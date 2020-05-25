@@ -80,37 +80,37 @@ public:
         bool const is_axially_symmetric, unsigned const integration_order,
         MeshLib::Mesh const& bulk_mesh,
         std::vector<std::pair<std::size_t, unsigned>> bulk_ids)
-        : _surface_element(surface_element),
-          _integration_method(integration_order),
-          _bulk_element_id(bulk_ids[_surface_element.getID()].first),
-          _surface_element_normal(MeshLib::calculateNormalizedSurfaceNormal(
-              _surface_element, *(bulk_mesh.getElements()[_bulk_element_id])))
+        : surface_element_(surface_element),
+          integration_method_(integration_order),
+          bulk_element_id_(bulk_ids[surface_element_.getID()].first),
+          surface_element_normal_(MeshLib::calculateNormalizedSurfaceNormal(
+              surface_element_, *(bulk_mesh.getElements()[bulk_element_id_])))
     {
         auto const fe = NumLib::createIsoparametricFiniteElement<
-            ShapeFunction, ShapeMatricesType>(_surface_element);
+            ShapeFunction, ShapeMatricesType>(surface_element_);
 
         auto const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
-        auto const bulk_face_id = bulk_ids[_surface_element.getID()].second;
+        auto const bulk_face_id = bulk_ids[surface_element_.getID()].second;
         std::vector<
             typename ShapeMatricesType::ShapeMatrices,
             Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
             shape_matrices;
         shape_matrices.reserve(n_integration_points);
-        _ip_data.reserve(n_integration_points);
+        ip_data_.reserve(n_integration_points);
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
                                         ShapeFunction::NPOINTS);
             fe.template computeShapeFunctions<NumLib::ShapeMatrixType::N_J>(
-                _integration_method.getWeightedPoint(ip).getCoords(),
+                integration_method_.getWeightedPoint(ip).getCoords(),
                 shape_matrices[ip], GlobalDim, is_axially_symmetric);
 
-            auto const& wp = _integration_method.getWeightedPoint(ip);
+            auto const& wp = integration_method_.getWeightedPoint(ip);
             auto bulk_element_point = MeshLib::getBulkElementPoint(
-                bulk_mesh, _bulk_element_id, bulk_face_id, wp);
-            _ip_data.emplace_back(shape_matrices[ip].detJ,
+                bulk_mesh, bulk_element_id_, bulk_face_id, wp);
+            ip_data_.emplace_back(shape_matrices[ip].detJ,
                                   shape_matrices[ip].integralMeasure,
                                   wp.getWeight(),
                                   std::move(bulk_element_point));
@@ -130,37 +130,37 @@ public:
             std::vector<GlobalVector*> const&)> const& getFlux) override
     {
         auto const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
         // integrated_value +=
         //   int_{\Gamma_e} \alpha \cdot flux \cdot normal \d \Gamma
         double integrated_value = 0;
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto const bulk_flux = getFlux(
-                _bulk_element_id, _ip_data[ip].bulk_element_point, t, x);
+                bulk_element_id_, ip_data_[ip].bulk_element_point, t, x);
 
             // TODO find solution for 2d case
             double const bulk_grad_times_normal(
                 Eigen::Map<Eigen::RowVectorXd const>(bulk_flux.data(),
                                                      bulk_flux.size())
                     .dot(Eigen::Map<Eigen::RowVectorXd const>(
-                        _surface_element_normal.getCoords(), 3)));
+                        surface_element_normal_.getCoords(), 3)));
 
             integrated_value +=
                 bulk_grad_times_normal *
-                _ip_data[ip].detJ_times_integralMeasure_times_weight;
+                ip_data_[ip].detJ_times_integralMeasure_times_weight;
         }
         return integrated_value;
     }
 
 private:
-    MeshLib::Element const& _surface_element;
+    MeshLib::Element const& surface_element_;
 
-    std::vector<IntegrationPointData> _ip_data;
+    std::vector<IntegrationPointData> ip_data_;
 
-    IntegrationMethod const _integration_method;
-    std::size_t const _bulk_element_id;
-    MathLib::Vector3 const _surface_element_normal;
+    IntegrationMethod const integration_method_;
+    std::size_t const bulk_element_id_;
+    MathLib::Vector3 const surface_element_normal_;
 };
 
 }  // namespace ProcessLib

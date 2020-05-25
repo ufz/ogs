@@ -61,14 +61,14 @@ public:
                               std::vector<double>& local_Jac_data) override;
 
 private:
-    std::vector<double> const _absolute_epsilons;
+    std::vector<double> const absolute_epsilons_;
 
     // temporary data only stored here in order to avoid frequent memory
     // reallocations.
-    std::vector<double> _local_M_data;
-    std::vector<double> _local_K_data;
-    std::vector<double> _local_b_data;
-    std::vector<double> _local_x_perturbed_data;
+    std::vector<double> local_M_data_;
+    std::vector<double> local_K_data_;
+    std::vector<double> local_b_data_;
+    std::vector<double> local_x_perturbed_data_;
 };
 
 std::unique_ptr<CentralDifferencesJacobianAssembler>

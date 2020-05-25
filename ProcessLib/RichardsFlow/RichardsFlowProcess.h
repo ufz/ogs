@@ -60,10 +60,10 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    RichardsFlowProcessData _process_data;
+    RichardsFlowProcessData process_data_;
 
     std::vector<std::unique_ptr<RichardsFlowLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }  // namespace RichardsFlow

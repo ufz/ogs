@@ -99,11 +99,11 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -112,11 +112,11 @@ public:
                               double const /*dt*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -131,7 +131,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N_u = _secondary_data.N_u[integration_point];
+        auto const& N_u = secondary_data_.N_u[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
@@ -147,7 +147,7 @@ private:
     std::size_t setSigma(double const* values)
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_eff);
+            values, ip_data_, &IpData::sigma_eff);
     }
 
     // TODO (naumov) This method is same as getIntPtSigma but for arguments and
@@ -156,7 +156,7 @@ private:
     std::vector<double> getSigma() const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma_eff);
+            ip_data_, &IpData::sigma_eff);
     }
 
     std::vector<double> const& getIntPtSigma(
@@ -166,7 +166,7 @@ private:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma_eff, cache);
+            ip_data_, &IpData::sigma_eff, cache);
     }
 
     virtual std::vector<double> const& getIntPtEpsilon(
@@ -176,11 +176,11 @@ private:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::eps, cache);
+            ip_data_, &IpData::eps, cache);
     }
 
 private:
-    ThermoHydroMechanicsProcessData<DisplacementDim>& _process_data;
+    ThermoHydroMechanicsProcessData<DisplacementDim>& process_data_;
 
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
@@ -188,14 +188,14 @@ private:
         IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
                              ShapeMatricesTypePressure, DisplacementDim,
                              ShapeFunctionDisplacement::NPOINTS>;
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> ip_data_;
 
-    IntegrationMethod _integration_method;
-    MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
+    IntegrationMethod integration_method_;
+    MeshLib::Element const& element_;
+    bool const is_axially_symmetric_;
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
-        _secondary_data;
+        secondary_data_;
 
     // The shape function of pressure has the same form with the shape function
     // of temperature

@@ -156,23 +156,23 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto& ip_data = _ip_data[ip];
+            auto& ip_data = ip_data_[ip];
 
             /// Set initial stress from parameter.
-            if (_process_data.initial_stress != nullptr)
+            if (process_data_.initial_stress != nullptr)
             {
                 ParameterLib::SpatialPosition const x_position{
-                    boost::none, _element.getID(), ip,
+                    boost::none, element_.getID(), ip,
                     MathLib::Point3d(interpolateCoordinates<ShapeFunction,
                                                             ShapeMatricesType>(
-                        _element, ip_data.N))};
+                        element_, ip_data.N))};
 
                 ip_data.sigma =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*_process_data.initial_stress)(
+                        DisplacementDim>((*process_data_.initial_stress)(
                         std::numeric_limits<
                             double>::quiet_NaN() /* time independent */,
                         x_position));
@@ -186,18 +186,18 @@ public:
                               double const /*t*/, double const /*dt*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -311,14 +311,14 @@ private:
 
 private:
 
-    ThermoMechanicsProcessData<DisplacementDim>& _process_data;
+    ThermoMechanicsProcessData<DisplacementDim>& process_data_;
 
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> ip_data_;
 
-    IntegrationMethod _integration_method;
-    MeshLib::Element const& _element;
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
-    bool const _is_axially_symmetric;
+    IntegrationMethod integration_method_;
+    MeshLib::Element const& element_;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
+    bool const is_axially_symmetric_;
 
     static const int temperature_index = 0;
     static const int temperature_size = ShapeFunction::NPOINTS;

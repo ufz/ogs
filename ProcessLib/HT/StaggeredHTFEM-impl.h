@@ -32,7 +32,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                                std::vector<double>& local_b_data,
                                LocalCoupledSolutions const& coupled_xs)
 {
-    if (process_id == _heat_transport_process_id)
+    if (process_id == heat_transport_process_id_)
     {
         assembleHeatTransportEquation(t, dt, local_x, local_M_data,
                                       local_K_data, local_b_data);
@@ -72,11 +72,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                                                                 pressure_size);
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(this->_element.getID());
+    pos.setElementID(this->element_.getID());
 
-    auto const& process_data = this->_process_data;
-    auto const& medium = *this->_process_data.media_map->getMedium(
-        this->_element.getID());
+    auto const& process_data = this->process_data_;
+    auto const& medium = *this->process_data_.media_map->getMedium(
+        this->element_.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
 
@@ -85,13 +85,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     MaterialPropertyLib::VariableArray vars;
 
     unsigned const n_integration_points =
-        this->_integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     for (unsigned ip(0); ip < n_integration_points; ip++)
     {
         pos.setIntegrationPoint(ip);
 
-        auto const& ip_data = this->_ip_data[ip];
+        auto const& ip_data = this->ip_data_[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;
@@ -201,11 +201,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         local_K_data, temperature_size, temperature_size);
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(this->_element.getID());
+    pos.setElementID(this->element_.getID());
 
-    auto const& process_data = this->_process_data;
+    auto const& process_data = this->process_data_;
     auto const& medium =
-        *process_data.media_map->getMedium(this->_element.getID());
+        *process_data.media_map->getMedium(this->element_.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     auto const& b = process_data.specific_body_force;
@@ -216,13 +216,13 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     MaterialPropertyLib::VariableArray vars;
 
     unsigned const n_integration_points =
-        this->_integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     for (unsigned ip(0); ip < n_integration_points; ip++)
     {
         pos.setIntegrationPoint(ip);
 
-        auto const& ip_data = this->_ip_data[ip];
+        auto const& ip_data = this->ip_data_[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;
@@ -305,7 +305,7 @@ StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
     {
         auto const indices =
-            NumLib::getIndices(this->_element.getID(), *dof_table[process_id]);
+            NumLib::getIndices(this->element_.getID(), *dof_table[process_id]);
         assert(!indices.empty());
         indices_of_all_coupled_processes.push_back(indices);
     }

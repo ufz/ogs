@@ -54,11 +54,11 @@ public:
         // fetch local_x from primary variable
         std::vector<GlobalIndexType> indices_cache;
         auto const r_c_indices = NumLib::getRowColumnIndices(
-            element_id, *_local_to_global_index_map, indices_cache);
+            element_id, *local_to_global_index_map_, indices_cache);
         constexpr int process_id = 0;  // monolithic scheme.
         std::vector<double> local_x(x[process_id]->get(r_c_indices.rows));
 
-        return _local_assemblers[element_id]->getFlux(p, t, local_x);
+        return local_assemblers_[element_id]->getFlux(p, t, local_x);
     }
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
@@ -73,7 +73,7 @@ public:
                 "The condition of process_id = 0 must be satisfied for "
                 "SteadyStateDiffusion, which is a single process.");
         }
-        if (!_surfaceflux)  // computing the surfaceflux is optional
+        if (!surfaceflux_)  // computing the surfaceflux is optional
         {
             return;
         }
@@ -81,9 +81,9 @@ public:
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
 
-        _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
-                                _mesh, pv.getActiveElementIDs());
-        _surfaceflux->save(t);
+        surfaceflux_->integrate(x, t, *this, process_id, integration_order_,
+                                mesh_, pv.getActiveElementIDs());
+        surfaceflux_->save(t);
     }
 
 private:
@@ -104,12 +104,12 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    SteadyStateDiffusionData _process_data;
+    SteadyStateDiffusionData process_data_;
 
     std::vector<std::unique_ptr<SteadyStateDiffusionLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
-    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
+    std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux_;
 };
 
 }  // namespace SteadyStateDiffusion

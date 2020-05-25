@@ -32,9 +32,9 @@ public:
                    GlobalMatrix* jac) const override;
 
 private:
-    ParameterLib::Parameter<double> const& _line_source_term_parameter;
+    ParameterLib::Parameter<double> const& line_source_term_parameter_;
     std::vector<std::unique_ptr<LineSourceTermLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }  // namespace ProcessLib

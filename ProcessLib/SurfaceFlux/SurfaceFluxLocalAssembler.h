@@ -68,31 +68,31 @@ public:
         unsigned const integration_order,
         MeshLib::PropertyVector<std::size_t> const& bulk_element_ids,
         MeshLib::PropertyVector<std::size_t> const& bulk_face_ids)
-        : _surface_element(surface_element),
-          _integration_method(integration_order),
-          _bulk_element_id(bulk_element_ids[surface_element.getID()]),
-          _bulk_face_id(bulk_face_ids[surface_element.getID()])
+        : surface_element_(surface_element),
+          integration_method_(integration_order),
+          bulk_element_id_(bulk_element_ids[surface_element.getID()]),
+          bulk_face_id_(bulk_face_ids[surface_element.getID()])
     {
         auto const fe = NumLib::createIsoparametricFiniteElement<
-            ShapeFunction, ShapeMatricesType>(_surface_element);
+            ShapeFunction, ShapeMatricesType>(surface_element_);
 
         std::size_t const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         std::vector<
             typename ShapeMatricesType::ShapeMatrices,
             Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
             shape_matrices;
         shape_matrices.reserve(n_integration_points);
-        _detJ_times_integralMeasure.reserve(n_integration_points);
+        detJ_times_integralMeasure_.reserve(n_integration_points);
         for (std::size_t ip = 0; ip < n_integration_points; ++ip)
         {
             shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
                                         ShapeFunction::NPOINTS);
             fe.template computeShapeFunctions<NumLib::ShapeMatrixType::N_J>(
-                _integration_method.getWeightedPoint(ip).getCoords(),
+                integration_method_.getWeightedPoint(ip).getCoords(),
                 shape_matrices[ip], GlobalDim, is_axially_symmetric);
-            _detJ_times_integralMeasure.push_back(
+            detJ_times_integralMeasure_.push_back(
                 shape_matrices[ip].detJ * shape_matrices[ip].integralMeasure);
         }
     }
@@ -127,9 +127,9 @@ public:
             if (surface_element.getGeomType() == MeshLib::MeshElemType::LINE)
             {
                 auto const bulk_normal = MeshLib::FaceRule::getSurfaceNormal(
-                    bulk_mesh.getElements()[_bulk_element_id]);
-                MathLib::Vector3 const line{*_surface_element.getNodes()[0],
-                                            *_surface_element.getNodes()[1]};
+                    bulk_mesh.getElements()[bulk_element_id_]);
+                MathLib::Vector3 const line{*surface_element_.getNodes()[0],
+                                            *surface_element_.getNodes()[1]};
                 surface_element_normal =
                     MathLib::crossProduct(line, bulk_normal);
             }
@@ -146,22 +146,22 @@ public:
             return surface_element_normal;
         };
         auto const surface_element_normal =
-            get_surface_normal(_surface_element);
+            get_surface_normal(surface_element_);
 
         double element_area = 0.0;
         std::size_t const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
         // specific_flux[id_of_element] +=
         //   int_{\Gamma_e} \alpha \cdot flux \cdot normal \d \Gamma /
         //   element_area
         for (std::size_t ip(0); ip < n_integration_points; ip++)
         {
-            auto const& wp = _integration_method.getWeightedPoint(ip);
+            auto const& wp = integration_method_.getWeightedPoint(ip);
 
             auto const bulk_element_point = MeshLib::getBulkElementPoint(
-                bulk_mesh, _bulk_element_id, _bulk_face_id, wp);
+                bulk_mesh, bulk_element_id_, bulk_face_id_, wp);
             auto const bulk_flux =
-                getFlux(_bulk_element_id, bulk_element_point, t, x);
+                getFlux(bulk_element_id_, bulk_element_point, t, x);
             for (int component_id(0);
                  component_id < specific_flux.getNumberOfComponents();
                  ++component_id)
@@ -174,10 +174,10 @@ public:
                             surface_element_normal.getCoords(), 3)));
 
                 specific_flux.getComponent(element_id, component_id) +=
-                    bulk_grad_times_normal * _detJ_times_integralMeasure[ip] *
+                    bulk_grad_times_normal * detJ_times_integralMeasure_[ip] *
                     wp.getWeight();
             }
-            element_area += _detJ_times_integralMeasure[ip] * wp.getWeight();
+            element_area += detJ_times_integralMeasure_[ip] * wp.getWeight();
         }
         for (int component_id(0);
              component_id < specific_flux.getNumberOfComponents();
@@ -189,13 +189,13 @@ public:
     }
 
 private:
-    MeshLib::Element const& _surface_element;
+    MeshLib::Element const& surface_element_;
 
-    std::vector<double> _detJ_times_integralMeasure;
+    std::vector<double> detJ_times_integralMeasure_;
 
-    IntegrationMethod const _integration_method;
-    std::size_t _bulk_element_id;
-    std::size_t _bulk_face_id;
+    IntegrationMethod const integration_method_;
+    std::size_t bulk_element_id_;
+    std::size_t bulk_face_id_;
 };
 
 }  // namespace ProcessLib

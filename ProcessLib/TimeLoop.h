@@ -55,9 +55,9 @@ public:
 private:
     /**
      * This function fills the vector of solutions of coupled processes of
-     * processes, _solutions_of_coupled_processes, and initializes the vector
+     * processes, solutions_of_coupled_processes_, and initializes the vector
      * of solutions of the previous coupling iteration,
-     * _solutions_of_last_cpl_iteration.
+     * solutions_of_last_cpl_iteration_.
      */
     void setCoupledSolutions();
 
@@ -109,27 +109,27 @@ private:
                          OutputClassMember output_class_member) const;
 
 private:
-    std::vector<GlobalVector*> _process_solutions;
-    std::vector<GlobalVector*> _process_solutions_prev;
-    std::unique_ptr<Output> _output;
-    std::vector<std::unique_ptr<ProcessData>> _per_process_data;
+    std::vector<GlobalVector*> process_solutions_;
+    std::vector<GlobalVector*> process_solutions_prev_;
+    std::unique_ptr<Output> output_;
+    std::vector<std::unique_ptr<ProcessData>> per_process_data_;
 
-    bool _last_step_rejected = false;
-    int _repeating_times_of_rejected_step = 0;
-    const double _start_time;
-    const double _end_time;
+    bool last_step_rejected_ = false;
+    int repeating_times_of_rejected_step_ = 0;
+    const double start_time_;
+    const double end_time_;
 
     /// Maximum iterations of the global coupling.
-    const int _global_coupling_max_iterations;
+    const int global_coupling_max_iterations_;
     /// Convergence criteria of processes for the global coupling iterations.
     std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
-        _global_coupling_conv_crit;
+        global_coupling_conv_crit_;
 
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
-        _chemical_solver_interface;
+        chemical_solver_interface_;
 
     /// Solutions of the previous coupling iteration for the convergence
     /// criteria of the coupling iteration.
-    std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
+    std::vector<GlobalVector*> solutions_of_last_cpl_iteration_;
 };
 }  // namespace ProcessLib

@@ -45,8 +45,8 @@ public:
         unsigned const integration_order,
         NeumannBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
-          _data(data),
-          _local_rhs(local_matrix_size)
+          data_(data),
+          local_rhs_(local_matrix_size)
     {
     }
 
@@ -56,45 +56,45 @@ public:
                   int const /*process_id*/, GlobalMatrix& /*K*/,
                   GlobalVector& b, GlobalMatrix* /*Jac*/) override
     {
-        _local_rhs.setZero();
+        local_rhs_.setZero();
 
         unsigned const n_integration_points =
-            Base::_integration_method.getNumberOfPoints();
+            Base::integration_method_.getNumberOfPoints();
 
         // Get element nodes for the interpolation from nodes to integration
         // point.
         NodalVectorType parameter_node_values =
-            _data.neumann_bc_parameter
-                .getNodalValuesOnElement(Base::_element, t)
+            data_.neumann_bc_parameter
+                .getNodalValuesOnElement(Base::element_, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
 
         ParameterLib::SpatialPosition position;
-        position.setElementID(Base::_element.getID());
+        position.setElementID(Base::element_.getID());
 
         double integral_measure = 1.0;
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             position.setIntegrationPoint(ip);
-            auto const& ip_data = Base::_ns_and_weights[ip];
+            auto const& ip_data = Base::ns_and_weights_[ip];
             auto const& N = ip_data.N;
             auto const& w = ip_data.weight;
 
-            if (_data.integral_measure)
+            if (data_.integral_measure)
             {
-                integral_measure = (*_data.integral_measure)(t, position)[0];
+                integral_measure = (*data_.integral_measure)(t, position)[0];
             }
-            _local_rhs.noalias() +=
+            local_rhs_.noalias() +=
                 N * parameter_node_values.dot(N) * w * integral_measure;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
-        b.add(indices, _local_rhs);
+        b.add(indices, local_rhs_);
     }
 
 private:
-    NeumannBoundaryConditionData const& _data;
+    NeumannBoundaryConditionData const& data_;
 
-    NodalVectorType _local_rhs;
+    NodalVectorType local_rhs_;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

@@ -157,24 +157,24 @@ public:
         int const mechanics_related_process_id,
         int const phase_field_process_id,
         int const heat_conduction_process_id)
-        : _process_data(process_data),
-          _integration_method(integration_order),
-          _element(e),
-          _is_axially_symmetric(is_axially_symmetric),
-          _mechanics_related_process_id(mechanics_related_process_id),
-          _phase_field_process_id(phase_field_process_id),
-          _heat_conduction_process_id(heat_conduction_process_id)
+        : process_data_(process_data),
+          integration_method_(integration_order),
+          element_(e),
+          is_axially_symmetric_(is_axially_symmetric),
+          mechanics_related_process_id_(mechanics_related_process_id),
+          phase_field_process_id_(phase_field_process_id),
+          heat_conduction_process_id_(heat_conduction_process_id)
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
-        _ip_data.reserve(n_integration_points);
-        _secondary_data.N.resize(n_integration_points);
+        ip_data_.reserve(n_integration_points);
+        secondary_data_.N.resize(n_integration_points);
 
         auto& solid_material =
             MaterialLib::Solids::selectSolidConstitutiveRelation(
-                _process_data.solid_materials,
-                _process_data.material_ids,
+                process_data_.solid_materials,
+                process_data_.material_ids,
                 e.getID());
         if (!dynamic_cast<MaterialLib::Solids::LinearElasticIsotropic<
                 DisplacementDim> const*>(&solid_material))
@@ -188,17 +188,17 @@ public:
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, DisplacementDim>(
-                e, is_axially_symmetric, _integration_method);
+                e, is_axially_symmetric, integration_method_);
 
         ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
+        x_position.setElementID(element_.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(solid_material);
-            auto& ip_data = _ip_data[ip];
+            ip_data_.emplace_back(solid_material);
+            auto& ip_data = ip_data_[ip];
             ip_data.integration_weight =
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                integration_method_.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
             static const int kelvin_vector_size =
@@ -220,7 +220,7 @@ public:
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
 
-            _secondary_data.N[ip] = shape_matrices[ip].N;
+            secondary_data_.N[ip] = shape_matrices[ip].N;
         }
     }
 
@@ -247,11 +247,11 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -259,18 +259,18 @@ public:
                               double const /*t*/, double const /*dt*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -284,7 +284,7 @@ private:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma, cache);
+            ip_data_, &IpData::sigma, cache);
     }
 
     std::vector<double> const& getIntPtEpsilon(
@@ -294,7 +294,7 @@ private:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::eps, cache);
+            ip_data_, &IpData::eps, cache);
     }
 
     std::vector<double> const& getIntPtHeatFlux(
@@ -305,7 +305,7 @@ private:
     {
         using KelvinVectorType = typename BMatricesType::KelvinVectorType;
 
-        auto const n_integration_points = _ip_data.size();
+        auto const n_integration_points = ip_data_.size();
 
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -314,7 +314,7 @@ private:
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            auto const& heatflux = _ip_data[ip].heatflux;
+            auto const& heatflux = ip_data_[ip].heatflux;
 
             for (typename KelvinVectorType::Index component = 0;
                  component < DisplacementDim;
@@ -348,23 +348,23 @@ private:
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
-    ThermoMechanicalPhaseFieldProcessData<DisplacementDim>& _process_data;
+    ThermoMechanicalPhaseFieldProcessData<DisplacementDim>& process_data_;
 
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> ip_data_;
 
-    IntegrationMethod _integration_method;
-    MeshLib::Element const& _element;
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
-    bool const _is_axially_symmetric;
+    IntegrationMethod integration_method_;
+    MeshLib::Element const& element_;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
+    bool const is_axially_symmetric_;
 
     /// ID of the processes that contains mechanical process.
-    int const _mechanics_related_process_id;
+    int const mechanics_related_process_id_;
 
     /// ID of phase field process.
-    int const _phase_field_process_id;
+    int const phase_field_process_id_;
 
     /// ID of heat conduction process.
-    int const _heat_conduction_process_id;
+    int const heat_conduction_process_id_;
 };
 
 }  // namespace ThermoMechanicalPhaseField

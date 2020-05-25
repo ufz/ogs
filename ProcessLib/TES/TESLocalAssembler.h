@@ -90,7 +90,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrices[integration_point].N;
+        auto const& N = shape_matrices_[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -130,17 +130,17 @@ public:
         std::vector<double>& cache) const override;
 
 private:
-    MeshLib::Element const& _element;
+    MeshLib::Element const& element_;
 
-    IntegrationMethod_ const _integration_method;
+    IntegrationMethod_ const integration_method_;
 
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
+        shape_matrices_;
 
     using LAT = LocalAssemblerTraits<ShapeMatricesType, ShapeFunction::NPOINTS,
                                      NODAL_DOF, GlobalDim>;
 
-    TESLocalAssemblerInner<LAT> _d;
+    TESLocalAssemblerInner<LAT> d_;
 
     using NodalMatrixType = typename LAT::LocalMatrix;
     using NodalVectorType = typename LAT::LocalVector;

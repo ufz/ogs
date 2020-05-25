@@ -69,54 +69,54 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
-    ParameterLib::Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& parameter_;
 
     /// Local dof table, a subset of the global one restricted to the
     /// participating number of elements of the boundary condition.
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_boundary_;
 
-    int const _variable_id;
-    int const _component_id;
+    int const variable_id_;
+    int const component_id_;
 
     /// Vector of (lower-dimensional) boundary elements on which the boundary
     /// condition is defined.
-    MeshLib::Mesh const& _bc_mesh;
+    MeshLib::Mesh const& bc_mesh_;
 
     /// Integration order for integration over the lower-dimensional elements
-    unsigned const _integration_order;
+    unsigned const integration_order_;
 
     /// The first item of the pair is the element id in the bulk mesh, the
     /// second item is the face id of the bulk element that is part of the
     /// boundary
-    std::vector<std::pair<std::size_t, unsigned>> _bulk_ids;
+    std::vector<std::pair<std::size_t, unsigned>> bulk_ids_;
 
     /// Stores the results of the flux computations per boundary element.
-    std::vector<double> _flux_values;
+    std::vector<double> flux_values_;
 
     /// Local assemblers for each boundary element.
     std::vector<std::unique_ptr<
         ConstraintDirichletBoundaryConditionLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     /// The threshold value used to the switch off/on the Dirichlet-type
     /// boundary condition.
-    double const _constraint_threshold;
+    double const constraint_threshold_;
 
     /// The boolean value lower is used for the calculation of the constraint
     /// criterion, i.e., if lower is set to true the criterion 'calculated_value
     /// < constraint_threshold' is evaluated to switch on/off the boundary
     /// condition, else 'calculated_value > constraint_threshold' is evaluated.
-    bool const _lower;
+    bool const lower_;
 
-    /// The mesh _bulk_mesh is the discretized domain the process(es) are
+    /// The mesh bulk_mesh_ is the discretized domain the process(es) are
     /// defined on. It is needed to get values for the constraint calculation.
-    MeshLib::Mesh const& _bulk_mesh;
+    MeshLib::Mesh const& bulk_mesh_;
 
-    /// The function _getFlux calculates the flux through the boundary element.
+    /// The function getFlux_ calculates the flux through the boundary element.
     std::function<Eigen::Vector3d(std::size_t const, MathLib::Point3d const&,
                                   double const,
                                   std::vector<GlobalVector*> const&)>
-        _getFlux;
+        getFlux_;
 };
 
 /// The function parses the config tree and creates a

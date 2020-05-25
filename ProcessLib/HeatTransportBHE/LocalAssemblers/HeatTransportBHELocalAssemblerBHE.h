@@ -69,41 +69,41 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
 private:
-    HeatTransportBHEProcessData& _process_data;
+    HeatTransportBHEProcessData& process_data_;
 
     std::vector<
         IntegrationPointDataBHE<ShapeMatricesType>,
         Eigen::aligned_allocator<IntegrationPointDataBHE<ShapeMatricesType>>>
-        _ip_data;
+        ip_data_;
 
-    IntegrationMethod _integration_method;
+    IntegrationMethod integration_method_;
 
-    BHEType const& _bhe;
+    BHEType const& bhe_;
 
-    std::size_t const _element_id;
+    std::size_t const element_id_;
 
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
 
-    Eigen::Vector3d _element_direction;
+    Eigen::Vector3d element_direction_;
 
     typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
                                                     bhe_unknowns_size>
-        _R_matrix;
+        R_matrix_;
 
     typename ShapeMatricesType::template MatrixType<soil_temperature_size,
                                                     soil_temperature_size>
-        _R_s_matrix;
+        R_s_matrix_;
 
     typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
                                                     soil_temperature_size>
-        _R_pi_s_matrix;
+        R_pi_s_matrix_;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

@@ -32,14 +32,14 @@ private:
         ShapeFunction, DisplacementDim>::template MatrixType<N, M>;
 
     // Dimensions of specific b-matrix for n-points and displacement dimension.
-    static int const _number_of_dof = ShapeFunction::NPOINTS * DisplacementDim;
+    static int const number_of_dof_ = ShapeFunction::NPOINTS * DisplacementDim;
 
 public:
     // For the 2D case the 33-component is needed (and the four entries
     // of the non-symmetric matrix); In 3d there are nine entries.
     using GradientMatrixType = MatrixType<DisplacementDim * DisplacementDim +
                                               (DisplacementDim == 2 ? 1 : 0),
-                                          _number_of_dof>;
+                                          number_of_dof_>;
     using GradientVectorType = VectorType<DisplacementDim * DisplacementDim +
                                           (DisplacementDim == 2 ? 1 : 0)>;
 };

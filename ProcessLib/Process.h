@@ -90,12 +90,12 @@ public:
     void setCoupledSolutionsForStaggeredScheme(
         CoupledSolutionsForStaggeredScheme* const coupled_solutions)
     {
-        _coupled_solutions = coupled_solutions;
+        coupled_solutions_ = coupled_solutions;
     }
 
     void updateDeactivatedSubdomains(double const time, const int process_id);
 
-    bool isMonolithicSchemeUsed() const { return _use_monolithic_scheme; }
+    bool isMonolithicSchemeUsed() const { return use_monolithic_scheme_; }
     virtual void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const /*process_id*/)
     {
@@ -118,33 +118,33 @@ public:
     getKnownSolutions(double const t, GlobalVector const& x,
                       int const process_id) const final
     {
-        return _boundary_conditions[process_id].getKnownSolutions(t, x);
+        return boundary_conditions_[process_id].getKnownSolutions(t, x);
     }
 
     virtual NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int /*process_id*/) const
     {
-        return *_local_to_global_index_map;
+        return *local_to_global_index_map_;
     }
 
-    MeshLib::Mesh& getMesh() const { return _mesh; }
+    MeshLib::Mesh& getMesh() const { return mesh_; }
     std::vector<std::reference_wrapper<ProcessVariable>> const&
     getProcessVariables(const int process_id) const
     {
-        return _process_variables[process_id];
+        return process_variables_[process_id];
     }
 
     SecondaryVariableCollection const& getSecondaryVariables() const
     {
-        return _secondary_variables;
+        return secondary_variables_;
     }
 
     std::vector<std::unique_ptr<IntegrationPointWriter>> const*
     getIntegrationPointWriter(MeshLib::Mesh const& mesh) const
     {
-        if (mesh == _mesh)
+        if (mesh == mesh_)
         {
-            return &_integration_point_writer;
+            return &integration_point_writer_;
         }
         return nullptr;
     }
@@ -163,12 +163,12 @@ public:
 protected:
     NumLib::Extrapolator& getExtrapolator() const
     {
-        return _extrapolator_data.getExtrapolator();
+        return extrapolator_data_.getExtrapolator();
     }
 
     NumLib::LocalToGlobalIndexMap const& getSingleComponentDOFTable() const
     {
-        return _extrapolator_data.getDOFTable();
+        return extrapolator_data_.getDOFTable();
     }
 
     /**
@@ -259,7 +259,7 @@ protected:
     /** This function is for general cases, in which all equations of the
      coupled processes have the same number of unknowns. For the general cases
      with the staggered scheme, all equations of the coupled processes share one
-     DOF table hold by  @c _local_to_global_index_map. Other cases can be
+     DOF table hold by  @c local_to_global_index_map_. Other cases can be
      considered by overloading this member function in the derived class.
      */
     virtual void constructDofTable();
@@ -267,14 +267,14 @@ protected:
     /**
      * Construct the DOF table for the monolithic scheme,
      * which is stored in the
-     * member of this class, @c _local_to_global_index_map.
+     * member of this class, @c local_to_global_index_map_.
      */
     void constructMonolithicProcessDofTable();
 
     /**
      * Construct the DOF table for a specified process in the staggered scheme,
      * which is stored in the
-     * member of this class, @c _local_to_global_index_map.
+     * member of this class, @c local_to_global_index_map_.
      */
     void constructDofTableOfSpecifiedProsessStaggerdScheme(
         const int specified_prosess_id);
@@ -301,33 +301,33 @@ public:
     std::string const name;
 
 protected:
-    MeshLib::Mesh& _mesh;
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
+    MeshLib::Mesh& mesh_;
+    std::unique_ptr<MeshLib::MeshSubset const> mesh_subset_all_nodes_;
 
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _local_to_global_index_map;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> local_to_global_index_map_;
 
-    SecondaryVariableCollection _secondary_variables;
+    SecondaryVariableCollection secondary_variables_;
 
-    VectorMatrixAssembler _global_assembler;
+    VectorMatrixAssembler global_assembler_;
 
-    const bool _use_monolithic_scheme;
+    const bool use_monolithic_scheme_;
 
     /// Pointer to CoupledSolutionsForStaggeredScheme, which contains the
     /// references to the solutions of the coupled processes.
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions;
+    CoupledSolutionsForStaggeredScheme* coupled_solutions_;
 
     /// Order of the integration method for element-wise integration.
     /// The Gauss-Legendre integration method and available orders is
     /// implemented in MathLib::GaussLegendre.
-    unsigned const _integration_order;
+    unsigned const integration_order_;
 
     /// An optional vector containing descriptions for integration point data
     /// output and setting of the integration point initial conditions.
     /// The integration point writer are implemented in specific processes.
     std::vector<std::unique_ptr<IntegrationPointWriter>>
-        _integration_point_writer;
+        integration_point_writer_;
 
-    GlobalSparsityPattern _sparsity_pattern;
+    GlobalSparsityPattern sparsity_pattern_;
 
 protected:
     /// Variables used by this process.  For the monolithic scheme or a
@@ -335,20 +335,20 @@ protected:
     /// staggered scheme, the size of the outer vector is the number of the
     /// coupled processes.
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
-        _process_variables;
+        process_variables_;
 
     /// Vector for boundary conditions. For the monolithic scheme or a
     /// single process, the size of the vector is one. For the staggered
     /// scheme, the size of vector is the number of the coupled processes.
-    std::vector<BoundaryConditionCollection> _boundary_conditions;
+    std::vector<BoundaryConditionCollection> boundary_conditions_;
 
 private:
     /// Vector for nodal source term collections. For the monolithic scheme
     /// or a single process, the size of the vector is one. For the staggered
     /// scheme, the size of vector is the number of the coupled processes.
-    std::vector<SourceTermCollection> _source_term_collections;
+    std::vector<SourceTermCollection> source_term_collections_;
 
-    ExtrapolatorData _extrapolator_data;
+    ExtrapolatorData extrapolator_data_;
 };
 
 }  // namespace ProcessLib

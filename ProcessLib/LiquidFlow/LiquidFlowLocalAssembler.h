@@ -91,24 +91,24 @@ public:
         bool const is_axially_symmetric,
         unsigned const integration_order,
         LiquidFlowData const& process_data)
-        : _element(element),
-          _integration_method(integration_order),
-          _process_data(process_data)
+        : element_(element),
+          integration_method_(integration_order),
+          process_data_(process_data)
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-        _ip_data.reserve(n_integration_points);
+            integration_method_.getNumberOfPoints();
+        ip_data_.reserve(n_integration_points);
 
         auto const& shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, GlobalDim>(
-                element, is_axially_symmetric, _integration_method);
+                element, is_axially_symmetric, integration_method_);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(
+            ip_data_.emplace_back(
                 shape_matrices[ip].N, shape_matrices[ip].dNdx,
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                integration_method_.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ);
         }
@@ -130,7 +130,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _ip_data[integration_point].N;
+        auto const& N = ip_data_[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -143,14 +143,14 @@ public:
         std::vector<double>& velocity_cache) const override;
 
 private:
-    MeshLib::Element const& _element;
+    MeshLib::Element const& element_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
-        _ip_data;
+        ip_data_;
 
     /**
      *  Calculator of the Laplacian and the gravity term for anisotropic
@@ -211,7 +211,7 @@ private:
         ParameterLib::SpatialPosition const& pos,
         MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
 
-    const LiquidFlowData& _process_data;
+    const LiquidFlowData& process_data_;
 };
 
 }  // namespace LiquidFlow

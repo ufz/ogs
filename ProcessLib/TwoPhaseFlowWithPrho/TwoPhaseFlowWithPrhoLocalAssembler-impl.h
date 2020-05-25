@@ -77,19 +77,19 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
         local_b.template segment<cap_pressure_size>(cap_pressure_matrix_index);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    pos.setElementID(element_.getID());
     const int material_id =
-        _process_data._material->getMaterialID(pos.getElementID().get());
+        process_data_.material_->getMaterialID(pos.getElementID().get());
 
-    const Eigen::MatrixXd& perm = _process_data._material->getPermeability(
-        material_id, t, pos, _element.getDimension());
-    assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
+    const Eigen::MatrixXd& perm = process_data_.material_->getPermeability(
+        material_id, t, pos, element_.getDimension());
+    assert(perm.rows() == element_.getDimension() || perm.rows() == 1);
     GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-        _element.getDimension(), _element.getDimension());
-    if (perm.rows() == _element.getDimension())
+        element_.getDimension(), element_.getDimension());
+    if (perm.rows() == element_.getDimension())
     {
         permeability = perm;
     }
@@ -100,7 +100,7 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& sm = _shape_matrices[ip];
+        auto const& sm = shape_matrices_[ip];
 
         double pl_int_pt = 0.;
         double totalrho_int_pt =
@@ -108,22 +108,22 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
         NumLib::shapeFunctionInterpolate(local_x, sm.N, pl_int_pt,
                                          totalrho_int_pt);
 
-        const double temperature = _process_data._temperature(t, pos)[0];
+        const double temperature = process_data_.temperature_(t, pos)[0];
 
         double const rho_gas =
-            _process_data._material->getGasDensity(pl_int_pt, temperature);
+            process_data_.material_->getGasDensity(pl_int_pt, temperature);
         double const rho_h2o =
-            _process_data._material->getLiquidDensity(pl_int_pt, temperature);
+            process_data_.material_->getLiquidDensity(pl_int_pt, temperature);
 
-        double& Sw = _ip_data[ip].sw;
+        double& Sw = ip_data_[ip].sw;
         /// Here only consider one component in gas phase
         double const X_h2_nonwet = 1.0;
-        double& rho_h2_wet = _ip_data[ip].rho_m;
-        double& dSwdP = _ip_data[ip].dsw_dpg;
-        double& dSwdrho = _ip_data[ip].dsw_drho;
-        double& drhoh2wet = _ip_data[ip].drhom_dpg;
-        double& drhoh2wet_drho = _ip_data[ip].drhom_drho;
-        if (!_ip_data[ip].mat_property.computeConstitutiveRelation(
+        double& rho_h2_wet = ip_data_[ip].rho_m;
+        double& dSwdP = ip_data_[ip].dsw_dpg;
+        double& dSwdrho = ip_data_[ip].dsw_drho;
+        double& drhoh2wet = ip_data_[ip].drhom_dpg;
+        double& drhoh2wet_drho = ip_data_[ip].drhom_drho;
+        if (!ip_data_[ip].mat_property.computeConstitutiveRelation(
                 t,
                 pos,
                 material_id,
@@ -139,47 +139,47 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
         {
             OGS_FATAL("Computation of local constitutive relation failed.");
         }
-        double const pc = _process_data._material->getCapillaryPressure(
+        double const pc = process_data_.material_->getCapillaryPressure(
             material_id, t, pos, pl_int_pt, temperature, Sw);
 
         double const rho_wet = rho_h2o + rho_h2_wet;
-        _saturation[ip] = Sw;
-        _pressure_nonwetting[ip] = pl_int_pt + pc;
+        saturation_[ip] = Sw;
+        pressure_nonwetting_[ip] = pl_int_pt + pc;
 
         // Assemble M matrix
         // nonwetting
         double dPC_dSw =
-            _process_data._material->getCapillaryPressureDerivative(
+            process_data_.material_->getCapillaryPressureDerivative(
                 material_id, t, pos, pl_int_pt, temperature, Sw);
 
-        double const porosity = _process_data._material->getPorosity(
+        double const porosity = process_data_.material_->getPorosity(
             material_id, t, pos, pl_int_pt, temperature, 0);
 
-        Mgx.noalias() += porosity * _ip_data[ip].massOperator;
+        Mgx.noalias() += porosity * ip_data_[ip].massOperator;
 
-        Mlp.noalias() += porosity * rho_h2o * dSwdP * _ip_data[ip].massOperator;
+        Mlp.noalias() += porosity * rho_h2o * dSwdP * ip_data_[ip].massOperator;
 
         Mlx.noalias() +=
-            porosity * (1 + dSwdrho * rho_h2o) * _ip_data[ip].massOperator;
+            porosity * (1 + dSwdrho * rho_h2o) * ip_data_[ip].massOperator;
         double const k_rel_gas =
-            _process_data._material->getNonwetRelativePermeability(
-                t, pos, _pressure_nonwetting[ip], temperature, Sw);
-        double const mu_gas = _process_data._material->getGasViscosity(
-            _pressure_nonwetting[ip], temperature);
+            process_data_.material_->getNonwetRelativePermeability(
+                t, pos, pressure_nonwetting_[ip], temperature, Sw);
+        double const mu_gas = process_data_.material_->getGasViscosity(
+            pressure_nonwetting_[ip], temperature);
         double const lambda_gas = k_rel_gas / mu_gas;
         double const diffusion_coeff_component_h2 =
-            _process_data._diffusion_coeff_component_b(t, pos)[0];
+            process_data_.diffusion_coeff_component_b_(t, pos)[0];
 
         // wet
         double const k_rel_wet =
-            _process_data._material->getWetRelativePermeability(
+            process_data_.material_->getWetRelativePermeability(
                 t, pos, pl_int_pt, temperature, Sw);
         double const mu_wet =
-            _process_data._material->getLiquidViscosity(pl_int_pt, temperature);
+            process_data_.material_->getLiquidViscosity(pl_int_pt, temperature);
         double const lambda_wet = k_rel_wet / mu_wet;
 
         laplace_operator.noalias() = sm.dNdx.transpose() * permeability *
-                                     sm.dNdx * _ip_data[ip].integration_weight;
+                                     sm.dNdx * ip_data_[ip].integration_weight;
 
         Kgp.noalias() +=
             (rho_gas * X_h2_nonwet * lambda_gas * (1 + dPC_dSw * dSwdP) +
@@ -187,13 +187,13 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
                 laplace_operator +
             (Sw * porosity * diffusion_coeff_component_h2 *
              (rho_h2o / rho_wet) * drhoh2wet) *
-                _ip_data[ip].diffusionOperator;
+                ip_data_[ip].diffusionOperator;
         Kgx.noalias() +=
             (rho_gas * X_h2_nonwet * lambda_gas * dPC_dSw * dSwdrho) *
                 laplace_operator +
             (Sw * porosity * diffusion_coeff_component_h2 *
              (rho_h2o / rho_wet) * drhoh2wet_drho) *
-                _ip_data[ip].diffusionOperator;
+                ip_data_[ip].diffusionOperator;
         Klp.noalias() += (rho_gas * lambda_gas * (1 + dPC_dSw * dSwdP) +
                           rho_wet * lambda_wet) *
                          laplace_operator;
@@ -201,21 +201,21 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
         Klx.noalias() +=
             (rho_gas * lambda_gas * dPC_dSw * dSwdrho) * laplace_operator;
 
-        if (_process_data._has_gravity)
+        if (process_data_.has_gravity_)
         {
-            auto const& b = _process_data._specific_body_force;
+            auto const& b = process_data_.specific_body_force_;
             Bg.noalias() += (rho_gas * rho_gas * lambda_gas +
                              rho_h2_wet * rho_wet * lambda_wet) *
                             sm.dNdx.transpose() * permeability * b *
-                            _ip_data[ip].integration_weight;
+                            ip_data_[ip].integration_weight;
             Bl.noalias() += (rho_wet * lambda_wet * rho_wet +
                              rho_gas * rho_gas * lambda_gas) *
                             sm.dNdx.transpose() * permeability * b *
-                            _ip_data[ip].integration_weight;
+                            ip_data_[ip].integration_weight;
 
         }  // end of has gravity
     }
-    if (_process_data._has_mass_lumping)
+    if (process_data_.has_mass_lumping_)
     {
         for (unsigned row = 0; row < Mgp.cols(); row++)
         {

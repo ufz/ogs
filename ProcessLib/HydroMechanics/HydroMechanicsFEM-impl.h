@@ -38,40 +38,40 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         bool const is_axially_symmetric,
         unsigned const integration_order,
         HydroMechanicsProcessData<DisplacementDim>& process_data)
-    : _process_data(process_data),
-      _integration_method(integration_order),
-      _element(e),
-      _is_axially_symmetric(is_axially_symmetric)
+    : process_data_(process_data),
+      integration_method_(integration_order),
+      element_(e),
+      is_axially_symmetric_(is_axially_symmetric)
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
-    _secondary_data.N_u.resize(n_integration_points);
+    ip_data_.reserve(n_integration_points);
+    secondary_data_.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
         initShapeMatrices<ShapeFunctionDisplacement,
                           ShapeMatricesTypeDisplacement, IntegrationMethod,
                           DisplacementDim>(e, is_axially_symmetric,
-                                           _integration_method);
+                                           integration_method_);
 
     auto const shape_matrices_p =
         initShapeMatrices<ShapeFunctionPressure, ShapeMatricesTypePressure,
                           IntegrationMethod, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+            e, is_axially_symmetric, integration_method_);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
-            _process_data.solid_materials, _process_data.material_ids,
+            process_data_.solid_materials, process_data_.material_ids,
             e.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        _ip_data.emplace_back(solid_material);
-        auto& ip_data = _ip_data[ip];
+        ip_data_.emplace_back(solid_material);
+        auto& ip_data = ip_data_[ip];
         auto const& sm_u = shape_matrices_u[ip];
         ip_data.integration_weight =
-            _integration_method.getWeightedPoint(ip).getWeight() *
+            integration_method_.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
         // Initialize current time step values
@@ -102,7 +102,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.N_p = shape_matrices_p[ip].N;
         ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
 
-        _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
+        secondary_data_.N_u[ip] = shape_matrices_u[ip].N;
     }
 }
 
@@ -176,16 +176,16 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                                     displacement_size);
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
-        *_process_data.solid_materials[0];
+        *process_data_.solid_materials[0];
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    auto const& b = _process_data.specific_body_force;
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& b = process_data_.specific_body_force;
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
@@ -198,28 +198,28 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data_[ip].integration_weight;
 
-        auto const& N_u_op = _ip_data[ip].N_u_op;
+        auto const& N_u_op = ip_data_[ip].N_u_op;
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
+                                   ShapeMatricesTypeDisplacement>(element_,
                                                                   N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
-        auto& eps = _ip_data[ip].eps;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        auto& eps = ip_data_[ip].eps;
+        auto const& sigma_eff = ip_data_[ip].sigma_eff;
 
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(p);
 
@@ -259,7 +259,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+        auto C = ip_data_[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                          T_ref);
 
         local_Jac
@@ -306,7 +306,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                                           pressure_index)
         .noalias() = -Kup;
 
-    if (_process_data.mass_lumping)
+    if (process_data_.mass_lumping)
     {
         storage_p = storage_p.colwise().sum().eval().asDiagonal();
     }
@@ -346,12 +346,12 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     constexpr int process_id = 0;  // monolithic as well as staggered where the
                                    // hydraulic process has id 0.
     auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+        NumLib::getIndices(element_.getID(), *dof_table[process_id]);
     assert(!indices.empty());
     auto const local_x = x[process_id]->get(indices);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
         double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
@@ -361,9 +361,9 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
 
@@ -379,7 +379,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         x_position.setIntegrationPoint(ip);
 
         vars[static_cast<int>(MPL::Variable::phase_pressure)] =
-            _ip_data[ip].N_p.dot(p);
+            ip_data_[ip].N_p.dot(p);
 
         auto const K = MPL::formEigenTensor<DisplacementDim>(
             medium->property(MPL::PropertyType::permeability)
@@ -393,10 +393,10 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const K_over_mu = K / mu;
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
 
         // Compute the velocity
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
         cache_matrix.col(ip).noalias() =
             -K_over_mu * dNdx_p * p + K_over_mu * rho_fr * b;
     }
@@ -422,7 +422,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             local_b_data, pressure_size);
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(this->_element.getID());
+    pos.setElementID(this->element_.getID());
 
     auto const p = local_x.template segment<pressure_size>(pressure_index);
     auto const u =
@@ -445,12 +445,12 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                                          pressure_size);
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
-        *_process_data.solid_materials[0];
+        *process_data_.solid_materials[0];
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
@@ -459,17 +459,17 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         medium->property(MPL::PropertyType::reference_temperature)
             .template value<double>(vars, x_position, t, dt);
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
+    int const n_integration_points = integration_method_.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data_[ip].integration_weight;
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
 
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(p);
 
@@ -504,22 +504,22 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             N_p.transpose() * N_p * w *
             ((alpha_b - porosity) * (1.0 - alpha_b) / K_S + porosity * beta_p);
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
         local_rhs.noalias() += dNdx_p.transpose() * rho_fr * K_over_mu * b * w;
 
-        auto& eps = _ip_data[ip].eps;
+        auto& eps = ip_data_[ip].eps;
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
+                                   ShapeMatricesTypeDisplacement>(element_,
                                                                   N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
         eps.noalias() = B * u;
-        auto& eps_prev = _ip_data[ip].eps_prev;
+        auto& eps_prev = ip_data_[ip].eps_prev;
         const double dv_dt =
             (Invariants::trace(eps) - Invariants::trace(eps_prev)) / dt;
         local_rhs.noalias() -= alpha_b * dv_dt * N_p * w;
@@ -556,9 +556,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             local_b_data, displacement_size);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
@@ -568,31 +568,31 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .template value<double>(vars, x_position, t, dt);
     vars[static_cast<int>(MPL::Variable::temperature)] = T_ref;
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
+    int const n_integration_points = integration_method_.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data_[ip].integration_weight;
 
-        auto const& N_u_op = _ip_data[ip].N_u_op;
+        auto const& N_u_op = ip_data_[ip].N_u_op;
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
+        auto const& N_p = ip_data_[ip].N_p;
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
+                                   ShapeMatricesTypeDisplacement>(element_,
                                                                   N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
-        auto& eps = _ip_data[ip].eps;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        auto& eps = ip_data_[ip].eps;
+        auto const& sigma_eff = ip_data_[ip].sigma_eff;
 
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(p);
 
@@ -609,14 +609,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             gas.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
 
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+        auto C = ip_data_[ip].updateConstitutiveRelation(t, x_position, dt, u,
                                                          T_ref);
 
         local_Jac.noalias() += B.transpose() * C * B * w;
@@ -677,35 +677,35 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
 
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
             .template value<double>(MPL::VariableArray(), x_position, t, dt);
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
+    int const n_integration_points = integration_method_.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
+                                   ShapeMatricesTypeDisplacement>(element_,
                                                                   N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
-        auto& eps = _ip_data[ip].eps;
+        auto& eps = ip_data_[ip].eps;
         eps.noalias() = B * u;
 
-        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u, T_ref);
+        ip_data_[ip].updateConstitutiveRelation(t, x_position, dt, u, T_ref);
     }
 }
 
@@ -718,13 +718,13 @@ std::size_t HydroMechanicsLocalAssembler<
                                                  int const integration_order)
 {
     if (integration_order !=
-        static_cast<int>(_integration_method.getIntegrationOrder()))
+        static_cast<int>(integration_method_.getIntegrationOrder()))
     {
         OGS_FATAL(
             "Setting integration point initial conditions; The integration "
             "order of the local assembler for element {:d} is different from "
             "the integration order in the initial condition.",
-            _element.getID());
+            element_.getID());
     }
 
     if (name == "sigma_ip")
@@ -746,7 +746,7 @@ std::size_t HydroMechanicsLocalAssembler<
     DisplacementDim>::setSigma(double const* values)
 {
     return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, _ip_data, &IpData::sigma_eff);
+        values, ip_data_, &IpData::sigma_eff);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -756,7 +756,7 @@ std::vector<double> HydroMechanicsLocalAssembler<
     DisplacementDim>::getSigma() const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::sigma_eff);
+        ip_data_, &IpData::sigma_eff);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -766,7 +766,7 @@ std::size_t HydroMechanicsLocalAssembler<
     DisplacementDim>::setEpsilon(double const* values)
 {
     return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, _ip_data, &IpData::eps);
+        values, ip_data_, &IpData::eps);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -778,7 +778,7 @@ std::vector<double> HydroMechanicsLocalAssembler<
     auto const kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     std::vector<double> ip_epsilon_values;
     auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -787,7 +787,7 @@ std::vector<double> HydroMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        auto const& eps = _ip_data[ip].eps;
+        auto const& eps = ip_data_[ip].eps;
         cache_mat.row(ip) =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
     }
@@ -809,16 +809,16 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, p,
-                         *_process_data.pressure_interpolated);
+        DisplacementDim>(element_, is_axially_symmetric_, p,
+                         *process_data_.pressure_interpolated);
 
-    int const elem_id = _element.getID();
+    int const elem_id = element_.getID();
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(elem_id);
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    auto const& medium = _process_data.media_map->getMedium(elem_id);
+    auto const& medium = process_data_.media_map->getMedium(elem_id);
     MPL::VariableArray vars;
 
     constexpr int symmetric_tensor_size =
@@ -833,8 +833,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
 
-        auto const& eps = _ip_data[ip].eps;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        auto const& eps = ip_data_[ip].eps;
+        auto const& sigma_eff = ip_data_[ip].sigma_eff;
         sigma_eff_sum += sigma_eff;
 
         vars[static_cast<int>(MPL::Variable::strain)].emplace<SymmetricTensor>(
@@ -842,14 +842,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         vars[static_cast<int>(MPL::Variable::stress)].emplace<SymmetricTensor>(
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_eff));
         vars[static_cast<int>(MPL::Variable::phase_pressure)] =
-            _ip_data[ip].N_p.dot(p);
+            ip_data_[ip].N_p.dot(p);
         k_sum += MPL::getSymmetricTensor<DisplacementDim>(
                     medium->property(MPL::PropertyType::permeability)
                         .value(vars, x_position, t, dt));
     }
 
     Eigen::Map<Eigen::VectorXd>(
-        &(*_process_data.permeability)[elem_id * symmetric_tensor_size],
+        &(*process_data_.permeability)[elem_id * symmetric_tensor_size],
         symmetric_tensor_size) = k_sum / n_integration_points;
 
     Eigen::Matrix<double, 3, 3, 0, 3, 3> const sigma_avg =
@@ -859,7 +859,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     Eigen::SelfAdjointEigenSolver<Eigen::Matrix<double, 3, 3>> e_s(sigma_avg);
 
     Eigen::Map<Eigen::Vector3d>(
-        &(*_process_data.principal_stress_values)[elem_id * 3], 3) =
+        &(*process_data_.principal_stress_values)[elem_id * 3], 3) =
         e_s.eigenvalues();
 
     auto eigen_vectors = e_s.eigenvectors();
@@ -867,7 +867,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (auto i = 0; i < 3; i++)
     {
         Eigen::Map<Eigen::Vector3d>(
-            &(*_process_data.principal_stress_vector[i])[elem_id * 3], 3) =
+            &(*process_data_.principal_stress_vector[i])[elem_id * 3], 3) =
             eigen_vectors.col(i);
     }
 }
@@ -878,7 +878,7 @@ unsigned HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getNumberOfIntegrationPoints() const
 {
-    return _integration_method.getNumberOfPoints();
+    return integration_method_.getNumberOfPoints();
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -889,7 +889,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                              IntegrationMethod, DisplacementDim>::
     getMaterialStateVariablesAt(unsigned integration_point) const
 {
-    return *_ip_data[integration_point].material_state_variables;
+    return *ip_data_[integration_point].material_state_variables;
 }
 
 }  // namespace HydroMechanics

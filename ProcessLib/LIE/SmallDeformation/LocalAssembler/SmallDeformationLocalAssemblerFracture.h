@@ -86,11 +86,11 @@ public:
                              double const /*delta_t*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -100,7 +100,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -222,7 +222,7 @@ private:
     std::vector<double> const& getIntPtSigma(
         std::vector<double>& cache, std::size_t const /*component*/) const
     {
-        cache.resize(_ip_data.size());
+        cache.resize(ip_data_.size());
 
         return cache;
     }
@@ -230,28 +230,28 @@ private:
     std::vector<double> const& getIntPtEpsilon(
         std::vector<double>& cache, std::size_t const /*component*/) const
     {
-        cache.resize(_ip_data.size());
+        cache.resize(ip_data_.size());
 
         return cache;
     }
 
-    SmallDeformationProcessData<DisplacementDim>& _process_data;
-    std::vector<FractureProperty*> _fracture_props;
-    std::vector<JunctionProperty*> _junction_props;
-    std::unordered_map<int, int> _fracID_to_local;
-    FractureProperty const* _fracture_property = nullptr;
+    SmallDeformationProcessData<DisplacementDim>& process_data_;
+    std::vector<FractureProperty*> fracture_props_;
+    std::vector<JunctionProperty*> junction_props_;
+    std::unordered_map<int, int> fracID_to_local_;
+    FractureProperty const* fracture_property_ = nullptr;
 
     std::vector<IntegrationPointDataFracture<HMatricesType, DisplacementDim>,
                 Eigen::aligned_allocator<IntegrationPointDataFracture<
                     HMatricesType, DisplacementDim>>>
-        _ip_data;
+        ip_data_;
 
-    IntegrationMethod _integration_method;
+    IntegrationMethod integration_method_;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<
                                    typename ShapeMatricesType::ShapeMatrices>>
-        _shape_matrices;
-    MeshLib::Element const& _element;
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+        shape_matrices_;
+    MeshLib::Element const& element_;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
 };
 
 }  // namespace SmallDeformation

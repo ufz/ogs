@@ -36,7 +36,7 @@ struct IntegrationPointData final : public IntegrationPointDataNonlocalInterface
         eps_p_D_xx = &msv.eps_p.D[0];
     }
 
-    typename BMatricesType::BMatrixType b_matrices;
+    typename BMatricesType::BMatrixType bmatrices_;
     typename BMatricesType::KelvinVectorType sigma, sigma_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
     double free_energy_density = 0;

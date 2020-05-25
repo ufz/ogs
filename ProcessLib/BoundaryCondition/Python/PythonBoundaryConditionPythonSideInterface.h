@@ -30,7 +30,7 @@ public:
         double /*t*/, std::array<double, 3> /*x*/, std::size_t /*node_id*/,
         std::vector<double> const& /*primary_variables*/) const
     {
-        _overridden_essential = false;
+        overridden_essential_ = false;
         return {false, std::numeric_limits<double>::quiet_NaN()};
     }
 
@@ -47,7 +47,7 @@ public:
         std::array<double, 3> /*x*/,
         std::vector<double> const& /*primary_variables*/) const
     {
-        _overridden_natural = false;
+        overridden_natural_ = false;
         return std::tuple<bool, double, std::vector<double>>{
             false, std::numeric_limits<double>::quiet_NaN(), {}};
     }
@@ -57,20 +57,20 @@ public:
     //!
     //! \pre getDirichletBCValue() must already have been called
     //! once.
-    bool isOverriddenEssential() const { return _overridden_essential; }
+    bool isOverriddenEssential() const { return overridden_essential_; }
 
     //! Tells if getFlux() has been overridden in the derived class in Python.
     //!
     //! \pre getFlux() must already have been called once.
-    bool isOverriddenNatural() const { return _overridden_natural; }
+    bool isOverriddenNatural() const { return overridden_natural_; }
 
     virtual ~PythonBoundaryConditionPythonSideInterface() = default;
 
 private:
     //! Tells if getDirichletBCValue() has been overridden in the derived class
     //! in Python.
-    mutable bool _overridden_essential = true;
+    mutable bool overridden_essential_ = true;
     //! Tells if getFlux() has been overridden in the derived class in Python.
-    mutable bool _overridden_natural = true;
+    mutable bool overridden_natural_ = true;
 };
 }  // namespace ProcessLib

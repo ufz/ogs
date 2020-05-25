@@ -63,24 +63,24 @@ public:
         bool is_axially_symmetric,
         unsigned const integration_order,
         PythonSourceTermData const& data)
-        : _data(data),
-          _element(e),
-          _is_axially_symmetric(is_axially_symmetric),
-          _integration_method(integration_order)
+        : data_(data),
+          element_(e),
+          is_axially_symmetric_(is_axially_symmetric),
+          integration_method_(integration_order)
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, GlobalDim>(
-                _element, _is_axially_symmetric, _integration_method);
+                element_, is_axially_symmetric_, integration_method_);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(
+            ip_data_.emplace_back(
                 shape_matrices[ip].N,
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                integration_method_.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ);
         }
@@ -94,10 +94,10 @@ public:
         using ShapeMatricesType =
             ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
         auto const fe = NumLib::createIsoparametricFiniteElement<
-            ShapeFunction, ShapeMatricesType>(_element);
+            ShapeFunction, ShapeMatricesType>(element_);
 
         unsigned const num_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
         auto const num_var = dof_table_source_term.getNumberOfVariables();
         auto const num_nodes = ShapeFunction::NPOINTS;
         auto const num_comp_total =
@@ -120,8 +120,8 @@ public:
                      ++element_node_id)
                 {
                     auto const boundary_node_id =
-                        _element.getNode(element_node_id)->getID();
-                    MeshLib::Location loc{_data.source_term_mesh_id,
+                        element_.getNode(element_node_id)->getID();
+                    MeshLib::Location loc{data_.source_term_mesh_id,
                                           MeshLib::MeshItemType::Node,
                                           boundary_node_id};
                     auto const dof_idx =
@@ -152,7 +152,7 @@ public:
 
         for (unsigned ip = 0; ip < num_integration_points; ip++)
         {
-            auto const& ip_data = _ip_data[ip];
+            auto const& ip_data = ip_data_[ip];
             auto const& N = ip_data.N;
             auto const& coords = fe.interpolateCoordinates(N);
             // Assumption: all primary variables have same shape functions.
@@ -160,7 +160,7 @@ public:
 
             auto const& w = ip_data.integration_weight;
             auto const flux_dflux =
-                _data.source_term_object->getFlux(t, coords, prim_vars_data);
+                data_.source_term_object->getFlux(t, coords, prim_vars_data);
             auto const& flux = flux_dflux.first;
             auto const& dflux = flux_dflux.second;
             local_rhs.noalias() += N * (flux * w);
@@ -196,7 +196,7 @@ public:
 
         auto const& indices_specific_component =
             dof_table_source_term(source_term_element_id,
-                                  _data.global_component_id)
+                                  data_.global_component_id)
                 .rows;
         b.add(indices_specific_component, local_rhs);
 
@@ -212,15 +212,15 @@ public:
     }
 
 private:
-    PythonSourceTermData const& _data;
-    MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
+    PythonSourceTermData const& data_;
+    MeshLib::Element const& element_;
+    bool const is_axially_symmetric_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<
         IntegrationPointData<NodalRowVectorType>,
         Eigen::aligned_allocator<IntegrationPointData<NodalRowVectorType>>>
-        _ip_data;
+        ip_data_;
 };
 
 }  // namespace Python

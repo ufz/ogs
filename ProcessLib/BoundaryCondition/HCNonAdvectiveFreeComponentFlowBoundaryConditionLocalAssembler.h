@@ -49,9 +49,9 @@ public:
         unsigned const integration_order,
         HCNonAdvectiveFreeComponentFlowBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
-          _data(data),
-          _local_matrix_size(local_matrix_size),
-          _surface_normal(getOrientedSurfaceNormal(e))
+          data_(data),
+          local_matrix_size_(local_matrix_size),
+          surface_normal_(getOrientedSurfaceNormal(e))
     {
     }
     Eigen::RowVector3d getOrientedSurfaceNormal(MeshLib::Element const& e)
@@ -64,7 +64,7 @@ public:
         surface_element_normal *= -1;
         return Eigen::Map<Eigen::RowVector3d const>(
             surface_element_normal.getCoords(),
-            _data.process.getMesh().getDimension());
+            data_.process.getMesh().getDimension());
     }
 
     void assemble(std::size_t const mesh_item_id,
@@ -73,49 +73,49 @@ public:
                   int const process_id, GlobalMatrix& /*K*/, GlobalVector& b,
                   GlobalMatrix* /*Jac*/) override
     {
-        NodalVectorType _local_rhs = NodalVectorType::Zero(_local_matrix_size);
+        NodalVectorType local_rhs_ = NodalVectorType::Zero(local_matrix_size_);
         // Get element nodes for the interpolation from nodes to
         // integration point.
         NodalVectorType const boundary_permeability_node_values =
-            _data.boundary_permeability.getNodalValuesOnElement(Base::_element,
+            data_.boundary_permeability.getNodalValuesOnElement(Base::element_,
                                                                 t);
         unsigned const n_integration_points =
-            Base::_integration_method.getNumberOfPoints();
+            Base::integration_method_.getNumberOfPoints();
 
         auto const indices =
             NumLib::getIndices(mesh_item_id, dof_table_boundary);
         std::vector<double> const local_values = x[process_id]->get(indices);
         std::size_t const bulk_element_id =
-            _data.bulk_element_ids[Base::_element.getID()];
+            data_.bulk_element_ids[Base::element_.getID()];
         std::size_t const bulk_face_id =
-            _data.bulk_face_ids[Base::_element.getID()];
+            data_.bulk_face_ids[Base::element_.getID()];
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& n_and_weight = Base::_ns_and_weights[ip];
+            auto const& n_and_weight = Base::ns_and_weights_[ip];
             auto const& N = n_and_weight.N;
             auto const& w = n_and_weight.weight;
-            auto const& wp = Base::_integration_method.getWeightedPoint(ip);
+            auto const& wp = Base::integration_method_.getWeightedPoint(ip);
 
             auto const bulk_element_point = MeshLib::getBulkElementPoint(
-                _data.process.getMesh(), bulk_element_id, bulk_face_id, wp);
+                data_.process.getMesh(), bulk_element_id, bulk_face_id, wp);
 
             double int_pt_value = 0.0;
             NumLib::shapeFunctionInterpolate(local_values, N, int_pt_value);
 
             NodalVectorType const neumann_node_values =
                 -boundary_permeability_node_values * int_pt_value *
-                _data.process.getFlux(bulk_element_id, bulk_element_point, t, x)
-                    .dot(_surface_normal);
-            _local_rhs.noalias() += N * neumann_node_values.dot(N) * w;
+                data_.process.getFlux(bulk_element_id, bulk_element_point, t, x)
+                    .dot(surface_normal_);
+            local_rhs_.noalias() += N * neumann_node_values.dot(N) * w;
         }
 
-        b.add(indices, _local_rhs);
+        b.add(indices, local_rhs_);
     }
 
 private:
-    HCNonAdvectiveFreeComponentFlowBoundaryConditionData const& _data;
-    std::size_t const _local_matrix_size;
-    Eigen::RowVector3d const _surface_normal;
+    HCNonAdvectiveFreeComponentFlowBoundaryConditionData const& data_;
+    std::size_t const local_matrix_size_;
+    Eigen::RowVector3d const surface_normal_;
 };
 
 }  // namespace ProcessLib

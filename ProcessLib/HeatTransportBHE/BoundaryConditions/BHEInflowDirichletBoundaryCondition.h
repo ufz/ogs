@@ -22,8 +22,8 @@ public:
     BHEInflowDirichletBoundaryCondition(
         std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices,
         BHEUpdateCallback bhe_update_callback)
-        : _in_out_global_indices(std::move(in_out_global_indices)),
-          _bhe_update_callback(bhe_update_callback)
+        : in_out_global_indices_(std::move(in_out_global_indices)),
+          bhe_update_callback_(bhe_update_callback)
     {
     }
 
@@ -34,15 +34,15 @@ public:
         bc_values.ids.resize(1);
         bc_values.values.resize(1);
 
-        bc_values.ids[0] = _in_out_global_indices.first;
+        bc_values.ids[0] = in_out_global_indices_.first;
         // here call the corresponding BHE functions
-        auto const T_out = x[_in_out_global_indices.second];
-        bc_values.values[0] = _bhe_update_callback(T_out, t);
+        auto const T_out = x[in_out_global_indices_.second];
+        bc_values.values[0] = bhe_update_callback_(T_out, t);
     }
 
 private:
-    std::pair<GlobalIndexType, GlobalIndexType> const _in_out_global_indices;
-    BHEUpdateCallback _bhe_update_callback;
+    std::pair<GlobalIndexType, GlobalIndexType> const in_out_global_indices_;
+    BHEUpdateCallback bhe_update_callback_;
 };
 
 template <typename BHEUpdateCallback>

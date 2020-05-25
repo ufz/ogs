@@ -39,40 +39,40 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         bool const is_axially_symmetric,
         unsigned const integration_order,
         ThermoHydroMechanicsProcessData<DisplacementDim>& process_data)
-    : _process_data(process_data),
-      _integration_method(integration_order),
-      _element(e),
-      _is_axially_symmetric(is_axially_symmetric)
+    : process_data_(process_data),
+      integration_method_(integration_order),
+      element_(e),
+      is_axially_symmetric_(is_axially_symmetric)
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
-    _secondary_data.N_u.resize(n_integration_points);
+    ip_data_.reserve(n_integration_points);
+    secondary_data_.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
         initShapeMatrices<ShapeFunctionDisplacement,
                           ShapeMatricesTypeDisplacement, IntegrationMethod,
                           DisplacementDim>(e, is_axially_symmetric,
-                                           _integration_method);
+                                           integration_method_);
 
     auto const shape_matrices_p =
         initShapeMatrices<ShapeFunctionPressure, ShapeMatricesTypePressure,
                           IntegrationMethod, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+            e, is_axially_symmetric, integration_method_);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
-            _process_data.solid_materials, _process_data.material_ids,
+            process_data_.solid_materials, process_data_.material_ids,
             e.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        _ip_data.emplace_back(solid_material);
-        auto& ip_data = _ip_data[ip];
+        ip_data_.emplace_back(solid_material);
+        auto& ip_data = ip_data_[ip];
         auto const& sm_u = shape_matrices_u[ip];
         ip_data.integration_weight =
-            _integration_method.getWeightedPoint(ip).getWeight() *
+            integration_method_.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
         ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
@@ -90,7 +90,7 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ip_data.N_p = shape_matrices_p[ip].N;
         ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
 
-        _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
+        secondary_data_.N_u[ip] = shape_matrices_u[ip].N;
     }
 }
 
@@ -179,27 +179,27 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     KuT.setZero(displacement_size, temperature_size);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MaterialPropertyLib::VariableArray vars;
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data_[ip].integration_weight;
 
-        auto const& N_u_op = _ip_data[ip].N_u_op;
+        auto const& N_u_op = ip_data_[ip].N_u_op;
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
 
         // same shape function for pressure and temperature since they have the
         // same order
@@ -209,16 +209,16 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
+                                   ShapeMatricesTypeDisplacement>(element_,
                                                                   N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
-        auto& eps = _ip_data[ip].eps;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        auto& eps = ip_data_[ip].eps;
+        auto const& sigma_eff = ip_data_[ip].sigma_eff;
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
@@ -261,9 +261,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(vars, x_position, t, dt);
         GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
-        double const T0 = _process_data.reference_temperature(t, x_position)[0];
+        double const T0 = process_data_.reference_temperature(t, x_position)[0];
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value>::identity2;
@@ -282,9 +282,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // displacement equation, displacement part
         //
         eps.noalias() = B * u;
-        auto C = _ip_data[ip].updateConstitutiveRelationThermal(
+        auto C = ip_data_[ip].updateConstitutiveRelationThermal(
             t, x_position, dt, u,
-            _process_data.reference_temperature(t, x_position)[0],
+            process_data_.reference_temperature(t, x_position)[0],
             thermal_strain);
 
         local_Jac
@@ -442,11 +442,11 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     constexpr int process_id = 0;  // monolithic scheme;
     auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+        NumLib::getIndices(element_.getID(), *dof_table[process_id]);
     assert(!indices.empty());
     auto const local_x = x[process_id]->get(indices);
 
@@ -462,9 +462,9 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
                                  temperature_size);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MaterialPropertyLib::VariableArray vars;
@@ -473,7 +473,7 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     {
         x_position.setIntegrationPoint(ip);
 
-        auto const& N_p = _ip_data[ip].N_p;
+        auto const& N_p = ip_data_[ip].N_p;
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             N_p.dot(T);  // N_p = N_T
@@ -496,10 +496,10 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
 
         // Compute the velocity
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
         cache_matrix.col(ip).noalias() =
             -K_over_mu * dNdx_p * p + K_over_mu * fluid_density * b;
     }
@@ -531,30 +531,30 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    x_position.setElementID(element_.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& solid_phase = medium->phase("Solid");
     MaterialPropertyLib::VariableArray vars;
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
+    int const n_integration_points = integration_method_.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& N_T = _ip_data[ip].N_p;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& N_T = ip_data_[ip].N_p;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
+                                   ShapeMatricesTypeDisplacement>(element_,
                                                                   N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
-        double const T0 = _process_data.reference_temperature(t, x_position)[0];
+        double const T0 = process_data_.reference_temperature(t, x_position)[0];
 
         double const T_int_pt = N_T.dot(T);
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -572,12 +572,12 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const thermal_strain =
             solid_linear_thermal_expansion_coefficient * delta_T;
 
-        auto& eps = _ip_data[ip].eps;
+        auto& eps = ip_data_[ip].eps;
         eps.noalias() = B * u;
 
-        _ip_data[ip].updateConstitutiveRelationThermal(
+        ip_data_[ip].updateConstitutiveRelationThermal(
             t, x_position, dt, u,
-            _process_data.reference_temperature(t, x_position)[0],
+            process_data_.reference_temperature(t, x_position)[0],
             thermal_strain);
     }
 }
@@ -596,8 +596,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, p,
-                         *_process_data.pressure_interpolated);
+        DisplacementDim>(element_, is_axially_symmetric_, p,
+                         *process_data_.pressure_interpolated);
 
     auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + temperature_index,
@@ -605,8 +605,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, T,
-                         *_process_data.temperature_interpolated);
+        DisplacementDim>(element_, is_axially_symmetric_, T,
+                         *process_data_.temperature_interpolated);
 }
 
 }  // namespace ThermoHydroMechanics

@@ -64,13 +64,13 @@ private:
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    HeatConductionProcessData _process_data;
+    HeatConductionProcessData process_data_;
 
     std::vector<std::unique_ptr<HeatConductionLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     /// Solution of the previous time step
-    std::unique_ptr<GlobalVector> _x_previous_timestep = nullptr;
+    std::unique_ptr<GlobalVector> x_previous_timestep_ = nullptr;
 };
 
 }  // namespace HeatConduction

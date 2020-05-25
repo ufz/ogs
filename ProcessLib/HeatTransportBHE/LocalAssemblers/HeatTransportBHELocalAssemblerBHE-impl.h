@@ -25,36 +25,36 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
                                       bool const is_axially_symmetric,
                                       unsigned const integration_order,
                                       HeatTransportBHEProcessData& process_data)
-    : _process_data(process_data),
-      _integration_method(integration_order),
-      _bhe(bhe),
-      _element_id(e.getID())
+    : process_data_(process_data),
+      integration_method_(integration_order),
+      bhe_(bhe),
+      element_id_(e.getID())
 {
     // need to make sure that the BHE elements are one-dimensional
     assert(e.getDimension() == 1);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
-    _secondary_data.N.resize(n_integration_points);
+    ip_data_.reserve(n_integration_points);
+    secondary_data_.N.resize(n_integration_points);
 
     auto const shape_matrices =
         initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod,
                           3 /* GlobalDim */>(e, is_axially_symmetric,
-                                             _integration_method);
+                                             integration_method_);
 
     // ip data initialization
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = shape_matrices[ip];
         // create the class IntegrationPointDataBHE in place
-        _ip_data.push_back(
+        ip_data_.push_back(
             {sm.N, sm.dNdx,
-             _integration_method.getWeightedPoint(ip).getWeight() *
+             integration_method_.getWeightedPoint(ip).getWeight() *
                  sm.integralMeasure * sm.detJ});
 
-        _secondary_data.N[ip] = sm.N;
+        secondary_data_.N[ip] = sm.N;
     }
 
     // calculate the element direction vector
@@ -63,11 +63,11 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     auto const p1 =
         Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->getCoords(), 3);
 
-    _element_direction = (p1 - p0).normalized();
+    element_direction_ = (p1 - p0).normalized();
 
-    _R_matrix.setZero(bhe_unknowns_size, bhe_unknowns_size);
-    _R_pi_s_matrix.setZero(bhe_unknowns_size, soil_temperature_size);
-    _R_s_matrix.setZero(soil_temperature_size, soil_temperature_size);
+    R_matrix_.setZero(bhe_unknowns_size, bhe_unknowns_size);
+    R_pi_s_matrix_.setZero(bhe_unknowns_size, soil_temperature_size);
+    R_s_matrix_.setZero(soil_temperature_size, soil_temperature_size);
     static constexpr int max_num_thermal_exchange_terms = 5;
     // formulate the local BHE R matrix
     for (int idx_bhe_unknowns = 0; idx_bhe_unknowns < bhe_unknowns;
@@ -82,10 +82,10 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
         // Loop over Gauss points
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& N = _ip_data[ip].N;
-            auto const& w = _ip_data[ip].integration_weight;
+            auto const& N = ip_data_[ip].N;
+            auto const& w = ip_data_[ip].integration_weight;
 
-            auto const& R = _bhe.thermalResistance(idx_bhe_unknowns);
+            auto const& R = bhe_.thermalResistance(idx_bhe_unknowns);
             // calculate mass matrix for current unknown
             matBHE_loc_R += N.transpose() * N * (1 / R) * w;
         }  // end of loop over integration point
@@ -101,9 +101,9 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
         // and it is less than the number of unknowns (8).
         if (idx_bhe_unknowns < max_num_thermal_exchange_terms)
         {
-            _bhe.template assembleRMatrices<ShapeFunction::NPOINTS>(
-                idx_bhe_unknowns, matBHE_loc_R, _R_matrix, _R_pi_s_matrix,
-                _R_s_matrix);
+            bhe_.template assembleRMatrices<ShapeFunction::NPOINTS>(
+                idx_bhe_unknowns, matBHE_loc_R, R_matrix_, R_pi_s_matrix_,
+                R_s_matrix_);
         }
     }  // end of loop over BHE unknowns
 
@@ -111,12 +111,12 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     // std::string sep =
     //     "\n----------------------------------------\n";
     // Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
-    // std::cout << "_R_matrix: \n" << sep;
-    // std::cout << _R_matrix.format(CleanFmt) << sep;
-    // std::cout << "_R_s_matrix: \n" << sep;
-    // std::cout << _R_s_matrix.format(CleanFmt) << sep;
-    // std::cout << "_R_pi_s_matrix: \n" << sep;
-    // std::cout << _R_pi_s_matrix.format(CleanFmt) << sep;
+    // std::cout << "R_matrix_: \n" << sep;
+    // std::cout << R_matrix_.format(CleanFmt) << sep;
+    // std::cout << "R_s_matrix_: \n" << sep;
+    // std::cout << R_s_matrix_.format(CleanFmt) << sep;
+    // std::cout << "R_pi_s_matrix_: \n" << sep;
+    // std::cout << R_pi_s_matrix_.format(CleanFmt) << sep;
 }
 
 template <typename ShapeFunction, typename IntegrationMethod, typename BHEType>
@@ -135,18 +135,18 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
         local_K_data, local_matrix_size, local_matrix_size);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    auto const& pipe_heat_capacities = _bhe.pipeHeatCapacities();
-    auto const& pipe_heat_conductions = _bhe.pipeHeatConductions();
+    auto const& pipe_heat_capacities = bhe_.pipeHeatCapacities();
+    auto const& pipe_heat_conductions = bhe_.pipeHeatConductions();
     auto const& pipe_advection_vectors =
-        _bhe.pipeAdvectionVectors(_element_direction);
-    auto const& cross_section_areas = _bhe.crossSectionAreas();
+        bhe_.pipeAdvectionVectors(element_direction_);
+    auto const& cross_section_areas = bhe_.crossSectionAreas();
 
     // the mass and conductance matrix terms
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
 
         auto const& w = ip_data.integration_weight;
         auto const& N = ip_data.N;
@@ -192,23 +192,23 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
 
     // add the R matrix to local_K
     local_K.template block<bhe_unknowns_size, bhe_unknowns_size>(
-        bhe_unknowns_index, bhe_unknowns_index) += _R_matrix;
+        bhe_unknowns_index, bhe_unknowns_index) += R_matrix_;
 
     // add the R_pi_s matrix to local_K
     local_K
         .template block<bhe_unknowns_size, soil_temperature_size>(
             bhe_unknowns_index, soil_temperature_index)
-        .noalias() += _R_pi_s_matrix;
+        .noalias() += R_pi_s_matrix_;
     local_K
         .template block<soil_temperature_size, bhe_unknowns_size>(
             soil_temperature_index, bhe_unknowns_index)
-        .noalias() += _R_pi_s_matrix.transpose();
+        .noalias() += R_pi_s_matrix_.transpose();
 
     // add the R_s matrix to local_K
     local_K
         .template block<soil_temperature_size, soil_temperature_size>(
             soil_temperature_index, soil_temperature_index)
-        .noalias() += _bhe.number_of_grout_zones * _R_s_matrix;
+        .noalias() += bhe_.number_of_grout_zones * R_s_matrix_;
 
     // debugging
     // std::string sep = "\n----------------------------------------\n";

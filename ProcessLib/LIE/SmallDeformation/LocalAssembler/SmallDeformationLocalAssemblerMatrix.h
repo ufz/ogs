@@ -85,11 +85,11 @@ public:
                              double const /*delta_t*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -99,7 +99,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -222,17 +222,17 @@ private:
                                              std::size_t const component) const
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             if (component < 3)
             {  // xx, yy, zz components
-                cache.push_back(ip_data._sigma[component]);
+                cache.push_back(ip_data.sigma_[component]);
             }
             else
             {  // mixed xy, yz, xz components
-                cache.push_back(ip_data._sigma[component] / std::sqrt(2));
+                cache.push_back(ip_data.sigma_[component] / std::sqrt(2));
             }
         }
 
@@ -243,35 +243,35 @@ private:
         std::vector<double>& cache, std::size_t const component) const
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             if (component < 3)
             {  // xx, yy, zz components
-                cache.push_back(ip_data._eps[component]);
+                cache.push_back(ip_data.eps_[component]);
             }
             else
             {  // mixed xy, yz, xz components
-                cache.push_back(ip_data._eps[component] / std::sqrt(2));
+                cache.push_back(ip_data.eps_[component] / std::sqrt(2));
             }
         }
 
         return cache;
     }
 
-    SmallDeformationProcessData<DisplacementDim>& _process_data;
+    SmallDeformationProcessData<DisplacementDim>& process_data_;
 
     std::vector<IntegrationPointDataMatrix<ShapeMatricesType, BMatricesType,
                                            DisplacementDim>,
                 Eigen::aligned_allocator<IntegrationPointDataMatrix<
                     ShapeMatricesType, BMatricesType, DisplacementDim>>>
-        _ip_data;
+        ip_data_;
 
-    IntegrationMethod _integration_method;
-    MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    IntegrationMethod integration_method_;
+    MeshLib::Element const& element_;
+    bool const is_axially_symmetric_;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
 };
 
 }  // namespace SmallDeformation

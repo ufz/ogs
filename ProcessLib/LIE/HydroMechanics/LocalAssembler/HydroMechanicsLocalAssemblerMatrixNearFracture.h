@@ -65,7 +65,7 @@ private:
                              double const /*t*/,
                              double const /*delta_t*/) override
     {
-        for (auto& ip_data : _ip_data)
+        for (auto& ip_data : ip_data_)
         {
             ip_data.pushBackState();
         }
@@ -75,9 +75,9 @@ private:
         double const t, double const dt,
         Eigen::VectorXd const& local_x) override;
 
-    using Base::_element;
-    using Base::_ip_data;
-    using Base::_process_data;
+    using Base::element_;
+    using Base::ip_data_;
+    using Base::process_data_;
     using Base::displacement_index;
     using Base::displacement_size;
     using Base::kelvin_vector_size;
@@ -89,10 +89,10 @@ private:
     static const int displacement_jump_index =
         displacement_index + displacement_size;
 
-    std::vector<FractureProperty*> _fracture_props;
-    std::vector<JunctionProperty*> _junction_props;
-    std::unordered_map<int, int> _fracID_to_local;
-    Eigen::Vector3d _e_center_coords;
+    std::vector<FractureProperty*> fracture_props_;
+    std::vector<JunctionProperty*> junction_props_;
+    std::unordered_map<int, int> fracID_to_local_;
+    Eigen::Vector3d e_center_coords_;
 };
 
 }  // namespace HydroMechanics

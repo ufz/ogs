@@ -43,12 +43,12 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
-    ParameterLib::Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& parameter_;
 
-    MeshLib::Mesh const& _bc_mesh;
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap const> _dof_table_boundary;
-    int const _variable_id;
-    int const _component_id;
+    MeshLib::Mesh const& bc_mesh_;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap const> dof_table_boundary_;
+    int const variable_id_;
+    int const component_id_;
 };
 
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(

@@ -33,25 +33,25 @@ private:
         ShapeFunction, DisplacementDim>::template MatrixType<N, M>;
 
     // Dimensions of specific b-matrix for n-points and displacement dimension.
-    static int const _number_of_dof = ShapeFunction::NPOINTS * DisplacementDim;
-    static int const _kelvin_vector_size =
+    static int const number_of_dof_ = ShapeFunction::NPOINTS * DisplacementDim;
+    static int const kelvin_vector_size_ =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
 
 public:
-    using StiffnessMatrixType = MatrixType<_number_of_dof, _number_of_dof>;
+    using StiffnessMatrixType = MatrixType<number_of_dof_, number_of_dof_>;
 
     /// Rhs residual
-    using NodalForceVectorType = VectorType<_number_of_dof>;
+    using NodalForceVectorType = VectorType<number_of_dof_>;
 
     /// This type can be different (fixed vs. dynamic size) from the
     /// MathLib::KelvinVector::KelvinVectorType.
-    using KelvinVectorType = VectorType<_kelvin_vector_size>;
+    using KelvinVectorType = VectorType<kelvin_vector_size_>;
 
     /// This type can be different (fixed vs. dynamic size) from the
     /// MathLib::KelvinVector::KelvinMatrixType.
     using KelvinMatrixType =
-        MatrixType<_kelvin_vector_size, _kelvin_vector_size>;
+        MatrixType<kelvin_vector_size_, kelvin_vector_size_>;
 
-    using BMatrixType = MatrixType<_kelvin_vector_size, _number_of_dof>;
+    using BMatrixType = MatrixType<kelvin_vector_size_, number_of_dof_>;
 };
 }  // namespace ProcessLib

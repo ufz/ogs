@@ -43,13 +43,13 @@ public:
     void preEachAssemble();
 
     // TODO better encapsulation
-    AssemblyParams const& getAssemblyParameters() const { return _d.ap; }
+    AssemblyParams const& getAssemblyParameters() const { return d_.ap; }
     TESFEMReactionAdaptor const& getReactionAdaptor() const
     {
-        return *_d.reaction_adaptor;
+        return *d_.reaction_adaptor;
     }
-    TESFEMReactionAdaptor& getReactionAdaptor() { return *_d.reaction_adaptor; }
-    TESLocalAssemblerData const& getData() const { return _d; }
+    TESFEMReactionAdaptor& getReactionAdaptor() { return *d_.reaction_adaptor; }
+    TESLocalAssemblerData const& getData() const { return d_; }
 private:
     Eigen::Matrix3d getMassCoeffMatrix(const unsigned int_pt);
     typename Traits::LaplaceMatrix getLaplaceCoeffMatrix(const unsigned int_pt,
@@ -65,7 +65,7 @@ private:
 
     void initReaction(const unsigned int_pt);
 
-    TESLocalAssemblerData _d;
+    TESLocalAssemblerData d_;
 };
 
 }  // namespace TES

@@ -67,23 +67,23 @@ public:
         bool is_axially_symmetric,
         unsigned const integration_order,
         ParameterLib::Parameter<double> const& volumetric_source_term)
-        : _volumetric_source_term(volumetric_source_term),
-          _integration_method(integration_order),
-          _local_rhs(local_matrix_size)
+        : volumetric_source_term_(volumetric_source_term),
+          integration_method_(integration_order),
+          local_rhs_(local_matrix_size)
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         auto const shape_matrices =
                        initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                          IntegrationMethod, GlobalDim>(
-                           element, is_axially_symmetric, _integration_method);
+                           element, is_axially_symmetric, integration_method_);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(
+            ip_data_.emplace_back(
                 shape_matrices[ip].N,
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                integration_method_.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ);
         }
@@ -93,10 +93,10 @@ public:
                    NumLib::LocalToGlobalIndexMap const& source_term_dof_table,
                    double const t, GlobalVector& b) override
     {
-        _local_rhs.setZero();
+        local_rhs_.setZero();
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(id);
@@ -104,24 +104,24 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
-            auto const st_val = _volumetric_source_term(t, pos)[0];
+            auto const st_val = volumetric_source_term_(t, pos)[0];
 
-            _local_rhs.noalias() +=
-                st_val * _ip_data[ip].integration_weight_times_N;
+            local_rhs_.noalias() +=
+                st_val * ip_data_[ip].integration_weight_times_N;
         }
         auto const indices = NumLib::getIndices(id, source_term_dof_table);
-        b.add(indices, _local_rhs);
+        b.add(indices, local_rhs_);
     }
 
 private:
-    ParameterLib::Parameter<double> const& _volumetric_source_term;
+    ParameterLib::Parameter<double> const& volumetric_source_term_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<
         IntegrationPointData<NodalRowVectorType>,
         Eigen::aligned_allocator<IntegrationPointData<NodalRowVectorType>>>
-        _ip_data;
-    NodalVectorType _local_rhs;
+        ip_data_;
+    NodalVectorType local_rhs_;
 };
 
 }  // namespace ProcessLib

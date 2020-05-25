@@ -73,10 +73,10 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    TwoPhaseFlowWithPPProcessData _process_data;
+    TwoPhaseFlowWithPPProcessData process_data_;
 
     std::vector<std::unique_ptr<TwoPhaseFlowWithPPLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }  // namespace TwoPhaseFlowWithPP

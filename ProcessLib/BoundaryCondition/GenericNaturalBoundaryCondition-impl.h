@@ -24,7 +24,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
         unsigned const global_dim, MeshLib::Mesh const& bc_mesh, Data&& data)
-    : _data(std::forward<Data>(data)), _bc_mesh(bc_mesh)
+    : data_(std::forward<Data>(data)), bc_mesh_(bc_mesh)
 {
     static_assert(std::is_same<typename std::decay<BoundaryConditionData>::type,
                                typename std::decay<Data>::type>::value,
@@ -44,32 +44,32 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
 
-    if (!_bc_mesh.getProperties().template existsPropertyVector<std::size_t>(
+    if (!bc_mesh_.getProperties().template existsPropertyVector<std::size_t>(
             "bulk_node_ids"))
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the boundary "
             "mesh '{:s}'.",
-            _bc_mesh.getName());
+            bc_mesh_.getName());
     }
 
-    std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
+    std::vector<MeshLib::Node*> const& bc_nodes = bc_mesh_.getNodes();
     DBUG(
         "Found {:d} nodes for Natural BCs for the variable {:d} and component "
         "{:d}",
         bc_nodes.size(), variable_id, component_id);
 
-    MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
+    MeshLib::MeshSubset bc_mesh_subset(bc_mesh_, bc_nodes);
 
     // Create local DOF table from the BC mesh subset for the given variable and
     // component id.
-    _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
+    dof_table_boundary_.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, {component_id}, std::move(bc_mesh_subset)));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _bc_mesh.getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
-        integration_order, _data);
+        global_dim, bc_mesh_.getElements(), *dof_table_boundary_,
+        shapefunction_order, local_assemblers_, bc_mesh_.isAxiallySymmetric(),
+        integration_order, data_);
 }
 
 template <typename BoundaryConditionData,
@@ -86,7 +86,7 @@ void GenericNaturalBoundaryCondition<BoundaryConditionData,
 {
     GlobalExecutor::executeMemberOnDereferenced(
         &GenericNaturalBoundaryConditionLocalAssemblerInterface::assemble,
-        _local_assemblers, *_dof_table_boundary, t, x, process_id, K, b, Jac);
+        local_assemblers_, *dof_table_boundary_, t, x, process_id, K, b, Jac);
 }
 
 }  // namespace ProcessLib

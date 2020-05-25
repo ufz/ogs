@@ -106,7 +106,7 @@ public:
 
     double thermalResistance(int const unknown_index) const
     {
-        return _thermal_resistances[unknown_index];
+        return thermal_resistances_[unknown_index];
     }
 
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
@@ -130,10 +130,10 @@ public:
     void updateHeatTransferCoefficients(double const flow_rate);
 
 protected:
-    PipeConfiguration1PType const _pipe;
+    PipeConfiguration1PType const pipe_;
 
     /// Flow velocity inside the pipes. Depends on the flow_rate.
-    double _flow_velocity = std::numeric_limits<double>::quiet_NaN();
+    double flow_velocity_ = std::numeric_limits<double>::quiet_NaN();
 
 private:
     std::array<double, number_of_unknowns> calcThermalResistances(
@@ -145,7 +145,7 @@ private:
     /// PHI_fg, PHI_gs;
     /// Here we store the thermal resistances needed for computation of the heat
     /// exchange coefficients in the governing equations of BHE.
-    std::array<double, number_of_unknowns> _thermal_resistances;
+    std::array<double, number_of_unknowns> thermal_resistances_;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

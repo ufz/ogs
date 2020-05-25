@@ -62,18 +62,18 @@ public:
     std::vector<std::unique_ptr<DeactivatedSubdomain const>> const&
     getDeactivatedSubdomains() const
     {
-        return _deactivated_subdomains;
+        return deactivated_subdomains_;
     }
 
     void updateDeactivatedSubdomains(double const time);
 
     std::vector<std::size_t>& getActiveElementIDs() const
     {
-        return _ids_of_active_elements;
+        return ids_of_active_elements_;
     }
 
     /// Returns the number of components of the process variable.
-    int getNumberOfComponents() const { return _n_components; }
+    int getNumberOfComponents() const { return n_components_; }
     std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryConditions(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
@@ -89,14 +89,14 @@ public:
 
     ParameterLib::Parameter<double> const& getInitialCondition() const
     {
-        return _initial_condition;
+        return initial_condition_;
     }
 
-    unsigned getShapeFunctionOrder() const { return _shapefunction_order; }
+    unsigned getShapeFunctionOrder() const { return shapefunction_order_; }
 private:
-    std::string const _name;
-    MeshLib::Mesh& _mesh;
-    const int _n_components;
+    std::string const name_;
+    MeshLib::Mesh& mesh_;
+    const int n_components_;
     /// The polynomial order of the process variable's shape functions.
     ///
     /// Requires an appropriate mesh.
@@ -110,14 +110,14 @@ private:
     /// (MeshLib::TemplateElement<MeshLib::HexRule8>).
     ///
     /// \sa MeshLib::CellRule MeshLib::FaceRule MeshLib::EdgeRule.
-    unsigned _shapefunction_order;
+    unsigned shapefunction_order_;
 
     std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-        _deactivated_subdomains;
+        deactivated_subdomains_;
 
     /// IDs of the active elements. It is initialized only if there are
     /// deactivated subdomains.
-    mutable std::vector<std::size_t> _ids_of_active_elements;
+    mutable std::vector<std::size_t> ids_of_active_elements_;
 
     void createBoundaryConditionsForDeactivatedSubDomains(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
@@ -125,10 +125,10 @@ private:
             parameters,
         std::vector<std::unique_ptr<BoundaryCondition>>& bcs);
 
-    ParameterLib::Parameter<double> const& _initial_condition;
+    ParameterLib::Parameter<double> const& initial_condition_;
 
-    std::vector<BoundaryConditionConfig> _bc_configs;
-    std::vector<SourceTermConfig> _source_term_configs;
+    std::vector<BoundaryConditionConfig> bc_configs_;
+    std::vector<SourceTermConfig> source_term_configs_;
 };
 
 }  // namespace ProcessLib

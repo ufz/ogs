@@ -127,16 +127,16 @@ public:
         std::vector<double>& cache) const override;
 
 private:
-    unsigned const _element_id;
-    RichardsComponentTransportProcessData const& _process_data;
+    unsigned const element_id_;
+    RichardsComponentTransportProcessData const& process_data_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
                              NodalMatrixType>,
         Eigen::aligned_allocator<IntegrationPointData<
             NodalRowVectorType, GlobalDimNodalMatrixType, NodalMatrixType>>>
-        _ip_data;
+        ip_data_;
 
     static const int concentration_index = 0;
     static const int concentration_size = ShapeFunction::NPOINTS;

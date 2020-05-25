@@ -27,21 +27,21 @@ struct IntegrationPointDataMatrix final
 {
     explicit IntegrationPointDataMatrix(
         MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
-        : _solid_material(solid_material),
-          _material_state_variables(
-              _solid_material.createMaterialStateVariables())
+        : solid_material_(solid_material),
+          material_state_variables_(
+              solid_material_.createMaterialStateVariables())
     {
     }
 
-    typename BMatricesType::KelvinVectorType _sigma, _sigma_prev;
-    typename BMatricesType::KelvinVectorType _eps, _eps_prev;
+    typename BMatricesType::KelvinVectorType sigma_, sigma_prev_;
+    typename BMatricesType::KelvinVectorType eps_, eps_prev_;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim>& _solid_material;
+    MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material_;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
-        _material_state_variables;
+        material_state_variables_;
 
-    typename BMatricesType::KelvinMatrixType _C;
+    typename BMatricesType::KelvinMatrixType C_;
     double integration_weight;
 
     typename ShapeMatricesType::NodalRowVectorType N;
@@ -49,9 +49,9 @@ struct IntegrationPointDataMatrix final
 
     void pushBackState()
     {
-        _eps_prev = _eps;
-        _sigma_prev = _sigma;
-        _material_state_variables->pushBackState();
+        eps_prev_ = eps_;
+        sigma_prev_ = sigma_;
+        material_state_variables_->pushBackState();
     }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

@@ -37,15 +37,15 @@ public:
         double rel_tol,
         bool fail_on_error,
         std::string const& log_file_path)
-        : _asm1(std::move(asm1)),
-          _asm2(std::move(asm2)),
-          _abs_tol(abs_tol),
-          _rel_tol(rel_tol),
-          _fail_on_error(fail_on_error),
-          _log_file(log_file_path)
+        : asm1_(std::move(asm1)),
+          asm2_(std::move(asm2)),
+          abs_tol_(abs_tol),
+          rel_tol_(rel_tol),
+          fail_on_error_(fail_on_error),
+          log_file_(log_file_path)
     {
-        _log_file.precision(std::numeric_limits<double>::digits10);
-        _log_file << "#!/usr/bin/env python\n"
+        log_file_.precision(std::numeric_limits<double>::digits10);
+        log_file_ << "#!/usr/bin/env python\n"
                      "import numpy as np\n"
                      "from numpy import nan\n"
                   << std::endl;
@@ -62,24 +62,24 @@ public:
                               std::vector<double>& local_Jac_data) override;
 
 private:
-    std::unique_ptr<AbstractJacobianAssembler> _asm1;
-    std::unique_ptr<AbstractJacobianAssembler> _asm2;
+    std::unique_ptr<AbstractJacobianAssembler> asm1_;
+    std::unique_ptr<AbstractJacobianAssembler> asm2_;
 
     // TODO change to matrix
-    double const _abs_tol;
-    double const _rel_tol;
+    double const abs_tol_;
+    double const rel_tol_;
 
     //! Whether to abort if the tolerances are exceeded.
-    bool const _fail_on_error;
+    bool const fail_on_error_;
 
     //! Path where a Python script will be placed, which contains information
     //! about exceeded tolerances and assembled local matrices.
-    std::ofstream _log_file;
+    std::ofstream log_file_;
 
-    //! Counter used for identifying blocks in the \c _log_file. It is
+    //! Counter used for identifying blocks in the \c log_file_. It is
     //! incremented upon each call of the assembly routine, i.e., for each
     //! element in each iteration etc.
-    std::size_t _counter = 0;
+    std::size_t counter_ = 0;
 };
 
 std::unique_ptr<CompareJacobiansJacobianAssembler>

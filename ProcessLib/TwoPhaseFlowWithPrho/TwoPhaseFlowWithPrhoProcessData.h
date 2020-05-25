@@ -21,14 +21,14 @@ namespace TwoPhaseFlowWithPrho
 {
 struct TwoPhaseFlowWithPrhoProcessData
 {
-    Eigen::VectorXd const _specific_body_force;
+    Eigen::VectorXd const specific_body_force_;
 
-    bool const _has_gravity;
-    bool const _has_mass_lumping;
-    ParameterLib::Parameter<double> const& _diffusion_coeff_component_b;
-    ParameterLib::Parameter<double> const& _diffusion_coeff_component_a;
-    ParameterLib::Parameter<double> const& _temperature;
-    std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> _material;
+    bool const has_gravity_;
+    bool const has_mass_lumping_;
+    ParameterLib::Parameter<double> const& diffusion_coeff_component_b_;
+    ParameterLib::Parameter<double> const& diffusion_coeff_component_a_;
+    ParameterLib::Parameter<double> const& temperature_;
+    std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties> material_;
 };
 
 }  // namespace TwoPhaseFlowWithPrho

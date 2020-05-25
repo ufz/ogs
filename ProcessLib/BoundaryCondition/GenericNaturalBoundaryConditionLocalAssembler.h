@@ -80,18 +80,18 @@ public:
     GenericNaturalBoundaryConditionLocalAssembler(
         MeshLib::Element const& e, bool is_axially_symmetric,
         unsigned const integration_order)
-        : _integration_method(integration_order),
-          _ns_and_weights(
+        : integration_method_(integration_order),
+          ns_and_weights_(
               initNsAndWeights(e, is_axially_symmetric, integration_order)),
-          _element(e)
+          element_(e)
     {
     }
 
 protected:
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<NAndWeight, Eigen::aligned_allocator<NAndWeight>> const
-        _ns_and_weights;
-    MeshLib::Element const& _element;
+        ns_and_weights_;
+    MeshLib::Element const& element_;
 };
 
 }  // namespace ProcessLib

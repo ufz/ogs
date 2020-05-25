@@ -44,13 +44,13 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
           (n_variables - 1) * ShapeFunctionDisplacement::NPOINTS * GlobalDim +
               ShapeFunctionPressure::NPOINTS,
           dofIndex_to_localIndex),
-      _process_data(process_data)
+      process_data_(process_data)
 {
     IntegrationMethod integration_method(integration_order);
     unsigned const n_integration_points =
         integration_method.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
+    ip_data_.reserve(n_integration_points);
 
     auto const shape_matrices_u =
         initShapeMatrices<ShapeFunctionDisplacement,
@@ -64,7 +64,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                                         integration_method);
 
     auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
-        _process_data.solid_materials, _process_data.material_ids, e.getID());
+        process_data_.solid_materials, process_data_.material_ids, e.getID());
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(e.getID());
@@ -72,8 +72,8 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
 
-        _ip_data.emplace_back(solid_material);
-        auto& ip_data = _ip_data[ip];
+        ip_data_.emplace_back(solid_material);
+        auto& ip_data = ip_data_[ip];
         auto const& sm_u = shape_matrices_u[ip];
         auto const& sm_p = shape_matrices_p[ip];
         ip_data.integration_weight =
@@ -103,7 +103,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         ip_data.C.resize(kelvin_vector_size, kelvin_vector_size);
 
         auto const initial_effective_stress =
-            _process_data.initial_effective_stress(0, x_position);
+            process_data_.initial_effective_stress(0, x_position);
         for (unsigned i = 0; i < kelvin_vector_size; i++)
         {
             ip_data.sigma_eff[i] = initial_effective_stress[i];
@@ -127,7 +127,7 @@ void HydroMechanicsLocalAssemblerMatrix<
     auto p_dot = const_cast<Eigen::VectorXd&>(local_x_dot)
                      .segment(pressure_index, pressure_size);
 
-    if (_process_data.deactivate_matrix_in_flow)
+    if (process_data_.deactivate_matrix_in_flow)
     {
         setPressureOfInactiveNodes(t, p);
         setPressureDotOfInactiveNodes(p_dot);
@@ -168,7 +168,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pu,
         Eigen::Ref<Eigen::MatrixXd> J_uu, Eigen::Ref<Eigen::MatrixXd> J_up)
 {
-    assert(this->_element.getDimension() == GlobalDim);
+    assert(this->element_.getDimension() == GlobalDim);
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
@@ -184,17 +184,17 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
             displacement_size, pressure_size>::Zero(displacement_size,
                                                     pressure_size);
 
-    auto const& gravity_vec = _process_data.specific_body_force;
+    auto const& gravity_vec = process_data_.specific_body_force;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    unsigned const n_integration_points = _ip_data.size();
+    unsigned const n_integration_points = ip_data_.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
         auto const& ip_w = ip_data.integration_weight;
         auto const& N_u = ip_data.N_u;
         auto const& dNdx_u = ip_data.dNdx_u;
@@ -204,13 +204,13 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
+                                   ShapeMatricesTypeDisplacement>(element_,
                                                                   N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<GlobalDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
         auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
@@ -219,10 +219,10 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto& eps = ip_data.eps;
         auto& state = ip_data.material_state_variables;
 
-        auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
-        auto const rho_sr = _process_data.solid_density(t, x_position)[0];
-        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-        auto const porosity = _process_data.porosity(t, x_position)[0];
+        auto const alpha = process_data_.biot_coefficient(t, x_position)[0];
+        auto const rho_sr = process_data_.solid_density(t, x_position)[0];
+        auto const rho_fr = process_data_.fluid_density(t, x_position)[0];
+        auto const porosity = process_data_.porosity(t, x_position)[0];
 
         double const rho = rho_sr * (1 - porosity) + porosity * rho_fr;
         auto const& identity2 =
@@ -230,9 +230,9 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        auto&& solution = _ip_data[ip].solid_material.integrateStress(
+        auto&& solution = ip_data_[ip].solid_material.integrateStress(
             t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
-            _process_data.reference_temperature);
+            process_data_.reference_temperature);
 
         if (!solution)
         {
@@ -251,15 +251,15 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         // pressure equation, pressure part and displacement equation, pressure
         // part
         //
-        if (!_process_data.deactivate_matrix_in_flow)  // Only for hydraulically
+        if (!process_data_.deactivate_matrix_in_flow)  // Only for hydraulically
                                                        // active matrix
         {
             Kup.noalias() += B.transpose() * alpha * identity2 * N_p * ip_w;
 
             double const k_over_mu =
-                _process_data.intrinsic_permeability(t, x_position)[0] /
-                _process_data.fluid_viscosity(t, x_position)[0];
-            double const S = _process_data.specific_storage(t, x_position)[0];
+                process_data_.intrinsic_permeability(t, x_position)[0] /
+                process_data_.fluid_viscosity(t, x_position)[0];
+            double const S = process_data_.specific_storage(t, x_position)[0];
 
             auto q = ip_data.darcy_velocity.head(GlobalDim);
             q.noalias() = -k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
@@ -299,7 +299,7 @@ void HydroMechanicsLocalAssemblerMatrix<
 {
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
                                                            pressure_size);
-    if (_process_data.deactivate_matrix_in_flow)
+    if (process_data_.deactivate_matrix_in_flow)
     {
         setPressureOfInactiveNodes(t, p);
     }
@@ -319,14 +319,14 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         Eigen::Ref<const Eigen::VectorXd> const& u)
 {
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    unsigned const n_integration_points = _ip_data.size();
+    unsigned const n_integration_points = ip_data_.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
 
         auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
@@ -340,19 +340,19 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         auto const x_coord =
             interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
+                                   ShapeMatricesTypeDisplacement>(element_,
                                                                   N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<GlobalDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
         eps.noalias() = B * u;
 
-        auto&& solution = _ip_data[ip].solid_material.integrateStress(
+        auto&& solution = ip_data_[ip].solid_material.integrateStress(
             t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
-            _process_data.reference_temperature);
+            process_data_.reference_temperature);
 
         if (!solution)
         {
@@ -362,14 +362,14 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinMatrixType<GlobalDim> C;
         std::tie(sigma_eff, state, C) = std::move(*solution);
 
-        if (!_process_data.deactivate_matrix_in_flow)  // Only for hydraulically
+        if (!process_data_.deactivate_matrix_in_flow)  // Only for hydraulically
                                                        // active matrix
         {
             double const k_over_mu =
-                _process_data.intrinsic_permeability(t, x_position)[0] /
-                _process_data.fluid_viscosity(t, x_position)[0];
-            auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-            auto const& gravity_vec = _process_data.specific_body_force;
+                process_data_.intrinsic_permeability(t, x_position)[0] /
+                process_data_.fluid_viscosity(t, x_position)[0];
+            auto const rho_fr = process_data_.fluid_density(t, x_position)[0];
+            auto const& gravity_vec = process_data_.specific_body_force;
             auto const& dNdx_p = ip_data.dNdx_p;
 
             ip_data.darcy_velocity.head(GlobalDim).noalias() =
@@ -382,7 +382,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     Eigen::VectorXd ele_strain = Eigen::VectorXd::Zero(n);
     Eigen::Vector3d ele_velocity = Eigen::Vector3d::Zero();
 
-    for (auto const& ip_data : _ip_data)
+    for (auto const& ip_data : ip_data_)
     {
         ele_stress += ip_data.sigma_eff;
         ele_strain += ip_data.eps;
@@ -393,37 +393,37 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     ele_strain /= static_cast<double>(n_integration_points);
     ele_velocity /= static_cast<double>(n_integration_points);
 
-    auto const element_id = _element.getID();
-    (*_process_data.mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
-    (*_process_data.mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
-    (*_process_data.mesh_prop_stress_zz)[_element.getID()] = ele_stress[2];
-    (*_process_data.mesh_prop_stress_xy)[_element.getID()] = ele_stress[3];
+    auto const element_id = element_.getID();
+    (*process_data_.mesh_prop_stress_xx)[element_.getID()] = ele_stress[0];
+    (*process_data_.mesh_prop_stress_yy)[element_.getID()] = ele_stress[1];
+    (*process_data_.mesh_prop_stress_zz)[element_.getID()] = ele_stress[2];
+    (*process_data_.mesh_prop_stress_xy)[element_.getID()] = ele_stress[3];
     if (GlobalDim == 3)
     {
-        (*_process_data.mesh_prop_stress_yz)[_element.getID()] = ele_stress[4];
-        (*_process_data.mesh_prop_stress_xz)[_element.getID()] = ele_stress[5];
+        (*process_data_.mesh_prop_stress_yz)[element_.getID()] = ele_stress[4];
+        (*process_data_.mesh_prop_stress_xz)[element_.getID()] = ele_stress[5];
     }
 
-    (*_process_data.mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
-    (*_process_data.mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
-    (*_process_data.mesh_prop_strain_zz)[_element.getID()] = ele_strain[2];
-    (*_process_data.mesh_prop_strain_xy)[_element.getID()] = ele_strain[3];
+    (*process_data_.mesh_prop_strain_xx)[element_.getID()] = ele_strain[0];
+    (*process_data_.mesh_prop_strain_yy)[element_.getID()] = ele_strain[1];
+    (*process_data_.mesh_prop_strain_zz)[element_.getID()] = ele_strain[2];
+    (*process_data_.mesh_prop_strain_xy)[element_.getID()] = ele_strain[3];
     if (GlobalDim == 3)
     {
-        (*_process_data.mesh_prop_strain_yz)[_element.getID()] = ele_strain[4];
-        (*_process_data.mesh_prop_strain_xz)[_element.getID()] = ele_strain[5];
+        (*process_data_.mesh_prop_strain_yz)[element_.getID()] = ele_strain[4];
+        (*process_data_.mesh_prop_strain_xz)[element_.getID()] = ele_strain[5];
     }
 
     for (unsigned i = 0; i < 3; i++)
     {
-        (*_process_data.mesh_prop_velocity)[element_id * 3 + i] =
+        (*process_data_.mesh_prop_velocity)[element_id * 3 + i] =
             ele_velocity[i];
     }
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        GlobalDim>(_element, _is_axially_symmetric, p,
-                   *_process_data.mesh_prop_nodal_p);
+        GlobalDim>(element_, is_axially_symmetric_, p,
+                   *process_data_.mesh_prop_nodal_p);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -435,16 +435,16 @@ void HydroMechanicsLocalAssemblerMatrix<
                                                p)
 {
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
     for (unsigned i = 0; i < pressure_size; i++)
     {
         // only inactive nodes
-        if (_process_data.p_element_status->isActiveNode(_element.getNode(i)))
+        if (process_data_.p_element_status->isActiveNode(element_.getNode(i)))
         {
             continue;
         }
-        x_position.setNodeID(_element.getNodeIndex(i));
-        auto const p0 = (*_process_data.p0)(t, x_position)[0];
+        x_position.setNodeID(element_.getNodeIndex(i));
+        auto const p0 = (*process_data_.p0)(t, x_position)[0];
         p[i] = p0;
     }
 }
@@ -458,7 +458,7 @@ void HydroMechanicsLocalAssemblerMatrix<
     for (unsigned i = 0; i < pressure_size; i++)
     {
         // only inactive nodes
-        if (_process_data.p_element_status->isActiveNode(_element.getNode(i)))
+        if (process_data_.p_element_status->isActiveNode(element_.getNode(i)))
         {
             continue;
         }

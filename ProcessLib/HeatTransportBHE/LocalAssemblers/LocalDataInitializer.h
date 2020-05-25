@@ -111,32 +111,32 @@ public:
 
     explicit LocalDataInitializer(
         NumLib::LocalToGlobalIndexMap const& dof_table)
-        : _dof_table(dof_table)
+        : dof_table_(dof_table)
     {
         // REMARKS: At the moment, only a 3D mesh (soil) with 1D elements (BHE)
         // are supported.
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Hex))] =
+        builder_[std::type_index(typeid(MeshLib::Hex))] =
             makeLocalAssemblerBuilder<NumLib::ShapeHex8>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Hex20))] =
+        builder_[std::type_index(typeid(MeshLib::Hex20))] =
             makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
 #endif
 
         // /// Simplices ////////////////////////////////////////////////
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Tet))] =
+        builder_[std::type_index(typeid(MeshLib::Tet))] =
             makeLocalAssemblerBuilder<NumLib::ShapeTet4>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Tet10))] =
+        builder_[std::type_index(typeid(MeshLib::Tet10))] =
             makeLocalAssemblerBuilder<NumLib::ShapeTet10>();
 #endif
 
@@ -144,13 +144,13 @@ public:
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Prism))] =
+        builder_[std::type_index(typeid(MeshLib::Prism))] =
             makeLocalAssemblerBuilder<NumLib::ShapePrism6>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Prism15))] =
+        builder_[std::type_index(typeid(MeshLib::Prism15))] =
             makeLocalAssemblerBuilder<NumLib::ShapePrism15>();
 #endif
 
@@ -158,24 +158,24 @@ public:
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Pyramid))] =
+        builder_[std::type_index(typeid(MeshLib::Pyramid))] =
             makeLocalAssemblerBuilder<NumLib::ShapePyra5>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Pyramid13))] =
+        builder_[std::type_index(typeid(MeshLib::Pyramid13))] =
             makeLocalAssemblerBuilder<NumLib::ShapePyra13>();
 #endif
         // /// Lines ///////////////////////////////////
 
 #if OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
-        _builder[std::type_index(typeid(MeshLib::Line))] =
+        builder_[std::type_index(typeid(MeshLib::Line))] =
             makeLocalAssemblerBuilderBHE<NumLib::ShapeLine2>();
 #endif
 
 #if OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Line3))] =
+        builder_[std::type_index(typeid(MeshLib::Line3))] =
             makeLocalAssemblerBuilderBHE<NumLib::ShapeLine3>();
 #endif
     }
@@ -193,9 +193,9 @@ public:
                     ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
-        auto const it = _builder.find(type_idx);
+        auto const it = builder_.find(type_idx);
 
-        if (it == _builder.end())
+        if (it == builder_.end())
         {
             OGS_FATAL(
                 "You are trying to build a local assembler for an unknown mesh "
@@ -296,9 +296,9 @@ private:
     }
 
     /// Mapping of element types to local assembler constructors.
-    std::unordered_map<std::type_index, LADataBuilder> _builder;
+    std::unordered_map<std::type_index, LADataBuilder> builder_;
 
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
+    NumLib::LocalToGlobalIndexMap const& dof_table_;
 };  // namespace HeatTransportBHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

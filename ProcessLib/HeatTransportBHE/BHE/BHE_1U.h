@@ -133,7 +133,7 @@ public:
 
     double thermalResistance(int const unknown_index) const
     {
-        return _thermal_resistances[unknown_index];
+        return thermal_resistances_[unknown_index];
     }
 
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
@@ -166,10 +166,10 @@ private:
     /// These governing equations can be found in
     /// 1) Diersch (2013) FEFLOW book on page 958, M.3, or
     /// 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 90-97.
-    std::array<double, number_of_unknowns> _thermal_resistances;
+    std::array<double, number_of_unknowns> thermal_resistances_;
 
     /// Flow velocity inside the pipes. Depends on the flow_rate.
-    double _flow_velocity;
+    double flow_velocity_;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

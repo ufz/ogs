@@ -102,26 +102,26 @@ private:
         const int process_id) const override;
 
 private:
-    std::vector<MeshLib::Node*> _base_nodes;
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
-    HydroMechanicsProcessData<DisplacementDim> _process_data;
+    std::vector<MeshLib::Node*> base_nodes_;
+    std::unique_ptr<MeshLib::MeshSubset const> mesh_subset_base_nodes_;
+    HydroMechanicsProcessData<DisplacementDim> process_data_;
 
-    std::vector<std::unique_ptr<LocalAssemblerIF>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerIF>> local_assemblers_;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map_single_component;
+        local_to_global_index_map_single_component_;
 
     /// Local to global index mapping for base nodes, which is used for linear
     /// interpolation for pressure in the staggered scheme.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map_with_base_nodes;
+        local_to_global_index_map_with_base_nodes_;
 
     /// Sparsity pattern for the flow equation, and it is initialized only if
     /// the staggered scheme is used.
-    GlobalSparsityPattern _sparsity_pattern_with_linear_element;
+    GlobalSparsityPattern sparsity_pattern_with_linear_element_;
 
     /// Solutions of the previous time step
-    std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
+    std::array<std::unique_ptr<GlobalVector>, 2> xs_previous_timestep_;
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           GlobalVector const& x,
@@ -138,11 +138,11 @@ private:
     /// process has process_id == 1 in the staggered scheme.
     bool hasMechanicalProcess(int const process_id) const
     {
-        return _use_monolithic_scheme || process_id == 1;
+        return use_monolithic_scheme_ || process_id == 1;
     }
 
-    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
-    MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
+    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
+    MeshLib::PropertyVector<double>* hydraulic_flow_ = nullptr;
 };
 
 extern template class HydroMechanicsProcess<2>;

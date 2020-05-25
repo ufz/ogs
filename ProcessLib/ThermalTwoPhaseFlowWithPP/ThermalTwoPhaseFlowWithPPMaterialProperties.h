@@ -117,29 +117,29 @@ public:
     const MaterialLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPMaterialProperties&
     getTwoPhaseMaterialModel() const
     {
-        return *_two_phase_material_model;
+        return *two_phase_material_model_;
     }
 
 private:
-    double const& _air_mol_mass = MaterialLib::PhysicalConstant::MolarMass::Air;
+    double const& air_mol_mass_ = MaterialLib::PhysicalConstant::MolarMass::Air;
     std::unique_ptr<MaterialLib::TwoPhaseFlowWithPP::
                         TwoPhaseFlowWithPPMaterialProperties> const
-        _two_phase_material_model;
+        two_phase_material_model_;
 
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const
-        _specific_heat_capacity_solid;
+        specific_heat_capacity_solid_;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const
-        _specific_heat_capacity_water;
+        specific_heat_capacity_water_;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const
-        _specific_heat_capacity_air;
+        specific_heat_capacity_air_;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const
-        _specific_heat_capacity_vapor;
+        specific_heat_capacity_vapor_;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const
-        _thermal_conductivity_dry_solid;
+        thermal_conductivity_dry_solid_;
     std::unique_ptr<MaterialLib::Fluid::FluidProperty> const
-        _thermal_conductivity_wet_solid;
+        thermal_conductivity_wet_solid_;
     std::unique_ptr<MaterialLib::Fluid::WaterVaporProperties> const
-        _water_vapor_properties;
+        water_vapor_properties_;
 };
 
 }  // namespace ProcessLib::ThermalTwoPhaseFlowWithPP

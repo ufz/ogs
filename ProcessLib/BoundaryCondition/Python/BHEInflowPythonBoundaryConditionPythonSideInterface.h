@@ -31,7 +31,7 @@ public:
                        std::vector<double> /*BHE_flowrate*/>
     initializeDataContainer() const
     {
-        _overridden_essential = false;
+        overridden_essential_ = false;
         return std::tuple<double,
                           std::vector<double>,
                           std::vector<double>,
@@ -54,7 +54,7 @@ public:
         std::vector<double> const& /*Tin_val*/,
         std::vector<double> const& /*Tout_val*/) const
     {
-        _overridden_tespyThermal = false;
+        overridden_tespyThermal_ = false;
         return std::tuple<bool, bool, std::vector<double>>{false, false, {}};
     }
 
@@ -68,7 +68,7 @@ public:
     virtual std::tuple<bool, std::vector<double>> tespyHydroSolver(
         double /*t*/) const
     {
-        _overridden_tespyHydro = false;
+        overridden_tespyHydro_ = false;
         return std::tuple<bool, std::vector<double>>{false, {}};
     }
 
@@ -77,19 +77,19 @@ public:
     //!
     //! \pre initializeDataContainer() must already have been called
     //! once.
-    bool isOverriddenEssential() const { return _overridden_essential; }
+    bool isOverriddenEssential() const { return overridden_essential_; }
 
     //! Tells if tespyThermalSolver() has been overridden in the derived class
     //! in Python.
     //!
     //! \pre tespyThermalSolver() must already have been called once.
-    bool isOverriddenTespyThermal() const { return _overridden_tespyThermal; }
+    bool isOverriddenTespyThermal() const { return overridden_tespyThermal_; }
 
     //! Tells if tespyHydroSolver() has been overridden in the derived class
     //! in Python.
     //!
     //! \pre tespyHydroSolver() must already have been called once.
-    bool isOverriddenTespyHydro() const { return _overridden_tespyHydro; }
+    bool isOverriddenTespyHydro() const { return overridden_tespyHydro_; }
 
     // BHE network dataframe container
     std::tuple<double,
@@ -104,12 +104,12 @@ public:
 private:
     //! Tells if initializeDataContainer() has been overridden in the derived
     //! class in Python.
-    mutable bool _overridden_essential = true;
+    mutable bool overridden_essential_ = true;
     //! Tells if tespyThermalSolver() has been overridden in the derived class
     //! in Python.
-    mutable bool _overridden_tespyThermal = true;
+    mutable bool overridden_tespyThermal_ = true;
     //! Tells if tespyHydroSolver() has been overridden in the derived class in
     //! Python.
-    mutable bool _overridden_tespyHydro = true;
+    mutable bool overridden_tespyHydro_ = true;
 };
 }  // namespace ProcessLib

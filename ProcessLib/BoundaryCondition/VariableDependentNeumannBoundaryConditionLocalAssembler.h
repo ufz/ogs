@@ -50,8 +50,8 @@ public:
         unsigned const integration_order,
         VariableDependentNeumannBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
-          _data(data),
-          _local_matrix_size(local_matrix_size)
+          data_(data),
+          local_matrix_size_(local_matrix_size)
     {
     }
 
@@ -61,32 +61,32 @@ public:
                   int const process_id, GlobalMatrix& /*K*/, GlobalVector& b,
                   GlobalMatrix* /*Jac*/) override
     {
-        NodalVectorType _local_rhs(_local_matrix_size);
-        _local_rhs.setZero();
+        NodalVectorType local_rhs_(local_matrix_size_);
+        local_rhs_.setZero();
         // Get element nodes for the interpolation from nodes to
         // integration point.
         NodalVectorType const constant_node_values =
-            _data.constant.getNodalValuesOnElement(Base::_element, t)
+            data_.constant.getNodalValuesOnElement(Base::element_, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_current_variable_node_values =
-            _data.coefficient_current_variable
-                .getNodalValuesOnElement(Base::_element, t)
+            data_.coefficient_current_variable
+                .getNodalValuesOnElement(Base::element_, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_other_variable_node_values =
-            _data.coefficient_other_variable
-                .getNodalValuesOnElement(Base::_element, t)
+            data_.coefficient_other_variable
+                .getNodalValuesOnElement(Base::element_, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_mixed_variables_node_values =
-            _data.coefficient_mixed_variables
-                .getNodalValuesOnElement(Base::_element, t)
+            data_.coefficient_mixed_variables
+                .getNodalValuesOnElement(Base::element_, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         unsigned const n_integration_points =
-            Base::_integration_method.getNumberOfPoints();
+            Base::integration_method_.getNumberOfPoints();
 
         auto const indices_current_variable =
             NumLib::getIndices(mesh_item_id, dof_table_boundary);
         auto const indices_other_variable = NumLib::getIndices(
-            mesh_item_id, _data.dof_table_boundary_other_variable);
+            mesh_item_id, data_.dof_table_boundary_other_variable);
         std::vector<double> const local_current_variable =
             x[process_id]->get(indices_current_variable);
         std::vector<double> const local_other_variable =
@@ -94,7 +94,7 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& n_and_weight = Base::_ns_and_weights[ip];
+            auto const& n_and_weight = Base::ns_and_weights_[ip];
             auto const& N = n_and_weight.N;
             auto const& w = n_and_weight.weight;
 
@@ -112,15 +112,15 @@ public:
                 coefficient_other_variable_node_values * other_variable_int_pt +
                 coefficient_mixed_variables_node_values *
                     current_variable_int_pt * other_variable_int_pt;
-            _local_rhs.noalias() += N * neumann_node_values.dot(N) * w;
+            local_rhs_.noalias() += N * neumann_node_values.dot(N) * w;
         }
 
-        b.add(indices_current_variable, _local_rhs);
+        b.add(indices_current_variable, local_rhs_);
     }
 
 private:
-    VariableDependentNeumannBoundaryConditionData const& _data;
-    std::size_t const _local_matrix_size;
+    VariableDependentNeumannBoundaryConditionData const& data_;
+    std::size_t const local_matrix_size_;
 };
 
 }  // namespace ProcessLib

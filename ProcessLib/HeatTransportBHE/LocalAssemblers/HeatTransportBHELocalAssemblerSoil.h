@@ -63,29 +63,29 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
 private:
-    HeatTransportBHEProcessData& _process_data;
+    HeatTransportBHEProcessData& process_data_;
 
     std::vector<
         IntegrationPointDataSoil<NodalRowVectorType, GlobalDimNodalMatrixType>,
         Eigen::aligned_allocator<IntegrationPointDataSoil<
             NodalRowVectorType, GlobalDimNodalMatrixType>>>
-        _ip_data;
+        ip_data_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
 
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
+        shape_matrices_;
 
-    std::size_t const _element_id;
+    std::size_t const element_id_;
 
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

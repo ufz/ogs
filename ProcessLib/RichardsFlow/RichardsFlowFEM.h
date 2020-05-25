@@ -99,11 +99,11 @@ public:
                        bool is_axially_symmetric,
                        unsigned const integration_order,
                        RichardsFlowProcessData const& process_data)
-        : _element(element),
-          _process_data(process_data),
-          _integration_method(integration_order),
-          _saturation(
-              std::vector<double>(_integration_method.getNumberOfPoints()))
+        : element_(element),
+          process_data_(process_data),
+          integration_method_(integration_order),
+          saturation_(
+              std::vector<double>(integration_method_.getNumberOfPoints()))
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
@@ -111,24 +111,24 @@ public:
         (void)local_matrix_size;
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-        _ip_data.reserve(n_integration_points);
+            integration_method_.getNumberOfPoints();
+        ip_data_.reserve(n_integration_points);
 
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, GlobalDim>(
-                element, is_axially_symmetric, _integration_method);
+                element, is_axially_symmetric, integration_method_);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto const& sm = shape_matrices[ip];
             const double integration_factor = sm.integralMeasure * sm.detJ;
-            _ip_data.emplace_back(
+            ip_data_.emplace_back(
                 sm.N, sm.dNdx,
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                integration_method_.getWeightedPoint(ip).getWeight() *
                     integration_factor,
                 sm.N.transpose() * sm.N * integration_factor *
-                    _integration_method.getWeightedPoint(ip).getWeight());
+                    integration_method_.getWeightedPoint(ip).getWeight());
         }
     }
 
@@ -152,12 +152,12 @@ public:
             local_b_data, local_matrix_size);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
         MaterialPropertyLib::VariableArray vars;
@@ -171,7 +171,7 @@ public:
         {
             pos.setIntegrationPoint(ip);
             double p_int_pt = 0.0;
-            NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
+            NumLib::shapeFunctionInterpolate(local_x, ip_data_[ip].N, p_int_pt);
 
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
@@ -191,7 +191,7 @@ public:
                 medium
                     .property(MaterialPropertyLib::PropertyType::saturation)
                     .template value<double>(vars, pos, t, dt);
-            _saturation[ip] = Sw;
+            saturation_[ip] = Sw;
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::liquid_saturation)] = Sw;
 
@@ -214,7 +214,7 @@ public:
             double const mass_mat_coeff =
                 storage * Sw + porosity * Sw * drhow_dp - porosity * dSw_dpc;
 
-            local_M.noalias() += mass_mat_coeff * _ip_data[ip].mass_operator;
+            local_M.noalias() += mass_mat_coeff * ip_data_[ip].mass_operator;
 
             double const k_rel =
                 medium
@@ -225,25 +225,25 @@ public:
             auto const mu =
                 liquid_phase.property(MaterialPropertyLib::viscosity)
                     .template value<double>(vars, pos, t, dt);
-            local_K.noalias() += _ip_data[ip].dNdx.transpose() * permeability *
-                                 _ip_data[ip].dNdx *
-                                 _ip_data[ip].integration_weight * (k_rel / mu);
+            local_K.noalias() += ip_data_[ip].dNdx.transpose() * permeability *
+                                 ip_data_[ip].dNdx *
+                                 ip_data_[ip].integration_weight * (k_rel / mu);
 
-            if (_process_data.has_gravity)
+            if (process_data_.has_gravity)
             {
                 auto const rho_w =
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
                         .template value<double>(vars, pos, t, dt);
-                auto const& body_force = _process_data.specific_body_force;
+                auto const& body_force = process_data_.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 NodalVectorType gravity_operator =
-                    _ip_data[ip].dNdx.transpose() * permeability * body_force *
-                    _ip_data[ip].integration_weight;
+                    ip_data_[ip].dNdx.transpose() * permeability * body_force *
+                    ip_data_[ip].integration_weight;
                 local_b.noalias() += (k_rel / mu) * rho_w * gravity_operator;
             }
         }
-        if (_process_data.has_mass_lumping)
+        if (process_data_.has_mass_lumping)
         {
             for (int idx_ml = 0; idx_ml < local_M.cols(); idx_ml++)
             {
@@ -257,7 +257,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _ip_data[integration_point].N;
+        auto const& N = ip_data_[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -269,8 +269,8 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
-        assert(!_saturation.empty());
-        return _saturation;
+        assert(!saturation_.empty());
+        return saturation_;
     }
 
     std::vector<double> const& getIntPtDarcyVelocity(
@@ -285,15 +285,15 @@ public:
 
         constexpr int process_id = 0;  // monolithic scheme.
         auto const indices =
-            NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+            NumLib::getIndices(element_.getID(), *dof_table[process_id]);
         assert(!indices.empty());
         auto const local_x = x[process_id]->get(indices);
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
@@ -308,7 +308,7 @@ public:
             &local_x[0], ShapeFunction::NPOINTS);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         cache.clear();
         auto cache_vec = MathLib::createZeroedMatrix<
@@ -318,7 +318,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             double p_int_pt = 0.0;
-            NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
+            NumLib::shapeFunctionInterpolate(local_x, ip_data_[ip].N, p_int_pt);
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
             vars[static_cast<int>(
@@ -346,14 +346,14 @@ public:
                     .template value<double>(vars, pos, t, dt);
             auto const K_mat_coeff = permeability * (k_rel / mu);
             cache_vec.col(ip).noalias() =
-                -K_mat_coeff * _ip_data[ip].dNdx * p_nodal_values;
-            if (_process_data.has_gravity)
+                -K_mat_coeff * ip_data_[ip].dNdx * p_nodal_values;
+            if (process_data_.has_gravity)
             {
                 auto const rho_w =
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
                         .template value<double>(vars, pos, t, dt);
-                auto const& body_force = _process_data.specific_body_force;
+                auto const& body_force = process_data_.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 // here it is assumed that the vector body_force is directed
                 // 'downwards'
@@ -365,17 +365,17 @@ public:
     }
 
 private:
-    MeshLib::Element const& _element;
-    RichardsFlowProcessData const& _process_data;
+    MeshLib::Element const& element_;
+    RichardsFlowProcessData const& process_data_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
                              NodalMatrixType>,
         Eigen::aligned_allocator<IntegrationPointData<
             NodalRowVectorType, GlobalDimNodalMatrixType, NodalMatrixType>>>
-        _ip_data;
-    std::vector<double> _saturation;
+        ip_data_;
+    std::vector<double> saturation_;
 };
 
 }  // namespace RichardsFlow

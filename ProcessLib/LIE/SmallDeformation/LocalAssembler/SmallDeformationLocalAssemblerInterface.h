@@ -29,14 +29,14 @@ class SmallDeformationLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    SmallDeformationLocalAssemblerInterface() : _dofIndex_to_localIndex{} {}
+    SmallDeformationLocalAssemblerInterface() : dofIndex_to_localIndex_{} {}
     SmallDeformationLocalAssemblerInterface(
         std::size_t n_local_size, std::vector<unsigned> dofIndex_to_localIndex)
-        : _dofIndex_to_localIndex(std::move(dofIndex_to_localIndex))
+        : dofIndex_to_localIndex_(std::move(dofIndex_to_localIndex))
     {
-        _local_u.resize(n_local_size);
-        _local_b.resize(_local_u.size());
-        _local_J.resize(_local_u.size(), _local_u.size());
+        local_u_.resize(n_local_size);
+        local_b_.resize(local_u_.size());
+        local_J_.resize(local_u_.size(), local_u_.size());
     }
 
     void assembleWithJacobian(double const t, double const dt,
@@ -50,20 +50,20 @@ public:
     {
         auto const local_dof_size = local_x_.size();
 
-        _local_u.setZero();
+        local_u_.setZero();
         for (unsigned i = 0; i < local_dof_size; i++)
         {
-            _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
+            local_u_[dofIndex_to_localIndex_[i]] = local_x_[i];
         }
-        _local_b.setZero();
-        _local_J.setZero();
+        local_b_.setZero();
+        local_J_.setZero();
 
-        assembleWithJacobian(t, dt, _local_u, _local_b, _local_J);
+        assembleWithJacobian(t, dt, local_u_, local_b_, local_J_);
 
         local_b_data.resize(local_dof_size);
         for (unsigned i = 0; i < local_dof_size; i++)
         {
-            local_b_data[i] = _local_b[_dofIndex_to_localIndex[i]];
+            local_b_data[i] = local_b_[dofIndex_to_localIndex_[i]];
         }
 
         local_Jac_data.resize(local_dof_size * local_dof_size);
@@ -71,8 +71,8 @@ public:
         {
             for (unsigned j = 0; j < local_dof_size; j++)
             {
-                local_Jac_data[i * local_dof_size + j] = _local_J(
-                    _dofIndex_to_localIndex[i], _dofIndex_to_localIndex[j]);
+                local_Jac_data[i * local_dof_size + j] = local_J_(
+                    dofIndex_to_localIndex_[i], dofIndex_to_localIndex_[j]);
             }
         }
     }
@@ -91,16 +91,16 @@ public:
         double const t, double const /*dt*/, std::vector<double> const& local_x,
         std::vector<double> const& /*local_x_dot*/) override
     {
-        if (!_dofIndex_to_localIndex.empty())
+        if (!dofIndex_to_localIndex_.empty())
         {
-            _local_u.setZero();
+            local_u_.setZero();
             for (std::size_t i = 0; i < local_x.size(); i++)
             {
-                _local_u[_dofIndex_to_localIndex[i]] = local_x[i];
+                local_u_[dofIndex_to_localIndex_[i]] = local_x[i];
             }
         }
 
-        computeSecondaryVariableConcreteWithVector(t, _local_u);
+        computeSecondaryVariableConcreteWithVector(t, local_u_);
     }
 
     virtual std::vector<double> const& getIntPtSigmaXX(
@@ -180,10 +180,10 @@ protected:
         double const t, Eigen::VectorXd const& local_u) = 0;
 
 private:
-    Eigen::VectorXd _local_u;
-    Eigen::VectorXd _local_b;
-    Eigen::MatrixXd _local_J;
-    std::vector<unsigned> const _dofIndex_to_localIndex;
+    Eigen::VectorXd local_u_;
+    Eigen::VectorXd local_b_;
+    Eigen::MatrixXd local_J_;
+    std::vector<unsigned> const dofIndex_to_localIndex_;
 };
 
 }  // namespace SmallDeformation

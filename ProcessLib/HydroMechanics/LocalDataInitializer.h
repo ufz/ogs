@@ -128,7 +128,7 @@ public:
 
     LocalDataInitializer(NumLib::LocalToGlobalIndexMap const& dof_table,
                          const unsigned shapefunction_order)
-        : _dof_table(dof_table)
+        : dof_table_(dof_table)
     {
         if (shapefunction_order != 2)
         {
@@ -141,15 +141,15 @@ public:
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Quad8))] =
+        builder_[std::type_index(typeid(MeshLib::Quad8))] =
             makeLocalAssemblerBuilder<NumLib::ShapeQuad8>();
-        _builder[std::type_index(typeid(MeshLib::Quad9))] =
+        builder_[std::type_index(typeid(MeshLib::Quad9))] =
             makeLocalAssemblerBuilder<NumLib::ShapeQuad9>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Hex20))] =
+        builder_[std::type_index(typeid(MeshLib::Hex20))] =
             makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
 #endif
 
@@ -157,13 +157,13 @@ public:
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Tri6))] =
+        builder_[std::type_index(typeid(MeshLib::Tri6))] =
             makeLocalAssemblerBuilder<NumLib::ShapeTri6>();
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Tet10))] =
+        builder_[std::type_index(typeid(MeshLib::Tet10))] =
             makeLocalAssemblerBuilder<NumLib::ShapeTet10>();
 #endif
 
@@ -171,7 +171,7 @@ public:
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Prism15))] =
+        builder_[std::type_index(typeid(MeshLib::Prism15))] =
             makeLocalAssemblerBuilder<NumLib::ShapePrism15>();
 #endif
 
@@ -179,7 +179,7 @@ public:
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
-        _builder[std::type_index(typeid(MeshLib::Pyramid13))] =
+        builder_[std::type_index(typeid(MeshLib::Pyramid13))] =
             makeLocalAssemblerBuilder<NumLib::ShapePyra13>();
 #endif
     }
@@ -195,11 +195,11 @@ public:
                     ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
-        auto const it = _builder.find(type_idx);
+        auto const it = builder_.find(type_idx);
 
-        if (it != _builder.end())
+        if (it != builder_.end())
         {
-            auto const num_local_dof = _dof_table.getNumberOfElementDOF(id);
+            auto const num_local_dof = dof_table_.getNumberOfElementDOF(id);
             data_ptr = it->second(mesh_item, num_local_dof,
                                   std::forward<ConstructorArgs>(args)...);
         }
@@ -243,9 +243,9 @@ private:
     }
 
     /// Mapping of element types to local assembler constructors.
-    std::unordered_map<std::type_index, LADataBuilder> _builder;
+    std::unordered_map<std::type_index, LADataBuilder> builder_;
 
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
+    NumLib::LocalToGlobalIndexMap const& dof_table_;
 
     // local assembler builder implementations.
 private:

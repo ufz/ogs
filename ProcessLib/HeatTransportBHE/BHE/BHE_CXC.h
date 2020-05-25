@@ -117,7 +117,7 @@ public:
 private:
     std::array<double, 2> velocities() const override
     {
-        return {_flow_velocity_inner, _flow_velocity_annulus};
+        return {flow_velocity_inner_, flow_velocity_annulus_};
     }
 
     std::array<double, number_of_unknowns> getThermalResistances(

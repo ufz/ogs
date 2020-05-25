@@ -25,10 +25,10 @@ public:
         NumLib::LocalToGlobalIndexMap const& dof_table,
         MeshLib::Mesh const& mesh, int const variable_id,
         int const component_id)
-        : _dof_table(dof_table),
-          _mesh(mesh),
-          _variable_id(variable_id),
-          _component_id(component_id)
+        : dof_table_(dof_table),
+          mesh_(mesh),
+          variable_id_(variable_id),
+          component_id_(component_id)
     {
         if (variable_id >= static_cast<int>(dof_table.getNumberOfVariables()) ||
             component_id >=
@@ -51,12 +51,12 @@ public:
                      int const process_id) override;
 
 private:
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
-    MeshLib::Mesh const& _mesh;
-    int const _variable_id;
-    int const _component_id;
+    NumLib::LocalToGlobalIndexMap const& dof_table_;
+    MeshLib::Mesh const& mesh_;
+    int const variable_id_;
+    int const component_id_;
 
-    NumLib::IndexValueVector<GlobalIndexType> _bc_values;
+    NumLib::IndexValueVector<GlobalIndexType> bc_values_;
 };
 
 std::unique_ptr<PhaseFieldIrreversibleDamageOracleBoundaryCondition>

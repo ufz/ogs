@@ -74,16 +74,16 @@ private:
         GlobalVector const& x) override;
 
 private:
-    SmallDeformationNonlocalProcessData<DisplacementDim> _process_data;
+    SmallDeformationNonlocalProcessData<DisplacementDim> process_data_;
 
     using LocalAssemblerInterface =
         SmallDeformationNonlocalLocalAssemblerInterface<DisplacementDim>;
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> local_assemblers_;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map_single_component;
+        local_to_global_index_map_single_component_;
 
-    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
+    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
 };
 
 extern template class ProcessLib::SmallDeformationNonlocal::

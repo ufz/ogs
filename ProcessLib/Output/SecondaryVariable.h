@@ -143,12 +143,12 @@ public:
 private:
     //! Maps external variable names to internal ones.
     //! The external variable names are used, e.g., for output.
-    std::map<std::string, std::string> _map_external_to_internal;
+    std::map<std::string, std::string> map_external_to_internal_;
 
     //! Collection of all configured secondary variables.
     //! Maps the internal variable name to the corresponding SecondaryVariable
     //! instance.
-    std::map<std::string, SecondaryVariable> _configured_secondary_variables;
+    std::map<std::string, SecondaryVariable> configured_secondary_variables_;
 };
 
 /*! Creates an object that computes a secondary variable via extrapolation of

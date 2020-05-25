@@ -120,27 +120,27 @@ private:
         const int process_id) const;
 
 private:
-    ThermoMechanicalPhaseFieldProcessData<DisplacementDim> _process_data;
+    ThermoMechanicalPhaseFieldProcessData<DisplacementDim> process_data_;
 
     std::vector<
         std::unique_ptr<ThermoMechanicalPhaseFieldLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map_single_component;
+        local_to_global_index_map_single_component_;
 
     /// Sparsity pattern for the phase field equation, and it is initialized
     //  only if the staggered scheme is used.
-    GlobalSparsityPattern _sparsity_pattern_with_single_component;
+    GlobalSparsityPattern sparsity_pattern_with_single_component_;
 
     /// ID of the processes that contains mechanical process.
-    int const _mechanics_related_process_id;
+    int const mechanics_related_process_id_;
 
     /// ID of phase field process.
-    int const _phase_field_process_id;
+    int const phase_field_process_id_;
 
     /// ID of heat conduction process.
-    int const _heat_conduction_process_id;
+    int const heat_conduction_process_id_;
 };
 
 extern template class ThermoMechanicalPhaseFieldProcess<2>;

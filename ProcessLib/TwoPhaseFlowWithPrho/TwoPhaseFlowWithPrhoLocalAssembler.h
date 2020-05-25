@@ -101,35 +101,35 @@ public:
         bool const is_axially_symmetric,
         unsigned const integration_order,
         TwoPhaseFlowWithPrhoProcessData const& process_data)
-        : _element(element),
-          _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+        : element_(element),
+          integration_method_(integration_order),
+          shape_matrices_(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method)),
-          _process_data(process_data),
-          _saturation(
-              std::vector<double>(_integration_method.getNumberOfPoints())),
-          _pressure_nonwetting(
-              std::vector<double>(_integration_method.getNumberOfPoints()))
+              element, is_axially_symmetric, integration_method_)),
+          process_data_(process_data),
+          saturation_(
+              std::vector<double>(integration_method_.getNumberOfPoints())),
+          pressure_nonwetting_(
+              std::vector<double>(integration_method_.getNumberOfPoints()))
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-        _ip_data.reserve(n_integration_points);
+            integration_method_.getNumberOfPoints();
+        ip_data_.reserve(n_integration_points);
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(*_process_data._material);
-            auto const& sm = _shape_matrices[ip];
-            _ip_data[ip].integration_weight =
+            ip_data_.emplace_back(*process_data_.material_);
+            auto const& sm = shape_matrices_[ip];
+            ip_data_[ip].integration_weight =
                 sm.integralMeasure * sm.detJ *
-                _integration_method.getWeightedPoint(ip).getWeight();
-            _ip_data[ip].massOperator.setZero(ShapeFunction::NPOINTS,
+                integration_method_.getWeightedPoint(ip).getWeight();
+            ip_data_[ip].massOperator.setZero(ShapeFunction::NPOINTS,
                                               ShapeFunction::NPOINTS);
-            _ip_data[ip].diffusionOperator.setZero(ShapeFunction::NPOINTS,
+            ip_data_[ip].diffusionOperator.setZero(ShapeFunction::NPOINTS,
                                                    ShapeFunction::NPOINTS);
-            _ip_data[ip].massOperator.noalias() =
-                sm.N.transpose() * sm.N * _ip_data[ip].integration_weight;
-            _ip_data[ip].diffusionOperator.noalias() =
-                sm.dNdx.transpose() * sm.dNdx * _ip_data[ip].integration_weight;
+            ip_data_[ip].massOperator.noalias() =
+                sm.N.transpose() * sm.N * ip_data_[ip].integration_weight;
+            ip_data_[ip].diffusionOperator.noalias() =
+                sm.dNdx.transpose() * sm.dNdx * ip_data_[ip].integration_weight;
         }
     }
 
@@ -143,7 +143,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrices[integration_point].N;
+        auto const& N = shape_matrices_[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -155,8 +155,8 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
-        assert(!_saturation.empty());
-        return _saturation;
+        assert(!saturation_.empty());
+        return saturation_;
     }
 
     std::vector<double> const& getIntPtNonWettingPressure(
@@ -165,24 +165,24 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& /*cache*/) const override
     {
-        assert(!_pressure_nonwetting.empty());
-        return _pressure_nonwetting;
+        assert(!pressure_nonwetting_.empty());
+        return pressure_nonwetting_;
     }
 
 private:
-    MeshLib::Element const& _element;
+    MeshLib::Element const& element_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
+        shape_matrices_;
 
-    TwoPhaseFlowWithPrhoProcessData const& _process_data;
+    TwoPhaseFlowWithPrhoProcessData const& process_data_;
     std::vector<IntegrationPointData<NodalMatrixType>,
                 Eigen::aligned_allocator<IntegrationPointData<NodalMatrixType>>>
-        _ip_data;
+        ip_data_;
 
-    std::vector<double> _saturation;  /// used for secondary variable output
-    std::vector<double> _pressure_nonwetting;
+    std::vector<double> saturation_;  /// used for secondary variable output
+    std::vector<double> pressure_nonwetting_;
     static const int nonwet_pressure_coeff_index = 0;
     static const int cap_pressure_coeff_index = 1;
 

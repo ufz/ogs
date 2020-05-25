@@ -65,21 +65,21 @@ public:
         bool const is_axially_symmetric,
         unsigned const integration_order,
         ParameterLib::Parameter<double> const& pressure)
-        : _integration_method(integration_order),
-          _pressure(pressure),
-          _element(e)
+        : integration_method_(integration_order),
+          pressure_(pressure),
+          element_(e)
     {
-        _local_rhs.setZero(local_matrix_size);
+        local_rhs_.setZero(local_matrix_size);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
-        _ip_data.reserve(n_integration_points);
+        ip_data_.reserve(n_integration_points);
 
         auto const shape_matrices_u =
             initShapeMatrices<ShapeFunctionDisplacement, ShapeMatricesType,
                               IntegrationMethod, GlobalDim>(
-                e, is_axially_symmetric, _integration_method);
+                e, is_axially_symmetric, integration_method_);
 
         GlobalDimVectorType element_normal(GlobalDim);
 
@@ -104,11 +104,11 @@ public:
         {
 
             double const integration_weight =
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                integration_method_.getWeightedPoint(ip).getWeight() *
                 shape_matrices_u[ip].integralMeasure *
                 shape_matrices_u[ip].detJ;
 
-            _ip_data.emplace_back(shape_matrices_u[ip].N, element_normal,
+            ip_data_.emplace_back(shape_matrices_u[ip].N, element_normal,
                                   integration_weight);
         }
     }
@@ -119,19 +119,19 @@ public:
                   GlobalMatrix& /*K*/, GlobalVector& local_rhs,
                   GlobalMatrix* /*Jac*/) override
     {
-        _local_rhs.setZero();
+        local_rhs_.setZero();
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         NodalVectorType pressure =
-            _pressure.getNodalValuesOnElement(_element, t);
+            pressure_.getNodalValuesOnElement(element_, t);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& w = _ip_data[ip].integration_weight;
-            auto const& N = _ip_data[ip].N;
-            auto const& n = _ip_data[ip].n;
+            auto const& w = ip_data_[ip].integration_weight;
+            auto const& N = ip_data_[ip].N;
+            auto const& n = ip_data_[ip].n;
 
             typename ShapeMatricesType::template MatrixType<GlobalDim,
                                                             displacement_size>
@@ -145,28 +145,28 @@ public:
                     .noalias() = N;
             }
 
-            _local_rhs.noalias() -= n.transpose() * N_u * pressure.dot(N) * w;
+            local_rhs_.noalias() -= n.transpose() * N_u * pressure.dot(N) * w;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
-        local_rhs.add(indices, _local_rhs);
+        local_rhs.add(indices, local_rhs_);
     }
 
 private:
-    IntegrationMethod const _integration_method;
-    ParameterLib::Parameter<double> const& _pressure;
+    IntegrationMethod const integration_method_;
+    ParameterLib::Parameter<double> const& pressure_;
 
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * GlobalDim;
     std::vector<
         IntegrationPointData<ShapeMatricesType>,
         Eigen::aligned_allocator<IntegrationPointData<ShapeMatricesType>>>
-        _ip_data;
+        ip_data_;
 
     typename ShapeMatricesType::template VectorType<displacement_size>
-        _local_rhs;
+        local_rhs_;
 
-    MeshLib::Element const& _element;
+    MeshLib::Element const& element_;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

@@ -73,20 +73,20 @@ private:
         GlobalVector const& x) override;
 #endif
 
-    HeatTransportBHEProcessData _process_data;
+    HeatTransportBHEProcessData process_data_;
 
     std::vector<std::unique_ptr<HeatTransportBHELocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
-        _mesh_subset_BHE_nodes;
+        mesh_subset_BHE_nodes_;
 
     std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
-        _mesh_subset_BHE_soil_nodes;
+        mesh_subset_BHE_soil_nodes_;
 
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_soil_nodes;
+    std::unique_ptr<MeshLib::MeshSubset const> mesh_subset_soil_nodes_;
 
-    const BHEMeshData _bheMeshData;
+    const BHEMeshData bheMeshData_;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

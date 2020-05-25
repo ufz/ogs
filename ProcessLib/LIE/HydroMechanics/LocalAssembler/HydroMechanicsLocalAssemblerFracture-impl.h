@@ -51,7 +51,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
           ShapeFunctionDisplacement::NPOINTS * GlobalDim +
               ShapeFunctionPressure::NPOINTS,
           dofIndex_to_localIndex),
-      _process_data(process_data)
+      process_data_(process_data)
 {
     assert(e.getDimension() == GlobalDim - 1);
 
@@ -59,7 +59,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     unsigned const n_integration_points =
         integration_method.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
+    ip_data_.reserve(n_integration_points);
 
     auto const shape_matrices_u =
         initShapeMatrices<ShapeFunctionDisplacement,
@@ -72,7 +72,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                           IntegrationMethod, GlobalDim>(e, is_axially_symmetric,
                                                         integration_method);
 
-    auto const& frac_prop = *_process_data.fracture_property;
+    auto const& frac_prop = *process_data_.fracture_property;
 
     // Get element nodes for aperture0 interpolation from nodes to integration
     // point. The aperture0 parameter is time-independent.
@@ -86,10 +86,10 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
 
-        _ip_data.emplace_back(*_process_data.fracture_model);
+        ip_data_.emplace_back(*process_data_.fracture_model);
         auto const& sm_u = shape_matrices_u[ip];
         auto const& sm_p = shape_matrices_p[ip];
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
         ip_data.integration_weight =
             sm_u.detJ * sm_u.integralMeasure *
             integration_method.getWeightedPoint(ip).getWeight();
@@ -120,7 +120,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             frac_prop.permeability_model->getNewState();
 
         auto const initial_effective_stress =
-            _process_data.initial_fracture_effective_stress(0, x_position);
+            process_data_.initial_fracture_effective_stress(0, x_position);
         for (int i = 0; i < GlobalDim; i++)
         {
             ip_data.sigma_eff[i] = initial_effective_stress[i];
@@ -175,7 +175,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pg,
         Eigen::Ref<Eigen::MatrixXd> J_gg, Eigen::Ref<Eigen::MatrixXd> J_gp)
 {
-    auto const& frac_prop = *_process_data.fracture_property;
+    auto const& frac_prop = *process_data_.fracture_property;
     auto const& R = frac_prop.R;
 
     // the index of a normal (normal to a fracture plane) component
@@ -199,17 +199,17 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     using GlobalDimMatrix = Eigen::Matrix<double, GlobalDim, GlobalDim>;
     using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
 
-    auto const& gravity_vec = _process_data.specific_body_force;
+    auto const& gravity_vec = process_data_.specific_body_force;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    unsigned const n_integration_points = _ip_data.size();
+    unsigned const n_integration_points = ip_data_.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
         auto const& ip_w = ip_data.integration_weight;
         auto const& N_p = ip_data.N_p;
         auto const& dNdx_p = ip_data.dNdx_p;
@@ -224,30 +224,30 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto const& w_prev = ip_data.w_prev;
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
-        auto& b_m = ip_data.aperture;
+        auto& bm_ = ip_data.aperture;
 
         double const S = frac_prop.specific_storage(t, x_position)[0];
-        double const mu = _process_data.fluid_viscosity(t, x_position)[0];
+        double const mu = process_data_.fluid_viscosity(t, x_position)[0];
         auto const alpha = frac_prop.biot_coefficient(t, x_position)[0];
-        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+        auto const rho_fr = process_data_.fluid_density(t, x_position)[0];
 
         // displacement jumps in local coordinates
         w.noalias() = R * H_g * g;
 
         // aperture
-        b_m = ip_data.aperture0 + w[index_normal];
-        if (b_m < 0.0)
+        bm_ = ip_data.aperture0 + w[index_normal];
+        if (bm_ < 0.0)
         {
             DBUG(
                 "Element {:d}, gp {:d}: Fracture aperture is {:g}, but it must "
                 "be "
                 "non-negative. Setting it to zero.",
-                _element.getID(), ip, b_m);
-            b_m = 0;
+                element_.getID(), ip, bm_);
+            bm_ = 0;
         }
 
         auto const initial_effective_stress =
-            _process_data.initial_fracture_effective_stress(0, x_position);
+            process_data_.initial_fracture_effective_stress(0, x_position);
 
         Eigen::Map<typename HMatricesType::ForceVectorType const> const stress0(
             initial_effective_stress.data(), initial_effective_stress.size());
@@ -259,7 +259,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
         auto& permeability = ip_data.permeability;
         permeability = frac_prop.permeability_model->permeability(
-            ip_data.permeability_state.get(), ip_data.aperture0, b_m);
+            ip_data.permeability_state.get(), ip_data.aperture0, bm_);
 
         GlobalDimMatrix const k =
             createRotatedTensor<GlobalDim>(R, permeability);
@@ -267,7 +267,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         // derivative of permeability respect to aperture
         double const local_dk_db =
             frac_prop.permeability_model->dpermeability_daperture(
-                ip_data.permeability_state.get(), ip_data.aperture0, b_m);
+                ip_data.permeability_state.get(), ip_data.aperture0, bm_);
         GlobalDimMatrix const dk_db =
             createRotatedTensor<GlobalDim>(R, local_dk_db);
 
@@ -287,11 +287,11 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         //
         // pressure equation, pressure part.
         //
-        storage_p.noalias() += N_p.transpose() * b_m * S * N_p * ip_w;
+        storage_p.noalias() += N_p.transpose() * bm_ * S * N_p * ip_w;
         laplace_p.noalias() +=
-            dNdx_p.transpose() * b_m * k / mu * dNdx_p * ip_w;
+            dNdx_p.transpose() * bm_ * k / mu * dNdx_p * ip_w;
         rhs_p.noalias() +=
-            dNdx_p.transpose() * b_m * k / mu * rho_fr * gravity_vec * ip_w;
+            dNdx_p.transpose() * bm_ * k / mu * rho_fr * gravity_vec * ip_w;
 
         //
         // pressure equation, displacement jump part.
@@ -306,7 +306,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         J_pg.noalias() += N_p.transpose() * S * N_p * p_dot * mT_R_Hg * ip_w;
         J_pg.noalias() +=
             dNdx_p.transpose() * k * grad_head_over_mu * mT_R_Hg * ip_w;
-        J_pg.noalias() += dNdx_p.transpose() * b_m * dk_db * grad_head_over_mu *
+        J_pg.noalias() += dNdx_p.transpose() * bm_ * dk_db * grad_head_over_mu *
                           mT_R_Hg * ip_w;
     }
 
@@ -337,21 +337,21 @@ void HydroMechanicsLocalAssemblerFracture<
 {
     auto const nodal_g = local_x.segment(displacement_index, displacement_size);
 
-    auto const& frac_prop = *_process_data.fracture_property;
+    auto const& frac_prop = *process_data_.fracture_property;
     auto const& R = frac_prop.R;
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
     auto constexpr index_normal = GlobalDim - 1;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    unsigned const n_integration_points = _ip_data.size();
+    unsigned const n_integration_points = ip_data_.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
         auto const& H_g = ip_data.H_u;
         auto& mat = ip_data.fracture_material;
         auto& effective_stress = ip_data.sigma_eff;
@@ -360,23 +360,23 @@ void HydroMechanicsLocalAssemblerFracture<
         auto const& w_prev = ip_data.w_prev;
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
-        auto& b_m = ip_data.aperture;
+        auto& bm_ = ip_data.aperture;
 
         // displacement jumps in local coordinates
         w.noalias() = R * H_g * nodal_g;
 
         // aperture
-        b_m = ip_data.aperture0 + w[index_normal];
-        if (b_m < 0.0)
+        bm_ = ip_data.aperture0 + w[index_normal];
+        if (bm_ < 0.0)
         {
             DBUG(
                 "Element {:d}, gp {:d}: Fracture aperture is {:g}, but it is "
                 "expected to be non-negative.",
-                _element.getID(), ip, b_m);
+                element_.getID(), ip, bm_);
         }
 
         auto const initial_effective_stress =
-            _process_data.initial_fracture_effective_stress(0, x_position);
+            process_data_.initial_fracture_effective_stress(0, x_position);
 
         Eigen::Map<typename HMatricesType::ForceVectorType const> const stress0(
             initial_effective_stress.data(), initial_effective_stress.size());
@@ -395,7 +395,7 @@ void HydroMechanicsLocalAssemblerFracture<
         HMatricesType::ForceVectorType::Zero(GlobalDim);
     double ele_Fs = -std::numeric_limits<double>::max();
     Eigen::Vector3d ele_velocity = Eigen::Vector3d::Zero();
-    for (auto const& ip : _ip_data)
+    for (auto const& ip : ip_data_)
     {
         ele_b += ip.aperture;
         ele_k += ip.permeability;
@@ -410,27 +410,27 @@ void HydroMechanicsLocalAssemblerFracture<
     ele_w /= static_cast<double>(n_integration_points);
     ele_sigma_eff /= static_cast<double>(n_integration_points);
     ele_velocity /= static_cast<double>(n_integration_points);
-    auto const element_id = _element.getID();
-    (*_process_data.mesh_prop_b)[element_id] = ele_b;
-    (*_process_data.mesh_prop_k_f)[element_id] = ele_k;
-    (*_process_data.mesh_prop_w_n)[element_id] = ele_w[index_normal];
-    (*_process_data.mesh_prop_w_s)[element_id] = ele_w[0];
-    (*_process_data.mesh_prop_fracture_stress_normal)[element_id] =
+    auto const element_id = element_.getID();
+    (*process_data_.mesh_prop_b)[element_id] = ele_b;
+    (*process_data_.mesh_prop_k_f)[element_id] = ele_k;
+    (*process_data_.mesh_prop_w_n)[element_id] = ele_w[index_normal];
+    (*process_data_.mesh_prop_w_s)[element_id] = ele_w[0];
+    (*process_data_.mesh_prop_fracture_stress_normal)[element_id] =
         ele_sigma_eff[index_normal];
-    (*_process_data.mesh_prop_fracture_stress_shear)[element_id] =
+    (*process_data_.mesh_prop_fracture_stress_shear)[element_id] =
         ele_sigma_eff[0];
-    (*_process_data.mesh_prop_fracture_shear_failure)[element_id] = ele_Fs;
+    (*process_data_.mesh_prop_fracture_shear_failure)[element_id] = ele_Fs;
 
     if (GlobalDim == 3)
     {
-        (*_process_data.mesh_prop_w_s2)[element_id] = ele_w[1];
-        (*_process_data.mesh_prop_fracture_stress_shear2)[element_id] =
+        (*process_data_.mesh_prop_w_s2)[element_id] = ele_w[1];
+        (*process_data_.mesh_prop_fracture_stress_shear2)[element_id] =
             ele_sigma_eff[1];
     }
 
     for (unsigned i = 0; i < 3; i++)
     {
-        (*_process_data.mesh_prop_velocity)[element_id * 3 + i] =
+        (*process_data_.mesh_prop_velocity)[element_id * 3 + i] =
             ele_velocity[i];
     }
 }

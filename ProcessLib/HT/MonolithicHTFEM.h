@@ -96,14 +96,14 @@ public:
         auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(this->_element.getID());
+        pos.setElementID(this->element_.getID());
 
         auto p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[pressure_index], pressure_size);
 
-        auto const& process_data = this->_process_data;
+        auto const& process_data = this->process_data_;
         auto const& medium =
-            *process_data.media_map->getMedium(this->_element.getID());
+            *process_data.media_map->getMedium(this->element_.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
 
@@ -115,13 +115,13 @@ public:
         MaterialPropertyLib::VariableArray vars;
 
         unsigned const n_integration_points =
-            this->_integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip(0); ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
 
-            auto const& ip_data = this->_ip_data[ip];
+            auto const& ip_data = this->ip_data_[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -211,7 +211,7 @@ public:
     {
         int const process_id = 0;  // monolithic case.
         auto const indices =
-            NumLib::getIndices(this->_element.getID(), *dof_table[process_id]);
+            NumLib::getIndices(this->element_.getID(), *dof_table[process_id]);
         assert(!indices.empty());
         auto const& local_x = x[process_id]->get(indices);
 

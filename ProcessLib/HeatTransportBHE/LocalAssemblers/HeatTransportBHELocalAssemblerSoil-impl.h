@@ -35,22 +35,22 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         bool const is_axially_symmetric,
         unsigned const integration_order,
         HeatTransportBHEProcessData& process_data)
-    : _process_data(process_data),
-      _integration_method(integration_order),
-      _element_id(e.getID())
+    : process_data_(process_data),
+      integration_method_(integration_order),
+      element_id_(e.getID())
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
-    _secondary_data.N.resize(n_integration_points);
+    ip_data_.reserve(n_integration_points);
+    secondary_data_.N.resize(n_integration_points);
 
-    _shape_matrices = initShapeMatrices<ShapeFunction, ShapeMatricesType,
+    shape_matrices_ = initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                         IntegrationMethod, 3 /* GlobalDim */>(
-        e, is_axially_symmetric, _integration_method);
+        e, is_axially_symmetric, integration_method_);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element_id);
+    x_position.setElementID(element_id_);
 
     // ip data initialization
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -58,12 +58,12 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         x_position.setIntegrationPoint(ip);
 
         // create the class IntegrationPointDataBHE in place
-        auto const& sm = _shape_matrices[ip];
-        double const w = _integration_method.getWeightedPoint(ip).getWeight() *
+        auto const& sm = shape_matrices_[ip];
+        double const w = integration_method_.getWeightedPoint(ip).getWeight() *
                          sm.integralMeasure * sm.detJ;
-        _ip_data.push_back({sm.N, sm.dNdx, w});
+        ip_data_.push_back({sm.N, sm.dNdx, w});
 
-        _secondary_data.N[ip] = sm.N;
+        secondary_data_.N[ip] = sm.N;
     }
 }
 
@@ -85,21 +85,21 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
         local_K_data, ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element_id);
+    pos.setElementID(element_id_);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element_id);
+    auto const& medium = *process_data_.media_map->getMedium(element_id_);
     auto const& solid_phase = medium.phase("Solid");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         pos.setIntegrationPoint(ip);
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;

@@ -67,12 +67,12 @@ public:
                        bool is_axially_symmetric,
                        unsigned const integration_order,
                        SteadyStateDiffusionData const& process_data)
-        : _element(element),
-          _process_data(process_data),
-          _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
+        : element_(element),
+          process_data_(process_data),
+          integration_method_(integration_order),
+          shape_matrices_(initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                             IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method))
+              element, is_axially_symmetric, integration_method_))
     {
     }
 
@@ -92,13 +92,13 @@ public:
             local_K_data, local_matrix_size, local_matrix_size);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             medium
@@ -109,8 +109,8 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
-            auto const& sm = _shape_matrices[ip];
-            auto const& wp = _integration_method.getWeightedPoint(ip);
+            auto const& sm = shape_matrices_[ip];
+            auto const& wp = integration_method_.getWeightedPoint(ip);
 
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, sm.N, p_int_pt);
@@ -137,7 +137,7 @@ public:
 
         // eval dNdx and invJ at p
         auto const fe = NumLib::createIsoparametricFiniteElement<
-            ShapeFunction, ShapeMatricesType>(_element);
+            ShapeFunction, ShapeMatricesType>(element_);
 
         typename ShapeMatricesType::ShapeMatrices shape_matrices(
             ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
@@ -149,9 +149,9 @@ public:
 
         // fetch hydraulic conductivity
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
 
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -179,7 +179,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrices[integration_point].N;
+        auto const& N = shape_matrices_[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -196,11 +196,11 @@ public:
         double const dt = std::numeric_limits<double>::quiet_NaN();
 
         auto const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         int const process_id = 0;  // monolithic scheme
         auto const indices =
-            NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+            NumLib::getIndices(element_.getID(), *dof_table[process_id]);
         assert(!indices.empty());
         auto const local_x = x[process_id]->get(indices);
         auto const local_x_vec =
@@ -213,10 +213,10 @@ public:
             cache, GlobalDim, n_integration_points);
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
 
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -228,7 +228,7 @@ public:
         for (unsigned i = 0; i < n_integration_points; ++i)
         {
             pos.setIntegrationPoint(i);
-            NumLib::shapeFunctionInterpolate(local_x, _shape_matrices[i].N,
+            NumLib::shapeFunctionInterpolate(local_x, shape_matrices_[i].N,
                                              pressure);
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = pressure;
@@ -238,19 +238,19 @@ public:
                     .value(vars, pos, t, dt));
             // dimensions: (d x 1) = (d x n) * (n x 1)
             cache_mat.col(i).noalias() =
-                -k * _shape_matrices[i].dNdx * local_x_vec;
+                -k * shape_matrices_[i].dNdx * local_x_vec;
         }
 
         return cache;
     }
 
 private:
-    MeshLib::Element const& _element;
-    SteadyStateDiffusionData const& _process_data;
+    MeshLib::Element const& element_;
+    SteadyStateDiffusionData const& process_data_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
-        _shape_matrices;
+        shape_matrices_;
 };
 
 }  // namespace SteadyStateDiffusion

@@ -33,13 +33,13 @@ private:
             template MatrixType<N, M>;
 
     // Dimensions of specific H-matrix for n-points and displacement dimension.
-    static int const _number_of_dof = ShapeFunction::NPOINTS * DisplacementDim;
+    static int const number_of_dof_ = ShapeFunction::NPOINTS * DisplacementDim;
 
 public:
-    using StiffnessMatrixType = MatrixType<_number_of_dof, _number_of_dof>;
-    using NodalForceVectorType = VectorType<_number_of_dof>;
+    using StiffnessMatrixType = MatrixType<number_of_dof_, number_of_dof_>;
+    using NodalForceVectorType = VectorType<number_of_dof_>;
 
-    using HMatrixType = MatrixType<DisplacementDim, _number_of_dof>;
+    using HMatrixType = MatrixType<DisplacementDim, number_of_dof_>;
 
     using ConstitutiveMatrixType = MatrixType<DisplacementDim, DisplacementDim>;
     using ForceVectorType = VectorType<DisplacementDim>;

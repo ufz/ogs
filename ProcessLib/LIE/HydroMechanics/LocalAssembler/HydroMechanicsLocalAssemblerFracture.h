@@ -51,7 +51,7 @@ public:
                              double const /*t*/,
                              double const /*delta_t*/) override
     {
-        for (auto& data : _ip_data)
+        for (auto& data : ip_data_)
         {
             data.pushBackState();
         }
@@ -64,7 +64,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _ip_data[integration_point].N_p;
+        auto const& N = ip_data_[integration_point].N_p;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -105,11 +105,11 @@ private:
                                      ShapeMatricesTypePressure,
                                      GlobalDim>;
 
-    HydroMechanicsProcessData<GlobalDim>& _process_data;
+    HydroMechanicsProcessData<GlobalDim>& process_data_;
 
     std::vector<IntegrationPointDataType,
                 Eigen::aligned_allocator<IntegrationPointDataType>>
-        _ip_data;
+        ip_data_;
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

@@ -60,20 +60,20 @@ public:
 
 private:
     //! Auxiliary data.
-    PythonBoundaryConditionData _bc_data;
+    PythonBoundaryConditionData bc_data_;
 
     //! Local dof table for the boundary mesh.
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_boundary_;
 
     //! Local assemblers for all elements of the boundary mesh.
     std::vector<
         std::unique_ptr<GenericNaturalBoundaryConditionLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     //! Whether or not to flush standard output before and after each call to
     //! Python code. Ensures right order of output messages and therefore
     //! simplifies debugging.
-    bool const _flush_stdout;
+    bool const flush_stdout_;
 };
 
 //! Creates a new PythonBoundaryCondition object.

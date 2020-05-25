@@ -60,17 +60,17 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
-    ParameterLib::Parameter<double> const& _parameter;
+    ParameterLib::Parameter<double> const& parameter_;
 
-    MeshLib::Mesh const& _bc_mesh;
-    /// Some nodes in _bc_mesh
-    std::vector<MeshLib::Node*> const& _nodes_in_bc_mesh;
+    MeshLib::Mesh const& bc_mesh_;
+    /// Some nodes in bc_mesh_
+    std::vector<MeshLib::Node*> const& nodes_in_bc_mesh_;
 
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap const> _dof_table_boundary;
-    int const _variable_id;
-    int const _component_id;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap const> dof_table_boundary_;
+    int const variable_id_;
+    int const component_id_;
 
-    std::unique_ptr<BaseLib::TimeInterval const> _time_interval;
+    std::unique_ptr<BaseLib::TimeInterval const> time_interval_;
 
     void config(NumLib::LocalToGlobalIndexMap const& dof_table_bulk);
 };

@@ -90,12 +90,12 @@ private:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::unique_ptr<GlobalVector>& result_cache);
 
-    std::vector<std::unique_ptr<TESLocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<TESLocalAssemblerInterface>> local_assemblers_;
 
-    AssemblyParams _assembly_params;
+    AssemblyParams assembly_params_;
 
     // used for checkBounds()
-    std::unique_ptr<GlobalVector> _x_previous_timestep;
+    std::unique_ptr<GlobalVector> x_previous_timestep_;
 };
 
 }  // namespace TES

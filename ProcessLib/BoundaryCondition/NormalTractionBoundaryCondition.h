@@ -49,27 +49,27 @@ public:
                         GlobalMatrix* Jac) override;
 
 private:
-    MeshLib::Mesh const& _bc_mesh;
+    MeshLib::Mesh const& bc_mesh_;
 
     /// Intersection of boundary nodes and bulk mesh subset for the
     /// variable_id/component_id pair.
-    std::vector<MeshLib::Node*> _nodes_subset;
+    std::vector<MeshLib::Node*> nodes_subset_;
 
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_all_nodes;
+    std::unique_ptr<MeshLib::MeshSubset const> mesh_subset_all_nodes_;
 
     /// Local dof table, a subset of the global one restricted to the
-    /// participating number of _elements of the boundary condition.
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
+    /// participating number of elements_ of the boundary condition.
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_boundary_;
 
     /// Integration order for integration over the lower-dimensional elements
-    unsigned const _integration_order;
+    unsigned const integration_order_;
 
-    /// Local assemblers for each element of number of _elements.
+    /// Local assemblers for each element of number of elements_.
     std::vector<
         std::unique_ptr<NormalTractionBoundaryConditionLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
-    ParameterLib::Parameter<double> const& _pressure;
+    ParameterLib::Parameter<double> const& pressure_;
 };
 
 std::unique_ptr<NormalTractionBoundaryCondition<

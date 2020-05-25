@@ -42,7 +42,7 @@ public:
         bool is_axially_symmetric,
         unsigned const integration_order,
         PythonBoundaryConditionData const& data)
-        : Base(e, is_axially_symmetric, integration_order), _data(data)
+        : Base(e, is_axially_symmetric, integration_order), data_(data)
     {
     }
 
@@ -55,17 +55,17 @@ public:
         using ShapeMatricesType =
             ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
         auto const fe = NumLib::createIsoparametricFiniteElement<
-            ShapeFunction, ShapeMatricesType>(Base::_element);
+            ShapeFunction, ShapeMatricesType>(Base::element_);
 
         unsigned const num_integration_points =
-            Base::_integration_method.getNumberOfPoints();
-        auto const num_var = _data.dof_table_bulk.getNumberOfVariables();
-        auto const num_nodes = Base::_element.getNumberOfNodes();
+            Base::integration_method_.getNumberOfPoints();
+        auto const num_var = data_.dof_table_bulk.getNumberOfVariables();
+        auto const num_nodes = Base::element_.getNumberOfNodes();
         auto const num_comp_total =
-            _data.dof_table_bulk.getNumberOfComponents();
+            data_.dof_table_bulk.getNumberOfComponents();
 
         auto const& bulk_node_ids_map =
-            *_data.boundary_mesh.getProperties()
+            *data_.boundary_mesh.getProperties()
                  .template getPropertyVector<std::size_t>(
                      "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
@@ -74,7 +74,7 @@ public:
         for (int var = 0; var < num_var; ++var)
         {
             auto const num_comp =
-                _data.dof_table_bulk.getNumberOfVariableComponents(var);
+                data_.dof_table_bulk.getNumberOfVariableComponents(var);
             for (int comp = 0; comp < num_comp; ++comp)
             {
                 auto const global_component =
@@ -84,15 +84,15 @@ public:
                      ++element_node_id)
                 {
                     auto const* const node =
-                        Base::_element.getNode(element_node_id);
+                        Base::element_.getNode(element_node_id);
                     auto const boundary_node_id = node->getID();
                     auto const bulk_node_id =
                         bulk_node_ids_map[boundary_node_id];
-                    MeshLib::Location loc{_data.bulk_mesh_id,
+                    MeshLib::Location loc{data_.bulk_mesh_id,
                                           MeshLib::MeshItemType::Node,
                                           bulk_node_id};
                     auto const dof_idx =
-                        _data.dof_table_bulk.getGlobalIndex(loc, var, comp);
+                        data_.dof_table_bulk.getGlobalIndex(loc, var, comp);
                     if (dof_idx == NumLib::MeshComponentMap::nop)
                     {
                         // TODO extend Python BC to mixed FEM ansatz functions
@@ -119,15 +119,15 @@ public:
 
         for (unsigned ip = 0; ip < num_integration_points; ip++)
         {
-            auto const& N = Base::_ns_and_weights[ip].N;
-            auto const& w = Base::_ns_and_weights[ip].weight;
+            auto const& N = Base::ns_and_weights_[ip].N;
+            auto const& w = Base::ns_and_weights_[ip].weight;
             auto const coords = fe.interpolateCoordinates(N);
             prim_vars =
                 N * primary_variables_mat;  // Assumption: all primary variables
                                             // have same shape functions.
             auto const flag_flux_dFlux =
-                _data.bc_object->getFlux(t, coords, prim_vars_data);
-            if (!_data.bc_object->isOverriddenNatural())
+                data_.bc_object->getFlux(t, coords, prim_vars_data);
+            if (!data_.bc_object->isOverriddenNatural())
             {
                 // getFlux() is not overridden in Python, so we can skip the
                 // whole BC assembly (i.e., for all boundary elements).
@@ -174,7 +174,7 @@ public:
         }
 
         auto const& indices_specific_component =
-            dof_table_boundary(boundary_element_id, _data.global_component_id)
+            dof_table_boundary(boundary_element_id, data_.global_component_id)
                 .rows;
         b.add(indices_specific_component, local_rhs);
 
@@ -190,7 +190,7 @@ public:
     }
 
 private:
-    PythonBoundaryConditionData const& _data;
+    PythonBoundaryConditionData const& data_;
 };
 
 }  // namespace ProcessLib

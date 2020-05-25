@@ -77,7 +77,7 @@ public:
                                     std::vector<GlobalVector*> const& x,
                                     const int iteration);
 
-    std::vector<double> getFixedOutputTimes() {return _fixed_output_times;}
+    std::vector<double> getFixedOutputTimes() {return fixed_output_times_;}
 
 private:
     struct OutputFile;
@@ -87,26 +87,26 @@ private:
                         double const t) const;
 
 private:
-    std::string const _output_directory;
-    std::string const _output_file_prefix;
-    std::string const _output_file_suffix;
+    std::string const output_directory_;
+    std::string const output_file_prefix_;
+    std::string const output_file_suffix_;
 
     //! Enables or disables zlib-compression of the output files.
-    bool const _output_file_compression;
+    bool const output_file_compression_;
 
     //! Chooses vtk's data mode for output following the enumeration given in
     /// the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
     /// documentation http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
-    int const _output_file_data_mode;
-    bool const _output_nonlinear_iteration_results;
+    int const output_file_data_mode_;
+    bool const output_nonlinear_iteration_results_;
 
     //! Describes after which timesteps to write output.
-    std::vector<PairRepeatEachSteps> _repeats_each_steps;
+    std::vector<PairRepeatEachSteps> repeats_each_steps_;
 
     //! Given times that steps have to reach.
-    std::vector<double> _fixed_output_times;
+    std::vector<double> fixed_output_times_;
 
-    std::multimap<Process const*, MeshLib::IO::PVDFile> _process_to_pvd_file;
+    std::multimap<Process const*, MeshLib::IO::PVDFile> process_to_pvd_file_;
 
     /**
      * Get the address of a PVDFile from corresponding to the given process.
@@ -122,9 +122,9 @@ private:
     //! Determines if there should be output at the given \c timestep or \c t.
     bool shallDoOutput(int timestep, double const t);
 
-    OutputDataSpecification const _output_data_specification;
-    std::vector<std::string> _mesh_names_for_output;
-    std::vector<std::unique_ptr<MeshLib::Mesh>> const& _meshes;
+    OutputDataSpecification const output_data_specification_;
+    std::vector<std::string> mesh_names_for_output_;
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes_;
 };
 
 }  // namespace ProcessLib

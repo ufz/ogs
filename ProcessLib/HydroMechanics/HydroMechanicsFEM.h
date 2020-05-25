@@ -169,11 +169,11 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -182,11 +182,11 @@ public:
                               double const /*dt*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -201,7 +201,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N_u = _secondary_data.N_u[integration_point];
+        auto const& N_u = secondary_data_.N_u[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
@@ -341,9 +341,9 @@ private:
                                              std::size_t const component) const
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             if (component < 3)
             {  // xx, yy, zz components
@@ -362,9 +362,9 @@ private:
         std::vector<double>& cache, std::size_t const component) const
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             cache.push_back(ip_data.eps[component]);
         }
@@ -446,7 +446,7 @@ private:
     getMaterialStateVariablesAt(unsigned integration_point) const override;
 
 private:
-    HydroMechanicsProcessData<DisplacementDim>& _process_data;
+    HydroMechanicsProcessData<DisplacementDim>& process_data_;
 
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
@@ -454,14 +454,14 @@ private:
         IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
                              ShapeMatricesTypePressure, DisplacementDim,
                              ShapeFunctionDisplacement::NPOINTS>;
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> ip_data_;
 
-    IntegrationMethod _integration_method;
-    MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
+    IntegrationMethod integration_method_;
+    MeshLib::Element const& element_;
+    bool const is_axially_symmetric_;
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
-        _secondary_data;
+        secondary_data_;
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

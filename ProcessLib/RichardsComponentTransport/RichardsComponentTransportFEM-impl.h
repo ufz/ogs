@@ -23,9 +23,9 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
         bool is_axially_symmetric,
         unsigned const integration_order,
         RichardsComponentTransportProcessData const& process_data)
-    : _element_id(element.getID()),
-      _process_data(process_data),
-      _integration_method(integration_order)
+    : element_id_(element.getID()),
+      process_data_(process_data),
+      integration_method_(integration_order)
 {
     // This assertion is valid only if all nodal d.o.f. use the same shape
     // matrices.
@@ -33,24 +33,24 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     (void)local_matrix_size;
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-    _ip_data.reserve(n_integration_points);
+        integration_method_.getNumberOfPoints();
+    ip_data_.reserve(n_integration_points);
 
     auto const shape_matrices =
         initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod,
                           GlobalDim>(element, is_axially_symmetric,
-                                     _integration_method);
+                                     integration_method_);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sm = shape_matrices[ip];
         double const integration_factor = sm.integralMeasure * sm.detJ;
-        _ip_data.emplace_back(
+        ip_data_.emplace_back(
             sm.N, sm.dNdx,
-            _integration_method.getWeightedPoint(ip).getWeight() *
+            integration_method_.getWeightedPoint(ip).getWeight() *
                 integration_factor,
             sm.N.transpose() * sm.N * integration_factor *
-                _integration_method.getWeightedPoint(ip).getWeight());
+                integration_method_.getWeightedPoint(ip).getWeight());
     }
 }
 
@@ -75,15 +75,15 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
         local_b_data, local_matrix_size);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element_id);
+    pos.setElementID(element_id_);
 
     auto p_nodal_values = Eigen::Map<const NodalVectorType>(
         &local_x[pressure_index], pressure_size);
 
-    auto const& b = _process_data.specific_body_force;
+    auto const& b = process_data_.specific_body_force;
 
     MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
@@ -107,10 +107,10 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
         // \todo the argument to getValue() has to be changed for non
         // constant storage model
         auto const specific_storage =
-            _process_data.porous_media_properties.getSpecificStorage(t, pos)
+            process_data_.porous_media_properties.getSpecificStorage(t, pos)
                 .getValue(0.0);
 
-        auto const& ip_data = _ip_data[ip];
+        auto const& ip_data = ip_data_[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;
@@ -121,53 +121,53 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
         NumLib::shapeFunctionInterpolate(local_x, N, C_int_pt, p_int_pt);
 
         double const pc_int_pt = -p_int_pt;
-        double const Sw = _process_data.porous_media_properties
+        double const Sw = process_data_.porous_media_properties
                               .getCapillaryPressureSaturationModel(t, pos)
                               .getSaturation(pc_int_pt);
 
         double const dSw_dpc =
-            1. / _process_data.porous_media_properties
+            1. / process_data_.porous_media_properties
                      .getCapillaryPressureSaturationModel(t, pos)
                      .getdPcdS(Sw);
 
         // \todo the first argument has to be changed for non constant
         // porosity model
         auto const porosity =
-            _process_data.porous_media_properties.getPorosity(t, pos).getValue(
+            process_data_.porous_media_properties.getPorosity(t, pos).getValue(
                 t, pos, 0.0, C_int_pt);
 
         auto const retardation_factor =
-            _process_data.retardation_factor(t, pos)[0];
+            process_data_.retardation_factor(t, pos)[0];
 
         auto const solute_dispersivity_transverse =
-            _process_data.solute_dispersivity_transverse(t, pos)[0];
+            process_data_.solute_dispersivity_transverse(t, pos)[0];
         auto const solute_dispersivity_longitudinal =
-            _process_data.solute_dispersivity_longitudinal(t, pos)[0];
+            process_data_.solute_dispersivity_longitudinal(t, pos)[0];
 
         // Use the fluid density model to compute the density
         vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::C)] =
             C_int_pt;
         vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] =
             p_int_pt;
-        auto const density = _process_data.fluid_properties->getValue(
+        auto const density = process_data_.fluid_properties->getValue(
             MaterialLib::Fluid::FluidPropertyType::Density, vars);
-        auto const decay_rate = _process_data.decay_rate(t, pos)[0];
+        auto const decay_rate = process_data_.decay_rate(t, pos)[0];
         auto const molecular_diffusion_coefficient =
-            _process_data.molecular_diffusion_coefficient(t, pos)[0];
+            process_data_.molecular_diffusion_coefficient(t, pos)[0];
 
-        auto const& K = _process_data.porous_media_properties
+        auto const& K = process_data_.porous_media_properties
                             .getIntrinsicPermeability(t, pos)
                             .getValue(t, pos, 0.0, 0.0);
-        auto const k_rel = _process_data.porous_media_properties
+        auto const k_rel = process_data_.porous_media_properties
                                 .getRelativePermeability(t, pos)
                                 .getValue(Sw);
         // Use the viscosity model to compute the viscosity
-        auto const mu = _process_data.fluid_properties->getValue(
+        auto const mu = process_data_.fluid_properties->getValue(
             MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
         auto const K_times_k_rel_over_mu = K * (k_rel / mu);
 
         GlobalDimVectorType const velocity =
-            _process_data.has_gravity
+            process_data_.has_gravity
                 ? GlobalDimVectorType(-K_times_k_rel_over_mu *
                                       (dNdx * p_nodal_values - density * b))
                 : GlobalDimVectorType(-K_times_k_rel_over_mu * dNdx *
@@ -202,7 +202,7 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
                           porosity * dSw_dpc) *
                          ip_data.mass_operator;
 
-        if (_process_data.has_gravity)
+        if (process_data_.has_gravity)
         {
             Bp += w * density * dNdx.transpose() * K_times_k_rel_over_mu * b;
         }
@@ -222,11 +222,11 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     constexpr int process_id = 0;  // monolithic scheme
     auto const indices =
-        NumLib::getIndices(_element_id, *dof_table[process_id]);
+        NumLib::getIndices(element_id_, *dof_table[process_id]);
     assert(!indices.empty());
     auto const local_x = x[process_id]->get(indices);
 
@@ -236,7 +236,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
         cache, GlobalDim, n_integration_points);
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element_id);
+    pos.setElementID(element_id_);
 
     MaterialLib::Fluid::FluidProperty::ArrayType vars;
 
@@ -245,16 +245,16 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        auto const& ip_data = _ip_data[ip];
+        auto const& ip_data = ip_data_[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
 
         pos.setIntegrationPoint(ip);
 
-        auto const& K = _process_data.porous_media_properties
+        auto const& K = process_data_.porous_media_properties
                             .getIntrinsicPermeability(t, pos)
                             .getValue(t, pos, 0.0, 0.0);
-        auto const mu = _process_data.fluid_properties->getValue(
+        auto const mu = process_data_.fluid_properties->getValue(
             MaterialLib::Fluid::FluidPropertyType::Viscosity, vars);
 
         double C_int_pt = 0.0;
@@ -263,25 +263,25 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // saturation
         double const pc_int_pt = -p_int_pt;
-        double const Sw = _process_data.porous_media_properties
+        double const Sw = process_data_.porous_media_properties
                               .getCapillaryPressureSaturationModel(t, pos)
                               .getSaturation(pc_int_pt);
 
-        auto const k_rel = _process_data.porous_media_properties
+        auto const k_rel = process_data_.porous_media_properties
                                 .getRelativePermeability(t, pos)
                                 .getValue(Sw);
 
         cache_mat.col(ip).noalias() = -dNdx * p_nodal_values;
-        if (_process_data.has_gravity)
+        if (process_data_.has_gravity)
         {
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::C)] = C_int_pt;
             vars[static_cast<int>(
                 MaterialLib::Fluid::PropertyVariableType::p)] = p_int_pt;
 
-            auto const rho_w = _process_data.fluid_properties->getValue(
+            auto const rho_w = process_data_.fluid_properties->getValue(
                 MaterialLib::Fluid::FluidPropertyType::Density, vars);
-            auto const b = _process_data.specific_body_force;
+            auto const b = process_data_.specific_body_force;
             // here it is assumed that the vector b is directed 'downwards'
             cache_mat.col(ip).noalias() += rho_w * b;
         }
@@ -296,7 +296,7 @@ Eigen::Map<const Eigen::RowVectorXd>
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::getShapeMatrix(
     const unsigned integration_point) const
 {
-    auto const& N = _ip_data[integration_point].N;
+    auto const& N = ip_data_[integration_point].N;
 
     // assumes N is stored contiguously in memory
     return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -313,14 +313,14 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
         std::vector<double>& cache) const
 {
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element_id);
+    pos.setElementID(element_id_);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     constexpr int process_id = 0;  // monolithic scheme
     auto const indices =
-        NumLib::getIndices(_element_id, *dof_table[process_id]);
+        NumLib::getIndices(element_id_, *dof_table[process_id]);
     assert(!indices.empty());
     auto const local_x = x[process_id]->get(indices);
 
@@ -330,7 +330,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        auto const& ip_data = _ip_data[ip];
+        auto const& ip_data = ip_data_[ip];
         auto const& N = ip_data.N;
 
         double C_int_pt = 0.0;
@@ -339,7 +339,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // saturation
         double const pc_int_pt = -p_int_pt;
-        double const Sw = _process_data.porous_media_properties
+        double const Sw = process_data_.porous_media_properties
                               .getCapillaryPressureSaturationModel(t, pos)
                               .getSaturation(pc_int_pt);
         cache_vec[ip] = Sw;

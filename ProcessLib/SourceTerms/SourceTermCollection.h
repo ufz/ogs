@@ -21,7 +21,7 @@ public:
     explicit SourceTermCollection(
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters)
-        : _parameters(parameters)
+        : parameters_(parameters)
     {
     }
 
@@ -35,9 +35,9 @@ public:
         unsigned const integration_order);
 
 private:
-    std::vector<std::unique_ptr<SourceTerm>> _source_terms;
+    std::vector<std::unique_ptr<SourceTerm>> source_terms_;
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-        _parameters;
+        parameters_;
 };
 
 }  // namespace ProcessLib

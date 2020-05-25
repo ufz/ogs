@@ -66,7 +66,7 @@ public:
     // TODO: get rid of
     double getReactionDampingFactor() const override
     {
-        return _reaction_damping_factor;
+        return reaction_damping_factor_;
     }
 
 private:
@@ -78,10 +78,10 @@ private:
     double estimateAdsorptionEquilibrium(const double p_V0,
                                          const double C0) const;
 
-    double _reaction_damping_factor = 1.0;
-    std::vector<bool> _bounds_violation;
+    double reaction_damping_factor_ = 1.0;
+    std::vector<bool> bounds_violation_;
 
-    TESLocalAssemblerData const& _d;
+    TESLocalAssemblerData const& d_;
 };
 
 class TESFEMReactionAdaptorInert final : public TESFEMReactionAdaptor
@@ -92,7 +92,7 @@ public:
     ReactionRate initReaction(const unsigned int_pt) override;
 
 private:
-    TESLocalAssemblerData const& _d;
+    TESLocalAssemblerData const& d_;
 };
 
 class TESFEMReactionAdaptorSinusoidal final : public TESFEMReactionAdaptor
@@ -103,7 +103,7 @@ public:
     ReactionRate initReaction(const unsigned /*int_pt*/) override;
 
 private:
-    TESLocalAssemblerData const& _d;
+    TESLocalAssemblerData const& d_;
 };
 
 class TESFEMReactionAdaptorCaOH2 final : public TESFEMReactionAdaptor
@@ -116,10 +116,10 @@ public:
 private:
     using Data = TESLocalAssemblerData;
     using React = Adsorption::ReactionCaOH2;
-    Data const& _d;
-    React& _react;
+    Data const& d_;
+    React& react_;
 
-    std::unique_ptr<MathLib::ODE::ODESolver<1>> _ode_solver;
+    std::unique_ptr<MathLib::ODE::ODESolver<1>> ode_solver_;
 
     static bool odeRhs(const double /*t*/,
                        MathLib::ODE::MappedConstVector<1> const y,

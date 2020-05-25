@@ -62,10 +62,10 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     : SmallDeformationLocalAssemblerInterface(
           n_variables * ShapeFunction::NPOINTS * DisplacementDim,
           dofIndex_to_localIndex),
-      _process_data(process_data),
-      _integration_method(integration_order),
-      _element(e),
-      _is_axially_symmetric(is_axially_symmetric)
+      process_data_(process_data),
+      integration_method_(integration_order),
+      element_(e),
+      is_axially_symmetric_(is_axially_symmetric)
 {
     std::vector<
         ShapeMatrices,
@@ -74,53 +74,53 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
                                            ShapeMatricesType,
                                            IntegrationMethod,
                                            DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+            e, is_axially_symmetric, integration_method_);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
-    _secondary_data.N.resize(n_integration_points);
+    ip_data_.reserve(n_integration_points);
+    secondary_data_.N.resize(n_integration_points);
 
     auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
-        _process_data.solid_materials, _process_data.material_ids, e.getID());
+        process_data_.solid_materials, process_data_.material_ids, e.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        _ip_data.emplace_back(solid_material);
-        auto& ip_data = _ip_data[ip];
+        ip_data_.emplace_back(solid_material);
+        auto& ip_data = ip_data_[ip];
         auto const& sm = shape_matrices[ip];
         ip_data.N = sm.N;
         ip_data.dNdx = sm.dNdx;
         ip_data.integration_weight =
-            _integration_method.getWeightedPoint(ip).getWeight() *
+            integration_method_.getWeightedPoint(ip).getWeight() *
             sm.integralMeasure * sm.detJ;
 
         // Initialize current time step values
         static const int kelvin_vector_size =
             MathLib::KelvinVector::KelvinVectorDimensions<
                 DisplacementDim>::value;
-        ip_data._sigma.setZero(kelvin_vector_size);
-        ip_data._eps.setZero(kelvin_vector_size);
+        ip_data.sigma_.setZero(kelvin_vector_size);
+        ip_data.eps_.setZero(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
-        ip_data._sigma_prev.resize(kelvin_vector_size);
-        ip_data._eps_prev.resize(kelvin_vector_size);
+        ip_data.sigma_prev_.resize(kelvin_vector_size);
+        ip_data.eps_prev_.resize(kelvin_vector_size);
 
-        ip_data._C.resize(kelvin_vector_size, kelvin_vector_size);
+        ip_data.C_.resize(kelvin_vector_size, kelvin_vector_size);
 
-        _secondary_data.N[ip] = sm.N;
+        secondary_data_.N[ip] = sm.N;
     }
 
-    for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
+    for (auto fid : process_data.vec_ele_connected_fractureIDs_[e.getID()])
     {
-        _fracID_to_local.insert({fid, _fracture_props.size()});
-        _fracture_props.push_back(&_process_data.fracture_properties[fid]);
+        fracID_to_local_.insert({fid, fracture_props_.size()});
+        fracture_props_.push_back(&process_data_.fracture_properties[fid]);
     }
 
-    for (auto jid : process_data._vec_ele_connected_junctionIDs[e.getID()])
+    for (auto jid : process_data.vec_ele_connected_junctionIDs_[e.getID()])
     {
-        _junction_props.push_back(&_process_data.junction_properties[jid]);
+        junction_props_.push_back(&process_data_.junction_properties[jid]);
     }
 }
 
@@ -133,11 +133,11 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
                                            Eigen::VectorXd& local_b,
                                            Eigen::MatrixXd& local_J)
 {
-    assert(_element.getDimension() == DisplacementDim);
+    assert(element_.getDimension() == DisplacementDim);
 
     auto const N_DOF_PER_VAR = ShapeFunction::NPOINTS * DisplacementDim;
-    auto const n_fractures = _fracture_props.size();
-    auto const n_junctions = _junction_props.size();
+    auto const n_fractures = fracture_props_.size();
+    auto const n_junctions = junction_props_.size();
     auto const n_enrich_var = n_fractures + n_junctions;
 
     using BlockVectorType =
@@ -203,30 +203,30 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
     // integration
     //------------------------------------------------
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        auto& ip_data = _ip_data[ip];
-        auto const& w = _ip_data[ip].integration_weight;
+        auto& ip_data = ip_data_[ip];
+        auto const& w = ip_data_[ip].integration_weight;
 
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
 
         // levelset functions
         Eigen::Vector3d const ip_physical_coords(
-            computePhysicalCoordinates(_element, N).getCoords());
+            computePhysicalCoordinates(element_, N).getCoords());
         std::vector<double> const levelsets(
-            uGlobalEnrichments(_fracture_props, _junction_props,
-                               _fracID_to_local, ip_physical_coords));
+            uGlobalEnrichments(fracture_props_, junction_props_,
+                               fracID_to_local_, ip_physical_coords));
 
-        // u = u^hat + sum_i(enrich^br_i(x) * [u]_i) + sum_i(enrich^junc_i(x) *
-        // [u]_i)
+        // u = u^hat + sum_i(enrich^br_i(x) * [u]i_) + sum_i(enrich^junc_i(x) *
+        // [u]i_)
         NodalDisplacementVectorType nodal_total_u = nodal_u;
         for (unsigned i = 0; i < n_enrich_var; i++)
         {
@@ -234,27 +234,27 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         }
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
+            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(element_,
                                                                      N);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, _is_axially_symmetric);
+                dNdx, N, x_coord, is_axially_symmetric_);
 
         // strain, stress
-        auto const& eps_prev = ip_data._eps_prev;
-        auto const& sigma_prev = ip_data._sigma_prev;
+        auto const& eps_prev = ip_data.eps_prev_;
+        auto const& sigma_prev = ip_data.sigma_prev_;
 
-        auto& eps = ip_data._eps;
-        auto& sigma = ip_data._sigma;
-        auto& state = ip_data._material_state_variables;
+        auto& eps = ip_data.eps_;
+        auto& sigma = ip_data.sigma_;
+        auto& state = ip_data.material_state_variables_;
 
         eps.noalias() = B * nodal_total_u;
 
-        auto&& solution = _ip_data[ip]._solid_material.integrateStress(
+        auto&& solution = ip_data_[ip].solid_material_.integrateStress(
             t, x_position, dt, eps_prev, eps, sigma_prev, *state,
-            _process_data._reference_temperature);
+            process_data_.reference_temperature_);
 
         if (!solution)
         {
@@ -311,35 +311,35 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
     Eigen::VectorXd ele_strain = Eigen::VectorXd::Zero(n);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
 
-        ele_stress += ip_data._sigma;
-        ele_strain += ip_data._eps;
+        ele_stress += ip_data.sigma_;
+        ele_strain += ip_data.eps_;
     }
     ele_stress /= n_integration_points;
     ele_strain /= n_integration_points;
 
-    (*_process_data._mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
-    (*_process_data._mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
-    (*_process_data._mesh_prop_stress_zz)[_element.getID()] = ele_stress[2];
-    (*_process_data._mesh_prop_stress_xy)[_element.getID()] = ele_stress[3];
+    (*process_data_.mesh_prop_stress_xx_)[element_.getID()] = ele_stress[0];
+    (*process_data_.mesh_prop_stress_yy_)[element_.getID()] = ele_stress[1];
+    (*process_data_.mesh_prop_stress_zz_)[element_.getID()] = ele_stress[2];
+    (*process_data_.mesh_prop_stress_xy_)[element_.getID()] = ele_stress[3];
     if (DisplacementDim == 3)
     {
-        (*_process_data._mesh_prop_stress_yz)[_element.getID()] = ele_stress[4];
-        (*_process_data._mesh_prop_stress_xz)[_element.getID()] = ele_stress[5];
+        (*process_data_.mesh_prop_stress_yz_)[element_.getID()] = ele_stress[4];
+        (*process_data_.mesh_prop_stress_xz_)[element_.getID()] = ele_stress[5];
     }
 
-    (*_process_data._mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
-    (*_process_data._mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
-    (*_process_data._mesh_prop_strain_zz)[_element.getID()] = ele_strain[2];
-    (*_process_data._mesh_prop_strain_xy)[_element.getID()] = ele_strain[3];
+    (*process_data_.mesh_prop_strain_xx_)[element_.getID()] = ele_strain[0];
+    (*process_data_.mesh_prop_strain_yy_)[element_.getID()] = ele_strain[1];
+    (*process_data_.mesh_prop_strain_zz_)[element_.getID()] = ele_strain[2];
+    (*process_data_.mesh_prop_strain_xy_)[element_.getID()] = ele_strain[3];
     if (DisplacementDim == 3)
     {
-        (*_process_data._mesh_prop_strain_yz)[_element.getID()] = ele_strain[4];
-        (*_process_data._mesh_prop_strain_xz)[_element.getID()] = ele_strain[5];
+        (*process_data_.mesh_prop_strain_yz_)[element_.getID()] = ele_strain[4];
+        (*process_data_.mesh_prop_strain_xz_)[element_.getID()] = ele_strain[5];
     }
 }
 

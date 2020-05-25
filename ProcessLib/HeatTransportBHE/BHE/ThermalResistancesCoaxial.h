@@ -24,7 +24,7 @@ struct AdvectiveThermalResistanceCoaxial
 {
     double const inner_pipe_coaxial;
     double const a_annulus;
-    double const b_annulus;
+    double const bannulus_;
 };
 
 struct PipeWallThermalResistanceCoaxial

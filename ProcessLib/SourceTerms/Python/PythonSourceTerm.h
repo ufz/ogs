@@ -57,16 +57,16 @@ public:
 
 private:
     //! Auxiliary data.
-    PythonSourceTermData _source_term_data;
+    PythonSourceTermData source_term_data_;
 
     //! Local assemblers for all elements of the source term mesh.
     std::vector<std::unique_ptr<PythonSourceTermLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     //! Whether or not to flush standard output before and after each call to
     //! Python code. Ensures right order of output messages and therefore
     //! simplifies debugging.
-    bool const _flush_stdout;
+    bool const flush_stdout_;
 };
 
 }  // namespace Python

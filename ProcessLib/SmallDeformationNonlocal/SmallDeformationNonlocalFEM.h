@@ -79,26 +79,26 @@ public:
         bool const is_axially_symmetric,
         unsigned const integration_order,
         SmallDeformationNonlocalProcessData<DisplacementDim>& process_data)
-        : _process_data(process_data),
-          _integration_method(integration_order),
-          _element(e),
-          _is_axially_symmetric(is_axially_symmetric)
+        : process_data_(process_data),
+          integration_method_(integration_order),
+          element_(e),
+          is_axially_symmetric_(is_axially_symmetric)
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
-        _ip_data.reserve(n_integration_points);
-        _secondary_data.N.resize(n_integration_points);
+        ip_data_.reserve(n_integration_points);
+        secondary_data_.N.resize(n_integration_points);
 
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, DisplacementDim>(
-                e, is_axially_symmetric, _integration_method);
+                e, is_axially_symmetric, integration_method_);
 
         auto& solid_material =
             MaterialLib::Solids::selectSolidConstitutiveRelation(
-                _process_data.solid_materials,
-                _process_data.material_ids,
+                process_data_.solid_materials,
+                process_data_.material_ids,
                 e.getID());
         auto* ehlers_solid_material = dynamic_cast<
             MaterialLib::Solids::Ehlers::SolidEhlers<DisplacementDim>*>(
@@ -113,11 +113,11 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(*ehlers_solid_material);
-            auto& ip_data = _ip_data[ip];
+            ip_data_.emplace_back(*ehlers_solid_material);
+            auto& ip_data = ip_data_[ip];
             auto const& sm = shape_matrices[ip];
-            _ip_data[ip].integration_weight =
-                _integration_method.getWeightedPoint(ip).getWeight() *
+            ip_data_[ip].integration_weight =
+                integration_method_.getWeightedPoint(ip).getWeight() *
                 sm.integralMeasure * sm.detJ;
 
             ip_data.N = sm.N;
@@ -137,7 +137,7 @@ public:
                 MathLib::KelvinVector::KelvinVectorDimensions<
                     DisplacementDim>::value);
 
-            _secondary_data.N[ip] = shape_matrices[ip].N;
+            secondary_data_.N[ip] = shape_matrices[ip].N;
 
             ip_data.coordinates = getSingleIntegrationPointCoordinates(ip);
         }
@@ -148,13 +148,13 @@ public:
                                     int const integration_order) override
     {
         if (integration_order !=
-            static_cast<int>(_integration_method.getIntegrationOrder()))
+            static_cast<int>(integration_method_.getIntegrationOrder()))
         {
             OGS_FATAL(
                 "Setting integration point initial conditions; The integration "
                 "order of the local assembler for element {:d} is different "
                 "from the integration order in the initial condition.",
-                _element.getID());
+                element_.getID());
         }
 
         if (name == "sigma_ip")
@@ -164,7 +164,7 @@ public:
 
         if (name == "kappa_d_ip")
         {
-            return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+            return ProcessLib::setIntegrationPointScalarData(values, ip_data_,
                                                              &IpData::kappa_d);
         }
 
@@ -189,7 +189,7 @@ public:
 
     double alpha_0(double const distance2) const
     {
-        double const internal_length2 = _process_data.internal_length_squared;
+        double const internal_length2 = process_data_.internal_length_squared;
         return (distance2 > internal_length2)
                    ? 0
                    : (1 - distance2 / (internal_length2)) *
@@ -203,10 +203,10 @@ public:
                 DisplacementDim>>> const& local_assemblers) override
     {
         auto const search_element_ids = MeshLib::findElementsWithinRadius(
-            _element, _process_data.internal_length_squared);
+            element_, process_data_.internal_length_squared);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         std::vector<double> distances;  // Cache for ip-ip distances.
         //
@@ -220,7 +220,7 @@ public:
             // Collect the integration points.
             //
 
-            auto const& xyz = _ip_data[k].coordinates;
+            auto const& xyz = ip_data_[k].coordinates;
 
             // For all neighbors of element
             for (auto const search_element_id : search_element_ids)
@@ -229,24 +229,24 @@ public:
                 la->getIntegrationPointCoordinates(xyz, distances);
                 for (int ip = 0; ip < static_cast<int>(distances.size()); ++ip)
                 {
-                    if (distances[ip] >= _process_data.internal_length_squared)
+                    if (distances[ip] >= process_data_.internal_length_squared)
                     {
                         continue;
                     }
                     // save into current ip_k
-                    _ip_data[k].non_local_assemblers.push_back(
+                    ip_data_[k].non_local_assemblers.push_back(
                         {la->getIPDataPtr(ip),
                          std::numeric_limits<double>::quiet_NaN(),
                          distances[ip]});
                 }
             }
-            if (_ip_data[k].non_local_assemblers.size() == 0)
+            if (ip_data_[k].non_local_assemblers.size() == 0)
             {
                 OGS_FATAL("no neighbours found!");
             }
 
             double a_k_sum_m = 0;
-            for (auto const& tuple : _ip_data[k].non_local_assemblers)
+            for (auto const& tuple : ip_data_[k].non_local_assemblers)
             {
                 double const distance2_m = tuple.distance2;
 
@@ -259,7 +259,7 @@ public:
             // Calculate alpha_kl =
             //       alpha_0(|x_k - x_l|) / int_{m \in ip} alpha_0(|x_k - x_m|)
             //
-            for (auto& tuple : _ip_data[k].non_local_assemblers)
+            for (auto& tuple : ip_data_[k].non_local_assemblers)
             {
                 double const distance2_l = tuple.distance2;
                 double const a_kl = alpha_0(distance2_l) / a_k_sum_m;
@@ -275,10 +275,10 @@ public:
     Eigen::Vector3d getSingleIntegrationPointCoordinates(
         int integration_point) const
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         Eigen::Vector3d xyz = Eigen::Vector3d::Zero();  // Resulting coordinates
-        auto* nodes = _element.getNodes();
+        auto* nodes = element_.getNodes();
         for (int i = 0; i < N.size(); ++i)
         {
             Eigen::Map<Eigen::Vector3d const> node_coordinates{
@@ -296,13 +296,13 @@ public:
         std::vector<double>& distances) const override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         distances.resize(n_integration_points);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& xyz = _ip_data[ip].coordinates;
+            auto const& xyz = ip_data_[ip].coordinates;
             distances[ip] = (xyz - coords).squaredNorm();
         }
     }
@@ -324,33 +324,33 @@ public:
                      std::vector<double> const& local_x) override
     {
         auto const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
+        x_position.setElementID(element_.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
 
-            auto const& N = _ip_data[ip].N;
-            auto const& dNdx = _ip_data[ip].dNdx;
+            auto const& N = ip_data_[ip].N;
+            auto const& dNdx = ip_data_[ip].dNdx;
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    _element, N);
+                    element_, N);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
-                                                     _is_axially_symmetric);
-            auto const& eps_prev = _ip_data[ip].eps_prev;
-            auto const& sigma_prev = _ip_data[ip].sigma_prev;
+                                                     is_axially_symmetric_);
+            auto const& eps_prev = ip_data_[ip].eps_prev;
+            auto const& sigma_prev = ip_data_[ip].sigma_prev;
 
-            auto& eps = _ip_data[ip].eps;
-            auto& sigma = _ip_data[ip].sigma;
-            auto& C = _ip_data[ip].C;
-            auto& state = _ip_data[ip].material_state_variables;
-            double const& damage_prev = _ip_data[ip].damage_prev;
+            auto& eps = ip_data_[ip].eps;
+            auto& sigma = ip_data_[ip].sigma;
+            auto& C = ip_data_[ip].C;
+            auto& state = ip_data_[ip].material_state_variables;
+            double const& damage_prev = ip_data_[ip].damage_prev;
 
             eps.noalias() =
                 B *
@@ -372,9 +372,9 @@ public:
                 (1. - damage_prev);  // damage_prev is in [0,1) range. See
                                      // calculateDamage() function.
 
-            auto&& solution = _ip_data[ip].solid_material.integrateStress(
+            auto&& solution = ip_data_[ip].solid_material.integrateStress(
                 t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
-                _process_data.reference_temperature);
+                process_data_.reference_temperature);
 
             if (!solution)
             {
@@ -387,7 +387,7 @@ public:
             {
                 auto const& ehlers_material =
                     static_cast<MaterialLib::Solids::Ehlers::SolidEhlers<
-                        DisplacementDim> const&>(_ip_data[ip].solid_material);
+                        DisplacementDim> const&>(ip_data_[ip].solid_material);
                 auto const damage_properties =
                     ehlers_material.evaluatedDamageProperties(t, x_position);
                 auto const material_properties =
@@ -397,22 +397,22 @@ public:
                 auto& state_vars =
                     static_cast<MaterialLib::Solids::Ehlers::StateVariables<
                         DisplacementDim>&>(
-                        *_ip_data[ip].material_state_variables);
+                        *ip_data_[ip].material_state_variables);
 
                 double const eps_p_eff_diff =
                     state_vars.eps_p.eff - state_vars.eps_p_prev.eff;
 
-                _ip_data[ip].kappa_d = calculateDamageKappaD<DisplacementDim>(
-                    eps_p_eff_diff, sigma, _ip_data[ip].kappa_d_prev,
+                ip_data_[ip].kappa_d = calculateDamageKappaD<DisplacementDim>(
+                    eps_p_eff_diff, sigma, ip_data_[ip].kappa_d_prev,
                     damage_properties.h_d, material_properties);
 
-                if (!_ip_data[ip].active_self)
+                if (!ip_data_[ip].active_self)
                 {
-                    _ip_data[ip].active_self |= _ip_data[ip].kappa_d > 0;
-                    if (_ip_data[ip].active_self)
+                    ip_data_[ip].active_self |= ip_data_[ip].kappa_d > 0;
+                    if (ip_data_[ip].active_self)
                     {
                         for (auto const& tuple :
-                             _ip_data[ip].non_local_assemblers)
+                             ip_data_[ip].non_local_assemblers)
                         {
                             // Activate the integration point.
                             tuple.ip_l_pointer->activated = true;
@@ -441,38 +441,38 @@ public:
             local_b_data, local_matrix_size);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
+        x_position.setElementID(element_.getID());
 
         // Non-local integration.
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
-            auto const& w = _ip_data[ip].integration_weight;
+            auto const& w = ip_data_[ip].integration_weight;
 
-            auto const& N = _ip_data[ip].N;
-            auto const& dNdx = _ip_data[ip].dNdx;
+            auto const& N = ip_data_[ip].N;
+            auto const& dNdx = ip_data_[ip].dNdx;
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    _element, N);
+                    element_, N);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
-                                                     _is_axially_symmetric);
+                                                     is_axially_symmetric_);
 
-            auto& sigma = _ip_data[ip].sigma;
-            auto& C = _ip_data[ip].C;
-            double& damage = _ip_data[ip].damage;
+            auto& sigma = ip_data_[ip].sigma;
+            auto& C = ip_data_[ip].C;
+            double& damage = ip_data_[ip].damage;
 
             {
                 double nonlocal_kappa_d = 0;
 
-                if (_ip_data[ip].active_self || _ip_data[ip].activated)
+                if (ip_data_[ip].active_self || ip_data_[ip].activated)
                 {
-                    for (auto const& tuple : _ip_data[ip].non_local_assemblers)
+                    for (auto const& tuple : ip_data_[ip].non_local_assemblers)
                     {
                         // Get local variable for the integration point l.
                         double const kappa_d_l = tuple.ip_l_pointer->kappa_d;
@@ -483,7 +483,7 @@ public:
 
                 auto const& ehlers_material =
                     static_cast<MaterialLib::Solids::Ehlers::SolidEhlers<
-                        DisplacementDim> const&>(_ip_data[ip].solid_material);
+                        DisplacementDim> const&>(ip_data_[ip].solid_material);
 
                 //
                 // Overnonlocal formulation
@@ -521,11 +521,11 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -533,11 +533,11 @@ public:
                               double const /*t*/, double const /*dt*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -553,13 +553,13 @@ public:
             local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
         int const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (int ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& dNdx = _ip_data[ip].dNdx;
-            auto const& d = _ip_data[ip].damage;
-            auto const& w = _ip_data[ip].integration_weight;
+            auto const& dNdx = ip_data_[ip].dNdx;
+            auto const& d = ip_data_[ip].damage;
+            auto const& w = ip_data_[ip].integration_weight;
 
             double const div_u =
                 Deformation::divergence<DisplacementDim,
@@ -571,7 +571,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -585,23 +585,23 @@ public:
             nodal_values, ShapeFunction::NPOINTS * DisplacementDim);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& w = _ip_data[ip].integration_weight;
+            auto const& w = ip_data_[ip].integration_weight;
 
-            auto const& N = _ip_data[ip].N;
-            auto const& dNdx = _ip_data[ip].dNdx;
+            auto const& N = ip_data_[ip].N;
+            auto const& dNdx = ip_data_[ip].dNdx;
 
             auto const x_coord =
                 interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    _element, N);
+                    element_, N);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
-                                                     _is_axially_symmetric);
-            auto& sigma = _ip_data[ip].sigma;
+                                                     is_axially_symmetric_);
+            auto& sigma = ip_data_[ip].sigma;
 
             local_b.noalias() += B.transpose() * sigma * w;
         }
@@ -616,9 +616,9 @@ public:
         std::vector<double>& cache) const override
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             cache.push_back(ip_data.free_energy_density);
         }
@@ -633,9 +633,9 @@ public:
         std::vector<double>& cache) const override
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             cache.push_back(*ip_data.eps_p_V);
         }
@@ -650,9 +650,9 @@ public:
         std::vector<double>& cache) const override
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             cache.push_back(*ip_data.eps_p_D_xx);
         }
@@ -667,7 +667,7 @@ public:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma, cache);
+            ip_data_, &IpData::sigma, cache);
     }
 
     std::vector<double> const& getIntPtEpsilon(
@@ -677,13 +677,13 @@ public:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::eps, cache);
+            ip_data_, &IpData::eps, cache);
     }
 
     std::size_t setSigma(double const* values)
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma);
+            values, ip_data_, &IpData::sigma);
     }
 
     // TODO (naumov) This method is same as getIntPtSigma but for arguments and
@@ -692,12 +692,12 @@ public:
     std::vector<double> getSigma() const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma);
+            ip_data_, &IpData::sigma);
     }
 
     void setKappaD(double value)
     {
-        for (auto& ip_data : _ip_data)
+        for (auto& ip_data : ip_data_)
         {
             ip_data.kappa_d = value;
         }
@@ -705,14 +705,14 @@ public:
     std::vector<double> getKappaD() const override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         std::vector<double> result_values;
         result_values.resize(n_integration_points);
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            result_values[ip] = _ip_data[ip].kappa_d;
+            result_values[ip] = ip_data_[ip].kappa_d;
         }
 
         return result_values;
@@ -725,19 +725,19 @@ public:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointScalarData(
-            _ip_data, &IpData::damage, cache);
+            ip_data_, &IpData::damage, cache);
     }
 
     unsigned getNumberOfIntegrationPoints() const override
     {
-        return _integration_method.getNumberOfPoints();
+        return integration_method_.getNumberOfPoints();
     }
 
     typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(int const integration_point) const override
     {
-        return *_ip_data[integration_point].material_state_variables;
+        return *ip_data_[integration_point].material_state_variables;
     }
 
 private:
@@ -745,9 +745,9 @@ private:
                                              std::size_t const component) const
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             if (component < 3)
             {  // xx, yy, zz components
@@ -766,9 +766,9 @@ private:
         std::vector<double>& cache, std::size_t const component) const
     {
         cache.clear();
-        cache.reserve(_ip_data.size());
+        cache.reserve(ip_data_.size());
 
-        for (auto const& ip_data : _ip_data)
+        for (auto const& ip_data : ip_data_)
         {
             if (component < 3)  // xx, yy, zz components
                 cache.push_back(ip_data.eps[component]);
@@ -782,18 +782,18 @@ private:
     IntegrationPointDataNonlocalInterface*
     getIPDataPtr(int const ip) override
     {
-        return &_ip_data[ip];
+        return &ip_data_[ip];
     }
 
 private:
-    SmallDeformationNonlocalProcessData<DisplacementDim>& _process_data;
+    SmallDeformationNonlocalProcessData<DisplacementDim>& process_data_;
 
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> ip_data_;
 
-    IntegrationMethod const _integration_method;
-    MeshLib::Element const& _element;
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
-    bool const _is_axially_symmetric;
+    IntegrationMethod const integration_method_;
+    MeshLib::Element const& element_;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
+    bool const is_axially_symmetric_;
 
     static const int displacement_size =
         ShapeFunction::NPOINTS * DisplacementDim;

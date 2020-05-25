@@ -23,7 +23,7 @@ public:
     explicit BoundaryConditionCollection(
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters)
-        : _parameters(parameters)
+        : parameters_(parameters)
     {
     }
 
@@ -34,13 +34,13 @@ public:
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t, GlobalVector const& x) const
     {
-        auto const n_bcs = _boundary_conditions.size();
+        auto const n_bcs = boundary_conditions_.size();
         for (std::size_t i=0; i<n_bcs; ++i) {
-            auto const& bc = *_boundary_conditions[i];
-            auto& dirichlet_storage = _dirichlet_bcs[i];
+            auto const& bc = *boundary_conditions_[i];
+            auto& dirichlet_storage = dirichlet_bcs_[i];
             bc.getEssentialBCValues(t, x, dirichlet_storage);
         }
-        return &_dirichlet_bcs;
+        return &dirichlet_bcs_;
     }
 
     void addBCsForProcessVariables(
@@ -51,23 +51,23 @@ public:
 
     void addBoundaryCondition(std::unique_ptr<BoundaryCondition>&& bc)
     {
-        _boundary_conditions.push_back(std::move(bc));
+        boundary_conditions_.push_back(std::move(bc));
     }
 
     void preTimestep(const double t, std::vector<GlobalVector*> const& x,
                      int const process_id)
     {
-        for (auto const& bc_ptr : _boundary_conditions)
+        for (auto const& bc_ptr : boundary_conditions_)
         {
             bc_ptr->preTimestep(t, x, process_id);
         }
     }
 
 private:
-    mutable std::vector<NumLib::IndexValueVector<GlobalIndexType>> _dirichlet_bcs;
-    std::vector<std::unique_ptr<BoundaryCondition>> _boundary_conditions;
+    mutable std::vector<NumLib::IndexValueVector<GlobalIndexType>> dirichlet_bcs_;
+    std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-        _parameters;
+        parameters_;
 };
 
 }  // namespace ProcessLib

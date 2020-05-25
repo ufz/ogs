@@ -36,14 +36,14 @@ public:
                                           std::size_t n_local_size,
                                           std::vector<unsigned>
                                               dofIndex_to_localIndex)
-        : _element(element),
-          _is_axially_symmetric(is_axially_symmetric),
-          _dofIndex_to_localIndex(std::move(dofIndex_to_localIndex))
+        : element_(element),
+          is_axially_symmetric_(is_axially_symmetric),
+          dofIndex_to_localIndex_(std::move(dofIndex_to_localIndex))
     {
-        _local_u.resize(n_local_size);
-        _local_udot.resize(n_local_size);
-        _local_b.resize(_local_u.size());
-        _local_J.resize(_local_u.size(), _local_u.size());
+        local_u_.resize(n_local_size);
+        local_udot_.resize(n_local_size);
+        local_b_.resize(local_u_.size());
+        local_J_.resize(local_u_.size(), local_u_.size());
     }
 
     void assemble(double const /*t*/, double const /*dt*/,
@@ -69,26 +69,26 @@ public:
     {
         auto const local_dof_size = local_x_.size();
 
-        _local_u.setZero();
+        local_u_.setZero();
         for (unsigned i = 0; i < local_dof_size; i++)
         {
-            _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
+            local_u_[dofIndex_to_localIndex_[i]] = local_x_[i];
         }
-        _local_udot.setZero();
+        local_udot_.setZero();
         for (unsigned i = 0; i < local_dof_size; i++)
         {
-            _local_udot[_dofIndex_to_localIndex[i]] = local_xdot_[i];
+            local_udot_[dofIndex_to_localIndex_[i]] = local_xdot_[i];
         }
-        _local_b.setZero();
-        _local_J.setZero();
+        local_b_.setZero();
+        local_J_.setZero();
 
-        assembleWithJacobianConcrete(t, dt, _local_u, _local_udot, _local_b,
-                                     _local_J);
+        assembleWithJacobianConcrete(t, dt, local_u_, local_udot_, local_b_,
+                                     local_J_);
 
         local_b_data.resize(local_dof_size);
         for (unsigned i = 0; i < local_dof_size; i++)
         {
-            local_b_data[i] = _local_b[_dofIndex_to_localIndex[i]];
+            local_b_data[i] = local_b_[dofIndex_to_localIndex_[i]];
         }
 
         local_Jac_data.resize(local_dof_size * local_dof_size);
@@ -96,8 +96,8 @@ public:
         {
             for (unsigned j = 0; j < local_dof_size; j++)
             {
-                local_Jac_data[i * local_dof_size + j] = _local_J(
-                    _dofIndex_to_localIndex[i], _dofIndex_to_localIndex[j]);
+                local_Jac_data[i * local_dof_size + j] = local_J_(
+                    dofIndex_to_localIndex_[i], dofIndex_to_localIndex_[j]);
             }
         }
     }
@@ -107,13 +107,13 @@ public:
     {
         auto const local_dof_size = local_x_.size();
 
-        _local_u.setZero();
+        local_u_.setZero();
         for (unsigned i = 0; i < local_dof_size; i++)
         {
-            _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
+            local_u_[dofIndex_to_localIndex_[i]] = local_x_[i];
         }
 
-        postTimestepConcreteWithVector(t, dt, _local_u);
+        postTimestepConcreteWithVector(t, dt, local_u_);
     }
 
 protected:
@@ -126,18 +126,18 @@ protected:
     virtual void postTimestepConcreteWithVector(
         double const t, double const dt, Eigen::VectorXd const& local_u) = 0;
 
-    MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
+    MeshLib::Element const& element_;
+    bool const is_axially_symmetric_;
 
 private:
-    Eigen::VectorXd _local_u;
-    Eigen::VectorXd _local_udot;
-    Eigen::VectorXd _local_b;
-    Eigen::MatrixXd _local_J;
+    Eigen::VectorXd local_u_;
+    Eigen::VectorXd local_udot_;
+    Eigen::VectorXd local_b_;
+    Eigen::MatrixXd local_J_;
     // a vector for mapping the index in the local DoF vector to the index in
     // the complete local solution vector which also include nodes where DoF are
     // not assigned.
-    std::vector<unsigned> const _dofIndex_to_localIndex;
+    std::vector<unsigned> const dofIndex_to_localIndex_;
 };
 
 }  // namespace HydroMechanics

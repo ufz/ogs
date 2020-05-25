@@ -76,11 +76,11 @@ private:
                                     const double t, const double delta_t,
                                     const int process_id) override;
 
-    ThermalTwoPhaseFlowWithPPProcessData _process_data;
+    ThermalTwoPhaseFlowWithPPProcessData process_data_;
 
     std::vector<
         std::unique_ptr<ThermalTwoPhaseFlowWithPPLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }  // namespace ThermalTwoPhaseFlowWithPP

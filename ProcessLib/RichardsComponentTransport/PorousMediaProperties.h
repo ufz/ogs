@@ -47,28 +47,28 @@ public:
             std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>&&
             relative_permeability_models,
         std::vector<int>&& material_ids)
-        : _porosity_models(std::move(porosity_models)),
-          _intrinsic_permeability_models(
+        : porosity_models_(std::move(porosity_models)),
+          intrinsic_permeability_models_(
               std::move(intrinsic_permeability_models)),
-          _specific_storage_models(std::move(specific_storage_models)),
-          _capillary_pressure_saturation_models(
+          specific_storage_models_(std::move(specific_storage_models)),
+          capillary_pressure_saturation_models_(
               std::move(capillary_pressure_saturation_models)),
-          _relative_permeability_models(
+          relative_permeability_models_(
               std::move(relative_permeability_models)),
-          _material_ids(std::move(material_ids))
+          material_ids_(std::move(material_ids))
     {
     }
 
     PorousMediaProperties(PorousMediaProperties&& other)
-        : _porosity_models(std::move(other._porosity_models)),
-          _intrinsic_permeability_models(
-              std::move(other._intrinsic_permeability_models)),
-          _specific_storage_models(std::move(other._specific_storage_models)),
-          _capillary_pressure_saturation_models(
-              std::move(other._capillary_pressure_saturation_models)),
-          _relative_permeability_models(
-              std::move(other._relative_permeability_models)),
-          _material_ids(other._material_ids)
+        : porosity_models_(std::move(other.porosity_models_)),
+          intrinsic_permeability_models_(
+              std::move(other.intrinsic_permeability_models_)),
+          specific_storage_models_(std::move(other.specific_storage_models_)),
+          capillary_pressure_saturation_models_(
+              std::move(other.capillary_pressure_saturation_models_)),
+          relative_permeability_models_(
+              std::move(other.relative_permeability_models_)),
+          material_ids_(other.material_ids_)
     {
     }
 
@@ -94,18 +94,18 @@ private:
 
 private:
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
-        _porosity_models;
+        porosity_models_;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
-        _intrinsic_permeability_models;
+        intrinsic_permeability_models_;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
-        _specific_storage_models;
+        specific_storage_models_;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::CapillaryPressureSaturation>>
-        _capillary_pressure_saturation_models;
+        capillary_pressure_saturation_models_;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>
-        _relative_permeability_models;
-    std::vector<int> _material_ids;
+        relative_permeability_models_;
+    std::vector<int> material_ids_;
 };
 
 }  // namespace RichardsComponentTransport

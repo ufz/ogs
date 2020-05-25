@@ -27,11 +27,11 @@ public:
                    GlobalMatrix* jac) const override;
 
 private:
-    std::size_t const _source_term_mesh_id;
-    MeshLib::Mesh const& _st_mesh;
-    int const _variable_id;
-    int const _component_id;
-    ParameterLib::Parameter<double> const& _parameter;
+    std::size_t const source_term_mesh_id_;
+    MeshLib::Mesh const& st_mesh_;
+    int const variable_id_;
+    int const component_id_;
+    ParameterLib::Parameter<double> const& parameter_;
 };
 
 }  // namespace ProcessLib

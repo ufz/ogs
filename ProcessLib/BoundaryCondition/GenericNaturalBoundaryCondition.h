@@ -41,19 +41,19 @@ public:
 
 private:
     /// Data used in the assembly of the specific boundary condition.
-    BoundaryConditionData _data;
+    BoundaryConditionData data_;
 
     /// A lower-dimensional mesh on which the boundary condition is defined.
-    MeshLib::Mesh const& _bc_mesh;
+    MeshLib::Mesh const& bc_mesh_;
 
     /// Local dof table, a subset of the global one restricted to the
-    /// participating number of _elements of the boundary condition.
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> _dof_table_boundary;
+    /// participating number of elements_ of the boundary condition.
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_boundary_;
 
-    /// Local assemblers for each element of number of _elements.
+    /// Local assemblers for each element of number of elements_.
     std::vector<
         std::unique_ptr<GenericNaturalBoundaryConditionLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }  // namespace ProcessLib

@@ -75,10 +75,10 @@ private:
                                     const double t, const double dt,
                                     const int process_id) override;
 
-    TwoPhaseFlowWithPrhoProcessData _process_data;
+    TwoPhaseFlowWithPrhoProcessData process_data_;
 
     std::vector<std::unique_ptr<TwoPhaseFlowWithPrhoLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }  // namespace TwoPhaseFlowWithPrho

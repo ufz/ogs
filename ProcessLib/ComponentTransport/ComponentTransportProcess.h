@@ -147,15 +147,15 @@ private:
 
     void setCoupledSolutionsOfPreviousTimeStep();
 
-    ComponentTransportProcessData _process_data;
+    ComponentTransportProcessData process_data_;
 
     std::vector<std::unique_ptr<ComponentTransportLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     /// Solutions of the previous time step
-    std::vector<std::unique_ptr<GlobalVector>> _xs_previous_timestep;
+    std::vector<std::unique_ptr<GlobalVector>> xs_previous_timestep_;
 
-    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
+    std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux_;
 };
 
 }  // namespace ComponentTransport

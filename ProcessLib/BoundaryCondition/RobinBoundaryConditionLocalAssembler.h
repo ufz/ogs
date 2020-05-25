@@ -39,9 +39,9 @@ public:
                                          unsigned const integration_order,
                                          RobinBoundaryConditionData const& data)
         : Base(e, is_axially_symmetric, integration_order),
-          _data(data),
-          _local_K(local_matrix_size, local_matrix_size),
-          _local_rhs(local_matrix_size)
+          data_(data),
+          local_K_(local_matrix_size, local_matrix_size),
+          local_rhs_(local_matrix_size)
     {
     }
 
@@ -52,55 +52,55 @@ public:
                   int const /*process_id*/, GlobalMatrix& K, GlobalVector& b,
                   GlobalMatrix* /*Jac*/) override
     {
-        _local_K.setZero();
-        _local_rhs.setZero();
+        local_K_.setZero();
+        local_rhs_.setZero();
 
         unsigned const n_integration_points =
-            Base::_integration_method.getNumberOfPoints();
+            Base::integration_method_.getNumberOfPoints();
 
         typename Base::NodalVectorType const alpha =
-            _data.alpha.getNodalValuesOnElement(Base::_element, t)
+            data_.alpha.getNodalValuesOnElement(Base::element_, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         typename Base::NodalVectorType const u_0 =
-            _data.u_0.getNodalValuesOnElement(Base::_element, t)
+            data_.u_0.getNodalValuesOnElement(Base::element_, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
 
         ParameterLib::SpatialPosition position;
-        position.setElementID(Base::_element.getID());
+        position.setElementID(Base::element_.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             position.setIntegrationPoint(ip);
-            auto const& ip_data = Base::_ns_and_weights[ip];
+            auto const& ip_data = Base::ns_and_weights_[ip];
             auto const& N = ip_data.N;
             auto const& w = ip_data.weight;
 
             double integral_measure = 1.0;
-            if (_data.integral_measure)
+            if (data_.integral_measure)
             {
-                integral_measure = (*_data.integral_measure)(t, position)[0];
+                integral_measure = (*data_.integral_measure)(t, position)[0];
             }
 
             // flux = alpha * ( u_0 - u )
             // adding a alpha term to the diagonal of the stiffness matrix
             // and a alpha * u_0 term to the rhs vector
-            _local_K.diagonal().noalias() +=
+            local_K_.diagonal().noalias() +=
                 N * alpha.dot(N) * w * integral_measure;
-            _local_rhs.noalias() +=
+            local_rhs_.noalias() +=
                 N * alpha.dot(N) * u_0.dot(N) * w * integral_measure;
         }
 
         auto const indices = NumLib::getIndices(id, dof_table_boundary);
         K.add(NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices),
-              _local_K);
-        b.add(indices, _local_rhs);
+              local_K_);
+        b.add(indices, local_rhs_);
     }
 
 private:
-    RobinBoundaryConditionData const& _data;
+    RobinBoundaryConditionData const& data_;
 
-    typename Base::NodalMatrixType _local_K;
-    typename Base::NodalVectorType _local_rhs;
+    typename Base::NodalMatrixType local_K_;
+    typename Base::NodalVectorType local_rhs_;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

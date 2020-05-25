@@ -36,7 +36,7 @@ public:
 
     double thermalResistance(int const unknown_index) const
     {
-        return _thermal_resistances[unknown_index];
+        return thermal_resistances_[unknown_index];
     }
 
     double updateFlowRateAndTemperature(double T_out, double current_time);
@@ -72,7 +72,7 @@ public:
     void updateHeatTransferCoefficients(double const flow_rate);
 
 protected:
-    PipeConfigurationCoaxial const _pipes;
+    PipeConfigurationCoaxial const pipes_;
 
     virtual std::array<double, 2> velocities() const = 0;
 
@@ -84,11 +84,11 @@ protected:
     /// These governing equations can be found in
     /// 1) Diersch (2013) FEFLOW book on page 958, M.3, or
     /// 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 90-97.
-    std::array<double, number_of_unknowns> _thermal_resistances;
+    std::array<double, number_of_unknowns> thermal_resistances_;
 
     /// Flow velocity inside the pipes and annulus. Depends on the flow_rate.
-    double _flow_velocity_inner = std::numeric_limits<double>::quiet_NaN(),
-           _flow_velocity_annulus = std::numeric_limits<double>::quiet_NaN();
+    double flow_velocity_inner_ = std::numeric_limits<double>::quiet_NaN(),
+           flow_velocity_annulus_ = std::numeric_limits<double>::quiet_NaN();
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

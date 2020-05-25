@@ -50,7 +50,7 @@ public:
         std::size_t const /*mesh_item_id*/,
         CoupledSolutionsForStaggeredScheme* const coupling_term)
     {
-        _coupled_solutions = coupling_term;
+        coupled_solutions_ = coupling_term;
     }
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
@@ -65,7 +65,7 @@ public:
         0;
 
 protected:
-    // TODO: remove _coupled_solutions or move integration point data from
+    // TODO: remove coupled_solutions_ or move integration point data from
     // local assembler class to a new class to make local assembler unique
     // for each process.
     /** Pointer to CoupledSolutionsForStaggeredScheme that is set in a
@@ -74,7 +74,7 @@ protected:
      * calculate the secondary variables like velocity for coupled
      * processes.
      */
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
+    CoupledSolutionsForStaggeredScheme* coupled_solutions_{nullptr};
 };
 
 }  // namespace HT

@@ -34,9 +34,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
              std::vector<double>& local_b_data)
 {
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    pos.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
         medium
@@ -50,7 +50,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                 .value(vars, pos, t, dt));
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to permeability.rows() ==
-    //  _element->getDimension()
+    //  element_->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
     if (permeability.size() == 1)
@@ -79,7 +79,7 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     // eval dNdx and invJ at p
     auto const fe =
         NumLib::createIsoparametricFiniteElement<ShapeFunction,
-                                                 ShapeMatricesType>(_element);
+                                                 ShapeMatricesType>(element_);
 
     typename ShapeMatricesType::ShapeMatrices shape_matrices(
         ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
@@ -91,9 +91,9 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
 
     // create pos object to access the correct media property
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    pos.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
@@ -140,12 +140,12 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         local_b_data, local_matrix_size);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    pos.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
@@ -156,7 +156,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& ip_data = _ip_data[ip];
+        auto const& ip_data = ip_data_[ip];
 
         double p = 0.;
         NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
@@ -201,8 +201,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
             local_K, local_b, ip_data, permeability, viscosity,
-            fluid_density * _process_data.gravitational_acceleration,
-            _process_data.gravitational_axis_id);
+            fluid_density * process_data_.gravitational_acceleration,
+            process_data_.gravitational_axis_id);
     }
 }
 
@@ -222,18 +222,18 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
     constexpr int process_id = 0;
     auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+        NumLib::getIndices(element_.getID(), *dof_table[process_id]);
     auto const local_x = x[process_id]->get(indices);
-    auto const n_integration_points = _integration_method.getNumberOfPoints();
+    auto const n_integration_points = integration_method_.getNumberOfPoints();
     velocity_cache.clear();
     auto velocity_cache_vectors = MathLib::createZeroedMatrix<
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
         velocity_cache, GlobalDim, n_integration_points);
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    pos.setElementID(element_.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
         medium
@@ -246,7 +246,7 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             medium->property(MaterialPropertyLib::PropertyType::permeability)
                 .value(vars, pos, t, dt));
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
-    //  the assert must be changed to perm.rows() == _element->getDimension()
+    //  the assert must be changed to perm.rows() == element_->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
     // evaluate the permeability to distinguish which computeDarcyVelocity
@@ -280,9 +280,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
@@ -292,7 +292,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             .template value<double>(vars, pos, t, dt);
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& ip_data = _ip_data[ip];
+        auto const& ip_data = ip_data_[ip];
         double p = 0.;
         NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
@@ -314,8 +314,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                     .value(vars, pos, t, dt));
         LaplacianGravityVelocityCalculator::calculateVelocity(
             ip, local_p_vec, ip_data, permeability, viscosity,
-            fluid_density * _process_data.gravitational_acceleration,
-            _process_data.gravitational_axis_id, darcy_velocity_at_ips);
+            fluid_density * process_data_.gravitational_acceleration,
+            process_data_.gravitational_axis_id, darcy_velocity_at_ips);
     }
 }
 

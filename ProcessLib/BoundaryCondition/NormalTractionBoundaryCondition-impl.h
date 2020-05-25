@@ -31,9 +31,9 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
         int const variable_id, unsigned const global_dim,
         MeshLib::Mesh const& bc_mesh,
         ParameterLib::Parameter<double> const& pressure)
-    : _bc_mesh(bc_mesh),
-      _integration_order(integration_order),
-      _pressure(pressure)
+    : bc_mesh_(bc_mesh),
+      integration_order_(integration_order),
+      pressure_(pressure)
 {
     // Create component ids vector for the current variable.
     auto const& number_of_components =
@@ -42,21 +42,21 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
     std::iota(std::begin(component_ids), std::end(component_ids), 0);
 
     // BC mesh subset creation
-    std::vector<MeshLib::Node*> const bc_nodes = _bc_mesh.getNodes();
+    std::vector<MeshLib::Node*> const bc_nodes = bc_mesh_.getNodes();
     DBUG("Found {:d} nodes for Natural BCs for the variable {:d}",
          bc_nodes.size(), variable_id);
 
-    MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
+    MeshLib::MeshSubset bc_mesh_subset(bc_mesh_, bc_nodes);
 
     // Create local DOF table from the BC mesh subset for the given variable and
     // component ids.
-    _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
+    dof_table_boundary_.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, component_ids, std::move(bc_mesh_subset)));
 
     createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _bc_mesh.getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
-        _integration_order, _pressure);
+        global_dim, bc_mesh_.getElements(), *dof_table_boundary_,
+        shapefunction_order, local_assemblers_, bc_mesh_.isAxiallySymmetric(),
+        integration_order_, pressure_);
 }
 
 template <template <typename, typename, unsigned>
@@ -68,7 +68,7 @@ void NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
 {
     GlobalExecutor::executeMemberOnDereferenced(
         &NormalTractionBoundaryConditionLocalAssemblerInterface::assemble,
-        _local_assemblers, *_dof_table_boundary, t, x, K, b, Jac);
+        local_assemblers_, *dof_table_boundary_, t, x, K, b, Jac);
 }
 
 std::unique_ptr<NormalTractionBoundaryCondition<

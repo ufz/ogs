@@ -31,9 +31,9 @@ public:
                    GlobalMatrix* jac) const override;
 
 private:
-    ParameterLib::Parameter<double> const& _volumetric_source_term;
+    ParameterLib::Parameter<double> const& volumetric_source_term_;
     std::vector<std::unique_ptr<VolumetricSourceTermLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }  // namespace ProcessLib

@@ -52,7 +52,7 @@ public:
 private:
     // the local assemblers for each element of the mesh
     std::vector<std::unique_ptr<SurfaceFluxLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }   // namespace ProcessLib

@@ -123,17 +123,17 @@ private:
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
         getDOFTableForExtrapolatorData() const override;
 
-    HTProcessData _process_data;
+    HTProcessData process_data_;
 
-    std::vector<std::unique_ptr<HTLocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<HTLocalAssemblerInterface>> local_assemblers_;
 
     /// Solutions of the previous time step
-    std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
+    std::array<std::unique_ptr<GlobalVector>, 2> xs_previous_timestep_;
 
-    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
+    std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux_;
 
-    const int _heat_transport_process_id;
-    const int _hydraulic_process_id;
+    const int heat_transport_process_id_;
+    const int hydraulic_process_id_;
 };
 
 }  // namespace HT

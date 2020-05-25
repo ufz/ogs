@@ -144,21 +144,21 @@ public:
         bool const is_axially_symmetric,
         unsigned const integration_order,
         PhaseFieldProcessData<DisplacementDim>& process_data)
-        : _process_data(process_data),
-          _integration_method(integration_order),
-          _element(e),
-          _is_axially_symmetric(is_axially_symmetric)
+        : process_data_(process_data),
+          integration_method_(integration_order),
+          element_(e),
+          is_axially_symmetric_(is_axially_symmetric)
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
-        _ip_data.reserve(n_integration_points);
-        _secondary_data.N.resize(n_integration_points);
+        ip_data_.reserve(n_integration_points);
+        secondary_data_.N.resize(n_integration_points);
 
         auto& solid_material =
             MaterialLib::Solids::selectSolidConstitutiveRelation(
-                _process_data.solid_materials,
-                _process_data.material_ids,
+                process_data_.solid_materials,
+                process_data_.material_ids,
                 e.getID());
         if (!dynamic_cast<MaterialLib::Solids::LinearElasticIsotropic<
                 DisplacementDim> const*>(&solid_material))
@@ -171,17 +171,17 @@ public:
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, DisplacementDim>(
-                e, is_axially_symmetric, _integration_method);
+                e, is_axially_symmetric, integration_method_);
 
         ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
+        x_position.setElementID(element_.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(solid_material);
-            auto& ip_data = _ip_data[ip];
+            ip_data_.emplace_back(solid_material);
+            auto& ip_data = ip_data_[ip];
             ip_data.integration_weight =
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                integration_method_.getWeightedPoint(ip).getWeight() *
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
             static const int kelvin_vector_size =
@@ -195,9 +195,9 @@ public:
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
             ip_data.history_variable =
-                _process_data.history_field(0, x_position)[0];
+                process_data_.history_field(0, x_position)[0];
             ip_data.history_variable_prev =
-                _process_data.history_field(0, x_position)[0];
+                process_data_.history_field(0, x_position)[0];
             ip_data.sigma.setZero(kelvin_vector_size);
             ip_data.strain_energy_tensile = 0.0;
             ip_data.elastic_energy = 0.0;
@@ -205,7 +205,7 @@ public:
             ip_data.N = shape_matrices[ip].N;
             ip_data.dNdx = shape_matrices[ip].dNdx;
 
-            _secondary_data.N[ip] = shape_matrices[ip].N;
+            secondary_data_.N[ip] = shape_matrices[ip].N;
         }
     }
 
@@ -232,11 +232,11 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -244,11 +244,11 @@ public:
                               double const /*t*/, double const /*dt*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            ip_data_[ip].pushBackState();
         }
     }
 
@@ -272,7 +272,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -286,7 +286,7 @@ private:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma, cache);
+            ip_data_, &IpData::sigma, cache);
     }
 
     std::vector<double> const& getIntPtEpsilon(
@@ -296,7 +296,7 @@ private:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::eps, cache);
+            ip_data_, &IpData::eps, cache);
     }
 
     void assembleWithJacobianPhaseFieldEquations(
@@ -313,14 +313,14 @@ private:
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
-    PhaseFieldProcessData<DisplacementDim>& _process_data;
+    PhaseFieldProcessData<DisplacementDim>& process_data_;
 
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> ip_data_;
 
-    IntegrationMethod _integration_method;
-    MeshLib::Element const& _element;
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
-    bool const _is_axially_symmetric;
+    IntegrationMethod integration_method_;
+    MeshLib::Element const& element_;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
+    bool const is_axially_symmetric_;
 };
 
 }  // namespace PhaseField

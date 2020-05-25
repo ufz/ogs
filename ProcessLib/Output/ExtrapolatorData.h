@@ -41,37 +41,37 @@ public:
         std::unique_ptr<NumLib::Extrapolator>&& extrapolator,
         NumLib::LocalToGlobalIndexMap const* const dof_table_single_component,
         bool const manage_storage)
-        : _extrapolator(std::move(extrapolator)),
-          _dof_table_single_component(dof_table_single_component),
-          _manage_storage(manage_storage)
+        : extrapolator_(std::move(extrapolator)),
+          dof_table_single_component_(dof_table_single_component),
+          manage_storage_(manage_storage)
     {
     }
 
     ExtrapolatorData(ExtrapolatorData&& other)
-        : _extrapolator(std::move(other._extrapolator)),
-          _dof_table_single_component(other._dof_table_single_component),
-          _manage_storage(other._manage_storage)
+        : extrapolator_(std::move(other.extrapolator_)),
+          dof_table_single_component_(other.dof_table_single_component_),
+          manage_storage_(other.manage_storage_)
     {
-        other._manage_storage = false;
-        other._dof_table_single_component = nullptr;
+        other.manage_storage_ = false;
+        other.dof_table_single_component_ = nullptr;
     }
 
     ExtrapolatorData& operator=(ExtrapolatorData&& other)
     {
         cleanup();
-        _manage_storage = other._manage_storage;
-        _dof_table_single_component = other._dof_table_single_component;
-        _extrapolator = std::move(other._extrapolator);
-        other._dof_table_single_component = nullptr;
-        other._manage_storage = false;
+        manage_storage_ = other.manage_storage_;
+        dof_table_single_component_ = other.dof_table_single_component_;
+        extrapolator_ = std::move(other.extrapolator_);
+        other.dof_table_single_component_ = nullptr;
+        other.manage_storage_ = false;
         return *this;
     }
 
     NumLib::LocalToGlobalIndexMap const& getDOFTable() const
     {
-        return *_dof_table_single_component;
+        return *dof_table_single_component_;
     }
-    NumLib::Extrapolator& getExtrapolator() const { return *_extrapolator; }
+    NumLib::Extrapolator& getExtrapolator() const { return *extrapolator_; }
 
     ~ExtrapolatorData() { cleanup(); }
 
@@ -79,22 +79,22 @@ private:
     //! Deletes the d.o.f table if it is allowed to do so.
     void cleanup()
     {
-        if (_manage_storage)
+        if (manage_storage_)
         {
-            delete _dof_table_single_component;
-            _dof_table_single_component = nullptr;
+            delete dof_table_single_component_;
+            dof_table_single_component_ = nullptr;
         }
     }
 
     //! Extrapolator managed by the ExtrapolatorData instance.
-    std::unique_ptr<NumLib::Extrapolator> _extrapolator;
+    std::unique_ptr<NumLib::Extrapolator> extrapolator_;
 
     //! D.o.f. table used by the extrapolator.
-    NumLib::LocalToGlobalIndexMap const* _dof_table_single_component = nullptr;
+    NumLib::LocalToGlobalIndexMap const* dof_table_single_component_ = nullptr;
 
     //! If true, free storage of the d.o.f. table in the ExtrapolatorData
     //! destructor.
-    bool _manage_storage = false;
+    bool manage_storage_ = false;
 };
 
 }  // namespace ProcessLib

@@ -102,12 +102,12 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    LiquidFlowData _process_data;
+    LiquidFlowData process_data_;
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
-    std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
+    std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux_;
 };
 
 }  // namespace LiquidFlow

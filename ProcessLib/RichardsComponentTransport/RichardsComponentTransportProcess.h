@@ -140,11 +140,11 @@ private:
         int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
-    RichardsComponentTransportProcessData _process_data;
+    RichardsComponentTransportProcessData process_data_;
 
     std::vector<
         std::unique_ptr<RichardsComponentTransportLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 };
 
 }  // namespace RichardsComponentTransport

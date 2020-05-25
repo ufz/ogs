@@ -29,31 +29,31 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         bool const is_axially_symmetric,
         unsigned const integration_order,
         ThermoMechanicsProcessData<DisplacementDim>& process_data)
-    : _process_data(process_data),
-      _integration_method(integration_order),
-      _element(e),
-      _is_axially_symmetric(is_axially_symmetric)
+    : process_data_(process_data),
+      integration_method_(integration_order),
+      element_(e),
+      is_axially_symmetric_(is_axially_symmetric)
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
-    _secondary_data.N.resize(n_integration_points);
+    ip_data_.reserve(n_integration_points);
+    secondary_data_.N.resize(n_integration_points);
 
     auto const shape_matrices =
         initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod,
                           DisplacementDim>(e, is_axially_symmetric,
-                                           _integration_method);
+                                           integration_method_);
 
     auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
-        _process_data.solid_materials, _process_data.material_ids, e.getID());
+        process_data_.solid_materials, process_data_.material_ids, e.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        _ip_data.emplace_back(solid_material);
-        auto& ip_data = _ip_data[ip];
+        ip_data_.emplace_back(solid_material);
+        auto& ip_data = ip_data_[ip];
         ip_data.integration_weight =
-            _integration_method.getWeightedPoint(ip).getWeight() *
+            integration_method_.getWeightedPoint(ip).getWeight() *
             shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
         static const int kelvin_vector_size =
@@ -70,14 +70,14 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         ip_data.eps_m.setZero(kelvin_vector_size);
         ip_data.eps_m_prev.setZero(kelvin_vector_size);
         ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
+        x_position.setElementID(element_.getID());
         ip_data.solid_density =
-            _process_data.reference_solid_density(0, x_position)[0];
+            process_data_.reference_solid_density(0, x_position)[0];
         ip_data.solid_density_prev = ip_data.solid_density;
         ip_data.N = shape_matrices[ip].N;
         ip_data.dNdx = shape_matrices[ip].dNdx;
 
-        _secondary_data.N[ip] = shape_matrices[ip].N;
+        secondary_data_.N[ip] = shape_matrices[ip].N;
     }
 }
 
@@ -90,13 +90,13 @@ std::size_t ThermoMechanicsLocalAssembler<
                                                  int const integration_order)
 {
     if (integration_order !=
-        static_cast<int>(_integration_method.getIntegrationOrder()))
+        static_cast<int>(integration_method_.getIntegrationOrder()))
     {
         OGS_FATAL(
             "Setting integration point initial conditions; The integration "
             "order of the local assembler for element {:d} is different from "
             "the integration order in the initial condition.",
-            _element.getID());
+            element_.getID());
     }
 
     if (name == "sigma_ip")
@@ -161,42 +161,42 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     DTT.setZero(temperature_size, temperature_size);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& w = ip_data_[ip].integration_weight;
+        auto const& N = ip_data_[ip].N;
+        auto const& dNdx = ip_data_[ip].dNdx;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
+            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(element_,
                                                                      N);
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, _is_axially_symmetric);
+                dNdx, N, x_coord, is_axially_symmetric_);
 
-        auto& sigma = _ip_data[ip].sigma;
-        auto const& sigma_prev = _ip_data[ip].sigma_prev;
+        auto& sigma = ip_data_[ip].sigma;
+        auto const& sigma_prev = ip_data_[ip].sigma_prev;
 
-        auto& eps = _ip_data[ip].eps;
-        auto const& eps_prev = _ip_data[ip].eps_prev;
+        auto& eps = ip_data_[ip].eps;
+        auto const& eps_prev = ip_data_[ip].eps_prev;
 
-        auto& eps_m = _ip_data[ip].eps_m;
-        auto const& eps_m_prev = _ip_data[ip].eps_m_prev;
+        auto& eps_m = ip_data_[ip].eps_m;
+        auto const& eps_m_prev = ip_data_[ip].eps_m_prev;
 
-        auto& state = _ip_data[ip].material_state_variables;
+        auto& state = ip_data_[ip].material_state_variables;
 
         double const dT = N.dot(T_dot) * dt;
         // calculate thermally induced strain
         // assume isotropic thermal expansion
-        auto const alpha = _process_data.linear_thermal_expansion_coefficient(
+        auto const alpha = process_data_.linear_thermal_expansion_coefficient(
             t, x_position)[0];
         double const linear_thermal_strain_increment = alpha * dT;
 
@@ -215,7 +215,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             eps_m_prev + eps - eps_prev -
             linear_thermal_strain_increment * Invariants::identity2;
 
-        auto&& solution = _ip_data[ip].solid_material.integrateStress(
+        auto&& solution = ip_data_[ip].solid_material.integrateStress(
             t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
 
         if (!solution)
@@ -249,11 +249,11 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         // dV = 3 * alpha * dT * V_0
         // rho_s_{n+1} = rho_s_n / (1 + 3 * alpha * dT )
         // see reference solid density description for details.
-        auto& rho_s = _ip_data[ip].solid_density;
-        rho_s = _ip_data[ip].solid_density_prev /
+        auto& rho_s = ip_data_[ip].solid_density;
+        rho_s = ip_data_[ip].solid_density_prev /
                 (1 + 3 * linear_thermal_strain_increment);
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
         local_rhs.template block<displacement_size, 1>(displacement_index, 0)
             .noalias() -=
             (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
@@ -263,13 +263,13 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         //
         KuT.noalias() +=
             B.transpose() * C * alpha * Invariants::identity2 * N * w;
-        if (_ip_data[ip].solid_material.getConstitutiveModel() ==
+        if (ip_data_[ip].solid_material.getConstitutiveModel() ==
             MaterialLib::Solids::ConstitutiveModel::CreepBGRa)
         {
             auto const s = Invariants::deviatoric_projection * sigma;
             double const norm_s = Invariants::FrobeniusNorm(s);
             const double creep_coefficient =
-                _ip_data[ip].solid_material.getTemperatureRelatedCoefficient(
+                ip_data_[ip].solid_material.getTemperatureRelatedCoefficient(
                     t, dt, x_position, T_ip, norm_s);
             KuT.noalias() += creep_coefficient * B.transpose() * s * N * w;
         }
@@ -278,10 +278,10 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         // temperature equation, temperature part;
         //
         auto const lambda =
-            _process_data.thermal_conductivity(t, x_position)[0];
+            process_data_.thermal_conductivity(t, x_position)[0];
         KTT.noalias() += dNdx.transpose() * lambda * dNdx * w;
 
-        auto const c = _process_data.specific_heat_capacity(t, x_position)[0];
+        auto const c = process_data_.specific_heat_capacity(t, x_position)[0];
         DTT.noalias() += N.transpose() * rho_s * c * N * w;
     }
 
@@ -314,7 +314,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         const LocalCoupledSolutions& local_coupled_solutions)
 {
     // For the equations with pressure
-    if (process_id == _process_data.heat_conduction_process_id)
+    if (process_id == process_data_.heat_conduction_process_id)
     {
         assembleWithJacobianForHeatConductionEquations(
             t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data,
@@ -363,43 +363,43 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         local_b_data, displacement_size);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& w = ip_data_[ip].integration_weight;
+        auto const& N = ip_data_[ip].N;
+        auto const& dNdx = ip_data_[ip].dNdx;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
+            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(element_,
                                                                      N);
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, _is_axially_symmetric);
+                dNdx, N, x_coord, is_axially_symmetric_);
 
-        auto& sigma = _ip_data[ip].sigma;
-        auto const& sigma_prev = _ip_data[ip].sigma_prev;
+        auto& sigma = ip_data_[ip].sigma;
+        auto const& sigma_prev = ip_data_[ip].sigma_prev;
 
-        auto& eps = _ip_data[ip].eps;
-        auto const& eps_prev = _ip_data[ip].eps_prev;
+        auto& eps = ip_data_[ip].eps;
+        auto const& eps_prev = ip_data_[ip].eps_prev;
 
-        auto& eps_m = _ip_data[ip].eps_m;
-        auto const& eps_m_prev = _ip_data[ip].eps_m_prev;
+        auto& eps_m = ip_data_[ip].eps_m;
+        auto const& eps_m_prev = ip_data_[ip].eps_m_prev;
 
-        auto& state = _ip_data[ip].material_state_variables;
+        auto& state = ip_data_[ip].material_state_variables;
 
         const double T_ip = N.dot(local_T);  // T at integration point
         double const dT_ip = T_ip - N.dot(local_T0);
         // calculate thermally induced strain
         // assume isotropic thermal expansion
-        auto const alpha = _process_data.linear_thermal_expansion_coefficient(
+        auto const alpha = process_data_.linear_thermal_expansion_coefficient(
             t, x_position)[0];
         double const linear_thermal_strain_increment = alpha * dT_ip;
 
@@ -417,7 +417,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             eps_m_prev + eps - eps_prev -
             linear_thermal_strain_increment * Invariants::identity2;
 
-        auto&& solution = _ip_data[ip].solid_material.integrateStress(
+        auto&& solution = ip_data_[ip].solid_material.integrateStress(
             t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
 
         if (!solution)
@@ -448,11 +448,11 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         // dV = 3 * alpha * dT * V_0
         // rho_s_{n+1} = rho_s_n / (1 + 3 * alpha * dT )
         // see reference solid density description for details.
-        auto& rho_s = _ip_data[ip].solid_density;
-        rho_s = _ip_data[ip].solid_density_prev /
+        auto& rho_s = ip_data_[ip].solid_density;
+        rho_s = ip_data_[ip].solid_density_prev /
                 (1 + 3 * linear_thermal_strain_increment);
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
         local_rhs.noalias() -=
             (B.transpose() * sigma - N_u.transpose() * rho_s * b) * w;
     }
@@ -497,38 +497,38 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     laplace.setZero(temperature_size, temperature_size);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& w = ip_data_[ip].integration_weight;
+        auto const& N = ip_data_[ip].N;
+        auto const& dNdx = ip_data_[ip].dNdx;
 
         // calculate real density
         // rho_s_{n+1} * (V_{n} + dV) = rho_s_n * V_n
         // dV = 3 * alpha * dT * V_0
         // rho_s_{n+1} = rho_s_n / (1 + 3 * alpha * dT )
         // see reference solid density description for details.
-        auto& rho_s = _ip_data[ip].solid_density;
+        auto& rho_s = ip_data_[ip].solid_density;
         // calculate thermally induced strain
         // assume isotropic thermal expansion
-        auto const alpha = _process_data.linear_thermal_expansion_coefficient(
+        auto const alpha = process_data_.linear_thermal_expansion_coefficient(
             t, x_position)[0];
 
         double const dT_ip = N.dot(local_dT);
         double const linear_thermal_strain_increment = alpha * dT_ip;
-        rho_s = _ip_data[ip].solid_density_prev /
+        rho_s = ip_data_[ip].solid_density_prev /
                 (1 + 3 * linear_thermal_strain_increment);
-        auto const c_p = _process_data.specific_heat_capacity(t, x_position)[0];
+        auto const c_p = process_data_.specific_heat_capacity(t, x_position)[0];
         mass.noalias() += N.transpose() * rho_s * c_p * N * w;
 
         auto const lambda =
-            _process_data.thermal_conductivity(t, x_position)[0];
+            process_data_.thermal_conductivity(t, x_position)[0];
         laplace.noalias() += dNdx.transpose() * lambda * dNdx * w;
     }
     local_Jac.noalias() += laplace + mass / dt;
@@ -543,7 +543,7 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::setSigma(double const* values)
 {
     return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, _ip_data, &IpData::sigma);
+        values, ip_data_, &IpData::sigma);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -552,7 +552,7 @@ std::vector<double> ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::getSigma() const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::sigma);
+        ip_data_, &IpData::sigma);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -566,7 +566,7 @@ std::vector<double> const& ThermoMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::sigma, cache);
+        ip_data_, &IpData::sigma, cache);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -576,7 +576,7 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::setEpsilon(double const* values)
 {
     return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, _ip_data, &IpData::eps);
+        values, ip_data_, &IpData::eps);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -585,7 +585,7 @@ std::vector<double> ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::getEpsilon() const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::eps);
+        ip_data_, &IpData::eps);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -599,7 +599,7 @@ std::vector<double> const& ThermoMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::eps, cache);
+        ip_data_, &IpData::eps, cache);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -611,7 +611,7 @@ std::size_t ThermoMechanicsLocalAssembler<
     auto const kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     auto epsilon_m_values =
         Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
@@ -620,7 +620,7 @@ std::size_t ThermoMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        _ip_data[ip].eps_m =
+        ip_data_[ip].eps_m =
             MathLib::KelvinVector::symmetricTensorToKelvinVector(
                 epsilon_m_values.col(ip));
     }
@@ -636,7 +636,7 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     auto const kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     std::vector<double> ip_epsilon_m_values;
     auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -645,7 +645,7 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        auto const& eps_m = _ip_data[ip].eps_m;
+        auto const& eps_m = ip_data_[ip].eps_m;
         cache_mat.row(ip) =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps_m);
     }
@@ -659,7 +659,7 @@ unsigned ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod,
     DisplacementDim>::getNumberOfIntegrationPoints() const
 {
-    return _integration_method.getNumberOfPoints();
+    return integration_method_.getNumberOfPoints();
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -670,7 +670,7 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::
     getMaterialStateVariablesAt(unsigned integration_point) const
 {
-    return *_ip_data[integration_point].material_state_variables;
+    return *ip_data_[integration_point].material_state_variables;
 }
 }  // namespace ThermoMechanics
 }  // namespace ProcessLib

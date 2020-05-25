@@ -78,26 +78,26 @@ private:
                                     const int process_id) override;
 
 private:
-    SmallDeformationProcessData<DisplacementDim> _process_data;
+    SmallDeformationProcessData<DisplacementDim> process_data_;
 
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> local_assemblers_;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map_single_component;
+        local_to_global_index_map_single_component_;
 
-    std::vector<MeshLib::Element*> _vec_matrix_elements;
-    std::vector<int> _vec_fracture_mat_IDs;
-    std::vector<std::vector<MeshLib::Element*>> _vec_fracture_elements;
-    std::vector<std::vector<MeshLib::Element*>> _vec_fracture_matrix_elements;
-    std::vector<std::vector<MeshLib::Node*>> _vec_fracture_nodes;
-    std::vector<MeshLib::Node*> _vec_junction_nodes;
+    std::vector<MeshLib::Element*> vec_matrix_elements_;
+    std::vector<int> vec_fracture_mat_IDs_;
+    std::vector<std::vector<MeshLib::Element*>> vec_fracture_elements_;
+    std::vector<std::vector<MeshLib::Element*>> vec_fracture_matrix_elements_;
+    std::vector<std::vector<MeshLib::Node*>> vec_fracture_nodes_;
+    std::vector<MeshLib::Node*> vec_junction_nodes_;
     std::vector<std::vector<MeshLib::Element*>>
-        _vec_junction_fracture_matrix_elements;
+        vec_junction_fracture_matrix_elements_;
 
     std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
-        _mesh_subset_fracture_nodes;
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_junction_nodes;
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_matrix_nodes;
+        mesh_subset_fracture_nodes_;
+    std::unique_ptr<MeshLib::MeshSubset const> mesh_subset_junction_nodes_;
+    std::unique_ptr<MeshLib::MeshSubset const> mesh_subset_matrix_nodes_;
 };
 
 extern template class SmallDeformationProcess<2>;

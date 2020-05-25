@@ -32,17 +32,17 @@ struct HeatTransportBHEProcessData final
         BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_ =
             nullptr)
         : media_map(std::move(media_map_)),
-          _vec_BHE_property(std::move(vec_BHEs_)),
+          vec_BHE_property_(std::move(vec_BHEs_)),
           py_bc_object(py_bc_object_)
     {
     }
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
 
-    std::vector<BHE::BHETypes> _vec_BHE_property;
+    std::vector<BHE::BHETypes> vec_BHE_property_;
 
-    MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
-    std::unordered_map<int, int> _map_materialID_to_BHE_ID{};
+    MeshLib::PropertyVector<int> const* mesh_prop_materialIDs_ = nullptr;
+    std::unordered_map<int, int> map_materialID_to_BHE_ID_{};
 
     //! Python object computing BC values.
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object;

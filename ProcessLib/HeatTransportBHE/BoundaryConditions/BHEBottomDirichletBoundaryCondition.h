@@ -20,7 +20,7 @@ class BHEBottomDirichletBoundaryCondition final : public BoundaryCondition
 public:
     explicit BHEBottomDirichletBoundaryCondition(
         std::pair<GlobalIndexType, GlobalIndexType>&& in_out_global_indices)
-        : _in_out_global_indices(std::move(in_out_global_indices))
+        : in_out_global_indices_(std::move(in_out_global_indices))
     {
     }
 
@@ -29,7 +29,7 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
-    std::pair<GlobalIndexType, GlobalIndexType> const _in_out_global_indices;
+    std::pair<GlobalIndexType, GlobalIndexType> const in_out_global_indices_;
 };
 
 std::unique_ptr<BHEBottomDirichletBoundaryCondition>

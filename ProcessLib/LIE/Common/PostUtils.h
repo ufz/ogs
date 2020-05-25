@@ -41,7 +41,7 @@ public:
         std::vector<std::pair<std::size_t, std::vector<int>>> const&
             vec_junction_nodeID_matIDs);
 
-    MeshLib::Mesh const& getOutputMesh() const { return *_output_mesh; }
+    MeshLib::Mesh const& getOutputMesh() const { return *output_mesh_; }
 
 private:
     template <typename T>
@@ -51,9 +51,9 @@ private:
     void calculateTotalDisplacement(unsigned const n_fractures,
                                     unsigned const n_junctions);
 
-    MeshLib::Mesh const& _org_mesh;
-    std::unique_ptr<MeshLib::Mesh> _output_mesh;
-    std::map<std::size_t, std::vector<std::size_t>> _map_dup_newNodeIDs;
+    MeshLib::Mesh const& org_mesh_;
+    std::unique_ptr<MeshLib::Mesh> output_mesh_;
+    std::map<std::size_t, std::vector<std::size_t>> map_dup_newNodeIDs_;
 };
 
 }  // namespace LIE

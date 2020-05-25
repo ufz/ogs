@@ -111,18 +111,18 @@ private:
                                             int const process_id) override;
 
 private:
-    PhaseFieldProcessData<DisplacementDim> _process_data;
+    PhaseFieldProcessData<DisplacementDim> process_data_;
 
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> local_assemblers_;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
-        _local_to_global_index_map_single_component;
+        local_to_global_index_map_single_component_;
 
-    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
+    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
 
     /// Sparsity pattern for the phase field equation, and it is initialized
     ///  only if the staggered scheme is used.
-    GlobalSparsityPattern _sparsity_pattern_with_single_component;
+    GlobalSparsityPattern sparsity_pattern_with_single_component_;
 
     /// Check whether the process represented by \c process_id is/has
     /// mechanical process. In the present implementation, the mechanical

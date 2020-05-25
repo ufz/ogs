@@ -22,7 +22,7 @@ class SourceTerm
 public:
     explicit SourceTerm(
         std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table)
-        : _source_term_dof_table{std::move(source_term_dof_table)}
+        : source_term_dof_table_{std::move(source_term_dof_table)}
     {
     }
 
@@ -32,7 +32,7 @@ public:
     virtual ~SourceTerm() = default;
 
 protected:
-    std::unique_ptr<NumLib::LocalToGlobalIndexMap> const _source_term_dof_table;
+    std::unique_ptr<NumLib::LocalToGlobalIndexMap> const source_term_dof_table_;
 };
 
 }  // namespace ProcessLib

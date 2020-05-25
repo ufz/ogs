@@ -66,22 +66,22 @@ struct TrafoTanh
 
 struct TrafoScale
 {
-    explicit TrafoScale(const double factor) : _factor{factor} {}
+    explicit TrafoScale(const double factor) : factor_{factor} {}
 
     static const bool constrained = false;
 
     /// Converts global matrix entry to "physical" variable
     /// used in local assembly.
-    double x(const double y) const { return y * _factor; }
+    double x(const double y) const { return y * factor_; }
 
-    double y(const double x) const { return x / _factor; }
+    double y(const double x) const { return x / factor_; }
 
     /// Derivative of the "physical" variable x w.r.t. y.
     /// the argument is x!
-    double dxdy(const double /*x*/) const { return _factor; }
+    double dxdy(const double /*x*/) const { return factor_; }
 
 private:
-    double _factor;
+    double factor_;
 };
 
 using Trafo = ProcessLib::TrafoScale;

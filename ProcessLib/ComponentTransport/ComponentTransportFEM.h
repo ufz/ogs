@@ -61,7 +61,7 @@ public:
         std::size_t const /*mesh_item_id*/,
         CoupledSolutionsForStaggeredScheme* const coupling_term)
     {
-        _coupled_solutions = coupling_term;
+        coupled_solutions_ = coupling_term;
     }
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
@@ -71,7 +71,7 @@ public:
         std::vector<double>& cache) const = 0;
 
 protected:
-    CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
+    CoupledSolutionsForStaggeredScheme* coupled_solutions_{nullptr};
 };
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -127,27 +127,27 @@ public:
         ComponentTransportProcessData const& process_data,
         std::vector<std::reference_wrapper<ProcessVariable>>
             transport_process_variables)
-        : _element(element),
-          _process_data(process_data),
-          _integration_method(integration_order),
-          _transport_process_variables(transport_process_variables)
+        : element_(element),
+          process_data_(process_data),
+          integration_method_(integration_order),
+          transport_process_variables_(transport_process_variables)
     {
         (void)local_matrix_size;
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-        _ip_data.reserve(n_integration_points);
+            integration_method_.getNumberOfPoints();
+        ip_data_.reserve(n_integration_points);
 
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, GlobalDim>(
-                element, is_axially_symmetric, _integration_method);
+                element, is_axially_symmetric, integration_method_);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data.emplace_back(
+            ip_data_.emplace_back(
                 shape_matrices[ip].N, shape_matrices[ip].dNdx,
-                _integration_method.getWeightedPoint(ip).getWeight() *
+                integration_method_.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ);
         }
@@ -162,7 +162,7 @@ public:
     {
         auto const local_matrix_size = local_x.size();
         // Nodal DOFs include pressure
-        int const num_nodal_dof = 1 + _transport_process_variables.size();
+        int const num_nodal_dof = 1 + transport_process_variables_.size();
         // This assertion is valid only if all nodal d.o.f. use the same shape
         // matrices.
         assert(local_matrix_size == ShapeFunction::NPOINTS * num_nodal_dof);
@@ -234,12 +234,12 @@ public:
         Eigen::Ref<LocalSegmentVectorType> Bp)
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
 
         MaterialPropertyLib::VariableArray vars;
 
@@ -248,7 +248,7 @@ public:
 
         // Get material properties
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
         // Select the only valid for component transport liquid phase.
         auto const& phase = medium.phase("AqueousLiquid");
 
@@ -256,13 +256,13 @@ public:
         // name. Components are shifted by one because the first one is always
         // pressure.
         auto const& component = phase.component(
-            _transport_process_variables[component_id].get().getName());
+            transport_process_variables_[component_id].get().getName());
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
-            auto const& ip_data = _ip_data[ip];
+            auto const& ip_data = ip_data_[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -328,7 +328,7 @@ public:
 
             GlobalDimMatrixType const K_over_mu = K / mu;
             GlobalDimVectorType const velocity =
-                _process_data.has_gravity
+                process_data_.has_gravity
                     ? GlobalDimVectorType(-K_over_mu *
                                           (dNdx * p_nodal_values - density * b))
                     : GlobalDimVectorType(-K_over_mu * dNdx * p_nodal_values);
@@ -363,7 +363,7 @@ public:
             const double R_times_phi(retardation_factor * porosity);
             GlobalDimVectorType const mass_density_flow = velocity * density;
             auto const N_t_N = (N.transpose() * N).eval();
-            if (_process_data.non_advective_form)
+            if (process_data_.non_advective_form)
             {
                 MCp.noalias() += N_t_N * (C_int_pt * R_times_phi * drho_dp * w);
                 MCC.noalias() += N_t_N * (C_int_pt * R_times_phi * drho_dC * w);
@@ -388,7 +388,7 @@ public:
                 Kpp.noalias() +=
                     dNdx.transpose() * K_over_mu * dNdx * (density * w);
 
-                if (_process_data.has_gravity)
+                if (process_data_.has_gravity)
                 {
                     Bp.noalias() += dNdx.transpose() * K_over_mu * b *
                                     (density * density * w);
@@ -440,15 +440,15 @@ public:
             local_b_data, pressure_size);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         MaterialPropertyLib::VariableArray vars;
@@ -457,7 +457,7 @@ public:
         {
             pos.setIntegrationPoint(ip);
 
-            auto const& ip_data = _ip_data[ip];
+            auto const& ip_data = ip_data_[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -512,7 +512,7 @@ public:
             local_K.noalias() +=
                 w * dNdx.transpose() * density * K_over_mu * dNdx;
 
-            if (_process_data.has_gravity)
+            if (process_data_.has_gravity)
             {
                 local_b.noalias() +=
                     w * density * density * dNdx.transpose() * K_over_mu * b;
@@ -548,12 +548,12 @@ public:
             local_K_data, concentration_size, concentration_size);
 
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
 
         MaterialPropertyLib::VariableArray vars;
 
@@ -561,19 +561,19 @@ public:
             GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
         auto const& phase = medium.phase("AqueousLiquid");
         // Hydraulic process id is 0 and thus transport process id starts
         // from 1.
         auto const component_id = transport_process_id - 1;
         auto const& component = phase.component(
-            _transport_process_variables[component_id].get().getName());
+            transport_process_variables_[component_id].get().getName());
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
-            auto const& ip_data = _ip_data[ip];
+            auto const& ip_data = ip_data_[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -634,7 +634,7 @@ public:
 
             GlobalDimMatrixType const K_over_mu = K / mu;
             GlobalDimVectorType const velocity =
-                _process_data.has_gravity
+                process_data_.has_gravity
                     ? GlobalDimVectorType(-K_over_mu *
                                           (dNdx * local_p - density * b))
                     : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
@@ -658,7 +658,7 @@ public:
             double const R_times_phi = retardation_factor * porosity;
             auto const N_t_N = (N.transpose() * N).eval();
 
-            if (_process_data.non_advective_form)
+            if (process_data_.non_advective_form)
             {
                 const double drho_dC =
                     phase.property(MaterialPropertyLib::PropertyType::density)
@@ -673,7 +673,7 @@ public:
 
             // coupling term
 
-            if (_process_data.non_advective_form)
+            if (process_data_.non_advective_form)
             {
                 double p0_int_pt = 0.0;
 
@@ -716,7 +716,7 @@ public:
         for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
         {
             auto const indices =
-                NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+                NumLib::getIndices(element_.getID(), *dof_table[process_id]);
             assert(!indices.empty());
             local_x.push_back(x[process_id]->get(indices));
         }
@@ -750,7 +750,7 @@ public:
         std::vector<double>& cache) const
     {
         auto const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            integration_method_.getNumberOfPoints();
 
         cache.clear();
         auto cache_mat = MathLib::createZeroedMatrix<
@@ -758,17 +758,17 @@ public:
             cache, GlobalDim, n_integration_points);
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
         MaterialPropertyLib::VariableArray vars;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            auto const& ip_data = _ip_data[ip];
+            auto const& ip_data = ip_data_[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
 
@@ -797,12 +797,12 @@ public:
             GlobalDimMatrixType const K_over_mu = K / mu;
 
             cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
-            if (_process_data.has_gravity)
+            if (process_data_.has_gravity)
             {
                 auto const rho_w =
                     phase.property(MaterialPropertyLib::PropertyType::density)
                         .template value<double>(vars, pos, t, dt);
-                auto const b = _process_data.specific_body_force;
+                auto const b = process_data_.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
                 cache_mat.col(ip).noalias() += K_over_mu * rho_w * b;
             }
@@ -814,7 +814,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _ip_data[integration_point].N;
+        auto const& N = ip_data_[integration_point].N;
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -832,7 +832,7 @@ public:
         // eval shape matrices at given point
         auto const shape_matrices = [&]() {
             auto const fe = NumLib::createIsoparametricFiniteElement<
-                ShapeFunction, ShapeMatricesType>(_element);
+                ShapeFunction, ShapeMatricesType>(element_);
 
             typename ShapeMatricesType::ShapeMatrices sm(
                 ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
@@ -846,12 +846,12 @@ public:
         }();
 
         ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        pos.setElementID(element_.getID());
 
         MaterialPropertyLib::VariableArray vars;
 
         auto const& medium =
-            *_process_data.media_map->getMedium(_element.getID());
+            *process_data_.media_map->getMedium(element_.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
         // local_x contains the local concentration and pressure values
@@ -881,9 +881,9 @@ public:
         auto const rho_w =
             phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
-        if (_process_data.has_gravity)
+        if (process_data_.has_gravity)
         {
-            auto const b = _process_data.specific_body_force;
+            auto const b = process_data_.specific_body_force;
             q += K_over_mu * rho_w * b;
         }
         Eigen::Vector3d flux(0.0, 0.0, 0.0);
@@ -892,18 +892,18 @@ public:
     }
 
 private:
-    MeshLib::Element const& _element;
-    ComponentTransportProcessData const& _process_data;
+    MeshLib::Element const& element_;
+    ComponentTransportProcessData const& process_data_;
 
-    IntegrationMethod const _integration_method;
+    IntegrationMethod const integration_method_;
     std::vector<std::reference_wrapper<ProcessVariable>> const
-        _transport_process_variables;
+        transport_process_variables_;
 
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
-        _ip_data;
+        ip_data_;
 };
 
 }  // namespace ComponentTransport

@@ -28,23 +28,23 @@ struct IntegrationPointWriter final
                            int const integration_order,
                            std::function<std::vector<std::vector<double>>()>
                                callback)
-        : _name(name),
-          _n_components(n_components),
-          _integration_order(integration_order),
-          _callback(callback)
+        : name_(name),
+          n_components_(n_components),
+          integration_order_(integration_order),
+          callback_(callback)
     {
     }
 
-    int numberOfComponents() const { return _n_components; }
-    int integrationOrder() const { return _integration_order; }
-    std::string name() const { return _name; }
-    std::vector<std::vector<double>> values() const { return _callback(); }
+    int numberOfComponents() const { return n_components_; }
+    int integrationOrder() const { return integration_order_; }
+    std::string name() const { return name_; }
+    std::vector<std::vector<double>> values() const { return callback_(); }
 
 private:
-    std::string const _name;
-    int const _n_components;
-    int const _integration_order;
-    std::function<std::vector<std::vector<double>>()> _callback;
+    std::string const name_;
+    int const n_components_;
+    int const integration_order_;
+    std::function<std::vector<std::vector<double>>()> callback_;
 };
 
 /// Add integration point data the the mesh's properties.

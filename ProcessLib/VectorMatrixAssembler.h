@@ -70,13 +70,13 @@ public:
 private:
     // temporary data only stored here in order to avoid frequent memory
     // reallocations.
-    std::vector<double> _local_M_data;
-    std::vector<double> _local_K_data;
-    std::vector<double> _local_b_data;
-    std::vector<double> _local_Jac_data;
+    std::vector<double> local_M_data_;
+    std::vector<double> local_K_data_;
+    std::vector<double> local_b_data_;
+    std::vector<double> local_Jac_data_;
 
     //! Used to assemble the Jacobian.
-    std::unique_ptr<AbstractJacobianAssembler> _jacobian_assembler;
+    std::unique_ptr<AbstractJacobianAssembler> jacobian_assembler_;
 };
 
 }  // namespace ProcessLib

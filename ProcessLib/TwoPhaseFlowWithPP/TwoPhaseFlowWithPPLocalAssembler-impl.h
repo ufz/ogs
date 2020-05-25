@@ -92,36 +92,36 @@ void TwoPhaseFlowWithPPLocalAssembler<
     auto Bl =
         local_b.template segment<cap_pressure_size>(cap_pressure_matrix_index);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& gas_phase = medium.phase("Gas");
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    pos.setElementID(element_.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         pos.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
-        auto const& dNdx = _ip_data[ip].dNdx;
-        auto const& M = _ip_data[ip].massOperator;
+        auto const& w = ip_data_[ip].integration_weight;
+        auto const& dNdx = ip_data_[ip].dNdx;
+        auto const& M = ip_data_[ip].massOperator;
 
         double pc_int_pt = 0.;
         double pn_int_pt = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, pn_int_pt,
+        NumLib::shapeFunctionInterpolate(local_x, ip_data_[ip].N, pn_int_pt,
                                          pc_int_pt);
 
-        _pressure_wet[ip] = pn_int_pt - pc_int_pt;
+        pressure_wet_[ip] = pn_int_pt - pc_int_pt;
         MPL::VariableArray variables;
 
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = pn_int_pt;
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             pc_int_pt;
         variables[static_cast<int>(MPL::Variable::temperature)] =
-            _process_data.temperature(t, pos)[0];
+            process_data_.temperature(t, pos)[0];
 
         auto const rho_nonwet =
             gas_phase.property(MPL::PropertyType::density)
@@ -129,7 +129,7 @@ void TwoPhaseFlowWithPPLocalAssembler<
 
         auto const rho_wet = liquid_phase.property(MPL::PropertyType::density)
                                  .template value<double>(variables, pos, t, dt);
-        auto& Sw = _saturation[ip];
+        auto& Sw = saturation_[ip];
         Sw = medium.property(MPL::PropertyType::saturation)
                  .template value<double>(variables, pos, t, dt);
 
@@ -179,9 +179,9 @@ void TwoPhaseFlowWithPPLocalAssembler<
         Klp.noalias() += rho_wet * lambda_wet * laplace_operator;
         Klpc.noalias() += -rho_wet * lambda_wet * laplace_operator;
 
-        if (_process_data.has_gravity)
+        if (process_data_.has_gravity)
         {
-            auto const& b = _process_data.specific_body_force;
+            auto const& b = process_data_.specific_body_force;
 
             NodalVectorType gravity_operator = dNdx.transpose() * K * b * w;
             Bg.noalias() +=
@@ -189,7 +189,7 @@ void TwoPhaseFlowWithPPLocalAssembler<
             Bl.noalias() += rho_wet * rho_wet * lambda_wet * gravity_operator;
         }  // end of has gravity
     }
-    if (_process_data.has_mass_lumping)
+    if (process_data_.has_mass_lumping)
     {
         for (unsigned row = 0; row < Mgpc.cols(); row++)
         {

@@ -66,8 +66,8 @@ public:
         : HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>(
               element, local_matrix_size, is_axially_symmetric,
               integration_order, process_data, 1),
-        _heat_transport_process_id(heat_transport_process_id),
-        _hydraulic_process_id(hydraulic_process_id)
+        heat_transport_process_id_(heat_transport_process_id),
+        hydraulic_process_id_(hydraulic_process_id)
     {
     }
 
@@ -96,8 +96,8 @@ private:
                                        std::vector<double>& local_M_data,
                                        std::vector<double>& local_K_data,
                                        std::vector<double>& local_b_data);
-    const int _heat_transport_process_id;
-    const int _hydraulic_process_id;
+    const int heat_transport_process_id_;
+    const int hydraulic_process_id_;
 };
 
 }  // namespace HT

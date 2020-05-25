@@ -31,7 +31,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
         LocalCoupledSolutions const& /*local_coupled_solutions*/)
 {
-    if (process_id == _phase_field_process_id)
+    if (process_id == phase_field_process_id_)
     {
         assembleWithJacobianForPhaseFieldEquations(
             t, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data, local_K_data,
@@ -39,7 +39,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         return;
     }
 
-    if (process_id == _heat_conduction_process_id)
+    if (process_id == heat_conduction_process_id_)
     {
         assembleWithJacobianForHeatConductionEquations(
             t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data,
@@ -83,38 +83,38 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         local_b_data, displacement_size);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
+    int const n_integration_points = integration_method_.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& w = ip_data_[ip].integration_weight;
+        auto const& N = ip_data_[ip].N;
+        auto const& dNdx = ip_data_[ip].dNdx;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
+            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(element_,
                                                                      N);
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, _is_axially_symmetric);
+                dNdx, N, x_coord, is_axially_symmetric_);
 
-        auto& eps = _ip_data[ip].eps;
+        auto& eps = ip_data_[ip].eps;
 
-        auto const& C_tensile = _ip_data[ip].C_tensile;
-        auto const& C_compressive = _ip_data[ip].C_compressive;
+        auto const& C_tensile = ip_data_[ip].C_tensile;
+        auto const& C_compressive = ip_data_[ip].C_compressive;
 
-        auto const& sigma = _ip_data[ip].sigma;
+        auto const& sigma = ip_data_[ip].sigma;
 
-        auto const k = _process_data.residual_stiffness(t, x_position)[0];
-        auto rho_sr = _process_data.solid_density(t, x_position)[0];
-        auto const alpha = _process_data.linear_thermal_expansion_coefficient(
+        auto const k = process_data_.residual_stiffness(t, x_position)[0];
+        auto rho_sr = process_data_.solid_density(t, x_position)[0];
+        auto const alpha = process_data_.linear_thermal_expansion_coefficient(
             t, x_position)[0];
-        double const T0 = _process_data.reference_temperature;
-        auto const& b = _process_data.specific_body_force;
+        double const T0 = process_data_.reference_temperature;
+        auto const& b = process_data_.specific_body_force;
 
         double const T_ip = N.dot(T);
         double const delta_T = T_ip - T0;
@@ -126,7 +126,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto const C_eff = degradation * C_tensile + C_compressive;
         eps.noalias() = B * u;
-        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u, alpha,
+        ip_data_[ip].updateConstitutiveRelation(t, x_position, dt, u, alpha,
                                                 delta_T, degradation);
 
         typename ShapeMatricesType::template MatrixType<DisplacementDim,
@@ -180,28 +180,28 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         local_b_data, temperature_size);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
+    int const n_integration_points = integration_method_.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& w = ip_data_[ip].integration_weight;
+        auto const& N = ip_data_[ip].N;
+        auto const& dNdx = ip_data_[ip].dNdx;
 
-        auto& eps_m = _ip_data[ip].eps_m;
-        auto& heatflux = _ip_data[ip].heatflux;
+        auto& eps_m = ip_data_[ip].eps_m;
+        auto& heatflux = ip_data_[ip].heatflux;
 
-        auto rho_sr = _process_data.solid_density(t, x_position)[0];
-        auto const alpha = _process_data.linear_thermal_expansion_coefficient(
+        auto rho_sr = process_data_.solid_density(t, x_position)[0];
+        auto const alpha = process_data_.linear_thermal_expansion_coefficient(
             t, x_position)[0];
-        double const c = _process_data.specific_heat_capacity(t, x_position)[0];
+        double const c = process_data_.specific_heat_capacity(t, x_position)[0];
         auto const lambda =
-            _process_data.thermal_conductivity(t, x_position)[0];
+            process_data_.thermal_conductivity(t, x_position)[0];
         auto const lambda_res =
-            _process_data.residual_thermal_conductivity(t, x_position)[0];
-        double const T0 = _process_data.reference_temperature;
+            process_data_.residual_thermal_conductivity(t, x_position)[0];
+        double const T0 = process_data_.reference_temperature;
 
         double const d_ip = N.dot(d);
         double const T_ip = N.dot(T);
@@ -271,20 +271,20 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         local_b_data, phasefield_size);
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
+    int const n_integration_points = integration_method_.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& w = ip_data_[ip].integration_weight;
+        auto const& N = ip_data_[ip].N;
+        auto const& dNdx = ip_data_[ip].dNdx;
 
-        auto const& strain_energy_tensile = _ip_data[ip].strain_energy_tensile;
+        auto const& strain_energy_tensile = ip_data_[ip].strain_energy_tensile;
 
-        auto const gc = _process_data.crack_resistance(t, x_position)[0];
-        auto const ls = _process_data.crack_length_scale(t, x_position)[0];
+        auto const gc = process_data_.crack_resistance(t, x_position)[0];
+        auto const ls = process_data_.crack_length_scale(t, x_position)[0];
 
         double const d_ip = N.dot(d);
 

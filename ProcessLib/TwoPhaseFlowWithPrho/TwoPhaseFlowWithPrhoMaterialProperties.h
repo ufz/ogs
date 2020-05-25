@@ -104,28 +104,28 @@ public:
         double& dxm_dX);
 
 protected:
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _liquid_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _viscosity;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_density;
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty> _gas_viscosity;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> liquid_density_;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> viscosity_;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> gas_density_;
+    std::unique_ptr<MaterialLib::Fluid::FluidProperty> gas_viscosity_;
 
     /** Use two phase models for different material zones.
     *  Material IDs must be given as mesh element properties.
     */
-    boost::optional<MeshLib::PropertyVector<int> const&> const _material_ids;
+    boost::optional<MeshLib::PropertyVector<int> const&> const material_ids_;
 
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>
-        _intrinsic_permeability_models;
+        intrinsic_permeability_models_;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Porosity>>
-        _porosity_models;
+        porosity_models_;
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Storage>>
-        _storage_models;
+        storage_models_;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::CapillaryPressureSaturation>>
-        _capillary_pressure_models;
+        capillary_pressure_models_;
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>
-        _relative_permeability_models;
+        relative_permeability_models_;
 
 private:
     static int const jacobian_residual_size = 2;
