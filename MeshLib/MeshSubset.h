@@ -30,11 +30,11 @@ public:
     /// \param msh Mesh
     /// \param vec_items Vector of Node pointers.
     MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_items)
-        : _msh(msh), _nodes(vec_items)
+        : msh_(msh), nodes_(vec_items)
     {
         // If the mesh nodes and the given nodes point to the same vector, they
         // must be equal.
-        if (&_msh.getNodes() == &_nodes)
+        if (&msh_.getNodes() == &nodes_)
         {
             return;
         }
@@ -44,7 +44,7 @@ public:
         //
         {
             // Need sorted version of the large vector.
-            auto sorted_nodes = _msh.getNodes();  // full copy of pointers.
+            auto sorted_nodes = msh_.getNodes();  // full copy of pointers.
             sort(begin(sorted_nodes), end(sorted_nodes));
 
             // Then proceed with the search function.
@@ -60,7 +60,7 @@ public:
                 }
                 return true;
             };
-            if (!std::all_of(begin(_nodes), end(_nodes), node_is_part_of_mesh))
+            if (!std::all_of(begin(nodes_), end(nodes_), node_is_part_of_mesh))
             {
                 OGS_FATAL("The mesh subset construction failed.");
             }
@@ -70,46 +70,46 @@ public:
     /// return this mesh ID
     std::size_t getMeshID() const
     {
-        return _msh.getID();
+        return msh_.getID();
     }
 
     /// return the number of registered nodes
     std::size_t getNumberOfNodes() const
     {
-        return _nodes.size();
+        return nodes_.size();
     }
 
     /// Returns the global node id Node::getID() of i-th node in the mesh
     /// subset.
-    /// \pre The _nodes vector must be of size > i.
+    /// \pre The nodes_ vector must be of size > i.
     std::size_t getNodeID(std::size_t const i) const
     {
-        assert(i < _nodes.size());
-        return _nodes[i]->getID();
+        assert(i < nodes_.size());
+        return nodes_[i]->getID();
     }
 
     std::vector<Element*>::const_iterator elementsBegin() const
     {
-        return _msh.getElements().cbegin();
+        return msh_.getElements().cbegin();
     }
 
     std::vector<Element*>::const_iterator elementsEnd() const
     {
-        return _msh.getElements().cend();
+        return msh_.getElements().cend();
     }
 
     std::vector<Node*> const& getNodes() const
     {
-        return _nodes;
+        return nodes_;
     }
 
     Mesh const& getMesh() const
     {
-        return _msh;
+        return msh_;
     }
 
 private:
-    Mesh const& _msh;
-    std::vector<Node*> const& _nodes;
+    Mesh const& msh_;
+    std::vector<Node*> const& nodes_;
 };
 }   // namespace MeshLib

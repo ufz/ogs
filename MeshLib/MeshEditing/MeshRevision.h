@@ -172,9 +172,9 @@ private:
     unsigned lutPrismThirdNode(unsigned id1, unsigned id2) const;
 
     /// The original mesh used for constructing the class
-    Mesh& _mesh;
+    Mesh& mesh_;
 
-    static const std::array<unsigned,8> _hex_diametral_nodes;
+    static const std::array<unsigned,8> hex_diametral_nodes_;
 };
 
 }  // namespace MeshLib

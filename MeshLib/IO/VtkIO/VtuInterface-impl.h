@@ -34,14 +34,14 @@ template <typename UnstructuredGridWriter>
 bool VtuInterface::writeVTU(std::string const& file_name,
                             const int num_partitions, const int rank)
 {
-    if(!_mesh)
+    if(!mesh_)
     {
         ERR("VtuInterface::write(): No mesh specified.");
         return false;
     }
 
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
-    vtkSource->SetMesh(_mesh);
+    vtkSource->SetMesh(mesh_);
 
     vtkSmartPointer<UnstructuredGridWriter> vtuWriter =
         vtkSmartPointer<UnstructuredGridWriter>::New();
@@ -49,7 +49,7 @@ bool VtuInterface::writeVTU(std::string const& file_name,
     vtkSource->Update();
     vtuWriter->SetInputData(vtkSource->GetOutput());
 
-    if (_use_compressor)
+    if (use_compressor_)
     {
         vtuWriter->SetCompressorTypeToZLib();
     }
@@ -58,12 +58,12 @@ bool VtuInterface::writeVTU(std::string const& file_name,
         vtuWriter->SetCompressorTypeToNone();
     }
 
-    vtuWriter->SetDataMode(_data_mode);
-    if (_data_mode == vtkXMLWriter::Appended)
+    vtuWriter->SetDataMode(data_mode_);
+    if (data_mode_ == vtkXMLWriter::Appended)
     {
         vtuWriter->SetEncodeAppendedData(1);
     }
-    if (_data_mode == vtkXMLWriter::Ascii)
+    if (data_mode_ == vtkXMLWriter::Ascii)
     {
         vtkSource->Update();
         vtkSmartPointer<vtkUnstructuredGrid> tempGrid =

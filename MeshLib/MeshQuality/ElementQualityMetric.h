@@ -45,9 +45,9 @@ public:
     virtual BaseLib::Histogram<double> getHistogram (std::size_t n_bins = 0) const;
 
 protected:
-    double _min;
-    double _max;
-    Mesh const& _mesh;
-    std::vector<double> _element_quality_metric;
+    double min_;
+    double max_;
+    Mesh const& mesh_;
+    std::vector<double> element_quality_metric_;
 };
 }  // namespace MeshLib

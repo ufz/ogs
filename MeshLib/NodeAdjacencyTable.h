@@ -39,37 +39,37 @@ public:
     explicit
     NodeAdjacencyTable(std::vector<Node*> const& nodes)
     {
-        _data.resize(nodes.size());
+        data_.resize(nodes.size());
 
         createTable(nodes);
     }
 
     std::size_t size() const
     {
-        return _data.size();
+        return data_.size();
     }
 
     std::size_t getNodeDegree(std::size_t const node_id) const
     {
-        return _data[node_id].size();
+        return data_[node_id].size();
     }
 
     std::vector<std::size_t> const& getAdjacentNodes(std::size_t const node_id) const
     {
-        return _data[node_id];
+        return data_[node_id];
     }
 
     void createTable(std::vector<Node*> const& nodes)
     {
-        if (_data.size() != nodes.size())
+        if (data_.size() != nodes.size())
         {
-            _data.resize(nodes.size());
+            data_.resize(nodes.size());
         }
 
         for (auto n_ptr : nodes)
         {
             std::vector<Node*> const& connected_nodes = n_ptr->getConnectedNodes();
-            std::vector<std::size_t>& row = _data[n_ptr->getID()];
+            std::vector<std::size_t>& row = data_[n_ptr->getID()];
             row.reserve(connected_nodes.size());
             std::transform(connected_nodes.cbegin(), connected_nodes.cend(),
                 std::back_inserter(row),
@@ -78,7 +78,7 @@ public:
     }
 
 private:
-    std::vector<std::vector<std::size_t>> _data;
+    std::vector<std::vector<std::size_t>> data_;
 
 };
 

@@ -40,7 +40,7 @@ public:
     std::vector<MeshLib::Node*> const& getActiveNodes() const;
 
     /// Returns the status of element i
-    bool isActive(std::size_t i) const { return _element_status[i]; }
+    bool isActive(std::size_t i) const { return element_status_[i]; }
 
     /// Returns the status of the given node
     bool isActiveNode(MeshLib::Node const* node) const;
@@ -56,15 +56,15 @@ protected:
     void setElementStatus(std::size_t i, bool status);
 
     /// The mesh for which the element status is administrated
-    MeshLib::Mesh const*const _mesh;
+    MeshLib::Mesh const*const mesh_;
     /// Element status for each mesh element (active/inactive = true/false)
-    std::vector<bool> _element_status;
+    std::vector<bool> element_status_;
     /// Node status for each mesh node (value = number of active elements connected to node, 0 means inactive)
-    std::vector<unsigned char> _active_nodes;
+    std::vector<unsigned char> active_nodes_;
 
-    bool const _hasAnyInactive;
-    std::vector<MeshLib::Node*> _vec_active_nodes;
-    std::vector<MeshLib::Element*> _vec_active_eles;
+    bool const hasAnyInactive_;
+    std::vector<MeshLib::Node*> vec_active_nodes_;
+    std::vector<MeshLib::Element*> vec_active_eles_;
 
 }; /* class */
 

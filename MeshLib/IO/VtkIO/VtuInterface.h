@@ -59,9 +59,9 @@ public:
                   const int rank = 1);
 
 private:
-    const MeshLib::Mesh* _mesh;
-    int _data_mode;
-    bool _use_compressor;
+    const MeshLib::Mesh* mesh_;
+    int data_mode_;
+    bool use_compressor_;
 };
 
 int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,

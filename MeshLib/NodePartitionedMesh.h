@@ -33,29 +33,29 @@ public:
     // \param mesh The gobal mesh
     explicit NodePartitionedMesh(const Mesh& mesh)
         : Mesh(mesh),
-          _global_node_ids(mesh.getNumberOfNodes()),
-          _n_global_base_nodes(mesh.getNumberOfBaseNodes()),
-          _n_global_nodes(mesh.getNumberOfNodes()),
-          _n_active_base_nodes(mesh.getNumberOfBaseNodes()),
-          _n_active_nodes(mesh.getNumberOfNodes()),
-          _is_single_thread(true)
+          global_node_ids_(mesh.getNumberOfNodes()),
+          n_global_base_nodes_(mesh.getNumberOfBaseNodes()),
+          n_global_nodes_(mesh.getNumberOfNodes()),
+          n_active_base_nodes_(mesh.getNumberOfBaseNodes()),
+          n_active_nodes_(mesh.getNumberOfNodes()),
+          is_single_thread_(true)
     {
         const auto& mesh_nodes = mesh.getNodes();
-        for (std::size_t i = 0; i < _nodes.size(); i++)
+        for (std::size_t i = 0; i < nodes_.size(); i++)
         {
-            _global_node_ids[i] = _nodes[i]->getID();
+            global_node_ids_[i] = nodes_[i]->getID();
 
             // TODO To add copying of the connected nodes (and elements)
             //      in the copy constructor of class Node in order to
             //      drop the following lines.
-            auto node = _nodes[i];
+            auto node = nodes_[i];
             // Copy constructor of Mesh does not copy the connected
             // nodes to node.
-            if (node->_connected_nodes.size() == 0)
+            if (node->connected_nodes_.size() == 0)
             {
-                std::copy(mesh_nodes[i]->_connected_nodes.begin(),
-                          mesh_nodes[i]->_connected_nodes.end(),
-                          std::back_inserter(node->_connected_nodes));
+                std::copy(mesh_nodes[i]->connected_nodes_.begin(),
+                          mesh_nodes[i]->connected_nodes_.end(),
+                          std::back_inserter(node->connected_nodes_));
             }
         }
     }
@@ -88,43 +88,43 @@ public:
                         const std::size_t n_active_base_nodes,
                         const std::size_t n_active_nodes)
         : Mesh(name, nodes, elements, properties, n_base_nodes),
-          _global_node_ids(glb_node_ids),
-          _n_global_base_nodes(n_global_base_nodes),
-          _n_global_nodes(n_global_nodes),
-          _n_active_base_nodes(n_active_base_nodes),
-          _n_active_nodes(n_active_nodes),
-          _is_single_thread(false)
+          global_node_ids_(glb_node_ids),
+          n_global_base_nodes_(n_global_base_nodes),
+          n_global_nodes_(n_global_nodes),
+          n_active_base_nodes_(n_active_base_nodes),
+          n_active_nodes_(n_active_nodes),
+          is_single_thread_(false)
     {
     }
 
     /// Get the number of nodes of the global mesh for linear elements.
     std::size_t getNumberOfGlobalBaseNodes() const
     {
-        return _n_global_base_nodes;
+        return n_global_base_nodes_;
     }
 
     /// Get the number of all nodes of the global mesh.
-    std::size_t getNumberOfGlobalNodes() const { return _n_global_nodes; }
+    std::size_t getNumberOfGlobalNodes() const { return n_global_nodes_; }
     /// Get the global node ID of a node with its local ID.
     std::size_t getGlobalNodeID(const std::size_t node_id) const
     {
-        return _global_node_ids[node_id];
+        return global_node_ids_[node_id];
     }
 
     /// Get the number of the active nodes of the partition for linear elements.
     std::size_t getNumberOfActiveBaseNodes() const
     {
-        return _n_active_base_nodes;
+        return n_active_base_nodes_;
     }
 
     /// Get the number of all active nodes of the partition.
-    std::size_t getNumberOfActiveNodes() const { return _n_active_nodes; }
+    std::size_t getNumberOfActiveNodes() const { return n_active_nodes_; }
     /// Check whether a node with ID of node_id is a ghost node
     bool isGhostNode(const std::size_t node_id) const
     {
-        if (node_id < _n_active_base_nodes)
+        if (node_id < n_active_base_nodes_)
             return false;
-        else if (node_id >= _n_base_nodes && node_id < getLargestActiveNodeID())
+        else if (node_id >= n_base_nodes_ && node_id < getLargestActiveNodeID())
             return false;
         else
             return true;
@@ -134,7 +134,7 @@ public:
     /// partition.
     std::size_t getLargestActiveNodeID() const
     {
-        return _n_base_nodes + _n_active_nodes - _n_active_base_nodes;
+        return n_base_nodes_ + n_active_nodes_ - n_active_base_nodes_;
     }
 
     // TODO I guess that is a simplified version of computeSparsityPattern()
@@ -142,7 +142,7 @@ public:
     std::size_t getMaximumNConnectedNodesToNode() const
     {
         std::vector<Node*>::const_iterator it_max_ncn = std::max_element(
-            _nodes.cbegin(), _nodes.cend(),
+            nodes_.cbegin(), nodes_.cend(),
             [](Node const* const node_a, Node const* const node_b) {
                 return (node_a->getConnectedNodes().size() <
                         node_b->getConnectedNodes().size());
@@ -151,25 +151,25 @@ public:
         return (*it_max_ncn)->getConnectedNodes().size() + 1;
     }
 
-    bool isForSingleThread() const { return _is_single_thread; }
+    bool isForSingleThread() const { return is_single_thread_; }
 
 private:
     /// Global IDs of nodes of a partition
-    std::vector<std::size_t> _global_node_ids;
+    std::vector<std::size_t> global_node_ids_;
 
     /// Number of the nodes of the global mesh linear interpolations.
-    std::size_t _n_global_base_nodes;
+    std::size_t n_global_base_nodes_;
 
     /// Number of all nodes of the global mesh.
-    std::size_t _n_global_nodes;
+    std::size_t n_global_nodes_;
 
     /// Number of the active nodes for linear interpolations
-    std::size_t _n_active_base_nodes;
+    std::size_t n_active_base_nodes_;
 
     /// Number of the all active nodes.
-    std::size_t _n_active_nodes;
+    std::size_t n_active_nodes_;
 
-    const bool _is_single_thread;
+    const bool is_single_thread_;
 };
 
 }  // namespace MeshLib

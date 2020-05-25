@@ -75,34 +75,34 @@ public:
     void addElement(Element* elem);
 
     /// Returns the dimension of the mesh (determined by the maximum dimension over all elements).
-    unsigned getDimension() const { return _mesh_dimension; }
+    unsigned getDimension() const { return mesh_dimension_; }
 
     /// Get the node with the given index.
-    const Node* getNode(std::size_t idx) const { return _nodes[idx]; }
+    const Node* getNode(std::size_t idx) const { return nodes_[idx]; }
 
     /// Get the element with the given index.
-    const Element* getElement(std::size_t idx) const { return _elements[idx]; }
+    const Element* getElement(std::size_t idx) const { return elements_[idx]; }
 
     /// Get the minimum edge length over all elements of the mesh.
-    double getMinEdgeLength() const { return _edge_length.first; }
+    double getMinEdgeLength() const { return edge_length_.first; }
 
     /// Get the maximum edge length over all elements of the mesh.
-    double getMaxEdgeLength() const { return _edge_length.second; }
+    double getMaxEdgeLength() const { return edge_length_.second; }
 
     /// Get the number of elements
-    std::size_t getNumberOfElements() const { return _elements.size(); }
+    std::size_t getNumberOfElements() const { return elements_.size(); }
 
     /// Get the number of nodes
-    std::size_t getNumberOfNodes() const { return _nodes.size(); }
+    std::size_t getNumberOfNodes() const { return nodes_.size(); }
 
     /// Get name of the mesh.
-    const std::string getName() const { return _name; }
+    const std::string getName() const { return name_; }
 
     /// Get the nodes-vector for the mesh.
-    std::vector<Node*> const& getNodes() const { return _nodes; }
+    std::vector<Node*> const& getNodes() const { return nodes_; }
 
     /// Get the element-vector for the mesh.
-    std::vector<Element*> const& getElements() const { return _elements; }
+    std::vector<Element*> const& getElements() const { return elements_; }
 
     /// Resets the IDs of all mesh-elements to their position in the element vector
     void resetElementIDs();
@@ -114,26 +114,26 @@ public:
     void recalculateMaxBaseNodeId();
 
     /// Changes the name of the mesh.
-    void setName(const std::string &name) { this->_name = name; }
+    void setName(const std::string &name) { this->name_ = name; }
 
     /// Get id of the mesh
-    std::size_t getID() const {return _id; }
+    std::size_t getID() const {return id_; }
 
     /// Get the number of base nodes
-    std::size_t getNumberOfBaseNodes() const { return _n_base_nodes; }
+    std::size_t getNumberOfBaseNodes() const { return n_base_nodes_; }
 
     /// Return true if the given node is a basic one (i.e. linear order node)
-    bool isBaseNode(std::size_t node_idx) const {return node_idx < _n_base_nodes; }
+    bool isBaseNode(std::size_t node_idx) const {return node_idx < n_base_nodes_; }
 
     /// Return true if the mesh has any nonlinear nodes
     bool isNonlinear() const { return (getNumberOfNodes() != getNumberOfBaseNodes()); }
 
-    MeshLib::Properties & getProperties() { return _properties; }
-    MeshLib::Properties const& getProperties() const { return _properties; }
+    MeshLib::Properties & getProperties() { return properties_; }
+    MeshLib::Properties const& getProperties() const { return properties_; }
 
-    bool isAxiallySymmetric() const { return _is_axially_symmetric; }
+    bool isAxiallySymmetric() const { return is_axially_symmetric_; }
     void setAxiallySymmetric(bool is_axial_symmetric) {
-        _is_axially_symmetric = is_axial_symmetric;
+        is_axially_symmetric_ = is_axial_symmetric;
     }
 
 protected:
@@ -160,19 +160,19 @@ protected:
     /// Check if the mesh contains any nonlinear element
     bool hasNonlinearElement() const;
 
-    std::size_t const _id;
-    unsigned _mesh_dimension;
+    std::size_t const id_;
+    unsigned mesh_dimension_;
     /// The minimal and maximal edge length over all elements in the mesh
-    std::pair<double, double> _edge_length;
+    std::pair<double, double> edge_length_;
     /// The minimal and maximal distance of nodes within an element over all elements in the mesh
-    std::pair<double, double> _node_distance;
-    std::string _name;
-    std::vector<Node*> _nodes;
-    std::vector<Element*> _elements;
-    std::size_t _n_base_nodes;
-    Properties _properties;
+    std::pair<double, double> node_distance_;
+    std::string name_;
+    std::vector<Node*> nodes_;
+    std::vector<Element*> elements_;
+    std::size_t n_base_nodes_;
+    Properties properties_;
 
-    bool _is_axially_symmetric = false;
+    bool is_axially_symmetric_ = false;
 }; /* class */
 
 

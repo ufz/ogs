@@ -27,7 +27,7 @@ public:
     explicit NodeSearch(const MeshLib::Mesh &mesh);
 
     /// return marked node IDs
-    const std::vector<std::size_t>& getSearchedNodeIDs() const {return _marked_nodes; }
+    const std::vector<std::size_t>& getSearchedNodeIDs() const {return marked_nodes_; }
 
     /// Marks all nodes connected to any of the given elements ids.
     /// \return number of connected nodes.
@@ -45,9 +45,9 @@ private:
     void updateUnion(const std::vector<std::size_t> &vec);
 
     /// The mesh from which elements should be removed.
-    const MeshLib::Mesh &_mesh;
+    const MeshLib::Mesh &mesh_;
     /// The vector of element indices that should be removed.
-    std::vector<std::size_t> _marked_nodes;
+    std::vector<std::size_t> marked_nodes_;
 };
 
 /// Create a vector of unique nodes used by given elements.

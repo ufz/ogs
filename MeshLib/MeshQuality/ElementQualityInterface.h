@@ -37,22 +37,22 @@ class ElementQualityInterface
 public:
     /// Constructor
     ElementQualityInterface(MeshLib::Mesh const& mesh, MeshQualityType t)
-    : _type(t), _mesh(mesh), _quality_tester(nullptr)
+    : type_(t), mesh_(mesh), quality_tester_(nullptr)
     {
-        calculateElementQuality(_mesh, _type);
+        calculateElementQuality(mesh_, type_);
     }
 
     /// Destructor
     ~ElementQualityInterface()
     {
-        delete _quality_tester;
+        delete quality_tester_;
     }
 
     /// Returns the vector containing a quality measure for each element.
     std::vector<double> const getQualityVector() const
     {
-        if (_quality_tester)
-            return _quality_tester->getElementQuality();
+        if (quality_tester_)
+            return quality_tester_->getElementQuality();
 
         std::vector<double> empty_quality_vec(0);
         return empty_quality_vec;
@@ -62,8 +62,8 @@ public:
     /// If no number of bins is specified, one will be calculated based on the Sturges criterium.
     BaseLib::Histogram<double> getHistogram(std::size_t n_bins = 0) const
     {
-        if (_quality_tester)
-            return _quality_tester->getHistogram(static_cast<std::size_t>(n_bins));
+        if (quality_tester_)
+            return quality_tester_->getHistogram(static_cast<std::size_t>(n_bins));
 
         return BaseLib::Histogram<double>{{}};
     }
@@ -71,11 +71,11 @@ public:
     /// Writes a histogram of the quality vector to a specified file.
     int writeHistogram(std::string const& file_name, std::size_t n_bins = 0) const
     {
-        if (_quality_tester == nullptr)
+        if (quality_tester_ == nullptr)
             return 1;
 
-        BaseLib::Histogram<double> const histogram (_quality_tester->getHistogram(n_bins));
-        histogram.write(file_name, _mesh.getName(), MeshQualityType2String(_type));
+        BaseLib::Histogram<double> const histogram (quality_tester_->getHistogram(n_bins));
+        histogram.write(file_name, mesh_.getName(), MeshQualityType2String(type_));
         return 0;
     }
 
@@ -84,26 +84,26 @@ private:
     void calculateElementQuality(MeshLib::Mesh const& mesh, MeshQualityType t)
     {
         if (t == MeshQualityType::EDGERATIO)
-            _quality_tester = new MeshLib::EdgeRatioMetric(mesh);
+            quality_tester_ = new MeshLib::EdgeRatioMetric(mesh);
         else if (t == MeshQualityType::ELEMENTSIZE)
-            _quality_tester = new MeshLib::ElementSizeMetric(mesh);
+            quality_tester_ = new MeshLib::ElementSizeMetric(mesh);
         else if (t == MeshQualityType::SIZEDIFFERENCE)
-            _quality_tester = new MeshLib::SizeDifferenceMetric(mesh);
+            quality_tester_ = new MeshLib::SizeDifferenceMetric(mesh);
         else if (t == MeshQualityType::EQUIANGLESKEW)
-            _quality_tester = new MeshLib::AngleSkewMetric(mesh);
+            quality_tester_ = new MeshLib::AngleSkewMetric(mesh);
         else if (t == MeshQualityType::RADIUSEDGERATIO)
-            _quality_tester = new MeshLib::RadiusEdgeRatioMetric(mesh);
+            quality_tester_ = new MeshLib::RadiusEdgeRatioMetric(mesh);
         else
         {
             ERR("ElementQualityInterface::calculateElementQuality(): Unknown MeshQualityType.");
             return;
         }
-        _quality_tester->calculateQuality();
+        quality_tester_->calculateQuality();
     }
 
-    MeshQualityType const _type;
-    MeshLib::Mesh const& _mesh;
-    MeshLib::ElementQualityMetric* _quality_tester;
+    MeshQualityType const type_;
+    MeshLib::Mesh const& mesh_;
+    MeshLib::ElementQualityMetric* quality_tester_;
 };
 
 }  // namespace MeshLib

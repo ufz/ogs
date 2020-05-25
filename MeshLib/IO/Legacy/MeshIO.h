@@ -60,7 +60,7 @@ private:
         std::istream& in, const std::vector<MeshLib::Node*>& nodes) const;
     std::string ElemType2StringOutput(const MeshLib::MeshElemType t) const;
 
-    const MeshLib::Mesh* _mesh{nullptr};
+    const MeshLib::Mesh* mesh_{nullptr};
 
 };  /* class */
 
