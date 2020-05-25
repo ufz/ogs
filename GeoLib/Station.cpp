@@ -24,24 +24,24 @@
 namespace GeoLib
 {
 Station::Station(double x, double y, double z, std::string name)
-    : Point(x, y, z), _name(std::move(name))
+    : Point(x, y, z), name_(std::move(name))
 
 {}
 
 Station::Station(Point* coords, std::string name)
-    : Point(*coords), _name(std::move(name))
+    : Point(*coords), name_(std::move(name))
 {}
 
 Station::Station(Station const& src)
     : Point(src),
-      _name(src._name),
-      _type(src._type),
-      _station_value(src._station_value)
+      name_(src.name_),
+      type_(src.type_),
+      station_value_(src.station_value_)
 {}
 
 Station::~Station()
 {
-    delete this->_sensor_data;
+    delete this->sensor_data_;
 }
 
 Station* Station::createStation(const std::string & line)
@@ -52,7 +52,7 @@ Station* Station::createStation(const std::string & line)
     if (fields.size() >= 3)
     {
         auto it = fields.begin();
-        station->_name = *it;
+        station->name_ = *it;
         (*station)[0] = std::strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
         (*station)[1] = std::strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
         if (++it != fields.end())

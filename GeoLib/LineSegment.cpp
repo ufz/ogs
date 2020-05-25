@@ -13,34 +13,34 @@ namespace GeoLib
 {
 LineSegment::LineSegment(Point* const a, Point* const b,
                          bool point_mem_management_by_line_segment)
-    : _a(a),
-      _b(b),
-      _point_mem_management_by_line_segment(
+    : a_(a),
+      b_(b),
+      point_mem_management_by_line_segment_(
           point_mem_management_by_line_segment)
 {}
 
 LineSegment::LineSegment(LineSegment const& line_segment)
-    : _a(new Point(line_segment.getBeginPoint())),
-      _b(new Point(line_segment.getEndPoint())),
-      _point_mem_management_by_line_segment(true)
+    : a_(new Point(line_segment.getBeginPoint())),
+      b_(new Point(line_segment.getEndPoint())),
+      point_mem_management_by_line_segment_(true)
 {}
 
 LineSegment::LineSegment(LineSegment&& line_segment)
-    : _a(line_segment._a),
-      _b(line_segment._b),
-      _point_mem_management_by_line_segment(
-          line_segment._point_mem_management_by_line_segment)
+    : a_(line_segment.a_),
+      b_(line_segment.b_),
+      point_mem_management_by_line_segment_(
+          line_segment.point_mem_management_by_line_segment_)
 {
-    line_segment._a = nullptr;
-    line_segment._b = nullptr;
-    line_segment._point_mem_management_by_line_segment = false;
+    line_segment.a_ = nullptr;
+    line_segment.b_ = nullptr;
+    line_segment.point_mem_management_by_line_segment_ = false;
 }
 
 LineSegment::~LineSegment()
 {
-    if (_point_mem_management_by_line_segment) {
-        delete _b;
-        delete _a;
+    if (point_mem_management_by_line_segment_) {
+        delete b_;
+        delete a_;
     }
 }
 
@@ -48,36 +48,36 @@ LineSegment& LineSegment::operator=(LineSegment const&) = default;
 
 LineSegment& LineSegment::operator=(LineSegment&& line_segment)
 {
-    _a = line_segment._a;
-    _b = line_segment._b;
-    _point_mem_management_by_line_segment =
-        line_segment._point_mem_management_by_line_segment;
+    a_ = line_segment.a_;
+    b_ = line_segment.b_;
+    point_mem_management_by_line_segment_ =
+        line_segment.point_mem_management_by_line_segment_;
 
-    line_segment._a = nullptr;
-    line_segment._b = nullptr;
-    line_segment._point_mem_management_by_line_segment = false;
+    line_segment.a_ = nullptr;
+    line_segment.b_ = nullptr;
+    line_segment.point_mem_management_by_line_segment_ = false;
 
     return *this;
 }
 
 Point const& LineSegment::getBeginPoint() const
 {
-    return *_a;
+    return *a_;
 }
 
 Point & LineSegment::getBeginPoint()
 {
-    return *_a;
+    return *a_;
 }
 
 Point const& LineSegment::getEndPoint() const
 {
-    return *_b;
+    return *b_;
 }
 
 Point & LineSegment::getEndPoint()
 {
-    return *_b;
+    return *b_;
 }
 
 std::ostream& operator<< (std::ostream& os, LineSegment const& s)

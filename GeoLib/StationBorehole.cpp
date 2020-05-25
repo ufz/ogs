@@ -37,20 +37,20 @@ StationBorehole::StationBorehole(double x,
                                  const std::string& name)
     : Station(x, y, z, name)
 {
-    _type = Station::StationType::BOREHOLE;
+    type_ = Station::StationType::BOREHOLE;
 
     // add first point of borehole
-    _profilePntVec.push_back(this);
-    _soilName.emplace_back("");
+    profilePntVec_.push_back(this);
+    soilName_.emplace_back("");
 }
 
 StationBorehole::~StationBorehole()
 {
     // deletes profile vector of borehole, starting at layer 1
     // the first point is NOT deleted as it points to the station object itself
-    for (std::size_t k(1); k < _profilePntVec.size(); k++)
+    for (std::size_t k(1); k < profilePntVec_.size(); k++)
     {
-        delete _profilePntVec[k];
+        delete profilePntVec_[k];
     }
 }
 
@@ -61,7 +61,7 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
 
     if (fields.size() >= 5)
     {
-        borehole->_name = fields.front();
+        borehole->name_ = fields.front();
         fields.pop_front();
         (*borehole)[0] = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
@@ -69,15 +69,15 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
         fields.pop_front();
         (*borehole)[2] = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
-        borehole->_depth = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+        borehole->depth_ = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
         if (fields.empty())
         {
-            borehole->_date = 0;
+            borehole->date_ = 0;
         }
         else
         {
-            borehole->_date = BaseLib::strDate2int(fields.front());
+            borehole->date_ = BaseLib::strDate2int(fields.front());
             fields.pop_front();
         }
     }
@@ -98,14 +98,14 @@ StationBorehole* StationBorehole::createStation(const std::string &name,
                                                 const std::string &date)
 {
     StationBorehole* station = new StationBorehole();
-    station->_name  = name;
+    station->name_  = name;
     (*station)[0]   = x;
     (*station)[1]   = y;
     (*station)[2]   = z;
-    station->_depth = depth;
+    station->depth_ = depth;
     if (date != "0000-00-00")
     {
-        station->_date = BaseLib::xmlDate2int(date);
+        station->date_ = BaseLib::xmlDate2int(date);
     }
     return station;
 }
@@ -114,35 +114,35 @@ void StationBorehole::addSoilLayer ( double thickness, const std::string &soil_n
 {
     /*
        // TF - Altmark
-       if (_profilePntVec.empty())
+       if (profilePntVec_.empty())
         addSoilLayer ((*this)[0], (*this)[1], (*this)[2]-thickness, soil_name);
        else {
-        std::size_t idx (_profilePntVec.size());
+        std::size_t idx (profilePntVec_.size());
         // read coordinates from last above
-        double x((*_profilePntVec[idx-1])[0]);
-        double y((*_profilePntVec[idx-1])[1]);
-        double z((*_profilePntVec[idx-1])[2]-thickness);
+        double x((*profilePntVec_[idx-1])[0]);
+        double y((*profilePntVec_[idx-1])[1]);
+        double z((*profilePntVec_[idx-1])[2]-thickness);
         addSoilLayer (x, y, z, soil_name);
        }
      */
 
     // KR - Bode
-    if (_profilePntVec.empty())
+    if (profilePntVec_.empty())
     {
         addSoilLayer((*this)[0], (*this)[1], (*this)[2], "");
     }
 
-    std::size_t idx (_profilePntVec.size());
-    double x((*_profilePntVec[idx - 1])[0]);
-    double y((*_profilePntVec[idx - 1])[1]);
-    double z((*_profilePntVec[0])[2] - thickness);
+    std::size_t idx (profilePntVec_.size());
+    double x((*profilePntVec_[idx - 1])[0]);
+    double y((*profilePntVec_[idx - 1])[1]);
+    double z((*profilePntVec_[0])[2] - thickness);
     addSoilLayer (x, y, z, soil_name);
 }
 
 void StationBorehole::addSoilLayer ( double x, double y, double z, const std::string &soil_name)
 {
-    _profilePntVec.push_back (new Point (x, y, z));
-    _soilName.push_back(soil_name);
+    profilePntVec_.push_back (new Point (x, y, z));
+    soilName_.push_back(soil_name);
 }
 
 bool isBorehole(GeoLib::Point const* pnt)

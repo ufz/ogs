@@ -26,14 +26,14 @@ namespace GeoLib
 DuplicateGeometry::DuplicateGeometry(GeoLib::GEOObjects& geo_objects,
                                      std::string const& input_name,
                                      std::string output_name)
-    : _output_name(std::move(output_name)), _geo_objects(geo_objects)
+    : output_name_(std::move(output_name)), geo_objects_(geo_objects)
 {
     duplicate(input_name);
 }
 
 void DuplicateGeometry::duplicate(std::string const& input_name)
 {
-    std::vector<GeoLib::Point*> const*const pnts (_geo_objects.getPointVec(input_name));
+    std::vector<GeoLib::Point*> const*const pnts (geo_objects_.getPointVec(input_name));
     if (pnts == nullptr)
     {
         ERR("Geometry '{:s}' not found.", input_name);
@@ -45,32 +45,32 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     std::transform(pnts->cbegin(), pnts->cend(), std::back_inserter(*new_pnts),
         [](GeoLib::Point* point) { return new GeoLib::Point(*point); });
     auto pnt_name_id_map = std::make_unique<std::map<std::string, std::size_t>>(
-        _geo_objects.getPointVecObj(input_name)->getNameIDMapBegin(),
-        _geo_objects.getPointVecObj(input_name)->getNameIDMapEnd());
-    _geo_objects.addPointVec(std::move(new_pnts), _output_name,
+        geo_objects_.getPointVecObj(input_name)->getNameIDMapBegin(),
+        geo_objects_.getPointVecObj(input_name)->getNameIDMapEnd());
+    geo_objects_.addPointVec(std::move(new_pnts), output_name_,
                              std::move(pnt_name_id_map));
 
-    std::vector<GeoLib::Polyline*> const* plys (_geo_objects.getPolylineVec(input_name));
+    std::vector<GeoLib::Polyline*> const* plys (geo_objects_.getPolylineVec(input_name));
     if (plys)
     {
         auto new_plys = copyPolylinesVector(*plys);
         auto ply_name_id_map =
             std::make_unique<std::map<std::string, std::size_t>>(
-                _geo_objects.getPolylineVecObj(input_name)->getNameIDMapBegin(),
-                _geo_objects.getPolylineVecObj(input_name)->getNameIDMapEnd());
-        _geo_objects.addPolylineVec(std::move(new_plys), _output_name,
+                geo_objects_.getPolylineVecObj(input_name)->getNameIDMapBegin(),
+                geo_objects_.getPolylineVecObj(input_name)->getNameIDMapEnd());
+        geo_objects_.addPolylineVec(std::move(new_plys), output_name_,
                                     std::move(ply_name_id_map));
     }
 
-    std::vector<GeoLib::Surface*> const* sfcs (_geo_objects.getSurfaceVec(input_name));
+    std::vector<GeoLib::Surface*> const* sfcs (geo_objects_.getSurfaceVec(input_name));
     if (sfcs)
     {
         auto new_sfcs = copySurfacesVector(*sfcs);
         auto sfc_name_id_map =
             std::make_unique<std::map<std::string, std::size_t>>(
-                _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapBegin(),
-                _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapEnd());
-        _geo_objects.addSurfaceVec(std::move(new_sfcs), _output_name,
+                geo_objects_.getSurfaceVecObj(input_name)->getNameIDMapBegin(),
+                geo_objects_.getSurfaceVecObj(input_name)->getNameIDMapEnd());
+        geo_objects_.addSurfaceVec(std::move(new_sfcs), output_name_,
                                    std::move(sfc_name_id_map));
     }
 }
@@ -88,7 +88,7 @@ std::unique_ptr<std::vector<GeoLib::Polyline*>> DuplicateGeometry::copyPolylines
         {
             continue;
         }
-        (*new_lines)[i] = new GeoLib::Polyline(*_geo_objects.getPointVec(_output_name));
+        (*new_lines)[i] = new GeoLib::Polyline(*geo_objects_.getPointVec(output_name_));
         std::size_t const nLinePnts (polylines[i]->getNumberOfPoints());
         for (std::size_t j = 0; j < nLinePnts; ++j)
         {
@@ -111,7 +111,7 @@ std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
         {
             continue;
         }
-        (*new_surfaces)[i] = new GeoLib::Surface(*_geo_objects.getPointVec(_output_name));
+        (*new_surfaces)[i] = new GeoLib::Surface(*geo_objects_.getPointVec(output_name_));
 
         std::size_t const n_tris (surfaces[i]->getNumberOfTriangles());
         for (std::size_t j=0; j<n_tris; ++j)
@@ -126,17 +126,17 @@ std::unique_ptr<std::vector<Surface*>> DuplicateGeometry::copySurfacesVector(
 
 std::vector<GeoLib::Point*>& DuplicateGeometry::getPointVectorCopy()
 {
-    return const_cast<std::vector<GeoLib::Point*>&>(*_geo_objects.getPointVec(_output_name));
+    return const_cast<std::vector<GeoLib::Point*>&>(*geo_objects_.getPointVec(output_name_));
 }
 
 std::vector<GeoLib::Polyline*>& DuplicateGeometry::getPolylineVectorCopy()
 {
-    return const_cast<std::vector<GeoLib::Polyline*>&>(*_geo_objects.getPolylineVec(_output_name));
+    return const_cast<std::vector<GeoLib::Polyline*>&>(*geo_objects_.getPolylineVec(output_name_));
 }
 
 std::vector<GeoLib::Surface*>& DuplicateGeometry::getSurfaceVectorCopy()
 {
-    return const_cast<std::vector<GeoLib::Surface*>&>(*_geo_objects.getSurfaceVec(_output_name));
+    return const_cast<std::vector<GeoLib::Surface*>&>(*geo_objects_.getSurfaceVec(output_name_));
 }
 
 }  // namespace GeoLib

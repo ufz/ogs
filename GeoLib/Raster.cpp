@@ -26,63 +26,63 @@ namespace GeoLib {
 void Raster::refineRaster(std::size_t scaling)
 {
     auto* new_raster_data(
-        new double[_header.n_rows * _header.n_cols * scaling * scaling]);
+        new double[header_.n_rows * header_.n_cols * scaling * scaling]);
 
-    for (std::size_t row(0); row<_header.n_rows; row++) {
-        for (std::size_t col(0); col<_header.n_cols; col++) {
-            const std::size_t idx(row*_header.n_cols+col);
+    for (std::size_t row(0); row<header_.n_rows; row++) {
+        for (std::size_t col(0); col<header_.n_cols; col++) {
+            const std::size_t idx(row*header_.n_cols+col);
             for (std::size_t new_row(row*scaling); new_row<(row+1)*scaling; new_row++) {
-                const std::size_t idx0(new_row*_header.n_cols*scaling);
+                const std::size_t idx0(new_row*header_.n_cols*scaling);
                 for (std::size_t new_col(col*scaling); new_col<(col+1)*scaling; new_col++) {
-                    new_raster_data[idx0+new_col] = _raster_data[idx];
+                    new_raster_data[idx0+new_col] = raster_data_[idx];
                 }
             }
         }
     }
 
-    std::swap(_raster_data, new_raster_data);
-    _header.cell_size /= scaling;
-    _header.n_cols *= scaling;
-    _header.n_rows *= scaling;
+    std::swap(raster_data_, new_raster_data);
+    header_.cell_size /= scaling;
+    header_.n_cols *= scaling;
+    header_.n_rows *= scaling;
 
     delete [] new_raster_data;
 }
 
 Raster::~Raster()
 {
-    delete [] _raster_data;
+    delete [] raster_data_;
 }
 
 double Raster::getValueAtPoint(const MathLib::Point3d &pnt) const
 {
-    if (pnt[0]>=_header.origin[0] && pnt[0]<(_header.origin[0]+(_header.cell_size*_header.n_cols)) &&
-        pnt[1]>=_header.origin[1] && pnt[1]<(_header.origin[1]+(_header.cell_size*_header.n_rows)))
+    if (pnt[0]>=header_.origin[0] && pnt[0]<(header_.origin[0]+(header_.cell_size*header_.n_cols)) &&
+        pnt[1]>=header_.origin[1] && pnt[1]<(header_.origin[1]+(header_.cell_size*header_.n_rows)))
     {
         auto cell_x = static_cast<int>(
-            std::floor((pnt[0] - _header.origin[0]) / _header.cell_size));
+            std::floor((pnt[0] - header_.origin[0]) / header_.cell_size));
         auto cell_y = static_cast<int>(
-            std::floor((pnt[1] - _header.origin[1]) / _header.cell_size));
+            std::floor((pnt[1] - header_.origin[1]) / header_.cell_size));
 
         // use raster boundary values if node is outside raster due to rounding
         // errors or floating point arithmetic
-        cell_x = (cell_x < 0) ? 0 : ((cell_x > static_cast<int>(_header.n_cols))
-                                         ? static_cast<int>(_header.n_cols - 1)
+        cell_x = (cell_x < 0) ? 0 : ((cell_x > static_cast<int>(header_.n_cols))
+                                         ? static_cast<int>(header_.n_cols - 1)
                                          : cell_x);
-        cell_y = (cell_y < 0) ? 0 : ((cell_y > static_cast<int>(_header.n_rows))
-                                         ? static_cast<int>(_header.n_rows - 1)
+        cell_y = (cell_y < 0) ? 0 : ((cell_y > static_cast<int>(header_.n_rows))
+                                         ? static_cast<int>(header_.n_rows - 1)
                                          : cell_y);
 
-        const std::size_t index = cell_y * _header.n_cols + cell_x;
-        return _raster_data[index];
+        const std::size_t index = cell_y * header_.n_cols + cell_x;
+        return raster_data_[index];
     }
-    return _header.no_data;
+    return header_.no_data;
 }
 
 double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 {
     // position in raster
-    double const xPos ((pnt[0] - _header.origin[0]) / _header.cell_size);
-    double const yPos ((pnt[1] - _header.origin[1]) / _header.cell_size);
+    double const xPos ((pnt[0] - header_.origin[0]) / header_.cell_size);
+    double const yPos ((pnt[1] - header_.origin[1]) / header_.cell_size);
     // raster cell index
     double const xIdx (std::floor(xPos));    //carry out computions in double
     double const yIdx (std::floor(yPos));    //  so not to over- or underflow.
@@ -106,20 +106,20 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
         // check if neighbour pixel is still on the raster, otherwise substitute
         // a no data value. This also allows the cast to unsigned type.
         if ((xIdx + x_nb[j]) < 0 || (yIdx + y_nb[j]) < 0 ||
-            (xIdx + x_nb[j]) > (_header.n_cols - 1) ||
-            (yIdx + y_nb[j]) > (_header.n_rows - 1))
+            (xIdx + x_nb[j]) > (header_.n_cols - 1) ||
+            (yIdx + y_nb[j]) > (header_.n_rows - 1))
         {
-            pix_val[j] = _header.no_data;
+            pix_val[j] = header_.no_data;
         }
         else
         {
-            pix_val[j] = _raster_data[static_cast<std::size_t>(yIdx + y_nb[j]) *
-                                          _header.n_cols +
+            pix_val[j] = raster_data_[static_cast<std::size_t>(yIdx + y_nb[j]) *
+                                          header_.n_cols +
                                       static_cast<std::size_t>(xIdx + x_nb[j])];
         }
 
         // remove no data values
-        if (std::fabs(pix_val[j] - _header.no_data) < std::numeric_limits<double>::epsilon())
+        if (std::fabs(pix_val[j] - header_.no_data) < std::numeric_limits<double>::epsilon())
         {
             weight[j] = 0;
             no_data_count++;
@@ -131,7 +131,7 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
     {
         if (no_data_count == 4)
         {  // if there is absolutely no data just use the default value
-            return _header.no_data;
+            return header_.no_data;
         }
 
         const double norm = 1.0 / (weight[0]+weight[1]+weight[2]+weight[3]);
@@ -145,10 +145,10 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
 bool Raster::isPntOnRaster(MathLib::Point3d const& pnt) const
 {
     return !(
-        (pnt[0] < _header.origin[0]) ||
-        (pnt[0] > _header.origin[0] + (_header.n_cols * _header.cell_size)) ||
-        (pnt[1] < _header.origin[1]) ||
-        (pnt[1] > _header.origin[1] + (_header.n_rows * _header.cell_size)));
+        (pnt[0] < header_.origin[0]) ||
+        (pnt[0] > header_.origin[0] + (header_.n_cols * header_.cell_size)) ||
+        (pnt[1] < header_.origin[1]) ||
+        (pnt[1] > header_.origin[1] + (header_.n_rows * header_.cell_size)));
 }
 
 } // end namespace GeoLib
