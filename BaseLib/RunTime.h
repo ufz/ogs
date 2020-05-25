@@ -31,9 +31,9 @@ class RunTime
         void start()
         {
 #ifdef USE_MPI
-            _start_time = MPI_Wtime();
+            start_time_ = MPI_Wtime();
 #else
-            _start_time = std::chrono::system_clock::now();
+            start_time_ = std::chrono::system_clock::now();
 #endif
         }
 
@@ -41,18 +41,18 @@ class RunTime
         double elapsed() const
         {
 #ifdef USE_MPI
-            return MPI_Wtime() - _start_time;
+            return MPI_Wtime() - start_time_;
 #else
             using namespace std::chrono;
-            return duration<double>(system_clock::now() - _start_time).count();
+            return duration<double>(system_clock::now() - start_time_).count();
 #endif
         }
 
     private:
 #ifdef USE_MPI
-        double _start_time = std::numeric_limits<double>::quiet_NaN();
+        double start_time_ = std::numeric_limits<double>::quiet_NaN();
 #else
-        std::chrono::time_point<std::chrono::system_clock> _start_time;
+        std::chrono::time_point<std::chrono::system_clock> start_time_;
 #endif
 };
 

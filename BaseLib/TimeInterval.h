@@ -26,7 +26,7 @@ class TimeInterval final
 {
 public:
     TimeInterval(const double start_time, const double end_time)
-        : _start_time(start_time), _end_time(end_time)
+        : start_time_(start_time), end_time_(end_time)
     {
     }
 
@@ -36,12 +36,12 @@ public:
 
     bool contains(const double current_time) const
     {
-        return (current_time >= _start_time && current_time <= _end_time);
+        return (current_time >= start_time_ && current_time <= end_time_);
     }
 
 private:
-    double _start_time;
-    double _end_time;
+    double start_time_;
+    double end_time_;
 };
 
 std::unique_ptr<TimeInterval> createTimeInterval(

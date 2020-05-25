@@ -44,13 +44,13 @@ protected:
     /// If no hash file exists, the xml-file is validated and a hash file is written if the xml-file was valid.
     bool checkHash() const;
 
-    QString _schemaFile;
+    QString schemaFile_;
 
     /// Caches the actual file contents when reading.
-    QByteArray _fileData;
+    QByteArray fileData_;
 
     /// The actual file name when reading.
-    QString _fileName;
+    QString fileName_;
 };
 
 } // end namespace IO

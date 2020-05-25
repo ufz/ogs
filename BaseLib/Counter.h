@@ -19,11 +19,11 @@ struct Counter
 {
     Counter()
     {
-        _counter_value++;
+        counter_value_++;
     }
-    static std::size_t _counter_value;
+    static std::size_t counter_value_;
 };
 
-template <typename X> std::size_t Counter<X>::_counter_value(0);
+template <typename X> std::size_t Counter<X>::counter_value_(0);
 
 } // end namespace BaseLib
