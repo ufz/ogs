@@ -23,18 +23,18 @@ ConvergenceCriterionPerComponentResidual::
         std::vector<double>&& relative_tolerances,
         const MathLib::VecNormType norm_type)
     : ConvergenceCriterionPerComponent(norm_type),
-      _abstols(std::move(absolute_tolerances)),
-      _reltols(std::move(relative_tolerances)),
-      _residual_norms_0(_abstols.size())
+      abstols_(std::move(absolute_tolerances)),
+      reltols_(std::move(relative_tolerances)),
+      residual_norms_0_(abstols_.size())
 {
-    if (_abstols.size() != _reltols.size())
+    if (abstols_.size() != reltols_.size())
     {
         OGS_FATAL(
             "The number of absolute and relative tolerances given must be the "
             "same.");
     }
 
-    if (_abstols.empty())
+    if (abstols_.empty())
     {
         OGS_FATAL("The given tolerances vector is empty.");
     }
@@ -44,19 +44,19 @@ ConvergenceCriterionPerComponentResidual::
 void ConvergenceCriterionPerComponentResidual::checkDeltaX(
     const GlobalVector& minus_delta_x, GlobalVector const& x)
 {
-    if ((!_dof_table) || (!_mesh))
+    if ((!dof_table_) || (!mesh_))
     {
         OGS_FATAL("D.o.f. table or mesh have not been set.");
     }
 
-    for (unsigned global_component = 0; global_component < _abstols.size();
+    for (unsigned global_component = 0; global_component < abstols_.size();
          ++global_component)
     {
         // TODO short cut if tol <= 0.0
-        auto error_dx = norm(minus_delta_x, global_component, _norm_type,
-                             *_dof_table, *_mesh);
+        auto error_dx = norm(minus_delta_x, global_component, norm_type_,
+                             *dof_table_, *mesh_);
         auto norm_x =
-            norm(x, global_component, _norm_type, *_dof_table, *_mesh);
+            norm(x, global_component, norm_type_, *dof_table_, *mesh_);
 
         INFO(
             "Convergence criterion, component {:d}: |dx|={:.4e}, |x|={:.4e}, "
@@ -71,7 +71,7 @@ void ConvergenceCriterionPerComponentResidual::checkDeltaX(
 void ConvergenceCriterionPerComponentResidual::checkResidual(
     const GlobalVector& residual)
 {
-    if ((!_dof_table) || (!_mesh))
+    if ((!dof_table_) || (!mesh_))
     {
         OGS_FATAL("D.o.f. table or mesh have not been set.");
     }
@@ -79,21 +79,21 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
     bool satisfied_abs = true;
     // Make sure that in the first iteration the relative residual tolerance is
     // not satisfied.
-    bool satisfied_rel = !_is_first_iteration;
+    bool satisfied_rel = !is_first_iteration_;
 
-    for (unsigned global_component = 0; global_component < _abstols.size();
+    for (unsigned global_component = 0; global_component < abstols_.size();
          ++global_component)
     {
         // TODO short cut if tol <= 0.0
-        auto norm_res = norm(residual, global_component, _norm_type,
-                             *_dof_table, *_mesh);
+        auto norm_res = norm(residual, global_component, norm_type_,
+                             *dof_table_, *mesh_);
 
-        if (_is_first_iteration) {
+        if (is_first_iteration_) {
             INFO("Convergence criterion, component {:d}: |r0|={:.4e}",
                  global_component, norm_res);
-            _residual_norms_0[global_component] = norm_res;
+            residual_norms_0_[global_component] = norm_res;
         } else {
-            auto const norm_res0 = _residual_norms_0[global_component];
+            auto const norm_res0 = residual_norms_0_[global_component];
             INFO(
                 "Convergence criterion, component {:d}: |r|={:.4e}, "
                 "|r0|={:.4e}, "
@@ -103,24 +103,24 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
                                  : (norm_res / norm_res0)));
         }
 
-        satisfied_abs = satisfied_abs && norm_res < _abstols[global_component];
+        satisfied_abs = satisfied_abs && norm_res < abstols_[global_component];
         satisfied_rel =
             satisfied_rel &&
-            checkRelativeTolerance(_reltols[global_component], norm_res,
-                                   _residual_norms_0[global_component]);
+            checkRelativeTolerance(reltols_[global_component], norm_res,
+                                   residual_norms_0_[global_component]);
     }
 
-    _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
+    satisfied_ = satisfied_ && (satisfied_abs || satisfied_rel);
 }
 
 void ConvergenceCriterionPerComponentResidual::setDOFTable(
     const LocalToGlobalIndexMap& dof_table, MeshLib::Mesh const& mesh)
 {
-    _dof_table = &dof_table;
-    _mesh = &mesh;
+    dof_table_ = &dof_table;
+    mesh_ = &mesh;
 
-    if (_dof_table->getNumberOfComponents() !=
-        static_cast<int>(_abstols.size()))
+    if (dof_table_->getNumberOfComponents() !=
+        static_cast<int>(abstols_.size()))
     {
         OGS_FATAL(
             "The number of components in the DOF table and the number of "

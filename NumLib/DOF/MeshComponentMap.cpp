@@ -53,8 +53,8 @@ MeshComponentMap::MeshComponentMap(
 
     // construct dict (and here we number global_index by component type)
     int comp_id = 0;
-    _num_global_dof = 0;
-    _num_local_dof = 0;
+    num_global_dof_ = 0;
+    num_local_dof_ = 0;
     for (auto const& c : components)
     {
         assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
@@ -83,7 +83,7 @@ MeshComponentMap::MeshComponentMap(
                 p_mesh.isGhostNode(p_mesh.getNode(j)->getID());
             if (is_ghost)
             {
-                _ghosts_indices.push_back(global_id);
+                ghosts_indices_.push_back(global_id);
                 global_id = -global_id;
                 // If the ghost entry has an index of 0,
                 // its index is set to the negative value of unknowns.
@@ -91,13 +91,13 @@ MeshComponentMap::MeshComponentMap(
                     global_id = -num_unknowns;
             }
             else
-                _num_local_dof++;
+                num_local_dof_++;
 
-            _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
+            dict_.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
                               comp_id, global_id));
         }
 
-        _num_global_dof += p_mesh.getNumberOfGlobalNodes();
+        num_global_dof_ += p_mesh.getNumberOfGlobalNodes();
         comp_id++;
     }
 }
@@ -200,7 +200,7 @@ void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 {
     GlobalIndexType global_index = offset;
 
-    auto& m = _dict.get<ByLocation>();  // view as sorted by mesh item
+    auto& m = dict_.get<ByLocation>();  // view as sorted by mesh item
     for (auto itr_mesh_item = m.begin(); itr_mesh_item != m.end();
          ++itr_mesh_item)
     {
@@ -212,7 +212,7 @@ void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 
 std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
 {
-    auto const& m = _dict.get<ByLocation>();
+    auto const& m = dict_.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
     std::vector<int> vec_compID;
     for (auto itr = p.first; itr != p.second; ++itr)
@@ -224,7 +224,7 @@ std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
 
 Line MeshComponentMap::getLine(Location const& l, int const comp_id) const
 {
-    auto const& m = _dict.get<ByLocationAndComponent>();
+    auto const& m = dict_.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, comp_id));
     assert(itr != m.end());  // The line must exist in the current dictionary.
     return *itr;
@@ -233,7 +233,7 @@ Line MeshComponentMap::getLine(Location const& l, int const comp_id) const
 GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
                                                  int const comp_id) const
 {
-    auto const& m = _dict.get<ByLocationAndComponent>();
+    auto const& m = dict_.get<ByLocationAndComponent>();
     auto const itr = m.find(Line(l, comp_id));
     return itr != m.end() ? itr->global_index : nop;
 }
@@ -241,7 +241,7 @@ GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
 std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(
     const Location& l) const
 {
-    auto const& m = _dict.get<ByLocation>();
+    auto const& m = dict_.get<ByLocation>();
     auto const p = m.equal_range(Line(l));
     std::vector<GlobalIndexType> global_indices;
     for (auto itr = p.first; itr != p.second; ++itr)
@@ -260,7 +260,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByLocation(
     std::vector<GlobalIndexType> global_indices;
     global_indices.reserve(ls.size());
 
-    auto const& m = _dict.get<ByLocation>();
+    auto const& m = dict_.get<ByLocation>();
     for (const auto& l : ls)
     {
         auto const p = m.equal_range(Line(l));
@@ -282,7 +282,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
     pairs.reserve(ls.size());
 
     // Create a sub dictionary containing all lines with location from ls.
-    auto const& m = _dict.get<ByLocation>();
+    auto const& m = dict_.get<ByLocation>();
     for (const auto& l : ls)
     {
         auto const p = m.equal_range(Line(l));
@@ -334,23 +334,23 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     // A special case for a ghost location with global index equal to the size
     // of the local vector:
     GlobalIndexType const real_global_index =
-        (-global_index == static_cast<GlobalIndexType>(_num_global_dof))
+        (-global_index == static_cast<GlobalIndexType>(num_global_dof_))
             ? 0
             : -global_index;
 
     // TODO Find in ghost indices is O(n^2/2) for n being the length of
-    // _ghosts_indices. Providing an inverted table would be faster.
+    // ghosts_indices_. Providing an inverted table would be faster.
     auto const ghost_index_it = std::find(
-        _ghosts_indices.begin(), _ghosts_indices.end(), real_global_index);
-    if (ghost_index_it == _ghosts_indices.end())
+        ghosts_indices_.begin(), ghosts_indices_.end(), real_global_index);
+    if (ghost_index_it == ghosts_indices_.end())
     {
         OGS_FATAL("index {:d} not found in ghost_indices", real_global_index);
     }
 
-    // Using std::distance on a std::vector is O(1). As long as _ghost_indices
+    // Using std::distance on a std::vector is O(1). As long as ghost_indices_
     // remains of std::vector type, this shall be fast.
     return range_end - range_begin +
-           std::distance(_ghosts_indices.begin(), ghost_index_it);
+           std::distance(ghosts_indices_.begin(), ghost_index_it);
 
 #endif
 }
@@ -367,13 +367,13 @@ void MeshComponentMap::createSerialMeshComponentMap(
         // mesh items are ordered first by node, cell, ....
         for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
         {
-            _dict.insert(Line(
+            dict_.insert(Line(
                 Location(mesh_id, MeshLib::MeshItemType::Node, c.getNodeID(j)),
                 comp_id, global_index++));
         }
         comp_id++;
     }
-    _num_local_dof = _dict.size();
+    num_local_dof_ = dict_.size();
 
     if (order == ComponentOrder::BY_LOCATION)
     {

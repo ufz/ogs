@@ -25,12 +25,12 @@ double TimeDiscretization::computeRelativeChangeFromPreviousTimestep(
         OGS_FATAL("An invalid norm type has been passed");
     }
 
-    if (!_dx)
+    if (!dx_)
     {
-        _dx = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
+        dx_ = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(x);
     }
 
-    auto& dx = *_dx;
+    auto& dx = *dx_;
     MathLib::LinAlg::copy(x, dx);  // copy x to dx.
 
     // dx = x - x_old --> x - dx --> dx

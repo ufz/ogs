@@ -35,7 +35,7 @@ std::vector<T> to_cumulative(std::vector<T> const& vec)
 int LocalToGlobalIndexMap::getGlobalComponent(int const variable_id,
                                               int const component_id) const
 {
-    return _variable_component_offsets[variable_id] + component_id;
+    return variable_component_offsets_[variable_id] + component_id;
 }
 
 template <typename ElementIterator>
@@ -63,11 +63,11 @@ void LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
             }
             MeshLib::Location l(
                 mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
-            indices.push_back(_mesh_component_map.getGlobalIndex(l, comp_id));
+            indices.push_back(mesh_component_map_.getGlobalIndex(l, comp_id));
         }
 
         indices.shrink_to_fit();
-        _rows((*e)->getID(), comp_id_write) = std::move(indices);
+        rows_((*e)->getID(), comp_id_write) = std::move(indices);
     }
 }
 
@@ -77,7 +77,7 @@ void LocalToGlobalIndexMap::findGlobalIndices(
     std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
     const int comp_id, const int comp_id_write)
 {
-    _rows.resize(std::distance(first, last), _mesh_subsets.size());
+    rows_.resize(std::distance(first, last), mesh_subsets_.size());
 
     std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(), nodes.end());
 
@@ -100,7 +100,7 @@ void LocalToGlobalIndexMap::findGlobalIndices(
             MeshLib::Location l(
                 mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
             auto const global_index =
-                _mesh_component_map.getGlobalIndex(l, comp_id);
+                mesh_component_map_.getGlobalIndex(l, comp_id);
             if (global_index == std::numeric_limits<GlobalIndexType>::max())
             {
                 continue;
@@ -109,7 +109,7 @@ void LocalToGlobalIndexMap::findGlobalIndices(
         }
 
         indices.shrink_to_fit();
-        _rows(elem_id, comp_id_write) = std::move(indices);
+        rows_(elem_id, comp_id_write) = std::move(indices);
     }
 }
 
@@ -125,9 +125,9 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubset>&& mesh_subsets,
     std::vector<int> const& vec_var_n_components,
     NumLib::ComponentOrder const order)
-    : _mesh_subsets(std::move(mesh_subsets)),
-      _mesh_component_map(_mesh_subsets, order),
-      _variable_component_offsets(to_cumulative(vec_var_n_components))
+    : mesh_subsets_(std::move(mesh_subsets)),
+      mesh_component_map_(mesh_subsets_, order),
+      variable_component_offsets_(to_cumulative(vec_var_n_components))
 {
     // For each element of that MeshSubset save a line of global indices.
     for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
@@ -139,7 +139,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             auto const global_component_id =
                 getGlobalComponent(variable_id, component_id);
 
-            auto const& ms = _mesh_subsets[global_component_id];
+            auto const& ms = mesh_subsets_[global_component_id];
             std::size_t const mesh_id = ms.getMeshID();
 
             findGlobalIndices(ms.elementsBegin(), ms.elementsEnd(),
@@ -154,15 +154,15 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<int> const& vec_var_n_components,
     std::vector<std::vector<MeshLib::Element*> const*> const& vec_var_elements,
     NumLib::ComponentOrder const order)
-    : _mesh_subsets(std::move(mesh_subsets)),
-      _mesh_component_map(_mesh_subsets, order),
-      _variable_component_offsets(to_cumulative(vec_var_n_components))
+    : mesh_subsets_(std::move(mesh_subsets)),
+      mesh_component_map_(mesh_subsets_, order),
+      variable_component_offsets_(to_cumulative(vec_var_n_components))
 {
     assert(vec_var_n_components.size() == vec_var_elements.size());
 
     // For each element of that MeshSubset save a line of global indices.
 
-    // _rows should be resized based on an element ID
+    // rows_ should be resized based on an element ID
     std::size_t max_elem_id = 0;
     for (std::vector<MeshLib::Element*>const* eles : vec_var_elements)
     {
@@ -171,7 +171,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             max_elem_id = std::max(max_elem_id, e->getID());
         }
     }
-    _rows.resize(max_elem_id + 1, _mesh_subsets.size());
+    rows_.resize(max_elem_id + 1, mesh_subsets_.size());
 
     for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
          ++variable_id)
@@ -183,7 +183,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
             auto const global_component_id =
                 getGlobalComponent(variable_id, component_id);
 
-            auto const& ms = _mesh_subsets[global_component_id];
+            auto const& ms = mesh_subsets_[global_component_id];
             std::size_t const mesh_id = ms.getMeshID();
 
             findGlobalIndicesWithElementID(
@@ -200,22 +200,22 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::Element*> const& elements,
     NumLib::MeshComponentMap&& mesh_component_map,
     LocalToGlobalIndexMap::ConstructorTag /*unused*/)
-    : _mesh_subsets(std::move(mesh_subsets)),
-      _mesh_component_map(std::move(mesh_component_map)),
-      _variable_component_offsets(variable_component_offsets)
+    : mesh_subsets_(std::move(mesh_subsets)),
+      mesh_component_map_(std::move(mesh_component_map)),
+      variable_component_offsets_(variable_component_offsets)
 {
     // Each subset in the mesh_subsets represents a single component.
-    if (_mesh_subsets.size() != global_component_ids.size())
+    if (mesh_subsets_.size() != global_component_ids.size())
     {
         OGS_FATAL(
             "Number of mesh subsets is not equal to number of components. "
             "There are {:d} mesh subsets and {:d} components.",
-            _mesh_subsets.size(), global_component_ids.size());
+            mesh_subsets_.size(), global_component_ids.size());
     }
 
     for (int i = 0; i < static_cast<int>(global_component_ids.size()); ++i)
     {
-        auto const& ms = _mesh_subsets[i];
+        auto const& ms = mesh_subsets_[i];
 
         // For all MeshSubset in mesh_subsets and each element of that
         // MeshSubset save a line of global indices.
@@ -251,8 +251,8 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
             getGlobalComponent(variable_id, component_id));
     }
 
-    auto mesh_component_map = _mesh_component_map.getSubset(
-        _mesh_subsets, new_mesh_subset, global_component_ids);
+    auto mesh_component_map = mesh_component_map_.getSubset(
+        mesh_subsets_, new_mesh_subset, global_component_ids);
 
     // Create copies of the new_mesh_subset for each of the global components.
     // The last component is moved after the for-loop.
@@ -265,7 +265,7 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
 
     return new LocalToGlobalIndexMap(
         std::move(all_mesh_subsets), global_component_ids,
-        _variable_component_offsets, elements, std::move(mesh_component_map),
+        variable_component_offsets_, elements, std::move(mesh_component_map),
         ConstructorTag{});
 }
 
@@ -287,8 +287,8 @@ LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     std::vector<MeshLib::Element*> const& elements =
         new_mesh_subset.getMesh().getElements();
 
-    auto mesh_component_map = _mesh_component_map.getSubset(
-        _mesh_subsets, new_mesh_subset, global_component_ids);
+    auto mesh_component_map = mesh_component_map_.getSubset(
+        mesh_subsets_, new_mesh_subset, global_component_ids);
 
     // Create copies of the new_mesh_subset for each of the global components.
     // The last component is moved after the for-loop.
@@ -301,47 +301,47 @@ LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
 
     return std::make_unique<LocalToGlobalIndexMap>(
         std::move(all_mesh_subsets), global_component_ids,
-        _variable_component_offsets, elements, std::move(mesh_component_map),
+        variable_component_offsets_, elements, std::move(mesh_component_map),
         ConstructorTag{});
 }
 
 std::size_t LocalToGlobalIndexMap::dofSizeWithGhosts() const
 {
-    return _mesh_component_map.dofSizeWithGhosts();
+    return mesh_component_map_.dofSizeWithGhosts();
 }
 
 std::size_t LocalToGlobalIndexMap::dofSizeWithoutGhosts() const
 {
-    return _mesh_component_map.dofSizeWithoutGhosts();
+    return mesh_component_map_.dofSizeWithoutGhosts();
 }
 
 int LocalToGlobalIndexMap::getNumberOfVariables() const
 {
-    return static_cast<int>(_variable_component_offsets.size()) - 1;
+    return static_cast<int>(variable_component_offsets_.size()) - 1;
 }
 
 int LocalToGlobalIndexMap::getNumberOfVariableComponents(int variable_id) const
 {
     assert(variable_id < getNumberOfVariables());
-    return _variable_component_offsets[variable_id + 1] -
-           _variable_component_offsets[variable_id];
+    return variable_component_offsets_[variable_id + 1] -
+           variable_component_offsets_[variable_id];
 }
 
 int LocalToGlobalIndexMap::getNumberOfComponents() const
 {
-    return _mesh_subsets.size();
+    return mesh_subsets_.size();
 }
 
 std::size_t LocalToGlobalIndexMap::size() const
 {
-    return _rows.rows();
+    return rows_.rows();
 }
 
 LocalToGlobalIndexMap::RowColumnIndices LocalToGlobalIndexMap::operator()(
     std::size_t const mesh_item_id, const int component_id) const
 {
-    return RowColumnIndices(_rows(mesh_item_id, component_id),
-                            _columns(mesh_item_id, component_id));
+    return RowColumnIndices(rows_(mesh_item_id, component_id),
+                            columns_(mesh_item_id, component_id));
 }
 
 std::size_t
@@ -349,9 +349,9 @@ LocalToGlobalIndexMap::getNumberOfElementDOF(std::size_t const mesh_item_id) con
 {
     std::size_t ndof = 0;
 
-    for (Table::Index c = 0; c < _rows.cols(); ++c)
+    for (Table::Index c = 0; c < rows_.cols(); ++c)
     {
-        ndof += _rows(mesh_item_id, c).size();
+        ndof += rows_(mesh_item_id, c).size();
     }
 
     return ndof;
@@ -361,9 +361,9 @@ std::size_t
 LocalToGlobalIndexMap::getNumberOfElementComponents(std::size_t const mesh_item_id) const
 {
     std::size_t n = 0;
-    for (Table::Index c = 0; c < _rows.cols(); ++c)
+    for (Table::Index c = 0; c < rows_.cols(); ++c)
     {
-        if (!_rows(mesh_item_id, c).empty())
+        if (!rows_(mesh_item_id, c).empty())
         {
             n++;
         }
@@ -380,7 +380,7 @@ std::vector<int> LocalToGlobalIndexMap::getElementVariableIDs(
         for (int j=0; j<getNumberOfVariableComponents(i); j++)
         {
             auto comp_id = getGlobalComponent(i, j);
-            if (!_rows(mesh_item_id, comp_id).empty())
+            if (!rows_(mesh_item_id, comp_id).empty())
             {
                 vec.push_back(i);
             }
@@ -398,27 +398,27 @@ GlobalIndexType LocalToGlobalIndexMap::getGlobalIndex(
     int const component_id) const
 {
     auto const c = getGlobalComponent(variable_id, component_id);
-    return _mesh_component_map.getGlobalIndex(l, c);
+    return mesh_component_map_.getGlobalIndex(l, c);
 }
 
 GlobalIndexType LocalToGlobalIndexMap::getGlobalIndex(
     MeshLib::Location const& l, int const global_component_id) const
 {
-    return _mesh_component_map.getGlobalIndex(l, global_component_id);
+    return mesh_component_map_.getGlobalIndex(l, global_component_id);
 }
 
 /// Forwards the respective method from MeshComponentMap.
 std::vector<GlobalIndexType> LocalToGlobalIndexMap::getGlobalIndices(
     const MeshLib::Location& l) const
 {
-    return _mesh_component_map.getGlobalIndices(l);
+    return mesh_component_map_.getGlobalIndices(l);
 }
 
 /// Get ghost indices, forwarded from MeshComponentMap.
 std::vector<GlobalIndexType> const& LocalToGlobalIndexMap::getGhostIndices()
     const
 {
-    return _mesh_component_map.getGhostIndices();
+    return mesh_component_map_.getGhostIndices();
 }
 
 /// Computes the index in a local (for DDC) vector for a given location and
@@ -427,7 +427,7 @@ GlobalIndexType LocalToGlobalIndexMap::getLocalIndex(
     MeshLib::Location const& l, std::size_t const comp_id,
     std::size_t const range_begin, std::size_t const range_end) const
 {
-    return _mesh_component_map.getLocalIndex(l, comp_id, range_begin,
+    return mesh_component_map_.getLocalIndex(l, comp_id, range_begin,
                                              range_end);
 }
 
@@ -440,7 +440,7 @@ MeshLib::MeshSubset const& LocalToGlobalIndexMap::getMeshSubset(
 MeshLib::MeshSubset const& LocalToGlobalIndexMap::getMeshSubset(
     int const global_component_id) const
 {
-    return _mesh_subsets[global_component_id];
+    return mesh_subsets_[global_component_id];
 }
 
 #ifndef NDEBUG
@@ -449,14 +449,14 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
     std::size_t const max_lines = 10;
     std::size_t lines_printed = 0;
 
-    os << "Rows of the local to global index map; " << map._rows.size()
+    os << "Rows of the local to global index map; " << map.rows_.size()
         << " rows\n";
     for (std::size_t e=0; e<map.size(); ++e)
     {
         os << "== e " << e << " ==\n";
         for (int c = 0; c < map.getNumberOfComponents(); ++c)
         {
-            auto const& line = map._rows(e, c);
+            auto const& line = map.rows_(e, c);
 
             os << "c" << c << " { ";
             std::copy(line.cbegin(), line.cend(),
@@ -471,7 +471,7 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
         }
     }
 
-    os << "Mesh component map:\n" << map._mesh_component_map;
+    os << "Mesh component map:\n" << map.mesh_component_map_;
     return os;
 }
 #endif  // NDEBUG

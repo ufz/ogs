@@ -24,7 +24,7 @@ namespace NumLib
 {
 LocalLinearLeastSquaresExtrapolator::LocalLinearLeastSquaresExtrapolator(
     NumLib::LocalToGlobalIndexMap const& dof_table)
-    : _dof_table_single_component(dof_table)
+    : dof_table_single_component_(dof_table)
 {
     /* Note in case the following assertion fails:
      * If you copied the extrapolation code, for your processes from
@@ -49,14 +49,14 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table)
 {
     auto const num_nodal_dof_result =
-        _dof_table_single_component.dofSizeWithoutGhosts() * num_components;
+        dof_table_single_component_.dofSizeWithoutGhosts() * num_components;
 
     std::vector<GlobalIndexType> ghost_indices;
     {  // Create num_components times version of ghost_indices arranged by
        // location. For example for 3 components and ghost_indices {5,6,10} we
        // compute {15, 16, 17,  18, 19, 20,  30, 31, 32}.
         auto const& single_component_ghost_indices =
-            _dof_table_single_component.getGhostIndices();
+            dof_table_single_component_.getGhostIndices();
         auto const single_component_ghost_indices_size =
             single_component_ghost_indices.size();
         ghost_indices.reserve(single_component_ghost_indices_size *
@@ -71,24 +71,24 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
         }
     }
 
-    if (!_nodal_values ||
+    if (!nodal_values_ ||
 #ifdef USE_PETSC
-        _nodal_values->getLocalSize() + _nodal_values->getGhostSize()
+        nodal_values_->getLocalSize() + nodal_values_->getGhostSize()
 #else
-        _nodal_values->size()
+        nodal_values_->size()
 #endif
             != static_cast<GlobalIndexType>(num_nodal_dof_result))
     {
-        _nodal_values = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+        nodal_values_ = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
             {num_nodal_dof_result, num_nodal_dof_result, &ghost_indices,
              nullptr});
     }
-    _nodal_values->setZero();
+    nodal_values_->setZero();
 
     // counts the writes to each nodal value, i.e., the summands in order to
     // compute the average afterwards
     auto counts =
-        MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*_nodal_values);
+        MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*nodal_values_);
     counts->setZero();
 
     auto const size = extrapolatables.size();
@@ -97,9 +97,9 @@ void LocalLinearLeastSquaresExtrapolator::extrapolate(
         extrapolateElement(i, num_components, extrapolatables, t, x, dof_table,
                            *counts);
     }
-    MathLib::LinAlg::finalizeAssembly(*_nodal_values);
+    MathLib::LinAlg::finalizeAssembly(*nodal_values_);
 
-    MathLib::LinAlg::componentwiseDivide(*_nodal_values, *_nodal_values,
+    MathLib::LinAlg::componentwiseDivide(*nodal_values_, *nodal_values_,
                                          *counts);
 }
 
@@ -111,14 +111,14 @@ void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table)
 {
     auto const num_element_dof_result = static_cast<GlobalIndexType>(
-        _dof_table_single_component.size() * num_components);
+        dof_table_single_component_.size() * num_components);
 
-    if (!_residuals || _residuals->size() != num_element_dof_result)
+    if (!residuals_ || residuals_->size() != num_element_dof_result)
     {
 #ifndef USE_PETSC
-        _residuals.reset(new GlobalVector{num_element_dof_result});
+        residuals_.reset(new GlobalVector{num_element_dof_result});
 #else
-        _residuals.reset(new GlobalVector{num_element_dof_result, false});
+        residuals_.reset(new GlobalVector{num_element_dof_result, false});
 #endif
     }
 
@@ -134,7 +134,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResiduals(
         calculateResidualElement(i, num_components, extrapolatables, t, x,
                                  dof_table);
     }
-    MathLib::LinAlg::finalizeAssembly(*_residuals);
+    MathLib::LinAlg::finalizeAssembly(*residuals_);
 }
 
 void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
@@ -148,7 +148,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
 {
     auto const& integration_point_values =
         extrapolatables.getIntegrationPointValues(
-            element_index, t, x, dof_table, _integration_point_values_cache);
+            element_index, t, x, dof_table, integration_point_values_cache_);
 
     auto const& N_0 = extrapolatables.getShapeMatrix(element_index, 0);
     auto const num_nodes = static_cast<unsigned>(N_0.cols());
@@ -174,7 +174,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
             "integration points.");
     }
 
-    auto const pair_it_inserted = _qr_decomposition_cache.emplace(
+    auto const pair_it_inserted = qr_decomposition_cache_.emplace(
         std::make_pair(num_nodes, num_int_pts), CachedData{});
 
     auto& cached_data = pair_it_inserted.first->second;
@@ -227,7 +227,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     }
 
     auto const& global_indices =
-        _dof_table_single_component(element_index, 0).rows;
+        dof_table_single_component_(element_index, 0).rows;
 
     if (num_components == 1)
     {
@@ -240,7 +240,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
 
         // TODO does that give rise to PETSc problems? E.g., writing to ghost
         // nodes? Furthermore: Is ghost nodes communication necessary for PETSc?
-        _nodal_values->add(global_indices, nodal_values);
+        nodal_values_->add(global_indices, nodal_values);
         counts.add(global_indices,
                    std::vector<double>(global_indices.size(), 1.0));
     }
@@ -256,7 +256,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         std::vector<GlobalIndexType> indices;
         indices.reserve(num_components * global_indices.size());
 
-        // _nodal_values is ordered location-wise
+        // nodal_values_ is ordered location-wise
         for (unsigned comp = 0; comp < num_components; ++comp)
         {
             for (auto i : global_indices)
@@ -267,7 +267,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
 
         // Nodal_values are passed as a raw pointer, because PETScVector and
         // EigenVector implementations differ slightly.
-        _nodal_values->add(indices, nodal_values.data());
+        nodal_values_->add(indices, nodal_values.data());
         counts.add(indices, std::vector<double>(indices.size(), 1.0));
     }
 }
@@ -281,7 +281,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table)
 {
     auto const& int_pt_vals = extrapolatables.getIntegrationPointValues(
-        element_index, t, x, dof_table, _integration_point_values_cache);
+        element_index, t, x, dof_table, integration_point_values_cache_);
 
     auto const num_values = static_cast<unsigned>(int_pt_vals.size());
     if (num_values % num_components != 0)
@@ -297,18 +297,18 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     const auto num_int_pts = num_values / num_components;
 
     const auto& global_indices =
-        _dof_table_single_component(element_index, 0).rows;
+        dof_table_single_component_(element_index, 0).rows;
     const auto num_nodes = static_cast<unsigned>(global_indices.size());
 
     auto const& interpolation_matrix =
-        _qr_decomposition_cache.find({num_nodes, num_int_pts})->second.A;
+        qr_decomposition_cache_.find({num_nodes, num_int_pts})->second.A;
 
     Eigen::VectorXd nodal_vals_element(num_nodes);
     auto const int_pt_vals_mat =
         MathLib::toMatrix(int_pt_vals, num_components, num_int_pts);
 
     MathLib::LinAlg::setLocalAccessibleVector(
-        *_nodal_values);  // For access in the for-loop.
+        *nodal_values_);  // For access in the for-loop.
     for (unsigned comp = 0; comp < num_components; ++comp)
     {
         // filter nodal values of the current element
@@ -316,7 +316,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
         {
             // TODO PETSc negative indices?
             auto const idx = num_components * global_indices[i] + comp;
-            nodal_vals_element[i] = _nodal_values->get(idx);
+            nodal_vals_element[i] = nodal_values_->get(idx);
         }
 
         double const residual = (interpolation_matrix * nodal_vals_element -
@@ -327,7 +327,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
             static_cast<GlobalIndexType>(num_components * element_index + comp);
         // The residual is set to the root mean square value.
         auto const root_mean_square = std::sqrt(residual / num_int_pts);
-        _residuals->set(eidx, root_mean_square);
+        residuals_->set(eidx, root_mean_square);
     }
 }
 

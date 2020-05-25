@@ -65,7 +65,7 @@ get_(std::size_t& id,
      std::map<MatVec*, std::size_t>& used_map,
      Args&&... args)
 {
-    if (id >= _next_id) {
+    if (id >= next_id_) {
         OGS_FATAL("An obviously uninitialized id argument has been passed."
             " This might not be a serious error for the current implementation,"
             " but it might become one in the future."
@@ -82,7 +82,7 @@ get_(std::size_t& id,
     }
 
     // not searched or not found, so create a new one
-    id = _next_id++;
+    id = next_id_++;
     auto res = used_map.emplace(
         MathLib::MatrixVectorTraits<MatVec>::newInstance(std::forward<Args>(args)...).release(),
         id);
@@ -95,7 +95,7 @@ std::pair<GlobalMatrix*, bool>
 SimpleMatrixVectorProvider::
 getMatrix_(std::size_t& id, Args&&... args)
 {
-    return get_<do_search>(id, _unused_matrices, _used_matrices, std::forward<Args>(args)...);
+    return get_<do_search>(id, unused_matrices_, used_matrices_, std::forward<Args>(args)...);
 }
 
 
@@ -160,11 +160,11 @@ void
 SimpleMatrixVectorProvider::
 releaseMatrix(GlobalMatrix const& A)
 {
-    auto it = _used_matrices.find(const_cast<GlobalMatrix*>(&A));
-    if (it == _used_matrices.end()) {
+    auto it = used_matrices_.find(const_cast<GlobalMatrix*>(&A));
+    if (it == used_matrices_.end()) {
         OGS_FATAL("The given matrix has not been found. Cannot release it. Aborting.");
     } else {
-        ::detail::transfer(_used_matrices, _unused_matrices, it);
+        ::detail::transfer(used_matrices_, unused_matrices_, it);
     }
 }
 
@@ -173,7 +173,7 @@ std::pair<GlobalVector*, bool>
 SimpleMatrixVectorProvider::
 getVector_(std::size_t& id, Args&&... args)
 {
-    return get_<do_search>(id, _unused_vectors, _used_vectors, std::forward<Args>(args)...);
+    return get_<do_search>(id, unused_vectors_, used_vectors_, std::forward<Args>(args)...);
 }
 
 
@@ -238,38 +238,38 @@ void
 SimpleMatrixVectorProvider::
 releaseVector(GlobalVector const& x)
 {
-    auto it = _used_vectors.find(const_cast<GlobalVector*>(&x));
-    if (it == _used_vectors.end()) {
+    auto it = used_vectors_.find(const_cast<GlobalVector*>(&x));
+    if (it == used_vectors_.end()) {
         OGS_FATAL("The given vector has not been found. Cannot release it. Aborting.");
     } else {
-        ::detail::transfer(_used_vectors, _unused_vectors, it);
+        ::detail::transfer(used_vectors_, unused_vectors_, it);
     }
 }
 
 SimpleMatrixVectorProvider::
 ~SimpleMatrixVectorProvider()
 {
-    if ((!_used_matrices.empty()) || (!_used_vectors.empty())) {
+    if ((!used_matrices_.empty()) || (!used_vectors_.empty())) {
         WARN("There are still some matrices and vectors in use."
              " This might be an indicator of a possible waste of memory.");
     }
 
-    for (auto& id_ptr : _unused_matrices)
+    for (auto& id_ptr : unused_matrices_)
     {
         delete id_ptr.second;
     }
 
-    for (auto& ptr_id : _used_matrices)
+    for (auto& ptr_id : used_matrices_)
     {
         delete ptr_id.first;
     }
 
-    for (auto& id_ptr : _unused_vectors)
+    for (auto& id_ptr : unused_vectors_)
     {
         delete id_ptr.second;
     }
 
-    for (auto& ptr_id : _used_vectors)
+    for (auto& ptr_id : used_vectors_)
     {
         delete ptr_id.first;
     }

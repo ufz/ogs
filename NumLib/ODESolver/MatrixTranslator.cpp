@@ -20,7 +20,7 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto const dxdot_dx = _time_disc.getNewXWeight();
+    auto const dxdot_dx = time_disc_.getNewXWeight();
 
     // A = M * dxdot_dx + K
     LinAlg::copy(M, A);
@@ -34,8 +34,8 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto& tmp = NumLib::GlobalVectorProvider::provider.getVector(_tmp_id);
-    _time_disc.getWeightedOldX(tmp, x_prev);
+    auto& tmp = NumLib::GlobalVectorProvider::provider.getVector(tmp_id_);
+    time_disc_.getWeightedOldX(tmp, x_prev);
 
     // rhs = M * weighted_old_x + b
     LinAlg::matMultAdd(M, tmp, b, rhs);

@@ -21,10 +21,10 @@ ConvergenceCriterionResidual::ConvergenceCriterionResidual(
     boost::optional<double>&& relative_tolerance,
     const MathLib::VecNormType norm_type)
     : ConvergenceCriterion(norm_type),
-      _abstol(std::move(absolute_tolerance)),
-      _reltol(std::move(relative_tolerance))
+      abstol_(std::move(absolute_tolerance)),
+      reltol_(std::move(relative_tolerance))
 {
-    if ((!_abstol) && (!_reltol))
+    if ((!abstol_) && (!reltol_))
     {
         OGS_FATAL(
             "At least one of absolute or relative tolerance has to be "
@@ -35,8 +35,8 @@ ConvergenceCriterionResidual::ConvergenceCriterionResidual(
 void ConvergenceCriterionResidual::checkDeltaX(
     const GlobalVector& minus_delta_x, GlobalVector const& x)
 {
-    auto error_dx = MathLib::LinAlg::norm(minus_delta_x, _norm_type);
-    auto norm_x = MathLib::LinAlg::norm(x, _norm_type);
+    auto error_dx = MathLib::LinAlg::norm(minus_delta_x, norm_type_);
+    auto norm_x = MathLib::LinAlg::norm(x, norm_type_);
 
     INFO("Convergence criterion: |dx|={:.4e}, |x|={:.4e}, |dx|/|x|={:.4e}",
          error_dx, norm_x,
@@ -46,49 +46,49 @@ void ConvergenceCriterionResidual::checkDeltaX(
 
 void ConvergenceCriterionResidual::checkResidual(const GlobalVector& residual)
 {
-    auto norm_res = MathLib::LinAlg::norm(residual, _norm_type);
+    auto norm_res = MathLib::LinAlg::norm(residual, norm_type_);
 
-    if (_is_first_iteration)
+    if (is_first_iteration_)
     {
         INFO("Convergence criterion: |r0|={:.4e}", norm_res);
-        _residual_norm_0 = norm_res;
+        residual_norm_0_ = norm_res;
     }
     else
     {
-        _residual_norm_0 =
-            (_residual_norm_0 < std::numeric_limits<double>::epsilon())
+        residual_norm_0_ =
+            (residual_norm_0_ < std::numeric_limits<double>::epsilon())
                 ? norm_res
-                : _residual_norm_0;
-        if (_residual_norm_0 < std::numeric_limits<double>::epsilon())
+                : residual_norm_0_;
+        if (residual_norm_0_ < std::numeric_limits<double>::epsilon())
         {
             INFO("Convergence criterion: |r|={:.4e} |r0|={:.4e}", norm_res,
-                 _residual_norm_0);
+                 residual_norm_0_);
         }
         else
         {
             INFO(
                 "Convergence criterion: |r|={:.4e} |r0|={:.4e} |r|/|r0|={:.4e}",
-                norm_res, _residual_norm_0,
-                (_residual_norm_0 == 0.
+                norm_res, residual_norm_0_,
+                (residual_norm_0_ == 0.
                      ? std::numeric_limits<double>::quiet_NaN()
-                     : (norm_res / _residual_norm_0)));
+                     : (norm_res / residual_norm_0_)));
         }
     }
 
     bool satisfied_abs = false;
     bool satisfied_rel = false;
 
-    if (_abstol)
+    if (abstol_)
     {
-        satisfied_abs = norm_res < *_abstol;
+        satisfied_abs = norm_res < *abstol_;
     }
-    if (_reltol && !_is_first_iteration)
+    if (reltol_ && !is_first_iteration_)
     {
         satisfied_rel =
-            checkRelativeTolerance(*_reltol, norm_res, _residual_norm_0);
+            checkRelativeTolerance(*reltol_, norm_res, residual_norm_0_);
     }
 
-    _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
+    satisfied_ = satisfied_ && (satisfied_abs || satisfied_rel);
 }
 
 std::unique_ptr<ConvergenceCriterionResidual>

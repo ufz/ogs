@@ -23,17 +23,17 @@ ConvergenceCriterionPerComponentDeltaX::ConvergenceCriterionPerComponentDeltaX(
     std::vector<double>&& relative_tolerances,
     const MathLib::VecNormType norm_type)
     : ConvergenceCriterionPerComponent(norm_type),
-      _abstols(std::move(absolute_tolerances)),
-      _reltols(std::move(relative_tolerances))
+      abstols_(std::move(absolute_tolerances)),
+      reltols_(std::move(relative_tolerances))
 {
-    if (_abstols.size() != _reltols.size())
+    if (abstols_.size() != reltols_.size())
     {
         OGS_FATAL(
             "The number of absolute and relative tolerances given must be the "
             "same.");
     }
 
-    if (_abstols.empty())
+    if (abstols_.empty())
     {
         OGS_FATAL("The given tolerances vector is empty.");
     }
@@ -42,7 +42,7 @@ ConvergenceCriterionPerComponentDeltaX::ConvergenceCriterionPerComponentDeltaX(
 void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
     const GlobalVector& minus_delta_x, GlobalVector const& x)
 {
-    if ((!_dof_table) || (!_mesh))
+    if ((!dof_table_) || (!mesh_))
     {
         OGS_FATAL("D.o.f. table or mesh have not been set.");
     }
@@ -50,14 +50,14 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
     bool satisfied_abs = true;
     bool satisfied_rel = true;
 
-    for (unsigned global_component = 0; global_component < _abstols.size();
+    for (unsigned global_component = 0; global_component < abstols_.size();
          ++global_component)
     {
         // TODO short cut if tol <= 0.0
-        auto error_dx = norm(minus_delta_x, global_component, _norm_type,
-                             *_dof_table, *_mesh);
+        auto error_dx = norm(minus_delta_x, global_component, norm_type_,
+                             *dof_table_, *mesh_);
         auto norm_x =
-            norm(x, global_component, _norm_type, *_dof_table, *_mesh);
+            norm(x, global_component, norm_type_, *dof_table_, *mesh_);
 
         INFO(
             "Convergence criterion, component {:d}: |dx|={:.4e}, |x|={:.4e}, "
@@ -66,23 +66,23 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
             (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
                           : (error_dx / norm_x)));
 
-        satisfied_abs = satisfied_abs && error_dx < _abstols[global_component];
+        satisfied_abs = satisfied_abs && error_dx < abstols_[global_component];
         satisfied_rel =
-            satisfied_rel && checkRelativeTolerance(_reltols[global_component],
+            satisfied_rel && checkRelativeTolerance(reltols_[global_component],
                                                     error_dx, norm_x);
     }
 
-    _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
+    satisfied_ = satisfied_ && (satisfied_abs || satisfied_rel);
 }
 
 void ConvergenceCriterionPerComponentDeltaX::setDOFTable(
     const LocalToGlobalIndexMap& dof_table, MeshLib::Mesh const& mesh)
 {
-    _dof_table = &dof_table;
-    _mesh = &mesh;
+    dof_table_ = &dof_table;
+    mesh_ = &mesh;
 
-    if (_dof_table->getNumberOfComponents() !=
-        static_cast<int>(_abstols.size()))
+    if (dof_table_->getNumberOfComponents() !=
+        static_cast<int>(abstols_.size()))
     {
         OGS_FATAL(
             "The number of components in the DOF table and the number of "

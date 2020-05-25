@@ -21,10 +21,10 @@ ConvergenceCriterionDeltaX::ConvergenceCriterionDeltaX(
     boost::optional<double>&& relative_tolerance,
     const MathLib::VecNormType norm_type)
     : ConvergenceCriterion(norm_type),
-      _abstol(std::move(absolute_tolerance)),
-      _reltol(std::move(relative_tolerance))
+      abstol_(std::move(absolute_tolerance)),
+      reltol_(std::move(relative_tolerance))
 {
-    if ((!_abstol) && (!_reltol))
+    if ((!abstol_) && (!reltol_))
     {
         OGS_FATAL(
             "At least one of absolute or relative tolerance has to be "
@@ -35,8 +35,8 @@ ConvergenceCriterionDeltaX::ConvergenceCriterionDeltaX(
 void ConvergenceCriterionDeltaX::checkDeltaX(const GlobalVector& minus_delta_x,
                                              GlobalVector const& x)
 {
-    auto error_dx = MathLib::LinAlg::norm(minus_delta_x, _norm_type);
-    auto norm_x = MathLib::LinAlg::norm(x, _norm_type);
+    auto error_dx = MathLib::LinAlg::norm(minus_delta_x, norm_type_);
+    auto norm_x = MathLib::LinAlg::norm(x, norm_type_);
 
     INFO("Convergence criterion: |dx|={:.4e}, |x|={:.4e}, |dx|/|x|={:.4e}",
          error_dx, norm_x,
@@ -46,14 +46,14 @@ void ConvergenceCriterionDeltaX::checkDeltaX(const GlobalVector& minus_delta_x,
     bool satisfied_abs = false;
     bool satisfied_rel = false;
 
-    if (_abstol) {
-        satisfied_abs = error_dx < *_abstol;
+    if (abstol_) {
+        satisfied_abs = error_dx < *abstol_;
     }
-    if (_reltol) {
-        satisfied_rel = checkRelativeTolerance(*_reltol, error_dx, norm_x);
+    if (reltol_) {
+        satisfied_rel = checkRelativeTolerance(*reltol_, error_dx, norm_x);
     }
 
-    _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
+    satisfied_ = satisfied_ && (satisfied_abs || satisfied_rel);
 }
 
 std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(

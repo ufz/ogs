@@ -35,8 +35,8 @@ bool FixedTimeStepping::next(double const /*solution_error*/,
                              int const /*number_iterations*/)
 {
     // check if last time step
-    if (_ts_current.steps() == _dt_vector.size() ||
-        std::abs(_ts_current.current() - _t_end) <
+    if (ts_current_.steps() == dt_vector_.size() ||
+        std::abs(ts_current_.current() - t_end_) <
             std::numeric_limits<double>::epsilon())
     {
         return false;
@@ -45,17 +45,17 @@ bool FixedTimeStepping::next(double const /*solution_error*/,
     // confirm current time and move to the next if accepted
     if (accepted())
     {
-        _ts_prev = _ts_current;
+        ts_prev_ = ts_current_;
     }
 
     // prepare the next time step info
-    _ts_current = _ts_prev;
-    double dt = _dt_vector[_ts_prev.steps()];
-    if (_ts_prev.current() + dt > _t_end)
+    ts_current_ = ts_prev_;
+    double dt = dt_vector_[ts_prev_.steps()];
+    if (ts_prev_.current() + dt > t_end_)
     {  // upper bound by t_end
-        dt = _t_end - _ts_prev.current();
+        dt = t_end_ - ts_prev_.current();
     }
-    _ts_current += dt;
+    ts_current_ += dt;
 
     return true;
 }

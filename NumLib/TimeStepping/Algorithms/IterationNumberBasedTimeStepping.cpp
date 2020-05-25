@@ -29,58 +29,58 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     std::vector<double>&& multiplier_vector,
     std::vector<double>&& fixed_output_times)
     : TimeStepAlgorithm(t_initial, t_end),
-      _iter_times_vector(std::move(iter_times_vector)),
-      _multiplier_vector(std::move(multiplier_vector)),
-      _fixed_output_times(std::move(fixed_output_times)),
-      _min_dt(min_dt),
-      _max_dt(max_dt),
-      _initial_dt(initial_dt),
-      _max_iter(_iter_times_vector.empty() ? 0 : _iter_times_vector.back())
+      iter_times_vector_(std::move(iter_times_vector)),
+      multiplier_vector_(std::move(multiplier_vector)),
+      fixed_output_times_(std::move(fixed_output_times)),
+      min_dt_(min_dt),
+      max_dt_(max_dt),
+      initial_dt_(initial_dt),
+      max_iter_(iter_times_vector_.empty() ? 0 : iter_times_vector_.back())
 {
-    if (_iter_times_vector.empty())
+    if (iter_times_vector_.empty())
     {
         OGS_FATAL("Vector of iteration numbers must not be empty.");
     }
-    if (_iter_times_vector.size() != _multiplier_vector.size())
+    if (iter_times_vector_.size() != multiplier_vector_.size())
     {
         OGS_FATAL(
             "Vector of iteration numbers must be of the same size as the "
             "vector of multipliers.");
     }
-    if (!std::is_sorted(std::begin(_iter_times_vector),
-                        std::end(_iter_times_vector)))
+    if (!std::is_sorted(std::begin(iter_times_vector_),
+                        std::end(iter_times_vector_)))
     {
         OGS_FATAL("Vector of iteration numbers must be sorted.");
     }
 
     // Remove possible duplicated elements. Result will be sorted.
-    BaseLib::makeVectorUnique(_fixed_output_times);
+    BaseLib::makeVectorUnique(fixed_output_times_);
 }
 
 bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
                                             int const number_iterations)
 {
-    _iter_times = number_iterations;
+    iter_times_ = number_iterations;
 
     // confirm current time and move to the next if accepted
     if (accepted())
     {
-        _ts_prev = _ts_current;
-        _dt_vector.push_back(_ts_current.dt());
+        ts_prev_ = ts_current_;
+        dt_vector_.push_back(ts_current_.dt());
     }
     else
     {
-        ++_n_rejected_steps;
+        ++n_rejected_steps_;
         // time step was rejected, keep dt for the next dt computation.
-        _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
-            TimeStep{_ts_prev.previous(),
-                     _ts_prev.previous() + _ts_current.dt(), _ts_prev.steps()};
+        ts_prev_ =  // essentially equal to ts_prev_.dt = ts_current_.dt.
+            TimeStep{ts_prev_.previous(),
+                     ts_prev_.previous() + ts_current_.dt(), ts_prev_.steps()};
     }
 
     // prepare the next time step info
-    _ts_current = _ts_prev;
-    _ts_current += possiblyClampDtToNextFixedTime(
-        _ts_current.current(), getNextTimeStepSize(), _fixed_output_times);
+    ts_current_ = ts_prev_;
+    ts_current_ += possiblyClampDtToNextFixedTime(
+        ts_current_.current(), getNextTimeStepSize(), fixed_output_times_);
 
     return true;
 }
@@ -88,19 +88,19 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
 double IterationNumberBasedTimeStepping::findMultiplier(
     int const number_iterations) const
 {
-    double multiplier = _multiplier_vector.front();
-    for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
+    double multiplier = multiplier_vector_.front();
+    for (std::size_t i = 0; i < iter_times_vector_.size(); i++)
     {
-        if (number_iterations >= _iter_times_vector[i])
+        if (number_iterations >= iter_times_vector_[i])
         {
-            multiplier = _multiplier_vector[i];
+            multiplier = multiplier_vector_[i];
         }
     }
 
-    if (!_accepted && (multiplier >= 1.0))
+    if (!accepted_ && (multiplier >= 1.0))
     {
-        return *std::min_element(_multiplier_vector.begin(),
-                                 _multiplier_vector.end());
+        return *std::min_element(multiplier_vector_.begin(),
+                                 multiplier_vector_.end());
     }
 
     return multiplier;
@@ -111,24 +111,24 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
     double dt = 0.0;
 
     // In first time step and first non-linear iteration take the initial dt.
-    if (_ts_prev.steps() == 0 && _iter_times == 0)
+    if (ts_prev_.steps() == 0 && iter_times_ == 0)
     {
-        dt = _initial_dt;
+        dt = initial_dt_;
     }
     else
     {
         // Attention: for the first time step and second iteration the
         // ts_prev.dt is 0 and 0*multiplier is the next dt, which will be
         // clamped to the minimum dt.
-        dt = _ts_prev.dt() * findMultiplier(_iter_times);
+        dt = ts_prev_.dt() * findMultiplier(iter_times_);
     }
 
-    dt = std::clamp(dt, _min_dt, _max_dt);
+    dt = std::clamp(dt, min_dt_, max_dt_);
 
-    double const t_next = dt + _ts_prev.current();
+    double const t_next = dt + ts_prev_.current();
     if (t_next > end())
     {
-        dt = end() - _ts_prev.current();
+        dt = end() - ts_prev_.current();
     }
 
     return dt;
@@ -137,24 +137,24 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
 void IterationNumberBasedTimeStepping::addFixedOutputTimes(
     std::vector<double> const& extra_fixed_output_times)
 {
-    _fixed_output_times.insert(_fixed_output_times.end(),
+    fixed_output_times_.insert(fixed_output_times_.end(),
                                extra_fixed_output_times.begin(),
                                extra_fixed_output_times.end());
 
     // Remove possible duplicated elements. Result will be sorted.
-    BaseLib::makeVectorUnique(_fixed_output_times);
+    BaseLib::makeVectorUnique(fixed_output_times_);
 }
 
 bool IterationNumberBasedTimeStepping::accepted() const
 {
-    return _accepted;
+    return accepted_;
 }
 
 bool IterationNumberBasedTimeStepping::canReduceTimestepSize() const
 {
     // If current and previous dt are both at minimum dt, then cannot reduce
     // further.
-    return !(_ts_current.dt() == _min_dt && _ts_prev.dt() == _min_dt);
+    return !(ts_current_.dt() == min_dt_ && ts_prev_.dt() == min_dt_);
 }
 
 }  // namespace NumLib

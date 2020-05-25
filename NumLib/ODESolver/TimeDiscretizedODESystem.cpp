@@ -46,28 +46,28 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Newton>::
     TimeDiscretizedODESystem(const int process_id, ODE& ode,
                              TimeDisc& time_discretization)
-    : _ode(ode),
-      _time_disc(time_discretization),
-      _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
+    : ode_(ode),
+      time_disc_(time_discretization),
+      mat_trans_(createMatrixTranslator<ODETag>(time_discretization))
 {
-    _Jac = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(process_id), _Jac_id);
-    _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(process_id), _M_id);
-    _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(process_id), _K_id);
-    _b = &NumLib::GlobalVectorProvider::provider.getVector(
-        _ode.getMatrixSpecifications(process_id), _b_id);
+    Jac_ = &NumLib::GlobalMatrixProvider::provider.getMatrix(
+        ode_.getMatrixSpecifications(process_id), Jac_id_);
+    M_ = &NumLib::GlobalMatrixProvider::provider.getMatrix(
+        ode_.getMatrixSpecifications(process_id), M_id_);
+    K_ = &NumLib::GlobalMatrixProvider::provider.getMatrix(
+        ode_.getMatrixSpecifications(process_id), K_id_);
+    b_ = &NumLib::GlobalVectorProvider::provider.getVector(
+        ode_.getMatrixSpecifications(process_id), b_id_);
 }
 
 TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Newton>::~TimeDiscretizedODESystem()
 {
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_Jac);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
-    NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*Jac_);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*M_);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*K_);
+    NumLib::GlobalVectorProvider::provider.releaseVector(*b_);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -78,30 +78,30 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto const t = _time_disc.getCurrentTime();
-    auto const dt = _time_disc.getCurrentTimeIncrement();
+    auto const t = time_disc_.getCurrentTime();
+    auto const dt = time_disc_.getCurrentTimeIncrement();
     auto const& x_curr = *x_new_timestep[process_id];
-    auto const dxdot_dx = _time_disc.getNewXWeight();
+    auto const dxdot_dx = time_disc_.getNewXWeight();
 
     std::vector<GlobalVector*> xdot(x_new_timestep.size());
     for (auto& v : xdot)
     {
         v = &NumLib::GlobalVectorProvider::provider.getVector();
-        _time_disc.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
+        time_disc_.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
                            *v);
     }
 
-    _M->setZero();
-    _K->setZero();
-    _b->setZero();
-    _Jac->setZero();
+    M_->setZero();
+    K_->setZero();
+    b_->setZero();
+    Jac_->setZero();
 
-    _ode.preAssemble(t, dt, x_curr);
+    ode_.preAssemble(t, dt, x_curr);
     try
     {
-        _ode.assembleWithJacobian(t, dt, x_new_timestep, *xdot[process_id],
-                                  dxdot_dx, 1.0, process_id, *_M, *_K, *_b,
-                                  *_Jac);
+        ode_.assembleWithJacobian(t, dt, x_new_timestep, *xdot[process_id],
+                                  dxdot_dx, 1.0, process_id, *M_, *K_, *b_,
+                                  *Jac_);
     }
     catch (AssemblyException const&)
     {
@@ -112,10 +112,10 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         throw;
     }
 
-    LinAlg::finalizeAssembly(*_M);
-    LinAlg::finalizeAssembly(*_K);
-    LinAlg::finalizeAssembly(*_b);
-    MathLib::LinAlg::finalizeAssembly(*_Jac);
+    LinAlg::finalizeAssembly(*M_);
+    LinAlg::finalizeAssembly(*K_);
+    LinAlg::finalizeAssembly(*b_);
+    MathLib::LinAlg::finalizeAssembly(*Jac_);
 
     for (auto& v : xdot)
     {
@@ -132,10 +132,10 @@ void TimeDiscretizedODESystem<
     // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
     //      can be optimuized. However, that would make the interface a bit more
     //      fragile.
-    auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
-    _time_disc.getXdot(x_new_timestep, x_prev, xdot);
+    auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(xdot_id_);
+    time_disc_.getXdot(x_new_timestep, x_prev, xdot);
 
-    _mat_trans->computeResidual(*_M, *_K, *_b, x_new_timestep, xdot, res);
+    mat_trans_->computeResidual(*M_, *K_, *b_, x_new_timestep, xdot, res);
 
     NumLib::GlobalVectorProvider::provider.releaseVector(xdot);
 }
@@ -144,7 +144,7 @@ void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Newton>::getJacobian(GlobalMatrix& Jac) const
 {
-    _mat_trans->computeJacobian(*_Jac, Jac);
+    mat_trans_->computeJacobian(*Jac_, Jac);
 }
 
 void TimeDiscretizedODESystem<
@@ -152,15 +152,15 @@ void TimeDiscretizedODESystem<
     NonlinearSolverTag::Newton>::computeKnownSolutions(GlobalVector const& x,
                                                        int const process_id)
 {
-    _known_solutions =
-        _ode.getKnownSolutions(_time_disc.getCurrentTime(), x, process_id);
+    known_solutions_ =
+        ode_.getKnownSolutions(time_disc_.getCurrentTime(), x, process_id);
 }
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Newton>::applyKnownSolutions(GlobalVector& x) const
 {
-    ::detail::applyKnownSolutions(_known_solutions, x);
+    ::detail::applyKnownSolutions(known_solutions_, x);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -168,14 +168,14 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
                               GlobalVector& minus_delta_x) const
 {
-    if (!_known_solutions)
+    if (!known_solutions_)
     {
         return;
     }
 
     using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
     std::vector<IndexType> ids;
-    for (auto const& bc : *_known_solutions)
+    for (auto const& bc : *known_solutions_)
     {
         std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
     }
@@ -189,25 +189,25 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Picard>::
     TimeDiscretizedODESystem(const int process_id, ODE& ode,
                              TimeDisc& time_discretization)
-    : _ode(ode),
-      _time_disc(time_discretization),
-      _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
+    : ode_(ode),
+      time_disc_(time_discretization),
+      mat_trans_(createMatrixTranslator<ODETag>(time_discretization))
 {
-    _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        ode.getMatrixSpecifications(process_id), _M_id);
-    _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        ode.getMatrixSpecifications(process_id), _K_id);
-    _b = &NumLib::GlobalVectorProvider::provider.getVector(
-        ode.getMatrixSpecifications(process_id), _b_id);
+    M_ = &NumLib::GlobalMatrixProvider::provider.getMatrix(
+        ode.getMatrixSpecifications(process_id), M_id_);
+    K_ = &NumLib::GlobalMatrixProvider::provider.getMatrix(
+        ode.getMatrixSpecifications(process_id), K_id_);
+    b_ = &NumLib::GlobalVectorProvider::provider.getVector(
+        ode.getMatrixSpecifications(process_id), b_id_);
 }
 
 TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Picard>::~TimeDiscretizedODESystem()
 {
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
-    NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*M_);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*K_);
+    NumLib::GlobalVectorProvider::provider.releaseVector(*b_);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -218,27 +218,27 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto const t = _time_disc.getCurrentTime();
-    auto const dt = _time_disc.getCurrentTimeIncrement();
+    auto const t = time_disc_.getCurrentTime();
+    auto const dt = time_disc_.getCurrentTimeIncrement();
     auto const& x_curr = *x_new_timestep[process_id];
     std::vector<GlobalVector*> xdot(x_new_timestep.size());
     for (auto& v : xdot)
     {
         v = &NumLib::GlobalVectorProvider::provider.getVector();
-        _time_disc.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
+        time_disc_.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
                            *v);
     }
 
-    _M->setZero();
-    _K->setZero();
-    _b->setZero();
+    M_->setZero();
+    K_->setZero();
+    b_->setZero();
 
-    _ode.preAssemble(t, dt, x_curr);
-    _ode.assemble(t, dt, x_new_timestep, xdot, process_id, *_M, *_K, *_b);
+    ode_.preAssemble(t, dt, x_curr);
+    ode_.assemble(t, dt, x_new_timestep, xdot, process_id, *M_, *K_, *b_);
 
-    LinAlg::finalizeAssembly(*_M);
-    LinAlg::finalizeAssembly(*_K);
-    LinAlg::finalizeAssembly(*_b);
+    LinAlg::finalizeAssembly(*M_);
+    LinAlg::finalizeAssembly(*K_);
+    LinAlg::finalizeAssembly(*b_);
 }
 
 void TimeDiscretizedODESystem<
@@ -246,15 +246,15 @@ void TimeDiscretizedODESystem<
     NonlinearSolverTag::Picard>::computeKnownSolutions(GlobalVector const& x,
                                                        int const process_id)
 {
-    _known_solutions =
-        _ode.getKnownSolutions(_time_disc.getCurrentTime(), x, process_id);
+    known_solutions_ =
+        ode_.getKnownSolutions(time_disc_.getCurrentTime(), x, process_id);
 }
 
 void TimeDiscretizedODESystem<
     ODESystemTag::FirstOrderImplicitQuasilinear,
     NonlinearSolverTag::Picard>::applyKnownSolutions(GlobalVector& x) const
 {
-    ::detail::applyKnownSolutions(_known_solutions, x);
+    ::detail::applyKnownSolutions(known_solutions_, x);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -263,7 +263,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               GlobalVector& rhs,
                               GlobalVector& x) const
 {
-    if (!_known_solutions)
+    if (!known_solutions_)
     {
         return;
     }
@@ -271,7 +271,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
     std::vector<IndexType> ids;
     std::vector<double> values;
-    for (auto const& bc : *_known_solutions)
+    for (auto const& bc : *known_solutions_)
     {
         std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
         std::copy(bc.values.cbegin(), bc.values.cend(),
