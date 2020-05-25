@@ -23,13 +23,13 @@ public:
     ReactionRate(std::string kinetic_reactant_,
                  std::vector<std::string> statements);
 
-    std::string const& commands() const { return _commands; }
+    std::string const& commands() const { return commands_; }
 
 public:
     std::string const kinetic_reactant;
 
 private:
-    std::string _commands;
+    std::string commands_;
 };
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

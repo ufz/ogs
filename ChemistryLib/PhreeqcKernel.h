@@ -83,10 +83,10 @@ private:
 
     void reset(std::size_t const chemical_system_id);
 
-    std::map<int, struct master*> _process_id_to_master_map;
-    std::unique_ptr<cxxISolution const> _initial_aqueous_solution;
-    std::unique_ptr<cxxSolution const> _aqueous_solution;
-    std::vector<ReactionRate> const _reaction_rates;
+    std::map<int, struct master*> process_id_to_master_map_;
+    std::unique_ptr<cxxISolution const> initial_aqueous_solution_;
+    std::unique_ptr<cxxSolution const> aqueous_solution_;
+    std::vector<ReactionRate> const reaction_rates_;
 };
 }  // namespace PhreeqcKernelData
 }  // namespace ChemistryLib

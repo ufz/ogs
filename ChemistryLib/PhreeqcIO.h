@@ -79,29 +79,29 @@ public:
 
     std::vector<std::string> const getComponentList() const override;
 
-    std::string const _phreeqc_input_file;
+    std::string const phreeqc_input_file_;
 
 private:
     PhreeqcIO& operator<<(double const dt)
     {
-        _dt = dt;
+        dt_ = dt;
         return *this;
     }
 
     void setAqueousSolutionsPrevFromDumpFile();
 
-    MeshLib::Mesh const& _mesh;
-    std::string const _database;
-    std::vector<AqueousSolution> _aqueous_solutions;
-    std::vector<EquilibriumReactant> _equilibrium_reactants;
-    std::vector<KineticReactant> _kinetic_reactants;
-    std::vector<ReactionRate> const _reaction_rates;
-    std::vector<SurfaceSite> const _surface;
-    std::unique_ptr<UserPunch> _user_punch;
-    std::unique_ptr<Output> const _output;
-    std::unique_ptr<Dump> const _dump;
-    Knobs const _knobs;
-    double _dt = std::numeric_limits<double>::quiet_NaN();
+    MeshLib::Mesh const& mesh_;
+    std::string const database_;
+    std::vector<AqueousSolution> aqueous_solutions_;
+    std::vector<EquilibriumReactant> equilibrium_reactants_;
+    std::vector<KineticReactant> kinetic_reactants_;
+    std::vector<ReactionRate> const reaction_rates_;
+    std::vector<SurfaceSite> const surface_;
+    std::unique_ptr<UserPunch> user_punch_;
+    std::unique_ptr<Output> const output_;
+    std::unique_ptr<Dump> const dump_;
+    Knobs const knobs_;
+    double dt_ = std::numeric_limits<double>::quiet_NaN();
     const int phreeqc_instance_id = 0;
 };
 }  // namespace PhreeqcIOData
