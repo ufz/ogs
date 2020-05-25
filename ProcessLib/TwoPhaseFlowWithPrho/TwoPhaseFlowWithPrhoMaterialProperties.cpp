@@ -54,16 +54,16 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
     std::vector<
         std::unique_ptr<MaterialLib::PorousMedium::RelativePermeability>>&&
         relative_permeability_models)
-    : _liquid_density(std::move(liquid_density)),
-      _viscosity(std::move(viscosity)),
-      _gas_density(std::move(gas_density)),
-      _gas_viscosity(std::move(gas_viscosity)),
-      _material_ids(material_ids),
-      _intrinsic_permeability_models(std::move(intrinsic_permeability_models)),
-      _porosity_models(std::move(porosity_models)),
-      _storage_models(std::move(storage_models)),
-      _capillary_pressure_models(std::move(capillary_pressure_models)),
-      _relative_permeability_models(std::move(relative_permeability_models))
+    : liquid_density_(std::move(liquid_density)),
+      viscosity_(std::move(viscosity)),
+      gas_density_(std::move(gas_density)),
+      gas_viscosity_(std::move(gas_viscosity)),
+      material_ids_(material_ids),
+      intrinsic_permeability_models_(std::move(intrinsic_permeability_models)),
+      porosity_models_(std::move(porosity_models)),
+      storage_models_(std::move(storage_models)),
+      capillary_pressure_models_(std::move(capillary_pressure_models)),
+      relative_permeability_models_(std::move(relative_permeability_models))
 {
     DBUG("Create material properties for Two-Phase flow with P-RHO model.");
 }
@@ -71,13 +71,13 @@ TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
 int TwoPhaseFlowWithPrhoMaterialProperties::getMaterialID(
     const std::size_t element_id)
 {
-    if (!_material_ids)
+    if (!material_ids_)
     {
         return 0;
     }
 
-    assert(element_id < _material_ids->size());
-    return (*_material_ids)[element_id];
+    assert(element_id < material_ids_->size());
+    return (*material_ids_)[element_id];
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getLiquidDensity(
@@ -86,7 +86,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getLiquidDensity(
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _liquid_density->getValue(vars);
+    return liquid_density_->getValue(vars);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getGasDensity(
@@ -95,7 +95,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getGasDensity(
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _gas_density->getValue(vars);
+    return gas_density_->getValue(vars);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getLiquidViscosity(
@@ -104,7 +104,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getLiquidViscosity(
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _viscosity->getValue(vars);
+    return viscosity_->getValue(vars);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getGasViscosity(
@@ -113,14 +113,14 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getGasViscosity(
     ArrayType vars;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _gas_viscosity->getValue(vars);
+    return gas_viscosity_->getValue(vars);
 }
 
 Eigen::MatrixXd TwoPhaseFlowWithPrhoMaterialProperties::getPermeability(
     const int material_id, const double t,
     const ParameterLib::SpatialPosition& pos, const int /*dim*/) const
 {
-    return _intrinsic_permeability_models[material_id]->getValue(t, pos, 0.0,
+    return intrinsic_permeability_models_[material_id]->getValue(t, pos, 0.0,
                                                                  0.0);
 }
 
@@ -129,7 +129,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getPorosity(
     const ParameterLib::SpatialPosition& pos, const double /*p*/,
     const double T, const double porosity_variable) const
 {
-    return _porosity_models[material_id]->getValue(t, pos, porosity_variable,
+    return porosity_models_[material_id]->getValue(t, pos, porosity_variable,
                                                    T);
 }
 
@@ -137,14 +137,14 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getNonwetRelativePermeability(
     const double /*t*/, const ParameterLib::SpatialPosition& /*pos*/,
     const double /*p*/, const double /*T*/, const double saturation) const
 {
-    return _relative_permeability_models[0]->getValue(saturation);
+    return relative_permeability_models_[0]->getValue(saturation);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getWetRelativePermeability(
     const double /*t*/, const ParameterLib::SpatialPosition& /*pos*/,
     const double /*p*/, const double /*T*/, const double saturation) const
 {
-    return _relative_permeability_models[1]->getValue(saturation);
+    return relative_permeability_models_[1]->getValue(saturation);
 }
 
 double TwoPhaseFlowWithPrhoMaterialProperties::getCapillaryPressure(
@@ -152,7 +152,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getCapillaryPressure(
     const ParameterLib::SpatialPosition& /*pos*/, const double /*p*/,
     const double /*T*/, const double saturation) const
 {
-    return _capillary_pressure_models[material_id]->getCapillaryPressure(
+    return capillary_pressure_models_[material_id]->getCapillaryPressure(
         saturation);
 }
 
@@ -161,7 +161,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::getCapillaryPressureDerivative(
     const ParameterLib::SpatialPosition& /*pos*/, const double /*p*/,
     const double /*T*/, const double saturation) const
 {
-    return _capillary_pressure_models[material_id]->getdPcdS(saturation);
+    return capillary_pressure_models_[material_id]->getdPcdS(saturation);
 }
 
 bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
@@ -232,7 +232,7 @@ void TwoPhaseFlowWithPrhoMaterialProperties::calculateResidual(
     double Sw, double rho_h2_wet, ResidualVector& res)
 {
     const double pg =
-        pl + _capillary_pressure_models[material_id]->getCapillaryPressure(Sw);
+        pl + capillary_pressure_models_[material_id]->getCapillaryPressure(Sw);
     const double rho_h2_nonwet = pg * H2 / IdealGasConstant / T;
 
     // calculating residual
@@ -247,11 +247,11 @@ void TwoPhaseFlowWithPrhoMaterialProperties::calculateJacobian(
     double rho_h2_wet)
 {
     const double pg =
-        pl + _capillary_pressure_models[material_id]->getCapillaryPressure(Sw);
+        pl + capillary_pressure_models_[material_id]->getCapillaryPressure(Sw);
     const double rho_h2_nonwet = pg * H2 / IdealGasConstant / T;
     double const rho_equili_h2_wet = pg * HenryConstantH2 * H2;
     double const dPC_dSw =
-        _capillary_pressure_models[material_id]->getdPcdS(Sw);
+        capillary_pressure_models_[material_id]->getdPcdS(Sw);
     double const drhoh2wet_dpg = HenryConstantH2 * H2;
     Jac.setZero();
     if ((1 - Sw) < (rho_equili_h2_wet - rho_h2_wet))
@@ -297,7 +297,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedSwdP(
 {
     const double pg =
         pl +
-        _capillary_pressure_models[current_material_id]->getCapillaryPressure(
+        capillary_pressure_models_[current_material_id]->getCapillaryPressure(
             S);
     double const rho_equilibrium_wet_h2 = pg * HenryConstantH2 * H2;
     if ((1 - S) < (rho_equilibrium_wet_h2 - rho_wet_h2))
@@ -311,7 +311,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedSwdP(
     double const beta = (drhoh2nonwet_dpg - drhoh2wet_dpg) *
                         pg;  // NOTE here should be PG^h, but we ignore vapor
     double const dPC_dSw =
-        _capillary_pressure_models[current_material_id]->getdPcdS(S);
+        capillary_pressure_models_[current_material_id]->getdPcdS(S);
     return alpha / (beta - alpha * dPC_dSw);
 }
 /**
@@ -323,7 +323,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedSwdX(
 {
     const double pg =
         pl +
-        _capillary_pressure_models[current_material_id]->getCapillaryPressure(
+        capillary_pressure_models_[current_material_id]->getCapillaryPressure(
             S);
     double const rho_equilibrium_wet_h2 = pg * HenryConstantH2 * H2;
     if ((1 - S) < (rho_equilibrium_wet_h2 - rho_wet_h2))
@@ -337,7 +337,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedSwdX(
     double const beta = (drhoh2nonwet_dpg - drhoh2wet_dpg) *
                         pg;  // NOTE here should be PG^h, but we ignore vapor
     double const dPC_dSw =
-        _capillary_pressure_models[current_material_id]->getdPcdS(S);
+        capillary_pressure_models_[current_material_id]->getdPcdS(S);
     return -1 / (beta - alpha * dPC_dSw);
 }
 /**
@@ -349,11 +349,11 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedXmdX(
 {
     const double pg =
         pl +
-        _capillary_pressure_models[current_material_id]->getCapillaryPressure(
+        capillary_pressure_models_[current_material_id]->getCapillaryPressure(
             Sw);
     double const rho_equilibrium_wet_h2 = pg * HenryConstantH2 * H2;
     double const dPC_dSw =
-        _capillary_pressure_models[current_material_id]->getdPcdS(Sw);
+        capillary_pressure_models_[current_material_id]->getdPcdS(Sw);
     if ((1 - Sw) < (rho_equilibrium_wet_h2 - rho_wet_h2))
     {
         return 1.0;
@@ -369,11 +369,11 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedXmdP(
 {
     const double pg =
         pl +
-        _capillary_pressure_models[current_material_id]->getCapillaryPressure(
+        capillary_pressure_models_[current_material_id]->getCapillaryPressure(
             Sw);
     double const rho_equilibrium_wet_h2 = pg * HenryConstantH2 * H2;
     double const dPC_dSw =
-        _capillary_pressure_models[current_material_id]->getdPcdS(Sw);
+        capillary_pressure_models_[current_material_id]->getdPcdS(Sw);
     if ((1 - Sw) < (rho_equilibrium_wet_h2 - rho_wet_h2))
     {
         return 0.0;

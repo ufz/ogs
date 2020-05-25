@@ -27,7 +27,7 @@ class FlushStdoutGuard final
 {
 public:
     //! Optionally flushes C++ stdout before running Python code.
-    explicit FlushStdoutGuard(bool const flush) : _flush(flush)
+    explicit FlushStdoutGuard(bool const flush) : flush_(flush)
     {
         if (!flush)
         {
@@ -40,7 +40,7 @@ public:
     //! Optionally flushes Python's stdout after running Python code.
     ~FlushStdoutGuard()
     {
-        if (!_flush)
+        if (!flush_)
         {
             return;
         }
@@ -51,7 +51,7 @@ public:
 
 private:
     //! To flush or not to flush.
-    const bool _flush;
+    const bool flush_;
 };
 }  // anonymous namespace
 
@@ -67,24 +67,24 @@ PythonSourceTerm::PythonSourceTerm(
     unsigned const shapefunction_order, unsigned const global_dim,
     bool const flush_stdout)
     : SourceTerm(std::move(source_term_dof_table)),
-      _source_term_data(std::move(source_term_data)),
-      _flush_stdout(flush_stdout)
+      source_term_data_(std::move(source_term_data)),
+      flush_stdout_(flush_stdout)
 {
     createLocalAssemblers<PythonSourceTermLocalAssembler>(
-        global_dim, _source_term_data.source_term_mesh.getElements(),
-        *_source_term_dof_table, shapefunction_order, _local_assemblers,
-        _source_term_data.source_term_mesh.isAxiallySymmetric(),
-        integration_order, _source_term_data);
+        global_dim, source_term_data_.source_term_mesh.getElements(),
+        *source_term_dof_table_, shapefunction_order, local_assemblers_,
+        source_term_data_.source_term_mesh.isAxiallySymmetric(),
+        integration_order, source_term_data_);
 }
 
 void PythonSourceTerm::integrate(const double t, const GlobalVector& x,
                                  GlobalVector& b, GlobalMatrix* Jac) const
 {
-    FlushStdoutGuard guard(_flush_stdout);
+    FlushStdoutGuard guard(flush_stdout_);
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &PythonSourceTermLocalAssemblerInterface::assemble, _local_assemblers,
-        *_source_term_dof_table, t, x, b, Jac);
+        &PythonSourceTermLocalAssemblerInterface::assemble, local_assemblers_,
+        *source_term_dof_table_, t, x, b, Jac);
 }
 
 }  // namespace Python

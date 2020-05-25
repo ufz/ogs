@@ -28,13 +28,13 @@ void PhaseFieldIrreversibleDamageOracleBoundaryCondition::getEssentialBCValues(
     bc_values.values.clear();
 
     // convert mesh node ids to global index for the given component
-    bc_values.ids.reserve(bc_values.ids.size() + _bc_values.ids.size());
+    bc_values.ids.reserve(bc_values.ids.size() + bc_values_.ids.size());
     bc_values.values.reserve(bc_values.values.size() +
-                             _bc_values.values.size());
+                             bc_values_.values.size());
 
-    std::copy(_bc_values.ids.begin(), _bc_values.ids.end(),
+    std::copy(bc_values_.ids.begin(), bc_values_.ids.end(),
               std::back_inserter(bc_values.ids));
-    std::copy(_bc_values.values.begin(), _bc_values.values.end(),
+    std::copy(bc_values_.values.begin(), bc_values_.values.end(),
               std::back_inserter(bc_values.values));
 }
 
@@ -47,22 +47,22 @@ void PhaseFieldIrreversibleDamageOracleBoundaryCondition::preTimestep(
     // of the stiffness, which is a widely used threshold.
     double irreversibleDamage = 0.05;
 
-    _bc_values.ids.clear();
-    _bc_values.values.clear();
+    bc_values_.ids.clear();
+    bc_values_.values.clear();
 
-    auto const mesh_id = _mesh.getID();
-    auto const& nodes = _mesh.getNodes();
+    auto const mesh_id = mesh_.getID();
+    auto const& nodes = mesh_.getNodes();
     for (auto const* n : nodes)
     {
         std::size_t node_id = n->getID();
         MeshLib::Location l(mesh_id, MeshLib::MeshItemType::Node, node_id);
         const auto g_idx =
-            _dof_table.getGlobalIndex(l, _variable_id, _component_id);
+            dof_table_.getGlobalIndex(l, variable_id_, component_id_);
 
         if ((*x[process_id])[node_id] <= irreversibleDamage)
         {
-            _bc_values.ids.emplace_back(g_idx);
-            _bc_values.values.emplace_back(0.0);
+            bc_values_.ids.emplace_back(g_idx);
+            bc_values_.values.emplace_back(0.0);
         }
     }
 }

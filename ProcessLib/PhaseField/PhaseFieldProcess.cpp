@@ -38,7 +38,7 @@ PhaseFieldProcess<DisplacementDim>::PhaseFieldProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
-      _process_data(std::move(process_data))
+      process_data_(std::move(process_data))
 {
     if (use_monolithic_scheme)
     {
@@ -46,7 +46,7 @@ PhaseFieldProcess<DisplacementDim>::PhaseFieldProcess(
             "Monolithic scheme is not implemented for the PhaseField process.");
     }
 
-    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+    nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 }
 
@@ -64,15 +64,15 @@ PhaseFieldProcess<DisplacementDim>::getMatrixSpecifications(
     // For the M process (deformation) in the staggered scheme.
     if (process_id == 0)
     {
-        auto const& l = *_local_to_global_index_map;
+        auto const& l = *local_to_global_index_map_;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
-                &l.getGhostIndices(), &this->_sparsity_pattern};
+                &l.getGhostIndices(), &this->sparsity_pattern_};
     }
 
     // For staggered scheme and phase field process.
-    auto const& l = *_local_to_global_index_map_single_component;
+    auto const& l = *local_to_global_index_map_single_component_;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
-            &l.getGhostIndices(), &_sparsity_pattern_with_single_component};
+            &l.getGhostIndices(), &sparsity_pattern_with_single_component_};
 }
 
 template <int DisplacementDim>
@@ -82,11 +82,11 @@ PhaseFieldProcess<DisplacementDim>::getDOFTable(const int process_id) const
     // For the M process (deformation) in the staggered scheme.
     if (process_id == 0)
     {
-        return *_local_to_global_index_map;
+        return *local_to_global_index_map_;
     }
 
     // For the equation of phasefield
-    return *_local_to_global_index_map_single_component;
+    return *local_to_global_index_map_single_component_;
 }
 
 template <int DisplacementDim>
@@ -99,18 +99,18 @@ void PhaseFieldProcess<DisplacementDim>::constructDofTable()
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
     std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
-        *_mesh_subset_all_nodes};
-    _local_to_global_index_map_single_component =
+        *mesh_subset_all_nodes_};
+    local_to_global_index_map_single_component_ =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
 
-    assert(_local_to_global_index_map_single_component);
+    assert(local_to_global_index_map_single_component_);
 
     // For phase field equation.
-    _sparsity_pattern_with_single_component = NumLib::computeSparsityPattern(
-        *_local_to_global_index_map_single_component, _mesh);
+    sparsity_pattern_with_single_component_ = NumLib::computeSparsityPattern(
+        *local_to_global_index_map_single_component_, mesh_);
 }
 
 template <int DisplacementDim>
@@ -121,27 +121,27 @@ void PhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
 {
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, PhaseFieldLocalAssembler>(
-        mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        mesh.getElements(), dof_table, local_assemblers_,
+        mesh.isAxiallySymmetric(), integration_order, process_data_);
 
-    _secondary_variables.addSecondaryVariable(
+    secondary_variables_.addSecondaryVariable(
         "sigma",
         makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
                              DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
+                         getExtrapolator(), local_assemblers_,
                          &LocalAssemblerInterface::getIntPtSigma));
 
-    _secondary_variables.addSecondaryVariable(
+    secondary_variables_.addSecondaryVariable(
         "epsilon",
         makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
                              DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
+                         getExtrapolator(), local_assemblers_,
                          &LocalAssemblerInterface::getIntPtEpsilon));
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
-        *_local_to_global_index_map);
+        &LocalAssemblerInterface::initialize, local_assemblers_,
+        *local_to_global_index_map_);
 }
 
 template <int DisplacementDim>
@@ -151,11 +151,11 @@ void PhaseFieldProcess<DisplacementDim>::initializeBoundaryConditions()
     // for the equations of deformation.
     const int mechanical_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id);
+        *local_to_global_index_map_, mechanical_process_id);
     // for the phase field
     const int phasefield_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_single_component, phasefield_process_id);
+        *local_to_global_index_map_single_component_, phasefield_process_id);
 }
 
 template <int DisplacementDim>
@@ -182,16 +182,16 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
             "Assemble the equations of deformation in "
             "PhaseFieldProcess for the staggered scheme.");
     }
-    dof_tables.emplace_back(*_local_to_global_index_map_single_component);
-    dof_tables.emplace_back(*_local_to_global_index_map);
+    dof_tables.emplace_back(*local_to_global_index_map_single_component_);
+    dof_tables.emplace_back(*local_to_global_index_map_);
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b, coupled_solutions_);
 }
 
 template <int DisplacementDim>
@@ -217,22 +217,22 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
             "Assemble the Jacobian equations of deformation in "
             "PhaseFieldProcess for the staggered scheme.");
     }
-    dof_tables.emplace_back(*_local_to_global_index_map);
-    dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+    dof_tables.emplace_back(*local_to_global_index_map_);
+    dof_tables.emplace_back(*local_to_global_index_map_single_component_);
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
+        local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, coupled_solutions_);
 
     if (process_id == 0)
     {
-        b.copyValues(*_nodal_forces);
-        std::transform(_nodal_forces->begin(), _nodal_forces->end(),
-                       _nodal_forces->begin(), [](double val) { return -val; });
+        b.copyValues(*nodal_forces_);
+        std::transform(nodal_forces_->begin(), nodal_forces_->end(),
+                       nodal_forces_->begin(), [](double val) { return -val; });
     }
 }
 
@@ -243,12 +243,12 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep PhaseFieldProcess {:d}.", process_id);
 
-    _process_data.injected_volume = t;
+    process_data_.injected_volume = t;
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::preTimestep, _local_assemblers,
+        &LocalAssemblerInterface::preTimestep, local_assemblers_,
         pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
         dt);
 }
@@ -262,28 +262,28 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
     {
         DBUG("PostTimestep PhaseFieldProcess.");
 
-        _process_data.elastic_energy = 0.0;
-        _process_data.surface_energy = 0.0;
-        _process_data.pressure_work = 0.0;
+        process_data_.elastic_energy = 0.0;
+        process_data_.surface_energy = 0.0;
+        process_data_.pressure_work = 0.0;
 
         std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
             dof_tables;
 
-        dof_tables.emplace_back(*_local_to_global_index_map);
-        dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+        dof_tables.emplace_back(*local_to_global_index_map_);
+        dof_tables.emplace_back(*local_to_global_index_map_single_component_);
 
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerInterface::computeEnergy, _local_assemblers,
+            &LocalAssemblerInterface::computeEnergy, local_assemblers_,
             pv.getActiveElementIDs(), dof_tables, *x[process_id], t,
-            _process_data.elastic_energy, _process_data.surface_energy,
-            _process_data.pressure_work, _coupled_solutions);
+            process_data_.elastic_energy, process_data_.surface_energy,
+            process_data_.pressure_work, coupled_solutions_);
 
         INFO("Elastic energy: {:g} Surface energy: {:g} Pressure work: {:g} ",
-             _process_data.elastic_energy, _process_data.surface_energy,
-             _process_data.pressure_work);
+             process_data_.elastic_energy, process_data_.surface_energy,
+             process_data_.pressure_work);
     }
 }
 
@@ -292,49 +292,49 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalVector const& x, const double t, double const /*dt*/,
     const int process_id)
 {
-    _process_data.crack_volume = 0.0;
+    process_data_.crack_volume = 0.0;
 
     if (!isPhaseFieldProcess(process_id))
     {
         std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
             dof_tables;
 
-        dof_tables.emplace_back(*_local_to_global_index_map);
-        dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+        dof_tables.emplace_back(*local_to_global_index_map_);
+        dof_tables.emplace_back(*local_to_global_index_map_single_component_);
 
         DBUG("PostNonLinearSolver crack volume computation.");
 
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
+            &LocalAssemblerInterface::computeCrackIntegral, local_assemblers_,
             pv.getActiveElementIDs(), dof_tables, x, t,
-            _process_data.crack_volume, _coupled_solutions);
+            process_data_.crack_volume, coupled_solutions_);
 
-        INFO("Integral of crack: {:g}", _process_data.crack_volume);
+        INFO("Integral of crack: {:g}", process_data_.crack_volume);
 
-        if (_process_data.propagating_crack)
+        if (process_data_.propagating_crack)
         {
-            _process_data.pressure_old = _process_data.pressure;
-            _process_data.pressure =
-                _process_data.injected_volume / _process_data.crack_volume;
-            _process_data.pressure_error =
-                std::fabs(_process_data.pressure_old - _process_data.pressure) /
-                _process_data.pressure;
+            process_data_.pressure_old = process_data_.pressure;
+            process_data_.pressure =
+                process_data_.injected_volume / process_data_.crack_volume;
+            process_data_.pressure_error =
+                std::fabs(process_data_.pressure_old - process_data_.pressure) /
+                process_data_.pressure;
             INFO("Internal pressure: {:g} and Pressure error: {:.4e}",
-                 _process_data.pressure, _process_data.pressure_error);
-            auto& u = *_coupled_solutions->coupled_xs[0];
+                 process_data_.pressure, process_data_.pressure_error);
+            auto& u = *coupled_solutions_->coupled_xs[0];
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
-                                   _process_data.pressure);
+                                   process_data_.pressure);
         }
     }
     else
     {
-        if (_process_data.propagating_crack)
+        if (process_data_.propagating_crack)
         {
-            auto& u = *_coupled_solutions->coupled_xs[0];
+            auto& u = *coupled_solutions_->coupled_xs[0];
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
-                                   1 / _process_data.pressure);
+                                   1 / process_data_.pressure);
         }
     }
 }

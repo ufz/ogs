@@ -31,7 +31,7 @@ RichardsFlowProcess::RichardsFlowProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
-      _process_data(std::move(process_data))
+      process_data_(std::move(process_data))
 {
 }
 
@@ -44,19 +44,19 @@ void RichardsFlowProcess::initializeConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
         mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        pv.getShapeFunctionOrder(), local_assemblers_,
+        mesh.isAxiallySymmetric(), integration_order, process_data_);
 
-    _secondary_variables.addSecondaryVariable(
+    secondary_variables_.addSecondaryVariable(
         "saturation",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), local_assemblers_,
             &RichardsFlowLocalAssemblerInterface::getIntPtSaturation));
 
-    _secondary_variables.addSecondaryVariable(
+    secondary_variables_.addSecondaryVariable(
         "darcy_velocity",
         makeExtrapolator(
-            mesh.getDimension(), getExtrapolator(), _local_assemblers,
+            mesh.getDimension(), getExtrapolator(), local_assemblers_,
             &RichardsFlowLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
@@ -68,14 +68,14 @@ void RichardsFlowProcess::assembleConcreteProcess(
     DBUG("Assemble RichardsFlowProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+       dof_table = {std::ref(*local_to_global_index_map_)};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b, coupled_solutions_);
 }
 
 void RichardsFlowProcess::assembleWithJacobianConcreteProcess(
@@ -87,14 +87,14 @@ void RichardsFlowProcess::assembleWithJacobianConcreteProcess(
     DBUG("AssembleWithJacobian RichardsFlowProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+       dof_table = {std::ref(*local_to_global_index_map_)};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
+        local_assemblers_, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, coupled_solutions_);
 }
 
 }  // namespace RichardsFlow

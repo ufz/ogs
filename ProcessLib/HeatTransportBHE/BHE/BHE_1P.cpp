@@ -29,9 +29,9 @@ BHE_1P::BHE_1P(BoreholeGeometry const& borehole,
                bool const use_python_bcs)
     : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
                 use_python_bcs},
-      _pipe(pipes)
+      pipe_(pipes)
 {
-    _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
+    thermal_resistances_.fill(std::numeric_limits<double>::quiet_NaN());
 
     // Initialize thermal resistances.
     auto values = visit(
@@ -64,7 +64,7 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::pipeHeatConductions()
     double const lambda_r = refrigerant.thermal_conductivity;
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
-    double const alpha_L = _pipe.longitudinal_dispersion_length;
+    double const alpha_L = pipe_.longitudinal_dispersion_length;
     double const porosity_g = grout.porosity_g;
     double const lambda_g = grout.lambda_g;
 
@@ -72,7 +72,7 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::pipeHeatConductions()
     // equations of the BHE.
     return {{
         // pipe, Eq. 19
-        (lambda_r + rho_r * Cp_r * alpha_L * _flow_velocity),
+        (lambda_r + rho_r * Cp_r * alpha_L * flow_velocity_),
         // grout, Eq. 21
         (1.0 - porosity_g) * lambda_g,
     }};
@@ -83,7 +83,7 @@ BHE_1P::pipeAdvectionVectors(Eigen::Vector3d const& elem_direction) const
 {
     double const& rho_r = refrigerant.density;
     double const& Cp_r = refrigerant.specific_heat_capacity;
-    Eigen::Vector3d adv_vector = rho_r * Cp_r * _flow_velocity * elem_direction;
+    Eigen::Vector3d adv_vector = rho_r * Cp_r * flow_velocity_ * elem_direction;
 
     return {// pipe, Eq. 19
             adv_vector,
@@ -100,10 +100,10 @@ void BHE_1P::updateHeatTransferCoefficients(double const flow_rate)
 
 {
     auto const tm_flow_properties = calculateThermoMechanicalFlowPropertiesPipe(
-        _pipe.single_pipe, borehole_geometry.length, refrigerant, flow_rate);
+        pipe_.single_pipe, borehole_geometry.length, refrigerant, flow_rate);
 
-    _flow_velocity = tm_flow_properties.velocity;
-    _thermal_resistances =
+    flow_velocity_ = tm_flow_properties.velocity;
+    thermal_resistances_ =
         calcThermalResistances(tm_flow_properties.nusselt_number);
 }
 
@@ -115,19 +115,19 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::calcThermalResistances(
 
     double const lambda_r = refrigerant.thermal_conductivity;
     double const lambda_g = grout.lambda_g;
-    double const lambda_p = _pipe.single_pipe.wall_thermal_conductivity;
+    double const lambda_p = pipe_.single_pipe.wall_thermal_conductivity;
 
     // thermal resistances due to advective flow of refrigerant in the pipe
     double const R_adv_i1 = 1.0 / (Nu * lambda_r * pi);
 
     // thermal resistance due to thermal conductivity of the pipe wall material
-    double const R_con_a = std::log(_pipe.single_pipe.outsideDiameter() /
-                                    _pipe.single_pipe.diameter) /
+    double const R_con_a = std::log(pipe_.single_pipe.outsideDiameter() /
+                                    pipe_.single_pipe.diameter) /
                            (2.0 * pi * lambda_p);
 
     // thermal resistances of the grout
     double const D = borehole_geometry.diameter;
-    double const pipe_outside_diameter = _pipe.single_pipe.outsideDiameter();
+    double const pipe_outside_diameter = pipe_.single_pipe.outsideDiameter();
 
     double const chi = std::log(std::sqrt(D * D + pipe_outside_diameter *
                                                       pipe_outside_diameter) /
@@ -169,8 +169,8 @@ BHE_1P::getBHEBottomDirichletBCNodesAndComponents(
 
 std::array<double, BHE_1P::number_of_unknowns> BHE_1P::crossSectionAreas() const
 {
-    return {{_pipe.single_pipe.area(),
-             borehole_geometry.area() - _pipe.single_pipe.outsideArea()}};
+    return {{pipe_.single_pipe.area(),
+             borehole_geometry.area() - pipe_.single_pipe.outsideArea()}};
 }
 
 double BHE_1P::updateFlowRateAndTemperature(double const T_out,

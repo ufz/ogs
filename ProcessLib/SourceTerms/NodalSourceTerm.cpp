@@ -22,11 +22,11 @@ NodalSourceTerm::NodalSourceTerm(
     const int component_id,
     ParameterLib::Parameter<double> const& parameter)
     : SourceTerm(std::move(source_term_dof_table)),
-      _source_term_mesh_id(source_term_mesh_id),
-      _st_mesh(st_mesh),
-      _variable_id(variable_id),
-      _component_id(component_id),
-      _parameter(parameter)
+      source_term_mesh_id_(source_term_mesh_id),
+      st_mesh_(st_mesh),
+      variable_id_(variable_id),
+      component_id_(component_id),
+      parameter_(parameter)
 {
     DBUG("Create NodalSourceTerm.");
 }
@@ -36,18 +36,18 @@ void NodalSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
 {
     DBUG("Assemble NodalSourceTerm.");
 
-    for (MeshLib::Node const* const node : _st_mesh.getNodes())
+    for (MeshLib::Node const* const node : st_mesh_.getNodes())
     {
         auto const node_id = node->getID();
-        MeshLib::Location const l{_source_term_mesh_id,
+        MeshLib::Location const l{source_term_mesh_id_,
                                   MeshLib::MeshItemType::Node, node_id};
-        auto const index = _source_term_dof_table->getGlobalIndex(
-            l, _variable_id, _component_id);
+        auto const index = source_term_dof_table_->getGlobalIndex(
+            l, variable_id_, component_id_);
 
         ParameterLib::SpatialPosition pos;
         pos.setNodeID(node_id);
 
-        b.add(index, _parameter(t, pos).front());
+        b.add(index, parameter_(t, pos).front());
     }
 }
 

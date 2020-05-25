@@ -31,15 +31,15 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
                                   double const,
                                   std::vector<GlobalVector*> const&)>
         getFlux)
-    : _parameter(parameter),
-      _variable_id(variable_id),
-      _component_id(component_id),
-      _bc_mesh(bc_mesh),
-      _integration_order(integration_order),
-      _constraint_threshold(constraint_threshold),
-      _lower(lower),
-      _bulk_mesh(bulk_mesh),
-      _getFlux(getFlux)
+    : parameter_(parameter),
+      variable_id_(variable_id),
+      component_id_(component_id),
+      bc_mesh_(bc_mesh),
+      integration_order_(integration_order),
+      constraint_threshold_(constraint_threshold),
+      lower_(lower),
+      bulk_mesh_(bulk_mesh),
+      getFlux_(getFlux)
 {
     if (variable_id >=
             static_cast<int>(dof_table_bulk.getNumberOfVariables()) ||
@@ -53,35 +53,35 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
             dof_table_bulk.getNumberOfVariableComponents(variable_id));
     }
 
-    std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
+    std::vector<MeshLib::Node*> const& bc_nodes = bc_mesh_.getNodes();
     DBUG(
         "Found {:d} nodes for constraint Dirichlet BCs for the variable {:d} "
         "and "
         "component {:d}",
         bc_nodes.size(), variable_id, component_id);
 
-    MeshLib::MeshSubset bc_mesh_subset{_bc_mesh, bc_nodes};
+    MeshLib::MeshSubset bc_mesh_subset{bc_mesh_, bc_nodes};
 
     // Create local DOF table from intersected mesh subsets for the given
     // variable and component ids.
-    _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
+    dof_table_boundary_.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, {component_id}, std::move(bc_mesh_subset)));
 
-    auto const& bc_elements(_bc_mesh.getElements());
-    _local_assemblers.resize(bc_elements.size());
-    _flux_values.resize(bc_elements.size());
-    // create _bulk_ids vector
+    auto const& bc_elements(bc_mesh_.getElements());
+    local_assemblers_.resize(bc_elements.size());
+    flux_values_.resize(bc_elements.size());
+    // create bulk_ids_ vector
     auto const* bulk_element_ids =
-        _bc_mesh.getProperties().getPropertyVector<std::size_t>(
+        bc_mesh_.getProperties().getPropertyVector<std::size_t>(
             "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
     auto const* bulk_node_ids =
-        _bc_mesh.getProperties().getPropertyVector<std::size_t>(
+        bc_mesh_.getProperties().getPropertyVector<std::size_t>(
             "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
     auto const& bulk_nodes = bulk_mesh.getNodes();
 
     auto get_bulk_element_face_id =
         [&](auto const bulk_element_id, MeshLib::Element const* bc_elem) {
-            auto const* bulk_elem = _bulk_mesh.getElement(bulk_element_id);
+            auto const* bulk_elem = bulk_mesh_.getElement(bulk_element_id);
             std::array<MeshLib::Node*, 3> nodes{
                 {bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(0)->getID()]],
                  bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(1)->getID()]],
@@ -89,9 +89,9 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
             return bulk_elem->identifyFace(nodes.data());
         };
 
-    _bulk_ids.reserve(bc_elements.size());
+    bulk_ids_.reserve(bc_elements.size());
     std::transform(begin(bc_elements), end(bc_elements),
-                   std::back_inserter(_bulk_ids), [&](auto const* bc_element) {
+                   std::back_inserter(bulk_ids_), [&](auto const* bc_element) {
                        auto const bulk_element_id =
                            (*bulk_element_ids)[bc_element->getID()];
                        return std::make_pair(bulk_element_id,
@@ -103,9 +103,9 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
 
     ProcessLib::createLocalAssemblers<
         ConstraintDirichletBoundaryConditionLocalAssembler>(
-        _bulk_mesh.getDimension(), _bc_mesh.getElements(), *_dof_table_boundary,
-        shape_function_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
-        _integration_order, bulk_mesh, _bulk_ids);
+        bulk_mesh_.getDimension(), bc_mesh_.getElements(), *dof_table_boundary_,
+        shape_function_order, local_assemblers_, bc_mesh_.isAxiallySymmetric(),
+        integration_order_, bulk_mesh, bulk_ids_);
 }
 
 void ConstraintDirichletBoundaryCondition::preTimestep(
@@ -115,15 +115,15 @@ void ConstraintDirichletBoundaryCondition::preTimestep(
     DBUG(
         "ConstraintDirichletBoundaryCondition::preTimestep: computing flux "
         "constraints");
-    for (auto const* boundary_element : _bc_mesh.getElements())
+    for (auto const* boundary_element : bc_mesh_.getElements())
     {
-        _flux_values[boundary_element->getID()] =
-            _local_assemblers[boundary_element->getID()]->integrate(
+        flux_values_[boundary_element->getID()] =
+            local_assemblers_[boundary_element->getID()]->integrate(
                 x, t,
                 [this](std::size_t const element_id,
                        MathLib::Point3d const& pnt, double const t,
                        std::vector<GlobalVector*> const& x) {
-                    return _getFlux(element_id, pnt, t, x);
+                    return getFlux_(element_id, pnt, t, x);
                 });
     }
 }
@@ -140,11 +140,11 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
     std::vector<std::pair<GlobalIndexType, double>> tmp_bc_values;
 
     auto isFlux = [&](const std::size_t element_id) {
-        return _lower ? _flux_values[element_id] < _constraint_threshold
-                      : _flux_values[element_id] > _constraint_threshold;
+        return lower_ ? flux_values_[element_id] < constraint_threshold_
+                      : flux_values_[element_id] > constraint_threshold_;
     };
 
-    for (auto const* boundary_element : _bc_mesh.getElements())
+    for (auto const* boundary_element : bc_mesh_.getElements())
     {
         // check if the boundary element is active
         if (isFlux(boundary_element->getID()))
@@ -159,11 +159,11 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
             auto const id = boundary_element->getNode(i)->getID();
             pos.setAll(id, boundary_element->getID(), {}, {});
 
-            MeshLib::Location l(_bc_mesh.getID(), MeshLib::MeshItemType::Node,
+            MeshLib::Location l(bc_mesh_.getID(), MeshLib::MeshItemType::Node,
                                 id);
             // TODO: that might be slow, but only done once
-            const auto g_idx = _dof_table_boundary->getGlobalIndex(
-                l, _variable_id, _component_id);
+            const auto g_idx = dof_table_boundary_->getGlobalIndex(
+                l, variable_id_, component_id_);
             if (g_idx == NumLib::MeshComponentMap::nop)
             {
                 continue;
@@ -177,7 +177,7 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
             // if-condition is applied.
             if (g_idx >= 0)
             {
-                tmp_bc_values.emplace_back(g_idx, _parameter(t, pos).front());
+                tmp_bc_values.emplace_back(g_idx, parameter_(t, pos).front());
             }
         }
     }

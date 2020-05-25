@@ -95,24 +95,24 @@ ProcessVariable::ProcessVariable(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
-      _name(config.getConfigParameter<std::string>("name")),
-      _mesh(mesh),
+      name_(config.getConfigParameter<std::string>("name")),
+      mesh_(mesh),
       //! \ogs_file_param{prj__process_variables__process_variable__components}
-      _n_components(config.getConfigParameter<int>("components")),
+      n_components_(config.getConfigParameter<int>("components")),
       //! \ogs_file_param{prj__process_variables__process_variable__order}
-      _shapefunction_order(config.getConfigParameter<unsigned>("order")),
-      _deactivated_subdomains(createDeactivatedSubdomains(config, mesh)),
-      _initial_condition(ParameterLib::findParameter<double>(
+      shapefunction_order_(config.getConfigParameter<unsigned>("order")),
+      deactivated_subdomains_(createDeactivatedSubdomains(config, mesh)),
+      initial_condition_(ParameterLib::findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
-          parameters, _n_components, &mesh))
+          parameters, n_components_, &mesh))
 {
-    DBUG("Constructing process variable {:s}", _name);
+    DBUG("Constructing process variable {:s}", name_);
 
-    if (_shapefunction_order < 1 || 2 < _shapefunction_order)
+    if (shapefunction_order_ < 1 || 2 < shapefunction_order_)
     {
         OGS_FATAL("The given shape function order {:d} is not supported",
-                  _shapefunction_order);
+                  shapefunction_order_);
     }
 
     // Boundary conditions
@@ -130,19 +130,19 @@ ProcessVariable::ProcessVariable(
                 //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__component}
                 bc_config.getConfigParameterOptional<int>("component");
 
-            if (!component_id && _n_components == 1)
+            if (!component_id && n_components_ == 1)
             {
                 // default value for single component vars.
                 component_id = 0;
             }
 
-            _bc_configs.emplace_back(std::move(bc_config), mesh, component_id);
+            bc_configs_.emplace_back(std::move(bc_config), mesh, component_id);
         }
     }
     else
     {
         INFO("No boundary conditions for process variable '{:s}' found.",
-             _name);
+             name_);
     }
 
     // Source terms
@@ -159,42 +159,42 @@ ProcessVariable::ProcessVariable(
                 //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__component}
                 st_config.getConfigParameterOptional<int>("component");
 
-            if (!component_id && _n_components == 1)
+            if (!component_id && n_components_ == 1)
             {
                 // default value for single component vars.
                 component_id = 0;
             }
 
-            _source_term_configs.emplace_back(std::move(st_config), mesh,
+            source_term_configs_.emplace_back(std::move(st_config), mesh,
                                               component_id);
         }
     }
     else
     {
-        INFO("No source terms for process variable '{:s}' found.", _name);
+        INFO("No source terms for process variable '{:s}' found.", name_);
     }
 }
 
 ProcessVariable::ProcessVariable(ProcessVariable&& other)
-    : _name(std::move(other._name)),
-      _mesh(other._mesh),
-      _n_components(other._n_components),
-      _shapefunction_order(other._shapefunction_order),
-      _deactivated_subdomains(std::move(other._deactivated_subdomains)),
-      _initial_condition(std::move(other._initial_condition)),
-      _bc_configs(std::move(other._bc_configs)),
-      _source_term_configs(std::move(other._source_term_configs))
+    : name_(std::move(other.name_)),
+      mesh_(other.mesh_),
+      n_components_(other.n_components_),
+      shapefunction_order_(other.shapefunction_order_),
+      deactivated_subdomains_(std::move(other.deactivated_subdomains_)),
+      initial_condition_(std::move(other.initial_condition_)),
+      bc_configs_(std::move(other.bc_configs_)),
+      source_term_configs_(std::move(other.source_term_configs_))
 {
 }
 
 std::string const& ProcessVariable::getName() const
 {
-    return _name;
+    return name_;
 }
 
 MeshLib::Mesh const& ProcessVariable::getMesh() const
 {
-    return _mesh;
+    return mesh_;
 }
 
 std::vector<std::unique_ptr<BoundaryCondition>>
@@ -206,13 +206,13 @@ ProcessVariable::createBoundaryConditions(
     Process const& process)
 {
     std::vector<std::unique_ptr<BoundaryCondition>> bcs;
-    bcs.reserve(_bc_configs.size());
+    bcs.reserve(bc_configs_.size());
 
-    for (auto& config : _bc_configs)
+    for (auto& config : bc_configs_)
     {
         auto bc = createBoundaryCondition(
-            config, dof_table, _mesh, variable_id, integration_order,
-            _shapefunction_order, parameters, process);
+            config, dof_table, mesh_, variable_id, integration_order,
+            shapefunction_order_, parameters, process);
 #ifdef USE_PETSC
         if (bc == nullptr)
         {
@@ -222,7 +222,7 @@ ProcessVariable::createBoundaryConditions(
         bcs.push_back(std::move(bc));
     }
 
-    if (_deactivated_subdomains.empty())
+    if (deactivated_subdomains_.empty())
     {
         return bcs;
     }
@@ -240,7 +240,7 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
     auto& parameter = ParameterLib::findParameter<double>(
         DeactivatedSubdomain::zero_parameter_name, parameters, 1);
 
-    for (auto const& deactivated_subdomain : _deactivated_subdomains)
+    for (auto const& deactivated_subdomain : deactivated_subdomains_)
     {
         auto const& deactivated_subdomain_meshes =
             deactivated_subdomain->deactivated_subdomain_meshes;
@@ -278,36 +278,36 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 
 void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
-    if (_deactivated_subdomains.empty())
+    if (deactivated_subdomains_.empty())
     {
-        _ids_of_active_elements.clear();
+        ids_of_active_elements_.clear();
         return;
     }
 
     auto found_a_set =
-        std::find_if(_deactivated_subdomains.begin(),
-                     _deactivated_subdomains.end(),
-                     [&](auto& _deactivated_subdomain) {
-                         return _deactivated_subdomain->includesTimeOf(time);
+        std::find_if(deactivated_subdomains_.begin(),
+                     deactivated_subdomains_.end(),
+                     [&](auto& deactivated_subdomain_) {
+                         return deactivated_subdomain_->includesTimeOf(time);
                      });
 
-    if (found_a_set == _deactivated_subdomains.end())
+    if (found_a_set == deactivated_subdomains_.end())
     {
-        _ids_of_active_elements.clear();
+        ids_of_active_elements_.clear();
         return;
     }
 
     // Already initialized.
-    if (!_ids_of_active_elements.empty())
+    if (!ids_of_active_elements_.empty())
     {
         return;
     }
 
     auto const& deactivated_materialIDs = (*found_a_set)->materialIDs;
 
-    auto const* const material_ids = MeshLib::materialIDs(_mesh);
-    _ids_of_active_elements.clear();
-    auto const number_of_elements = _mesh.getNumberOfElements();
+    auto const* const material_ids = MeshLib::materialIDs(mesh_);
+    ids_of_active_elements_.clear();
+    auto const number_of_elements = mesh_.getNumberOfElements();
 
     for (std::size_t i = 0; i < number_of_elements; i++)
     {
@@ -317,7 +317,7 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
         {
             continue;
         }
-        _ids_of_active_elements.push_back(_mesh.getElement(i)->getID());
+        ids_of_active_elements_.push_back(mesh_.getElement(i)->getID());
     }
 }
 
@@ -329,11 +329,11 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
 {
     std::vector<std::unique_ptr<SourceTerm>> source_terms;
 
-    for (auto& config : _source_term_configs)
+    for (auto& config : source_term_configs_)
     {
         source_terms.emplace_back(createSourceTerm(
             config, dof_table, config.mesh, variable_id, integration_order,
-            _shapefunction_order, parameters));
+            shapefunction_order_, parameters));
     }
 
     return source_terms;

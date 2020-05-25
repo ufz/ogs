@@ -30,7 +30,7 @@ BHE_2U::BHE_2U(BoreholeGeometry const& borehole,
     : BHECommonUType{borehole, refrigerant,   grout, flowAndTemperatureControl,
                      pipes,    use_python_bcs}
 {
-    _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
+    thermal_resistances_.fill(std::numeric_limits<double>::quiet_NaN());
 
     // Initialize thermal resistances.
     auto values = visit(
@@ -67,7 +67,7 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatConductions()
     double const lambda_r = refrigerant.thermal_conductivity;
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
-    double const alpha_L = _pipes.longitudinal_dispersion_length;
+    double const alpha_L = pipes_.longitudinal_dispersion_length;
     double const porosity_g = grout.porosity_g;
     double const lambda_g = grout.lambda_g;
 
@@ -76,13 +76,13 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatConductions()
     // 1) Diersch (2013) FEFLOW book on page 952, M.120-122, or
     // 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 19-22.
     return {{// pipe i1
-             (lambda_r + rho_r * Cp_r * alpha_L * _flow_velocity),
+             (lambda_r + rho_r * Cp_r * alpha_L * flow_velocity_),
              // pipe i2
-             (lambda_r + rho_r * Cp_r * alpha_L * _flow_velocity),
+             (lambda_r + rho_r * Cp_r * alpha_L * flow_velocity_),
              // pipe o1
-             (lambda_r + rho_r * Cp_r * alpha_L * _flow_velocity),
+             (lambda_r + rho_r * Cp_r * alpha_L * flow_velocity_),
              // pipe o2
-             (lambda_r + rho_r * Cp_r * alpha_L * _flow_velocity),
+             (lambda_r + rho_r * Cp_r * alpha_L * flow_velocity_),
              // pipe g1
              (1.0 - porosity_g) * lambda_g,
              // pipe g2
@@ -100,13 +100,13 @@ BHE_2U::pipeAdvectionVectors(Eigen::Vector3d const& /*elem_direction*/) const
     double const Cp_r = refrigerant.specific_heat_capacity;
 
     return {{// pipe i1
-             {0, 0, -rho_r * Cp_r * _flow_velocity},
+             {0, 0, -rho_r * Cp_r * flow_velocity_},
              // pipe i2
-             {0, 0, -rho_r * Cp_r * _flow_velocity},
+             {0, 0, -rho_r * Cp_r * flow_velocity_},
              // pipe o1
-             {0, 0, rho_r * Cp_r * _flow_velocity},
+             {0, 0, rho_r * Cp_r * flow_velocity_},
              // pipe o2
-             {0, 0, rho_r * Cp_r * _flow_velocity},
+             {0, 0, rho_r * Cp_r * flow_velocity_},
              // grout g1
              {0, 0, 0},
              // grout g2
@@ -179,10 +179,10 @@ void BHE_2U::updateHeatTransferCoefficients(double const flow_rate)
 
 {
     auto const tm_flow_properties = calculateThermoMechanicalFlowPropertiesPipe(
-        _pipes.inlet, borehole_geometry.length, refrigerant, flow_rate);
+        pipes_.inlet, borehole_geometry.length, refrigerant, flow_rate);
 
-    _flow_velocity = tm_flow_properties.velocity;
-    _thermal_resistances =
+    flow_velocity_ = tm_flow_properties.velocity;
+    thermal_resistances_ =
         calcThermalResistances(tm_flow_properties.nusselt_number);
 }
 
@@ -194,9 +194,9 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
 
     double const lambda_r = refrigerant.thermal_conductivity;
     double const lambda_g = grout.lambda_g;
-    double const lambda_p = _pipes.inlet.wall_thermal_conductivity;
+    double const lambda_p = pipes_.inlet.wall_thermal_conductivity;
 
-    // thermal resistances due to advective flow of refrigerant in the _pipes
+    // thermal resistances due to advective flow of refrigerant in the pipes_
     // Eq. 36 in Diersch_2011_CG
     double const R_adv_i = 1.0 / (Nu * lambda_r * pi);
     double const R_adv_o = 1.0 / (Nu * lambda_r * pi);
@@ -204,11 +204,11 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
     // thermal resistance due to thermal conductivity of the pipe wall material
     // Eq. 49
     double const R_con_a =
-        std::log(_pipes.inlet.outsideDiameter() / _pipes.inlet.diameter) /
+        std::log(pipes_.inlet.outsideDiameter() / pipes_.inlet.diameter) /
         (2.0 * pi * lambda_p);
 
-    // the average outer diameter of the _pipes
-    double const d0 = _pipes.outlet.outsideDiameter();
+    // the average outer diameter of the pipes_
+    double const d0 = pipes_.outlet.outsideDiameter();
     double const D = borehole_geometry.diameter;
     // Eq. 38
     double const chi =
@@ -217,11 +217,11 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
     // Eq. 39
     // thermal resistances of the grout
     double const R_g =
-        std::acosh((D * D + d0 * d0 - 2 * _pipes.distance * _pipes.distance) /
+        std::acosh((D * D + d0 * d0 - 2 * pipes_.distance * pipes_.distance) /
                    (2 * D * d0)) /
         (2 * pi * lambda_g) *
-        (3.098 - 4.432 * std::sqrt(2) * _pipes.distance / D +
-         2.364 * 2 * _pipes.distance * _pipes.distance / D / D);
+        (3.098 - 4.432 * std::sqrt(2) * pipes_.distance / D +
+         2.364 * 2 * pipes_.distance * pipes_.distance / D / D);
     // thermal resistance due to the grout transition.
     double const R_con_b = chi * R_g;
 
@@ -231,21 +231,21 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
 
     // thermal resistance due to inter-grout exchange
     double const R_ar_1 =
-        std::acosh((2.0 * _pipes.distance * _pipes.distance - d0 * d0) / d0 /
+        std::acosh((2.0 * pipes_.distance * pipes_.distance - d0 * d0) / d0 /
                    d0) /
         (2.0 * pi * lambda_g);
 
     double const R_ar_2 =
-        std::acosh((2.0 * 2.0 * _pipes.distance * _pipes.distance - d0 * d0) /
+        std::acosh((2.0 * 2.0 * pipes_.distance * pipes_.distance - d0 * d0) /
                    d0 / d0) /
         (2.0 * pi * lambda_g);
 
-    std::vector<double> _intergrout_thermal_exchange;
-    _intergrout_thermal_exchange =
+    std::vector<double> intergrout_thermal_exchange_;
+    intergrout_thermal_exchange_ =
         thermalResistancesGroutSoil2U(chi, R_ar_1, R_ar_2, R_g);
 
-    return {{R_fig, R_fog, _intergrout_thermal_exchange[0],
-             _intergrout_thermal_exchange[1], _intergrout_thermal_exchange[2]}};
+    return {{R_fig, R_fog, intergrout_thermal_exchange_[0],
+             intergrout_thermal_exchange_[1], intergrout_thermal_exchange_[2]}};
 
     // keep the following lines------------------------------------------------
     // when debugging the code, printing the R and phi values are needed--------
@@ -282,14 +282,14 @@ BHE_2U::getBHEBottomDirichletBCNodesAndComponents(
 std::array<double, BHE_2U::number_of_unknowns> BHE_2U::crossSectionAreas() const
 {
     return {{
-        _pipes.inlet.area(),
-        _pipes.inlet.area(),
-        _pipes.outlet.area(),
-        _pipes.outlet.area(),
-        borehole_geometry.area() / 4 - _pipes.inlet.outsideArea(),
-        borehole_geometry.area() / 4 - _pipes.inlet.outsideArea(),
-        borehole_geometry.area() / 4 - _pipes.outlet.outsideArea(),
-        borehole_geometry.area() / 4 - _pipes.outlet.outsideArea(),
+        pipes_.inlet.area(),
+        pipes_.inlet.area(),
+        pipes_.outlet.area(),
+        pipes_.outlet.area(),
+        borehole_geometry.area() / 4 - pipes_.inlet.outsideArea(),
+        borehole_geometry.area() / 4 - pipes_.inlet.outsideArea(),
+        borehole_geometry.area() / 4 - pipes_.outlet.outsideArea(),
+        borehole_geometry.area() / 4 - pipes_.outlet.outsideArea(),
     }};
 }
 

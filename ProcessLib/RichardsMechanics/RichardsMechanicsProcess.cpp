@@ -39,18 +39,18 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
-      _process_data(std::move(process_data))
+      process_data_(std::move(process_data))
 {
-    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+    nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
-    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
+    hydraulic_flow_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
 
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
     // properties, s.t. there is no "overlapping" with cell/point data.
     // See getOrCreateMeshProperty.
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
@@ -58,70 +58,70 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getSigma();
                 }
 
                 return result;
             }));
 
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "saturation_ip", 1 /*n components*/, integration_order, [this]() {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getSaturation();
                 }
 
                 return result;
             }));
 
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "porosity_ip", 1 /*n components*/, integration_order, [this]() {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getPorosity();
                 }
 
                 return result;
             }));
 
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "transport_porosity_ip", 1 /*n components*/, integration_order,
             [this]() {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getTransportPorosity();
                 }
 
                 return result;
             }));
 
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "swelling_stress_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
@@ -129,18 +129,18 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getSwellingStress();
                 }
 
                 return result;
             }));
 
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
@@ -148,11 +148,11 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getEpsilon();
                 }
 
@@ -173,45 +173,45 @@ RichardsMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
 {
     // For the monolithic scheme or the M process (deformation) in the staggered
     // scheme.
-    if (_use_monolithic_scheme || process_id == 1)
+    if (use_monolithic_scheme_ || process_id == 1)
     {
-        auto const& l = *_local_to_global_index_map;
+        auto const& l = *local_to_global_index_map_;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
-                &l.getGhostIndices(), &this->_sparsity_pattern};
+                &l.getGhostIndices(), &this->sparsity_pattern_};
     }
 
     // For staggered scheme and H process (pressure).
-    auto const& l = *_local_to_global_index_map_with_base_nodes;
+    auto const& l = *local_to_global_index_map_with_base_nodes_;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
-            &l.getGhostIndices(), &_sparsity_pattern_with_linear_element};
+            &l.getGhostIndices(), &sparsity_pattern_with_linear_element_};
 }
 
 template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    mesh_subset_all_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, mesh_.getNodes());
     // Create single component dof in the mesh's base nodes.
-    _base_nodes = MeshLib::getBaseNodes(_mesh.getElements());
-    _mesh_subset_base_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _base_nodes);
+    base_nodes_ = MeshLib::getBaseNodes(mesh_.getElements());
+    mesh_subset_base_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, base_nodes_);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
     std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
-        *_mesh_subset_all_nodes};
-    _local_to_global_index_map_single_component =
+        *mesh_subset_all_nodes_};
+    local_to_global_index_map_single_component_ =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
 
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         // For pressure, which is the first
         std::vector<MeshLib::MeshSubset> all_mesh_subsets{
-            *_mesh_subset_base_nodes};
+            *mesh_subset_base_nodes_};
 
         // For displacement.
         const int monolithic_process_id = 0;
@@ -219,14 +219,14 @@ void RichardsMechanicsProcess<DisplacementDim>::constructDofTable()
                         getProcessVariables(monolithic_process_id)[1]
                             .get()
                             .getNumberOfComponents(),
-                        [&]() { return *_mesh_subset_all_nodes; });
+                        [&]() { return *mesh_subset_all_nodes_; });
 
         std::vector<int> const vec_n_components{1, DisplacementDim};
-        _local_to_global_index_map =
+        local_to_global_index_map_ =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
                 NumLib::ComponentOrder::BY_LOCATION);
-        assert(_local_to_global_index_map);
+        assert(local_to_global_index_map_);
     }
     else
     {
@@ -236,10 +236,10 @@ void RichardsMechanicsProcess<DisplacementDim>::constructDofTable()
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
             getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-            [&]() { return *_mesh_subset_all_nodes; });
+            [&]() { return *mesh_subset_all_nodes_; });
 
         std::vector<int> const vec_n_components{DisplacementDim};
-        _local_to_global_index_map =
+        local_to_global_index_map_ =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
                 NumLib::ComponentOrder::BY_LOCATION);
@@ -247,18 +247,18 @@ void RichardsMechanicsProcess<DisplacementDim>::constructDofTable()
         // For pressure equation.
         // Collect the mesh subsets with base nodes in a vector.
         std::vector<MeshLib::MeshSubset> all_mesh_subsets_base_nodes{
-            *_mesh_subset_base_nodes};
-        _local_to_global_index_map_with_base_nodes =
+            *mesh_subset_base_nodes_};
+        local_to_global_index_map_with_base_nodes_ =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets_base_nodes),
                 // by location order is needed for output
                 NumLib::ComponentOrder::BY_LOCATION);
 
-        _sparsity_pattern_with_linear_element = NumLib::computeSparsityPattern(
-            *_local_to_global_index_map_with_base_nodes, _mesh);
+        sparsity_pattern_with_linear_element_ = NumLib::computeSparsityPattern(
+            *local_to_global_index_map_with_base_nodes_, mesh_);
 
-        assert(_local_to_global_index_map);
-        assert(_local_to_global_index_map_with_base_nodes);
+        assert(local_to_global_index_map_);
+        assert(local_to_global_index_map_with_base_nodes_);
     }
 }
 
@@ -270,8 +270,8 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 {
     using nlohmann::json;
 
-    const int mechanical_process_id = _use_monolithic_scheme ? 0 : 1;
-    const int deformation_variable_id = _use_monolithic_scheme ? 1 : 0;
+    const int mechanical_process_id = use_monolithic_scheme_ ? 0 : 1;
+    const int deformation_variable_id = use_monolithic_scheme_ ? 1 : 0;
     ProcessLib::RichardsMechanics::createLocalAssemblers<
         DisplacementDim, RichardsMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
@@ -279,16 +279,16 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         getProcessVariables(mechanical_process_id)[deformation_variable_id]
             .get()
             .getShapeFunctionOrder(),
-        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-        _process_data);
+        local_assemblers_, mesh.isAxiallySymmetric(), integration_order,
+        process_data_);
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
                                       auto get_ip_values_function) {
-        _secondary_variables.addSecondaryVariable(
+        secondary_variables_.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
-                             _local_assemblers,
+                             local_assemblers_,
                              std::move(get_ip_values_function)));
     };
 
@@ -335,30 +335,30 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     // enable output of internal variables defined by material models
     //
     ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
-        LocalAssemblerIF>(_process_data.solid_materials,
+        LocalAssemblerIF>(process_data_.solid_materials,
                                  add_secondary_variable);
 
-    _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
+    process_data_.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
         MeshLib::MeshItemType::Cell, 1);
 
-    _process_data.element_porosity = MeshLib::getOrCreateMeshProperty<double>(
+    process_data_.element_porosity = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
         MeshLib::MeshItemType::Cell, 1);
 
-    _process_data.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
+    process_data_.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_avg",
         MeshLib::MeshItemType::Cell,
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim>::RowsAtCompileTime);
 
-    _process_data.pressure_interpolated =
+    process_data_.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
             MeshLib::MeshItemType::Node, 1);
 
     // Set initial conditions for integration point data.
-    for (auto const& ip_writer : _integration_point_writer)
+    for (auto const& ip_writer : integration_point_writer_)
     {
         // Find the mesh property with integration point writer's name.
         auto const& name = ip_writer->name();
@@ -391,7 +391,7 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         // Now we have a properly named vtk's field data array and the
         // corresponding meta data.
         std::size_t position = 0;
-        for (auto& local_asm : _local_assemblers)
+        for (auto& local_asm : local_assemblers_)
         {
             std::size_t const integration_points_read =
                 local_asm->setIPDataInitialConditions(
@@ -410,18 +410,18 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerIF::initialize, _local_assemblers,
-        *_local_to_global_index_map);
+        &LocalAssemblerIF::initialize, local_assemblers_,
+        *local_to_global_index_map_);
 }
 
 template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 {
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         const int monolithic_process_id = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, monolithic_process_id);
+            *local_to_global_index_map_, monolithic_process_id);
         return;
     }
 
@@ -429,12 +429,12 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
     // for the equations of pressure
     const int hydraulic_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id);
+        *local_to_global_index_map_with_base_nodes_, hydraulic_process_id);
 
     // for the equations of deformation.
     const int mechanical_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id);
+        *local_to_global_index_map_, mechanical_process_id);
 }
 
 template <int DisplacementDim>
@@ -445,8 +445,8 @@ void RichardsMechanicsProcess<
     DBUG("SetInitialConditions RichardsMechanicsProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        *_local_to_global_index_map, x, t);
+        &LocalAssemblerIF::setInitialConditions, local_assemblers_,
+        *local_to_global_index_map_, x, t);
 }
 
 template <int DisplacementDim>
@@ -462,14 +462,14 @@ void RichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // processes in this class, this function is actually not used so far.
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*local_to_global_index_map_)};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b, coupled_solutions_);
 }
 
 template <int DisplacementDim>
@@ -483,12 +483,12 @@ void RichardsMechanicsProcess<DisplacementDim>::
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
     // For the monolithic scheme
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         DBUG(
             "Assemble the Jacobian of RichardsMechanics for the monolithic"
             " scheme.");
-        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*local_to_global_index_map_);
     }
     else
     {
@@ -505,19 +505,19 @@ void RichardsMechanicsProcess<DisplacementDim>::
                 "Assemble the Jacobian equations of mechanical process in "
                 "RichardsMechanics for the staggered scheme.");
         }
-        dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
-        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*local_to_global_index_map_with_base_nodes_);
+        dof_tables.emplace_back(*local_to_global_index_map_);
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
+        local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, coupled_solutions_);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
-        if (_use_monolithic_scheme)
+        if (use_monolithic_scheme_)
         {
             transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
                                               output_vector,
@@ -530,13 +530,13 @@ void RichardsMechanicsProcess<DisplacementDim>::
                                               std::negate<double>());
         }
     };
-    if (_use_monolithic_scheme || process_id == 0)
+    if (use_monolithic_scheme_ || process_id == 0)
     {
-        copyRhs(0, *_hydraulic_flow);
+        copyRhs(0, *hydraulic_flow_);
     }
-    if (_use_monolithic_scheme || process_id == 1)
+    if (use_monolithic_scheme_ || process_id == 1)
     {
-        copyRhs(1, *_nodal_forces);
+        copyRhs(1, *nodal_forces_);
     }
 }
 
@@ -552,8 +552,8 @@ void RichardsMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerIF::postTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), *_local_to_global_index_map,
+            &LocalAssemblerIF::postTimestep, local_assemblers_,
+            pv.getActiveElementIDs(), *local_to_global_index_map_,
             *x[process_id], t, dt);
     }
 }
@@ -575,9 +575,9 @@ void RichardsMechanicsProcess<
 
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
+        &LocalAssemblerIF::postNonLinearSolver, local_assemblers_,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt,
-        _use_monolithic_scheme);
+        use_monolithic_scheme_);
 }
 
 template <int DisplacementDim>
@@ -591,9 +591,9 @@ void RichardsMechanicsProcess<DisplacementDim>::
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
+        &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
         pv.getActiveElementIDs(), getDOFTable(process_id), t, dt, x, x_dot,
-        _coupled_solutions);
+        coupled_solutions_);
 }
 
 template <int DisplacementDim>
@@ -601,7 +601,7 @@ std::tuple<NumLib::LocalToGlobalIndexMap*, bool> RichardsMechanicsProcess<
     DisplacementDim>::getDOFTableForExtrapolatorData() const
 {
     const bool manage_storage = false;
-    return std::make_tuple(_local_to_global_index_map_single_component.get(),
+    return std::make_tuple(local_to_global_index_map_single_component_.get(),
                            manage_storage);
 }
 
@@ -612,11 +612,11 @@ RichardsMechanicsProcess<DisplacementDim>::getDOFTable(
 {
     if (hasMechanicalProcess(process_id))
     {
-        return *_local_to_global_index_map;
+        return *local_to_global_index_map_;
     }
 
     // For the equation of pressure
-    return *_local_to_global_index_map_with_base_nodes;
+    return *local_to_global_index_map_with_base_nodes_;
 }
 
 template class RichardsMechanicsProcess<2>;

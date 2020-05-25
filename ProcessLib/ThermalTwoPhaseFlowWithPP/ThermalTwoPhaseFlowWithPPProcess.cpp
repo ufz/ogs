@@ -42,7 +42,7 @@ ThermalTwoPhaseFlowWithPPProcess::ThermalTwoPhaseFlowWithPPProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
-      _process_data(std::move(process_data))
+      process_data_(std::move(process_data))
 {
     DBUG("Create Nonisothermal TwoPhase Flow Process model.");
 }
@@ -57,18 +57,18 @@ void ThermalTwoPhaseFlowWithPPProcess::initializeConcreteProcess(
         getProcessVariables(monolithic_process_id)[0];
     ProcessLib::createLocalAssemblers<ThermalTwoPhaseFlowWithPPLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        pv.getShapeFunctionOrder(), local_assemblers_,
+        mesh.isAxiallySymmetric(), integration_order, process_data_);
 
-    _secondary_variables.addSecondaryVariable(
+    secondary_variables_.addSecondaryVariable(
         "saturation",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+        makeExtrapolator(1, getExtrapolator(), local_assemblers_,
                          &ThermalTwoPhaseFlowWithPPLocalAssemblerInterface::
                              getIntPtSaturation));
 
-    _secondary_variables.addSecondaryVariable(
+    secondary_variables_.addSecondaryVariable(
         "pressure_wetting",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
+        makeExtrapolator(1, getExtrapolator(), local_assemblers_,
                          &ThermalTwoPhaseFlowWithPPLocalAssemblerInterface::
                              getIntPtWettingPressure));
 }
@@ -81,14 +81,14 @@ void ThermalTwoPhaseFlowWithPPProcess::assembleConcreteProcess(
     DBUG("Assemble ThermalTwoPhaseFlowWithPPProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+       dof_table = {std::ref(*local_to_global_index_map_)};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b, coupled_solutions_);
 }
 
 void ThermalTwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
@@ -100,14 +100,14 @@ void ThermalTwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
     DBUG("AssembleWithJacobian ThermalTwoPhaseFlowWithPPProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+       dof_table = {std::ref(*local_to_global_index_map_)};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
+        local_assemblers_, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, coupled_solutions_);
 }
 void ThermalTwoPhaseFlowWithPPProcess::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, double const delta_t,
@@ -117,8 +117,8 @@ void ThermalTwoPhaseFlowWithPPProcess::preTimestepConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+        &LocalAssemblerInterface::preTimestep, local_assemblers_,
+        pv.getActiveElementIDs(), *local_to_global_index_map_, *x[process_id],
         t, delta_t);
 }
 

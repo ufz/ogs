@@ -131,7 +131,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
-    ++_counter;
+    ++counter_;
 
     auto const num_dof = local_x.size();
     auto to_mat = [num_dof](std::vector<double> const& data) {
@@ -147,7 +147,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
     // First assembly -- the one whose results will be added to the global
     // equation system finally.
-    _asm1->assembleWithJacobian(local_assembler, t, dt, local_x, local_xdot,
+    asm1_->assembleWithJacobian(local_assembler, t, dt, local_x, local_xdot,
                                 dxdot_dx, dx_dx, local_M_data, local_K_data,
                                 local_b_data, local_Jac_data);
 
@@ -161,7 +161,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     std::vector<double> local_Jac_data2;
 
     // Second assembly -- used for checking only.
-    _asm2->assembleWithJacobian(local_assembler, t, dt, local_x, local_xdot,
+    asm2_->assembleWithJacobian(local_assembler, t, dt, local_x, local_xdot,
                                 dxdot_dx, dx_dx, local_M_data2, local_K_data2,
                                 local_b_data2, local_Jac_data2);
 
@@ -182,12 +182,12 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
             .eval();
 
     auto const abs_diff_mask =
-        (abs_diff.abs() <= _abs_tol)
+        (abs_diff.abs() <= abs_tol_)
             .select(decltype(abs_diff)::Zero(abs_diff.rows(), abs_diff.cols()),
                     decltype(abs_diff)::Ones(abs_diff.rows(), abs_diff.cols()))
             .eval();
     auto const rel_diff_mask =
-        (rel_diff.abs() <= _rel_tol)
+        (rel_diff.abs() <= rel_tol_)
             .select(decltype(rel_diff)::Zero(rel_diff.rows(), rel_diff.cols()),
                     decltype(rel_diff)::Ones(rel_diff.rows(), rel_diff.cols()))
             .eval();
@@ -205,7 +205,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     }
     else
     {
-        msg_tolerance << "absolute tolerance of " << _abs_tol << " exceeded";
+        msg_tolerance << "absolute tolerance of " << abs_tol_ << " exceeded";
     }
 
     if (rel_diff_OK)
@@ -219,7 +219,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
             msg_tolerance << " and ";
         }
 
-        msg_tolerance << "relative tolerance of " << _rel_tol << " exceeded";
+        msg_tolerance << "relative tolerance of " << rel_tol_ << " exceeded";
     }
 
     // basic consistency check if something went terribly wrong
@@ -284,13 +284,13 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
     if (output)
     {
-        _log_file << "\n### counter: " << std::to_string(_counter)
+        log_file_ << "\n### counter: " << std::to_string(counter_)
                   << " (begin)\n";
     }
 
     if (fatal_error)
     {
-        _log_file << '\n'
+        log_file_ << '\n'
                   << "#######################################################\n"
                   << "# FATAL ERROR: " << msg_fatal << '\n'
                   << "#              You cannot expect any meaningful insights "
@@ -307,89 +307,89 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
     if (tol_exceeded)
     {
-        _log_file << "# " << msg_tolerance.str() << "\n\n";
+        log_file_ << "# " << msg_tolerance.str() << "\n\n";
     }
 
     if (output)
     {
-        dump_py(_log_file, "counter", _counter);
-        dump_py(_log_file, "num_dof", num_dof);
-        dump_py(_log_file, "abs_tol", _abs_tol);
-        dump_py(_log_file, "rel_tol", _rel_tol);
+        dump_py(log_file_, "counter", counter_);
+        dump_py(log_file_, "num_dof", num_dof);
+        dump_py(log_file_, "abs_tol", abs_tol_);
+        dump_py(log_file_, "rel_tol", rel_tol_);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        dump_py(_log_file, "local_x", local_x);
-        dump_py(_log_file, "local_x_dot", local_xdot);
-        dump_py(_log_file, "dxdot_dx", dxdot_dx);
-        dump_py(_log_file, "dx_dx", dx_dx);
+        dump_py(log_file_, "local_x", local_x);
+        dump_py(log_file_, "local_x_dot", local_xdot);
+        dump_py(log_file_, "dxdot_dx", dxdot_dx);
+        dump_py(log_file_, "dx_dx", dx_dx);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        dump_py(_log_file, "Jacobian_1", local_Jac1);
-        dump_py(_log_file, "Jacobian_2", local_Jac2);
+        dump_py(log_file_, "Jacobian_1", local_Jac1);
+        dump_py(log_file_, "Jacobian_2", local_Jac2);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        _log_file << "# Jacobian_2 - Jacobian_1\n";
-        dump_py(_log_file, "abs_diff", abs_diff);
-        _log_file << "# Componentwise: 2 * abs_diff / (|Jacobian_1| + "
+        log_file_ << "# Jacobian_2 - Jacobian_1\n";
+        dump_py(log_file_, "abs_diff", abs_diff);
+        log_file_ << "# Componentwise: 2 * abs_diff / (|Jacobian_1| + "
                      "|Jacobian_2|)\n";
-        dump_py(_log_file, "rel_diff", rel_diff);
+        dump_py(log_file_, "rel_diff", rel_diff);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        _log_file << "# Masks: 0 ... tolerance met, 1 ... tolerance exceeded\n";
-        dump_py(_log_file, "abs_diff_mask", abs_diff_mask);
-        dump_py(_log_file, "rel_diff_mask", rel_diff_mask);
+        log_file_ << "# Masks: 0 ... tolerance met, 1 ... tolerance exceeded\n";
+        dump_py(log_file_, "abs_diff_mask", abs_diff_mask);
+        dump_py(log_file_, "rel_diff_mask", rel_diff_mask);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        dump_py(_log_file, "M_1", local_M1);
-        dump_py(_log_file, "M_2", local_M2);
+        dump_py(log_file_, "M_1", local_M1);
+        dump_py(log_file_, "M_2", local_M2);
         if (fatal_error && local_M1.size() == local_M2.size())
         {
-            dump_py(_log_file, "delta_M", local_M2 - local_M1);
-            _log_file << '\n';
+            dump_py(log_file_, "delta_M", local_M2 - local_M1);
+            log_file_ << '\n';
         }
 
-        dump_py(_log_file, "K_1", local_K1);
-        dump_py(_log_file, "K_2", local_K2);
+        dump_py(log_file_, "K_1", local_K1);
+        dump_py(log_file_, "K_2", local_K2);
         if (fatal_error && local_K1.size() == local_K2.size())
         {
-            dump_py(_log_file, "delta_K", local_K2 - local_K1);
-            _log_file << '\n';
+            dump_py(log_file_, "delta_K", local_K2 - local_K1);
+            log_file_ << '\n';
         }
 
-        dump_py(_log_file, "b_1", local_b_data);
-        dump_py(_log_file, "b_2", local_b_data2);
+        dump_py(log_file_, "b_1", local_b_data);
+        dump_py(log_file_, "b_2", local_b_data2);
         if (fatal_error && local_b1.size() == local_b2.size())
         {
-            dump_py(_log_file, "delta_b", local_b2 - local_b1);
-            _log_file << '\n';
+            dump_py(log_file_, "delta_b", local_b2 - local_b1);
+            log_file_ << '\n';
         }
 
-        dump_py(_log_file, "res_1", res1);
-        dump_py(_log_file, "res_2", res2);
+        dump_py(log_file_, "res_1", res1);
+        dump_py(log_file_, "res_2", res2);
         if (fatal_error)
         {
-            dump_py(_log_file, "delta_res", res2 - res1);
+            dump_py(log_file_, "delta_res", res2 - res1);
         }
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        _log_file << "### counter: " << std::to_string(_counter) << " (end)\n";
+        log_file_ << "### counter: " << std::to_string(counter_) << " (end)\n";
     }
 
     if (fatal_error)
     {
-        _log_file << std::flush;
+        log_file_ << std::flush;
         OGS_FATAL("{:s}", msg_fatal);
     }
 
-    if (tol_exceeded && _fail_on_error)
+    if (tol_exceeded && fail_on_error_)
     {
-        _log_file << std::flush;
+        log_file_ << std::flush;
         OGS_FATAL(
             "OGS failed, because the two Jacobian implementations returned "
             "different results.");

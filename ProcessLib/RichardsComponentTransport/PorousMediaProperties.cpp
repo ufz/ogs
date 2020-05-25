@@ -18,41 +18,41 @@ int PorousMediaProperties::getMaterialID(
     ParameterLib::SpatialPosition const& pos) const
 {
     int const element_id = pos.getElementID().get();
-    return _material_ids[element_id];
+    return material_ids_[element_id];
 }
 
 MaterialLib::PorousMedium::Porosity const& PorousMediaProperties::getPorosity(
     double /*t*/, ParameterLib::SpatialPosition const& pos) const
 {
-    return *_porosity_models[getMaterialID(pos)];
+    return *porosity_models_[getMaterialID(pos)];
 }
 
 MaterialLib::PorousMedium::Permeability const&
 PorousMediaProperties::getIntrinsicPermeability(
     double /*t*/, ParameterLib::SpatialPosition const& pos) const
 {
-    return *_intrinsic_permeability_models[getMaterialID(pos)];
+    return *intrinsic_permeability_models_[getMaterialID(pos)];
 }
 
 MaterialLib::PorousMedium::Storage const&
 PorousMediaProperties::getSpecificStorage(
     double /*t*/, ParameterLib::SpatialPosition const& pos) const
 {
-    return *_specific_storage_models[getMaterialID(pos)];
+    return *specific_storage_models_[getMaterialID(pos)];
 }
 
 MaterialLib::PorousMedium::CapillaryPressureSaturation const&
 PorousMediaProperties::getCapillaryPressureSaturationModel(
     double /*t*/, ParameterLib::SpatialPosition const& pos) const
 {
-    return *_capillary_pressure_saturation_models[getMaterialID(pos)];
+    return *capillary_pressure_saturation_models_[getMaterialID(pos)];
 }
 
 MaterialLib::PorousMedium::RelativePermeability const&
 PorousMediaProperties::getRelativePermeability(
     double /*t*/, ParameterLib::SpatialPosition const& pos) const
 {
-    return *_relative_permeability_models[getMaterialID(pos)];
+    return *relative_permeability_models_[getMaterialID(pos)];
 }
 }  // namespace RichardsComponentTransport
 }  // namespace ProcessLib

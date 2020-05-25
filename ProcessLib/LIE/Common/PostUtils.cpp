@@ -53,7 +53,7 @@ PostProcessTool::PostProcessTool(
         vec_branch_nodeID_matIDs,
     std::vector<std::pair<std::size_t, std::vector<int>>> const&
         vec_junction_nodeID_matIDs)
-    : _org_mesh(org_mesh)
+    : org_mesh_(org_mesh)
 {
     if (!org_mesh.getProperties().hasPropertyVector("displacement") ||
         !org_mesh.getProperties().hasPropertyVector("displacement_jump1") ||
@@ -76,7 +76,7 @@ PostProcessTool::PostProcessTool(
             auto duplicated_node =
                 new MeshLib::Node(org_node->getCoords(), new_nodes.size());
             new_nodes.push_back(duplicated_node);
-            _map_dup_newNodeIDs[org_node->getID()].push_back(
+            map_dup_newNodeIDs_[org_node->getID()].push_back(
                 duplicated_node->getID());
         }
     }
@@ -87,7 +87,7 @@ PostProcessTool::PostProcessTool(
         auto duplicated_node =
             new MeshLib::Node(org_node->getCoords(), new_nodes.size());
         new_nodes.push_back(duplicated_node);
-        _map_dup_newNodeIDs[org_node->getID()].push_back(
+        map_dup_newNodeIDs_[org_node->getID()].push_back(
             duplicated_node->getID());
     }
 
@@ -128,8 +128,8 @@ PostProcessTool::PostProcessTool(
                 }
 
                 // list of duplicated node IDs
-                auto itr = _map_dup_newNodeIDs.find(node_id);
-                if (itr == _map_dup_newNodeIDs.end())
+                auto itr = map_dup_newNodeIDs_.find(node_id);
+                if (itr == map_dup_newNodeIDs_.end())
                 {
                     continue;
                 }
@@ -208,7 +208,7 @@ PostProcessTool::PostProcessTool(
     }
 
     // new mesh
-    _output_mesh = std::make_unique<MeshLib::Mesh>(org_mesh.getName(),
+    output_mesh_ = std::make_unique<MeshLib::Mesh>(org_mesh.getName(),
                                                    new_nodes, new_eles);
     createProperties<int>();
     createProperties<double>();
@@ -221,7 +221,7 @@ PostProcessTool::PostProcessTool(
 template <typename T>
 void PostProcessTool::createProperties()
 {
-    MeshLib::Properties const& src_properties = _org_mesh.getProperties();
+    MeshLib::Properties const& src_properties = org_mesh_.getProperties();
     for (auto name : src_properties.getPropertyVectorNames())
     {
         if (!src_properties.existsPropertyVector<T>(name))
@@ -236,18 +236,18 @@ void PostProcessTool::createProperties()
         auto const n_dest_comp = (n_src_comp == 2) ? 3 : n_src_comp;
 
         auto new_prop = MeshLib::getOrCreateMeshProperty<T>(
-            *_output_mesh, name, src_prop->getMeshItemType(), n_dest_comp);
+            *output_mesh_, name, src_prop->getMeshItemType(), n_dest_comp);
 
         if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Node)
         {
             assert(new_prop->size() ==
-                   _output_mesh->getNumberOfNodes() * n_dest_comp);
+                   output_mesh_->getNumberOfNodes() * n_dest_comp);
             (void)(new_prop);  // to avoid compilation warning.
         }
         else if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Cell)
         {
             assert(new_prop->size() ==
-                   _output_mesh->getNumberOfElements() * n_dest_comp);
+                   output_mesh_->getNumberOfElements() * n_dest_comp);
         }
         else
         {
@@ -263,7 +263,7 @@ void PostProcessTool::createProperties()
 template <typename T>
 void PostProcessTool::copyProperties()
 {
-    MeshLib::Properties const& src_properties = _org_mesh.getProperties();
+    MeshLib::Properties const& src_properties = org_mesh_.getProperties();
     for (auto name : src_properties.getPropertyVectorNames())
     {
         if (!src_properties.existsPropertyVector<T>(name))
@@ -272,14 +272,14 @@ void PostProcessTool::copyProperties()
         }
         auto const* src_prop = src_properties.getPropertyVector<T>(name);
         auto* dest_prop =
-            _output_mesh->getProperties().getPropertyVector<T>(name);
+            output_mesh_->getProperties().getPropertyVector<T>(name);
 
         if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Node)
         {
             auto const n_src_comp = src_prop->getNumberOfComponents();
             auto const n_dest_comp = dest_prop->getNumberOfComponents();
             // copy existing
-            for (unsigned i = 0; i < _org_mesh.getNumberOfNodes(); i++)
+            for (unsigned i = 0; i < org_mesh_.getNumberOfNodes(); i++)
             {
                 for (int j = 0; j < n_src_comp; j++)
                 {
@@ -293,7 +293,7 @@ void PostProcessTool::copyProperties()
                 }
             }
             // copy duplicated
-            for (auto itr : _map_dup_newNodeIDs)
+            for (auto itr : map_dup_newNodeIDs_)
             {
                 for (int j = 0; j < n_dest_comp; j++)
                 {
@@ -323,15 +323,15 @@ void PostProcessTool::copyProperties()
 void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
                                                  unsigned const n_junctions)
 {
-    auto const& u = *_output_mesh->getProperties().getPropertyVector<double>(
+    auto const& u = *output_mesh_->getProperties().getPropertyVector<double>(
         "displacement");
     auto const n_u_comp = u.getNumberOfComponents();
-    assert(u.size() == _output_mesh->getNodes().size() * 3);
+    assert(u.size() == output_mesh_->getNodes().size() * 3);
     auto& total_u =
-        *_output_mesh->getProperties().createNewPropertyVector<double>(
+        *output_mesh_->getProperties().createNewPropertyVector<double>(
             "u", MeshLib::MeshItemType::Node, n_u_comp);
     total_u.resize(u.size());
-    for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
+    for (unsigned i = 0; i < output_mesh_->getNodes().size(); i++)
     {
         for (int j = 0; j < n_u_comp; j++)
         {
@@ -343,14 +343,14 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
          enrich_id++)
     {
         // nodal value of levelset
-        std::vector<double> nodal_levelset(_output_mesh->getNodes().size(),
+        std::vector<double> nodal_levelset(output_mesh_->getNodes().size(),
                                            0.0);
         auto const& ele_levelset =
-            *_output_mesh->getProperties().getPropertyVector<double>(
+            *output_mesh_->getProperties().getPropertyVector<double>(
                 "levelset" + std::to_string(enrich_id + 1));
-        for (MeshLib::Element const* e : _output_mesh->getElements())
+        for (MeshLib::Element const* e : output_mesh_->getElements())
         {
-            if (e->getDimension() != _output_mesh->getDimension())
+            if (e->getDimension() != output_mesh_->getDimension())
             {
                 continue;
             }
@@ -368,9 +368,9 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
 
         // update total displacements
         auto const& g =
-            *_output_mesh->getProperties().getPropertyVector<double>(
+            *output_mesh_->getProperties().getPropertyVector<double>(
                 "displacement_jump" + std::to_string(enrich_id + 1));
-        for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
+        for (unsigned i = 0; i < output_mesh_->getNodes().size(); i++)
         {
             for (int j = 0; j < n_u_comp; j++)
             {

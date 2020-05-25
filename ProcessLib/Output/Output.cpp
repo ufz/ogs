@@ -24,7 +24,7 @@
 namespace
 {
 //! Converts a vtkXMLWriter's data mode string to an int. See
-/// Output::_output_file_data_mode.
+/// Output::output_file_data_mode_.
 int convertVtkDataMode(std::string const& data_mode)
 {
     if (data_mode == "Ascii")
@@ -64,7 +64,7 @@ bool Output::shallDoOutput(int timestep, double const t)
 {
     int each_steps = 1;
 
-    for (auto const& pair : _repeats_each_steps)
+    for (auto const& pair : repeats_each_steps_)
     {
         each_steps = pair.each_steps;
 
@@ -80,16 +80,16 @@ bool Output::shallDoOutput(int timestep, double const t)
 
     bool make_output = timestep % each_steps == 0;
 
-    if (_fixed_output_times.empty())
+    if (fixed_output_times_.empty())
     {
         return make_output;
     }
 
-    const double specific_time = _fixed_output_times.back();
+    const double specific_time = fixed_output_times_.back();
     const double zero_threshold = std::numeric_limits<double>::min();
     if (std::fabs(specific_time - t) < zero_threshold)
     {
-        _fixed_output_times.pop_back();
+        fixed_output_times_.pop_back();
         make_output = true;
     }
 
@@ -105,35 +105,35 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
                OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
-    : _output_directory(std::move(output_directory)),
-      _output_file_prefix(std::move(output_file_prefix)),
-      _output_file_suffix(std::move(output_file_suffix)),
-      _output_file_compression(compress_output),
-      _output_file_data_mode(convertVtkDataMode(data_mode)),
-      _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
-      _repeats_each_steps(std::move(repeats_each_steps)),
-      _fixed_output_times(std::move(fixed_output_times)),
-      _output_data_specification(std::move(output_data_specification)),
-      _mesh_names_for_output(mesh_names_for_output),
-      _meshes(meshes)
+    : output_directory_(std::move(output_directory)),
+      output_file_prefix_(std::move(output_file_prefix)),
+      output_file_suffix_(std::move(output_file_suffix)),
+      output_file_compression_(compress_output),
+      output_file_data_mode_(convertVtkDataMode(data_mode)),
+      output_nonlinear_iteration_results_(output_nonlinear_iteration_results),
+      repeats_each_steps_(std::move(repeats_each_steps)),
+      fixed_output_times_(std::move(fixed_output_times)),
+      output_data_specification_(std::move(output_data_specification)),
+      mesh_names_for_output_(mesh_names_for_output),
+      meshes_(meshes)
 {
 }
 
 void Output::addProcess(ProcessLib::Process const& process,
                         const int process_id)
 {
-    if (_mesh_names_for_output.empty())
+    if (mesh_names_for_output_.empty())
     {
-        _mesh_names_for_output.push_back(process.getMesh().getName());
+        mesh_names_for_output_.push_back(process.getMesh().getName());
     }
 
 
-    for (auto const& mesh_output_name : _mesh_names_for_output)
+    for (auto const& mesh_output_name : mesh_names_for_output_)
     {
         auto const filename =
-            constructPVDName(_output_directory, _output_file_prefix,
+            constructPVDName(output_directory_, output_file_prefix_,
                              process_id, mesh_output_name);
-        _process_to_pvd_file.emplace(std::piecewise_construct,
+        process_to_pvd_file_.emplace(std::piecewise_construct,
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
     }
@@ -146,9 +146,9 @@ MeshLib::IO::PVDFile* Output::findPVDFile(
     std::string const& mesh_name_for_output)
 {
     auto const filename =
-        constructPVDName(_output_directory, _output_file_prefix, process_id,
+        constructPVDName(output_directory_, output_file_prefix_, process_id,
                          mesh_name_for_output);
-    auto range = _process_to_pvd_file.equal_range(&process);
+    auto range = process_to_pvd_file_.equal_range(&process);
     int counter = 0;
     MeshLib::IO::PVDFile* pvd_file = nullptr;
     for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
@@ -238,13 +238,13 @@ void Output::doOutputAlways(Process const& process,
                          process.getSecondaryVariables(),
                          output_secondary_variable,
                          process.getIntegrationPointWriter(process.getMesh()),
-                         _output_data_specification);
+                         output_data_specification_);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    if (!(process_id == static_cast<int>(_process_to_pvd_file.size() /
-                                         _mesh_names_for_output.size()) -
+    if (!(process_id == static_cast<int>(process_to_pvd_file_.size() /
+                                         mesh_names_for_output_.size()) -
                             1 ||
           process.isMonolithicSchemeUsed()))
     {
@@ -253,15 +253,15 @@ void Output::doOutputAlways(Process const& process,
 
     auto output_bulk_mesh = [&]() {
         outputBulkMesh(
-            OutputFile(_output_directory, _output_file_prefix,
-                       _output_file_suffix, process.getMesh().getName(),
-                       process_id, timestep, t, _output_file_data_mode,
-                       _output_file_compression),
+            OutputFile(output_directory_, output_file_prefix_,
+                       output_file_suffix_, process.getMesh().getName(),
+                       process_id, timestep, t, output_file_data_mode_,
+                       output_file_compression_),
             findPVDFile(process, process_id, process.getMesh().getName()),
             process.getMesh(), t);
     };
 
-    for (auto const& mesh_output_name : _mesh_names_for_output)
+    for (auto const& mesh_output_name : mesh_names_for_output_)
     {
         if (process.getMesh().getName() == mesh_output_name)
         {
@@ -269,7 +269,7 @@ void Output::doOutputAlways(Process const& process,
             continue;
         }
         auto& mesh = *BaseLib::findElementOrError(
-            begin(_meshes), end(_meshes),
+            begin(meshes_), end(meshes_),
             [&mesh_output_name](auto const& m) {
                 return m->getName() == mesh_output_name;
             },
@@ -304,21 +304,21 @@ void Output::doOutputAlways(Process const& process,
                              process.getSecondaryVariables(),
                              output_secondary_variable,
                              process.getIntegrationPointWriter(mesh),
-                             _output_data_specification);
+                             output_data_specification_);
 
         // TODO (TomFischer): add pvd support here. This can be done if the
         // output is mesh related instead of process related. This would also
         // allow for merging bulk mesh output and arbitrary mesh output.
 
-        OutputFile const output_file{_output_directory,
-                                     _output_file_prefix,
-                                     _output_file_suffix,
+        OutputFile const output_file{output_directory_,
+                                     output_file_prefix_,
+                                     output_file_suffix_,
                                      mesh.getName(),
                                      process_id,
                                      timestep,
                                      t,
-                                     _output_file_data_mode,
-                                     _output_file_compression};
+                                     output_file_data_mode_,
+                                     output_file_compression_};
 
         auto pvd_file = findPVDFile(process, process_id, mesh.getName());
         pvd_file->addVTUFile(output_file.name, t);
@@ -370,7 +370,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
                                         std::vector<GlobalVector*> const& x,
                                         const int iteration)
 {
-    if (!_output_nonlinear_iteration_results)
+    if (!output_nonlinear_iteration_results_)
     {
         return;
     }
@@ -390,12 +390,12 @@ void Output::doOutputNonlinearIteration(Process const& process,
                          process.getSecondaryVariables(),
                          output_secondary_variable,
                          process.getIntegrationPointWriter(process.getMesh()),
-                         _output_data_specification);
+                         output_data_specification_);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    if (!(process_id == static_cast<int>(_process_to_pvd_file.size()) - 1 ||
+    if (!(process_id == static_cast<int>(process_to_pvd_file_.size()) - 1 ||
           process.isMonolithicSchemeUsed()))
     {
         return;
@@ -405,18 +405,18 @@ void Output::doOutputNonlinearIteration(Process const& process,
     findPVDFile(process, process_id, process.getMesh().getName());
 
     std::string const output_file_name =
-        BaseLib::constructFormattedFileName(_output_file_prefix,
+        BaseLib::constructFormattedFileName(output_file_prefix_,
                                             process.getMesh().getName(),
                                             process_id, timestep, t) +
         "_nliter_" + std::to_string(iteration) + ".vtu";
     std::string const output_file_path =
-        BaseLib::joinPaths(_output_directory, output_file_name);
+        BaseLib::joinPaths(output_directory_, output_file_name);
 
     DBUG("output iteration results to {:s}", output_file_path);
 
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 
-    makeOutput(output_file_path, process.getMesh(), _output_file_compression,
-               _output_file_data_mode);
+    makeOutput(output_file_path, process.getMesh(), output_file_compression_,
+               output_file_data_mode_);
 }
 }  // namespace ProcessLib

@@ -23,7 +23,7 @@ SurfaceFlux::SurfaceFlux(
 {
     DBUG("Create local balance assemblers.");
     // Populate the vector of local assemblers.
-    _local_assemblers.resize(boundary_mesh.getElements().size());
+    local_assemblers_.resize(boundary_mesh.getElements().size());
 
     // needed to create dof table
     auto mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
@@ -48,7 +48,7 @@ SurfaceFlux::SurfaceFlux(
 
     ProcessLib::createLocalAssemblers<SurfaceFluxLocalAssembler>(
         boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
-        boundary_mesh.getElements(), *dof_table, 1, _local_assemblers,
+        boundary_mesh.getElements(), *dof_table, 1, local_assemblers_,
         boundary_mesh.isAxiallySymmetric(), integration_order,
         *bulk_element_ids, *bulk_face_ids);
 }
@@ -67,7 +67,7 @@ void SurfaceFlux::integrate(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SurfaceFluxLocalAssemblerInterface::integrate,
-        _local_assemblers, active_element_ids, x, balance, t, bulk_mesh, getFlux);
+        local_assemblers_, active_element_ids, x, balance, t, bulk_mesh, getFlux);
 }
 
 }  // namespace ProcessLib

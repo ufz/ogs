@@ -29,15 +29,15 @@ BHECommonCoaxial::BHECommonCoaxial(
     bool const use_python_bcs)
     : BHECommon{borehole, refrigerant, grout, flowAndTemperatureControl,
                 use_python_bcs},
-      _pipes(pipes)
+      pipes_(pipes)
 {
-    cross_section_area_inner_pipe = _pipes.inner_pipe.area();
+    cross_section_area_inner_pipe = pipes_.inner_pipe.area();
     cross_section_area_annulus =
-        _pipes.outer_pipe.area() - _pipes.inner_pipe.outsideArea();
+        pipes_.outer_pipe.area() - pipes_.inner_pipe.outsideArea();
     cross_section_area_grout =
-        borehole_geometry.area() - _pipes.outer_pipe.outsideArea();
+        borehole_geometry.area() - pipes_.outer_pipe.outsideArea();
 
-    _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
+    thermal_resistances_.fill(std::numeric_limits<double>::quiet_NaN());
 }
 
 std::array<double, BHECommonCoaxial::number_of_unknowns>
@@ -69,7 +69,7 @@ BHECommonCoaxial::pipeHeatConductions() const
     double const lambda_r = refrigerant.thermal_conductivity;
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
-    double const alpha_L = _pipes.longitudinal_dispersion_length;
+    double const alpha_L = pipes_.longitudinal_dispersion_length;
     double const porosity_g = grout.porosity_g;
     double const lambda_g = grout.lambda_g;
 
@@ -108,16 +108,16 @@ BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
 {
     // thermal resistances due to advective flow of refrigerant in the pipes
     auto const R_advective = calculateAdvectiveThermalResistance(
-        _pipes.inner_pipe, _pipes.outer_pipe, refrigerant, Nu_inner_pipe,
+        pipes_.inner_pipe, pipes_.outer_pipe, refrigerant, Nu_inner_pipe,
         Nu_annulus_pipe);
 
     // thermal resistance due to thermal conductivity of the pipe wall material
     auto const R_conductive = calculatePipeWallThermalResistance(
-        _pipes.inner_pipe, _pipes.outer_pipe);
+        pipes_.inner_pipe, pipes_.outer_pipe);
 
     // thermal resistance due to the grout transition and grout-soil exchange.
     auto const R = calculateGroutAndGroutSoilExchangeThermalResistance(
-        _pipes.outer_pipe, grout, borehole_geometry.diameter);
+        pipes_.outer_pipe, grout, borehole_geometry.diameter);
 
     // thermal resistance due to grout-soil exchange
     double const R_gs = R.grout_soil;
@@ -126,7 +126,7 @@ BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
     double const R_ff = R_advective.inner_pipe_coaxial + R_advective.a_annulus +
                         R_conductive.inner_pipe_coaxial;
     double const R_fg =
-        R_advective.b_annulus + R_conductive.annulus + R.conductive_b;
+        R_advective.bannulus_ + R_conductive.annulus + R.conductive_b;
 
     return getThermalResistances(R_gs, R_ff, R_fg);
 }
@@ -154,20 +154,20 @@ BHECommonCoaxial::getBHEBottomDirichletBCNodesAndComponents(
 void BHECommonCoaxial::updateHeatTransferCoefficients(double const flow_rate)
 {
     auto const tm_flow_properties_annulus =
-        calculateThermoMechanicalFlowPropertiesAnnulus(_pipes.inner_pipe,
-                                                       _pipes.outer_pipe,
+        calculateThermoMechanicalFlowPropertiesAnnulus(pipes_.inner_pipe,
+                                                       pipes_.outer_pipe,
                                                        borehole_geometry.length,
                                                        refrigerant,
                                                        flow_rate);
 
-    _flow_velocity_annulus = tm_flow_properties_annulus.velocity;
+    flow_velocity_annulus_ = tm_flow_properties_annulus.velocity;
 
     auto const tm_flow_properties = calculateThermoMechanicalFlowPropertiesPipe(
-        _pipes.inner_pipe, borehole_geometry.length, refrigerant, flow_rate);
+        pipes_.inner_pipe, borehole_geometry.length, refrigerant, flow_rate);
 
-    _flow_velocity_inner = tm_flow_properties.velocity;
+    flow_velocity_inner_ = tm_flow_properties.velocity;
 
-    _thermal_resistances =
+    thermal_resistances_ =
         calcThermalResistances(tm_flow_properties.nusselt_number,
                                tm_flow_properties_annulus.nusselt_number);
 }

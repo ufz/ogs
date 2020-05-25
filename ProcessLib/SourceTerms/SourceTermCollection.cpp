@@ -24,16 +24,16 @@ void SourceTermCollection::addSourceTermsForProcessVariables(
     {
         ProcessVariable& pv = process_variables[variable_id];
         auto sts = pv.createSourceTerms(dof_table, variable_id,
-                                        integration_order, _parameters);
+                                        integration_order, parameters_);
 
-        std::move(sts.begin(), sts.end(), std::back_inserter(_source_terms));
+        std::move(sts.begin(), sts.end(), std::back_inserter(source_terms_));
     }
 }
 
 void SourceTermCollection::integrate(const double t, GlobalVector const& x,
                                      GlobalVector& b, GlobalMatrix* jac) const
 {
-    for (auto const& st : _source_terms)
+    for (auto const& st : source_terms_)
     {
         st->integrate(t, x, b, jac);
     }

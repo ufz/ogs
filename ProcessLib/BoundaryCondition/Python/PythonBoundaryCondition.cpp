@@ -28,7 +28,7 @@ class FlushStdoutGuard
 {
 public:
     //! Optionally flushes C++ stdout before running Python code.
-    explicit FlushStdoutGuard(bool const flush) : _flush(flush)
+    explicit FlushStdoutGuard(bool const flush) : flush_(flush)
     {
         if (!flush)
         {
@@ -41,7 +41,7 @@ public:
     //! Optionally flushes Python's stdout after running Python code.
     ~FlushStdoutGuard()
     {
-        if (!_flush)
+        if (!flush_)
         {
             return;
         }
@@ -52,7 +52,7 @@ public:
 
 private:
     //! To flush or not to flush.
-    const bool _flush;
+    const bool flush_;
 };
 }  // anonymous namespace
 
@@ -64,64 +64,64 @@ PythonBoundaryCondition::PythonBoundaryCondition(
     unsigned const shapefunction_order,
     unsigned const global_dim,
     bool const flush_stdout)
-    : _bc_data(std::move(bc_data)), _flush_stdout(flush_stdout)
+    : bc_data_(std::move(bc_data)), flush_stdout_(flush_stdout)
 {
     std::vector<MeshLib::Node*> const& bc_nodes =
-        _bc_data.boundary_mesh.getNodes();
-    MeshLib::MeshSubset bc_mesh_subset(_bc_data.boundary_mesh, bc_nodes);
+        bc_data_.boundary_mesh.getNodes();
+    MeshLib::MeshSubset bc_mesh_subset(bc_data_.boundary_mesh, bc_nodes);
 
     // Create local DOF table from the bc mesh subset for the given variable and
     // component id.
-    _dof_table_boundary = _bc_data.dof_table_bulk.deriveBoundaryConstrainedMap(
+    dof_table_boundary_ = bc_data_.dof_table_bulk.deriveBoundaryConstrainedMap(
         std::move(bc_mesh_subset));
 
     createLocalAssemblers<PythonBoundaryConditionLocalAssembler>(
-        global_dim, _bc_data.boundary_mesh.getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers,
-        _bc_data.boundary_mesh.isAxiallySymmetric(), integration_order,
-        _bc_data);
+        global_dim, bc_data_.boundary_mesh.getElements(), *dof_table_boundary_,
+        shapefunction_order, local_assemblers_,
+        bc_data_.boundary_mesh.isAxiallySymmetric(), integration_order,
+        bc_data_);
 }
 
 void PythonBoundaryCondition::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    FlushStdoutGuard guard(_flush_stdout);
+    FlushStdoutGuard guard(flush_stdout_);
     (void)guard;
 
-    auto const nodes = _bc_data.boundary_mesh.getNodes();
+    auto const nodes = bc_data_.boundary_mesh.getNodes();
 
     auto const& bulk_node_ids_map =
-        *_bc_data.boundary_mesh.getProperties().getPropertyVector<std::size_t>(
+        *bc_data_.boundary_mesh.getProperties().getPropertyVector<std::size_t>(
             "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
     bc_values.ids.clear();
     bc_values.values.clear();
 
-    bc_values.ids.reserve(_bc_data.boundary_mesh.getNumberOfNodes());
-    bc_values.values.reserve(_bc_data.boundary_mesh.getNumberOfNodes());
+    bc_values.ids.reserve(bc_data_.boundary_mesh.getNumberOfNodes());
+    bc_values.values.reserve(bc_data_.boundary_mesh.getNumberOfNodes());
 
     std::vector<double> primary_variables;
 
-    for (auto const* node : _bc_data.boundary_mesh.getNodes())
+    for (auto const* node : bc_data_.boundary_mesh.getNodes())
     {
         auto const boundary_node_id = node->getID();
         auto const bulk_node_id = bulk_node_ids_map[boundary_node_id];
 
         // gather primary variable values
         primary_variables.clear();
-        auto const num_var = _dof_table_boundary->getNumberOfVariables();
+        auto const num_var = dof_table_boundary_->getNumberOfVariables();
         for (int var = 0; var < num_var; ++var)
         {
             auto const num_comp =
-                _dof_table_boundary->getNumberOfVariableComponents(var);
+                dof_table_boundary_->getNumberOfVariableComponents(var);
             for (int comp = 0; comp < num_comp; ++comp)
             {
-                MeshLib::Location loc{_bc_data.bulk_mesh_id,
+                MeshLib::Location loc{bc_data_.bulk_mesh_id,
                                       MeshLib::MeshItemType::Node,
                                       bulk_node_id};
                 auto const dof_idx =
-                    _bc_data.dof_table_bulk.getGlobalIndex(loc, var, comp);
+                    bc_data_.dof_table_bulk.getGlobalIndex(loc, var, comp);
 
                 if (dof_idx == NumLib::MeshComponentMap::nop)
                 {
@@ -141,9 +141,9 @@ void PythonBoundaryCondition::getEssentialBCValues(
         }
 
         auto* xs = nodes[boundary_node_id]->getCoords();  // TODO DDC problems?
-        auto pair_flag_value = _bc_data.bc_object->getDirichletBCValue(
+        auto pair_flag_value = bc_data_.bc_object->getDirichletBCValue(
             t, {xs[0], xs[1], xs[2]}, boundary_node_id, primary_variables);
-        if (!_bc_data.bc_object->isOverriddenEssential())
+        if (!bc_data_.bc_object->isOverriddenEssential())
         {
             DBUG(
                 "Method `getDirichletBCValue' not overridden in Python "
@@ -156,10 +156,10 @@ void PythonBoundaryCondition::getEssentialBCValues(
             continue;
         }
 
-        MeshLib::Location l(_bc_data.bulk_mesh_id, MeshLib::MeshItemType::Node,
+        MeshLib::Location l(bc_data_.bulk_mesh_id, MeshLib::MeshItemType::Node,
                             bulk_node_id);
-        const auto dof_idx = _bc_data.dof_table_bulk.getGlobalIndex(
-            l, _bc_data.global_component_id);
+        const auto dof_idx = bc_data_.dof_table_bulk.getGlobalIndex(
+            l, bc_data_.global_component_id);
         if (dof_idx == NumLib::MeshComponentMap::nop)
         {
             OGS_FATAL(
@@ -186,13 +186,13 @@ void PythonBoundaryCondition::applyNaturalBC(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     GlobalMatrix& K, GlobalVector& b, GlobalMatrix* Jac)
 {
-    FlushStdoutGuard guard(_flush_stdout);
+    FlushStdoutGuard guard(flush_stdout_);
 
     try
     {
         GlobalExecutor::executeMemberOnDereferenced(
             &GenericNaturalBoundaryConditionLocalAssemblerInterface::assemble,
-            _local_assemblers, *_dof_table_boundary, t, x, process_id, K, b,
+            local_assemblers_, *dof_table_boundary_, t, x, process_id, K, b,
             Jac);
     }
     catch (MethodNotOverriddenInDerivedClassException const& /*e*/)

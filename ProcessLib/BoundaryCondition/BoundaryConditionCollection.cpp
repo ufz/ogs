@@ -16,7 +16,7 @@ void BoundaryConditionCollection::applyNaturalBC(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     GlobalMatrix& K, GlobalVector& b, GlobalMatrix* Jac)
 {
-    for (auto const& bc : _boundary_conditions)
+    for (auto const& bc : boundary_conditions_)
     {
         bc->applyNaturalBC(t, x, process_id, K, b, Jac);
     }
@@ -34,15 +34,15 @@ void BoundaryConditionCollection::addBCsForProcessVariables(
     {
         ProcessVariable& pv = process_variables[variable_id];
         auto bcs = pv.createBoundaryConditions(
-            dof_table, variable_id, integration_order, _parameters, process);
+            dof_table, variable_id, integration_order, parameters_, process);
 
         std::move(bcs.begin(), bcs.end(),
-                  std::back_inserter(_boundary_conditions));
+                  std::back_inserter(boundary_conditions_));
     }
 
     // For each BC there will be storage for Dirichlet BC. This storage will be
     // uninitialized by default, and has to be filled by the respective BC
     // object if needed.
-    _dirichlet_bcs.resize(_boundary_conditions.size());
+    dirichlet_bcs_.resize(boundary_conditions_.size());
 }
 }  // namespace ProcessLib

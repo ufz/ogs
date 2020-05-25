@@ -20,11 +20,11 @@ void BHEBottomDirichletBoundaryCondition::getEssentialBCValues(
     bc_values.ids.resize(1);
     bc_values.values.resize(1);
 
-    bc_values.ids[0] = _in_out_global_indices.second;
+    bc_values.ids[0] = in_out_global_indices_.second;
     // here, the outflow temperature is always
     // the same as the inflow temperature
     // get the inflow temperature from here.
-    bc_values.values[0] = x[_in_out_global_indices.first];
+    bc_values.values[0] = x[in_out_global_indices_.first];
 }
 
 std::unique_ptr<BHEBottomDirichletBoundaryCondition>

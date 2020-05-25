@@ -31,14 +31,14 @@ Process::Process(
     SecondaryVariableCollection&& secondary_variables,
     const bool use_monolithic_scheme)
     : name(std::move(name_)),
-      _mesh(mesh),
-      _secondary_variables(std::move(secondary_variables)),
-      _global_assembler(std::move(jacobian_assembler)),
-      _use_monolithic_scheme(use_monolithic_scheme),
-      _coupled_solutions(nullptr),
-      _integration_order(integration_order),
-      _process_variables(std::move(process_variables)),
-      _boundary_conditions([&](const std::size_t number_of_process_variables)
+      mesh_(mesh),
+      secondary_variables_(std::move(secondary_variables)),
+      global_assembler_(std::move(jacobian_assembler)),
+      use_monolithic_scheme_(use_monolithic_scheme),
+      coupled_solutions_(nullptr),
+      integration_order_(integration_order),
+      process_variables_(std::move(process_variables)),
+      boundary_conditions_([&](const std::size_t number_of_process_variables)
                                -> std::vector<BoundaryConditionCollection> {
           std::vector<BoundaryConditionCollection> pcs_BCs;
           pcs_BCs.reserve(number_of_process_variables);
@@ -47,8 +47,8 @@ Process::Process(
               pcs_BCs.emplace_back(BoundaryConditionCollection(parameters));
           }
           return pcs_BCs;
-      }(_process_variables.size())),
-      _source_term_collections([&](const std::size_t number_of_processes)
+      }(process_variables_.size())),
+      source_term_collections_([&](const std::size_t number_of_processes)
                                    -> std::vector<SourceTermCollection> {
           std::vector<SourceTermCollection> pcs_sts;
           pcs_sts.reserve(number_of_processes);
@@ -57,34 +57,34 @@ Process::Process(
               pcs_sts.emplace_back(SourceTermCollection(parameters));
           }
           return pcs_sts;
-      }(_process_variables.size()))
+      }(process_variables_.size()))
 {
 }
 
 void Process::initializeProcessBoundaryConditionsAndSourceTerms(
     const NumLib::LocalToGlobalIndexMap& dof_table, const int process_id)
 {
-    auto const& per_process_variables = _process_variables[process_id];
-    auto& per_process_BCs = _boundary_conditions[process_id];
+    auto const& per_process_variables = process_variables_[process_id];
+    auto& per_process_BCs = boundary_conditions_[process_id];
 
     per_process_BCs.addBCsForProcessVariables(per_process_variables, dof_table,
-                                              _integration_order, *this);
+                                              integration_order_, *this);
 
-    auto& per_process_sts = _source_term_collections[process_id];
+    auto& per_process_sts = source_term_collections_[process_id];
     per_process_sts.addSourceTermsForProcessVariables(
-        per_process_variables, dof_table, _integration_order);
+        per_process_variables, dof_table, integration_order_);
 }
 
 void Process::initializeBoundaryConditions()
 {
-    // The number of processes is identical to the size of _process_variables,
+    // The number of processes is identical to the size of process_variables_,
     // the vector contains variables for different processes. See the
-    // documentation of _process_variables.
-    const std::size_t number_of_processes = _process_variables.size();
+    // documentation of process_variables_.
+    const std::size_t number_of_processes = process_variables_.size();
     for (std::size_t pcs_id = 0; pcs_id < number_of_processes; pcs_id++)
     {
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, pcs_id);
+            *local_to_global_index_map_, pcs_id);
     }
 }
 
@@ -101,8 +101,8 @@ void Process::initialize()
     DBUG("Initialize the extrapolator");
     initializeExtrapolator();
 
-    initializeConcreteProcess(*_local_to_global_index_map, _mesh,
-                              _integration_order);
+    initializeConcreteProcess(*local_to_global_index_map_, mesh_,
+                              integration_order_);
 
     DBUG("Initialize boundary conditions.");
     initializeBoundaryConditions();
@@ -114,7 +114,7 @@ void Process::setInitialConditions(const int process_id, double const t,
     // getDOFTableOfProcess can be overloaded by the specific process.
     auto const& dof_table_of_process = getDOFTable(process_id);
 
-    auto const& per_process_variables = _process_variables[process_id];
+    auto const& per_process_variables = process_variables_[process_id];
     for (std::size_t variable_id = 0;
          variable_id < per_process_variables.size();
          variable_id++)
@@ -168,9 +168,9 @@ void Process::setInitialConditions(const int process_id, double const t,
 MathLib::MatrixSpecifications Process::getMatrixSpecifications(
     const int /*process_id*/) const
 {
-    auto const& l = *_local_to_global_index_map;
+    auto const& l = *local_to_global_index_map_;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
-            &l.getGhostIndices(), &_sparsity_pattern};
+            &l.getGhostIndices(), &sparsity_pattern_};
 }
 
 void Process::updateDeactivatedSubdomains(double const time,
@@ -201,11 +201,11 @@ void Process::assemble(const double t, double const dt,
     assembleConcreteProcess(t, dt, x, xdot, process_id, M, K, b);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
-    _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,
+    boundary_conditions_[process_id].applyNaturalBC(t, x, process_id, K, b,
                                                     nullptr);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
-    _source_term_collections[process_id].integrate(t, *x[process_id], b,
+    source_term_collections_[process_id].integrate(t, *x[process_id], b,
                                                    nullptr);
 }
 
@@ -224,16 +224,16 @@ void Process::assembleWithJacobian(const double t, double const dt,
                                         process_id, M, K, b, Jac);
 
     // TODO: apply BCs to Jacobian.
-    _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,
+    boundary_conditions_[process_id].applyNaturalBC(t, x, process_id, K, b,
                                                     &Jac);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
-    _source_term_collections[process_id].integrate(t, *x[process_id], b, &Jac);
+    source_term_collections_[process_id].integrate(t, *x[process_id], b, &Jac);
 }
 
 void Process::constructDofTable()
 {
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         constructMonolithicProcessDofTable();
 
@@ -248,8 +248,8 @@ void Process::constructDofTable()
 void Process::constructMonolithicProcessDofTable()
 {
     // Create single component dof in every of the mesh nodes.
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    mesh_subset_all_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, mesh_.getNodes());
 
     // Vector of mesh subsets.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
@@ -258,33 +258,33 @@ void Process::constructMonolithicProcessDofTable()
     std::vector<int> vec_var_n_components;
     // Collect the mesh subsets in a vector for the components of each
     // variables.
-    for (ProcessVariable const& pv : _process_variables[0])
+    for (ProcessVariable const& pv : process_variables_[0])
     {
         std::generate_n(std::back_inserter(all_mesh_subsets),
                         pv.getNumberOfComponents(),
-                        [&]() { return *_mesh_subset_all_nodes; });
+                        [&]() { return *mesh_subset_all_nodes_; });
     }
 
     // Create a vector of the number of variable components
-    for (ProcessVariable const& pv : _process_variables[0])
+    for (ProcessVariable const& pv : process_variables_[0])
     {
         vec_var_n_components.push_back(pv.getNumberOfComponents());
     }
 
-    _local_to_global_index_map =
+    local_to_global_index_map_ =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets), vec_var_n_components,
             NumLib::ComponentOrder::BY_LOCATION);
 
-    assert(_local_to_global_index_map);
+    assert(local_to_global_index_map_);
 }
 
 void Process::constructDofTableOfSpecifiedProsessStaggerdScheme(
     const int specified_prosess_id)
 {
     // Create single component dof in every of the mesh nodes.
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    mesh_subset_all_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, mesh_.getNodes());
 
     // Vector of mesh subsets.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
@@ -293,38 +293,38 @@ void Process::constructDofTableOfSpecifiedProsessStaggerdScheme(
     std::vector<int> vec_var_n_components;
     // Collect the mesh subsets in a vector for each variables' components.
     std::generate_n(std::back_inserter(all_mesh_subsets),
-                    _process_variables[specified_prosess_id][0]
+                    process_variables_[specified_prosess_id][0]
                         .get()
                         .getNumberOfComponents(),
-                    [&]() { return *_mesh_subset_all_nodes; });
+                    [&]() { return *mesh_subset_all_nodes_; });
 
     // Create a vector of the number of variable components.
-    vec_var_n_components.push_back(_process_variables[specified_prosess_id][0]
+    vec_var_n_components.push_back(process_variables_[specified_prosess_id][0]
                                        .get()
                                        .getNumberOfComponents());
-    _local_to_global_index_map =
+    local_to_global_index_map_ =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets), vec_var_n_components,
             NumLib::ComponentOrder::BY_LOCATION);
 
-    assert(_local_to_global_index_map);
+    assert(local_to_global_index_map_);
 }
 
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
 Process::getDOFTableForExtrapolatorData() const
 {
-    if (_local_to_global_index_map->getNumberOfComponents() == 1)
+    if (local_to_global_index_map_->getNumberOfComponents() == 1)
     {
         // For single-variable-single-component processes reuse the existing DOF
         // table.
         const bool manage_storage = false;
-        return std::make_tuple(_local_to_global_index_map.get(),
+        return std::make_tuple(local_to_global_index_map_.get(),
                                manage_storage);
     }
 
     // Otherwise construct a new DOF table.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component;
-    all_mesh_subsets_single_component.emplace_back(*_mesh_subset_all_nodes);
+    all_mesh_subsets_single_component.emplace_back(*mesh_subset_all_nodes_);
 
     const bool manage_storage = true;
 
@@ -348,14 +348,14 @@ void Process::initializeExtrapolator()
             *dof_table_single_component));
 
     // TODO: Later on the DOF table can change during the simulation!
-    _extrapolator_data = ExtrapolatorData(
+    extrapolator_data_ = ExtrapolatorData(
         std::move(extrapolator), dof_table_single_component, manage_storage);
 }
 
 void Process::computeSparsityPattern()
 {
-    _sparsity_pattern =
-        NumLib::computeSparsityPattern(*_local_to_global_index_map, _mesh);
+    sparsity_pattern_ =
+        NumLib::computeSparsityPattern(*local_to_global_index_map_, mesh_);
 }
 
 void Process::preTimestep(std::vector<GlobalVector*> const& x, const double t,
@@ -365,7 +365,7 @@ void Process::preTimestep(std::vector<GlobalVector*> const& x, const double t,
         MathLib::LinAlg::setLocalAccessibleVector(*solution);
     preTimestepConcreteProcess(x, t, delta_t, process_id);
 
-    _boundary_conditions[process_id].preTimestep(t, x, process_id);
+    boundary_conditions_[process_id].preTimestep(t, x, process_id);
 }
 
 void Process::postTimestep(std::vector<GlobalVector*> const& x, const double t,

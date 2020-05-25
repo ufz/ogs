@@ -37,15 +37,15 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
-      _process_data(std::move(process_data))
+      process_data_(std::move(process_data))
 {
-    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+    nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
-    _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
+    heat_flux_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
 
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
@@ -53,11 +53,11 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
 
                     result[i] = local_asm.getSigma();
                 }
@@ -65,7 +65,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
                 return result;
             }));
 
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
@@ -73,11 +73,11 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
 
                     result[i] = local_asm.getEpsilon();
                 }
@@ -85,7 +85,7 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
                 return result;
             }));
 
-    _integration_point_writer.emplace_back(
+    integration_point_writer_.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "epsilon_m_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
@@ -93,11 +93,11 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
 
                     result[i] = local_asm.getEpsilonMechanical();
                 }
@@ -119,21 +119,21 @@ ThermoMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
 {
     // For the monolithic scheme or the M process (deformation) in the staggered
     // scheme.
-    if (_use_monolithic_scheme ||
-        process_id == _process_data.mechanics_process_id)
+    if (use_monolithic_scheme_ ||
+        process_id == process_data_.mechanics_process_id)
     {
-        auto const& l = *_local_to_global_index_map;
+        auto const& l = *local_to_global_index_map_;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
-                &l.getGhostIndices(), &this->_sparsity_pattern};
+                &l.getGhostIndices(), &this->sparsity_pattern_};
     }
 
     // For staggered scheme and T process.
-    auto const& l = *_local_to_global_index_map_single_component;
+    auto const& l = *local_to_global_index_map_single_component_;
     return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
-            &l.getGhostIndices(), &_sparsity_pattern_with_single_component};
+            &l.getGhostIndices(), &sparsity_pattern_with_single_component_};
 }
 
-// TODO [WW]: remove if (_use_monolithic_scheme) during the refactoring of the
+// TODO [WW]: remove if (use_monolithic_scheme_) during the refactoring of the
 // coupling part.
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::constructDofTable()
@@ -141,29 +141,29 @@ void ThermoMechanicsProcess<DisplacementDim>::constructDofTable()
     // Note: the heat conduction process and the mechanical process use the same
     // order of shape functions.
 
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         constructMonolithicProcessDofTable();
         return;
     }
     constructDofTableOfSpecifiedProsessStaggerdScheme(
-        _process_data.mechanics_process_id);
+        process_data_.mechanics_process_id);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
     std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
-        *_mesh_subset_all_nodes};
-    _local_to_global_index_map_single_component.reset(
+        *mesh_subset_all_nodes_};
+    local_to_global_index_map_single_component_.reset(
         new NumLib::LocalToGlobalIndexMap(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION));
 
-    if (!_use_monolithic_scheme)
+    if (!use_monolithic_scheme_)
     {
-        _sparsity_pattern_with_single_component =
+        sparsity_pattern_with_single_component_ =
             NumLib::computeSparsityPattern(
-                *_local_to_global_index_map_single_component, _mesh);
+                *local_to_global_index_map_single_component_, mesh_);
     }
 }
 
@@ -175,16 +175,16 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 {
     ProcessLib::SmallDeformation::createLocalAssemblers<
         DisplacementDim, ThermoMechanicsLocalAssembler>(
-        mesh.getElements(), dof_table, _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        mesh.getElements(), dof_table, local_assemblers_,
+        mesh.isAxiallySymmetric(), integration_order, process_data_);
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
                                       auto get_ip_values_function) {
-        _secondary_variables.addSecondaryVariable(
+        secondary_variables_.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
-                             _local_assemblers,
+                             local_assemblers_,
                              std::move(get_ip_values_function)));
     };
 
@@ -202,11 +202,11 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     // enable output of internal variables defined by material models
     //
     ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
-        LocalAssemblerInterface>(_process_data.solid_materials,
+        LocalAssemblerInterface>(process_data_.solid_materials,
                                  add_secondary_variable);
 
     // Set initial conditions for integration point data.
-    for (auto const& ip_writer : _integration_point_writer)
+    for (auto const& ip_writer : integration_point_writer_)
     {
         // Find the mesh property with integration point writer's name.
         auto const& name = ip_writer->name();
@@ -239,7 +239,7 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         // Now we have a properly named vtk's field data array and the
         // corresponding meta data.
         std::size_t position = 0;
-        for (auto& local_asm : _local_assemblers)
+        for (auto& local_asm : local_assemblers_)
         {
             std::size_t const integration_points_read =
                 local_asm->setIPDataInitialConditions(
@@ -257,30 +257,30 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
-        *_local_to_global_index_map);
+        &LocalAssemblerInterface::initialize, local_assemblers_,
+        *local_to_global_index_map_);
 }
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 {
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         const int process_id_of_thermomechanics = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_thermomechanics);
+            *local_to_global_index_map_, process_id_of_thermomechanics);
         return;
     }
 
     // Staggered scheme:
     // for the equations of heat conduction
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_single_component,
-        _process_data.heat_conduction_process_id);
+        *local_to_global_index_map_single_component_,
+        process_data_.heat_conduction_process_id);
 
     // for the equations of deformation.
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, _process_data.mechanics_process_id);
+        *local_to_global_index_map_, process_data_.mechanics_process_id);
 }
 
 template <int DisplacementDim>
@@ -292,14 +292,14 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     DBUG("Assemble ThermoMechanicsProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*local_to_global_index_map_)};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b, coupled_solutions_);
 }
 
 template <int DisplacementDim>
@@ -315,17 +315,17 @@ void ThermoMechanicsProcess<DisplacementDim>::
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
     // For the monolithic scheme
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         DBUG(
             "Assemble the Jacobian of ThermoMechanics for the monolithic"
             " scheme.");
-        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*local_to_global_index_map_);
     }
     else
     {
         // For the staggered scheme
-        if (process_id == _process_data.heat_conduction_process_id)
+        if (process_id == process_data_.heat_conduction_process_id)
         {
             DBUG(
                 "Assemble the Jacobian equations of heat conduction process in "
@@ -339,18 +339,18 @@ void ThermoMechanicsProcess<DisplacementDim>::
         }
 
         // For the flexible appearance order of processes in the coupling.
-        if (_process_data.heat_conduction_process_id ==
+        if (process_data_.heat_conduction_process_id ==
             0)  // First: the heat conduction process
         {
             dof_tables.emplace_back(
-                *_local_to_global_index_map_single_component);
-            dof_tables.emplace_back(*_local_to_global_index_map);
+                *local_to_global_index_map_single_component_);
+            dof_tables.emplace_back(*local_to_global_index_map_);
         }
         else  // vice versa
         {
-            dof_tables.emplace_back(*_local_to_global_index_map);
+            dof_tables.emplace_back(*local_to_global_index_map_);
             dof_tables.emplace_back(
-                *_local_to_global_index_map_single_component);
+                *local_to_global_index_map_single_component_);
         }
 
         setCoupledSolutionsOfPreviousTimeStep();
@@ -359,13 +359,13 @@ void ThermoMechanicsProcess<DisplacementDim>::
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
+        local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, coupled_solutions_);
 
     // TODO (naumov): Refactor the copy rhs part. This is copy from HM.
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
-        if (_use_monolithic_scheme)
+        if (use_monolithic_scheme_)
         {
             transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
                                               output_vector,
@@ -378,15 +378,15 @@ void ThermoMechanicsProcess<DisplacementDim>::
                                               std::negate<double>());
         }
     };
-    if (_use_monolithic_scheme ||
-        process_id == _process_data.heat_conduction_process_id)
+    if (use_monolithic_scheme_ ||
+        process_id == process_data_.heat_conduction_process_id)
     {
-        copyRhs(0, *_heat_flux);
+        copyRhs(0, *heat_flux_);
     }
-    if (_use_monolithic_scheme ||
-        process_id == _process_data.mechanics_process_id)
+    if (use_monolithic_scheme_ ||
+        process_id == process_data_.mechanics_process_id)
     {
-        copyRhs(1, *_nodal_forces);
+        copyRhs(1, *nodal_forces_);
     }
 }
 
@@ -401,28 +401,28 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     assert(process_id < 2);
 
-    if (process_id == _process_data.mechanics_process_id)
+    if (process_id == process_data_.mechanics_process_id)
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
-            &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), *_local_to_global_index_map,
+            &LocalAssemblerInterface::preTimestep, local_assemblers_,
+            pv.getActiveElementIDs(), *local_to_global_index_map_,
             *x[process_id], t, dt);
         return;
     }
 
     // For the staggered scheme.
-    if (!_previous_T)
+    if (!previous_T_)
     {
-        _previous_T = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+        previous_T_ = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
             *x[process_id]);
     }
     else
     {
-        auto& x0 = *_previous_T;
+        auto& x0 = *previous_T_;
         MathLib::LinAlg::copy(*x[process_id], x0);
     }
 
-    auto& x0 = *_previous_T;
+    auto& x0 = *previous_T_;
     MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
@@ -431,7 +431,7 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, double const dt,
     int const process_id)
 {
-    if (process_id != _process_data.mechanics_process_id)
+    if (process_id != process_data_.mechanics_process_id)
     {
         return;
     }
@@ -441,8 +441,8 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+        &LocalAssemblerInterface::postTimestep, local_assemblers_,
+        pv.getActiveElementIDs(), *local_to_global_index_map_, *x[process_id],
         t, dt);
 }
 
@@ -450,21 +450,21 @@ template <int DisplacementDim>
 void ThermoMechanicsProcess<
     DisplacementDim>::setCoupledSolutionsOfPreviousTimeStep()
 {
-    _coupled_solutions->coupled_xs_t0.resize(1);
-    _coupled_solutions->coupled_xs_t0[0] = _previous_T.get();
+    coupled_solutions_->coupled_xs_t0.resize(1);
+    coupled_solutions_->coupled_xs_t0[0] = previous_T_.get();
 }
 
 template <int DisplacementDim>
 NumLib::LocalToGlobalIndexMap const&
 ThermoMechanicsProcess<DisplacementDim>::getDOFTable(const int process_id) const
 {
-    if (_process_data.mechanics_process_id == process_id)
+    if (process_data_.mechanics_process_id == process_id)
     {
-        return *_local_to_global_index_map;
+        return *local_to_global_index_map_;
     }
 
     // For the equation of pressure
-    return *_local_to_global_index_map_single_component;
+    return *local_to_global_index_map_single_component_;
 }
 
 template class ThermoMechanicsProcess<2>;

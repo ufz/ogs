@@ -33,12 +33,12 @@ DirichletBoundaryConditionWithinTimeInterval::
         MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id)
-    : _parameter(parameter),
-      _bc_mesh(bc_mesh),
-      _nodes_in_bc_mesh(bc_mesh.getNodes()),
-      _variable_id(variable_id),
-      _component_id(component_id),
-      _time_interval(std::move(time_interval))
+    : parameter_(parameter),
+      bc_mesh_(bc_mesh),
+      nodes_in_bc_mesh_(bc_mesh.getNodes()),
+      variable_id_(variable_id),
+      component_id_(component_id),
+      time_interval_(std::move(time_interval))
 {
     config(dof_table_bulk);
 }
@@ -51,12 +51,12 @@ DirichletBoundaryConditionWithinTimeInterval::
         std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id)
-    : _parameter(parameter),
-      _bc_mesh(bc_mesh),
-      _nodes_in_bc_mesh(nodes_in_bc_mesh),
-      _variable_id(variable_id),
-      _component_id(component_id),
-      _time_interval(std::move(time_interval))
+    : parameter_(parameter),
+      bc_mesh_(bc_mesh),
+      nodes_in_bc_mesh_(nodes_in_bc_mesh),
+      variable_id_(variable_id),
+      component_id_(component_id),
+      time_interval_(std::move(time_interval))
 {
     config(dof_table_bulk);
 }
@@ -64,27 +64,27 @@ DirichletBoundaryConditionWithinTimeInterval::
 void DirichletBoundaryConditionWithinTimeInterval::config(
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk)
 {
-    checkParametersOfDirichletBoundaryCondition(_bc_mesh, dof_table_bulk,
-                                                _variable_id, _component_id);
+    checkParametersOfDirichletBoundaryCondition(bc_mesh_, dof_table_bulk,
+                                                variable_id_, component_id_);
 
-    std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
-    MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
+    std::vector<MeshLib::Node*> const& bc_nodes = bc_mesh_.getNodes();
+    MeshLib::MeshSubset bc_mesh_subset(bc_mesh_, bc_nodes);
 
     // Create local DOF table from the BC mesh subset for the given variable
     // and component id.
-    _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
-        _variable_id, {_component_id}, std::move(bc_mesh_subset)));
+    dof_table_boundary_.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
+        variable_id_, {component_id_}, std::move(bc_mesh_subset)));
 }
 
 void DirichletBoundaryConditionWithinTimeInterval::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    if (_time_interval->contains(t))
+    if (time_interval_->contains(t))
     {
-        getEssentialBCValuesLocal(_parameter, _bc_mesh, _nodes_in_bc_mesh,
-                                  *_dof_table_boundary, _variable_id,
-                                  _component_id, t, x, bc_values);
+        getEssentialBCValuesLocal(parameter_, bc_mesh_, nodes_in_bc_mesh_,
+                                  *dof_table_boundary_, variable_id_,
+                                  component_id_, t, x, bc_values);
         return;
     }
 

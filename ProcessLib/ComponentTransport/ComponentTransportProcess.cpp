@@ -35,8 +35,8 @@ ComponentTransportProcess::ComponentTransportProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
-      _process_data(std::move(process_data)),
-      _surfaceflux(std::move(surfaceflux))
+      process_data_(std::move(process_data)),
+      surfaceflux_(std::move(surfaceflux))
 {
 }
 
@@ -50,10 +50,10 @@ void ComponentTransportProcess::initializeConcreteProcess(
 
     std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>
         transport_process_variables;
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
-        for (auto pv_iter = std::next(_process_variables[process_id].begin());
-             pv_iter != _process_variables[process_id].end();
+        for (auto pv_iter = std::next(process_variables_[process_id].begin());
+             pv_iter != process_variables_[process_id].end();
              ++pv_iter)
         {
             transport_process_variables.push_back(*pv_iter);
@@ -61,26 +61,26 @@ void ComponentTransportProcess::initializeConcreteProcess(
     }
     else
     {
-        for (auto pv_iter = std::next(_process_variables.begin());
-             pv_iter != _process_variables.end();
+        for (auto pv_iter = std::next(process_variables_.begin());
+             pv_iter != process_variables_.end();
              ++pv_iter)
         {
             transport_process_variables.push_back((*pv_iter)[0]);
         }
 
-        _xs_previous_timestep.resize(_process_variables.size());
+        xs_previous_timestep_.resize(process_variables_.size());
     }
 
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
         mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data,
+        pv.getShapeFunctionOrder(), local_assemblers_,
+        mesh.isAxiallySymmetric(), integration_order, process_data_,
         transport_process_variables);
 
-    _secondary_variables.addSecondaryVariable(
+    secondary_variables_.addSecondaryVariable(
         "darcy_velocity",
         makeExtrapolator(
-            mesh.getDimension(), getExtrapolator(), _local_assemblers,
+            mesh.getDimension(), getExtrapolator(), local_assemblers_,
             &ComponentTransportLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
@@ -95,34 +95,34 @@ void ComponentTransportProcess::assembleConcreteProcess(
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
-        dof_tables.push_back(std::ref(*_local_to_global_index_map));
+        dof_tables.push_back(std::ref(*local_to_global_index_map_));
     }
     else
     {
         setCoupledSolutionsOfPreviousTimeStep();
         std::generate_n(
-            std::back_inserter(dof_tables), _process_variables.size(),
-            [&]() { return std::ref(*_local_to_global_index_map); });
+            std::back_inserter(dof_tables), process_variables_.size(),
+            [&]() { return std::ref(*local_to_global_index_map_); });
     }
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b, coupled_solutions_);
 }
 
 void ComponentTransportProcess::setCoupledSolutionsOfPreviousTimeStep()
 {
     unsigned const number_of_coupled_solutions =
-        _coupled_solutions->coupled_xs.size();
-    _coupled_solutions->coupled_xs_t0.clear();
-    _coupled_solutions->coupled_xs_t0.reserve(number_of_coupled_solutions);
+        coupled_solutions_->coupled_xs.size();
+    coupled_solutions_->coupled_xs_t0.clear();
+    coupled_solutions_->coupled_xs_t0.reserve(number_of_coupled_solutions);
     for (unsigned i = 0; i < number_of_coupled_solutions; ++i)
     {
-        auto const& x_t0 = _xs_previous_timestep[i];
-        _coupled_solutions->coupled_xs_t0.emplace_back(x_t0.get());
+        auto const& x_t0 = xs_previous_timestep_[i];
+        coupled_solutions_->coupled_xs_t0.emplace_back(x_t0.get());
     }
 }
 
@@ -136,12 +136,12 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*local_to_global_index_map_)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
+        local_assemblers_, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, coupled_solutions_);
 }
 
 Eigen::Vector3d ComponentTransportProcess::getFlux(
@@ -152,14 +152,14 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(
 {
     std::vector<GlobalIndexType> indices_cache;
     auto const r_c_indices = NumLib::getRowColumnIndices(
-        element_id, *_local_to_global_index_map, indices_cache);
+        element_id, *local_to_global_index_map_, indices_cache);
 
     std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes{
         x.size(), r_c_indices.rows};
     auto const local_xs =
         getCoupledLocalSolutions(x, indices_of_all_coupled_processes);
 
-    return _local_assemblers[element_id]->getFlux(p, t, local_xs);
+    return local_assemblers_[element_id]->getFlux(p, t, local_xs);
 }
 
 void ComponentTransportProcess::
@@ -171,31 +171,31 @@ void ComponentTransportProcess::
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::
             setStaggeredCoupledSolutions,
-        _local_assemblers, pv.getActiveElementIDs(), _coupled_solutions);
+        local_assemblers_, pv.getActiveElementIDs(), coupled_solutions_);
 }
 
 void ComponentTransportProcess::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, const double /*t*/,
     const double /*delta_t*/, int const process_id)
 {
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         return;
     }
 
-    if (!_xs_previous_timestep[process_id])
+    if (!xs_previous_timestep_[process_id])
     {
-        _xs_previous_timestep[process_id] =
+        xs_previous_timestep_[process_id] =
             MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
                 *x[process_id]);
     }
     else
     {
-        auto& x0 = *_xs_previous_timestep[process_id];
+        auto& x0 = *xs_previous_timestep_[process_id];
         MathLib::LinAlg::copy(*x[process_id], x0);
     }
 
-    auto& x0 = *_xs_previous_timestep[process_id];
+    auto& x0 = *xs_previous_timestep_[process_id];
     MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
@@ -206,29 +206,29 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
     int const process_id)
 {
     // For the monolithic scheme, process_id is always zero.
-    if (_use_monolithic_scheme && process_id != 0)
+    if (use_monolithic_scheme_ && process_id != 0)
     {
         OGS_FATAL(
             "The condition of process_id = 0 must be satisfied for "
             "monolithic ComponentTransportProcess, which is a single process.");
     }
-    if (!_use_monolithic_scheme && process_id != 0)
+    if (!use_monolithic_scheme_ && process_id != 0)
     {
         DBUG(
             "This is the transport part of the staggered "
             "ComponentTransportProcess.");
         return;
     }
-    if (!_surfaceflux)  // computing the surfaceflux is optional
+    if (!surfaceflux_)  // computing the surfaceflux is optional
     {
         return;
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
+    surfaceflux_->integrate(x, t, *this, process_id, integration_order_, mesh_,
                             pv.getActiveElementIDs());
-    _surfaceflux->save(t);
+    surfaceflux_->save(t);
 }
 
 }  // namespace ComponentTransport

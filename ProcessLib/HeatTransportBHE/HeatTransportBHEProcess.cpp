@@ -37,17 +37,17 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
-      _process_data(std::move(process_data)),
-      _bheMeshData(getBHEDataInMesh(mesh))
+      process_data_(std::move(process_data)),
+      bheMeshData_(getBHEDataInMesh(mesh))
 {
-    if (_bheMeshData.BHE_mat_IDs.size() !=
-        _process_data._vec_BHE_property.size())
+    if (bheMeshData_.BHE_mat_IDs.size() !=
+        process_data_.vec_BHE_property_.size())
     {
         OGS_FATAL(
             "The number of the given BHE properties ({:d}) are not consistent "
             "with the number of BHE groups in the mesh ({:d}).",
-            _process_data._vec_BHE_property.size(),
-            _bheMeshData.BHE_mat_IDs.size());
+            process_data_.vec_BHE_property_.size(),
+            bheMeshData_.BHE_mat_IDs.size());
     }
 
     auto material_ids = MeshLib::materialIDs(mesh);
@@ -56,13 +56,13 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
         OGS_FATAL("Not able to get material IDs! ");
     }
 
-    _process_data._mesh_prop_materialIDs = material_ids;
+    process_data_.mesh_prop_materialIDs_ = material_ids;
 
     // create a map from a material ID to a BHE ID
-    for (int i = 0; i < static_cast<int>(_bheMeshData.BHE_mat_IDs.size()); i++)
+    for (int i = 0; i < static_cast<int>(bheMeshData_.BHE_mat_IDs.size()); i++)
     {
         // fill in the map structure
-        _process_data._map_materialID_to_BHE_ID[_bheMeshData.BHE_mat_IDs[i]] =
+        process_data_.map_materialID_to_BHE_ID_[bheMeshData_.BHE_mat_IDs[i]] =
             i;
     }
 }
@@ -70,18 +70,18 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
 void HeatTransportBHEProcess::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    mesh_subset_all_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, mesh_.getNodes());
 
     //
     // Soil temperature variable defined on the whole mesh.
     //
-    _mesh_subset_soil_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
-    std::vector<MeshLib::MeshSubset> all_mesh_subsets{*_mesh_subset_soil_nodes};
+    mesh_subset_soil_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, mesh_.getNodes());
+    std::vector<MeshLib::MeshSubset> all_mesh_subsets{*mesh_subset_soil_nodes_};
 
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
-    vec_var_elements.push_back(&(_mesh.getElements()));
+    vec_var_elements.push_back(&(mesh_.getElements()));
 
     std::vector<int> vec_n_components{
         1};  // one component for the soil temperature variable.
@@ -89,36 +89,36 @@ void HeatTransportBHEProcess::constructDofTable()
     //
     // BHE nodes with BHE type dependend number of variables.
     //
-    int const n_BHEs = _process_data._vec_BHE_property.size();
-    assert(n_BHEs == static_cast<int>(_bheMeshData.BHE_mat_IDs.size()));
-    assert(n_BHEs == static_cast<int>(_bheMeshData.BHE_nodes.size()));
-    assert(n_BHEs == static_cast<int>(_bheMeshData.BHE_elements.size()));
+    int const n_BHEs = process_data_.vec_BHE_property_.size();
+    assert(n_BHEs == static_cast<int>(bheMeshData_.BHE_mat_IDs.size()));
+    assert(n_BHEs == static_cast<int>(bheMeshData_.BHE_nodes.size()));
+    assert(n_BHEs == static_cast<int>(bheMeshData_.BHE_elements.size()));
 
     // the BHE nodes need to be cherry-picked from the vector
     for (int i = 0; i < n_BHEs; i++)
     {
         auto const number_of_unknowns =
             visit([](auto const& bhe) { return bhe.number_of_unknowns; },
-                  _process_data._vec_BHE_property[i]);
-        auto const& bhe_nodes = _bheMeshData.BHE_nodes[i];
-        auto const& bhe_elements = _bheMeshData.BHE_elements[i];
+                  process_data_.vec_BHE_property_[i]);
+        auto const& bhe_nodes = bheMeshData_.BHE_nodes[i];
+        auto const& bhe_elements = bheMeshData_.BHE_elements[i];
 
         // All the BHE nodes have additional variables.
-        _mesh_subset_BHE_nodes.push_back(
-            std::make_unique<MeshLib::MeshSubset const>(_mesh, bhe_nodes));
+        mesh_subset_BHE_nodes_.push_back(
+            std::make_unique<MeshLib::MeshSubset const>(mesh_, bhe_nodes));
 
         std::generate_n(
             std::back_inserter(all_mesh_subsets),
             // Here the number of components equals to the
             // number of unknowns on the BHE
             number_of_unknowns,
-            [& ms = _mesh_subset_BHE_nodes.back()]() { return *ms; });
+            [& ms = mesh_subset_BHE_nodes_.back()]() { return *ms; });
 
         vec_n_components.push_back(number_of_unknowns);
         vec_var_elements.push_back(&bhe_elements);
     }
 
-    _local_to_global_index_map =
+    local_to_global_index_map_ =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets),
             vec_n_components,
@@ -126,7 +126,7 @@ void HeatTransportBHEProcess::constructDofTable()
             NumLib::ComponentOrder::BY_COMPONENT);
 
     // in case of debugging the dof table, activate the following line
-    // std::cout << *_local_to_global_index_map << "\n";
+    // std::cout << *local_to_global_index_map_ << "\n";
 }
 
 void HeatTransportBHEProcess::initializeConcreteProcess(
@@ -136,25 +136,25 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
 {
     // Quick access map to BHE's through element ids.
     std::unordered_map<std::size_t, BHE::BHETypes*> element_to_bhe_map;
-    int const n_BHEs = _process_data._vec_BHE_property.size();
+    int const n_BHEs = process_data_.vec_BHE_property_.size();
     for (int i = 0; i < n_BHEs; i++)
     {
-        auto const& bhe_elements = _bheMeshData.BHE_elements[i];
+        auto const& bhe_elements = bheMeshData_.BHE_elements[i];
         for (auto const& e : bhe_elements)
         {
             element_to_bhe_map[e->getID()] =
-                &_process_data._vec_BHE_property[i];
+                &process_data_.vec_BHE_property_[i];
         }
     }
 
     assert(mesh.getDimension() == 3);
     ProcessLib::HeatTransportBHE::createLocalAssemblers<
         HeatTransportBHELocalAssemblerSoil, HeatTransportBHELocalAssemblerBHE>(
-        mesh.getElements(), dof_table, _local_assemblers, element_to_bhe_map,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        mesh.getElements(), dof_table, local_assemblers_, element_to_bhe_map,
+        mesh.isAxiallySymmetric(), integration_order, process_data_);
 
     // Create BHE boundary conditions for each of the BHEs
-    createBHEBoundaryConditionTopBottom(_bheMeshData.BHE_nodes);
+    createBHEBoundaryConditionTopBottom(bheMeshData_.BHE_nodes);
 }
 
 void HeatTransportBHEProcess::assembleConcreteProcess(
@@ -167,12 +167,12 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*local_to_global_index_map_)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b, coupled_solutions_);
 }
 
 void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
@@ -195,8 +195,8 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
-        dt, x, x_dot, _coupled_solutions);
+        local_assemblers_, pv.getActiveElementIDs(), getDOFTable(process_id), t,
+        dt, x, x_dot, coupled_solutions_);
 }
 
 #ifdef OGS_USE_PYTHON
@@ -204,27 +204,27 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     GlobalVector const& x)
 {
     // if the process use python boundary conditon
-    if (_process_data.py_bc_object == nullptr)
+    if (process_data_.py_bc_object == nullptr)
         return NumLib::IterationResult::SUCCESS;
 
     // Here the task is to get current time flowrate and flow temperature from
     // TESPy
     auto const Tout_nodes_id =
-        std::get<3>(_process_data.py_bc_object->dataframe_network);
+        std::get<3>(process_data_.py_bc_object->dataframe_network);
     const std::size_t n_bc_nodes = Tout_nodes_id.size();
 
     // update flowrate in network if network exist a dynamic flowrate in time
     auto const cur_time =
-        std::get<0>(_process_data.py_bc_object->dataframe_network);
-    if (std::get<0>(_process_data.py_bc_object->tespyHydroSolver(cur_time)))
+        std::get<0>(process_data_.py_bc_object->dataframe_network);
+    if (std::get<0>(process_data_.py_bc_object->tespyHydroSolver(cur_time)))
     {
         // calculate the current flowrate in each BHE from TESPy
         auto const cur_flowrate =
-            std::get<1>(_process_data.py_bc_object->tespyHydroSolver(cur_time));
+            std::get<1>(process_data_.py_bc_object->tespyHydroSolver(cur_time));
         for (std::size_t i = 0; i < n_bc_nodes; i++)
-            std::get<4>(_process_data.py_bc_object->dataframe_network)[i] =
+            std::get<4>(process_data_.py_bc_object->dataframe_network)[i] =
                 cur_flowrate[i];
-        if (!_process_data.py_bc_object->isOverriddenTespyHydro())
+        if (!process_data_.py_bc_object->isOverriddenTespyHydro())
         {
             DBUG(
                 "Method `tespyHydroSolver' not overridden in Python "
@@ -238,15 +238,15 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     for (std::size_t i = 0; i < n_bc_nodes; i++)
     {
         // read the T_out and store them in dataframe
-        std::get<2>(_process_data.py_bc_object->dataframe_network)[i] =
+        std::get<2>(process_data_.py_bc_object->dataframe_network)[i] =
             x[Tout_nodes_id[i]];
     }
     // Tout transfer to Python
-    auto const tespy_result = _process_data.py_bc_object->tespyThermalSolver(
-        std::get<0>(_process_data.py_bc_object->dataframe_network),
-        std::get<1>(_process_data.py_bc_object->dataframe_network),
-        std::get<2>(_process_data.py_bc_object->dataframe_network));
-    if (!_process_data.py_bc_object->isOverriddenTespyThermal())
+    auto const tespy_result = process_data_.py_bc_object->tespyThermalSolver(
+        std::get<0>(process_data_.py_bc_object->dataframe_network),
+        std::get<1>(process_data_.py_bc_object->dataframe_network),
+        std::get<2>(process_data_.py_bc_object->dataframe_network));
+    if (!process_data_.py_bc_object->isOverriddenTespyThermal())
     {
         DBUG(
             "Method `tespyThermalSolver' not overridden in Python "
@@ -256,7 +256,7 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
 
     // update the T_in
     for (std::size_t i = 0; i < n_bc_nodes; i++)
-        std::get<1>(_process_data.py_bc_object->dataframe_network)[i] =
+        std::get<1>(process_data_.py_bc_object->dataframe_network)[i] =
             cur_Tin[i];
 
     auto const tespy_has_converged = std::get<1>(tespy_result);
@@ -271,9 +271,9 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
     std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes)
 {
     const int process_id = 0;
-    auto& bcs = _boundary_conditions[process_id];
+    auto& bcs = boundary_conditions_[process_id];
 
-    int const n_BHEs = static_cast<int>(_process_data._vec_BHE_property.size());
+    int const n_BHEs = static_cast<int>(process_data_.vec_BHE_property_.size());
 
     // for each BHE
     for (int bhe_i = 0; bhe_i < n_BHEs; bhe_i++)
@@ -311,8 +311,8 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         }
         auto get_global_index =
             [&](std::size_t const node_id, int const component) {
-                return _local_to_global_index_map->getGlobalIndex(
-                    {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
+                return local_to_global_index_map_->getGlobalIndex(
+                    {mesh_.getID(), MeshLib::MeshItemType::Node, node_id},
                     variable_id, component);
             };
 
@@ -337,7 +337,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                 // call BHEPythonBoundarycondition
                 {
 #ifdef OGS_USE_PYTHON
-                    if (_process_data.py_bc_object)  // the bc object exist
+                    if (process_data_.py_bc_object)  // the bc object exist
                     {
                         // apply the customized top, inflow BC.
                         bcs.addBoundaryCondition(
@@ -347,7 +347,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                                         bc_top_node_id, bc_bottom_node_id,
                                         in_out_component_id.first)),
                                 bhe,
-                                *(_process_data.py_bc_object)));
+                                *(process_data_.py_bc_object)));
                     }
                     else
                     {
@@ -394,7 +394,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
 
             }
         };
-        visit(createBCs, _process_data._vec_BHE_property[bhe_i]);
+        visit(createBCs, process_data_.vec_BHE_property_[bhe_i]);
     }
 }
 }  // namespace HeatTransportBHE

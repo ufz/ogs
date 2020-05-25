@@ -41,10 +41,10 @@ HTProcess::HTProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
-      _process_data(std::move(process_data)),
-      _surfaceflux(std::move(surfaceflux)),
-      _heat_transport_process_id(heat_transport_process_id),
-      _hydraulic_process_id(hydraulic_process_id)
+      process_data_(std::move(process_data)),
+      surfaceflux_(std::move(surfaceflux)),
+      heat_transport_process_id_(heat_transport_process_id),
+      hydraulic_process_id_(hydraulic_process_id)
 {
 }
 
@@ -60,26 +60,26 @@ void HTProcess::initializeConcreteProcess(
     const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
-            pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order, _process_data);
+            pv.getShapeFunctionOrder(), local_assemblers_,
+            mesh.isAxiallySymmetric(), integration_order, process_data_);
     }
     else
     {
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
-            pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order, _process_data,
-            _heat_transport_process_id, _hydraulic_process_id);
+            pv.getShapeFunctionOrder(), local_assemblers_,
+            mesh.isAxiallySymmetric(), integration_order, process_data_,
+            heat_transport_process_id_, hydraulic_process_id_);
     }
 
-    _secondary_variables.addSecondaryVariable(
+    secondary_variables_.addSecondaryVariable(
         "darcy_velocity",
         makeExtrapolator(mesh.getDimension(), getExtrapolator(),
-                         _local_assemblers,
+                         local_assemblers_,
                          &HTLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
@@ -91,14 +91,14 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         DBUG("Assemble HTProcess.");
-        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*local_to_global_index_map_);
     }
     else
     {
-        if (process_id == _heat_transport_process_id)
+        if (process_id == heat_transport_process_id_)
         {
             DBUG(
                 "Assemble the equations of heat transport process within "
@@ -111,16 +111,16 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
                 "fluid flow process within HTProcess.");
         }
         setCoupledSolutionsOfPreviousTimeStep();
-        dof_tables.emplace_back(*_local_to_global_index_map);
-        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(*local_to_global_index_map_);
+        dof_tables.emplace_back(*local_to_global_index_map_);
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b, coupled_solutions_);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
@@ -133,23 +133,23 @@ void HTProcess::assembleWithJacobianConcreteProcess(
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
-    if (!_use_monolithic_scheme)
+    if (!use_monolithic_scheme_)
     {
         setCoupledSolutionsOfPreviousTimeStep();
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(std::ref(*local_to_global_index_map_));
     }
     else
     {
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(std::ref(*local_to_global_index_map_));
+        dof_tables.emplace_back(std::ref(*local_to_global_index_map_));
     }
 
     // Call global assembler for each local assembly item.
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
+        local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, coupled_solutions_);
 }
 
 void HTProcess::preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
@@ -159,24 +159,24 @@ void HTProcess::preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
 {
     assert(process_id < 2);
 
-    if (_use_monolithic_scheme)
+    if (use_monolithic_scheme_)
     {
         return;
     }
 
-    if (!_xs_previous_timestep[process_id])
+    if (!xs_previous_timestep_[process_id])
     {
-        _xs_previous_timestep[process_id] =
+        xs_previous_timestep_[process_id] =
             MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
                 *x[process_id]);
     }
     else
     {
-        auto& x0 = *_xs_previous_timestep[process_id];
+        auto& x0 = *xs_previous_timestep_[process_id];
         MathLib::LinAlg::copy(*x[process_id], x0);
     }
 
-    auto& x0 = *_xs_previous_timestep[process_id];
+    auto& x0 = *xs_previous_timestep_[process_id];
     MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
@@ -188,24 +188,24 @@ void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HTLocalAssemblerInterface::setStaggeredCoupledSolutions,
-        _local_assemblers, pv.getActiveElementIDs(), _coupled_solutions);
+        local_assemblers_, pv.getActiveElementIDs(), coupled_solutions_);
 }
 
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
 HTProcess::getDOFTableForExtrapolatorData() const
 {
-    if (!_use_monolithic_scheme)
+    if (!use_monolithic_scheme_)
     {
         // For single-variable-single-component processes reuse the existing DOF
         // table.
         const bool manage_storage = false;
-        return std::make_tuple(_local_to_global_index_map.get(),
+        return std::make_tuple(local_to_global_index_map_.get(),
                                manage_storage);
     }
 
     // Otherwise construct a new DOF table.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
-        *_mesh_subset_all_nodes};
+        *mesh_subset_all_nodes_};
 
     const bool manage_storage = true;
     return std::make_tuple(new NumLib::LocalToGlobalIndexMap(
@@ -218,7 +218,7 @@ HTProcess::getDOFTableForExtrapolatorData() const
 void HTProcess::setCoupledSolutionsOfPreviousTimeStepPerProcess(
     const int process_id)
 {
-    const auto& x_t0 = _xs_previous_timestep[process_id];
+    const auto& x_t0 = xs_previous_timestep_[process_id];
     if (x_t0 == nullptr)
     {
         OGS_FATAL(
@@ -228,14 +228,14 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStepPerProcess(
             "HTProcess::preTimestepConcreteProcess) ");
     }
 
-    _coupled_solutions->coupled_xs_t0[process_id] = x_t0.get();
+    coupled_solutions_->coupled_xs_t0[process_id] = x_t0.get();
 }
 
 void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
 {
-    _coupled_solutions->coupled_xs_t0.resize(2);
-    setCoupledSolutionsOfPreviousTimeStepPerProcess(_heat_transport_process_id);
-    setCoupledSolutionsOfPreviousTimeStepPerProcess(_hydraulic_process_id);
+    coupled_solutions_->coupled_xs_t0.resize(2);
+    setCoupledSolutionsOfPreviousTimeStepPerProcess(heat_transport_process_id_);
+    setCoupledSolutionsOfPreviousTimeStepPerProcess(hydraulic_process_id_);
 }
 
 Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
@@ -246,13 +246,13 @@ Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
     // fetch local_x from primary variable
     std::vector<GlobalIndexType> indices_cache;
     auto const r_c_indices = NumLib::getRowColumnIndices(
-        element_id, *_local_to_global_index_map, indices_cache);
+        element_id, *local_to_global_index_map_, indices_cache);
     std::vector<std::vector<GlobalIndexType>> indices_of_all_coupled_processes{
         x.size(), r_c_indices.rows};
     auto const local_x =
         getCoupledLocalSolutions(x, indices_of_all_coupled_processes);
 
-    return _local_assemblers[element_id]->getFlux(p, t, local_x);
+    return local_assemblers_[element_id]->getFlux(p, t, local_x);
 }
 
 // this is almost a copy of the implementation in the GroundwaterFlow
@@ -262,27 +262,27 @@ void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                             int const process_id)
 {
     // For the monolithic scheme, process_id is always zero.
-    if (_use_monolithic_scheme && process_id != 0)
+    if (use_monolithic_scheme_ && process_id != 0)
     {
         OGS_FATAL(
             "The condition of process_id = 0 must be satisfied for "
             "monolithic HTProcess, which is a single process.");
     }
-    if (!_use_monolithic_scheme && process_id != _hydraulic_process_id)
+    if (!use_monolithic_scheme_ && process_id != hydraulic_process_id_)
     {
         DBUG("This is the thermal part of the staggered HTProcess.");
         return;
     }
-    if (!_surfaceflux)  // computing the surfaceflux is optional
+    if (!surfaceflux_)  // computing the surfaceflux is optional
     {
         return;
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
+    surfaceflux_->integrate(x, t, *this, process_id, integration_order_, mesh_,
                             pv.getActiveElementIDs());
-    _surfaceflux->save(t);
+    surfaceflux_->save(t);
 }
 }  // namespace HT
 }  // namespace ProcessLib

@@ -29,21 +29,21 @@ class IsCrackTip
 {
 public:
     explicit IsCrackTip(MeshLib::Mesh const& mesh)
-        : _mesh(mesh), _fracture_element_dim(mesh.getDimension() - 1)
+        : mesh_(mesh), fracture_element_dim_(mesh.getDimension() - 1)
     {
-        _is_internal_node.resize(mesh.getNumberOfNodes(), true);
+        is_internal_node_.resize(mesh.getNumberOfNodes(), true);
 
         MeshLib::NodeSearch nodeSearch(mesh);
         nodeSearch.searchBoundaryNodes();
         for (auto i : nodeSearch.getSearchedNodeIDs())
         {
-            _is_internal_node[i] = false;
+            is_internal_node_[i] = false;
         }
     }
 
     bool operator()(MeshLib::Node const& node) const
     {
-        if (!_is_internal_node[node.getID()] || !_mesh.isBaseNode(node.getID()))
+        if (!is_internal_node_[node.getID()] || !mesh_.isBaseNode(node.getID()))
         {
             return false;
         }
@@ -51,7 +51,7 @@ public:
         unsigned n_connected_fracture_elements = 0;
         for (MeshLib::Element const* e : node.getElements())
         {
-            if (e->getDimension() == _fracture_element_dim)
+            if (e->getDimension() == fracture_element_dim_)
             {
                 n_connected_fracture_elements++;
             }
@@ -62,9 +62,9 @@ public:
     }
 
 private:
-    MeshLib::Mesh const& _mesh;
-    unsigned const _fracture_element_dim;
-    std::vector<bool> _is_internal_node;
+    MeshLib::Mesh const& mesh_;
+    unsigned const fracture_element_dim_;
+    std::vector<bool> is_internal_node_;
 };
 
 void findFracutreIntersections(

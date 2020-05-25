@@ -20,13 +20,13 @@ VolumetricSourceTerm::VolumetricSourceTerm(
     unsigned const integration_order, unsigned const shapefunction_order,
     ParameterLib::Parameter<double> const& volumetric_source_term)
     : SourceTerm(std::move(source_term_dof_table)),
-      _volumetric_source_term(volumetric_source_term)
+      volumetric_source_term_(volumetric_source_term)
 {
     ProcessLib::createLocalAssemblers<VolumetricSourceTermLocalAssembler>(
         source_term_mesh.getDimension(), source_term_mesh.getElements(),
-        *_source_term_dof_table, shapefunction_order, _local_assemblers,
+        *source_term_dof_table_, shapefunction_order, local_assemblers_,
         source_term_mesh.isAxiallySymmetric(), integration_order,
-        _volumetric_source_term);
+        volumetric_source_term_);
 }
 
 void VolumetricSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
@@ -38,7 +38,7 @@ void VolumetricSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberOnDereferenced(
         &VolumetricSourceTermLocalAssemblerInterface::integrate,
-        _local_assemblers, *_source_term_dof_table, t, b);
+        local_assemblers_, *source_term_dof_table_, t, b);
 }
 
 }   // namespace ProcessLib

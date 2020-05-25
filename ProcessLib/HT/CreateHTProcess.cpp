@@ -102,8 +102,8 @@ std::unique_ptr<Process> createHTProcess(
     }
     // Process IDs, which are set according to the appearance order of the
     // process variables.
-    const int _heat_transport_process_id = 0;
-    const int _hydraulic_process_id = 1;
+    const int heat_transport_process_id_ = 0;
+    const int hydraulic_process_id_ = 1;
 
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
@@ -182,7 +182,7 @@ std::unique_ptr<Process> createHTProcess(
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
         use_monolithic_scheme, std::move(surfaceflux),
-        _heat_transport_process_id, _hydraulic_process_id);
+        heat_transport_process_id_, hydraulic_process_id_);
 }
 
 }  // namespace HT

@@ -51,7 +51,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
-      _process_data(std::move(process_data))
+      process_data_(std::move(process_data))
 {
     INFO("[LIE/HM] looking for fracture elements in the given mesh");
     std::vector<int> vec_fracture_mat_IDs;
@@ -64,27 +64,27 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     std::vector<std::pair<std::size_t, std::vector<int>>>
         vec_junction_nodeID_matIDs;
     getFractureMatrixDataInMesh(
-        mesh, _vec_matrix_elements, vec_fracture_mat_IDs,
+        mesh, vec_matrix_elements_, vec_fracture_mat_IDs,
         vec_vec_fracture_elements, vec_vec_fracture_matrix_elements,
         vec_vec_fracture_nodes, vec_branch_nodeID_matIDs,
         vec_junction_nodeID_matIDs);
-    _vec_fracture_elements.insert(_vec_fracture_elements.begin(),
+    vec_fracture_elements_.insert(vec_fracture_elements_.begin(),
                                   vec_vec_fracture_elements[0].begin(),
                                   vec_vec_fracture_elements[0].end());
-    _vec_fracture_matrix_elements.insert(
-        _vec_fracture_matrix_elements.begin(),
+    vec_fracture_matrix_elements_.insert(
+        vec_fracture_matrix_elements_.begin(),
         vec_vec_fracture_matrix_elements[0].begin(),
         vec_vec_fracture_matrix_elements[0].end());
-    _vec_fracture_nodes.insert(_vec_fracture_nodes.begin(),
+    vec_fracture_nodes_.insert(vec_fracture_nodes_.begin(),
                                vec_vec_fracture_nodes[0].begin(),
                                vec_vec_fracture_nodes[0].end());
 
-    if (!_vec_fracture_elements.empty())
+    if (!vec_fracture_elements_.empty())
     {
         // set fracture property assuming a fracture forms a straight line
         setFractureProperty(GlobalDim,
-                            *_vec_fracture_elements[0],
-                            *_process_data.fracture_property);
+                            *vec_fracture_elements_[0],
+                            *process_data_.fracture_property);
     }
 
     //
@@ -94,9 +94,9 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     // and was removed due to lack of applications.
     //
 
-    if (!_process_data.deactivate_matrix_in_flow)
+    if (!process_data_.deactivate_matrix_in_flow)
     {
-        _process_data.p_element_status =
+        process_data_.p_element_status =
             std::make_unique<MeshLib::ElementStatus>(&mesh);
     }
     else
@@ -121,14 +121,14 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
                 vec_p_inactive_matIDs.push_back(matID);
             }
         }
-        _process_data.p_element_status =
+        process_data_.p_element_status =
             std::make_unique<MeshLib::ElementStatus>(&mesh,
                                                      vec_p_inactive_matIDs);
 
         const int monolithic_process_id = 0;
         ProcessVariable const& pv_p =
             getProcessVariables(monolithic_process_id)[0];
-        _process_data.p0 = &pv_p.getInitialCondition();
+        process_data_.p0 = &pv_p.getInitialCondition();
     }
 }
 
@@ -139,21 +139,21 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     // prepare mesh subsets to define DoFs
     //------------------------------------------------------------
     // for extrapolation
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    mesh_subset_all_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, mesh_.getNodes());
     // pressure
-    _mesh_nodes_p = MeshLib::getBaseNodes(
-        _process_data.p_element_status->getActiveElements());
-    _mesh_subset_nodes_p =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh_nodes_p);
+    mesh_nodes_p_ = MeshLib::getBaseNodes(
+        process_data_.p_element_status->getActiveElements());
+    mesh_subset_nodes_p_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, mesh_nodes_p_);
     // regular u
-    _mesh_subset_matrix_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
-    if (!_vec_fracture_nodes.empty())
+    mesh_subset_matrix_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(mesh_, mesh_.getNodes());
+    if (!vec_fracture_nodes_.empty())
     {
         // u jump
-        _mesh_subset_fracture_nodes =
-            std::make_unique<MeshLib::MeshSubset>(_mesh, _vec_fracture_nodes);
+        mesh_subset_fracture_nodes_ =
+            std::make_unique<MeshLib::MeshSubset>(mesh_, vec_fracture_nodes_);
     }
 
     // Collect the mesh subsets in a vector.
@@ -162,40 +162,40 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     // pressure
     vec_n_components.push_back(1);
-    all_mesh_subsets.emplace_back(*_mesh_subset_nodes_p);
-    if (!_process_data.deactivate_matrix_in_flow)
+    all_mesh_subsets.emplace_back(*mesh_subset_nodes_p_);
+    if (!process_data_.deactivate_matrix_in_flow)
     {
-        vec_var_elements.push_back(&_mesh.getElements());
+        vec_var_elements.push_back(&mesh_.getElements());
     }
     else
     {
         // TODO set elements including active nodes for pressure.
         // cannot use ElementStatus
-        vec_var_elements.push_back(&_vec_fracture_matrix_elements);
+        vec_var_elements.push_back(&vec_fracture_matrix_elements_);
     }
     // regular displacement
     vec_n_components.push_back(GlobalDim);
     std::generate_n(std::back_inserter(all_mesh_subsets), GlobalDim,
-                    [&]() { return *_mesh_subset_matrix_nodes; });
-    vec_var_elements.push_back(&_vec_matrix_elements);
-    if (!_vec_fracture_nodes.empty())
+                    [&]() { return *mesh_subset_matrix_nodes_; });
+    vec_var_elements.push_back(&vec_matrix_elements_);
+    if (!vec_fracture_nodes_.empty())
     {
         // displacement jump
         vec_n_components.push_back(GlobalDim);
         std::generate_n(std::back_inserter(all_mesh_subsets), GlobalDim,
-                        [&]() { return *_mesh_subset_fracture_nodes; });
-        vec_var_elements.push_back(&_vec_fracture_matrix_elements);
+                        [&]() { return *mesh_subset_fracture_nodes_; });
+        vec_var_elements.push_back(&vec_fracture_matrix_elements_);
     }
 
     INFO("[LIE/HM] creating a DoF table");
-    _local_to_global_index_map =
+    local_to_global_index_map_ =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets),
             vec_n_components,
             vec_var_elements,
             NumLib::ComponentOrder::BY_COMPONENT);
 
-    DBUG("created {:d} DoF", _local_to_global_index_map->size());
+    DBUG("created {:d} DoF", local_to_global_index_map_->size());
 }
 
 template <int GlobalDim>
@@ -215,32 +215,32 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         // use displacment process variable for shapefunction order
         getProcessVariables(
             monolithic_process_id)[1].get().getShapeFunctionOrder(),
-            _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-            _process_data);
+            local_assemblers_, mesh.isAxiallySymmetric(), integration_order,
+            process_data_);
 
     auto mesh_prop_sigma_xx = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_xx",
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_sigma_xx->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_xx = mesh_prop_sigma_xx;
+    process_data_.mesh_prop_stress_xx = mesh_prop_sigma_xx;
 
     auto mesh_prop_sigma_yy = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_yy",
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_sigma_yy->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_yy = mesh_prop_sigma_yy;
+    process_data_.mesh_prop_stress_yy = mesh_prop_sigma_yy;
 
     auto mesh_prop_sigma_zz = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_zz",
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_sigma_zz->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_zz = mesh_prop_sigma_zz;
+    process_data_.mesh_prop_stress_zz = mesh_prop_sigma_zz;
 
     auto mesh_prop_sigma_xy = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_xy",
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_sigma_xy->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_xy = mesh_prop_sigma_xy;
+    process_data_.mesh_prop_stress_xy = mesh_prop_sigma_xy;
 
     if (GlobalDim == 3)
     {
@@ -248,38 +248,38 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "stress_xz",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_sigma_xz->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_stress_xz = mesh_prop_sigma_xz;
+        process_data_.mesh_prop_stress_xz = mesh_prop_sigma_xz;
 
         auto mesh_prop_sigma_yz = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "stress_yz",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_sigma_yz->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_stress_yz = mesh_prop_sigma_yz;
+        process_data_.mesh_prop_stress_yz = mesh_prop_sigma_yz;
     }
 
     auto mesh_prop_epsilon_xx = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "strain_xx",
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_epsilon_xx->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_xx = mesh_prop_epsilon_xx;
+    process_data_.mesh_prop_strain_xx = mesh_prop_epsilon_xx;
 
     auto mesh_prop_epsilon_yy = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "strain_yy",
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_epsilon_yy->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_yy = mesh_prop_epsilon_yy;
+    process_data_.mesh_prop_strain_yy = mesh_prop_epsilon_yy;
 
     auto mesh_prop_epsilon_zz = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "strain_zz",
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_epsilon_zz->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_zz = mesh_prop_epsilon_zz;
+    process_data_.mesh_prop_strain_zz = mesh_prop_epsilon_zz;
 
     auto mesh_prop_epsilon_xy = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "strain_xy",
         MeshLib::MeshItemType::Cell, 1);
     mesh_prop_epsilon_xy->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_xy = mesh_prop_epsilon_xy;
+    process_data_.mesh_prop_strain_xy = mesh_prop_epsilon_xy;
 
     if (GlobalDim == 3)
     {
@@ -287,28 +287,28 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "strain_xz",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_epsilon_xz->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_strain_xz = mesh_prop_epsilon_xz;
+        process_data_.mesh_prop_strain_xz = mesh_prop_epsilon_xz;
 
         auto mesh_prop_epsilon_yz = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "strain_yz",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_epsilon_yz->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_strain_yz = mesh_prop_epsilon_yz;
+        process_data_.mesh_prop_strain_yz = mesh_prop_epsilon_yz;
     }
 
     auto mesh_prop_velocity = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "velocity",
         MeshLib::MeshItemType::Cell, 3);
     mesh_prop_velocity->resize(mesh.getNumberOfElements() * 3);
-    _process_data.mesh_prop_velocity = mesh_prop_velocity;
+    process_data_.mesh_prop_velocity = mesh_prop_velocity;
 
-    if (!_vec_fracture_elements.empty())
+    if (!vec_fracture_elements_.empty())
     {
         auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "levelset1",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_levelset->resize(mesh.getNumberOfElements());
-        for (MeshLib::Element const* e : _mesh.getElements())
+        for (MeshLib::Element const* e : mesh_.getElements())
         {
             if (e->getDimension() < GlobalDim)
             {
@@ -316,7 +316,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             }
 
             std::vector<FractureProperty*> fracture_props(
-                {_process_data.fracture_property.get()});
+                {process_data_.fracture_property.get()});
             std::vector<JunctionProperty*> junction_props;
             std::unordered_map<int, int> fracID_to_local({{0, 0}});
             std::vector<double> levelsets = uGlobalEnrichments(
@@ -333,8 +333,8 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "w_s",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_w_s->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_w_n = mesh_prop_w_n;
-        _process_data.mesh_prop_w_s = mesh_prop_w_s;
+        process_data_.mesh_prop_w_n = mesh_prop_w_n;
+        process_data_.mesh_prop_w_s = mesh_prop_w_s;
 
         auto mesh_prop_b = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "aperture",
@@ -345,8 +345,8 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         {
             OGS_FATAL("Could not access MaterialIDs property from mesh.");
         }
-        auto const& frac = _process_data.fracture_property;
-        for (MeshLib::Element const* e : _mesh.getElements())
+        auto const& frac = process_data_.fracture_property;
+        for (MeshLib::Element const* e : mesh_.getElements())
         {
             if (e->getDimension() == GlobalDim)
             {
@@ -363,20 +363,20 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
                     .getNodalValuesOnElement(*e, /*time independent*/ 0)
                     .mean();
         }
-        _process_data.mesh_prop_b = mesh_prop_b;
+        process_data_.mesh_prop_b = mesh_prop_b;
 
         auto mesh_prop_k_f = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "k_f",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_k_f->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_k_f = mesh_prop_k_f;
+        process_data_.mesh_prop_k_f = mesh_prop_k_f;
 
         auto mesh_prop_fracture_stress_shear =
             MeshLib::getOrCreateMeshProperty<double>(
                 const_cast<MeshLib::Mesh&>(mesh), "f_stress_s",
                 MeshLib::MeshItemType::Cell, 1);
         mesh_prop_fracture_stress_shear->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_fracture_stress_shear =
+        process_data_.mesh_prop_fracture_stress_shear =
             mesh_prop_fracture_stress_shear;
 
         auto mesh_prop_fracture_stress_normal =
@@ -384,7 +384,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
                 const_cast<MeshLib::Mesh&>(mesh), "f_stress_n",
                 MeshLib::MeshItemType::Cell, 1);
         mesh_prop_fracture_stress_normal->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_fracture_stress_normal =
+        process_data_.mesh_prop_fracture_stress_normal =
             mesh_prop_fracture_stress_normal;
 
         auto mesh_prop_fracture_shear_failure =
@@ -392,20 +392,20 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
                 const_cast<MeshLib::Mesh&>(mesh), "f_shear_failure",
                 MeshLib::MeshItemType::Cell, 1);
         mesh_prop_fracture_shear_failure->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_fracture_shear_failure =
+        process_data_.mesh_prop_fracture_shear_failure =
             mesh_prop_fracture_shear_failure;
 
         auto mesh_prop_nodal_w = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "nodal_w",
             MeshLib::MeshItemType::Node, GlobalDim);
         mesh_prop_nodal_w->resize(mesh.getNumberOfNodes() * GlobalDim);
-        _process_data.mesh_prop_nodal_w = mesh_prop_nodal_w;
+        process_data_.mesh_prop_nodal_w = mesh_prop_nodal_w;
 
         auto mesh_prop_nodal_b = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "nodal_aperture",
             MeshLib::MeshItemType::Node, 1);
         mesh_prop_nodal_b->resize(mesh.getNumberOfNodes());
-        _process_data.mesh_prop_nodal_b = mesh_prop_nodal_b;
+        process_data_.mesh_prop_nodal_b = mesh_prop_nodal_b;
 
         if (GlobalDim == 3)
         {
@@ -413,7 +413,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
                 const_cast<MeshLib::Mesh&>(mesh), "w_s2",
                 MeshLib::MeshItemType::Cell, 1);
             mesh_prop_w_s2->resize(mesh.getNumberOfElements());
-            _process_data.mesh_prop_w_s2 = mesh_prop_w_s2;
+            process_data_.mesh_prop_w_s2 = mesh_prop_w_s2;
 
             auto mesh_prop_fracture_stress_shear2 =
                 MeshLib::getOrCreateMeshProperty<double>(
@@ -421,7 +421,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
                     MeshLib::MeshItemType::Cell, 1);
             mesh_prop_fracture_stress_shear2->resize(
                 mesh.getNumberOfElements());
-            _process_data.mesh_prop_fracture_stress_shear2 =
+            process_data_.mesh_prop_fracture_stress_shear2 =
                 mesh_prop_fracture_stress_shear2;
         }
 
@@ -429,27 +429,27 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
             MeshLib::MeshItemType::Node, 1);
         mesh_prop_nodal_p->resize(mesh.getNumberOfNodes());
-        _process_data.mesh_prop_nodal_p = mesh_prop_nodal_p;
+        process_data_.mesh_prop_nodal_p = mesh_prop_nodal_p;
 
-        _process_data.mesh_prop_nodal_forces =
+        process_data_.mesh_prop_nodal_forces =
             MeshLib::getOrCreateMeshProperty<double>(
                 const_cast<MeshLib::Mesh&>(mesh), "NodalForces",
                 MeshLib::MeshItemType::Node, GlobalDim);
-        assert(_process_data.mesh_prop_nodal_forces->size() ==
+        assert(process_data_.mesh_prop_nodal_forces->size() ==
                GlobalDim * mesh.getNumberOfNodes());
 
-        _process_data.mesh_prop_nodal_forces_jump =
+        process_data_.mesh_prop_nodal_forces_jump =
             MeshLib::getOrCreateMeshProperty<double>(
                 const_cast<MeshLib::Mesh&>(mesh), "NodalForcesJump",
                 MeshLib::MeshItemType::Node, GlobalDim);
-        assert(_process_data.mesh_prop_nodal_forces_jump->size() ==
+        assert(process_data_.mesh_prop_nodal_forces_jump->size() ==
                GlobalDim * mesh.getNumberOfNodes());
 
-        _process_data.mesh_prop_hydraulic_flow =
+        process_data_.mesh_prop_hydraulic_flow =
             MeshLib::getOrCreateMeshProperty<double>(
                 const_cast<MeshLib::Mesh&>(mesh), "HydraulicFlow",
                 MeshLib::MeshItemType::Node, 1);
-        assert(_process_data.mesh_prop_hydraulic_flow->size() ==
+        assert(process_data_.mesh_prop_hydraulic_flow->size() ==
                mesh.getNumberOfNodes());
     }
 }
@@ -468,7 +468,7 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
 
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::postTimestep,
-            _local_assemblers, pv.getActiveElementIDs(), dof_table,
+            local_assemblers_, pv.getActiveElementIDs(), dof_table,
             *x[process_id], t, dt);
     }
 
@@ -500,7 +500,7 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
         this->getProcessVariables(monolithic_process_id)[g_variable_id];
     auto const num_comp = pv_g.getNumberOfComponents();
     auto& mesh_prop_g = *MeshLib::getOrCreateMeshProperty<double>(
-        _mesh, pv_g.getName(), MeshLib::MeshItemType::Node, num_comp);
+        mesh_, pv_g.getName(), MeshLib::MeshItemType::Node, num_comp);
     for (int component_id = 0; component_id < num_comp; ++component_id)
     {
         auto const& mesh_subset = dof_table.getMeshSubset(
@@ -519,10 +519,10 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
     }
 
     // compute nodal w and aperture
-    auto const& R = _process_data.fracture_property->R;
-    auto const& b0 = _process_data.fracture_property->aperture0;
-    MeshLib::PropertyVector<double>& vec_w = *_process_data.mesh_prop_nodal_w;
-    MeshLib::PropertyVector<double>& vec_b = *_process_data.mesh_prop_nodal_b;
+    auto const& R = process_data_.fracture_property->R;
+    auto const& b0 = process_data_.fracture_property->aperture0;
+    MeshLib::PropertyVector<double>& vec_w = *process_data_.mesh_prop_nodal_w;
+    MeshLib::PropertyVector<double>& vec_b = *process_data_.mesh_prop_nodal_b;
 
     auto compute_nodal_aperture = [&](std::size_t const node_id,
                                       double const w_n) {
@@ -541,7 +541,7 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
 
     Eigen::VectorXd g(GlobalDim);
     Eigen::VectorXd w(GlobalDim);
-    for (MeshLib::Node const* node : _vec_fracture_nodes)
+    for (MeshLib::Node const* node : vec_fracture_nodes_)
     {
         auto const node_id = node->getID();
         g.setZero();
@@ -575,11 +575,11 @@ void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
     DBUG("Assemble HydroMechanicsProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*local_to_global_index_map_)};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, xdot, process_id, M, K, b, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
+        dof_table, t, dt, x, xdot, process_id, M, K, b, coupled_solutions_);
 }
 
 template <int GlobalDim>
@@ -595,20 +595,20 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
 
     // Call global assembler for each local assembly item.
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+       dof_table = {std::ref(*local_to_global_index_map_)};
     GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
+        local_assemblers_, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac, coupled_solutions_);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
         transformVariableFromGlobalVector(b, variable_id,
-                                          *_local_to_global_index_map,
+                                          *local_to_global_index_map_,
                                           output_vector, std::negate<double>());
     };
-    copyRhs(0, *_process_data.mesh_prop_hydraulic_flow);
-    copyRhs(1, *_process_data.mesh_prop_nodal_forces);
-    copyRhs(2, *_process_data.mesh_prop_nodal_forces_jump);
+    copyRhs(0, *process_data_.mesh_prop_hydraulic_flow);
+    copyRhs(1, *process_data_.mesh_prop_nodal_forces);
+    copyRhs(2, *process_data_.mesh_prop_nodal_forces_jump);
 }
 
 template <int GlobalDim>
@@ -621,8 +621,8 @@ void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &HydroMechanicsLocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+        &HydroMechanicsLocalAssemblerInterface::preTimestep, local_assemblers_,
+        pv.getActiveElementIDs(), *local_to_global_index_map_, *x[process_id],
         t, dt);
 }
 
