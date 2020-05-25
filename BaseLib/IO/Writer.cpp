@@ -26,18 +26,18 @@ namespace IO
 
 Writer::Writer()
 {
-    _out.precision(std::numeric_limits<double>::digits10);
+    out_.precision(std::numeric_limits<double>::digits10);
 }
 
 std::string Writer::writeToString()
 {
     // Empty stream and clear error states.
-    _out.str("");
-    _out.clear();
+    out_.str("");
+    out_.clear();
 
     if (this->write())
     {
-        return _out.str();
+        return out_.str();
     }
 
     return std::string("");
@@ -68,7 +68,7 @@ int Writer::writeToFile(std::string const& filename)
 
 void Writer::setPrecision(unsigned int precision)
 {
-    _out.precision(precision);
+    out_.precision(precision);
 }
 }  // namespace IO
 }  // namespace BaseLib
