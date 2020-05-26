@@ -22,7 +22,7 @@
 #include "Exponential.h"
 #include "IdealGasLaw.h"
 #include "Linear.h"
-#include "ParameterProperty.h"
+#include "Parameter.h"
 #include "PorosityFromMassBalance.h"
 #include "RelativePermeability/RelPermBrooksCorey.h"
 #include "RelativePermeability/RelPermLiakopoulos.h"

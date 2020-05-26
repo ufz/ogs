@@ -22,7 +22,7 @@ class ConfigTree;
 
 namespace MaterialPropertyLib
 {
-class ParameterProperty;
+class Parameter;
 }
 
 namespace ParameterLib
@@ -32,7 +32,7 @@ struct ParameterBase;
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<ParameterProperty> createParameterProperty(
+std::unique_ptr<Parameter> createParameterProperty(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         parameters);

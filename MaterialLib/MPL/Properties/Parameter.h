@@ -19,11 +19,11 @@ namespace MaterialPropertyLib
 /// The parameter property class. The property reads the value from a parameter.
 /// The current implementation accepts only the double datatype defined in
 /// PropertyDataType.
-class ParameterProperty final : public Property
+class Parameter final : public Property
 {
 public:
-    ParameterProperty(std::string name,
-                      ParameterLib::Parameter<double> const& parameter);
+    Parameter(std::string name,
+              ParameterLib::Parameter<double> const& parameter);
 
     /// This method computes the value of a property depending linearly on
     /// the value of the given primary variable.

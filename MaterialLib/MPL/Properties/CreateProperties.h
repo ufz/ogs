@@ -23,7 +23,7 @@
 #include "CreateExponential.h"
 #include "CreateIdealGasLaw.h"
 #include "CreateLinear.h"
-#include "CreateParameterProperty.h"
+#include "CreateParameter.h"
 #include "CreatePermeabilityOrthotropicPowerLaw.h"
 #include "CreatePorosityFromMassBalance.h"
 #include "CreateSaturationDependentSwelling.h"
