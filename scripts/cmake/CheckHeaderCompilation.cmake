@@ -52,7 +52,10 @@ function(_check_header_compilation TARGET)
     # HACK, maybe add Gui Widgets Xml XmlPatterns as well
     if(OGS_BUILD_GUI)
         set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES}
-            ${Qt5Core_INCLUDE_DIRS})
+            ${Qt5Core_INCLUDE_DIRS}
+            ${Qt5Gui_INCLUDE_DIRS}
+            ${Qt5Widgets_INCLUDE_DIRS}
+        )
     endif()
     set(CMAKE_REQUIRED_DEFINITIONS ${DEFS_CLEANED})
 
@@ -62,6 +65,15 @@ function(_check_header_compilation TARGET)
             continue()
         endif()
         if("${FILE}" MATCHES ".*-impl\\.h") # Ignore *-impl.h files
+            continue()
+        endif()
+        if("${FILE}" MATCHES ".*Dialog\\.h") # Ignore Qt Dialog files
+            continue()
+        endif()
+        if("${FILE}" MATCHES ".*Widget\\.h") # Ignore Qt Widget files
+            continue()
+        endif()
+        if("${FILE}" MATCHES ".*Window\\.h") # Ignore Qt Window files
             continue()
         endif()
 
@@ -105,6 +117,16 @@ function(check_header_compilation)
     _check_header_compilation(NumLib)
     _check_header_compilation(ParameterLib)
     _check_header_compilation(ProcessLib)
+    _check_header_compilation(ApplicationsLib)
+    _check_header_compilation(ApplicationsFileIO)
+    _check_header_compilation(DataHolderLib)
+    if(OGS_BUILD_GUI)
+        _check_header_compilation(QtBase)
+        _check_header_compilation(QtDataView)
+        _check_header_compilation(QtDiagramView)
+        # _check_header_compilation(QtStratView) # all fail
+        _check_header_compilation(VtkVis)
+    endif()
 
     if(HEADER_COMPILE_ERROR)
         message(FATAL_ERROR "... header compilation check failed, see CMakeFiles/CMakeError.log for details!")
