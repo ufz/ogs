@@ -12,17 +12,17 @@
 
 #include <gtest/gtest.h>
 
-#include "MaterialLib/MPL/Properties/ExponentialProperty.h"
+#include "MaterialLib/MPL/Properties/Exponential.h"
 
-TEST(MaterialPropertyLib, ExponentialProperty)
+TEST(MaterialPropertyLib, Exponential)
 {
     double const y_ref = 1e-3;
     double const reference_condition = 20.0;
     double const factor = 1 / 75.0;
     MaterialPropertyLib::ExponentData const exp_data{
         MaterialPropertyLib::Variable::temperature, reference_condition, factor};
-    MaterialPropertyLib::ExponentialProperty exp_property{"exponential", y_ref,
-                                                          exp_data};
+    MaterialPropertyLib::Exponential exp_property{"exponential", y_ref,
+                                                  exp_data};
 
     MaterialPropertyLib::VariableArray variable_array;
     variable_array[static_cast<int>(

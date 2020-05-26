@@ -45,16 +45,16 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     }
     if (property_type == "Curve")
     {
-        return createCurveProperty(config, curves);
+        return createCurve(config, curves);
     }
     if (property_type == "Linear")
     {
-        return createLinearProperty(config);
+        return createLinear(config);
     }
 
     if (property_type == "Exponential")
     {
-        return createExponentialProperty(config);
+        return createExponential(config);
     }
 
     if (property_type == "Parameter")

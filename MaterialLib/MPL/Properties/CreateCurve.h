@@ -1,31 +1,36 @@
 /**
  * \file
- * \author Norbert Grunwald
- * \date   Sep 10, 2019
- *
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
+ *
  */
 
 #pragma once
 
+#include <map>
 #include <memory>
+#include <string>
 
 namespace BaseLib
 {
 class ConfigTree;
 }
 
-namespace MaterialPropertyLib
+namespace MathLib
 {
-class LinearProperty;
+class PiecewiseLinearInterpolation;
 }
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<LinearProperty> createLinearProperty(
-    BaseLib::ConfigTree const& config);
+class Curve;
+
+std::unique_ptr<Curve> createCurve(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 }  // namespace MaterialPropertyLib

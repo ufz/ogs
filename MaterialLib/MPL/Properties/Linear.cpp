@@ -10,23 +10,22 @@
 
 #include <numeric>
 
-#include "MaterialLib/MPL/Properties/LinearProperty.h"
+#include "MaterialLib/MPL/Properties/Linear.h"
 
 namespace MaterialPropertyLib
 {
-LinearProperty::LinearProperty(std::string name,
-                               PropertyDataType const& property_reference_value,
-                               std::vector<IndependentVariable> const& vs)
+Linear::Linear(std::string name,
+               PropertyDataType const& property_reference_value,
+               std::vector<IndependentVariable> const& vs)
     : independent_variables_(vs)
 {
     name_ = std::move(name);
     value_ = property_reference_value;
 }
 
-PropertyDataType LinearProperty::value(
-    VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
-    double const /*dt*/) const
+PropertyDataType Linear::value(VariableArray const& variable_array,
+                               ParameterLib::SpatialPosition const& /*pos*/,
+                               double const /*t*/, double const /*dt*/) const
 {
     auto calculate_linearized_ratio = [&variable_array](
                                           double const initial_linearized_ratio,
@@ -47,10 +46,10 @@ PropertyDataType LinearProperty::value(
     return std::get<double>(value_) * linearized_ratio_to_reference_value;
 }
 
-PropertyDataType LinearProperty::dValue(
-    VariableArray const& /*variable_array*/, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
-    double const /*dt*/) const
+PropertyDataType Linear::dValue(VariableArray const& /*variable_array*/,
+                                Variable const primary_variable,
+                                ParameterLib::SpatialPosition const& /*pos*/,
+                                double const /*t*/, double const /*dt*/) const
 {
     auto const independent_variable =
         std::find_if(independent_variables_.begin(),
@@ -65,10 +64,10 @@ PropertyDataType LinearProperty::dValue(
                : decltype(value_){};
 }
 
-PropertyDataType LinearProperty::d2Value(
-    VariableArray const& /*variable_array*/, Variable const /*pv1*/,
-    Variable const /*pv2*/, ParameterLib::SpatialPosition const& /*pos*/,
-    double const /*t*/, double const /*dt*/) const
+PropertyDataType Linear::d2Value(VariableArray const& /*variable_array*/,
+                                 Variable const /*pv1*/, Variable const /*pv2*/,
+                                 ParameterLib::SpatialPosition const& /*pos*/,
+                                 double const /*t*/, double const /*dt*/) const
 {
     return decltype(value_){};
 }

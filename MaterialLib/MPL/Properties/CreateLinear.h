@@ -13,7 +13,6 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 
 namespace BaseLib
 {
@@ -22,18 +21,11 @@ class ConfigTree;
 
 namespace MaterialPropertyLib
 {
-class ParameterProperty;
-}
-
-namespace ParameterLib
-{
-struct ParameterBase;
+class Linear;
 }
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<ParameterProperty> createParameterProperty(
-    BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-        parameters);
+std::unique_ptr<Linear> createLinear(
+    BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib

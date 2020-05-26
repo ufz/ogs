@@ -10,17 +10,17 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "CreateParameterProperty.h"
+#include "CreateParameter.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"
 
-#include "ParameterProperty.h"
+#include "Parameter.h"
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<ParameterProperty> createParameterProperty(
+std::unique_ptr<Parameter> createParameterProperty(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
@@ -38,7 +38,7 @@ std::unique_ptr<ParameterProperty> createParameterProperty(
         config.getConfigParameter<std::string>("parameter_name");
     auto const& parameter = ParameterLib::findParameter<double>(
         parameter_name, parameters, 0, nullptr);
-    return std::make_unique<MaterialPropertyLib::ParameterProperty>(
+    return std::make_unique<MaterialPropertyLib::Parameter>(
         std::move(property_name), parameter);
 }
 }  // namespace MaterialPropertyLib

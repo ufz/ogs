@@ -8,17 +8,17 @@
  *
  */
 
-#include "CreateCurveProperty.h"
+#include "CreateCurve.h"
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
-#include "CurveProperty.h"
+#include "Curve.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<CurveProperty> createCurveProperty(
+std::unique_ptr<Curve> createCurve(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
@@ -31,7 +31,7 @@ std::unique_ptr<CurveProperty> createCurveProperty(
     //! \ogs_file_param{properties__property__name}
     auto property_name = config.peekConfigParameter<std::string>("name");
 
-    DBUG("Create CurveProperty {:s}.", property_name);
+    DBUG("Create Curve {:s}.", property_name);
 
     //! \ogs_file_param{properties__property__Curve__curve}
     auto curve_name = config.getConfigParameter<std::string>("curve");
@@ -48,7 +48,7 @@ std::unique_ptr<CurveProperty> createCurveProperty(
         MaterialPropertyLib::convertStringToVariable(
             independent_variable_string);
 
-    return std::make_unique<CurveProperty>(
+    return std::make_unique<Curve>(
         std::move(property_name), independent_variable, curve);
 }
 

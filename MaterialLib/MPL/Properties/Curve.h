@@ -20,13 +20,13 @@ namespace MaterialPropertyLib
 /// pairs of supporting point and value. The pairs are specified by a curve.
 /// The current implementation accepts only the double datatype defined in
 /// PropertyDataType.
-class CurveProperty final : public Property
+class Curve final : public Property
 {
 public:
     /// This constructor allows to specify the independent variable of the
     /// curve and the curve itself, i.e., a piecewise linear function.
-    CurveProperty(std::string name, Variable const independent_variable,
-                  MathLib::PiecewiseLinearInterpolation const& curve);
+    Curve(std::string name, Variable const independent_variable,
+          MathLib::PiecewiseLinearInterpolation const& curve);
 
     /// This method computes the value of a property depending linearly on
     /// the value of the given primary variable.

@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::CurveProperty
+\copydoc MaterialPropertyLib::Curve
