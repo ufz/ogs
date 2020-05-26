@@ -114,14 +114,14 @@ RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://
     rm -rf /var/tmp/cvode-2.8.2 /var/tmp/2.8.2.tar.gz
 ENV CVODE_ROOT=/usr/local/cvode
 
-# cppcheck version 1.87
-# https://github.com/danmar/cppcheck/archive/1.87.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/danmar/cppcheck/archive/1.87.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/1.87.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/cppcheck-1.87/build && cd /var/tmp/cppcheck-1.87/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cppcheck -D CMAKE_BUILD_TYPE=Release /var/tmp/cppcheck-1.87 && \
-    cmake --build /var/tmp/cppcheck-1.87/build --target all -- -j$(nproc) && \
-    cmake --build /var/tmp/cppcheck-1.87/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/cppcheck-1.87 /var/tmp/1.87.tar.gz
+# cppcheck version 809a769c690d8ab6fef293e41a29c8490512866e
+# https://github.com/danmar/cppcheck/archive/809a769c690d8ab6fef293e41a29c8490512866e.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/danmar/cppcheck/archive/809a769c690d8ab6fef293e41a29c8490512866e.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/809a769c690d8ab6fef293e41a29c8490512866e.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/cppcheck-809a769c690d8ab6fef293e41a29c8490512866e/build && cd /var/tmp/cppcheck-809a769c690d8ab6fef293e41a29c8490512866e/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cppcheck -D CMAKE_BUILD_TYPE=Release /var/tmp/cppcheck-809a769c690d8ab6fef293e41a29c8490512866e && \
+    cmake --build /var/tmp/cppcheck-809a769c690d8ab6fef293e41a29c8490512866e/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/cppcheck-809a769c690d8ab6fef293e41a29c8490512866e/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/cppcheck-809a769c690d8ab6fef293e41a29c8490512866e /var/tmp/809a769c690d8ab6fef293e41a29c8490512866e.tar.gz
 ENV PATH=/usr/local/cppcheck/bin:$PATH
 
 RUN apt-get update -y && \

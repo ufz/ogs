@@ -227,7 +227,8 @@ pipeline {
                              pattern: 'build/build*.log')],
                 unstableTotalAll: 1
               recordIssues enabledForFailure: true,
-                tools: [cppCheck(pattern: 'build/cppcheck.log')]
+                tools: [cppCheck(pattern: 'build/cppcheck.log')],
+                unstableTotalAll: 500
             }
             success { archiveArtifacts 'build/*.tar.gz,build/conaninfo.txt,build/cppcheck.log' }
           }

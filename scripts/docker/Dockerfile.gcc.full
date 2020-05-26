@@ -96,16 +96,6 @@ LABEL org.opengeosys.pm=conan \
     org.opengeosys.pm.conan.version=1.22.2
 LABEL org.opengeosys.pm.conan.user_home=/opt/conan
 
-# cppcheck version 1.87
-# https://github.com/danmar/cppcheck/archive/1.87.tar.gz
-RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/danmar/cppcheck/archive/1.87.tar.gz && \
-    mkdir -p /var/tmp && tar -x -f /var/tmp/1.87.tar.gz -C /var/tmp -z && \
-    mkdir -p /var/tmp/cppcheck-1.87/build && cd /var/tmp/cppcheck-1.87/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/cppcheck -D CMAKE_BUILD_TYPE=Release /var/tmp/cppcheck-1.87 && \
-    cmake --build /var/tmp/cppcheck-1.87/build --target all -- -j$(nproc) && \
-    cmake --build /var/tmp/cppcheck-1.87/build --target install -- -j$(nproc) && \
-    rm -rf /var/tmp/cppcheck-1.87 /var/tmp/1.87.tar.gz
-ENV PATH=/usr/local/cppcheck/bin:$PATH
-
 RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         doxygen \
