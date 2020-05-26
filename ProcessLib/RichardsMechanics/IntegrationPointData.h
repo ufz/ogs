@@ -65,6 +65,11 @@ struct IntegrationPointData final
     double porosity_prev = std::numeric_limits<double>::quiet_NaN();
     double transport_porosity = std::numeric_limits<double>::quiet_NaN();
     double transport_porosity_prev = std::numeric_limits<double>::quiet_NaN();
+    double dry_density_solid = std::numeric_limits<double>::quiet_NaN();
+    double dry_density_pellet_saturated =
+        std::numeric_limits<double>::quiet_NaN();
+    double dry_density_pellet_unsaturated =
+        std::numeric_limits<double>::quiet_NaN();
 
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
