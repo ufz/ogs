@@ -296,15 +296,16 @@ pipeline {
               }
               build {
                 env = 'eve/cli.sh'
+                cmd = 'nice -n 15 cmake --build . --config Release'
                 cmd_args = '-j 8'
               }
               build {
                 env = 'eve/cli.sh'
-                target = 'tests'
+                cmd = 'nice -n 15 cmake --build . --config Release --target tests'
               }
               build {
                 env = 'eve/cli.sh'
-                target = 'ctest'
+                cmd = 'nice -n 15 cmake --build . --config Release --target ctest'
               }
             }
           }
@@ -315,7 +316,7 @@ pipeline {
                   sh 'rm -rf /global/apps/ogs/head/standard'
                   build {
                     env = 'eve/cli.sh'
-                    target = 'install'
+                    cmd = 'nice -n 15 cmake --build . --config Release --target install'
                   }
                 }
               }
@@ -360,14 +361,17 @@ pipeline {
               build {
                 env = 'eve/petsc.sh'
                 cmd_args = '-j 8'
+                cmd = 'nice -n 15 cmake --build . --config Release'
               }
               build {
                 env = 'eve/petsc.sh'
                 target = 'tests'
+                cmd = 'nice -n 15 cmake --build . --config Release --target tests'
               }
               build {
                 env = 'eve/petsc.sh'
                 target = 'ctest'
+                cmd = 'nice -n 15 cmake --build . --config Release --target ctest'
               }
             }
           }
@@ -378,7 +382,7 @@ pipeline {
                   sh 'rm -rf /global/apps/ogs/head/petsc'
                   build {
                     env = 'eve/petsc.sh'
-                    target = 'install'
+                    cmd = 'nice -n 15 cmake --build . --config Release --target install'
                   }
                 }
               }
