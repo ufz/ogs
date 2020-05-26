@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <iosfwd>
 
 namespace FileIO

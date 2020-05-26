@@ -12,9 +12,12 @@
 
 #include <iosfwd>
 #include <list>
+#include <memory>
+#include <string>
+#include <vector>
 
+#include "Applications/FileIO/Gmsh/GMSHPoint.h"
 #include "BaseLib/IO/Writer.h"
-
 #include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
 namespace GeoLib
@@ -29,7 +32,6 @@ namespace FileIO
 namespace GMSH
 {
 
-class GMSHPoint;
 class GMSHPolygonTree;
 class GMSHMeshDensityStrategy;
 

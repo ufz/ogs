@@ -16,6 +16,8 @@
 #include <limits>
 #include <numeric>
 
+#include "BaseLib/Logging.h"
+
 namespace FileIO
 {
 namespace Gocad
