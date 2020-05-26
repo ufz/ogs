@@ -42,21 +42,21 @@ using Tensor = std::array<double, 9>;
 /// is missing, simply add it somewhere at the list, but above the last entry.
 enum class Variable : int
 {
-    concentration,
-    phase_pressure,
-    effective_pore_pressure_rate,
     capillary_pressure,
+    concentration,
     density,
-    temperature,
+    displacement,
+    effective_pore_pressure_rate,
+    grain_compressibility,
     liquid_saturation,
     liquid_saturation_rate,
+    phase_pressure,
     porosity,
-    transport_porosity,
-    displacement,
     strain,
     stress,
+    temperature,
+    transport_porosity,
     volumetric_strain_rate,
-    grain_compressibility,
     number_of_variables
 };
 
