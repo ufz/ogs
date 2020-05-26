@@ -605,6 +605,20 @@ AddTest(
 )
 
 AddTest(
+    NAME 3D_ComponentTransport_surfaceflux_pvd
+    PATH Parabolic/ComponentTransport/SimpleSynthetics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS surfaceflux_component-transport_cube_1e3.prj
+    WRAPPER time
+    TESTER diff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    cube_1x1x1_hex_1e3_right_pcs_0.pvd
+    cube_1x1x1_hex_1e3_left_pcs_0.pvd
+    cube_1x1x1_hex_1e3_pcs_0.pvd
+)
+
+AddTest(
     NAME 3D_StaggeredScheme_ComponentTransport_surfaceflux
     PATH Parabolic/ComponentTransport/StaggeredScheme
     EXECUTABLE ogs
