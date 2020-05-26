@@ -7,4 +7,4 @@ ogs_add_library(DataHolderLib ${SOURCES_DataHolderLib})
 target_link_libraries(
     DataHolderLib
     PUBLIC GeoLib MeshLib
-    PRIVATE BaseLib spdlog::spdlog)
+    PRIVATE BaseLib MathLib spdlog::spdlog)
