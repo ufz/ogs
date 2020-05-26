@@ -1,0 +1,165 @@
+# syntax=docker/dockerfile:experimental
+
+FROM ubuntu:20.04 AS build
+
+# Generated with ogs-container-maker 1.4.3
+
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        curl \
+        make \
+        tar \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+
+# LLVM compiler
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        clang-9 \
+        clang-format-9 \
+        clang-tidy-9 \
+        libomp-dev && \
+    rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/clang clang $(which clang-9) 30 && \
+    update-alternatives --install /usr/bin/clang++ clang++ $(which clang++-9) 30 && \
+    update-alternatives --install /usr/bin/clang-format clang-format $(which clang-format-9) 30 && \
+    update-alternatives --install /usr/bin/clang-tidy clang-tidy $(which clang-tidy-9) 30
+
+# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip3 install scif
+
+# OGS base building block
+# Python
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3 \
+        python3-dev && \
+    rm -rf /var/lib/apt/lists/*
+# pip
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        python3-pip \
+        python3-setuptools \
+        python3-wheel && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip3 install virtualenv pre-commit cmake-format
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common && \
+    apt-add-repository ppa:git-core/ppa -y && \
+    apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        git \
+        git-lfs \
+        ninja-build && \
+    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y dirmngr --install-recommends && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6B05F25D762E3157 && \
+    curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
+    git lfs install && \
+    mkdir -p /apps /scratch /lustre /work /projects /data
+
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libgl1-mesa-dev \
+        libglu1-mesa-dev \
+        libxt-dev \
+        mesa-common-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# CMake version 3.16.6
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        make \
+        wget && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://cmake.org/files/v3.16/cmake-3.16.6-Linux-x86_64.sh && \
+    mkdir -p /usr/local && \
+    /bin/sh /var/tmp/cmake-3.16.6-Linux-x86_64.sh --prefix=/usr/local --skip-license && \
+    rm -rf /var/tmp/cmake-3.16.6-Linux-x86_64.sh
+ENV PATH=/usr/local/bin:$PATH
+
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libboost-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Eigen version 3.3.4
+# http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp http://bitbucket.org/eigen/eigen/get/3.3.4.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/3.3.4.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/eigen-eigen-*/build && cd /var/tmp/eigen-eigen-*/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/eigen /var/tmp/eigen-eigen-* && \
+    cmake --build /var/tmp/eigen-eigen-*/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/eigen-eigen-*/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/eigen-eigen-* /var/tmp/3.3.4.tar.gz
+ENV Eigen3_DIR=/usr/local/eigen \
+    Eigen3_ROOT=/usr/local/eigen
+
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libgeotiff-dev \
+        libqt5x11extras5-dev \
+        libqt5xmlpatterns5-dev \
+        libshp-dev \
+        qt5-default && \
+    rm -rf /var/lib/apt/lists/*
+
+# VTK 8.2.0
+# https://www.vtk.org/files/release/8.2/VTK-8.2.0.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://www.vtk.org/files/release/8.2/VTK-8.2.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/VTK-8.2.0.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/VTK-8.2.0/build && cd /var/tmp/VTK-8.2.0/build && CC=clang CXX=clang++ cmake -DCMAKE_INSTALL_PREFIX=/usr/local/vtk -DVTK_BUILD_QT_DESIGNER_PLUGIN=OFF -DVTK_Group_Qt=ON -DVTK_QT_VERSION=5 -D CMAKE_BUILD_TYPE=Release /var/tmp/VTK-8.2.0 && \
+    cmake --build /var/tmp/VTK-8.2.0/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/VTK-8.2.0/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/VTK-8.2.0 /var/tmp/VTK-8.2.0.tar.gz
+RUN echo "/usr/local/vtk/lib" >> /etc/ld.so.conf.d/hpccm.conf && ldconfig
+ENV VTK_ROOT=/usr/local/vtk
+
+# Include-what-you-use for clang version 9
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        libclang-9-dev \
+        libncurses5-dev \
+        llvm-9-dev \
+        zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+# https://github.com/include-what-you-use/include-what-you-use/archive/clang_9.0.tar.gz
+RUN mkdir -p /var/tmp && wget -q -nc --no-check-certificate -P /var/tmp https://github.com/include-what-you-use/include-what-you-use/archive/clang_9.0.tar.gz && \
+    mkdir -p /var/tmp && tar -x -f /var/tmp/clang_9.0.tar.gz -C /var/tmp -z && \
+    mkdir -p /var/tmp/include-what-you-use-clang_9.0/build && cd /var/tmp/include-what-you-use-clang_9.0/build && cmake -DCMAKE_INSTALL_PREFIX=/usr/local/iwyy -D IWYU_LLVM_ROOT_PATH=/usr/lib/llvm-9 /var/tmp/include-what-you-use-clang_9.0 && \
+    cmake --build /var/tmp/include-what-you-use-clang_9.0/build --target all -- -j$(nproc) && \
+    cmake --build /var/tmp/include-what-you-use-clang_9.0/build --target install -- -j$(nproc) && \
+    rm -rf /var/tmp/include-what-you-use-clang_9.0 /var/tmp/clang_9.0.tar.gz
+ENV PATH=/usr/local/iwyy/bin:$PATH
+
+# ccache building block
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        ccache && \
+    rm -rf /var/lib/apt/lists/*
+RUN mkdir -p /opt/ccache && chmod 777 /opt/ccache
+ENV CCACHE_DIR=/opt/ccache \
+    CCACHE_MAXSIZE=15G \
+    CCACHE_SLOPPINESS=pch_defines,time_macros
+LABEL ccache.dir=/opt/ccache \
+    ccache.size=15G
+
+# Jenkins node
+RUN apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        openssh-client \
+        rsync \
+        sudo && \
+    rm -rf /var/lib/apt/lists/*
+RUN groupadd --gid 1001 jenkins || true && \
+    adduser --uid 500 --gid 1001 --disabled-password --gecos "" jenkins && \
+    echo "jenkins ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    echo "jenkins:jenkins" | chpasswd
+USER jenkins
+WORKDIR /home/jenkins

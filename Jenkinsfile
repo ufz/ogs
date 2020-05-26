@@ -598,7 +598,7 @@ pipeline {
           }
           agent {
             dockerfile {
-              filename 'Dockerfile.clang.full'
+              filename 'Dockerfile.clang.gui'
               dir 'scripts/docker'
               label 'docker'
               args '-v /home/jenkins/cache/ccache:/opt/ccache -v /home/jenkins/cache/conan/.conan:/opt/conan/.conan'
@@ -611,7 +611,12 @@ pipeline {
               sh 'find $CONAN_USER_HOME -name "system_reqs.txt" -exec rm {} \\;'
               try {
                 configure {
-                  cmakeOptions = '-DOGS_CHECK_HEADER_COMPILATION=ON -DBUILD_TESTING=OFF'
+                  cmakeOptions =
+                    '-DOGS_CHECK_HEADER_COMPILATION=ON ' +
+                    '-DOGS_BUILD_UTILS=ON ' +
+                    '-DOGS_BUILD_GUI=ON ' +
+                    '-DOGS_USE_PYTHON=ON ' +
+                    '-DBUILD_SHARED_LIBS=ON '
                   dir = 'build-check-header'
                 }
               }
