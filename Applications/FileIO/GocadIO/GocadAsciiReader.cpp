@@ -177,13 +177,12 @@ std::string propertyCheck(std::string const& strng)
         {"PROPERTY_CLASSES", "PROP_LEGAL_RANGES", "NO_DATA_VALUES",
          "PROPERTY_KINDS", "PROPERTY_SUBCLASSES", "UNITS", "ESIZES"}};
 
-    std::vector<std::string> str = BaseLib::splitString(strng);
-    for (std::string key : property_keywords)
+    std::string const str = BaseLib::splitString(strng)[0];
+    auto res =
+        std::find(property_keywords.begin(), property_keywords.end(), str);
+    if (res != property_keywords.end())
     {
-        if (str[0] == key)
-        {
-            return key;
-        }
+        return *res;
     }
     return std::string("");
 }
