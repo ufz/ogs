@@ -159,7 +159,6 @@ void MeshElementRemovalDialog::accept()
                 OGSError::box(
                     "The current selection removes NO mesh elements.");
             }
-            delete new_mesh;
             return;
         }
     }
