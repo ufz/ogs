@@ -26,15 +26,16 @@ class PVDFile
 public:
     //! Set a PVD file path
     explicit PVDFile(std::string pvd_fname)
-        : _pvd_filename(std::move(pvd_fname))
+        : pvd_filename(std::move(pvd_fname))
     {
     }
 
     //! Add a VTU file to this PVD file.
     void addVTUFile(std::string const& vtu_fname, double timestep);
 
+    std::string const pvd_filename;
+
 private:
-    std::string const _pvd_filename;
     std::vector<std::pair<double, std::string>>
         _datasets;  // a vector of (time, VTU file name)
 };

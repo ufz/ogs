@@ -251,7 +251,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>1d_isofrac_phreeqckernel_pcs_{:process_id}</prefix>
+            <prefix>1d_isofrac_phreeqckernel</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>5</repeat>
@@ -265,7 +266,6 @@
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <chemical_system chemical_solver="PhreeqcKernel">

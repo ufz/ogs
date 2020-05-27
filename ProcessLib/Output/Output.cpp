@@ -44,6 +44,18 @@ int convertVtkDataMode(std::string const& data_mode)
         "Binary, or Appended.",
         data_mode);
 }
+
+std::string constructPVDName(std::string const& output_directory,
+                             std::string const& output_file_prefix,
+                             int const process_id,
+                             std::string const& mesh_name)
+{
+    return BaseLib::joinPaths(
+        output_directory,
+        BaseLib::constructFormattedFileName(output_file_prefix, mesh_name,
+                                            process_id, 0, 0) +
+            ".pvd");
+}
 }  // namespace
 
 namespace ProcessLib
@@ -110,32 +122,46 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
 void Output::addProcess(ProcessLib::Process const& process,
                         const int process_id)
 {
-    auto const filename =
-        BaseLib::joinPaths(_output_directory,
-                           BaseLib::constructFormattedFileName(
-                               _output_file_prefix, process.getMesh().getName(),
-                               process_id, 0, 0) +
-                               ".pvd");
-    _process_to_pvd_file.emplace(std::piecewise_construct,
-                                 std::forward_as_tuple(&process),
-                                 std::forward_as_tuple(filename));
+    if (_mesh_names_for_output.empty())
+    {
+        _mesh_names_for_output.push_back(process.getMesh().getName());
+    }
+
+
+    for (auto const& mesh_output_name : _mesh_names_for_output)
+    {
+        auto const filename =
+            constructPVDName(_output_directory, _output_file_prefix,
+                             process_id, mesh_output_name);
+        _process_to_pvd_file.emplace(std::piecewise_construct,
+                                     std::forward_as_tuple(&process),
+                                     std::forward_as_tuple(filename));
+    }
 }
 
 // TODO return a reference.
-MeshLib::IO::PVDFile* Output::findPVDFile(Process const& process,
-                                          const int process_id)
+MeshLib::IO::PVDFile* Output::findPVDFile(
+    Process const& process,
+    const int process_id,
+    std::string const& mesh_name_for_output)
 {
+    auto const filename =
+        constructPVDName(_output_directory, _output_file_prefix, process_id,
+                         mesh_name_for_output);
     auto range = _process_to_pvd_file.equal_range(&process);
     int counter = 0;
     MeshLib::IO::PVDFile* pvd_file = nullptr;
     for (auto spd_it = range.first; spd_it != range.second; ++spd_it)
     {
-        if (counter == process_id)
+        if (spd_it->second.pvd_filename == filename)
         {
-            pvd_file = &spd_it->second;
-            break;
+            if (counter == process_id)
+            {
+                pvd_file = &spd_it->second;
+                break;
+            }
+            counter++;
         }
-        counter++;
     }
     if (pvd_file == nullptr)
     {
@@ -217,7 +243,9 @@ void Output::doOutputAlways(Process const& process,
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
     // output.
-    if (!(process_id == static_cast<int>(_process_to_pvd_file.size() - 1) ||
+    if (!(process_id == static_cast<int>(_process_to_pvd_file.size() /
+                                         _mesh_names_for_output.size()) -
+                            1 ||
           process.isMonolithicSchemeUsed()))
     {
         return;
@@ -229,14 +257,9 @@ void Output::doOutputAlways(Process const& process,
                        _output_file_suffix, process.getMesh().getName(),
                        process_id, timestep, t, _output_file_data_mode,
                        _output_file_compression),
-            findPVDFile(process, process_id), process.getMesh(), t);
+            findPVDFile(process, process_id, process.getMesh().getName()),
+            process.getMesh(), t);
     };
-    // Write the bulk mesh only if there are no other meshes specified for
-    // output, otherwise only the specified meshes are written.
-    if (_mesh_names_for_output.empty())
-    {
-        output_bulk_mesh();
-    }
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
@@ -296,6 +319,9 @@ void Output::doOutputAlways(Process const& process,
                                      t,
                                      _output_file_data_mode,
                                      _output_file_compression};
+
+        auto pvd_file = findPVDFile(process, process_id, mesh.getName());
+        pvd_file->addVTUFile(output_file.name, t);
 
         DBUG("output to {:s}", output_file.path);
 
@@ -376,7 +402,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
     }
 
     // Only check whether a process data is available for output.
-    findPVDFile(process, process_id);
+    findPVDFile(process, process_id, process.getMesh().getName());
 
     std::string const output_file_name =
         BaseLib::constructFormattedFileName(_output_file_prefix,

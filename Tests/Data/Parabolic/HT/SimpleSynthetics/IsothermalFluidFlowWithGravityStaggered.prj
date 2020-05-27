@@ -162,7 +162,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>IsothermalFluidFlowWithGravityStaggered_pcs_{:process_id}</prefix>
+            <prefix>IsothermalFluidFlowWithGravityStaggered</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -174,7 +175,6 @@
                 <variable>p</variable>
                 <variable>darcy_velocity</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

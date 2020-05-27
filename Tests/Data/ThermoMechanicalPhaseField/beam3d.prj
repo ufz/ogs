@@ -136,7 +136,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>beam3d_pcs_{:process_id}</prefix>
+            <prefix>beam3d</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -159,7 +160,6 @@
                 <variable>epsilon</variable>
                 <variable>phasefield</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

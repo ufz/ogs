@@ -76,7 +76,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>out_beam_fine_ED_pcs_{:process_id}</prefix>
+            <prefix>out_beam_fine_ED</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>10000</repeat>
@@ -89,7 +90,6 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -282,97 +282,97 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_40_t_0.400000.vtu</file>
+            <file>out_beam_fine_ED_ts_40_t_0.400000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>1e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_40_t_0.400000.vtu</file>
+            <file>out_beam_fine_ED_ts_40_t_0.400000.vtu</file>
             <field>damage</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_40_t_0.400000.vtu</file>
+            <file>out_beam_fine_ED_ts_40_t_0.400000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>7e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_40_t_0.400000.vtu</file>
+            <file>out_beam_fine_ED_ts_40_t_0.400000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_60_t_0.600000.vtu</file>
+            <file>out_beam_fine_ED_ts_60_t_0.600000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>1e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_60_t_0.600000.vtu</file>
+            <file>out_beam_fine_ED_ts_60_t_0.600000.vtu</file>
             <field>damage</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_60_t_0.600000.vtu</file>
+            <file>out_beam_fine_ED_ts_60_t_0.600000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>2e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_60_t_0.600000.vtu</file>
+            <file>out_beam_fine_ED_ts_60_t_0.600000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_80_t_0.800000.vtu</file>
+            <file>out_beam_fine_ED_ts_80_t_0.800000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>1e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_80_t_0.800000.vtu</file>
+            <file>out_beam_fine_ED_ts_80_t_0.800000.vtu</file>
             <field>damage</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_80_t_0.800000.vtu</file>
+            <file>out_beam_fine_ED_ts_80_t_0.800000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>2e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_80_t_0.800000.vtu</file>
+            <file>out_beam_fine_ED_ts_80_t_0.800000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_100_t_1.000000.vtu</file>
+            <file>out_beam_fine_ED_ts_100_t_1.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>1e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_100_t_1.000000.vtu</file>
+            <file>out_beam_fine_ED_ts_100_t_1.000000.vtu</file>
             <field>damage</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_100_t_1.000000.vtu</file>
+            <file>out_beam_fine_ED_ts_100_t_1.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>2e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_beam_fine_ED_pcs_0_ts_100_t_1.000000.vtu</file>
+            <file>out_beam_fine_ED_ts_100_t_1.000000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

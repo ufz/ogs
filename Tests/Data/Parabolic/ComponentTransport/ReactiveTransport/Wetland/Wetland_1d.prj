@@ -1159,7 +1159,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>Wetland_1d_pcs_{:process_id}</prefix>
+            <prefix>Wetland_1d</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
