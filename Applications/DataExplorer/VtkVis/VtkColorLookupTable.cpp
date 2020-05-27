@@ -62,14 +62,14 @@ void VtkColorLookupTable::Build()
         // make sure that color map starts with the first color in the dictionary
         unsigned char startcolor[4] = { 0, 0 , 0 , 0 };
         std::pair<std::size_t, unsigned char*> lastValue(0, startcolor);
-        std::size_t nextIndex(0);
 
         for (auto& it : _dict)
         {
             double val = (it.first < range[0])
                              ? range[0]
                              : ((it.first > range[1]) ? range[1] : it.first);
-            nextIndex = static_cast<std::size_t>(std::floor(val - range[0]));
+            auto const nextIndex =
+                static_cast<std::size_t>(std::floor(val - range[0]));
 
             this->SetTableValueRGBA(nextIndex, it.second);
 
