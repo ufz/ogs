@@ -350,16 +350,6 @@ bool SwmmInterface::readLinksAsPolylines(std::ifstream &in,
     return true;
 }
 
-/// Deletes the geometric objects and returns false
-bool geometryCleanup(std::vector<GeoLib::Point*> &points, std::vector<GeoLib::Polyline*> &lines)
-{
-    for (auto line : lines)
-        delete line;
-    for (auto point : points)
-        delete point;
-    return false;
-}
-
 bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     GeoLib::GEOObjects &geo_objects, bool add_subcatchments)
 {
@@ -380,27 +370,24 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
 
     std::string geo_name = BaseLib::extractBaseNameWithoutExtension(inp_file_name);
     std::string line;
-    while ( std::getline(in, line) )
+    while (std::getline(in, line))
     {
-        if (line == "[COORDINATES]")
+        if (line == "[COORDINATES]" || line == "[VERTICES]" ||
+            line == "[SYMBOLS]")
         {
             if (!readCoordinates<GeoLib::Point>(in, *points, pnt_names))
-                return geometryCleanup(*points, *lines);
-        }
-        if (line == "[VERTICES]")
-        {
-            if (!readCoordinates<GeoLib::Point>(in, *points, pnt_names))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
         if (line == "[Polygons]" && add_subcatchments)
         {
             if (!readPolygons(in, *lines, line_names, *points, pnt_names))
-                return geometryCleanup(*points, *lines);
-        }
-        if (line == "[SYMBOLS]")
-        {
-            if (!readCoordinates<GeoLib::Point>(in, *points, pnt_names))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
     }
 
@@ -411,8 +398,9 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     }
     if (points->size() != pnt_names.size())
     {
-        ERR ("Length of point vector and point name vector do not match.");
-        return geometryCleanup(*points, *lines);
+        ERR("Length of point vector and point name vector do not match.");
+        BaseLib::cleanupVectorElements(*points, *lines);
+        return false;
     }
 
     auto name_id_map = std::make_unique<std::map<std::string, std::size_t>>();
@@ -429,31 +417,43 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     in.clear();
     in.seekg(0, in.beg);
 
-    while ( std::getline(in, line) )
+    while (std::getline(in, line))
     {
         if (line == "[JUNCTIONS]")
         {
             INFO ("Reading point elevation...");
             if (!addPointElevation(in, *points, *name_id_map))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
         if (line == "[CONDUITS]")
         {
             INFO ("Reading conduits...");
             if (!readLinksAsPolylines(in, *lines, line_names, *points, *name_id_map))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
         else if (line == "[PUMPS]")
         {
             INFO ("Reading pumps...");
             if (!readLinksAsPolylines(in, *lines, line_names, *points, *name_id_map))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
         else if (line == "[WEIRS]")
         {
             INFO ("Reading weirs...");
             if (!readLinksAsPolylines(in, *lines, line_names, *points, *name_id_map))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
     }
 

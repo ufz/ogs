@@ -64,20 +64,6 @@ bool isCommentLine(std::string const& str)
     return (str.substr(0, 1) == "#");
 }
 
-/// Clears data vectors if an error occured
-void clearData(std::vector<MeshLib::Node*> const& nodes,
-               std::vector<MeshLib::Element*> const& elems)
-{
-    for (MeshLib::Element* e : elems)
-    {
-        delete e;
-    }
-    for (MeshLib::Node* n : nodes)
-    {
-        delete n;
-    }
-}
-
 /// Parses current section until END-tag is reached
 bool skipToEND(std::ifstream& in)
 {
@@ -537,7 +523,7 @@ MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
         return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
     }
     ERR("Error parsing {:s} {:s}.", dataType2ShortString(type), mesh_name);
-    clearData(nodes, elems);
+    BaseLib::cleanupVectorElements(nodes, elems);
     return nullptr;
 }
 
