@@ -309,12 +309,9 @@ std::string VtkRaster::findWorldFile(std::string const& filename)
 {
     std::string const no_ext = BaseLib::dropFileExtension(filename);
 
-    std::vector<std::string> const supported_extensions =
-    { ".pgw", ".pngw", ".pgwx",
-      ".jgw", ".jpgw", ".jgwx",
-      ".tfw", ".tifw", ".tfwx",
-      ".bpw", ".bmpw", ".bpwx",
-      ".wld" };
+    constexpr std::array supported_extensions = {
+        ".pgw",  ".pngw", ".pgwx", ".jgw",  ".jpgw", ".jgwx", ".tfw",
+        ".tifw", ".tfwx", ".bpw",  ".bmpw", ".bpwx", ".wld"};
 
     auto const res =
         std::find_if(supported_extensions.begin(), supported_extensions.end(),
