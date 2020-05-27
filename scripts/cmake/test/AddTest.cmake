@@ -198,14 +198,6 @@ Use six arguments version of AddTest with absolute and relative tolerances")
 
                 if("${REFERENCE_VTK_FILE}" STREQUAL "GLOB")
                     list(APPEND TESTER_COMMAND "${VTK_FILE} ${NAME_A} ${NAME_B} ${ABS_TOL} ${REL_TOL}")
-                    string(REPLACE "*" ".*" VTK_FILE_REGEX ${VTK_FILE})
-                    string(APPEND VTKDIFF_XML_SNIPPET
-                        "<vtkdiff>"
-                        "<regex>${VTK_FILE_REGEX}</regex>"
-                        "<field>${NAME_A}</field>"
-                        "<absolute_tolerance>${ABS_TOL}</absolute_tolerance>"
-                        "<relative_tolerance>${REL_TOL}</relative_tolerance>"
-                        "</vtkdiff>")
                     set(GLOB_MODE TRUE)
                 else()
                     list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
@@ -216,20 +208,6 @@ Use six arguments version of AddTest with absolute and relative tolerances")
                     ${TESTER_ARGS}")
                 endif()
             endforeach()
-            if (VTKDIFF_XML_SNIPPET)
-                #Project file to change
-                list(GET AddTest_EXECUTABLE_ARGS -1 PROJECT_FILE_NAME)
-                set(SED_INPUT "${AddTest_SOURCE_PATH}/${PROJECT_FILE_NAME}")
-                message("Add to ${SED_INPUT}")
-
-                string(PREPEND VTKDIFF_XML_SNIPPET "<test_definition>")
-                string(APPEND VTKDIFF_XML_SNIPPET "</test_definition>")
-
-                # Insert test defintions block in front of closing OpenGeoSysProject tag.
-                set(SED_ARGS "'/<\\/OpenGeoSysProject>/i ${VTKDIFF_XML_SNIPPET}'")
-                file(APPEND /tmp/x.sh "sed -i " "${SED_ARGS} " ${SED_INPUT} "\n")
-                unset(VTKDIFF_XML_SNIPPET)
-            endif()
         else ()
             message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of six.")
         endif()
