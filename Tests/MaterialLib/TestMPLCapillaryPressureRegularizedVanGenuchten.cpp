@@ -110,7 +110,6 @@ TEST(MaterialPropertyLib, CapillaryPressureRegularizedVanGenuchten)
                                0.0}};
 
     const int n = 30;
-    const double offset = 1.0e-7;
     for (int i = 0; i <= n; ++i)
     {
         variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
@@ -149,6 +148,7 @@ TEST(MaterialPropertyLib, CapillaryPressureRegularizedVanGenuchten)
                 variable_array,
                 MaterialPropertyLib::Variable::liquid_saturation, pos, t, dt);
 
+        const double offset = (S[i] < Sl_r) ? 1.0e-2 : 1.0e-7;
         variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S[i] - offset;
 
