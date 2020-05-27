@@ -90,7 +90,7 @@ public:
     }
 
     /// Removes a primary variable incl. all associated conditions
-    void removePrimaryVariable(std::string const primary_var_name);
+    void removePrimaryVariable(std::string const& primary_var_name);
 
     /// Removes one boundary condition
     void removeBoundaryCondition(std::string const& primary_var_name,

@@ -62,10 +62,11 @@ public:
     std::string const getObjName() const { return _obj_name; }
 
     /// Sets a mesh as corresponding object for the condition
-    void setMesh(std::string const mesh_name);
+    void setMesh(std::string const& mesh_name);
 
     /// Sets a geometric object as corresponding object for the condition
-    virtual void setGeoObject(std::string geo_name, std::string obj_name);
+    virtual void setGeoObject(std::string const& geo_name,
+                              std::string const& obj_name);
 
     /// Returns the type of condition for displaying purposes
     virtual std::string const getConditionClassStr() const = 0;
