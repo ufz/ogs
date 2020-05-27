@@ -59,7 +59,8 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
     BaseLib::trim(prop._property_name, '\"');
 
     auto checkPropertyID =
-        [](boost::tokenizer<boost::char_separator<char>>::iterator& tok_it,
+        [](boost::tokenizer<boost::char_separator<char>>::iterator const&
+               tok_it,
            Property const& prop) {
             if (!prop.checkID(*tok_it))
             {
