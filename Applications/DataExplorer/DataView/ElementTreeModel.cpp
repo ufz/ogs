@@ -132,15 +132,15 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
         MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
     for (auto entry : n_element_types)
     {
-        QList<QVariant> elements_number;
-        elements_number << QString::fromStdString(
-                               MeshLib::MeshElemType2String(
-                                   static_cast<MeshLib::MeshElemType>(
-                                       entry.first)) +
-                               "s:")
-                        << QString::number(entry.second) << ""
-                        << "";
-        auto* type_item = new TreeItem(elements_number, elements_item);
+        QList<QVariant> number_of_element_types;
+        number_of_element_types
+            << QString::fromStdString(
+                   MeshLib::MeshElemType2String(
+                       static_cast<MeshLib::MeshElemType>(entry.first)) +
+                   "s:")
+            << QString::number(entry.second) << ""
+            << "";
+        auto* type_item = new TreeItem(number_of_element_types, elements_item);
         elements_item->appendChild(type_item);
     }
 
