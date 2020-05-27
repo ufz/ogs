@@ -65,8 +65,8 @@ bool isCommentLine(std::string const& str)
 }
 
 /// Clears data vectors if an error occured
-void clearData(std::vector<MeshLib::Node*>& nodes,
-               std::vector<MeshLib::Element*>& elems)
+void clearData(std::vector<MeshLib::Node*> const& nodes,
+               std::vector<MeshLib::Element*> const& elems)
 {
     for (MeshLib::Element* e : elems)
     {
