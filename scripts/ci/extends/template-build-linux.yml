@@ -19,9 +19,9 @@
       $CMAKE_ARGS
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
-    - cmake --build . > >(tee make.output)
-    - cmake --build . --target tests
-    - cmake --build . --target ctest
+    - $BUILD_CMD_PREFIX cmake --build . > >(tee make.output)
+    - $BUILD_CMD_PREFIX cmake --build . --target tests
+    - $BUILD_CMD_PREFIX cmake --build . --target ctest
     - cp Testing/**/Test.xml Tests/ctest.xml
 
   cache:
