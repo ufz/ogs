@@ -636,7 +636,7 @@ void GocadSGridReader::readSplitInformation()
 
 void GocadSGridReader::applySplitInformation(
     std::vector<MeshLib::Node*>& nodes,
-    std::vector<MeshLib::Element*>& elements) const
+    std::vector<MeshLib::Element*> const& elements) const
 {
     for (auto split_node : _split_nodes)
     {
