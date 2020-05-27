@@ -99,7 +99,7 @@ private:
     void readNodeCoordinates(std::ifstream& in,
                              const FEM_CLASS& fem_class,
                              const FEM_DIM& fem_dim,
-                             std::vector<MeshLib::Node*>& nodes);
+                             std::vector<MeshLib::Node*> const& nodes);
 
     /// read elevation data
     void readElevation(std::ifstream& in,
