@@ -148,8 +148,10 @@ struct MechanicsBase
         return ConstitutiveModel::Invalid;
     }
 
-    virtual double getBulkModulus(double const /*t*/,
-                                  ParameterLib::SpatialPosition const& /*x*/) const
+    virtual double getBulkModulus(
+        double const /*t*/,
+        ParameterLib::SpatialPosition const& /*x*/,
+        KelvinMatrix const* const /*C*/ = nullptr) const
     {
         OGS_FATAL(
             "getBulkModulus is not yet implemented for this Solid Material.");

@@ -39,9 +39,8 @@ PropertyDataType TransportPorosityFromMassBalance::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    double const K_SR = std::get<Phase*>(scale_)
-                            ->property(PropertyType::bulk_modulus)
-                            .template value<double>(variable_array, pos, t, dt);
+    double const beta_SR = std::get<double>(
+        variable_array[static_cast<int>(Variable::grain_compressibility)]);
     auto const alpha_b =
         std::get<Phase*>(scale_)
             ->property(PropertyType::biot_coefficient)
@@ -59,7 +58,7 @@ PropertyDataType TransportPorosityFromMassBalance::value(
     double const phi_tr_prev = std::get<double>(
         variable_array[static_cast<int>(Variable::transport_porosity)]);
 
-    double const w = dt * (e_dot + p_eff_dot / K_SR);
+    double const w = dt * (e_dot + p_eff_dot * beta_SR);
     return std::clamp(phi_tr_prev + (alpha_b - phi) * w, phi_min_, phi_max_);
 }
 

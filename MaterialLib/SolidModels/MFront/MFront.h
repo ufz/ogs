@@ -93,6 +93,10 @@ public:
     std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
     getInternalVariables() const override;
 
+    double getBulkModulus(double const /*t*/,
+                          ParameterLib::SpatialPosition const& /*x*/,
+                          KelvinMatrix const* const /*C*/) const override;
+
     double computeFreeEnergyDensity(
         double const t,
         ParameterLib::SpatialPosition const& x,

@@ -58,14 +58,9 @@
                             <value>2.6e3</value>
                         </property>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>30e9</value>
-                        </property>
-                        <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
-                            <value>1</value>
+                            <value>0.72222222222222222222</value>
                         </property>
                         <property>
                             <name>porosity</name>

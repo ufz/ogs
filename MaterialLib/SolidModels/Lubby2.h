@@ -155,12 +155,6 @@ public:
             new MaterialStateVariables};
     }
 
-    double getBulkModulus(double const t,
-                          ParameterLib::SpatialPosition const& x) const override
-    {
-        return _mp.KM0(t, x)[0];
-    }
-
 public:
     static int const KelvinVectorSize =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
@@ -227,6 +221,13 @@ public:
         // updated if other time schemes are used.
         return (eps - eps_K - eps_M).dot(sigma) / 2 +
                eps_K.dot(sigma - eta_K * (eps_K - eps_K_prev) / dt) / 2;
+    }
+
+    double getBulkModulus(double const t,
+                          ParameterLib::SpatialPosition const& x,
+                          KelvinMatrix const* const /*C*/) const override
+    {
+        return _mp.KM0(t, x)[0];
     }
 
     std::optional<std::tuple<KelvinVector,

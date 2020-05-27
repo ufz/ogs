@@ -60,11 +60,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>100e9</value>
-                        </property>
-                        <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
                             <value>0</value>
@@ -193,7 +188,7 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>1e9</value>
+            <value>120e9</value>
         </parameter>
         <parameter>
             <name>nu</name>
