@@ -190,9 +190,7 @@ void GMSHPrefsDialog::reject()
 std::vector<std::string> GMSHPrefsDialog::getSelectedObjects(QStringList list)
 {
     std::vector<std::string> indexList;
-    for (auto& index : list)
-    {
-        indexList.push_back(index.toStdString());
-    }
+    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
+                   [](auto const& index) { return index.toStdString(); });
     return indexList;
 }
