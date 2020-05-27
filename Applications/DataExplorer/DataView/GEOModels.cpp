@@ -172,17 +172,18 @@ void GEOModels::connectPolylineSegments(
 
     if (plyVec)
     {
-        const std::vector<GeoLib::Polyline*>* polylines = plyVec->getVector();
+        std::vector<GeoLib::Polyline*> const& polylines = *plyVec->getVector();
         std::vector<GeoLib::Polyline*> ply_list;
-        for (auto& elem : indexlist)
-        {
-            ply_list.push_back((*polylines)[elem]);
-        }
+        std::transform(indexlist.begin(), indexlist.end(),
+                       std::back_inserter(ply_list),
+                       [polylines](auto const& ply_index) {
+                           return polylines[ply_index];
+                       });
 
         // connect polylines
-        GeoLib::Polyline* new_line = GeoLib::Polyline::constructPolylineFromSegments(
-                ply_list,
-                proximity);
+        GeoLib::Polyline* new_line =
+            GeoLib::Polyline::constructPolylineFromSegments(ply_list,
+                                                            proximity);
 
         if (new_line)
         {
@@ -218,7 +219,7 @@ void GEOModels::connectPolylineSegments(
 
             if (!ply_name.empty())
             {
-                plyVec->setNameOfElementByID(polylines->size(), ply_name);
+                plyVec->setNameOfElementByID(polylines.size(), ply_name);
             }
         }
         else
