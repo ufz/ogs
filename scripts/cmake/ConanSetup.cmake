@@ -16,12 +16,6 @@ if(CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
         "using Conan. Specify CMAKE_BUILD_TYPE!")
 endif()
 
-# $ cat /etc/os-release | grep VERSION_ID
-# VERSION_ID="17.10"
-if(COMPILER_IS_GCC AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 6 AND UBUNTU_VERSION VERSION_EQUAL 16)
-
-endif()
-
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
