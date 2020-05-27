@@ -39,6 +39,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/InitialStates/into_initial_state.prj)
     OgsTest(PROJECTFILE Mechanics/InitialStates/equilibrium_restart.prj)
     OgsTest(PROJECTFILE Mechanics/InitialStates/non_equilibrium_initial_state.prj)
+    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj)
+    set_tests_properties(ogs-Mechanics/MohrCoulombAbboSloan/slope PROPERTIES WILL_FAIL true)
 endif()
 
 if (OGS_USE_PYTHON)
@@ -107,25 +109,6 @@ AddTest(
     ../../ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
     ../../ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
 )
-
-AddTest(
-    NAME Mechanics_slope_stability_mfront
-    PATH Mechanics/MohrCoulombAbboSloan
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS slope.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    GLOB slope_pcs_0_ts_*.vtu displacement displacement 1e-14 0.0
-    GLOB slope_pcs_0_ts_*.vtu sigma sigma 2e-8 0.0
-    GLOB slope_pcs_0_ts_*.vtu epsilon epsilon 1e-14 0.0
-    GLOB slope_pcs_0_ts_*.vtu NodalForces NodalForces 1e-8 0.0
-    GLOB slope_pcs_0_ts_*.vtu EquivalentPlasticStrain EquivalentPlasticStrain 1e-13 0.0
-    GLOB slope_pcs_0_ts_*.vtu ElasticStrain ElasticStrain 1e-14 0.0
-)
-if(NOT OGS_USE_MPI)
-    set_tests_properties(ogs-Mechanics_slope_stability_mfront PROPERTIES WILL_FAIL true)
-endif()
 
 endif()
 

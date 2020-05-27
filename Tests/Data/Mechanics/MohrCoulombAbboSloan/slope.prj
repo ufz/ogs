@@ -253,4 +253,42 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>slope_pcs_0_ts_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>slope_pcs_0_ts_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>2e-8</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>slope_pcs_0_ts_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>slope_pcs_0_ts_.*.vtu</regex>
+            <field>NodalForces</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>slope_pcs_0_ts_.*.vtu</regex>
+            <field>EquivalentPlasticStrain</field>
+            <absolute_tolerance>1e-13</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>slope_pcs_0_ts_.*.vtu</regex>
+            <field>ElasticStrain</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
