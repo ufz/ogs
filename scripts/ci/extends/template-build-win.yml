@@ -1,10 +1,7 @@
 .template-build-win:
   stage: build
-
   tags:
     - windows
-    - ogs
-
   extends:
     - .defaults
     - .vs2019-environment

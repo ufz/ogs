@@ -24,7 +24,6 @@ ctest results:
     GIT_STRATEGY: none
   tags:
     - docker-shell
-    - ogs
   needs:
     - job: build linux
     - job: build win

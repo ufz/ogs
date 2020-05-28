@@ -1,7 +1,7 @@
 check header:
   stage: checks
   tags:
-    - ogs
+    - docker
   extends:
     - .defaults
     - .rules-master-manual
