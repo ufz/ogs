@@ -56,7 +56,7 @@ TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
     m << "<properties></properties>\n";
     m << "</medium>\n";
 
-    auto const& medium = createTestMaterial(m.str());
+    auto const& medium = Tests::createTestMaterial(m.str());
     auto const& gas_phase = medium->phase("Gas");
 
     MaterialPropertyLib::VariableArray variable_array;

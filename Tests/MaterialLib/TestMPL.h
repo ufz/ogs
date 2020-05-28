@@ -30,10 +30,10 @@ namespace MaterialPropertyLib
 class Property;
 }
 
-std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml);
-
 namespace Tests
 {
+std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml);
+
 std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
     const char xml[],
     std::function<std::unique_ptr<MaterialPropertyLib::Property>(
