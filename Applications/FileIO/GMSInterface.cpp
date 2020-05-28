@@ -304,14 +304,7 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
         if (!opt_pv)
         {
             ERR("Could not create PropertyVector for material ids.");
-            for (auto element : elements)
-            {
-                delete element;
-            }
-            for (auto node : nodes)
-            {
-                delete node;
-            }
+            BaseLib::cleanupVectorElements(nodes, elements);
             return nullptr;
         }
         opt_pv->reserve(mat_ids.size());

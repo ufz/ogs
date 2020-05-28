@@ -98,7 +98,7 @@ bool Project::getUniqueName(std::string &name) const
     return isUnique;
 }
 
-void Project::removePrimaryVariable(std::string const primary_var_name)
+void Project::removePrimaryVariable(std::string const& primary_var_name)
 {
     std::size_t const n_bc(_boundary_conditions.size());
     for (int i = n_bc - 1; i >= 0; --i)

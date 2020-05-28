@@ -239,14 +239,7 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh (std::string const& nodes_fname,
     std::vector<MeshLib::Element*> elements;
     std::vector<int> materials;
     if (!readElementsFromStream (ins_ele, elements, materials, nodes)) {
-        // remove elements read until now
-        for (auto & element : elements) {
-            delete element;
-        }
-        // remove nodes
-        for (auto & node : nodes) {
-            delete node;
-        }
+        BaseLib::cleanupVectorElements(nodes, elements);
         return nullptr;
     }
 

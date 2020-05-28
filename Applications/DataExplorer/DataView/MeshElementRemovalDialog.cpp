@@ -145,25 +145,20 @@ void MeshElementRemovalDialog::accept()
 
     if (anything_checked)
     {
-        MeshLib::Mesh* new_mesh = MeshLib::removeElements(*msh, ex.getSearchedElementIDs(), this->newMeshNameEdit->text().toStdString());
+        MeshLib::Mesh* new_mesh = MeshLib::removeElements(
+            *msh, ex.getSearchedElementIDs(),
+            this->newMeshNameEdit->text().toStdString());
         if (new_mesh)
         {
             emit meshAdded(new_mesh);
         }
         else
         {
-            if (new_mesh == nullptr)
-            {
-                OGSError::box(
-                    "The current selection removes ALL mesh elements.\nPlease "
-                    "change the selection.");
-            }
             if (ex.getSearchedElementIDs().empty())
             {
                 OGSError::box(
                     "The current selection removes NO mesh elements.");
             }
-            delete new_mesh;
             return;
         }
     }

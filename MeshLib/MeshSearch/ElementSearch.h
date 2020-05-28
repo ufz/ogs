@@ -62,7 +62,7 @@ public:
     /// element not to be marked
     /// @param max_property_value maximum value of the given property for the
     /// element not to be marked
-    /// @param outside_of if true, all values outside of the given range or
+    /// @param outside_of if true, all values outside of the given range are
     /// marked, if false, all values inside the given range are marked
     /// @return The number of marked elements will be returned. The concrete
     /// element ids can be requested by getSearchedElementIDs().

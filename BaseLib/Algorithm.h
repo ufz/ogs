@@ -284,4 +284,20 @@ std::size_t findIndex(Container const& container,
     }
     return std::distance(container.begin(), it);
 }
+
+/** Util function to cleanup vectors */
+template <typename T1, typename T2>
+void cleanupVectorElements(std::vector<T1*> const& items,
+                           std::vector<T2*> const& dependent_items)
+{
+    for (auto dependent_item : dependent_items)
+    {
+        delete dependent_item;
+    }
+    for (auto item : items)
+    {
+        delete item;
+    }
+}
+
 }  // namespace BaseLib

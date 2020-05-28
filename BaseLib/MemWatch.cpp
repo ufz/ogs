@@ -49,15 +49,6 @@ unsigned MemWatch::updateMemUsage ()
         in >> pages;
         _vmem_size = static_cast<unsigned long>(pages) *
             static_cast<unsigned long>(getpagesize());
-        in >> pages;
-        _rmem_size =static_cast<unsigned long>(pages) *
-            static_cast<unsigned long>(getpagesize());
-        in >> pages;
-        _smem_size = static_cast<unsigned long>(pages) *
-            static_cast<unsigned long>(getpagesize());
-        in >> pages;
-        _cmem_size = static_cast<unsigned long>(pages) *
-            static_cast<unsigned long>(getpagesize());
         in.close ();
 #endif
 
@@ -68,21 +59,6 @@ unsigned long MemWatch::getVirtMemUsage ()
 {
         updateMemUsage ();
         return _vmem_size;
-}
-
-unsigned long MemWatch::getResMemUsage () {
-        updateMemUsage ();
-        return _rmem_size;
-}
-
-unsigned long MemWatch::getShrMemUsage () {
-        updateMemUsage ();
-        return _smem_size;
-}
-
-unsigned long MemWatch::getCodeMemUsage () {
-        updateMemUsage ();
-        return _cmem_size;
 }
 
 } // end namespace BaseLib

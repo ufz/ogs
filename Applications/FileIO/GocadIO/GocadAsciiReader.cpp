@@ -64,20 +64,6 @@ bool isCommentLine(std::string const& str)
     return (str.substr(0, 1) == "#");
 }
 
-/// Clears data vectors if an error occured
-void clearData(std::vector<MeshLib::Node*>& nodes,
-               std::vector<MeshLib::Element*>& elems)
-{
-    for (MeshLib::Element* e : elems)
-    {
-        delete e;
-    }
-    for (MeshLib::Node* n : nodes)
-    {
-        delete n;
-    }
-}
-
 /// Parses current section until END-tag is reached
 bool skipToEND(std::ifstream& in)
 {
@@ -177,13 +163,12 @@ std::string propertyCheck(std::string const& strng)
         {"PROPERTY_CLASSES", "PROP_LEGAL_RANGES", "NO_DATA_VALUES",
          "PROPERTY_KINDS", "PROPERTY_SUBCLASSES", "UNITS", "ESIZES"}};
 
-    std::vector<std::string> str = BaseLib::splitString(strng);
-    for (std::string key : property_keywords)
+    std::string const str = BaseLib::splitString(strng)[0];
+    auto res =
+        std::find(property_keywords.begin(), property_keywords.end(), str);
+    if (res != property_keywords.end())
     {
-        if (str[0] == key)
-        {
-            return key;
-        }
+        return *res;
     }
     return std::string("");
 }
@@ -538,7 +523,7 @@ MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
         return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
     }
     ERR("Error parsing {:s} {:s}.", dataType2ShortString(type), mesh_name);
-    clearData(nodes, elems);
+    BaseLib::cleanupVectorElements(nodes, elems);
     return nullptr;
 }
 

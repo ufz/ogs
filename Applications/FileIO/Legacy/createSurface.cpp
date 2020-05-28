@@ -56,10 +56,9 @@ bool createSurface(GeoLib::Polyline const& ply,
     auto polyline_points = std::make_unique<std::vector<GeoLib::Point*>>();
     GeoLib::GEOObjects geo;
     auto ply_points = ply.getPointsVec();
-    for (auto p : ply_points)
-    {
-        polyline_points->push_back(new GeoLib::Point(*p));
-    }
+    std::transform(ply_points.begin(), ply_points.end(),
+                   std::back_inserter(*polyline_points),
+                   [](auto const* p) { return new GeoLib::Point(*p); });
     std::string ply_name = "temporary_polyline_name";
     geo.addPointVec(std::move(polyline_points), ply_name);
     auto polyline =

@@ -508,8 +508,9 @@ bool GEOObjects::mergePoints(std::vector<std::string> const & geo_names,
     return true;
 }
 
-void GEOObjects::mergePolylines(std::vector<std::string> const & geo_names,
-        std::string & merged_geo_name, std::vector<std::size_t> const& pnt_offsets)
+void GEOObjects::mergePolylines(std::vector<std::string> const& geo_names,
+                                std::string const& merged_geo_name,
+                                std::vector<std::size_t> const& pnt_offsets)
 {
     const std::size_t n_geo_names(geo_names.size());
     std::vector<std::size_t> ply_offsets(n_geo_names, 0);
@@ -551,8 +552,9 @@ void GEOObjects::mergePolylines(std::vector<std::string> const & geo_names,
     }
 }
 
-void GEOObjects::mergeSurfaces(std::vector<std::string> const & geo_names,
-        std::string & merged_geo_name, std::vector<std::size_t> const& pnt_offsets)
+void GEOObjects::mergeSurfaces(std::vector<std::string> const& geo_names,
+                               std::string const& merged_geo_name,
+                               std::vector<std::size_t> const& pnt_offsets)
 {
     std::vector<GeoLib::Point*> const* merged_points(this->getPointVecObj(merged_geo_name)->getVector());
     std::vector<std::size_t> const& id_map (this->getPointVecObj(merged_geo_name)->getIDMap ());

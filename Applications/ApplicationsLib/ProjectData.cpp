@@ -166,12 +166,13 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
     if (optional_meshes)
     {
         DBUG("Reading multiple meshes.");
-        for (auto mesh_config :
-             //! \ogs_file_param{prj__meshes__mesh}
-             optional_meshes->getConfigParameterList("mesh"))
-        {
-            meshes.push_back(readSingleMesh(mesh_config, project_directory));
-        }
+        //! \ogs_file_param{prj__meshes__mesh}
+        auto const configs = optional_meshes->getConfigParameterList("mesh");
+        std::transform(
+            configs.begin(), configs.end(), std::back_inserter(meshes),
+            [&project_directory](auto const& mesh_config) {
+                return readSingleMesh(mesh_config, project_directory);
+            });
     }
     else
     {  // Read single mesh with geometry.
@@ -268,9 +269,8 @@ ProjectData::ProjectData() = default;
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& project_directory,
                          std::string const& output_directory)
+    : _mesh_vec(readMeshes(project_config, project_directory))
 {
-    _mesh_vec = readMeshes(project_config, project_directory);
-
     if (auto const python_script =
             //! \ogs_file_param{prj__python_script}
         project_config.getConfigParameterOptional<std::string>("python_script"))

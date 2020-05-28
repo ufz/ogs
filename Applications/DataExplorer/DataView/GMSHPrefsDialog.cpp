@@ -57,10 +57,8 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
     std::vector<std::string> geo_station_names;
     geoObjects.getStationVectorNames(geo_station_names);
 
-    for (auto& geo_station_name : geo_station_names)
-    {
-        geoNames.push_back(geo_station_name);
-    }
+    std::copy(geo_station_names.begin(), geo_station_names.end(),
+              geoNames.begin());
 
     std::size_t nGeoObjects(geoNames.size());
 
@@ -192,9 +190,7 @@ void GMSHPrefsDialog::reject()
 std::vector<std::string> GMSHPrefsDialog::getSelectedObjects(QStringList list)
 {
     std::vector<std::string> indexList;
-    for (auto& index : list)
-    {
-        indexList.push_back(index.toStdString());
-    }
+    std::transform(list.begin(), list.end(), std::back_inserter(indexList),
+                   [](auto const& index) { return index.toStdString(); });
     return indexList;
 }

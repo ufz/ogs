@@ -350,16 +350,6 @@ bool SwmmInterface::readLinksAsPolylines(std::ifstream &in,
     return true;
 }
 
-/// Deletes the geometric objects and returns false
-bool geometryCleanup(std::vector<GeoLib::Point*> &points, std::vector<GeoLib::Polyline*> &lines)
-{
-    for (auto line : lines)
-        delete line;
-    for (auto point : points)
-        delete point;
-    return false;
-}
-
 bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     GeoLib::GEOObjects &geo_objects, bool add_subcatchments)
 {
@@ -380,27 +370,24 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
 
     std::string geo_name = BaseLib::extractBaseNameWithoutExtension(inp_file_name);
     std::string line;
-    while ( std::getline(in, line) )
+    while (std::getline(in, line))
     {
-        if (line == "[COORDINATES]")
+        if (line == "[COORDINATES]" || line == "[VERTICES]" ||
+            line == "[SYMBOLS]")
         {
             if (!readCoordinates<GeoLib::Point>(in, *points, pnt_names))
-                return geometryCleanup(*points, *lines);
-        }
-        if (line == "[VERTICES]")
-        {
-            if (!readCoordinates<GeoLib::Point>(in, *points, pnt_names))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
         if (line == "[Polygons]" && add_subcatchments)
         {
             if (!readPolygons(in, *lines, line_names, *points, pnt_names))
-                return geometryCleanup(*points, *lines);
-        }
-        if (line == "[SYMBOLS]")
-        {
-            if (!readCoordinates<GeoLib::Point>(in, *points, pnt_names))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
     }
 
@@ -411,8 +398,9 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     }
     if (points->size() != pnt_names.size())
     {
-        ERR ("Length of point vector and point name vector do not match.");
-        return geometryCleanup(*points, *lines);
+        ERR("Length of point vector and point name vector do not match.");
+        BaseLib::cleanupVectorElements(*points, *lines);
+        return false;
     }
 
     auto name_id_map = std::make_unique<std::map<std::string, std::size_t>>();
@@ -429,31 +417,43 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     in.clear();
     in.seekg(0, in.beg);
 
-    while ( std::getline(in, line) )
+    while (std::getline(in, line))
     {
         if (line == "[JUNCTIONS]")
         {
             INFO ("Reading point elevation...");
             if (!addPointElevation(in, *points, *name_id_map))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
         if (line == "[CONDUITS]")
         {
             INFO ("Reading conduits...");
             if (!readLinksAsPolylines(in, *lines, line_names, *points, *name_id_map))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
         else if (line == "[PUMPS]")
         {
             INFO ("Reading pumps...");
             if (!readLinksAsPolylines(in, *lines, line_names, *points, *name_id_map))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
         else if (line == "[WEIRS]")
         {
             INFO ("Reading weirs...");
             if (!readLinksAsPolylines(in, *lines, line_names, *points, *name_id_map))
-                return geometryCleanup(*points, *lines);
+            {
+                BaseLib::cleanupVectorElements(*points, *lines);
+                return false;
+            }
         }
     }
 
@@ -478,21 +478,23 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
             }
         }
         std::vector<std::size_t> const& pnt_id_map (geo_objects.getPointVecObj(geo_name)->getIDMap());
-        for (GeoLib::Polyline* line : *lines)
+        for (GeoLib::Polyline* polyline : *lines)
         {
-            for (std::size_t i=0; i<line->getNumberOfPoints(); ++i)
+            for (std::size_t i = 0; i < polyline->getNumberOfPoints(); ++i)
             {
-                line->setPointID(i, pnt_id_map[line->getPointID(i)]);
-                if (i>0 && line->getPointID(i-1) == line->getPointID(i))
+                polyline->setPointID(i, pnt_id_map[polyline->getPointID(i)]);
+                if (i > 0 &&
+                    polyline->getPointID(i - 1) == polyline->getPointID(i))
                 {
-                    line->removePoint(i);
+                    polyline->removePoint(i);
                     i--;
                 }
             }
-            if (line->getPointID(0) == line->getPointID(line->getNumberOfPoints()-1))
+            if (polyline->getPointID(0) ==
+                polyline->getPointID(polyline->getNumberOfPoints() - 1))
             {
-                line->removePoint(line->getNumberOfPoints()-1);
-                line->addPoint(line->getPointID(0));
+                polyline->removePoint(polyline->getNumberOfPoints() - 1);
+                polyline->addPoint(polyline->getPointID(0));
             }
         }
         geo_objects.addPolylineVec(std::move(lines), geo_name,
@@ -851,8 +853,9 @@ std::vector<std::string> SwmmInterface::getSubcatchmentNameMap() const
 {
     std::vector<std::string> names;
     names.reserve(_subcatchments.size());
-    for (auto sc : _subcatchments)
-        names.push_back(sc.name);
+    std::transform(_subcatchments.begin(), _subcatchments.end(),
+                   std::back_inserter(names),
+                   [](auto const& sc) { return sc.name; });
     return names;
 }
 
@@ -1306,8 +1309,7 @@ bool SwmmInterface::writeCsvForTimestep(std::string const& file_name, SwmmObject
     FileIO::CsvInterface csv;
     csv.addIndexVectorForWriting(getNumberOfObjects(obj_type));
     csv.addVectorForWriting("Name", getNames(obj_type));
-    std::vector<std::string> const obj_names (getNames(obj_type));
-    std::size_t const n_params (getNumberOfParameters(obj_type));
+    std::size_t const n_params(getNumberOfParameters(obj_type));
     for (std::size_t i=0; i<n_params; ++i)
     {
         std::vector<double> data = getArrayAtTimeStep(obj_type, time_step, i);

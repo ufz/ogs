@@ -53,7 +53,7 @@ bool isConvertibleToDouble(std::string const& s)
 }
 
 /// Wraps a string into double ticks.
-std::string safeString(std::string s)
+std::string safeString(std::string const& s)
 {
     return "\"" + s + "\"";
 }

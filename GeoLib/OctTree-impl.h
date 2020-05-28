@@ -128,13 +128,12 @@ void OctTree<POINT, MAX_POINTS>::getPointsInRange(T const& min, T const& max,
     }
 
     if (_is_leaf) {
-        for (auto p : _pnts) {
-            if (min[0] <= (*p)[0] && (*p)[0] < max[0] && min[1] <= (*p)[1] &&
-                (*p)[1] < max[1] && min[2] <= (*p)[2] && (*p)[2] < max[2])
-            {
-                pnts.push_back(p);
-            }
-        }
+        std::copy_if(_pnts.begin(), _pnts.end(), std::back_inserter(pnts),
+                     [&min, &max](auto const* p) {
+                         return (min[0] <= (*p)[0] && (*p)[0] < max[0] &&
+                                 min[1] <= (*p)[1] && (*p)[1] < max[1] &&
+                                 min[2] <= (*p)[2] && (*p)[2] < max[2]);
+                     });
     } else {
         for (std::size_t k(0); k<8; k++) {
             _children[k]->getPointsInRange(min, max, pnts);

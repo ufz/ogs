@@ -23,7 +23,6 @@
 
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/FileFinder.h"
 
 #include "GeoLib/StationBorehole.h"
 #include "GeoLib/GEOObjects.h"
@@ -250,8 +249,8 @@ bool XmlStnInterface::write()
     root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 
     const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_exportName));
-    bool isBorehole = static_cast<GeoLib::Station*>((*stations)[0])->type() ==
-                      GeoLib::Station::StationType::BOREHOLE;
+    bool const is_borehole = static_cast<GeoLib::Station*>((*stations)[0])->type() ==
+                       GeoLib::Station::StationType::BOREHOLE;
 
     doc.appendChild(root);
     QDomElement stationListTag = doc.createElement("stationlist");
@@ -261,7 +260,7 @@ bool XmlStnInterface::write()
     stationListTag.appendChild(listNameTag);
     QDomText stationListNameText = doc.createTextNode(QString::fromStdString(_exportName));
     listNameTag.appendChild(stationListNameText);
-    QString listType = (isBorehole) ? "boreholes" : "stations";
+    QString listType = is_borehole ? "boreholes" : "stations";
     QDomElement stationsTag = doc.createElement(listType);
     stationListTag.appendChild(stationsTag);
 
@@ -280,7 +279,7 @@ bool XmlStnInterface::write()
 
     for (std::size_t i = 0; i < nStations; i++)
     {
-        QString stationType =  (isBorehole) ? "borehole" : "station";
+        QString stationType =  is_borehole ? "borehole" : "station";
         QDomElement stationTag = doc.createElement(stationType);
         stationTag.setAttribute( "id", QString::number(i) );
         stationTag.setAttribute( "x",  QString::number((*(*stations)[i])[0], 'f',
@@ -306,7 +305,7 @@ bool XmlStnInterface::write()
             stationValueTag.appendChild(stationValueText);
         }
 
-        if (isBorehole)
+        if (is_borehole)
         {
             writeBoreholeData(
                 doc, stationTag,

@@ -528,8 +528,7 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
     mat(0,1) = c[0]-d[0];
     mat(1,0) = b[1]-a[1];
     mat(1,1) = c[1]-d[1];
-    Eigen::Vector2d rhs;
-    rhs << c[0] - a[0], c[1] - a[1];
+    Eigen::Vector2d rhs{c[0] - a[0], c[1] - a[1]};
 
     rhs = mat.partialPivLu().solve(rhs);
     if (0 <= rhs[1] && rhs[1] <= 1.0) {

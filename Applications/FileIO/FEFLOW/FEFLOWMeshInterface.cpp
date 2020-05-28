@@ -312,7 +312,7 @@ void FEFLOWMeshInterface::readNodeCoordinates(
 
 void FEFLOWMeshInterface::readNodeCoordinates(
     std::ifstream& in, const FEM_CLASS& fem_class, const FEM_DIM& fem_dim,
-    std::vector<MeshLib::Node*>& vec_nodes)
+    std::vector<MeshLib::Node*> const& vec_nodes)
 {
     const std::size_t no_nodes_per_layer =
         (fem_class.dimension == 2)

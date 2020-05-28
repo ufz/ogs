@@ -20,7 +20,6 @@
 
 #include "BaseLib/Logging.h"
 
-#include "BaseLib/FileFinder.h"
 #include "GeoLib/Triangle.h"
 
 namespace

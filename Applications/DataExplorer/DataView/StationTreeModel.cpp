@@ -54,14 +54,14 @@ QModelIndex StationTreeModel::index( int row, int column,
 
     if (!parent.isValid())
     {
-        parentItem = (ModelTreeItem*)(_rootItem);
+        parentItem = static_cast<ModelTreeItem*>(_rootItem);
     }
     else
     {
         parentItem = static_cast<ModelTreeItem*>(parent.internalPointer());
     }
 
-    auto* childItem = (ModelTreeItem*)(parentItem->child(row));
+    auto* childItem = static_cast<ModelTreeItem*>(parentItem->child(row));
     if (childItem)
     {
         QModelIndex newIndex = createIndex(row, column, childItem);
