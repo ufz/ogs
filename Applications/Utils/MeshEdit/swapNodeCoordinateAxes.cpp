@@ -46,10 +46,7 @@ static bool parseNewOrder(std::string const& str_order, std::array<int, 3> &new_
         return false;
     }
 
-    for (int& new_axes_indice : new_axes_indices)
-    {
-        new_axes_indice = -1;
-    }
+    new_axes_indices.fill(-1);
 
     for (int i=0; i<3; i++)
     {
