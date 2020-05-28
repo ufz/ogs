@@ -853,8 +853,9 @@ std::vector<std::string> SwmmInterface::getSubcatchmentNameMap() const
 {
     std::vector<std::string> names;
     names.reserve(_subcatchments.size());
-    for (auto sc : _subcatchments)
-        names.push_back(sc.name);
+    std::transform(_subcatchments.begin(), _subcatchments.end(),
+                   std::back_inserter(names),
+                   [](auto const& sc) { return sc.name; });
     return names;
 }
 
