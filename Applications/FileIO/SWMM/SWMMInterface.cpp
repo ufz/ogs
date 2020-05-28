@@ -1308,8 +1308,7 @@ bool SwmmInterface::writeCsvForTimestep(std::string const& file_name, SwmmObject
     FileIO::CsvInterface csv;
     csv.addIndexVectorForWriting(getNumberOfObjects(obj_type));
     csv.addVectorForWriting("Name", getNames(obj_type));
-    std::vector<std::string> const obj_names (getNames(obj_type));
-    std::size_t const n_params (getNumberOfParameters(obj_type));
+    std::size_t const n_params(getNumberOfParameters(obj_type));
     for (std::size_t i=0; i<n_params; ++i)
     {
         std::vector<double> data = getArrayAtTimeStep(obj_type, time_step, i);
