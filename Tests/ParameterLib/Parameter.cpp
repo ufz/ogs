@@ -35,7 +35,7 @@ std::unique_ptr<Parameter<double>> constructParameterFromString(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves = {})
 {
-    auto const xml_ptree = readXml(xml.c_str());
+    auto const xml_ptree = Tests::readXml(xml.c_str());
     BaseLib::ConfigTree config_tree(xml_ptree, "", BaseLib::ConfigTree::onerror,
                                     BaseLib::ConfigTree::onwarning);
     auto parameter_base = createParameter(config_tree, meshes, curves);

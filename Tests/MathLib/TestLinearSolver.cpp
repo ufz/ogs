@@ -283,7 +283,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
             "  </parameters>"
             "  <prefix>ptest1</prefix>"
             "</petsc>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
@@ -317,7 +317,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
             "  </parameters>"
             "  <prefix>ptest2</prefix>"
             "</petsc>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,
@@ -353,7 +353,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
             "  </parameters>"
             "  <prefix>ptest3</prefix>"
             "</petsc>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     checkLinearSolverInterface<MathLib::PETScMatrix,
                                MathLib::PETScVector,

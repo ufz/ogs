@@ -28,7 +28,7 @@ using ArrayType = MaterialLib::Fluid::FluidProperty::ArrayType;
 // Test density models.
 std::unique_ptr<FluidProperty> createTestFluidDensityModel(const char xml[])
 {
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("density");
