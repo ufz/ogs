@@ -478,21 +478,23 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
             }
         }
         std::vector<std::size_t> const& pnt_id_map (geo_objects.getPointVecObj(geo_name)->getIDMap());
-        for (GeoLib::Polyline* line : *lines)
+        for (GeoLib::Polyline* polyline : *lines)
         {
-            for (std::size_t i=0; i<line->getNumberOfPoints(); ++i)
+            for (std::size_t i = 0; i < polyline->getNumberOfPoints(); ++i)
             {
-                line->setPointID(i, pnt_id_map[line->getPointID(i)]);
-                if (i>0 && line->getPointID(i-1) == line->getPointID(i))
+                polyline->setPointID(i, pnt_id_map[polyline->getPointID(i)]);
+                if (i > 0 &&
+                    polyline->getPointID(i - 1) == polyline->getPointID(i))
                 {
-                    line->removePoint(i);
+                    polyline->removePoint(i);
                     i--;
                 }
             }
-            if (line->getPointID(0) == line->getPointID(line->getNumberOfPoints()-1))
+            if (polyline->getPointID(0) ==
+                polyline->getPointID(polyline->getNumberOfPoints() - 1))
             {
-                line->removePoint(line->getNumberOfPoints()-1);
-                line->addPoint(line->getPointID(0));
+                polyline->removePoint(polyline->getNumberOfPoints() - 1);
+                polyline->addPoint(polyline->getPointID(0));
             }
         }
         geo_objects.addPolylineVec(std::move(lines), geo_name,
