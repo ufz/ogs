@@ -15,6 +15,10 @@ add_custom_target(check-header
 # Checks header for standalone compilation
 function(_check_header_compilation TARGET)
 
+    if(NOT TARGET ${TARGET})
+        return()
+    endif()
+
     get_target_property(SOURCE_FILES ${TARGET} SOURCES)
     get_target_property(SOURCE_DIR ${TARGET} SOURCE_DIR)
 
