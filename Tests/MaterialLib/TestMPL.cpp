@@ -19,6 +19,8 @@
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "ParameterLib/Parameter.h"
 
+namespace Tests
+{
 std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
 {
     auto const ptree = readXml(xml.c_str());
@@ -33,8 +35,6 @@ std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
     return MPL::createMedium(config, parameters, nullptr, curves);
 }
 
-namespace Tests
-{
 std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
     const char xml[],
     std::function<std::unique_ptr<MaterialPropertyLib::Property>(
