@@ -20,6 +20,7 @@ include:
   - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
   # extends
   - local: '/scripts/ci/extends/defaults.yml'
+  - local: '/scripts/ci/extends/rules-master-manual.yml'
   - local: '/scripts/ci/extends/template-build-linux.yml'
   - local: '/scripts/ci/extends/template-build-win.yml'
   - local: '/scripts/ci/extends/container-maker-setup.yml'
@@ -39,3 +40,4 @@ include:
   - local: '/scripts/ci/jobs/build-gui-linux.yml'
   - local: '/scripts/ci/jobs/build-gui-win.yml'
   - local: '/scripts/ci/jobs/build-gui-mac.yml'
+  - local: '/scripts/ci/jobs/check-header.yml'
