@@ -18,12 +18,13 @@
 #include "MaterialLib/MPL/CreateMedium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "ParameterLib/Parameter.h"
+#include "Tests/TestTools.h"
 
 namespace Tests
 {
 std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
 {
-    auto const ptree = readXml(xml.c_str());
+    auto const ptree = Tests::readXml(xml.c_str());
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& config = conf.getConfigSubtree("medium");
@@ -41,7 +42,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
         BaseLib::ConfigTree const& config)>
         createProperty)
 {
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("property");

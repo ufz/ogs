@@ -120,7 +120,7 @@ TEST(BaseLibConfigTree, Get)
             "<vector_bad1>x 1 2a</vector_bad1>"
             "<vector_bad2>0 1 2a</vector_bad2>"
             ;
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -256,7 +256,7 @@ TEST(BaseLibConfigTree, IncompleteParse)
             "<pt x=\"0.5\">1</pt>"
             "<pt2 x=\"0.5\" y=\"1.0\" z=\"2.0\" />"
             ;
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -297,7 +297,7 @@ TEST(BaseLibConfigTree, CheckRange)
             "<int>0</int>"
             "<int>1</int>"
             "<int>2</int>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -336,7 +336,7 @@ TEST(BaseLibConfigTree, GetSubtreeList)
             "<val><int>0</int></val>"
             "<val><int>1</int></val>"
             "<val><int>2</int></val>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -368,7 +368,7 @@ TEST(BaseLibConfigTree, GetParamList)
             "<int>2</int>"
             "<int2 a=\"b\">3</int2>"
             "<int3>4<error/></int3>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -419,7 +419,7 @@ TEST(BaseLibConfigTree, GetValueList)
             "<int>0</int>"
             "<int>1</int>"
             "<int>2</int>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -454,7 +454,7 @@ TEST(BaseLibConfigTree, NoConversion)
             "<ign/>"
             "<ign2/><ign2/><ign2/>"
             ;
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -506,7 +506,7 @@ TEST(BaseLibConfigTree, NoConversion)
 TEST(BaseLibConfigTree, BadKeynames)
 {
     const char xml[] = "";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -550,7 +550,7 @@ TEST(BaseLibConfigTree, StringLiterals)
     const char xml[] =
             "<s>test</s>"
             "<t>Test</t>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -576,7 +576,7 @@ TEST(BaseLibConfigTree, MoveConstruct)
             "<s>test</s>"
             "<t>Test</t>"
             "<u>data</u>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {
@@ -620,7 +620,7 @@ TEST(BaseLibConfigTree, MoveAssign)
             "<s>test</s>"
             "<t>Test</t>"
             "<u>data</u>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
 
     Callbacks cbs;
     {

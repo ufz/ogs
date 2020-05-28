@@ -11,8 +11,9 @@
 
 #include "Tests/TestTools.h"
 
-boost::property_tree::ptree
-readXml(const char xml[])
+namespace Tests
+{
+boost::property_tree::ptree readXml(const char xml[])
 {
     boost::property_tree::ptree ptree;
     std::istringstream xml_str(xml);
@@ -22,3 +23,5 @@ readXml(const char xml[])
         boost::property_tree::xml_parser::trim_whitespace);
     return ptree;
 }
+
+}  // namespace Tests
