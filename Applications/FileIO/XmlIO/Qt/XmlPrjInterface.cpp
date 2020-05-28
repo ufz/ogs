@@ -21,7 +21,6 @@
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "Applications/DataHolderLib/FemCondition.h"
 
-#include "BaseLib/FileFinder.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/IO/Writer.h"
 

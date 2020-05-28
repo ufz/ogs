@@ -20,9 +20,6 @@
 
 #include "BaseLib/Logging.h"
 
-#include "BaseLib/FileFinder.h"
-
-
 namespace FileIO
 {
 XmlNumInterface::XmlNumInterface() : XMLQtInterface("OpenGeoSysNUM.xsd") {}

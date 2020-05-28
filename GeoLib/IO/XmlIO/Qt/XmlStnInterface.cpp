@@ -23,7 +23,6 @@
 
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/FileFinder.h"
 
 #include "GeoLib/StationBorehole.h"
 #include "GeoLib/GEOObjects.h"
