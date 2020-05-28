@@ -243,7 +243,7 @@ TEST(Material, parseMaterials)
     medium.property[MPL::permeability] = "1.0e-12";
 
     // create an actual MaterialProperty-Medium out of the specifier object
-    auto const m = createTestMaterial(makeMedium(medium));
+    auto const m = Tests::createTestMaterial(makeMedium(medium));
 
     // those two vectors will actually be compared
     std::vector<std::string> expected;

@@ -77,7 +77,7 @@ TEST(MaterialPropertyLib, RelPermLiakopoulos)
         std::stringstream m;
         m << m_beg.str() << m_sat.str() << m_end.str();
 
-        auto const& medium = createTestMaterial(m.str());
+        auto const& medium = Tests::createTestMaterial(m.str());
         MaterialPropertyLib::VariableArray variable_array;
         ParameterLib::SpatialPosition const pos;
         double const time = std::numeric_limits<double>::quiet_NaN();
