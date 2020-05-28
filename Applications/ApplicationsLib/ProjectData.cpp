@@ -1087,14 +1087,10 @@ void ProjectData::parseChemicalSystem(
         }
         else if (boost::iequals(chemical_solver, "PhreeqcKernel"))
         {
-            INFO(
-                "Configuring phreeqc interface for water chemistry "
-                "calculation by direct memory access.");
-
-            _chemical_system = ChemistryLib::createChemicalSolverInterface<
-                ChemistryLib::ChemicalSolver::PhreeqcKernel>(
-                _mesh_vec, process_id_to_component_name_map, *config,
-                output_directory);
+            OGS_FATAL(
+                "The chemical solver option of PhreeqcKernel is not accessible "
+                "for the time being. Please set 'Phreeqc'' as the chemical "
+                "solver for reactive transport modeling.");
         }
         else
         {
