@@ -97,52 +97,16 @@ AddTest(
     RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu saturation saturation 1e-10 1e-11
 )
 
-# 1d infiltration with RichardsFlow
 AddTest(
     NAME 1d-infiltration
     PATH Parabolic/Richards/infiltration_1D
     EXECUTABLE ogs
     EXECUTABLE_ARGS 1d-infiltration.prj
+    RUNTIME 3
     TESTER vtkdiff
-    DIFF_DATA
-    out_ex1_ts_0_expected.vtu out_ex1_ts_0.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_100_expected.vtu out_ex1_ts_100.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_120_expected.vtu out_ex1_ts_120.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_140_expected.vtu out_ex1_ts_140.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_160_expected.vtu out_ex1_ts_160.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_180_expected.vtu out_ex1_ts_180.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_20_expected.vtu out_ex1_ts_20.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_200_expected.vtu out_ex1_ts_200.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_220_expected.vtu out_ex1_ts_220.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_240_expected.vtu out_ex1_ts_240.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_260_expected.vtu out_ex1_ts_260.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_280_expected.vtu out_ex1_ts_280.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_300_expected.vtu out_ex1_ts_300.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_320_expected.vtu out_ex1_ts_320.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_340_expected.vtu out_ex1_ts_340.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_360_expected.vtu out_ex1_ts_360.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_380_expected.vtu out_ex1_ts_380.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_40_expected.vtu out_ex1_ts_40.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_400_expected.vtu out_ex1_ts_400.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_420_expected.vtu out_ex1_ts_420.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_440_expected.vtu out_ex1_ts_440.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_460_expected.vtu out_ex1_ts_460.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_480_expected.vtu out_ex1_ts_480.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_500_expected.vtu out_ex1_ts_500.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_520_expected.vtu out_ex1_ts_520.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_540_expected.vtu out_ex1_ts_540.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_560_expected.vtu out_ex1_ts_560.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_580_expected.vtu out_ex1_ts_580.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_60_expected.vtu out_ex1_ts_60.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_600_expected.vtu out_ex1_ts_600.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_620_expected.vtu out_ex1_ts_620.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_640_expected.vtu out_ex1_ts_640.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_660_expected.vtu out_ex1_ts_660.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_680_expected.vtu out_ex1_ts_680.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_700_expected.vtu out_ex1_ts_700.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_720_expected.vtu out_ex1_ts_720.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_740_expected.vtu out_ex1_ts_740.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_748_expected.vtu out_ex1_ts_748.vtu pressure pressure 1e-3 1e-5
-    out_ex1_ts_80_expected.vtu out_ex1_ts_80.vtu pressure pressure 1e-3 1e-5
     REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB 1d-infiltration_t_*.vtu pressure pressure 1e-15 0
+    GLOB 1d-infiltration_t_*.vtu darcy_velocity darcy_velocity 1e-15 0
+    GLOB 1d-infiltration_t_*.vtu saturation saturation 1e-15 0
 )
