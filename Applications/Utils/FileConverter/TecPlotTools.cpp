@@ -239,7 +239,7 @@ void skipGeometrySection(std::ifstream& in, std::string& line)
 }
 
 /// Splits a TecPlot file containing multiple sections/zones into separate files
-int splitFile(std::ifstream& in, std::string file_name)
+int splitFile(std::ifstream& in, std::string const& file_name)
 {
     std::ofstream out;
     std::string line;
@@ -298,7 +298,7 @@ int splitFile(std::ifstream& in, std::string file_name)
 }
 
 /// Converts a TecPlot file into one or more OGS-meshes (one mesh per section/zone)
-int convertFile(std::ifstream& in, std::string file_name)
+int convertFile(std::ifstream& in, std::string const& file_name)
 {
     std::string line;
     std::string name;
