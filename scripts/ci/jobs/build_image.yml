@@ -4,6 +4,8 @@ build gcc images:
     - changes:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
   tags:
     - docker-shell
     - ogs
@@ -11,7 +13,7 @@ build gcc images:
     GIT_LFS_SKIP_SMUDGE: "1"
   extends: .container-maker-setup
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker login -u $OGS_CI_REGISTRY_USER -p $OGS_CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker pull $CONTAINER_GCC_IMAGE:latest || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
       --ogs off --pm system --cvode --cppcheck --docs --gcovr

@@ -8,10 +8,10 @@ stages:
 
 variables:
   # Docker image names
-  CONTAINER_GCC_IMAGE: $CI_REGISTRY_IMAGE/gcc:$CI_COMMIT_REF_SLUG
-  CONTAINER_GCC_GUI_IMAGE: $CI_REGISTRY_IMAGE/gcc-gui:$CI_COMMIT_REF_SLUG
-  XUNIT_TO_JUNIT_IMAGE: registry.gitlab.com/opengeosys/ogs/xunit-to-junit
-  PRECOMMIT_IMAGE: registry.gitlab.com/opengeosys/ogs/pre-commit
+  CONTAINER_GCC_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/$CI_PROJECT_NAMESPACE/gcc:$CI_COMMIT_REF_SLUG
+  CONTAINER_GCC_GUI_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/$CI_PROJECT_NAMESPACE/gcc-gui:$CI_COMMIT_REF_SLUG
+  XUNIT_TO_JUNIT_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/xunit-to-junit
+  PRECOMMIT_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/pre-commit
   # Build config
   BUILD_TYPE: Release
   BUILD_PROCESSES: "" # Empty string: builds all processes
