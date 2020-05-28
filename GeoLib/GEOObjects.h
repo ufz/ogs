@@ -339,8 +339,9 @@ private:
      * @param pnt_offsets offsets in the merged vector storing the points
      * @return true, if merging the points succeeded, else false
      */
-    bool mergePoints(std::vector<std::string> const & geo_names, std::string & merged_geo_name,
-            std::vector<std::size_t> &pnt_offsets);
+    bool mergePoints(std::vector<std::string> const& geo_names,
+                     std::string& merged_geo_name,
+                     std::vector<std::size_t>& pnt_offsets);
 
     /**
      * Method merges GeoLib::Polylines from different geometries into one
@@ -354,8 +355,9 @@ private:
      * merging.
      * @param pnt_offsets offsets in the merged vector storing the points.
      */
-    void mergePolylines(std::vector<std::string> const & geo_names, std::string & merged_geo_name,
-            std::vector<std::size_t> const& pnt_offsets);
+    void mergePolylines(std::vector<std::string> const& geo_names,
+                        std::string const& merged_geo_name,
+                        std::vector<std::size_t> const& pnt_offsets);
 
     /**
      * Method merges GeoLib::Surfaces from different geometries into one
@@ -367,8 +369,9 @@ private:
      * merging.
      * @param pnt_offsets offsets in the merged vector storing the points.
      */
-    void mergeSurfaces(std::vector<std::string> const & geo_names,
-            std::string & merged_geo_name, std::vector<std::size_t> const& pnt_offsets);
+    void mergeSurfaces(std::vector<std::string> const& geo_names,
+                       std::string const& merged_geo_name,
+                       std::vector<std::size_t> const& pnt_offsets);
 
     void markUnusedPoints(std::string const& geo_name,
                           std::vector<bool>& transfer_pnts) const;
