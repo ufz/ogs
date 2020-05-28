@@ -1,0 +1,27 @@
+clang sanitizer:
+  stage: checks
+  tags:
+    - docker
+  extends:
+    - .defaults
+    - .rules-master-manual
+
+  variables:
+    BUILD_DIR: "build-sanitizer"
+    CMAKE_ARGS: "-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON -DOGS_BUILD_UTILS=ON"
+    UBSAN_OPTIONS: "print_stacktrace=1"
+    LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
+
+  image:
+    name: $CONTAINER_CLANG_IMAGE
+
+  script:
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
+    - >
+      cmake .. -G Ninja
+      $CMAKE_ARGS
+      -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
+    - cmake --build . --target tests
+    - cmake --build . --target ctest

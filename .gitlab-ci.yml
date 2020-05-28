@@ -10,6 +10,7 @@ variables:
   # Docker image names
   CONTAINER_GCC_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/$CI_PROJECT_NAMESPACE/gcc:$CI_COMMIT_REF_SLUG
   CONTAINER_GCC_GUI_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/$CI_PROJECT_NAMESPACE/gcc-gui:$CI_COMMIT_REF_SLUG
+  CONTAINER_CLANG_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/$CI_PROJECT_NAMESPACE/clang:$CI_COMMIT_REF_SLUG
   XUNIT_TO_JUNIT_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/xunit-to-junit
   PRECOMMIT_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/pre-commit
   WEB_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/web
@@ -44,3 +45,4 @@ include:
   - local: '/scripts/ci/jobs/check-header.yml'
   - local: '/scripts/ci/jobs/tests-large.yml'
   - local: '/scripts/ci/jobs/web.yml'
+  - local: '/scripts/ci/jobs/clang-sanitizer.yml'

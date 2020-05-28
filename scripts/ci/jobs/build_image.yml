@@ -1,4 +1,4 @@
-build gcc images:
+build container images:
   stage: .pre
   rules:
     - changes:
@@ -22,6 +22,10 @@ build gcc images:
     - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
       --pm conan --cvode --cppcheck --docs --gcovr --gui
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
+    - docker pull $CONTAINER_CLANG_IMAGE:latest || true
+    - python ThirdParty/container-maker/ogscm/cli.py --build --gitlab
+      --base_image ubuntu:18.04 --compiler clang --compiler_version 9
+      --tag $CONTAINER_CLANG_IMAGE --upload
 
 ### global project images ###
 build xunit-to-junit image:
