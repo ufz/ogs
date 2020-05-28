@@ -213,30 +213,33 @@ bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
 
 bool Polygon::isPolylineInPolygon(const Polyline& ply) const
 {
-    for (auto segment : ply) {
-        if (!containsSegment(segment)) {
-            return false;
-        }
-    }
-    return true;
+    return std::all_of(ply.begin(), ply.end(), [this](auto const& segment) {
+        return containsSegment(segment);
+    });
 }
 
 bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
 {
     const std::size_t ply_size (ply.getNumberOfPoints());
     // check points
-    for (std::size_t k(0); k < ply_size; k++) {
-        if (isPntInPolygon (*(ply.getPoint(k)))) {
+    for (std::size_t k(0); k < ply_size; k++)
+    {
+        if (isPntInPolygon(*(ply.getPoint(k))))
+        {
             return true;
         }
     }
 
     GeoLib::Point s;
-    for (auto polygon_seg : *this) {
-        for (auto polyline_seg : ply) {
-            if (GeoLib::lineSegmentIntersect(polyline_seg, polygon_seg, s)) {
-                return true;
-            }
+    for (auto polygon_seg : *this)
+    {
+        if (std::any_of(ply.begin(), ply.end(),
+                        [&polygon_seg, &s](auto const& polyline_seg) {
+                            return GeoLib::lineSegmentIntersect(polyline_seg,
+                                                                polygon_seg, s);
+                        }))
+        {
+            return true;
         }
     }
 
