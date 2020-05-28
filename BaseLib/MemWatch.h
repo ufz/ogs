@@ -20,16 +20,10 @@ class MemWatch {
 public:
     MemWatch ();
     unsigned long getVirtMemUsage ();
-    unsigned long getResMemUsage ();
-    unsigned long getShrMemUsage ();
-    unsigned long getCodeMemUsage ();
 
 private:
     unsigned updateMemUsage ();
     unsigned long _vmem_size = 0;
-    unsigned long _rmem_size = 0;
-    unsigned long _smem_size = 0;
-    unsigned long _cmem_size = 0;
 };
 
 }  // namespace BaseLib
