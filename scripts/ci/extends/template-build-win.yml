@@ -8,7 +8,6 @@
     - .test-artifacts
 
   variables:
-    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
 
   script:
     - mkdir -p $BUILD_DIR

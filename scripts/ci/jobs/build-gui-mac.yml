@@ -15,7 +15,6 @@ build gui mac:
 
   variables:
     BUILD_DIR: "build-gui-mac"
-    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
     CMAKE_ARGS: >-
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_PCH=OFF

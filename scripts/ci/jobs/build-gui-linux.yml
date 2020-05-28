@@ -13,7 +13,6 @@ build gui linux:
 
   variables:
     BUILD_DIR: "build-gui-linux"
-    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
     CMAKE_ARGS: >-
       -DOGS_USE_CONAN=ON
       -DOGS_USE_PCH=OFF

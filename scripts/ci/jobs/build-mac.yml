@@ -6,4 +6,3 @@ build mac:
 
   variables:
     BUILD_DIR: "build-mac"
-    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"

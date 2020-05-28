@@ -23,3 +23,7 @@ check header:
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
     - cat CMakeFiles/CMakeError.log || true
+
+  cache:
+    paths:
+      - $CCACHE_DIR

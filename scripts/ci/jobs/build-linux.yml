@@ -3,7 +3,6 @@ build linux:
 
   variables:
     BUILD_DIR: "build"
-    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
     CMAKE_ARGS: "-DOGS_USE_CONAN=OFF"
 
   image:
