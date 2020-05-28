@@ -32,3 +32,24 @@ std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
 
     return MPL::createMedium(config, parameters, nullptr, curves);
 }
+
+namespace Tests
+{
+std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
+    const char xml[],
+    std::function<std::unique_ptr<MaterialPropertyLib::Property>(
+        BaseLib::ConfigTree const& config)>
+        createProperty)
+{
+    auto const ptree = readXml(xml);
+    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
+                             BaseLib::ConfigTree::onwarning);
+    auto const& sub_config = conf.getConfigSubtree("property");
+    // Parsing the property name:
+    auto const property_name =
+        sub_config.getConfigParameter<std::string>("name");
+
+    return createProperty(sub_config);
+}
+
+}  // namespace Tests
