@@ -1,0 +1,1 @@
+\copydoc MaterialPropertyLib::CapillaryPressureRegularizedVanGenuchten::m_
