@@ -25,7 +25,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     const std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>&
         nonlinear_solvers,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>& phreeqc_io)
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&
+        chemical_solver_interface)
 {
     auto const& coupling_config
         //! \ogs_file_param{prj__time_loop__global_process_coupling}
@@ -93,7 +94,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
 
     return std::make_unique<TimeLoop>(
         std::move(output), std::move(per_process_data), max_coupling_iterations,
-        std::move(global_coupling_conv_criteria), std::move(phreeqc_io),
-        start_time, end_time);
+        std::move(global_coupling_conv_criteria),
+        std::move(chemical_solver_interface), start_time, end_time);
 }
 }  // namespace ProcessLib
