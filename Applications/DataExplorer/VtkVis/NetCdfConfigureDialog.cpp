@@ -79,9 +79,8 @@ void NetCdfConfigureDialog::on_comboBoxVariable_currentIndexChanged(int /*id*/)
 }
 
 //set up x-axis/lat
-void NetCdfConfigureDialog::on_comboBoxDim1_currentIndexChanged(int id)
+void NetCdfConfigureDialog::on_comboBoxDim1_currentIndexChanged(int /*id*/)
 {
-    if (id == -1) id = 0;
     double firstValue=0, lastValue=0;
     unsigned size = 0;
     getDimEdges(comboBoxDim1->currentText().toStdString(), size, firstValue, lastValue);
