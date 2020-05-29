@@ -326,16 +326,15 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
             QString key = i.key();
             QList<QVariant> values = i.value();
 
-            VtkAlgorithmPropertyVectorEdit* vectorEdit;
             if (!values.empty())
             {
                 QList<QString> valuesAsString;
                 foreach (QVariant variant, values)
                 valuesAsString.push_back(variant.toString());
 
-                vectorEdit = new VtkAlgorithmPropertyVectorEdit(valuesAsString, key,
-                                                                values.front().type(),
-                                                                algProps);
+                VtkAlgorithmPropertyVectorEdit* vectorEdit =
+                    new VtkAlgorithmPropertyVectorEdit(
+                        valuesAsString, key, values.front().type(), algProps);
                 connect(vectorEdit, SIGNAL(editingFinished()), this,
                         SIGNAL(requestViewUpdate()));
                 layout->addRow(key, vectorEdit);
