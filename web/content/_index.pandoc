@@ -7,7 +7,7 @@ date: 2017-01-13T14:24:23+01:00
 
 hero:
   headline: Open-source multi-physics
-  textline: OpenGeoSys (OGS) is a scientific [open source project](https://github.com/ufz/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. Current version is OpenGeoSys-6 which is documented on this page. For information about OpenGeoSys-5, see [its dedicated section](/ogs-5). OGS been successfully applied in the fields of contaminant hydrology, water resources and waste management, geotechnical applications, geothermal energy systems and energy storage.
+  textline: OpenGeoSys (OGS) is a scientific [open source project](https://gitlab.opengeosys.org/ogs/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. Current version is OpenGeoSys-6 which is documented on this page. For information about OpenGeoSys-5, see [its dedicated section](/ogs-5). OGS been successfully applied in the fields of contaminant hydrology, water resources and waste management, geotechnical applications, geothermal energy systems and energy storage.
   quicklinks:
     - name: Tools
       anchor: tools
@@ -107,7 +107,7 @@ features:
         Implement your new feature and [let the CI system](/docs/devguide/development-workflows/continuous-integration) run sophisticated tests automatically for you incorporating multiple computing platforms, a magnitude of software configurations and a whole array of CPU intensive complex test simulation runs.
     - headline: Get help from core developers
       textline: |
-        Once your feature is ready the [code review process](/docs/devguide/development-workflows/code-reviews/) starts. A helpful [core developer](https://github.com/ufz/ogs/graphs/contributors) checks the proposed change for general acceptance and may give hints for improvement (of e.g. the computational performance or the code structure). Once the iterative feedback loop between you, code reviewer(s) and the automated test system satisfies all aspects the proposed change is merged into the main development line.
+        Once your feature is ready the [code review process](/docs/devguide/development-workflows/code-reviews/) starts. A helpful [core developer](https://gitlab.opengeosys.org/ogs/ogs/-/graphs/gitlab-ci) checks the proposed change for general acceptance and may give hints for improvement (of e.g. the computational performance or the code structure). Once the iterative feedback loop between you, code reviewer(s) and the automated test system satisfies all aspects the proposed change is merged into the main development line.
   visual:
     permalink: "/features/OGS-Software-Engineering-Small.png"
     alt: Dev workflow
@@ -131,10 +131,10 @@ features:
           url: /docs/devguide
     - headline: Become part of the Community
       textline: |
-        Get in touch with the OpenGeoSys Community via our [Discussion forum](https://discourse.opengeosys.org), [GitHub](https://github.com/ufz/ogs) or by [email](mailto:info@opengeosys.org).
+        Get in touch with the OpenGeoSys Community via our [Discussion forum](https://discourse.opengeosys.org), [GitLab](https://gitlab.opengeosys.org/ogs/ogs) or by [email](mailto:info@opengeosys.org).
       links:
-        - text: <i class="fab fa-github"></i> GitHub
-          url: https://github.com/ufz/ogs
+        - text: <i class="fab fa-gitlab"></i> GitLab
+          url: https://gitlab.opengeosys.org/ogs/ogs
   layout: vertical
   class: inverse
 ---

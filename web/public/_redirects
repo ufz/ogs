@@ -12,4 +12,4 @@
 /help/documentation/output-control-file https://ogs5-keywords.netlify.com/ogs/wiki/public/doc-auto/by_ext/out.html
 /help/documentation/* https://ogs5-keywords.netlify.com
 
-/project/license https://github.com/ufz/ogs/blob/master/LICENSE.txt
+/project/license https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/LICENSE.txt
