@@ -44,9 +44,7 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     new_pnts->reserve(pnts->size());
     std::transform(pnts->cbegin(), pnts->cend(), std::back_inserter(*new_pnts),
         [](GeoLib::Point* point) { return new GeoLib::Point(*point); });
-    auto pnt_name_id_map =
-        std::make_unique<std::map<std::string, std::size_t>>();
-    pnt_name_id_map->insert(
+    auto pnt_name_id_map = std::make_unique<std::map<std::string, std::size_t>>(
         _geo_objects.getPointVecObj(input_name)->getNameIDMapBegin(),
         _geo_objects.getPointVecObj(input_name)->getNameIDMapEnd());
     _geo_objects.addPointVec(std::move(new_pnts), _output_name,
@@ -57,10 +55,9 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     {
         auto new_plys = copyPolylinesVector(*plys);
         auto ply_name_id_map =
-            std::make_unique<std::map<std::string, std::size_t>>();
-        ply_name_id_map->insert(
-            _geo_objects.getPolylineVecObj(input_name)->getNameIDMapBegin(),
-            _geo_objects.getPolylineVecObj(input_name)->getNameIDMapEnd());
+            std::make_unique<std::map<std::string, std::size_t>>(
+                _geo_objects.getPolylineVecObj(input_name)->getNameIDMapBegin(),
+                _geo_objects.getPolylineVecObj(input_name)->getNameIDMapEnd());
         _geo_objects.addPolylineVec(std::move(new_plys), _output_name,
                                     std::move(ply_name_id_map));
     }
@@ -70,10 +67,9 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     {
         auto new_sfcs = copySurfacesVector(*sfcs);
         auto sfc_name_id_map =
-            std::make_unique<std::map<std::string, std::size_t>>();
-        sfc_name_id_map->insert(
-            _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapBegin(),
-            _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapEnd());
+            std::make_unique<std::map<std::string, std::size_t>>(
+                _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapBegin(),
+                _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapEnd());
         _geo_objects.addSurfaceVec(std::move(new_sfcs), _output_name,
                                    std::move(sfc_name_id_map));
     }
