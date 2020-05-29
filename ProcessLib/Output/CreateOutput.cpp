@@ -114,6 +114,15 @@ std::unique_ptr<Output> createOutput(
     //! \ogs_file_param{prj__time_loop__output__meshes}
     if (auto const meshes_config = config.getConfigSubtreeOptional("meshes"))
     {
+        if(prefix.find("{:meshname}") == std::string::npos)
+        {
+            OGS_FATAL(
+                "There are multiple meshes defined in the output section of "
+                "the project file, but the prefix doesn't contain "
+                "'{:meshname}'. Thus the names for the files, the simulation "
+                "results should be written to, would not be distinguishable "
+                "for different meshes.");
+        }
         //! \ogs_file_param{prj__time_loop__output__meshes__mesh}
         for (auto mesh_config : meshes_config->getConfigParameterList("mesh"))
         {
