@@ -3,10 +3,10 @@
         Generated with <a href="https://gohugo.io">Hugo</a> {{ hugo.Version }}. Last revision: {{ .Lastmod.Format "January 2, 2006" }} {{ if .IsPage }}<em>
             {{ with .GitInfo }}
                 <br>
-                Commit: {{ .Subject }} <a href="https://github.com/ufz/ogs/commit/{{ .AbbreviatedHash }}">{{ .AbbreviatedHash }}</a>
+                Commit: {{ .Subject }} <a href="https://gitlab.opengeosys.org/ogs/ogs/-/commit/{{ .AbbreviatedHash }}">{{ .AbbreviatedHash }}</a>
             {{ end }}
             {{if .GitInfo}}
-                &nbsp;| <a href="https://github.com/ufz/ogs/edit/master/web/content/{{ .File.Path }}">Edit this page on <i class="fab fa-github"></i></a>
+                &nbsp;| <a href="https://gitlab.opengeosys.org/ogs/ogs/-/edit/master/web/content/{{ .File.Path }}">Edit this page on <i class="fab fa-github"></i></a>
             {{ end }}
             </em> {{ end }}
     </p>

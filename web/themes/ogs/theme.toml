@@ -3,7 +3,7 @@
 
 name = "OGS"
 license = "BSD"
-licenselink = "https://github.com/ufz/ogs/blob/master/LICENSE.md"
+licenselink = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/LICENSE.md"
 description = ""
 homepage = "http://opengeosys.org/"
 tags = ["", ""]

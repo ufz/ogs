@@ -1,12 +1,12 @@
 {{ if .Get 1 }}
-<a href="https://github.com/ufz/ogs-data/blob/master/{{ .Get 1 }}">
+<a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/{{ .Get 1 }}">
 {{ else }}
-<a href="https://github.com/ufz/ogs-data/blob/master/{{ .Page.Params.project }}">
+<a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/{{ .Page.Params.project }}">
 {{ end }}
 <i class="far fa-arrow-right"></i>
 {{ if .Get 0 }}
 {{ .Get 0 | markdownify }}
 {{ else }}
-Project file on GitHub
+Project file on GitLab
 {{ end }}
 </a>
