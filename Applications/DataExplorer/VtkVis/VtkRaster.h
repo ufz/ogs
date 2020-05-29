@@ -72,7 +72,4 @@ private:
      * BMP/JPG/PNG-file and create a RasterHeader for the image.
      */
     static bool readWorldFile(std::string const& filename, vtkImageReader2* image);
-
-    /// Converts an uint32-number into a quadruple representing RGBA-colours for a pixel.
-    static void uint32toRGBA(const unsigned int s, int* p);
 };
