@@ -82,11 +82,11 @@ $$
 ## Input files
 
 The project file is
-[`square_1e3_poisson_sin_x_sin_y.prj`](https://github.com/ufz/ogs/tree/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion_Python/square_1e3_poisson_sin_x_sin_y.prj). It describes the
+[`square_1e3_poisson_sin_x_sin_y.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion_Python/square_1e3_poisson_sin_x_sin_y.prj). It describes the
 process to be solved and the related process variable together with their
 initial, boundary conditions and source terms. The definition of the source term
 $Q$ is in a [Python
-script](https://github.com/ufz/ogs/tree/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion_Python/sin_x_sin_y_source_term.py).
+script](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion_Python/sin_x_sin_y_source_term.py).
 The script for setting the source terms is referenced in the project file as
 follows:
 ```
