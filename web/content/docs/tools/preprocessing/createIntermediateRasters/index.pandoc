@@ -12,8 +12,6 @@ author = "Karsten Rink"
 
 This utility uses two input DEMs (i.e. raster files of digital elevation models) located at the exact same spatial position but at different elevation and calculates a specified number of raster DEMs located at equidistant distance between them (i.e. for n=1, one new raster located precisely in the middle will be created).
 
-The tool is part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs).
-
 ## Usage
 
 ```bash

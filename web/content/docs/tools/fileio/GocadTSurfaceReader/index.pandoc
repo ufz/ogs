@@ -24,8 +24,6 @@ Another data type, SGRID (Structured Grid, usually saved to *.sg files) can be c
 
 Parsers for additional GoCAD-datasets may be added in the future.
 
-The tool is part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs).
-
 ## Usage
 
 ```bash

@@ -12,8 +12,6 @@ author = "Karsten Rink"
 
 This utility rasterises an existing 3D mesh at a given resolution. The result is a (quasi-)structured grid (consisting of hexahedral elements) with the same extent as the input mesh. Cell properties are mapped onto the grid (sampled at centre-points of each cube), while node properties are ignored. For large raster sizes,  an undersampling of the original mesh is possible.
 
-The tool is part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs).
-
 ## Usage
 
 ```bash

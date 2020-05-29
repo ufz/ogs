@@ -14,8 +14,6 @@ This is a utility for handling TecPlot data. At the moment, it is possible to sp
 
 This tool may be extended in the future to handle more TecPlot-related functionality.
 
-The tool is part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs).
-
 ## Usage
 
 ```bash
