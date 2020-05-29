@@ -85,26 +85,25 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
         QMenu menu;
         QAction* addFilterAction = menu.addAction("Add filter...");
 
-        QAction* addLUTAction(nullptr);
-        QAction* addMeshingAction(nullptr);
         if (objectType == VTK_IMAGE_DATA)
         {
             // this exception is needed as image object are only displayed in the vis-pipeline
             isSourceItem = false;
-            addMeshingAction = menu.addAction("Convert Image to Mesh...");
+            QAction* addMeshingAction =
+                menu.addAction("Convert Image to Mesh...");
             connect(addMeshingAction, SIGNAL(triggered()), this,
                     SLOT(showImageToMeshConversionDialog()));
         }
         else
         {
-            addLUTAction = menu.addAction("Add color table...");
+            QAction* addLUTAction = menu.addAction("Add color table...");
             connect(addLUTAction, SIGNAL(triggered()), this, SLOT(addColorTable()));
         }
 
-        QAction* addConvertToMeshAction(nullptr);
         if (objectType == VTK_UNSTRUCTURED_GRID)
         {
-            addConvertToMeshAction = menu.addAction("Convert to Mesh...");
+            QAction* addConvertToMeshAction =
+                menu.addAction("Convert to Mesh...");
             connect(addConvertToMeshAction, SIGNAL(triggered()), this,
                     SLOT(convertVTKToOGSMesh()));
         }
@@ -113,11 +112,10 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 #ifdef VTKFBXCONVERTER_FOUND
         QAction* exportFbxAction = menu.addAction("Export as Fbx");
 #endif
-        QAction* removeAction = nullptr;
         if (!isSourceItem || vtkProps->IsRemovable())
         {
             menu.addSeparator();
-            removeAction = menu.addAction("Remove");
+            QAction* removeAction = menu.addAction("Remove");
             connect(removeAction, SIGNAL(triggered()), this,
                     SLOT(removeSelectedPipelineItem()));
         }
