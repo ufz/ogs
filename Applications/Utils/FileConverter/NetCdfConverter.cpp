@@ -31,7 +31,8 @@
 
 using namespace netCDF;
 
-const double no_data = -9999;
+const double no_data_output = -9999;
+double no_data_input = -9999;
 
 enum class OutputType
 {
@@ -404,7 +405,7 @@ static GeoLib::RasterHeader createRasterHeader(
         (n_dims - temp_offset == 3) ? length[dim_idx_map.back()] : 1;
     return {length[dim_idx_map[0 + temp_offset]],
             length[dim_idx_map[1 + temp_offset]],
-            z_length, origin, res, no_data};
+            z_length, origin, res, no_data_output};
 }
 
 static std::vector<std::size_t> getLength(NcVar const& var, bool const is_time_dep)
@@ -429,13 +430,14 @@ static std::vector<double> getData(NcFile const& dataset, NcVar const& var,
     offset[0] = time_step;
     std::vector<double> data_vec(total_length, 0);
     var.getVar(offset, length, data_vec.data());
-    std::replace_if(data_vec.begin(), data_vec.end(),
-                    [](double& x) { return x <= no_data; }, no_data);
+    std::replace_if(
+        data_vec.begin(), data_vec.end(),
+        [](double& x) { return x == no_data_input; }, no_data_output);
 
     // reverse lines in vertical direction if the original file has its origin
     // in the northwest corner
-    NcVar const dim_var (getDimVar(dataset, var, n_dims - 1));
-    auto const bounds = (dim_var.isNull()) ? getDimLength(var, n_dims - 1)
+    NcVar const dim_var (getDimVar(dataset, var, n_dims - 2));
+    auto const bounds = (dim_var.isNull()) ? getDimLength(var, n_dims - 2)
                                            : getBoundaries(dim_var);
     if (bounds.first > bounds.second)
         flipRaster(data_vec, length[n_dims - 1], length[n_dims - 2]);
@@ -620,6 +622,12 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
+    TCLAP::ValueArg<int> arg_nodata(
+        "n", "nodata",
+        "explicitely specifies the no data value used in the dataset (usually it not necessary to set this)",
+        false, -9999, "integer specifying no data value");
+    cmd.add(arg_nodata);
+
     std::vector<std::string> allowed_elems{"tri", "quad", "prism", "hex"};
     TCLAP::ValuesConstraint<std::string> allowed_elem_vals(allowed_elems);
     TCLAP::ValueArg<std::string> arg_elem_type(
@@ -783,6 +791,11 @@ int main(int argc, char* argv[])
                         : elemSelectionLoop(n_dims - temp_offset);
         if (elem_type == MeshLib::MeshElemType::INVALID)
             elemSelectionLoop(n_dims - temp_offset);
+    }
+
+    if (arg_nodata.isSet())
+    {
+        no_data_input = arg_nodata.getValue();
     }
 
     if (!convert(dataset, var, output_name, dim_idx_map, is_time_dep,
