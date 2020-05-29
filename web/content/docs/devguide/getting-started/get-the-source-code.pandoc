@@ -18,30 +18,31 @@ The content of this page is largely taken from the [GitHub-blog](https://github.
 
 ## Create a fork
 
-Go to the [official OGS-6 repository](https://github.com/ufz/ogs) and click the "Fork"-button. This creates a new fork under your account with the URL `https://github.com/YOUR-USERNAME/ogs`.
+Go to the [official OGS-6 repository](https://gitlab.opengeosys.org/ogs/ogs) and click the "Fork"-button. This creates a new fork under your account with the URL `https://gitlab.opengeosys.org/YOUR-USERNAME/ogs`.
 
 
 ## Setup your local clone
 
-You can use the git command line tool to clone the remote repository on GitHub to your PC:
+You can use the git command line tool to clone the remote repository on GitLab to your PC:
 
 ```bash
-$ git clone https://github.com/YOUR-USERNAME/ogs
+$ git clone git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
 $ cd ogs
 $ git config remote.pushdefault origin
 $ git config push.default current
 ```
 
-This creates a new folder `ogs` in your current working directory with the OGS source code. After this step, the remote called `origin` refers to your fork on GitHub. It also sets the default remote for pushes to be `origin` and the default push behavior to `current`. Together this means that if you just type `git push`, the current branch is pushed to the `origin` remote (git version >= 2.5 required).
+This creates a new folder `ogs` in your current working directory with the OGS source code. After this step, the remote called `origin` refers to your fork on GitLab. It also sets the default remote for pushes to be `origin` and the default push behavior to `current`. Together this means that if you just type `git push`, the current branch is pushed to the `origin` remote (git version >= 2.5 required).
 
 Create a second remote called `upstream` that points at the main OGS repository and fetch from it:
 
 ```bash
-$ git remote add upstream https://github.com/ufz/ogs
+$ git remote add upstream https://gitlab.opengeosys.org/ogs/ogs.git
 $ git fetch upstream
 ```
 
-{{< asciinema url="https://asciinema.org/a/249002" speed="3" rows="20" >}}
+<!-- TODO: rerecord with GitLab -->
+<!-- {{< asciinema url="https://asciinema.org/a/249002" speed="3" rows="20" >}} -->
 
 ## Enable git commit hooks
 
@@ -88,7 +89,7 @@ or rebase your branch on top of the new master by typing
 $ git pull --rebase
 ```
 
-Now after you implemented the feature and committed your work you can push the new commits to the `feature-name`-branch on your GitHub fork:
+Now after you implemented the feature and committed your work you can push the new commits to the `feature-name`-branch on your GitLab fork:
 
 ```bash
 $ git push
