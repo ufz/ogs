@@ -15,12 +15,12 @@ weight = 1051
 - Update `.github/PULL_REQUEST_TEMPLATE.md` to point to a new changelog wiki page
 - Replace `#([0-9][0-9][0-9][0-9])` with `[#$1](https://github.com/ufz/ogs/pull/$1)` (e.g. in VS Code)
 - Tag the release commit as an annotated tag (`git tag -a 6.0.8 -m "OpenGeoSys Release 6.0.8"`)
-- Create a [new release on GitHub](https://github.com/ufz/ogs/releases)
+- Create a [new release on GitLab](https://gitlab.opengeosys.org/ogs/ogs/-/releases)
 - Fill in the release notes from the Wiki
-- Start the `ufz/master` Jenkins job manually and check that it ran successfully! (Do not push to `master` until job ran successfully!)
-- Copy release binaries from Jenkins job to GitHub release page
-- Create and copy container images to GitHub release page
+- TODO!
+- Copy release binaries from Jenkins job to GitLab release page
+- Create and copy container images to GitLab release page
 - Update web release page with generated artifacts
-- Check new [Zenodo release](https://zenodo.org/account/settings/github/repository/ufz/ogs#)
+- TODO: Check new [Zenodo release](https://zenodo.org/account/settings/github/repository/ufz/ogs#)
 - Create a discourse announcement post
 
