@@ -48,7 +48,7 @@ $$
 ## Input files
 
 The main project file is
-[`square_1e2_volumetricsourceterm.prj`](https://github.com/ufz/ogs/blob/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_volumetricsourceterm.prj). It describes the
+[`square_1e2_volumetricsourceterm.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_volumetricsourceterm.prj). It describes the
 processes to be solved and the related process variables together with their
 initial and boundary conditions. It also references the bulk mesh and the
 boundary meshes associated with the bulk mesh.

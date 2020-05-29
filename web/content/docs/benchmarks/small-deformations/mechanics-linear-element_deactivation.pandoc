@@ -37,8 +37,8 @@ The input data set of the element deactivation approach is specified inside the 
 
  The input syntax can be also found in the project files of the two benchmarks:
 
-* [2D](https://github.com/ufz/ogs/tree/master/Tests/Data/Mechanics/Linear/square_with_deactivated_hole.prj)
-* [3D](https://github.com/ufz/ogs/tree/master/Tests/Data/Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj)
+* [2D](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Mechanics/Linear/square_with_deactivated_hole.prj)
+* [3D](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj)
 
 ## Mesh
 2D and 3D meshes:

@@ -92,9 +92,9 @@ src="../LineSourceTermFigures/comparison_plot_over_line_rel_diff_analytical_solu
 #### Input files
 
 The project files for the described models are
-[49k.prj](https://github.com/ufz/ogs-data/blob/master/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/49k_prisms/line_source_term_in_cylinder.prj)
+[49k.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/49k_prisms/line_source_term_in_cylinder.prj)
 and
-[286k.prj](https://github.com/ufz/ogs-data/blob/master/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms/line_source_term_in_cylinder.prj).
+[286k.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms/line_source_term_in_cylinder.prj).
 The project files describe the processes to be solved and the related process variables
 together with their initial and boundary conditions as well as the source terms.
 
@@ -123,4 +123,4 @@ src="../LineSourceTermFigures/plot_over_line_diff_and_rel_diff_analytical_soluti
 #### Input files
 
 The project file for the described model is
-[line_source_term_in_cylinder.prj](https://github.com/ufz/ogs-data/blob/master/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder_axisymmetric/line_source_term_in_cylinder.prj).
+[line_source_term_in_cylinder.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder_axisymmetric/line_source_term_in_cylinder.prj).
