@@ -51,6 +51,7 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
     this->_content = e.getContent();
 }
 
+
 namespace details
 {
 
@@ -75,7 +76,8 @@ isEdge(unsigned const (&/*edge_nodes*/)[1], unsigned /*idx1*/, unsigned /*idx2*/
     return false;
 }
 
-}  // namespace details
+} // namespace details
+
 
 template <class ELEMENT_RULE>
 bool TemplateElement<ELEMENT_RULE>::isEdge(unsigned idx1, unsigned idx2) const
