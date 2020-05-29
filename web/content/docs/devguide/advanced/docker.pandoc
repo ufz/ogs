@@ -19,7 +19,7 @@ See the [docs](https://docs.docker.com) for installation instructions.
 
 ## Images
 
-Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions are created with [ufz/ogs-container-maker](https://github.com/ufz/ogs-container-maker). Built images can be found at [Docker Hub](https://hub.docker.com/u/ogs6/). You can also [create images from your local source code](https://github.com/ufz/ogs-container-maker#build-ogs-from-local-git-repo).
+Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/builder/) which can be stacked and thus form a directed graph. OGS-6 image definitions are created with [ufz/ogs-container-maker](https://github.com/ufz/ogs-container-maker). Built images can be found at the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry). You can also [create images from your local source code](https://github.com/ufz/ogs-container-maker#build-ogs-from-local-git-repo).
 
 To build an image by yourself create a Dockerfile:
 
@@ -63,16 +63,6 @@ $ docker run --rm -i -t -v /host/directory:/container/directory image_name
 
 ## Prebuilt OGS-6 Docker images
 
-There are docker images provided on [Docker Hub](https://hub.docker.com/u/ogs6/) which include everything necessary to build OGS-6. They are intended to be used by Jenkins. Do not use them for development as you will run into permission issues (when mounting your source code into the container: in the container you are the `jenkins` user which has other `uid` and `gid`).
+There are docker images provided on the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry) which include everything necessary to build OGS-6. They are intended to be used by Jenkins. You can use the for development.
 
-Use [Singularity container]({{< relref "singularity.pandoc" >}}) for development instead.
-
-There are images for `gcc` and `clang`.
-
-## OGS-6 images used by Jenkins
-
-The following images are used by Jenkins:
-
-- `ogs6/gcc`, defined in [scripts/docker/Dockerfile.gcc.full](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.gcc.full)
-- `ogs6/gcc:gui`, defined in [scripts/docker/Dockerfile.gcc.gui](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.gcc.gui)
-- `ogs6/clang`, defined in [scripts/docker/Dockerfile.clang.full](https://github.com/ufz/ogs/blob/master/scripts/docker/Dockerfile.clang.full)
+Even better for development is the usage of [Singularity container]({{< relref "singularity.pandoc" >}}) because they offer a transparent mapping of the user to container space.

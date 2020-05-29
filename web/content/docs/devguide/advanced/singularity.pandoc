@@ -30,9 +30,9 @@ Singularity per default mounts your home directory and also passes your current 
 
 ```bash
 [git clone ogs]
-singularity pull docker://ogs6/gcc # Downloads the image to gcc.sif
-# OR: Pull the docker://ogs6/gcc:gui image for compiling the Data Explorer
-singularity shell gcc.sif
+singularity pull singularity pull docker://registry.opengeosys.org/ogs/ogs/ogs/gcc:master # Downloads the image to gcc.sif
+# OR: Pull the singularity pull docker://registry.opengeosys.org/ogs/ogs/ogs/gcc-gui:master image for compiling the Data Explorer
+singularity shell gcc_master.sif
 [Now inside the container]
 mkdir build; cd build
 cmake ../ogs -DCMAKE_BUILD_TYPE=Release
@@ -45,7 +45,7 @@ make
 Once ogs executable is built it can be called from **outside** the container:
 
 ```bash
-singularity exec gcc.sif build/bin/ogs some/path/project.prj
+singularity exec gcc_master.sif build/bin/ogs some/path/project.prj
 ```
 
 This starts the container, mounts your home directory inside the container, passes the current working directory and runs the ogs executable (which is in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When ogs finishes the container stops and you returns to the host system.
