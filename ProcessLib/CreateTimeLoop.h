@@ -50,6 +50,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>> const&
         nonlinear_solvers,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>& phreeqc_io);
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&
+        chemical_solver_interface);
 
 }  // namespace ProcessLib

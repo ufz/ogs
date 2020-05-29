@@ -224,21 +224,21 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     return nonlinear_solver_status;
 }
 
-TimeLoop::TimeLoop(
-    std::unique_ptr<Output>&& output,
-    std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
-    const int global_coupling_max_iterations,
-    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
-        global_coupling_conv_crit,
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&& chemical_system,
-    const double start_time, const double end_time)
+TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
+                   std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
+                   const int global_coupling_max_iterations,
+                   std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
+                       global_coupling_conv_crit,
+                   std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+                       chemical_solver_interface,
+                   const double start_time, const double end_time)
     : _output(std::move(output)),
       _per_process_data(std::move(per_process_data)),
       _start_time(start_time),
       _end_time(end_time),
       _global_coupling_max_iterations(global_coupling_max_iterations),
       _global_coupling_conv_crit(std::move(global_coupling_conv_crit)),
-      _chemical_system(std::move(chemical_system))
+      _chemical_solver_interface(std::move(chemical_solver_interface))
 {
 }
 
@@ -444,11 +444,12 @@ void TimeLoop::initialize()
     std::tie(_process_solutions, _process_solutions_prev) =
         setInitialConditions(_start_time, _per_process_data);
 
-    if (_chemical_system != nullptr)
+    if (_chemical_solver_interface)
     {
         BaseLib::RunTime time_phreeqc;
         time_phreeqc.start();
-        _chemical_system->executeInitialCalculation(_process_solutions);
+        _chemical_solver_interface->executeInitialCalculation(
+            _process_solutions);
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 
@@ -800,7 +801,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             timestep_id, t);
     }
 
-    if (_chemical_system != nullptr)
+    if (_chemical_solver_interface)
     {
         // Sequential non-iterative approach applied here to perform water
         // chemistry calculation followed by resolving component transport
@@ -809,7 +810,8 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         // space and localized chemical equilibrium between solutes.
         BaseLib::RunTime time_phreeqc;
         time_phreeqc.start();
-        _chemical_system->doWaterChemistryCalculation(_process_solutions, dt);
+        _chemical_solver_interface->doWaterChemistryCalculation(
+            _process_solutions, dt);
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 

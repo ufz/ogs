@@ -341,7 +341,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__nonlinear_solvers}
     parseNonlinearSolvers(project_config.getConfigSubtree("nonlinear_solvers"));
 
-    parseChemicalSystem(
+    parseChemicalSolverInterface(
         //! \ogs_file_param{prj__chemical_system}
         project_config.getConfigSubtreeOptional("chemical_system"),
         output_directory);
@@ -974,9 +974,9 @@ void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
 {
     DBUG("Reading time loop configuration.");
 
-    _time_loop = ProcessLib::createTimeLoop(config, output_directory,
-                                            _processes, _nonlinear_solvers,
-                                            _mesh_vec, _chemical_system);
+    _time_loop = ProcessLib::createTimeLoop(
+        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec,
+        _chemical_solver_interface);
 
     if (!_time_loop)
     {
@@ -1049,7 +1049,7 @@ void ProjectData::parseCurves(
     }
 }
 
-void ProjectData::parseChemicalSystem(
+void ProjectData::parseChemicalSolverInterface(
     boost::optional<BaseLib::ConfigTree> const& config,
     std::string const& output_directory)
 {
@@ -1080,10 +1080,11 @@ void ProjectData::parseChemicalSystem(
                 "Configuring phreeqc interface for water chemistry "
                 "calculation using file-based approach.");
 
-            _chemical_system = ChemistryLib::createChemicalSolverInterface<
-                ChemistryLib::ChemicalSolver::Phreeqc>(
-                _mesh_vec, process_id_to_component_name_map, *config,
-                output_directory);
+            _chemical_solver_interface =
+                ChemistryLib::createChemicalSolverInterface<
+                    ChemistryLib::ChemicalSolver::Phreeqc>(
+                    _mesh_vec, process_id_to_component_name_map, *config,
+                    output_directory);
         }
         else if (boost::iequals(chemical_solver, "PhreeqcKernel"))
         {
