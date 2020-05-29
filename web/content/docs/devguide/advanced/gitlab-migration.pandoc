@@ -1,0 +1,28 @@
++++
+date = "2020-05-29T11:00:13+01:00"
+title = "Migrate to GitLab"
+author = "Lars Bilke"
+weight = 1043
+
+[menu]
+  [menu.devguide]
+    parent = "advanced"
++++
+
+## Migrate your local repos to point to GitLab
+
+You have to modify your git remotes to point to the new GitLab repos. Assuming the former official git repo remote is called `upstream`:
+
+```bash
+git remote set-url upstream https://gitlab.opengeosys.org/ogs/ogs.git
+```
+
+Assuming your personal forks remote is called `origin`:
+
+```
+git remote set-url origin git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
+```
+
+----
+
+Or you can clone a fresh repo by following the steps in [Get the source code]({{< ref "get-the-source-code.pandoc" >}}).
