@@ -10,6 +10,7 @@
 
 #include "DuplicateGeometry.h"
 
+#include <map>
 #include <utility>
 #include "BaseLib/Logging.h"
 
@@ -43,20 +44,34 @@ void DuplicateGeometry::duplicate(std::string const& input_name)
     new_pnts->reserve(pnts->size());
     std::transform(pnts->cbegin(), pnts->cend(), std::back_inserter(*new_pnts),
         [](GeoLib::Point* point) { return new GeoLib::Point(*point); });
-    _geo_objects.addPointVec(std::move(new_pnts), _output_name);
+    auto pnt_name_id_map = std::make_unique<std::map<std::string, std::size_t>>(
+        _geo_objects.getPointVecObj(input_name)->getNameIDMapBegin(),
+        _geo_objects.getPointVecObj(input_name)->getNameIDMapEnd());
+    _geo_objects.addPointVec(std::move(new_pnts), _output_name,
+                             std::move(pnt_name_id_map));
 
     std::vector<GeoLib::Polyline*> const* plys (_geo_objects.getPolylineVec(input_name));
     if (plys)
     {
         auto new_plys = copyPolylinesVector(*plys);
-        _geo_objects.addPolylineVec(std::move(new_plys), _output_name);
+        auto ply_name_id_map =
+            std::make_unique<std::map<std::string, std::size_t>>(
+                _geo_objects.getPolylineVecObj(input_name)->getNameIDMapBegin(),
+                _geo_objects.getPolylineVecObj(input_name)->getNameIDMapEnd());
+        _geo_objects.addPolylineVec(std::move(new_plys), _output_name,
+                                    std::move(ply_name_id_map));
     }
 
     std::vector<GeoLib::Surface*> const* sfcs (_geo_objects.getSurfaceVec(input_name));
     if (sfcs)
     {
         auto new_sfcs = copySurfacesVector(*sfcs);
-        _geo_objects.addSurfaceVec(std::move(new_sfcs), _output_name);
+        auto sfc_name_id_map =
+            std::make_unique<std::map<std::string, std::size_t>>(
+                _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapBegin(),
+                _geo_objects.getSurfaceVecObj(input_name)->getNameIDMapEnd());
+        _geo_objects.addSurfaceVec(std::move(new_sfcs), _output_name,
+                                   std::move(sfc_name_id_map));
     }
 }
 
