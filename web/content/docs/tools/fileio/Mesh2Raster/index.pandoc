@@ -12,8 +12,6 @@ author = "Karsten Rink"
 
 This utility generates an ASCII-raster file based on a 2D surface mesh. A raster is superimposed on the mesh and pixel values are set to the surface elevation at each pixel's position. If no mesh element is located beneath a pixel it's value is set to NODATA.
 
-The tool is part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs).
-
 ## Usage
 
 ```bash
