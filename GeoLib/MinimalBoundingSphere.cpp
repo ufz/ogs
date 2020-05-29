@@ -72,7 +72,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
             two_pnts_sphere = MinimalBoundingSphere(p, q);
         }
         _radius = two_pnts_sphere.getRadius();
-        _center = two_pnts_sphere.getCenter();
+        _center = MathLib::Vector3(two_pnts_sphere.getCenter());
     }
 }
 
@@ -103,21 +103,21 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
         MinimalBoundingSphere const prs(p, r , s);
         MinimalBoundingSphere const qrs(q, r , s);
         _radius = pqr.getRadius();
-        _center = pqr.getCenter();
+        _center = MathLib::Vector3(pqr.getCenter());
         if (_radius < pqs.getRadius())
         {
             _radius = pqs.getRadius();
-            _center = pqs.getCenter();
+            _center = MathLib::Vector3(pqs.getCenter());
         }
         if (_radius < prs.getRadius())
         {
             _radius = prs.getRadius();
-            _center = prs.getCenter();
+            _center = MathLib::Vector3(prs.getCenter());
         }
         if (_radius < qrs.getRadius())
         {
             _radius = qrs.getRadius();
-            _center = qrs.getCenter();
+            _center = MathLib::Vector3(qrs.getCenter());
         }
     }
 }
@@ -128,7 +128,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(
 {
     const std::vector<MathLib::Point3d*>& sphere_points(points);
     MinimalBoundingSphere const bounding_sphere = recurseCalculation(sphere_points, 0, sphere_points.size(), 0);
-    _center = bounding_sphere.getCenter();
+    _center = MathLib::Vector3(bounding_sphere.getCenter());
     _radius = bounding_sphere.getRadius();
 }
 

@@ -52,7 +52,7 @@ public:
     /**
      * Construct Vector3 from TemplatePoint.
      */
-    TemplateVector3(TemplatePoint<T,3> const& p) :
+    explicit TemplateVector3(TemplatePoint<T,3> const& p) :
         TemplatePoint<T>(p)
     {}
 
