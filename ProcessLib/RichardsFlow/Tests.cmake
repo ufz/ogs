@@ -2,6 +2,7 @@ if (NOT OGS_USE_MPI)
     # Comparison test for richards mechanics w/o deformations.
     OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_richardsflow.prj)
     OgsTest(PROJECTFILE Parabolic/Richards/flow_fully_saturated.prj)
+    OgsTest(PROJECTFILE Parabolic/Richards/infiltration_1D/1d-infiltration-RM.prj)
 endif()
 
 AddTest(
