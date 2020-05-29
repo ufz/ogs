@@ -1,17 +1,17 @@
 +++
 date = "2018-02-26T11:00:13+01:00"
-title = "GitLab"
+title = "Set Up GitLab"
 author = "Lars Bilke"
-weight = 1041
+weight = 1002
 
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "getting-started"
 +++
 
 ## Introduction
 
-[GitLab](https://gitlab.com) is a web-based Git repository manager similar to [GitHub](https://github.com). GitLab can be self-hosted and we do just that with <https://gitlab.opengeosys.org>. For the moment all OGS repositories are still hosted at [github.com/ufz](https://github.com/ufz) but we store benchmark data files on our own GitLab because of storage limits on GitHub.
+[GitLab](https://gitlab.com) is a web-based development and collaboration tool similar to [GitHub](https://github.com). We self-host GitLab at <https://gitlab.opengeosys.org> and migrated our development workflows from GitHub in June 2020. Development takes place in the [ogs-group](https://gitlab.opengeosys.org/ogs) and the authoritative repository is at [ogs/ogs](https://gitlab.opengeosys.org/ogs/ogs).
 
 ## Setup an account
 
