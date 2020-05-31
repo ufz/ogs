@@ -56,9 +56,7 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
-                     Knobs&& knobs,
-                     std::vector<std::pair<int, std::string>> const&
-                         process_id_to_component_name_map)
+                     Knobs&& knobs)
     : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
       _mesh(mesh),
       _database(std::move(database)),
@@ -70,8 +68,7 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
-      _knobs(std::move(knobs)),
-      _process_id_to_component_name_map(process_id_to_component_name_map)
+      _knobs(std::move(knobs))
 {
     // initialize phreeqc instance
     if (CreateIPhreeqc() != phreeqc_instance_id)
@@ -159,61 +156,45 @@ void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
         // Loop over transport process id map to retrieve component
         // concentrations from process solutions or to update process solutions
         // after chemical calculation by Phreeqc
-        for (auto const& process_id_to_component_name_map_element :
-             _process_id_to_component_name_map)
+
+        for (unsigned component_id = 0; component_id < components.size();
+             ++component_id)
         {
-            auto const& transport_process_id =
-                process_id_to_component_name_map_element.first;
-            auto const& transport_process_variable =
-                process_id_to_component_name_map_element.second;
-
+            auto& component = components[component_id];
             auto& transport_process_solution =
-                process_solutions[transport_process_id];
-
-            auto component =
-                std::find_if(components.begin(), components.end(),
-                             [&transport_process_variable](Component const& c) {
-                                 return c.name == transport_process_variable;
-                             });
-
-            if (component != components.end())
+                process_solutions[component_id + 1];
+            switch (status)
             {
-                switch (status)
-                {
-                    case Status::SettingAqueousSolutions:
-                        // Set component concentrations.
-                        component->amount =
-                            transport_process_solution->get(global_id);
-                        break;
-                    case Status::UpdatingProcessSolutions:
-                        // Update solutions of component transport processes.
-                        transport_process_solution->set(global_id,
-                                                        component->amount);
-                        break;
-                }
+                case Status::SettingAqueousSolutions:
+                    // Set component concentrations.
+                    component.amount =
+                        transport_process_solution->get(global_id);
+                    break;
+                case Status::UpdatingProcessSolutions:
+                    // Update solutions of component transport processes.
+                    transport_process_solution->set(global_id,
+                                                    component.amount);
+                    break;
             }
+        }
 
-            if (transport_process_variable == "H")
+        switch (status)
+        {
+            case Status::SettingAqueousSolutions:
             {
-                switch (status)
-                {
-                    case Status::SettingAqueousSolutions:
-                    {
-                        // Set pH value by hydrogen concentration.
-                        aqueous_solution.pH = -std::log10(
-                            transport_process_solution->get(global_id));
-                        break;
-                    }
-                    case Status::UpdatingProcessSolutions:
-                    {
-                        // Update hydrogen concentration by pH value.
-                        auto hydrogen_concentration =
-                            std::pow(10, -aqueous_solution.pH);
-                        transport_process_solution->set(global_id,
-                                                        hydrogen_concentration);
-                        break;
-                    }
-                }
+                // Set pH value by hydrogen concentration.
+                aqueous_solution.pH =
+                    -std::log10(process_solutions.back()->get(global_id));
+                break;
+            }
+            case Status::UpdatingProcessSolutions:
+            {
+                // Update hydrogen concentration by pH value.
+                auto hydrogen_concentration =
+                    std::pow(10, -aqueous_solution.pH);
+                process_solutions.back()->set(global_id,
+                                              hydrogen_concentration);
+                break;
             }
         }
     }

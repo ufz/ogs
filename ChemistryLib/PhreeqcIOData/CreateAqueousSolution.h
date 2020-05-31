@@ -10,9 +10,6 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-
 namespace BaseLib
 {
 class ConfigTree;
@@ -24,9 +21,6 @@ namespace PhreeqcIOData
 {
 struct AqueousSolution;
 
-AqueousSolution createAqueousSolution(
-    BaseLib::ConfigTree const& config,
-    std::vector<std::pair<int, std::string>> const&
-        process_id_to_component_name_map);
+AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

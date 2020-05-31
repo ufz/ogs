@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <string>
 #include <vector>
 
 namespace BaseLib
@@ -25,8 +24,6 @@ namespace PhreeqcIOData
 struct Component;
 
 std::vector<Component> createSolutionComponents(
-    BaseLib::ConfigTree const& config,
-    std::vector<std::pair<int, std::string>> const&
-        process_id_to_component_name_map);
+    BaseLib::ConfigTree const& config);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

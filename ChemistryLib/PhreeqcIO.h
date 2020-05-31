@@ -53,9 +53,7 @@ public:
               std::unique_ptr<UserPunch>&& user_punch,
               std::unique_ptr<Output>&& output,
               std::unique_ptr<Dump>&& dump,
-              Knobs&& knobs,
-              std::vector<std::pair<int, std::string>> const&
-                  process_id_to_component_name_map);
+              Knobs&& knobs);
 
     void executeInitialCalculation(
         std::vector<GlobalVector*>& process_solutions) override;
@@ -101,8 +99,6 @@ private:
     std::unique_ptr<Output> const _output;
     std::unique_ptr<Dump> const _dump;
     Knobs const _knobs;
-    std::vector<std::pair<int, std::string>> const&
-        _process_id_to_component_name_map;
     double _dt = std::numeric_limits<double>::quiet_NaN();
     const int phreeqc_instance_id = 0;
 };
