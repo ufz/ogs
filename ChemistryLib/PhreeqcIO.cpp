@@ -543,5 +543,18 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
 
     return in;
 }
+
+std::vector<std::string> const PhreeqcIO::getComponentList() const
+{
+    std::vector<std::string> component_names;
+    auto const& components = _aqueous_solutions.front().components;
+    std::transform(components.begin(), components.end(),
+                   std::back_inserter(component_names),
+                   [](auto const& c) { return c.name; });
+
+    component_names.push_back("H");
+
+    return component_names;
+}
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

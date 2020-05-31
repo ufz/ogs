@@ -77,6 +77,8 @@ public:
 
     friend std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io);
 
+    std::vector<std::string> const getComponentList() const override;
+
     std::string const _phreeqc_input_file;
 
 private:
