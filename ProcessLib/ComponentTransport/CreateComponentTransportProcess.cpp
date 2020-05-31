@@ -10,6 +10,7 @@
 
 #include "CreateComponentTransportProcess.h"
 
+#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -18,6 +19,7 @@
 
 #include "ComponentTransportProcess.h"
 #include "ComponentTransportProcessData.h"
+
 namespace ProcessLib
 {
 namespace ComponentTransport
@@ -141,12 +143,51 @@ std::unique_ptr<Process> createComponentTransportProcess(
         std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>
             per_process_variable;
 
-        for (auto& pv : collected_process_variables)
+        if (!chemical_solver_interface)
         {
-            per_process_variable.emplace_back(pv);
-            process_variables.push_back(std::move(per_process_variable));
+            for (auto& pv : collected_process_variables)
+            {
+                per_process_variable.emplace_back(pv);
+                process_variables.push_back(std::move(per_process_variable));
+            }
         }
+        else
         {
+            auto sort_by_component = [&per_process_variable,
+                                      collected_process_variables](
+                                         auto const& c_name) {
+                auto pv = std::find_if(collected_process_variables.begin(),
+                                       collected_process_variables.end(),
+                                       [&c_name](auto const& v) -> bool {
+                                           return v.get().getName() == c_name;
+                                       });
+
+                if (pv == collected_process_variables.end())
+                {
+                    OGS_FATAL(
+                        "Component {:s} given in "
+                        "<chemical_system>/<solution>/"
+                        "<components> is not found in specified "
+                        "coupled processes (see "
+                        "<process>/<process_variables>/"
+                        "<concentration>).",
+                        c_name);
+                }
+
+                per_process_variable.emplace_back(*pv);
+                return std::move(per_process_variable);
+            };
+
+            auto const components =
+                chemical_solver_interface->getComponentList();
+            // pressure
+            per_process_variable.emplace_back(collected_process_variables[0]);
+            process_variables.push_back(std::move(per_process_variable));
+            // concentration
+            assert(components.size() + 1 == collected_process_variables.size());
+            std::transform(components.begin(), components.end(),
+                           std::back_inserter(process_variables),
+                           sort_by_component);
         }
     }
 
