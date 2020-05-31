@@ -167,6 +167,8 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
     auto mesh = *meshes[0];
     auto path_to_database = parseDatabasePath(config);
 
+    // TODO (renchao): remove mapping process id to component name.
+    std::vector<std::pair<int, std::string>> process_id_to_component_name_map;
     // solution
     auto aqueous_solution = PhreeqcKernelData::createAqueousSolution(
         //! \ogs_file_param{prj__chemical_system__solution}
