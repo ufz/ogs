@@ -81,7 +81,9 @@ std::unique_ptr<Process> createComponentTransportProcess(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::string const& output_directory,
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface> const&
+        chemical_solver_interface)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "ComponentTransport");

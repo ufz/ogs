@@ -726,7 +726,8 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                 ProcessLib::ComponentTransport::createComponentTransportProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config, _mesh_vec, output_directory, _media);
+                    process_config, _mesh_vec, output_directory, _media,
+                    _chemical_solver_interface);
         }
         else
 #endif
