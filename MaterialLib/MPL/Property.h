@@ -14,6 +14,7 @@
 #include <Eigen/Dense>
 #include <array>
 #include <string>
+#include <typeinfo>
 #include <variant>
 
 #include "ParameterLib/SpatialPosition.h"
@@ -82,13 +83,37 @@ public:
     T initialValue(ParameterLib::SpatialPosition const& pos,
                    double const t) const
     {
-        return std::get<T>(initialValue(pos, t));
+        try
+        {
+            return std::get<T>(initialValue(pos, t));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The initial value of {:s} does not hold requested type '{:s}' "
+                "but a {:s}.",
+                description(),
+                typeid(T).name(),
+                property_data_type_names_[initialValue(pos, t).index()]);
+        }
     }
 
     template <typename T>
     T value() const
     {
-        return std::get<T>(value());
+        try
+        {
+            return std::get<T>(value());
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The value of {:s} does not hold requested type '{:s}' but a "
+                "{:s}.",
+                description(),
+                typeid(T).name(),
+                property_data_type_names_[value().index()]);
+        }
     }
 
     template <typename T>
@@ -96,7 +121,20 @@ public:
             ParameterLib::SpatialPosition const& pos, double const t,
             double const dt) const
     {
-        return std::get<T>(value(variable_array, pos, t, dt));
+        try
+        {
+            return std::get<T>(value(variable_array, pos, t, dt));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The value of {:s} is not of the requested type '{:s}' but a "
+                "{:s}.",
+                description(),
+                typeid(T).name(),
+                property_data_type_names_[value(variable_array, pos, t, dt)
+                                              .index()]);
+        }
     }
 
     template <typename T>
@@ -104,7 +142,20 @@ public:
              ParameterLib::SpatialPosition const& pos, double const t,
              double const dt) const
     {
-        return std::get<T>(dValue(variable_array, variable, pos, t, dt));
+        try
+        {
+            return std::get<T>(dValue(variable_array, variable, pos, t, dt));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The first derivative value of {:s} is not of the requested "
+                "type '{:s}' but a {:s}.",
+                description(),
+                typeid(T).name(),
+                property_data_type_names_
+                    [dValue(variable_array, variable, pos, t, dt).index()]);
+        }
     }
     template <typename T>
     T d2Value(VariableArray const& variable_array, Variable const& variable1,
@@ -112,8 +163,22 @@ public:
               ParameterLib::SpatialPosition const& pos, double const t,
               double const dt) const
     {
-        return std::get<T>(
-            d2Value(variable_array, variable1, variable2, pos, t, dt));
+        try
+        {
+            return std::get<T>(
+                d2Value(variable_array, variable1, variable2, pos, t, dt));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The second derivative value of {:s} is not of the requested "
+                "type '{:s}' but a {:s}.",
+                description(),
+                typeid(T).name(),
+                property_data_type_names_[d2Value(variable_array, variable1,
+                                                  variable2, pos, t, dt)
+                                              .index()]);
+        }
     }
 
 protected:
@@ -132,6 +197,17 @@ private:
         // Empty check for properties which can be defined on every scale,
         // medium, phase or component
     }
+    std::string description() const;
+
+private:
+    /// Corresponds to the PropertyDataType
+    static constexpr std::array property_data_type_names_ = {
+        "scalar",     "2-vector",         "3-vector",        "2x2-matrix",
+        "3x3-matrix", "2D-Kelvin vector", "3D-Kelvin vector"};
+    static_assert(property_data_type_names_.size() ==
+                      std::variant_size_v<PropertyDataType>,
+                  "The array of property data type names has different size "
+                  "than the PropertyDataType variant type.");
 };
 
 inline void overwriteExistingProperties(

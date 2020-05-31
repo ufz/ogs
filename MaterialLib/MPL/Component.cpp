@@ -39,4 +39,9 @@ bool Component::hasProperty(PropertyType const& p) const
 {
     return properties_[p] != nullptr;
 }
+
+std::string Component::description() const
+{
+    return "component '" + name + "'";
+}
 }  // namespace MaterialPropertyLib

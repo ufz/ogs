@@ -66,6 +66,9 @@ public:
                                                variable2);
     }
 
+    /// Short description of the component with its name.
+    std::string description() const;
+
 public:
     std::string const name;
 

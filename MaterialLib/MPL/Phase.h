@@ -51,6 +51,9 @@ public:
     /// A get-function for retrieving the number of components in this phase.
     std::size_t numberOfComponents() const;
 
+    /// Short description of the phase with its name.
+    std::string description() const;
+
 public:
     std::string const name;
 

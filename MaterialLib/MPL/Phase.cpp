@@ -54,8 +54,8 @@ Property const& Phase::property(PropertyType const& p) const
     Property const* const property = properties_[p].get();
     if (property == nullptr)
     {
-        OGS_FATAL("Trying to access undefined property '{:s}' of phase {:s}",
-                  property_enum_to_string[p], name);
+        OGS_FATAL("Trying to access undefined property '{:s}' of {:s}",
+                  property_enum_to_string[p], description());
     }
     return *properties_[p];
 }
@@ -70,4 +70,8 @@ std::size_t Phase::numberOfComponents() const
     return components_.size();
 }
 
+std::string Phase::description() const
+{
+    return "phase '" + name + "'";
+}
 }  // namespace MaterialPropertyLib
