@@ -547,9 +547,10 @@ void ProjectData::parseChemicalSolverInterface(
     (void)output_directory;
 
     OGS_FATAL(
-        "The specified type of the process to be solved is not component "
-        "transport process so that water chemistry calculation could not "
-        "be activated.");
+        "Found the type of the process to be solved is not component transport "
+        "process. Please specify the process type to ComponentTransport. At "
+        "the present, water chemistry calculation is only available for "
+        "component transport process.");
 #endif
 }
 
