@@ -85,11 +85,19 @@ bool Output::shallDoOutput(int timestep, double const t)
         return make_output;
     }
 
-    const double specific_time = _fixed_output_times.back();
-    const double zero_threshold = std::numeric_limits<double>::min();
-    if (std::fabs(specific_time - t) < zero_threshold)
+    auto const fixed_output_time = std::lower_bound(
+        cbegin(_fixed_output_times), cend(_fixed_output_times), t);
+    if (fixed_output_time == cend(_fixed_output_times))
     {
-        _fixed_output_times.pop_back();
+        return make_output;
+    }
+    DBUG(
+        "Fixed time output; Found {} in list of output times for current time "
+        "{}.",
+        *fixed_output_time, t);
+    const double zero_threshold = std::numeric_limits<double>::min();
+    if (std::fabs(*fixed_output_time - t) < zero_threshold)
+    {
         make_output = true;
     }
 
@@ -117,6 +125,8 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
       _mesh_names_for_output(mesh_names_for_output),
       _meshes(meshes)
 {
+    assert(
+        std::is_sorted(cbegin(_fixed_output_times), cend(_fixed_output_times)));
 }
 
 void Output::addProcess(ProcessLib::Process const& process,
