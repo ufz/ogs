@@ -53,7 +53,7 @@ private:
      * @param dest_properties
      */
     void interpolatePropertiesForMesh(
-        Mesh& dest_mesh,
+        Mesh const& dest_mesh,
         MeshLib::PropertyVector<double>& dest_properties) const;
 
     /**
