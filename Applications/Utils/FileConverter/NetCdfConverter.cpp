@@ -31,8 +31,8 @@
 
 using namespace netCDF;
 
-const double no_data_output = -9999;
-double no_data_input = -9999;
+static const double no_data_output = -9999;
+static double no_data_input = -9999;
 
 enum class OutputType
 {
@@ -430,6 +430,7 @@ static std::vector<double> getData(NcFile const& dataset, NcVar const& var,
     offset[0] = time_step;
     std::vector<double> data_vec(total_length, 0);
     var.getVar(offset, length, data_vec.data());
+
     std::replace_if(
         data_vec.begin(), data_vec.end(),
         [](double& x) { return x == no_data_input; }, no_data_output);
@@ -624,8 +625,8 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<int> arg_nodata(
         "n", "nodata",
-        "explicitely specifies the no data value used in the dataset (usually it not necessary to set this)",
-        false, -9999, "integer specifying no data value");
+        "explicitly specifies the no data value used in the dataset (usually it is not necessary to set this)",
+        false, no_data_input, "integer specifying no data value");
     cmd.add(arg_nodata);
 
     std::vector<std::string> allowed_elems{"tri", "quad", "prism", "hex"};
