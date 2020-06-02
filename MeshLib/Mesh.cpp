@@ -299,11 +299,9 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
         WARN("Did not find PropertyVector '{:s}' for scaling.", property_name);
         return;
     }
-    for (auto& v :
-         *mesh.getProperties().getPropertyVector<double>(property_name))
-    {
-        v *= factor;
-    }
+    auto & pv = *mesh.getProperties().getPropertyVector<double>(property_name);
+    std::transform(pv.begin(), pv.end(), pv.begin(),
+                   [factor](auto const& v) { return v * factor; });
 }
 
 PropertyVector<int> const* materialIDs(Mesh const& mesh)

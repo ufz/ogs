@@ -174,10 +174,8 @@ bool MeshLayerMapper::createRasterLayers(
 
     // add bottom layer
     std::vector<MeshLib::Node*> const& nodes = bottom->getNodes();
-    for (MeshLib::Node* node : nodes)
-    {
-        _nodes.push_back(new MeshLib::Node(*node));
-    }
+    std::transform(nodes.begin(), nodes.end(), std::back_inserter(_nodes),
+                   [](auto const* node) { return new MeshLib::Node(*node); });
 
     // add the other layers
     for (std::size_t i = 0; i < nLayers - 1; ++i)

@@ -26,10 +26,8 @@ namespace detail
 void rotateToLocal(const MeshLib::RotationMatrix& matR2local,
                    std::vector<MathLib::Point3d>& points)
 {
-    for (auto& p : points)
-    {
-        p = matR2local * p;
-    }
+    std::transform(points.begin(), points.end(), points.begin(),
+                   [&matR2local](auto const& pnt) { return matR2local * pnt; });
 }
 
 /// get a rotation matrix to the global coordinates

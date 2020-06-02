@@ -40,10 +40,11 @@ std::vector<MeshLib::Element*> copyElementVector(
 {
     std::vector<MeshLib::Element*> new_elements;
     new_elements.reserve(elements.size());
-    for (auto element : elements)
-    {
-        new_elements.push_back(copyElement(element, new_nodes, node_id_map));
-    }
+    std::transform(elements.begin(), elements.end(),
+                   std::back_inserter(new_elements),
+                   [&new_nodes, &node_id_map](auto const& element) {
+                       return copyElement(element, new_nodes, node_id_map);
+                   });
     return new_elements;
 }
 
