@@ -31,19 +31,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/MeshTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 
-set(NUM_CTEST_PROCESSORS 3)
-if(DEFINED ENV{CTEST_NUM_THREADS})
-    set(NUM_CTEST_PROCESSORS $ENV{CTEST_NUM_THREADS})
-elseif(DEFINED ENV{NUM_THREADS})
-    set(NUM_CTEST_PROCESSORS $ENV{NUM_THREADS})
-endif()
-
-if(DEFINED ENV{CTEST_LARGE_NUM_THREADS})
-    set(NUM_CTEST_LARGE_PROCESSORS $ENV{CTEST_LARGE_NUM_THREADS})
-else()
-    set(NUM_CTEST_LARGE_PROCESSORS ${NUM_CTEST_PROCESSORS})
-endif()
-
 if(CMAKE_CONFIGURATION_TYPES)
     set(CONFIG_PARAMETER --build-config "$<CONFIGURATION>")
 endif()
@@ -75,7 +62,7 @@ add_custom_target(
     --force-new-ctest-process
     --output-on-failure --output-log Tests/ctest.log
     --exclude-regex LARGE
-    ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_PROCESSORS}
+    ${CONFIG_PARAMETER}
     --timeout 900 # 15 minutes
     DEPENDS ${test_dependencies} ctest-cleanup
     USES_TERMINAL
@@ -101,7 +88,7 @@ add_custom_target(
     --force-new-ctest-process
     --output-on-failure --output-log Tests/ctest-large.log
     --tests-regex LARGE
-    ${CONFIG_PARAMETER} --parallel ${NUM_CTEST_LARGE_PROCESSORS}
+    ${CONFIG_PARAMETER}
     --timeout 3600
     DEPENDS ${test_dependencies} ctest-large-cleanup
     USES_TERMINAL
