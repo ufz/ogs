@@ -13,10 +13,13 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <regex>
+#include <vector>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
+#include "filesystem.h"
 #ifdef USE_PETSC
 #include "MeshLib/IO/VtkIO/VtuInterface.h"  // For petsc file name conversion.
 #include <petsc.h>
@@ -163,27 +166,43 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             vtkdiff_config.getConfigParameter<std::string>("field");
         DBUG("vtkdiff will compare field '{:s}'.", field_name);
 
+        std::vector<std::string> filenames;
+        if (auto const regex_string =
+            //! \ogs_file_param{prj__test_definition__vtkdiff__regex}
+            vtkdiff_config.getConfigParameterOptional<std::string>("regex"))
+        {
+            // TODO: insert rank into regex for mpi case
+            DBUG("vtkdiff regex is '{}'.", *regex_string);
+            auto const regex = std::regex(*regex_string);
+            for (auto const & p: fs::directory_iterator(fs::path(reference_path)))
+            {
+                auto const filename = p.path().filename().string();
+                if (std::regex_match(filename, regex))
+                {
+                    DBUG("        -> matched '{}'", filename);
+                    filenames.push_back(filename);
+                }
+            }
+        }
+        else
+        {
 #ifdef USE_PETSC
-        int rank;
-        MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
-        int mpi_size;
-        MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
-        std::string const& filename =
-            MeshLib::IO::getVtuFileNameForPetscOutputWithoutExtension(
-                //! \ogs_file_param{prj__test_definition__vtkdiff__file}
-                vtkdiff_config.getConfigParameter<std::string>("file")) +
-            "_" + std::to_string(rank) + ".vtu";
+            int rank;
+            MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
+            int mpi_size;
+            MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
+            std::string const& filename =
+                MeshLib::IO::getVtuFileNameForPetscOutputWithoutExtension(
+                    //! \ogs_file_param{prj__test_definition__vtkdiff__file}
+                    vtkdiff_config.getConfigParameter<std::string>("file")) +
+                "_" + std::to_string(rank) + ".vtu";
 #else
-        std::string const& filename =
-            //! \ogs_file_param{prj__test_definition__vtkdiff__file}
-            vtkdiff_config.getConfigParameter<std::string>("file");
+            std::string const& filename =
+                //! \ogs_file_param{prj__test_definition__vtkdiff__file}
+                vtkdiff_config.getConfigParameter<std::string>("file");
 #endif  // OGS_USE_PETSC
-        std::string const& output_filename =
-            BaseLib::joinPaths(output_directory, filename);
-        _output_files.push_back(output_filename);
-        // TODO (naumov) expand filename relative to ref path for globbing.
-        std::string const& reference_filename =
-            BaseLib::joinPaths(reference_path, filename);
+            filenames.push_back(filename);
+        }
 
         auto const absolute_tolerance =
             //! \ogs_file_param{prj__test_definition__vtkdiff__absolute_tolerance}
@@ -199,7 +218,6 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         }
         std::string const absolute_tolerance_parameter =
             "--abs " + absolute_tolerance;
-
         auto const relative_tolerance =
             //! \ogs_file_param{prj__test_definition__vtkdiff__relative_tolerance}
             vtkdiff_config.getConfigParameter<std::string>("relative_tolerance",
@@ -215,16 +233,25 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         std::string const relative_tolerance_parameter =
             "--rel " + relative_tolerance;
 
-        //
-        // Construct command line.
-        //
-        std::string command_line =
-            vtkdiff + " -a " + safeString(field_name) + " -b " +
-            safeString(field_name) + " " + safeString(reference_filename) +
-            " " + safeString(output_filename) + " " +
-            absolute_tolerance_parameter + " " + relative_tolerance_parameter;
-        INFO("Will run '{:s}'", command_line);
-        _command_lines.emplace_back(std::move(command_line));
+        for (auto const &filename : filenames)
+        {
+            std::string const& output_filename =
+                BaseLib::joinPaths(output_directory, filename);
+            _output_files.push_back(output_filename);
+            std::string const& reference_filename =
+                BaseLib::joinPaths(reference_path, filename);
+
+            //
+            // Construct command line.
+            //
+            std::string command_line =
+                vtkdiff + " -a " + safeString(field_name) + " -b " +
+                safeString(field_name) + " " + safeString(reference_filename) +
+                " " + safeString(output_filename) + " " +
+                absolute_tolerance_parameter + " " + relative_tolerance_parameter;
+            INFO("Will run '{:s}'", command_line);
+            _command_lines.emplace_back(std::move(command_line));
+        }
     }
 }
 
