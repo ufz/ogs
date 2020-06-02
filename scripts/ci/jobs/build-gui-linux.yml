@@ -1,6 +1,9 @@
 build gui linux:
   extends: .template-build-linux
   stage: gui
+  tags:
+    - envinf1
+    - docker
   needs:
     - job: build linux
       artifacts: false
