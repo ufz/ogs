@@ -10,6 +10,7 @@
 
 #include "CreateComponentTransportProcess.h"
 
+#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -18,6 +19,7 @@
 
 #include "ComponentTransportProcess.h"
 #include "ComponentTransportProcessData.h"
+
 namespace ProcessLib
 {
 namespace ComponentTransport
@@ -81,7 +83,9 @@ std::unique_ptr<Process> createComponentTransportProcess(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::string const& output_directory,
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface> const&
+        chemical_solver_interface)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "ComponentTransport");
@@ -128,7 +132,6 @@ std::unique_ptr<Process> createComponentTransportProcess(
             it->get().getNumberOfComponents());
     }
 
-    std::vector<std::pair<int, std::string>> process_id_to_component_name_map;
     // Allocate the collected process variables into a two-dimensional vector,
     // depending on what scheme is adopted
     if (use_monolithic_scheme)  // monolithic scheme.
@@ -140,20 +143,51 @@ std::unique_ptr<Process> createComponentTransportProcess(
         std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>
             per_process_variable;
 
-        for (auto& pv : collected_process_variables)
+        if (!chemical_solver_interface)
         {
-            per_process_variable.emplace_back(pv);
-            process_variables.push_back(std::move(per_process_variable));
+            for (auto& pv : collected_process_variables)
+            {
+                per_process_variable.emplace_back(pv);
+                process_variables.push_back(std::move(per_process_variable));
+            }
         }
-
-        auto variable_id = 0;
-        for (unsigned process_id = 1; process_id < process_variables.size();
-             process_id++)
+        else
         {
-            auto const& transport_process_variable =
-                process_variables[process_id][variable_id].get().getName();
-            process_id_to_component_name_map.emplace_back(
-                process_id, transport_process_variable);
+            auto sort_by_component = [&per_process_variable,
+                                      collected_process_variables](
+                                         auto const& c_name) {
+                auto pv = std::find_if(collected_process_variables.begin(),
+                                       collected_process_variables.end(),
+                                       [&c_name](auto const& v) -> bool {
+                                           return v.get().getName() == c_name;
+                                       });
+
+                if (pv == collected_process_variables.end())
+                {
+                    OGS_FATAL(
+                        "Component {:s} given in "
+                        "<chemical_system>/<solution>/"
+                        "<components> is not found in specified "
+                        "coupled processes (see "
+                        "<process>/<process_variables>/"
+                        "<concentration>).",
+                        c_name);
+                }
+
+                per_process_variable.emplace_back(*pv);
+                return std::move(per_process_variable);
+            };
+
+            auto const components =
+                chemical_solver_interface->getComponentList();
+            // pressure
+            per_process_variable.emplace_back(collected_process_variables[0]);
+            process_variables.push_back(std::move(per_process_variable));
+            // concentration
+            assert(components.size() + 1 == collected_process_variables.size());
+            std::transform(components.begin(), components.end(),
+                           std::back_inserter(process_variables),
+                           sort_by_component);
         }
     }
 
@@ -212,8 +246,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        use_monolithic_scheme, std::move(surfaceflux),
-        std::move(process_id_to_component_name_map));
+        use_monolithic_scheme, std::move(surfaceflux));
 }
 
 }  // namespace ComponentTransport

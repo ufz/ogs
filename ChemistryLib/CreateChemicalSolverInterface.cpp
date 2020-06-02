@@ -67,8 +67,6 @@ template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::vector<std::pair<int, std::string>> const&
-        process_id_to_component_name_map,
     BaseLib::ConfigTree const& config, std::string const& output_directory)
 {
     auto mesh_name =
@@ -92,8 +90,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // solution
     auto aqueous_solution = PhreeqcIOData::createAqueousSolution(
         //! \ogs_file_param{prj__chemical_system__solution}
-        config.getConfigSubtree("solution"),
-        process_id_to_component_name_map);
+        config.getConfigSubtree("solution"));
 
     // kinetic reactants
     auto chemical_system_map =
@@ -158,21 +155,20 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         std::move(path_to_database), std::move(aqueous_solutions),
         std::move(equilibrium_reactants), std::move(kinetic_reactants),
         std::move(reaction_rates), std::move(surface), std::move(user_punch),
-        std::move(output), std::move(dump), std::move(knobs),
-        process_id_to_component_name_map);
+        std::move(output), std::move(dump), std::move(knobs));
 }
 
 template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::vector<std::pair<int, std::string>> const&
-        process_id_to_component_name_map,
     BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
 {
     auto mesh = *meshes[0];
     auto path_to_database = parseDatabasePath(config);
 
+    // TODO (renchao): remove mapping process id to component name.
+    std::vector<std::pair<int, std::string>> process_id_to_component_name_map;
     // solution
     auto aqueous_solution = PhreeqcKernelData::createAqueousSolution(
         //! \ogs_file_param{prj__chemical_system__solution}
