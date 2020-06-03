@@ -20,5 +20,5 @@ TODO!
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Kolditz:2018" >}}
+{{< bib "kolditz:2018" >}}
 :::

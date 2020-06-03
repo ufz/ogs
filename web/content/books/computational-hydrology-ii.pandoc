@@ -24,7 +24,7 @@ This book explores the application of the open-source software OpenGeoSys (OGS) 
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Sachse:2017" >}}
+{{< bib "sachse:2017" >}}
 :::
 
 ::: {.note}

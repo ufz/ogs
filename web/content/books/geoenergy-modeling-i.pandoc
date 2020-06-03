@@ -26,7 +26,7 @@ This introduction to geothermal modeling deals with flow and heat transport proc
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Boettcher:2016" >}}
+{{< bib "boettcher:2016" >}}
 :::
 
 ::: {.note}

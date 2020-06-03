@@ -23,7 +23,7 @@ In this book, effective computational methods to facilitate those pivotal simula
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Nagel:2017" >}}
+{{< bib "nagel:2017" >}}
 :::
 
 ::: {.note}

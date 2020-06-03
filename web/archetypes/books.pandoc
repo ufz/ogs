@@ -23,5 +23,5 @@ TODO DESCRIPTION
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="TODO-BIB-ID" >}}
+{{< bib "TODO-BIB-ID" >}}
 :::
