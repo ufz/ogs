@@ -1181,6 +1181,51 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const& RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
+    getIntPtDryDensitySolid(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::dry_density_solid, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const& RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
+    getIntPtDryDensityPelletSaturated(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::dry_density_pellet_saturated, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const& RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
+    getIntPtDryDensityPelletUnsaturated(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::dry_density_pellet_unsaturated, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
@@ -1431,6 +1476,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Swelling and possibly volumetric strain rate update.
         auto& sigma_sw = _ip_data[ip].sigma_sw;
+        double& phi_tr = _ip_data[ip].transport_porosity;
         {
             auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
 
@@ -1458,8 +1504,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
             {
-                double& phi_tr = _ip_data[ip].transport_porosity;
-
                 // Use previous time step transport_porosity for
                 // transport_porosity update, ...
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
@@ -1490,6 +1534,16 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
 
         GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
+
+        auto const rho_SR =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
+        auto const phi = _ip_data[ip].porosity;
+        _ip_data[ip].dry_density_solid = (1 - phi) * rho_SR;
+        _ip_data[ip].dry_density_pellet_saturated =
+            (phi - phi_tr) * rho_LR + (1 - phi) * rho_SR;
+        _ip_data[ip].dry_density_pellet_unsaturated =
+            S_L * (phi - phi_tr) * rho_LR + (1 - phi) * rho_SR;
 
         eps.noalias() = B * u;
 

@@ -32,6 +32,9 @@
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
                 <secondary_variable internal_name="porosity" output_name="porosity"/>
                 <secondary_variable internal_name="transport_porosity" output_name="transport_porosity"/>
+                <secondary_variable internal_name="dry_density_solid" output_name="dry_density_solid"/>
+                <secondary_variable internal_name="dry_density_pellet_saturated" output_name="dry_density_pellet_saturated"/>
+                <secondary_variable internal_name="dry_density_pellet_unsaturated" output_name="dry_density_pellet_unsaturated"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
         </process>
@@ -402,6 +405,24 @@
         <vtkdiff>
             <regex>deformation_dependent_porosity_swelling_pcs_0_ts_.*.vtu</regex>
             <field>porosity_avg</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>deformation_dependent_porosity_swelling_pcs_0_ts_.*.vtu</regex>
+            <field>dry_density_solid</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>deformation_dependent_porosity_swelling_pcs_0_ts_.*.vtu</regex>
+            <field>dry_density_pellet_saturated</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>deformation_dependent_porosity_swelling_pcs_0_ts_.*.vtu</regex>
+            <field>dry_density_pellet_unsaturated</field>
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
