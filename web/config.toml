@@ -28,6 +28,11 @@ disableKinds = ["taxonomyTerm"]
   url = "/docs/"
   identifier = "docs"
   weight = 4
+[[menu.main]]
+  name = "Publications"
+  url = "/publications/"
+  identifier = "publications"
+  weight = 5
 
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
