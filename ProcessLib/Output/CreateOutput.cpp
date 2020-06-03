@@ -131,17 +131,12 @@ std::unique_ptr<Output> createOutput(
         }
     }
 
-    std::vector<double> fixed_output_times;
-    auto fixed_output_times_ptr =
+    std::vector<double> fixed_output_times =
         //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
-        config.getConfigParameterOptional<std::vector<double>>(
-            "fixed_output_times");
-    if (fixed_output_times_ptr)
-    {
-        fixed_output_times = std::move(*fixed_output_times_ptr);
-        // Remove possible duplicated elements and sort.
-        BaseLib::makeVectorUnique(fixed_output_times);
-    }
+        config.getConfigParameter<std::vector<double>>("fixed_output_times",
+                                                       {});
+    // Remove possible duplicated elements and sort.
+    BaseLib::makeVectorUnique(fixed_output_times);
 
     bool const output_iteration_results =
         //! \ogs_file_param{prj__time_loop__output__output_iteration_results}
