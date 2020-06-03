@@ -5,7 +5,6 @@
     git lfs install
     git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
-    pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
     hugo
     node_modules/.bin/hugo-algolia --toml -s"""
 
@@ -22,7 +21,6 @@
     git lfs install
     git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
-    pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
     hugo -b $DEPLOY_PRIME_URL"""
 
 [context.branch-deploy]
@@ -30,7 +28,6 @@
     git lfs install
     git lfs pull
     yarn --ignore-engines --ignore-optional --non-interactive
-    pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
     hugo -b $DEPLOY_PRIME_URL"""
 
 [[redirects]]
