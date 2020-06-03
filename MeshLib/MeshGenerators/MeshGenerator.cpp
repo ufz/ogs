@@ -30,19 +30,28 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     const std::vector<const std::vector<double>*> &vec_xyz_coords,
     const MathLib::Point3d& origin)
 {
-    std::vector<Node*> nodes;
-    nodes.reserve(vec_xyz_coords[0]->size()*vec_xyz_coords[1]->size()*vec_xyz_coords[2]->size());
-
-    for (std::size_t i = 0; i < vec_xyz_coords[2]->size(); i++)
+    auto const shift_coordinates = [](auto const& in, auto& out,
+                                      auto const& shift) {
+        std::transform(in.begin(), in.end(), std::back_inserter(out),
+                       [&shift](auto const& v) { return v + shift; });
+    };
+    std::array<std::vector<double>, 3> coords;
+    for (std::size_t i = 0; i < 3; ++i)
     {
-        const double z ((*vec_xyz_coords[2])[i]+origin[2]);
-        for (std::size_t j = 0; j < vec_xyz_coords[1]->size(); j++)
+        coords[i].reserve(vec_xyz_coords[i]->size());
+        shift_coordinates(*vec_xyz_coords[i], coords[i], origin[i]);
+    }
+
+    std::vector<Node*> nodes;
+    nodes.reserve(coords[0].size() * coords[1].size() * coords[2].size());
+
+    for (auto const z : coords[2])
+    {
+        for (auto const y : coords[1])
         {
-            const double y ((*vec_xyz_coords[1])[j]+origin[1]);
-            for (double const x : *vec_xyz_coords[0])
-            {
-                nodes.push_back (new Node(x+origin[0], y, z));
-            }
+            std::transform(
+                coords[0].begin(), coords[0].end(), std::back_inserter(nodes),
+                [&y, &z](double const& x) { return new Node(x, y, z); });
         }
     }
     return nodes;
