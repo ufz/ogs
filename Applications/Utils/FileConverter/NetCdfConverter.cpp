@@ -164,35 +164,38 @@ static std::pair<double, double> getBoundaries(NcVar const& var)
 }
 
 static MathLib::Point3d getOrigin(NcFile const& dataset, NcVar const& var,
-                           std::vector<std::size_t> const& dim_idx_map,
-                           bool is_time_dep)
+                                  std::vector<std::size_t> const& dim_idx_map,
+                                  std::size_t const time_offset)
 {
-    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
     MathLib::Point3d origin(MathLib::ORIGIN);
     std::size_t const n_dims = var.getDimCount();
-    for (std::size_t i = temp_offset; i < n_dims; ++i)
+    for (std::size_t i = time_offset; i < n_dims; ++i)
     {
         NcVar const& dim = getDimVar(dataset, var, dim_idx_map[i]);
         auto const bounds = (dim.isNull()) ? getDimLength(var, dim_idx_map[i])
                                            : getBoundaries(dim);
-        origin[i - temp_offset] =
+        origin[i - time_offset] =
             (bounds.first < bounds.second) ? bounds.first : bounds.second;
     }
     return origin;
 }
 
-static void flipRaster(std::vector<double>& data, std::size_t const width,
-                std::size_t const height)
+static void flipRaster(std::vector<double>& data, std::size_t const layers,
+                       std::size_t const width, std::size_t const height)
 {
     std::size_t const length(data.size());
     std::vector<double> tmp_vec;
     tmp_vec.reserve(length);
-    for (std::size_t i = 0; i < height; i++)
+    for (std::size_t k = 0; k < layers; k++)
     {
-        std::size_t const line_idx(length - (width * (i + 1)));
-        for (std::size_t j = 0; j < width; j++)
+        std::size_t const layer_end = (k+1) * height * width;
+        for (std::size_t i = 0; i < height; i++)
         {
-            tmp_vec.push_back(data[line_idx + j]);
+            std::size_t const line_idx(layer_end - (width * (i + 1)));
+            for (std::size_t j = 0; j < width; j++)
+            {
+                tmp_vec.push_back(data[line_idx + j]);
+            }
         }
     }
     std::copy(tmp_vec.cbegin(), tmp_vec.cend(), data.begin());
@@ -395,25 +398,24 @@ static double getResolution(NcFile const& dataset, NcVar const& var)
 static GeoLib::RasterHeader createRasterHeader(
     NcFile const& dataset, NcVar const& var,
     std::vector<std::size_t> const& dim_idx_map,
-    std::vector<std::size_t> const& length, bool is_time_dep)
+    std::vector<std::size_t> const& length, std::size_t const time_offset)
 {
-    MathLib::Point3d const origin = getOrigin(dataset, var, dim_idx_map, is_time_dep);
+    MathLib::Point3d const origin =
+        getOrigin(dataset, var, dim_idx_map, time_offset);
     double const res = getResolution(dataset, var);
     std::size_t n_dims = var.getDimCount();
-    std::size_t temp_offset = (is_time_dep) ? 1 : 0;
     std::size_t z_length =
-        (n_dims - temp_offset == 3) ? length[dim_idx_map.back()] : 1;
-    return {length[dim_idx_map[0 + temp_offset]],
-            length[dim_idx_map[1 + temp_offset]],
+        (n_dims - time_offset == 3) ? length[dim_idx_map.back()] : 1;
+    return {length[dim_idx_map[0 + time_offset]],
+            length[dim_idx_map[1 + time_offset]],
             z_length, origin, res, no_data_output};
 }
 
-static std::vector<std::size_t> getLength(NcVar const& var, bool const is_time_dep)
+static std::vector<std::size_t> getLength(NcVar const& var, std::size_t const time_offset)
 {
-    std::size_t const temp_offset = (is_time_dep) ? 1 : 0;
     std::size_t const n_dims = (var.getDimCount());
     std::vector<std::size_t> length(n_dims, 1);
-    for (std::size_t i = temp_offset; i < n_dims; ++i)
+    for (std::size_t i = time_offset; i < n_dims; ++i)
     {
         length[i] = var.getDim(i).getSize();
     }
@@ -435,13 +437,6 @@ static std::vector<double> getData(NcFile const& dataset, NcVar const& var,
         data_vec.begin(), data_vec.end(),
         [](double& x) { return x == no_data_input; }, no_data_output);
 
-    // reverse lines in vertical direction if the original file has its origin
-    // in the northwest corner
-    NcVar const dim_var (getDimVar(dataset, var, n_dims - 2));
-    auto const bounds = (dim_var.isNull()) ? getDimLength(var, n_dims - 2)
-                                           : getBoundaries(dim_var);
-    if (bounds.first > bounds.second)
-        flipRaster(data_vec, length[n_dims - 1], length[n_dims - 2]);
     return data_vec;
 }
 
@@ -534,14 +529,15 @@ static MeshLib::MeshElemType assignElemType(
 }
 
 static bool convert(NcFile const& dataset, NcVar const& var,
-             std::string const& output_name,
-             std::vector<std::size_t> const& dim_idx_map,
-             bool const is_time_dep,
-             std::pair<std::size_t, std::size_t> const& time_bounds,
-             OutputType const output, MeshLib::MeshElemType const elem_type)
+                    std::string const& output_name,
+                    std::vector<std::size_t> const& dim_idx_map,
+                    std::size_t const time_offset,
+                    std::pair<std::size_t, std::size_t> const& time_bounds,
+                    OutputType const output,
+                    MeshLib::MeshElemType const elem_type)
 {
     std::unique_ptr<MeshLib::Mesh> mesh;
-    std::vector<std::size_t> const length = getLength(var, is_time_dep);
+    std::vector<std::size_t> const length = getLength(var, time_offset);
     std::size_t const array_length = std::accumulate(
         length.cbegin(), length.cend(), 1, std::multiplies<std::size_t>());
     for (std::size_t i = time_bounds.first; i <= time_bounds.second; ++i)
@@ -549,11 +545,24 @@ static bool convert(NcFile const& dataset, NcVar const& var,
         std::string const step_str = (time_bounds.first != time_bounds.second)
                 ? std::string(" time step " + std::to_string(i)) : "";
         std::cout << "Converting" << step_str << "...\n";
-        std::vector<double> const data_vec =
+        std::vector<double> data_vec =
             getData(dataset, var, array_length, i, length);
 
+        // reverse lines in vertical direction if file has its origin in the
+        // northwest corner
+        std::size_t const n_dims = length.size();
+        NcVar const dim_var(getDimVar(dataset, var, n_dims - 2));
+        auto const bounds = (dim_var.isNull()) ? getDimLength(var, n_dims - 2)
+                                               : getBoundaries(dim_var);
+        if (bounds.first > bounds.second)
+        {
+            std::size_t n_layers =
+                (length.size() - time_offset == 3) ? length[n_dims - 3] : 1;
+            flipRaster(data_vec, n_layers, length[n_dims - 1], length[n_dims - 2]);
+        }
+
         GeoLib::RasterHeader const header =
-            createRasterHeader(dataset, var, dim_idx_map, length, is_time_dep);
+            createRasterHeader(dataset, var, dim_idx_map, length, time_offset);
         MeshLib::UseIntensityAs const useIntensity =
             MeshLib::UseIntensityAs::DATAVECTOR;
         if (output == OutputType::MULTIMESH)
