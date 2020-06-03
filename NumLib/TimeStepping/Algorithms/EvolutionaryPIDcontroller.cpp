@@ -36,8 +36,12 @@ EvolutionaryPIDcontroller::EvolutionaryPIDcontroller(
       _e_n_minus2(0.),
       _is_accepted(true)
 {
-    // Remove possible duplicated elements. Result will be sorted.
-    BaseLib::makeVectorUnique(_fixed_output_times);
+    if (!std::is_sorted(cbegin(_fixed_output_times), cend(_fixed_output_times)))
+    {
+        OGS_FATAL(
+            "Vector of fixed time steps passed to the "
+            "EvolutionaryPIDcontroller constructor must be sorted");
+    }
 }
 
 bool EvolutionaryPIDcontroller::next(double const solution_error,
