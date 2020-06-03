@@ -134,7 +134,6 @@ bool MeshElementGrid::sortElementInGridCells(MeshLib::Element const& element)
         return false;
     }
 
-    std::vector<std::array<std::size_t,3>> coord_vecs(element.getNumberOfNodes());
     for (std::size_t k(1); k<element.getNumberOfNodes(); ++k) {
         // compute coordinates of the grid for each node of the element
         c = getGridCellCoordinates(*(static_cast<MathLib::Point3d const*>(element.getNode(k))));
