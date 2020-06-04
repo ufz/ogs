@@ -129,7 +129,7 @@ ProcessVariable::ProcessVariable(
             //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition}
             bcs_config->getConfigSubtreeList("boundary_condition"))
         {
-            auto const& mesh = findMeshInConfig(bc_config, meshes);
+            auto const& bc_mesh = findMeshInConfig(bc_config, meshes);
             auto component_id =
                 //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__component}
                 bc_config.getConfigParameterOptional<int>("component");
@@ -140,7 +140,8 @@ ProcessVariable::ProcessVariable(
                 component_id = 0;
             }
 
-            _bc_configs.emplace_back(std::move(bc_config), mesh, component_id);
+            _bc_configs.emplace_back(std::move(bc_config), bc_mesh,
+                                     component_id);
         }
     }
     else
@@ -158,7 +159,7 @@ ProcessVariable::ProcessVariable(
             //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term}
             sts_config->getConfigSubtreeList("source_term"))
         {
-            MeshLib::Mesh const& mesh = findMeshInConfig(st_config, meshes);
+            MeshLib::Mesh const& st_mesh = findMeshInConfig(st_config, meshes);
             auto component_id =
                 //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__component}
                 st_config.getConfigParameterOptional<int>("component");
@@ -169,7 +170,7 @@ ProcessVariable::ProcessVariable(
                 component_id = 0;
             }
 
-            _source_term_configs.emplace_back(std::move(st_config), mesh,
+            _source_term_configs.emplace_back(std::move(st_config), st_mesh,
                                               component_id);
         }
     }
