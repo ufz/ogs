@@ -34,6 +34,7 @@ set(SOURCES
     ModelTreeItem.cpp
     ProcessModel.cpp
     ProcessView.cpp
+    RasterDataToMeshDialog.cpp
     SaveMeshDialog.cpp
     SelectMeshDialog.cpp
     SetNameDialog.cpp
@@ -84,6 +85,7 @@ set(HEADERS
     ProcessModel.h
     ProcessVarItem.h
     ProcessView.h
+    RasterDataToMeshDialog.h
     SaveMeshDialog.h
     SelectMeshDialog.h
     SetNameDialog.h
