@@ -48,9 +48,7 @@ struct Component
 
 struct AqueousSolution
 {
-    AqueousSolution(double temperature_,
-                    double pressure_,
-                    double pe_,
+    AqueousSolution(double temperature_, double pressure_,
                     MeshLib::PropertyVector<double>* pe_,
                     std::vector<Component>&& components_,
                     ChargeBalance charge_balance_,
@@ -68,8 +66,8 @@ struct AqueousSolution
     friend std::ostream& operator<<(std::ostream& os,
                                     AqueousSolution const& aqueous_solution);
 
-    double temperature;
-    double pressure;
+    double const temperature;
+    double const pressure;
     std::unique_ptr<GlobalVector> pH;
     MeshLib::PropertyVector<double>* pe;
     std::vector<Component> components;
