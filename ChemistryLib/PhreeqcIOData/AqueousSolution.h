@@ -11,9 +11,12 @@
 #pragma once
 
 #include <iosfwd>
+#include <memory>
 #include <string>
 #include <vector>
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "Output.h"
 
 namespace ChemistryLib
@@ -24,10 +27,16 @@ namespace PhreeqcIOData
 {
 struct Component
 {
-    explicit Component(std::string name_) : name(std::move(name_)) {}
+    explicit Component(std::string name_,
+                       std::size_t const num_chemical_systems_)
+        : name(std::move(name_)),
+          amount(MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+              num_chemical_systems_))
+    {
+    }
 
     std::string const name;
-    double amount = std::numeric_limits<double>::quiet_NaN();
+    std::unique_ptr<GlobalVector> amount;
     static const ItemType item_type = ItemType::Component;
 };
 
@@ -37,9 +46,12 @@ struct AqueousSolution
                     double pressure_,
                     double pe_,
                     std::vector<Component>&& components_,
-                    ChargeBalance charge_balance_)
+                    ChargeBalance charge_balance_,
+                    std::size_t const num_chemical_systems_)
         : temperature(temperature_),
           pressure(pressure_),
+          pH(MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+              num_chemical_systems_)),
           pe(pe_),
           components(std::move(components_)),
           charge_balance(charge_balance_)
@@ -51,8 +63,8 @@ struct AqueousSolution
 
     double temperature;
     double pressure;
-    double pH = std::numeric_limits<double>::quiet_NaN();
     double pe;
+    std::unique_ptr<GlobalVector> pH;
     std::vector<Component> components;
     ChargeBalance const charge_balance;
 };
