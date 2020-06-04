@@ -139,6 +139,11 @@ newInstance(MatrixSpecifications const& spec)
     return std::make_unique<EigenVector>(spec.nrows);
 }
 
+std::unique_ptr<EigenVector> MatrixVectorTraits<EigenVector>::newInstance(
+    Eigen::SparseMatrix<double>::Index const length)
+{
+    return std::make_unique<EigenVector>(length);
+}
 } // namespace MathLib
 
 #endif // defined(OGS_USE_EIGEN)

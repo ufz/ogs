@@ -19,14 +19,17 @@ template<typename Matrix>
 struct MatrixVectorTraits;
 }
 
-#define SPECIALIZE_MATRIX_VECTOR_TRAITS(MATVEC, IDX) \
-    template<> struct MatrixVectorTraits<MATVEC> { \
-        using Index = IDX; \
-        static std::unique_ptr<MATVEC> newInstance(); \
-        static std::unique_ptr<MATVEC> newInstance(MATVEC const& A); \
-        static std::unique_ptr<MATVEC> newInstance(MatrixSpecifications const& spec); \
+#define SPECIALIZE_MATRIX_VECTOR_TRAITS(MATVEC, IDX)                    \
+    template <>                                                         \
+    struct MatrixVectorTraits<MATVEC>                                   \
+    {                                                                   \
+        using Index = IDX;                                              \
+        static std::unique_ptr<MATVEC> newInstance();                   \
+        static std::unique_ptr<MATVEC> newInstance(MATVEC const& A);    \
+        static std::unique_ptr<MATVEC> newInstance(                     \
+            MatrixSpecifications const& spec);                          \
+        static std::unique_ptr<MATVEC> newInstance(Index const length); \
     };
-
 
 #ifdef USE_PETSC
 
