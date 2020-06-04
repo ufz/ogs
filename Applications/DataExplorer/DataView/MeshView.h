@@ -62,6 +62,9 @@ private slots:
     /// Opens a dialog for mapping 2d meshes.
     void openMap2dMeshDialog();
 
+    /// Opens a dialog for assigning raster data to the mesh
+    void openRasterDataToMeshDialog();
+
     /// Opens a dialog for editing meshes.
     void openMeshEditDialog();
 

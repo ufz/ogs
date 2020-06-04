@@ -31,9 +31,11 @@
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/MeshEditing/AddLayerToMesh.h"
+#include "MeshLib/MeshEditing/RasterDataToMesh.h"
 
 #include "OGSError.h"
 #include "MeshMapping2DDialog.h"
+#include "RasterDataToMeshDialog.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshValueEditDialog.h"
 #include "SurfaceExtractionDialog.h"
@@ -127,6 +129,8 @@ void MeshView::contextMenuEvent( QContextMenuEvent* event )
     std::vector<MeshAction> actions;
     actions.push_back({new QAction("Map mesh...", this), 1, 2});
     connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMap2dMeshDialog()));
+    actions.push_back({new QAction("Assign raster data to mesh...", this), 1, 2});
+    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openRasterDataToMeshDialog()));
     actions.push_back({new QAction("Edit mesh...", this), 2, 3});
     connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
     actions.push_back({new QAction("Add layer...", this), 1, 3});
@@ -198,6 +202,45 @@ void MeshView::openMap2dMeshDialog()
     }
     static_cast<MeshModel*>(this->model())->addMesh(std::move(result));
 
+}
+
+void MeshView::openRasterDataToMeshDialog()
+{
+    MeshModel const* const model = static_cast<MeshModel*>(this->model());
+    QModelIndex const index = this->selectionModel()->currentIndex();
+    MeshLib::Mesh const* mesh = model->getMesh(index);
+    if (mesh == nullptr)
+    {
+        return;
+    }
+
+    RasterDataToMeshDialog dlg(mesh->getName());
+    if (dlg.exec() != QDialog::Accepted)
+    {
+        return;
+    }
+
+    auto result = std::make_unique<MeshLib::Mesh>(*mesh);
+    result->setName(dlg.getMeshName());
+    std::unique_ptr<GeoLib::Raster> raster{
+        FileIO::AsciiRasterInterface::readRaster(dlg.getRasterPath())};
+    if (!raster)
+    {
+        OGSError::box(QString::fromStdString("Could not read raster file " +
+                                             dlg.getRasterPath()));
+        return;
+    }
+    if (dlg.createNodeArray())
+    {
+        MeshLib::RasterDataToMesh::projectToNodes(
+            *result, *raster, dlg.getNoDataReplacement(), dlg.getArrayName());
+    }
+    else
+    {
+        MeshLib::RasterDataToMesh::projectToElements(
+            *result, *raster, dlg.getNoDataReplacement(), dlg.getArrayName());
+    }
+    static_cast<MeshModel*>(this->model())->addMesh(std::move(result));
 }
 
 void MeshView::openMeshEditDialog()
