@@ -19,6 +19,12 @@
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "Output.h"
 
+namespace MeshLib
+{
+template <typename PROP_VAL_TYPE>
+class PropertyVector;
+}
+
 namespace ChemistryLib
 {
 enum class ChargeBalance;
@@ -45,6 +51,7 @@ struct AqueousSolution
     AqueousSolution(double temperature_,
                     double pressure_,
                     double pe_,
+                    MeshLib::PropertyVector<double>* pe_,
                     std::vector<Component>&& components_,
                     ChargeBalance charge_balance_,
                     std::size_t const num_chemical_systems_)
@@ -63,8 +70,8 @@ struct AqueousSolution
 
     double temperature;
     double pressure;
-    double pe;
     std::unique_ptr<GlobalVector> pH;
+    MeshLib::PropertyVector<double>* pe;
     std::vector<Component> components;
     ChargeBalance const charge_balance;
 };

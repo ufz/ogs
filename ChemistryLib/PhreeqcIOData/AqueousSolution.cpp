@@ -12,6 +12,7 @@
 
 #include "AqueousSolution.h"
 #include "ChemistryLib/Common/ChargeBalance.h"
+#include "MeshLib/PropertyVector.h"
 
 namespace ChemistryLib
 {
