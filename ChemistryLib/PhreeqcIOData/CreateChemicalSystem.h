@@ -11,20 +11,28 @@
 #pragma once
 
 #include <memory>
-#include <vector>
+
+namespace BaseLib
+{
+class ConfigTree;
+}
+
+namespace MeshLib
+{
+class Mesh;
+
+template <typename PROP_VAL_TYPE>
+class PropertyVector;
+}  // namespace MeshLib
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct Output;
 struct ChemicalSystem;
-struct UserPunch;
 
-std::unique_ptr<Output> createOutput(
-    ChemicalSystem const& chemical_system,
-    std::unique_ptr<UserPunch> const& user_punch,
-    bool const use_high_precision,
-    std::string const& project_file_name);
+std::unique_ptr<ChemicalSystem> createChemicalSystem(
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
+    MeshLib::PropertyVector<std::size_t> const& chemical_system_map);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

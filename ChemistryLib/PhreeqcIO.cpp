@@ -20,6 +20,7 @@
 #include "BaseLib/ConfigTreeUtil.h"
 #include "MeshLib/Mesh.h"
 #include "PhreeqcIOData/AqueousSolution.h"
+#include "PhreeqcIOData/ChemicalSystem.h"
 #include "PhreeqcIOData/Dump.h"
 #include "PhreeqcIOData/EquilibriumReactant.h"
 #include "PhreeqcIOData/KineticReactant.h"
@@ -48,9 +49,7 @@ std::ostream& operator<<(std::ostream& os,
 PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      MeshLib::Mesh const& mesh,
                      std::string&& database,
-                     std::vector<AqueousSolution>&& aqueous_solutions,
-                     std::vector<EquilibriumReactant>&& equilibrium_reactants,
-                     std::vector<KineticReactant>&& kinetic_reactants,
+                     std::unique_ptr<ChemicalSystem>&& chemical_system,
                      std::vector<ReactionRate>&& reaction_rates,
                      std::vector<SurfaceSite>&& surface,
                      std::unique_ptr<UserPunch>&& user_punch,
@@ -60,9 +59,7 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
     : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
       _mesh(mesh),
       _database(std::move(database)),
-      _aqueous_solutions(std::move(aqueous_solutions)),
-      _equilibrium_reactants(std::move(equilibrium_reactants)),
-      _kinetic_reactants(std::move(kinetic_reactants)),
+      _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
       _surface(std::move(surface)),
       _user_punch(std::move(user_punch)),
