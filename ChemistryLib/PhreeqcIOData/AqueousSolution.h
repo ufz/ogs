@@ -63,8 +63,7 @@ struct AqueousSolution
     {
     }
 
-    friend std::ostream& operator<<(std::ostream& os,
-                                    AqueousSolution const& aqueous_solution);
+    void print(std::ostream& os, std::size_t const chemical_system_id) const;
 
     double const temperature;
     double const pressure;
