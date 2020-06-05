@@ -528,7 +528,7 @@ pipeline {
                   '-DOGS_CPU_ARCHITECTURE=core2 ' +
                   '-DOGS_BUILD_UTILS=ON ' +
                   '-DOGS_BUILD_GUI=ON ' +
-                  '-DOGS_USE_CONAN=ON ' +
+                  '-DOGS_USE_CONAN=OFF ' +
                   '-DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" ' +
                   '-DOGS_USE_NETCDF=ON '
               }
