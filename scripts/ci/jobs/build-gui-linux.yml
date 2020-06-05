@@ -1,0 +1,27 @@
+build gui linux:
+  extends: .template-build-linux
+  stage: gui
+  tags:
+    - envinf1
+    - docker
+  needs:
+    - job: build linux
+      artifacts: false
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+    - changes:
+      - Applications/DataExplorer/**/*
+    - when: manual
+      allow_failure: true
+
+  variables:
+    BUILD_DIR: "build-gui-linux"
+    CMAKE_ARGS: >-
+      -DOGS_USE_CONAN=ON
+      -DOGS_USE_PCH=OFF
+      -DOGS_BUILD_GUI=ON
+      -DOGS_BUILD_UTILS=ON
+      -DOGS_USE_NETCDF=ON
+
+  image:
+    name: $CONTAINER_GCC_GUI_IMAGE

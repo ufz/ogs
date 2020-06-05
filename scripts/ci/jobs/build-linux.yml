@@ -1,0 +1,10 @@
+build linux:
+  extends: .template-build-linux
+  tags:
+    - envinf1
+    - docker
+  variables:
+    BUILD_DIR: "build"
+    CMAKE_ARGS: "-DOGS_USE_CONAN=OFF"
+  image:
+    name: $CONTAINER_GCC_IMAGE

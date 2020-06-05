@@ -36,7 +36,11 @@ find_program(CURL_TOOL_PATH curl DOC "The curl-tool")
 
 find_program(S3CMD_TOOL_PATH s3cmd DOC "S3cmd tool for uploading to Amazon S3")
 
-find_program(CCACHE_TOOL_PATH ccache)
+if(WIN32)
+    find_program(CLCACHE_TOOL_PATH clcache)
+else()
+    find_program(CCACHE_TOOL_PATH ccache)
+endif()
 
 # Tools for web
 find_program(VTKJS_CONVERTER vtkDataConverter

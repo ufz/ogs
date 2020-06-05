@@ -1,0 +1,9 @@
+build linux petsc:
+  extends: .template-build-linux
+  tags:
+    - envinf1
+    - docker-shell
+
+  variables:
+    BUILD_DIR: "build-petsc"
+    CMAKE_ARGS: "-DOGS_USE_CONAN=OFF -DOGS_USE_PETSC=ON -DBUILD_SHARED_LIBS=ON"

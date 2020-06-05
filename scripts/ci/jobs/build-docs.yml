@@ -1,0 +1,17 @@
+build docs:
+  stage: build
+  image:
+    name: $CONTAINER_GCC_IMAGE
+
+  before_script:
+    - mkdir -p build
+    - cd build
+
+  script:
+    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - cmake --build . --target doc > >(tee make-docs.output)
+
+  artifacts:
+    expose_as: 'Doxygen'
+    paths: ['build/docs/']
+    expire_in: 1 week

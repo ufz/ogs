@@ -1,0 +1,24 @@
+# not working until https://gitlab.com/gitlab-org/gitlab-runner/issues/1809
+# is implemented
+# Usage:
+#
+# build pre-commit image:
+#   extends: .template-build-dockerfile
+#   variables:
+#     DOCKERFILE: scripts/docker/Dockerfile.pre-commit
+#     IMAGE_REF: $PRECOMMIT_IMAGE:latest
+.template-build-dockerfile:
+  stage: .pre
+  only:
+    changes:
+      - $DOCKERFILE
+      - scripts/ci/extends/template-build-dockerfile.yml
+  tags:
+    - docker-shell
+  variables:
+    GIT_LFS_SKIP_SMUDGE: "1"
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $IMAGE_REF || true
+    - docker build --cache-from $IMAGE_REF -t $IMAGE_REF -f $DOCKERFILE scripts/docker
+    - docker push $IMAGE_REF

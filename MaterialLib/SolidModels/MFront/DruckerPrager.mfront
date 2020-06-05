@@ -90,4 +90,3 @@ lam.setGlossaryName("EquivalentPlasticStrain");
         dflam_ddeel = theta * (nF | D) / D(0, 0);
     }
 }
-

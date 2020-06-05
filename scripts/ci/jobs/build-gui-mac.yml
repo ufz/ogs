@@ -1,0 +1,23 @@
+build gui mac:
+  extends: .template-build-linux
+  stage: gui
+  needs:
+    - job: build mac
+      artifacts: false
+  tags:
+    - mac
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+    - changes:
+      - Applications/DataExplorer/**/*
+    - when: manual
+      allow_failure: true
+
+  variables:
+    BUILD_DIR: "build-gui-mac"
+    CMAKE_ARGS: >-
+      -DOGS_USE_CONAN=OFF
+      -DOGS_USE_PCH=OFF
+      -DOGS_BUILD_GUI=ON
+      -DOGS_BUILD_UTILS=ON
+      -DOGS_USE_NETCDF=ON

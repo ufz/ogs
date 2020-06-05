@@ -1,0 +1,8 @@
+build mac:
+  extends: .template-build-linux
+
+  tags:
+    - mac
+
+  variables:
+    BUILD_DIR: "build-mac"

@@ -1,0 +1,32 @@
+.template-build-linux:
+  stage: build
+  tags:
+    - docker
+  extends:
+    - .defaults
+    - .test-artifacts
+
+  variables:
+    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
+
+  before_script:
+    - git lfs install
+    - git lfs fetch
+    - git lfs checkout
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
+
+  script:
+    - >
+      cmake .. -G Ninja
+      $CMAKE_ARGS
+      -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
+    - $BUILD_CMD_PREFIX cmake --build . > >(tee make.output)
+    - $BUILD_CMD_PREFIX cmake --build . --target tests
+    - $BUILD_CMD_PREFIX cmake --build . --target ctest
+    - cp Testing/**/Test.xml Tests/ctest.xml
+
+  cache:
+    paths:
+      - $CCACHE_DIR

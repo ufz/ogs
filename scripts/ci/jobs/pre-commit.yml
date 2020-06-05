@@ -1,0 +1,8 @@
+pre commit:
+  stage: pre-checks
+  image:
+    name: $PRECOMMIT_IMAGE
+  script:
+    - pre-commit install
+    - pre-commit run --all-files
+    - git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'

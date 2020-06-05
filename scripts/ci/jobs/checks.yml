@@ -1,0 +1,41 @@
+compiler warnings:
+  stage: checks
+  variables:
+    GIT_STRATEGY: none
+  allow_failure: true
+  needs:
+    - job: build linux
+    - job: build win
+    - job: build mac
+  script:
+    - exit_code=0
+    - cd build
+    - "if [[ $(cat make.output | grep warning -i) ]]; then echo 'There were GCC compiler warnings:'; cat make.output | grep warning -i; exit_code=1; fi"
+    - cd ../build-win
+    - "if [[ $(cat make.output | grep ': warning' -i) ]]; then echo 'There were MSVC compiler warnings:'; cat make.output | grep ': warning' -i; exit_code=1; fi"
+    - cd ../build-mac
+    - "if [[ $(cat make.output | grep warning -i) ]]; then echo 'There were Clang (macOS) compiler warnings:'; cat make.output | grep warning -i; exit_code=1; fi"
+    - exit $exit_code
+
+
+ctest results:
+  stage: checks
+  variables:
+    GIT_STRATEGY: none
+  tags:
+    - docker-shell
+  needs:
+    - job: build linux
+    - job: build win
+    - job: build mac
+  script:
+    - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build/Tests/ctest.xml > ./build/ctest-junit.xml
+    - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build-win/Tests/ctest.xml > ./build-win/ctest-junit.xml
+    - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build-mac/Tests/ctest.xml > ./build-mac/ctest-junit.xml
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit:
+        - build/ctest-junit.xml
+        - build-win/ctest-junit.xml
+        - build-mac/ctest-junit.xml

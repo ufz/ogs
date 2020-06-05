@@ -1,0 +1,30 @@
+clang tidy:
+  stage: checks
+  tags:
+    - docker
+  extends:
+    - .defaults
+    - .rules-master-manual
+
+  variables:
+    BUILD_DIR: "build-tidy"
+    CMAKE_ARGS: "-DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DCMAKE_CXX_CLANG_TIDY=clang-tidy-9"
+
+  image:
+    name: $CONTAINER_CLANG_IMAGE
+
+  script:
+    - mkdir -p $BUILD_DIR
+    - cd $BUILD_DIR
+    - >
+      cmake .. -G Ninja
+      $CMAKE_ARGS
+      -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
+    - cmake --build . > >(tee make.output)
+
+  artifacts:
+    # No report yet: https://gitlab.com/gitlab-org/gitlab/-/issues/3985
+    paths:
+      - $BUILD_DIR/make.output
+    expire_in: 1 week

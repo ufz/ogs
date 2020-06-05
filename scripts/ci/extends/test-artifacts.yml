@@ -1,0 +1,10 @@
+.test-artifacts:
+  artifacts:
+    paths:
+      - $BUILD_DIR/Tests/ctest.xml
+      - $BUILD_DIR/Tests/testrunner.xml
+      - $BUILD_DIR/make.output
+    expire_in: 1 week
+    reports:
+      junit:
+        - $BUILD_DIR/Tests/testrunner.xml

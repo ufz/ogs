@@ -1,18 +1,49 @@
-variables:
-  GIT_STRATEGY: fetch
-  OPENMPI_VERSIONS: 'off 2.1.6 3.1.4 4.0.1'
+stages:
+  - pre-checks
+  - build
+  - checks
+  - gui
+  - package
 
-build-container:
-  tags:
-    - docker-shell
-  stage: build
-  script:
-    - git submodule update --init ThirdParty/container-maker
-    - virtualenv .venv
-    - source .venv/bin/activate
-    - pip install -r ThirdParty/container-maker/requirements.txt
-    - export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
-    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi $OPENMPI_VERSIONS
-  artifacts:
-    paths:
-      - _out/images/*.sif
+
+variables:
+  # Docker image names
+  CONTAINER_GCC_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/$CI_PROJECT_NAMESPACE/gcc:$CI_COMMIT_REF_SLUG
+  CONTAINER_GCC_GUI_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/$CI_PROJECT_NAMESPACE/gcc-gui:$CI_COMMIT_REF_SLUG
+  CONTAINER_CLANG_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/$CI_PROJECT_NAMESPACE/clang:$CI_COMMIT_REF_SLUG
+  XUNIT_TO_JUNIT_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/xunit-to-junit
+  PRECOMMIT_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/pre-commit
+  WEB_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/web
+  # Build config
+  BUILD_TYPE: Release
+  BUILD_PROCESSES: "" # Empty string: builds all processes
+
+include:
+  - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
+  # extends
+  - local: '/scripts/ci/extends/defaults.yml'
+  - local: '/scripts/ci/extends/rules-master-manual.yml'
+  - local: '/scripts/ci/extends/template-build-linux.yml'
+  - local: '/scripts/ci/extends/template-build-win.yml'
+  - local: '/scripts/ci/extends/container-maker-setup.yml'
+  - local: '/scripts/ci/extends/vs2019-environment.yml'
+  - local: '/scripts/ci/extends/test-artifacts.yml'
+  # jobs
+  - local: '/scripts/ci/jobs/pre-commit.yml'
+  - local: '/scripts/ci/jobs/build_image.yml'
+  - local: '/scripts/ci/jobs/build-linux.yml'
+  - local: '/scripts/ci/jobs/build-linux-petsc.yml'
+  - local: '/scripts/ci/jobs/build-linux-frontend.yml'
+  - local: '/scripts/ci/jobs/build-docs.yml'
+  - local: '/scripts/ci/jobs/build-win.yml'
+  - local: '/scripts/ci/jobs/build-mac.yml'
+  - local: '/scripts/ci/jobs/checks.yml'
+  - local: '/scripts/ci/jobs/container.yml'
+  - local: '/scripts/ci/jobs/build-gui-linux.yml'
+  - local: '/scripts/ci/jobs/build-gui-win.yml'
+  - local: '/scripts/ci/jobs/build-gui-mac.yml'
+  - local: '/scripts/ci/jobs/check-header.yml'
+  - local: '/scripts/ci/jobs/tests-large.yml'
+  - local: '/scripts/ci/jobs/web.yml'
+  - local: '/scripts/ci/jobs/clang-sanitizer.yml'
+  - local: '/scripts/ci/jobs/clang-tidy.yml'
