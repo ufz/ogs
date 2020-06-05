@@ -291,6 +291,8 @@ foreach(element_type tri quad)
         COMMAND generateStructuredMesh -e ${element_type} --lx 1 --ly 1 --nx 10 --ny 10 -o ${Data_BINARY_DIR}/FileIO/square_1x1_${element_type}.vtu
         WORKING_DIRECTORY ${Data_BINARY_DIR}/FileIO/
     )
+    set_tests_properties(ExtractBoundary-generate_input_files_${element_type}
+        PROPERTIES COST 1) # RUNTIME 1
 
     AddTest(
         NAME ExtractBoundary_2D_${element_type}_Test

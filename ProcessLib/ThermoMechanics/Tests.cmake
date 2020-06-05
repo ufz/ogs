@@ -26,7 +26,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     tm1_1Dbeam_pcs_0_ts_1_t_1.000000.vtu tm1_1Dbeam_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1e-10 0.0
     tm1_1Dbeam_pcs_0_ts_1_t_1.000000.vtu tm1_1Dbeam_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
