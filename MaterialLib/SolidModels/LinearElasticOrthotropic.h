@@ -171,6 +171,21 @@ public:
 
     MaterialProperties getMaterialProperties() const { return _mp; }
 
+    double getBulkModulus(double const t,
+                          ParameterLib::SpatialPosition const& x,
+                          KelvinMatrix const* const /*C*/) const override
+    {
+        auto const& mp = _mp.evaluate(t, x);
+        auto const E = [&mp](int const i) { return mp.E(i); };
+        auto const nu = [&mp](int const i, int const j) { return mp.nu(i, j); };
+        // corresponds to 1/(I:S:I) --> Reuss bound.
+        // Voigt bound would proceed as (I:C:I)/9. Use MFront model if you
+        // prefer that.
+        return E(1) * E(2) * E(3) /
+               (E(1) * E(2) + E(1) * E(3) * (1 - 2 * nu(2, 3)) +
+                E(2) * E(3) * (1 - 2 * nu(1, 2) * nu(1, 3)));
+    }
+
 protected:
     MaterialProperties _mp;
     boost::optional<ParameterLib::CoordinateSystem> const&

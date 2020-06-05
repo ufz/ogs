@@ -51,6 +51,8 @@ public:
 
     using Parameter = ParameterLib::Parameter<double>;
 
+    using LinearElasticIsotropic<DisplacementDim>::getBulkModulus;
+
     std::unique_ptr<
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
     createMaterialStateVariables() const override
