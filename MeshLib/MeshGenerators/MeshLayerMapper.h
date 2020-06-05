@@ -59,10 +59,10 @@ public:
     * locations where no information is given, node elevation is set to
     * noDataReplacementValue.
     */
-    static bool layerMapping(MeshLib::Mesh &mesh, const GeoLib::Raster &raster, double noDataReplacementValue);
+    static bool layerMapping(MeshLib::Mesh const &mesh, const GeoLib::Raster &raster, double noDataReplacementValue);
 
     /// Maps the elevation of all mesh nodes to the specified static value.
-    static bool mapToStaticValue(MeshLib::Mesh &mesh, double value);
+    static bool mapToStaticValue(MeshLib::Mesh const& mesh, double value);
 
 private:
     /// Adds another layer to a subsurface mesh
