@@ -412,8 +412,6 @@ pipeline {
             MSVC_NUMBER = '16'
             MSVC_VERSION = '2019'
             OMP_NUM_THREADS = '1'
-            CC = 'clcache'
-            CXX = 'clcache'
           }
           steps {
             script {
