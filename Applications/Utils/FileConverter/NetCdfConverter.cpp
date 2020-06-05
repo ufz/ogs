@@ -435,7 +435,7 @@ static std::vector<double> getData(NcFile const& dataset, NcVar const& var,
 
     std::replace_if(
         data_vec.begin(), data_vec.end(),
-        [](double& x) { return x == no_data_input; }, no_data_output);
+        [](double const& x) { return x == no_data_input; }, no_data_output);
 
     return data_vec;
 }

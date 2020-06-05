@@ -38,7 +38,7 @@ class EquilibriumReactants final : private cxxPPassemblage
 {
 public:
     explicit EquilibriumReactants(
-        std::vector<PhaseComponent>& phase_components);
+        std::vector<PhaseComponent> const& phase_components);
 
     void setChemicalSystemID(std::size_t const chemical_system_id)
     {

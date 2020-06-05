@@ -66,12 +66,12 @@ std::vector<double> TimeDependentHeterogeneousParameter::operator()(
 
     auto r0 = _time_parameter_mapping[k - 1].second->operator()(t, pos);
     std::transform(r0.begin(), r0.end(), r0.begin(),
-                   [alpha](auto& v) { return (1 - alpha) * v; });
+                   [alpha](auto const& v) { return (1 - alpha) * v; });
     auto r1 = _time_parameter_mapping[k].second->operator()(t, pos);
     std::transform(r1.begin(), r1.end(), r1.begin(),
-                   [alpha](auto& v) { return alpha * v; });
+                   [alpha](auto const& v) { return alpha * v; });
     std::transform(r0.begin(), r0.end(), r1.begin(), r0.begin(),
-                   [](auto& v0, auto const& v1) { return v0 + v1; });
+                   [](auto const& v0, auto const& v1) { return v0 + v1; });
     return r0;
 }
 
