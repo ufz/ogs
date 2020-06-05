@@ -68,7 +68,7 @@ if(OGS_BUILD_GUI)
         zlib/1.2.11
     )
     if(UNIX)
-        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/${ogs.tested_version.qt.linux}@bincrafters/testing)
+        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/${ogs.tested_version.qt.linux}@bincrafters/stable)
     else()
         set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/${ogs.tested_version.qt.win}@bincrafters/stable)
     endif()

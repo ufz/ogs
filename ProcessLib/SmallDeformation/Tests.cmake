@@ -39,7 +39,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/InitialStates/into_initial_state.prj)
     OgsTest(PROJECTFILE Mechanics/InitialStates/equilibrium_restart.prj)
     OgsTest(PROJECTFILE Mechanics/InitialStates/non_equilibrium_initial_state.prj)
-    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj)
+    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 50)
     set_tests_properties(ogs-Mechanics/MohrCoulombAbboSloan/slope PROPERTIES WILL_FAIL true)
 endif()
 

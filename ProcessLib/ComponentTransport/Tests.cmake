@@ -197,7 +197,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 900
+    RUNTIME 4
     DIFF_DATA
     box_ogsOutput_pcs_0_ts_0_t_0.000000_expected.vtu box_ogsOutput_pcs_0_ts_0_t_0.000000.vtu concentration concentration 5e-7 5e-10
     box_ogsOutput_pcs_0_ts_20_t_100000.000000_expected.vtu box_ogsOutput_pcs_0_ts_20_t_100000.000000.vtu concentration concentration 5e-7 5e-10
@@ -312,7 +312,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 26
+    RUNTIME 1
     DIFF_DATA
     DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000_expected.vtu OpenBoundaryBC_pcs_0_ts_0_t_0.000000.vtu Si Si 5e-6 5e-6
     DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000_expected.vtu OpenBoundaryBC_pcs_0_ts_1_t_0.020000.vtu Si Si 5e-6 5e-6
@@ -343,7 +343,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 26
+    RUNTIME 1
     DIFF_DATA
     DiffusionAndAdvection_surfaceflux_pcs_0_ts_0_t_0.000000_expected.vtu AdvectiveNonAdvectiveComparison_pcs_0_ts_0_t_0.000000.vtu Si Si 5e-6 5e-6
     DiffusionAndAdvection_surfaceflux_pcs_0_ts_1_t_0.020000_expected.vtu AdvectiveNonAdvectiveComparison_pcs_0_ts_1_t_0.020000.vtu Si Si 5e-6 5e-6
@@ -1119,7 +1119,7 @@ AddTest(
     1d_isofrac_pcs_3_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
     1d_isofrac_pcs_3_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
     1d_isofrac_pcs_3_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
-    RUNTIME 85
+    RUNTIME 20
 )
 
 AddTest(
@@ -1197,6 +1197,7 @@ AddTest(
     KineticReactant2_2d_pcs_4_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu H H 1e-10 1e-16
     KineticReactant2_2d_pcs_4_ts_16_t_1600.000000_expected.vtu KineticReactant2_2d_ts_16_t_1600.000000.vtu H H 1e-10 1e-16
     KineticReactant2_2d_pcs_4_ts_20_t_2000.000000_expected.vtu KineticReactant2_2d_ts_20_t_2000.000000.vtu H H 1e-10 1e-16
+    RUNTIME 140
 )
 
 AddTest(
@@ -1220,5 +1221,5 @@ AddTest(
     Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sno Sno 1e-10 1e-16
     Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sso Sso 1e-10 1e-16
     Wetland_1d_pcs_11_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sulphide Sulphide 1e-10 1e-16
-    RUNTIME 140
+    RUNTIME 24
 )

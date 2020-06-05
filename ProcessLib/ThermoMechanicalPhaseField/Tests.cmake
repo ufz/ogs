@@ -16,7 +16,7 @@ AddTest(
 AddTest(
     NAME ThermoMechanicalPhaseField_3D_beam
     PATH ThermoMechanicalPhaseField
-    RUNTIME 20
+    RUNTIME 5
     EXECUTABLE ogs
     EXECUTABLE_ARGS beam3d.prj
     WRAPPER time
