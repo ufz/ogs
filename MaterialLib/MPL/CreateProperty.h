@@ -47,6 +47,7 @@ using PropertyArray =
 /// Then, the property name is evaluated and the property is copied into the
 /// properties array.
 std::unique_ptr<PropertyArray> createProperties(
+    int const geometry_dimension,
     boost::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,

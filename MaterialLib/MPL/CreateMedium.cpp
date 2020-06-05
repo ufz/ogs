@@ -25,6 +25,7 @@
 namespace MaterialPropertyLib
 {
 std::unique_ptr<Medium> createMedium(
+    int const geometry_dimension,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
@@ -34,15 +35,16 @@ std::unique_ptr<Medium> createMedium(
 {
     // Parsing the phases
     // Properties of phases may be not required in all the cases.
-    auto&& phases =
-        //! \ogs_file_param{prj__media__medium__phases}
-        createPhases(config.getConfigSubtreeOptional("phases"), parameters,
-                     local_coordinate_system, curves);
+    auto&& phases = createPhases(geometry_dimension,
+                                 //! \ogs_file_param{prj__media__medium__phases}
+                                 config.getConfigSubtreeOptional("phases"),
+                                 parameters, local_coordinate_system, curves);
 
     // Parsing medium properties, overwriting the defaults.
     auto&& properties =
-        //! \ogs_file_param{prj__media__medium__properties}
-        createProperties(config.getConfigSubtreeOptional("properties"),
+        createProperties(geometry_dimension,
+                         //! \ogs_file_param{prj__media__medium__properties}
+                         config.getConfigSubtreeOptional("properties"),
                          parameters, local_coordinate_system, curves);
 
     if (phases.empty() && !properties)

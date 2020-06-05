@@ -21,6 +21,7 @@
 namespace
 {
 std::unique_ptr<MaterialPropertyLib::Component> createComponent(
+    int const geometry_dimension,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
@@ -43,10 +44,11 @@ std::unique_ptr<MaterialPropertyLib::Component> createComponent(
     // component is predefined in the class implementation, properties
     // become optional. The default values of properties will be overwritten
     // if specified.
-    std::unique_ptr<PropertyArray> properties =
+    std::unique_ptr<PropertyArray> properties = createProperties(
+        geometry_dimension,
         //! \ogs_file_param{prj__media__medium__phases__phase__components__component__properties}
-        createProperties(config.getConfigSubtreeOptional("properties"),
-                         parameters, local_coordinate_system, curves);
+        config.getConfigSubtreeOptional("properties"), parameters,
+        local_coordinate_system, curves);
 
     // If a name is given, it must conform with one of the derived component
     // names in the following list:
@@ -70,6 +72,7 @@ std::unique_ptr<MaterialPropertyLib::Component> createComponent(
 namespace MaterialPropertyLib
 {
 std::vector<std::unique_ptr<Component>> createComponents(
+    int const geometry_dimension,
     boost::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
@@ -88,8 +91,9 @@ std::vector<std::unique_ptr<Component>> createComponents(
         //! \ogs_file_param{prj__media__medium__phases__phase__components__component}
         config->getConfigSubtreeList("component"))
     {
-        auto component = createComponent(component_config, parameters,
-                                         local_coordinate_system, curves);
+        auto component =
+            createComponent(geometry_dimension, component_config, parameters,
+                            local_coordinate_system, curves);
 
         if (std::find_if(components.begin(),
                          components.end(),
