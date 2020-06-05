@@ -91,7 +91,7 @@ set(SOURCES
 SET_SOURCE_FILES_PROPERTIES(src/src/Var.c PROPERTIES LANGUAGE CXX)
 
 add_library(iphreeqc STATIC ${SOURCES})
-target_include_directories(iphreeqc
+target_include_directories(iphreeqc BEFORE
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/src/phreeqcpp/common
     ${CMAKE_CURRENT_SOURCE_DIR}/src/src/phreeqcpp/PhreeqcKeywords
