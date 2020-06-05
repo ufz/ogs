@@ -486,7 +486,8 @@ void ProjectData::parseMedia(
             _media[id] =
                 (id == material_ids[0])
                     ? MaterialPropertyLib::createMedium(
-                          medium_config, _parameters,
+                          _mesh_vec[0]->getDimension(), medium_config,
+                          _parameters,
                           _local_coordinate_system ? &*_local_coordinate_system
                                                    : nullptr,
                           _curves)

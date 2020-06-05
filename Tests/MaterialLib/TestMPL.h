@@ -32,7 +32,8 @@ class Property;
 
 namespace Tests
 {
-std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml);
+std::unique_ptr<MPL::Medium> createTestMaterial(
+    std::string const& xml, int const geometry_dimension = 1);
 
 std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
     const char xml[],

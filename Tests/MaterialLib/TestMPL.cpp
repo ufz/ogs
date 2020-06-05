@@ -22,7 +22,8 @@
 
 namespace Tests
 {
-std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
+std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml,
+                                                int const geometry_dimension)
 {
     auto const ptree = Tests::readXml(xml.c_str());
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
@@ -33,7 +34,8 @@ std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml)
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         curves;
 
-    return MPL::createMedium(config, parameters, nullptr, curves);
+    return MPL::createMedium(geometry_dimension, config, parameters, nullptr,
+                             curves);
 }
 
 std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
