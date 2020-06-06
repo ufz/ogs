@@ -10,6 +10,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "CreateMedium.h"
+
 #include "Medium.h"
 
 #include "BaseLib/ConfigTree.h"

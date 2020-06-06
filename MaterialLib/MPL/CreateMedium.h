@@ -10,6 +10,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#pragma once
+
 #include <map>
 #include <memory>
 #include <string>

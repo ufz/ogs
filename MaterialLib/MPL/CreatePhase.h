@@ -10,6 +10,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#pragma once
+
 #include <boost/optional.hpp>
 #include <map>
 #include <memory>
