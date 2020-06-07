@@ -48,6 +48,10 @@ Variable convertStringToVariable(std::string const& input)
     {
         return Variable::grain_compressibility;
     }
+    if (boost::iequals(input, "solid_grain_pressure"))
+    {
+        return Variable::solid_grain_pressure;
+    }
 
     OGS_FATAL(
         "The variable name '{:s}' does not correspond to any known variable",

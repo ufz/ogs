@@ -52,6 +52,7 @@ enum class Variable : int
     liquid_saturation_rate,
     phase_pressure,
     porosity,
+    solid_grain_pressure,
     strain,
     stress,
     temperature,
