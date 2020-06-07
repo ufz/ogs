@@ -229,7 +229,7 @@ bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
 }
 void TwoPhaseFlowWithPrhoMaterialProperties::calculateResidual(
     const int material_id, double const pl, double const X, double const T,
-    double Sw, double rho_h2_wet, ResidualVector& res)
+    double const Sw, double const rho_h2_wet, ResidualVector& res)
 {
     const double pg =
         pl + _capillary_pressure_models[material_id]->getCapillaryPressure(Sw);
@@ -243,8 +243,8 @@ void TwoPhaseFlowWithPrhoMaterialProperties::calculateResidual(
 void TwoPhaseFlowWithPrhoMaterialProperties::calculateJacobian(
     const int material_id, double const /*t*/,
     ParameterLib::SpatialPosition const& /*x*/, double const pl,
-    double const /*X*/, double const T, JacobianMatrix& Jac, double Sw,
-    double rho_h2_wet)
+    double const /*X*/, double const T, JacobianMatrix& Jac, double const Sw,
+    double const rho_h2_wet)
 {
     const double pg =
         pl + _capillary_pressure_models[material_id]->getCapillaryPressure(Sw);

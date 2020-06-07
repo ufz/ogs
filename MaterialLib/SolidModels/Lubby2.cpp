@@ -208,9 +208,9 @@ void Lubby2<DisplacementDim>::calculateResidualBurgers(
     const KelvinVector& strain_t,
     const KelvinVector& stress_curr,
     const KelvinVector& stress_t,
-    KelvinVector& strain_Kel_curr,
+    const KelvinVector& strain_Kel_curr,
     const KelvinVector& strain_Kel_t,
-    KelvinVector& strain_Max_curr,
+    const KelvinVector& strain_Max_curr,
     const KelvinVector& strain_Max_t,
     ResidualVector& res,
     detail::LocalLubby2Properties<DisplacementDim> const& properties) const

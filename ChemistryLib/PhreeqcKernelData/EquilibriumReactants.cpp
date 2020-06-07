@@ -25,7 +25,7 @@ PhaseComponent::PhaseComponent(std::string&& name_,
 }
 
 EquilibriumReactants::EquilibriumReactants(
-    std::vector<PhaseComponent>& phase_components)
+    std::vector<PhaseComponent> const& phase_components)
 {
     for (auto& phase_component : phase_components)
     {
