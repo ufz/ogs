@@ -84,14 +84,16 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
 }
 
 MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh,
-    double thickness,
-    std::string const& name)
+                                 double thickness,
+                                 std::string const& name,
+                                 bool copy_material_ids)
 {
-    return addLayerToMesh(mesh, thickness, name, true);
+    return addLayerToMesh(mesh, thickness, name, true, copy_material_ids);
 }
 
 MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
-                              std::string const& name, bool on_top)
+                              std::string const& name, bool on_top,
+                              bool copy_material_ids)
 {
     INFO("Extracting top surface of mesh '{:s}' ... ", mesh.getName());
     int const flag = (on_top) ? -1 : 1;
@@ -192,12 +194,26 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     }
 
     new_materials->reserve(subsfc_elements.size());
-    int new_layer_id(
-        *(std::max_element(materials->cbegin(), materials->cend())) + 1);
     std::copy(materials->cbegin(), materials->cend(),
               std::back_inserter(*new_materials));
-    auto const n_new_props(subsfc_elements.size() - mesh.getNumberOfElements());
-    std::fill_n(std::back_inserter(*new_materials), n_new_props, new_layer_id);
+
+    if (copy_material_ids &&
+        sfc_mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
+    {
+        auto const& sfc_material_ids =
+            *sfc_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
+        std::copy(sfc_material_ids.cbegin(), sfc_material_ids.cend(),
+                  std::back_inserter(*new_materials));
+    }
+    else
+    {
+        int const new_layer_id(
+            *(std::max_element(materials->cbegin(), materials->cend())) + 1);
+        auto const n_new_props(subsfc_elements.size() -
+                               mesh.getNumberOfElements());
+        std::fill_n(std::back_inserter(*new_materials), n_new_props,
+                    new_layer_id);
+    }
 
     return new_mesh;
 }
