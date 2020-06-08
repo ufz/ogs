@@ -1,4 +1,5 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -18,7 +19,7 @@ namespace MeshLib
 namespace RasterDataToMesh
 {
 
-bool checkMesh2D(MeshLib::Mesh const& mesh)
+static bool checkMesh2D(MeshLib::Mesh const& mesh)
 {
     if (mesh.getDimension() > 2)
     {
@@ -27,8 +28,9 @@ bool checkMesh2D(MeshLib::Mesh const& mesh)
     }
     return true;
 }
-std::string getValidName(std::vector<std::string> const& vec_names,
-                     std::string const& array_name)
+
+static std::string getValidName(std::vector<std::string> const& vec_names,
+                                std::string const& array_name)
 {
     std::string new_name = array_name;
     std::size_t count = 1;
@@ -44,7 +46,7 @@ std::string getValidName(std::vector<std::string> const& vec_names,
     return new_name;
 }
 
-double evaluatePixel(double value, double no_data, double replacement)
+static double evaluatePixel(double value, double no_data, double replacement)
 {
     if (std::abs(value - no_data) < std::numeric_limits<double>::epsilon())
         return replacement;
@@ -94,5 +96,5 @@ bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     return true;
 }
 
-}  // namespace RasterDataToMesh
-} // end namespace MeshLib
+}  // end namespace RasterDataToMesh
+}  // end namespace MeshLib

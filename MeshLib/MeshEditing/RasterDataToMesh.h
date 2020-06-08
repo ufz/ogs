@@ -27,6 +27,5 @@ bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
 
 bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
                        double const default, std::string const& array_name);
-};
-
-} // end namespace MeshLib
+}  // end namespace RasterDataToMesh
+}  // end namespace MeshLib
