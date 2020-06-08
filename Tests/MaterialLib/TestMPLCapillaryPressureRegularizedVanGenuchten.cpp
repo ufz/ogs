@@ -27,23 +27,6 @@
 
 namespace MPL = MaterialPropertyLib;
 
-std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
-    const char xml[],
-    std::function<std::unique_ptr<MaterialPropertyLib::Property>(
-        BaseLib::ConfigTree const& config)>
-        createProperty)
-{
-    auto const ptree = readXml(xml);
-    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
-                             BaseLib::ConfigTree::onwarning);
-    auto const& sub_config = conf.getConfigSubtree("property");
-    // Parsing the property name:
-    auto const property_name =
-        sub_config.getConfigParameter<std::string>("name");
-
-    return createProperty(sub_config);
-}
-
 TEST(MaterialPropertyLib, CapillaryPressureRegularizedVanGenuchten)
 {
     const char xml_pc_S[] =
@@ -55,7 +38,7 @@ TEST(MaterialPropertyLib, CapillaryPressureRegularizedVanGenuchten)
         "   <exponent>0.6</exponent>"
         "   <p_b>1.e+4</p_b>"
         "</property>";
-    auto const capillary_pressure_property_ptr = createTestProperty(
+    auto const capillary_pressure_property_ptr = Tests::createTestProperty(
         xml_pc_S, MPL::createCapillaryPressureRegularizedVanGenuchten);
 
     MPL::Property const& capillary_pressure_property =

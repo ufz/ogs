@@ -43,7 +43,7 @@ TEST(MaterialPropertyLib, SaturationBrooksCorey)
     m << "</properties>\n";
     m << "</medium>\n";
 
-    auto const& medium = createTestMaterial(m.str());
+    auto const& medium = Tests::createTestMaterial(m.str());
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;

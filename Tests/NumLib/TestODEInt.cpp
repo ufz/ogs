@@ -41,7 +41,7 @@ createLinearSolver()
         "<petsc><parameters>"
         "-ksp_type bcgs -pc_type sor -ksp_rtol 1e-24 -ksp_max_it 100 -ksp_initial_guess_nonzero false"
         "</parameters></petsc>";
-    auto const ptree = readXml(xml);
+    auto const ptree = Tests::readXml(xml);
     BaseLib::ConfigTree config(ptree, "", BaseLib::ConfigTree::onerror,
                                BaseLib::ConfigTree::onwarning);
     return std::make_unique<GlobalLinearSolver>("", &config);
