@@ -186,6 +186,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& solid_phase = medium->phase("Solid");
     MaterialPropertyLib::VariableArray vars;
 
+    auto const& identity2 = MathLib::KelvinVector::Invariants<
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
+        identity2;
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -222,8 +226,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
+        double const p_int_pt = N_p.dot(p);
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_p.dot(p);
+            p_int_pt;
 
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -240,6 +245,17 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const porosity =
             solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
+
+        auto const alpha =
+            solid_phase
+                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+                .template value<double>(vars, x_position, t, dt);
+        // For stress dependent permeability.
+        vars[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+            .emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    (_ip_data[ip].sigma_eff - alpha * identity2 * p_int_pt)
+                        .eval()));
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<DisplacementDim>(
@@ -264,9 +280,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const T0 = _process_data.reference_temperature(t, x_position)[0];
 
         auto const& b = _process_data.specific_body_force;
-        auto const& identity2 = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>::identity2;
 
         // TODO (Wenqing) : Change dT to time step wise increment
         double const delta_T(T_int_pt - T0);
@@ -300,10 +313,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // displacement equation, pressure part (K_up)
         //
-        auto const alpha =
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
-                .template value<double>(vars, x_position, t, dt);
 
         Kup.noalias() += B.transpose() * alpha * identity2 * N_p * w;
 
@@ -469,6 +478,10 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     auto const& solid_phase = medium->phase("Solid");
     MaterialPropertyLib::VariableArray vars;
 
+    auto const& identity2 = MathLib::KelvinVector::Invariants<
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
+        identity2;
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -477,8 +490,9 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             N_p.dot(T);  // N_p = N_T
+        double const p_int_pt = N_p.dot(p);
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
-            N_p.dot(p);
+            p_int_pt;
 
         // TODO (naumov) Temporary value not used by current material models.
         // Need extension of secondary variables interface.
@@ -486,6 +500,18 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
         auto const viscosity =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                 .template value<double>(vars, x_position, t, dt);
+
+        auto const alpha =
+            solid_phase
+                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+                .template value<double>(vars, x_position, t, dt);
+        // For stress dependent permeability.
+        vars[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+            .emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    (_ip_data[ip].sigma_eff - alpha * identity2 * p_int_pt)
+                        .eval()));
+
         GlobalDimMatrixType K_over_mu =
             MaterialPropertyLib::formEigenTensor<DisplacementDim>(
                 solid_phase
