@@ -82,6 +82,13 @@ newInstance(MatrixSpecifications const& spec)
     }
 }
 
+std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance(
+    PETScVector::IndexType const length)
+{
+    auto const is_global_size = true;
+
+    return std::make_unique<PETScVector>(length, is_global_size);
+}
 } // namespace MathLib
 
 
@@ -139,6 +146,11 @@ newInstance(MatrixSpecifications const& spec)
     return std::make_unique<EigenVector>(spec.nrows);
 }
 
+std::unique_ptr<EigenVector> MatrixVectorTraits<EigenVector>::newInstance(
+    Eigen::SparseMatrix<double>::Index const length)
+{
+    return std::make_unique<EigenVector>(length);
+}
 } // namespace MathLib
 
 #endif // defined(OGS_USE_EIGEN)

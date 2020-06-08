@@ -10,10 +10,20 @@
 
 #pragma once
 
+#include <memory>
+
 namespace BaseLib
 {
 class ConfigTree;
 }
+
+namespace MeshLib
+{
+class Mesh;
+
+template <typename PROP_VAL_TYPE>
+class PropertyVector;
+}  // namespace MeshLib
 
 namespace ChemistryLib
 {
@@ -21,6 +31,9 @@ namespace PhreeqcIOData
 {
 struct AqueousSolution;
 
-AqueousSolution createAqueousSolution(BaseLib::ConfigTree const& config);
+std::unique_ptr<AqueousSolution> createAqueousSolution(
+    BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& mesh,
+    MeshLib::PropertyVector<std::size_t> const& chemical_system_map);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

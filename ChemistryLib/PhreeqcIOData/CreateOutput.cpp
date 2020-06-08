@@ -12,8 +12,8 @@
 #include <numeric>
 
 #include "AqueousSolution.h"
+#include "ChemicalSystem.h"
 #include "CreateOutput.h"
-#include "EquilibriumReactant.h"
 #include "KineticReactant.h"
 #include "UserPunch.h"
 
@@ -22,13 +22,14 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::unique_ptr<Output> createOutput(
-    std::vector<Component> const& components,
-    std::vector<EquilibriumReactant> const& equilibrium_reactants,
-    std::vector<KineticReactant> const& kinetic_reactants,
+    ChemicalSystem const& chemical_system,
     std::unique_ptr<UserPunch> const& user_punch,
     bool const use_high_precision,
     std::string const& project_file_name)
 {
+    auto const& components = chemical_system.aqueous_solution->components;
+    auto const& equilibrium_reactants = chemical_system.equilibrium_reactants;
+    auto const& kinetic_reactants = chemical_system.kinetic_reactants;
     // Mark which phreeqc output items will be held.
     std::vector<OutputItem> accepted_items{{"pH", ItemType::pH},
                                            {"pe", ItemType::pe}};

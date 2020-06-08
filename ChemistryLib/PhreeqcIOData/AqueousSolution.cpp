@@ -12,44 +12,46 @@
 
 #include "AqueousSolution.h"
 #include "ChemistryLib/Common/ChargeBalance.h"
+#include "MeshLib/PropertyVector.h"
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-std::ostream& operator<<(std::ostream& os,
-                         AqueousSolution const& aqueous_solution)
+void AqueousSolution::print(std::ostream& os,
+                            std::size_t const chemical_system_id) const
 {
-    os << "temp " << aqueous_solution.temperature << "\n";
+    os << "temp " << temperature << "\n";
 
-    os << "pressure " << aqueous_solution.pressure << "\n";
+    os << "pressure " << pressure << "\n";
 
-    switch (aqueous_solution.charge_balance)
+    switch (charge_balance)
     {
         case ChargeBalance::pH:
-            os << "pH " << aqueous_solution.pH << " charge"
+            os << "pH " << (*pH)[chemical_system_id] << " charge"
                << "\n";
-            os << "pe " << aqueous_solution.pe << "\n";
+            os << "pe " << (*pe)[chemical_system_id] << "\n";
             break;
         case ChargeBalance::pe:
-            os << "pH " << aqueous_solution.pH << "\n";
-            os << "pe " << aqueous_solution.pe << " charge"
+            os << "pH " << (*pH)[chemical_system_id] << "\n";
+            os << "pe " << (*pe)[chemical_system_id] << " charge"
                << "\n";
             break;
         case ChargeBalance::Unspecified:
-            os << "pH " << aqueous_solution.pH << "\n";
-            os << "pe " << aqueous_solution.pe << "\n";
+            os << "pH " << (*pH)[chemical_system_id] << "\n";
+            os << "pe " << (*pe)[chemical_system_id] << "\n";
             break;
     }
 
     os << "units mol/kgw\n";
 
-    for (auto const& component : aqueous_solution.components)
+    for (auto const& component : components)
     {
-        os << component.name << " " << component.amount << "\n";
+        os << component.name << " " << (*component.amount)[chemical_system_id]
+           << "\n";
     }
 
-    return os;
+    os << "\n\n";
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
