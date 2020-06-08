@@ -4,8 +4,8 @@ subtitle = "Groundwater Quality Modeling"
 date = 2018-03-07T15:20:04+01:00
 author = "[TODO]"
 
-book_type = "Tutorial"
-book_cover = "computational-hydrology-ii.png"
+categories = ["Tutorials"]
+image = "computational-hydrology-ii.png"
 
 +++
 
@@ -24,7 +24,7 @@ This book explores the application of the open-source software OpenGeoSys (OGS) 
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Sachse:2017" >}}
+{{< bib "sachse:2017" >}}
 :::
 
 ::: {.note}

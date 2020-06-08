@@ -7,17 +7,11 @@ buildFuture = true
 enableGitInfo = true
 canonifyURLs = true
 staticDir = ["dist", "static"]
-disableKinds = ["taxonomyTerm"]
 
 [params]
   alert = ""
 
 # Main menu
-[[menu.main]]
-  name = "Books"
-  url = "/books/"
-  identifier = "books"
-  weight = 2
 [[menu.main]]
   name = "Releases"
   url = "/releases/"
@@ -28,6 +22,11 @@ disableKinds = ["taxonomyTerm"]
   url = "/docs/"
   identifier = "docs"
   weight = 4
+[[menu.main]]
+  name = "Publications"
+  url = "/publications/"
+  identifier = "publications"
+  weight = 5
 
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]

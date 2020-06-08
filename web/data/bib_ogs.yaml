@@ -1,0 +1,340 @@
+entries:
+    kolditz2012:
+        type: book
+        title: Thermo-Hydro-Mechanical-Chemical Processes in Porous Media - Benchmarks
+            and Examples
+        publisher: Springer
+        year: '2012'
+        volume: '86'
+        doi: 10.1007/978-3-642-27177-9
+        isbn: 978-3-642-27176-2
+        category: Processes
+        author:
+        -   first: O.
+            last: Kolditz
+        -   first: U.-J.
+            last: Görke
+        -   first: H.
+            last: Shao
+        -   first: W.
+            last: Wang
+    nagel2016:
+        type: article
+        title: On Advantages of the Kelvin Mapping in Finite Element Implementations
+            of Deformation Processes
+        journal: ArXiv e-prints
+        archiveprefix: arXiv
+        eprint: '1605.09606'
+        primaryclass: physics.comp-ph
+        keywords: Physics - Computational Physics
+        year: '2016'
+        month: May
+        url: http://arxiv.org/abs/1605.09606
+        category: Methods
+        author:
+        -   first: T.
+            last: Nagel
+        -   first: U.-J.
+            last: Görke
+        -   first: K.
+            middle: M.
+            last: Moerman
+        -   first: O.
+            last: Kolditz
+    parisio2017:
+        type: article
+        title: Plastic-damage modeling of saturated quasi-brittle shales
+        journal: International Journal of Rock Mechanics and Mining Sciences
+        volume: '93'
+        number: ''
+        pages: 295 - 306
+        year: '2017'
+        note: ''
+        issn: 1365-1609
+        doi: 10.1016/j.ijrmms.2017.01.016
+        url: http://www.sciencedirect.com/science/article/pii/S1365160917300849
+        category: Processes
+        author:
+        -   first: Francesco
+            last: Parisio
+        -   first: Lyesse
+            last: Laloui
+    bilke2019:
+        type: article
+        title: 'Development of Open-Source Porous Media Simulators: Principles and
+            Experiences'
+        journal: Transport in Porous Media
+        year: '2019'
+        month: Oct
+        day: '01'
+        volume: '130'
+        number: '1'
+        pages: 337-361
+        issn: 1573-1634
+        doi: 10.1007/s11242-019-01310-1
+        publisher: Springer
+        category: Development
+        tags: featured
+        author:
+        -   first: Lars
+            last: Bilke
+        -   first: Bernd
+            last: Flemisch
+        -   first: Thomas
+            last: Kalbacher
+        -   first: Olaf
+            last: Kolditz
+        -   first: Rainer
+            last: Helmig
+        -   first: Thomas
+            last: Nagel
+    fischer:2015:
+        type: article
+        title: 'GO2OGS 1.0: a versatile workflow to integrate complex geological information
+            with fault data into numerical simulation models'
+        journal: Geosci. Model Dev.
+        volume: '8'
+        pages: 3681--3694
+        year: '2015'
+        doi: 10.5194/gmd-8-3681-2015
+        url: https://www.geosci-model-dev.net/8/3681/2015/gmd-8-3681-2015.pdf
+        category: Workflows
+        author:
+        -   first: T.
+            last: Fischer
+        -   first: D.
+            last: Naumov
+        -   first: S.
+            last: Sattler
+        -   first: O.
+            last: Kolditz
+        -   first: M.
+            prelast: and
+            last: Walther
+    sachse:2015:
+        type: book
+        title: 'Computational Hydrology I: Groundwater Flow Modeling'
+        publisher: Springer International Publishing
+        year: '2015'
+        doi: 10.1007/978-3-319-13335-5
+        isbn: 978-3-319-13334-8
+        category: Tutorial
+        author:
+        -   first: Agnes
+            last: Sachse
+        -   first: Karsten
+            last: Rink
+        -   first: Wenkui
+            last: He
+        -   first: Olaf
+            last: Kolditz
+    boettcher:2016:
+        type: book
+        title: 'Geoenergy Modeling I: Geothermal Processes in Fractured Porous Media'
+        publisher: Springer International Publishing
+        year: '2016'
+        doi: 10.1007/978-3-319-31335-1
+        isbn: 978-3-319-31333-7
+        category: Tutorial
+        author:
+        -   first: Norbert
+            last: Böttcher
+        -   first: Norihiro
+            last: Watanabe
+        -   first: Uwe-Jenks
+            last: Görke
+        -   first: Olaf
+            last: Kolditz
+    shao:2016:
+        type: book
+        title: 'Geoenergy Modeling II: Shallow Geothermal Systems'
+        publisher: Springer International Publishing
+        year: '2016'
+        doi: 10.1007/978-3-319-45057-5
+        isbn: 978-3-319-45055-1
+        category: Tutorial
+        author:
+        -   first: Haibing
+            last: Shao
+        -   first: Philipp
+            last: Hein
+        -   first: Agnes
+            last: Sachse
+        -   first: Olaf
+            last: Kolditz
+    watanabe:2017:
+        type: book
+        title: 'Geoenergy Modeling III: Enhanced Geothermal Systems Porous Media'
+        publisher: Springer International Publishing
+        year: '2017'
+        doi: 10.1007/978-3-319-46581-4
+        isbn: 978-3-319-46579-1
+        category: Tutorial
+        author:
+        -   first: Norihiro
+            last: Watanabe
+        -   first: Guido
+            last: Blöcher
+        -   first: Mauro
+            last: Cacace
+        -   first: Sebastian
+            last: Held
+        -   first: Thomas
+            last: Kohl
+    sachse:2017:
+        type: book
+        title: 'Computational Hydrology II: Groundwater Quality Modeling'
+        publisher: Springer International Publishing
+        year: '2017'
+        doi: 10.1007/978-3-319-52809-0
+        isbn: 978-3-319-52808-3
+        category: Tutorial
+        author:
+        -   first: Agnes
+            last: Sachse
+        -   first: Eric
+            last: Nixdorf
+        -   first: Eunseon
+            last: Jang
+        -   first: Karsten
+            last: Rink
+        -   first: Thomas
+            last: Fischer
+        -   first: Beidou
+            last: Xi
+        -   first: Christof
+            last: Beyer
+        -   first: Sebastian
+            last: Bauer
+        -   first: Marc
+            last: Walther
+        -   first: Yuanyuan
+            last: Sun
+        -   first: Yonghui
+            last: Song
+    nagel:2017:
+        type: book
+        title: 'Computational Geotechnics: Storage of Energy Carriers'
+        publisher: Springer International Publishing
+        year: '2017'
+        doi: 10.1007/978-3-319-56962-8
+        isbn: 978-3-319-56960-4
+        category: Tutorial
+        author:
+        -   first: Thomas
+            last: Nagel
+        -   first: Norbert
+            last: Böttcher
+        -   first: Uwe-Jenks
+            last: Görke
+        -   first: Olaf
+            last: Kolditz
+    lehmann:2018:
+        type: book
+        title: Models of Thermochemical Heat Storage
+        publisher: Springer International Publishing
+        year: '2018'
+        doi: 10.1007/978-3-319-71523-0
+        isbn: 978-3-319-71521-6
+        category: Tutorial
+        author:
+        -   first: Christoph
+            last: Lehmann
+        -   first: Olaf
+            last: Kolditz
+        -   first: Thomas
+            last: Nagel
+    jang:2018:
+        type: book
+        title: 'Computational Hydrology III: OGS-PHREEQC coupled reactive transport
+            modeling'
+        publisher: Springer International Publishing
+        year: '2018'
+        doi: 10.1007/978-3-319-67153-6
+        isbn: 978-3-319-67152-9
+        category: Tutorial
+        author:
+        -   first: Eunseon
+            last: Jang
+        -   first: Johannes
+            last: Boog
+        -   first: Wenkui
+            last: He
+        -   first: Thomas
+            last: Kalbacher
+    kolditz:2015:
+        type: book
+        title: 'Thermo-Hydro-Mechanical-Chemical Processes in Fractured Porous Media:
+            Modelling and Benchmarking -- Closed-Form Solutions'
+        publisher: Springer International Publishing
+        year: '2015'
+        doi: 10.1007/978-3-319-11894-9
+        isbn: 978-3-319-11893-2
+        category: Book
+        author:
+        -   first: Olaf
+            last: Kolditz
+        -   first: Hua
+            last: Shao
+        -   first: Wenqing
+            last: Wang
+        -   first: Bauer
+            last: Sebastian
+    kolditz:2016:
+        type: book
+        title: 'Thermo-Hydro-Mechanical-Chemical Processes in Fractured Porous Media:
+            Modelling and Benchmarking -- Benchmarking Initiatives'
+        publisher: Springer International Publishing
+        year: '2016'
+        doi: 10.1007/978-3-319-29224-3
+        isbn: 978-3-319-29223-6
+        category: Book
+        author:
+        -   first: Olaf
+            last: Kolditz
+        -   first: Uwe-Jenks
+            last: Görke
+        -   first: Hua
+            last: Shao
+        -   first: Wenqing
+            last: Wang
+        -   first: Bauer
+            last: Sebastian
+    kolditz:2018:
+        type: book
+        title: 'Thermo-Hydro-Mechanical-Chemical Processes in Fractured Porous Media:
+            Modelling and Benchmarking -- From Benchmarking to Tutoring'
+        publisher: Springer International Publishing
+        year: '2018'
+        doi: 10.1007/978-3-319-68225-9
+        isbn: 978-3-319-68224-2
+        category: Book
+        author:
+        -   first: Olaf
+            last: Kolditz
+        -   first: Thomas
+            last: Nagel
+        -   first: Hua
+            last: Shao
+        -   first: Wenqing
+            last: Wang
+        -   first: Bauer
+            last: Sebastian
+    huang2015extending:
+        type: article
+        title: Extending the persistent primary variable algorithm to simulate non-isothermal
+            two-phase two-component flow with phase change phenomena
+        journal: Geothermal Energy
+        volume: '3'
+        number: '1'
+        pages: '13'
+        year: '2015'
+        publisher: Springer
+        category: Processes
+        author:
+        -   first: Yonghui
+            last: Huang
+        -   first: Olaf
+            last: Kolditz
+        -   first: Haibing
+            last: Shao

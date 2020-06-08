@@ -4,8 +4,8 @@ subtitle = "From Benchmarking to Tutoring"
 date = 2018-03-07T15:35:30+01:00
 author = "Lars Bilke"
 
-book_type = "Book"
-book_cover = "bmb-4.png"
+categories = ["Books"]
+image = "bmb-4.png"
 
 +++
 
@@ -20,5 +20,5 @@ TODO!
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Kolditz:2018" >}}
+{{< bib "kolditz:2018" >}}
 :::

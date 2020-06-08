@@ -4,8 +4,8 @@ subtitle = "Shallow Geothermal Systems"
 date = 2018-03-07T14:59:32+01:00
 author = "Lars Bilke"
 
-book_type = "Tutorial"
-book_cover = "geoenergy-modeling-ii.png"
+categories = ["Tutorials"]
+image = "geoenergy-modeling-ii.png"
 
 aliases = [ "/books/shallow-geothermal-systems" ]
 
@@ -28,7 +28,7 @@ This book is dedicated to the numerical modeling of shallow geothermal systems. 
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Shao:2016" >}}
+{{< bib "shao:2016" >}}
 :::
 
 ::: {.note}

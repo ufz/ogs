@@ -4,8 +4,8 @@ subtitle = "Geothermal Processes in Fractured Porous Media"
 date = 2018-03-07T14:58:32+01:00
 author = "Lars Bilke"
 
-book_type = "Tutorial"
-book_cover = "geoenergy-modeling-i.png"
+categories = ["Tutorials"]
+image = "geoenergy-modeling-i.png"
 
 aliases = [ "/tutorials/ces-i/e07", "/tutorials/ces-i/e08",
             "/tutorials/ces-i/e09", "/tutorials/ces-i/e10" ]
@@ -26,7 +26,7 @@ This introduction to geothermal modeling deals with flow and heat transport proc
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Boettcher:2016" >}}
+{{< bib "boettcher:2016" >}}
 :::
 
 ::: {.note}

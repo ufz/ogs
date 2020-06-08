@@ -4,8 +4,8 @@ subtitle = "Benchmarking Initiatives"
 date = 2018-03-05T16:27:48+01:00
 author = "Lars Bilke"
 
-book_type = "Book"
-book_cover = "BMB-3-Cover.png"
+categories = ["Books"]
+image = "BMB-3-Cover.png"
 
 +++
 
@@ -23,5 +23,5 @@ This book presents a new suite of benchmarks for and examples of porous media me
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Kolditz:2016" >}}
+{{< bib "kolditz:2016" >}}
 :::

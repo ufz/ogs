@@ -1,0 +1,29 @@
++++
+title = "Publications"
+
+[[sections]]
+name = "Paper"
+url = "/publications/paper"
+text = "Peer-reviewed scientific paper about OpenGeoSys and its applications."
+icon = "far fa-users"
+
+[[sections]]
+name = "Books"
+url = "/categories/books"
+text = "Comprehensive benchmark descriptions and theory."
+icon = "far fa-laptop-code"
+
+[[sections]]
+name = "Tutorials"
+url = "/categories/tutorials"
+text = "Step-by-step instructions on specific topics."
+icon = "far fa-rabbit-fast"
+
++++
+
+<h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">OpenGeoSys publications overview</h1>
+<p class="lg:w-1/2 w-full leading-relaxed text-base">If you find OpenGeoSys useful for your research please cite us!</p>
+
+<div class="bg-gray-300 rounded-lg pt-3 px-3">
+{{< bib "kolditz2012" >}}
+</div>

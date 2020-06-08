@@ -4,8 +4,8 @@ subtitle = "OGS-PHREEQC coupled reactive transport modeling"
 date = 2018-06-18T08:20:04+01:00
 author = "Eunseon Jang"
 
-book_type = "Tutorial"
-book_cover = "Computational-Hydrology-III-Cover.jpg"
+categories = ["Tutorials"]
+image = "Computational-Hydrology-III-Cover.jpg"
 +++
 
 [<i class="far fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/Computational-Hydrology-III/Computational-Hydrology-III.pdf)
@@ -25,7 +25,7 @@ The tutorial book is intended primarily for graduate students and applied scient
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Jang:2018" >}}
+{{< bib "jang:2018" >}}
 :::
 
 ::: {.note}

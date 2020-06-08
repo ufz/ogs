@@ -3,8 +3,8 @@ title = "Models of Thermochemical Heat Storage"
 date = 2018-03-07T15:31:45+01:00
 author = "Lars Bilke"
 
-book_type = "Tutorial"
-book_cover = "models-of-thermochemical-heat-storage.png"
+categories = ["Tutorials"]
+image = "models-of-thermochemical-heat-storage.png"
 
 +++
 
@@ -21,7 +21,7 @@ This book is intended primarily for graduate students and applied scientists wor
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Lehmann:2018" >}}
+{{< bib "lehmann:2018" >}}
 :::
 
 ::: {.note}

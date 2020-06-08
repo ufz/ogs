@@ -5,7 +5,7 @@ date = {{ .Date }}
 author = "[TODO]"
 
 book_type = "[Book | Tutorial]"
-book_cover = "[TODO]"
+image = "[TODO]"
 
 +++
 
@@ -23,5 +23,5 @@ TODO DESCRIPTION
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="TODO-BIB-ID" >}}
+{{< bib "TODO-BIB-ID" >}}
 :::

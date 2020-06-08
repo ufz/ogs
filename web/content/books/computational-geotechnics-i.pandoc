@@ -4,9 +4,8 @@ subtitle = "Storage of Energy Carriers"
 date = 2018-03-07T15:27:05+01:00
 author = "Lars Bilke"
 
-book_type = "Tutorial"
-book_cover = "computational-geotechnics-i.png"
-
+categories = ["Tutorials"]
+image = "computational-geotechnics-i.png"
 +++
 
 [<i class="far fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/Comp-Geotechnics-I/Computational_Geotechnics_I.pdf)
@@ -23,7 +22,7 @@ In this book, effective computational methods to facilitate those pivotal simula
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Nagel:2017" >}}
+{{< bib "nagel:2017" >}}
 :::
 
 ::: {.note}

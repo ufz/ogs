@@ -55,7 +55,7 @@ figure below) of the Thuringia syncline to a vtk unstructured grid ('VTU'
 in the figure) within the INFLUINS project. Further conversion steps were taken
 to prepare the mesh for the simulation (not part of this tool, see Fischer et
 al. 2015).
-{{< bib id="Fischer:2015" >}})
+{{< bib "fischer:2015" >}})
 ![](WorkflowGO2OGS.png)
 
 ### Rotenburger Rinne (Geologischer Dienst für Niedersachsen, Referat Hydrogeologie Landesamt für Bergbau, Energie und Geologie (Jörg Elbracht))

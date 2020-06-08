@@ -4,8 +4,8 @@ subtitle = "Closed Form Solutions"
 date = 2018-03-02T12:49:25+01:00
 author = "Lars Bilke"
 
-book_type = "Book"
-book_cover = "BMB-2-Cover.png"
+categories = ["Books"]
+image = "BMB-2-Cover.png"
 
 +++
 
@@ -25,5 +25,5 @@ Also have a look at [Volume 1](http://www.springer.com/de/book/9783642271762) of
 
 ::: {.note}
 ### <i class="far fa-book"></i> Bibliography
-{{< bib id="Kolditz:2015" >}}
+{{< bib "kolditz:2015" >}}
 :::

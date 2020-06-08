@@ -1,29 +1,26 @@
-{{ if .Site.Data.bibliography }}
-  <p>
-    {{ $id := .Get "id" }}
-    {{ range where .Site.Data.bibliography "id" $id }}
-      {{ $len := (len .author) }}
-      {{ range $index, $element := .author }}
-        {{ $element.family }}, {{ $element.given}} {{ if ne (add $index 1) $len }}and{{ end }}
-      {{ end }}
-      ({{ range .issued }}
-        {{ range . }}
-          {{ range . }}
-            {{.}}
-          {{ end }}
-        {{ end }}
-      {{ end }}):
-      <i>{{ .title | safeHTML }}</i>.
-       <!-- Workaround for keys with hyphens inside with index-function -->
-      {{ if isset . "container-title" }}{{ index . "container-title" }}{{ end }}
-      {{ if isset . "issue" }}{{ .issue }},{{ end }}
-      {{ if isset . "volume" }}vol. {{ .volume }},{{ end }}
-      {{ if isset . "page" }}p. {{ .page }},{{ end }}
-      {{ if isset . "DOI" }}DOI: <a href="https://doi.org/{{ .DOI }}">{{ .DOI }}</a>,{{ end }}
-      {{ if isset . "ISBN" }}ISBN: {{ .ISBN }},{{ end }}
-      {{ .publisher }}
-    {{ end }}
-  </p>
-{{ else }}
-  {{ printf "Warning: Bibliography not converted! Missing bib id: "}}<code>{{.Get "id"}}</code>
-{{ end }}
+{{ $full_bib := merge .Site.Data.bib_ogs .Site.Data.bib_other }}
+{{ $bib := index $full_bib.entries (.Get 0) }}
+<p style="line-height: 1em;">
+  {{ $len := (len $bib.author) }}
+  {{ range $index, $element := $bib.author }}
+    {{ $element.last }}, {{ $element.first}} {{ if ne (add $index 1) $len }}and{{ end }}
+  {{ end }}
+  ({{$bib.year}}):
+  <i>{{ $bib.title | safeHTML }}</i>.
+  {{ if isset $bib "journal" }}{{ $bib.journal }},{{ end }}
+  {{ if isset $bib "issue" }}Issue {{ $bib.issue }},{{ end }}
+  {{ if isset $bib "volume" }}vol. {{ $bib.volume }},{{ end }}
+  {{ if isset $bib "pages" }}p. {{ $bib.pages }},{{ end }}
+  {{ if isset $bib "isbn" }}ISBN: {{ $bib.isbn }},{{ end }}
+  {{ if isset $bib "publisher" }}{{ $bib.publisher }},{{ end }}
+  {{ if isset $bib "doi" }}
+    DOI:<a href="https://doi.org/{{ $bib.doi }}" class="text-indigo-500 inline-flex items-center mt-4">
+      {{ $bib.doi }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
+    </a>
+  {{ end }}
+  {{ if isset $bib "url" }}
+    <a href="{{ $bib.url }}" class="text-indigo-500 inline-flex items-center mt-4">
+      {{ $bib.url }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
+    </a>
+  {{ end }}
+</p>

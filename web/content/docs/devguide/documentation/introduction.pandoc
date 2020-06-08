@@ -94,17 +94,21 @@ Files belonging directly to a page (e.g. images shown on that same page) should 
 
 #### Bibliography references
 
-Bibliography items from *Documentation/bibliography.bib* can be referenced by their id with the [`bib`-shortcode](https://github.com/ufz/ogs/blob/f0ebe2e5c9507039a6776c7cb2989a35790bce2f/web/content/docs/benchmarks/bgr_verification_examples/thermomechanics.pandoc#L42-L46).
+Bibliography items from *Documentation/bibliography/*.bib can be referenced by their id (always use lowercase ids) with the `bib`-shortcode:
 
 
-The bib-file has to be converted into a json-file with the [pandoc-citeproc](https://github.com/jgm/pandoc-citeproc)-tool:
-
-```sh
-[cd to ogs/web]
-pandoc-citeproc --bib2json ../Documentation/bibliography.bib > data/bibliography.json
+```
+{{< bib "kolditz2012" >}}
 ```
 
-This json-file is then used by the shortcode.
+The bib-file has to be converted into a yaml-file with the [pybtex-convert](https://docs.pybtex.org/cmdline.html)-tool:
+
+```sh
+pybtex-convert Documentation/bibliography/ogs.bib web/data/bib_ogs.yaml
+pybtex-convert Documentation/bibliography/other.bib web/data/bib_other.yaml
+```
+
+This yaml-file is then used by the shortcode.
 
 ---
 

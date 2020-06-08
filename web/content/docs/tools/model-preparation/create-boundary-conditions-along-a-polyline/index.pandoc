@@ -35,4 +35,4 @@ The found nodes will be written to a geometry file which may be useful for visua
 
 The tool was used for the setup of the hydro-geological model of the Unstrut catchment:
 
-{{< bib id="Fischer:2015" >}}
+{{< bib "fischer:2015" >}}

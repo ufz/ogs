@@ -5,42 +5,54 @@ title = "Documentation"
 name = "User Guide"
 url = "/docs/userguide/basics/introduction/"
 text = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
-icon = "fal fa-users"
+icon = "far fa-users"
 
 [[sections]]
 name = "Developer Guide"
 url = "/docs/devguide/getting-started/introduction/"
 text = "You want to contribute to the OpenGeoSys project or implement a custom feature? In the Developer Guide you will find everything to get you started into OpenGeoSys development. Experienced developers will find a comprehensive list of advanced development topics."
-icon = "fal fa-laptop-code"
+icon = "far fa-laptop-code"
 
 [[sections]]
 name = "Benchmarks"
 url = "/docs/benchmarks/elliptic/elliptic-dirichlet/"
 text = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
-icon = "fal fa-rabbit-fast"
+icon = "far fa-rabbit-fast"
 
 [[sections]]
 name = "Tools & Workflows"
 url = "/docs/tools/getting-started/overview/"
 text = "Helpful tools for pre- and postprocessing as well as complete model setup workflows."
-icon = "fal fa-tools"
+icon = "far fa-tools"
 
 [[sections]]
 name = "Data Explorer Manual"
 url = "https://jenkins.opengeosys.org/job/ufz/job/data_explorer_manual/job/master/lastSuccessfulBuild/artifact/DataExplorer-Manual.pdf"
 text = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
-icon = "fal fa-file-image"
+icon = "far fa-file-image"
 
 [[sections]]
 name = "Source code documentation"
 url = "https://doxygen.opengeosys.org/"
 text = "The OGS source code documentation is automatically generated right from the code itself via Doxygen and is nice reference while coding."
-icon = "fal fa-file-code"
+icon = "far fa-file-code"
 
 [[sections]]
 name = "Styleguide"
 url = "https://ufz.github.io/styleguide/cppguide.xml"
 text = "OpenGeoSys C++ Style Guide"
-icon = "fal fa-file-check"
+icon = "far fa-file-check"
 
 +++
+
+<h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">OpenGeoSys documentation overview</h1>
+<p class="lg:w-1/2 w-full leading-relaxed text-base">If you find OpenGeoSys useful for your research please cite us!</p>
+
+<div class="bg-gray-300 rounded-lg pt-3 px-3">
+{{< bib "kolditz2012" >}}
+</div>
+
+<a href="/publications" class="text-indigo-500 inline-flex items-center mt-4">
+    See all publications&nbsp;
+    <i class="far fa-arrow-right"></i>
+</a>
