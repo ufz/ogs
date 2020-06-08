@@ -225,9 +225,8 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     cache.clear();
     cache.reserve(rho_SR.size());
 
-    for (auto const rho : rho_SR) {
-        cache.push_back(rho / rho_SR_dry - 1.0);
-    }
+    transform(cbegin(rho_SR), cend(rho_SR), back_inserter(cache),
+              [&](auto const rho) { return rho / rho_SR_dry - 1.0; });
 
     return cache;
 }

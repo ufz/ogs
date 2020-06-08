@@ -618,10 +618,9 @@ public:
         cache.clear();
         cache.reserve(_ip_data.size());
 
-        for (auto const& ip_data : _ip_data)
-        {
-            cache.push_back(ip_data.free_energy_density);
-        }
+        transform(
+            cbegin(_ip_data), cend(_ip_data), back_inserter(cache),
+            [](auto const& ip_data) { return ip_data.free_energy_density; });
 
         return cache;
     }
@@ -635,10 +634,8 @@ public:
         cache.clear();
         cache.reserve(_ip_data.size());
 
-        for (auto const& ip_data : _ip_data)
-        {
-            cache.push_back(*ip_data.eps_p_V);
-        }
+        transform(cbegin(_ip_data), cend(_ip_data), back_inserter(cache),
+                  [](auto const& ip_data) { return *ip_data.eps_p_V; });
 
         return cache;
     }
@@ -652,10 +649,8 @@ public:
         cache.clear();
         cache.reserve(_ip_data.size());
 
-        for (auto const& ip_data : _ip_data)
-        {
-            cache.push_back(*ip_data.eps_p_D_xx);
-        }
+        transform(cbegin(_ip_data), cend(_ip_data), back_inserter(cache),
+                  [](auto const& ip_data) { return *ip_data.eps_p_D_xx; });
 
         return cache;
     }

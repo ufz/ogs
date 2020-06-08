@@ -71,9 +71,8 @@ public:
         std::vector<double> local_x;
         local_x.reserve(indices.size());
 
-        for (auto i : indices) {
-            local_x.emplace_back(_vec[i]);
-        }
+        transform(cbegin(indices), cend(indices), back_inserter(local_x),
+                  [&](auto const i) { return _vec[i]; });
 
         return local_x;
     }

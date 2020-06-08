@@ -10,9 +10,9 @@
 #include "LevelSetFunction.h"
 
 #include <boost/math/special_functions/sign.hpp>
+#include <numeric>
 
 #include "BaseLib/Algorithm.h"
-
 #include "BranchProperty.h"
 #include "FractureProperty.h"
 #include "JunctionProperty.h"
@@ -61,12 +61,11 @@ std::vector<double> uGlobalEnrichments(
     for (std::size_t i = 0; i < frac_props.size(); i++)
     {
         auto const* frac = frac_props[i];
-        double enrich = levelsets[i];
-        for (const auto& j : frac->branches_slave)
-        {
-            enrich *= Heaviside(levelsetBranch(j, x));
-        }
-        enrichments[i] = enrich;
+        enrichments[i] = std::accumulate(
+            cbegin(frac->branches_slave), cend(frac->branches_slave),
+            levelsets[i], [&](double const& enrich, auto const& branch) {
+                return enrich * Heaviside(levelsetBranch(branch, x));
+            });
     }
 
     // junctions

@@ -74,12 +74,15 @@ BoundaryElementsSearcher::getBoundaryElementsAtPoint(
     GeoLib::Point const& point, bool const multiple_nodes_allowed)
 {
     // look for already saved points and return if found.
-    for (auto const& boundaryElements : _boundary_elements_at_point)
+    if (auto const it = find_if(cbegin(_boundary_elements_at_point),
+                                cend(_boundary_elements_at_point),
+                                [&](auto const& boundary_elements) {
+                                    return boundary_elements->getPoint() ==
+                                           point;
+                                });
+        it != cend(_boundary_elements_at_point))
     {
-        if (boundaryElements->getPoint() == point)
-        {
-            return boundaryElements->getBoundaryElements();
-        }
+        return (*it)->getBoundaryElements();
     }
 
     // create new boundary elements at points.
@@ -93,12 +96,15 @@ BoundaryElementsSearcher::getBoundaryElementsAlongPolyline(
     GeoLib::Polyline const& polyline)
 {
     // look for already saved polylines and return if found.
-    for (auto const& boundary_elements : _boundary_elements_along_polylines)
+    if (auto const it = find_if(cbegin(_boundary_elements_along_polylines),
+                                cend(_boundary_elements_along_polylines),
+                                [&](auto const& boundary_elements) {
+                                    return &boundary_elements->getPolyline() ==
+                                           &polyline;
+                                });
+        it != cend(_boundary_elements_along_polylines))
     {
-        if (&boundary_elements->getPolyline() == &polyline)
-        {
-            return boundary_elements->getBoundaryElements();
-        }
+        return (*it)->getBoundaryElements();
     }
 
     // create new boundary elements at points.
@@ -112,12 +118,15 @@ BoundaryElementsSearcher::getBoundaryElementsOnSurface(
     GeoLib::Surface const& surface)
 {
     // look for already saved surfaces and return if found.
-    for (auto const& boundary_elements : _boundary_elements_along_surfaces)
+    if (auto const it = find_if(cbegin(_boundary_elements_along_surfaces),
+                                cend(_boundary_elements_along_surfaces),
+                                [&](auto const& boundary_elements) {
+                                    return &boundary_elements->getSurface() ==
+                                           &surface;
+                                });
+        it != cend(_boundary_elements_along_surfaces))
     {
-        if (&boundary_elements->getSurface() == &surface)
-        {
-            return boundary_elements->getBoundaryElements();
-        }
+        return (*it)->getBoundaryElements();
     }
 
     _boundary_elements_along_surfaces.push_back(

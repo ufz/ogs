@@ -266,10 +266,10 @@ void Process::constructMonolithicProcessDofTable()
     }
 
     // Create a vector of the number of variable components
-    for (ProcessVariable const& pv : _process_variables[0])
-    {
-        vec_var_n_components.push_back(pv.getNumberOfComponents());
-    }
+    transform(
+        cbegin(_process_variables[0]), cend(_process_variables[0]),
+        back_inserter(vec_var_n_components),
+        [](ProcessVariable const& pv) { return pv.getNumberOfComponents(); });
 
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
