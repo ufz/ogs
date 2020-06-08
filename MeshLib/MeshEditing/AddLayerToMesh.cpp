@@ -91,8 +91,7 @@ MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh,
 }
 
 MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
-    std::string const& name,
-    bool on_top)
+                              std::string const& name, bool on_top)
 {
     INFO("Extracting top surface of mesh '{:s}' ... ", mesh.getName());
     int const flag = (on_top) ? -1 : 1;
@@ -116,11 +115,14 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
         auto* const pv =
             sfc_mesh->getProperties().createNewPropertyVector<std::size_t>(
                 prop_name, MeshLib::MeshItemType::Node, 1);
-        if (pv) {
+        if (pv)
+        {
             pv->resize(sfc_mesh->getNumberOfNodes());
             std::iota(pv->begin(), pv->end(), 0);
-        } else {
-            ERR("Could not create and initialize property.");
+        }
+        else
+        {
+            ERR("Could not create and initialize property '{%s}'.", prop_name);
             return nullptr;
         }
     }
