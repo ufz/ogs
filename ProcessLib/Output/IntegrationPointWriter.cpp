@@ -74,12 +74,14 @@ static void addIntegrationPointMetaData(
 static ProcessLib::IntegrationPointMetaData extractIntegrationPointMetaData(
     json const& meta_data, std::string const& name)
 {
-    for (auto const& md : meta_data["integration_point_arrays"])
+    auto const& ip_meta_data = meta_data["integration_point_arrays"];
+    if (auto const it =
+            find_if(cbegin(ip_meta_data), cend(ip_meta_data),
+                    [&name](auto const& md) { return md["name"] == name; });
+        it != cend(ip_meta_data))
     {
-        if (md["name"] == name)
-        {
-            return {name, md["number_of_components"], md["integration_order"]};
-        }
+        return {name, (*it)["number_of_components"],
+                (*it)["integration_order"]};
     }
     OGS_FATAL("No integration point meta data with name '{:s}' found.", name);
 }
@@ -92,10 +94,11 @@ void addIntegrationPointWriter(
         integration_point_writer)
 {
     std::vector<IntegrationPointMetaData> meta_data;
-    for (auto const& ip_writer : integration_point_writer)
-    {
-        meta_data.push_back(addIntegrationPointData(mesh, *ip_writer));
-    }
+    meta_data.reserve(size(integration_point_writer));
+    transform(cbegin(integration_point_writer), cend(integration_point_writer),
+              back_inserter(meta_data), [&](auto const& ip_writer) {
+                  return addIntegrationPointData(mesh, *ip_writer);
+              });
     if (!meta_data.empty())
     {
         addIntegrationPointMetaData(mesh, meta_data);

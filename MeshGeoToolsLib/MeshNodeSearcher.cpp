@@ -152,12 +152,13 @@ std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(
 MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
     GeoLib::Point const& pnt) const
 {
-    for (auto const& mesh_nodes_on_point : _mesh_nodes_on_points)
+    if (auto const it = find_if(
+            cbegin(_mesh_nodes_on_points),
+            cend(_mesh_nodes_on_points),
+            [&](auto const& nodes) { return &(nodes->getPoint()) == &pnt; });
+        it != cend(_mesh_nodes_on_points))
     {
-        if (&(mesh_nodes_on_point->getPoint()) == &pnt)
-        {
-            return *mesh_nodes_on_point;
-        }
+        return **it;
     }
 
     _mesh_nodes_on_points.push_back(
@@ -172,12 +173,13 @@ MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
 MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
     GeoLib::Polyline const& ply) const
 {
-    for (auto const& mesh_nodes_along_polyline : _mesh_nodes_along_polylines)
+    if (auto const it = find_if(
+            cbegin(_mesh_nodes_along_polylines),
+            cend(_mesh_nodes_along_polylines),
+            [&](auto const& nodes) { return &(nodes->getPolyline()) == &ply; });
+        it != cend(_mesh_nodes_along_polylines))
     {
-        if (&(mesh_nodes_along_polyline->getPolyline()) == &ply)
-        {
-            return *mesh_nodes_along_polyline;
-        }
+        return **it;
     }
 
     // compute nodes (and supporting points) along polyline
@@ -190,12 +192,13 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
 MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
     GeoLib::Surface const& sfc) const
 {
-    for (auto const& mesh_nodes_along_surface : _mesh_nodes_along_surfaces)
+    if (auto const it = find_if(
+            cbegin(_mesh_nodes_along_surfaces),
+            cend(_mesh_nodes_along_surfaces),
+            [&](auto const& nodes) { return &(nodes->getSurface()) == &sfc; });
+        it != cend(_mesh_nodes_along_surfaces))
     {
-        if (&(mesh_nodes_along_surface->getSurface()) == &sfc)
-        {
-            return *mesh_nodes_along_surface;
-        }
+        return **it;
     }
 
     // compute nodes (and supporting points) on surface

@@ -50,11 +50,10 @@ void VectorMatrixAssembler::assemble(
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
-    for (auto dof_table : dof_tables)
-    {
-        indices_of_processes.emplace_back(
-            NumLib::getIndices(mesh_item_id, dof_table.get()));
-    }
+    transform(cbegin(dof_tables), cend(dof_tables),
+              back_inserter(indices_of_processes), [&](auto const& dof_table) {
+                  return NumLib::getIndices(mesh_item_id, dof_table);
+              });
 
     auto const& indices = indices_of_processes[process_id];
     _local_M_data.clear();
@@ -118,11 +117,10 @@ void VectorMatrixAssembler::assembleWithJacobian(
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
-    for (auto dof_table : dof_tables)
-    {
-        indices_of_processes.emplace_back(
-            NumLib::getIndices(mesh_item_id, dof_table.get()));
-    }
+    transform(cbegin(dof_tables), cend(dof_tables),
+              back_inserter(indices_of_processes), [&](auto const& dof_table) {
+                  return NumLib::getIndices(mesh_item_id, dof_table);
+              });
 
     auto const& indices = indices_of_processes[process_id];
     auto const local_xdot = xdot.get(indices);

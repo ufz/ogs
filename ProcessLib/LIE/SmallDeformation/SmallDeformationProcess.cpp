@@ -120,11 +120,14 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
 
     // set junctions
-    for (auto& vec_junction_nodeID_matID : vec_junction_nodeID_matIDs)
-    {
-        _vec_junction_nodes.push_back(const_cast<MeshLib::Node*>(
-            _mesh.getNode(vec_junction_nodeID_matID.first)));
-    }
+    transform(cbegin(vec_junction_nodeID_matIDs),
+              cend(vec_junction_nodeID_matIDs),
+              back_inserter(_vec_junction_nodes),
+              [&](auto& vec_junction_nodeID_matID) {
+                  return const_cast<MeshLib::Node*>(
+                      _mesh.getNode(vec_junction_nodeID_matID.first));
+              });
+
     for (std::size_t i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
         auto const& material_ids = vec_junction_nodeID_matIDs[i].second;

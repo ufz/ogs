@@ -304,10 +304,8 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
 
     std::vector<GlobalIndexType> global_indices;
     global_indices.reserve(pairs.size());
-    for (const auto& pair : pairs)
-    {
-        global_indices.push_back(pair.second);
-    }
+    transform(cbegin(pairs), cend(pairs), back_inserter(global_indices),
+              [&](const auto& pair) { return pair.second; });
 
     return global_indices;
 }

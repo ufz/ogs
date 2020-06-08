@@ -10,6 +10,8 @@
 
 #include "ComputeSparsityPattern.h"
 
+#include <numeric>
+
 #include "LocalToGlobalIndexMap.h"
 #include "MeshLib/NodeAdjacencyTable.h"
 
@@ -54,11 +56,11 @@ GlobalSparsityPattern computeSparsityPatternNonPETSc(
     // Map adjacent mesh nodes to "adjacent global indices".
     for (std::size_t n = 0; n < mesh.getNumberOfNodes(); ++n)
     {
-        unsigned n_connected_dof = 0;
-        for (auto an : node_adjacency_table.getAdjacentNodes(n))
-        {
-            n_connected_dof += global_idcs[an].size();
-        }
+        auto const& an = node_adjacency_table.getAdjacentNodes(n);
+        auto const n_connected_dof = std::accumulate(
+            cbegin(an), cend(an), 0, [&](auto const result, auto const i) {
+                return result + global_idcs[i].size();
+            });
         for (auto global_index : global_idcs[n])
         {
             sparsity_pattern[global_index] = n_connected_dof;

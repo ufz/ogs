@@ -329,12 +329,12 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
 {
     std::vector<std::unique_ptr<SourceTerm>> source_terms;
 
-    for (auto& config : _source_term_configs)
-    {
-        source_terms.emplace_back(createSourceTerm(
-            config, dof_table, config.mesh, variable_id, integration_order,
-            _shapefunction_order, parameters));
-    }
+    transform(cbegin(_source_term_configs), cend(_source_term_configs),
+              back_inserter(source_terms), [&](auto& config) {
+                  return createSourceTerm(config, dof_table, config.mesh,
+                                          variable_id, integration_order,
+                                          _shapefunction_order, parameters);
+              });
 
     return source_terms;
 }

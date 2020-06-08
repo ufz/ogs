@@ -245,11 +245,11 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     // Create a subset of the current mesh component map.
     std::vector<int> global_component_ids;
 
-    for (auto component_id : component_ids)
-    {
-        global_component_ids.push_back(
-            getGlobalComponent(variable_id, component_id));
-    }
+    transform(cbegin(component_ids), cend(component_ids),
+              back_inserter(global_component_ids),
+              [&](auto const component_id) {
+                  return getGlobalComponent(variable_id, component_id);
+              });
 
     auto mesh_component_map = _mesh_component_map.getSubset(
         _mesh_subsets, new_mesh_subset, global_component_ids);

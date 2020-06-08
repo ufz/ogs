@@ -194,7 +194,8 @@ void operator()(LisMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
     row_sizes.reserve(n_rows);
 
     // LIS needs 1 more entry, otherewise it starts reallocating arrays.
-    for (auto i : sparsity_pattern) row_sizes.push_back(i+1);
+    transform(cbegin(sparsity_pattern), cend(sparsity_pattern),
+              back_inserter(row_sizes), [](auto const i) { return i + 1; });
 
     int ierr = lis_matrix_malloc(matrix._AA, 0, row_sizes.data());
     checkLisError(ierr);

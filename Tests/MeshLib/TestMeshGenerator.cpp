@@ -7,10 +7,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <memory>
 #include <cmath>
-
-#include "gtest/gtest.h"
+#include <memory>
+#include <numeric>
 
 #include "MathLib/MathTools.h"
 #include "MeshLib/Elements/Element.h"
@@ -18,6 +17,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
 using namespace MeshLib;
 
@@ -181,11 +181,12 @@ TEST(MeshLib, MeshGeneratorRegularPyramid)
     ASSERT_DOUBLE_EQ(L, node_n1[2]);
 
     // check if the domain volume equals the volume of the elements
-    long double element_volumes = 0.0;
-    for (auto const element : msh->getElements())
-    {
-        element_volumes += element->computeVolume();
-    }
+    long double const element_volumes =
+        std::accumulate(cbegin(msh->getElements()), cend(msh->getElements()),
+                        0., [](double const volume, auto* const element) {
+                            return volume + element->computeVolume();
+                        });
+
     EXPECT_NEAR(L*L*L, element_volumes, 1e-10);
 
     // test node order of the elements

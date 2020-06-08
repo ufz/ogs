@@ -230,20 +230,17 @@ bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
         }
     }
 
-    GeoLib::Point s;
-    for (auto polygon_seg : *this)
-    {
-        if (std::any_of(ply.begin(), ply.end(),
-                        [&polygon_seg, &s](auto const& polyline_seg) {
-                            return GeoLib::lineSegmentIntersect(polyline_seg,
-                                                                polygon_seg, s);
-                        }))
-        {
-            return true;
-        }
-    }
+    auto polygon_segment_intersects_line = [&](auto const& polygon_seg) {
+        GeoLib::Point s;
+        return std::any_of(ply.begin(), ply.end(),
+                           [&polygon_seg, &s](auto const& polyline_seg) {
+                               return GeoLib::lineSegmentIntersect(
+                                   polyline_seg, polygon_seg, s);
+                           });
+    };
 
-    return false;
+    return any_of(std::cbegin(*this), std::cend(*this),
+                  polygon_segment_intersects_line);
 }
 
 bool Polygon::getNextIntersectionPointPolygonLine(

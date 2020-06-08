@@ -48,14 +48,11 @@ public:
             return false;
         }
 
-        unsigned n_connected_fracture_elements = 0;
-        for (MeshLib::Element const* e : node.getElements())
-        {
-            if (e->getDimension() == _fracture_element_dim)
-            {
-                n_connected_fracture_elements++;
-            }
-        }
+        auto const n_connected_fracture_elements =
+            count_if(cbegin(node.getElements()), cend(node.getElements()),
+                     [&](auto* const e) {
+                         return e->getDimension() == _fracture_element_dim;
+                     });
         assert(n_connected_fracture_elements > 0);
 
         return (n_connected_fracture_elements == 1);
@@ -88,10 +85,8 @@ void findFracutreIntersections(
     std::vector<std::size_t> all_fracture_nodes;
     for (auto& vec : vec_fracture_nodes)
     {
-        for (auto* node : vec)
-        {
-            all_fracture_nodes.push_back(node->getID());
-        }
+        transform(cbegin(vec), cend(vec), back_inserter(all_fracture_nodes),
+                  [](auto* const n) { return n->getID(); });
     }
 
     // create a table of a node id and connected material IDs
@@ -248,10 +243,11 @@ void getFractureMatrixDataInMesh(
     {
         OGS_FATAL("Could not access MaterialIDs property from mesh.");
     }
-    for (MeshLib::Element* e : all_fracture_elements)
-    {
-        vec_fracture_mat_IDs.push_back((*material_ids)[e->getID()]);
-    }
+    transform(
+        cbegin(all_fracture_elements), cend(all_fracture_elements),
+        back_inserter(vec_fracture_mat_IDs),
+        [&material_ids](auto const* e) { return (*material_ids)[e->getID()]; });
+
     BaseLib::makeVectorUnique(vec_fracture_mat_IDs);
     DBUG("-> found {:d} fracture material groups", vec_fracture_mat_IDs.size());
 

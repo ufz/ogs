@@ -259,10 +259,9 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         // _nodal_values is ordered location-wise
         for (unsigned comp = 0; comp < num_components; ++comp)
         {
-            for (auto i : global_indices)
-            {
-                indices.push_back(num_components * i + comp);
-            }
+            transform(cbegin(global_indices), cend(global_indices),
+                      back_inserter(indices),
+                      [&](auto const i) { return num_components * i + comp; });
         }
 
         // Nodal_values are passed as a raw pointer, because PETScVector and
