@@ -3,8 +3,8 @@ title = "Computational Hydrology: I Groundwater Flow Modeling"
 date = 2018-03-01T15:51:37+01:00
 author = "Lars Bilke"
 
-book_type = "Tutorial"
-book_cover = "Computation-Hydrology-I-Cover.png"
+categories = ["Tutorials"]
+image = "Computation-Hydrology-I-Cover.png"
 
 +++
 

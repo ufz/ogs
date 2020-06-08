@@ -4,8 +4,8 @@ subtitle = "Groundwater Quality Modeling"
 date = 2018-03-07T15:20:04+01:00
 author = "[TODO]"
 
-book_type = "Tutorial"
-book_cover = "computational-hydrology-ii.png"
+categories = ["Tutorials"]
+image = "computational-hydrology-ii.png"
 
 +++
 
