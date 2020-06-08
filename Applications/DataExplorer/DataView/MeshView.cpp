@@ -244,9 +244,11 @@ void MeshView::openAddLayerDialog()
         return;
     }
 
-    double const thickness (dlg.getThickness());
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
-        *mesh, thickness, dlg.getName(), dlg.isTopLayer()));
+    bool const copy_material_ids = false;
+    double const thickness(dlg.getThickness());
+    std::unique_ptr<MeshLib::Mesh> result(
+        MeshLib::addLayerToMesh(*mesh, thickness, dlg.getName(),
+                                dlg.isTopLayer(), copy_material_ids));
 
     if (result)
     {

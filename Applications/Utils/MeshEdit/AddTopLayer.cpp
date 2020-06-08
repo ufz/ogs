@@ -46,6 +46,15 @@ int main (int argc, char* argv[])
         "the thickness of the new layer", false, 10, "floating point value");
     cmd.add(layer_thickness_arg);
 
+    TCLAP::ValueArg<bool> copy_material_ids_arg(
+        "", "copy_material_ids",
+        "copy the existing material distribution of the layer which is to "
+        "be extented ",
+        false, false,
+        "bool value: either true for copying or false for adding new "
+        "material ID");
+    cmd.add(copy_material_ids_arg);
+
     cmd.parse(argc, argv);
 
     INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
@@ -58,7 +67,8 @@ int main (int argc, char* argv[])
     INFO("done.");
 
     std::unique_ptr<MeshLib::Mesh> result(MeshLib::addTopLayerToMesh(
-        *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue()));
+        *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue(),
+        copy_material_ids_arg.getValue()));
     if (!result) {
         ERR("Failure while adding top layer.");
         return EXIT_FAILURE;
