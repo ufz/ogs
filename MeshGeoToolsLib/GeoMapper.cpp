@@ -75,8 +75,7 @@ void GeoMapper::mapOnMesh(MeshLib::Mesh const*const mesh)
 
     // the variable _surface_mesh is reused below, so first the existing
     // _surface_mesh has to be cleaned up
-
-        delete _surface_mesh;
+    delete _surface_mesh;
 
     if (mesh->getDimension() < 3)
     {
@@ -575,8 +574,7 @@ static void mapPolylineOnSurfaceMesh(
 void GeoMapper::advancedMapOnMesh(MeshLib::Mesh const& mesh)
 {
     // 1. extract surface
-
-        delete _surface_mesh;
+    delete _surface_mesh;
 
     if (mesh.getDimension()<3) {
         _surface_mesh = new MeshLib::Mesh(mesh);

@@ -28,7 +28,7 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(
     }
 
     unsigned const n_nodes(elem.getNumberOfNodes());
-    auto elem_nodes = std::make_unique<MeshLib::Node* []>(n_nodes);
+    auto elem_nodes = std::make_unique<MeshLib::Node*[]>(n_nodes);
     for (unsigned i = 0; i < n_nodes; ++i)
     {
         elem_nodes[i] = nodes[elem.getNode(i)->getID()];
@@ -61,10 +61,11 @@ std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
         return nullptr;
     }
 
-    std::vector<MeshLib::Node*> new_nodes (MeshLib::copyNodeVector(mesh.getNodes()));
-    std::vector<MeshLib::Element*> const& elems (mesh.getElements());
+    std::vector<MeshLib::Node*> new_nodes(
+        MeshLib::copyNodeVector(mesh.getNodes()));
+    std::vector<MeshLib::Element*> const& elems(mesh.getElements());
     std::vector<MeshLib::Element*> new_elems;
-    std::size_t n_elems (mesh.getNumberOfElements());
+    std::size_t n_elems(mesh.getNumberOfElements());
     new_elems.reserve(n_elems);
 
     for (std::size_t i = 0; i < n_elems; ++i)
@@ -77,5 +78,4 @@ std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
                                            new_elems, mesh.getProperties());
 }
 
-} // end namespace MeshLib
-
+}  // end namespace MeshLib
