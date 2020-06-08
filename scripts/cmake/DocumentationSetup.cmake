@@ -23,7 +23,10 @@ set(DOXYGEN_EXTRACT_STATIC YES)
 set(DOXYGEN_EXTRACT_ANON_NSPACES YES)
 set(DOXYGEN_SORT_BY_SCOPE_NAME YES)
 set(DOXYGEN_LAYOUT_FILE ${PROJECT_SOURCE_DIR}/Documentation/DoxygenLayout.xml)
-set(DOXYGEN_CITE_BIB_FILES ${PROJECT_SOURCE_DIR}/Documentation/bibliography)
+set(DOXYGEN_CITE_BIB_FILES
+    ${PROJECT_SOURCE_DIR}/Documentation/bibliography/ogs
+    ${PROJECT_SOURCE_DIR}/Documentation/bibliography/other
+)
 set(DOXYGEN_WARN_LOGFILE ${PROJECT_BINARY_DIR}/DoxygenWarnings.log)
 set(DOXYGEN_EXCLUDE_PATTERNS moc_* ui_* CMake*)
 set(DOXYGEN_IMAGE_PATH ${PROJECT_SOURCE_DIR}/Documentation/images)
