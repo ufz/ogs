@@ -145,10 +145,11 @@ std::vector<MeshElemType> getMeshElemTypes()
 std::vector<std::string> getMeshElemTypeStringsShort()
 {
     std::vector<std::string> vec;
-    for (MeshElemType eleType : getMeshElemTypes())
-    {
-        vec.push_back(MeshElemType2StringShort(eleType));
-    }
+    auto const& mesh_elem_types = getMeshElemTypes();
+    std::transform(mesh_elem_types.begin(), mesh_elem_types.end(),
+                   std::back_inserter(vec), [](auto const& element_type) {
+                       return MeshElemType2StringShort(element_type);
+                   });
     return vec;
 }
 

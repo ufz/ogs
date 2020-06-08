@@ -420,7 +420,7 @@ static void mapPointOnSurfaceElement(MeshLib::Element const& elem,
                                      MathLib::Point3d& q)
 {
     // create plane equation: n*p = d
-    MathLib::Vector3 const& p(*(elem.getNode(0)));
+    MathLib::Vector3 const p(*(elem.getNode(0)));
     MathLib::Vector3 const n(MeshLib::FaceRule::getSurfaceNormal(&elem));
     if (n[2] == 0.0) { // vertical plane, z coordinate is arbitrary
         q[2] = p[2];

@@ -388,13 +388,3 @@ bool VtkRaster::readWorldFile(std::string const& filename,
     image->SetDataOrigin(x0, vtk_y0, 0);
     return true;
 }
-
-void VtkRaster::uint32toRGBA(const unsigned int s, int* p)
-{
-    p[3]   = s / (256 * 256 * 256);
-    int r  = s % (256 * 256 * 256);
-    p[2]   = r / (256 * 256);
-    r     %= (256 * 256);
-    p[1]   = r / 256;
-    p[0]   = r % 256;
-}

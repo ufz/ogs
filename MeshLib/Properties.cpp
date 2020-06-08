@@ -36,10 +36,9 @@ bool Properties::hasPropertyVector(std::string const& name) const
 std::vector<std::string> Properties::getPropertyVectorNames() const
 {
     std::vector<std::string> names;
-    for (auto p : _properties)
-    {
-        names.push_back(p.first);
-    }
+    std::transform(_properties.begin(), _properties.end(),
+                   std::back_inserter(names),
+                   [](auto const& pair) { return pair.first; });
     return names;
 }
 

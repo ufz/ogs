@@ -27,7 +27,7 @@ void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
         plane_normal[2] += (pt_i[0] - pt_j[0])
                            * (pt_i[1] + pt_j[1]); // projection on xy
 
-        centroid += pt_j;
+        centroid += MathLib::Vector3(pt_j);
     }
 
     plane_normal.normalize();
@@ -48,7 +48,8 @@ void getNewellPlane (const std::vector<T_POINT*>& pnts,
 }
 
 template <class T_POINT>
-std::pair<MathLib::Vector3, double> getNewellPlane (const std::vector<T_POINT>& pnts)
+std::pair<MathLib::Vector3, double> getNewellPlane(
+    const std::vector<T_POINT>& pnts)
 {
     MathLib::Vector3 plane_normal;
     MathLib::Vector3 centroid;
@@ -61,7 +62,7 @@ std::pair<MathLib::Vector3, double> getNewellPlane (const std::vector<T_POINT>& 
         plane_normal[2] += (pnts[i][0] - pnts[j][0])
                            * (pnts[i][1] + pnts[j][1]); // projection on xy
 
-        centroid += pnts[j];
+        centroid += MathLib::Vector3(pnts[j]);
     }
 
     plane_normal.normalize();

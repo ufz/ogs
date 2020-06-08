@@ -16,6 +16,7 @@
 
 #include <numeric>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
 
 #include "GeoLib/Grid.h"
@@ -89,7 +90,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
                 {
                     ERR("Element {:d} has unknown element type.", k);
                     this->resetNodeIDs();
-                    this->cleanUp(new_nodes, new_elements);
+                    BaseLib::cleanupVectorElements(new_nodes, new_elements);
                     return nullptr;
                 }
                 if (material_vec)
@@ -131,7 +132,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string &new_mesh_name,
                                  new_properties);
     }
 
-    this->cleanUp(new_nodes, new_elements);
+    BaseLib::cleanupVectorElements(new_nodes, new_elements);
     return nullptr;
 }
 
@@ -912,18 +913,4 @@ unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2) const
     }
     return std::numeric_limits<unsigned>::max();
 }
-
-void MeshRevision::cleanUp(std::vector<MeshLib::Node*> &new_nodes, std::vector<MeshLib::Element*> &new_elements) const
-{
-    for (auto& new_element : new_elements)
-    {
-        delete new_element;
-    }
-
-    for (auto& new_node : new_nodes)
-    {
-        delete new_node;
-    }
-}
-
 } // end namespace MeshLib

@@ -133,12 +133,12 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
         addElementToSurface(*elements[i], id_map, *(*sfcs)[surfaceId]);
     }
 
-    std::for_each(sfcs->begin(), sfcs->end(), [](GeoLib::Surface* sfc) {
+    std::for_each(sfcs->begin(), sfcs->end(), [](GeoLib::Surface*& sfc) {
         if (sfc->getNumberOfTriangles() == 0)
         {
             delete sfc;
+            sfc = nullptr;
         }
-        sfc = nullptr;
     });
     auto sfcs_end = std::remove(sfcs->begin(), sfcs->end(), nullptr);
     sfcs->erase(sfcs_end, sfcs->end());

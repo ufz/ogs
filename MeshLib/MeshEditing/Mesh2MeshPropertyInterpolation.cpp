@@ -84,7 +84,8 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
 }
 
 void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
-    Mesh& dest_mesh, MeshLib::PropertyVector<double>& dest_properties) const
+    Mesh const& dest_mesh,
+    MeshLib::PropertyVector<double>& dest_properties) const
 {
     std::vector<double> interpolated_src_node_properties(
         _src_mesh.getNumberOfNodes());
