@@ -20,9 +20,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::unique_ptr<AqueousSolution> createAqueousSolution(
-    BaseLib::ConfigTree const& config,
-    MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map)
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
     //! \ogs_file_param{prj__chemical_system__solution__temperature}
     auto const temperature = config.getConfigParameter<double>("temperature");

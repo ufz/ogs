@@ -28,7 +28,7 @@ std::unique_ptr<ChemicalSystem> createChemicalSystem(
     // solution
     auto aqueous_solution = createAqueousSolution(
         //! \ogs_file_param{prj__chemical_system__solution}
-        config.getConfigSubtree("solution"), mesh, chemical_system_map);
+        config.getConfigSubtree("solution"), mesh);
 
     // kinetic reactants
     auto kinetic_reactants = createKineticReactants(
