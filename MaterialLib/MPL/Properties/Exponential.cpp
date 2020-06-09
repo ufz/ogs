@@ -31,7 +31,7 @@ PropertyDataType Exponential::value(
 {
     return std::get<double>(value_) *
            std::exp(
-               -std::get<double>(exponent_data_.factor) *
+               std::get<double>(exponent_data_.factor) *
                (std::get<double>(
                     variable_array[static_cast<int>(exponent_data_.type)]) -
                 std::get<double>(exponent_data_.reference_condition)));
@@ -43,10 +43,10 @@ PropertyDataType Exponential::dValue(
     double const /*dt*/) const
 {
     return exponent_data_.type == primary_variable
-               ? -std::get<double>(value_) *
+               ? std::get<double>(value_) *
                      std::get<double>(exponent_data_.factor) *
                      std::exp(
-                         -std::get<double>(exponent_data_.factor) *
+                         std::get<double>(exponent_data_.factor) *
                          (std::get<double>(variable_array[static_cast<int>(
                               exponent_data_.type)]) -
                           std::get<double>(exponent_data_.reference_condition)))
@@ -63,7 +63,7 @@ PropertyDataType Exponential::d2Value(
                      boost::math::pow<2>(
                          std::get<double>(exponent_data_.factor)) *
                      std::exp(
-                         -std::get<double>(exponent_data_.factor) *
+                         std::get<double>(exponent_data_.factor) *
                          (std::get<double>(variable_array[static_cast<int>(
                               exponent_data_.type)]) -
                           std::get<double>(exponent_data_.reference_condition)))
