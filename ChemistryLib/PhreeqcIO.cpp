@@ -109,6 +109,8 @@ void PhreeqcIO::initialize()
             num_chemical_systems += _chemical_system_index_map[i].size();
         return num_chemical_systems;
     }();
+
+    _chemical_system->initialize(_num_chemical_systems);
 }
 
 void PhreeqcIO::executeInitialCalculation(
