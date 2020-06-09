@@ -101,6 +101,16 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
     }
 }
 
+void PhreeqcIO::initialize()
+{
+    _num_chemical_systems = [&] {
+        std::size_t num_chemical_systems = 0;
+        for (std::size_t i = 0; i < _chemical_system_index_map.size(); ++i)
+            num_chemical_systems += _chemical_system_index_map[i].size();
+        return num_chemical_systems;
+    }();
+}
+
 void PhreeqcIO::executeInitialCalculation(
     std::vector<GlobalVector*>& process_solutions)
 {

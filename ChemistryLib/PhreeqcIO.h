@@ -51,6 +51,8 @@ public:
               std::unique_ptr<Dump>&& dump,
               Knobs&& knobs);
 
+    void initialize() override;
+
     void executeInitialCalculation(
         std::vector<GlobalVector*>& process_solutions) override;
 
@@ -97,6 +99,8 @@ private:
     Knobs const _knobs;
     double _dt = std::numeric_limits<double>::quiet_NaN();
     const int phreeqc_instance_id = 0;
+    std::size_t _num_chemical_systems =
+        std::numeric_limits<std::size_t>::quiet_NaN();
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

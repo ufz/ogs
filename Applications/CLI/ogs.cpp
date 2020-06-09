@@ -38,6 +38,7 @@
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
+#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
 #include "ProcessLib/TimeLoop.h"
@@ -231,6 +232,11 @@ int main(int argc, char* argv[])
 
             auto chemical_solver_interface =
                 project.getChemicalSolverInterface();
+            if (chemical_solver_interface)
+            {
+                chemical_solver_interface->initialize();
+            }
+
             // Check intermediately that config parsing went fine.
             project_config.checkAndInvalidate();
             BaseLib::ConfigTree::assertNoSwallowedErrors();
