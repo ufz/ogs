@@ -71,6 +71,7 @@ std::vector<KineticReactant> createKineticReactants(
         kinetic_reactants.emplace_back(std::move(name),
                                        std::move(chemical_formula),
                                        amount,
+                                       initial_amount,
                                        std::move(parameters),
                                        fix_amount);
     }
