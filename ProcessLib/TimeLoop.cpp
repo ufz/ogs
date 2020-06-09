@@ -448,6 +448,11 @@ void TimeLoop::initialize()
     {
         BaseLib::RunTime time_phreeqc;
         time_phreeqc.start();
+
+        auto& pcs = _per_process_data[0]->process;
+        auto const interpolated_process_solutions =
+            pcs.interpolateProcessSolutions(_process_solutions);
+
         _chemical_solver_interface->executeInitialCalculation(
             _process_solutions);
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
@@ -810,6 +815,11 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         // space and localized chemical equilibrium between solutes.
         BaseLib::RunTime time_phreeqc;
         time_phreeqc.start();
+
+        auto& pcs = _per_process_data[0]->process;
+        auto const interpolated_process_solutions =
+            pcs.interpolateProcessSolutions(_process_solutions);
+
         _chemical_solver_interface->doWaterChemistryCalculation(
             _process_solutions, dt);
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());

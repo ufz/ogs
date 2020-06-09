@@ -101,6 +101,12 @@ public:
     {
     }
 
+    virtual std::vector<GlobalVector> interpolateProcessSolutions(
+        std::vector<GlobalVector*> const& /*x*/)
+    {
+        return {};
+    }
+
     virtual void extrapolateIntegrationPointValuesToNodes(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*integration_point_values_vectors*/,

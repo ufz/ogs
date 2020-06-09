@@ -98,6 +98,12 @@ public:
                              GlobalVector const& x, double const t,
                              double const dt, bool const use_monolithic_scheme);
 
+    virtual std::vector<double> interpolateNodalValuesToIntegrationPoints(
+        std::vector<double> const& /*local_x*/)
+    {
+        return {};
+    }
+
     /// Computes the flux in the point \c p_local_coords that is given in local
     /// coordinates using the values from \c local_x.
     /// Fits to monolithic scheme.
