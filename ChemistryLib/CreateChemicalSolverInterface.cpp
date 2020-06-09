@@ -60,7 +60,7 @@ std::string parseDatabasePath(BaseLib::ConfigTree const& config)
 namespace ChemistryLib
 {
 template <>
-std::unique_ptr<ChemicalSolverInterface>
+std::shared_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     BaseLib::ConfigTree const& config, std::string const& output_directory)
@@ -126,7 +126,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto output = PhreeqcIOData::createOutput(
         *chemical_system, user_punch, use_high_precision, project_file_name);
 
-    return std::make_unique<PhreeqcIOData::PhreeqcIO>(
+    return std::make_shared<PhreeqcIOData::PhreeqcIO>(
         std::move(project_file_name), *meshes[mesh.getID()],
         std::move(path_to_database), std::move(chemical_system),
         std::move(reaction_rates), std::move(surface), std::move(user_punch),
@@ -134,7 +134,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
 }
 
 template <>
-std::unique_ptr<ChemicalSolverInterface>
+std::shared_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
@@ -165,7 +165,7 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         //! \ogs_file_param{prj__chemical_system__equilibrium_reactants}
         config.getConfigSubtreeOptional("equilibrium_reactants"), mesh);
 
-    return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
+    return std::make_shared<PhreeqcKernelData::PhreeqcKernel>(
         mesh.getNumberOfBaseNodes(), process_id_to_component_name_map,
         std::move(path_to_database), std::move(aqueous_solution),
         std::move(equilibrium_reactants), std::move(kinetic_reactants),

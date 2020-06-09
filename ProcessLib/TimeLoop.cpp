@@ -229,7 +229,7 @@ TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
                    const int global_coupling_max_iterations,
                    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                        global_coupling_conv_crit,
-                   std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+                   std::shared_ptr<ChemistryLib::ChemicalSolverInterface>&
                        chemical_solver_interface,
                    const double start_time, const double end_time)
     : _output(std::move(output)),
@@ -238,7 +238,7 @@ TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
       _end_time(end_time),
       _global_coupling_max_iterations(global_coupling_max_iterations),
       _global_coupling_conv_crit(std::move(global_coupling_conv_crit)),
-      _chemical_solver_interface(std::move(chemical_solver_interface))
+      _chemical_solver_interface(chemical_solver_interface)
 {
 }
 
