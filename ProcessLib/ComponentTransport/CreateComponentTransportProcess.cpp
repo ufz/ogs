@@ -9,6 +9,7 @@
  */
 
 #include "CreateComponentTransportProcess.h"
+#include "CreateChemicalProcessData.h"
 
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
@@ -221,6 +222,9 @@ std::unique_ptr<Process> createComponentTransportProcess(
     DBUG("Check the media properties of ComponentTransport process ...");
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
+
+    auto chemical_process_data =
+        createChemicalProcessData(chemical_solver_interface);
 
     ComponentTransportProcessData process_data{
         std::move(media_map),
