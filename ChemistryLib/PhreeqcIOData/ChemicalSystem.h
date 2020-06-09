@@ -17,11 +17,6 @@
 #include "EquilibriumReactant.h"
 #include "KineticReactant.h"
 
-namespace MeshLib
-{
-class Mesh;
-}
-
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
