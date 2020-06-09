@@ -33,13 +33,7 @@ namespace PhreeqcIOData
 {
 struct Component
 {
-    explicit Component(std::string name_,
-                       std::size_t const num_chemical_systems_)
-        : name(std::move(name_)),
-          amount(MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-              num_chemical_systems_))
-    {
-    }
+    explicit Component(std::string name_) : name(std::move(name_)) {}
 
     std::string const name;
     std::unique_ptr<GlobalVector> amount;
