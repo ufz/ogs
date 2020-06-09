@@ -32,6 +32,8 @@ struct ChemicalSystem
     {
     }
 
+    void initialize(std::size_t const num_chemical_systems);
+
     std::unique_ptr<AqueousSolution> aqueous_solution;
     std::vector<KineticReactant> kinetic_reactants;
     std::vector<EquilibriumReactant> equilibrium_reactants;

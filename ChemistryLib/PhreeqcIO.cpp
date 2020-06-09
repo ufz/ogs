@@ -109,6 +109,8 @@ void PhreeqcIO::initialize()
         [](auto result, auto const& chemical_system_index) {
             return result + chemical_system_index.size();
         });
+
+    _chemical_system->initialize(_num_chemical_systems);
 }
 
 void PhreeqcIO::executeInitialCalculation(
