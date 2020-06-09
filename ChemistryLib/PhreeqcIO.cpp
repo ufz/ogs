@@ -116,8 +116,7 @@ void PhreeqcIO::initialize()
 void PhreeqcIO::executeInitialCalculation(
     std::vector<GlobalVector> const& int_pt_x)
 {
-    setAqueousSolutionsOrUpdateProcessSolutions(
-        process_solutions, Status::SettingAqueousSolutions);
+    setAqueousSolution(int_pt_x);
 
     writeInputsToFile();
 
@@ -147,66 +146,20 @@ void PhreeqcIO::doWaterChemistryCalculation(
         process_solutions, Status::UpdatingProcessSolutions);
 }
 
-void PhreeqcIO::setAqueousSolutionsOrUpdateProcessSolutions(
-    std::vector<GlobalVector*> const& process_solutions, Status const status)
+void PhreeqcIO::setAqueousSolution(std::vector<GlobalVector> const& int_pt_x)
 {
-    std::size_t const num_chemical_systems = _mesh.getNumberOfBaseNodes();
-
-    auto const chemical_system_map =
-        *_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
-
-    // Loop over chemical systems
     auto& aqueous_solution = _chemical_system->aqueous_solution;
-    auto& components = aqueous_solution->components;
-    for (std::size_t local_id = 0; local_id < num_chemical_systems; ++local_id)
-    {
-        auto const global_id = chemical_system_map[local_id];
-        // Loop over transport process id map to retrieve component
-        // concentrations from process solutions or to update process solutions
-        // after chemical calculation by Phreeqc
-        for (unsigned component_id = 0; component_id < components.size();
-             ++component_id)
-        {
-            auto& component = components[component_id];
-            auto& transport_process_solution =
-                process_solutions[component_id + 1];
-            switch (status)
-            {
-                case Status::SettingAqueousSolutions:
-                    // Set component concentrations.
-                    component.amount->set(
-                        local_id, (*transport_process_solution)[global_id]);
-                    break;
-                case Status::UpdatingProcessSolutions:
-                    // Update solutions of component transport processes.
-                    transport_process_solution->set(
-                        global_id, (*component.amount)[local_id]);
-                    break;
-            }
-        }
 
-        switch (status)
-        {
-            case Status::SettingAqueousSolutions:
-            {
-                // Set pH value by hydrogen concentration.
-                aqueous_solution->pH->set(
-                    local_id,
-                    -std::log10((*process_solutions.back())[global_id]));
-                break;
-            }
-            case Status::UpdatingProcessSolutions:
-            {
-                // Update hydrogen concentration by pH value.
-                auto hydrogen_concentration =
-                    std::pow(10, -(*aqueous_solution->pH)[local_id]);
-                process_solutions.back()->set(global_id,
-                                              hydrogen_concentration);
-                break;
-            }
-        }
+    // components
+    auto& components = aqueous_solution->components;
+    for (unsigned component_id = 0; component_id < components.size();
+         ++component_id)
+    {
+        *components[component_id].amount = int_pt_x[component_id + 1];
     }
+
+    // pH
+    *aqueous_solution->pH = int_pt_x.back();
 }
 
 void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
