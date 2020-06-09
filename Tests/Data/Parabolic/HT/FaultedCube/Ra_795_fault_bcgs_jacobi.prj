@@ -57,7 +57,7 @@
                             <exponent>
                                 <variable_name>temperature</variable_name>
                                 <reference_condition>20</reference_condition>
-                                <factor>0.01333333</factor>
+                                <factor>-0.01333333</factor>
                             </exponent>
                         </property>
                     </properties>
@@ -143,7 +143,7 @@
                             <exponent>
                                 <variable_name>temperature</variable_name>
                                 <reference_condition>20</reference_condition>
-                                <factor>0.01333333</factor>
+                                <factor>-0.01333333</factor>
                             </exponent>
                         </property>
                     </properties>
