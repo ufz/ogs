@@ -117,6 +117,9 @@ public:
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const process_id) override;
 
+    std::vector<GlobalVector> interpolateProcessSolutions(
+        std::vector<GlobalVector*> const& x) override;
+
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     const double /*t*/,
                                     const double /*delta_t*/,

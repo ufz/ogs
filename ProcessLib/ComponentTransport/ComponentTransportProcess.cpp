@@ -174,6 +174,76 @@ void ComponentTransportProcess::
         _local_assemblers, pv.getActiveElementIDs(), _coupled_solutions);
 }
 
+std::vector<GlobalVector>
+ComponentTransportProcess::interpolateProcessSolutions(
+    std::vector<GlobalVector*> const& x)
+{
+    // Result is for each process a vector of integration point values for each
+    // element stored consecutively.
+    auto interpolateNodalValuesToIntegrationPoints =
+        [this](std::size_t mesh_item_id,
+               LocalAssemblerInterface& local_assembler,
+               std::vector<
+                   std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
+                   dof_tables,
+               std::vector<GlobalVector*> const& x,
+               std::vector<std::vector<double>>& int_pt_process_solutions) {
+            for (unsigned process_id = 0; process_id < x.size(); ++process_id)
+            {
+                auto const& dof_table = dof_tables[process_id].get();
+                auto const indices =
+                    NumLib::getIndices(mesh_item_id, dof_table);
+                auto const local_x = x[process_id]->get(indices);
+
+                // interpolated_values in size of integration points
+                std::vector<double> const interpolated_values =
+                    local_assembler.interpolateNodalValuesToIntegrationPoints(
+                        local_x);
+
+                // For each element (mesh_item_id) concatenate the integration
+                // point values.
+                auto& int_pt_process_solution =
+                    int_pt_process_solutions[process_id];
+                int_pt_process_solution.insert(int_pt_process_solution.end(),
+                                               interpolated_values.begin(),
+                                               interpolated_values.end());
+            }
+        };
+
+    // Same dof table for each primary variable.
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_tables;
+    dof_tables.reserve(x.size());
+    std::generate_n(std::back_inserter(dof_tables), x.size(),
+                    [&]() { return std::ref(*_local_to_global_index_map); });
+
+    std::vector<std::vector<double>> int_pt_process_solutions(x.size());
+
+    GlobalExecutor::executeDereferenced(
+        interpolateNodalValuesToIntegrationPoints, _local_assemblers,
+        dof_tables, x, int_pt_process_solutions);
+
+    // For each process copy the (elements x integration_points_per_element)
+    // vector to the result `int_pt_x`.
+    std::vector<GlobalVector> int_pt_x;
+    int_pt_x.reserve(x.size());
+    for (auto const& int_pt_process_solution : int_pt_process_solutions)
+    {
+        GlobalIndexType const size = int_pt_process_solution.size();
+        // New vector of size (elements x integration_points_per_element)
+        GlobalVector int_pt_process_solution_vec(size);
+
+        // Copy one by one.
+        for (GlobalIndexType i = 0; i < size; ++i)
+        {
+            int_pt_process_solution_vec.set(i, int_pt_process_solution[i]);
+        }
+        int_pt_x.push_back(int_pt_process_solution_vec);
+    }
+
+    return int_pt_x;
+}
+
 void ComponentTransportProcess::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, const double /*t*/,
     const double /*delta_t*/, int const process_id)

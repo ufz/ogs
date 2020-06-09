@@ -100,6 +100,13 @@ public:
         int const /*process_id*/)
     {
     }
+
+    virtual std::vector<GlobalVector> interpolateProcessSolutions(
+        std::vector<GlobalVector*> const& /*x*/)
+    {
+        return {};
+    }
+
     void preAssemble(const double t, double const dt,
                      GlobalVector const& x) final;
     void assemble(const double t, double const dt,
