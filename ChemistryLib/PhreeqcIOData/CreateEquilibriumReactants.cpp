@@ -55,16 +55,6 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
             MeshLib::MeshItemType::IntegrationPoint,
             1);
 
-        std::fill(std::begin(*amount),
-                  std::end(*amount),
-                  std::numeric_limits<double>::quiet_NaN());
-
-        std::for_each(chemical_system_map.begin(),
-                      chemical_system_map.end(),
-                      [&amount, initial_amount](auto const& global_id) {
-                          (*amount)[global_id] = initial_amount;
-                      });
-
         equilibrium_reactants.emplace_back(
             std::move(name), amount, saturation_index);
     }
