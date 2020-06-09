@@ -916,6 +916,21 @@ public:
         return flux;
     }
 
+    std::vector<double> interpolateNodalValuesToIntegrationPoints(
+        std::vector<double> const& local_x) override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        std::vector<double> interpolated_values(n_integration_points);
+        for (unsigned ip(0); ip < n_integration_points; ++ip)
+        {
+            NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N,
+                                             interpolated_values[ip]);
+        }
+        return interpolated_values;
+    }
+
     std::vector<double> const& getInterpolatedLocalSolution(
         const double /*t*/,
         std::vector<GlobalVector*> const& int_pt_x,
