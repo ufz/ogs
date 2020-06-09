@@ -55,7 +55,7 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
             1);
 
         equilibrium_reactants.emplace_back(
-            std::move(name), amount, saturation_index);
+            std::move(name), amount, initial_amount, saturation_index);
     }
 
     return equilibrium_reactants;
