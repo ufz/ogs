@@ -53,8 +53,8 @@ public:
 
     void initialize() override;
 
-    void executeInitialCalculation(
-        std::vector<GlobalVector*>& process_solutions) override;
+    void executeInitialCalculation(std::vector<GlobalVector> const&
+                                       interpolated_process_solutions) override;
 
     void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions,
