@@ -59,7 +59,7 @@ std::vector<KineticReactant> createKineticReactants(
         auto amount = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh),
             name,
-            MeshLib::MeshItemType::Node,
+            MeshLib::MeshItemType::IntegrationPoint,
             1);
 
         std::fill(std::begin(*amount),
