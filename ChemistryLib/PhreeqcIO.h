@@ -50,9 +50,8 @@ public:
     void executeInitialCalculation(
         std::vector<GlobalVector> const& int_pt_x) override;
 
-    void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions,
-        double const dt) override;
+    void doWaterChemistryCalculation(std::vector<GlobalVector> const& int_pt_x,
+                                     double const dt) override;
 
     void setAqueousSolution(std::vector<GlobalVector> const& int_pt_x);
 

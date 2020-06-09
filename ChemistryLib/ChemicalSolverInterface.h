@@ -23,7 +23,7 @@ public:
         std::vector<GlobalVector> const& int_pt_x) = 0;
 
     virtual void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions, double const dt) = 0;
+        std::vector<GlobalVector> const& int_pt_x, double const dt) = 0;
 
     virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const
     {

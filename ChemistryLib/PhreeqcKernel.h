@@ -45,7 +45,7 @@ public:
         std::vector<GlobalVector> const& /*int_pt_x*/) override;
 
     void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector> const& /*int_pt_x*/,
         double const dt) override;
 
     void setAqueousSolutions(
