@@ -28,6 +28,14 @@ public:
         return {};
     }
 
+    std::vector<std::vector<GlobalIndexType>>& getChemicalSystemIndexMap()
+    {
+        return _chemical_system_index_map;
+    }
+
     virtual ~ChemicalSolverInterface() = default;
+
+protected:
+    std::vector<std::vector<GlobalIndexType>> _chemical_system_index_map;
 };
 }  // namespace ChemistryLib
