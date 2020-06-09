@@ -22,8 +22,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::unique_ptr<ChemicalSystem> createChemicalSystem(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map)
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
     // solution
     auto aqueous_solution = createAqueousSolution(
@@ -33,14 +32,12 @@ std::unique_ptr<ChemicalSystem> createChemicalSystem(
     // kinetic reactants
     auto kinetic_reactants = createKineticReactants(
         //! \ogs_file_param{prj__chemical_system__kinetic_reactants}
-        config.getConfigSubtreeOptional("kinetic_reactants"), mesh,
-        chemical_system_map);
+        config.getConfigSubtreeOptional("kinetic_reactants"), mesh);
 
     // equilibrium reactants
     auto equilibrium_reactants = createEquilibriumReactants(
         //! \ogs_file_param{prj__chemical_system__equilibrium_reactants}
-        config.getConfigSubtreeOptional("equilibrium_reactants"), mesh,
-        chemical_system_map);
+        config.getConfigSubtreeOptional("equilibrium_reactants"), mesh);
 
     return std::make_unique<ChemicalSystem>(std::move(aqueous_solution),
                                             std::move(kinetic_reactants),
