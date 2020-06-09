@@ -42,7 +42,7 @@ public:
                   std::vector<ReactionRate>&& reaction_rates);
 
     void executeInitialCalculation(
-        std::vector<GlobalVector*>& process_solutions) override;
+        std::vector<GlobalVector> const& /*int_pt_x*/) override;
 
     void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions,

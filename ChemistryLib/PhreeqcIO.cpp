@@ -114,7 +114,7 @@ void PhreeqcIO::initialize()
 }
 
 void PhreeqcIO::executeInitialCalculation(
-    std::vector<GlobalVector*>& process_solutions)
+    std::vector<GlobalVector> const& int_pt_x)
 {
     setAqueousSolutionsOrUpdateProcessSolutions(
         process_solutions, Status::SettingAqueousSolutions);

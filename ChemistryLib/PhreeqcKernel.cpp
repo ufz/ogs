@@ -323,11 +323,13 @@ void PhreeqcKernel::reset(std::size_t const chemical_system_id)
 }
 
 void PhreeqcKernel::executeInitialCalculation(
-    std::vector<GlobalVector*>& process_solutions)
+    std::vector<GlobalVector> const& /*int_pt_x*/)
 {
     // TODO (Renchao): This function could be replaced with
     // PhreeqcKernel::doWaterChemistryCalculation(std::vector<GlobalVector*>&
     // process_solutions, double const dt).
+    std::vector<GlobalVector*> process_solutions;
+
     setAqueousSolutions(process_solutions);
 
     setTimeStepSize(0);

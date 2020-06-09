@@ -20,7 +20,7 @@ public:
     virtual void initialize() {}
 
     virtual void executeInitialCalculation(
-        std::vector<GlobalVector*>& process_solutions) = 0;
+        std::vector<GlobalVector> const& int_pt_x) = 0;
 
     virtual void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions, double const dt) = 0;
