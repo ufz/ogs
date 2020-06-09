@@ -143,7 +143,8 @@ std::vector<GlobalVector*> PhreeqcIO::getIntPtProcessSolutions() const
 }
 
 void PhreeqcIO::doWaterChemistryCalculation(
-    std::vector<GlobalVector*>& process_solutions, double const dt)
+    std::vector<GlobalVector> const& interpolated_process_solutions,
+    double const dt)
 {
     setAqueousSolution(interpolated_process_solutions);
 
@@ -154,9 +155,6 @@ void PhreeqcIO::doWaterChemistryCalculation(
     execute();
 
     readOutputsFromFile();
-
-    setAqueousSolutionsOrUpdateProcessSolutions(
-        process_solutions, Status::UpdatingProcessSolutions);
 }
 
 void PhreeqcIO::setAqueousSolution(

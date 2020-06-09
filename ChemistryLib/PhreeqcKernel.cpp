@@ -170,8 +170,11 @@ void PhreeqcKernel::reinitializeRates()
 }
 
 void PhreeqcKernel::doWaterChemistryCalculation(
-    std::vector<GlobalVector*>& process_solutions, double const dt)
+    std::vector<GlobalVector> const& /*interpolated_process_solutions*/,
+    double const dt)
 {
+    std::vector<GlobalVector*> process_solutions;
+
     setAqueousSolutions(process_solutions);
 
     setTimeStepSize(dt);

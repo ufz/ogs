@@ -45,7 +45,7 @@ public:
                                        interpolated_process_solutions) override;
 
     void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector> const& interpolated_process_solutions,
         double const dt) override;
 
     void setAqueousSolutions(
