@@ -227,10 +227,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         createChemicalProcessData(chemical_solver_interface);
 
     ComponentTransportProcessData process_data{
-        std::move(media_map),
-        specific_body_force,
-        has_gravity,
-        non_advective_form};
+        std::move(media_map), specific_body_force, has_gravity,
+        non_advective_form, std::move(chemical_process_data)};
 
     SecondaryVariableCollection secondary_variables;
 
