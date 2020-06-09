@@ -17,6 +17,8 @@ namespace ChemistryLib
 class ChemicalSolverInterface
 {
 public:
+    virtual void initialize() {}
+
     virtual void executeInitialCalculation(
         std::vector<GlobalVector*>& process_solutions) = 0;
 
