@@ -229,6 +229,8 @@ int main(int argc, char* argv[])
                 p->initialize();
             }
 
+            auto chemical_solver_interface =
+                project.getChemicalSolverInterface();
             // Check intermediately that config parsing went fine.
             project_config.checkAndInvalidate();
             BaseLib::ConfigTree::assertNoSwallowedErrors();
