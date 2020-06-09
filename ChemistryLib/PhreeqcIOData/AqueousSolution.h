@@ -49,7 +49,7 @@ struct Component
 struct AqueousSolution
 {
     AqueousSolution(double temperature_, double pressure_,
-                    MeshLib::PropertyVector<double>* pe_,
+                    MeshLib::PropertyVector<double>* pe_, double const pe0_,
                     std::vector<Component>&& components_,
                     ChargeBalance charge_balance_,
                     std::size_t const num_chemical_systems_)
@@ -58,6 +58,7 @@ struct AqueousSolution
           pH(MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
               num_chemical_systems_)),
           pe(pe_),
+          pe0(pe0_),
           components(std::move(components_)),
           charge_balance(charge_balance_)
     {
@@ -69,6 +70,7 @@ struct AqueousSolution
     double const pressure;
     std::unique_ptr<GlobalVector> pH;
     MeshLib::PropertyVector<double>* pe;
+    double const pe0;
     std::vector<Component> components;
     ChargeBalance const charge_balance;
 };

@@ -47,6 +47,7 @@ std::unique_ptr<AqueousSolution> createAqueousSolution(
     return std::make_unique<AqueousSolution>(temperature,
                                              pressure,
                                              pe,
+                                             pe0,
                                              std::move(components),
                                              charge_balance,
                                              mesh.getNumberOfBaseNodes());
