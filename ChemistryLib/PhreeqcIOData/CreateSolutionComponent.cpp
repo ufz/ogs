@@ -17,7 +17,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<Component> createSolutionComponents(
-    BaseLib::ConfigTree const& config, std::size_t const num_chemical_systems)
+    BaseLib::ConfigTree const& config)
 {
     std::vector<Component> components;
     //! \ogs_file_param{prj__chemical_system__solution__components}
@@ -27,7 +27,7 @@ std::vector<Component> createSolutionComponents(
         //! \ogs_file_param{prj__chemical_system__solution__components__component}
         comp_config.getConfigParameterList<std::string>("component"))
     {
-        components.emplace_back(component_name, num_chemical_systems);
+        components.emplace_back(component_name);
     }
 
     return components;
