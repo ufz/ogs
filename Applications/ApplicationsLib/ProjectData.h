@@ -78,6 +78,13 @@ public:
         return _processes;
     }
 
+    std::shared_ptr<ChemistryLib::ChemicalSolverInterface>
+    getChemicalSolverInterface() const
+    {
+        return _chemical_solver_interface ? _chemical_solver_interface
+                                          : nullptr;
+    }
+
     ProcessLib::TimeLoop& getTimeLoop() { return *_time_loop; }
 
 private:
