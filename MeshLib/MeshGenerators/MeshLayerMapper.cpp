@@ -259,7 +259,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh& dem_mesh,
                 break;
             case 5:
             {
-                std::array<MeshLib::Node*, 5> pyramid_nodes;
+                std::array<MeshLib::Node*, 5> pyramid_nodes{};
                 pyramid_nodes[0] = new_elem_nodes[pyramid_base[missing_idx][0]];
                 pyramid_nodes[1] = new_elem_nodes[pyramid_base[missing_idx][1]];
                 pyramid_nodes[2] = new_elem_nodes[pyramid_base[missing_idx][2]];
@@ -271,7 +271,7 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh& dem_mesh,
             }
             case 4:
             {
-                std::array<MeshLib::Node*, 4> tet_nodes;
+                std::array<MeshLib::Node*, 4> tet_nodes{};
                 std::copy(new_elem_nodes.begin(),
                           new_elem_nodes.begin() + node_counter,
                           tet_nodes.begin());
