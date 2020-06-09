@@ -39,8 +39,7 @@ std::unique_ptr<AqueousSolution> createAqueousSolution(
         MeshLib::MeshItemType::IntegrationPoint,
         1);
 
-    auto components =
-        createSolutionComponents(config, mesh.getNumberOfBaseNodes());
+    auto components = createSolutionComponents(config);
 
     auto charge_balance = createChargeBalance(config);
 

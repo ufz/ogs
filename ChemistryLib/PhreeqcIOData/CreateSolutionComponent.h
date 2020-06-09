@@ -24,6 +24,6 @@ namespace PhreeqcIOData
 struct Component;
 
 std::vector<Component> createSolutionComponents(
-    BaseLib::ConfigTree const& config, std::size_t const num_chemical_systems);
+    BaseLib::ConfigTree const& config);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
