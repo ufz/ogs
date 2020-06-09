@@ -25,7 +25,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     const std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>&
         nonlinear_solvers,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&
+    std::shared_ptr<ChemistryLib::ChemicalSolverInterface>&
         chemical_solver_interface)
 {
     auto const& coupling_config
@@ -94,7 +94,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
 
     return std::make_unique<TimeLoop>(
         std::move(output), std::move(per_process_data), max_coupling_iterations,
-        std::move(global_coupling_conv_criteria),
-        std::move(chemical_solver_interface), start_time, end_time);
+        std::move(global_coupling_conv_criteria), chemical_solver_interface,
+        start_time, end_time);
 }
 }  // namespace ProcessLib
