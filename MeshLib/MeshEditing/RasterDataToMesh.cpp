@@ -19,7 +19,7 @@ namespace MeshLib
 namespace RasterDataToMesh
 {
 
-static bool checkMesh2D(MeshLib::Mesh const& mesh)
+static bool checkMesh(MeshLib::Mesh const& mesh)
 {
     if (mesh.getDimension() > 2)
     {
@@ -50,13 +50,13 @@ static double evaluatePixel(double const value, double const no_data,
     {
         return replacement;
     }
-    return value;
+     return value;
 }
 
 bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
                     double const def, std::string const& array_name)
 {
-    if (!checkMesh2D(mesh))
+    if (!checkMesh(mesh))
     {
         return false;
     }
@@ -78,7 +78,7 @@ bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
 bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
                        double const def, std::string const& array_name)
 {
-    if (!checkMesh2D(mesh))
+    if (!checkMesh(mesh))
     {
         return false;
     }
