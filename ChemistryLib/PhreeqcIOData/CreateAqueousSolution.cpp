@@ -41,13 +41,8 @@ std::unique_ptr<AqueousSolution> createAqueousSolution(
 
     auto charge_balance = createChargeBalance(config);
 
-    return std::make_unique<AqueousSolution>(temperature,
-                                             pressure,
-                                             pe,
-                                             pe0,
-                                             std::move(components),
-                                             charge_balance,
-                                             mesh.getNumberOfBaseNodes());
+    return std::make_unique<AqueousSolution>(
+        temperature, pressure, pe, pe0, std::move(components), charge_balance);
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
