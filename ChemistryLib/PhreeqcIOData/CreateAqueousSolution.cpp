@@ -34,16 +34,10 @@ std::unique_ptr<AqueousSolution> createAqueousSolution(
     auto const pe0 = config.getConfigParameter<double>("pe");
 
     auto pe = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "pe", MeshLib::MeshItemType::Node, 1);
-
-    std::fill(std::begin(*pe),
-              std::end(*pe),
-              std::numeric_limits<double>::quiet_NaN());
-
-    std::for_each(
-        chemical_system_map.begin(),
-        chemical_system_map.end(),
-        [&pe, pe0](auto const& global_id) { (*pe)[global_id] = pe0; });
+        const_cast<MeshLib::Mesh&>(mesh),
+        "pe",
+        MeshLib::MeshItemType::IntegrationPoint,
+        1);
 
     auto components =
         createSolutionComponents(config, mesh.getNumberOfBaseNodes());
