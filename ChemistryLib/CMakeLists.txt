@@ -11,3 +11,6 @@ include(GenerateExportHeader)
 generate_export_header(ChemistryLib)
 
 target_link_libraries(ChemistryLib PUBLIC iphreeqc PRIVATE NumLib spdlog::spdlog)
+
+# See https://github.com/ufz/ogs/pull/2982#issuecomment-641086788
+set_source_files_properties(PhreeqcIO.cpp PROPERTIES SKIP_UNITY_BUILD_INCLUSION TRUE)
