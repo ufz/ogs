@@ -31,11 +31,13 @@ struct ComponentTransportProcessData
         std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
             media_map_,
         Eigen::VectorXd const& specific_body_force_, bool const has_gravity_,
-        bool const non_advective_form_)
+        bool const non_advective_form_,
+        std::unique_ptr<ChemicalProcessData>&& chemical_process_data_)
         : media_map(std::move(media_map_)),
           specific_body_force(specific_body_force_),
           has_gravity(has_gravity_),
-          non_advective_form(non_advective_form_)
+          non_advective_form(non_advective_form_),
+          chemical_process_data(std::move(chemical_process_data_))
     {
     }
 
