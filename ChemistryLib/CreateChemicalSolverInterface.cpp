@@ -84,11 +84,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto path_to_database = parseDatabasePath(config);
 
     // chemical system
-    auto chemical_system_map =
-        *mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
-    auto chemical_system = PhreeqcIOData::createChemicalSystem(
-        config, *meshes[0], chemical_system_map);
+    auto chemical_system =
+        PhreeqcIOData::createChemicalSystem(config, *meshes[0]);
 
     // rates
     auto reaction_rates = createReactionRates<PhreeqcIOData::ReactionRate>(

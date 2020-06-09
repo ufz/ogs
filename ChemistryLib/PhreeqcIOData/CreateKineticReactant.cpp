@@ -21,8 +21,7 @@ namespace PhreeqcIOData
 {
 std::vector<KineticReactant> createKineticReactants(
     boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map)
+    MeshLib::Mesh const& mesh)
 {
     if (!config)
     {
