@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-#include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "Output.h"
 
 namespace MeshLib
@@ -45,12 +44,9 @@ struct AqueousSolution
     AqueousSolution(double temperature_, double pressure_,
                     MeshLib::PropertyVector<double>* pe_, double const pe0_,
                     std::vector<Component>&& components_,
-                    ChargeBalance charge_balance_,
-                    std::size_t const num_chemical_systems_)
+                    ChargeBalance charge_balance_)
         : temperature(temperature_),
           pressure(pressure_),
-          pH(MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-              num_chemical_systems_)),
           pe(pe_),
           pe0(pe0_),
           components(std::move(components_)),
