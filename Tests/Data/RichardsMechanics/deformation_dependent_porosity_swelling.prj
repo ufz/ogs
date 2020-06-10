@@ -72,8 +72,16 @@
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>1</value>
+                            <type>Exponential</type>
+                            <reference_value>1</reference_value>
+                            <exponent>
+                                <variable_name>solid_grain_pressure</variable_name>
+                                <reference_condition>0</reference_condition>
+                                <!-- beta_SR = (1 - alpha)/K_S. K_S = E/(3(1-2 nu)) -->
+                                <!-- K_S = 1/(3*(1-2*0.3)) = 5/6. -->
+                                <!-- beta_SR = (1 - 11/12)/K_S = 0.1 -->
+                                <factor>0.1</factor>
+                            </exponent>
                         </property>
                         <property>
                             <name>porosity</name>
@@ -198,6 +206,9 @@
                 <variable>saturation</variable>
                 <variable>porosity</variable>
                 <variable>transport_porosity</variable>
+                <variable>dry_density_solid</variable>
+                <variable>dry_density_pellet_saturated</variable>
+                <variable>dry_density_pellet_unsaturated</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
