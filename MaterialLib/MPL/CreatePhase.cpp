@@ -25,6 +25,7 @@
 namespace
 {
 std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
+    int const geometry_dimension,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
@@ -60,16 +61,18 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
     }
 
     // Parsing of optional components.
-    auto components =
+    auto components = createComponents(
+        geometry_dimension,
         //! \ogs_file_param{prj__media__medium__phases__phase__components}
-        createComponents(config.getConfigSubtreeOptional("components"),
-                         parameters, local_coordinate_system, curves);
+        config.getConfigSubtreeOptional("components"), parameters,
+        local_coordinate_system, curves);
 
     // Properties of optional properties.
-    auto properties =
+    auto properties = createProperties(
+        geometry_dimension,
         //! \ogs_file_param{prj__media__medium__phases__phase__properties}
-        createProperties(config.getConfigSubtreeOptional("properties"),
-                         parameters, local_coordinate_system, curves);
+        config.getConfigSubtreeOptional("properties"), parameters,
+        local_coordinate_system, curves);
 
     if (components.empty() && !properties)
     {
@@ -87,6 +90,7 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
 namespace MaterialPropertyLib
 {
 std::vector<std::unique_ptr<Phase>> createPhases(
+    int const geometry_dimension,
     boost::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
@@ -105,7 +109,7 @@ std::vector<std::unique_ptr<Phase>> createPhases(
          //! \ogs_file_param{prj__media__medium__phases__phase}
          config->getConfigSubtreeList("phase"))
     {
-        auto phase = createPhase(phase_config, parameters,
+        auto phase = createPhase(geometry_dimension, phase_config, parameters,
                                  local_coordinate_system, curves);
 
         if (std::find_if(phases.begin(),
