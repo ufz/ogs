@@ -72,14 +72,6 @@ void trim(std::string &str, char ch=' ');
  */
 void simplify(std::string &str);
 
-//! Method for handling conversion to string uniformly across all types and std::string; see std::string overload below.
-template<typename T> std::string tostring(T const& value)
-{
-    return std::to_string(value);
-}
-//! \overload
-std::string const& tostring(std::string const& value);
-
 //! Returns a random string of the given length containing just a-z,A-Z,0-9
 std::string randomString(std::size_t length);
 

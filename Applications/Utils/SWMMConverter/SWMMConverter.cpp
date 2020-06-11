@@ -90,7 +90,7 @@ int writeMeshOutput(std::string const& input_file,
             addObjectsToMesh(*swmm, mesh, FileIO::SwmmObject::LINK, i);
 
         MeshLib::IO::VtuInterface vtkio(&mesh, 0, false);
-        std::string name(basename + BaseLib::tostring(i) + extension);
+        std::string name(basename + std::to_string(i) + extension);
         vtkio.writeToFile(name);
     }
     return 0;

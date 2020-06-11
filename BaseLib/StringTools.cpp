@@ -82,11 +82,6 @@ void simplify(std::string &str)
     );
 }
 
-std::string const& tostring(std::string const& value)
-{
-    return value;
-}
-
 std::string format(const char* format_str, ... )
 {
     va_list args;
