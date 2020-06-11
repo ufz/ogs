@@ -7,7 +7,7 @@ build gui mac:
   tags:
     - mac
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:
       - Applications/DataExplorer/**/*
     - when: manual
