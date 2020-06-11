@@ -19,6 +19,7 @@
 #include "NeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
+#include "PrimaryVariableConstraintDirichletBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
 #include "VariableDependentNeumannBoundaryCondition.h"
 
@@ -106,6 +107,12 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         return createConstraintDirichletBoundaryCondition(
             config.config, config.boundary_mesh, dof_table, variable_id,
             integration_order, *config.component_id, parameters, process);
+    }
+    if (type == "PrimaryVariableConstraintDirichlet")
+    {
+        return createPrimaryVariableConstraintDirichletBoundaryCondition(
+            config.config, config.boundary_mesh, dof_table, variable_id,
+            *config.component_id, parameters);
     }
     if (type == "HCNonAdvectiveFreeComponentFlowBoundary")
     {
