@@ -119,4 +119,19 @@ std::string randomString(std::size_t const length)
     return s;
 }
 
+std::string getUniqueName(std::vector<std::string> const& existing_names,
+                          std::string const& input_name)
+{
+    std::string result_name = input_name;
+    std::size_t count = 1;
+    while (std::find(existing_names.cbegin(),
+                     existing_names.cend(),
+                     result_name) != existing_names.end())
+    {
+        count++;
+        result_name = input_name + "-" + std::to_string(count);
+    }
+    return result_name;
+}
+
 }  // end namespace BaseLib

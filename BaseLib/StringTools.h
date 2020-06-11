@@ -75,4 +75,7 @@ void simplify(std::string &str);
 //! Returns a random string of the given length containing just a-z,A-Z,0-9
 std::string randomString(std::size_t length);
 
+//! Append '-' and a number such that the name is unique.
+std::string getUniqueName(std::vector<std::string> const& existing_names,
+                          std::string const& input_name);
 } // end namespace BaseLib
