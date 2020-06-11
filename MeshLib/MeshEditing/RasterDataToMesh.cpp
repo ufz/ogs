@@ -10,6 +10,7 @@
 
 #include "RasterDataToMesh.h"
 
+#include "BaseLib/StringTools.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 
@@ -26,20 +27,6 @@ static bool checkMesh(MeshLib::Mesh const& mesh)
         return false;
     }
     return true;
-}
-
-static std::string getValidName(std::vector<std::string> const& vec_names,
-                                std::string const& array_name)
-{
-    std::string new_name = array_name;
-    std::size_t count = 1;
-    while (std::find(vec_names.cbegin(), vec_names.cend(), new_name) !=
-           vec_names.end())
-    {
-        count++;
-        new_name = array_name + "-" + std::to_string(count);
-    }
-    return new_name;
 }
 
 static double evaluatePixel(double const value, double const no_data,
@@ -64,7 +51,7 @@ bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     auto& nodes = mesh.getNodes();
     auto& props = mesh.getProperties();
     std::string const name =
-        getValidName(props.getPropertyVectorNames(), array_name);
+        BaseLib::getUniqueName(props.getPropertyVectorNames(), array_name);
     auto vec = props.createNewPropertyVector<double>(
         name, MeshLib::MeshItemType::Node, 1);
     double const no_data = raster.getHeader().no_data;
@@ -88,7 +75,7 @@ bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     auto& elems = mesh.getElements();
     auto& props = mesh.getProperties();
     std::string const name =
-        getValidName(props.getPropertyVectorNames(), array_name);
+        BaseLib::getUniqueName(props.getPropertyVectorNames(), array_name);
     auto vec = props.createNewPropertyVector<double>(
         name, MeshLib::MeshItemType::Cell, 1);
     double const no_data = raster.getHeader().no_data;
