@@ -13,7 +13,8 @@ weight = 10
 
 ### Prerequisites
 
-* Linux or macOS (you may run Singularity with [Vagrant](https://app.vagrantup.com/sylabs) on Windows as well)
+* Linux or [macOS](https://sylabs.io/singularity-desktop-macos/)
+  * Note: You can run Singularity on Windows inside a virtual machine using [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or with [Vagrant](https://app.vagrantup.com/sylabs)
 * A running [installation](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps) of Singularity 3.0 or higher
 
 ### Get a container image
@@ -24,15 +25,7 @@ Simply download an image from the [releases]({{< ref "/releases" >}}) page.
 
 #### Option: Download image from the latest master-branch build
 
-Simply download an image from the [latest master-branch build](https://jenkins.opengeosys.org/job/ufz/job/ogs/job/master/lastSuccessfulBuild/artifact/build) page.
-
-#### Option: Create custom image with ogs-container-maker
-
-Build images with [ogs-container-maker](https://github.com/ufz/ogs-container-maker) on [Jenkins](https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build) (login required, ask Lars Bilke for access):
-
-![](../ogs-container-maker-params.png){width=450px}
-
-It will build all combinations of `format`, `openmpi_versions` and `pm`. When the build finishes you can download the container (`*.sif` files) at the jobs page under `Build Artifacts`.
+Simply download an image from the [latest master-branch build](https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images/?job=images) page.
 
 ### Run OGS inside a Container (called from outside)
 
