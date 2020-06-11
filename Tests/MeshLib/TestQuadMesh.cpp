@@ -9,6 +9,8 @@
 
 #include <ctime>
 #include <iterator>
+#include <list>
+
 #include "gtest/gtest.h"
 
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
