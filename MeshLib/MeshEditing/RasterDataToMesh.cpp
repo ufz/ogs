@@ -18,7 +18,6 @@ namespace MeshLib
 
 namespace RasterDataToMesh
 {
-
 static bool checkMesh(MeshLib::Mesh const& mesh)
 {
     if (mesh.getDimension() > 2)
@@ -50,11 +49,12 @@ static double evaluatePixel(double const value, double const no_data,
     {
         return replacement;
     }
-     return value;
+    return value;
 }
 
 bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
-                    double const def, std::string const& array_name)
+                    double const default_replacement,
+                    std::string const& array_name)
 {
     if (!checkMesh(mesh))
     {
@@ -68,15 +68,17 @@ bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     auto vec = props.createNewPropertyVector<double>(
         name, MeshLib::MeshItemType::Node, 1);
     double const no_data = raster.getHeader().no_data;
-    std::transform(nodes.cbegin(), nodes.cend(), std::back_inserter(*vec), [&](auto const node)
-    {
-        return evaluatePixel(raster.getValueAtPoint(*node), no_data, def);
-    });
+    std::transform(nodes.cbegin(), nodes.cend(), std::back_inserter(*vec),
+                   [&](auto const node) {
+                       return evaluatePixel(raster.getValueAtPoint(*node),
+                                            no_data, default_replacement);
+                   });
     return true;
 }
 
 bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
-                       double const def, std::string const& array_name)
+                       double const default_replacement,
+                       std::string const& array_name)
 {
     if (!checkMesh(mesh))
     {
@@ -90,10 +92,12 @@ bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     auto vec = props.createNewPropertyVector<double>(
         name, MeshLib::MeshItemType::Cell, 1);
     double const no_data = raster.getHeader().no_data;
-    std::transform(elems.cbegin(), elems.cend(), std::back_inserter(*vec), [&](auto const elem) {
-        auto node = elem->getCenterOfGravity();
-        return evaluatePixel(raster.getValueAtPoint(node), no_data, def);
-    });
+    std::transform(elems.cbegin(), elems.cend(), std::back_inserter(*vec),
+                   [&](auto const elem) {
+                       auto node = elem->getCenterOfGravity();
+                       return evaluatePixel(raster.getValueAtPoint(node),
+                                            no_data, default_replacement);
+                   });
     return true;
 }
 
