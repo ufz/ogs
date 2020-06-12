@@ -19,15 +19,20 @@ build web site:
   stage: build
   image: $WEB_IMAGE
   script:
+    # HACK to easier linking to the generated pages
+    - echo '<meta http-equiv="REFRESH" content="0;URL=web/public/index.html">' >> WebPreview.html
     - cd web
     - yarn
-    - hugo
+    - hugo --environment staging
   rules:
     - changes:
       - web/
   artifacts:
+    expose_as: 'Web Preview'
     paths:
+      - WebPreview.html
       - web/public
+    expire_in: 1 week
   cache:
     paths:
       - web/node_modules
