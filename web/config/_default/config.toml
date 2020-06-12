@@ -1,11 +1,9 @@
 languageCode = "en-us"
 title = "OpenGeoSys"
 theme = "ogs"
-baseURL = "https://www.opengeosys.org"
 buildDrafts = false
 buildFuture = true
 enableGitInfo = true
-canonifyURLs = true
 staticDir = ["dist", "static"]
 
 [params]

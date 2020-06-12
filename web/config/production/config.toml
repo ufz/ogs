@@ -1,0 +1,2 @@
+baseURL = "https://www.opengeosys.org"
+canonifyURLs = true
