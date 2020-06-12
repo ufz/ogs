@@ -87,10 +87,39 @@ void PrimaryVariableConstraintDirichletBoundaryCondition::getEssentialBCValues(
         {
             // fetch the value of the primary variable
             auto const local_x = x.get(std::vector{global_index});
-
-            bc_values.ids.emplace_back(global_index);
             pos.setNodeID(id);
-            bc_values.values.emplace_back(_parameter(t, pos).front());
+            if (_less &&
+                local_x[0] < _constraint_threshold_parameter(t, pos).front())
+            {
+                DBUG(
+                    "PrimaryVariableConstraintDirichletBoundaryCondition {:f} "
+                    "< {:f} - value {:f} will be set for dof {:d}.",
+                    local_x[0],
+                    _constraint_threshold_parameter(t, pos).front(),
+                    _parameter(t,pos).front(), global_index);
+
+                bc_values.ids.emplace_back(global_index);
+                bc_values.values.emplace_back(_parameter(t, pos).front());
+            }
+            else if (!_less &&
+                local_x[0] > _constraint_threshold_parameter(t, pos).front())
+            {
+                DBUG(
+                    "PrimaryVariableConstraintDirichletBoundaryCondition {:f} "
+                    "> {:f} - value {:f} will be set for dof {:d}.",
+                    local_x[0],
+                    _constraint_threshold_parameter(t, pos).front(),
+                    _parameter(t,pos).front(), global_index);
+
+                bc_values.ids.emplace_back(global_index);
+                bc_values.values.emplace_back(_parameter(t, pos).front());
+            }
+            else
+            {
+                DBUG(
+                    "PrimaryVariableConstraintDirichletBoundaryCondition "
+                    "condition not satisfied - bc won't be set.");
+            }
         }
     }
 }
