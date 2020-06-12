@@ -5,11 +5,8 @@ web url checker:
   extends:
     - .defaults
     - .rules-master-manual
-
   image:
     name: $WEB_IMAGE
-    entrypoint: [""]
-
   script:
     - cd web
     - >
@@ -17,3 +14,20 @@ web url checker:
       --white-listed-files releases/*
       --white-listed-urls https://jenkins.opengeosys.org/job/ufz/job/ogs-container-maker/job/master/build,http://yourproxy.example.com,https://apt.kitware.com/ubuntu/,https://github.com/YOUR-USERNAME/ogs,https://jenkins.opengeosys.org/github-webhook/,http://localhost:1313,https://github.com/ufz/ogs/pull/\$1,http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd,https://\`-protocol
       content
+
+build web site:
+  stage: build
+  image: $WEB_IMAGE
+  script:
+    - cd web
+    - yarn
+    - hugo
+  rules:
+    - changes:
+      - web/
+  artifacts:
+    paths:
+      - web/public
+  cache:
+    paths:
+      - web/node_modules
