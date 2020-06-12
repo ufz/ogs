@@ -757,7 +757,7 @@ pipeline {
               environment name: 'JOB_NAME', value: 'ufz/ogs/master'
             }
           }
-          agent { label 'docker'}
+          agent { label 'envinf1'}
           steps {
             script {
               sh '''git submodule update --init ThirdParty/container-maker
