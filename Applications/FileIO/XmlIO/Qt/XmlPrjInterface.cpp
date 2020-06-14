@@ -371,9 +371,7 @@ bool XmlPrjInterface::write()
     }
 
     // geometries
-    std::vector<std::string> geo_names;
-    geo_objects.getGeometryNames(geo_names);
-    for (std::string const& name : geo_names)
+    for (std::string const& name : geo_objects.getGeometryNames())
     {
         // write gml file
         GeoLib::IO::XmlGmlInterface gml(geo_objects);

@@ -37,11 +37,11 @@ void readGeometryFromFile(std::string const& fname,
             fname, geo_objs, geo_name, errors, gmsh_path);
     }
 
-    std::vector<std::string> geo_names;
-    geo_objs.getGeometryNames(geo_names);
-    if (geo_names.empty()) {
-        OGS_FATAL("GEOObjects has no geometry name after reading the geometry file. "
-                  "Something is wrong in the reading function.");
+    if (geo_objs.getGeometryNames().empty())
+    {
+        OGS_FATAL(
+            "GEOObjects has no geometry name after reading the geometry file. "
+            "Something is wrong in the reading function.");
     }
 }
 }  // namespace FileIO

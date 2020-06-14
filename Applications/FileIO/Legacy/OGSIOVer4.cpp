@@ -671,8 +671,7 @@ void writeGLIFileV4 (const std::string& fname,
 
 void writeAllDataToGLIFileV4 (const std::string& fname, const GeoLib::GEOObjects& geo)
 {
-    std::vector<std::string> geo_names;
-    geo.getGeometryNames (geo_names);
+    auto const geo_names = geo.getGeometryNames();
 
     // extract path for reading external files
     const std::string path = BaseLib::extractPath(fname);

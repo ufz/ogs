@@ -24,9 +24,8 @@ TEST(GeoLib, PointToStationConversion)
     GeoLib::IO::BoostXmlGmlInterface io(geo_obj);
     bool const ret = io.readFile(file_name);
     EXPECT_TRUE(ret);
-    std::vector<std::string> geo_names;
-    geo_obj.getGeometryNames(geo_names);
-    auto const* const pnts = geo_obj.getPointVec(geo_names[0]);
+    auto const geo_name = geo_obj.getGeometryNames()[0];
+    auto const* const pnts = geo_obj.getPointVec(geo_name);
     assert(pnts != nullptr);
     std::size_t const exp_all_pnts(310);
     EXPECT_EQ(exp_all_pnts, pnts->size());
@@ -34,7 +33,7 @@ TEST(GeoLib, PointToStationConversion)
     // converting only unused points
     std::string stn_orphaned_pnts("Orphaned Points");
     int const res_orphaned_pnts =
-        geo_obj.geoPointsToStations(geo_names[0], stn_orphaned_pnts, true);
+        geo_obj.geoPointsToStations(geo_name, stn_orphaned_pnts, true);
     EXPECT_EQ(0, res_orphaned_pnts);
     auto const* const stns = geo_obj.getStationVec(stn_orphaned_pnts);
     assert(stns != nullptr);
@@ -50,7 +49,7 @@ TEST(GeoLib, PointToStationConversion)
     // converting all points
     std::string stn_all_pnts("All Points");
     int const res_all_pnts =
-        geo_obj.geoPointsToStations(geo_names[0], stn_all_pnts, false);
+        geo_obj.geoPointsToStations(geo_name, stn_all_pnts, false);
     EXPECT_EQ(0, res_all_pnts);
     EXPECT_EQ(exp_all_pnts, geo_obj.getStationVec(stn_all_pnts)->size());
 }

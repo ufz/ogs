@@ -72,8 +72,7 @@ bool createSurface(GeoLib::Polyline const& ply,
     geo.addPolylineVec(std::move(polylines), ply_name);
 
     // use GMSHInterface to create a mesh from the closed polyline
-    std::vector<std::string> geo_names;
-    geo.getGeometryNames(geo_names);
+    auto const geo_names = geo.getGeometryNames();
     FileIO::GMSH::GMSHInterface gmsh_io(
         geo, false, FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, 0.0,
         0.0, 0, geo_names, false, false);

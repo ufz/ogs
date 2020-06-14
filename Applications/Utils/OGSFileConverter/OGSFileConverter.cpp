@@ -73,12 +73,11 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
             continue;
         }
 
-        std::vector<std::string> geo_names;
-        geo_objects.getGeometryNames(geo_names);
-        FileIO::Legacy::writeGLIFileV4(output_str, geo_names[0], geo_objects);
-        geo_objects.removeSurfaceVec(geo_names[0]);
-        geo_objects.removePolylineVec(geo_names[0]);
-        geo_objects.removePointVec(geo_names[0]);
+        auto const geo_name = geo_objects.getGeometryNames()[0];
+        FileIO::Legacy::writeGLIFileV4(output_str, geo_name, geo_objects);
+        geo_objects.removeSurfaceVec(geo_name);
+        geo_objects.removePolylineVec(geo_name);
+        geo_objects.removePointVec(geo_name);
     }
     OGSError::box("File conversion finished");
 }

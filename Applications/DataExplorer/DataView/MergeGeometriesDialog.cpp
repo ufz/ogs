@@ -25,8 +25,7 @@ MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDi
 {
     setupUi(this);
 
-    std::vector<std::string> geoNames;
-    _geo_objects.getGeometryNames(geoNames);
+    auto const geoNames = _geo_objects.getGeometryNames();
 
     // get station names
     std::vector<std::string> geo_station_names;

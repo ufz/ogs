@@ -340,8 +340,7 @@ const SurfaceVec* GEOObjects::getSurfaceVecObj(const std::string &name) const
 
 bool GEOObjects::isUniquePointVecName(std::string &name)
 {
-    std::vector<std::string> existing_names;
-    getGeometryNames(existing_names);
+    std::vector<std::string> const existing_names = getGeometryNames();
     auto const& unique_name = BaseLib::getUniqueName(existing_names, name);
 
     if (unique_name != name)
@@ -384,9 +383,9 @@ void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
     }
 }
 
-void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
+std::vector<std::string> GEOObjects::getGeometryNames() const
 {
-    names.clear ();
+    std::vector<std::string> names;
     for (auto point : _pnt_vecs)
     {
         if (point->getType() == PointVec::PointType::POINT)
@@ -394,6 +393,7 @@ void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
             names.push_back(point->getName());
         }
     }
+    return names;
 }
 
 std::string GEOObjects::getElementNameByID(const std::string& geometry_name,

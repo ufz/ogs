@@ -91,12 +91,7 @@ int main(int argc, char* argv[])
     FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries,
                                  gmsh_path_arg.getValue());
 
-    std::string geo_name;
-    {
-        std::vector<std::string> geo_names;
-        geometries.getGeometryNames(geo_names);
-        geo_name = geo_names[0];
-    }
+    auto const geo_name = geometries.getGeometryNames()[0];
 
     // *** check if the data is usable
     // *** get vector of polylines
