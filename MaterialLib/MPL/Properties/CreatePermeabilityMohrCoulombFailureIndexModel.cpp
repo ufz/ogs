@@ -68,16 +68,19 @@ std::unique_ptr<Property> createPermeabilityMohrCoulombFailureIndexModel(
     auto const max_k =
         //! \ogs_file_param{properties__property__PermeabilityMohrCoulombFailureIndexModel__maximum_permeability}
         config.getConfigParameter<double>("maximum_permeability");
+    auto const t_sigma_max =
+        //! \ogs_file_param{properties__property__PermeabilityMohrCoulombFailureIndexModel__tensile_strength_parameter}
+        config.getConfigParameter<double>("tensile_strength_parameter");
 
     if (geometry_dimension == 2)
     {
         return std::make_unique<PermeabilityMohrCoulombFailureIndexModel<2>>(
             std::move(property_name), parameter_k0, kr, b, c, phi, max_k,
-            local_coordinate_system);
+            t_sigma_max, local_coordinate_system);
     }
 
     return std::make_unique<PermeabilityMohrCoulombFailureIndexModel<3>>(
         std::move(property_name), parameter_k0, kr, b, c, phi, max_k,
-        local_coordinate_system);
+        t_sigma_max, local_coordinate_system);
 }
 }  // namespace MaterialPropertyLib

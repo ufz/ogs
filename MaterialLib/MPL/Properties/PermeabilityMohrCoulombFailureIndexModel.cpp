@@ -31,7 +31,7 @@ PermeabilityMohrCoulombFailureIndexModel<DisplacementDim>::
     PermeabilityMohrCoulombFailureIndexModel(
         std::string name, ParameterLib::Parameter<double> const& k0,
         double const kr, double const b, double const c, double const phi,
-        double const k_max,
+        double const k_max, double const t_sigma_max,
         ParameterLib::CoordinateSystem const* const local_coordinate_system)
     : k0_(k0),
       kr_(kr),
@@ -39,8 +39,20 @@ PermeabilityMohrCoulombFailureIndexModel<DisplacementDim>::
       c_(c),
       phi_(boost::math::constants::degree<double>() * phi),
       k_max_(k_max),
+      t_sigma_max_(t_sigma_max),
       local_coordinate_system_(local_coordinate_system)
 {
+    const double t_sigma_upper = c_ / std::tan(phi_);
+    if (t_sigma_max_ <= 0.0 || t_sigma_max_ > t_sigma_upper ||
+        std::fabs(t_sigma_max_ - t_sigma_upper) <
+            std::numeric_limits<double>::epsilon())
+    {
+        OGS_FATAL(
+            "Tensile strength parameter of {:e} is out of the range (0, "
+            "c/tan(phi)) = (0, {:e})",
+            t_sigma_max_, t_sigma_upper);
+    }
+
     name_ = std::move(name);
 }
 
@@ -85,15 +97,24 @@ PermeabilityMohrCoulombFailureIndexModel<DisplacementDim>::value(
     }
 
     double const sigma_m = 0.5 * (sigma[2] + sigma[0]);
-    double tau_tt = c_ * std::cos(phi_) - sigma_m * std::sin(phi_);
-    const double apex_cut_offset = 0.001;
-    if (std::fabs(tau_tt) < apex_cut_offset)
-    {
-        tau_tt = apex_cut_offset * c_ * std::cos(phi_);
-    }
 
-    // +- tau_t = tau_tt
-    double const f = 0.5 * std::fabs(sigma[2] - sigma[0]) / tau_tt;
+    double const tau_m = 0.5 * std::fabs(sigma[2] - sigma[0]);
+    double f = 0.0;
+    if (sigma_m > t_sigma_max_)
+    {
+        // tensile failure criterion
+        f = sigma_m / t_sigma_max_;
+
+        double const tau_tt =
+            c_ * std::cos(phi_) - t_sigma_max_ * std::sin(phi_);
+
+        f = std::max(f, tau_m / tau_tt);
+    }
+    else
+    {
+        // von Mohr Coulomb failure criterion
+        f = tau_m / (c_ * std::cos(phi_) - sigma_m * std::sin(phi_));
+    }
 
     if (f >= 1.0)
     {

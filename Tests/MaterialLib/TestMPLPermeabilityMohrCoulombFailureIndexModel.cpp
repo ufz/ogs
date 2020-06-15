@@ -9,8 +9,6 @@
  * Created on June 8, 2020, 9:17 AM
  */
 
-#pragma once
-
 #include <gtest/gtest.h>
 
 #include <Eigen/Eigen>
@@ -27,16 +25,16 @@
 
 TEST(MaterialPropertyLib, PermeabilityMohrCoulombFailureIndexModel)
 {
-    ParameterLib::ConstantParameter<double> k0 =
-        ParameterLib::ConstantParameter<double>("k0", 1.e-20);
+    ParameterLib::ConstantParameter<double> const k0("k0", 1.e-20);
     double const kr = 1.0e-19;
     double const b = 3.0;
     double const c = 1.0e+6;
     double const phi = 15.0;
     double const k_max = 1.e-10;
+    double const t_sigma_max = c;
 
     auto const k_model = MPL::PermeabilityMohrCoulombFailureIndexModel<3>(
-        "k_f", k0, kr, b, c, phi, k_max, nullptr);
+        "k_f", k0, kr, b, c, phi, k_max, t_sigma_max, nullptr);
 
     const int symmetric_tensor_size = 6;
     using SymmetricTensor = Eigen::Matrix<double, symmetric_tensor_size, 1>;
@@ -62,7 +60,7 @@ TEST(MaterialPropertyLib, PermeabilityMohrCoulombFailureIndexModel)
 
     double const k_expected = 1.1398264890628033e-15;
 
-    ASSERT_LE(std::fabs((k_expected - k(0, 0))) / k_expected, 1e-10)
+    ASSERT_LE(std::fabs(k_expected - k(0, 0)) / k_expected, 1e-10)
         << "for expected changed permeability " << k_expected
         << " and for computed changed permeability." << k(0, 0);
 
@@ -97,7 +95,9 @@ TEST(MaterialPropertyLib, PermeabilityMohrCoulombFailureIndexModel)
     auto const k_apex_f =
         MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
 
-    ASSERT_LE(std::fabs(k_max - k_apex_f(0, 0)) / k_max, 1e-19)
+    double const k_apex_expacted = 7.2849707418474819e-15;
+    ASSERT_LE(std::fabs(k_apex_expacted - k_apex_f(0, 0)) / k_apex_expacted,
+              1e-19)
         << "for expected untouched permeability" << k_non_f_expected
         << " and for computed untouched permeability." << k_apex_f(0, 0);
 }

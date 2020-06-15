@@ -36,23 +36,45 @@ namespace MaterialPropertyLib
  * \f$k_\text{r}\f$ is a reference permeability,
  * \f$b\f$ is a fitting parameter.
  * \f$k_\text{r}\f$ and \f$b\f$ can be calibrated by experimental data.
+ *
  * The failure index \f$f\f$ is calculated from  the Mohr Coulomb failure
- * criterion comparing an acting shear stress. The Mohr Coulomb failure
+ * criterion comparing an acting shear stress for the shear dominated failure.
+ * The tensile failure is governed by an input parameter of
+ * tensile_strength_parameter .
+ *
+ *  The Mohr Coulomb failure
  * criterion \cite labuz2012mohr takes
  * the form
  *   \f[\tau(\sigma)=c-\sigma \mathrm{tan} \phi\f]
  *   with \f$\tau\f$ the shear stress, \f$c\f$ the cohesion, \f$\sigma\f$ the
  * tensile stress, and \f$\phi\f$ the internal friction angle.
  *
- *  The failure index is calculated by
+ *  The failure index of the Mohr Coulomb model is calculated by
  *   \f[
- *         f=\frac{\tau_m }{\cos(\phi)\tau(\sigma_m)}
+ *         f_{MC}=\frac{\tau_m }{\cos(\phi)\tau(\sigma_m)}
  *   \f]
  *   with
  *   \f$\tau_m=(\sigma_3-\sigma_1)/2\f$
  *   and \f$\sigma_m=(\sigma_1+\sigma_3)/2\f$,
  *  where \f$\sigma_1\f$ and \f$\sigma_3\f$ are the minimum and maximum shear
  * stress, respectively.
+ *
+ * The tensile failure index is calculated by
+ *  \f[
+ *    f_{t} = \sigma_m / \sigma^t_{max}
+ * \f]
+ * with, \f$\sigma^t_{max} < c \tan(\phi) \f$, a parameter of tensile strength for the cutting
+ * of the apex of the Mohr Coulomb model.
+ *
+ * The tensile stress status is determined by a condition of \f$\sigma_m>
+ * \sigma^t_{max}\f$. The failure index is then calculated by
+ * \f[
+ *   f =
+ *  \begin{cases}
+ *    f=f_{MC}, & \sigma_{m} <\sigma^t_{max}\\
+ *    f=max(f_{MC}, f_t), & \sigma_{m} \geq \sigma^t_{max}\\
+ *  \end{cases}
+ * \f]
  *
  *  Note: the conventional mechanics notations are used, which mean that tensile
  * stress is positive.
@@ -65,7 +87,7 @@ public:
     PermeabilityMohrCoulombFailureIndexModel(
         std::string name, ParameterLib::Parameter<double> const& k0,
         double const kr, double const b, double const c, double const phi,
-        double const k_max,
+        double const k_max, double const t_sigma_max,
         ParameterLib::CoordinateSystem const* const local_coordinate_system);
 
     void checkScale() const override;
@@ -92,6 +114,9 @@ private:
 
     /// Maximum permeability.
     double const k_max_;
+
+    /// Tensile strength parameter.
+    double const t_sigma_max_;
     ParameterLib::CoordinateSystem const* const local_coordinate_system_;
 };
 
