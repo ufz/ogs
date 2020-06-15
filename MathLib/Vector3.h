@@ -3,7 +3,7 @@
  * \author Lars Bilke
  * \date   2009-10-27
  * \brief  Definition of the Vector3 class.
- *         From: http://www.strout.net/info/coding/classlib/intro.html
+ *         From: http://www.strout.net
  *         with modifications to derive from TemplatePoint
  *
  * \copyright

@@ -4,11 +4,9 @@
  *
  * This page only describes the source code itself. See the following links for additional information:
  *
- * - Wiki: https://svn.ufz.de/ogs
- * - Developer guide: http://docs.opengeosys.org/docs/devguide
- * - Data Explorer (Gui) manual: http://docs.opengeosys.org/assets/releases/head/docs/DataExplorer-Manual.pdf
+ * - Developer guide: https://opengeosys.org/docs/devguide
+ * - Data Explorer (Gui) manual: https://jenkins.opengeosys.org/job/ufz/job/data_explorer_manual/job/master/lastSuccessfulBuild/artifact/DataExplorer-Manual.pdf
  * - Discussion forum: https://discourse.opengeosys.org
- * - Jenkins build server: https://svn.ufz.de/hudson
  *
  *
  * \section internal_modules Internal Modules

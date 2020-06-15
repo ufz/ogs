@@ -64,7 +64,6 @@ public slots:
     vtkRenderer* renderer() const { return _vtkRender; }
 
     /// @brief Sets the widgets cursor shape.
-    /// @see http://doc.qt.nokia.com/4.7/qt.html#CursorShape-enum
     void setCursorShape(Qt::CursorShape shape);
 
 protected slots:

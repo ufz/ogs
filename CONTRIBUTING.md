@@ -40,7 +40,6 @@
 
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
-* [OGS Jenkins-CI server](https://svn.ufz.de/hudson/job/OGS-6/)
 * [OGS Styleguide][styleguide]
 
 [styleguide]: http://ufz.github.com/styleguide/cppguide.xml

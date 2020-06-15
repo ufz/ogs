@@ -287,7 +287,7 @@ bool BoostXmlGmlInterface::write()
 
     // put header in property tree
     pt.put("<xmlattr>.xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-    pt.put("<xmlattr>.xmlns:ogs", "http://www.opengeosys.net");
+    pt.put("<xmlattr>.xmlns:ogs", "https://www.opengeosys.org");
     auto& geometry_set = pt.add("OpenGeoSysGLI", "");
 
     geometry_set.add("name", _exportName);
