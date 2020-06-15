@@ -14,6 +14,7 @@
 #include "BaseLib/Error.h"
 #include "LogPenalty.h"
 #include "MathLib/MathTools.h"
+#include "NumLib/Exceptions.h"
 
 namespace MaterialLib
 {
@@ -192,7 +193,9 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
 
         if (!success_iterations)
         {
-            OGS_FATAL("Coulomb nonlinear solver didn't converge.");
+            throw NumLib::AssemblyException(
+                "FractureModel/Coulomb local nonlinear solver didn't "
+                "converge.");
         }
 
         // Solution containing lambda is not needed; w_p and sigma already
