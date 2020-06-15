@@ -1054,7 +1054,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 1D_ReactiveMassTransport_IPhreeqc_KineticReactantBlockTest
+    NAME 1D_ReactiveMassTransport_PhreeqcIO_KineticReactantBlockTest
     PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant
     EXECUTABLE ogs
     EXECUTABLE_ARGS 1d_isofrac.prj
