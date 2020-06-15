@@ -14,17 +14,17 @@ build container images:
   extends: .container-maker-setup
   script:
     - docker login -u $OGS_CI_REGISTRY_USER -p $OGS_CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $CONTAINER_GCC_IMAGE:latest || true
+    - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc:master || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
       --pm system --cvode --cppcheck --docs --gcovr
       --tag $CONTAINER_GCC_IMAGE --upload
-    - docker pull $CONTAINER_GCC_GUI_IMAGE:latest || true
+    - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc-gui:master || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
       --pm conan --cvode --cppcheck --docs --gcovr --gui
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
-    - docker pull $CONTAINER_CLANG_IMAGE:latest || true
+    - docker pull registry.opengeosys.org/ogs/ogs/ogs/clang:master || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
-      --base_image ubuntu:18.04 --compiler clang --compiler_version 9
+      --compiler clang --compiler_version 9
       --tag $CONTAINER_CLANG_IMAGE --upload
 
 ### global project images ###
