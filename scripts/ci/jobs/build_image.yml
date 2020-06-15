@@ -4,10 +4,11 @@ build container images:
     - changes:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
+      when: always
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: always
   tags:
-    - docker-shell
+    - envinf1-shell # can be changed back when instance-level vars are implemented
 
   variables:
     GIT_LFS_SKIP_SMUDGE: "1"

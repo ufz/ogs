@@ -1,8 +1,7 @@
 build linux petsc:
   extends: .template-build-linux
   tags:
-    - envinf1
-    - docker-shell
+    - envinf1-shell
 
   variables:
     BUILD_DIR: "build-petsc"
