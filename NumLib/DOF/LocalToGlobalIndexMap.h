@@ -44,7 +44,7 @@ class LocalToGlobalIndexMap final
 {
     // Enables using std::make_unique with private constructors from within
     // member functions of LocalToGlobalIndexMap. Cf.
-    // http://seanmiddleditch.com/enabling-make_unique-with-private-constructors/
+    // https://seanmiddleditch.com/enabling-make-unique-with-private-constructors/
     struct ConstructorTag
     {
         explicit ConstructorTag() = default;

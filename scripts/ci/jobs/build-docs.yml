@@ -4,6 +4,8 @@ build docs:
     name: $CONTAINER_GCC_IMAGE
 
   before_script:
+    # HACK to easier linking to the generated pages
+    - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
     - mkdir -p build
     - cd build
 
@@ -13,5 +15,7 @@ build docs:
 
   artifacts:
     expose_as: 'Doxygen'
-    paths: ['build/docs/']
+    paths:
+      - Doxygen.html
+      - build/docs/
     expire_in: 1 week
