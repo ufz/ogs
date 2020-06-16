@@ -174,6 +174,35 @@ void ComponentTransportProcess::
         _local_assemblers, pv.getActiveElementIDs(), _coupled_solutions);
 }
 
+void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(
+    const double t,
+    std::vector<GlobalVector*> const& integration_point_values_vectors,
+    std::vector<GlobalVector*>& nodal_values_vectors)
+{
+    auto& extrapolator = getExtrapolator();
+    auto const extrapolatables =
+        NumLib::makeExtrapolatable(_local_assemblers,
+                                   &ComponentTransportLocalAssemblerInterface::
+                                       getInterpolatedLocalSolution);
+
+    for (unsigned transport_process_id = 0;
+         transport_process_id < integration_point_values_vectors.size();
+         ++transport_process_id)
+    {
+        auto const& pv = _process_variables[transport_process_id + 1][0].get();
+        auto const& int_pt_C =
+            integration_point_values_vectors[transport_process_id];
+
+        extrapolator.extrapolate(pv.getNumberOfComponents(), extrapolatables, t,
+                                 {int_pt_C},
+                                 {_local_to_global_index_map.get()});
+
+        auto const& nodal_values = extrapolator.getNodalValues();
+        MathLib::LinAlg::copy(nodal_values,
+                              *nodal_values_vectors[transport_process_id + 1]);
+    }
+}
+
 void ComponentTransportProcess::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, const double /*t*/,
     const double /*delta_t*/, int const process_id)

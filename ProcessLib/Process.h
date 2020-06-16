@@ -100,6 +100,14 @@ public:
         int const /*process_id*/)
     {
     }
+
+    virtual void extrapolateIntegrationPointValuesToNodes(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*integration_point_values_vectors*/,
+        std::vector<GlobalVector*>& /*nodal_values_vectors*/)
+    {
+    }
+
     void preAssemble(const double t, double const dt,
                      GlobalVector const& x) final;
     void assemble(const double t, double const dt,
