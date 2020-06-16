@@ -50,6 +50,32 @@ You need to have at least **gcc {{< dataFile "versions.minimum_version.gcc" >}}*
 $ gcc --version
 gcc (GCC) {{< dataFile "versions.minimum_version.gcc" >}}.0
 ```
+
+::: {.note}
+### Install a newer compiler on Ubuntu
+
+We recommend using Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}} as its standard `gcc` package is already at version 9. If you are on an older Ubuntu version you can install a newer compiler from the `ubuntu-toolchain-r/test`-repository:
+
+```bash
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install gcc-9 g++-9
+```
+
+To make the newly installed compiler the default one:
+
+```bash
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 \
+  --slave /usr/bin/g++ g++ /usr/bin/g++-9
+```
+
+If you do not do this you have to specify the compiler during the first CMake run:
+
+```bash
+CC=gcc-9 CXX=c++-9 cmake ../ogs [more CMake options]
+```
+:::
+
 :::
 
 ::: {.mac}

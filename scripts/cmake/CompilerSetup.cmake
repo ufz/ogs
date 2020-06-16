@@ -74,9 +74,11 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     endif()
 
     if(COMPILER_IS_GCC)
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.gcc})
-            message(FATAL_ERROR "Aborting: GCC ${ogs.minimum_version.gcc} is \
-                required! Found version ${CMAKE_CXX_COMPILER_VERSION}.")
+        if(NOT "${HOSTNAME}" MATCHES "frontend.*") # TODO: remove later
+            if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.gcc})
+                message(FATAL_ERROR "Aborting: GCC ${ogs.minimum_version.gcc} is \
+                    required! Found version ${CMAKE_CXX_COMPILER_VERSION}.")
+            endif()
         endif()
         add_compile_options(-fext-numeric-literals)
         include(GCCSanitizer)
