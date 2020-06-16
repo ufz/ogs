@@ -53,8 +53,12 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
         OGS_FATAL("Vector of iteration numbers must be sorted.");
     }
 
-    // Remove possible duplicated elements. Result will be sorted.
-    BaseLib::makeVectorUnique(_fixed_output_times);
+    if (!std::is_sorted(cbegin(_fixed_output_times), cend(_fixed_output_times)))
+    {
+        OGS_FATAL(
+            "Vector of fixed time steps passed to the "
+            "IterationNumberBasedTimeStepping constructor must be sorted");
+    }
 }
 
 bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,

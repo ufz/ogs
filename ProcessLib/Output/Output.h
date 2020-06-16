@@ -104,7 +104,7 @@ private:
     std::vector<PairRepeatEachSteps> _repeats_each_steps;
 
     //! Given times that steps have to reach.
-    std::vector<double> _fixed_output_times;
+    std::vector<double> const _fixed_output_times;
 
     std::multimap<Process const*, MeshLib::IO::PVDFile> _process_to_pvd_file;
 

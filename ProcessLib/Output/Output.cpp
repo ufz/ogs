@@ -78,22 +78,20 @@ bool Output::shallDoOutput(int timestep, double const t)
         }
     }
 
-    bool make_output = timestep % each_steps == 0;
-
-    if (_fixed_output_times.empty())
+    if (timestep % each_steps == 0)
     {
-        return make_output;
+        return true;
     }
 
-    const double specific_time = _fixed_output_times.back();
-    const double zero_threshold = std::numeric_limits<double>::min();
-    if (std::fabs(specific_time - t) < zero_threshold)
+    auto const fixed_output_time = std::lower_bound(
+        cbegin(_fixed_output_times), cend(_fixed_output_times), t);
+    if (fixed_output_time == cend(_fixed_output_times))
     {
-        _fixed_output_times.pop_back();
-        make_output = true;
+        return false;
     }
 
-    return make_output;
+    return std::fabs(*fixed_output_time - t) <
+           std::numeric_limits<double>::min();
 }
 
 Output::Output(std::string output_directory, std::string output_file_prefix,
@@ -117,6 +115,12 @@ Output::Output(std::string output_directory, std::string output_file_prefix,
       _mesh_names_for_output(mesh_names_for_output),
       _meshes(meshes)
 {
+    if (!std::is_sorted(cbegin(_fixed_output_times), cend(_fixed_output_times)))
+    {
+        OGS_FATAL(
+            "Vector of fixed output time steps passed to the Output "
+            "constructor must be sorted");
+    }
 }
 
 void Output::addProcess(ProcessLib::Process const& process,

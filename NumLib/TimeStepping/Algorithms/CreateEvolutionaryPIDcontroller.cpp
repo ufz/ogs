@@ -45,12 +45,9 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     auto fixed_output_times =
         //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__fixed_output_times}
         config.getConfigParameter<std::vector<double>>("fixed_output_times",
-                                                       std::vector<double>{});
-    if (!fixed_output_times.empty())
-    {
-        // Remove possible duplicated elements and sort in descending order.
-        BaseLib::makeVectorUnique(fixed_output_times, std::greater<>());
-    }
+                                                       {});
+    // Remove possible duplicated elements and sort.
+    BaseLib::makeVectorUnique(fixed_output_times);
 
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__tol}
     auto const tol = config.getConfigParameter<double>("tol");
