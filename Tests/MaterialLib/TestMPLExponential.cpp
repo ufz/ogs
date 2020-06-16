@@ -74,8 +74,12 @@ TEST_F(MaterialPropertyLibExponentialProperty, TestNumericalDerivatives)
         double const Dv = dydx_C2(T, y, eps);
         double const Dv2 = d2ydx2_C2(T, y, eps);
 
+        if ((std::abs(dv - Dv) > 1e-9 * v) ||
+            (std::abs(dv2 - Dv2) > 1.5e-4 * v))
+            INFO("{} {} {}", T, std::abs(dv - Dv) / v, std::abs(dv2 - Dv2) / v);
+
         return (std::abs(dv - Dv) <= 1e-9 * v) &&
-               (std::abs(dv2 - Dv2) <= eps * v);
+               (std::abs(dv2 - Dv2) <= 1.5e-4 * v);
     };
 
     // Limit values to avoid +-inf.
