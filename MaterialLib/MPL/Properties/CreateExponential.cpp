@@ -44,6 +44,10 @@ std::unique_ptr<Exponential> createExponential(
         //! \ogs_file_param{properties__property__Exponential__exponent__factor}
         exponent_data_config.getConfigParameter<double>("factor");
 
+    auto const offset =
+        //! \ogs_file_param{properties__property__Exponential__offset}
+        config.getConfigParameter<double>("offset");
+
     MaterialPropertyLib::Variable exp_data_type =
         MaterialPropertyLib::convertStringToVariable(variable_name);
 
@@ -51,6 +55,6 @@ std::unique_ptr<Exponential> createExponential(
         exp_data_type, reference_condition, factor};
 
     return std::make_unique<MaterialPropertyLib::Exponential>(
-        std::move(property_name), reference_value, exp_data);
+        std::move(property_name), offset, reference_value, exp_data);
 }
 }  // namespace MaterialPropertyLib
