@@ -47,11 +47,11 @@ namespace MaterialPropertyLib
  * the form
  *   \f[\tau(\sigma)=c-\sigma \mathrm{tan} \phi\f]
  *   with \f$\tau\f$ the shear stress, \f$c\f$ the cohesion, \f$\sigma\f$ the
- * tensile stress, and \f$\phi\f$ the internal friction angle.
+ * normal stress, and \f$\phi\f$ the internal friction angle.
  *
  *  The failure index of the Mohr Coulomb model is calculated by
  *   \f[
- *         f_{MC}=\frac{\tau_m }{\cos(\phi)\tau(\sigma_m)}
+ *         f_{MC}=\frac{|\tau_m| }{\cos(\phi)\tau(\sigma_m)}
  *   \f]
  *   with
  *   \f$\tau_m=(\sigma_3-\sigma_1)/2\f$
@@ -63,18 +63,25 @@ namespace MaterialPropertyLib
  *  \f[
  *    f_{t} = \sigma_m / \sigma^t_{max}
  * \f]
- * with, \f$\sigma^t_{max} < c \tan(\phi) \f$, a parameter of tensile strength for the cutting
- * of the apex of the Mohr Coulomb model.
+ * with, \f$0 < \sigma^t_{max} < c \tan(\phi) \f$, a parameter of tensile
+ * strength for the cutting of the apex of the Mohr Coulomb model.
  *
  * The tensile stress status is determined by a condition of \f$\sigma_m>
  * \sigma^t_{max}\f$. The failure index is then calculated by
  * \f[
  *   f =
  *  \begin{cases}
- *    f=f_{MC}, & \sigma_{m} <\sigma^t_{max}\\
- *    f=max(f_{MC}, f_t), & \sigma_{m} \geq \sigma^t_{max}\\
+ *    f_{MC}, & \sigma_{m} \leq \sigma^t_{max}\\
+ *    max(f_{MC}, f_t), & \sigma_{m} > \sigma^t_{max}\\
  *  \end{cases}
  * \f]
+ *
+ *  The computed permeability components are restricted with an upper bound,
+ *  i.e. \f$\mathbf{k}:=k_{ij} < k_{max}\f$.
+ *
+ * If \f$\mathbf{k}_0\f$ is orthogonal, i.e input two or three numbers
+ * for its diagonal entries, a coordinate system rotation of \f$\mathbf{k}\f$
+ * is possible if it is needed.
  *
  *  Note: the conventional mechanics notations are used, which mean that tensile
  * stress is positive.
@@ -101,7 +108,8 @@ public:
                             double const t, double const dt) const override;
 
 private:
-    /// Intrinsic permeability for undamaged material.
+    /// Intrinsic permeability for undamaged material. It can be a scalar or
+    /// tensor for anisotropic material.
     ParameterLib::Parameter<double> const& k0_;
     /// Reference permeability.
     double const kr_;

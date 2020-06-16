@@ -112,7 +112,7 @@ PermeabilityMohrCoulombFailureIndexModel<DisplacementDim>::value(
     }
     else
     {
-        // von Mohr Coulomb failure criterion
+        // Mohr Coulomb failure criterion
         f = tau_m / (c_ * std::cos(phi_) - sigma_m * std::sin(phi_));
     }
 
