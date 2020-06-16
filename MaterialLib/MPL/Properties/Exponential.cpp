@@ -16,9 +16,10 @@
 namespace MaterialPropertyLib
 {
 Exponential::Exponential(std::string name,
+                         double const offset,
                          PropertyDataType const& property_reference_value,
                          ExponentData const& v)
-    : exponent_data_(v)
+    : exponent_data_(v), offset_(offset)
 {
     name_ = std::move(name);
     auto const f = std::get<double>(exponent_data_.factor);
@@ -35,7 +36,7 @@ PropertyDataType Exponential::value(
     auto const v =
         std::get<double>(variable_array[static_cast<int>(exponent_data_.type)]);
 
-    return std::get<double>(value_) * std::exp(f * v);
+    return offset_ + std::get<double>(value_) * std::exp(f * v);
 }
 
 PropertyDataType Exponential::dValue(
