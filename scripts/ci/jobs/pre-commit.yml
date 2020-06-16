@@ -2,6 +2,8 @@ pre commit:
   stage: pre-checks
   image:
     name: $PRECOMMIT_IMAGE
+  extends:
+    - .defaults
   script:
     - pre-commit install
     - pre-commit run --all-files

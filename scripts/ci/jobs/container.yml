@@ -9,7 +9,9 @@ container:
     GIT_STRATEGY: fetch
     OPENMPI_VERSIONS: 'off 2.1.6 3.1.4 4.0.1'
     GIT_LFS_SKIP_SMUDGE: "1"
-  extends: .container-maker-setup
+  extends:
+    - .defaults
+    - .container-maker-setup
   script:
     - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi $OPENMPI_VERSIONS
   artifacts:

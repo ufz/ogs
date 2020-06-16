@@ -2,6 +2,8 @@ build docs:
   stage: build
   image:
     name: $CONTAINER_GCC_IMAGE
+  extends:
+    - .defaults
 
   before_script:
     # HACK to easier linking to the generated pages

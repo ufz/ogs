@@ -18,6 +18,8 @@ web url checker:
 preview web site:
   stage: build
   image: $WEB_IMAGE
+  extends:
+    - .defaults
   script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=web/public/index.html">' >> WebPreview.html
@@ -41,6 +43,8 @@ preview web site:
 deploy web site:
   stage: package
   image: $WEB_IMAGE
+  extends:
+    - .defaults
   script:
     - cd web
     - yarn
