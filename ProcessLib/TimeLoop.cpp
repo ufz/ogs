@@ -459,6 +459,9 @@ void TimeLoop::initialize()
         auto const post_reaction_int_pt_process_solutions =
             _chemical_solver_interface->getIntPtProcessSolutions();
 
+        pcs.extrapolateIntegrationPointValuesToNodes(
+            0., post_reaction_int_pt_process_solutions, _process_solutions);
+
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 
@@ -829,6 +832,9 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
         auto const post_reaction_int_pt_process_solutions =
             _chemical_solver_interface->getIntPtProcessSolutions();
+
+        pcs.extrapolateIntegrationPointValuesToNodes(
+            t, post_reaction_int_pt_process_solutions, _process_solutions);
 
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
