@@ -70,6 +70,12 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> const& getInterpolatedLocalSolution(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& int_pt_x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const = 0;
+
 protected:
     CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
 };
@@ -889,6 +895,24 @@ public:
         Eigen::Vector3d flux(0.0, 0.0, 0.0);
         flux.head<GlobalDim>() = rho_w * q;
         return flux;
+    }
+
+    std::vector<double> const& getInterpolatedLocalSolution(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& int_pt_x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        assert(_process_data.chemical_process_data);
+        assert(int_pt_x.size() == 1);
+
+        cache.clear();
+        auto const ele_id = _element.getID();
+        auto const& indices = _process_data.chemical_process_data
+                                  ->chemical_system_index_map[ele_id];
+        cache = int_pt_x[0]->get(indices);
+
+        return cache;
     }
 
 private:
