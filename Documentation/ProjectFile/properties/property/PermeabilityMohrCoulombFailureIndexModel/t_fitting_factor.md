@@ -1,0 +1,1 @@
+\copydoc MaterialPropertyLib::PermeabilityMohrCoulombFailureIndexModel::b_

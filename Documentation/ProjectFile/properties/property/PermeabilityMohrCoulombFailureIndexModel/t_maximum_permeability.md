@@ -1,0 +1,1 @@
+\copydoc MaterialPropertyLib::PermeabilityMohrCoulombFailureIndexModel::k_max_

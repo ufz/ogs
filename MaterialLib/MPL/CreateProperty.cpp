@@ -27,7 +27,7 @@
 namespace
 {
 std::unique_ptr<MaterialPropertyLib::Property> createProperty(
-    int const /*geometry_dimension*/,
+    int const geometry_dimension,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
@@ -71,6 +71,13 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     if (boost::iequals(property_type, "IdealGasLaw"))
     {
         return createIdealGasLaw(config);
+    }
+
+    if (boost::iequals(property_type,
+                       "PermeabilityMohrCoulombFailureIndexModel"))
+    {
+        return createPermeabilityMohrCoulombFailureIndexModel(
+            geometry_dimension, config, parameters, local_coordinate_system);
     }
 
     if (boost::iequals(property_type, "PermeabilityOrthotropicPowerLaw"))
