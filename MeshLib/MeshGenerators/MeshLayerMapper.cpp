@@ -269,8 +269,10 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
 
 bool MeshLayerMapper::layerMapping(MeshLib::Mesh const& mesh,
                                    GeoLib::Raster const& raster,
-                                   double const noDataReplacementValue = 0.0)
+                                   double const nodata_replacement,
+                                   bool const ignore_nodata)
 {
+
     if (mesh.getDimension() != 2)
     {
         ERR("MshLayerMapper::layerMapping() - requires 2D mesh");
@@ -289,18 +291,27 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh const& mesh,
     const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
     for (unsigned i = 0; i < nNodes; ++i)
     {
-        if (!raster.isPntOnRaster(*nodes[i]))
+        if (!ignore_nodata && !raster.isPntOnRaster(*nodes[i]))
         {
             // use either default value or elevation from layer above
-            nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1], noDataReplacementValue);
+            nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1],
+                                        nodata_replacement);
             continue;
         }
 
-        double elevation (raster.interpolateValueAtPoint(*nodes[i]));
-        if (std::abs(elevation - header.no_data) <
-            std::numeric_limits<double>::epsilon())
+        double elevation (raster.getValueAtPoint(*nodes[i]));
+        constexpr double eps = std::numeric_limits<double>::epsilon();
+        if (std::fabs(elevation - header.no_data) < eps)
         {
-            elevation = noDataReplacementValue;
+            if (ignore_nodata)
+            {
+                continue;
+            }
+            elevation = nodata_replacement;
+        }
+        else
+        {
+            elevation = raster.interpolateValueAtPoint(*nodes[i]);
         }
         nodes[i]->updateCoordinates((*nodes[i])[0], (*nodes[i])[1], elevation);
     }
