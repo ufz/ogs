@@ -458,6 +458,10 @@ void TimeLoop::initialize()
         _chemical_solver_interface->executeInitialCalculation(
             pcs.interpolateNodalValuesToIntegrationPoints(_process_solutions));
 
+        pcs.extrapolateIntegrationPointValuesToNodes(
+            0., _chemical_solver_interface->getIntPtProcessSolutions(),
+            _process_solutions);
+
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 
@@ -823,6 +827,10 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
         _chemical_solver_interface->doWaterChemistryCalculation(
             pcs.interpolateNodalValuesToIntegrationPoints(_process_solutions),
             dt);
+
+        pcs.extrapolateIntegrationPointValuesToNodes(
+            t, _chemical_solver_interface->getIntPtProcessSolutions(),
+            _process_solutions);
 
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
