@@ -23,11 +23,12 @@ struct MaterialPropertyLibExponentialProperty : public ::testing::Test
 {
     void SetUp() override
     {
+        double const y_offset = 1.;
         double const y_ref = 1.;
         double const T_ref = 1.;
         double const factor = 2.;
         p = std::make_unique<MPL::Exponential>(
-            "exponential", y_ref,
+            "exponential", y_offset, y_ref,
             MPL::ExponentData{MPL::Variable::temperature, T_ref, factor});
     }
     std::unique_ptr<MPL::Property> p;
@@ -90,12 +91,13 @@ TEST_F(MaterialPropertyLibExponentialProperty, TestNumericalDerivatives)
 
 TEST(MaterialPropertyLib, Exponential)
 {
+    double const y_offset = -1e-3;
     double const y_ref = 1e-3;
     double const reference_condition = 20.0;
     double const factor = 1 / 75.0;
     MPL::ExponentData const exp_data{MPL::Variable::temperature,
                                      reference_condition, factor};
-    MPL::Property const& p = MPL::Exponential{"exponential", y_ref, exp_data};
+    MPL::Property const& p = MPL::Exponential{"exponential", y_offset, y_ref, exp_data};
 
     double const T = 20.;
     MPL::VariableArray variable_array;
@@ -103,9 +105,10 @@ TEST(MaterialPropertyLib, Exponential)
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
-    ASSERT_NEAR(p.template value<double>(variable_array, pos, time, dt),
-                y_ref * (std::exp(factor * (T - reference_condition))),
-                1.e-10);
+    ASSERT_NEAR(
+        p.template value<double>(variable_array, pos, time, dt),
+        y_offset + y_ref * (std::exp(factor * (T - reference_condition))),
+        1.e-10);
     ASSERT_EQ(p.template dValue<double>(
                   variable_array, MPL::Variable::phase_pressure, pos, time, dt),
               0.0);
