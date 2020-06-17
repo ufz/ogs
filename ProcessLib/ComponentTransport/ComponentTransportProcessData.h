@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "ChemicalProcessData.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 
@@ -43,6 +44,7 @@ struct ComponentTransportProcessData
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const non_advective_form;
+    std::unique_ptr<ChemicalProcessData> chemical_process_data;
 };
 
 }  // namespace ComponentTransport
