@@ -26,6 +26,20 @@
    <string>2D Mesh Mapping</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="6" column="2">
+    <widget class="QLineEdit" name="newNameEdit">
+     <property name="text">
+      <string>MappedMesh</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QLabel" name="newNameLabel">
+     <property name="text">
+      <string>Name of new mesh:</string>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="3">
     <widget class="QPushButton" name="rasterSelectButton">
      <property name="maximumSize">
@@ -36,20 +50,6 @@
      </property>
      <property name="text">
       <string>...</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QLabel" name="noDataValueLabel">
-     <property name="text">
-      <string>     Set NoData values to:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QRadioButton" name="staticValueButton">
-     <property name="text">
-      <string>Map to static value:</string>
      </property>
     </widget>
    </item>
@@ -66,7 +66,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="4" column="2">
     <widget class="QLineEdit" name="noDataValueEdit">
      <property name="text">
       <string>0.0</string>
@@ -76,7 +76,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
+   <item row="5" column="2">
     <widget class="QLineEdit" name="staticValueEdit">
      <property name="enabled">
       <bool>false</bool>
@@ -89,13 +89,10 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1" colspan="3">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   <item row="5" column="0" colspan="2">
+    <widget class="QRadioButton" name="staticValueButton">
+     <property name="text">
+      <string>Map to static value:</string>
      </property>
     </widget>
    </item>
@@ -109,17 +106,27 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
-    <widget class="QLineEdit" name="newNameEdit">
-     <property name="text">
-      <string>MappedMesh</string>
+   <item row="7" column="1" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
-    <widget class="QLabel" name="newNameLabel">
+    <widget class="QLabel" name="noDataValueLabel">
      <property name="text">
-      <string>Name of new mesh:</string>
+      <string>     Set NoData values to:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <widget class="QCheckBox" name="ignoreNoDataCheckbox">
+     <property name="text">
+      <string>Ignore</string>
      </property>
     </widget>
    </item>
