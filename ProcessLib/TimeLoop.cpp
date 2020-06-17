@@ -456,6 +456,9 @@ void TimeLoop::initialize()
         _chemical_solver_interface->executeInitialCalculation(
             interpolated_process_solutions);
 
+        auto const post_reaction_int_pt_process_solutions =
+            _chemical_solver_interface->getIntPtProcessSolutions();
+
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
 
@@ -823,6 +826,9 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
         _chemical_solver_interface->doWaterChemistryCalculation(
             interpolated_process_solutions, dt);
+
+        auto const post_reaction_int_pt_process_solutions =
+            _chemical_solver_interface->getIntPtProcessSolutions();
 
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }

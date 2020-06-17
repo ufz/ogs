@@ -123,9 +123,21 @@ void PhreeqcIO::executeInitialCalculation(
     execute();
 
     readOutputsFromFile();
+}
 
-    setAqueousSolutionsOrUpdateProcessSolutions(
-        process_solutions, Status::UpdatingProcessSolutions);
+std::vector<GlobalVector*> PhreeqcIO::getIntPtProcessSolutions() const
+{
+    std::vector<GlobalVector*> int_pt_x;
+
+    auto const& aqueous_solution = _chemical_system->aqueous_solution;
+    auto const& components = aqueous_solution->components;
+    std::transform(components.begin(), components.end(),
+                   std::back_inserter(int_pt_x),
+                   [](auto const& c) { return c.amount.get(); });
+
+    int_pt_x.push_back(aqueous_solution->pH.get());
+
+    return int_pt_x;
 }
 
 void PhreeqcIO::doWaterChemistryCalculation(

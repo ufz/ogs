@@ -62,6 +62,8 @@ public:
 
     void readOutputsFromFile();
 
+    std::vector<GlobalVector*> getIntPtProcessSolutions() const override;
+
     friend std::ostream& operator<<(std::ostream& os,
                                     PhreeqcIO const& phreeqc_io);
 
