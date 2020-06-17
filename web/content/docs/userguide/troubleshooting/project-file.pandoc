@@ -11,7 +11,7 @@ weight = 2
 
 ## Check project file syntax with `xmllint`
 
-[Project files `.prj`](https://doxygen.opengeosys.org/ogs_file_param__ProjectFile.html) have to be valid XML documents. You can check the formatting with the [`xmllint`-tool](http://xmlsoft.org/xmllint.html):
+Project files `.prj` have to be valid XML documents. You can check the formatting with the [`xmllint`-tool](http://xmlsoft.org/xmllint.html):
 
 ```bash
 xmllint --noout myproj.prj

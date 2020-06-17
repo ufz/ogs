@@ -27,7 +27,7 @@ Download the latest benchmark files from [GitHub as a .zip-package](https://gith
 
 ## Running
 
-OGS is a command line application and requires the path to a [`.prj`-file](https://doxygen.opengeosys.org/ogs_file_param__ProjectFile.html) as an argument.
+OGS is a command line application and requires the path to a `.prj`-file as an argument.
 
 ::: {.win}
 To run it open a new command line shell (called *cmd.exe*). Now simply type `ogs` (if the executable is in your `PATH`-environment variable) or specify its full path (e.g.: `C:\Users\MyUserName\Downloads\ogs.exe`) and hit `ENTER`.
