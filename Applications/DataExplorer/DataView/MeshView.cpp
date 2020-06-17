@@ -189,7 +189,8 @@ void MeshView::openMap2dMeshDialog()
             return;
         }
         if (!MeshLib::MeshLayerMapper::layerMapping(*result, *raster,
-                                                    dlg.getNoDataReplacement()))
+                                                    dlg.getNoDataReplacement(),
+                                                    dlg.getIgnoreNoData()))
         {
             OGSError::box("Error mapping mesh.");
             return;

@@ -25,10 +25,17 @@ MeshMapping2DDialog::MeshMapping2DDialog(QDialog* parent)
     this->staticValueEdit->setValidator (static_value_validator);
 }
 
+void MeshMapping2DDialog::on_ignoreNoDataCheckbox_toggled(bool isChecked)
+{
+    this->noDataValueEdit->setEnabled(!isChecked);
+}
+
 void MeshMapping2DDialog::on_rasterValueButton_toggled(bool isChecked)
 {
     this->rasterPathEdit->setEnabled(isChecked);
-    this->noDataValueEdit->setEnabled(isChecked);
+    this->ignoreNoDataCheckbox->setEnabled(isChecked);
+    this->noDataValueEdit->setEnabled(isChecked &&
+                                      !this->ignoreNoDataCheckbox->isChecked());
     this->rasterSelectButton->setEnabled(isChecked);
     this->staticValueEdit->setEnabled(!isChecked);
 }
@@ -52,7 +59,9 @@ void MeshMapping2DDialog::accept()
         OGSError::box("Please specify path to raster file.");
         return;
     }
-    if (this->rasterValueButton->isChecked() && this->noDataValueEdit->text().isEmpty())
+    if (this->rasterValueButton->isChecked() &&
+        !this->ignoreNoDataCheckbox->isChecked() &&
+        this->noDataValueEdit->text().isEmpty())
     {
         OGSError::box("Please specify No Data value.");
         return;
@@ -66,6 +75,10 @@ void MeshMapping2DDialog::accept()
     {
         OGSError::box("Please specify a name for the resulting mesh.");
         return;
+    }
+    if (this->noDataValueEdit->text().isEmpty())
+    {
+        this->noDataValueEdit->setText("0.0");
     }
 
     this->done(QDialog::Accepted);
