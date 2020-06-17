@@ -53,6 +53,7 @@
                         <property>
                             <name>viscosity</name>
                             <type>Exponential</type>
+                            <offset>0</offset>
                             <reference_value>1.0e-3</reference_value>
                             <exponent>
                                 <variable_name>temperature</variable_name>
@@ -139,6 +140,7 @@
                         <property>
                             <name>viscosity</name>
                             <type>Exponential</type>
+                            <offset>0</offset>
                             <reference_value>1.0e-3</reference_value>
                             <exponent>
                                 <variable_name>temperature</variable_name>
