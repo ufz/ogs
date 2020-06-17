@@ -435,3 +435,36 @@ AddTest(
 #    DIFF_DATA
 #    GLOB LF_constraint_bc_1e3_pcs_0_ts_*.vtu p p 1e-15 1e-14
 #)
+
+AddTest(
+    NAME LiquidFlow_SimpleSynthetics_PrimaryVariableConstraintDirichletBC_1
+    PATH Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_1.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB part_of_left_boundary_to_part_of_right_boundary_primary_variable_constraint_dirichlet_top_1_ts_*.vtu pressure pressure 1e-15 1e-14
+)
+
+AddTest(
+    NAME LiquidFlow_SimpleSynthetics_PrimaryVariableConstraintDirichletBC_2
+    PATH Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_2.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB part_of_left_boundary_to_part_of_right_boundary_primary_variable_constraint_dirichlet_top_2_ts_*.vtu pressure pressure 1e-15 1e-14
+)
+
+AddTest(
+    NAME LiquidFlow_SimpleSynthetics_PrimaryVariableConstraintDirichletBC_3
+    PATH Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_3.prj
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB part_of_left_boundary_to_part_of_right_boundary_primary_variable_constraint_dirichlet_top_3_ts_*.vtu pressure pressure 1e-15 1e-14
+)
