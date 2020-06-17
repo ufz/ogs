@@ -25,6 +25,8 @@ public:
     virtual void doWaterChemistryCalculation(
         std::vector<GlobalVector*>& process_solutions, double const dt) = 0;
 
+    virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const = 0;
+
     virtual std::vector<std::string> const getComponentList() const
     {
         return {};

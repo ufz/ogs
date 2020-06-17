@@ -53,6 +53,11 @@ public:
 
     void execute(std::vector<GlobalVector*>& process_solutions);
 
+    std::vector<GlobalVector*> getIntPtProcessSolutions() const override
+    {
+        return {};
+    }
+
     void updateNodalProcessSolutions(
         std::vector<GlobalVector*> const& process_solutions,
         std::size_t const node_id);
