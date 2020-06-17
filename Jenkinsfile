@@ -768,9 +768,9 @@ pipeline {
                 python ThirdParty/container-maker/ogscm/cli.py -B -C -R \
                   -j $NUM_THREADS --ogs . --pm system --cvode \
                   --cmake ' -DOGS_USE_PYTHON=ON -DOGS_BUILD_UTILS=ON'
-                python ThirdParty/container-maker/ogscm/cli.py -B -C -R \
-                  -j $NUM_THREADS --ogs . --pm system --cvode \
-                  --ompi 4.0.1
+                # python ThirdParty/container-maker/ogscm/cli.py -B -C -R \
+                #   -j $NUM_THREADS --ogs . --pm system --cvode \
+                #   --ompi 4.0.1
               '''.stripIndent()
             }
           }
