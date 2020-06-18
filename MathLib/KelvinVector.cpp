@@ -10,6 +10,10 @@
 
 #include "KelvinVector.h"
 
+// to use math constants of <cmath>, e.g M_SQRT1_2: 1/sqrt(2)
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include "BaseLib/Error.h"
 
 namespace MathLib
@@ -19,7 +23,7 @@ namespace KelvinVector
 template <>
 double Invariants<6>::determinant(Eigen::Matrix<double, 6, 1> const& v)
 {
-    return v(0) * v(1) * v(2) + v(3) * v(4) * v(5) / std::sqrt(2.) -
+    return v(0) * v(1) * v(2) + v(3) * v(4) * v(5) * M_SQRT1_2 -
            v(3) * v(3) * v(2) / 2. - v(4) * v(4) * v(0) / 2. -
            v(5) * v(5) * v(1) / 2.;
 }
@@ -54,9 +58,9 @@ Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> inverse(
     inv(0) = v(1) * v(2) - v(4) * v(4) / 2.;
     inv(1) = v(0) * v(2) - v(5) * v(5) / 2.;
     inv(2) = v(0) * v(1) - v(3) * v(3) / 2.;
-    inv(3) = v(4) * v(5) / std::sqrt(2.) - v(3) * v(2);
-    inv(4) = v(3) * v(5) / std::sqrt(2.) - v(4) * v(0);
-    inv(5) = v(4) * v(3) / std::sqrt(2.) - v(1) * v(5);
+    inv(3) = v(4) * v(5) * M_SQRT1_2 - v(3) * v(2);
+    inv(4) = v(3) * v(5) * M_SQRT1_2 - v(4) * v(0);
+    inv(5) = v(4) * v(3) * M_SQRT1_2 - v(1) * v(5);
     return inv / Invariants<6>::determinant(v);
 }
 
@@ -65,8 +69,7 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(
     Eigen::Matrix<double, 4, 1, Eigen::ColMajor, 4, 1> const& v)
 {
     Eigen::Matrix<double, 3, 3> m;
-    m << v[0], v[3] / std::sqrt(2.), 0, v[3] / std::sqrt(2.), v[1], 0, 0, 0,
-        v[2];
+    m << v[0], v[3] * M_SQRT1_2, 0, v[3] * M_SQRT1_2, v[1], 0, 0, 0, v[2];
     return m;
 }
 
@@ -75,9 +78,8 @@ Eigen::Matrix<double, 3, 3> kelvinVectorToTensor(
     Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> const& v)
 {
     Eigen::Matrix<double, 3, 3> m;
-    m << v[0], v[3] / std::sqrt(2.), v[5] / std::sqrt(2.), v[3] / std::sqrt(2.),
-        v[1], v[4] / std::sqrt(2.), v[5] / std::sqrt(2.), v[4] / std::sqrt(2.),
-        v[2];
+    m << v[0], v[3] * M_SQRT1_2, v[5] * M_SQRT1_2, v[3] * M_SQRT1_2, v[1],
+        v[4] * M_SQRT1_2, v[5] * M_SQRT1_2, v[4] * M_SQRT1_2, v[2];
     return m;
 }
 
@@ -118,7 +120,7 @@ KelvinVectorType<2> tensorToKelvin<2>(Eigen::Matrix<double, 3, 3> const& m)
     assert(m(2, 1) == 0);
 
     KelvinVectorType<2> v;
-    v << m(0, 0), m(1, 1), m(2, 2), m(0, 1) * std::sqrt(2.);
+    v << m(0, 0), m(1, 1), m(2, 2), m(0, 1) * M_SQRT2;
     return v;
 }
 
@@ -133,8 +135,8 @@ KelvinVectorType<3> tensorToKelvin<3>(Eigen::Matrix<double, 3, 3> const& m)
            std::numeric_limits<double>::epsilon());
 
     KelvinVectorType<3> v;
-    v << m(0, 0), m(1, 1), m(2, 2), m(0, 1) * std::sqrt(2.),
-        m(1, 2) * std::sqrt(2.), m(0, 2) * std::sqrt(2.);
+    v << m(0, 0), m(1, 1), m(2, 2), m(0, 1) * M_SQRT2, m(1, 2) * M_SQRT2,
+        m(0, 2) * M_SQRT2;
     return v;
 }
 
@@ -143,7 +145,7 @@ Eigen::Matrix<double, 4, 1> kelvinVectorToSymmetricTensor(
     Eigen::Matrix<double, 4, 1, Eigen::ColMajor, 4, 1> const& v)
 {
     Eigen::Matrix<double, 4, 1> m;
-    m << v[0], v[1], v[2], v[3] / std::sqrt(2.);
+    m << v[0], v[1], v[2], v[3] * M_SQRT1_2;
     return m;
 }
 
@@ -152,8 +154,7 @@ Eigen::Matrix<double, 6, 1> kelvinVectorToSymmetricTensor(
     Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> const& v)
 {
     Eigen::Matrix<double, 6, 1> m;
-    m << v[0], v[1], v[2], v[3] / std::sqrt(2.), v[4] / std::sqrt(2.),
-        v[5] / std::sqrt(2.);
+    m << v[0], v[1], v[2], v[3] * M_SQRT1_2, v[4] * M_SQRT1_2, v[5] * M_SQRT1_2;
     return m;
 }
 
@@ -190,10 +191,9 @@ KelvinMatrixType<2> fourthOrderRotationMatrix<2>(
     };
 
     MathLib::KelvinVector::KelvinMatrixType<2> R;
-    R << Q(1, 1) * Q(1, 1), Q(1, 2) * Q(1, 2), 0,
-        std::sqrt(2) * Q(1, 1) * Q(1, 2), Q(2, 1) * Q(2, 1), Q(2, 2) * Q(2, 2),
-        0, std::sqrt(2) * Q(2, 1) * Q(2, 2), 0, 0, 1, 0,
-        std::sqrt(2) * Q(1, 1) * Q(2, 1), std::sqrt(2) * Q(1, 2) * Q(2, 2), 0,
+    R << Q(1, 1) * Q(1, 1), Q(1, 2) * Q(1, 2), 0, M_SQRT2 * Q(1, 1) * Q(1, 2),
+        Q(2, 1) * Q(2, 1), Q(2, 2) * Q(2, 2), 0, M_SQRT2 * Q(2, 1) * Q(2, 2), 0,
+        0, 1, 0, M_SQRT2 * Q(1, 1) * Q(2, 1), M_SQRT2 * Q(1, 2) * Q(2, 2), 0,
         Q(1, 1) * Q(2, 2) + Q(1, 2) * Q(2, 1);
     return R;
 }
@@ -209,22 +209,22 @@ KelvinMatrixType<3> fourthOrderRotationMatrix<3>(
 
     MathLib::KelvinVector::KelvinMatrixType<3> R;
     R << Q(1, 1) * Q(1, 1), Q(1, 2) * Q(1, 2), Q(1, 3) * Q(1, 3),
-        std::sqrt(2) * Q(1, 1) * Q(1, 2), std::sqrt(2) * Q(1, 2) * Q(1, 3),
-        std::sqrt(2) * Q(1, 1) * Q(1, 3), Q(2, 1) * Q(2, 1), Q(2, 2) * Q(2, 2),
-        Q(2, 3) * Q(2, 3), std::sqrt(2) * Q(2, 1) * Q(2, 2),
-        std::sqrt(2) * Q(2, 2) * Q(2, 3), std::sqrt(2) * Q(2, 1) * Q(2, 3),
+        M_SQRT2 * Q(1, 1) * Q(1, 2), M_SQRT2 * Q(1, 2) * Q(1, 3),
+        M_SQRT2 * Q(1, 1) * Q(1, 3), Q(2, 1) * Q(2, 1), Q(2, 2) * Q(2, 2),
+        Q(2, 3) * Q(2, 3), M_SQRT2 * Q(2, 1) * Q(2, 2),
+        M_SQRT2 * Q(2, 2) * Q(2, 3), M_SQRT2 * Q(2, 1) * Q(2, 3),
         Q(3, 1) * Q(3, 1), Q(3, 2) * Q(3, 2), Q(3, 3) * Q(3, 3),
-        std::sqrt(2) * Q(3, 1) * Q(3, 2), std::sqrt(2) * Q(3, 2) * Q(3, 3),
-        std::sqrt(2) * Q(3, 1) * Q(3, 3), std::sqrt(2) * Q(1, 1) * Q(2, 1),
-        std::sqrt(2) * Q(1, 2) * Q(2, 2), std::sqrt(2) * Q(1, 3) * Q(2, 3),
+        M_SQRT2 * Q(3, 1) * Q(3, 2), M_SQRT2 * Q(3, 2) * Q(3, 3),
+        M_SQRT2 * Q(3, 1) * Q(3, 3), M_SQRT2 * Q(1, 1) * Q(2, 1),
+        M_SQRT2 * Q(1, 2) * Q(2, 2), M_SQRT2 * Q(1, 3) * Q(2, 3),
         Q(1, 1) * Q(2, 2) + Q(1, 2) * Q(2, 1),
         Q(1, 2) * Q(2, 3) + Q(1, 3) * Q(2, 2),
-        Q(1, 1) * Q(2, 3) + Q(1, 3) * Q(2, 1), std::sqrt(2) * Q(2, 1) * Q(3, 1),
-        std::sqrt(2) * Q(2, 2) * Q(3, 2), std::sqrt(2) * Q(2, 3) * Q(3, 3),
+        Q(1, 1) * Q(2, 3) + Q(1, 3) * Q(2, 1), M_SQRT2 * Q(2, 1) * Q(3, 1),
+        M_SQRT2 * Q(2, 2) * Q(3, 2), M_SQRT2 * Q(2, 3) * Q(3, 3),
         Q(2, 1) * Q(3, 2) + Q(2, 2) * Q(3, 1),
         Q(2, 2) * Q(3, 3) + Q(2, 3) * Q(3, 2),
-        Q(2, 1) * Q(3, 3) + Q(2, 3) * Q(3, 1), std::sqrt(2) * Q(1, 1) * Q(3, 1),
-        std::sqrt(2) * Q(1, 2) * Q(3, 2), std::sqrt(2) * Q(1, 3) * Q(3, 3),
+        Q(2, 1) * Q(3, 3) + Q(2, 3) * Q(3, 1), M_SQRT2 * Q(1, 1) * Q(3, 1),
+        M_SQRT2 * Q(1, 2) * Q(3, 2), M_SQRT2 * Q(1, 3) * Q(3, 3),
         Q(1, 1) * Q(3, 2) + Q(1, 2) * Q(3, 1),
         Q(1, 2) * Q(3, 3) + Q(1, 3) * Q(3, 2),
         Q(1, 1) * Q(3, 3) + Q(1, 3) * Q(3, 1);
