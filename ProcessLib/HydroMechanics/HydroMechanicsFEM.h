@@ -10,9 +10,14 @@
 
 #pragma once
 
+// to use math constants of <cmath>, e.g M_SQRT1_2: 1/sqrt(2)
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <memory>
 #include <vector>
 
+#include "HydroMechanicsProcessData.h"
+#include "LocalAssemblerInterface.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
@@ -24,9 +29,6 @@
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "HydroMechanicsProcessData.h"
-#include "LocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
@@ -351,7 +353,7 @@ private:
             }
             else
             {  // mixed xy, yz, xz components
-                cache.push_back(ip_data.sigma_eff[component] / std::sqrt(2));
+                cache.push_back(ip_data.sigma_eff[component] * M_SQRT1_2);
             }
         }
 

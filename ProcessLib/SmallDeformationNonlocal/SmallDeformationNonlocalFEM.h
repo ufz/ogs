@@ -11,6 +11,9 @@
 #pragma once
 
 #include <algorithm>
+// to use math constants of <cmath>, e.g M_SQRT1_2: 1/sqrt(2)
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <limits>
 #include <memory>
 #include <vector>
@@ -750,7 +753,7 @@ private:
             }
             else
             {  // mixed xy, yz, xz components
-                cache.push_back(ip_data.sigma[component] / std::sqrt(2));
+                cache.push_back(ip_data.sigma[component] * M_SQRT1_2);
             }
         }
 
@@ -768,7 +771,7 @@ private:
             if (component < 3)  // xx, yy, zz components
                 cache.push_back(ip_data.eps[component]);
             else  // mixed xy, yz, xz components
-                cache.push_back(ip_data.eps[component] / std::sqrt(2));
+                cache.push_back(ip_data.eps[component] * M_SQRT1_2);
         }
 
         return cache;

@@ -10,9 +10,11 @@
 
 #pragma once
 
-#include "ProcessLib/Deformation/BMatrixPolicy.h"
-
+// to use math constants of <cmath>, e.g M_SQRT1_2: 1/sqrt(2)
+#define _USE_MATH_DEFINES
 #include <cmath>
+
+#include "ProcessLib/Deformation/BMatrixPolicy.h"
 
 namespace ProcessLib
 {
@@ -26,8 +28,8 @@ void fillBMatrix2DCartesianPart(DNDX_Type const& dNdx, BMatrixType& B)
     for (int i = 0; i < NPOINTS; ++i)
     {
         B(1, NPOINTS + i) = dNdx(1, i);
-        B(3, i) = dNdx(1, i) / std::sqrt(2);
-        B(3, NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
+        B(3, i) = dNdx(1, i) * M_SQRT1_2;
+        B(3, NPOINTS + i) = dNdx(0, i) * M_SQRT1_2;
         B(0, i) = dNdx(0, i);
     }
 }
@@ -58,10 +60,10 @@ BMatrixType computeBMatrix(DNDX_Type const& dNdx,
             for (int i = 0; i < NPOINTS; ++i)
             {
                 B(2, 2 * NPOINTS + i) = dNdx(2, i);
-                B(4, NPOINTS + i) = dNdx(2, i) / std::sqrt(2);
-                B(4, 2 * NPOINTS + i) = dNdx(1, i) / std::sqrt(2);
-                B(5, i) = dNdx(2, i) / std::sqrt(2);
-                B(5, 2 * NPOINTS + i) = dNdx(0, i) / std::sqrt(2);
+                B(4, NPOINTS + i) = dNdx(2, i) * M_SQRT1_2;
+                B(4, 2 * NPOINTS + i) = dNdx(1, i) * M_SQRT1_2;
+                B(5, i) = dNdx(2, i) * M_SQRT1_2;
+                B(5, 2 * NPOINTS + i) = dNdx(0, i) * M_SQRT1_2;
             }
             detail::fillBMatrix2DCartesianPart<NPOINTS>(dNdx, B);
             break;

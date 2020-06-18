@@ -10,16 +10,17 @@
 
 #pragma once
 
+// to use math constants of <cmath>, e.g M_SQRT1_2: 1/sqrt(2)
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <vector>
 
+#include "IntegrationPointDataMatrix.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
 #include "ProcessLib/LIE/SmallDeformation/SmallDeformationProcessData.h"
-
-#include "IntegrationPointDataMatrix.h"
+#include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "SecondaryData.h"
 #include "SmallDeformationLocalAssemblerInterface.h"
 
@@ -232,7 +233,7 @@ private:
             }
             else
             {  // mixed xy, yz, xz components
-                cache.push_back(ip_data._sigma[component] / std::sqrt(2));
+                cache.push_back(ip_data._sigma[component] * M_SQRT1_2);
             }
         }
 
@@ -253,7 +254,7 @@ private:
             }
             else
             {  // mixed xy, yz, xz components
-                cache.push_back(ip_data._eps[component] / std::sqrt(2));
+                cache.push_back(ip_data._eps[component] * M_SQRT1_2);
             }
         }
 

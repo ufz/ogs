@@ -10,7 +10,11 @@
 
 #pragma once
 
+#include <boost/math/constants/constants.hpp>
 #include <cassert>
+// to use math constants of <cmath>, e.g M_SQRT1_2: 1/sqrt(2)
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <vector>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -84,39 +88,39 @@ std::vector<double> const& getMaterialForces(
                 eshelby_stress[8] = psi;
 
             eshelby_stress[0] -= sigma[0] * grad_u[0] +
-                                 sigma[3] / std::sqrt(2) * grad_u[3] +
-                                 sigma[5] / std::sqrt(2) * grad_u[6];
+                                 sigma[3] * M_SQRT1_2 * grad_u[3] +
+                                 sigma[5] * M_SQRT1_2 * grad_u[6];
 
-            eshelby_stress[1] -= sigma[3] / std::sqrt(2) * grad_u[0] +
+            eshelby_stress[1] -= sigma[3] * M_SQRT1_2 * grad_u[0] +
                                  sigma[1] * grad_u[3] +
-                                 sigma[4] / std::sqrt(2) * grad_u[6];
+                                 sigma[4] * M_SQRT1_2 * grad_u[6];
 
-            eshelby_stress[2] -= sigma[5] / std::sqrt(2) * grad_u[0] +
-                                 sigma[4] / std::sqrt(2) * grad_u[3] +
+            eshelby_stress[2] -= sigma[5] * M_SQRT1_2 * grad_u[0] +
+                                 sigma[4] * M_SQRT1_2 * grad_u[3] +
                                  sigma[2] * grad_u[6];
 
             eshelby_stress[3] -= sigma[0] * grad_u[1] +
-                                 sigma[3] / std::sqrt(2) * grad_u[4] +
-                                 sigma[5] / std::sqrt(2) * grad_u[7];
+                                 sigma[3] * M_SQRT1_2 * grad_u[4] +
+                                 sigma[5] * M_SQRT1_2 * grad_u[7];
 
-            eshelby_stress[4] -= sigma[3] / std::sqrt(2) * grad_u[1] +
+            eshelby_stress[4] -= sigma[3] * M_SQRT1_2 * grad_u[1] +
                                  sigma[1] * grad_u[4] +
-                                 sigma[4] / std::sqrt(2) * grad_u[7];
+                                 sigma[4] * M_SQRT1_2 * grad_u[7];
 
-            eshelby_stress[5] -= sigma[5] / std::sqrt(2) * grad_u[1] +
-                                 sigma[4] / std::sqrt(2) * grad_u[4] +
+            eshelby_stress[5] -= sigma[5] * M_SQRT1_2 * grad_u[1] +
+                                 sigma[4] * M_SQRT1_2 * grad_u[4] +
                                  sigma[2] * grad_u[7];
 
             eshelby_stress[6] -= sigma[0] * grad_u[2] +
-                                 sigma[3] / std::sqrt(2) * grad_u[5] +
-                                 sigma[5] / std::sqrt(2) * grad_u[8];
+                                 sigma[3] * M_SQRT1_2 * grad_u[5] +
+                                 sigma[5] * M_SQRT1_2 * grad_u[8];
 
-            eshelby_stress[7] -= sigma[3] / std::sqrt(2) * grad_u[2] +
+            eshelby_stress[7] -= sigma[3] * M_SQRT1_2 * grad_u[2] +
                                  sigma[1] * grad_u[5] +
-                                 sigma[4] / std::sqrt(2) * grad_u[8];
+                                 sigma[4] * M_SQRT1_2 * grad_u[8];
 
-            eshelby_stress[8] -= sigma[5] / std::sqrt(2) * grad_u[2] +
-                                 sigma[4] / std::sqrt(2) * grad_u[5] +
+            eshelby_stress[8] -= sigma[5] * M_SQRT1_2 * grad_u[2] +
+                                 sigma[4] * M_SQRT1_2 * grad_u[5] +
                                  sigma[2] * grad_u[8];
         }
         else if (DisplacementDim == 2)
@@ -125,16 +129,16 @@ std::vector<double> const& getMaterialForces(
                 eshelby_stress[4] = psi;
 
             eshelby_stress[0] -=
-                sigma[0] * grad_u[0] + sigma[3] / std::sqrt(2) * grad_u[2];
+                sigma[0] * grad_u[0] + sigma[3] * M_SQRT1_2 * grad_u[2];
 
             eshelby_stress[1] -=
-                sigma[3] / std::sqrt(2) * grad_u[0] + sigma[1] * grad_u[2];
+                sigma[3] * M_SQRT1_2 * grad_u[0] + sigma[1] * grad_u[2];
 
             eshelby_stress[2] -=
-                sigma[0] * grad_u[1] + sigma[3] / std::sqrt(2) * grad_u[3];
+                sigma[0] * grad_u[1] + sigma[3] * M_SQRT1_2 * grad_u[3];
 
             eshelby_stress[3] -=
-                sigma[3] / std::sqrt(2) * grad_u[1] + sigma[1] * grad_u[3];
+                sigma[3] * M_SQRT1_2 * grad_u[1] + sigma[1] * grad_u[3];
 
             // for axial-symmetric case the following is not zero in general
             eshelby_stress[4] -= sigma[2] * grad_u[4];
