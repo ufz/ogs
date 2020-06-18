@@ -95,7 +95,7 @@ Now after you implemented the feature and committed your work you can push the n
 $ git push
 ```
 
-If your work is done submit a pull request.
+If your work is done submit a [merge request](https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new).
 
 This workflow is summarized with this picture:
 

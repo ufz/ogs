@@ -34,4 +34,4 @@ First thing to do when you start working on your local repository is to create a
 
 Start committing changes in logical chunks. After you are happy with your implementation push your topic branch to your forked repository on GitLab.
 
-Open a *Pull Request* which will initiate the code review process.
+Open a [*Merge Request*](https://docs.gitlab.com/ee/user/project/merge_requests/) which will initiate the code review process.
