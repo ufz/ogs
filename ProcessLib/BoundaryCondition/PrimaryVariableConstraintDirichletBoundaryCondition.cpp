@@ -137,7 +137,7 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "PrimaryVariableConstraintDirichlet");
 
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichlet__parameter}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter {:s}", param_name);
 
@@ -145,7 +145,7 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
         param_name, parameters, 1, &bc_mesh);
 
     auto const constraint_type =
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_type}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__constraint_type}
         config.getConfigParameter<std::string>("constraint_type");
     if (constraint_type != "PrimaryVariable")
     {
@@ -155,7 +155,9 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
     }
 
     auto const constraint_parameter_name =
-    config.getConfigParameter<std::string>("constraint_threshold_parameter");
+        config.getConfigParameter<std::string>(
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__constraint_threshold_parameter}
+            "constraint_threshold_parameter");
     DBUG("Using parameter {:s} as constraint_threshold_parameter",
          constraint_parameter_name);
 
@@ -163,7 +165,7 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
         constraint_parameter_name, parameters, 1, &bc_mesh);
 
     auto const constraint_direction_string =
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_direction}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__constraint_direction}
         config.getConfigParameter<std::string>("constraint_direction");
     if (constraint_direction_string != "greater" &&
         constraint_direction_string != "less")

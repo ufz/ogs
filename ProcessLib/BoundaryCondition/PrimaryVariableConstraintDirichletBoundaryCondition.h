@@ -24,11 +24,13 @@ struct Parameter;
 
 namespace ProcessLib
 {
-// TODO docu
-/// The PrimaryVariableConstraintDirichletBoundaryCondition class describes a
-/// constant in space and time PrimaryVariableConstraintDirichlet boundary
-/// condition. The expected parameter in the passed configuration is "value"
-/// which, when not present defaults to zero.
+/// The PrimaryVariableConstraintDirichletBoundaryCondition is a Dirichlet-type
+/// boundary condition.
+///
+/// The class implements a constraint Dirichlet-type boundary condition. Using
+/// a threshold for the primary variable which is given by a parameter the
+/// boundary condition can be switched on/off. The value that is set a
+/// Dirichlet-type boundary condition is given by another parameter.
 class PrimaryVariableConstraintDirichletBoundaryCondition final
     : public BoundaryCondition
 {
@@ -46,6 +48,7 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
+    ///< parameter that defines the Dirirchlet-type condition values
     ParameterLib::Parameter<double> const& _parameter;
 
     MeshLib::Mesh const& _bc_mesh;
@@ -53,14 +56,18 @@ private:
     int const _variable_id;
     int const _component_id;
 
-    /// The threshold value used to the switch off/on the Dirichlet-type
+    /// The threshold parameter used to the switch on/off the Dirichlet-type
     /// boundary condition.
     ParameterLib::Parameter<double> const& _constraint_threshold_parameter;
 
-    /// The boolean value lower is used for the calculation of the constraint
-    /// criterion, i.e., if lower is set to true the criterion 'calculated_value
+    /// The value less is used for the calculation of the constraint
+    /// criterion. If less is set to true (i.e. 'less' is set in the
+    /// project file) the criterion 'calculated_value
     /// < constraint_threshold' is evaluated to switch on/off the boundary
-    /// condition, else 'calculated_value > constraint_threshold' is evaluated.
+    /// condition.
+    /// If less will be set to false in case 'greater' is given in the project
+    /// file and the condition 'calculated_value > constraint_threshold' is
+    /// evaluated.
     bool const _less;
 };
 
