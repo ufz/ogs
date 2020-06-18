@@ -140,20 +140,21 @@ KelvinVectorType<3> tensorToKelvin<3>(Eigen::Matrix<double, 3, 3> const& m)
 
 template <>
 Eigen::Matrix<double, 4, 1> kelvinVectorToSymmetricTensor(
-    Eigen::Matrix<double, 4, 1, Eigen::ColMajor, 4, 1> const& v)
+    Eigen::Matrix<double, 4, 1, Eigen::ColMajor, 4, 1> const& v,
+    double const factor)
 {
     Eigen::Matrix<double, 4, 1> m;
-    m << v[0], v[1], v[2], v[3] / std::sqrt(2.);
+    m << v[0], v[1], v[2], factor * v[3];
     return m;
 }
 
 template <>
 Eigen::Matrix<double, 6, 1> kelvinVectorToSymmetricTensor(
-    Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> const& v)
+    Eigen::Matrix<double, 6, 1, Eigen::ColMajor, 6, 1> const& v,
+    double const factor)
 {
     Eigen::Matrix<double, 6, 1> m;
-    m << v[0], v[1], v[2], v[3] / std::sqrt(2.), v[4] / std::sqrt(2.),
-        v[5] / std::sqrt(2.);
+    m << v[0], v[1], v[2], factor * v[3], factor * v[4], v[5] / std::sqrt(2.);
     return m;
 }
 
@@ -164,15 +165,16 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
                                             1,
                                             Eigen::ColMajor,
                                             Eigen::Dynamic,
-                                            1> const& v)
+                                            1> const& v,
+                              double const factor)
 {
     if (v.size() == 4)
     {
-        return kelvinVectorToSymmetricTensor<4>(v);
+        return kelvinVectorToSymmetricTensor<4>(v, factor);
     }
     if (v.size() == 6)
     {
-        return kelvinVectorToSymmetricTensor<6>(v);
+        return kelvinVectorToSymmetricTensor<6>(v, factor);
     }
     OGS_FATAL(
         "Kelvin vector to tensor conversion expected an input vector of size 4 "

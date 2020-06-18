@@ -10,6 +10,8 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <boost/math/constants/constants.hpp>
+
 #include "BaseLib/Error.h"
 
 namespace MathLib
@@ -153,14 +155,14 @@ KelvinVectorType<DisplacementDim> tensorToKelvin(
 ///
 /// Only implementations for KelvinVectorSize 4 and 6, and dynamic size vectors
 /// are provided.
+/// \c factor gives a multiplier for the off diagonal entries. By default,
+/// \c factor is 1/sqrt(2).
 template <int KelvinVectorSize>
 Eigen::Matrix<double, KelvinVectorSize, 1, Eigen::ColMajor, KelvinVectorSize, 1>
-kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
-                                            KelvinVectorSize,
-                                            1,
-                                            Eigen::ColMajor,
-                                            KelvinVectorSize,
-                                            1> const& v);
+kelvinVectorToSymmetricTensor(
+    Eigen::Matrix<double, KelvinVectorSize, 1, Eigen::ColMajor,
+                  KelvinVectorSize, 1> const& v,
+    double const factor = 1.0 / boost::math::constants::root_two<double>());
 
 /// Conversion of a short vector representation of a
 /// symmetric 3x3 matrix to a Kelvin vector.
