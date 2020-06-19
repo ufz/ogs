@@ -8,5 +8,3 @@
 *.h   hooks.style=uncrustify
 *.cpp hooks.style=uncrustify
 *.hpp hooks.style=uncrustify
-# Git LFS
-# Gocad files
