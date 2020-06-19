@@ -1,3 +1,19 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b1c592f919cc2df92ca999d3e8251437471bc35883b23f8971f660416f2cbc3d
-size 799
+<?xml version="1.0"?>
+<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <PUnstructuredGrid GhostLevel="1">
+    <PPointData>
+      <PDataArray type="Float64" Name="D1_left_front_N1_right"/>
+      <PDataArray type="Float64" Name="Linear_1_to_minus1"/>
+      <PDataArray type="Float64" Name="pressure"/>
+    </PPointData>
+    <PCellData>
+      <PDataArray type="Int32" Name="MaterialIDs"/>
+    </PCellData>
+    <PPoints>
+      <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
+    </PPoints>
+    <Piece Source="cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu"/>
+    <Piece Source="cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu"/>
+    <Piece Source="cube_1e3_pcs_0_ts_1_t_1_000000_2.vtu"/>
+  </PUnstructuredGrid>
+</VTKFile>

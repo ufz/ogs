@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ab437aab608035ab4c503fe55bca9f210b917292508bdee3a09e25e77ce6a741
-size 607
+<?xml version="1.0"?>
+<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <PUnstructuredGrid GhostLevel="0">
+    <PPointData>
+      <PDataArray type="Float64" Name="Result"/>
+    </PPointData>
+    <PPoints>
+      <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
+    </PPoints>
+    <Piece Source="quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_0.vtu"/>
+    <Piece Source="quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_1.vtu"/>
+    <Piece Source="quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_2.vtu"/>
+  </PUnstructuredGrid>
+</VTKFile>
