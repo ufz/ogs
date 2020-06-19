@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9a41c0e67aa7e4f53dac104d7c856c04e9837348d53725258a40233c84c99aca
-size 738
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="OpenGeoSysGLI.xsl"?>
+
+<OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogs="http://www.opengeosys.org">
+    <name>cpreepBGRA</name>
+    <points>
+         <point id="0"  x="0." y="0."  z="0." />
+         <point id="1"  x="0.05" y="0."  z="0." />
+         <point id="2"  x="0.05" y="0.2"  z="0." />
+         <point id="3"  x="0." y="0.2"  z="0." />
+    </points>
+
+    <polylines>
+        <polyline id="1" name="top">
+            <pnt>2</pnt>
+            <pnt>3</pnt>
+        </polyline>
+        <polyline id="2" name="bottom">
+            <pnt>0</pnt>
+            <pnt>1</pnt>
+        </polyline>
+    </polylines>
+</OpenGeoSysGLI>

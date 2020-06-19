@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:695ff92fc3c89b908436066798970446329f3ffb11388316a81e1c2ceadccc9d
-size 394
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="OpenGeoSysGLI.xsl"?>
+
+<OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogs="http://www.opengeosys.org">
+    <name>sat_line</name>
+    <points>
+        <point id="0" x="0" y="0" z="0" name="left"/>
+        <point id="1" x="100" y="0" z="0" name="right"/>
+    </points>
+</OpenGeoSysGLI>
