@@ -2,6 +2,7 @@ if (NOT OGS_USE_MPI)
     # Comparison test for richards mechanics w/o deformations.
     OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_richardsflow.prj)
     OgsTest(PROJECTFILE Parabolic/Richards/flow_fully_saturated.prj)
+    OgsTest(PROJECTFILE Parabolic/Richards/infiltration_1D/1d-infiltration-RM.prj)
 endif()
 
 AddTest(
@@ -95,4 +96,18 @@ AddTest(
     DIFF_DATA
     RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu pressure pressure 5e-8 1e-10
     RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu saturation saturation 1e-10 1e-11
+)
+
+AddTest(
+    NAME 1d-infiltration
+    PATH Parabolic/Richards/infiltration_1D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 1d-infiltration.prj
+    RUNTIME 3
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB 1d-infiltration_t_*.vtu pressure pressure 1e-15 0
+    GLOB 1d-infiltration_t_*.vtu darcy_velocity darcy_velocity 1e-15 0
+    GLOB 1d-infiltration_t_*.vtu saturation saturation 1e-15 0
 )
