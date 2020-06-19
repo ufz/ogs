@@ -4,6 +4,9 @@ pre commit:
     name: $PRECOMMIT_IMAGE
   extends:
     - .defaults
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: never
   script:
     - pre-commit install
     - pre-commit run --all-files
