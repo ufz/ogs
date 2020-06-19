@@ -117,7 +117,7 @@ std::unique_ptr<Output> createOutput(
             OGS_FATAL(
                 "There are multiple meshes defined in the output section of "
                 "the project file, but the prefix doesn't contain "
-                "'{:meshname}'. Thus the names for the files, the simulation "
+                "'{{:meshname}}'. Thus the names for the files, the simulation "
                 "results should be written to, would not be distinguishable "
                 "for different meshes.");
         }
