@@ -8,6 +8,7 @@ build docs:
   before_script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
+    - git fetch --tags
     - mkdir -p build
     - cd build
 
@@ -24,8 +25,7 @@ build docs:
 
 check docs links:
   stage: checks
-  image:
-    name: $WEB_IMAGE
+  image: $WEB_IMAGE
   needs:
     - job: build docs
   extends:
@@ -38,3 +38,15 @@ check docs links:
       --white-listed-urls http://www.opengeosys.org/project/license,http://www.opengeosys.org,http://www.opengeosys.org\&quot,http://www.trolltech.com/products/qt/licensing.html,http://www.trolltech.com/products/qt/opensource.html
       --white-listed-files project_file_doc_qa.html,ogs_file_
       docs
+
+deploy doxygen:
+  stage: package
+  image: $WEB_IMAGE
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  needs:
+    - job: build docs
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - netlify deploy --prod --dir=build/docs --site=$DOXYGEN_NETLIFY_SITE_ID
