@@ -1,3 +1,31 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ed7d5669babc9e218370ca794616d101c27f47c7c9b6157aa3ace191a7e60afe
-size 920
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="OpenGeoSysGLI.xsl"?>
+
+<OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogs="http://www.opengeosys.org">
+    <name>bar</name>
+    <points>
+        <point id="0" x="0" y="0" z="0"/>
+        <point id="1" x="10" y="0" z="0"/>
+        <point id="2" x="10" y="150" z="0"/>
+        <point id="3" x="0" y="150" z="0"/>
+    </points>
+
+    <polylines>
+        <polyline id="0" name="left">
+            <pnt>0</pnt>
+            <pnt>3</pnt>
+        </polyline>
+        <polyline id="1" name="right">
+            <pnt>1</pnt>
+            <pnt>2</pnt>
+        </polyline>
+        <polyline id="2" name="bottom">
+            <pnt>0</pnt>
+            <pnt>1</pnt>
+        </polyline>
+        <polyline id="3" name="top">
+            <pnt>2</pnt>
+            <pnt>3</pnt>
+        </polyline>
+    </polylines>
+</OpenGeoSysGLI>

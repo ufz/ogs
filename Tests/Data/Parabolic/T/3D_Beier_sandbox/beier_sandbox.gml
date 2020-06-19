@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e76e63a340a50d4e810928dcdaf27c22fca04d66546daf864a76d3026bb61bdd
-size 648
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="OpenGeoSysGLI.xsl"?>
+
+<OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.opengeosys.org/images/xsd/OpenGeoSysGLI.xsd" xmlns:ogs="http://www.opengeosys.org">
+    <name>beier_sandbox</name>
+    <points>
+        <point id="0" x="0.0" y="2.5" z="-18.0" name="BHE_BOTTOM"/>
+        <point id="1" x="0.0" y="2.5" z="0.0" name="BHE_TOP"/>
+    </points>
+    <polylines>
+        <polyline id="0" name="BHE_1">
+            <pnt>1</pnt>
+            <pnt>0</pnt>
+        </polyline>
+    </polylines>
+</OpenGeoSysGLI>

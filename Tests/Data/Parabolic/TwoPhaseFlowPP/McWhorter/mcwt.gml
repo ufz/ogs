@@ -1,3 +1,16 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7e0407c439b6a4005f731ff6bfad3b9f629d26003443429a1e8e068c8e64a6ad
-size 539
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE OGS-GML-DOM>
+<OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogs="http://www.opengeosys.org">
+ <name>mcwt</name>
+ <points>
+  <point x="0.000000" y="0.000000" z="0.000000" id="0" name="POINT0"/>
+  <point x="2.600000" y="0.000000" z="0.000000" id="1" name="POINT1"/>
+  <point x="1.300000" y="0.000000" z="0.000000" id="2"/>
+ </points>
+ <polylines>
+  <polyline id="0" name="Profile">
+   <pnt>0</pnt>
+   <pnt>1</pnt>
+  </polyline>
+ </polylines>
+</OpenGeoSysGLI>
