@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a66c26f401a08aa2ec20457681ec2951b8ddcd8bab90ee23afe87c7f5b33522d
-size 1816
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="11"                   NumberOfCells="10"                  >
+      <PointData Scalars="analytical_solution">
+        <DataArray type="Float64" Name="analytical_solution" format="appended" RangeMin="-0"                   RangeMax="0.36646779944"        offset="0"                   />
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1"                    offset="148"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="256"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="332"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="404"                 />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAABYAAAAWwAAAA==eJxjYACDhi0xGdGmJdftebd3fD+UcsG+xO2xxqe2E/ZnlILUF646ZD9nWl3/Sds99t7f3A9JXdhi/6ZqQ0yTwFr7X7HedR/1Ftn/n73u+hntifYMUPMAkH0mXw==AQAAAACAAAAIAQAAPQAAAA==eJxjYMAOZs0EgZ322MVPYoibGIPAZRzqb2KIQ8ADHOY8xhBPTwOBZzjMf4khfvYMCLzBYe8HDHEAESgjAw==AQAAAACAAACgAAAAJgAAAA==eJxdxTkCABAMALA6i/8/2MCULIl4Cldu3Hnw5OTFm8//Ahb4AGU=AQAAAACAAABQAAAAIwAAAA==eJxjYoAAFijNBqU5oDQXlOaB0nxQWgBKC0FpESgNAA4QAG8=AQAAAACAAAAKAAAACwAAAA==eJxjZoYBAACvAB8=
+  </AppendedData>
+</VTKFile>

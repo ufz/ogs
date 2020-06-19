@@ -1,3 +1,27 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:49736fb06b8d49cbee4d382473fd64f46e6cf587693554c98446a7302e4bc23c
-size 2116
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="UInt64" Name="bulk_element_ids" NumberOfTuples="6" format="appended" RangeMin="4"                    RangeMax="25"                   offset="0"                   />
+    </FieldData>
+    <Piece NumberOfPoints="4"                    NumberOfCells="3"                   >
+      <PointData>
+        <DataArray type="UInt64" Name="bulk_node_ids" format="appended" RangeMin="5"                    RangeMax="38"                   offset="72"                  />
+      </PointData>
+      <CellData>
+        <DataArray type="UInt64" Name="number_bulk_elements" format="appended" RangeMin="2"                    RangeMax="2"                    offset="120"                 />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="5"                    RangeMax="5.8309518948"         offset="160"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="296"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="368"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="408"                 />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _MAAAAAQAAAAAAAAABQAAAAAAAAAOAAAAAAAAAA8AAAAAAAAAGAAAAAAAAAAZAAAAAAAAAA==IAAAAAUAAAAAAAAAEAAAAAAAAAAbAAAAAAAAACYAAAAAAAAAGAAAAAIAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA==YAAAAAAAAAAAABRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABRAAAAAAAAA8D8AAAAAAAAAAAAAAAAAABRAAAAAAAAAAEAAAAAAAAAAAAAAAAAAABRAAAAAAAAACEAAAAAAAAAAAA==MAAAAAAAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAADAAAAAAAAAA==GAAAAAIAAAAAAAAABAAAAAAAAAAGAAAAAAAAAA==AwAAAAMDAw==
+  </AppendedData>
+</VTKFile>

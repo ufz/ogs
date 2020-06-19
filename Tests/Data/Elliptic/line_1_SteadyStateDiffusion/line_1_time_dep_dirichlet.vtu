@@ -1,3 +1,63 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:ab34b5431ff77f26d5d750b23832fb808e66602e9f1b7a0cba66764b0571fd82
-size 4014
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="11" NumberOfCells="10">
+      <PointData>
+        <DataArray type="Float64" Name="t_1s" format="binary" RangeMin="0" RangeMax="1">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAANAAAAAAAAAA=eJxjYICAWTNBYKc9hD5pbwwGl6H8m/YQVQ+g4o/t08DgGVT+pf3ZMyDwBqrugz0Ar10jAA==
+        </DataArray>
+        <DataArray type="Float64" Name="t_2s" format="binary" RangeMin="0" RangeMax="2">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAANAAAAAAAAAA=eJxjYICAWTNB4KQ9hL5pbwwGj6H8l/YQVR+g4p/t08DgG1T+p/3ZMyDwB6qOwQEAxR4ioQ==
+        </DataArray>
+        <DataArray type="Float64" Name="t_3s" format="binary" RangeMin="0" RangeMax="3">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAANAAAAAAAAAA=eJxjYIAAE2MQuGwPoR/bnwGDN1D+Z3uIqh9Q8T9QmsEBIs/sMGsmCLA6QNRxOAAAJBgezw==
+        </DataArray>
+        <DataArray type="Float64" Name="t_4s" format="binary" RangeMin="0" RangeMax="4">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAANQAAAAAAAAA=eJxjYICAWTNB4KY9hH5pbwwGn6H8n/ZQZQ4QcWaHNDBgc4DIczqcPQMCPA4QZQIOAFtbHkY=
+        </DataArray>
+        <DataArray type="Float64" Name="t_5s" format="binary" RangeMin="0" RangeMax="5">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAAJwAAAAAAAAA=eJxjYEAGD+wh9Aco/QNKMzhAKBYozQGleaC0AJQWgtIiDgAX4AWU
+        </DataArray>
+        <DataArray type="Float64" Name="t_6s" format="binary" RangeMin="0" RangeMax="6">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAAMwAAAAAAAAA=eJxjYIAAE2MQeGwPoT/bnwGDP1A+swNEFYcDRJwHSgs4QOSFHWbNBAFRqDoJBwC+RBxy
+        </DataArray>
+        <DataArray type="Float64" Name="t_7s" format="binary" RangeMin="0" RangeMax="7">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAANQAAAAAAAAA=eJxjYICA9DQQeGYPob/Znz0DAgwOED6bA0QVjwNEXMBhJhgIQ+XFHIzBQBKqTsYBAE+9HMk=
+        </DataArray>
+        <DataArray type="Float64" Name="t_8s" format="binary" RangeMin="0" RangeMax="8">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAANQAAAAAAAAA=eJxjYICAWTNB4KU9hP5pbwwGzA4QPqcDRJWAA0Rc2CENDMSg8pIOZ8+AgAxUnYIDAAeFHOg=
+        </DataArray>
+        <DataArray type="Float64" Name="t_9s" format="binary" RangeMin="0" RangeMax="9">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAAMgAAAAAAAAA=eJxjYICAs2dA4I09hP5jPxMMWB0gfB4HiCohB4i4qIMxGEhC5WWgfAWoOiUHAK3WIco=
+        </DataArray>
+        <DataArray type="Float64" Name="t_10s" format="binary" RangeMin="0" RangeMax="10">
+          AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAAJgAAAAAAAAA=eJxjYEAGH+yhDAcIxQGlBaC0CJSWgNIyUFoBSitBaRUHALQLBDY=
+        </DataArray>
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="1">
+          AQAAAAAAAAAAgAAAAAAAAAgBAAAAAAAAOwAAAAAAAAA=eJxjYMAOZs0EgZ322MVPYogbg8FlHOpvYohDwAMc5jzGEE8Dg2c4zH+JIX72DAi8wWHvBwxxAA+QIwA=
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="10">
+          AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAJgAAAAAAAAA=eJxdxTkCABAMALA6i/8/2MCULIl4Cldu3Hnw5OTFm8//Ahb4AGU=
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="2" RangeMax="20">
+          AQAAAAAAAAAAgAAAAAAAAFAAAAAAAAAAIwAAAAAAAAA=eJxjYoAAFijNBqU5oDQXlOaB0nxQWgBKC0FpESgNAA4QAG8=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="3" RangeMax="3">
+          AQAAAAAAAAAAgAAAAAAAAAoAAAAAAAAACwAAAAAAAAA=eJxjZoYBAACvAB8=
+        </DataArray>
+        <DataArray type="Int64" Name="faces" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAAAAAAAAgAAAAAAAAFAAAAAAAAAADAAAAAAAAAA=eJxjYKAuAAAAUAAB
+        </DataArray>
+        <DataArray type="Int64" Name="faceoffsets" format="binary" RangeMin="1" RangeMax="10">
+          AQAAAAAAAAAAgAAAAAAAAFAAAAAAAAAAIgAAAAAAAAA=eJwtxbcBACAIADA76v8HM5As6a0MTy9vH4evn78TBzAAOA==
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

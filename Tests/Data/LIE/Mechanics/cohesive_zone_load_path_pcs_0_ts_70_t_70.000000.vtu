@@ -1,3 +1,97 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6925b17b7b92b531cf60062ae9405841106fd8ab9fb52b3e554b5ebb2a411d34
-size 5949
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="18" format="binary" RangeMin="45" RangeMax="103">
+        EgAAAAAAAAA2LjEuMC02OTEtZ2Y3NWIxNjQ=
+      </DataArray>
+    </FieldData>
+    <Piece NumberOfPoints="6" NumberOfCells="3">
+      <PointData>
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="binary" RangeMin="4.966442953e-06" RangeMax="5e-06">
+          YAAAAAAAAADohCeHyYTWuvBo44i1+NS+AAAAAAAAAADwaOOItfjUvgAAAAAAAAAA8GjjiLX41D42OJnHzbtTu/Bo44i1+NQ+6ARA3LCKUzsrUKJxrdTUPgAAAAAAAAAAK1Cica3U1D4=
+        </DataArray>
+        <DataArray type="Float64" Name="displacement_jump1" NumberOfComponents="2" format="binary" RangeMin="0" RangeMax="9.932885906e-06">
+          YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/O5264+ab7srUKJxrdTkvvgZx1cI+WW7K1Cica3U5L4=
+        </DataArray>
+        <DataArray type="Float64" Name="sigma_xx" format="binary" RangeMin="-7.070799757e-09" RangeMax="2.1458828125e-08">
+          MAAAAAAAAACJdWCgA7zxvYV1YKADvPG9wKpjyY4KVz63qmPJjgpXPpT2aDJtXj6+hfZoMm1ePr4=
+        </DataArray>
+        <DataArray type="Float64" Name="sigma_xy" format="binary" RangeMin="-6.4371941655e-08" RangeMax="2.9947137045e-08">
+          MAAAAAAAAACuP3g25xNgPqw/eDbnE2A+cCT1ME5AVj7Ut3Msm0dxvnh26NyT8V8+wbgTUk6DOD4=
+        </DataArray>
+        <DataArray type="Float64" Name="sigma_yy" format="binary" RangeMin="2237136.4653" RangeMax="3355704.698">
+          MAAAAAAAAACfoldZHJpJQZuiV1kcmklBnaJXWRyaSUFToldZHJpJQYfBjztoEUFBy8GPO2gRQUE=
+        </DataArray>
+        <DataArray type="Float64" Name="sigma_zz" format="binary" RangeMin="0" RangeMax="1118568.2327">
+          MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJDBjztoETFBxMGPO2gRMUE=
+        </DataArray>
+      </PointData>
+      <CellData Scalars="f_stress_n_analytical">
+        <DataArray type="Int32" Name="MaterialIDs" format="binary" RangeMin="0" RangeMax="1">
+          DAAAAAAAAAAAAAAAAQAAAAEAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="aperture" format="binary" RangeMin="0" RangeMax="1.9932885906e-05">
+          GAAAAAAAAACO3EJ9seb0PgAAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="f_stress_n" format="binary" RangeMin="0" RangeMax="3355704.698">
+          GAAAAAAAAAD6oVdZHJpJQQAAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="f_stress_s" format="binary" RangeMin="0" RangeMax="5.9888482308e-11">
+          GAAAAAAAAADq9YX8RnbQPQAAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="levelset1" format="binary" RangeMin="0" RangeMax="1">
+          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="strain_xx" format="binary" RangeMin="-6.0949950235e-24" RangeMax="6.0367896596e-24">
+          GAAAAAAAAAAAAAAAAAAAAIBeZAY9eR27iDpEAi8xHTs=
+        </DataArray>
+        <DataArray type="Float64" Name="strain_xy" format="binary" RangeMin="-7.9409338805e-23" RangeMax="4.2351647363e-22">
+          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA7AAAAAAAAWLs=
+        </DataArray>
+        <DataArray type="Float64" Name="strain_yy" format="binary" RangeMin="0" RangeMax="3.355704698e-08">
+          GAAAAAAAAAAAAAAAAAAAAABjjKALBGI+8GKMoAsEYj4=
+        </DataArray>
+        <DataArray type="Float64" Name="strain_zz" format="binary" RangeMin="0" RangeMax="0">
+          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="stress_xx" format="binary" RangeMin="-6.0949950235e-10" RangeMax="6.0367896596e-10">
+          GAAAAAAAAAAAAAAAAAAAAIqgpt028QS+RKDdLgS+BD4=
+        </DataArray>
+        <DataArray type="Float64" Name="stress_xy" format="binary" RangeMin="-7.9409338805e-09" RangeMax="4.2351647363e-08">
+          GAAAAAAAAAAAAAAAAAAAAAAAkB7EvGY+AADsFpMNQb4=
+        </DataArray>
+        <DataArray type="Float64" Name="stress_yy" format="binary" RangeMin="0" RangeMax="3355704.698">
+          GAAAAAAAAAAAAAAAAAAAAKOiV1kcmklBfqJXWRyaSUE=
+        </DataArray>
+        <DataArray type="Float64" Name="stress_zz" format="binary" RangeMin="0" RangeMax="0">
+          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="w_n" format="binary" RangeMin="0" RangeMax="9.932885906e-06">
+          GAAAAAAAAAArUKJxrdTkPgAAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="w_s" format="binary" RangeMin="0" RangeMax="1.7726990763e-22">
+          GAAAAAAAAAB6BJ8hzMlqOwAAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Float64" Name="f_stress_n_analytical" format="binary" RangeMin="0" RangeMax="3355696.6216">
+          GAAAAAAAAAD0m5FPGJpJQQAAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="2.2360679775">
+          kAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAA=
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="5">
+          UAAAAAAAAAAFAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAUAAAAAAAAABAAAAAAAAAADAAAAAAAAAAQAAAAAAAAABQAAAAAAAAACAAAAAAAAAA==
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="2" RangeMax="10">
+          GAAAAAAAAAACAAAAAAAAAAYAAAAAAAAACgAAAAAAAAA=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="3" RangeMax="9">
+          AwAAAAAAAAADCQk=
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

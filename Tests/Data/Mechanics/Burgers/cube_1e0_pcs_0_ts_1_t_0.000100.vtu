@@ -1,3 +1,48 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d0fb614e6b6fa737074bcf681648e83f6c17fcd2c8d5a5f517c287ea52af6802
-size 2580
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="8" NumberOfCells="1">
+      <PointData>
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="0.012504017039">
+          AQAAAACAAADAAAAAHwAAAA==eJxjYCANOP/9e3DL7E57dHEXHOKkAlcSzQcAbZoUWQ==
+        </DataArray>
+        <DataArray type="Float64" Name="sigma_xx" format="binary" RangeMin="-1.1273334618e-17" RangeMax="3.0206809069e-18">
+          AQAAAACAAABAAAAANQAAAA==eJzTXOVufELt424LKK0eJzgp8Y63jTaUfnv05InlDAI2zMcg9N4tcZqz/mXu2QOlAbSEHqY=
+        </DataArray>
+        <DataArray type="Float64" Name="sigma_xy" format="binary" RangeMin="0.014142135624" RangeMax="0.014142135624">
+          AQAAAACAAABAAAAAIQAAAA==eJx7yfLfv/dbj/1jKP0ASn+A0k+h9Cso/Q5NHQCgxCQ6
+        </DataArray>
+        <DataArray type="Float64" Name="sigma_yy" format="binary" RangeMin="-1.6118070275e-18" RangeMax="4.3188239138e-19">
+          AQAAAACAAABAAAAANgAAAA==eJxj3Pf6hN68w7uX74XQ9UV9Euz35G16oPTaKLbFh3wfWd+B0svq9it277bdsxpKAwAsdSBL
+        </DataArray>
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAAAEAAAADAAAAA==eJxjYGBgAAAABAAB
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="1.7320508076">
+          AQAAAACAAADAAAAAHAAAAA==eJxjYMAHPtjjlcaQh/GJ1YdLPy51mDQAp2EONQ==
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="7">
+          AQAAAACAAABAAAAAHgAAAA==eJxjYIAARijNDKWZoDQLlGaF0uxQmg1KAwAC8AAd
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="8" RangeMax="8">
+          AQAAAACAAAAIAAAACwAAAA==eJzjYIAAAABIAAk=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="12" RangeMax="12">
+          AQAAAACAAAABAAAACQAAAA==eJzjAQAADQAN
+        </DataArray>
+        <DataArray type="Int64" Name="faces" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAAAIAAAACwAAAA==eJxjYIAAAAAIAAE=
+        </DataArray>
+        <DataArray type="Int64" Name="faceoffsets" format="binary" RangeMin="1" RangeMax="1">
+          AQAAAACAAAAIAAAACwAAAA==eJxjZIAAAAAQAAI=
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

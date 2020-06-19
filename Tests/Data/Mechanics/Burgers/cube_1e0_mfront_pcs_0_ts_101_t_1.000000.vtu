@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:63336e761e4ccef1bc29d05df706f6c7ac8d3d2138dc75d67931d2a18d191282
-size 5058
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="IntegrationPointMetaData" NumberOfTuples="97" format="appended" RangeMin="34"                   RangeMax="125"                  offset="0"                   />
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="20" format="appended" RangeMin="45"                   RangeMax="103"                  offset="140"                 />
+      <DataArray type="Float64" Name="sigma_ip" NumberOfComponents="6" NumberOfTuples="8" format="appended" RangeMin="0.01"                 RangeMax="0.01"                 offset="204"                 />
+    </FieldData>
+    <Piece NumberOfPoints="8"                    NumberOfCells="1"                   >
+      <PointData>
+        <DataArray type="Float64" Name="MaterialForces" NumberOfComponents="3" format="appended" RangeMin="3.1622776602e+149"    RangeMax="-nan"                 offset="440"                 />
+        <DataArray type="Float64" Name="NodalForces" NumberOfComponents="3" format="appended" RangeMin="0.0035355339059"      RangeMax="0.0035355339059"      offset="488"                 />
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="0.042582834421"       offset="664"                 />
+        <DataArray type="Float64" Name="sigma" NumberOfComponents="6" format="appended" RangeMin="0.01"                 RangeMax="0.01"                 offset="732"                 />
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1052"                />
+        <DataArray type="Float64" Name="principal_stress_values" NumberOfComponents="3" format="appended" RangeMin="0.014142135624"       RangeMax="0.014142135624"       offset="1092"                />
+        <DataArray type="Float64" Name="principal_stress_vector_1" NumberOfComponents="3" format="appended" RangeMin="1"                    RangeMax="1"                    offset="1156"                />
+        <DataArray type="Float64" Name="principal_stress_vector_2" NumberOfComponents="3" format="appended" RangeMin="1"                    RangeMax="1"                    offset="1220"                />
+        <DataArray type="Float64" Name="principal_stress_vector_3" NumberOfComponents="3" format="appended" RangeMin="1"                    RangeMax="1"                    offset="1276"                />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.7320508076"         offset="1336"                />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="1400"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1464"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1504"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAABhAAAAVwAAAA==eF5VjDEOgDAIAP/C7OTg0K8YQ1DRMAANrYNp+ne7Ot5dcg3EKt9BVdww+yCkCHoLpLX9osfJAWmewEgZEhS5lVAyDPPozoF+4eGa3djqGCx96x8LVCQuAQAAAACAAAAUAAAAHAAAAA==eF4z0zPWM9A1tDTTTTcwTTNIMjQ1SwYALWsEsw==AQAAAACAAACAAQAAnwAAAA==eF7bE6U/YXqOpc0pFfGdHrnicLpGZJ37w6oWewYouD6f+fcTV6c93WLMxx5YOu3Jd139kaVf1wZG41J/Ts26j7FFZM/xJwdzDlu/2Q2jq9DUP4qSXucxX9nmd4Fp1CVBlT1/RZ9MMNzKZ8MkBqHRzd8+f8Picm1dmz1Euv+SwqTJvz75Ee1+mHpc7kdX//7cpm3WAbxEux+mHgA4wpWyAQAAAACAAADAAAAAEQAAAA==eF5jYACBH/UMQ5QGAN48Iyk=AQAAAACAAADAAAAAcQAAAA==eF6rFlnn/rAqZX8NlF7QvYPra+kG6xpUcftZSyKmxp75vbsOyq+Gyhc9iT5Z0SNjA1MHo+vtGH9n7VTbg2bO/lRNtR/LhBhsqtHMX3O7Zp1d49XdVWjm71NT2bPxnpoNmrj9uy0Lvdmuy+wBAE4jXKI=AQAAAACAAADAAAAAIAAAAA==eF5jYCAN5K/MvpR1dqk9ungBDnFSAS5zcIkDAJf3EcQ=AQAAAACAAACAAQAA3QAAAA==eF4zeML77cYjUZuFDmc8Ir69tz4CpetF1rk/rGqxZ4ACj8i9D9J2WticegxRz+gIUacOpWvQ1EfXMye+93e2Ybc3OnpIMnjPLXdh9YdzzGxgdCWa+i28XSa/zSP2MEHVX4aqg9FVaOqZuXefZixz27N9cqmuuprZngmbIo2c+YT2TITStWjq43qPrj5828ZmN1T9XKi6eVA6B039z0XHPjMamdv0bOCTu7UjwMah06ol7ZegjSOUrkNTf0WL6cyDuog9k6Hq1aHqNKB0E5r6Lx/M0i6nuOwBANP6juY=AQAAAACAAAAEAAAADAAAAA==eF5jYGBgAAAABAABAQAAAACAAAAYAAAAHAAAAA==eF6rFlnn/rCqZX/L/Yt750wXt6mG8O0BngcMPA==AQAAAACAAAAYAAAAHAAAAA==eF47Y12fNm/Bs/1nILQ9p1hlZ8H5aXsAoyoM0Q==AQAAAACAAAAYAAAAGAAAAA==eF5jYICAH9p1VdKKC/ZAeB/2AwAxXQVjAQAAAACAAAAYAAAAGwAAAA==eF47Y12fNm/Bs/1noDSnWGVnwflpNgCnKgzRAQAAAACAAADAAAAAHAAAAA==eF5jYMAHPtjjlcaQh/GJ1YdLPy51mDQAp2EONQ==AQAAAACAAABAAAAAHgAAAA==eF5jYIAARijNDKWZoDQLlGaF0uxQmg1KAwAC8AAdAQAAAACAAAAIAAAACwAAAA==eF7jYIAAAABIAAk=AQAAAACAAAABAAAACQAAAA==eF7jAQAADQAN
+  </AppendedData>
+</VTKFile>

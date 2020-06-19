@@ -1,3 +1,33 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:78fabdfcaea32720057cee260c0dbd9b267e25cc3a2913c41745f9600a74bf21
-size 3930
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="IntegrationPointMetaData" NumberOfTuples="97" format="appended" RangeMin="34"                   RangeMax="125"                  offset="0"                   />
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="19" format="appended" RangeMin="45"                   RangeMax="103"                  offset="140"                 />
+      <DataArray type="Float64" Name="sigma_ip" NumberOfComponents="4" NumberOfTuples="4" format="appended" RangeMin="0.010198039027"       RangeMax="0.010198039027"       offset="200"                 />
+    </FieldData>
+    <Piece NumberOfPoints="4"                    NumberOfCells="1"                   >
+      <PointData>
+        <DataArray type="Float64" Name="MaterialForces" NumberOfComponents="2" format="appended" RangeMin="3.2526911935e-05"     RangeMax="3.2526911935e-05"     offset="336"                 />
+        <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="0.005"                RangeMax="0.005"                offset="404"                 />
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0.0096166522241"      offset="496"                 />
+        <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="appended" RangeMin="0.0096166522241"      RangeMax="0.0096166522241"      offset="572"                 />
+        <DataArray type="Float64" Name="sigma" NumberOfComponents="4" format="appended" RangeMin="0.010198039027"       RangeMax="0.010198039027"       offset="676"                 />
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="0"                    offset="820"                 />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.4142135624"         offset="860"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="912"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="964"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1004"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAABhAAAAVwAAAA==eF5VjDEKgDAMAP+S2Umc+hWREDVKhiQlrYOU/t2ujncH10Cs8h1UxQ2zD0KKoLdAWtsvepwckOYJjJQhQZFbCSXDMI/uHOgXHq7Zja2OwdK3/gELTCQsAQAAAACAAAATAAAAGwAAAA==eF4z0zPSM9K1NNVNN0wys0i2TExJBgAq8QTrAQAAAACAAACAAAAAVAAAAA==eF5bYvbuc4O4pk2VyDr3h1Ut9n9Xfrzkm5RgzwAFPen+gQ2bdPfA5H9D5c9Y16fNW2Bmw/X613WVRyY21VD5f6jyewwn9Gvlc0vtqcZhPgBuNzeFAQAAAACAAABAAAAAIAAAAA==eF6rbWX9ziz3Y181hLargtI1qPx9Nag0TH4fAJOVHJ0=AQAAAACAAABAAAAAMQAAAA==eF6L5P6YL1OquKdKZJ37w6qS/VEQvk0NlK+xwrox/4aYDVTeXhPC3wOVtwcAf7kb+Q==AQAAAACAAABAAAAAJQAAAA==eF5jYEAFp3bt6GX7kLYfTZjBM+CPRPH1JvtjUHkPKB8AdPMRNA==AQAAAACAAACAAAAAOgAAAA==eF47tGtHL9uHtP3OAX8kiq832TOggAc79kPlXdDkdRU5RfpmGO85gkM/VN7mDFTeA6v5LJYAUvwonQ==AQAAAACAAACAAAAAWQAAAA==eF77eyelpqjV2KZcZJ37w6oW+18rP17yTUqwZwCDDzuEo138NH872JShyesqcor0zXDe87LO9G3uW+s9JVD5b6jyNvneyrOkf2rtqYHK/0UxX8QSAHZ8Nug=AQAAAACAAAAEAAAADAAAAA==eF5jYGBgAAAABAABAQAAAACAAABgAAAAFQAAAA==eF5jYMAHPtjjlcaQh/ER4gCW5AS9AQAAAACAAAAgAAAAEwAAAA==eF5jYIAARijNDKWZoDQAAHgABw==AQAAAACAAAAIAAAACwAAAA==eF5jYYAAAAAoAAU=AQAAAACAAAABAAAACQAAAA==eF7jBAAACgAK
+  </AppendedData>
+</VTKFile>

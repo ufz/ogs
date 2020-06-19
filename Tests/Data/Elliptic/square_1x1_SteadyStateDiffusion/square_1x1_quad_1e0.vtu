@@ -1,3 +1,42 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:f71d2444a5f99106af55de42283c52bea8bed6e40c94f59544082911d37ca7c8
-size 1973
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="4" NumberOfCells="1">
+      <PointData>
+        <DataArray type="Float64" Name="Linear_1_to_minus1" format="binary" RangeMin="-1" RangeMax="1">
+          AQAAAACAAAAgAAAAFAAAAA==eJxjYACBD/YMEHo/AxofAEpsBb0=
+        </DataArray>
+        <DataArray type="Float64" Name="D1_left_bottom_N1_right" format="binary" RangeMin="1" RangeMax="1.6753144833">
+          AQAAAACAAAAgAAAAGAAAAA==eJxjYACBD/YMaLSOvVu/2Llf9gBLygbr
+        </DataArray>
+      </PointData>
+      <CellData>
+        <DataArray type="UInt32" Name="MaterialIDs" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAAAEAAAADAAAAA==eJxjYGBgAAAABAAB
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="1.4142135624">
+          AQAAAACAAABgAAAAFQAAAA==eJxjYMAHPtjjlcaQh/ER4gCW5AS9
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="3">
+          AQAAAACAAAAgAAAAEwAAAA==eJxjYIAARijNDKWZoDQAAHgABw==
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="4" RangeMax="4">
+          AQAAAACAAAAIAAAACwAAAA==eJxjYYAAAAAoAAU=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="9" RangeMax="9">
+          AQAAAACAAAABAAAACQAAAA==eJzjBAAACgAK
+        </DataArray>
+        <DataArray type="Int64" Name="faces" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAAAIAAAACwAAAA==eJxjYIAAAAAIAAE=
+        </DataArray>
+        <DataArray type="Int64" Name="faceoffsets" format="binary" RangeMin="1" RangeMax="1">
+          AQAAAACAAAAIAAAACwAAAA==eJxjZIAAAAAQAAI=
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

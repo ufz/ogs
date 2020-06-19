@@ -1,3 +1,34 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:da12f42866c85e8f1e5d008996bc18521ee0cd1e7b0458668b64a897c1ff30d0
-size 3844
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="2"                    NumberOfCells="1"                   >
+      <PointData>
+        <DataArray type="UInt64" Name="bulk_node_ids" format="appended" RangeMin="10"                   RangeMax="21"                   offset="0"                   />
+        <DataArray type="Float64" Name="darcy_ini" format="appended" RangeMin="-0"                   RangeMax="-0"                   offset="44"                  />
+        <DataArray type="Float64" Name="Pconstant" format="appended" RangeMin="-0.001"               RangeMax="-0.001"               offset="88"                  />
+        <DataArray type="Float64" Name="Pprefac1" format="appended" RangeMin="0"                    RangeMax="0"                    offset="140"                 />
+        <DataArray type="Float64" Name="Pprefac2" format="appended" RangeMin="0.001"                RangeMax="0.001"                offset="180"                 />
+        <DataArray type="Float64" Name="Pprefac3" format="appended" RangeMin="0"                    RangeMax="0"                    offset="232"                 />
+        <DataArray type="Float64" Name="Cconstant" format="appended" RangeMin="0"                    RangeMax="0"                    offset="272"                 />
+        <DataArray type="Float64" Name="Cprefac1" format="appended" RangeMin="0"                    RangeMax="0"                    offset="312"                 />
+        <DataArray type="Float64" Name="Cprefac2" format="appended" RangeMin="0"                    RangeMax="0"                    offset="352"                 />
+        <DataArray type="Float64" Name="Cprefac3" format="appended" RangeMin="0.001"                RangeMax="0.001"                offset="392"                 />
+        <DataArray type="Float64" Name="c_ini" format="appended" RangeMin="0"                    RangeMax="0"                    offset="444"                 />
+        <DataArray type="Float64" Name="p_ini" format="appended" RangeMin="-1"                   RangeMax="-1"                   offset="484"                 />
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="appended" RangeMin="1"                    RangeMax="1.0049875623"         offset="532"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="588"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="632"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="672"                 />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAAAQAAAADgAAAA==eJzjYoAAUSgNAAFYACA=AQAAAACAAAAQAAAADwAAAA==eJxjYACDBgYoDQAFEAEBAQAAAACAAAAQAAAAEwAAAA==eJz7s/LjJd+kgP1/oDQAXTAKTQ==AQAAAACAAAAQAAAACwAAAA==eJxjYEAFAAAQAAE=AQAAAACAAAAQAAAAEwAAAA==eJz7s/LjJd+kAPs/UBoAWDAJTQ==AQAAAACAAAAQAAAACwAAAA==eJxjYEAFAAAQAAE=AQAAAACAAAAQAAAACwAAAA==eJxjYEAFAAAQAAE=AQAAAACAAAAQAAAACwAAAA==eJxjYEAFAAAQAAE=AQAAAACAAAAQAAAACwAAAA==eJxjYEAFAAAQAAE=AQAAAACAAAAQAAAAEwAAAA==eJz7s/LjJd+kAPs/UBoAWDAJTQ==AQAAAACAAAAQAAAACwAAAA==eJxjYEAFAAAQAAE=AQAAAACAAAAQAAAAEAAAAA==eJxjYACBD/sZoDQAEsYDXw==AQAAAACAAAAYAAAAFgAAAA==eJxjYGiwZ4CDBvuzZ87YglgAKW8EIQ==AQAAAACAAAAQAAAADgAAAA==eJxjYIAARigNAAAYAAI=AQAAAACAAAAIAAAACwAAAA==eJxjYoAAAAAYAAM=AQAAAACAAAABAAAACQAAAA==eJxjBgAABAAE
+  </AppendedData>
+</VTKFile>

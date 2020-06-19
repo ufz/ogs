@@ -1,3 +1,33 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9aa273e7328b89475393856c9bfa0dc47d420220293f4d5cfcb1e91a7d418428
-size 2108
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="11" NumberOfCells="10">
+      <PointData>
+        <DataArray type="UInt64" Name="bulk_node_ids" format="binary" RangeMin="10" RangeMax="120">
+          WAAAAHgAAAAAAAAACgAAAAAAAAAVAAAAAAAAACAAAAAAAAAAKwAAAAAAAAA2AAAAAAAAAEEAAAAAAAAATAAAAAAAAABXAAAAAAAAAGIAAAAAAAAAbQAAAAAAAAA=
+        </DataArray>
+      </PointData>
+      <CellData>
+        <DataArray type="UInt64" Name="bulk_element_ids" format="binary" RangeMin="9" RangeMax="99">
+          UAAAAAkAAAAAAAAAEwAAAAAAAAAdAAAAAAAAACcAAAAAAAAAMQAAAAAAAAA7AAAAAAAAAEUAAAAAAAAATwAAAAAAAABZAAAAAAAAAGMAAAAAAAAA
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="1" RangeMax="1.4142135624">
+          CAEAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/mpmZmZmZuT8AAAAAAAAAAAAAAAAAAPA/mpmZmZmZyT8AAAAAAAAAAAAAAAAAAPA/MzMzMzMz0z8AAAAAAAAAAAAAAAAAAPA/mpmZmZmZ2T8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA4D8AAAAAAAAAAAAAAAAAAPA/MzMzMzMz4z8AAAAAAAAAAAAAAAAAAPA/ZmZmZmZm5j8AAAAAAAAAAAAAAAAAAPA/mpmZmZmZ6T8AAAAAAAAAAAAAAAAAAPA/zczMzMzM7D8AAAAAAAAAAA==
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="10">
+          oAAAAAEAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAMAAAAAAAAAAwAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABQAAAAAAAAAFAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAHAAAAAAAAAAcAAAAAAAAACAAAAAAAAAAIAAAAAAAAAAkAAAAAAAAACQAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAAAAAAAAAAA=
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="2" RangeMax="20">
+          UAAAAAIAAAAAAAAABAAAAAAAAAAGAAAAAAAAAAgAAAAAAAAACgAAAAAAAAAMAAAAAAAAAA4AAAAAAAAAEAAAAAAAAAASAAAAAAAAABQAAAAAAAAA
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="3" RangeMax="3">
+          CgAAAAMDAwMDAwMDAwM=
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>
