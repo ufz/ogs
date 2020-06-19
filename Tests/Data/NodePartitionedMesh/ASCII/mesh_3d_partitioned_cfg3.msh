@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c4a79f211be7779107378b68e7e37b8eb33e1653667029ceaadb7b6122c4a2fa
-size 500
+Subdomain mesh (Number of nodes; Number of base nodes; Number of regular elements; Number of ghost elements; Number of non-ghost base nodes; Number of non-ghost nodes Number of base nodes of the global mesh; Number of nodes of the global mesh; Number of integer variables to define non-ghost elements; Number of integer variables to define ghost elements.)
+3
+643 643 260 157 447 447 1331 1331 2860 1727 0 
+622 622 250 149 436 436 1331 1331 2750 1639 0 
+630 630 274 143 448 448 1331 1331 3014 1573 0 
