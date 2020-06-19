@@ -138,11 +138,11 @@ public:
 
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& local_xdot, const double dxdot_dx,
+        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
         const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions) override;
+        std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data) override;
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
@@ -229,17 +229,14 @@ private:
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
      *                        method.
-     * @param local_coupled_solutions Nodal values of solutions of the coupled
-     *                                temperature of an element.
      */
 
     void assembleWithJacobianForDeformationEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& local_xdot, const double dxdot_dx,
+        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
         const double dx_dx, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions);
+        std::vector<double>& local_Jac_data);
 
     /**
      * Assemble local matrices and vectors arise from the linearized discretized
@@ -265,16 +262,13 @@ private:
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
      *                        method.
-     * @param local_coupled_solutions Nodal values of solutions of the coupled
-     *                                displacement of an element.
      */
     void assembleWithJacobianForHeatConductionEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& local_xdot, const double dxdot_dx,
+        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
         const double dx_dx, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions);
+        std::vector<double>& local_Jac_data);
 
     std::size_t setSigma(double const* values);
 

@@ -40,25 +40,7 @@ struct CoupledSolutionsForStaggeredScheme
 };
 
 /**
- *  A struct to keep the references to the local element solutions  of the
- *  current and previous time step solutions of the equations of the coupled
- *  processes.
- *
- *  During the global assembly loop, an instance of this struct is created for
- *  each element and it is then passed to local assemblers.
- */
-struct LocalCoupledSolutions
-{
-    explicit LocalCoupledSolutions(std::vector<double>&& local_coupled_xs0_)
-        : local_coupled_xs0(std::move(local_coupled_xs0_))
-    {
-    }
-
-    /// Local solutions of the previous time step.
-    std::vector<double> const local_coupled_xs0;
-};
-
-/**
+    LocalCoupledSolutions(std::vector<double>&& local_coupled_xs0_)
  * Fetch the nodal solutions of all coupled processes from the given vector of
  * global solutions for each process into a flat vector.
  */
