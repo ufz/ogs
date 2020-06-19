@@ -1,3 +1,62 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dcd83e50c02cceec44c7447cf98973fd03eb0faded7a7136670e526bb6466efa
-size 3775
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="0" format="binary" RangeMin="1e+299" RangeMax="-1e+299">
+        AAAAAACAAAAAAAAA
+      </DataArray>
+    </FieldData>
+    <Piece NumberOfPoints="8" NumberOfCells="1">
+      <PointData>
+        <DataArray type="Float64" Name="HydraulicFlow" format="binary" RangeMin="-7.1054273576e-14" RangeMax="1.1368683772e-13">
+          AQAAAACAAABAAAAAHQAAAA==eJxjYAABk71gikEBSgvYQmgHKP2jHhcNAM1YCHU=
+        </DataArray>
+        <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="binary" RangeMin="3.1622776602e+149" RangeMax="nan">
+          AQAAAACAAACAAAAAFQAAAA==eJxjYACDBgj1o56BLD75NAArsBOV
+        </DataArray>
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="binary" RangeMin="0" RangeMax="0.0035977593061">
+          AQAAAACAAACAAAAAMwAAAA==eJxjYEAF7Pe/zVS/nmKPJszw/x5EnBcq/w/Kh6gPwVDPABXngJkH5XNCaUaoOACbNip/
+        </DataArray>
+        <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="binary" RangeMin="0.0044063372586" RangeMax="0.0044063372586">
+          AQAAAACAAAAAAQAAjQAAAA==eJxjv/9tpvr1FHsmKM0JpdU+PPWrCBO04YPyuaC0IJSecci06FYahw0rlP/3HoRmhvK/urcp1W81tRGC8n/eQzXHMvK34QtVlT0w/SxQmh1Knzpld2PjDuM9MHHG+6jmH6izmrnxt6ENL5TPAKU5oLTxRevIv1d+WPOj+Y8bSjtyxxk4zjCzAQDZBoIP
+        </DataArray>
+        <DataArray type="Float64" Name="pressure" format="binary" RangeMin="0" RangeMax="0.10416000013">
+          AQAAAACAAABAAAAAGQAAAA==eJybliFxyWrVLvtpUHoqGp+BAAAA2soPFA==
+        </DataArray>
+        <DataArray type="Float64" Name="pressure_interpolated" format="binary" RangeMin="0.10416000013" RangeMax="0.10416000013">
+          AQAAAACAAABAAAAAGAAAAA==eJybliFxyWrVLvtpUHoqGp8QDQDS9R4o
+        </DataArray>
+        <DataArray type="Float64" Name="sigma" NumberOfComponents="4" format="binary" RangeMin="0.18041041234" RangeMax="0.18041041234">
+          AQAAAACAAAAAAQAAhAAAAA==eJybnSFxyWrVLvu5UHohlM6dvUhVvTHQZj4O+cSCWeLvF3nYzIDyp0Lp2VC6/bhNxPtXpTZLofyZUHoJlM7bENPcFJ6yZzqUPwNNXUt2ziTbl8V7YPwpaPZkXji356t6kc0cKH86mv2fapQspYUsbRahiS+G0n/OKTo+OF9mAwDPqXnF
+        </DataArray>
+        <DataArray type="Float64" Name="temperature" format="binary" RangeMin="0" RangeMax="353.15">
+          AQAAAACAAABAAAAAFgAAAA==eJxLSwMCoTKHTCidhkYzEAAAHn4LHA==
+        </DataArray>
+        <DataArray type="Float64" Name="temperature_interpolated" format="binary" RangeMin="353.15" RangeMax="353.15">
+          AQAAAACAAABAAAAAFwAAAA==eJxLSwMCoTKHTCidhkZnEOADANlWFjg=
+        </DataArray>
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAAAEAAAADAAAAA==eJxjYGBgAAAABAAB
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="1.4142135624">
+          AQAAAACAAADAAAAAIgAAAA==eJxjYMAHPtjjlcaQh/HRxR8QMAddHqYfXfwBhvkAejsLlw==
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="7">
+          AQAAAACAAABAAAAAHgAAAA==eJxjYIAARijNDKWZoDQLlGaD0uxQmhVKAwADAAAd
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="8" RangeMax="8">
+          AQAAAACAAAAIAAAACwAAAA==eJzjYIAAAABIAAk=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="23" RangeMax="23">
+          AQAAAACAAAABAAAACQAAAA==eJwTBwAAGAAY
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

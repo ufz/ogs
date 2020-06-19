@@ -1,3 +1,35 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:908ad4579b3133178d5d8a14a9c35a229d1af20e097c46bca4a49dd7c95eb615
-size 4486
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="8"                    NumberOfCells="1"                   >
+      <PointData>
+        <DataArray type="Float64" Name="sigma_0" NumberOfComponents="6" format="appended" RangeMin="0"                    RangeMax="0"                    offset="0"                   />
+        <DataArray type="Float64" Name="sigma_1" NumberOfComponents="6" format="appended" RangeMin="0"                    RangeMax="0"                    offset="44"                  />
+        <DataArray type="Float64" Name="sigma_2" NumberOfComponents="6" format="appended" RangeMin="721687.83649"         RangeMax="721687.83649"         offset="88"                  />
+        <DataArray type="Float64" Name="sigma_3" NumberOfComponents="6" format="appended" RangeMin="1443375.673"          RangeMax="1443375.673"          offset="152"                 />
+        <DataArray type="Float64" Name="sigma_4" NumberOfComponents="6" format="appended" RangeMin="2165063.5095"         RangeMax="2165063.5095"         offset="216"                 />
+        <DataArray type="Float64" Name="sigma_5" NumberOfComponents="6" format="appended" RangeMin="2886751.3459"         RangeMax="2886751.3459"         offset="280"                 />
+        <DataArray type="Float64" Name="sigma_6" NumberOfComponents="6" format="appended" RangeMin="3608439.1824"         RangeMax="3608439.1824"         offset="344"                 />
+        <DataArray type="Float64" Name="sigma_7" NumberOfComponents="6" format="appended" RangeMin="4330127.0189"         RangeMax="4330127.0189"         offset="408"                 />
+        <DataArray type="Float64" Name="sigma_8" NumberOfComponents="6" format="appended" RangeMin="5051814.8554"         RangeMax="5051814.8554"         offset="472"                 />
+        <DataArray type="Float64" Name="sigma_9" NumberOfComponents="6" format="appended" RangeMin="5773502.6919"         RangeMax="5773502.6919"         offset="536"                 />
+        <DataArray type="Float64" Name="sigma_10" NumberOfComponents="6" format="appended" RangeMin="5773502.6919"         RangeMax="5773502.6919"         offset="600"                 />
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.7320508076"         offset="664"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="728"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="792"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="832"                 />
+        <DataArray type="Int64" Name="faces" format="appended" RangeMin=""                     RangeMax=""                     offset="868"                 />
+        <DataArray type="Int64" Name="faceoffsets" format="appended" RangeMin=""                     RangeMax=""                     offset="908"                 />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAACAAQAADQAAAA==eJxjYBgFAwkAAYAAAQ==AQAAAACAAACAAQAADQAAAA==eJxjYBgFAwkAAYAAAQ==AQAAAACAAACAAQAAHgAAAA==eJxbt2rVqqw8yYProPRaKM2AA6wbVU9V9QDhdWjJAQAAAACAAACAAQAAHgAAAA==eJxbt2rVqqw8zYProPRaKM2AA6wbVU9V9QAQk2pJAQAAAACAAACAAQAAHgAAAA==eJxjZmBguCBkfJAZSjNBaQYcgHlUPVXVAwATBSxRAQAAAACAAACAAQAAHgAAAA==eJxbt2rVqqw8y4ProPRaKM2AA6wbVU9V9QA/omvJAQAAAACAAACAAQAAHgAAAA==eJyLCg0NZT1lfzAKSkdCaQYcIGpUPVXVAwBYTEu5AQAAAACAAACAAQAAHgAAAA==eJxjZmBguCDkfJAZSjNBaQYcgHlUPVXVAwBCFC3RAQAAAACAAACAAQAAHgAAAA==eJyLDA0NnevgdjASSkdAaQYcIHJUPVXVAwDiG02ZAQAAAACAAACAAQAAHgAAAA==eJxbt2rVqqw8z4ProPRaKM2AA6wbVU9V9QBusW1JAQAAAACAAACAAQAAHgAAAA==eJxbt2rVqqw8z4ProPRaKM2AA6wbVU9V9QBusW1JAQAAAACAAADAAAAAHAAAAA==eJxjYMAHPtjjlcaQh/GJ1YdLPy51mDQAp2EONQ==AQAAAACAAABAAAAAHgAAAA==eJxjYIAARijNDKWZoDQLlGaF0uxQmg1KAwAC8AAdAQAAAACAAAAIAAAACwAAAA==eJzjYIAAAABIAAk=AQAAAACAAAABAAAACQAAAA==eJzjAQAADQANAQAAAACAAAAIAAAACwAAAA==eJxjYIAAAAAIAAE=AQAAAACAAAAIAAAACwAAAA==eJxjZIAAAAAQAAI=
+  </AppendedData>
+</VTKFile>

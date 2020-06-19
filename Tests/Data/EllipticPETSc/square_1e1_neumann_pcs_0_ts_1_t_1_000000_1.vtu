@@ -1,3 +1,47 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a22afd52b400cde481f5cb6ad0f18d139aa7d7692a3618374dbb2a755e23e47e
-size 2864
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="20" format="binary" RangeMin="45" RangeMax="103">
+        AQAAAACAAAAUAAAAHAAAAA==eJwz0zPUM9A1t7DUTU9NSzRLSTVOTAYAMkIFfw==
+      </DataArray>
+    </FieldData>
+    <Piece NumberOfPoints="12" NumberOfCells="6">
+      <PointData>
+        <DataArray type="Float64" Name="D1_left_bottom_N1_right" format="binary" RangeMin="1" RangeMax="1.6753144833">
+          AQAAAACAAABgAAAAXAAAAA==eJxjYACBD/bX/sx7aV78yX4ux4kl2yZ8tT9o+UaJieeXPQNU/rWWbHvgsU/2KcbrXtw0+GavY+/WL3YOIc/Upc7LUfXRXq3LjHFD12f7+NWJc88mfrcHAD+XJpY=
+        </DataArray>
+        <DataArray type="Float64" Name="Linear_1_to_minus1" format="binary" RangeMin="-1" RangeMax="1">
+          AQAAAACAAABgAAAAHQAAAA==eJxjYACBD/ZJoSBw1T4BQu9ngIjDaLLlATtZHM8=
+        </DataArray>
+        <DataArray type="Float64" Name="pressure" format="binary" RangeMin="1" RangeMax="1.6801845695">
+          AQAAAACAAABgAAAAXQAAAA==eJxjYACBD/bXrqgs3pz7yV6wg+e71oyv9vfWmqyPkvplzwCVnzo1V0/t5Cf7d5847Utsv9lbvhE153yEkLdcee/895yP9g/eHH5yP/Gz/c9Nt3jONX63BwBdpSui
+        </DataArray>
+        <DataArray type="Float64" Name="v" NumberOfComponents="2" format="binary" RangeMin="0.26731055829" RangeMax="1.222792711">
+          AQAAAACAAADAAAAAuAAAAA==eJzj/LVzabbK3f0MYFC6R2eG6tOGEw/2e4hsztMJOrBfoFtf5Svr8/3eKktkq1Qv7r/w6EOAHO/r/Q3hyX+THK/sb2icKPZ02wOo/gabYzdk98bseLT/oTJI/cb9L5h/Sq70erE/hLOlfu/ffftPX3e/UHv79f4DYHWH9m95l79vrvRFqP6uPba902Psva/s5wG76+x+O9kv25rsHu3Xhbpr1pKOD1P2v9g/k3Mer4D/u/0AFd9heA==
+        </DataArray>
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAAAYAAAACwAAAA==eJxjYMAOAAAYAAE=
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0.33333333333" RangeMax="1.4142135624">
+          AQAAAACAAAAgAQAAPwAAAA==eJxjYICAiFAQeGoP5TL4g/lX7dHFYXx0cQj4gEMcIY9uPro4qv4PGOZjF0c3D8FHF4eZjy4OMxddHABUsDOh
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="11">
+          AQAAAACAAADAAAAANQAAAA==eJxjYIAARijNCqVZ0MSZoDQbmjqYODOUZkdTxwGlOdHMY0AT50IzjxFNnBvNHpg6ACUwAG0=
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="4" RangeMax="24">
+          AQAAAACAAAAwAAAAGAAAAA==eJxjYYAADijNA6UFoLQIlJaA0gAHMABV
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="9" RangeMax="9">
+          AQAAAACAAAAGAAAACwAAAA==eJzj5AQBAADDADc=
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

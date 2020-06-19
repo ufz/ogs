@@ -1,3 +1,39 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0b76825efa97835b9ab4cf3c5532c9fa3ae13195414da4011050dd50b9e2b632
-size 8237
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="20" format="appended" RangeMin="45"                   RangeMax="103"                  offset="0"                   />
+    </FieldData>
+    <Piece NumberOfPoints="20"                   NumberOfCells="1"                   >
+      <PointData>
+        <DataArray type="Float64" Name="HydraulicFlow" format="appended" RangeMin="0.1811045691"         RangeMax="0.1811045691"         offset="64"                  />
+        <DataArray type="Float64" Name="NodalForces" NumberOfComponents="3" format="appended" RangeMin="1.4093723356e-18"     RangeMax="0.015814293412"       offset="136"                 />
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="0.032439564851"       offset="736"                 />
+        <DataArray type="Float64" Name="epsilon" NumberOfComponents="6" format="appended" RangeMin="0.032439564851"       RangeMax="0.032439564851"       offset="944"                 />
+        <DataArray type="Float64" Name="porosity" format="appended" RangeMin="0.5"                  RangeMax="0.5"                  offset="1980"                />
+        <DataArray type="Float64" Name="pressure" format="appended" RangeMin="-0.45"                RangeMax="0"                    offset="2092"                />
+        <DataArray type="Float64" Name="pressure_interpolated" format="appended" RangeMin="-0.45"                RangeMax="-0.45"                offset="2144"                />
+        <DataArray type="Float64" Name="saturation" format="appended" RangeMin="0.68640028325"        RangeMax="0.68640028325"        offset="2192"                />
+        <DataArray type="Float64" Name="sigma" NumberOfComponents="6" format="appended" RangeMin="0.054455257805"       RangeMax="0.054455257805"       offset="2296"                />
+        <DataArray type="Float64" Name="swelling_stress" NumberOfComponents="6" format="appended" RangeMin="0.084530953945"       RangeMax="0.084530953945"       offset="3224"                />
+        <DataArray type="Float64" Name="velocity" NumberOfComponents="3" format="appended" RangeMin="4.2883568433e-18"     RangeMax="1.1796029945e-16"     offset="3484"                />
+      </PointData>
+      <CellData>
+        <DataArray type="Float64" Name="porosity_avg" format="appended" RangeMin="0.5"                  RangeMax="0.5"                  offset="3900"                />
+        <DataArray type="Float64" Name="saturation_avg" format="appended" RangeMin="0.68640028325"        RangeMax="0.68640028325"        offset="3944"                />
+        <DataArray type="Float64" Name="stress_avg" NumberOfComponents="6" format="appended" RangeMin="0.054455257805"       RangeMax="0.054455257805"       offset="3992"                />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.7320508076"         offset="4092"                />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="4192"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="4280"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="4320"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAAAUAAAAHAAAAA==eF4z0zPSM9I1NjPQTTdJszRJTUs1NQQALu4E7g==AQAAAACAAACgAAAAJAAAAA==eF5Lr9hmk6933D4ZSqdB6RQonYEmno7GZwCDH/W0ogEA8y0sAQAAAACAAADgAQAAsAEAAA==eF4r1DTI0FYPtFkouJNl5StZmzI5Ppf5hgX212Z/Pbm0XnjPNmG2W6fanu+ugoq3FTAnaQqG2uSyxFbfXOK2pwIq/k2FZeHUOKM9XybM/r1jTvCeYqj44spT23in+tkku2Q/Ct0rYlMKEd//+cHK62lSOjY2CodLNF867oHau3+9W+PM5/NDbWIvMzt9mOi3pwgqvnaa4xzeDVp7ehg4N+YVh+wphIpvD6vVkqjT3KOnz8/ndcTHJhssPmE/T8qtTdcDUvZMuv/999wDhja5UHGuqktLftYG7dnLWXJduMZpj55h7bPrJj57VtWdDt5sbWsTKahYvvVGgE0eVH138Sap81dDbF7kTpa/9D9gz/odXnN0ea32FGZZCfOqKtkIPHI7d2a3mU0+VL3/gWUps6Mi91w4u7ylS8lmj0qv2u1De0z3nEqZq3tX3szmTbLm3cpgrT07f1juNGLhtZndll3IzSS4R/X2pGcny0P3QN1v3/5Md9pH4dA98g2xEicYIm1yoOLfgku3SfcY2xiemWxbYhEF85e968kdcaLXGPa489XPkuJNhrnfHgALnMz7AQAAAACAAADgAQAAiAAAAA==eF5jYMAOVlobHTHlz9iPQ5pBuvPRt5KuBXD5DVD1MmjiuMAJEs3vh6qXQxNfBBaPwGmOBFj9BJzyJcYHJx86mWxzGmq+NJr6HWjuTAmewuAwocGmA2ovujthABYOk5f6sBhPKbHZCTVHFiousJiRKedmhc15Et0Pc48Mmvg0qDno4QMAPyxt3w==AQAAAACAAADAAwAA9QIAAA==eF5d0X1QC3Acx/HN6rpUUlitzGNDqautQvUt3aHWpMRkStFW10pprSchZ9OJOaXaFOdh1wN3i6vmatTXthId10nnDonjphyuPMVIHHf284f9/7rvvX+fnyaM0xfsLDYsOG4yFyrUhoLAntreu0dAeVvW+lwQj23NW04UzKLCetuicmoUB68RP594yVYlJfKUGkSXeukuj/cjrTPtye+pPegoUYWOOQkxgXh34mXNsTaBSiWk7rus/FjMhsjPk0V2z9NwgHlftKt/ETDA4jnETzdQZ+QM14MP67x+8ooMTPWa6s0sBVIdribpPklxjNxnEZ9s6ce6TeE0u/2zcPq46dtdGR+CzPyIZp0n3CSeSfxOSz9GSxRBMYO7seGH+MyzwnTIq0ls6zqUilri2cSrLP3Ik6gUufQKXEBzH3j3iwHcbJvvMZMMuEj8CuIdG//24+wMbb6WUQGUTy1ak1wAoy1UkTzuMDQR70o8T13e3CZXQZfCjz4vJwffOH3uu1yciD8jol4kPhKg2qr/wFq/uLmllVDXynvUVCACvYc9XyfJRKNdct0X1pduvdX/av354Q4vEm4wnftPApuCE1kRY+GsdNie/XXR27NioJH9lxH/0ktFNf88B6+HDo6sFkhxb74paTGDh9Wusdt2yIX4b8+FxNPjvbRBdGZI6OD4MXdJLk6kZLLH22MxwbjVHKePgw7ivYjnei0/Mth5GqbMO2q0U4WQ5zdS0hNYhmsCIns7u3OxIez/nn32Q3OcnYUhnsUPUgKNUrynind8XboK3nBD1rGDAYaI9yC+Mk2rp4+W37j+Xuj7Si4Frjo3gFlfisP9VRTNGhE8tOoJteyPqW5PhS22wZi1tMotoIMNvReOlrWLU/GW1X2+ZX+k1mbylriW4WPfOxs7PsTg+pLY9A2cmWgg3pv4UcueqDRE+4945EM4zX2lJjgdR2POjd/zkUKt1Xt5ln3Qe6JRpHNJg4KVM8wZxiw421VRer8oE/4AzTXNRw==AQAAAACAAACgAAAAQAAAAA==eF7jYgCBB/b/weC+/RcoLQYV54HS7FBaCEoLQunfUPVMUD4HlGaD0sxQmgVN/g9UHyeUzwClYfaxQmkA1fAuzg==AQAAAACAAACgAAAAFAAAAA==eF7bcwYE7uzfQybNQGMAAGXPMpk=AQAAAACAAACgAAAAEQAAAA==eF7bcwYE7uzfM0hpAMT1fn0=AQAAAACAAACgAAAAOwAAAA==eF67HS2w6++3p/YXoPRJKP0BSt+H0peh9BMo/QxKn4XSl6D0NSh9E03fbTT6PJS+hca/i6YPAOipZZA=AQAAAACAAADAAwAApgIAAA==eF5d0nlIE3AUB3AybX8kS11TSikaKKQmiuTVz9CWZ1Bzmcc2DzwmNDWvpnMamZYnHjna1JpKzhVCHnkkvhy5KQqVaSVTxDJIW7llDCPzCuLpH/71/vnw+L4vrzCnnYQxpKqa/1OpEplM6OjTElVzh/7Sul0wtIgElnLfv+e8mMltBjtn4KEvQ++PnqvkNN1Q5EBSnueaz91kaGJIoWmMC1Xo49Gz0P8qrEyPXXAkBdsVq2liLgQcMtlkvjtGBtCr0Vegf2O5sCV0E5Mph+BTvXYl4LkVRT9unwat6BXoJejH5XW+NZkUWJdJXRqqrpAI82uRrmw66UVfjr4c/eRyQ3PGfDT0AFvblxdHRpdc7M/cjIQ+9I/Qd6OXU54pxCNFMJxnpU3ephH3ccclr9808h59J/p69F/VDoIdTRHJYpZoPs6xCXXRkMG2FpF76CvRR6AvGPQo3ZxPBqlkcVgSFAajdpkqiu1VyEdfjD4effdSlmxrJYaYkhfin5QEWJ2c+8baMQw1oq9GX4Ten/8kN0T3Z2jGeWbGczuW1LYELrD0CaR+Xz+x6PtfU0VGr1QYVFhAOO0ieKx5F2tEPKhGf3/ffu0BP5edNj7oubOdfVaB8DnKjEtvDyK1+zwH/cbLL7xyRgY5/SF6WiIUQqJlwEnHT3xoQ69E34pezw+vXdGmAivbIKCFupE7jRPp6p6z5CF6GfoM9NVcar0sP5VsVpvlWHdlA908Re53P2bv3ib0D9AftJLohp1cwf4Iv5Fx3okobczU3kmRe3l2+7y9+w/U3O8DPCGMhDA0uUYm6KZ8yjocTKEffRf6IfS2l907nrOuk1sppUaxTRyEhOa/tTAKSBf6OvRP0R898Wrj8QUOaZOOcWiTieRHf/jy7OEE8g9s6dqzAQAAAACAAADAAwAAsQAAAA==eF6V0qEKwlAYxXGfxecQbjIaXDMIBtEgA5kzDESuAzdY3uWmhS3oWLP7Hj6F7yDIPw3kuK985VcO57j4NpmPvXHffzf71+n9XDzM6Mcl+AQ/FT7AB/iZ8Bk+wx+Er/E1/iJ8js/xsfAdvsMfhfd4jz8LH+Ej/Fr4Al/gV8K7Xr+h8CW+xG+Ft3iL3wif4lP8UvgKX+HtwP1Ewjf45s9++3l3wrf4Fn8duB+1/w/guN3zAQAAAACAAADgAQAAJQEAAA==eF6LKNzlV82baqNzYeu+u9XeNlfWPp3G6uZtowkVtzhRKHO8UGbPA/lfO2sXJu+5UgAW32MHVX8WKq4LUb9nwRmI+o70m8dZOWtsxKHmKJyGiLetZmhJUiu1kYCK//iUMnvL37o9++d22Uy1yNgjAzXnx3GI+iqoOFT9nn9Q9R/NJWfzNSzYEwQ1Jy0UBFz3HDoG0uezhwEMyizDoe4UOw4R5/708y6fTItNCVR9Upt4dUZIjA1YeUPQThGofw/UuXlI56XY8ELVV0DVJ4PpUBtWqHvWQMWL6iHqeSDq92RCxe+HQNRzQMVboeI5FRvb3Y7O3MMHdX8WVDxio312fXAh1P1xOwug4WCDLN4QYPkLGg4HoP6Sg7onBWqOAFQcAKdS0Tg=AQAAAACAAAAIAAAADQAAAA==eF5jYACBB/YAAgcBIA==AQAAAACAAAAIAAAAEAAAAA==eF47Gy2w6++3p/YAFc4FCg==AQAAAACAAAAwAAAANwAAAA==eF6bUrLMJlBp+v6JYHr5/nqmky9FL03Z333kWaOamdOeT637Vqn989mz9d7xSfI5zjYAVHQY8g==AQAAAACAAADgAQAAOAAAAA==eF5jYMAHPtjjlcaQh/GJ1YdLPy51uOgHBOwjVh6XeejueoCmDpd/0c3D5W5i7cOlH7c9AC/UKd0=AQAAAACAAACgAAAAMAAAAA==eF4txUkCgBAAAECpiKLt/391MHOZEKbFq6M3785OPny6ufjx59+vqy/f7h4tGAC/AQAAAACAAAAIAAAACwAAAA==eF4TYYAAAACoABU=AQAAAACAAAABAAAACQAAAA==eF6TBAAAGgAa
+  </AppendedData>
+</VTKFile>

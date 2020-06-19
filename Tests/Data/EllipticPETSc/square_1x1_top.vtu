@@ -1,3 +1,33 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:40d28d44c22f122277ad3abf6df97582a60b1eb7711809577f23c78faa380b61
-size 1502
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="4" NumberOfCells="3">
+      <PointData>
+        <DataArray type="UInt64" Name="bulk_node_ids" format="binary" RangeMin="12" RangeMax="15">
+          IAAAAA8AAAAAAAAADgAAAAAAAAANAAAAAAAAAAwAAAAAAAAA
+        </DataArray>
+      </PointData>
+      <CellData>
+        <DataArray type="UInt64" Name="bulk_element_ids" format="binary" RangeMin="6" RangeMax="8">
+          GAAAAAYAAAAAAAAABwAAAAAAAAAIAAAAAAAAAA==
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="1" RangeMax="1.4142135624">
+          YAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAFhVVVVVVeU/AAAAAAAA8D8AAAAAAAAAAE9VVVVVVdU/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAA==
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="3">
+          MAAAAAMAAAAAAAAAAgAAAAAAAAACAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="2" RangeMax="6">
+          GAAAAAIAAAAAAAAABAAAAAAAAAAGAAAAAAAAAA==
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="3" RangeMax="3">
+          AwAAAAMDAw==
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

@@ -1,3 +1,60 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6809b29deef54c2aa2d9fb21413f33e764b0b62b159177e135793a925cb8a1ce
-size 3961
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="61" NumberOfCells="60">
+      <PointData>
+         <DataArray type="Float64" Name="Temperature_Analytical_2months" format="ascii" RangeMin="0" RangeMax="1">
+ 274.94800767  274.39172197  273.96774415  273.66182864  273.45355894
+  273.32014271  273.23991102  273.19470393  273.17087515  273.1591408
+  273.15374815  273.15143752  273.15051514  273.15017233  273.15005378
+  273.15001564  273.15000424  273.15000107  273.15000025  273.15000005
+  273.15000001  273.15        273.15        273.15        273.15        273.15
+  273.15        273.15        273.15        273.15        273.15        273.15
+  273.15        273.15        273.15        273.15        273.15        273.15
+  273.15        273.15        273.15        273.15        273.15        273.15
+  273.15        273.15        273.15        273.15        273.15        273.15
+  273.15        273.15        273.15        273.15        273.15        273.15
+  273.15        273.15        273.15        273.15        273.15
+        </DataArray>
+         <DataArray type="Float64" Name="Temperature_Analytical_1year" format="ascii" RangeMin="0" RangeMax="1">
+         277.63809888  277.04077475  276.49846243  276.01015461  275.57421326
+  275.18842829  274.85009461  274.55610338  274.30304201  274.08729797
+  273.90516094  273.75291893  273.62694432  273.52376705  273.44013324
+  273.37304826  273.31980478  273.27799661  273.24552016  273.22056558
+  273.20159978  273.18734376  273.17674631  273.16895606  273.16329338
+  273.15922342  273.15633121  273.15429922  273.15288783  273.1519187
+  273.15126087  273.15081948  273.15052673  273.1503348   273.15021044
+  273.1501308   273.15008038  273.15004884  273.15002934  273.15001743
+  273.15001024  273.15000594  273.15000341  273.15000193  273.15000108
+  273.1500006   273.15000033  273.15000018  273.1500001   273.15000005
+  273.15000003  273.15000001  273.15000001  273.15        273.15        273.15
+  273.15        273.15        273.15        273.15        273.15 
+         </DataArray>
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="60">
+          AQAAAACAAAC4BQAAmgAAAA==eJyVyrltAgEARNEJHRIQOCBACFkIIcR9GnYBAzaHa6JkSqCBfQETvvnJO3sWOMpq/oDX4HX4J7wBb8Jb8Db8C96Bd+E9eB8+gA/hI/gYPoFP4TP4HL6AL+Er+Br+Dd/At/ACXlb7A54denj26OE5oIfnBz08R/TwnNDDc0YPzy96eP7Qw3NBD88VPTw39PDc0cPzX74AcsokBA==
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="60">
+          AQAAAACAAADAAwAAcQAAAA==eJxdxbMBAwAAALDatm3b/9/VoZ2SJYHAT5BDHOYIRznGcU5wklOc5gxnOcd5LnCRS1zmCle5xnVucJNb3OYOd7nHfR7wkEc85glPecZzXvCSV7zmDW95x3s+8JFPfOYLX/nGd37wk1/85s//L9CvDhE=
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="2" RangeMax="120">
+          AQAAAACAAADgAQAAeAAAAA==eJwtxcEKQQEAADBJkiRJkiRJkiRJkvSSJEmSJEmSJEmSJJ/vYLssHPqLOOqY40446ZTTzjjrnPMuuOiSy6646prrbrjpltvuuOue+x448NAjjz3x1DPPvfDSK6+98dY7733w0SefffHVN9/98NMvv/3x1z8+Jw5N
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="3" RangeMax="3">
+          AQAAAACAAAA8AAAADAAAAA==eJxjZiYfAAAVrgC1
+        </DataArray>
+        <DataArray type="Int64" Name="faces" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAADgAQAADgAAAA==eJxjYBgFwxkAAAHgAAE=
+        </DataArray>
+        <DataArray type="Int64" Name="faceoffsets" format="binary" RangeMin="1" RangeMax="60">
+          AQAAAACAAADgAQAAaAAAAA==eJwtxTMCAwEAALDatq+2rf+/q0OTJeHQX8RRxxx3wkmnnHbGWeecd8FFl1x2xVXXXHfDTbfcdsdd99z3wIGHHnnsiaeeee6Fl1557Y233nnvg48++eyLr7757oeffvntj7/+AZ/8Byc=
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

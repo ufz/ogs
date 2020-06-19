@@ -1,3 +1,41 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:77dbfb24483150ef8aa156b4213109c9a8f2856969f3d36740792491d094978a
-size 3903
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="21" format="binary" RangeMin="45" RangeMax="103">
+        AQAAAACAAAAVAAAAHQAAAA==eJwz0zPUM9A1NDcz1U03NLU0TzFLNrEEADDaBMg=
+      </DataArray>
+    </FieldData>
+    <Piece NumberOfPoints="121" NumberOfCells="100">
+      <PointData>
+        <DataArray type="Float64" Name="Si" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAADIAwAAEQAAAA==eJxjYBgFo2AUDHUAAAPIAAE=
+        </DataArray>
+        <DataArray type="UInt64" Name="bulk_node_ids" format="binary" RangeMin="10" RangeMax="1330">
+          AQAAAACAAADIAwAAHAEAAA==eJwt0W1EZAEYhuGmTyVSSqSUWKVESolIicgmIq2IlIiUiJSIlGVJiUiJSIlYuyJSIlIiUiJSIlIiUiJSEp1r/lzuZ945P84URYV9f3KYzkRG8z0y8Im3HOUAuxkXEDYTCkzRi3rP3aT9zb5pH7M/2rP0X33sbs4eGR6YrzfcXbhbtie4K9UTvv+ld/3uvy6LCKzSs+7b9ZH7LV3tvk4vue/R5+73db37E92sL3WHvtO9+p/nDtpvPPdZD7mLsX/Yf9uT7BnMZTErWMtGtrKLI+znONO85x8sZDlr2MAW9rGTw/zDaS5wlevc4SHP+MBrvjLkfcQzldks4BTnucI1bvOAVzzlPV/4yVj/YzIzmccSVrKJP9nGL0JEO7E=
+        </DataArray>
+      </PointData>
+      <CellData>
+        <DataArray type="UInt64" Name="bulk_element_ids" format="binary" RangeMin="9" RangeMax="999">
+          AQAAAACAAAAgAwAA3QAAAA==eJwtxTEoRAEAAFDnBkkGSQZdukHSDZdkkGTQpRsuySBdN1y6DJIM0mWQZJBkkHSDrssgySDJIF2GSzJIMkgySDJcBsNlUIb/3vIa6wKtjrjbvR50wmOe8rTnvORVb3rXRR/5zFe+8YNf/OFv/zocCm52u6OOud/DTnrCGc94wcte97YLPvCJL3ztOz/5zV/+8Z8b6oNb3OEuxz3gEac86axnvegVb3jH+z70qS9d8b2f/e6qaw6Fg5vc5k73uM9DHvW408553nmvect7LvnY5y771o9+9af/AdHsMXU=
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="1" RangeMax="1.7320508076">
+          AQAAAACAAABYCwAAgQEAAA==eJyFlkFqQzEMRP+deoDcpndqbuIjGNrVX3knMAQMWfQI5acon5nRJN6EP4hnSbYm3rZj/V428/vzfay76NevYy3RPx/rJvrHY02zTxj+MJzdcjjf5LCenLo+Xmc87//PbxeOz33rfM845iCPde2Hy585qA/id5NXvKmX8+8m/y75I5f7PM2+3d4H3hd1rnfYfbmfeJ/P+NTrPIfpwzJzEJZf3+cl8cjn+xaST3I5H/xWPueD32c88nfhu3vE+WQf3H1mv8k83RxxfObp7q2Ld77IfcC61Lfcva3ramYOcq47xQ/D6cLBeVFOvW8YzhQdz5H5S3Q8F537mtOs3zo/eT2/7LchOtY7TL3sP0t0rFd9vua0Z15cL+vYr5Bzr+OH4YfhTNHx/jF/iY5zpe+CmtOMr+a5T+lD7Xu76Pg/rr7t/NP5mOPwnGYc6/ntfM/5lXuXvfYZft+lzyzpJ+voJxw/DD8MZ4qO88X8JTrOl75ba06z76v6f7k/4/8AE3eRTw==
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="120">
+          AQAAAACAAACADAAA/QEAAA==eJxd0EXXEGQABWFaGgWluwSV7v7oEAVJizBolI6fz4L32czd3HPmzGrmTPq8eeO/HL8o/JvxS+Phy8evioevGb8hHr5p/NZ4+Pfjd8TD143fFQ//dvyeePi28fvi4QfHH46nkx5Hxx8L1+NEPFyPiXi4Hifj4XqciofrcToerseZeLgeZ+PhepyLh+t2Pp5OelwYfzFcj0vx8Inxc+PhesyPh+uxOB6ux4p4uB7r4+F6bImH67E9Hq7boXg66fHV+K/D9VgWD9djdTxcjx/j4Xpcjofr8VM8XI+f4+F6XImH63E1Hq7bL/F00uPa+OvhetyIh+txMx6ux614uB634+F6/BoP1+O3eLgev8fD9fgjHq7bn/F00uPO+LvhetyLh+txPx6ux1/xcD3+jofr8U88XI9/4+F6bIyH6/FdPFy3nfF00mPv+N3heuyPh98ffyQersfxeLgeD+LhejyMh+vxKB6ux+N4uB5P4uG6PY2nkx7Pxj8P1+O/eLge/8fD9XgRD9fjZTxcj1fxcD1ex8P1eBMP1+NtPFy3d/F00uP9+A/henyMh+sxOx6ux6x4uB4z4+F6rI2H67E5Hq7HD/FwPQ7Ew3VbGE8nPZaMXxCux8p4uB5fxMP1mBEP12N6PHzt+GnxcD2mxsP1mBIP12NyPFy3SfE+AXRYY6c=
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="4" RangeMax="400">
+          AQAAAACAAAAgAwAAxgAAAA==eJwtxRF0QgEAAMB6LwiCIAiCIAiCIPgQBEEQBEEQBEEQBEEQBEEQBINBEARBEARBMBgEQRAMBoNBEARBEATdyUVCb1HHHHfCSaecdsZZ55x3wYGLLrnsiquuue6Gm2657Y677rnvgYceeeyJp575w5+ee+GlV15746133vvL3z746JPP/vGv//zvi6+++e6Hnw6F30UcdcxxJ5x0ymlnnHXOeRccuOiSy6646prrbrjpltvuuOue+x546JHHnnjqmV/7BioO
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="9" RangeMax="9">
+          AQAAAACAAABkAAAADAAAAA==eJzj5KQ9AACx7gOF
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

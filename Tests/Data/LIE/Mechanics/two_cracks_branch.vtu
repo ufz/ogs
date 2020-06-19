@@ -1,3 +1,36 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2b36df072192474fa34b663230d9ee60c927cbc0cde15fdfb63b7fad2fed1ef9
-size 3129
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="59" NumberOfCells="54">
+      <PointData>
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="binary" RangeMin="0" RangeMax="2">
+          AQAAAACAAADYAAAAEwAAAA==eJxjZGBgYETCTFA81AEABzgACQ==
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="0.11180339887">
+          AQAAAACAAACIBQAAkgIAAA==eJxjYMAOZs0EgZX2uMQh9E4c8gjxHXKtrwN39Nmjmwfhz8QQfxMI0rEQp3qIeevg4m0RIOFODHe0+EPUo4sLqRoDwWKc/kp+LSAoKDjRHl18xyOQ+EIMcfsAbO5caf/oO0j9Rgxxf9dQINgKFy9xg7gHPdzmPkMOH4S48Q2If3GFv28SqvlwoC2I4h54+L3BHs+lroIo/kUVR4RPD8c694dVUzDiy0gRFE/zcMbj5ND+Q1811sDF2VZCxJcm7lq28NEmuHhNB0S8LjV7z+Kbc+DixW9tXXdxLbIv9hNJZp2xFi4+e0NeYK11n314Dqp4YwHEHNNVc55yR/XCxXNjdjmpr15kf7ym48Fe/nlw8YVN/76wKC+2fzCR1XaRUz9cPOZUTfTJnd32/EdR1V/nyZkUdKvTXu4FqvpDrnl94Tu77O/OWfTQPhThr/eHIe5xnj9LwVN/GyJ86iqaI3Z32q8207YLvISIx48C/7Y6v15kH9+Gao5O/+6Kw1qL7bk1UdWrnf2/2XLVZHvumwWrON0R+eW/doHfEd9ee78TPaLr81fDxUun/y6d6zjF3m6+pO2x+wjxuWnG9T875ttLnkA1R6Lvb6uG2yJ7+1Wo5sTOMN879eM8+zVTUc1pO5z9XvPSUntR+dmHhO+uh4ufng8JB62TKgbPP2+Ai78WLTmzNnih/bEA4aKz0xDiLeD4rbPXSUQ1h5Xfe9b17gn2hxNQ1WdwPWKMmrLEftljGb6nXcvg4qmTIPYaTzJTe+20BC7+iDVyXjv3QvspNuvLzp5FiG8yuxf3T6TFvkZMFsWcXdKN35RlJtr/D0ZV/yRSauer/nr76+obBGsOroKLS/uVOc1ZvtQ+88Z6FHEA/6uYYQ==
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="58">
+          AQAAAACAAABgBgAAKwEAAA==eJxdk8lSAkEQBVFR3HBfxpVlZFEEGRBk+P8P8+DLgzmXjMh4UxVdXd1s/H2FuC8+iAdhK3wU+e857IS9sCt/FB4r15PfCU9Upyd/2vj/HYZleC9P/45ypTzn6atOKX8X7oXX4TC8kr8J35Qbyj+FA9UZyl+Gu+FFOA7P5ckPlBvL03+kOmP5s5A9YC8mYSHPHr0rN5F/DT9UZyLfDF/Cz3AWTuW9xzPRe807mCrn90H/r7BSXzzzGilXyTP/uepU8i3l2Z+lcnj2b6HcUp75cx9z5fD05710w3W4kue9fiu3lmeuzHmlHJ57Yg9+wk1YyPNe+8pt5DkPfQvl8O7PXtbqi2euC+Vqee7pVnVqec7DXrFn27Atz55OldvKM3/uo60cnvv8BYLJGXA=
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="2" RangeMax="204">
+          AQAAAACAAACwAQAAgwAAAA==eJwtxaESwQAAAFDnnHNOEARBEARBEARhYWFBEARBEARBEBYWBGFhQRAEQRAEQRAEQRAEQfBRgvfKy+f+Ci665LIrrrrmuhtuuuW2O+66574Dh4488NAjjz3x1DPPvfDSsROvvHbqzBtvvfPeBx998tkXX33z3Q8//fLbH3/9A4/VFMs=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="3" RangeMax="9">
+          AQAAAACAAAA2AAAADgAAAA==eJxjZgYBThIBAC0tAcM=
+        </DataArray>
+        <DataArray type="Int64" Name="faces" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAACwAQAADgAAAA==eJxjYBgFQwkAAAGwAAE=
+        </DataArray>
+        <DataArray type="Int64" Name="faceoffsets" format="binary" RangeMin="1" RangeMax="54">
+          AQAAAACAAACwAQAAYQAAAA==eJwtxUUCggAAADC7E7ADFOzO/z/Ng9tl+dxfwUWXXHbFVddcd8NNt9x2x1333Hfg0JEHHnrksSeeeua5F146duKV106deeOtd9774KNPPvviq2++++GnX377469/ZB0Fzg==
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

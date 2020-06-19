@@ -1,3 +1,30 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a09fca3e1cf6cc900db49ed46c6bb874a291a41cead6e334b24f35504003510b
-size 3284
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="40" format="appended" RangeMin="45"                   RangeMax="121"                  offset="0"                   />
+    </FieldData>
+    <Piece NumberOfPoints="16"                   NumberOfCells="9"                   >
+      <PointData>
+        <DataArray type="Float64" Name="D1_left_bottom_N1_right" format="appended" RangeMin="1"                    RangeMax="1.6753144833"         offset="88"                  />
+        <DataArray type="Float64" Name="Linear_1_to_minus1" format="appended" RangeMin="-1"                   RangeMax="1"                    offset="240"                 />
+        <DataArray type="Float64" Name="pressure" format="appended" RangeMin="1000000"              RangeMax="10000000"             offset="304"                 />
+        <DataArray type="Float64" Name="v" NumberOfComponents="2" format="appended" RangeMin="0.63907212001"        RangeMax="0.64000247813"        offset="392"                 />
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="0"                    offset="652"                 />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.4142135624"         offset="692"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="816"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="932"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1000"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAAAoAAAAMAAAAA==eF4z0zPSM9I1M9RNN0tONLAwMDMx1kvJLCqp1DMyMDIwMDQ0MTQ2NTEwAwDFzQmTAQAAAACAAACAAAAAXgAAAA==eF5jYACBD/YMBGimLnVejqqP9mpdZowbuj7bx69OnHs28Ttc/tqfeS/Niz/Zz+U4sWTbhK/2By3fKDHx/ILLv9aSbQ889sk+xXjdi5sG3+x17N36xc79sgcAuPIrUg==AQAAAACAAACAAAAAHgAAAA==eF5jYACBD/ZJoSBw1T4BQu9ngIjDaJrJAwBgbyZpAQAAAACAAACAAAAAMAAAAA==eF5jYGBguCCU7OjMMbNEYmOU48eKyMzGFj9HoDBDQ4semAbJuxGQdydTHgBxzyXcAQAAAACAAAAAAQAArwAAAA==eF7bxChb9azqiX3AzA0XvuYst5n3q0zmYukT+yA1nRLb20f26GQ9j3cvfmLfNst2r4ZP0Z4zD/4yXAbKr/CJeFG1rXvPWqj+f0UtMTsmLrRZANX/VN/8Ik/Qrj36UP0PF+3WPfp4js15qP69MorieSkL9qyG6g8G298O1/8MrH/1HgOofj+we6bD9e8B61+0ZxVUPwMUwPTD+IZQ/RDz020uQfUHgs2bugcAt2V8tA==AQAAAACAAAAkAAAACwAAAA==eF5jYCAMAAAkAAE=AQAAAACAAACAAQAASQAAAA==eF5jYMAO/ENB4Ko9ungEWPwphjgEfMAhjmkejI8uDjMfu/0fcIhjugumDl0cxsfujw84xBHyMBaqOz5gmI8ujspHiAMAt187AQ==AQAAAACAAAAgAQAARQAAAA==eF5djDkOwCAAw6AXbenx/98yEC/OYsmyUspcDfdwk1/CQx1+DZs6fuiv8JSnv9Xh+e3q+KF/w0ee/lOH5/dXNwBz+AEPAQAAAACAAABIAAAAIAAAAA==eF5jYYAADijNA6UFoLQIlJaA0jJQWgFKq0BpABToALU=AQAAAACAAAAJAAAACwAAAA==eF7j5IQCAAGeAFI=
+  </AppendedData>
+</VTKFile>
