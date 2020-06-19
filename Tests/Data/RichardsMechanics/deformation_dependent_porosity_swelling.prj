@@ -73,6 +73,7 @@
                         <property>
                             <name>density</name>
                             <type>Exponential</type>
+                            <offset>0</offset>
                             <reference_value>1</reference_value>
                             <exponent>
                                 <variable_name>solid_grain_pressure</variable_name>
