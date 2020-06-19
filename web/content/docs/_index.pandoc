@@ -25,11 +25,12 @@ url = "/docs/tools/getting-started/overview/"
 text = "Helpful tools for pre- and postprocessing as well as complete model setup workflows."
 icon = "far fa-tools"
 
-[[sections]]
-name = "Data Explorer Manual"
-url = "https://jenkins.opengeosys.org/job/ufz/job/data_explorer_manual/job/master/lastSuccessfulBuild/artifact/DataExplorer-Manual.pdf"
-text = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
-icon = "far fa-file-image"
+# TODO LB
+# [[sections]]
+# name = "Data Explorer Manual"
+# url = "https://jenkins.opengeosys.org/job/ufz/job/data_explorer_manual/job/master/lastSuccessfulBuild/artifact/DataExplorer-Manual.pdf"
+# text = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
+# icon = "far fa-file-image"
 
 [[sections]]
 name = "Source code documentation"

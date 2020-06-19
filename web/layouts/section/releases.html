@@ -2,6 +2,7 @@
   <div class="container">
     {{ .Content }}
 
+    <!-- TODO LB
     <h2 id="latest"><i class="far fa-wrench"></i> Latest development version</h2>
     <p>
       Here you can find the latest version of OpenGeoSys. But be warned: although this version was
@@ -13,9 +14,10 @@
           Downloads for the current development version of OpenGeoSys can be found on our continuous integration system:
       </p>
       <p>
-          <a href="https://jenkins.opengeosys.org/job/ufz/job/ogs/job/master/lastSuccessfulBuild/artifact/build"><i class="far fa-arrow-right"></i> Latest successful Jenkins Build with Downloads</a> <span class="text-sm text-gray-600"></span>
+          <a href="TODO"><i class="far fa-arrow-right"></i> Latest successful CI Build with Downloads</a> <span class="text-sm text-gray-600"></span>
       </p>
     </div>
+    -->
 
     {{ range first 1 .Data.Pages }}
       <h2 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: {{ .Title }} <a class="text-lg" href="{{ .Permalink }}"><i class="far fa-link"></i></a></h2>
