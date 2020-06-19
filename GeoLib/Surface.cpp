@@ -106,4 +106,10 @@ bool Surface::isPntInSfc(MathLib::Point3d const& pnt, double eps) const
     }
     return _surface_grid->isPointInSurface(pnt, eps);
 }
+
+bool operator==(Surface const& lhs, Surface const& rhs)
+{
+    return &lhs == &rhs;
+}
+
 }  // namespace GeoLib
