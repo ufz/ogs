@@ -22,11 +22,6 @@ repos:
         language: system
         files: '.*\.cpp'
         stages: [commit, manual]
-    -   id: git-lfs
-        name: Check git lfs files
-        entry: scripts/hooks/pre-commit-git-lfs.sh
-        language: system
-        stages: [commit, manual]
     -   id: cmake-format
         name: Format CMake files
         entry: scripts/hooks/pre-commit-cmake-format.sh
