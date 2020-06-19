@@ -9,7 +9,6 @@
 *.cpp hooks.style=uncrustify
 *.hpp hooks.style=uncrustify
 # Git LFS
-*.node filter=lfs diff=lfs merge=lfs -text
 *.msh filter=lfs diff=lfs merge=lfs -text
 *.gml filter=lfs diff=lfs merge=lfs -text
 *.vti filter=lfs diff=lfs merge=lfs -text
