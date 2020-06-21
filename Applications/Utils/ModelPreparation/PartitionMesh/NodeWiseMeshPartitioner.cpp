@@ -337,12 +337,14 @@ std::size_t copyNodePropertyVectorValues(
 {
     auto const& nodes = p.nodes;
     auto const nnodes = nodes.size();
+    auto const n_components = pv.getNumberOfComponents();
     for (std::size_t i = 0; i < nnodes; ++i)
     {
         const auto global_id = nodes[i]->getID();
-        partitioned_pv[offset + i] = pv[global_id];
+        std::copy_n(&pv[n_components * global_id], n_components,
+                    &partitioned_pv[offset + n_components * i]);
     }
-    return nnodes;
+    return n_components * nnodes;
 }
 
 /// Copies the properties from global property vector \c pv to the
@@ -356,19 +358,22 @@ std::size_t copyCellPropertyVectorValues(
     MeshLib::PropertyVector<T>& partitioned_pv)
 {
     std::size_t const n_regular(p.regular_elements.size());
+    auto const n_components = pv.getNumberOfComponents();
     for (std::size_t i = 0; i < n_regular; ++i)
     {
         const auto id = p.regular_elements[i]->getID();
-        partitioned_pv[offset + i] = pv[id];
+        std::copy_n(&pv[n_components * id], n_components,
+                    &partitioned_pv[offset + n_components * i]);
     }
 
     std::size_t const n_ghost(p.ghost_elements.size());
     for (std::size_t i = 0; i < n_ghost; ++i)
     {
         const auto id = p.ghost_elements[i]->getID();
-        partitioned_pv[offset + n_regular + i] = pv[id];
+        std::copy_n(&pv[n_components * id], n_components,
+                    &partitioned_pv[offset + n_components * (n_regular + i)]);
     }
-    return n_regular + n_ghost;
+    return n_components * (n_regular + n_ghost);
 }
 
 template <typename T>
