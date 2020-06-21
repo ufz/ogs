@@ -42,8 +42,7 @@ PropertyVector<T>* Properties::createNewPropertyVector(
     MeshItemType mesh_item_type,
     std::size_t n_components)
 {
-    // check if there is already a PropertyVector with the same name and
-    // mesh_item_type
+    // check if there is already a PropertyVector with the same name
     std::map<std::string, PropertyVectorBase*>::const_iterator it(
         _properties.find(name)
     );
