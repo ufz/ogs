@@ -192,7 +192,8 @@ private:
         pv->resize(pvpmd.number_of_tuples * pvmd.number_of_components);
         // jump to the place for reading the specific part of the
         // PropertyVector
-        is.seekg(global_offset + pvpmd.offset * sizeof(T));
+        is.seekg(global_offset +
+                 pvpmd.offset * pvmd.number_of_components * sizeof(T));
         // read the values
         unsigned long const number_of_bytes = pvmd.data_type_size_in_bytes *
                                               pvpmd.number_of_tuples *
