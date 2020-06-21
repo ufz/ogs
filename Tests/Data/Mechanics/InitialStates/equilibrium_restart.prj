@@ -2,10 +2,10 @@
 <OpenGeoSysProject>
     <meshes>
         <mesh>soil_column_q8_with_ic.vtu</mesh>
-        <mesh>soil_column_bottom.vtu</mesh>
-        <mesh>soil_column_top.vtu</mesh>
-        <mesh>soil_column_left.vtu</mesh>
-        <mesh>soil_column_right.vtu</mesh>
+        <mesh>soil_column_q8_bottom.vtu</mesh>
+        <mesh>soil_column_q8_top.vtu</mesh>
+        <mesh>soil_column_q8_left.vtu</mesh>
+        <mesh>soil_column_q8_right.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -113,7 +113,7 @@
             <parameter>maximum_top_pressure</parameter>
         </parameter>
         <parameter>
-            <mesh>soil_column_right</mesh>
+            <mesh>soil_column_q8_right</mesh>
             <name>side_load</name>
             <type>Function</type>
             <expression>-0.8*2200.0*9.81*(100.0-y)</expression>
@@ -135,25 +135,25 @@
             <boundary_conditions>
                 <!-- fixed boundaries -->
                 <boundary_condition>
-                    <mesh>soil_column_bottom</mesh>
+                    <mesh>soil_column_q8_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>Zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>soil_column_left</mesh>
+                    <mesh>soil_column_q8_left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>Zero</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>soil_column_top</mesh>
+                    <mesh>soil_column_q8_top</mesh>
                     <type>Neumann</type>
                     <component>1</component>
                     <parameter>top_load</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>soil_column_right</mesh>
+                    <mesh>soil_column_q8_right</mesh>
                     <type>Neumann</type>
                     <component>0</component>
                     <parameter>side_load</parameter>
