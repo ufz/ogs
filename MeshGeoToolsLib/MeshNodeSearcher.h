@@ -119,29 +119,6 @@ public:
         GeoLib::Surface const& sfc) const;
 
     /**
-     * Return a MeshNodesOnPoint object for the given GeoLib::Point object.
-     * @param pnt the GeoLib::Point the nearest mesh nodes are searched for
-     * @return a reference to a MeshNodesOnPoint object
-     */
-    MeshNodesOnPoint& getMeshNodesOnPoint(GeoLib::Point const& pnt) const;
-
-    /**
-     * Return a MeshNodesAlongPolyline object for the given GeoLib::Polyline object.
-     * @param ply the GeoLib::Polyline the nearest mesh nodes are searched for
-     * @return a reference to a MeshNodesAlongPolyline object
-     */
-    MeshNodesAlongPolyline& getMeshNodesAlongPolyline(
-        GeoLib::Polyline const& ply) const;
-
-    /**
-     * Return a MeshNodesAlongSurface object for the given GeoLib::Surface object.
-     * @param sfc the GeoLib::Surface the nearest mesh nodes are searched for
-     * @return a reference to a MeshNodesAlongSurface object
-     */
-    MeshNodesAlongSurface& getMeshNodesAlongSurface(
-        GeoLib::Surface const& sfc) const;
-
-    /**
      * Returns a (possibly new) mesh node searcher for the mesh.
      * A new one will be created, if it does not already exists.
      */

@@ -134,31 +134,13 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
 std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsForPoint(
     GeoLib::Point const& pnt) const
 {
-    return getMeshNodesOnPoint(pnt).getNodeIDs();
-}
-
-std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
-    GeoLib::Polyline const& ply) const
-{
-    return getMeshNodesAlongPolyline(ply).getNodeIDs();
-}
-
-std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(
-    GeoLib::Surface const& sfc) const
-{
-    return getMeshNodesAlongSurface(sfc).getNodeIDs();
-}
-
-MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
-    GeoLib::Point const& pnt) const
-{
     if (auto const it = find_if(
             cbegin(_mesh_nodes_on_points),
             cend(_mesh_nodes_on_points),
             [&](auto const& nodes) { return &(nodes->getPoint()) == &pnt; });
         it != cend(_mesh_nodes_on_points))
     {
-        return **it;
+        return (*it)->getNodeIDs();
     }
 
     _mesh_nodes_on_points.push_back(
@@ -167,10 +149,10 @@ MeshNodesOnPoint& MeshNodeSearcher::getMeshNodesOnPoint(
                              pnt,
                              _search_length_algorithm->getSearchLength(),
                              _search_all_nodes));
-    return *_mesh_nodes_on_points.back();
+    return _mesh_nodes_on_points.back()->getNodeIDs();
 }
 
-MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
+std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
     GeoLib::Polyline const& ply) const
 {
     if (auto const it = find_if(
@@ -179,17 +161,17 @@ MeshNodesAlongPolyline& MeshNodeSearcher::getMeshNodesAlongPolyline(
             [&](auto const& nodes) { return &(nodes->getPolyline()) == &ply; });
         it != cend(_mesh_nodes_along_polylines))
     {
-        return **it;
+        return (*it)->getNodeIDs();
     }
 
     // compute nodes (and supporting points) along polyline
     _mesh_nodes_along_polylines.push_back(new MeshNodesAlongPolyline(
         _mesh, ply, _search_length_algorithm->getSearchLength(),
         _search_all_nodes));
-    return *_mesh_nodes_along_polylines.back();
+    return _mesh_nodes_along_polylines.back()->getNodeIDs();
 }
 
-MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
+std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(
     GeoLib::Surface const& sfc) const
 {
     if (auto const it = find_if(
@@ -198,7 +180,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
             [&](auto const& nodes) { return &(nodes->getSurface()) == &sfc; });
         it != cend(_mesh_nodes_along_surfaces))
     {
-        return **it;
+        return (*it)->getNodeIDs();
     }
 
     // compute nodes (and supporting points) on surface
@@ -207,7 +189,7 @@ MeshNodesAlongSurface& MeshNodeSearcher::getMeshNodesAlongSurface(
                                   sfc,
                                   _search_length_algorithm->getSearchLength(),
                                   _search_all_nodes));
-    return *_mesh_nodes_along_surfaces.back();
+    return _mesh_nodes_along_surfaces.back()->getNodeIDs();
 }
 
 MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
