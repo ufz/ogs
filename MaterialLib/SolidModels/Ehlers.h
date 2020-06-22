@@ -12,7 +12,7 @@
  * details. \cite Ehlers1995
  *
  * Refer to "Single-surface benchmark of OpenGeoSys documentation
- * (https://docs.opengeosys.org/docs/benchmarks/small-deformations/mechanics-plasticity-single-surface)"
+ * (https://www.opengeosys.org/docs/benchmarks/small-deformations/mechanics-plasticity-single-surface)"
  * for more details for the tests.
  */
 

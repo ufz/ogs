@@ -23,7 +23,7 @@
 namespace BaseLib
 {
 /**
- * \brief Returns true if given file exists. From http://www.techbytes.ca/techbyte103.html
+ * \brief Returns true if given file exists.
  *
  * \param strFilename         the file name
  */

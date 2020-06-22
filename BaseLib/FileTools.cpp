@@ -33,7 +33,7 @@ bool project_directory_is_set = false;
 namespace BaseLib
 {
 /**
- * Returns true if given file exists. From http://www.techbytes.ca/techbyte103.html
+ * Returns true if given file exists.
  */
 bool IsFileExisting(const std::string &strFilename)
 {
