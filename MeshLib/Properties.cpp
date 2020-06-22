@@ -141,5 +141,25 @@ Properties::~Properties()
     }
 }
 
-} // end namespace MeshLib
+std::map<std::string, PropertyVectorBase*>::const_iterator Properties::begin()
+    const
+{
+    return _properties.cbegin();
+}
 
+std::map<std::string, PropertyVectorBase*>::const_iterator Properties::end()
+    const
+{
+    return _properties.cend();
+}
+
+std::map<std::string, PropertyVectorBase*>::iterator Properties::begin()
+{
+    return _properties.begin();
+}
+
+std::map<std::string, PropertyVectorBase*>::iterator Properties::end()
+{
+    return _properties.end();
+}
+}  // end namespace MeshLib

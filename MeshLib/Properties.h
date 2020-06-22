@@ -150,6 +150,11 @@ public:
 
     ~Properties();
 
+    std::map<std::string, PropertyVectorBase*>::const_iterator begin() const;
+    std::map<std::string, PropertyVectorBase*>::const_iterator end() const;
+    std::map<std::string, PropertyVectorBase*>::iterator begin();
+    std::map<std::string, PropertyVectorBase*>::iterator end();
+
 private:
     /// A mapping from property's name to the stored object of any type.
     /// See addProperty() and getProperty() documentation.
