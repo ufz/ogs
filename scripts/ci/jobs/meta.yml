@@ -1,0 +1,11 @@
+meta:
+  stage: .pre
+  tags:
+    - envinf1-shell
+  script:
+    - git fetch --depth 500
+    - echo "OGS_VERSION=${CI_COMMIT_TAG:-`git describe --tags --long --dirty --always`}" >> build.env
+    - cat build.env
+  artifacts:
+    reports:
+      dotenv: build.env

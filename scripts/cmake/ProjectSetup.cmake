@@ -33,46 +33,51 @@ if(NOT IS_GIT_REPO)
     return()
 endif()
 
-# Get version info from Git, implementation based on
-# https://github.com/tomtom-international/cpp-dependencies
-execute_process(
-    COMMAND ${GIT_EXECUTABLE} describe --tags --long --dirty --always
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-    RESULT_VARIABLE DESCRIBE_RESULT
-    OUTPUT_VARIABLE DESCRIBE_STDOUT
-)
-if(DESCRIBE_RESULT EQUAL 0)
-    string(STRIP "${DESCRIBE_STDOUT}" DESCRIBE_STDOUT)
-    message(STATUS "Git reported this project's version as '${DESCRIBE_STDOUT}'")
-    if(DESCRIBE_STDOUT MATCHES "^(.*)-(dirty)$")
-      set(DESCRIBE_DIRTY "${CMAKE_MATCH_2}")
-      set(DESCRIBE_STDOUT "${CMAKE_MATCH_1}")
-    endif()
-    if(DESCRIBE_STDOUT MATCHES "^([0-9a-f]+)$")
-      set(DESCRIBE_COMMIT_NAME "${CMAKE_MATCH_1}")
-      set(DESCRIBE_STDOUT "")
-    elseif(DESCRIBE_STDOUT MATCHES "^(.*)-g([0-9a-f]+)$")
-      set(DESCRIBE_COMMIT_NAME "g${CMAKE_MATCH_2}")
-      set(DESCRIBE_STDOUT "${CMAKE_MATCH_1}")
-    endif()
-    if(DESCRIBE_STDOUT MATCHES "^(.*)-([0-9]+)$")
-      set(DESCRIBE_COMMIT_COUNT "${CMAKE_MATCH_2}")
-      set(DESCRIBE_TAG "${CMAKE_MATCH_1}")
-      set(DESCRIBE_STDOUT "")
-    endif()
-
-    set(OGS_VERSION ${DESCRIBE_TAG})
-    if(DESCRIBE_COMMIT_COUNT GREATER 0)
-      set(OGS_VERSION "${OGS_VERSION}-${DESCRIBE_COMMIT_COUNT}-${DESCRIBE_COMMIT_NAME}")
-    endif()
-
-    if(DESCRIBE_DIRTY)
-      string(TIMESTAMP DESCRIBE_DIRTY_TIMESTAMP "%Y%m%d%H%M%S" UTC)
-      set(OGS_VERSION "${OGS_VERSION}.dirty.${DESCRIBE_DIRTY_TIMESTAMP}")
-    endif()
-    message(STATUS "OGS VERSION: ${OGS_VERSION}")
+if(DEFINED ENV{OGS_VERSION})
+    set(OGS_VERSION $ENV{OGS_VERSION})
+    message(STATUS "OGS VERSION: ${OGS_VERSION} (set via environment)")
 else()
-    message(WARNING "Git repository contains no tags! Please run: git fetch --tags")
+    # Get version info from Git, implementation based on
+    # https://github.com/tomtom-international/cpp-dependencies
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} describe --tags --long --dirty --always
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        RESULT_VARIABLE DESCRIBE_RESULT
+        OUTPUT_VARIABLE DESCRIBE_STDOUT
+    )
+    if(DESCRIBE_RESULT EQUAL 0)
+        string(STRIP "${DESCRIBE_STDOUT}" DESCRIBE_STDOUT)
+        message(STATUS "Git reported this project's version as '${DESCRIBE_STDOUT}'")
+        if(DESCRIBE_STDOUT MATCHES "^(.*)-(dirty)$")
+          set(DESCRIBE_DIRTY "${CMAKE_MATCH_2}")
+          set(DESCRIBE_STDOUT "${CMAKE_MATCH_1}")
+        endif()
+        if(DESCRIBE_STDOUT MATCHES "^([0-9a-f]+)$")
+          set(DESCRIBE_COMMIT_NAME "${CMAKE_MATCH_1}")
+          set(DESCRIBE_STDOUT "")
+        elseif(DESCRIBE_STDOUT MATCHES "^(.*)-g([0-9a-f]+)$")
+          set(DESCRIBE_COMMIT_NAME "g${CMAKE_MATCH_2}")
+          set(DESCRIBE_STDOUT "${CMAKE_MATCH_1}")
+        endif()
+        if(DESCRIBE_STDOUT MATCHES "^(.*)-([0-9]+)$")
+          set(DESCRIBE_COMMIT_COUNT "${CMAKE_MATCH_2}")
+          set(DESCRIBE_TAG "${CMAKE_MATCH_1}")
+          set(DESCRIBE_STDOUT "")
+        endif()
+
+        set(OGS_VERSION ${DESCRIBE_TAG})
+        if(DESCRIBE_COMMIT_COUNT GREATER 0)
+          set(OGS_VERSION "${OGS_VERSION}-${DESCRIBE_COMMIT_COUNT}-${DESCRIBE_COMMIT_NAME}")
+        endif()
+
+        if(DESCRIBE_DIRTY)
+          string(TIMESTAMP DESCRIBE_DIRTY_TIMESTAMP "%Y%m%d%H%M%S" UTC)
+          set(OGS_VERSION "${OGS_VERSION}.dirty.${DESCRIBE_DIRTY_TIMESTAMP}")
+        endif()
+        message(STATUS "OGS VERSION: ${OGS_VERSION}")
+    else()
+        message(WARNING "Git repository contains no tags! Please run: git fetch --tags")
+    endif()
 endif()
 
 # Get git commit
