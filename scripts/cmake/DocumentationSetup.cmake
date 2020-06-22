@@ -12,7 +12,7 @@ set(DOXYGEN_EXCLUDE
     ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile
     ${PROJECT_SOURCE_DIR}/web)
 set(DOXYGEN_FILE_PATTERNS *.h *.cpp *.tpp *.dox)
-set(DOXYGEN_PROJECT_NAME "OGS ${OGS_VERSION}")
+set(DOXYGEN_PROJECT_NAME "OGS")
 set(DOXYGEN_PROJECT_VERSION ${GIT_SHA1_SHORT})
 set(DOXYGEN_PROJECT_LOGO ${PROJECT_SOURCE_DIR}/Documentation/OpenGeoSys-Logo.png)
 set(DOXYGEN_HTML_OUTPUT ${PROJECT_BINARY_DIR}/docs)
@@ -49,6 +49,7 @@ set(DOXYGEN_ALIASES
     "ogs_file_attr_special{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_attr__\\1 \\\"\\1\\\""
     "ogs_missing_documentation = \\xrefitem ogs_missing_documentation \\\"Missing Documentation\\\" \\\"OGS Input File Parameters&mdash\;List of incomplete documentation pages\\\" Documentation missing/incomplete")
 set(DOXYGEN_CREATE_SUBDIRS YES)
+configure_file(${PROJECT_SOURCE_DIR}/Documentation/mainpage.dox.in ${PROJECT_BINARY_DIR}/DocAux/dox/mainpage.dox)
 
 doxygen_add_docs(doc
     ${PROJECT_SOURCE_DIR}/
