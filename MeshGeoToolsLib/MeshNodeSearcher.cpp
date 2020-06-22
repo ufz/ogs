@@ -101,18 +101,33 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
     {
         case GeoLib::GEOTYPE::POINT:
         {
-            vec_nodes = this->getMeshNodeIDsForPoint(
-                *static_cast<const GeoLib::Point*>(&geoObj));
-            break;
+            std::function<GeoLib::Point(MeshNodesOnPoint const&)>
+                get_cached_item_function = &MeshNodesOnPoint::getPoint;
+            return MeshGeoToolsLib::getMeshNodeIDs(
+                _mesh_nodes_on_points, get_cached_item_function,
+                *static_cast<const GeoLib::Point*>(&geoObj), _mesh, _mesh_grid,
+                _search_length_algorithm->getSearchLength(), _search_all_nodes);
         }
         case GeoLib::GEOTYPE::POLYLINE:
-            vec_nodes = this->getMeshNodeIDsAlongPolyline(
-                *static_cast<const GeoLib::Polyline*>(&geoObj));
-            break;
+        {
+            std::function<GeoLib::Polyline(MeshNodesAlongPolyline const&)>
+                get_cached_item_function = &MeshNodesAlongPolyline::getPolyline;
+            return MeshGeoToolsLib::getMeshNodeIDs(
+                _mesh_nodes_along_polylines, get_cached_item_function,
+                *static_cast<const GeoLib::Polyline*>(&geoObj), _mesh,
+                _mesh_grid, _search_length_algorithm->getSearchLength(),
+                _search_all_nodes);
+        }
         case GeoLib::GEOTYPE::SURFACE:
-            vec_nodes = this->getMeshNodeIDsAlongSurface(
-                *static_cast<const GeoLib::Surface*>(&geoObj));
-            break;
+        {
+            std::function<GeoLib::Surface(MeshNodesAlongSurface const&)>
+                get_cached_item_function = &MeshNodesAlongSurface::getSurface;
+            return MeshGeoToolsLib::getMeshNodeIDs(
+                _mesh_nodes_along_surfaces, get_cached_item_function,
+                *static_cast<const GeoLib::Surface*>(&geoObj), _mesh,
+                _mesh_grid, _search_length_algorithm->getSearchLength(),
+                _search_all_nodes);
+        }
         default:
             break;
     }
@@ -160,38 +175,6 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
         node_ids.push_back(ids.front());
     }
     return node_ids;
-}
-
-std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsForPoint(
-    GeoLib::Point const& pnt) const
-{
-    std::function<GeoLib::Point(MeshNodesOnPoint const&)>
-        get_cached_item_function = &MeshNodesOnPoint::getPoint;
-    return MeshGeoToolsLib::getMeshNodeIDs(
-        _mesh_nodes_on_points, get_cached_item_function, pnt, _mesh, _mesh_grid,
-        _search_length_algorithm->getSearchLength(), _search_all_nodes);
-}
-
-std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongPolyline(
-    GeoLib::Polyline const& ply) const
-{
-    std::function<GeoLib::Polyline(MeshNodesAlongPolyline const&)>
-        get_cached_item_function = &MeshNodesAlongPolyline::getPolyline;
-    return MeshGeoToolsLib::getMeshNodeIDs(
-        _mesh_nodes_along_polylines, get_cached_item_function, ply, _mesh,
-        _mesh_grid, _search_length_algorithm->getSearchLength(),
-        _search_all_nodes);
-}
-
-std::vector<std::size_t> const& MeshNodeSearcher::getMeshNodeIDsAlongSurface(
-    GeoLib::Surface const& sfc) const
-{
-    std::function<GeoLib::Surface(MeshNodesAlongSurface const&)>
-        get_cached_item_function = &MeshNodesAlongSurface::getSurface;
-    return MeshGeoToolsLib::getMeshNodeIDs(
-        _mesh_nodes_along_surfaces, get_cached_item_function, sfc, _mesh,
-        _mesh_grid, _search_length_algorithm->getSearchLength(),
-        _search_all_nodes);
 }
 
 MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
