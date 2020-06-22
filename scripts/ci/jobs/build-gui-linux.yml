@@ -5,6 +5,7 @@ build gui linux:
     - envinf1
     - docker
   needs:
+    - meta
     - job: build linux
       artifacts: false
   rules:

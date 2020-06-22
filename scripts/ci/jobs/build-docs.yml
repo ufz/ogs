@@ -2,8 +2,7 @@ build docs:
   stage: build
   image:
     name: $CONTAINER_GCC_IMAGE
-  needs:
-    - job: meta
+  needs: [meta]
 
   before_script:
     # HACK to easier linking to the generated pages

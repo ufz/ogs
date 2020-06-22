@@ -6,7 +6,7 @@ build linux frontend:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - when: manual
       allow_failure: true
-
+  needs: [meta]
   variables:
     BUILD_DIR: "build"
     CCACHE_DIR: "/data/ogs/.ccache"

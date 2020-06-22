@@ -3,7 +3,6 @@
   tags:
     - docker
   extends:
-    - .defaults
     - .test-artifacts
 
   variables:
