@@ -30,6 +30,7 @@ preview web site:
     - if: '$CI_COMMIT_BRANCH != "master"'
     - changes:
       - web/
+      - scripts/ci/jobs/web.yml
   artifacts:
     expose_as: 'Web Preview'
     paths:
@@ -50,10 +51,12 @@ deploy web site:
     - yarn
     - hugo
     - netlify deploy --prod --dir=public
+    - node_modules/.bin/hugo-algolia --toml -s
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:
       - web/
+      - scripts/ci/jobs/web.yml
   cache:
     paths:
       - web/node_modules
