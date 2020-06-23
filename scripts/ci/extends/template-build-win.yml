@@ -9,14 +9,19 @@
   variables:
 
   script:
-    - mkdir -p $BUILD_DIR
-    - cd $BUILD_DIR
+    - mkdir -p $env:BUILD_DIR
+    - cd $env:BUILD_DIR
     - >
       cmake .. -G Ninja
       $env:CMAKE_ARGS.Split(" ")
       -DCMAKE_BUILD_TYPE="$env:BUILD_TYPE"
       -DOGS_BUILD_PROCESSES="$env:BUILD_PROCESSES"
-    - cmake --build . | Tee-Object -FilePath make.output
+    - cmake --build . --target package | Tee-Object -FilePath make.output
     - cmake --build . --target tests
     - cmake --build . --target ctest
     - cp Testing/**/Test.xml Tests/ctest.xml
+
+  artifacts:
+    name: "$env:CI_JOB_NAME"
+    paths:
+      - $env:BUILD_DIR/*.zip

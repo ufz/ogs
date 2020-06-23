@@ -1,6 +1,8 @@
 build gui linux:
   extends: .template-build-linux
   stage: gui
+  image:
+    name: $CONTAINER_GCC_GUI_IMAGE
   tags:
     - envinf1
     - docker
@@ -14,7 +16,6 @@ build gui linux:
       - Applications/DataExplorer/**/*
     - when: manual
       allow_failure: true
-
   variables:
     BUILD_DIR: "build-gui-linux"
     CMAKE_ARGS: >-
@@ -22,10 +23,6 @@ build gui linux:
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_NETCDF=ON
-
-  image:
-    name: $CONTAINER_GCC_GUI_IMAGE
-
   cache:
     paths:
       - $CCACHE_DIR
