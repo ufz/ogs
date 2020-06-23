@@ -12,14 +12,12 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <tuple>
 #include <vector>
 
-
 #include "BaseLib/ConfigTree.h"
-
 #include "NumLib/TimeStepping/Algorithms/EvolutionaryPIDcontroller.h"
 #include "NumLib/TimeStepping/TimeStep.h"
-
 #include "Tests/TestTools.h"
 
 std::unique_ptr<NumLib::TimeStepAlgorithm> createTestTimeStepper(
@@ -51,7 +49,13 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     double solution_error = 0.;
     int const number_iterations = 0;
     // 1st step
-    ASSERT_TRUE(PIDStepper->next(solution_error, number_iterations));
+
+    auto [step_accepted, timestepper_dt] =
+        PIDStepper->next(solution_error, number_iterations);
+
+    ASSERT_TRUE(step_accepted);
+    PIDStepper->resetCurrentTimeStep(timestepper_dt);
+
     NumLib::TimeStep ts = PIDStepper->getTimeStep();
     double h_new = 0.01;
     double t_previous = 0.;
@@ -64,7 +68,10 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
 
     // e_n_minus1 is filled.
     solution_error = 1.0e-4;
-    PIDStepper->next(solution_error, number_iterations);
+    auto [step_accepted1, timestepper_dt1] =
+        PIDStepper->next(solution_error, number_iterations);
+    ASSERT_TRUE(step_accepted1);
+    PIDStepper->resetCurrentTimeStep(timestepper_dt1);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
     ASSERT_EQ(2u, ts.steps());
@@ -76,7 +83,10 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
 
     // e_n_minus2 is filled.
     solution_error = 0.5e-3;
-    PIDStepper->next(solution_error, number_iterations);
+    auto [step_accepted2, timestepper_dt2] =
+        PIDStepper->next(solution_error, number_iterations);
+    ASSERT_TRUE(step_accepted2);
+    PIDStepper->resetCurrentTimeStep(timestepper_dt2);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
     ASSERT_EQ(3u, ts.steps());
@@ -86,7 +96,9 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
 
     // error > TOL=1.3-3, step rejected and new step size estimated.
     solution_error = 0.01;
-    PIDStepper->next(solution_error, number_iterations);
+    auto [step_accepted3, timestepper_dt3] =
+        PIDStepper->next(solution_error, number_iterations);
+    ASSERT_TRUE(!step_accepted3);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
     // No change in ts.steps
@@ -100,7 +112,10 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
 
     // With e_n, e_n_minus1, e_n_minus2
     solution_error = 0.4e-3;
-    PIDStepper->next(solution_error, number_iterations);
+    auto [step_accepted4, timestepper_dt4] =
+        PIDStepper->next(solution_error, number_iterations);
+    ASSERT_TRUE(step_accepted4);
+    PIDStepper->resetCurrentTimeStep(timestepper_dt4);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
     ASSERT_EQ(4u, ts.steps());

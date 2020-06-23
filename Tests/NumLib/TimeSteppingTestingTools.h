@@ -11,10 +11,12 @@
 
 #pragma once
 
+#include <tuple>
+#include <vector>
+
 #include "BaseLib/Logging.h"
-
+#include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
 #include "NumLib/TimeStepping/TimeStep.h"
-
 
 namespace
 {
@@ -28,6 +30,7 @@ struct Dummy
 template <class T_TIME_STEPPING, class T = Dummy>
 std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
                                  std::vector<int> const& number_iterations,
+                                 std::vector<double> const& fixed_output_times,
                                  T* obj = nullptr)
 {
     std::vector<double> vec_t;
@@ -36,11 +39,20 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
     double const solution_error = 0;
     for (auto const& i : number_iterations)
     {
-        if (!algorithm.next(solution_error, i))
+        auto[step_accepted, timestepper_dt] = algorithm.next(solution_error, i);
+        if (!step_accepted)
         {
             break;
         }
 
+        if (!fixed_output_times.empty())
+        {
+            timestepper_dt = NumLib::possiblyClampDtToNextFixedTime(
+                algorithm.getTimeStep().current(), timestepper_dt,
+                fixed_output_times);
+        }
+
+        algorithm.resetCurrentTimeStep(timestepper_dt);
         NumLib::TimeStep t = algorithm.getTimeStep();
         // INFO("t: n={:d},t={:g},dt={:g}", t.steps(), t.current(), t.dt());
         if (obj)
