@@ -61,8 +61,8 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     }
 }
 
-bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
-                                            int const number_iterations)
+std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
+    double const /*solution_error*/, int const number_iterations)
 {
     _iter_times = number_iterations;
 
@@ -70,23 +70,15 @@ bool IterationNumberBasedTimeStepping::next(double const /*solution_error*/,
     if (accepted())
     {
         _ts_prev = _ts_current;
-        _dt_vector.push_back(_ts_current.dt());
+        return std::make_tuple(true, getNextTimeStepSize());
     }
     else
     {
         ++_n_rejected_steps;
         // time step was rejected, keep dt for the next dt computation.
-        _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
-            TimeStep{_ts_prev.previous(),
-                     _ts_prev.previous() + _ts_current.dt(), _ts_prev.steps()};
+        return std::make_tuple(false, getNextTimeStepSize());
     }
-
-    // prepare the next time step info
-    _ts_current = _ts_prev;
-    _ts_current += possiblyClampDtToNextFixedTime(
-        _ts_current.current(), getNextTimeStepSize(), _fixed_output_times);
-
-    return true;
+    return {};
 }
 
 double IterationNumberBasedTimeStepping::findMultiplier(

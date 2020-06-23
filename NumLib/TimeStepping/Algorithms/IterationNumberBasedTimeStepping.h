@@ -95,7 +95,8 @@ public:
 
     ~IterationNumberBasedTimeStepping() override = default;
 
-    bool next(double solution_error, int number_iterations) override;
+    std::tuple<bool, double> next(double solution_error,
+                                  int number_iterations) override;
 
     bool accepted() const override;
     void setAcceptedOrNot(bool accepted) override { _accepted = accepted; };
