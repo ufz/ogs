@@ -2,6 +2,7 @@ tests large:
   stage: build
   tags:
     - docker
+    - envinf1
   extends:
     - .defaults
     - .rules-master-manual
