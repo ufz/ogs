@@ -53,13 +53,12 @@ int main (int argc, char* argv[])
         true);
     cmd.add(layer_position_arg);
 
-    TCLAP::ValueArg<bool> copy_material_ids_arg(
-        "", "copy_material_ids",
-        "copy the existing material distribution of the layer which is to "
-        "be extented ",
-        false, false,
-        "bool value: either true for copying or false for adding new "
-        "material ID");
+    TCLAP::SwitchArg copy_material_ids_arg(
+        "", "copy-material-ids",
+        "Copy the existing material distribution of the layer which is to be "
+        "extented. If the switch isn't given a new material id will be "
+        "created.",
+        false);
     cmd.add(copy_material_ids_arg);
 
     cmd.parse(argc, argv);
