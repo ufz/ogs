@@ -46,6 +46,13 @@ int main (int argc, char* argv[])
         "the thickness of the new layer", false, 10, "floating point value");
     cmd.add(layer_thickness_arg);
 
+    TCLAP::SwitchArg layer_position_arg(
+        "", "add-layer-on-bottom",
+        "Per default the layer is add on the top, if this argument is set the "
+        "layer is add on the bottom.",
+        true);
+    cmd.add(layer_position_arg);
+
     TCLAP::ValueArg<bool> copy_material_ids_arg(
         "", "copy_material_ids",
         "copy the existing material distribution of the layer which is to "
@@ -68,9 +75,10 @@ int main (int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
         *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue(),
-        true, copy_material_ids_arg.getValue()));
-    if (!result) {
-        ERR("Failure while adding top layer.");
+        layer_position_arg.getValue(), copy_material_ids_arg.getValue()));
+    if (!result)
+    {
+        ERR("Failure while adding layer.");
         return EXIT_FAILURE;
     }
 
