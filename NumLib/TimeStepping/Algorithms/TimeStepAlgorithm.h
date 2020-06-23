@@ -83,7 +83,7 @@ public:
     /// return current time step
     const TimeStep getTimeStep() const { return _ts_current; }
     /// reset the current step size from the previous time
-    virtual void resetCurrentTimeStep(const double dt)
+    void resetCurrentTimeStep(const double dt)
     {
         _ts_prev = _ts_current;
         _ts_current += dt;

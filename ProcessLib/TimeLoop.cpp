@@ -290,10 +290,16 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
     double dt = std::numeric_limits<double>::max();
+
+    bool is_initial_step = false;
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         auto& ppd = *_per_process_data[i];
         const auto& timestepper = ppd.timestepper;
+        if (timestepper->getTimeStep().steps() == 0)
+        {
+            is_initial_step = true;
+        }
 
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
@@ -321,8 +327,10 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             timestepper->setAcceptedOrNot(true);
         }
 
-        if (!timestepper->next(solution_error,
-                               ppd.nonlinear_solver_status.number_iterations) &&
+        auto [step_accepted, timestepper_dt] = timestepper->next(
+            solution_error, ppd.nonlinear_solver_status.number_iterations);
+
+        if (!step_accepted &&
             // In case of FixedTimeStepping, which makes timestepper->next(...)
             // return false when the ending time is reached.
             t + std::numeric_limits<double>::epsilon() < timestepper->end())
@@ -337,15 +345,11 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             all_process_steps_accepted = false;
         }
 
-        if (timestepper->getTimeStep().dt() >
-                std::numeric_limits<double>::min() ||
+        if (timestepper_dt > std::numeric_limits<double>::epsilon() ||
             std::abs(t - timestepper->end()) <
                 std::numeric_limits<double>::epsilon())
         {
-            if (timestepper->getTimeStep().dt() < dt)
-            {
-                dt = timestepper->getTimeStep().dt();
-            }
+            dt = std::min(timestepper_dt, dt);
         }
     }
 
@@ -356,41 +360,6 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     else
     {
         _repeating_times_of_rejected_step++;
-    }
-
-    bool is_initial_step = false;
-    // Reset the time step with the minimum step size, dt
-    // Update the solution of the previous time step.
-    for (std::size_t i = 0; i < _per_process_data.size(); i++)
-    {
-        const auto& ppd = *_per_process_data[i];
-        auto& timestepper = ppd.timestepper;
-        timestepper->resetCurrentTimeStep(dt);
-
-        if (t == timestepper->begin())
-        {
-            is_initial_step = true;
-            continue;
-        }
-
-        auto& x = *_process_solutions[i];
-        auto& x_prev = *_process_solutions_prev[i];
-        if (all_process_steps_accepted)
-        {
-            MathLib::LinAlg::copy(x, x_prev);  // pushState
-        }
-        else
-        {
-            if (t < _end_time || std::abs(t - _end_time) <
-                                     std::numeric_limits<double>::epsilon())
-            {
-                WARN(
-                    "Time step {:d} was rejected {:d} times "
-                    "and it will be repeated with a reduced step size.",
-                    accepted_steps + 1, _repeating_times_of_rejected_step);
-                MathLib::LinAlg::copy(x_prev, x);  // popState
-            }
-        }
     }
 
     if (!is_initial_step)
@@ -437,6 +406,45 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         }
     }
 
+    dt = NumLib::possiblyClampDtToNextFixedTime(t, dt,
+                                                _output->getFixedOutputTimes());
+
+    // Reset the time step with the minimum step size, dt
+    // Update the solution of the previous time step.
+    for (std::size_t i = 0; i < _per_process_data.size(); i++)
+    {
+        const auto& ppd = *_per_process_data[i];
+        auto& timestepper = ppd.timestepper;
+        if (all_process_steps_accepted)
+        {
+            timestepper->resetCurrentTimeStep(dt);
+        }
+
+        if (t == timestepper->begin())
+        {
+            continue;
+        }
+
+        auto& x = *_process_solutions[i];
+        auto& x_prev = *_process_solutions_prev[i];
+        if (all_process_steps_accepted)
+        {
+            MathLib::LinAlg::copy(x, x_prev);  // pushState
+        }
+        else
+        {
+            if (t < _end_time || std::abs(t - _end_time) <
+                                     std::numeric_limits<double>::epsilon())
+            {
+                WARN(
+                    "Time step {:d} was rejected {:d} times "
+                    "and it will be repeated with a reduced step size.",
+                    accepted_steps + 1, _repeating_times_of_rejected_step);
+                MathLib::LinAlg::copy(x_prev, x);  // popState
+            }
+        }
+    }
+
     return dt;
 }
 
@@ -462,16 +470,9 @@ void TimeLoop::initialize()
         {
             conv_crit->setDOFTable(pcs.getDOFTable(process_id), pcs.getMesh());
         }
-
-        // Add the fixed times of output to time stepper in order that
-        // the time stepping is performed and the results are output at
-        // these times. Note: only the adaptive time steppers can have the
-        // the fixed times.
-        auto& timestepper = process_data->timestepper;
-        timestepper->addFixedOutputTimes(_output->getFixedOutputTimes());
     }
 
-    // init solution storage
+    // initial solution storage
     std::tie(_process_solutions, _process_solutions_prev) =
         setInitialConditions(_start_time, _per_process_data);
 
@@ -572,7 +573,6 @@ bool TimeLoop::loop()
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
 
-        dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
 
         if (!_last_step_rejected)
         {
@@ -581,8 +581,9 @@ bool TimeLoop::loop()
                             &Output::doOutput);
         }
 
-        if (t == _end_time || t + dt > _end_time ||
-            t + std::numeric_limits<double>::epsilon() > _end_time)
+        dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
+        if (std::fabs(t - _end_time) < std::numeric_limits<double>::epsilon() ||
+            t + dt > _end_time)
         {
             break;
         }
