@@ -1,6 +1,6 @@
 /*
- * \date 2015-04-14
- * \brief Adds a top layer to an existing mesh.
+ * \file
+ * \brief Adds a layer to an existing mesh.
  *
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
@@ -23,9 +23,9 @@
 int main (int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
-        "Adds a top layer to an existing mesh"
+        "Adds a layer to an existing mesh."
         "The documentation is available at "
-        "https://docs.opengeosys.org/docs/tools/meshing/addtoplayer.\n\n"
+        "https://docs.opengeosys.org/docs/tools/meshing/addlayer.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"

@@ -1,5 +1,5 @@
 set(TOOLS
-    AddTopLayer
+    AddLayer
     appendLinesAlongPolyline
     checkMesh
     convertToLinearMesh
