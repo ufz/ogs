@@ -17,10 +17,8 @@ build gui linux:
 
   variables:
     BUILD_DIR: "build-gui-linux"
-    CONAN_USER_HOME: "$CI_PROJECT_DIR/.conan"
     CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=ON
-      -DOGS_USE_PCH=OFF
+      -DOGS_USE_CONAN=OFF
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_NETCDF=ON
@@ -31,4 +29,3 @@ build gui linux:
   cache:
     paths:
       - $CCACHE_DIR
-      - $CONAN_USER_HOME

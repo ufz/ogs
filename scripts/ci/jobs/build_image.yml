@@ -21,7 +21,7 @@ build container images:
       --tag $CONTAINER_GCC_IMAGE --upload
     - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc-gui:master || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
-      --pm conan --cvode --cppcheck --docs --gcovr --gui
+      --pm system --cvode --cppcheck --docs --gcovr --gui
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
     - docker pull registry.opengeosys.org/ogs/ogs/ogs/clang:master || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
