@@ -31,33 +31,24 @@ FixedTimeStepping::FixedTimeStepping(double t0, double tn, double dt)
 {
 }
 
-bool FixedTimeStepping::next(double const /*solution_error*/,
-                             int const /*number_iterations*/)
+std::tuple<bool, double> FixedTimeStepping::next(
+    double const /*solution_error*/, int const /*number_iterations*/)
 {
     // check if last time step
     if (_ts_current.steps() == _dt_vector.size() ||
         std::abs(_ts_current.current() - _t_end) <
             std::numeric_limits<double>::epsilon())
     {
-        return false;
+        return std::make_tuple(false, 0.0);
     }
 
-    // confirm current time and move to the next if accepted
-    if (accepted())
-    {
-        _ts_prev = _ts_current;
-    }
-
-    // prepare the next time step info
-    _ts_current = _ts_prev;
-    double dt = _dt_vector[_ts_prev.steps()];
-    if (_ts_prev.current() + dt > _t_end)
+    double dt = _dt_vector[_ts_current.steps()];
+    if (_ts_current.current() + dt > _t_end)
     {  // upper bound by t_end
-        dt = _t_end - _ts_prev.current();
+        dt = _t_end - _ts_current.current();
     }
-    _ts_current += dt;
 
-    return true;
+    return std::make_tuple(true, dt);
 }
 
 double FixedTimeStepping::computeEnd(double t_initial,
