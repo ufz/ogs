@@ -168,20 +168,18 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     auto* edge_item = new TreeItem(edges, _rootItem);
     _rootItem->appendChild(edge_item);
 
-    std::vector<std::string> const& vec_names (mesh.getProperties().getPropertyVectorNames());
-    for (const auto& vec_name : vec_names)
+    for (auto [name, property] : mesh.getProperties())
     {
         QList<QVariant> array_info;
-        array_info << QString::fromStdString(vec_name) + ": ";
+        array_info << QString::fromStdString(name) + ": ";
         if (auto const vec_bounds =  // test if boost::optional is empty
-            MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_name))
+            MeshLib::MeshInformation::getValueBounds<int>(*property))
         {
             array_info << "[" + QString::number(vec_bounds->first) + ","
                        << QString::number(vec_bounds->second) + "]";
         }
         else if (auto const vec_bounds =  // test if boost::optional is empty
-                 MeshLib::MeshInformation::getValueBounds<double>(mesh,
-                                                                  vec_name))
+                 MeshLib::MeshInformation::getValueBounds<double>(*property))
         {
             array_info << "[" + QString::number(vec_bounds->first) + ","
                        << QString::number(vec_bounds->second) + "]";
