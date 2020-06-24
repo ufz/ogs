@@ -51,6 +51,7 @@ endif()
 
 if (OGS_USE_MPI)
     # OgsTest(WRAPPER mpirun -np 4 PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
+    OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Mechanics/InitialStates/soil_column_nonequilibrium_sigma_elementwise.prj)
 endif()
 
 if (OGS_USE_MFRONT)
