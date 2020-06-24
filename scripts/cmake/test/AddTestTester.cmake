@@ -32,6 +32,9 @@ foreach(CMD ${TESTER_COMMAND})
                 "did not match any files!")
         endif()
         foreach(FILE ${FILES})
+            if("$ENV{HOSTNAME}" MATCHES "frontend.*")
+                string(REPLACE "gpfs1" ".." FILE ${FILE})
+            endif()
             execute_process(
                 COMMAND ${SELECTED_DIFF_TOOL_PATH} ${SOURCE_PATH}/${FILE} ${BINARY_PATH}/${FILE} -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}
                 WORKING_DIRECTORY ${SOURCE_PATH}

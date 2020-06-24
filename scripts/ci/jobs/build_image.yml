@@ -1,10 +1,11 @@
 build container images:
   stage: .pre
   rules:
-    - changes:
-      - ThirdParty/container-maker
-      - scripts/ci/jobs/build_image.yml
-      when: always
+    # TODO
+    # - changes:
+      # - ThirdParty/container-maker
+      # - scripts/ci/jobs/build_image.yml
+      # when: always
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: always
   tags:
@@ -15,18 +16,18 @@ build container images:
   extends: .container-maker-setup
   script:
     - docker login -u $OGS_CI_REGISTRY_USER -p $OGS_CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc:master || true
+    - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
       --pm system --cvode --cppcheck --docs --gcovr
-      --tag $CONTAINER_GCC_IMAGE --upload
-    - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc-gui:master || true
+      --tag $CONTAINER_GCC_IMAGE:$CONTAINER_TAG --upload
+    - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc-gui || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
       --pm system --cvode --cppcheck --docs --gcovr --gui
-      --tag $CONTAINER_GCC_GUI_IMAGE --upload
-    - docker pull registry.opengeosys.org/ogs/ogs/ogs/clang:master || true
+      --tag $CONTAINER_GCC_GUI_IMAGE:$CONTAINER_TAG --upload
+    - docker pull registry.opengeosys.org/ogs/ogs/ogs/clang || true
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
       --compiler clang --compiler_version 9
-      --tag $CONTAINER_CLANG_IMAGE --upload
+      --tag $CONTAINER_CLANG_IMAGE:$CONTAINER_TAG --upload
 
 ### global project images ###
 build xunit-to-junit image:
