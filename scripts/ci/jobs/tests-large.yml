@@ -1,5 +1,5 @@
 tests large:
-  stage: build
+  stage: check
   tags:
     - docker
     - envinf1
