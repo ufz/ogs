@@ -20,7 +20,7 @@ You need to opt-in to use the [EasyBuild modules](https://wiki.ufz.de/eve/index.
 - Run `touch ~/.easybuild-yes`
 - `exit` and re-login
 
-Also on eve the installed git module (2.10) is over 2 years old and we recommend using a newer module (especially when you have problems with fetching or checking out of Git LFS files):
+Also on eve the installed git module (2.10) is over 2 years old and we recommend using a newer module:
 
 ```bash
 ml use /global/apps/modulefiles

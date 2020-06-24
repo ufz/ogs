@@ -14,27 +14,3 @@ weight = 1044
 If you have any Git-related questions first look at these links:
 
 - [Git Flight Rules](https://github.com/k88hudson/git-flight-rules)
-
-
-## Git-LFS issues
-
-### *The system cannot find the file specified.*
-
-Example error output:
-
-```bash
-open C:\data\code\ogs6\ogs\Tests\Data\Mechanics\Ehlers\ref_axisymmetric_sphere_pcs_0_ts_100_t_1.000000.vtu: The system cannot find the file specified.
-error: failed to push some refs to 'git@github.com:bilke/ogs.git'
-```
-
-Solution:
-
-Fetch all lfs files from `ufz/ogs` and push them to your remote.
-
-```bash
-# this downloads ALL lfs objects from the old lfs server
-git lfs fetch --all origin # or upstream, this should point to ufz/ogs
-
-# pushes ALL lfs objects to the new lfs server
-git lfs push --all my-remote # this should point to your remote
-```

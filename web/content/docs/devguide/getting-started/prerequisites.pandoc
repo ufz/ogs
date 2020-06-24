@@ -133,8 +133,7 @@ git version {{< dataFile "versions.minimum_version.git" >}}
 Otherwise please install Git with your favorite package manager:
 
 ```bash
-$ sudo yum install git      // RPM-based systems
-$ sudo apt-get install git  // Debian-based systems
+$ sudo apt-get install git
 ```
 
 Let Git know who you are:
@@ -179,41 +178,6 @@ In some corporate environments you may have to use a proxy server. In this case 
 git config --global http.proxy http://yourproxy.example.com
 ```
 :::
-
-
-## Step: Install Git LFS
-
-[Git LFS](https://git-lfs.github.com/) (large file storage) is a git extension dealing with large binary files such as images and is used for the documentation. You don't need to worry about anything but you need to install the extension as it is not a part of standard git.
-
-::: {.win}
-- Git LFS is already part of your regular git installation, to enable it run: `git lfs install` in the command line
-:::
-
-::: {.linux}
-Install via [PackageCloud](https://packagecloud.io/):
-
-```bash
-$ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-$ sudo apt-get install git-lfs
-$ git lfs install
-```
-:::
-
-::: {.mac}
-Install with Homebrew:
-
-```bash
-$ brew install git-lfs
-$ git lfs install
-```
-:::
-
-::: {.note}
-### <i class="far fa-info-circle"></i> Git LFS installation without admin rights
-
-If you do not have rights to install a system package (e.g. on cluster systems) you can [download](https://github.com/git-lfs/git-lfs/releases/latest) a precompiled `git-lfs` executable. Simply put it into your `PATH` and everything should work (remember to run `git lfs install` once!). See also: <https://github.com/git-lfs/git-lfs/wiki/Installation#other>
-:::
-
 
 ## Step: Install Python 3
 

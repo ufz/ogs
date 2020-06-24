@@ -31,12 +31,11 @@ The functionality is very flexible and more wrappers and checker can be added la
 
 ## Test Data
 
-Test data is stored with git lfs in `Tests/Data`. Generated test output files should be found in `[build-dir]/Tests/Data`.
+Test data is stored in `Tests/Data`. Generated test output files should be found in `[build-dir]/Tests/Data`.
 
 In the OGS-cli outputting to `[build-dir]/Tests/Data` is already handled (via the `-o` parameter). For other executables you have to implement this, e.g. a with parameter specifying the output directory.
 
 In code `BaseLib::BuildInfo::data_path` (from `BuildInfo.h`) references the data source directory and `BaseLib::BuildInfo::data_binary_path` references the data output directory.
 
-For adding new data files make sure you have [setup git lfs](../../getting-started/prerequisites) already. Then simply commit the new files as usual.
+For adding new data files simply commit the new files as usual.
 
-Check this [in-depth tutorial](https://www.atlassian.com/git/tutorials/git-lfs) to learn more about git lfs.
