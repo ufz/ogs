@@ -12,14 +12,14 @@
 
 */
 
+#include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-
 #include "Metis.h"
 #include "NodeWiseMeshPartitioner.h"
 
@@ -75,6 +75,19 @@ int main(int argc, char* argv[])
     TCLAP::SwitchArg ascii_flag("a", "ascii", "Enable ASCII output.", false);
     cmd.add(ascii_flag);
 
+    TCLAP::ValueArg<std::string> log_level_arg("l", "log-level",
+                                               "the verbosity of logging "
+                                               "messages: none, error, warn, "
+                                               "info, debug, all",
+                                               false,
+#ifdef NDEBUG
+                                               "info",
+#else
+                                               "all",
+#endif
+                                               "LOG_LEVEL");
+    cmd.add(log_level_arg);
+
     // All the remaining arguments are used as file names for boundary/subdomain
     // meshes.
     TCLAP::UnlabeledMultiArg<std::string> other_meshes_filenames_arg(
@@ -82,6 +95,13 @@ int main(int argc, char* argv[])
     cmd.add(other_meshes_filenames_arg);
 
     cmd.parse(argc, argv);
+
+    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
+    spdlog::set_pattern("%^%l:%$ %v");
+    spdlog::set_error_handler([](const std::string& msg) {
+        std::cerr << "spdlog error: " << msg << std::endl;
+        OGS_FATAL("spdlog logger error occured.");
+    });
 
     BaseLib::RunTime run_timer;
     run_timer.start();
