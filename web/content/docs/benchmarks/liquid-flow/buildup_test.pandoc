@@ -89,7 +89,7 @@ The pressure buildup test is comparable to a pumping recovery test as
 the extraction rate is first kept constant at $Q$, and then becomes zero
 at $t=t_p$. This benchmark then adopts the same assumptions as in the
 [Theis'
-problem](https://benchmarks.opengeosys.org/docs/benchmarks/liquid-flow/liquid-flow-theis-problem/).
+problem](https://www.opengeosys.org/docs/benchmarks/liquid-flow/liquid-flow-theis-problem/).
 The analytical solution of the pressure difference $\Delta p$ with
 respect to the initial pressure $p_0$ is the sum of two Theis curves:
 one starting at $t=0$ and another starting at $t=t_p$ but with an

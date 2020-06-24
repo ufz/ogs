@@ -107,7 +107,7 @@ features:
         Implement your new feature and [let the CI system](/docs/devguide/development-workflows/continuous-integration) run sophisticated tests automatically for you incorporating multiple computing platforms, a magnitude of software configurations and a whole array of CPU intensive complex test simulation runs.
     - headline: Get help from core developers
       textline: |
-        Once your feature is ready the [code review process](/docs/devguide/development-workflows/code-reviews/) starts. A helpful [core developer](https://gitlab.opengeosys.org/ogs/ogs/-/graphs/gitlab-ci) checks the proposed change for general acceptance and may give hints for improvement (of e.g. the computational performance or the code structure). Once the iterative feedback loop between you, code reviewer(s) and the automated test system satisfies all aspects the proposed change is merged into the main development line.
+        Once your feature is ready the [code review process](/docs/devguide/development-workflows/code-reviews/) starts. A helpful [core developer](https://gitlab.opengeosys.org/ogs/ogs/-/graphs/master) checks the proposed change for general acceptance and may give hints for improvement (of e.g. the computational performance or the code structure). Once the iterative feedback loop between you, code reviewer(s) and the automated test system satisfies all aspects the proposed change is merged into the main development line.
   visual:
     permalink: "/features/OGS-Software-Engineering-Small.png"
     alt: Dev workflow

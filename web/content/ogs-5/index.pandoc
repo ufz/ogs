@@ -37,7 +37,7 @@ On Windows you may have to install the appropriate Visual Studio Redistributable
 
 ### Development builds
 
-You can get the latest OpenGeoSys-5 (with recent bug-fixes) version from our [Jenkins CI system](https://jenkins.opengeosys.org/job/ufz/job/ogs5/job/master/). Binaries for Windows (64-Bit) and Linux are provided for the OGS FEM-simulator under *"Last successful Artifacts"*.
+TODO: You can get the latest OpenGeoSys-5 (with recent bug-fixes) version from the CI system. Binaries for Windows (64-Bit) and Linux are provided for the OGS FEM-simulator under *"Last successful Artifacts"*.
 
 ### Source code
 
