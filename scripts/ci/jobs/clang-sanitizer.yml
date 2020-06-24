@@ -4,7 +4,7 @@ clang sanitizer:
     - docker
   extends:
     - .defaults
-    - .rules-master-manual
+    - .rules-manual
 
   variables:
     BUILD_DIR: "build-sanitizer"

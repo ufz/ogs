@@ -24,7 +24,7 @@ include:
   - template: 'Code-Quality.gitlab-ci.yml'
   # extends
   - local: '/scripts/ci/extends/defaults.yml'
-  - local: '/scripts/ci/extends/rules-master-manual.yml'
+  - local: '/scripts/ci/extends/rules.yml'
   - local: '/scripts/ci/extends/template-build-linux.yml'
   - local: '/scripts/ci/extends/template-build-win.yml'
   - local: '/scripts/ci/extends/container-maker-setup.yml'
