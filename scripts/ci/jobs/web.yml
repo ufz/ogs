@@ -1,5 +1,5 @@
 web url checker:
-  stage: checks
+  stage: check
   tags:
     - docker
   extends:

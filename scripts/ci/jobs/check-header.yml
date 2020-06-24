@@ -1,5 +1,5 @@
 check header:
-  stage: checks
+  stage: check
   tags:
     - docker
   extends:

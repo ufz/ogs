@@ -1,7 +1,7 @@
 stages:
-  - pre-checks
+  - pre-check
   - build
-  - checks
+  - check
   - gui
   - package
 

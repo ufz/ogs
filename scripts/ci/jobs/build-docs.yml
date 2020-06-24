@@ -22,7 +22,7 @@ build docs:
     expire_in: 1 week
 
 check docs links:
-  stage: checks
+  stage: check
   image: $WEB_IMAGE
   needs:
     - job: build docs

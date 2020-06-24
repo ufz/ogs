@@ -1,5 +1,5 @@
 pre commit:
-  stage: pre-checks
+  stage: pre-check
   image:
     name: $PRECOMMIT_IMAGE
   extends:

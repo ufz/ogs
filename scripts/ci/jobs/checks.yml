@@ -1,5 +1,5 @@
 compiler warnings:
-  stage: checks
+  stage: check
   variables:
     GIT_STRATEGY: none
   allow_failure: true
@@ -19,7 +19,7 @@ compiler warnings:
 
 
 ctest results:
-  stage: checks
+  stage: check
   variables:
     GIT_STRATEGY: none
   tags:
