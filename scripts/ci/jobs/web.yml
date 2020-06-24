@@ -1,5 +1,6 @@
 web url checker:
   stage: check
+  allow_failure: true
   tags:
     - docker
   extends:

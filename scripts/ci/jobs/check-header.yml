@@ -1,5 +1,6 @@
 check header:
   stage: check
+  allow_failure: true
   tags:
     - docker
   extends:
@@ -21,8 +22,8 @@ check header:
       cmake .. -G Ninja
       $CMAKE_ARGS
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-      -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
-    - cat CMakeFiles/CMakeError.log || true
+      -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES || true
+    - cat CMakeFiles/CMakeError.log
 
   cache:
     paths:
