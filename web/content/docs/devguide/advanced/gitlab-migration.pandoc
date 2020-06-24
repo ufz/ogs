@@ -29,6 +29,12 @@ git commit -m "Converted LFS files to plain git."
 ```
 :::
 
+## Create a new fork on GitLab
+
+[Create a new fork](https://gitlab.opengeosys.org/ogs/ogs/-/forks/new) from the [official OGS-6 repository](https://gitlab.opengeosys.org/ogs/ogs).
+
+This creates a new fork under your account with the URL `https://gitlab.opengeosys.org/YOUR-USERNAME/ogs`.
+
 ## Migrate your local repos to point to GitLab
 
 You have to modify your git remotes to point to the new GitLab repos. Assuming the former official git repo remote is called `upstream`:

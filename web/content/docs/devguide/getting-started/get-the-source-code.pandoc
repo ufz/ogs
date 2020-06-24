@@ -18,7 +18,9 @@ The content of this page is largely taken from the [GitHub-blog](https://github.
 
 ## Create a fork
 
-Go to the [official OGS-6 repository](https://gitlab.opengeosys.org/ogs/ogs) and click the "Fork"-button. This creates a new fork under your account with the URL `https://gitlab.opengeosys.org/YOUR-USERNAME/ogs`.
+[Create a new fork](https://gitlab.opengeosys.org/ogs/ogs/-/forks/new) from the [official OGS-6 repository](https://gitlab.opengeosys.org/ogs/ogs).
+
+This creates a new fork under your account with the URL `https://gitlab.opengeosys.org/YOUR-USERNAME/ogs`.
 
 
 ## Setup your local clone
