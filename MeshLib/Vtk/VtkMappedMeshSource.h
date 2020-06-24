@@ -76,11 +76,8 @@ protected:
 
 private:
     /// Adds a zero-copy vtk array wrapper.
-    /// \param properties MeshLib::Properties object
-    /// \param prop_name The name of the property vector to be mapped
     template <typename T>
-    bool addProperty(MeshLib::Properties const& properties,
-                     std::string const& prop_name) const;
+    void addProperty(MeshLib::PropertyVector<T> const& property) const;
 
     const MeshLib::Mesh* _mesh{};
 

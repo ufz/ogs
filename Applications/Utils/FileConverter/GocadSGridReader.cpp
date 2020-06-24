@@ -22,6 +22,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
 
 int main(int argc, char* argv[])
@@ -70,25 +71,7 @@ int main(int argc, char* argv[])
     }
 
     std::unique_ptr<MeshLib::Mesh> mesh(reader.getMesh());
-
-    INFO("The mesh contains the following PropertyVectors:");
-    auto property_names(mesh->getProperties().getPropertyVectorNames());
-    for (auto const& property_name : property_names)
-    {
-        INFO("- {:s} (#values: {:d})", property_name,
-             mesh->getProperties()
-                 .getPropertyVector<double>(property_name)
-                 ->size());
-        auto bounds(
-            std::minmax_element(mesh->getProperties()
-                                    .getPropertyVector<double>(property_name)
-                                    ->cbegin(),
-                                mesh->getProperties()
-                                    .getPropertyVector<double>(property_name)
-                                    ->cend()));
-        INFO("\tvalues in range [{:e}, {:e}].", *(bounds.first),
-             *(bounds.second));
-    }
+    MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
     INFO("Writing mesh to '{:s}'.", mesh_output_arg.getValue());
     MeshLib::IO::writeMeshToFile(*mesh, mesh_output_arg.getValue());
