@@ -3,8 +3,8 @@ web url checker:
   tags:
     - docker
   extends:
-    - .defaults
     - .rules-master-manual
+  needs: []
   image:
     name: $WEB_IMAGE
   script:
@@ -28,7 +28,7 @@ preview web site:
     - hugo --environment staging
   rules:
     - if: '$CI_COMMIT_BRANCH != "master"'
-    - changes:
+      changes:
       - web/
       - scripts/ci/jobs/web.yml
   artifacts:
@@ -44,8 +44,7 @@ preview web site:
 deploy web site:
   stage: package
   image: $WEB_IMAGE
-  extends:
-    - .defaults
+  needs: ["web url checker"]
   script:
     - cd web
     - yarn
@@ -54,7 +53,7 @@ deploy web site:
     - node_modules/.bin/hugo-algolia --toml -s
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
-    - changes:
+      changes:
       - web/
       - scripts/ci/jobs/web.yml
   cache:
