@@ -13,21 +13,25 @@ To migrate your repository run the following commands in your local repository (
 
 ## Disable Git LFS
 
-We used Git LFS to store large files but [switched back to plain git](https://github.com/ufz/ogs/issues/2961). You need to disable Git LFS in your repo:
-
-```bash
-git lfs uninstall --local
-```
+We used Git LFS to store large files but [switched back to plain git](https://github.com/ufz/ogs/issues/2961).
 
 ::: {.note}
-### <i class="far fa-info-circle"></i> Normalize LFS files in your existing branches
+### <i class="far fa-info-circle"></i> IMPORTANT: Normalize LFS files in your existing branches
 If you have branches from pre-GitLab times with e.g. newly created LFS files (benchmark files, images, ...) you have to convert them back to plain git:
 
 ```bash
 git add --renormalize .
 git commit -m "Converted LFS files to plain git."
 ```
+
+Now you have to squash this conversion commit into your original commit which added the files as Git LFS files. In result your branch history should and **must not** have any Git LFS files! Otherwise GitLab will reject the push!
 :::
+
+When you are done migrating your branches you need to disable Git LFS in your local repo:
+
+```bash
+git lfs uninstall --local
+```
 
 ## Create a new fork on GitLab
 
