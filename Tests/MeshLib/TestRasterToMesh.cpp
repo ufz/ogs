@@ -57,9 +57,7 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshElevation)
     ASSERT_EQ(_n_nodes, mesh->getNodes().size());
     ASSERT_EQ(_n_nodes, mesh->getNumberOfNodes());
 
-    std::vector<std::string> const names =
-        mesh->getProperties().getPropertyVectorNames();
-    ASSERT_TRUE(names.empty());
+    ASSERT_EQ(0, mesh->getProperties().size());
 
     auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
@@ -81,9 +79,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshElevation)
 
     ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
 
-    std::vector<std::string> const names =
-        mesh->getProperties().getPropertyVectorNames();
-    ASSERT_TRUE(names.empty());
+    ASSERT_EQ(0, mesh->getProperties().size());
 
     auto const& n_types =
         MeshLib::MeshInformation::getNumberOfElementTypes(*mesh);
@@ -118,9 +114,7 @@ TEST_F(RasterToMeshTest, convertRasterToTriMeshValue)
 
     ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
 
-    std::vector<std::string> const names =
-        mesh->getProperties().getPropertyVectorNames();
-    ASSERT_EQ(1, names.size());
+    ASSERT_EQ(1, mesh->getProperties().size());
 
     MeshLib::PropertyVector<double>* const prop =
         mesh->getProperties().getPropertyVector<double>("test");
@@ -152,9 +146,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshValue)
 
     ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
 
-    std::vector<std::string> const names =
-        mesh->getProperties().getPropertyVectorNames();
-    ASSERT_EQ(1, names.size());
+    ASSERT_EQ(1, mesh->getProperties().size());
 
     MeshLib::PropertyVector<double>* const prop =
         mesh->getProperties().getPropertyVector<double>("test");
@@ -186,9 +178,7 @@ TEST_F(RasterToMeshTest, convertRasterToPrismMeshValue)
 
     ASSERT_EQ(2 * _n_nodes, mesh->getNumberOfBaseNodes());
 
-    std::vector<std::string> const names =
-        mesh->getProperties().getPropertyVectorNames();
-    ASSERT_EQ(1, names.size());
+    ASSERT_EQ(1, mesh->getProperties().size());
 
     MeshLib::PropertyVector<double>* const prop =
         mesh->getProperties().getPropertyVector<double>("test");
@@ -220,9 +210,7 @@ TEST_F(RasterToMeshTest, convertRasterToHexMeshValue)
 
     ASSERT_EQ(2 * _n_nodes, mesh->getNumberOfBaseNodes());
 
-    std::vector<std::string> const names =
-        mesh->getProperties().getPropertyVectorNames();
-    ASSERT_EQ(1, names.size());
+    ASSERT_EQ(1, mesh->getProperties().size());
 
     MeshLib::PropertyVector<int>* const prop =
         mesh->getProperties().getPropertyVector<int>("MaterialIDs");
@@ -254,9 +242,7 @@ TEST_F(RasterToMeshTest, convertRasterToQuadMeshNone)
 
     ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
 
-    std::vector<std::string> const names =
-        mesh->getProperties().getPropertyVectorNames();
-    ASSERT_TRUE(names.empty());
+    ASSERT_EQ(0, mesh->getProperties().size());
 
     for (MeshLib::Node* n : mesh->getNodes())
     {
@@ -283,9 +269,7 @@ TEST_F(RasterToMeshTest, vtkImage)
 
     ASSERT_EQ(_n_nodes, mesh->getNumberOfBaseNodes());
 
-    std::vector<std::string> const names =
-        mesh->getProperties().getPropertyVectorNames();
-    ASSERT_EQ(1, names.size());
+    ASSERT_EQ(1, mesh->getProperties().size());
 
     MeshLib::PropertyVector<double>* const prop =
         mesh->getProperties().getPropertyVector<double>("test");

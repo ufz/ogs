@@ -118,7 +118,7 @@ TEST(MeshLib, AddTopLayerToTriMesh)
     {
         test->resize(mesh->getNumberOfElements(), 0.1);
     }
-    ASSERT_EQ(2, mesh->getProperties().getPropertyVectorNames().size());
+    ASSERT_EQ(2, mesh->getProperties().size());
     double const height (1);
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result (MeshLib::addLayerToMesh(*mesh,
@@ -134,7 +134,7 @@ TEST(MeshLib, AddTopLayerToTriMesh)
     ASSERT_EQ(mesh->getNumberOfElements(),
               n_elems.at(MeshLib::MeshElemType::PRISM));
 
-    ASSERT_EQ(1, result->getProperties().getPropertyVectorNames().size());
+    ASSERT_EQ(1, result->getProperties().size());
     auto const* const new_mats =
         result->getProperties().getPropertyVector<int>(mat_name);
     ASSERT_EQ(result->getNumberOfElements(), new_mats->size());
@@ -305,7 +305,7 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
               n_elems.at(MeshLib::MeshElemType::TRIANGLE));
     ASSERT_EQ(2 * mesh->getNumberOfElements(),
               n_elems.at(MeshLib::MeshElemType::PRISM));
-    ASSERT_EQ(1, result->getProperties().getPropertyVectorNames().size());
+    ASSERT_EQ(1, result->getProperties().size());
     auto const* const new_mats =
         result->getProperties().getPropertyVector<int>(mat_name);
     ASSERT_EQ(result->getNumberOfElements(), new_mats->size());
