@@ -90,12 +90,6 @@ void PrimaryVariableConstraintDirichletBoundaryCondition::getEssentialBCValues(
             if (_less &&
                 local_x[0] < _constraint_threshold_parameter(t, pos).front())
             {
-                DBUG(
-                    "PrimaryVariableConstraintDirichletBoundaryCondition {:f} "
-                    "< {:f} - value {:f} will be set for dof {:d}.",
-                    local_x[0], _constraint_threshold_parameter(t, pos).front(),
-                    _parameter(t, pos).front(), global_index);
-
                 bc_values.ids.emplace_back(global_index);
                 bc_values.values.emplace_back(_parameter(t, pos).front());
             }
@@ -103,20 +97,8 @@ void PrimaryVariableConstraintDirichletBoundaryCondition::getEssentialBCValues(
                      local_x[0] >
                          _constraint_threshold_parameter(t, pos).front())
             {
-                DBUG(
-                    "PrimaryVariableConstraintDirichletBoundaryCondition {:f} "
-                    "> {:f} - value {:f} will be set for dof {:d}.",
-                    local_x[0], _constraint_threshold_parameter(t, pos).front(),
-                    _parameter(t, pos).front(), global_index);
-
                 bc_values.ids.emplace_back(global_index);
                 bc_values.values.emplace_back(_parameter(t, pos).front());
-            }
-            else
-            {
-                DBUG(
-                    "PrimaryVariableConstraintDirichletBoundaryCondition "
-                    "condition not satisfied - bc won't be set.");
             }
         }
     }
