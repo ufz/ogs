@@ -68,7 +68,8 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> reference_path_arg(
         "r", "reference",
         "Run output result comparison after successful simulation comparing to "
-        "all files in the given path.",
+        "all files in the given path. This requires test definitions to be "
+        "present in the project file.",
         false, "", "PATH");
     cmd.add(reference_path_arg);
 
@@ -204,6 +205,12 @@ int main(int argc, char* argv[])
                         project_config->getConfigSubtree("test_definition"),
                         reference_path_arg.getValue(),
                         outdir_arg.getValue());
+                if( test_definition->numberOfTests() == 0)
+                {
+                    OGS_FATAL(
+                        "No tests were constructed from the test definitions, "
+                        "but reference solutions path was given.");
+                }
 
                 INFO("Cleanup possible output files before running ogs.");
                 BaseLib::removeFiles(test_definition->getOutputFiles());

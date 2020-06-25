@@ -287,4 +287,9 @@ std::vector<std::string> const& TestDefinition::getOutputFiles() const
 {
     return _output_files;
 }
+
+std::size_t TestDefinition::numberOfTests() const
+{
+    return size(_command_lines);
+}
 }  // namespace ApplicationsLib

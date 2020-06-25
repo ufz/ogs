@@ -34,6 +34,7 @@ public:
 
     bool runTests() const;
     std::vector<std::string> const& getOutputFiles() const;
+    std::size_t numberOfTests() const;
 
 private:
     std::vector<std::string> _command_lines;
