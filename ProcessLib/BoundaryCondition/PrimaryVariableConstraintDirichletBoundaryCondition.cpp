@@ -30,13 +30,13 @@ PrimaryVariableConstraintDirichletBoundaryCondition::
         MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
-        ParameterLib::Parameter<double> const& constraint_threshold_parameter,
+        ParameterLib::Parameter<double> const& threshold_parameter,
         bool const less)
     : _parameter(parameter),
       _bc_mesh(bc_mesh),
       _variable_id(variable_id),
       _component_id(component_id),
-      _constraint_threshold_parameter(constraint_threshold_parameter),
+      _threshold_parameter(threshold_parameter),
       _less(less)
 {
     checkParametersOfDirichletBoundaryCondition(_bc_mesh, dof_table_bulk,
@@ -87,15 +87,13 @@ void PrimaryVariableConstraintDirichletBoundaryCondition::getEssentialBCValues(
             // fetch the value of the primary variable
             auto const local_x = x.get(std::vector{global_index});
             pos.setNodeID(id);
-            if (_less &&
-                local_x[0] < _constraint_threshold_parameter(t, pos).front())
+            if (_less && local_x[0] < _threshold_parameter(t, pos).front())
             {
                 bc_values.ids.emplace_back(global_index);
                 bc_values.values.emplace_back(_parameter(t, pos).front());
             }
             else if (!_less &&
-                     local_x[0] >
-                         _constraint_threshold_parameter(t, pos).front())
+                     local_x[0] > _threshold_parameter(t, pos).front())
             {
                 bc_values.ids.emplace_back(global_index);
                 bc_values.values.emplace_back(_parameter(t, pos).front());
@@ -124,38 +122,29 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
     auto& parameter = ParameterLib::findParameter<double>(
         param_name, parameters, 1, &bc_mesh);
 
-    auto const constraint_type =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__constraint_type}
-        config.getConfigParameter<std::string>("constraint_type");
-    if (constraint_type != "PrimaryVariable")
-    {
-        OGS_FATAL(
-            "The constraint type is '{:s}', but has to be 'PrimaryVariable'.",
-            constraint_type);
-    }
-
-    auto const constraint_parameter_name = config.getConfigParameter<
+    auto const threshold_parameter_name = config.getConfigParameter<
         std::string>(
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__constraint_threshold_parameter}
-        "constraint_threshold_parameter");
-    DBUG("Using parameter {:s} as constraint_threshold_parameter",
-         constraint_parameter_name);
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__threshold_parameter}
+        "threshold_parameter");
+    DBUG("Using parameter {:s} as threshold_parameter",
+         threshold_parameter_name);
 
-    auto& constraint_threshold_parameter = ParameterLib::findParameter<double>(
-        constraint_parameter_name, parameters, 1, &bc_mesh);
+    auto& threshold_parameter = ParameterLib::findParameter<double>(
+        threshold_parameter_name, parameters, 1, &bc_mesh);
 
-    auto const constraint_direction_string =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__constraint_direction}
-        config.getConfigParameter<std::string>("constraint_direction");
-    if (constraint_direction_string != "greater" &&
-        constraint_direction_string != "less")
+    auto const comparison_operator_string =
+        //!
+        //\ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__comparison_operator}
+        config.getConfigParameter<std::string>("comparison_operator");
+    if (comparison_operator_string != "greater" &&
+        comparison_operator_string != "less")
     {
         OGS_FATAL(
-            "The constraint direction is '{:s}', but has to be either "
+            "The comparison operator is '{:s}', but has to be either "
             "'greater' or 'less'.",
-            constraint_direction_string);
+            comparison_operator_string);
     }
-    bool const less = constraint_direction_string == "less";
+    bool const less = comparison_operator_string == "less";
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.
@@ -174,7 +163,7 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
     return std::make_unique<
         PrimaryVariableConstraintDirichletBoundaryCondition>(
         parameter, bc_mesh, dof_table_bulk, variable_id, component_id,
-        constraint_threshold_parameter, less);
+        threshold_parameter, less);
 }
 
 }  // namespace ProcessLib

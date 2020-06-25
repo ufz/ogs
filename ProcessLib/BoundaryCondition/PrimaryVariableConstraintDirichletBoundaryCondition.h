@@ -40,7 +40,7 @@ public:
         MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id,
-        ParameterLib::Parameter<double> const& constraint_threshold_parameter,
+        ParameterLib::Parameter<double> const& threshold_parameter,
         bool const less);
 
     void getEssentialBCValues(
@@ -58,15 +58,15 @@ private:
 
     /// The threshold parameter used to the switch on/off the Dirichlet-type
     /// boundary condition.
-    ParameterLib::Parameter<double> const& _constraint_threshold_parameter;
+    ParameterLib::Parameter<double> const& _threshold_parameter;
 
     /// The value less is used for the calculation of the constraint
     /// criterion. If less is set to true (i.e. 'less' is set in the
     /// project file) the criterion 'calculated_value
-    /// < constraint_threshold' is evaluated to switch on/off the boundary
+    /// < _threshold_parameter' is evaluated to switch on/off the boundary
     /// condition.
     /// If less will be set to false in case 'greater' is given in the project
-    /// file and the condition 'calculated_value > constraint_threshold' is
+    /// file and the condition 'calculated_value > _threshold_parameter' is
     /// evaluated.
     bool const _less;
 };
