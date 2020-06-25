@@ -15,10 +15,3 @@ author = "Wenqing Wang"
 
 For the description of the benchmark and its related permeability model,
   please read [the PDF](../PermeabilityMohrCoulombFailureIndexModel.pdf).
-
-For a full document of the failure index dependent
- permeability model, benchmark and its the implementation in ogs6, etc.,
-  please visit the Overleaf site:
- <https://www.overleaf.com/read/qjfmysnsvqwb>
-which contains LeTeX source of the documentation as well.
- If you want to edit the document on Overleaf site, please contact us.
