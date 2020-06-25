@@ -102,7 +102,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     else
     {
         auto const range =
-            MeshLib::MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
+            MeshLib::MeshInformation::getValueBounds(*materialIDs(mesh));
         if (!range)
         {
             OGS_FATAL(

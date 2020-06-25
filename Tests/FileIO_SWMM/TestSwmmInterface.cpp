@@ -70,8 +70,8 @@ TEST(FileIO, TestSwmmInterface)
     ASSERT_EQ(n_elems,
               types.at(MeshLib::MeshElemType::LINE));  // all elems are lines
     auto const bounds =
-        MeshLib::MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
-    ASSERT_TRUE(boost::none != bounds);
+        MeshLib::MeshInformation::getValueBounds(*materialIDs(mesh));
+    ASSERT_TRUE(bounds.has_value());
     ASSERT_EQ(0, bounds->first);
     ASSERT_EQ(0, bounds->second);
 
