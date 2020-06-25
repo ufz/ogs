@@ -117,6 +117,11 @@ public:
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const process_id) override;
 
+    void extrapolateIntegrationPointValuesToNodes(
+        const double t,
+        std::vector<GlobalVector*> const& integration_point_values_vectors,
+        std::vector<GlobalVector*>& nodal_values_vectors) override;
+
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     const double /*t*/,
                                     const double /*delta_t*/,
