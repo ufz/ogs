@@ -162,4 +162,9 @@ std::map<std::string, PropertyVectorBase*>::iterator Properties::end()
 {
     return _properties.end();
 }
+
+std::map<std::string, PropertyVectorBase*>::size_type Properties::size() const
+{
+    return _properties.size();
+}
 }  // end namespace MeshLib

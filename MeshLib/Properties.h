@@ -154,6 +154,7 @@ public:
     std::map<std::string, PropertyVectorBase*>::const_iterator end() const;
     std::map<std::string, PropertyVectorBase*>::iterator begin();
     std::map<std::string, PropertyVectorBase*>::iterator end();
+    std::map<std::string, PropertyVectorBase*>::size_type size() const;
 
 private:
     /// A mapping from property's name to the stored object of any type.
