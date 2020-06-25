@@ -204,6 +204,15 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             filenames.push_back(filename);
         }
 
+        if (empty(filenames))
+        {
+            OGS_FATAL(
+                "No files from test definitions were added for tests but {} "
+                "{:s} specified.",
+                size(vtkdiff_configs),
+                (size(vtkdiff_configs) == 1 ? "test was" : "tests were"));
+        }
+
         auto const absolute_tolerance =
             //! \ogs_file_param{prj__test_definition__vtkdiff__absolute_tolerance}
             vtkdiff_config.getConfigParameter<std::string>("absolute_tolerance",
