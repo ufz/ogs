@@ -17,6 +17,23 @@
 #include "Elements/Element.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 
+namespace
+{
+template <typename T>
+void printBounds(MeshLib::PropertyVector<T> const& property)
+{
+    auto const bounds = MeshLib::MeshInformation::getValueBounds(property);
+    if (!bounds.has_value())
+    {
+        INFO("\t{:s}: Could not get value bounds for property vector.",
+             property.getPropertyName());
+        return;
+    }
+    INFO("\t{:s}: ({:d} values) [{}, {}]", property.getPropertyName(),
+         property.size(), bounds->first, bounds->second);
+}
+}  // namespace
+
 namespace MeshLib
 {
 GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh& mesh)
@@ -58,44 +75,32 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
     auto const& properties = mesh.getProperties();
     INFO("There are {:d} properties in the mesh:", properties.size());
 
-    auto print_bounds = [](auto const& property) {
-        auto const bounds = getValueBounds(property);
-        if (!bounds.has_value())
-        {
-            INFO("\t{:s}: Could not get value bounds for property vector.",
-                 property.getPropertyName());
-            return;
-        }
-        INFO("\t{:s}: ({:d} values) [{}, {}]", property.getPropertyName(),
-             property.size(), bounds->first, bounds->second);
-    };
-
     for (auto [name, property] : properties)
     {
         if (auto p = dynamic_cast<PropertyVector<double>*>(property))
         {
-            print_bounds(*p);
+            printBounds(*p);
         }
         else if (auto p = dynamic_cast<PropertyVector<float>*>(property))
         {
-            print_bounds(*p);
+            printBounds(*p);
         }
         else if (auto p = dynamic_cast<PropertyVector<int>*>(property))
         {
-            print_bounds(*p);
+            printBounds(*p);
         }
         else if (auto p = dynamic_cast<PropertyVector<unsigned>*>(property))
         {
-            print_bounds(*p);
+            printBounds(*p);
         }
         else if (auto p = dynamic_cast<PropertyVector<long>*>(property))
         {
-            print_bounds(*p);
+            printBounds(*p);
         }
         else if (auto p =
                      dynamic_cast<PropertyVector<unsigned long>*>(property))
         {
-            print_bounds(*p);
+            printBounds(*p);
         }
         else if (auto p = dynamic_cast<PropertyVector<std::size_t>*>(property))
         {
@@ -103,7 +108,7 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
         }
         else if (auto p = dynamic_cast<PropertyVector<char>*>(property))
         {
-            print_bounds(*p);
+            printBounds(*p);
         }
         else
         {
