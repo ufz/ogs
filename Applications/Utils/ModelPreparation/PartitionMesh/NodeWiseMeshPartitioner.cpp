@@ -835,12 +835,12 @@ ConfigOffsets incrementConfigOffsets(ConfigOffsets const& oldConfig,
     return {
         static_cast<long>(oldConfig.node_rank_offset +
                           offsets.node * sizeof(NodeStruct)),
-        // Offset the ending entry of the element integer variales of
+        // Offset the ending entry of the element integer variables of
         // the non-ghost elements of this partition in the vector of elem_info.
         static_cast<long>(oldConfig.element_rank_offset +
                           offsets.regular_elements * sizeof(long)),
 
-        // Offset the ending entry of the element integer variales of
+        // Offset the ending entry of the element integer variables of
         // the ghost elements of this partition in the vector of elem_info.
         static_cast<long>(oldConfig.ghost_element_rank_offset +
                           offsets.ghost_elements * sizeof(long))};
@@ -958,7 +958,7 @@ void writeElementsBinary(std::string const& file_name_base,
         const auto& partition = partitions[i];
         auto const local_node_ids = enumerateLocalNodeIds(partition.nodes);
 
-        // A vector contians all element integer variables of
+        // A vector contains all element integer variables of
         // the non-ghost elements of this partition
         std::vector<long> ele_info(num_elem_integers[i]);
 
