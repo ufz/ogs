@@ -23,9 +23,9 @@
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
     - $BUILD_CMD_PREFIX cmake --build . > >(tee make.output)
-    - $BUILD_CMD_PREFIX cmake --build . --target tests
-    - $BUILD_CMD_PREFIX cmake --build . --target ctest
-    - cp Testing/**/Test.xml Tests/ctest.xml
+    - if $BUILD_TESTS ; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
+    - if $BUILD_CTEST ; then $BUILD_CMD_PREFIX cmake --build . --target ctest ; fi
+    - if $BUILD_CTEST ; then cp Testing/**/Test.xml Tests/ctest.xml ; fi
 
   cache:
     paths:

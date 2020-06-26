@@ -16,6 +16,7 @@ build gui mac:
 
   variables:
     BUILD_DIR: "build-gui-mac"
+    BUILD_CTEST: "false"
     CMAKE_ARGS: >-
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_PCH=OFF

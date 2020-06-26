@@ -18,6 +18,8 @@ variables:
   # Build config
   BUILD_TYPE: Release
   BUILD_PROCESSES: "" # Empty string: builds all processes
+  BUILD_TESTS: "true"
+  BUILD_CTEST: "true"
 
 include:
   - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
