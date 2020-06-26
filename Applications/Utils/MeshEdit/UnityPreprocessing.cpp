@@ -59,9 +59,10 @@ void fillPropVec(MeshLib::PropertyVector<T> const& property,
                  std::size_t const total_nodes)
 {
     assert(property.getNumberOfComponents() == 1);
-    MeshLib::PropertyVector<T>* new_vec = new_props.createNewPropertyVector<T>(
-        property.getPropertyName(), MeshLib::MeshItemType::Node, 1);
-    new_vec->resize(total_nodes);
+    MeshLib::PropertyVector<T>* new_property =
+        new_props.createNewPropertyVector<T>(property.getPropertyName(),
+                                             MeshLib::MeshItemType::Node, 1);
+    new_property->resize(total_nodes);
     if (property.getMeshItemType() == MeshLib::MeshItemType::Node)
     {
         INFO("Migrating node array '{:s}' to new mesh structure...",
@@ -72,7 +73,7 @@ void fillPropVec(MeshLib::PropertyVector<T> const& property,
             std::size_t const n_nodes_i = node_map[i].size();
             for (std::size_t j = 0; j < n_nodes_i; ++j)
             {
-                (*new_vec)[node_map[i][j]] = property[i];
+                (*new_property)[node_map[i][j]] = property[i];
             }
         }
     }
@@ -86,7 +87,7 @@ void fillPropVec(MeshLib::PropertyVector<T> const& property,
             std::size_t const n_nodes = elems[i]->getNumberOfNodes();
             for (std::size_t j = 0; j < n_nodes; ++j)
             {
-                (*new_vec)[elems[i]->getNodeIndex(j)] = property[i];
+                (*new_property)[elems[i]->getNodeIndex(j)] = property[i];
             }
         }
     }
