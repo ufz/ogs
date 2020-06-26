@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <PUnstructuredGrid GhostLevel="1">
+    <FieldData>
+      <DataArray type="Int8" Name="IntegrationPointMetaData" NumberOfTuples="97" format="binary" RangeMin="34" RangeMax="125">
+        AQAAAACAAABhAAAAVgAAAA==eF5VjDEOgDAIAP/C7KZTv2IMQUXDADS0Dqbp3+3qeHfJNRCrfAdVccPsg5Ai6C2Q1vaLHicHpHkCI2VIUORWQskwzKM7B/qFh2t2Y6tjsPStfwt7JC0=
+      </DataArray>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="40" format="binary" RangeMin="45" RangeMax="121">
+        AQAAAACAAAAoAAAAMAAAAA==eF4z0zPWM9Q1MtdNNzNOsTS3MEs110vJLCqp1DMyMDIwMDMyMDQxNTI0BwDHbAmw
+      </DataArray>
+      <DataArray type="Float64" Name="sigma_ip" NumberOfComponents="4" NumberOfTuples="198" format="binary" RangeMin="2184903.3215410206" RangeMax="3531311.24553486">
+        AQAAAACAAADAGAAAzgIAAA==eF7t1s1r03Acx/FOKFNBfICCilAZCMpgOHyYghWfNj14FLx5UWQMD0MG3vQf2MWD6MGjPQjDucPAgx0UVhA9iEJg4EBxm8KE6dqkTxaiSZrkx2ffXz6tzSaCub74vrN8k3TpSiQSs5Mn86Zt36s/u5hPNI/Xnx6uvNmVzXVFeoG4ofW+dwtL/Y8n/9m+5w8ypE/cIJ5dt35zP7H0x6+dyFu/fWB+SNyf3gta9w/fTdKXvaD1v91/vjg7env0feZP59l+sc/22+79i7N/ZduAe31jW+T5/77Wm/sP9meBs/2q728rfc088w3p73t5zPWp44Pg07loN4gvEY+vb5G+7AZx1g/3h+4fur8fvdN+u479cpvzqi+OHHV95fqFwBfmR24dmP6a07m631bcJH10Ns98vfv+EZfj/uJ2dv5yB/MTe4645++9fz5w7/vqY07nzf1mot3Setx9k/TRsS972C+K/bekbwVeEudt7fVjX3P9ZL71fqWD/tirfvf6hmfOBd6Yyyzfvbqc0Tmb93z7jO8m6aNjX/awXyV9dOzLru+njB3Dc7VGMF8HV3+/pHn1+XS8TPro2Jc97Fsd9nFe7Z+6c9idz347K+5Pcm8+qXX/8N0kfXTso2N/lfTRsY+O/aI4bwT7K5Hz/xA9HXiF9NGxL3vYr5N+A9x7/7YG8z8j+psv97nn/7x7TT8X7RbxZNCvkr7sFvGwXyd92S3iYb8GvvfSRM+Nnv3k/CniSe3+sS/vN0U87JdI3yL9YkT/0dNe19NDZwJXf98cL4Orz6c0r74fjldJHx376NivkT56u30T3Ps+79a6//9xk8bV59fxCumjYx8d+3h/sC/fv7CP7vcdP9h9KP/dtu0XX07Dfuvu+SVXvx8k95/PjeqXSR8d++jq++V4CfzJzQ9Tg+mdWlefP8crpL9K+ujYR8c+7g/7JukXNf1ftHn7uw==
+        <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+          <Value index="0">
+            2184903.3215
+          </Value>
+          <Value index="1">
+            3531311.2455
+          </Value>
+        </InformationKey>
+      </DataArray>
+    </FieldData>
+    <PPointData>
+      <PDataArray type="Float64" Name="MaterialForces" NumberOfComponents="2"/>
+      <PDataArray type="Float64" Name="NodalForces" NumberOfComponents="2"/>
+      <PDataArray type="Float64" Name="displacement" NumberOfComponents="2"/>
+      <PDataArray type="Float64" Name="epsilon" NumberOfComponents="4"/>
+      <PDataArray type="Float64" Name="sigma" NumberOfComponents="4"/>
+    </PPointData>
+    <PCellData>
+      <PDataArray type="Float64" Name="nonequilibrium_stress" NumberOfComponents="4"/>
+      <PDataArray type="Float64" Name="principal_stress_values" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="principal_stress_vector_1" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="principal_stress_vector_2" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="principal_stress_vector_3" NumberOfComponents="3"/>
+    </PCellData>
+    <PPoints>
+      <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
+    </PPoints>
+    <Piece Source="soil_column_nonequilibrium_sigma_elementwise_ts_1_0.vtu"/>
+    <Piece Source="soil_column_nonequilibrium_sigma_elementwise_ts_1_1.vtu"/>
+  </PUnstructuredGrid>
+</VTKFile>

@@ -303,7 +303,7 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
             "{:d}.",
             _mpi_rank, global_offset,
             global_offset +
-                pvpmd.offset * vec_pvmd[i]->data_type_size_in_bytes);
+                pvpmd.offset * vec_pvmd[i]->number_of_components * vec_pvmd[i]->data_type_size_in_bytes);
         if (vec_pvmd[i]->is_int_type)
         {
             if (vec_pvmd[i]->is_data_type_signed)
