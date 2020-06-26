@@ -63,7 +63,7 @@ set(VTK_COMPONENTS vtkIOXML)
 if(OGS_BUILD_GUI)
     set(VTK_COMPONENTS ${VTK_COMPONENTS}
         vtkIOImage vtkIOLegacy vtkIOExport
-        vtkIOExportOpenGL2 vtkInteractionStyle vtkInteractionWidgets
+        vtkInteractionStyle vtkInteractionWidgets
         vtkGUISupportQt vtkRenderingOpenGL2 vtkRenderingContextOpenGL2
         vtkFiltersTexture vtkRenderingCore vtkFiltersParallel
     )
