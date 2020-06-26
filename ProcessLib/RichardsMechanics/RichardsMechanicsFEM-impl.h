@@ -458,8 +458,18 @@ void RichardsMechanicsLocalAssembler<
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
                 .template value<double>(variables, x_position, t, dt);
-        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t, dt);
+        auto const mu =
+            liquid_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, x_position, t, dt);
+
+        // For stress dependent permeability.
+        variables[static_cast<int>(MPL::Variable::stress)]
+            .emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    (_ip_data[ip].sigma_eff +
+                     alpha * chi_S_L * identity2 * p_cap_ip)
+                        .eval()));
+
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
@@ -510,8 +520,7 @@ void RichardsMechanicsLocalAssembler<
         //
         K.template block<displacement_size, pressure_size>(displacement_index,
                                                            pressure_index)
-            .noalias() -=
-            B.transpose() * alpha * chi_S_L * identity2 * N_p * w;
+            .noalias() -= B.transpose() * alpha * chi_S_L * identity2 * N_p * w;
 
         //
         // pressure equation, displacement part.
@@ -779,8 +788,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
                 .template value<double>(variables, x_position, t, dt);
-        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t, dt);
+        auto const mu =
+            liquid_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, x_position, t, dt);
+
+        // For stress dependent permeability.
+        variables[static_cast<int>(MPL::Variable::stress)]
+            .emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    (_ip_data[ip].sigma_eff +
+                     alpha * chi_S_L * identity2 * p_cap_ip)
+                        .eval()));
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
@@ -1408,7 +1426,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                           typename BMatricesType::BMatrixType>(
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
-
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
 
@@ -1527,14 +1544,24 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     porosity;
             }
         }
-        auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
-                            .template value<double>(variables, x_position, t, dt);
+        auto const mu =
+            liquid_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, x_position, t, dt);
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
+
+        // For stress dependent permeability.
+        variables[static_cast<int>(MPL::Variable::stress)]
+            .emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    (_ip_data[ip].sigma_eff +
+                     alpha * chi_S_L * identity2 * p_cap_ip)
+                        .eval()));
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
+
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
                 .template value<double>(variables, x_position, t, dt);

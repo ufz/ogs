@@ -459,6 +459,24 @@ AddTest(
     InjectionProduction1D_pcs_1_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_pcs_0_ts_100_t_8640000.000000.vtu sigma_yy sigma_yy 1e-11 1e-11
 )
 
+AddTest(
+    NAME FailureIndexDependentPermeability
+    PATH HydroMechanics/FailureIndexDependentPermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS quad_with_half_hole.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu pressure pressure 1.0e-10 1.e-10
+    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu displacement displacement 1.0e-10 1.e-10
+    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu sigma_xx sigma_xx 1.0e-6 1.e-9
+    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu sigma_yy sigma_yy 1.0e-6 1.e-9
+    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu sigma_zz sigma_zz 1.0e-10 1.e-10
+    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu sigma_xy sigma_xy 1.0e-6 1.e-9
+    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu permeability permeability 1.0e-6 1.e-9
+)
+
 ### With staggered scheme
 AddTest(
     NAME StaggeredInjectionProduction1D

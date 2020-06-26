@@ -121,6 +121,8 @@ public:
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
+    using SymmetricTensor = Eigen::Matrix<double, KelvinVectorSize, 1>;
+
     HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler const&) = delete;
     HydroMechanicsLocalAssembler(HydroMechanicsLocalAssembler&&) = delete;
 
