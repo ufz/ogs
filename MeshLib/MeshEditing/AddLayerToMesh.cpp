@@ -83,14 +83,6 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
     return nullptr;
 }
 
-MeshLib::Mesh* addTopLayerToMesh(MeshLib::Mesh const& mesh,
-                                 double thickness,
-                                 std::string const& name,
-                                 bool copy_material_ids)
-{
-    return addLayerToMesh(mesh, thickness, name, true, copy_material_ids);
-}
-
 MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
                               std::string const& name, bool on_top,
                               bool copy_material_ids)

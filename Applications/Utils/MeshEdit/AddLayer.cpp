@@ -1,6 +1,6 @@
 /*
- * \date 2015-04-14
- * \brief Adds a top layer to an existing mesh.
+ * \file
+ * \brief Adds a layer to an existing mesh.
  *
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
@@ -23,9 +23,9 @@
 int main (int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
-        "Adds a top layer to an existing mesh"
+        "Adds a layer to an existing mesh."
         "The documentation is available at "
-        "https://docs.opengeosys.org/docs/tools/meshing/addtoplayer.\n\n"
+        "https://docs.opengeosys.org/docs/tools/meshing/addlayer.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
@@ -46,13 +46,19 @@ int main (int argc, char* argv[])
         "the thickness of the new layer", false, 10, "floating point value");
     cmd.add(layer_thickness_arg);
 
-    TCLAP::ValueArg<bool> copy_material_ids_arg(
-        "", "copy_material_ids",
-        "copy the existing material distribution of the layer which is to "
-        "be extented ",
-        false, false,
-        "bool value: either true for copying or false for adding new "
-        "material ID");
+    TCLAP::SwitchArg layer_position_arg(
+        "", "add-layer-on-bottom",
+        "Per default the layer is add on the top, if this argument is set the "
+        "layer is add on the bottom.",
+        true);
+    cmd.add(layer_position_arg);
+
+    TCLAP::SwitchArg copy_material_ids_arg(
+        "", "copy-material-ids",
+        "Copy the existing material distribution of the layer which is to be "
+        "extented. If the switch isn't given a new material id will be "
+        "created.",
+        false);
     cmd.add(copy_material_ids_arg);
 
     cmd.parse(argc, argv);
@@ -66,11 +72,12 @@ int main (int argc, char* argv[])
     }
     INFO("done.");
 
-    std::unique_ptr<MeshLib::Mesh> result(MeshLib::addTopLayerToMesh(
+    std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
         *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue(),
-        copy_material_ids_arg.getValue()));
-    if (!result) {
-        ERR("Failure while adding top layer.");
+        layer_position_arg.getValue(), copy_material_ids_arg.getValue()));
+    if (!result)
+    {
+        ERR("Failure while adding layer.");
         return EXIT_FAILURE;
     }
 
