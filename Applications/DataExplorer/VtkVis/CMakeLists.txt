@@ -135,14 +135,10 @@ if(GEOTIFF_FOUND)
     target_link_libraries(VtkVis PUBLIC ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND
 
-target_link_libraries(VtkVis
-                      PUBLIC BaseLib
-                             GeoLib
-                             MeshLib
-                             DataHolderLib
-                             QtBase
-                             vtkIOImage
-                      PRIVATE MathLib ApplicationsFileIO Qt5::Gui spdlog::spdlog)
+target_link_libraries(
+    VtkVis
+    PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase
+    PRIVATE MathLib ApplicationsFileIO Qt5::Gui spdlog::spdlog)
 
 if(OGS_USE_NETCDF)
     target_link_libraries(VtkVis

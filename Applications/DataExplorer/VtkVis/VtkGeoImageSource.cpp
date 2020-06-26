@@ -97,7 +97,7 @@ vtkImageData* VtkGeoImageSource::getImageData()
 
 void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
-    vtkDebugMacro(<< "Executing VtkGeoImageSource")
+    vtkDebugMacro(<< "Executing VtkGeoImageSource");
     void* inPtr = input->GetScalarPointer();
     void* outPtr = output->GetScalarPointer();
     switch(output->GetScalarType())
