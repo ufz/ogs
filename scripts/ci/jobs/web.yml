@@ -4,7 +4,7 @@ web url checker:
   tags:
     - docker
   extends:
-    - .rules-master-manual
+    - .rules-manual
   needs: []
   image:
     name: $WEB_IMAGE
@@ -28,9 +28,9 @@ preview web site:
     - yarn
     - hugo --environment staging
   rules:
-    - if: '$CI_COMMIT_BRANCH != "master"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       changes:
-      - web/
+      - web/**/*
       - scripts/ci/jobs/web.yml
   artifacts:
     expose_as: 'Web Preview'
@@ -45,18 +45,18 @@ preview web site:
 deploy web site:
   stage: package
   image: $WEB_IMAGE
-  needs: ["web url checker"]
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      changes:
+        - web/**/*
+        - scripts/ci/jobs/web.yml
   script:
     - cd web
     - yarn
     - hugo
     - netlify deploy --prod --dir=public
     - node_modules/.bin/hugo-algolia --toml -s
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-      - web/
-      - scripts/ci/jobs/web.yml
   cache:
     paths:
       - web/node_modules
