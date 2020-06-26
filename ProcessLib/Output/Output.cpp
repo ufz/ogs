@@ -62,6 +62,15 @@ namespace ProcessLib
 {
 bool Output::shallDoOutput(int timestep, double const t)
 {
+    auto const fixed_output_time = std::lower_bound(
+        cbegin(_fixed_output_times), cend(_fixed_output_times), t);
+    if ((fixed_output_time != cend(_fixed_output_times)) &&
+        (std::fabs(*fixed_output_time - t) <
+         std::numeric_limits<double>::epsilon()))
+    {
+        return true;
+    }
+
     int each_steps = 1;
 
     for (auto const& pair : _repeats_each_steps)
@@ -83,15 +92,7 @@ bool Output::shallDoOutput(int timestep, double const t)
         return true;
     }
 
-    auto const fixed_output_time = std::lower_bound(
-        cbegin(_fixed_output_times), cend(_fixed_output_times), t);
-    if (fixed_output_time == cend(_fixed_output_times))
-    {
-        return false;
-    }
-
-    return std::fabs(*fixed_output_time - t) <
-           std::numeric_limits<double>::min();
+    return false;
 }
 
 Output::Output(std::string output_directory, std::string output_file_prefix,
