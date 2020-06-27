@@ -210,113 +210,154 @@ PostProcessTool::PostProcessTool(
     // new mesh
     _output_mesh = std::make_unique<MeshLib::Mesh>(org_mesh.getName(),
                                                    new_nodes, new_eles);
-    createProperties<int>();
-    createProperties<double>();
-    copyProperties<int>();
-    copyProperties<double>();
+
+    for (auto [name, property] : _org_mesh.getProperties())
+    {
+        if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<float>*>(property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<int>*>(property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned>*>(property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<long>*>(property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
+                     property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<std::size_t>*>(
+                     property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<char>*>(property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else
+        {
+            OGS_FATAL(
+                "Mesh property '{:s}' of unhandled data type '{:s}'. Please "
+                "check the data type of the mesh properties. The available "
+                "data types are:"
+                "\n\t double,"
+                "\n\t float,"
+                "\n\t int,"
+                "\n\t unsigned,"
+                "\n\t long,"
+                "\n\t unsigned long,"
+                "\n\t char.",
+                property->getPropertyName(),
+                typeid(*property).name());
+        }
+    }
     calculateTotalDisplacement(vec_vec_fracture_nodes.size(),
                                vec_junction_nodeID_matIDs.size());
 }
 
 template <typename T>
-void PostProcessTool::createProperties()
+MeshLib::PropertyVector<T>* PostProcessTool::createProperty(
+    MeshLib::PropertyVector<T> const& property)
 {
-    MeshLib::Properties const& src_properties = _org_mesh.getProperties();
-    for (auto name : src_properties.getPropertyVectorNames())
+    auto const item_type = property.getMeshItemType();
+    auto const n_src_comp = property.getNumberOfComponents();
+    // convert 2D vector to 3D. Otherwise Paraview Calculator filter does
+    // not recognize it as a vector
+    auto const n_dest_comp = (n_src_comp == 2) ? 3 : n_src_comp;
+
+    auto new_property = MeshLib::getOrCreateMeshProperty<T>(
+        *_output_mesh, property.getPropertyName(), item_type, n_dest_comp);
+
+    if (item_type == MeshLib::MeshItemType::Node)
     {
-        if (!src_properties.existsPropertyVector<T>(name))
-        {
-            continue;
-        }
-        auto const* src_prop = src_properties.getPropertyVector<T>(name);
-
-        auto const n_src_comp = src_prop->getNumberOfComponents();
-        // convert 2D vector to 3D. Otherwise Paraview Calculator filter does
-        // not recognize it as a vector
-        auto const n_dest_comp = (n_src_comp == 2) ? 3 : n_src_comp;
-
-        auto new_prop = MeshLib::getOrCreateMeshProperty<T>(
-            *_output_mesh, name, src_prop->getMeshItemType(), n_dest_comp);
-
-        if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Node)
-        {
-            assert(new_prop->size() ==
-                   _output_mesh->getNumberOfNodes() * n_dest_comp);
-            (void)(new_prop);  // to avoid compilation warning.
-        }
-        else if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Cell)
-        {
-            assert(new_prop->size() ==
-                   _output_mesh->getNumberOfElements() * n_dest_comp);
-        }
-        else
-        {
-            WARN(
-                "Property '{:s}' cannot be created because its mesh item type "
-                "is "
-                "not supported.",
-                name);
-        }
+        assert(new_property->size() ==
+               _output_mesh->getNumberOfNodes() * n_dest_comp);
     }
+    else if (item_type == MeshLib::MeshItemType::Cell)
+    {
+        assert(new_property->size() ==
+               _output_mesh->getNumberOfElements() * n_dest_comp);
+    }
+    else
+    {
+        WARN(
+            "Property '{:s}' cannot be created because its mesh item type "
+            "'{:s}' is not supported.",
+            property.getPropertyName(), toString(item_type));
+        _output_mesh->getProperties().removePropertyVector(
+            new_property->getPropertyName());
+        return nullptr;
+    }
+    return new_property;
 }
 
 template <typename T>
-void PostProcessTool::copyProperties()
+void PostProcessTool::copyPropertyValues(
+    MeshLib::PropertyVector<T> const& source_property,
+    MeshLib::PropertyVector<T>* const destination_property)
 {
-    MeshLib::Properties const& src_properties = _org_mesh.getProperties();
-    for (auto name : src_properties.getPropertyVectorNames())
+    if (destination_property == nullptr)
     {
-        if (!src_properties.existsPropertyVector<T>(name))
-        {
-            continue;
-        }
-        auto const* src_prop = src_properties.getPropertyVector<T>(name);
-        auto* dest_prop =
-            _output_mesh->getProperties().getPropertyVector<T>(name);
+        // skip the copy, because the destination wasn't created.
+        return;
+    }
 
-        if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Node)
+    auto const item_type = source_property.getMeshItemType();
+    if (item_type == MeshLib::MeshItemType::Node)
+    {
+        auto const n_src_comp = source_property.getNumberOfComponents();
+        auto const n_dest_comp = destination_property->getNumberOfComponents();
+        // copy existing
+        for (unsigned i = 0; i < _org_mesh.getNumberOfNodes(); i++)
         {
-            auto const n_src_comp = src_prop->getNumberOfComponents();
-            auto const n_dest_comp = dest_prop->getNumberOfComponents();
-            // copy existing
-            for (unsigned i = 0; i < _org_mesh.getNumberOfNodes(); i++)
+            auto last = std::copy_n(&source_property[i * n_src_comp],
+                                    n_src_comp,
+                                    &(*destination_property)[i * n_dest_comp]);
+            // set zero for components not existing in the original
+            std::fill_n(last, n_dest_comp - n_src_comp, 0);
+        }
+        // copy duplicated
+        for (auto itr : _map_dup_newNodeIDs)
+        {
+            for (unsigned k = 0; k < itr.second.size(); k++)
             {
-                for (int j = 0; j < n_src_comp; j++)
-                {
-                    (*dest_prop)[i * n_dest_comp + j] =
-                        (*src_prop)[i * n_src_comp + j];
-                }
-                // set zero for components not existing in the original
-                for (int j = n_src_comp; j < n_dest_comp; j++)
-                {
-                    (*dest_prop)[i * n_dest_comp + j] = 0;
-                }
-            }
-            // copy duplicated
-            for (auto itr : _map_dup_newNodeIDs)
-            {
-                for (int j = 0; j < n_dest_comp; j++)
-                {
-                    for (unsigned k = 0; k < itr.second.size(); k++)
-                    {
-                        (*dest_prop)[itr.second[k] * n_dest_comp + j] =
-                            (*dest_prop)[itr.first * n_dest_comp + j];
-                    }
-                }
+                std::copy_n(
+                    &(*destination_property)[itr.first * n_dest_comp],
+                    n_dest_comp,
+                    &(*destination_property)[itr.second[k] * n_dest_comp]);
             }
         }
-        else if (src_prop->getMeshItemType() == MeshLib::MeshItemType::Cell)
-        {
-            std::copy(src_prop->begin(), src_prop->end(), dest_prop->begin());
-        }
-        else
-        {
-            WARN(
-                "Property '{:s}' cannot be created because its mesh item type "
-                "is "
-                "not supported.",
-                name);
-        }
+    }
+    else if (item_type == MeshLib::MeshItemType::Cell)
+    {
+        assert(source_property.size() == destination_property->size());
+        std::copy(source_property.begin(), source_property.end(),
+                  destination_property->begin());
+    }
+    else
+    {
+        OGS_FATAL(
+            "Property '{:s}' values cannot be copied because its mesh item "
+            "type '{:s}' is not supported. Unexpected error, because the "
+            "destination property was created.",
+            source_property.getPropertyName(), toString(item_type));
     }
 }
 
