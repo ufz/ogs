@@ -99,13 +99,17 @@ private:
     /// Parses the processes configuration and creates new processes for each
     /// process entry passing the corresponding subtree to the process
     /// constructor.
-    void parseProcesses(BaseLib::ConfigTree const& processes_config,
-                        std::string const& project_directory,
-                        std::string const& output_directory);
+    void parseProcesses(
+        BaseLib::ConfigTree const& processes_config,
+        std::string const& project_directory,
+        std::string const& output_directory,
+        ChemistryLib::ChemicalSolverInterface* chemical_solver_interface);
 
     /// Parses the time loop configuration.
     void parseTimeLoop(BaseLib::ConfigTree const& config,
-                       const std::string& output_directory);
+                       const std::string& output_directory,
+                       std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+                           chemical_solver_interface);
 
     void parseLinearSolvers(BaseLib::ConfigTree const& config);
 
@@ -113,7 +117,8 @@ private:
 
     void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
 
-    void parseChemicalSolverInterface(
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
+    parseChemicalSolverInterface(
         boost::optional<BaseLib::ConfigTree> const& config,
         const std::string& output_directory);
 
@@ -138,7 +143,4 @@ private:
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;
-
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
-        _chemical_solver_interface;
 };
