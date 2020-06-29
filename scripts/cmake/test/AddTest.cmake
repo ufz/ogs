@@ -245,6 +245,7 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
         "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
         "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
+        -DPython3_EXECUTABLE=${Python3_EXECUTABLE}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     set_tests_properties(${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME})

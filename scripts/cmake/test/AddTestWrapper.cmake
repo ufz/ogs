@@ -12,7 +12,7 @@ endif()
 if(EXISTS ${SOURCE_PATH}/requirements.txt AND NOT EXISTS ${BINARY_PATH}/${PIP})
     message(STATUS "Generating Python virtual environment...")
     execute_process(
-        COMMAND virtualenv .venv
+        COMMAND virtualenv --python ${Python3_EXECUTABLE} .venv
         WORKING_DIRECTORY ${BINARY_PATH})
 endif()
 if(EXISTS ${SOURCE_PATH}/requirements.txt)
