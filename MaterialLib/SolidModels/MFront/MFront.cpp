@@ -290,8 +290,6 @@ MFront<DisplacementDim>::integrateStress(
         behaviour_data.s1.external_state_variables[0] = T;
     }
 
-    auto v = mgis::behaviour::make_view(behaviour_data);
-
     // rotation tensor
     auto const Q = [this, &x]() -> KelvinMatrixType<DisplacementDim> {
         if (!_local_coordinate_system)
@@ -310,7 +308,7 @@ MFront<DisplacementDim>::integrateStress(
                     eps_prev);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
-        v.s0.gradients[i] = eps_prev_MFront[i];
+        behaviour_data.s0.gradients[i] = eps_prev_MFront[i];
     }
 
     auto const eps_MFront =
@@ -321,7 +319,7 @@ MFront<DisplacementDim>::integrateStress(
                     eps);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
-        v.s1.gradients[i] = eps_MFront[i];
+        behaviour_data.s1.gradients[i] = eps_MFront[i];
     }
 
     auto const sigma_prev_MFront =
@@ -332,10 +330,11 @@ MFront<DisplacementDim>::integrateStress(
                     sigma_prev);
     for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
     {
-        v.s0.thermodynamic_forces[i] = sigma_prev_MFront[i];
-        v.s1.thermodynamic_forces[i] = sigma_prev_MFront[i];
+        behaviour_data.s0.thermodynamic_forces[i] = sigma_prev_MFront[i];
+        behaviour_data.s1.thermodynamic_forces[i] = sigma_prev_MFront[i];
     }
 
+    auto v = mgis::behaviour::make_view(behaviour_data);
     auto const status = mgis::behaviour::integrate(v, _behaviour);
     if (status != 1)
     {
