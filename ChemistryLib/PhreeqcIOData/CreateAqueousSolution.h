@@ -29,6 +29,6 @@ namespace PhreeqcIOData
 struct AqueousSolution;
 
 std::unique_ptr<AqueousSolution> createAqueousSolution(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

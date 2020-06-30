@@ -22,7 +22,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::unique_ptr<ChemicalSystem> createChemicalSystem(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh)
 {
     // solution
     auto aqueous_solution = createAqueousSolution(

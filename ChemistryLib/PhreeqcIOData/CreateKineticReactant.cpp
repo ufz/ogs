@@ -20,8 +20,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<KineticReactant> createKineticReactants(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh)
+    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
 {
     if (!config)
     {
@@ -56,10 +55,7 @@ std::vector<KineticReactant> createKineticReactants(
             reactant_config.getConfigParameter<bool>("fix_amount", false);
 
         auto amount = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh),
-            name,
-            MeshLib::MeshItemType::IntegrationPoint,
-            1);
+            mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
         if (chemical_formula.empty() && fix_amount)
         {

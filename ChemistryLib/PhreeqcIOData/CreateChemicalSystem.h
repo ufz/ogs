@@ -29,6 +29,6 @@ namespace PhreeqcIOData
 struct ChemicalSystem;
 
 std::unique_ptr<ChemicalSystem> createChemicalSystem(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh);
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
