@@ -5,3 +5,6 @@ build mac:
   needs: [meta]
   variables:
     BUILD_DIR: "build-mac"
+    CMAKE_ARGS: >-
+      -DOGS_BUILD_UTILS=ON
+      -DOGS_USE_PYTHON=ON
