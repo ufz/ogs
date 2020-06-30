@@ -58,9 +58,4 @@ function (OgsTest)
         DISABLED ${OgsTest_DISABLED}
         LABELS "${DIR_LABELS}"
     )
-
-    if(TARGET ${OgsTest_EXECUTABLE})
-        add_dependencies(ctest ${OgsTest_EXECUTABLE})
-        add_dependencies(ctest-large ${OgsTest_EXECUTABLE})
-    endif()
 endfunction()

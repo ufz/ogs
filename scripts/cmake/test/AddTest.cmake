@@ -280,7 +280,7 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         LABELS "${DIR_LABELS}"
     )
 
-    if(TARGET ${AddTest_EXECUTABLE})
+    if(NOT "${AddTest_EXECUTABLE}" STREQUAL "ogs" AND TARGET ${AddTest_EXECUTABLE})
         add_dependencies(ctest ${AddTest_EXECUTABLE})
         add_dependencies(ctest-large ${AddTest_EXECUTABLE})
     endif()
