@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    GeoLib::Polygon polygon(*(ply));
+    GeoLib::Polygon const polygon(*(ply));
 
     // *** read mesh
     auto mesh = std::unique_ptr<MeshLib::Mesh>(
