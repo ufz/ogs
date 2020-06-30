@@ -95,4 +95,4 @@ set_target_properties(ctest ctest-large ctest-cleanup ctest-large-cleanup
 add_dependencies(ctest ogs)
 add_dependencies(ctest-large ogs)
 
-configure_file(${PROJECT_SOURCE_DIR}/Tests/snakemake.in.yaml ${PROJECT_BINARY_DIR}/Tests/snakemake.yaml)
+configure_file(${PROJECT_SOURCE_DIR}/scripts/test/snakemake.in.yaml ${PROJECT_BINARY_DIR}/snakemake.yaml)

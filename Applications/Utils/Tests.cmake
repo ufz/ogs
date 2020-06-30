@@ -310,7 +310,7 @@ if(SNAKEMAKE AND NOT OGS_USE_MPI)
     add_test(NAME workflow_ExtractBoundary
         COMMAND ${SNAKEMAKE}
                  -j 1
-                 --configfile ${PROJECT_BINARY_DIR}/Tests/snakemake.yaml
+                 --configfile ${PROJECT_BINARY_DIR}/snakemake.yaml
                  -d ${Data_BINARY_DIR}/FileIO/
                  -s ${CMAKE_CURRENT_SOURCE_DIR}/ExtractBoundary.smk
     )
