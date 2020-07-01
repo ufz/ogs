@@ -58,7 +58,7 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
     geoObjects.getStationVectorNames(geo_station_names);
 
     std::copy(geo_station_names.begin(), geo_station_names.end(),
-              geoNames.begin());
+              std::back_inserter(geoNames));
 
     std::size_t nGeoObjects(geoNames.size());
 
