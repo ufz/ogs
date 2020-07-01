@@ -1,9 +1,10 @@
 # Usage, e.g.:
-#   # generateStructuredMesh and ExtractBoundary have to be in the path
-#   snakemake -s ExtractBoundary.smk -j 1 --configfile $HOME/code/ogs6/build/Tests/snakemake.yaml -d $HOME/code/ogs6/build/Tests/Data/FileIO
+#   snakemake -s ExtractBoundary.smk -j 1 --configfile $HOME/code/ogs6/build/Tests/snakemake.yaml
+output_path = "FileIO"
 
 import os
 os.environ["PATH"] += os.pathsep + os.pathsep.join([config['BIN_DIR']])
+workdir: f"{config['Data_BINARY_DIR']}/{output_path}"
 
 # "entry point", otherwise one would had to specify output files as snakemake
 # arguments
@@ -36,9 +37,12 @@ rule vtkdiff:
         "square_1x1_{type}_boundary.vtu"
     output:
         "square_1x1_{type}_boundary_diff.out"
-    shell:
-        """
-        vtkdiff {input} {config[Data_SOURCE_DIR]}/FileIO/square_1x1_{wildcards.type}_boundary.vtu -a bulk_node_ids -b bulk_node_ids --abs 0 --rel 0 > {output}
-        vtkdiff {input} {config[Data_SOURCE_DIR]}/FileIO/square_1x1_{wildcards.type}_boundary.vtu -a bulk_element_ids -b bulk_element_ids --abs 0 --rel 0 >> {output}
-        vtkdiff {input} {config[Data_SOURCE_DIR]}/FileIO/square_1x1_{wildcards.type}_boundary.vtu -a bulk_face_ids -b bulk_face_ids --abs 0 --rel 0 >> {output}
-        """
+    params:
+        fields = [
+            # second field name can be omitted if identical
+            ["bulk_node_ids", 0, 0],
+            ["bulk_element_ids", 0, 0],
+            ["bulk_face_ids", 0, 0]
+        ]
+    wrapper:
+        f"file://{config['SOURCE_DIR']}/scripts/snakemake/vtkdiff"
