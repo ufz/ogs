@@ -15,6 +15,6 @@
 /project/license https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/LICENSE.txt
 /papers https://www.ufz.de/index.php?en=37204
 
-https://docs.opengeosys.org/* https://www.opengeosys.org/docs/:splat
-https://tutorials.opengeosys.org https://www.opengeosys.org/categories/tutorials/
-https://benchmarks.opengeosys.org https://www.opengeosys.org/docs/benchmarks/
+https://docs.opengeosys.org/* https://www.opengeosys.org/docs/:splat 301!
+https://tutorials.opengeosys.org https://www.opengeosys.org/categories/tutorials/ 301!
+https://benchmarks.opengeosys.org https://www.opengeosys.org/docs/benchmarks/ 301!
