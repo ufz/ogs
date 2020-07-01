@@ -20,4 +20,9 @@ name = "Latest Singularity container CLI with Utilities"
 url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images?job=container"
 note = "Download and run .sif-file with [Singularity](/docs/devguide/advanced/singularity/)"
 icon = "far fa-container-storage"
+
+[[head_downloads]]
+name = "Instructions on downloading latest benchmark input files"
+url = "/docs/userguide/basics/introduction/#download-benchmarks"
+icon = "far fa-arrow-right"
 +++

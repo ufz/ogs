@@ -23,7 +23,17 @@ OGS itself is a simple executable file so you can put it anywhere you like. For 
 
 ## Download benchmarks
 
-Download the latest benchmark files from [GitHub as a .zip-package](https://github.com/ufz/ogs-data/archive/master.zip). Unzip it. See [the Benchmarks section](/docs/benchmarks/) for more information.
+You can download the latest benchmark files from GitLab:
+
+- On our OGS repository on GitLab browse to the [Tests/Data](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data)-folder
+- Browse to the process subfolder you are interested in, e.g. [Elliptic](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic) (1.)
+- Find the Downloads-dropdown (2.)
+- Choose an appropriate format under **Download this directory** (3.)
+- Uncompress the downloaded file
+
+See [the Benchmarks section](/docs/benchmarks/) for more information on the benchmarks.
+
+![](../Download_Benchmarks.png)
 
 ## Running
 

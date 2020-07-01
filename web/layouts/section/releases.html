@@ -15,7 +15,7 @@
       <ul>
         {{ range .Params.head_downloads }}
         <li>
-          <a href="{{ .url }}"><i class="{{ .icon }}"></i> {{ .name }}</a> <span class="text-sm">({{ .note | markdownify }})</span>
+          <a href="{{ .url }}"><i class="{{ .icon }}"></i> {{ .name }}</a>{{ if .note }} <span class="text-sm">({{ .note | markdownify }})</span>{{ end }}
         </li>
         {{ end }}
       </ul>
