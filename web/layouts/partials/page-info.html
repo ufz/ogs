@@ -6,7 +6,7 @@
                 Commit: {{ .Subject }} <a href="https://gitlab.opengeosys.org/ogs/ogs/-/commit/{{ .AbbreviatedHash }}">{{ .AbbreviatedHash }}</a>
             {{ end }}
             {{if .GitInfo}}
-                &nbsp;| <a href="https://gitlab.opengeosys.org/ogs/ogs/-/edit/master/web/content/{{ .File.Path }}">Edit this page on <i class="fab fa-github"></i></a>
+                &nbsp;| <a href="https://gitlab.opengeosys.org/ogs/ogs/-/edit/master/web/content/{{ .File.Path }}">Edit this page on <i class="fab fa-gitlab"></i></a>
             {{ end }}
             </em> {{ end }}
     </p>

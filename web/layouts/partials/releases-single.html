@@ -1,7 +1,15 @@
-{{ $gh_release := print "https://github.com/ufz/ogs/releases/tag/" .Title }}
+{{ $gh_release := print "https://github.com/ufz/ogs/releases/tag/" .Params.tag }}
 {{ $gh_download := print "https://github.com/ufz/ogs/releases/download/" .Params.tag }}
+{{ $type := "GitHub"}}
+{{/* comparison only works for two version parts, strip out 6. */}}
+{{ if gt (slicestr .Params.tag 2) "3.1" }}
+  {{ $gh_release = print "https://gitlab.opengeosys.org/ogs/ogs/-/releases/" .Params.tag }}
+  {{ $gh_download = print "https://gitlab.opengeosys.org/ogs/ogs/-/releases/" .Params.tag }}
+  {{ $type = "GitLab"}}
+{{ end }}
+
 {{ $file_prefix := print "ogs-" .Params.tag }}
-<p>Released on {{ dateFormat "Monday, Jan 2, 2006" .Params.release_date }}, <a href="{{ $gh_release }}"><i class="fab fa-github"></i> GitHub release</a></p>
+<p>Released on {{ dateFormat "Monday, Jan 2, 2006" .Params.release_date }}, <a href="{{ $gh_release }}"><i class="fab fa-{{ $type | lower}}"></i> {{ $type }} release</a></p>
 {{ if .Params.downloads }}
   <div class="note">
     <h3><i class="far fa-download"></i> Benchmark downloads</h3>
