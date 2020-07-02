@@ -28,7 +28,7 @@ preview web site:
     - yarn
     - hugo --environment staging
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: $CI_MERGE_REQUEST_ID
       changes:
       - web/**/*
       - scripts/ci/jobs/web.yml
