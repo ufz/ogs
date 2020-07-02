@@ -29,8 +29,7 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     {
         OGS_FATAL(
             "The dimension ({:d}) of the given boundary mesh '{:s}' is not "
-            "lower "
-            "than the bulk dimension ({:d}).",
+            "lower than the bulk dimension ({:d}).",
             bc_mesh.getDimension(), bc_mesh.getName(), global_dim);
     }
 

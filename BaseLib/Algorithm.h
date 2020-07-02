@@ -13,11 +13,11 @@
 #include <algorithm>
 #include <boost/optional.hpp>
 #include <cassert>
+#include <string>
 #include <typeindex>
 #include <typeinfo>
 
 #include "Error.h"
-#include "StringTools.h"
 
 namespace BaseLib
 {
@@ -94,7 +94,7 @@ void insertIfTypeIndexKeyUniqueElseError(Map& map, Key const& key,
     if (!inserted.second)
     {  // insertion failed, i.e., key already exists
         OGS_FATAL("{:s} Key `{:s}' already exists.", error_message,
-                  tostring(key.hash_code()));
+                  std::to_string(key.hash_code()));
     }
 }
 
@@ -110,8 +110,7 @@ void insertIfKeyUniqueElseError(Map& map, Key const& key, Value&& value,
     auto const inserted = map.emplace(key, std::forward<Value>(value));
     if (!inserted.second)
     {  // insertion failed, i.e., key already exists
-        OGS_FATAL("{:s} Key `{:s}' already exists.", error_message,
-                  tostring(key));
+        OGS_FATAL("{:s} Key `{:s}' already exists.", error_message, key);
     }
 }
 
@@ -130,14 +129,14 @@ void insertIfKeyValueUniqueElseError(Map& map, Key const& key, Value&& value,
     if (std::find_if(map.cbegin(), map.cend(), value_compare) != map.cend())
     {
         OGS_FATAL("{:s} Value `{:s}' already exists.", error_message,
-                  tostring(value));
+                  std::to_string(value));
     }
 
     auto const inserted = map.emplace(key, std::forward<Value>(value));
     if (!inserted.second)
     {  // insertion failed, i.e., key already exists
         OGS_FATAL("{:s} Key `{:s}' already exists.", error_message,
-                  tostring(key));
+                  std::to_string(key));
     }
 }
 
@@ -153,8 +152,15 @@ typename Map::mapped_type& getOrError(Map& map, Key const& key,
     auto it = map.find(key);
     if (it == map.end())
     {
-        OGS_FATAL("{:s} Key `{:s}' does not exist.", error_message,
-                  tostring(key));
+        if constexpr (std::is_convertible<Key, std::string>::value)
+        {
+            OGS_FATAL("{:s} Key `{:s}' does not exist.", error_message, key);
+        }
+        else
+        {
+            OGS_FATAL("{:s} Key `{:s}' does not exist.", error_message,
+                      std::to_string(key));
+        }
     }
 
     return it->second;
@@ -167,8 +173,15 @@ typename Map::mapped_type const& getOrError(Map const& map, Key const& key,
     auto it = map.find(key);
     if (it == map.end())
     {
-        OGS_FATAL("{:s} Key `{:s}' does not exist.", error_message,
-                  tostring(key));
+        if constexpr (std::is_convertible<Key, std::string>::value)
+        {
+            OGS_FATAL("{:s} Key `{:s}' does not exist.", error_message, key);
+        }
+        else
+        {
+            OGS_FATAL("{:s} Key `{:s}' does not exist.", error_message,
+                      std::to_string(key));
+        }
     }
 
     return it->second;

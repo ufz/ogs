@@ -10,6 +10,7 @@
 
 #include "RasterDataToMesh.h"
 
+#include "BaseLib/StringTools.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 
@@ -18,7 +19,6 @@ namespace MeshLib
 
 namespace RasterDataToMesh
 {
-
 static bool checkMesh(MeshLib::Mesh const& mesh)
 {
     if (mesh.getDimension() > 2)
@@ -29,20 +29,6 @@ static bool checkMesh(MeshLib::Mesh const& mesh)
     return true;
 }
 
-static std::string getValidName(std::vector<std::string> const& vec_names,
-                                std::string const& array_name)
-{
-    std::string new_name = array_name;
-    std::size_t count = 1;
-    while (std::find(vec_names.cbegin(), vec_names.cend(), new_name) !=
-           vec_names.end())
-    {
-        count++;
-        new_name = array_name + "-" + std::to_string(count);
-    }
-    return new_name;
-}
-
 static double evaluatePixel(double const value, double const no_data,
                             double const replacement)
 {
@@ -50,11 +36,12 @@ static double evaluatePixel(double const value, double const no_data,
     {
         return replacement;
     }
-     return value;
+    return value;
 }
 
 bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
-                    double const def, std::string const& array_name)
+                    double const default_replacement,
+                    std::string const& array_name)
 {
     if (!checkMesh(mesh))
     {
@@ -64,19 +51,21 @@ bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     auto& nodes = mesh.getNodes();
     auto& props = mesh.getProperties();
     std::string const name =
-        getValidName(props.getPropertyVectorNames(), array_name);
+        BaseLib::getUniqueName(props.getPropertyVectorNames(), array_name);
     auto vec = props.createNewPropertyVector<double>(
         name, MeshLib::MeshItemType::Node, 1);
     double const no_data = raster.getHeader().no_data;
-    std::transform(nodes.cbegin(), nodes.cend(), std::back_inserter(*vec), [&](auto const node)
-    {
-        return evaluatePixel(raster.getValueAtPoint(*node), no_data, def);
-    });
+    std::transform(nodes.cbegin(), nodes.cend(), std::back_inserter(*vec),
+                   [&](auto const node) {
+                       return evaluatePixel(raster.getValueAtPoint(*node),
+                                            no_data, default_replacement);
+                   });
     return true;
 }
 
 bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
-                       double const def, std::string const& array_name)
+                       double const default_replacement,
+                       std::string const& array_name)
 {
     if (!checkMesh(mesh))
     {
@@ -86,14 +75,16 @@ bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     auto& elems = mesh.getElements();
     auto& props = mesh.getProperties();
     std::string const name =
-        getValidName(props.getPropertyVectorNames(), array_name);
+        BaseLib::getUniqueName(props.getPropertyVectorNames(), array_name);
     auto vec = props.createNewPropertyVector<double>(
         name, MeshLib::MeshItemType::Cell, 1);
     double const no_data = raster.getHeader().no_data;
-    std::transform(elems.cbegin(), elems.cend(), std::back_inserter(*vec), [&](auto const elem) {
-        auto node = elem->getCenterOfGravity();
-        return evaluatePixel(raster.getValueAtPoint(node), no_data, def);
-    });
+    std::transform(elems.cbegin(), elems.cend(), std::back_inserter(*vec),
+                   [&](auto const elem) {
+                       auto node = elem->getCenterOfGravity();
+                       return evaluatePixel(raster.getValueAtPoint(node),
+                                            no_data, default_replacement);
+                   });
     return true;
 }
 

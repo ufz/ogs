@@ -80,10 +80,10 @@ int main(int argc, char *argv[])
         displacement[2] = z_arg.getValue();
     }
 
-    std::vector<std::string> geo_names;
-    geo_objects.getGeometryNames(geo_names);
+    auto const geo_name = geo_objects.getGeometryNames()[0];
 
-    std::vector<GeoLib::Point*> const* point_vec = geo_objects.getPointVec(geo_names[0]);
+    std::vector<GeoLib::Point*> const* point_vec =
+        geo_objects.getPointVec(geo_name);
     std::size_t const n_points = point_vec->size();
     for (std::size_t i = 0; i < n_points; ++i)
     {
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    xml.setNameForExport(geo_names[0]);
+    xml.setNameForExport(geo_name);
     xml.writeToFile(geo_output_arg.getValue());
 
     return EXIT_SUCCESS;

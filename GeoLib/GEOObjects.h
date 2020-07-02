@@ -221,7 +221,7 @@ public:
     const SurfaceVec* getSurfaceVecObj(const std::string &name) const;
 
     /// Returns the names of all geometry vectors.
-    void getGeometryNames (std::vector<std::string>& names) const;
+    std::vector<std::string> getGeometryNames() const;
 
     std::string getElementNameByID(const std::string& geometry_name,
                                    GeoLib::GEOTYPE type, std::size_t id) const;

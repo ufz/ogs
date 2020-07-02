@@ -25,7 +25,7 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(
     : _mesh(mesh), _sfc(sfc)
 {
     // search elements near the surface
-    auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDsAlongSurface(sfc);
+    auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDs(sfc);
     MeshLib::ElementSearch es(_mesh);
     es.searchByNodeIDs(node_ids_on_sfc);
     auto &ele_ids_near_sfc = es.getSearchedElementIDs();

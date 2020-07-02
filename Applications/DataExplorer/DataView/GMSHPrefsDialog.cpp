@@ -50,8 +50,7 @@ GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects, QDialog* 
         new StrictDoubleValidator(0, 1, 5, this->param3));
     param3->setValidator (mesh_density_scaling_stations_validator);
 
-    std::vector<std::string> geoNames;
-    geoObjects.getGeometryNames(geoNames);
+    auto geoNames = geoObjects.getGeometryNames();
 
     // get station names
     std::vector<std::string> geo_station_names;

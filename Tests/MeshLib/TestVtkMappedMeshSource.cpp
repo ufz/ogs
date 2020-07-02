@@ -12,28 +12,27 @@
  *
  */
 
-#include "InfoLib/TestInfo.h"
+#include <vtkCellData.h>
+#include <vtkNew.h>
+#include <vtkPointData.h>
+#include <vtkSmartPointer.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkXMLUnstructuredGridReader.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 
 #include <memory>
 #include <numeric>
 
-#include "filesystem.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "BaseLib/StringTools.h"
+#include "InfoLib/TestInfo.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-
+#include "filesystem.h"
 #include "gtest/gtest.h"
-
-#include <vtkNew.h>
-#include <vtkUnstructuredGrid.h>
-#include <vtkSmartPointer.h>
-#include <vtkXMLUnstructuredGridWriter.h>
-#include <vtkXMLUnstructuredGridReader.h>
-#include <vtkCellData.h>
-#include <vtkPointData.h>
 
 // Creates a mesh with different types of data (double, int, etc.) and point,
 // cell, or integration point properties.

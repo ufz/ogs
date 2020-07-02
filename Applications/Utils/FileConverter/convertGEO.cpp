@@ -49,8 +49,7 @@ int main (int argc, char* argv[])
     GeoLib::GEOObjects geoObjects;
     FileIO::readGeometryFromFile(argInputFileName.getValue(), geoObjects,
                                  gmsh_path_arg.getValue());
-    std::vector<std::string> geo_names;
-    geoObjects.getGeometryNames(geo_names);
+    auto const geo_names = geoObjects.getGeometryNames();
     assert(geo_names.size() == 1);
 
     FileIO::writeGeometryToFile(geo_names[0], geoObjects, argOutputFileName.getValue());

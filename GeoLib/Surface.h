@@ -77,6 +77,7 @@ public:
      * @return axis aligned bounding box
      */
     AABB const& getAABB() const { return *_bounding_volume; }
+
 protected:
     /** a vector of pointers to Points */
     const std::vector<Point*>& _sfc_pnts;
@@ -90,4 +91,7 @@ protected:
     /// called and a valid surface grid is not existing.
     mutable std::unique_ptr<SurfaceGrid> _surface_grid;
 };
+
+bool operator==(Surface const& lhs, Surface const& rhs);
+
 }  // namespace GeoLib

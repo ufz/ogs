@@ -15,6 +15,7 @@
 #include "GEOObjects.h"
 
 #include <fstream>
+#include "BaseLib/StringTools.h"
 #include "BaseLib/Logging.h"
 
 #include "Triangle.h"
@@ -339,41 +340,15 @@ const SurfaceVec* GEOObjects::getSurfaceVecObj(const std::string &name) const
 
 bool GEOObjects::isUniquePointVecName(std::string &name)
 {
-    int count = 0;
-    bool isUnique = false;
-    std::string cpName;
+    std::vector<std::string> const existing_names = getGeometryNames();
+    auto const& unique_name = BaseLib::getUniqueName(existing_names, name);
 
-    while (!isUnique)
+    if (unique_name != name)
     {
-        isUnique = true;
-        cpName = name;
-
-        count++;
-        // If the original name already exists we start to add numbers to name for
-        // as long as it takes to make the name unique.
-        if (count > 1)
-        {
-            cpName = cpName + "-" + std::to_string(count);
-        }
-
-        for (auto& point : _pnt_vecs)
-        {
-            if (cpName == point->getName())
-            {
-                isUnique = false;
-            }
-        }
+        name = unique_name;
+        return false;
     }
-
-    // At this point cpName is a unique name and isUnique is true.
-    // If cpName is not the original name, "name" is changed and isUnique is set to false,
-    // indicating that a vector with the original name already exists.
-    if (count > 1)
-    {
-        isUnique = false;
-        name = cpName;
-    }
-    return isUnique;
+    return true;
 }
 
 bool GEOObjects::isPntVecUsed (const std::string &name) const
@@ -408,9 +383,9 @@ void GEOObjects::getStationVectorNames(std::vector<std::string>& names) const
     }
 }
 
-void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
+std::vector<std::string> GEOObjects::getGeometryNames() const
 {
-    names.clear ();
+    std::vector<std::string> names;
     for (auto point : _pnt_vecs)
     {
         if (point->getType() == PointVec::PointType::POINT)
@@ -418,6 +393,7 @@ void GEOObjects::getGeometryNames (std::vector<std::string>& names) const
             names.push_back(point->getName());
         }
     }
+    return names;
 }
 
 std::string GEOObjects::getElementNameByID(const std::string& geometry_name,

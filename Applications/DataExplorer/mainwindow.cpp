@@ -482,8 +482,8 @@ void MainWindow::save()
     }
     else if (fi.suffix().toLower() == "geo")
     {
-        std::vector<std::string> selected_geometries;
-        _project.getGEOObjects().getGeometryNames(selected_geometries);
+        auto const selected_geometries =
+            _project.getGEOObjects().getGeometryNames();
 
         // values necessary also for the adaptive meshing
         const double point_density = 0;

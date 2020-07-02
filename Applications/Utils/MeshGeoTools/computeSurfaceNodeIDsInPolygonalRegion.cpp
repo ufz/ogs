@@ -96,12 +96,11 @@ int main (int argc, char* argv[])
     GeoLib::GEOObjects geo_objs;
     FileIO::readGeometryFromFile(geo_in.getValue(), geo_objs,
                                  gmsh_path_arg.getValue());
-    std::vector<std::string> geo_names;
-    geo_objs.getGeometryNames(geo_names);
+    auto const geo_name = geo_objs.getGeometryNames()[0];
     INFO("Geometry '{:s}' read: {:d} points, {:d} polylines.",
-         geo_names[0],
-         geo_objs.getPointVec(geo_names[0])->size(),
-         geo_objs.getPolylineVec(geo_names[0])->size());
+         geo_name,
+         geo_objs.getPointVec(geo_name)->size(),
+         geo_objs.getPolylineVec(geo_name)->size());
 
     MathLib::Vector3 const dir(0.0, 0.0, -1.0);
     double angle(90);
@@ -125,7 +124,7 @@ int main (int argc, char* argv[])
 
     std::vector<MeshLib::Node*> const& mesh_nodes(mesh->getNodes());
     GeoLib::PolylineVec const* ply_vec(
-        geo_objs.getPolylineVecObj(geo_names[0])
+        geo_objs.getPolylineVecObj(geo_name)
     );
     std::vector<GeoLib::Polyline*> const& plys(*(ply_vec->getVector()));
 

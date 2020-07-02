@@ -60,34 +60,6 @@ public:
     std::vector<MeshLib::Element*> const& getBoundaryElements(
         GeoLib::GeoObject const& geoObj, bool const multiple_nodes_allowed);
 
-    /**
-     * generate boundary elements at the given point.
-     * @param point Search the mesh for given point
-     * @param multiple_nodes_allowed allows for finding multiple nodes within
-     * the given search radius
-     * @return a vector of boundary elements
-     */
-    std::vector<MeshLib::Element*> const& getBoundaryElementsAtPoint(
-        GeoLib::Point const& point, bool const multiple_nodes_allowed);
-
-    /**
-     * generate boundary elements on the given polyline.
-     * @param polyline the GeoLib::Polyline the nearest mesh nodes are searched
-     * for
-     * @return a vector of boundary element objects
-     */
-    std::vector<MeshLib::Element*> const& getBoundaryElementsAlongPolyline(
-        GeoLib::Polyline const& polyline);
-
-    /**
-     * generate boundary elements on the given surface.
-     * @param surface the GeoLib::Surface the nearest mesh nodes are searched
-     * for
-     * @return a vector of boundary element objects
-     */
-    std::vector<MeshLib::Element*> const& getBoundaryElementsOnSurface(
-        GeoLib::Surface const& surface);
-
 private:
     MeshLib::Mesh const& _mesh;
     MeshNodeSearcher const& _mshNodeSearcher;

@@ -103,8 +103,15 @@ int main (int argc, char* argv[])
     // Non-bounding-box params
     TCLAP::SwitchArg zveArg("z", "zero-volume", "remove zero volume elements", false);
     cmd.add(zveArg);
-    TCLAP::MultiArg<std::string> eleTypeArg("t", "element-type",
-                                          "element type to be removed", false, "element type");
+
+    std::vector<std::string> allowed_ele_types{"line",  "tri", "quad",   "hex",
+                                               "prism", "tet", "pyramid"};
+    TCLAP::ValuesConstraint<std::string> allowedVals{allowed_ele_types};
+    TCLAP::MultiArg<std::string> eleTypeArg(
+        "t", "element-type",
+        "element type to be removed: line | tri | quad | hex | prism | tet | "
+        "pyramid",
+        false, &allowedVals);
     cmd.add(eleTypeArg);
 
     // scalar array params

@@ -23,9 +23,11 @@ namespace MeshLib
 namespace RasterDataToMesh
 {
 bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
-                    double const def, std::string const& array_name);
+                    double const default_replacement,
+                    std::string const& array_name);
 
 bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
-                       double const def, std::string const& array_name);
+                       double const default_replacement,
+                       std::string const& array_name);
 }  // end namespace RasterDataToMesh
 }  // end namespace MeshLib

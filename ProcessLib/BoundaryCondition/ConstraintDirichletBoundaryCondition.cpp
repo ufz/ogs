@@ -56,8 +56,7 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
     std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
     DBUG(
         "Found {:d} nodes for constraint Dirichlet BCs for the variable {:d} "
-        "and "
-        "component {:d}",
+        "and component {:d}",
         bc_nodes.size(), variable_id, component_id);
 
     MeshLib::MeshSubset bc_mesh_subset{_bc_mesh, bc_nodes};
@@ -271,8 +270,7 @@ createConstraintDirichletBoundaryCondition(
             process_variables[variable_id].get().getName();
         OGS_FATAL(
             "<constraining_process_variable> in process variable name '{:s}' "
-            "at "
-            "geometry 'TODO' : The constraining process variable is set as "
+            "at geometry 'TODO' : The constraining process variable is set as "
             "'{:s}', but this is not specified in the project file.",
             constraining_process_variable_name,
             constraining_process_variable);
@@ -290,8 +288,7 @@ createConstraintDirichletBoundaryCondition(
     {
         OGS_FATAL(
             "The constraint direction is '{:s}', but has to be either "
-            "'greater' "
-            "or 'lower'.",
+            "'greater' or 'lower'.",
             constraint_direction_string);
     }
     bool const lower = constraint_direction_string == "lower";

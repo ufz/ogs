@@ -193,12 +193,7 @@ int main (int argc, char* argv[])
     FileIO::readGeometryFromFile(geometry_fname.getValue(), geometries,
                                  gmsh_path_arg.getValue());
 
-    std::string geo_name;
-    {
-        std::vector<std::string> geo_names;
-        geometries.getGeometryNames(geo_names);
-        geo_name = geo_names[0];
-    }
+    auto const geo_name = geometries.getGeometryNames()[0];
 
     // *** check if the data is usable
     // *** get vector of polylines
@@ -220,9 +215,9 @@ int main (int argc, char* argv[])
     MeshGeoToolsLib::MeshNodeSearcher mesh_searcher(
         *surface_mesh, std::move(search_length_strategy),
         MeshGeoToolsLib::SearchAllNodes::Yes);
-    for(std::size_t k(0); k<plys->size(); k++) {
-        std::vector<std::size_t> ids
-            (mesh_searcher.getMeshNodeIDsAlongPolyline(*((*plys)[k])));
+    for (std::size_t k(0); k < plys->size(); k++)
+    {
+        auto const& ids = mesh_searcher.getMeshNodeIDs(*((*plys)[k]));
         if (ids.empty())
         {
             continue;
@@ -233,8 +228,7 @@ int main (int argc, char* argv[])
     }
 
     // merge all together
-    std::vector<std::string> geo_names;
-    geometry_sets.getGeometryNames(geo_names);
+    auto const geo_names = geometry_sets.getGeometryNames();
     if (geo_names.empty()) {
         ERR("Did not find mesh nodes along polylines.");
         return EXIT_FAILURE;

@@ -58,9 +58,8 @@ int main (int argc, char* argv[])
     FileIO::readGeometryFromFile(geoFileArg.getValue(), geo_objs,
                                  gmsh_path_arg.getValue());
 
-    std::vector<std::string> geo_names;
-    geo_objs.getGeometryNames (geo_names);
-    if (geo_names.empty ())
+    auto const geo_names = geo_objs.getGeometryNames();
+    if (geo_names.empty())
     {
         ERR("No geometries found.");
         return EXIT_FAILURE;

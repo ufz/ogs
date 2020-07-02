@@ -47,8 +47,7 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
         int result = xml.readFile(test_file.file_name);
         EXPECT_EQ(1, result);
 
-        std::vector<std::string> geo_names;
-        project.getGEOObjects().getGeometryNames(geo_names);
+        auto const geo_names = project.getGEOObjects().getGeometryNames();
         EXPECT_EQ(test_file.n_geo, geo_names.size());
         EXPECT_EQ(test_file.n_mesh, project.getMeshObjects().size());
 

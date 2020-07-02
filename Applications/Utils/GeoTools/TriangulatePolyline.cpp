@@ -79,10 +79,11 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    std::vector<std::string> geo_names;
-    geo_objects.getGeometryNames(geo_names);
-    GeoLib::PolylineVec const*const line_vec (geo_objects.getPolylineVecObj(geo_names[0]));
-    GeoLib::Polyline* line = const_cast<GeoLib::Polyline*>(line_vec->getElementByName(polyline_name));
+    auto const geo_name = geo_objects.getGeometryNames()[0];
+    GeoLib::PolylineVec const* const line_vec(
+        geo_objects.getPolylineVecObj(geo_name));
+    GeoLib::Polyline* line = const_cast<GeoLib::Polyline*>(
+        line_vec->getElementByName(polyline_name));
 
     // check if line exists
     if (line == nullptr)
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
     }
 
     INFO ("Creating a surface by triangulation of the polyline ...");
-    if (FileIO::createSurface(*line, geo_objects, geo_names[0],
+    if (FileIO::createSurface(*line, geo_objects, geo_name,
                               gmsh_path_arg.getValue()))
     {
         INFO("\t done");
@@ -129,8 +130,8 @@ int main(int argc, char *argv[])
             "\t Creating a surface by triangulation of the polyline "
             "failed.");
     }
-    GeoLib::SurfaceVec* sfc_vec(geo_objects.getSurfaceVecObj(geo_names[0]));
-    std::size_t const sfc_id = geo_objects.getSurfaceVec(geo_names[0])->size() - 1;
+    GeoLib::SurfaceVec* sfc_vec(geo_objects.getSurfaceVecObj(geo_name));
+    std::size_t const sfc_id = geo_objects.getSurfaceVec(geo_name)->size() - 1;
     std::string const surface_name (polyline_name + "_surface");
     for (std::size_t i=1;;++i)
     {
@@ -143,7 +144,7 @@ int main(int argc, char *argv[])
     }
 
     // write new file
-    xml.setNameForExport(geo_names[0]);
+    xml.setNameForExport(geo_name);
     xml.writeToFile(output_arg.getValue());
     INFO ("...done.");
 

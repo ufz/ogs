@@ -65,12 +65,7 @@ int main (int argc, char* argv[])
         }
     }
 
-    std::string geo_name;
-    {
-        std::vector<std::string> geo_names;
-        geometries.getGeometryNames(geo_names);
-        geo_name = geo_names[0];
-    }
+    auto const geo_name = geometries.getGeometryNames()[0];
 
     MeshGeoToolsLib::GeoMapper geo_mapper(geometries, geo_name);
 
