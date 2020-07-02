@@ -20,6 +20,7 @@
 
 #include "filesystem.h"
 #include "Applications/FileIO/TetGenInterface.h"
+#include "BaseLib/StringTools.h"
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "GeoLib/GEOObjects.h"
