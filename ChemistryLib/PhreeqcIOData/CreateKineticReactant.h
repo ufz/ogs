@@ -33,8 +33,6 @@ namespace PhreeqcIOData
 struct KineticReactant;
 
 std::vector<KineticReactant> createKineticReactants(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map);
+    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

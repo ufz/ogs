@@ -25,7 +25,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
     const std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>&
         nonlinear_solvers,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
         chemical_solver_interface)
 {
     auto const& coupling_config

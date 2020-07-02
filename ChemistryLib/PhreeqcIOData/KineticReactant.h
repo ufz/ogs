@@ -27,11 +27,13 @@ struct KineticReactant
     KineticReactant(std::string name_,
                     std::string chemical_formula_,
                     MeshLib::PropertyVector<double>* amount_,
+                    double const initial_amount_,
                     std::vector<double>&& parameters_,
                     bool const fix_amount_)
         : name(std::move(name_)),
           chemical_formula(std::move(chemical_formula_)),
           amount(amount_),
+          initial_amount(initial_amount_),
           parameters(std::move(parameters_)),
           fix_amount(fix_amount_)
     {
@@ -42,6 +44,7 @@ struct KineticReactant
     std::string const name;
     std::string const chemical_formula;
     MeshLib::PropertyVector<double>* amount;
+    double const initial_amount;
     std::vector<double> const parameters;
     bool const fix_amount;
     static const ItemType item_type = ItemType::KineticReactant;

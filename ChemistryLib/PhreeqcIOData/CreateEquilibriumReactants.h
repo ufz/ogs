@@ -33,8 +33,6 @@ namespace PhreeqcIOData
 struct EquilibriumReactant;
 
 std::vector<EquilibriumReactant> createEquilibriumReactants(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map);
+    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

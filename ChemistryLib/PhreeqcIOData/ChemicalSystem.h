@@ -17,11 +17,6 @@
 #include "EquilibriumReactant.h"
 #include "KineticReactant.h"
 
-namespace MeshLib
-{
-class Mesh;
-}
-
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
@@ -36,6 +31,8 @@ struct ChemicalSystem
           equilibrium_reactants(std::move(equilibrium_reactants_))
     {
     }
+
+    void initialize(std::size_t const num_chemical_systems);
 
     std::unique_ptr<AqueousSolution> aqueous_solution;
     std::vector<KineticReactant> kinetic_reactants;

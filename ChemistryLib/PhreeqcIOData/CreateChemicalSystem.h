@@ -20,9 +20,6 @@ class ConfigTree;
 namespace MeshLib
 {
 class Mesh;
-
-template <typename PROP_VAL_TYPE>
-class PropertyVector;
 }  // namespace MeshLib
 
 namespace ChemistryLib
@@ -32,7 +29,6 @@ namespace PhreeqcIOData
 struct ChemicalSystem;
 
 std::unique_ptr<ChemicalSystem> createChemicalSystem(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map);
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

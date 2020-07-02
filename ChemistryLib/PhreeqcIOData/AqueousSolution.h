@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-#include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "Output.h"
 
 namespace MeshLib
@@ -33,13 +32,7 @@ namespace PhreeqcIOData
 {
 struct Component
 {
-    explicit Component(std::string name_,
-                       std::size_t const num_chemical_systems_)
-        : name(std::move(name_)),
-          amount(MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-              num_chemical_systems_))
-    {
-    }
+    explicit Component(std::string name_) : name(std::move(name_)) {}
 
     std::string const name;
     std::unique_ptr<GlobalVector> amount;
@@ -49,15 +42,13 @@ struct Component
 struct AqueousSolution
 {
     AqueousSolution(double temperature_, double pressure_,
-                    MeshLib::PropertyVector<double>* pe_,
+                    MeshLib::PropertyVector<double>* pe_, double const pe0_,
                     std::vector<Component>&& components_,
-                    ChargeBalance charge_balance_,
-                    std::size_t const num_chemical_systems_)
+                    ChargeBalance charge_balance_)
         : temperature(temperature_),
           pressure(pressure_),
-          pH(MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-              num_chemical_systems_)),
           pe(pe_),
+          pe0(pe0_),
           components(std::move(components_)),
           charge_balance(charge_balance_)
     {
@@ -69,6 +60,7 @@ struct AqueousSolution
     double const pressure;
     std::unique_ptr<GlobalVector> pH;
     MeshLib::PropertyVector<double>* pe;
+    double const pe0;
     std::vector<Component> components;
     ChargeBalance const charge_balance;
 };

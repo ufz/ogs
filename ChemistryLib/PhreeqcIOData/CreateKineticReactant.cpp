@@ -20,9 +20,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<KineticReactant> createKineticReactants(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map)
+    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
 {
     if (!config)
     {
@@ -57,20 +55,7 @@ std::vector<KineticReactant> createKineticReactants(
             reactant_config.getConfigParameter<bool>("fix_amount", false);
 
         auto amount = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh),
-            name,
-            MeshLib::MeshItemType::Node,
-            1);
-
-        std::fill(std::begin(*amount),
-                  std::end(*amount),
-                  std::numeric_limits<double>::quiet_NaN());
-
-        std::for_each(chemical_system_map.begin(),
-                      chemical_system_map.end(),
-                      [&amount, initial_amount](auto const& global_id) {
-                          (*amount)[global_id] = initial_amount;
-                      });
+            mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
         if (chemical_formula.empty() && fix_amount)
         {
@@ -82,6 +67,7 @@ std::vector<KineticReactant> createKineticReactants(
         kinetic_reactants.emplace_back(std::move(name),
                                        std::move(chemical_formula),
                                        amount,
+                                       initial_amount,
                                        std::move(parameters),
                                        fix_amount);
     }

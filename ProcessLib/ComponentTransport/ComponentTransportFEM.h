@@ -11,6 +11,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <numeric>
 #include <vector>
 
 #include "ComponentTransportProcessData.h"
@@ -156,6 +157,24 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ);
+        }
+
+        if (_process_data.chemical_process_data)
+        {
+            // chemical system index map
+            auto& chemical_system_index_map =
+                _process_data.chemical_process_data->chemical_system_index_map;
+
+            GlobalIndexType const start_value =
+                chemical_system_index_map.empty()
+                    ? 0
+                    : chemical_system_index_map.back().back() + 1;
+
+            std::vector<GlobalIndexType> indices(
+                _integration_method.getNumberOfPoints());
+            std::iota(indices.begin(), indices.end(), start_value);
+
+            chemical_system_index_map.push_back(std::move(indices));
         }
     }
 
@@ -895,6 +914,21 @@ public:
         Eigen::Vector3d flux(0.0, 0.0, 0.0);
         flux.head<GlobalDim>() = rho_w * q;
         return flux;
+    }
+
+    std::vector<double> interpolateNodalValuesToIntegrationPoints(
+        std::vector<double> const& local_x) override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        std::vector<double> interpolated_values(n_integration_points);
+        for (unsigned ip(0); ip < n_integration_points; ++ip)
+        {
+            NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N,
+                                             interpolated_values[ip]);
+        }
+        return interpolated_values;
     }
 
     std::vector<double> const& getInterpolatedLocalSolution(

@@ -20,9 +20,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::unique_ptr<AqueousSolution> createAqueousSolution(
-    BaseLib::ConfigTree const& config,
-    MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map)
+    BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh)
 {
     //! \ogs_file_param{prj__chemical_system__solution__temperature}
     auto const temperature = config.getConfigParameter<double>("temperature");
@@ -34,28 +32,14 @@ std::unique_ptr<AqueousSolution> createAqueousSolution(
     auto const pe0 = config.getConfigParameter<double>("pe");
 
     auto pe = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "pe", MeshLib::MeshItemType::Node, 1);
+        mesh, "pe", MeshLib::MeshItemType::IntegrationPoint, 1);
 
-    std::fill(std::begin(*pe),
-              std::end(*pe),
-              std::numeric_limits<double>::quiet_NaN());
-
-    std::for_each(
-        chemical_system_map.begin(),
-        chemical_system_map.end(),
-        [&pe, pe0](auto const& global_id) { (*pe)[global_id] = pe0; });
-
-    auto components =
-        createSolutionComponents(config, mesh.getNumberOfBaseNodes());
+    auto components = createSolutionComponents(config);
 
     auto charge_balance = createChargeBalance(config);
 
-    return std::make_unique<AqueousSolution>(temperature,
-                                             pressure,
-                                             pe,
-                                             std::move(components),
-                                             charge_balance,
-                                             mesh.getNumberOfBaseNodes());
+    return std::make_unique<AqueousSolution>(
+        temperature, pressure, pe, pe0, std::move(components), charge_balance);
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

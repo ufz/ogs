@@ -17,6 +17,8 @@ namespace ChemistryLib
 class ChemicalSolverInterface
 {
 public:
+    virtual void initialize() {}
+
     virtual void executeInitialCalculation(
         std::vector<GlobalVector*>& process_solutions) = 0;
 
@@ -29,5 +31,8 @@ public:
     }
 
     virtual ~ChemicalSolverInterface() = default;
+
+public:
+    std::vector<std::vector<GlobalIndexType>> chemical_system_index_map;
 };
 }  // namespace ChemistryLib

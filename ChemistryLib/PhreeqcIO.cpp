@@ -15,6 +15,7 @@
 #include <boost/algorithm/string.hpp>
 #include <cmath>
 #include <fstream>
+#include <numeric>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
@@ -99,6 +100,17 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
         // one.
         SetDumpFileOn(phreeqc_instance_id, 1);
     }
+}
+
+void PhreeqcIO::initialize()
+{
+    _num_chemical_systems = std::accumulate(
+        begin(chemical_system_index_map), end(chemical_system_index_map), 0,
+        [](auto result, auto const& chemical_system_index) {
+            return result + chemical_system_index.size();
+        });
+
+    _chemical_system->initialize(_num_chemical_systems);
 }
 
 void PhreeqcIO::executeInitialCalculation(

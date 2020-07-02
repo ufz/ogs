@@ -20,9 +20,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<EquilibriumReactant> createEquilibriumReactants(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh,
-    MeshLib::PropertyVector<std::size_t> const& chemical_system_map)
+    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
 {
     if (!config)
     {
@@ -50,23 +48,10 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
                 "saturation_index");
 
         auto amount = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh),
-            name,
-            MeshLib::MeshItemType::Node,
-            1);
-
-        std::fill(std::begin(*amount),
-                  std::end(*amount),
-                  std::numeric_limits<double>::quiet_NaN());
-
-        std::for_each(chemical_system_map.begin(),
-                      chemical_system_map.end(),
-                      [&amount, initial_amount](auto const& global_id) {
-                          (*amount)[global_id] = initial_amount;
-                      });
+            mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
         equilibrium_reactants.emplace_back(
-            std::move(name), amount, saturation_index);
+            std::move(name), amount, initial_amount, saturation_index);
     }
 
     return equilibrium_reactants;

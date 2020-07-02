@@ -9,6 +9,7 @@
  */
 
 #include "CreateComponentTransportProcess.h"
+#include "CreateChemicalProcessData.h"
 
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
@@ -84,8 +85,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::string const& output_directory,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface> const&
-        chemical_solver_interface)
+    ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "ComponentTransport");
@@ -222,11 +222,12 @@ std::unique_ptr<Process> createComponentTransportProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
+    auto chemical_process_data =
+        createChemicalProcessData(chemical_solver_interface);
+
     ComponentTransportProcessData process_data{
-        std::move(media_map),
-        specific_body_force,
-        has_gravity,
-        non_advective_form};
+        std::move(media_map), specific_body_force, has_gravity,
+        non_advective_form, std::move(chemical_process_data)};
 
     SecondaryVariableCollection secondary_variables;
 

@@ -328,14 +328,15 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__media}
     parseMedia(project_config.getConfigSubtreeOptional("media"));
 
-    parseChemicalSolverInterface(
+    auto chemical_solver_interface = parseChemicalSolverInterface(
         //! \ogs_file_param{prj__chemical_system}
         project_config.getConfigSubtreeOptional("chemical_system"),
         output_directory);
 
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"),
-                   project_directory, output_directory);
+                   project_directory, output_directory,
+                   chemical_solver_interface.get());
 
     //! \ogs_file_param{prj__linear_solvers}
     parseLinearSolvers(project_config.getConfigSubtree("linear_solvers"));
@@ -345,7 +346,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
     //! \ogs_file_param{prj__time_loop}
     parseTimeLoop(project_config.getConfigSubtree("time_loop"),
-                  output_directory);
+                  output_directory, std::move(chemical_solver_interface));
 }
 
 void ProjectData::parseProcessVariables(
@@ -501,15 +502,18 @@ void ProjectData::parseMedia(
     }
 }
 
-void ProjectData::parseChemicalSolverInterface(
+std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
+ProjectData::parseChemicalSolverInterface(
     boost::optional<BaseLib::ConfigTree> const& config,
     std::string const& output_directory)
 {
     if (!config)
     {
-        return;
+        return nullptr;
     }
 
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
+        chemical_solver_interface;
 #ifdef OGS_BUILD_PROCESS_COMPONENTTRANSPORT
     INFO(
         "Ready for initializing interface to a chemical solver for water "
@@ -525,10 +529,9 @@ void ProjectData::parseChemicalSolverInterface(
             "Configuring phreeqc interface for water chemistry "
             "calculation using file-based approach.");
 
-        _chemical_solver_interface =
-            ChemistryLib::createChemicalSolverInterface<
-                ChemistryLib::ChemicalSolver::Phreeqc>(_mesh_vec, *config,
-                                                       output_directory);
+        chemical_solver_interface = ChemistryLib::createChemicalSolverInterface<
+            ChemistryLib::ChemicalSolver::Phreeqc>(_mesh_vec, *config,
+                                                   output_directory);
     }
     else if (boost::iequals(chemical_solver, "PhreeqcKernel"))
     {
@@ -553,11 +556,14 @@ void ProjectData::parseChemicalSolverInterface(
         "the present, water chemistry calculation is only available for "
         "component transport process.");
 #endif
+    return chemical_solver_interface;
 }
 
-void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
-                                 std::string const& project_directory,
-                                 std::string const& output_directory)
+void ProjectData::parseProcesses(
+    BaseLib::ConfigTree const& processes_config,
+    std::string const& project_directory,
+    std::string const& output_directory,
+    ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface)
 {
     (void)project_directory;  // to avoid compilation warning
     (void)output_directory;   // to avoid compilation warning
@@ -728,7 +734,7 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _mesh_vec, output_directory, _media,
-                    _chemical_solver_interface);
+                    chemical_solver_interface);
         }
         else
 #endif
@@ -1022,14 +1028,17 @@ void ProjectData::parseProcesses(BaseLib::ConfigTree const& processes_config,
     }
 }
 
-void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
-                                std::string const& output_directory)
+void ProjectData::parseTimeLoop(
+    BaseLib::ConfigTree const& config,
+    std::string const& output_directory,
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+        chemical_solver_interface)
 {
     DBUG("Reading time loop configuration.");
 
     _time_loop = ProcessLib::createTimeLoop(
         config, output_directory, _processes, _nonlinear_solvers, _mesh_vec,
-        _chemical_solver_interface);
+        std::move(chemical_solver_interface));
 
     if (!_time_loop)
     {
