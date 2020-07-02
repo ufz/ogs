@@ -56,7 +56,7 @@ if(OGS_USE_CVODE)
 endif()
 
 if(OGS_USE_MFRONT)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} tfel/3.2.1@bilke/testing)
+    set(CONAN_REQUIRES ${CONAN_REQUIRES} tfel/3.3.0@bilke/testing)
 endif()
 
 if(OGS_BUILD_GUI)
