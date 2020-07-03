@@ -16,9 +16,9 @@ meta_container:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
   script:
-    - echo "CONTAINER_GCC_IMAGE=$CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/gcc:$CI_COMMIT_REF_SLUG" >> build.env
-    - echo "CONTAINER_GCC_GUI_IMAGE=$CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/gcc-gui:$CI_COMMIT_REF_SLUG" >> build.env
-    - echo "CONTAINER_CLANG_IMAGE=$CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/clang:$CI_COMMIT_REF_SLUG" >> build.env
+    - echo "CONTAINER_GCC_IMAGE=$CI_REGISTRY_IMAGE/gcc:$CI_COMMIT_REF_SLUG" >> build.env
+    - echo "CONTAINER_GCC_GUI_IMAGE=$CI_REGISTRY_IMAGE/gcc-gui:$CI_COMMIT_REF_SLUG" >> build.env
+    - echo "CONTAINER_CLANG_IMAGE=$CI_REGISTRY_IMAGE/clang:$CI_COMMIT_REF_SLUG" >> build.env
     - cat build.env
   artifacts:
     reports:
