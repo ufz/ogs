@@ -17,7 +17,6 @@ compiler warnings:
     - "if [[ $(cat make.output | grep warning -i) ]]; then echo 'There were Clang (macOS) compiler warnings:'; cat make.output | grep warning -i; exit_code=1; fi"
     - exit $exit_code
 
-
 ctest results:
   stage: check
   variables:

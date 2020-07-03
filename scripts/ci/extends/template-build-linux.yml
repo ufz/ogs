@@ -4,7 +4,7 @@
     - docker
   extends:
     - .test-artifacts
-
+  dependencies: [meta, meta_container]
   variables:
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
 

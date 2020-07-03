@@ -9,7 +9,6 @@ container:
   variables:
     OPENMPI_VERSIONS: 'off' # 4.0.1
   extends:
-    - .defaults
     - .container-maker-setup
   script:
     - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi $OPENMPI_VERSIONS

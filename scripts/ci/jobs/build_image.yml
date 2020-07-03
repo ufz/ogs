@@ -1,33 +1,23 @@
 build container images:
-  stage: .pre
+  stage: preparation
   rules:
-    # TODO
-    # - changes:
-      # - ThirdParty/container-maker
-      # - scripts/ci/jobs/build_image.yml
-      # when: always
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      when: always
-  tags:
-    - envinf1-shell # can be changed back when instance-level vars are implemented
-
-  variables:
-    GIT_LFS_SKIP_SMUDGE: "1"
+    - changes:
+      - ThirdParty/container-maker
+      - scripts/ci/jobs/build_image.yml
+  dependencies: [meta_container]
+  tags: [docker-shell]
   extends: .container-maker-setup
   script:
-    - docker login -u $OGS_CI_REGISTRY_USER -p $OGS_CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc || true
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
-      --pm system --cvode --cppcheck --docs --gcovr
-      --tag $CONTAINER_GCC_IMAGE:$CONTAINER_TAG --upload
-    - docker pull registry.opengeosys.org/ogs/ogs/ogs/gcc-gui || true
+      --pm system --cvode --cppcheck --docs --gcovr --tfel
+      --tag $CONTAINER_GCC_IMAGE --upload
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
       --pm system --cvode --cppcheck --docs --gcovr --gui
-      --tag $CONTAINER_GCC_GUI_IMAGE:$CONTAINER_TAG --upload
-    - docker pull registry.opengeosys.org/ogs/ogs/ogs/clang || true
+      --tag $CONTAINER_GCC_GUI_IMAGE --upload
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
       --compiler clang --compiler_version 9
-      --tag $CONTAINER_CLANG_IMAGE:$CONTAINER_TAG --upload
+      --tag $CONTAINER_CLANG_IMAGE --upload
 
 ### global project images ###
 build xunit-to-junit image:
@@ -39,14 +29,10 @@ build xunit-to-junit image:
       - scripts/ci/jobs/build_image.yml
   tags:
     - docker-shell
-
-  variables:
-    GIT_LFS_SKIP_SMUDGE: "1"
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $XUNIT_TO_JUNIT_IMAGE:latest || true
-    - docker build --cache-from $XUNIT_TO_JUNIT_IMAGE:latest -t $XUNIT_TO_JUNIT_IMAGE:latest -f scripts/docker/saxon/Dockerfile scripts/docker/saxon
-    - docker push $XUNIT_TO_JUNIT_IMAGE:latest
+    - docker build --cache-from $XUNIT_TO_JUNIT_IMAGE -t $XUNIT_TO_JUNIT_IMAGE -f scripts/docker/saxon/Dockerfile scripts/docker/saxon
+    - docker push $XUNIT_TO_JUNIT_IMAGE
 
 
 build pre-commit image:
@@ -58,13 +44,10 @@ build pre-commit image:
       - scripts/ci/jobs/build_image.yml
   tags:
     - docker-shell
-  variables:
-    GIT_LFS_SKIP_SMUDGE: "1"
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $PRECOMMIT_IMAGE:latest || true
-    - docker build --cache-from $PRECOMMIT_IMAGE:latest -t $PRECOMMIT_IMAGE:latest -f scripts/docker/Dockerfile.pre-commit scripts/docker
-    - docker push $PRECOMMIT_IMAGE:latest
+    - docker build --cache-from $PRECOMMIT_IMAGE -t $PRECOMMIT_IMAGE -f scripts/docker/Dockerfile.pre-commit scripts/docker
+    - docker push $PRECOMMIT_IMAGE
 
 build web image:
   stage: .pre
@@ -75,10 +58,7 @@ build web image:
       - scripts/ci/jobs/build_image.yml
   tags:
     - docker-shell
-  variables:
-    GIT_LFS_SKIP_SMUDGE: "1"
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $WEB_IMAGE:latest || true
-    - docker build --cache-from $WEB_IMAGE:latest -t $WEB_IMAGE:latest -f scripts/docker/Dockerfile.web scripts/docker
-    - docker push $WEB_IMAGE:latest
+    - docker build --cache-from $WEB_IMAGE -t $WEB_IMAGE -f scripts/docker/Dockerfile.web scripts/docker
+    - docker push $WEB_IMAGE

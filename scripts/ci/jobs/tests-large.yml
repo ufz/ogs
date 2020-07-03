@@ -4,17 +4,14 @@ tests large:
     - docker
     - envinf1
   extends:
-    - .defaults
     - .rules-master-manual
-
+  dependencies: [meta_container]
   variables:
     BUILD_DIR: "build-tests-large"
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
     CMAKE_ARGS: "-DOGS_USE_CONAN=OFF"
-
   image:
     name: $CONTAINER_GCC_IMAGE
-
   script:
     - git lfs install
     - git lfs fetch
@@ -27,11 +24,9 @@ tests large:
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
     - cmake --build . --target ctest-large
-
   artifacts:
     paths:
       - $BUILD_DIR/Tests/ctest.xml
-
   cache:
     paths:
       - $CCACHE_DIR

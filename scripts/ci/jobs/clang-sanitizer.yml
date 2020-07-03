@@ -1,20 +1,15 @@
 clang sanitizer:
   stage: check
-  tags:
-    - docker
   extends:
-    - .defaults
     - .rules-manual
-
+  dependencies: [meta_container]
   variables:
     BUILD_DIR: "build-sanitizer"
     CMAKE_ARGS: "-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON -DOGS_BUILD_UTILS=ON"
     UBSAN_OPTIONS: "print_stacktrace=1"
     LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
-
   image:
     name: $CONTAINER_CLANG_IMAGE
-
   script:
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR

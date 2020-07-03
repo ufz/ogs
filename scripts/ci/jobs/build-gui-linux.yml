@@ -6,10 +6,6 @@ build gui linux:
   tags:
     - envinf1
     - docker
-  needs:
-    - meta
-    - job: build linux
-      artifacts: false
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:
