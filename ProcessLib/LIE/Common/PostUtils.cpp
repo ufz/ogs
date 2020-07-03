@@ -331,7 +331,7 @@ void PostProcessTool::copyPropertyValues(
                                     n_src_comp,
                                     &(*destination_property)[i * n_dest_comp]);
             // set zero for components not existing in the original
-            std::fill_n(last, n_dest_comp - n_src_comp, 0);
+            std::fill_n(last, n_dest_comp - n_src_comp, T{0});
         }
         // copy duplicated
         for (auto itr : _map_dup_newNodeIDs)
