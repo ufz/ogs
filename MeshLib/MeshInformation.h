@@ -43,7 +43,7 @@ public:
         {
             INFO("Mesh property vector '{:s}' is empty.",
                  property.getPropertyName());
-            return {};
+            return std::nullopt;
         }
 
         auto const [min, max] =
