@@ -155,6 +155,9 @@ public:
     std::map<std::string, PropertyVectorBase*>::iterator begin();
     std::map<std::string, PropertyVectorBase*>::iterator end();
     std::map<std::string, PropertyVectorBase*>::size_type size() const;
+    // Counts properties of given mesh item type.
+    std::map<std::string, PropertyVectorBase*>::size_type size(
+        MeshItemType const mesh_item_type) const;
 
 private:
     /// A mapping from property's name to the stored object of any type.

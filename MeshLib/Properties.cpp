@@ -167,4 +167,12 @@ std::map<std::string, PropertyVectorBase*>::size_type Properties::size() const
 {
     return _properties.size();
 }
+
+std::map<std::string, PropertyVectorBase*>::size_type Properties::size(
+    MeshItemType const mesh_item_type) const
+{
+    return count_if(begin(), end(), [&](auto const p) {
+        return p.second->getMeshItemType() == mesh_item_type;
+    });
+}
 }  // end namespace MeshLib
