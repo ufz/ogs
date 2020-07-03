@@ -733,9 +733,9 @@ void writePropertiesBinary(const std::string& file_name_base,
                            std::vector<Partition> const& partitions,
                            MeshLib::MeshItemType const mesh_item_type)
 {
-    auto const& property_names =
-        partitioned_properties.getPropertyVectorNames(mesh_item_type);
-    if (property_names.empty())
+    auto const number_of_properties =
+        partitioned_properties.size(mesh_item_type);
+    if (number_of_properties == 0)
     {
         return;
     }
@@ -760,7 +760,6 @@ void writePropertiesBinary(const std::string& file_name_base,
         OGS_FATAL("Could not open file '{:s}' for output.", file_name_val);
     }
 
-    std::size_t const number_of_properties(property_names.size());
     BaseLib::writeValueBinary(out, number_of_properties);
 
     applyToPropertyVectors(
