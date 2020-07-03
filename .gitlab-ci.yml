@@ -2,9 +2,7 @@ stages:
   - preparation
   - build
   - check
-  - gui
   - package
-
 
 variables:
   # Docker image names

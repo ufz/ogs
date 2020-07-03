@@ -1,6 +1,6 @@
 build gui linux:
   extends: .template-build-linux
-  stage: gui
+  stage: build
   image:
     name: $CONTAINER_GCC_GUI_IMAGE
   tags:
