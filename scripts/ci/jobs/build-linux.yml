@@ -11,4 +11,3 @@ build linux:
       -DOGS_USE_PYTHON=ON
   image:
     name: $CONTAINER_GCC_IMAGE
-  needs: [meta]

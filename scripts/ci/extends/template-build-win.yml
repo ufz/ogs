@@ -4,6 +4,7 @@
     - windows
   extends:
     - .vs2019-environment
+  dependencies: [meta, meta_container]
   variables:
   script:
     - mkdir -p $env:BUILD_DIR

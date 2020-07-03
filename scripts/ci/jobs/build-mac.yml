@@ -2,7 +2,6 @@ build mac:
   extends: .template-build-linux
   tags:
     - mac
-  needs: [meta]
   variables:
     BUILD_DIR: "build-mac"
     CMAKE_ARGS: >-

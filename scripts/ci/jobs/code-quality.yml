@@ -1,7 +1,6 @@
 code_quality:
   stage: check
-  extends:
-    - .defaults
+  needs: []
   rules:
   variables:
     DOCKER_TLS_CERTDIR: "/certs"

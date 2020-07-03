@@ -1,15 +1,11 @@
 build gui linux:
   extends: .template-build-linux
-  stage: gui
+  stage: build
   image:
     name: $CONTAINER_GCC_GUI_IMAGE
   tags:
     - envinf1
     - docker
-  needs:
-    - meta
-    - job: build linux
-      artifacts: false
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:

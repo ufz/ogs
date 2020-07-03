@@ -1,17 +1,14 @@
 stages:
-  - pre-check
+  - preparation
   - build
   - check
-  - gui
   - package
-
 
 variables:
   # Docker image names
   CONTAINER_GCC_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/gcc
   CONTAINER_GCC_GUI_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/gcc-gui
   CONTAINER_CLANG_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/clang
-  CONTAINER_TAG: latest
   XUNIT_TO_JUNIT_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/xunit-to-junit
   PRECOMMIT_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/pre-commit
   WEB_IMAGE: $CI_REGISTRY/ogs/$CI_PROJECT_NAME/web

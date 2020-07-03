@@ -1,6 +1,5 @@
 build win:
   extends: .template-build-win
-  needs: [meta]
   variables:
     BUILD_DIR: build-win
     CMAKE_ARGS: >-
