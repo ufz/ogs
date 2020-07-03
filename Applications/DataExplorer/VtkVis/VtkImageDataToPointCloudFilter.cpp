@@ -79,7 +79,7 @@ int VtkImageDataToPointCloudFilter::RequestData(
     vtkPointData* input_data = input->GetPointData();
     input_data->GetArray(0)->GetRange(range);
 
-    std::vector<std::size_t> density;
+    std::vector<vtkIdType> density;
     density.reserve(n_points);
     for (vtkIdType i = 0; i < n_points; ++i)
     {
@@ -96,12 +96,13 @@ int VtkImageDataToPointCloudFilter::RequestData(
         float const val((static_cast<float*>(pixvals))[i * n_comp]);
         double const calc_gamma = (IsLinear) ? 1 : Gamma;
         std::size_t const pnts_per_cell = interpolate(range[0], range[1], val, calc_gamma);
-        density.push_back(static_cast<std::size_t>(
+        density.push_back(static_cast<vtkIdType>(
             std::floor(pnts_per_cell * GetPointScaleFactor())));
     }
 
     // Allocate the space needed for output objects
-    std::size_t const sum = std::accumulate(density.begin(), density.end(), 0);
+    auto const sum =
+        std::accumulate(density.begin(), density.end(), vtkIdType{0});
     vtkSmartPointer<vtkPoints> new_points = vtkSmartPointer<vtkPoints>::New();
     new_points->SetNumberOfPoints(sum);
     vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
