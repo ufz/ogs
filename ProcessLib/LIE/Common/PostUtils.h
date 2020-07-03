@@ -45,9 +45,12 @@ public:
 
 private:
     template <typename T>
-    void createProperties();
+    MeshLib::PropertyVector<T>* createProperty(
+        MeshLib::PropertyVector<T> const& property);
     template <typename T>
-    void copyProperties();
+    void copyPropertyValues(
+        MeshLib::PropertyVector<T> const& source_property,
+        MeshLib::PropertyVector<T>* const destination_property);
     void calculateTotalDisplacement(unsigned const n_fractures,
                                     unsigned const n_junctions);
 

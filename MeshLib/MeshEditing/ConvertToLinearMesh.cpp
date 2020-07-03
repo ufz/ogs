@@ -104,20 +104,18 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
                                                MeshLib::MeshItemType::Node)));
 
     // copy property vectors for nodes
-    MeshLib::Properties const& src_properties = org_mesh.getProperties();
-    for (auto name : src_properties.getPropertyVectorNames())
+    for (auto [name, property] : org_mesh.getProperties())
     {
-        if (!src_properties.existsPropertyVector<double>(name))
+        if (property->getMeshItemType() != MeshLib::MeshItemType::Node)
         {
             continue;
         }
-        auto const* src_prop = src_properties.getPropertyVector<double>(name);
-        if (src_prop->getMeshItemType() != MeshLib::MeshItemType::Node)
+        auto double_property = dynamic_cast<PropertyVector<double>*>(property);
+        if (double_property == nullptr)
         {
             continue;
         }
-
-        auto const n_src_comp = src_prop->getNumberOfComponents();
+        auto const n_src_comp = double_property->getNumberOfComponents();
         auto new_prop =
             new_mesh->getProperties().createNewPropertyVector<double>(
                 name, MeshLib::MeshItemType::Node, n_src_comp);
@@ -129,7 +127,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
             for (int j = 0; j < n_src_comp; j++)
             {
                 (*new_prop)[i * n_src_comp + j] =
-                    (*src_prop)[i * n_src_comp + j];
+                    (*double_property)[i * n_src_comp + j];
             }
         }
     }

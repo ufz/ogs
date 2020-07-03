@@ -140,47 +140,57 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     }
 
     // Arrays
-    MeshLib::Properties const& properties = _mesh->getProperties();
-    std::vector<std::string> const& propertyNames =
-        properties.getPropertyVectorNames();
-
-    for (auto const& name : propertyNames)
+    for (auto [name, property] : _mesh->getProperties())
     {
-        if (addProperty<double>(properties, name))
+        if (auto p = dynamic_cast<PropertyVector<double>*>(property))
         {
-            continue;
+            addProperty(*p);
         }
-        if (addProperty<float>(properties, name))
+        else if (auto p = dynamic_cast<PropertyVector<float>*>(property))
         {
-            continue;
+            addProperty(*p);
         }
-        if (addProperty<int>(properties, name))
+        else if (auto p = dynamic_cast<PropertyVector<int>*>(property))
         {
-            continue;
+            addProperty(*p);
         }
-        if (addProperty<unsigned>(properties, name))
+        else if (auto p = dynamic_cast<PropertyVector<unsigned>*>(property))
         {
-            continue;
+            addProperty(*p);
         }
-        if (addProperty<std::size_t>(properties, name))
+        else if (auto p = dynamic_cast<PropertyVector<long>*>(property))
         {
-            continue;
+            addProperty(*p);
         }
-        if (addProperty<char>(properties, name))
+        else if (auto p =
+                     dynamic_cast<PropertyVector<unsigned long>*>(property))
         {
-            continue;
+            addProperty(*p);
         }
-
-        OGS_FATAL(
-            "Mesh property '{:s}' with unknown data type. Please check the "
-            "data type of the mesh properties. The available data types are:"
-            "\n\t double,"
-            "\n\t float,"
-            "\n\t int,"
-            "\n\t unsigned,"
-            "\n\t size_t,"
-            "\n\t char.",
-            name.data());
+        else if (auto p = dynamic_cast<PropertyVector<std::size_t>*>(property))
+        {
+            addProperty(*p);
+        }
+        else if (auto p = dynamic_cast<PropertyVector<char>*>(property))
+        {
+            addProperty(*p);
+        }
+        else
+        {
+            OGS_FATAL(
+                "Mesh property '{:s}' of unhandled data type '{:s}'. Please "
+                "check the data type of the mesh properties. The available "
+                "data types are:"
+                "\n\t double,"
+                "\n\t float,"
+                "\n\t int,"
+                "\n\t unsigned,"
+                "\n\t long,"
+                "\n\t unsigned long,"
+                "\n\t char.",
+                property->getPropertyName(),
+                typeid(*property).name());
+        }
     }
 
     output->GetPointData()->ShallowCopy(this->PointData.GetPointer());
@@ -201,43 +211,29 @@ int VtkMappedMeshSource::RequestInformation(
 }
 
 template <typename T>
-bool VtkMappedMeshSource::addProperty(MeshLib::Properties const& properties,
-                                      std::string const& prop_name) const
+void VtkMappedMeshSource::addProperty(
+    MeshLib::PropertyVector<T> const& property) const
 {
-    if (!properties.existsPropertyVector<T>(prop_name))
-    {
-        return false;
-    }
-    // TODO: Hack removing const
-    auto* propertyVector = const_cast<MeshLib::PropertyVector<T>*>(
-        properties.getPropertyVector<T>(prop_name));
-    if (!propertyVector)
-    {
-        return false;
-    }
-
     vtkNew<vtkAOSDataArrayTemplate<T>> dataArray;
     const bool hasArrayOwnership = false;
-    dataArray->SetArray(propertyVector->data(),
-                        static_cast<vtkIdType>(propertyVector->size()),
+    dataArray->SetArray(const_cast<T*>(property.data()),
+                        static_cast<vtkIdType>(property.size()),
                         static_cast<int>(!hasArrayOwnership));
-    dataArray->SetNumberOfComponents(propertyVector->getNumberOfComponents());
-    dataArray->SetName(prop_name.c_str());
+    dataArray->SetNumberOfComponents(property.getNumberOfComponents());
+    dataArray->SetName(property.getPropertyName().c_str());
 
-    if (propertyVector->getMeshItemType() == MeshLib::MeshItemType::Node)
+    if (property.getMeshItemType() == MeshLib::MeshItemType::Node)
     {
         this->PointData->AddArray(dataArray.GetPointer());
     }
-    else if (propertyVector->getMeshItemType() == MeshLib::MeshItemType::Cell)
+    else if (property.getMeshItemType() == MeshLib::MeshItemType::Cell)
     {
         this->CellData->AddArray(dataArray.GetPointer());
     }
-    else if (propertyVector->getMeshItemType() ==
+    else if (property.getMeshItemType() ==
              MeshLib::MeshItemType::IntegrationPoint)
     {
         this->FieldData->AddArray(dataArray.GetPointer());
     }
-
-    return true;
 }
 }  // Namespace MeshLib

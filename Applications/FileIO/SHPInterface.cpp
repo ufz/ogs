@@ -265,31 +265,26 @@ bool SHPInterface::write2dMeshToSHP(const std::string &file_name, const MeshLib:
     SHPClose(hSHP);
 
     // Write scalar arrays to database file
-    MeshLib::Properties const& properties = mesh.getProperties();
-    std::vector<std::string> const& array_names =
-        properties.getPropertyVectorNames(MeshLib::MeshItemType::Cell);
     int const n_recs = DBFGetRecordCount(hDBF);
-
-    for (std::string const& name : array_names)
+    for (auto [name, property] : mesh.getProperties())
     {
-        if (properties.existsPropertyVector<int>(name))
+        if (auto p = dynamic_cast<MeshLib::PropertyVector<int>*>(property))
         {
-            std::vector<int> const& vec = *properties.getPropertyVector<int>(name);
             int const field = DBFAddField(hDBF, name.c_str(), FTInteger, 16, 0);
             for (int i = 0; i < n_recs; ++i)
             {
                 std::size_t const elem_idx = DBFReadIntegerAttribute(hDBF, i, elem_id_field);
-                DBFWriteIntegerAttribute(hDBF, i, field, vec[elem_idx]);
+                DBFWriteIntegerAttribute(hDBF, i, field, (*p)[elem_idx]);
             }
         }
-        else if (properties.existsPropertyVector<double>(name))
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {
-            std::vector<double> const& vec = *properties.getPropertyVector<double>(name);
             int const field = DBFAddField(hDBF, name.c_str(), FTDouble, 33, 16);
             for (int i = 0; i < n_recs; ++i)
             {
                 std::size_t const elem_idx = DBFReadIntegerAttribute(hDBF, i, elem_id_field);
-                DBFWriteDoubleAttribute(hDBF, i, field, vec[elem_idx]);
+                DBFWriteDoubleAttribute(hDBF, i, field, (*p)[elem_idx]);
             }
         }
     }

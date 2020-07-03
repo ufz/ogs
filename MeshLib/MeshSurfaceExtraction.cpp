@@ -30,40 +30,23 @@
 namespace MeshLib
 {
 template <typename T>
-bool processPropertyVector(std::string const& name,
-                           MeshLib::MeshItemType const type,
-                           MeshLib::Properties const& properties,
-                           std::size_t const /*vec_size*/,
+void processPropertyVector(MeshLib::PropertyVector<T> const& property,
                            std::vector<std::size_t> const& id_map,
                            MeshLib::Mesh& sfc_mesh)
 {
-    if (!properties.existsPropertyVector<T>(name))
-    {
-        return false;
-    }
+    auto const number_of_components = property.getNumberOfComponents();
 
-    auto const& org_vec = *properties.getPropertyVector<T>(name);
-    if (type != org_vec.getMeshItemType())
-    {
-        return false;
-    }
-    auto const number_of_components = org_vec.getNumberOfComponents();
-
-    auto sfc_prop =
-        getOrCreateMeshProperty<T>(sfc_mesh, name, type, number_of_components);
+    auto sfc_prop = getOrCreateMeshProperty<T>(
+        sfc_mesh, property.getPropertyName(), property.getMeshItemType(),
+        number_of_components);
     sfc_prop->clear();
     sfc_prop->reserve(id_map.size());
 
     for (auto bulk_id : id_map)
     {
-        for (auto component_id = 0; component_id < number_of_components;
-             ++component_id)
-        {
-            sfc_prop->push_back(org_vec.getComponent(bulk_id, component_id));
-        }
+        std::copy_n(&property.getComponent(bulk_id, 0 /*component_id*/),
+                    number_of_components, back_inserter(*sfc_prop));
     }
-
-    return true;
 }
 
 bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
@@ -88,34 +71,73 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
             element_ids_map.size(), n_elems);
         return false;
     }
+    std::map<MeshLib::MeshItemType, std::vector<std::size_t> const*> const
+        id_maps = {{MeshItemType::Cell, &element_ids_map},
+                   {MeshItemType::Node, &node_ids_map}};
 
     std::size_t vectors_copied(0);
     std::size_t vectors_skipped(0);
-    std::vector<std::string> const& array_names =
-        properties.getPropertyVectorNames();
-    for (std::string const& name : array_names)
+    for (auto [name, property] : properties)
     {
-        if (processPropertyVector<double>(name, MeshLib::MeshItemType::Cell,
-                                          properties, n_elems, element_ids_map,
-                                          sfc_mesh) ||
-            processPropertyVector<int>(name, MeshLib::MeshItemType::Cell,
-                                       properties, n_elems, element_ids_map,
-                                       sfc_mesh) ||
-            processPropertyVector<double>(name, MeshLib::MeshItemType::Node,
-                                          properties, n_nodes, node_ids_map,
-                                          sfc_mesh) ||
-            processPropertyVector<int>(name, MeshLib::MeshItemType::Node,
-                                       properties, n_nodes, node_ids_map,
-                                       sfc_mesh))
+        if (property->getMeshItemType() != MeshItemType::Cell ||
+            property->getMeshItemType() != MeshItemType::Node)
         {
+            WARN(
+                "Skipping property vector '{:s}' - not defined on cells or "
+                "nodes.",
+                name);
+            vectors_skipped++;
+            continue;
+        }
+
+        auto const& id_map = *id_maps.at(property->getMeshItemType());
+        if (auto p = dynamic_cast<PropertyVector<double>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<PropertyVector<float>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<PropertyVector<int>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<PropertyVector<unsigned>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<PropertyVector<long>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p =
+                     dynamic_cast<PropertyVector<unsigned long>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<PropertyVector<std::size_t>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<PropertyVector<char>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
             vectors_copied++;
         }
         else
         {
             WARN(
-                "Skipping property vector '{:s}' - no matching data type "
+                "Skipping property vector '{:s}' - no matching data type '{:s}'"
                 "found.",
-                name);
+                name, typeid(*property).name());
             vectors_skipped++;
         }
     }

@@ -242,8 +242,6 @@ bool parseNodes(std::ifstream& in,
                 MeshLib::Properties& mesh_prop)
 {
     NodeType t = NodeType::UNSPECIFIED;
-    std::vector<std::string> const array_names =
-        mesh_prop.getPropertyVectorNames();
     std::streampos pos = in.tellg();
     std::string line;
     while (std::getline(in, line))
@@ -283,15 +281,19 @@ bool parseNodes(std::ifstream& in,
         {
             t = NodeType::PVRTX;
             nodes.push_back(createNode(sstr));
-            for (std::string const& name : array_names)
+            for (auto [name, property] : mesh_prop)
             {
                 if (name == mat_id_name)
                 {
                     continue;
                 }
-                double value;
-                sstr >> value;
-                mesh_prop.getPropertyVector<double>(name)->push_back(value);
+                if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(
+                        property))
+                {
+                    double value;
+                    sstr >> value;
+                    p->push_back(value);
+                }
             }
         }
         else if (line.substr(0, 4) == "ATOM")
