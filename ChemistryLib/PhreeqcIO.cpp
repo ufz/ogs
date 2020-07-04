@@ -462,8 +462,9 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                     case ItemType::pH:
                     {
                         // Update pH value
-                        aqueous_solution->pH->set(chemical_system_id,
-                                                  accepted_items[item_id]);
+                        aqueous_solution->pH->set(
+                            chemical_system_id,
+                            std::pow(10, -accepted_items[item_id]));
                         break;
                     }
                     case ItemType::pe:
