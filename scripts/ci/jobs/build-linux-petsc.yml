@@ -4,4 +4,8 @@ build linux petsc:
     - envinf1-shell
   variables:
     BUILD_DIR: "build-petsc"
-    CMAKE_ARGS: "-DOGS_USE_CONAN=OFF -DOGS_USE_PETSC=ON -DBUILD_SHARED_LIBS=ON"
+    CMAKE_ARGS: >-
+      -DBUILD_SHARED_LIBS=ON
+      -DOGS_BUILD_UTILS=ON
+      -DOGS_USE_CONAN=OFF
+      -DOGS_USE_PETSC=ON
