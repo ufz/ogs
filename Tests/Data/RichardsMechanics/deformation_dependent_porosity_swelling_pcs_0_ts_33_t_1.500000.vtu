@@ -16,8 +16,6 @@
         <DataArray type="Float64" Name="HydraulicFlow" format="appended" RangeMin="-1.5694555756e-06"    RangeMax="1.0108385313e-17"     offset="39380"               />
         <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="1.5728260321e-18"     RangeMax="0.012820695968"       offset="40176"               />
         <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0.14142135624"        offset="43080"               />
-        <DataArray type="Float64" Name="dry_density_pellet_saturated" format="appended" RangeMin="0.6002794709"         RangeMax="0.60028174195"        offset="46100"               />
-        <DataArray type="Float64" Name="dry_density_pellet_unsaturated" format="appended" RangeMin="0.59611288001"        RangeMax="0.59611503999"        offset="47456"               />
         <DataArray type="Float64" Name="dry_density_solid" format="appended" RangeMin="0.51694765327"        RangeMax="0.51694770272"        offset="48784"               />
         <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="appended" RangeMin="0.14141926462"        RangeMax="0.14142255419"        offset="50020"               />
         <DataArray type="Float64" Name="porosity" format="appended" RangeMin="0.5"                  RangeMax="0.5"                  offset="56272"               />
