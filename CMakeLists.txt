@@ -94,11 +94,6 @@ if(OGS_BUILD_GUI)
     add_definitions(-DOGS_BUILD_GUI)
 endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
-if(OGS_BUILD_UTILS AND OGS_USE_MPI)
-    message(WARNING "OGS_BUILD_UTILS cannot be used with OGS_USE_MPI "
-                    "(OGS_USE_PETSC)! Disabling OGS_BUILD_UTILS.")
-    set(OGS_BUILD_UTILS OFF CACHE BOOL "" FORCE)
-endif()
 
 if(WIN32)
     option(OGS_BUILD_SWMM "Should the SWMM interface be built?" OFF)

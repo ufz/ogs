@@ -287,6 +287,9 @@ AddTest(
 )
 
 foreach(element_type tri quad)
+    if(OGS_USE_MPI)
+        break()
+    endif()
     add_test(NAME ExtractBoundary-generate_input_files_${element_type}
         COMMAND generateStructuredMesh -e ${element_type} --lx 1 --ly 1 --nx 10 --ny 10 -o ${Data_BINARY_DIR}/FileIO/square_1x1_${element_type}.vtu
         WORKING_DIRECTORY ${Data_BINARY_DIR}/FileIO/

@@ -27,3 +27,10 @@ target_link_libraries(
     MeshLib
     PUBLIC BaseLib GeoLib MathLib ${VTK_LIBRARIES}
     PRIVATE spdlog::spdlog)
+
+if(OGS_USE_MPI AND TARGET MPI::MPI_CXX)
+    target_link_libraries(MeshLib PUBLIC MPI::MPI_CXX)
+endif()
+if(OGS_USE_PETSC)
+    target_link_libraries(ogs PRIVATE ${PETSC_LIBRARIES})
+endif()
