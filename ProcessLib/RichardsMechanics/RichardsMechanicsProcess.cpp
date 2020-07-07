@@ -323,14 +323,6 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable("dry_density_solid", 1,
                            &LocalAssemblerIF::getIntPtDryDensitySolid);
 
-    add_secondary_variable(
-        "dry_density_pellet_saturated", 1,
-        &LocalAssemblerIF::getIntPtDryDensityPelletSaturated);
-
-    add_secondary_variable(
-        "dry_density_pellet_unsaturated", 1,
-        &LocalAssemblerIF::getIntPtDryDensityPelletUnsaturated);
-
     //
     // enable output of internal variables defined by material models
     //
