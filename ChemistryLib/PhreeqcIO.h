@@ -31,12 +31,6 @@ struct SurfaceSite;
 struct Dump;
 struct UserPunch;
 
-enum class Status
-{
-    SettingAqueousSolutions,
-    UpdatingProcessSolutions
-};
-
 class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
@@ -53,22 +47,23 @@ public:
 
     void initialize() override;
 
-    void executeInitialCalculation(
-        std::vector<GlobalVector*>& process_solutions) override;
+    void executeInitialCalculation(std::vector<GlobalVector> const&
+                                       interpolated_process_solutions) override;
 
     void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector> const& interpolated_process_solutions,
         double const dt) override;
 
-    void setAqueousSolutionsOrUpdateProcessSolutions(
-        std::vector<GlobalVector*> const& process_solutions,
-        Status const status);
+    void setAqueousSolution(
+        std::vector<GlobalVector> const& interpolated_process_solutions);
 
     void writeInputsToFile(double const dt = 0);
 
     void execute();
 
     void readOutputsFromFile();
+
+    std::vector<GlobalVector*> getIntPtProcessSolutions() const override;
 
     friend std::ostream& operator<<(std::ostream& os,
                                     PhreeqcIO const& phreeqc_io);

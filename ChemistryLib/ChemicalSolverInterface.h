@@ -20,10 +20,13 @@ public:
     virtual void initialize() {}
 
     virtual void executeInitialCalculation(
-        std::vector<GlobalVector*>& process_solutions) = 0;
+        std::vector<GlobalVector> const& interpolated_process_solutions) = 0;
 
     virtual void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions, double const dt) = 0;
+        std::vector<GlobalVector> const& interpolated_process_solutions,
+        double const dt) = 0;
+
+    virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const = 0;
 
     virtual std::vector<std::string> const getComponentList() const
     {

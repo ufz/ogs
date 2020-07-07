@@ -8,6 +8,7 @@
  *
  */
 
+#include <cmath>
 #include <ostream>
 
 #include "AqueousSolution.h"
@@ -28,17 +29,17 @@ void AqueousSolution::print(std::ostream& os,
     switch (charge_balance)
     {
         case ChargeBalance::pH:
-            os << "pH " << (*pH)[chemical_system_id] << " charge"
+            os << "pH " << -std::log10((*pH)[chemical_system_id]) << " charge"
                << "\n";
             os << "pe " << (*pe)[chemical_system_id] << "\n";
             break;
         case ChargeBalance::pe:
-            os << "pH " << (*pH)[chemical_system_id] << "\n";
+            os << "pH " << -std::log10((*pH)[chemical_system_id]) << "\n";
             os << "pe " << (*pe)[chemical_system_id] << " charge"
                << "\n";
             break;
         case ChargeBalance::Unspecified:
-            os << "pH " << (*pH)[chemical_system_id] << "\n";
+            os << "pH " << -std::log10((*pH)[chemical_system_id]) << "\n";
             os << "pe " << (*pe)[chemical_system_id] << "\n";
             break;
     }

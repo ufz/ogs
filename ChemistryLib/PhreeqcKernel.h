@@ -41,17 +41,22 @@ public:
                   std::unique_ptr<Kinetics>&& kinetic_reactants,
                   std::vector<ReactionRate>&& reaction_rates);
 
-    void executeInitialCalculation(
-        std::vector<GlobalVector*>& process_solutions) override;
+    void executeInitialCalculation(std::vector<GlobalVector> const&
+                                       interpolated_process_solutions) override;
 
     void doWaterChemistryCalculation(
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector> const& interpolated_process_solutions,
         double const dt) override;
 
     void setAqueousSolutions(
         std::vector<GlobalVector*> const& process_solutions);
 
     void execute(std::vector<GlobalVector*>& process_solutions);
+
+    std::vector<GlobalVector*> getIntPtProcessSolutions() const override
+    {
+        return {};
+    }
 
     void updateNodalProcessSolutions(
         std::vector<GlobalVector*> const& process_solutions,
