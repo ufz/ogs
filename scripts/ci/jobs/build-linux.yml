@@ -8,6 +8,7 @@ build linux:
     CMAKE_ARGS: >-
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_CONAN=OFF
+      -DOGS_USE_MFRONT=ON
       -DOGS_USE_PYTHON=ON
   image:
     name: $CONTAINER_GCC_IMAGE

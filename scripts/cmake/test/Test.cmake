@@ -48,11 +48,14 @@ if(OGS_USE_MFRONT)
     list(APPEND test_dependencies
         MFrontGenericBehaviourInterfaceTest
         MFrontGenericBehaviourInterfaceTest2
+        MFrontGenericBehaviourInterfaceTest3
         BoundsCheckTest
         ParameterTest
         IntegrateTest
         IntegrateTest2
+        IntegrateTest2b
         IntegrateTest3
+        IntegrateTest3b
         BehaviourTest)
 endif()
 

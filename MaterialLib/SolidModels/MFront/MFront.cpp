@@ -290,8 +290,6 @@ MFront<DisplacementDim>::integrateStress(
         behaviour_data.s1.external_state_variables[0] = T;
     }
 
-    auto v = mgis::behaviour::make_view(behaviour_data);
-
     // rotation tensor
     auto const Q = [this, &x]() -> KelvinMatrixType<DisplacementDim> {
         if (!_local_coordinate_system)
@@ -308,10 +306,8 @@ MFront<DisplacementDim>::integrateStress(
                             KelvinVectorDimensions<DisplacementDim>::value,
                             KelvinVectorDimensions<DisplacementDim>::value>() *
                     eps_prev);
-    for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
-    {
-        v.s0.gradients[i] = eps_prev_MFront[i];
-    }
+    std::copy_n(eps_prev_MFront.data(), KelvinVector::SizeAtCompileTime,
+                behaviour_data.s0.gradients.data());
 
     auto const eps_MFront =
         OGSToMFront(Q.transpose()
@@ -319,10 +315,8 @@ MFront<DisplacementDim>::integrateStress(
                             KelvinVectorDimensions<DisplacementDim>::value,
                             KelvinVectorDimensions<DisplacementDim>::value>() *
                     eps);
-    for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
-    {
-        v.s1.gradients[i] = eps_MFront[i];
-    }
+    std::copy_n(eps_MFront.data(), KelvinVector::SizeAtCompileTime,
+                behaviour_data.s1.gradients.data());
 
     auto const sigma_prev_MFront =
         OGSToMFront(Q.transpose()
@@ -330,12 +324,12 @@ MFront<DisplacementDim>::integrateStress(
                             KelvinVectorDimensions<DisplacementDim>::value,
                             KelvinVectorDimensions<DisplacementDim>::value>() *
                     sigma_prev);
-    for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
-    {
-        v.s0.thermodynamic_forces[i] = sigma_prev_MFront[i];
-        v.s1.thermodynamic_forces[i] = sigma_prev_MFront[i];
-    }
+    std::copy_n(sigma_prev_MFront.data(), KelvinVector::SizeAtCompileTime,
+                behaviour_data.s0.thermodynamic_forces.data());
+    std::copy_n(sigma_prev_MFront.data(), KelvinVector::SizeAtCompileTime,
+                behaviour_data.s1.thermodynamic_forces.data());
 
+    auto v = mgis::behaviour::make_view(behaviour_data);
     auto const status = mgis::behaviour::integrate(v, _behaviour);
     if (status != 1)
     {
@@ -344,10 +338,8 @@ MFront<DisplacementDim>::integrateStress(
     }
 
     KelvinVector sigma;
-    for (auto i = 0; i < KelvinVector::SizeAtCompileTime; ++i)
-    {
-        sigma[i] = behaviour_data.s1.thermodynamic_forces[i];
-    }
+    std::copy_n(behaviour_data.s1.thermodynamic_forces.data(),
+                KelvinVector::SizeAtCompileTime, sigma.data());
     sigma = Q.template topLeftCorner<
                 KelvinVectorDimensions<DisplacementDim>::value,
                 KelvinVectorDimensions<DisplacementDim>::value>() *
