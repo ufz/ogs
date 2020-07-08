@@ -9,9 +9,6 @@
     CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
 
   before_script:
-    - git lfs install
-    - git lfs fetch
-    - git lfs checkout
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     - ([ "${CONAN_USER_HOME}" == "${CI_PROJECT_DIR}/.conan" ]) && conan remove --system-reqs '*'

@@ -13,9 +13,6 @@ tests large:
   image:
     name: $CONTAINER_GCC_IMAGE
   script:
-    - git lfs install
-    - git lfs fetch
-    - git lfs checkout
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     - >
