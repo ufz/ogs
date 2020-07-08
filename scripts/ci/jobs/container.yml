@@ -1,17 +1,12 @@
 container:
   stage: package
-  only:
-    refs:
-      - master
-  tags:
-    - docker-shell
+  tags: [docker-shell]
   needs: [meta]
-  variables:
-    OPENMPI_VERSIONS: 'off' # 4.0.1
   extends:
-    - .container-maker-setup
+    - .rules-master
   script:
-    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi $OPENMPI_VERSIONS
+    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode
+    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi 4.0.4 --base_image centos:8
   artifacts:
     name: container
     paths:
