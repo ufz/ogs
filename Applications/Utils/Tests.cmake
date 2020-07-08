@@ -313,6 +313,24 @@ foreach(element_type tri quad)
     )
 endforeach()
 
+AddTest(
+    NAME partmesh_with_field_data
+    PATH NodePartitionedMesh/partmesh
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -n 2 -i cube_1x1x1_hex_8.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh
+    TESTER diff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+        cube_1x1x1_hex_8_partitioned_cell_properties_cfg2.bin
+        cube_1x1x1_hex_8_partitioned_cell_properties_val2.bin
+        cube_1x1x1_hex_8_partitioned_msh_cfg2.bin
+        cube_1x1x1_hex_8_partitioned_msh_ele2.bin
+        cube_1x1x1_hex_8_partitioned_msh_ele_g2.bin
+        cube_1x1x1_hex_8_partitioned_msh_nod2.bin
+        cube_1x1x1_hex_8_partitioned_node_properties_cfg2.bin
+        cube_1x1x1_hex_8_partitioned_node_properties_val2.bin
+)
+
 if(OGS_USE_NETCDF)
     AddTest(
         NAME NetCDF_2D_Test
