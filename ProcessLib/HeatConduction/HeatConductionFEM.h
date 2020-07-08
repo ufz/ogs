@@ -128,6 +128,10 @@ public:
                                  sm.N * sm.detJ * wp.getWeight() *
                                  sm.integralMeasure;
         }
+        if (_process_data.mass_lumping)
+        {
+            local_M = local_M.colwise().sum().eval().asDiagonal();
+        }
     }
 
     void assembleWithJacobian(double const t, double const dt,
@@ -181,6 +185,10 @@ public:
             laplace.noalias() += sm.dNdx.transpose() * k * sm.dNdx * w;
             storage.noalias() +=
                 sm.N.transpose() * density * heat_capacity * sm.N * w;
+        }
+        if (_process_data.mass_lumping)
+        {
+            storage = storage.colwise().sum().eval().asDiagonal();
         }
 
         local_Jac.noalias() += laplace + storage / dt;
