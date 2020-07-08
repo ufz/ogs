@@ -27,6 +27,25 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
+AddTest(
+    NAME 1D_HeatConduction_neumann_newton
+    PATH Parabolic/T/1D_neumann
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS newton.prj
+    TESTER vtkdiff
+    DIFF_DATA
+    newton_ts_1_t_78125.000000.vtu newton_ts_1_t_78125.000000.vtu temperature temperature 1e-12 1e-16
+    newton_ts_3_t_234375.000000.vtu newton_ts_3_t_234375.000000.vtu temperature temperature 1e-12 1e-16
+    newton_ts_65_t_5078125.000000.vtu newton_ts_65_t_5078125.000000.vtu temperature temperature 1e-12 1e-16
+    newton_ts_405_t_31640625.000000.vtu newton_ts_405_t_31640625.000000.vtu temperature temperature 1e-12 1e-16
+    newton_ts_500_t_39062500.000000.vtu newton_ts_500_t_39062500.000000.vtu temperature temperature 1e-12 1e-16
+    temperature_analytical.vtu newton_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature 1e-4 1e-4
+    temperature_analytical.vtu newton_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature 1e-4 1e-4
+    REQUIREMENTS NOT OGS_USE_MPI
+)
+    REQUIREMENTS NOT OGS_USE_MPI
+)
+
 # SQUARE 1x1 HEAT CONDUCTION TEST -- AXIALLY SYMMETRIC
 # test results are compared to 3D simulation on a wedge-shaped domain
 AddTest(
