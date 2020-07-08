@@ -11,14 +11,14 @@ AddTest(
 )
 
 AddTest(
-        NAME 1D_HeatConduction_neumann
+        NAME 1D_HeatConduction_neumann_picard
         PATH Parabolic/T/1D_neumann
         EXECUTABLE ogs
-        EXECUTABLE_ARGS line_60_heat.prj
+        EXECUTABLE_ARGS picard.prj
         TESTER vtkdiff
         DIFF_DATA
-        temperature_analytical.vtu line_60_heat_pcs_0_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature 1e-4 1e-4
-        temperature_analytical.vtu line_60_heat_pcs_0_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature 1e-4 1e-4
+        temperature_analytical.vtu picard_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature 1e-4 1e-4
+        temperature_analytical.vtu picard_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature 1e-4 1e-4
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
