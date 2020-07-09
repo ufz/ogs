@@ -4,6 +4,7 @@ container:
   needs: [meta]
   extends:
     - .rules-master
+    - .container-maker-setup
   script:
     - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode
     - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi 4.0.4 --base_image centos:8
