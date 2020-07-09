@@ -12,7 +12,8 @@ meta:
 meta_container:
   stage: .pre
   rules:
-    - changes:
+    - if: '$CI_PROJECT_NAMESPACE != "ogs"'
+      changes:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
   script:
