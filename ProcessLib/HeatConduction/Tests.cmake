@@ -22,8 +22,11 @@ AddTest(
         picard_ts_65_t_5078125.000000.vtu picard_ts_65_t_5078125.000000.vtu temperature temperature 1e-12 1e-16
         picard_ts_405_t_31640625.000000.vtu picard_ts_405_t_31640625.000000.vtu temperature temperature 1e-12 1e-16
         picard_ts_500_t_39062500.000000.vtu picard_ts_500_t_39062500.000000.vtu temperature temperature 1e-12 1e-16
-        temperature_analytical.vtu picard_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature 1e-4 1e-4
-        temperature_analytical.vtu picard_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature 1e-4 1e-4
+        temperature_analytical.vtu picard_ts_1_t_78125.000000.vtu temperature_78125s temperature 8e-2 1e-4
+        temperature_analytical.vtu picard_ts_3_t_234375.000000.vtu temperature_234375s temperature 6e-2 1e-4
+        temperature_analytical.vtu picard_ts_65_t_5078125.000000.vtu temperature_5078125s temperature 1e-4 1e-4
+        temperature_analytical.vtu picard_ts_405_t_31640625.000000.vtu temperature_31640625s temperature 1e-4 1e-4
+        temperature_analytical.vtu picard_ts_500_t_39062500.000000.vtu temperature_39062500s temperature 1e-4 1e-4
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -39,8 +42,11 @@ AddTest(
     newton_ts_65_t_5078125.000000.vtu newton_ts_65_t_5078125.000000.vtu temperature temperature 1e-12 1e-16
     newton_ts_405_t_31640625.000000.vtu newton_ts_405_t_31640625.000000.vtu temperature temperature 1e-12 1e-16
     newton_ts_500_t_39062500.000000.vtu newton_ts_500_t_39062500.000000.vtu temperature temperature 1e-12 1e-16
-    temperature_analytical.vtu newton_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature 1e-4 1e-4
-    temperature_analytical.vtu newton_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature 1e-4 1e-4
+    temperature_analytical.vtu newton_ts_1_t_78125.000000.vtu temperature_78125s temperature 8e-2 1e-4
+    temperature_analytical.vtu newton_ts_3_t_234375.000000.vtu temperature_234375s temperature 6e-2 1e-4
+    temperature_analytical.vtu newton_ts_65_t_5078125.000000.vtu temperature_5078125s temperature 1e-4 1e-4
+    temperature_analytical.vtu newton_ts_405_t_31640625.000000.vtu temperature_31640625s temperature 1e-4 1e-4
+    temperature_analytical.vtu newton_ts_500_t_39062500.000000.vtu temperature_39062500s temperature 1e-4 1e-4
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -56,8 +62,11 @@ AddTest(
     picard_masslumping_ts_65_t_5078125.000000.vtu picard_masslumping_ts_65_t_5078125.000000.vtu temperature temperature 1e-12 1e-16
     picard_masslumping_ts_405_t_31640625.000000.vtu picard_masslumping_ts_405_t_31640625.000000.vtu temperature temperature 1e-12 1e-16
     picard_masslumping_ts_500_t_39062500.000000.vtu picard_masslumping_ts_500_t_39062500.000000.vtu temperature temperature 1e-12 1e-16
-    temperature_analytical.vtu picard_masslumping_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature 1e-4 1e-4
-    temperature_analytical.vtu picard_masslumping_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature 1e-4 1e-4
+    temperature_analytical.vtu picard_masslumping_ts_1_t_78125.000000.vtu temperature_78125s temperature 2e-1 1e-4
+    temperature_analytical.vtu picard_masslumping_ts_3_t_234375.000000.vtu temperature_234375s temperature 2e-1 1e-4
+    temperature_analytical.vtu picard_masslumping_ts_65_t_5078125.000000.vtu temperature_5078125s temperature 1e-4 1e-4
+    temperature_analytical.vtu picard_masslumping_ts_405_t_31640625.000000.vtu temperature_31640625s temperature 1e-4 1e-4
+    temperature_analytical.vtu picard_masslumping_ts_500_t_39062500.000000.vtu temperature_39062500s temperature 1e-4 1e-4
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -73,8 +82,11 @@ AddTest(
     newton_masslumping_ts_65_t_5078125.000000.vtu newton_masslumping_ts_65_t_5078125.000000.vtu temperature temperature 1e-12 1e-16
     newton_masslumping_ts_405_t_31640625.000000.vtu newton_masslumping_ts_405_t_31640625.000000.vtu temperature temperature 1e-12 1e-16
     newton_masslumping_ts_500_t_39062500.000000.vtu newton_masslumping_ts_500_t_39062500.000000.vtu temperature temperature 1e-12 1e-16
-    temperature_analytical.vtu newton_masslumping_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature 1e-4 1e-4
-    temperature_analytical.vtu newton_masslumping_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature 1e-4 1e-4
+    temperature_analytical.vtu newton_masslumping_ts_1_t_78125.000000.vtu temperature_78125s temperature 2e-1 1e-4
+    temperature_analytical.vtu newton_masslumping_ts_3_t_234375.000000.vtu temperature_234375s temperature 2e-1 1e-4
+    temperature_analytical.vtu newton_masslumping_ts_65_t_5078125.000000.vtu temperature_5078125s temperature 1e-4 1e-4
+    temperature_analytical.vtu newton_masslumping_ts_405_t_31640625.000000.vtu temperature_31640625s temperature 1e-4 1e-4
+    temperature_analytical.vtu newton_masslumping_ts_500_t_39062500.000000.vtu temperature_39062500s temperature 1e-4 1e-4
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
