@@ -55,6 +55,7 @@ struct HydroMechanicsProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
+    /// If set mass lumping will be applied to the pressure equation.
     bool const mass_lumping;
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
