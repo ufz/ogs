@@ -16,8 +16,8 @@ import xml.etree.cElementTree as ET
 import json
 from print23 import print_
 
-github_src_url = "https://github.com/ufz/ogs/tree/master"
-github_data_url = "https://github.com/ufz/ogs-data/tree/master"
+github_src_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master"
+github_data_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data"
 
 if len(sys.argv) != 4:
     print_("Usage:")
@@ -122,7 +122,7 @@ for (dirpath, _, filenames) in os.walk(docdir):
                             tagpath_expanded))
 
                         fh.write(
-                            "- Go to source code: [&rarr; ufz/ogs/master]({2}/{0}#L{1})\n"
+                            "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n"
                             .format(path, line, github_src_url))
                 else:
                     fh.write("\nNo additional info.\n")
@@ -136,7 +136,7 @@ for (dirpath, _, filenames) in os.walk(docdir):
                     for df in sorted(datafiles):
                         pagename = "ogs_ctest_prj__" + df.replace(
                             "/", "__").replace(".", "__")
-                        fh.write(("- \\[[&rarr; ogs-data/master]({1}/{0}) | " \
+                        fh.write(("- \\[[&rarr; ogs/ogs/master]({1}/{0}) | " \
                                 + "\\ref {2} \"&rarr; doc\"\\]&emsp;{0}\n") \
                                 .format(df, github_data_url, pagename))
                 except KeyError:

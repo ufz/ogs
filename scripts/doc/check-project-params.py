@@ -9,7 +9,7 @@ import re
 import os.path
 import json
 
-github_src_url = "https://github.com/ufz/ogs/tree/master"
+github_src_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master"
 
 
 def debug(msg):
