@@ -563,7 +563,8 @@ void ProjectData::parseProcesses(
     BaseLib::ConfigTree const& processes_config,
     std::string const& project_directory,
     std::string const& output_directory,
-    ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface)
+    [[maybe_unused]] ChemistryLib::ChemicalSolverInterface* const
+        chemical_solver_interface)
 {
     (void)project_directory;  // to avoid compilation warning
     (void)output_directory;   // to avoid compilation warning
