@@ -174,7 +174,12 @@ int main(int argc, char* argv[])
         readMetisData(input_file_name_wo_extension, num_partitions,
                       mesh_partitioner.mesh().getNumberOfNodes()));
 
-    removeMetisPartitioningFiles(input_file_name_wo_extension, num_partitions);
+    // Remove metis partitioning files only if metis was run internally.
+    if (exe_metis_flag.getValue())
+    {
+        removeMetisPartitioningFiles(input_file_name_wo_extension,
+                                     num_partitions);
+    }
 
     INFO("Partitioning the mesh in the node wise way ...");
     bool const is_mixed_high_order_linear_elems = lh_elems_flag.getValue();
