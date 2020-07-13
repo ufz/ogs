@@ -388,6 +388,14 @@ bool copyPropertyVector(
         return false;
     }
     auto const item_type = pv->getMeshItemType();
+
+    if (item_type == MeshLib::MeshItemType::IntegrationPoint)
+    {
+        return true;  // Skip integration point data. Requires parsing of json
+                      // for the integration point data. Return true, because
+                      // the property was "successfully" parsed.
+    }
+
     auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
         pv->getPropertyName(), pv->getMeshItemType(),
         pv->getNumberOfComponents());
