@@ -28,6 +28,7 @@ ctest results:
     - job: build win
     - job: build mac
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build/Tests/ctest.xml > ./build/ctest-junit.xml
     - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build-win/Tests/ctest.xml > ./build-win/ctest-junit.xml
     - docker run -v $PWD:/tmp $XUNIT_TO_JUNIT_IMAGE -s:/tmp/build-mac/Tests/ctest.xml > ./build-mac/ctest-junit.xml
