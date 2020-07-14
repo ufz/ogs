@@ -170,7 +170,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     if (num_int_pts < num_nodes)
     {
         OGS_FATAL(
-            "Least squares is not possible if there are more nodes than"
+            "Least squares is not possible if there are more nodes than "
             "integration points.");
     }
 
