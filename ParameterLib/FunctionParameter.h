@@ -15,9 +15,6 @@
 
 #include <exprtk.hpp>
 
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/Node.h"
-
 #include "Parameter.h"
 #include "Utils.h"
 
@@ -40,14 +37,12 @@ struct FunctionParameter final : public Parameter<T>
      * Constructing from a vector of expressions
      *
      * @param name        the parameter's name
-     * @param mesh        the parameter's domain of definition.
      * @param vec_expression_str  a vector of mathematical expressions
      * The vector size specifies the number of components of the parameter.
      */
     FunctionParameter(std::string const& name,
-                      MeshLib::Mesh const& mesh,
                       std::vector<std::string> const& vec_expression_str)
-        : Parameter<T>(name, &mesh), _vec_expression_str(vec_expression_str)
+        : Parameter<T>(name, nullptr), _vec_expression_str(vec_expression_str)
     {
         _symbol_table.add_constants();
         _symbol_table.create_variable("x");
@@ -89,14 +84,6 @@ struct FunctionParameter final : public Parameter<T>
             y = coords[1];
             z = coords[2];
         }
-        else if (pos.getNodeID())
-        {
-            auto const& node =
-                *ParameterBase::_mesh->getNode(pos.getNodeID().get());
-            x = node[0];
-            y = node[1];
-            z = node[2];
-        }
 
         for (unsigned i = 0; i < _vec_expression.size(); i++)
         {
@@ -118,7 +105,6 @@ private:
 };
 
 std::unique_ptr<ParameterBase> createFunctionParameter(
-    std::string const& name, BaseLib::ConfigTree const& config,
-    MeshLib::Mesh const& mesh);
+    std::string const& name, BaseLib::ConfigTree const& config);
 
 }  // namespace ParameterLib
