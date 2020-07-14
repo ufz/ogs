@@ -141,6 +141,7 @@ void Process::setInitialConditions(const int process_id, double const t,
                                           node->getID());
 
                 pos.setNodeID(node->getID());
+                pos.setCoordinates(*node);
                 auto const& ic_value = ic(t, pos);
 
                 auto global_index =

@@ -77,13 +77,16 @@ struct FunctionParameter final : public Parameter<T>
         auto& x = _symbol_table.get_variable("x")->ref();
         auto& y = _symbol_table.get_variable("y")->ref();
         auto& z = _symbol_table.get_variable("z")->ref();
-        if (pos.getCoordinates())
+        if (!pos.getCoordinates())
         {
-            auto const coords = pos.getCoordinates().get();
-            x = coords[0];
-            y = coords[1];
-            z = coords[2];
+            OGS_FATAL(
+                "FunctionParameter: The spatial position has to be set by "
+                "coordinates.");
         }
+        auto const coords = pos.getCoordinates().get();
+        x = coords[0];
+        y = coords[1];
+        z = coords[2];
 
         for (unsigned i = 0; i < _vec_expression.size(); i++)
         {
