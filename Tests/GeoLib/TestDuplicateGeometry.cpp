@@ -67,19 +67,21 @@ TEST(GeoLib, DuplicateGeometry)
     }
 
     // add polylines
-    std::size_t n_plys (rand() % 10 + 1);
-    auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
-    for (std::size_t i=0; i<n_plys; ++i)
     {
-        int n_ply_pnts (rand() % 100 + 2);
-        auto* line = new GeoLib::Polyline(*geo.getPointVec(input_name));
-        for (std::size_t j = 0; j < static_cast<std::size_t>(n_ply_pnts); ++j)
+        int const n_plys = std::rand() % 10 + 1;
+        auto plys = std::make_unique<std::vector<GeoLib::Polyline*>>();
+        for (int i = 0; i < n_plys; ++i)
         {
-            line->addPoint(rand() % n_pnts);
+            int const n_ply_pnts = std::rand() % 100 + 2;
+            auto* line = new GeoLib::Polyline(*geo.getPointVec(input_name));
+            for (int j = 0; j < n_ply_pnts; ++j)
+            {
+                line->addPoint(std::rand() % n_pnts);
+            }
+            plys->push_back(line);
         }
-        plys->push_back(line);
+        geo.addPolylineVec(std::move(plys), input_name);
     }
-    geo.addPolylineVec(std::move(plys), input_name);
 
     // duplicate polylines
     {
@@ -89,9 +91,9 @@ TEST(GeoLib, DuplicateGeometry)
 
         std::vector<GeoLib::Polyline*> const*const plys (geo.getPolylineVec(input_name));
         std::vector<GeoLib::Polyline*> const*const new_plys (geo.getPolylineVec(output2));
-        ASSERT_EQ(n_plys, new_plys->size());
+        ASSERT_EQ(plys->size(), new_plys->size());
 
-        for (std::size_t i=0; i<n_plys; ++i)
+        for (std::size_t i = 0; i < plys->size(); ++i)
         {
             std::size_t const n_ply_pnts ((*new_plys)[i]->getNumberOfPoints());
             ASSERT_EQ(n_ply_pnts, (*plys)[i]->getNumberOfPoints());
@@ -110,27 +112,24 @@ TEST(GeoLib, DuplicateGeometry)
     }
 
     // add surfaces
-    std::size_t n_sfcs (rand() % 10 + 1);
-    auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
-    for (std::size_t i=0; i<n_sfcs; ++i)
     {
-        int n_tris (rand() % 10);
-        auto* sfc = new GeoLib::Surface(*geo.getPointVec(input_name));
-        for (std::size_t j = 0; j < static_cast<std::size_t>(n_tris); ++j)
+        int const n_sfcs = std::rand() % 10 + 1;
+        auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
+        for (int i = 0; i < n_sfcs; ++i)
         {
-            sfc->addTriangle(rand() % n_pnts, rand() % n_pnts, rand() % n_pnts);
-        }
-        if (sfc->getNumberOfTriangles() > 0)
-        {
+            int const n_tris = std::rand() % 10 + 1;
+            auto* sfc = new GeoLib::Surface(*geo.getPointVec(input_name));
+            for (int j = 0; j < n_tris; ++j)
+            {
+                sfc->addTriangle(std::rand() % n_pnts,
+                                 std::rand() % n_pnts,
+                                 std::rand() % n_pnts);
+            }
+            ASSERT_GT(sfc->getNumberOfTriangles(), 0);
             sfcs->push_back(sfc);
         }
-        else
-        {
-            delete sfc;
-        }
+        geo.addSurfaceVec(std::move(sfcs), input_name);
     }
-    n_sfcs = sfcs->size();
-    geo.addSurfaceVec(std::move(sfcs), input_name);
 
     // duplicate surfaces
     {
@@ -140,9 +139,9 @@ TEST(GeoLib, DuplicateGeometry)
 
         std::vector<GeoLib::Surface*> const* sfcs (geo.getSurfaceVec(input_name));
         std::vector<GeoLib::Surface*> const* new_sfcs (geo.getSurfaceVec(output2));
-        ASSERT_EQ(n_sfcs, new_sfcs->size());
+        ASSERT_EQ(sfcs->size(), new_sfcs->size());
 
-        for (std::size_t i=0; i<n_sfcs; ++i)
+        for (std::size_t i = 0; i < sfcs->size(); ++i)
         {
             std::size_t const n_tris ((*new_sfcs)[i]->getNumberOfTriangles());
             ASSERT_EQ(n_tris, (*sfcs)[i]->getNumberOfTriangles());
