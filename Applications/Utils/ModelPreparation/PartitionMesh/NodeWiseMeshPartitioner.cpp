@@ -786,8 +786,7 @@ void writePropertiesBinary(const std::string& file_name_base,
                         partition.numberOfMeshItems(mesh_item_type))};
         DBUG(
             "Write meta data for node-based PropertyVector: global offset "
-            "{:d}, "
-            "number of tuples {:d}",
+            "{:d}, number of tuples {:d}",
             pvpmd.offset, pvpmd.number_of_tuples);
         MeshLib::IO::writePropertyVectorPartitionMetaData(out, pvpmd);
         offset += pvpmd.number_of_tuples;
