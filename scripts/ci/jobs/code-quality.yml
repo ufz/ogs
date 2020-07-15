@@ -1,5 +1,6 @@
 code_quality:
   stage: check
+  tags: [docker, envinf1]
   needs: []
   rules:
   variables:
