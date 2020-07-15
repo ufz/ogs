@@ -2,3 +2,6 @@ version: "2"
 exclude_patterns:
   - "ThirdParty/"
   - "Tests/Data/"
+plugins:
+  markdownlint:
+    enabled: true
