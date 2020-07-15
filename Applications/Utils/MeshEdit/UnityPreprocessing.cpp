@@ -28,9 +28,11 @@
 
 bool containsCellVecs(MeshLib::Mesh const& mesh)
 {
-    MeshLib::Properties const& props (mesh.getProperties());
-    std::vector<std::string> const& vec_names(props.getPropertyVectorNames(MeshLib::MeshItemType::Cell));
-    return !vec_names.empty();
+    auto is_cell_property = [](auto const p) {
+        return p.second->getMeshItemType() == MeshLib::MeshItemType::Cell;
+    };
+    return std::any_of(mesh.getProperties().begin(), mesh.getProperties().end(),
+                       is_cell_property);
 }
 
 template <class T>
@@ -50,81 +52,108 @@ MeshLib::Element* createElement(MeshLib::Element const& e,
 }
 
 template <class T>
-bool fillPropVec(MeshLib::Properties const& props,
-    std::string const& name,
-    MeshLib::Properties &new_props,
-    std::vector<MeshLib::Element*> const& elems,
-    std::vector<std::vector<std::size_t>> const& node_map,
-    std::size_t total_nodes)
+void fillPropVec(MeshLib::PropertyVector<T> const& property,
+                 MeshLib::Properties& new_props,
+                 std::vector<MeshLib::Element*> const& elems,
+                 std::vector<std::vector<std::size_t>> const& node_map,
+                 std::size_t const total_nodes)
 {
-    if (!props.existsPropertyVector<T>(name))
+    assert(property.getNumberOfComponents() == 1);
+    MeshLib::PropertyVector<T>* new_property =
+        new_props.createNewPropertyVector<T>(property.getPropertyName(),
+                                             MeshLib::MeshItemType::Node, 1);
+    new_property->resize(total_nodes);
+    if (property.getMeshItemType() == MeshLib::MeshItemType::Node)
     {
-        return false;
-    }
-
-    MeshLib::PropertyVector<T> const*const vec = props.getPropertyVector<T>(name);
-    if (vec->getNumberOfComponents() != 1)
-    {
-        INFO("Ignoring array '{:s}' (more than one component).", name);
-        return false;
-    }
-
-    MeshLib::PropertyVector<T>* new_vec =
-        new_props.createNewPropertyVector<T>(vec->getPropertyName(), MeshLib::MeshItemType::Node, 1);
-    new_vec->resize(total_nodes);
-    if (vec->getMeshItemType() == MeshLib::MeshItemType::Node)
-    {
-        INFO("Migrating node array '{:s}' to new mesh structure...", name);
+        INFO("Migrating node array '{:s}' to new mesh structure...",
+             property.getPropertyName());
         std::size_t const n_nodes (node_map.size());
         for (std::size_t i = 0; i<n_nodes; ++i)
         {
             std::size_t const n_nodes_i = node_map[i].size();
             for (std::size_t j = 0; j < n_nodes_i; ++j)
             {
-                (*new_vec)[node_map[i][j]] = (*vec)[i];
+                (*new_property)[node_map[i][j]] = property[i];
             }
         }
     }
-    else if (vec->getMeshItemType() == MeshLib::MeshItemType::Cell)
+    else if (property.getMeshItemType() == MeshLib::MeshItemType::Cell)
     {
-        INFO("Transforming cell array '{:s}' into node array...", name);
-        std::size_t const n_elems (vec->size());
+        INFO("Transforming cell array '{:s}' into node array...",
+             property.getPropertyName());
+        std::size_t const n_elems(property.size());
         for (std::size_t i = 0; i<n_elems; ++i)
         {
             std::size_t const n_nodes = elems[i]->getNumberOfNodes();
             for (std::size_t j = 0; j < n_nodes; ++j)
             {
-                (*new_vec)[elems[i]->getNodeIndex(j)] = (*vec)[i];
+                (*new_property)[elems[i]->getNodeIndex(j)] = property[i];
             }
         }
     }
-    return true;
 }
 
-MeshLib::Properties constructProperties(MeshLib::Properties const& props,
+MeshLib::Properties constructProperties(
+    MeshLib::Properties const& properties,
     std::vector<MeshLib::Element*> const& elems,
     std::vector<std::vector<std::size_t>> const& node_map,
-    std::size_t n_nodes)
+    std::size_t const n_nodes)
 {
-    std::vector<std::string> const& names = props.getPropertyVectorNames();
-    MeshLib::Properties new_props;
-    for (std::string const& name : names)
+    using namespace MeshLib;
+    Properties new_properties;
+    for (auto [name, property] : properties)
     {
-        if (fillPropVec<int>(props, name, new_props, elems, node_map, n_nodes))
+        if (property->getNumberOfComponents() != 1)
         {
+            INFO("Ignoring array '{:s}' (more than one component).", name);
             continue;
         }
-        if (fillPropVec<double>(props, name, new_props, elems, node_map,
-                                n_nodes))
+
+        if (auto const p = dynamic_cast<PropertyVector<double>*>(property))
         {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
             continue;
         }
-        if (fillPropVec<long>(props, name, new_props, elems, node_map, n_nodes))
+        else if (auto const p = dynamic_cast<PropertyVector<float>*>(property))
         {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
+            continue;
+        }
+        else if (auto const p = dynamic_cast<PropertyVector<int>*>(property))
+        {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
+            continue;
+        }
+        else if (auto const p =
+                     dynamic_cast<PropertyVector<unsigned>*>(property))
+        {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
+            continue;
+        }
+        else if (auto const p = dynamic_cast<PropertyVector<long>*>(property))
+        {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
+            continue;
+        }
+        else if (auto const p =
+                     dynamic_cast<PropertyVector<unsigned long>*>(property))
+        {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
+            continue;
+        }
+        else if (auto const p =
+                     dynamic_cast<PropertyVector<std::size_t>*>(property))
+        {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
+            continue;
+        }
+        else if (auto const p = dynamic_cast<PropertyVector<char>*>(property))
+        {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
             continue;
         }
     }
-    return new_props;
+    return new_properties;
 }
 
 MeshLib::Mesh* constructMesh(MeshLib::Mesh const& mesh)

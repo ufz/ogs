@@ -31,8 +31,8 @@ TEST(FileIO, TestGmsInterface)
     ASSERT_EQ(1355, types.at(MeshLib::MeshElemType::PYRAMID));      // pyramids
     ASSERT_EQ(17074, types.at(MeshLib::MeshElemType::PRISM));       // prism
     auto const& bounds =
-        MeshLib::MeshInformation::getValueBounds<int>(*mesh, "MaterialIDs");
-    ASSERT_TRUE(boost::none != bounds);
+        MeshLib::MeshInformation::getValueBounds(*materialIDs(*mesh));
+    ASSERT_TRUE(bounds.has_value());
     ASSERT_EQ(1, bounds->first);
     ASSERT_EQ(63, bounds->second);
 }

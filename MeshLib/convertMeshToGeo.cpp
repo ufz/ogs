@@ -97,8 +97,7 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
             return std::make_tuple(nullptr, std::make_pair(0, 0));
         }
 
-        auto const bounds =
-            MeshInformation::getValueBounds<int>(mesh, "MaterialIDs");
+        auto const bounds = MeshInformation::getValueBounds(*materialIds);
         if (!bounds)
         {
             OGS_FATAL(

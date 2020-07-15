@@ -17,6 +17,7 @@
 #include <array>
 #include <limits>
 #include <map>
+#include <optional>
 #include <string>
 
 #include "GeoLib/AABB.h"
@@ -35,24 +36,18 @@ public:
     /// Returns the smallest and largest value of a scalar array with the given
     /// name.
     template <typename T>
-    static boost::optional<std::pair<T, T>> const getValueBounds(
-        MeshLib::Mesh const& mesh, std::string const& name)
+    static std::optional<std::pair<T, T>> const getValueBounds(
+        PropertyVector<T> const& property)
     {
-        if (!mesh.getProperties().existsPropertyVector<T>(name))
+        if (property.empty())
         {
-            return {};
-        }
-
-        auto const* const data_vec =
-            mesh.getProperties().getPropertyVector<T>(name);
-        if (data_vec->empty())
-        {
-            INFO("Mesh does not contain values for the property '{:s}'.", name);
-            return {};
+            INFO("Mesh property vector '{:s}' is empty.",
+                 property.getPropertyName());
+            return std::nullopt;
         }
 
         auto const [min, max] =
-            std::minmax_element(begin(*data_vec), end(*data_vec));
+            std::minmax_element(begin(property), end(property));
         return {{*min, *max}};
     }
 

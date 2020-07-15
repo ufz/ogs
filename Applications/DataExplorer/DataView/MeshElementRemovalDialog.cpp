@@ -178,28 +178,14 @@ void MeshElementRemovalDialog::reject()
 
 std::size_t MeshElementRemovalDialog::addScalarArrays(MeshLib::Mesh const& mesh) const
 {
-    MeshLib::Properties const& properties = mesh.getProperties();
-    std::vector<std::string> const& names = properties.getPropertyVectorNames();
-    for (auto const& name : names)
+    for (auto [name, property] : mesh.getProperties())
     {
-        if (properties.existsPropertyVector<int>(name))
+        if (property->getMeshItemType() != MeshLib::MeshItemType::Cell)
         {
-            auto const& p = properties.getPropertyVector<int>(name);
-            if (p->getMeshItemType() == MeshLib::MeshItemType::Cell)
-            {
-                this->scalarArrayComboBox->addItem(QString::fromStdString(name));
-                enableScalarArrayWidgets(true);
-            }
+            continue;
         }
-        if (properties.existsPropertyVector<double>(name))
-        {
-            auto const& p = properties.getPropertyVector<double>(name);
-            if (p->getMeshItemType() == MeshLib::MeshItemType::Cell)
-            {
-                this->scalarArrayComboBox->addItem(QString::fromStdString(name));
-                enableScalarArrayWidgets(true);
-            }
-        }
+        this->scalarArrayComboBox->addItem(QString::fromStdString(name));
+        enableScalarArrayWidgets(true);
     }
     return this->scalarArrayComboBox->count();
 }

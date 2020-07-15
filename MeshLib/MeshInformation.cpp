@@ -17,6 +17,23 @@
 #include "Elements/Element.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 
+namespace
+{
+template <typename T>
+void printBounds(MeshLib::PropertyVector<T> const& property)
+{
+    auto const bounds = MeshLib::MeshInformation::getValueBounds(property);
+    if (!bounds.has_value())
+    {
+        INFO("\t{:s}: Could not get value bounds for property vector.",
+             property.getPropertyName());
+        return;
+    }
+    INFO("\t{:s}: ({:d} values) [{}, {}]", property.getPropertyName(),
+         property.size(), bounds->first, bounds->second);
+}
+}  // namespace
+
 namespace MeshLib
 {
 GeoLib::AABB MeshInformation::getBoundingBox(const MeshLib::Mesh& mesh)
@@ -55,28 +72,50 @@ void MeshInformation::writeAllNumbersOfElementTypes(const MeshLib::Mesh& mesh)
 
 void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
 {
-    std::vector<std::string> const& vec_names(
-        mesh.getProperties().getPropertyVectorNames());
-    INFO("There are {:d} properties in the mesh:", vec_names.size());
-    for (const auto& vec_name : vec_names)
+    auto const& properties = mesh.getProperties();
+    INFO("There are {:d} properties in the mesh:", properties.size());
+
+    for (auto [name, property] : properties)
     {
-        if (auto const vec_bounds =
-                MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_name))
+        if (auto p = dynamic_cast<PropertyVector<double>*>(property))
         {
-            INFO("\t{:s}: [{:d}, {:d}]", vec_name, vec_bounds->first,
-                 vec_bounds->second);
+            printBounds(*p);
         }
-        else if (auto const vec_bounds =
-                     MeshLib::MeshInformation::getValueBounds<double>(mesh,
-                                                                      vec_name))
+        else if (auto p = dynamic_cast<PropertyVector<float>*>(property))
         {
-            INFO("\t{:s}: [{:g}, {:g}]", vec_name, vec_bounds->first,
-                 vec_bounds->second);
+            printBounds(*p);
+        }
+        else if (auto p = dynamic_cast<PropertyVector<int>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p = dynamic_cast<PropertyVector<unsigned>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p = dynamic_cast<PropertyVector<long>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p =
+                     dynamic_cast<PropertyVector<unsigned long>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p = dynamic_cast<PropertyVector<std::size_t>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p = dynamic_cast<PropertyVector<char>*>(property))
+        {
+            printBounds(*p);
         }
         else
         {
-            INFO("\t{:s}: Could not get value bounds for property vector.",
-                 vec_name);
+            INFO(
+                "\t{:s}: Could not get value bounds for property vector of "
+                "type '{:s}'.",
+                name, typeid(*p).name());
         }
     }
 }

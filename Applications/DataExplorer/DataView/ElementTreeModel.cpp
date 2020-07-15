@@ -25,6 +25,22 @@
 
 #include "TreeItem.h"
 
+namespace
+{
+template <typename PropertyType>
+QList<QVariant> propertyBounds(PropertyType const& property)
+{
+    auto const bounds = MeshLib::MeshInformation::getValueBounds(property);
+    if (bounds.has_value())
+    {
+        return {"[" + QString::number(bounds->first) + ",",
+                QString::number(bounds->second) + "]"};
+    }
+    // Makeup the same structure of output as in the valid case above.
+    return {"[empty,", "empty]"};
+}
+}  // namespace
+
 /**
  * Constructor.
  */
@@ -168,39 +184,55 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
     auto* edge_item = new TreeItem(edges, _rootItem);
     _rootItem->appendChild(edge_item);
 
-    std::vector<std::string> const& vec_names (mesh.getProperties().getPropertyVectorNames());
-    for (const auto& vec_name : vec_names)
+    for (auto [name, property] : mesh.getProperties())
     {
-        QList<QVariant> array_info;
-        array_info << QString::fromStdString(vec_name) + ": ";
-        if (auto const vec_bounds =  // test if boost::optional is empty
-            MeshLib::MeshInformation::getValueBounds<int>(mesh, vec_name))
+        QList<QVariant> array_info{QString::fromStdString(name) + ": "};
+
+        if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {
-            array_info << "[" + QString::number(vec_bounds->first) + ","
-                       << QString::number(vec_bounds->second) + "]";
+            array_info.append(propertyBounds(*p));
         }
-        else if (auto const vec_bounds =  // test if boost::optional is empty
-                 MeshLib::MeshInformation::getValueBounds<double>(mesh,
-                                                                  vec_name))
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<float>*>(property))
         {
-            array_info << "[" + QString::number(vec_bounds->first) + ","
-                       << QString::number(vec_bounds->second) + "]";
+            array_info.append(propertyBounds(*p));
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<int>*>(property))
+        {
+            array_info.append(propertyBounds(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned>*>(property))
+        {
+            array_info.append(propertyBounds(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<long>*>(property))
+        {
+            array_info.append(propertyBounds(*p));
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
+                     property))
+        {
+            array_info.append(propertyBounds(*p));
+        }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<std::size_t>*>(
+                     property))
+        {
+            array_info.append(propertyBounds(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<char>*>(property))
+        {
+            array_info.append(propertyBounds(*p));
         }
         else
-        {
-            // Makeup the same structure of output as in the valid cases above.
-            array_info << "[error,"
-                       << "error]";
-        }
-
-        if (array_info.size() == 1)
-        {
+        {  // Unhandled property vector type.
             array_info << "[ ?"
                        << "? ]"
                        << "";
         }
-        auto* vec_item = new TreeItem(array_info, _rootItem);
-        _rootItem->appendChild(vec_item);
+        _rootItem->appendChild(new TreeItem(array_info, _rootItem));
     }
 
     endResetModel();
