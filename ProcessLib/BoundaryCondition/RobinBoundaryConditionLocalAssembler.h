@@ -31,6 +31,7 @@ class RobinBoundaryConditionLocalAssembler final
 {
     using Base = GenericNaturalBoundaryConditionLocalAssembler<
         ShapeFunction, IntegrationMethod, GlobalDim>;
+    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
 
 public:
     RobinBoundaryConditionLocalAssembler(MeshLib::Element const& e,
@@ -65,15 +66,17 @@ public:
             _data.u_0.getNodalValuesOnElement(Base::_element, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
 
-        ParameterLib::SpatialPosition position;
-        position.setElementID(Base::_element.getID());
-
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            position.setIntegrationPoint(ip);
             auto const& ip_data = Base::_ns_and_weights[ip];
             auto const& N = ip_data.N;
             auto const& w = ip_data.weight;
+
+            ParameterLib::SpatialPosition const position{
+                boost::none, Base::_element.getID(), ip,
+                MathLib::Point3d(
+                    interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
+                        Base::_element, N))};
 
             double integral_measure = 1.0;
             if (_data.integral_measure)

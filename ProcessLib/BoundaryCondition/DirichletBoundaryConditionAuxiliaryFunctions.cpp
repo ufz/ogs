@@ -94,6 +94,7 @@ void getEssentialBCValuesLocal(
         if (global_index >= 0)
         {
             pos.setNodeID(id);
+            pos.setCoordinates(*node);
             bc_values.ids.emplace_back(global_index);
             bc_values.values.emplace_back(parameter(t, pos).front());
         }
