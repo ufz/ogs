@@ -2,8 +2,8 @@
 date = "2017-02-15T14:54:12+01:00"
 title = "Heatconduction (Neumann)"
 weight = 122
-project = "Parabolic/T/1D_neumann/line_60_heat.prj"
-author = "Tianyuan Zheng"
+project = "Parabolic/T/1D_neumann/picard.prj"
+author = "Dmitri Naumov, Tianyuan Zheng"
 
 [menu]
   [menu.benchmarks]
@@ -36,12 +36,16 @@ We solve the parabolic equation on a line domain $[60\times 1]$ with $\lambda  =
 
 $$
 \eqalign{
-\lambda  {\partial T(x) \over \partial n} = 2 &\quad \text{on } (x=0) \subset \Gamma_N.\cr
+\lambda  {\partial T(x) \over \partial n} = q &\quad \text{on } (x=0) \subset \Gamma_N.\cr
 \lambda  {\partial T(x) \over \partial n} = 0 &\quad \text{on } (x=60) \subset \Gamma_N.
 }
 $$
 
-The solution of this problem is
+with flux value being $q = 2$.
+
+Approximate solution of this problem is the solution for semi-infinite rod,
+which is applicable as long as the temperature does not come close to the right
+side of the domain:
 $$
 \begin{equation}
 T(x,t) = \frac{2q}{\lambda}\left(\left(\frac{\alpha t}{\pi}\right)^{\frac{1}{2}} e^{-x^2/4\alpha t} - \frac{x}{2}\textrm{erfc}\left( \frac{x}{2\sqrt{\alpha  t}}\right)\right),
@@ -51,22 +55,36 @@ where $T_\textrm{b}$ is the boundary temperature, $\textrm{erfc}$ is the complem
 
 ## Input files
 
-The main project file is `line_60_heat.prj`. It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
+The main project file is `picard.prj`. It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
+The geometries used to specify the boundary conditions are given in the
+`line_60_geometry.gml` file.  The input mesh is stored in the `mesh.vtu` file.
 
-As of now a small portion of possible inputs is implemented; one can change:
- - the mesh file
- - the geometry file
- - introduce more/different Dirichlet boundary conditions (different geometry or other constant values)
- - introduce more/different Neumann boundary conditions (different geometry or other constant values)
+Same project was also setup to be solved with the Newton-Raphson method, see
+`newton.prj` input file.
 
-The geometries used to specify the boundary conditions are given in the `line_60_heat.gml` file.
-
-The input mesh `line_60_heat.vtu` is stored in the VTK file format and can be directly visualized in Paraview for example.
+Another two project files were tested with a mass-lumping method used to
+reduce oscillations for particularly small ratios of element size to time step
+increment. See `picard_masslumping.prj` and `newton_masslumping.prj` files.
 
 ## Results and evaluation
 
-The result, written in the `.vtu` file, can be visualized with Paraview, for example.
+### Picard vs. Newton
 
-Loading the `line_60_heat_pcs_0_ts_65_t_5078125.000000.vtu` file in Paraview and Plotting over line. Compared to the analytical solution 'temperature_analytical.vtu', the results are very good:
+For the simple equation, as expected, the difference between the Picard and
+Newton non-linear solvers is reasonable for the given non-linear solver
+tolerances.
 
-{{< img src="../validation_neumann-1.png" >}}
+|          |                    |
+|----------|--------------------|
+| {{< img title="Time step 1, time 78125s."      src="../picard_vs_newton_ts_1_t_78125.png"      >}} | {{< img title="Time step 3, time 234375s."     src="../picard_vs_newton_ts_3_t_234375.png"     >}} |
+| {{< img title="Time step 65, time 5078125s."   src="../picard_vs_newton_ts_65_t_5078125.png"   >}} | {{< img title="Time step 405, time 31640625s." src="../picard_vs_newton_ts_405_t_31640625.png" >}} |
+
+### Mass-lumping and analytical solution
+
+Using the mass-lumping method reduces the oscillations for the first time steps
+on cost of accuracy as the error is significantly larger.
+
+|          |                    |
+|----------|--------------------|
+| {{< img title="Time step 1, time 78125s."      src="../temperature_error_ts_1_t_78125.png"      >}} | {{< img title="Time step 3, time 234375s."     src="../temperature_error_ts_3_t_234375.png"     >}} |
+| {{< img title="Time step 65, time 5078125s."   src="../temperature_error_ts_65_t_5078125.png"   >}} | {{< img title="Time step 405, time 31640625s." src="../temperature_error_ts_405_t_31640625.png" >}} |

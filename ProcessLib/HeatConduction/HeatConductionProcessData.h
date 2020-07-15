@@ -23,5 +23,8 @@ struct HeatConductionProcessData
     ParameterLib::Parameter<double> const& thermal_conductivity;
     ParameterLib::Parameter<double> const& heat_capacity;
     ParameterLib::Parameter<double> const& density;
+
+    /// If set mass lumping will be applied to the equation.
+    bool const mass_lumping;
 };
 }  // namespace ProcessLib::HeatConduction

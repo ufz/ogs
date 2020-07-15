@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>line_60_heat.vtu</mesh>
-    <geometry>line_60_heat.gml</geometry>
+    <mesh>mesh.vtu</mesh>
+    <geometry>line_60_geometry.gml</geometry>
     <processes>
         <process>
             <name>HeatConduction</name>
@@ -16,16 +16,17 @@
             <secondary_variables>
                 <secondary_variable internal_name="heat_flux_x" output_name="heat_flux_x"/>
             </secondary_variables>
+            <mass_lumping>true</mass_lumping>
         </process>
     </processes>
     <time_loop>
         <processes>
             <process ref="HeatConduction">
-                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <nonlinear_solver>nonlinear_solver</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1.e-6</abstol>
+                    <abstol>1e-16</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -45,11 +46,19 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>line_60_heat_pcs_{:process_id}</prefix>
+            <prefix>newton_masslumping</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
-                    <each_steps> 65 </each_steps>
+                    <each_steps> 1 </each_steps>
+                </pair>
+                <pair>
+                    <repeat> 1 </repeat>
+                    <each_steps> 2 </each_steps>
+                </pair>
+                <pair>
+                    <repeat> 1 </repeat>
+                    <each_steps> 62 </each_steps>
                 </pair>
                 <pair>
                     <repeat> 1 </repeat>
@@ -108,8 +117,8 @@
     </process_variables>
     <nonlinear_solvers>
         <nonlinear_solver>
-            <name>basic_picard</name>
-            <type>Picard</type>
+            <name>nonlinear_solver</name>
+            <type>Newton</type>
             <max_iter>10</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>

@@ -128,6 +128,71 @@ public:
                                  sm.N * sm.detJ * wp.getWeight() *
                                  sm.integralMeasure;
         }
+        if (_process_data.mass_lumping)
+        {
+            local_M = local_M.colwise().sum().eval().asDiagonal();
+        }
+    }
+
+    void assembleWithJacobian(double const t, double const dt,
+                              std::vector<double> const& local_x,
+                              std::vector<double> const& local_xdot,
+                              const double /*dxdot_dx*/, const double /*dx_dx*/,
+                              std::vector<double>& /*local_M_data*/,
+                              std::vector<double>& /*local_K_data*/,
+                              std::vector<double>& local_rhs_data,
+                              std::vector<double>& local_Jac_data) override
+    {
+        auto const local_matrix_size = local_x.size();
+        // This assertion is valid only if all nodal d.o.f. use the same shape
+        // matrices.
+        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
+
+        auto x = Eigen::Map<NodalVectorType const>(local_x.data(),
+                                                   local_matrix_size);
+
+        auto x_dot = Eigen::Map<NodalVectorType const>(local_xdot.data(),
+                                                       local_matrix_size);
+
+        auto local_Jac = MathLib::createZeroedMatrix<NodalMatrixType>(
+            local_Jac_data, local_matrix_size, local_matrix_size);
+        auto local_rhs = MathLib::createZeroedVector<NodalVectorType>(
+            local_rhs_data, local_matrix_size);
+
+        NodalMatrixType laplace =
+            NodalMatrixType::Zero(local_matrix_size, local_matrix_size);
+        NodalMatrixType storage =
+            NodalMatrixType::Zero(local_matrix_size, local_matrix_size);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            pos.setIntegrationPoint(ip);
+            auto const& sm = _shape_matrices[ip];
+            double const w =
+                _integration_method.getWeightedPoint(ip).getWeight() * sm.detJ *
+                sm.integralMeasure;
+
+            auto const k = _process_data.thermal_conductivity(t, pos)[0];
+            auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
+            auto const density = _process_data.density(t, pos)[0];
+
+            laplace.noalias() += sm.dNdx.transpose() * k * sm.dNdx * w;
+            storage.noalias() +=
+                sm.N.transpose() * density * heat_capacity * sm.N * w;
+        }
+        if (_process_data.mass_lumping)
+        {
+            storage = storage.colwise().sum().eval().asDiagonal();
+        }
+
+        local_Jac.noalias() += laplace + storage / dt;
+        local_rhs.noalias() -= laplace * x + storage * x_dot;
     }
 
     void computeSecondaryVariableConcrete(
