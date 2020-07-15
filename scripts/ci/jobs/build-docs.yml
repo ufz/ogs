@@ -15,7 +15,7 @@ build docs:
     expose_as: 'Doxygen'
     paths:
       - Doxygen.html
-      - build/docs/
+      - build/docs
     expire_in: 1 week
 
 check docs links:
