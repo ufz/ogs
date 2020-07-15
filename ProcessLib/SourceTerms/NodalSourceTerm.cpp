@@ -46,6 +46,7 @@ void NodalSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
 
         ParameterLib::SpatialPosition pos;
         pos.setNodeID(node_id);
+        pos.setCoordinates(*node);
 
         b.add(index, _parameter(t, pos).front());
     }
