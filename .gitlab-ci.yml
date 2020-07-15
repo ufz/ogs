@@ -28,7 +28,6 @@ workflow:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH  # master, ogs/ogs repo only
 
 include:
-  - template: 'Code-Quality.gitlab-ci.yml'
   # extends
   - local: '/scripts/ci/extends/defaults.yml'
   - local: '/scripts/ci/extends/rules.yml'
@@ -37,7 +36,8 @@ include:
   - local: '/scripts/ci/extends/container-maker-setup.yml'
   - local: '/scripts/ci/extends/vs2019-environment.yml'
   - local: '/scripts/ci/extends/test-artifacts.yml'
-  # jobs
+  - local: '/scripts/ci/jobs/meta.yml'
+  # jobs, can be indiviually disabled for testing
   - local: '/scripts/ci/jobs/pre-commit.yml'
   - local: '/scripts/ci/jobs/build_image.yml'
   - local: '/scripts/ci/jobs/build-linux.yml'
@@ -47,14 +47,14 @@ include:
   - local: '/scripts/ci/jobs/build-win.yml'
   - local: '/scripts/ci/jobs/build-mac.yml'
   - local: '/scripts/ci/jobs/checks.yml'
-  - local: '/scripts/ci/jobs/container.yml'
+  - template: 'Code-Quality.gitlab-ci.yml'
+  - local: '/scripts/ci/jobs/code-quality.yml'
   - local: '/scripts/ci/jobs/build-gui-linux.yml'
   - local: '/scripts/ci/jobs/build-gui-win.yml'
   - local: '/scripts/ci/jobs/build-gui-mac.yml'
   - local: '/scripts/ci/jobs/check-header.yml'
   - local: '/scripts/ci/jobs/tests-large.yml'
-  - local: '/scripts/ci/jobs/web.yml'
   - local: '/scripts/ci/jobs/clang-sanitizer.yml'
   - local: '/scripts/ci/jobs/clang-tidy.yml'
-  - local: '/scripts/ci/jobs/code-quality.yml'
-  - local: '/scripts/ci/jobs/meta.yml'
+  - local: '/scripts/ci/jobs/web.yml'
+  - local: '/scripts/ci/jobs/container.yml'
