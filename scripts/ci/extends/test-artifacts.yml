@@ -4,6 +4,8 @@
       - $BUILD_DIR/Tests/ctest.xml
       - $BUILD_DIR/Tests/testrunner.xml
       - $BUILD_DIR/make.output
+      - $BUILD_DIR/*.zip
+      - $BUILD_DIR/*.tar.gz
     expire_in: 1 week
     reports:
       junit:

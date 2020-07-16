@@ -4,6 +4,7 @@
     - windows
   extends:
     - .vs2019-environment
+    - .test-artifacts
   dependencies: [meta, meta_container]
   variables:
   script:
@@ -18,13 +19,3 @@
     - if($env:BUILD_TESTS -eq "true") { cmake --build . --target tests }
     - if($env:BUILD_CTEST -eq "true") { cmake --build . --target ctest }
     - if($env:BUILD_CTEST -eq "true") { cp Testing/**/Test.xml Tests/ctest.xml }
-  artifacts:
-    paths:
-      - $BUILD_DIR/Tests/ctest.xml
-      - $BUILD_DIR/Tests/testrunner.xml
-      - $BUILD_DIR/make.output
-      - $BUILD_DIR/*.zip
-    expire_in: 1 week
-    reports:
-      junit:
-        - $BUILD_DIR/Tests/testrunner.xml
