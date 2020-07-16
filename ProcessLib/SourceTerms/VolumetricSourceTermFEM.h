@@ -32,13 +32,13 @@ public:
     virtual ~VolumetricSourceTermLocalAssemblerInterface() = default;
 };
 
-const unsigned NUM_NODAL_DOF = 1;
-
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class VolumetricSourceTermLocalAssembler final
     : public VolumetricSourceTermLocalAssemblerInterface
 {
+    static const unsigned NUM_NODAL_DOF = 1;
+
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
 
     using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
@@ -51,7 +51,7 @@ public:
     VolumetricSourceTermLocalAssembler(
         MeshLib::Element const& element,
         std::size_t const local_matrix_size,
-        bool is_axially_symmetric,
+        bool const is_axially_symmetric,
         unsigned const integration_order,
         ParameterLib::Parameter<double> const& volumetric_source_term)
         : _volumetric_source_term(volumetric_source_term),
