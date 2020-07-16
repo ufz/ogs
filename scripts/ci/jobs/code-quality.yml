@@ -14,7 +14,8 @@ cppcheck:
       codequality: build/cppcheck.json
     expire_in: 1 week
 
-code_quality:
+# Disabled, see !3053
+.code_quality:
   stage: check
   tags: [docker, envinf1]
   needs: []
