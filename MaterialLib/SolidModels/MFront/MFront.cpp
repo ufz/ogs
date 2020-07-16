@@ -11,7 +11,10 @@
 
 #include <MGIS/Behaviour/Integrate.hxx>
 
+#include "MaterialLib/MPL/VariableType.h"
 #include "NumLib/Exceptions.h"
+
+namespace MPL = MaterialPropertyLib;
 
 namespace
 {
@@ -248,6 +251,8 @@ std::optional<std::tuple<typename MFront<DisplacementDim>::KelvinVector,
                              DisplacementDim>::MaterialStateVariables>,
                          typename MFront<DisplacementDim>::KelvinMatrix>>
 MFront<DisplacementDim>::integrateStress(
+    MPL::VariableArray const& variable_array_prev,
+    MPL::VariableArray const& variable_array,
     double const t,
     ParameterLib::SpatialPosition const& x,
     double const dt,

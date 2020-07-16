@@ -309,10 +309,12 @@ public:
             material_state_variables) const override;
 
     std::optional<std::tuple<KelvinVector,
-                               std::unique_ptr<typename MechanicsBase<
-                                   DisplacementDim>::MaterialStateVariables>,
-                               KelvinMatrix>>
+                             std::unique_ptr<typename MechanicsBase<
+                                 DisplacementDim>::MaterialStateVariables>,
+                             KelvinMatrix>>
     integrateStress(
+        MaterialPropertyLib::VariableArray const& variable_array_prev,
+        MaterialPropertyLib::VariableArray const& variable_array,
         double const t, ParameterLib::SpatialPosition const& x, double const dt,
         KelvinVector const& eps_prev, KelvinVector const& eps,
         KelvinVector const& sigma_prev,

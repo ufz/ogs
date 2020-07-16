@@ -33,7 +33,9 @@ std::optional<std::tuple<typename CreepBGRa<DisplacementDim>::KelvinVector,
                              DisplacementDim>::MaterialStateVariables>,
                          typename CreepBGRa<DisplacementDim>::KelvinMatrix>>
 CreepBGRa<DisplacementDim>::integrateStress(
-    double const t, ParameterLib::SpatialPosition const& x, double const dt,
+    MaterialPropertyLib::VariableArray const& variable_array_prev,
+    MaterialPropertyLib::VariableArray const& variable_array, double const t,
+    ParameterLib::SpatialPosition const& x, double const dt,
     KelvinVector const& eps_prev, KelvinVector const& eps,
     KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
