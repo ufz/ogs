@@ -119,7 +119,7 @@ TEST(GeoLib, DuplicateGeometry)
         {
             int const n_tris = std::rand() % 10 + 1;
             auto* sfc = new GeoLib::Surface(*geo.getPointVec(input_name));
-            for (int j = 0; j < n_tris; ++j)
+            while(sfc->getNumberOfTriangles() <= n_tris)
             {
                 sfc->addTriangle(std::rand() % n_pnts,
                                  std::rand() % n_pnts,
