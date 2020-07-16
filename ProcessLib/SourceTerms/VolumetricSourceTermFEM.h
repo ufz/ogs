@@ -18,23 +18,10 @@
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
+#include "SourceTermIntegrationPointData.h"
 
 namespace ProcessLib
 {
-template <typename NodalRowVectorType>
-struct IntegrationPointData final
-{
-    IntegrationPointData(NodalRowVectorType const& N_,
-                         double const& integration_weight_)
-        : integration_weight_times_N(N_ * integration_weight_)
-    {}
-
-    NodalRowVectorType const integration_weight_times_N;
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-};
-
-
 class VolumetricSourceTermLocalAssemblerInterface
 {
 public:
@@ -69,15 +56,16 @@ public:
         ParameterLib::Parameter<double> const& volumetric_source_term)
         : _volumetric_source_term(volumetric_source_term),
           _integration_method(integration_order),
+          _element(element),
           _local_rhs(local_matrix_size)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
         auto const shape_matrices =
-                       initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                         IntegrationMethod, GlobalDim>(
-                           element, is_axially_symmetric, _integration_method);
+            initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                              IntegrationMethod, GlobalDim>(
+                _element, is_axially_symmetric, _integration_method);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -98,16 +86,19 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(id);
-
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
+            auto const& N = _ip_data[ip].N;
+            auto const& w = _ip_data[ip].integration_weight;
+
+            ParameterLib::SpatialPosition const pos{
+                boost::none, _element.getID(), ip,
+                MathLib::Point3d(
+                    interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
+                        _element, N))};
             auto const st_val = _volumetric_source_term(t, pos)[0];
 
-            _local_rhs.noalias() +=
-                st_val * _ip_data[ip].integration_weight_times_N;
+            _local_rhs.noalias() += st_val * w * N;
         }
         auto const indices = NumLib::getIndices(id, source_term_dof_table);
         b.add(indices, _local_rhs);
@@ -117,10 +108,11 @@ private:
     ParameterLib::Parameter<double> const& _volumetric_source_term;
 
     IntegrationMethod const _integration_method;
-    std::vector<
-        IntegrationPointData<NodalRowVectorType>,
-        Eigen::aligned_allocator<IntegrationPointData<NodalRowVectorType>>>
+    std::vector<SourceTermIntegrationPointData<NodalRowVectorType>,
+                Eigen::aligned_allocator<
+                    SourceTermIntegrationPointData<NodalRowVectorType>>>
         _ip_data;
+    MeshLib::Element const& _element;
     NodalVectorType _local_rhs;
 };
 
