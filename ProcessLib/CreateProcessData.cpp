@@ -11,6 +11,9 @@
 #include "BaseLib/Algorithm.h"
 
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
+#ifdef USE_PETSC
+#include "NumLib/ODESolver/PETScNonlinearSolver.h"
+#endif  // USE_PETSC
 #include "NumLib/TimeStepping/CreateTimeStepper.h"
 
 #include "CreateProcessData.h"
@@ -35,7 +38,7 @@ static std::unique_ptr<ProcessData> makeProcessData(
         nonlinear_solver_picard->compensateNonEquilibriumInitialResiduum(
             compensate_non_equilibrium_initial_residuum);
         return std::make_unique<ProcessData>(
-            std::move(timestepper), *nonlinear_solver_picard,
+            std::move(timestepper), Tag::Picard, *nonlinear_solver_picard,
             std::move(conv_crit), std::move(time_disc), process_id, process);
     }
     if (auto* nonlinear_solver_newton =
@@ -45,9 +48,18 @@ static std::unique_ptr<ProcessData> makeProcessData(
         nonlinear_solver_newton->compensateNonEquilibriumInitialResiduum(
             compensate_non_equilibrium_initial_residuum);
         return std::make_unique<ProcessData>(
-            std::move(timestepper), *nonlinear_solver_newton,
+            std::move(timestepper), Tag::Newton, *nonlinear_solver_newton,
             std::move(conv_crit), std::move(time_disc), process_id, process);
     }
+#ifdef USE_PETSC
+    if (auto* nonlinear_solver_petsc =
+            dynamic_cast<NumLib::PETScNonlinearSolver*>(&nonlinear_solver))
+    {
+        return std::make_unique<ProcessData>(
+            std::move(timestepper), Tag::Newton, *nonlinear_solver_petsc,
+            std::move(conv_crit), std::move(time_disc), process_id, process);
+    }
+#endif  // USE_PETSC
 
     OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
 }

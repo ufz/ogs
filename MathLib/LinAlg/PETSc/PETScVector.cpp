@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <cassert>
 
+#include "BaseLib/Error.h"
+
 namespace MathLib
 {
 PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
@@ -145,6 +147,13 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
 
     assert(static_cast<PetscInt>(u.size()) == _size);
 
+    PetscInt state;
+    VecLockGet(_v, &state);
+    if (state != 0)
+    {
+        OGS_FATAL("PETSc vector is already locked for {:s} access.",
+                  state > 0 ? "read" : "write");
+    }
     PetscScalar* xp = nullptr;
     VecGetArray(_v, &xp);
 

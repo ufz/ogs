@@ -13,38 +13,16 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
+#include "CoupledSolutionsForStaggeredScheme.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
+#include "NumLib/ODESolver/PETScNonlinearSolver.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
+#include "ProcessData.h"
 #include "ProcessLib/CreateProcessData.h"
 #include "ProcessLib/Output/CreateOutput.h"
-
-#include "CoupledSolutionsForStaggeredScheme.h"
-#include "ProcessData.h"
-
 namespace
 {
-//! Sets the EquationSystem for the given nonlinear solver,
-//! which is Picard or Newton depending on the NLTag.
-template <NumLib::NonlinearSolverTag NLTag>
-void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
-                       NumLib::EquationSystem& eq_sys,
-                       NumLib::ConvergenceCriterion& conv_crit)
-{
-    using Solver = NumLib::NonlinearSolver<NLTag>;
-    using EqSys = NumLib::NonlinearSystem<NLTag>;
-
-    assert(dynamic_cast<Solver*>(&nonlinear_solver) != nullptr);
-    assert(dynamic_cast<EqSys*>(&eq_sys) != nullptr);
-
-    auto& nl_solver_ = static_cast<Solver&>(nonlinear_solver);
-    auto& eq_sys_ = static_cast<EqSys&>(eq_sys);
-
-    nl_solver_.setEquationSystem(eq_sys_, conv_crit);
-}
-
-//! Sets the EquationSystem for the given nonlinear solver,
-//! transparently both for Picard and Newton solvers.
 void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
                        NumLib::EquationSystem& eq_sys,
                        NumLib::ConvergenceCriterion& conv_crit,
@@ -54,11 +32,51 @@ void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
     switch (nl_tag)
     {
         case Tag::Picard:
-            setEquationSystem<Tag::Picard>(nonlinear_solver, eq_sys, conv_crit);
+        {
+            using EqSys = NumLib::NonlinearSystem<Tag::Picard>;
+            auto& eq_sys_ = static_cast<EqSys&>(eq_sys);
+            if (auto* nl_solver =
+                    dynamic_cast<NumLib::NonlinearSolver<Tag::Picard>*>(
+                        &nonlinear_solver);
+                nl_solver != nullptr)
+            {
+                nl_solver->setEquationSystem(eq_sys_, conv_crit);
+            }
+            else
+            {
+                OGS_FATAL(
+                    "Could not cast nonlinear solver to Picard type solver.");
+            }
             break;
+        }
         case Tag::Newton:
-            setEquationSystem<Tag::Newton>(nonlinear_solver, eq_sys, conv_crit);
+        {
+            using EqSys = NumLib::NonlinearSystem<Tag::Newton>;
+            auto& eq_sys_ = static_cast<EqSys&>(eq_sys);
+
+            if (auto* nl_solver =
+                    dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
+                        &nonlinear_solver);
+                nl_solver != nullptr)
+            {
+                nl_solver->setEquationSystem(eq_sys_, conv_crit);
+            }
+#ifdef USE_PETSC
+            else if (auto* nl_solver =
+                         dynamic_cast<NumLib::PETScNonlinearSolver*>(
+                             &nonlinear_solver);
+                     nl_solver != nullptr)
+            {
+                nl_solver->setEquationSystem(eq_sys_, conv_crit);
+            }
+#endif  // USE_PETSC
+            else
+            {
+                OGS_FATAL(
+                    "Could not cast nonlinear solver to Newton type solver.");
+            }
             break;
+        }
     }
 }
 
@@ -91,8 +109,16 @@ void setTimeDiscretizedODESystem(
             NumLib::TimeDiscretizedODESystem<ODETag, Tag::Picard>>(
             process_data.process_id, ode_sys, *process_data.time_disc);
     }
-    else if (dynamic_cast<NonlinearSolverNewton*>(
-                 &process_data.nonlinear_solver))
+    // TODO (naumov) Provide a function to nonlinear_solver to distinguish the
+    // types. Could be handy, because a nonlinear solver could handle both types
+    // like PETScSNES.
+    else if ((dynamic_cast<NonlinearSolverNewton*>(
+                  &process_data.nonlinear_solver) != nullptr)
+#ifdef USE_PETSC
+             || (dynamic_cast<NumLib::PETScNonlinearSolver*>(
+                     &process_data.nonlinear_solver) != nullptr)
+#endif  // USE_PETSC
+    )
     {
         // The Newton-Raphson method needs a Newton-ready ODE.
 
