@@ -10,6 +10,7 @@ weight = 1038
 +++
 
 ::: {.note}
+
 ### <i class="far fa-exclamation-triangle"></i> GCC-like compilers only
 
 Tested on GCC and Clang.

@@ -65,6 +65,7 @@ $$
 
 Since the analytical solution has a singularity at $(x, y) = (0, 0)$ the
 analytical solution in paraview is generated as follow:
+
 ```
 if (coordsX^2<0.0001 & coordsY^2<0.0001, temperature, -1/(4*asin(1))*ln(sqrt(coordsX^2+coordsY^2))
 ```
@@ -88,7 +89,6 @@ the error grows in the vicinity of the boundary and in the center.
 {{< img
 src="../LineSourceTermFigures/comparison_plot_over_line_rel_diff_analytical_solution_temperature_and_simulated_temperature_line_source_term_in_cylinder.png" >}}
 
-
 #### Input files
 
 The project files for the described models are
@@ -106,6 +106,7 @@ The Poisson equation on cylindrical domain of heigth $1$ and radius
 $r=1$ is solved. The cylindrical domain is defined as axisymmetric.
 
 #### Results and evaluation
+
 {{< img
 src="../LineSourceTermFigures/simulated_temperature_distribution_line_source_term_in_axisymmetric_cylinder.png" >}}
 The above figure shows the computed temperature distribution.

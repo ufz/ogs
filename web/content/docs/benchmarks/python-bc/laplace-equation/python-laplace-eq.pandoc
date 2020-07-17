@@ -33,6 +33,7 @@ We solve Laplace's Equation in 2D on a $1 \times 1$ square domain.
 Laplace's equation is
 $$
 \begin{equation}
+
 - \mathop{\mathrm{div}} (a \mathop{\mathrm{grad}} u) = 0
 \end{equation}
 $$
@@ -81,7 +82,6 @@ domain with values from $u(x,y)|_{\Gamma_{\mathrm{D}}}$.
 On the right boundary of the domain a Neumann BC is applied.
 There $n = (1, 0)$, which implies that $a \mathop{\mathrm{grad}} u \cdot n
 = a \, \partial u / \partial x$.
-
 
 ## Results
 

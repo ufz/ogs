@@ -14,7 +14,8 @@ author = "Wenqing Wang"
 {{< data-link >}}
 
 ---
-#     Consolidation example based on fluid injection and production    application
+
+# Consolidation example based on fluid injection and production    application
 
 {{< img src="../InjectionProduction.png" >}}
 

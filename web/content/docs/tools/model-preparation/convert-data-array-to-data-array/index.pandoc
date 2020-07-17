@@ -47,6 +47,8 @@ convertVtkDataArrayToVtkDataArray
 ```
 
 ::: {.note}
+
 ### Example Files
+
 [doubleValuedMaterialIDs.vtu](doubleValuedMaterialIDs.vtu)
 :::

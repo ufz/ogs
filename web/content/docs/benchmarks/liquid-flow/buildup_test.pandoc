@@ -15,7 +15,6 @@ project = "/Parabolic/LiquidFlow/BuildupTest/buildup_test.prj"
 
 ## Problem description
 
-
 The pressure buildup test is performed by shutting in a producing well
 at time $t=t_p$, after which a smooth rise of the well head pressure can
 be observed. For a geothermal reservoir, the buildup test result is
@@ -54,7 +53,6 @@ linear section appears at the left side of the diagram.
 {{< img src="../horner.png" >}}
 
 Figure 1: Horner plot ($p$ vs $(t_p+\Delta t)/\Delta t$) for buildup test showing the inferred Horner straight line
-
 
 The slope $m$ of the Horner straight line is expressed as:
 $$m=0.1832\frac{Q\mu}{\kappa b}$$ in which $Q\  \mathrm{[L^3/T]}\ (Q>0)$
@@ -100,7 +98,6 @@ $$\Delta p=\rho g \frac{-Q}{4\pi T}W\left(\frac{r^2S}{4Tt}\right)+\rho g \frac{Q
 
 ## Results and evaluation
 
-
 The pressure evolution is simulated throughout the domain and the result
 is compared with the analytical solution at $r=10.287\ \mathrm{m}$. In
 Figure 2, it can be observed that the numerical model
@@ -110,11 +107,9 @@ Figure 3.
 
 {{< img src="../comparison.png" >}}
 
-
 Figure 2: OGS 6 result compared with analytical solution
 
 {{< img src="../error.png" >}}
-
 
 Figure 3: Absolute and relative error
 

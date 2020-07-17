@@ -16,10 +16,10 @@ project = "Parabolic/T/3D_3BHEs_array/3bhes_1U.prj"
 In a large borehole heat exchanger (BHE) array, all BHEs are connected with each other through a pipeline network. As the circulating fluid temperatures within each BHE are controlled by the network, the array itself has an intrinsic feature of balancing thermal extraction rates among different BHEs. This leads to the BHE thermal load shifting phenomena in the long-term operation. In OGS-6, this process can be simulated by using the PipeNetwork feature in the `Heat_Transport_BHE` process.
 
 This short tutorial aims to give the user a guide to the PipeNetwork feature. It includes the following main parts:\
+
 * The basic requirements for the PipeNetwork feature.\
 * The workflow of creating a pipeline network model using the software TESPy.\
 * The workflow of connecting the TESPy pipeline network model with the OGS model.\
-
 
 ## Requirements on the computer
 
@@ -31,7 +31,7 @@ pip3 install tespy
 
 ## Creating a pipeline network model with the software TESPy
 
-The Thermal Engineering Systems in Python (TESPy (https://doi.org/10.5281/zenodo.2555866)) is a software package developed by Francesco Witte. It is capable of simulating coupled thermal-hydraulic status of working fluids in thermal engineering applications. Such systm typically involves a cirulation network that is composed of pre-defined components including pipes, heat exchangers and different types of turbo machinery. Interested readers may refer to the online documentation (https://tespy.readthedocs.io/en/master/index.html#) of TESPy for more detailed introduction of the software. The workflow in this part is built based on the benchmark example "A 3-BHE Array Coupled With Pipe Network" from the OpenGeoSys Documentation (https://www.opengeosys.org/docs/benchmarks/heat-transport-bhe/3d_3bhes_array/). One can refer to this benchmark and download its latest benchmark files from GitHub (https://www.opengeosys.org/docs/userguide/basics/introduction/) for creating the pipeline network TESPy model. The OpenGeoSys and TESPy version used for this tutorial is (OpenGeoSys 6.2.2) and 0.2.0 accordingly.
+The Thermal Engineering Systems in Python (TESPy (<https://doi.org/10.5281/zenodo.2555866>)) is a software package developed by Francesco Witte. It is capable of simulating coupled thermal-hydraulic status of working fluids in thermal engineering applications. Such systm typically involves a cirulation network that is composed of pre-defined components including pipes, heat exchangers and different types of turbo machinery. Interested readers may refer to the online documentation (<https://tespy.readthedocs.io/en/master/index.html>#) of TESPy for more detailed introduction of the software. The workflow in this part is built based on the benchmark example "A 3-BHE Array Coupled With Pipe Network" from the OpenGeoSys Documentation (<https://www.opengeosys.org/docs/benchmarks/heat-transport-bhe/3d_3bhes_array/>). One can refer to this benchmark and download its latest benchmark files from GitHub (<https://www.opengeosys.org/docs/userguide/basics/introduction/>) for creating the pipeline network TESPy model. The OpenGeoSys and TESPy version used for this tutorial is (OpenGeoSys 6.2.2) and 0.2.0 accordingly.
 
 The coupled model that is going to be built is demonstrated in Figure 1. It consists of a pipeline network connected with 3 BHEs, a water pump, a virtual heat pump as the consumer, a splitter to split up the feeding fluid flow and a merge to returned flow. These devices are all defined as `components` in TESPy. A full list of available components can be found in the TESPy components module. In the pipeline network, these components are connected with each other through `connections` parts, which are illustrated by the black lines in the figure. With these two main parts, a completely TESPy pipeline network model can be set up.
 
@@ -261,6 +261,7 @@ To use the PipeNetwork feature, several input parameters need to be adjusted in 
     <geometry>3bhes_1U.gml</geometry>
     <python_script>bcs_tespy.py</python_script>
 ```
+
 ```bash
 <borehole_heat_exchangers>
     <borehole_heat_exchanger>
@@ -270,10 +271,9 @@ To use the PipeNetwork feature, several input parameters need to be adjusted in 
 
 After the configuration of the OGS project file, all the required files for using the PipeNetwork feature are prepared. The process explicitly couple the BHE and the pipe network can be simulated in the `Heat_Transport_BHE` process by OGS.
 
-
 ## References
 
-[1] Francesco Witte, Thermal engineering systems in python, 2019. URL: https://doi.org/10.5281/zenodo.2555866. doi:10.5281/zenodo.2555866.
+[1] Francesco Witte, Thermal engineering systems in python, 2019. URL: <https://doi.org/10.5281/zenodo.2555866>. doi:10.5281/zenodo.2555866.
 
 [2] Haibing Shao, Philipp Hein, Agnes Sachse, and Olaf Kolditz. Geoenergy modeling II: shallow geothermal systems. Springer International Publishing, 2016.
 

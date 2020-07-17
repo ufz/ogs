@@ -60,8 +60,9 @@ You can see that there is the project-file missing.
 Then simply supply the path to a project file as an argument to the OGS executable:
 
 ```
-$ ogs .\Path\to\BenchmarkName.prj
+ogs .\Path\to\BenchmarkName.prj
 ```
+
 :::
 
 ::: {.linux}
@@ -85,8 +86,9 @@ You can see that there is the project-file missing.
 Then simply supply the path to a project file as an argument to the OGS executable:
 
 ```
-$ ogs ./path/to/BenchmarkName.prj
+ogs ./path/to/BenchmarkName.prj
 ```
+
 :::
 
 ::: {.mac}

@@ -10,11 +10,11 @@ weight = 1003
 +++
 
 ::: {.note}
+
 ### Attribution
 
 The content of this page is largely taken from the [GitHub-blog](https://github.com/blog/2042-git-2-5-including-multiple-worktrees-and-triangular-workflows).
 :::
-
 
 ## Create a fork
 
@@ -22,16 +22,15 @@ The content of this page is largely taken from the [GitHub-blog](https://github.
 
 This creates a new fork under your account with the URL `https://gitlab.opengeosys.org/YOUR-USERNAME/ogs`.
 
-
 ## Setup your local clone
 
 You can use the git command line tool to clone the remote repository on GitLab to your PC:
 
 ```bash
-$ git clone --filter=blob:limit=100k git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
-$ cd ogs
-$ git config remote.pushdefault origin
-$ git config push.default current
+git clone --filter=blob:limit=100k git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
+cd ogs
+git config remote.pushdefault origin
+git config push.default current
 ```
 
 This creates a new folder `ogs` in your current working directory with the OGS source code. After this step, the remote called `origin` refers to your fork on GitLab. It also sets the default remote for pushes to be `origin` and the default push behavior to `current`. Together this means that if you just type `git push`, the current branch is pushed to the `origin` remote.
@@ -43,8 +42,8 @@ The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which
 Create a second remote called `upstream` that points at the main OGS repository and fetch from it:
 
 ```bash
-$ git remote add upstream https://gitlab.opengeosys.org/ogs/ogs.git
-$ git fetch upstream
+git remote add upstream https://gitlab.opengeosys.org/ogs/ogs.git
+git fetch upstream
 ```
 
 <!-- TODO: rerecord with GitLab -->
@@ -74,7 +73,7 @@ You only have to follow the above steps once. From then on, whenever you want to
 Make sure that your local repository is up-to-date with the upstream repository:
 
 ```bash
-$ git fetch upstream
+git fetch upstream
 ```
 
 Create a branch `feature-name` off of upstream `master`-branch to work on a new feature, and check out the branch:
@@ -86,19 +85,19 @@ git checkout -b feature-name upstream/master
 This automatically sets up your local `new-feature`-branch to track the upstream `master`-branch. This means that if more commits are added to `master` upstream, you can merge those commits into your `feature`-branch by typing
 
 ```bash
-$ git pull
+git pull
 ```
 
 or rebase your branch on top of the new master by typing
 
 ```bash
-$ git pull --rebase
+git pull --rebase
 ```
 
 Now after you implemented the feature and committed your work you can push the new commits to the `feature-name`-branch on your GitLab fork:
 
 ```bash
-$ git push
+git push
 ```
 
 If your work is done submit a [merge request](https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new).

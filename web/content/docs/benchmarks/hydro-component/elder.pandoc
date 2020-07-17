@@ -13,18 +13,15 @@ title = "Saturated Variable-Density Flow and Mass Transport (Elder)"
 
 {{< data-link >}}
 
-
 ## Overview
 
 This benchmark is one of the classical free-convection density-driven flow and mass transport setups. It was originally published by Elder (1965) and has since then been used as a basic test case (Diersch & Kolditz, 1998; Guo & Langevin, 2002), or has been subject to various investigations concerning grid convergence (Graf & Degener, 2011) and numerical stability (Musuuza et al., 2009; Johannsen, 2003).
 
 For the setup and parameterization, see the chapter "Density dependent flow - The Elder Problem" in Kolditz et al. (2012).
 
-
 ## Problem description
 
 The Elder benchmark describes free convection of a dense fluid in mixable, single-phase environment. A high-concentration solute increases fluid density on the upper boundary and perpetrates the domain by evolving concentration fingers. Here, we compare numerical results of OGS-6 to those of OGS-5. Settings of both simulators were chosen to be as identical as possible. Simulation times were $3300 s$ and $7800 s$ for OGS-6 and OGS-5, respectively.
-
 
 ### Model results
 

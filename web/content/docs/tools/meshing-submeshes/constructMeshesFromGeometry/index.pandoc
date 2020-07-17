@@ -21,6 +21,7 @@ ids mappings to the bulk mesh.
 
 For example a conversion of a mesh from `Tests/Data/LIE/Hydromechanics` single
 fracture 3D project:
+
 ```
 constructMeshesFromGeometry -m single_fracture_3D.vtu -g single_fracture_3D.gml
 
@@ -44,6 +45,7 @@ debug: Found 25 elements in the mesh
 debug: Creating mesh from geometry single_fracture_3D top.
 debug: Found 25 elements in the mesh
 ```
+
 yields new meshes for each named geometry: `single_fracture_3D_inlet.vtu`,
 `single_fracture_3D_right.vtu`, `single_fracture_3D_outlet.vtu`,
 `single_fracture_3D_left.vtu`, `single_fracture_3D_front.vtu`,

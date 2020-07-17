@@ -13,13 +13,11 @@ title = "Saturated Mass Transport"
 
 {{< data-link >}}
 
-
 ## Overview
 
 This benchmark compiles a number of simple, synthetic setups to test different processes of saturated component transport of a solute.
 
 The development of the equation system is given in [this PDF](../HC-Process.pdf). In the following, we present the different setups.
-
 
 ## Problem description
 
@@ -64,7 +62,6 @@ Boundary condition for this setup is pressure $p=0$ for the top left corner and 
 
 {{< img src="../gif/DiffusionAndStorageAndGravityAndDispersionHalf.gif" title="*Diffusion, Storage, Gravity, and Dispersion Half*">}}
 
-
 #### Diffusion, Storage, Advection, and Decay
 
 Left side boundary conditions for this setup are pressure $p=1$ and concentration $c=1$. Decay rate is $\theta = 0.001 s^{-1}$.
@@ -73,7 +70,6 @@ Left side boundary conditions for this setup are pressure $p=1$ and concentratio
 
 {{< img src="../gif/DiffusionAndStorageAndAdvectionAndDecay.gif" title="*Diffusion, Storage, Advection, and Decay*">}}
 
-
 #### Changes With Inclusion of Non Boussinesq-Effects ####
-The changes to the original setup are described in [this PDF](../HC-NonBoussinesq.pdf).
 
+The changes to the original setup are described in [this PDF](../HC-NonBoussinesq.pdf).

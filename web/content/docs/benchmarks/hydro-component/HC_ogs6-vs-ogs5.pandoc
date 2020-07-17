@@ -13,13 +13,11 @@ title = "Heterogeneous Saturated Mass Transport"
 
 {{< data-link >}}
 
-
 ## Overview
 
 This example involves the usage of a cell-based heterogeneous parameterization for the parameter "intrinsic permeability". We show a 2D and a 3D setup and compared the results to those from OGS5; the original examples are described in chapter "5.2 Groundwater flow in a heterogeneous medium" in Kolditz et al. (2012).
 
 We extended the setup to show mass transport in the heterogeneous medium for testing.
-
 
 ## Problem description
 
@@ -44,7 +42,6 @@ The mass transport simulation results (figures below) show an expected heterogen
 
 [The project files for the 2D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D/ogs5_H_2d.prj" >}})
 [The project files for the 3D setup are here.]({{< data-url "Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D/ogs5_H_3d.prj" >}})
-
 
 ## Literature
 

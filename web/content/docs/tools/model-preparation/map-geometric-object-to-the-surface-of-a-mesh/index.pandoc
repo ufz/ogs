@@ -34,6 +34,7 @@ Often, the mesh resolution and the resolution of the geometric objects like poly
 In the first figure such a situation is depicted. In the second figure the result of the application of the algorithm is shown.
 
 Usage for the example:
+
 ```
 MapGeometryToMeshSurface -m SubsurfaceMesh.vtu -i TestPolyline.gml -o TestMappedPolyline.gml
 ```
@@ -46,7 +47,9 @@ DOI:10.1007/s12665-013-2970-2 [download](http://link.springer.com/article/10.100
 *MW: the citation is not used in the description*
 
 ::: {.note}
+
 ### Example Files
+
 [SubsurfaceMesh.vtu](SubsurfaceMesh.vtu)  
 [TestPolyline.gml](TestPolyline.gml)  
 :::

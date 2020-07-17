@@ -45,4 +45,3 @@ shows the bulk mesh and the id's of the nodes on the top of it. Furthermore,
 the translated top surface mesh with the corresponding bulk node id's are
 represented.
 ![](03_bulk_mesh_with_ids_top_surface_bulk_node_ids.png)
-

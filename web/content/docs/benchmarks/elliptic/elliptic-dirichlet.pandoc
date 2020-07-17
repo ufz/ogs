@@ -48,9 +48,10 @@ $$
 The main project file is `square_1e2.prj`. It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
 
 As of now a small portion of possible inputs is implemented; one can change:
- - the mesh file
- - the geometry file
- - introduce more/different Dirichlet boundary conditions (different geometry or values)
+
+- the mesh file
+- the geometry file
+- introduce more/different Dirichlet boundary conditions (different geometry or values)
 
 The geometries used to specify the boundary conditions are given in the `square_1x1.gml` file.
 
@@ -59,8 +60,9 @@ The input mesh `square_1x1_quad_1e2.vtu` is stored in the VTK file format and ca
 ## Running simulation
 
 To start the simulation (after successful compilation) run:
+
 ```bash
-$ ogs square_1e2.prj
+ogs square_1e2.prj
 ```
 
 It will produce the output files `square_1e2_pcs_0.pvd`,
@@ -69,6 +71,7 @@ It will produce the output files `square_1e2_pcs_0.pvd`,
 computed in the first time step.
 
 The output on the console will be similar to the following one (ignore the spurious error messages "Could not find POINT..."):
+
 ```
 error: GEOObjects::getGeoObject(): Could not find POINT "left" in geometry.
 error: GEOObjects::getGeoObject(): Could not find POINT "right" in geometry.

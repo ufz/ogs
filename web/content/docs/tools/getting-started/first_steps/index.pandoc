@@ -24,4 +24,3 @@ To use a mesh created by SALOME it must be converted to the GMSH file format fir
 To extract a surface mesh (in order to define appropriate boundary conditions) one can use the tool [ExtractSurface]({{< ref "extract-surface" >}}) for different kinds of 3D meshes. If you are using a different tool (e.g. paraview), keep in mind that the dimensions of the boundary mesh need to be `d-1`, where `d` is the dimension of the bulk mesh (i.e. `connectivity`, `offsets` and `types` cell properties need to be set correctly in the unstructured grid file).
 
 Finally, the subdomains need to be identified. This can be done by the tool [identifySubdomains]({{< ref "identifySubdomains" >}}) which is also part of the official [OpenGeoSys git repository](https://github.com/ufz/ogs).
-

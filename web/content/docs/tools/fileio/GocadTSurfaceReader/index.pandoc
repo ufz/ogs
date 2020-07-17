@@ -18,7 +18,7 @@ At the moment, this utility can read:
 * PLINE (Polyline)
 * TSURF (Triangulated Surfaces)
 
-Expected file extensions for these data types include *.vs, *.pl, *.ts, and *.mx (the last one for **m**i**x**ed data).
+Expected file extensions for these data types include *.vs,*.pl, *.ts, and*.mx (the last one for **m**i**x**ed data).
 
 Another data type, SGRID (Structured Grid, usually saved to *.sg files) can be converted via the [GoCadSGridReader](../../meshing/gocadsgridreader).
 
@@ -53,10 +53,10 @@ Unless specified otherwise, the utility will convert all datasets and write them
 
 Datasets may have additional scalar data assigned to nodes. If so, this data is also added to the output data.
 
-
 ## Simple example
 
 **Command:**
+
 ```
 GocadTSurfaceReader -i d:\GoCAD_data\Top-Lower_Sandy.ts -o d:\GoCAD_data
 ```
@@ -68,4 +68,3 @@ GocadTSurfaceReader -i d:\GoCAD_data\Top-Lower_Sandy.ts -o d:\GoCAD_data
 **Output:**
 
 ![Converted surface visualised in ParaView with scalar data added to nodes.](./Surface-ParaView.png)
-

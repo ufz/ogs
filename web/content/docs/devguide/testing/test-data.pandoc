@@ -38,4 +38,3 @@ In the OGS-cli outputting to `[build-dir]/Tests/Data` is already handled (via th
 In code `BaseLib::BuildInfo::data_path` (from `BuildInfo.h`) references the data source directory and `BaseLib::BuildInfo::data_binary_path` references the data output directory.
 
 For adding new data files simply commit the new files as usual.
-

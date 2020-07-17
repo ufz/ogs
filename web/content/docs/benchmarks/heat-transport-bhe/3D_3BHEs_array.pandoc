@@ -18,6 +18,7 @@ project = "Parabolic/T/3D_3BHEs_array/3bhes_1U.prj"
 For large-scale Ground Source Heat Pump (GSHP) systems, it is often coupled with an array of multiple Borehole Heat Exchangers in order to extract more heat from the subsurface. When operated over a long period of time, there can be thermal interference occurring among the BHEs. This can lead to thermal imbalance occurring in the subsurface. Since all BHEs are connected with each other through a pipeline network, the heat extraction rate on each individual BHE depends strongly on the inflow and outflow temperatures. As these temperature values were controlled by the pipeline network, it has an intrinsic feature of balancing thermal extraction rates among different BHEs. In order to quantitatively consider the thermal imbalance in the subsurface and the effect of the pipeline network, the calculation of hydraulic and heat transport in the pipe network must be included in the numerical simulation. This benchmark tests the pipe network feature with a 3D numerical model to show the phenomena of heat extraction rate shifting over a heating season. Since only 3 BHEs were included in this test, the percentage of shifted thermal load is limited. However, when dozens of BHEs are involved, the amount of shifted thermal load can be significant.
 
 ## Model Setup
+
 OGS {#OGS .unnumbered .unnumbered}
 ===
 
@@ -59,11 +60,9 @@ The evolution of the soil temperature at 1 m distance away from the 3 BHEs are s
 
 Figure 2: Evolution of the soil temperature located at the 1 m distance away from each BHE
 
-
 {{< img src="../3D_3BHEs_array_figures/Inflow_and_outflow_temperature.png" width="200">}}
 
 Figure 3: Evolution of the inflow and outflow refrigerant temperature of each BHE
-
 
 {{< img src="../3D_3BHEs_array_figures/Heat_extraction_rate.png" width="200">}}
 
@@ -73,4 +72,4 @@ Figure 4: Evolution of the heat extraction rate of each BHE
 
 [1] Diersch, H. J., Bauer, D., Heidemann, W., Rühaak, W., & Schätzl, P. (2011). Finite element modeling of borehole heat exchanger systems: Part 1. Fundamentals. Computers & Geosciences, 37(8), 1122-1135.
 
-[2] Francesco Witte, Thermal engineering systems in python, 2019. URL: https://doi.org/10.5281/zenodo.2555866. doi:10.5281/zenodo.2555866.
+[2] Francesco Witte, Thermal engineering systems in python, 2019. URL: <https://doi.org/10.5281/zenodo.2555866>. doi:10.5281/zenodo.2555866.

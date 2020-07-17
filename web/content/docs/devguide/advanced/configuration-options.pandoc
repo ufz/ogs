@@ -40,7 +40,6 @@ CMake switches to enable / disable parts of OGS.
 
 - `OGS_COVERAGE` - Enables code coverage measurements with gcov/lcov. TODO
 
-
 #### Advanced options
 
 - `OGS_CXX_FLAGS` - Appends user-given compiler flags. Note that existing (CMake-given) flags are not replaced.

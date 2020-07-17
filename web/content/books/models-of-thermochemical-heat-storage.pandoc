@@ -20,11 +20,15 @@ This book is intended primarily for graduate students and applied scientists wor
 :::
 
 ::: {.note}
+
 ### <i class="far fa-book"></i> Bibliography
+
 {{< bib "lehmann:2018" >}}
 :::
 
 ::: {.note}
+
 ### <i class="far fa-code-branch"></i> OpenGeoSys Version Info
+
 This book requires OpenGeoSys-6.
 :::

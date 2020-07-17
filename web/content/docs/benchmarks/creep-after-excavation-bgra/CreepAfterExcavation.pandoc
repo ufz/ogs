@@ -43,7 +43,6 @@ material group is for rock salt. The material properties of the rocks are given 
 The parameters of the BGRa creep model are $A=0.18\, \mbox{d}^{-1}$,
 $m=5$, $Q=54 \mbox{ kJ/mol}$ for the rock salt. For the cap rock, $A$ is set to zero.
 
-
 The width
 and the height of of the domain are 300 m and 340 m, respectively. The
 height of the cap rock portion is 40 m. The drift to be excavated has a
@@ -54,15 +53,15 @@ assume a steady state of stress and temperature of excavation at the
 beginning of the current simulation. For this assumption, the boundary
 conditions are given as:
 
--   top boundary: $\tau_x =$$\sigma_x$$_y=0$, $\tau_y=\sigma_y=-10$ MPa,
+- top boundary: $\tau_x =$$\sigma_x$$_y=0$, $\tau_y=\sigma_y=-10$ MPa,
     $T=310$ K.
 
--   two lateral boundaries: normal displacement is fixed, and no heat
+- two lateral boundaries: normal displacement is fixed, and no heat
     flux.
 
--   bottom boundary: normal displacement is fixed, and $T=320$ K.
+- bottom boundary: normal displacement is fixed, and $T=320$ K.
 
--   circle of drift surface: traction free
+- circle of drift surface: traction free
     (${ \mathbf\sigma}\cdot \mathbf n = 0$), and $T=300$ K as excavation
     conditions.
 
@@ -99,7 +98,6 @@ green vertical line in it marks the time of the displayed stress field.
     <figcaption>Stress distribution at the time of 1000 days.</figcaption>
 </figure>
 
-
 The above three figures show that the absolute value of the horizontal stress increase
 signification in the areas above and beneath the drift due to the creep,
 and the change of the vertical stress is slow compared to that of the
@@ -112,17 +110,18 @@ end of the simulation time at 1000 days.
     <figcaption>Strain distribution at the time of 1000 days.</figcaption>
 </figure>
 
-
 The steady-state temperature distribution is displayed in the following figure
 <figure>
     <img src="../T.png" alt="Temperature distribution at the time of 1000 days." id="fig_6">
     <figcaption>Temperature distribution at the time of 1000 days.</figcaption>
 </figure>
 
-## Note:
+## Note
+
 For the automatic benchmarking, the time duration of creep is reduced to 50 days in order to reduce the run time.
- If one wants to test this benchmark for 1000 days' creep, please change the end time in the tag of `<t_end> `
+ If one wants to test this benchmark for 1000 days' creep, please change the end time in the tag of `<t_end>`
 in the project file as
+
  ```
 <t_end>86400.0e+3</t_end>
 ```

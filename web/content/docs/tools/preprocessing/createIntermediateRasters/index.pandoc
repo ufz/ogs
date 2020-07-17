@@ -43,6 +43,7 @@ The parameter ```n``` determines how many layers are created between the two inp
 Two input rasters as well as their 3D surface representation. Darker pixels represent values at a lower elevation while brighter pixels represent higher elevaton. In the 3D visualisation, the left-most raster is represented by the green surface and the right-most raster by the yellow surface.
 
 **Command:**
+
 ```
 createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc -n 1
 ```
@@ -51,6 +52,7 @@ createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc 
 A new raster is created in the exact center between the two input rasters. In the 3D representation, the new layer is shown in red.
 
 **Command:**
+
 ```
 createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc -n 2
 ```

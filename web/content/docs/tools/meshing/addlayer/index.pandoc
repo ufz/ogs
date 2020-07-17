@@ -35,6 +35,7 @@ AddLayer -i <input-mesh> -o <output-mesh> [-t <thickness>]
 *Left*: A simple cube mesh with one material group (red). *Right*: The updated mesh where an additional layer (blue) was added on top of the domain with a second material group.
 
 Usage for example:
+
 ```
 AddLayer -i quad.vtu -o quad_with_new_top_layer.vtu -t 1
 ```

@@ -23,6 +23,7 @@ TimeDependentHeterogeneousParameter for boundary conditions or source terms.
 
 In the parameter specification section of the project file it is possible to add
 a parameter type with the type `TimedependentHeterogeneousParameter`.
+
 ```
 <parameter>
     <name>ParameterForSourceTerm</name>
@@ -44,9 +45,9 @@ a parameter type with the type `TimedependentHeterogeneousParameter`.
     </time_series>
 </parameter>
 ```
+
 Of course, the referenced parameters for the particular time steps have to be
 defined also. Values of the parameter are piecewise linear interpolated.
-
 
 ## Example
 

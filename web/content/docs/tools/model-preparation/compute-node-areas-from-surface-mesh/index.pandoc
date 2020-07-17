@@ -19,6 +19,7 @@ ComputeNodeAreasFromSurfaceMesh -i <file name of input mesh>
     [-p <output path and base name as one string>]
     [--id-prop-name <property name>]
 ```
+
 If the option `-p` is not given the output path is extracted from the input path. The default value for the `--id-prop-name` argument is "bulk_node_ids". This name is also used by [ExtractSurface]({{< ref "extract-surface" >}}) for storing the subsurface node ids.
 
 ## Example
@@ -26,6 +27,7 @@ If the option `-p` is not given the output path is extracted from the input path
 ![](ExampleComputeSurfaceNodeAreasFromSurfaceMesh.png)
 
 The following steps were performed to obtain the example data:
+
  1. The hexahedral example domain was created by [generateStructuredMesh]({{< ref "structured-mesh-generation">}}) `generateStructuredMesh -o hex_6x7x3.vtu -e hex --lx 6 --ly 7 --lz 3`.
  2. The tool [ExtractSurface]({{< ref "extract-surface" >}}) was applied:
  `ExtractSurface -i hex_6x7x3.vtu -o hex_6x7x3_surface.vtu`

@@ -49,7 +49,6 @@ $$
 h(x,y) = \frac{1}{2 \pi} \ln \sqrt{x^2 + y^2}.
 $$
 
-
 ## Input files
 
 The main project file is `square_1e6_with_nodal_sources.prj`. It describes the process to be solved and the related process variables together with their initial and boundary conditions as well as the definition of the nodal source term. It also references the mesh and geometrical objects defined on the mesh.
@@ -61,12 +60,12 @@ The input mesh `square_1x1_quad_1e6.vtu` is stored in the VTK file format and ca
 ## Running simulation
 
 To start the simulation (after successful compilation) run:
+
 ```bash
-$ ogs circle_1e6_axi.prj
+ogs circle_1e6_axi.prj
 ```
 
 It will produce some output and write the computed result into a data array of the written vtu file.
-
 
 ## Results and evaluation
 
@@ -77,4 +76,3 @@ It will produce some output and write the computed result into a data array of t
 {{< img src="../circle_1e6_gwf_with_nodal_source_term_diff_analytical_solution_head.png" >}}
 
 {{< img src="../circle_1e6_gwf_with_nodal_source_term_diff_analytical_solution_head_log_scale.png" >}}
-

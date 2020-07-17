@@ -18,6 +18,7 @@ weight = 102
 The Poisson equation is:
 $$
 \begin{equation}
+
 - k\; \Delta p = Q \quad \text{in }\Omega
 \end{equation}$$
 w.r.t boundary conditions
@@ -89,10 +90,13 @@ $Q$ is in a [Python
 script](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion_Python/sin_x_sin_y_source_term.py).
 The script for setting the source terms is referenced in the project file as
 follows:
+
 ```
 <python_script>sin_x_sin_y_source_term.py</python_script>
 ```
+
 In the source term descripition
+
 ```
 <source_term>
     <mesh>square_1x1_quad_1e3_entire_domain</mesh>
@@ -100,9 +104,11 @@ In the source term descripition
     <source_term_object>sinx_siny_source_term</source_term_object>
 </source_term>
 ```
+
 the domain is specified by the mesh-tag. The function $Q$ is defined by the
 Python object `sinx_sinx_source_term` that is created in the last line of the
 Python script:
+
 ```python
 import OpenGeoSys
 from math import pi, sin
@@ -132,8 +138,9 @@ sinx_siny_source_term = SinXSinYSourceTerm()
 ## Running simulation
 
 To start the simulation (after successful compilation) run:
+
 ```bash
-$ ogs square_1e3_poisson_sin_x_sin_y.prj
+ogs square_1e3_poisson_sin_x_sin_y.prj
 ```
 
 It will produce some output and write the computed result into the
@@ -141,6 +148,7 @@ It will produce some output and write the computed result into the
 directly visualized and analysed in paraview for example.
 
 The output on the console will be similar to the following on:
+
 ```
 info: This is OpenGeoSys-6 version 6.1.0-1132-g00a6062a2.
 info: OGS started on 2018-10-10 09:22:17+0200.
@@ -186,7 +194,7 @@ Since a coarse mesh ($32 \times 32$ elements) is used for the simulation the
 difference between the numerical and the analytical solution is relatively large.
 
 #### Comparison for higher resolution mesh ($316 \times 316$ elements)
+
 {{< img src="../square_1e5_poisson_sin_x_sin_y_sourceterm_Diff_Pressure_AnalyticalSolution_PythonSourceTerm.png" >}}
 The difference between the numerical and the analytical solution is much smaller
 than in the coarse mesh case.
-

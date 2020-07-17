@@ -32,7 +32,7 @@ RUN ...
 Run the `build` command:
 
 ```bash
-$ docker build --rm -t repo/image_name path/to/directory
+docker build --rm -t repo/image_name path/to/directory
 ```
 
 - `--rm` Cleans up after exiting the container
@@ -46,19 +46,19 @@ Now you can see your build image with `$ docker images`.
 To run commands inside a container:
 
 ```bash
-$ docker run --rm -t image_name command_to_run
+docker run --rm -t image_name command_to_run
 ```
 
 To run an interactive shell add the `-i`-switch:
 
 ```bash
-$ docker run --rm -i -t image_name
+docker run --rm -i -t image_name
 ```
 
 It is useful to mount folders from the host operating system in the Docker container, e.g. to edit source code on your host with your favorite editor:
 
 ```bash
-$ docker run --rm -i -t -v /host/directory:/container/directory image_name
+docker run --rm -i -t -v /host/directory:/container/directory image_name
 ```
 
 ## Prebuilt OGS-6 Docker images

@@ -12,6 +12,7 @@ weight = 1005
 ## Build the project
 
 ::: {.win}
+
 ### Step: Build with Visual Studio
 
 Open the OGS.sln either by double-clicking it in the file browser or opening in Visual Studio via **File / Open / Project**.
@@ -28,19 +29,20 @@ You can work normally in Visual Studio but remember that you have to make projec
 :::
 
 ::: {.linux}
+
 ### Option: Make
 
 To build with the `make` tool on the shell go to your previously created build directory and type `make`:
 
 ```bash
-$ cd build
-$ make
+cd build
+make
 ```
 
 To speedup the compilation process append the number of cores of your cpu to the make command. E.g. for 8 cores:
 
 ```bash
-$ make -j 8
+make -j 8
 ```
 
 {{< asciinema url="https://asciinema.org/a/249005" preload="1" >}}
@@ -50,32 +52,33 @@ $ make -j 8
 To let CMake generate the Eclipse project files change the generator argument to the CMake run:
 
 ```bash
-$ cmake [your configuration options] -G"Eclipse CDT4 - Unix Makefiles" ../sources
+cmake [your configuration options] -G"Eclipse CDT4 - Unix Makefiles" ../sources
 ```
 
 Or with ccmake
 
 ```bash
-$ ccmake -G"Eclipse CDT4 - Unix Makefiles" ../sources
+ccmake -G"Eclipse CDT4 - Unix Makefiles" ../sources
 ```
 
 Start the Eclipse ide. From the menu choose **File / Import**. In the import dialog choose **General / Existing projects into workspace** and click **Next**. In **Select root directory** select your build directory and make sure that **Copy project into workspace** is unchecked. Click **Finish**.
 :::
 
 ::: {.mac}
+
 ### Option: Make
 
 To build with the `make` tool on the shell go to your previously created build directory and type `make`:
 
 ```bash
-$ cd build
-$ make
+cd build
+make
 ```
 
 To speedup the compilation process append the number of cores of your cpu to the make command. E.g. for 8 cores:
 
 ```bash
-$ make -j 8
+make -j 8
 ```
 
 ### Option: Xcode
@@ -83,31 +86,29 @@ $ make -j 8
 To let CMake generate the Xcode project files change the generator argument on the CMake run:
 
 ```bash
-$ cmake [your configuration options] -G Xcode ../sources
+cmake [your configuration options] -G Xcode ../sources
 ```
 
 Or with ccmake
 
 ```bash
-$ ccmake -G Xcode ../sources
+ccmake -G Xcode ../sources
 ```
 
 Then load the generated project file by either clicking the **OGS.xcodeproj** or via
 
 ```bash
-$ open OGS.xcodeproj
+open OGS.xcodeproj
 ```
 
 In Xcode choose `ogs` or `ogs-gui` from the drop-down menu on the top right and then hit the Run-button.
 :::
 
-
 ## Waiting
 
 So now the build process is running... This can take some time because maybe there are external libraries which get automatically downloaded and compiled. This step is only done once per build directory, so subsequent builds will be much faster. See [this]({{< ref "third-party-libraries" >}}) for more.
 
-
-## Finished!
+## Finished
 
 Congratulations you have finished the **Getting Started**-section!
 

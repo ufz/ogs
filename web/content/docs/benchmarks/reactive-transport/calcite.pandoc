@@ -13,7 +13,6 @@ title = "Precipitation/dissolution equilibrium reactions in a saturated column"
 
 {{< data-link >}}
 
-
 ## Overview
 
 This benchmark was firstly described in Kolditz *et al.* (2012) as a reactive transport benchmark including precipitation and dissolution reactions along a saturated column of calcite which is fluxed with a diluted solution of MgCl$_2$. Three different codes (OGS-5#ChemApp, OGS-5#IPhreeqc and OGS-5#GEMS) were used in that exercise.
@@ -69,10 +68,7 @@ At the simulated time, it can be clearly seen that the MgCl$_2$ solution front h
 
 {{< img src="../calcite-Figures/ResultComparisonPH.png" title="pH value profiles obtained with OGS-6#IPhreeqc (empty triangle symbol) and OGS-5#IPhreeqc (empty circle symbol) at 350 min.">}}
 
-
-
 {{< data-link >}}
-
 
 ## Literature
 

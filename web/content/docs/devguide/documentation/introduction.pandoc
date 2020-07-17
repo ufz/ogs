@@ -96,7 +96,6 @@ Files belonging directly to a page (e.g. images shown on that same page) should 
 
 Bibliography items from *Documentation/bibliography/*.bib can be referenced by their id (always use lowercase ids) with the `bib`-shortcode:
 
-
 ```
 {{< bib "kolditz2012" >}}
 ```

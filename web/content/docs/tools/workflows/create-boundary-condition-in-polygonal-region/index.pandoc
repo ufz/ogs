@@ -30,4 +30,3 @@ In order to create boundary conditions in a polygonal region the following workf
 4. Compute the associated area for the nodes of the surface mesh deploying tool [ComputeNodeAreasFromSurfaceMesh]({{< ref "compute-node-areas-from-surface-mesh" >}})
 
 The surface mesh patches (created until step 3) can be used as input for OGS-6 simulations. For OGS-5 simulations only the additional step 4 has to be performed.
-
