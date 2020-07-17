@@ -13,8 +13,6 @@ title = "Conservative tracer transport with time varying source (1D/2D)"
 
 {{< data-link >}}
 
-# "Conservative tracer transport with time varying source(1D/2D)"
-
 ## Overview
 
 This benchmark describes the transport of a conservative tracer through a saturated porous media. Simulations have been performed with OGS-6 and OGS-5 in both, 1D and 2D domains.

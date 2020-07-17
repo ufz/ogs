@@ -46,7 +46,7 @@ See also: <http://docs.conan.io/en/latest/faq/troubleshooting.html#error-invalid
 
 When your `cmake`-run output looks similar to this:
 
-```
+```bash
 $ cmake ..
 ...
 Running: sudo -A yum update -y
@@ -68,13 +68,13 @@ is incompatible to the glibc library on Ubuntu 16.04 (2.23).
 
 In this case you would get linker errors with the Conan VTK library:
 
-```
+```bash
 error: undefined reference to `getrandom'
 .../expat/vtkexpat/lib/xmlparse.c 694
 ```
 
 If you still want to use your OS / compiler combination you can build the VTK Conan package on your machine. Run this one time:
 
-```
+```bash
 cmake . -DOGS_CONAN_BUILD=vtk
 ```

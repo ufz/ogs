@@ -17,7 +17,7 @@ normals a correct node ordering of the element nodes is required.
 
 ## Usage
 
-```
+```bash
 ExtractBoundary -i [<file name of input mesh>] [-o <file name of output mesh>]
     [--face-property-name <string>]
     [--element-property-name <string>]
@@ -34,22 +34,19 @@ and are required for flux calculations during a simulation run of OpenGeoSys.
 
 ## Examples
 
-# Extract the boundary from a quad mesh
+### Extract the boundary from a quad mesh
 
 `ExtractBoundary -i square_1x1_quad.vtu -o square_1x1_quad_border.vtu`
 
-![](ExtractBoundary_square_1x1_quad_border.png)
-
-In the figure above the square mesh consists of 16 cells/elements. The numbers
+![The square mesh consists of 16 cells/elements. The numbers
 in the cells are the cell IDs. The generated boundary grid consists of the
-somewhat thicker and colored line elements.
+somewhat thicker and colored line elements.](ExtractBoundary_square_1x1_quad_border.png){.m-auto}
 
-# Extract the boundary from a tri mesh
+### Extract the boundary from a tri mesh
 
 `ExtractBoundary -i square_1x1_tri.vtu -o square_1x1_tri_border.vtu`
 
-![](ExtractBoundary_square_1x1_tri_border.png)
-
-In the figure above the square mesh consists of 32 triangle shaped cells. The
+![The square mesh consists of 32 triangle shaped cells. The
 numbers in the tri are the cell IDs. The generated boundary grid consists of the
 somewhat thicker and colored line elements.
+](ExtractBoundary_square_1x1_tri_border.png){.m-auto}

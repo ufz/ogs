@@ -20,8 +20,7 @@ The tasks of the CI system are configured in [scripts inside the OGS source code
 A CI run consists of a [pipeline](https://docs.gitlab.com/ee/ci/pipelines/) which contains [stages](https://docs.gitlab.com/ee/ci/yaml/#stages) which in turn contain jobs. A job runs a set of instructions (e.g. checking out the source code, building the code, testing the code) on a [runner](https://docs.gitlab.com/runner/).
 
 Each pipeline run is visualized as follows:
-
-![](../GitLab-Pipeline.png)
+![GitLab pipeline visualization](../GitLab-Pipeline.png)
 
 Jobs are belong to a stage and each job will get a status (success, warnings, failure). Some jobs are optional (see the gear icon) and can be manually triggered by pressing the play button.
 
@@ -33,13 +32,13 @@ The master-branch of the the main repository as well as all merge requests on th
 
 If you want to skip a pipeline run for a push add the `-o ci.skip` git push option. Example:
 
-```
+```bash
 git push -o ci.skip
 ```
 
 Or add add `[ci skip]` to the commit message to skip the pipeline for this commit. Example:
 
-```
+```bash
 git commit -m "Added feature X [ci skip]"
 ```
 

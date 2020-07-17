@@ -22,15 +22,13 @@ Given a "bulk" mesh (Tests/Data/Mechanics/Linear/disc_with_hole.vtu) and a
 quater circle mesh for heterogeneous boundary condition. OGS requires two
 mappings into the "bulk" mesh, one for the nodes and one for the elements.
 
-<center>
 ![The figure shows a part of the "bulk" mesh with boundary element numbers, and
 the quater circle mesh shown as white line with green
-points.](disc_with_hole_and_bondary.png){width=50%}
-</center>
+points.](disc_with_hole_and_bondary.png){width=50% .m-auto}
 
 To create this mappings we run
 
-```
+```bash
 identifySubdomains -m Tests/Data/Mechanics/Linear/disc_with_hole.vtu -s 1e-6 -o
 new_ -- quater_circle.vtu
 ```
@@ -47,7 +45,7 @@ mappings and is prepared for usage as a boundary condition mesh.
 - The double dash is separating the subdomain meshes, so the input can have
    multiple subdomain inputs:
 
-   ```
+   ```bash
    identifySubdomains -m bulk.vtu -- bc1.vtu bc2.vtu source_term_meshes*.vtu
    ```
 

@@ -72,7 +72,7 @@ computed in the first time step.
 
 The output on the console will be similar to the following one (ignore the spurious error messages "Could not find POINT..."):
 
-```
+```bash
 error: GEOObjects::getGeoObject(): Could not find POINT "left" in geometry.
 error: GEOObjects::getGeoObject(): Could not find POINT "right" in geometry.
 info: Initialize processes.
@@ -104,6 +104,4 @@ A major part of the output was produced by the linear equation solver (LIS in th
 
 <!-- {{< vis path="Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_pcs_0_ts_1_t_1.000000.vtu" >}} -->
 
-The result can be visualized with Paraview.
-
-![](../square_1e2_pcs_0_ts_1_t_1.000000.png)
+![The result can be visualized with Paraview.](../square_1e2_pcs_0_ts_1_t_1.000000.png)

@@ -91,13 +91,13 @@ script](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic/
 The script for setting the source terms is referenced in the project file as
 follows:
 
-```
+```xml
 <python_script>sin_x_sin_y_source_term.py</python_script>
 ```
 
 In the source term descripition
 
-```
+```xml
 <source_term>
     <mesh>square_1x1_quad_1e3_entire_domain</mesh>
     <type>Python</type>
@@ -149,7 +149,7 @@ directly visualized and analysed in paraview for example.
 
 The output on the console will be similar to the following on:
 
-```
+```bash
 info: This is OpenGeoSys-6 version 6.1.0-1132-g00a6062a2.
 info: OGS started on 2018-10-10 09:22:17+0200.
 

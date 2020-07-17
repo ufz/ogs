@@ -26,19 +26,19 @@ To generate a mesh two arguments are required: file name for the resulting mesh,
 
 - To generate a simple 2-dimensional mesh measuring 3 by 4 length units call
 
-```
+```bash
 > bin/generateStructuredMesh -o quad_3x4.vtu -e quad --lx 3 --ly 4 ⏎
 info: Mesh created: 20 nodes, 12 elements
 ```
 
 - To generate a simple 3-dimensional mesh measuring 4 by 5 by 6 length units call
 
-```
+```bash
 > bin/generateStructuredMesh -o hex_4x5x6.vtu -e hex --lx 4 --ly 5 --lz 6 ⏎
 info: Mesh created: 210 nodes, 120 elements.
 ```
 
-![](structured_grid_quad34_hex456.png)
+![Resulting mesh](structured_grid_quad34_hex456.png)
 
 ## Basic options
 
@@ -82,12 +82,12 @@ The parameters must be positive real numbers
 
 Hexahedral mesh as above but with 10 elements in y-direction and element length of 1.5 in z-direction:
 
-```
+```bash
 > bin/generateStructuredMesh -o hex_4x5x6.vtu -e hex --lx 4 --ly 5 --lz 6 --ny 10 --dz0 1.5 ⏎
 info: Mesh created: 275 nodes, 160 elements.
 ```
 
-![](structured_grid_hex456_uniform.png)
+![Resulting mesh](structured_grid_hex456_uniform.png)
 
 ## Non-uniform mesh refinement
 
@@ -122,9 +122,9 @@ Hexahedral mesh as above but with three different non-uniform mesh refinements:
 - y-direction: Element growth (factor 1.1) starting with specified element length 0.1.
 - z-direction: Fast element growth (factor 2) starting with specified element length 0.1 and limited by maximum length 1. (The last element is larger than maximum because of the gap to be filled for the given mesh length as described in uniform-mesh refinement section.)
 
-```
+```bash
 bin/generateStructuredMesh -o hex_4x5x6.vtu -e hex --lx 4 --ly 5 --lz 6 --mx 0.8 --my 1.1 --dy0 0.1 --mz 2 --dz-max 1 --dz0 0.1 ⏎
 info: Mesh created: 1368 nodes, 1008 elements.
 ```
 
-![](structured_grid_hex456_non-uniform.png)
+![Resulting mesh](structured_grid_hex456_non-uniform.png)

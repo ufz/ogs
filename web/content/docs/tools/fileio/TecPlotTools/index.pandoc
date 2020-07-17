@@ -39,7 +39,7 @@ Where:
 
 **Command:**
 
-```
+```bash
 TecPlotTools -i Lake.plt -o Lake.vtu -c
 ```
 

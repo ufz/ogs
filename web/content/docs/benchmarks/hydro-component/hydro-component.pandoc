@@ -70,6 +70,6 @@ Left side boundary conditions for this setup are pressure $p=1$ and concentratio
 
 {{< img src="../gif/DiffusionAndStorageAndAdvectionAndDecay.gif" title="*Diffusion, Storage, Advection, and Decay*">}}
 
-#### Changes With Inclusion of Non Boussinesq-Effects ####
+#### Changes With Inclusion of Non Boussinesq-Effects
 
 The changes to the original setup are described in [this PDF](../HC-NonBoussinesq.pdf).

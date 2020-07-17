@@ -19,8 +19,7 @@ For large-scale Ground Source Heat Pump (GSHP) systems, it is often coupled with
 
 ## Model Setup
 
-OGS {#OGS .unnumbered .unnumbered}
-===
+### OGS
 
 The BHE used in this Model contains a single U-shape pipe (1U type). The details about its finite element realisation could be found by Diersch et al. (2011). For the subsurface domain, a 50 $\times$ 50 $\times$ 72 $m$ mesh was constructed with prism and line elements. 3 BHEs are situated from -2 $m$ to a depth of -52 $m$ in the subsurface, with an adjacent distance of 6 $m$ from each other. The BHE \#1 and BHE \#3 are located at the left and right side, while the BHE \#2 is installed in the centre. The initial soil temperature of the domain is set with 12 $^\circ$C. The top surface is assumed as Dirichlet boundary condition with a fixed temperature of 12 $^\circ$C over the entire simulation. The detailed input parameters can be found in the 3bhes\_1U.prj file, they are also listed in the following table.
 
@@ -43,8 +42,7 @@ The BHE used in this Model contains a single U-shape pipe (1U type). The details
 | Length of the BHE U-pipe in network    | $l$                | $100$               | $\mathrm{m}$                |
 | Roughness coefficient of the pipe      | $k_s$              | $0.00001$           | $\mathrm{m}$                |
 
-TESPy {#TESPy .unnumbered .unnumbered}
-=====
+### TESPy
 
 A closed-loop pipeline network system was constructed in TESPy to be coupled with the OGS model. The TESPy software developed by Francesco Witte is capable of simulating coupled thermal-hydraulic status of the network, which is composed of pre-defined components including pipes, heat exchangers and different types of turbo machinery. Interested readers may refer to the online documentation of TESPy for the details introduction of the software. Figure 1 illustrates the basic configuration of the entire network. After lifted by the pump, the circulating refrigerant inflow will be divided into 3 branches by the splitter and then flow into each BHEs. Because of the pipe network configuration, the inflow temperature on each BHE will be the same. The refrigerant flowing out of the BHEs array will firstly be mixed at the merging point and then being extracted for heat extraction through the heat pump. After that, the refrigerant will be circulated back into the pipe network. For the boundary condition, a constant thermal load of 3750 $W$ is imposed on the heat pump for the entire simulation period, which means an average specific heat extraction rate on each BHE with 25 $W/m$. The total simulation time is 6 months.
 

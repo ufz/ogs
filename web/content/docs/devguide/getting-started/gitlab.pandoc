@@ -16,7 +16,7 @@ weight = 1002
 ## Setup an account
 
 - Creating a GitLab account can be done by simply using your existing GitHub account: click the GitHub logo (octocat) on the [Gitlab sign-in page](https://gitlab.opengeosys.org/users/sign_in)
-  ![](../gitlab-login.png)
+  ![GitLab login page](../gitlab-login.png)
   - You will be redirected to GitHub (please login there) and asked for authorization.
   - Your new user account will be blocked at first, please let us know we will unblock it
 

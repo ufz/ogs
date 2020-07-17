@@ -68,7 +68,7 @@ directly visualized and analysed in paraview for example.
 
 The output on the console will be similar to:
 
-```
+```bash
 info: ConstantParameter: K
 info: ConstantParameter: p0
 info: ConstantParameter: p_Dirichlet_left

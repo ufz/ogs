@@ -23,7 +23,7 @@ Another application is to cut out patches of a (top) surface (tool [ExtractSurfa
 
 ## Usage
 
-```
+```bash
 removeMeshElements -i <input-mesh> -o <output-mesh>
  [-n <property_name>] [--int-property-value <number value>] ...
  [--element-type <element type>] ...
@@ -36,12 +36,11 @@ The corresponding element types differ from vtk cell types and can be found in M
 
 ## Examples
 
-![](ExampleRemoveElements-Input.png)
-![](ExampleRemoveElements-Output.png)
+![The left figure above is the result of the repeated application of [SetPropertiesInPolygonalRegion]({{< ref "set-properties-in-polygonal-region" >}}). It contains material ids 0 (red), 1 (yellow), 2 (turquoise) and 3 (blue).](ExampleRemoveElements-Input.png)
 
-The left figure above is the result of the repeated application of [SetPropertiesInPolygonalRegion]({{< ref "set-properties-in-polygonal-region" >}}). It contains material ids 0 (red), 1 (yellow), 2 (turquoise) and 3 (blue). On the right figure the result of the following command line input is depicted:
+![The result of the following command line input is depicted.](ExampleRemoveElements-Output.png)
 
-```
+```bash
 removeMeshElements -i TestCube-ResetPropertiesInPolygonalRegion.vtu -o TestCube-removeMeshElements.vtu -n MaterialIDs --int-property-value 1 --int-property-value 2 --int-property-value 3
 ```
 

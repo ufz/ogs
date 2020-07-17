@@ -2,3 +2,4 @@ comment: OpenGeoSys rules
 default: true
 line-length: false
 no-inline-html: false
+no-duplicate-heading: false

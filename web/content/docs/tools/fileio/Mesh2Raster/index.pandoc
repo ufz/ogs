@@ -42,30 +42,27 @@ The input mesh for this example is a homogeneous, unstructured triangle mesh wit
 
 **Command:**
 
-```
+```bash
 Mesh2Raster -i input.vtu -o output.asc -c 50
 ```
 
-![](./Mesh2Raster-output50.png){ width=66% }
-The generated output raster has a size of 340x333 pixels and represents the original surface well. Given the average edge length of 100m in the original mesh, an even smaller cellsize would not have contained more details but resulted in a larger file size.[^1]
+![The generated output raster has a size of 340x333 pixels and represents the original surface well. Given the average edge length of 100m in the original mesh, an even smaller cellsize would not have contained more details but resulted in a larger file size.[^1]](./Mesh2Raster-output50.png){ width=66% .m-auto }
 
 **Command:**
 
-```
+```bash
 Mesh2Raster -i input.vtu -o output.asc -c 200
 ```
 
-![](./Mesh2Raster-output200.png)
-The generated output raster has a size of 85x84 pixels and still represents the original surface reasonably well, despite visible undersampling.
+![The generated output raster has a size of 85x84 pixels and still represents the original surface reasonably well, despite visible undersampling.](./Mesh2Raster-output200.png){ width=66% .m-auto }
 
 **Command:**
 
-```
+```bash
 Mesh2Raster -i input.vtu -o output.asc -c 1000
 ```
 
-![](./Mesh2Raster-output1000.png)
-The generated output raster has a size of 17x17 pixels and shows severy undersampling. However, this is the resolution that a large number of weather data products are available at.
+![The generated output raster has a size of 17x17 pixels and shows severy undersampling. However, this is the resolution that a large number of weather data products are available at.](./Mesh2Raster-output1000.png){ width=66% .m-auto }
 
 ## Application
 

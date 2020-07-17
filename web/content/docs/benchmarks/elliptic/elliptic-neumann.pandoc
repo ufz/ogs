@@ -72,7 +72,7 @@ It will produce some output and write the computed result into the `square_1e2_n
 
 The output on the console will be similar to the following one (ignore the spurious error messages "Could not find POINT..."):
 
-```
+```bash
 info: This is OpenGeoSys-6 version 6.0.7-619-ge761162.
 info: OGS started on 2016-12-05 11:16:47+0100.
 info: ConstantParameter: K

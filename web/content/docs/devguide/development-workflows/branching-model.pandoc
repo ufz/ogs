@@ -25,8 +25,7 @@ The following explanation is taken from an [in-depth article](https://www.atlass
 >
 
 The workflow is summarized in the following image from the [GitHub blog](https://github.com/blog/2042-git-2-5-including-multiple-worktrees-and-triangular-workflows):
-
-![](https://cloud.githubusercontent.com/assets/1319791/8943755/5dcdcae4-354a-11e5-9f82-915914fad4f7.png)
+![Git workflow](https://cloud.githubusercontent.com/assets/1319791/8943755/5dcdcae4-354a-11e5-9f82-915914fad4f7.png)
 
 You always **fetch** changes from official repository (called **upstream**), develop on your **local** repository and **push** changes to your server-side repository (called **origin**).
 

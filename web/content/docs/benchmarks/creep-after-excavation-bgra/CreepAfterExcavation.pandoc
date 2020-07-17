@@ -13,24 +13,18 @@ author = "Wenqing Wang"
 
 {{< data-link >}}
 
--------------------------------------------------------------------------
 Following up the benchmark about the BGRa creep model described on the
 [this page](https://www.opengeosys.org/docs/benchmarks/creepbgra/creepbrga/),
 this example represents the creep in the near field of
 drift in the deep rock salt after excavation. The domain and the
 geometry are shown in the following figure:
-<figure>
-    <img src="../mesh.png" alt="Mesh and Geometry" id="fig_6"
- style="height:400px;width:490px;">
-    <figcaption>Mesh and Geometry.</figcaption>
-</figure>
+
+![Mesh and Geometry.](../mesh.png){ width=66% .m-auto }
 
 The domain has two material groups, which are highlighted by different
 colors. The material group that is in the
 top part of the domain represents a cap rock type, while the other
 material group is for rock salt. The material properties of the rocks are given in the following table:
-
----------------------- ---------- ----------- ------------
 
 |         |Cap rock |  Rock salt|   Unit|
 | --- |:---------:| -----:|----:|
@@ -38,7 +32,8 @@ material group is for rock salt. The material properties of the rocks are given 
 |Young’s Modulus    |    7.0    |    7.65  |      GPa       |
 |Poisson ratio      |    0.3    |    2.7   |      -          |
 |Thermal conductivity |   5     |     5    |       W/(mK)    |
----------------------- ---------- ----------- ------------
+
+---
 
 The parameters of the BGRa creep model are $A=0.18\, \mbox{d}^{-1}$,
 $m=5$, $Q=54 \mbox{ kJ/mol}$ for the rock salt. For the cap rock, $A$ is set to zero.
@@ -122,6 +117,6 @@ For the automatic benchmarking, the time duration of creep is reduced to 50 days
  If one wants to test this benchmark for 1000 days' creep, please change the end time in the tag of `<t_end>`
 in the project file as
 
- ```
+ ```xml
 <t_end>86400.0e+3</t_end>
 ```

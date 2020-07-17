@@ -22,7 +22,7 @@ ids mappings to the bulk mesh.
 For example a conversion of a mesh from `Tests/Data/LIE/Hydromechanics` single
 fracture 3D project:
 
-```
+```bash
 constructMeshesFromGeometry -m single_fracture_3D.vtu -g single_fracture_3D.gml
 
 debug: Reading geometry file '../s/Tests/Data/LIE/HydroMechanics/single_fracture_3D.gml'.
@@ -52,6 +52,5 @@ yields new meshes for each named geometry: `single_fracture_3D_inlet.vtu`,
 `single_fracture_3D_top.vtu`, `single_fracture_3D_bottom.vtu`, and
 `single_fracture_3D_back.vtu`.
 
-![](single_fracture_3D_geometries.png)
-The figure shows the front part of the mesh with the extracted geometries. Note,
-the lower dimensional inlet boundary, shown as a line.
+![Shows the front part of the mesh with the extracted geometries. Note,
+the lower dimensional inlet boundary, shown as a line.](single_fracture_3D_geometries.png){.m-auto}

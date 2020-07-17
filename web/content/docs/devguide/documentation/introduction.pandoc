@@ -96,7 +96,7 @@ Files belonging directly to a page (e.g. images shown on that same page) should 
 
 Bibliography items from *Documentation/bibliography/*.bib can be referenced by their id (always use lowercase ids) with the `bib`-shortcode:
 
-```
+```bash
 {{< bib "kolditz2012" >}}
 ```
 
@@ -129,7 +129,7 @@ ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
 
 ### Link checker
 
-```
+```bash
 npm install -g @hashicorp/broken-links-checker
 hugo
 broken-links-checker --path ./public --baseUrl https://www.opengeosys.org

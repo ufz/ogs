@@ -57,7 +57,7 @@ Datasets may have additional scalar data assigned to nodes. If so, this data is 
 
 **Command:**
 
-```
+```bash
 GocadTSurfaceReader -i d:\GoCAD_data\Top-Lower_Sandy.ts -o d:\GoCAD_data
 ```
 

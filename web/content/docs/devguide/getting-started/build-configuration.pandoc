@@ -86,7 +86,7 @@ cmake ../ogs
 
 ::: {.note}
 
-#### <i class="far fa-check"></i> Pro Tip: Use the Visual Studio command line
+### <i class="far fa-check"></i> Pro Tip: Use the Visual Studio command line
 
 In the Start menu under *Visual Studio 2017* you find a application link to *x64 Native Tools Command Prompt for VS 2017*. This starts a command line setup for Visual Studio 64-bit. When you run CMake commands in this command line the correct generator will be picked up automatically:
 
@@ -96,7 +96,7 @@ cmake ../ogs
 
 This even allows for using [Ninja]({{< ref "build-with-ninja.pandoc" >}}) as the build tool which can effectively utilize all CPU cores
 
-#### <i class="far fa-check"></i> Pro Tip 2: Use a better terminal application
+### <i class="far fa-check"></i> Pro Tip 2: Use a better terminal application
 
 Use [ConEmu](https://conemu.github.io) for a better terminal experience. It automatically detects all installed terminal applications (e.g. regular Windows cmd.exe, Git shell, VS command lines, ...) and feautures multiple terminals inside tabs.
 :::

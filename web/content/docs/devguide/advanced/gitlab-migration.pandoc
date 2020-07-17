@@ -51,7 +51,7 @@ git remote set-url upstream https://gitlab.opengeosys.org/ogs/ogs.git
 
 Assuming your personal forks remote is called `origin`:
 
-```
+```bash
 git remote set-url origin git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
 ```
 

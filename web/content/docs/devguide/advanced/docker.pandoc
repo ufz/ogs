@@ -23,7 +23,7 @@ Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/
 
 To build an image by yourself create a Dockerfile:
 
-```
+```bash
 FROM ubuntu:17.10
 
 RUN ...

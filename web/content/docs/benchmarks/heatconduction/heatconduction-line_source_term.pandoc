@@ -66,7 +66,7 @@ $$
 Since the analytical solution has a singularity at $(x, y) = (0, 0)$ the
 analytical solution in paraview is generated as follow:
 
-```
+```none
 if (coordsX^2<0.0001 & coordsY^2<0.0001, temperature, -1/(4*asin(1))*ln(sqrt(coordsX^2+coordsY^2))
 ```
 

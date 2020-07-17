@@ -14,7 +14,7 @@ The tool extracts 2d surface elements of a mesh given either in the vtu or msh f
 
 ## Usage
 
-```
+```bash
 ExtractSurface -i [<file name of input mesh>] [-o <file name of output mesh>]
  [-x <floating point value>] [-y <floating point value>] [-z <floating point value>]
  [-a <floating point value>]
@@ -27,7 +27,7 @@ The normal of the surface that should be extracted is given by the arguments `-x
 
 ## Example
 
-![](TopBottomSideSurface.png)
+![Extracted surfaces](TopBottomSideSurface.png){.m-auto}
 
 Extracted top, bottom and side surfaces:
 
@@ -35,9 +35,8 @@ Extracted top, bottom and side surfaces:
 - bottom `ExtractSurface -i Input.vtu -o BottomSurface.vtu -x 0 -y 0 -z 1`
 - side `ExtractSurface -i Input.vtu -o SideSurface.vtu -x 1 -y 1 -z 0 -a 45`
 
-![](CubeFrontRightBackLeft.png)
-
-The figure shows the extracted front, right, back, and left surfaces from the
+![Shows the extracted front, right, back, and left surfaces from the
 cube that are colored by the corresponding subsurface material id. The material
 ids transformed to the surfaces can be used for further boundary condition
 preparations for instance employing paraviews threshold filter.
+](CubeFrontRightBackLeft.png){.m-auto}
