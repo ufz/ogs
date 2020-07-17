@@ -16,6 +16,9 @@ if(CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
         "using Conan. Specify CMAKE_BUILD_TYPE!")
 endif()
 
+# Treat Conan includes as system includes to suppress warnings
+set(CONAN_SYSTEM_INCLUDES ON)
+
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
