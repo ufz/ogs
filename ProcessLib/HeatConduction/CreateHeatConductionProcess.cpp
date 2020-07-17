@@ -72,8 +72,8 @@ std::unique_ptr<Process> createHeatConductionProcess(
 
     DBUG("Use '{:s}' as density parameter.", density.name);
 
-    //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__mass_lumping}
     auto const mass_lumping =
+        //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
 
     HeatConductionProcessData process_data{thermal_conductivity, heat_capacity,
