@@ -257,6 +257,7 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
+        MPL::VariableArray variables_prev;
         MPL::VariableArray variables;
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
@@ -302,9 +303,25 @@ public:
                 Eigen::Map<typename BMatricesType::NodalForceVectorType const>(
                     local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
+            variables_prev[static_cast<int>(MPL::Variable::stress)]
+                .emplace<
+                    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                    sigma_prev);
+            variables_prev[static_cast<int>(MPL::Variable::strain)]
+                .emplace<
+                    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                    eps_prev);
+            variables_prev[static_cast<int>(MPL::Variable::temperature)]
+                .emplace<double>(_process_data.reference_temperature);
+            variables[static_cast<int>(MPL::Variable::strain)]
+                .emplace<
+                    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                    eps);
+            variables[static_cast<int>(MPL::Variable::temperature)]
+                .emplace<double>(_process_data.reference_temperature);
+
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                variables, t, x_position, dt, eps_prev, eps, sigma_prev, *state,
-                _process_data.reference_temperature);
+                variables_prev, variables, t, x_position, dt, *state);
 
             if (!solution)
             {

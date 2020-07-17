@@ -266,6 +266,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // displacement equation, displacement part
         //
         eps.noalias() = B * u;
+        vars[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
         auto C = _ip_data[ip].updateConstitutiveRelation(vars, t, x_position,
                                                          dt, u, T_ref);
@@ -656,6 +659,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 DisplacementDim>::value>::identity2;
 
         eps.noalias() = B * u;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
         auto C = _ip_data[ip].updateConstitutiveRelation(vars, t, x_position,
                                                          dt, u, T_ref);
@@ -758,6 +764,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
         _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt, u,
                                                 T_ref);

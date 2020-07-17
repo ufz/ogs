@@ -329,6 +329,7 @@ public:
             _integration_method.getNumberOfPoints();
 
         MPL::VariableArray variables;
+        MPL::VariableArray variables_prev;
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
@@ -375,9 +376,25 @@ public:
                 (1. - damage_prev);  // damage_prev is in [0,1) range. See
                                      // calculateDamage() function.
 
+            variables_prev[static_cast<int>(MPL::Variable::stress)]
+                .emplace<
+                    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                    sigma_eff_prev);
+            variables_prev[static_cast<int>(MPL::Variable::strain)]
+                .emplace<
+                    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                    eps_prev);
+            variables_prev[static_cast<int>(MPL::Variable::temperature)]
+                .emplace<double>(_process_data.reference_temperature);
+            variables[static_cast<int>(MPL::Variable::strain)]
+                .emplace<
+                    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                    eps);
+            variables[static_cast<int>(MPL::Variable::temperature)]
+                .emplace<double>(_process_data.reference_temperature);
+
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                variables, t, x_position, dt, eps_prev, eps, sigma_eff_prev,
-                *state, _process_data.reference_temperature);
+                variables_prev, variables, t, x_position, dt, *state);
 
             if (!solution)
             {

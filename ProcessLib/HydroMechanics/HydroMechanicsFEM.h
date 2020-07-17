@@ -80,9 +80,22 @@ struct IntegrationPointData final
         DisplacementVectorType const& /*u*/,
         double const T)
     {
+        MaterialPropertyLib::VariableArray variable_array_prev;
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_eff_prev);
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_prev);
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::temperature)]
+            .emplace<double>(T);
+
         auto&& solution = solid_material.integrateStress(
-            variable_array, t, x_position, dt, eps_prev, eps, sigma_eff_prev,
-            *material_state_variables, T);
+            variable_array_prev, variable_array, t, x_position, dt,
+            *material_state_variables);
 
         if (!solution)
         {
