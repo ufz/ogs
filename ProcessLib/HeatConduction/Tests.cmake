@@ -152,7 +152,7 @@ AddTest(
     EXECUTABLE_ARGS line_1_line_1e2_source_term.prj
     TESTER vtkdiff
     DIFF_DATA
-    line_1_line_1e2_pcs_0_ts_500_t_39062500.000000_reference.vtu line_1_line_1e2_pcs_0_ts_500_t_39062500.000000.vtu temperature temperature 1e-11 0.0
+    line_1_line_1e2_pcs_0_ts_500_t_39062500.000000_reference.vtu line_1_line_1e2_pcs_0_ts_500_t_39062500.000000.vtu temperature temperature 1.4e-11 0.0
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -249,7 +249,7 @@ AddTest(
         EXECUTABLE_ARGS line_source_term_x_0.5.prj
         TESTER vtkdiff
         DIFF_DATA
-        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu temperature temperature 4e-15 2e-14
+        source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu temperature temperature 7e-15 2e-14
         source_term_middle_pcs_0_ts_1_t_1.000000.vtu source_term_middle_pcs_0_ts_1_t_1.000000.vtu heat_flux_x heat_flux_x 7e-14 0.0
         REQUIREMENTS NOT OGS_USE_MPI
 )
