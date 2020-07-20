@@ -23,7 +23,7 @@ namespace ParameterLib
 /// A parameter class evaluating functions defined by
 /// user-provided mathematical expressions.
 ///
-/// Currently, x, y, and z are supported as variables
+/// Currently, x, y, z, and t are supported as variables
 /// of the functions.
 template <typename T>
 struct FunctionParameter final : public Parameter<T>
@@ -48,6 +48,7 @@ struct FunctionParameter final : public Parameter<T>
         _symbol_table.create_variable("x");
         _symbol_table.create_variable("y");
         _symbol_table.create_variable("z");
+        _symbol_table.create_variable("t");
 
         _vec_expression.resize(_vec_expression_str.size());
         for (unsigned i = 0; i < _vec_expression_str.size(); i++)
@@ -63,20 +64,21 @@ struct FunctionParameter final : public Parameter<T>
         }
     }
 
-    bool isTimeDependent() const override { return false; }
+    bool isTimeDependent() const override { return true; }
 
     int getNumberOfComponents() const override
     {
         return _vec_expression.size();
     }
 
-    std::vector<T> operator()(double const /*t*/,
+    std::vector<T> operator()(double const t,
                               SpatialPosition const& pos) const override
     {
         std::vector<T> cache(getNumberOfComponents());
         auto& x = _symbol_table.get_variable("x")->ref();
         auto& y = _symbol_table.get_variable("y")->ref();
         auto& z = _symbol_table.get_variable("z")->ref();
+        auto& time = _symbol_table.get_variable("t")->ref();
         if (!pos.getCoordinates())
         {
             OGS_FATAL(
@@ -87,6 +89,7 @@ struct FunctionParameter final : public Parameter<T>
         x = coords[0];
         y = coords[1];
         z = coords[2];
+        time = t;
 
         for (unsigned i = 0; i < _vec_expression.size(); i++)
         {
