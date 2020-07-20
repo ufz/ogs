@@ -59,7 +59,7 @@ std::unique_ptr<ParameterBase> createParameter(
     if (type == "Function")
     {
         INFO("FunctionParameter: {:s}", name);
-        return createFunctionParameter(name, config);
+        return createFunctionParameter(name, config, curves);
     }
     if (type == "Group")
     {
