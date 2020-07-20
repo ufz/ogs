@@ -123,11 +123,27 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     }
     if (type == "NormalTraction")
     {
-        return ProcessLib::NormalTractionBoundaryCondition::
-            createNormalTractionBoundaryCondition(
-                config.config, config.boundary_mesh, dof_table, variable_id,
-                integration_order, shapefunction_order,
-                bulk_mesh.getDimension(), parameters);
+        switch (bulk_mesh.getDimension())
+        {
+            case 2:
+                return ProcessLib::NormalTractionBoundaryCondition::
+                    createNormalTractionBoundaryCondition<2>(
+                        config.config, config.boundary_mesh, dof_table,
+                        variable_id, integration_order, shapefunction_order,
+                        parameters);
+            case 3:
+                return ProcessLib::NormalTractionBoundaryCondition::
+                    createNormalTractionBoundaryCondition<3>(
+                        config.config, config.boundary_mesh, dof_table,
+                        variable_id, integration_order, shapefunction_order,
+                        parameters);
+            default:
+                OGS_FATAL(
+                    "NormalTractionBoundaryCondition can not be instantiated "
+                    "for mesh dimensions other than two or three. "
+                    "{}-dimensional mesh was given.",
+                    bulk_mesh.getDimension());
+        }
     }
     if (type == "PhaseFieldIrreversibleDamageOracleBoundaryCondition")
     {
