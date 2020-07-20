@@ -226,6 +226,10 @@ AddTest(
         REQUIREMENTS NOT OGS_USE_MPI
 )
 
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Parabolic/T/1D_line_source_term_tests/moving_source_term.prj)
+endif()
+
 # tests for line source term implementation
 AddTest(
         NAME HeatConduction_2D_LineSourceTermLeft
