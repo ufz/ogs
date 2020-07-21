@@ -33,7 +33,6 @@ We solve Laplace's Equation in 2D on a $1 \times 1$ square domain.
 Laplace's equation is
 $$
 \begin{equation}
-
 - \mathop{\mathrm{div}} (a \mathop{\mathrm{grad}} u) = 0
 \end{equation}
 $$

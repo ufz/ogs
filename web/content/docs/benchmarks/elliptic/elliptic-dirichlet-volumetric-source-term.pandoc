@@ -18,7 +18,6 @@ weight = 102
 We start with Poisson equation:
 $$
 \begin{equation}
-
 - k\; \Delta p = Q \quad \text{in }\Omega
 \end{equation}$$
 w.r.t boundary conditions
