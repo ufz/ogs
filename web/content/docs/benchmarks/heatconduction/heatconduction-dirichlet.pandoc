@@ -31,7 +31,7 @@ where $T$ could be temperature, the subscripts $D$ and $N$ denote the Dirichlet-
 
 ## Problem specification and analytical solution
 
-We solve the Parabolic equation on a line domain $[60\times 1]$ with $\lambda = 3.2$ and $\rho C_\textrm{p} = 2.5e10^6$ w.r.t. the specific boundary conditions:
+We solve the Parabolic equation on a line domain $[60\times 1]$ with $\lambda = 3.2$ and $\rho C_\textrm{p} = 2.5 \times 10^6$ w.r.t. the specific boundary conditions:
 
 $$
 \eqalign{
