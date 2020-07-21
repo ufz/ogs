@@ -18,6 +18,7 @@
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
+#include "SourceTermIntegrationPointData.h"
 
 namespace ProcessLib
 {
@@ -55,6 +56,7 @@ public:
         ParameterLib::Parameter<double> const& line_source_term_parameter)
         : _parameter(line_source_term_parameter),
           _integration_method(integration_order),
+          _element(element),
           _local_rhs(local_matrix_size)
     {
         unsigned const n_integration_points =
@@ -63,14 +65,15 @@ public:
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
                               IntegrationMethod, GlobalDim>(
-                element, is_axially_symmetric, _integration_method);
+                _element, is_axially_symmetric, _integration_method);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
+                shape_matrices[ip].N,
                 _integration_method.getWeightedPoint(ip).getWeight() *
-                shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ *
-                shape_matrices[ip].N);
+                    shape_matrices[ip].integralMeasure *
+                    shape_matrices[ip].detJ);
         }
     }
 
@@ -83,15 +86,19 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(id);
-
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
+            auto const& N = _ip_data[ip].N;
+            auto const& w = _ip_data[ip].integration_weight;
+
+            ParameterLib::SpatialPosition const pos{
+                boost::none, _element.getID(), ip,
+                MathLib::Point3d(
+                    interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
+                        _element, N))};
             auto const st_val = _parameter(t, pos)[0];
 
-            _local_rhs.noalias() += st_val * _ip_data[ip];
+            _local_rhs.noalias() += st_val * w * N;
         }
         auto const indices = NumLib::getIndices(id, source_term_dof_table);
         b.add(indices, _local_rhs);
@@ -101,9 +108,11 @@ private:
     ParameterLib::Parameter<double> const& _parameter;
 
     IntegrationMethod const _integration_method;
-    std::vector<NodalRowVectorType,
-                Eigen::aligned_allocator<NodalRowVectorType>>
+    std::vector<SourceTermIntegrationPointData<NodalRowVectorType>,
+                Eigen::aligned_allocator<
+                    SourceTermIntegrationPointData<NodalRowVectorType>>>
         _ip_data;
+    MeshLib::Element const& _element;
     NodalVectorType _local_rhs;
 };
 

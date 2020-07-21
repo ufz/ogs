@@ -87,6 +87,7 @@ void PrimaryVariableConstraintDirichletBoundaryCondition::getEssentialBCValues(
             // fetch the value of the primary variable
             auto const local_x = x.get(std::vector{global_index});
             pos.setNodeID(id);
+            pos.setCoordinates(*node);
             if (_less && local_x[0] < _threshold_parameter(t, pos).front())
             {
                 bc_values.ids.emplace_back(global_index);

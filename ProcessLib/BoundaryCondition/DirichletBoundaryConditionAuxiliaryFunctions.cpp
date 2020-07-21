@@ -76,7 +76,6 @@ void getEssentialBCValuesLocal(
     for (auto const* const node : nodes_in_bc_mesh)
     {
         auto const id = node->getID();
-        pos.setNodeID(node->getID());
         // TODO: that might be slow, but only done once
         auto const global_index = dof_table_boundary.getGlobalIndex(
             {bc_mesh.getID(), MeshLib::MeshItemType::Node, id}, variable_id,
@@ -94,6 +93,8 @@ void getEssentialBCValuesLocal(
         // applied.
         if (global_index >= 0)
         {
+            pos.setNodeID(id);
+            pos.setCoordinates(*node);
             bc_values.ids.emplace_back(global_index);
             bc_values.values.emplace_back(parameter(t, pos).front());
         }
