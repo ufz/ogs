@@ -16,7 +16,9 @@ To migrate your repository run the following commands in your local repository (
 We used Git LFS to store large files but [switched back to plain git](https://github.com/ufz/ogs/issues/2961).
 
 ::: {.note}
+
 ### <i class="far fa-info-circle"></i> IMPORTANT: Normalize LFS files in your existing branches
+
 If you have branches from pre-GitLab times with e.g. newly created LFS files (benchmark files, images, ...) you have to convert them back to plain git:
 
 ```bash
@@ -49,7 +51,7 @@ git remote set-url upstream https://gitlab.opengeosys.org/ogs/ogs.git
 
 Assuming your personal forks remote is called `origin`:
 
-```
+```bash
 git remote set-url origin git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
 ```
 

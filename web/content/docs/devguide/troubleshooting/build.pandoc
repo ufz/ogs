@@ -18,19 +18,19 @@ weight = 1043
 
 The compilation especially of the processes in Release-config can be very memory hungry. Using dynamic Eigen shape matrices can reduce memory usage:
 
-```
+```bash
 cmake . -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=ON
 ```
 
 You should also have at least 8 GB of RAM and even this can be not enough when compiling on multiple cores (which is the default). To build on only one core run the following in your build-directory:
 
-```
+```bash
 cmake --build . --config Release -j 1
 ```
 
 If this still fails you can disable building of the failing processes, e.g.:
 
-```
+```bash
 cmake . -DOGS_BUILD_PROCESS_HT=OFF
 cmake --build . --config Release -j 1
 ```

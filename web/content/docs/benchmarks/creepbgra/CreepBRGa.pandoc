@@ -22,8 +22,7 @@ by experiments, $Q$ is called activation energy,
 $R_u=8.314472 \mbox{J/(Kmol)}$ is the universal gas constant, and
 ${ \sigma}_f$ is a stress scaling factor.
 
-Creep potential and creep strain
-================================
+## Creep potential and creep strain
 
 Assume there is a creep potential $g^c$ and the creep induced strain
 rate is given by the flow rule
@@ -58,8 +57,7 @@ derived as $$\begin{gathered}
  \dot { \mathbf \epsilon}^c ({ \sigma})={\color{red} {\sqrt{\frac{3}{2}}}}Ae^{-Q/R_uT}\left(\dfrac{{\bar \sigma}}{{ \sigma}_f}\right)^m\dfrac{{\mathbf s}}{{\left\Vert{\mathbf s}\right\Vert}}
 \end{gathered}$$
 
-Stress integration
-==================
+## Stress integration
 
 The above creep strain rate expression can be simplified as $$\begin{gathered}
   \dot { \mathbf \epsilon}^c ({ \sigma}) = b {\left\Vert{\mathbf s}\right\Vert}^{m-1} {\mathbf s}
@@ -103,7 +101,7 @@ Newton-Raphson is applied to .
  Let $$\begin{gathered}
  \mathbf{r}= { \mathbf \sigma}^{n+1} -
  { \mathbf \sigma}^{n} - \mathbf{C} (\Delta { \mathbf \epsilon} - \alpha_T \Delta T \mathbf I)
- + 2bG \Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}
++ 2bG \Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}
  {\mathbf s}^{n+1}
 \end{gathered}$$
 
@@ -114,8 +112,7 @@ of is derived as
  \left(\mathcal{I} - \frac{1}{3} \mathbf{I} \otimes \mathbf{I} + (m-1){\left\Vert{\mathbf s}^{n+1}\right\Vert}^{-2} {\mathbf s}^{n+1}\otimes {\mathbf s}^{n+1}\right)
 \end{gathered}$$
 
-Consistent tangent
-==================
+## Consistent tangent
 
 Once the converged stress integration is obtained, the tangential of
 stress with respect to strain can be obtained straightforwardly by
@@ -131,16 +128,16 @@ We see that $$\begin{aligned}
 If the model is used for the thermo-mechanical problems and the problems
 are solved by the monolithic scheme, the displacement-temperature block
 of the global Jacobian can be derived as
- $$\begin{aligned}
- - 2G\dfrac{Q}{R} {{\int}_{\Omega} \dfrac{b}{T^2} {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}  \mathbf{B}^T  {\mathbf s}^{n+1} \mathrm{d} \Omega}
- \end{aligned}$$
+$$\begin{aligned}
+
+  -2G\dfrac{Q}{R} {{\int}_{\Omega} \dfrac{b}{T^2} {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}  \mathbf{B}^T  {\mathbf s}^{n+1} \mathrm{d} \Omega}
+\end{aligned}
 
 *Note*: The above rate form of stress integration is implemented in ogs6.
  Alternatively, one can use a absolute stress integration form, which can be found in the attached
  [PDF](../doku_BGRa.pdf).
 
-Example
-=======
+## Example
 
 We verify the scheme by a one dimensional extension with constant
 pressure of ${ \sigma}_0=5 ~\mbox{MPa}$. The values of the parameters are
@@ -184,9 +181,8 @@ obtained by the present multidimensional scheme with the analytical
 solution is shown in the following figure:
 {{< img src="../bgra0.png" >}}
 
+### Python code
 
-Python code
------------
 A short python snippet, to compute the values.
 <details>
 <summary>

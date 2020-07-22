@@ -59,7 +59,6 @@ In this model, the quad element was adopted to compose the mesh. The initial tem
 
 {{< img src="../BHE_array_benchmark_figures/figure_1.png" >}}
 
-
 Figure 1: Model geometry, BHE location, and the observation profile
 
 Different meshes were adopted to analyse the impact of mesh density on the numerical results. According to Diersch et al. (2011) the different element size can affect the accuracy of the numerical result significantly for such type of BHE simulation. The optimal element size $\triangle$ in a 2D model around the BHE node should have the following relationship with respect to the BHE diameter:
@@ -81,7 +80,6 @@ where $r_b$ is the BHE radius. n denotes the number of surrounding nodes. n = 8
 ## Numerical modelling results
 
 Figure 2 and 3 show the comparison of the temperature distribution along the observation profile (position see Figure 1) using analytical solution with the numerical results from OGS5 and OGS6 for every 4 months in the whole simulated time. It shows the numerical solution has a very good agreement with the analytical solution.
-
 
 {{< img src="../BHE_array_benchmark_figures/figure_2.png" width="200">}}
 
@@ -108,7 +106,7 @@ In this benchmark, a 2D numerical model has been constructed to simulate the gro
 ## References
 
 [1] Bayer, P., de Paly, M., Beck, M., 2014. Strategic optimization of borehole heat exchanger field for seasonal geothermal heating and cooling. Applied Energy 136, 445-453.
-URL http://dx.doi.org/10.1016/j.apenergy.2014.09.029
+URL <http://dx.doi.org/10.1016/j.apenergy.2014.09.029>
 
 [2] Diersch, H.-J., Bauer, D., Heidemann, W., Ruehaak, W., Sch¨atzl, P., 2011. Finite element modeling of borehole heat exchanger systems: Part 2. Numerical simulation. Computers & Geosciences 37, 1136-1147.
 

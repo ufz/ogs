@@ -30,7 +30,6 @@ For simplicitly, also initially the elastic piston is in an unstressed state.
 
 {{<img src="../sketch-piston.png" >}}
 
-
 ## Results
 
 {{<img src="../load-steps.png" >}}

@@ -56,8 +56,9 @@ boundary meshes associated with the bulk mesh.
 ## Running simulation
 
 To start the simulation (after successful compilation) run:
+
 ```bash
-$ ogs square_1e2_volumetricsourceterm.prj
+ogs square_1e2_volumetricsourceterm.prj
 ```
 
 OGS writes the computed results (pressure, darcy velocity) into the output file
@@ -65,7 +66,8 @@ OGS writes the computed results (pressure, darcy velocity) into the output file
 directly visualized and analysed in paraview for example.
 
 The output on the console will be similar to:
-```
+
+```bash
 info: ConstantParameter: K
 info: ConstantParameter: p0
 info: ConstantParameter: p_Dirichlet_left

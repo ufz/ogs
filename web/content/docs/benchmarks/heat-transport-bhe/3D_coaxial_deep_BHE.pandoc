@@ -14,6 +14,7 @@ project = "Parabolic/T/3D_deep_BHE/3D_deep_BHE_CXA.prj"
 {{< data-link >}}
 
 ## Problem description
+
 In recent years, Borehole Heat Exchangers (BHE) are very widely utilized to extract geothermal energy for building heating. For coaxial type of BHEs, an inner pipe is installed inside of an outer pipe, allowing the downward and upward flow to be seperated. In some projects, very long coaxial BHEs are installed down to a 2-km depth, in order to extract more energy from the deep subsurface (Kong et al., 2017). Based on the flow directions, there are two types of coaxial BHEs. When downward flow is located in the inner pipe, it is called Coaxial-Centred (CXC) type. On the countary, if the inflow is introduced in the annular space, it is called a CXA type. Detailed schematization of the CXA-type BHE system is shown in Figure 1. In this benchmark, the numerical model in OGS-6 has been tested for the 2 coaxial types of BHEs. The simulation results are compared with previous OGS-5 results and also the analytical solution proposed by [Beier et al. (2014)](../Analytical_coaxial_BHE.zip).
 
 {{< img src="../3D_coaxial_deep_BHE_figures/coaxial_deep_BHE.png" width="200">}}
@@ -21,6 +22,7 @@ In recent years, Borehole Heat Exchangers (BHE) are very widely utilized to extr
 Figure 1: Coaxial BHE of CXA (Kong et al. (2017))
 
 ## Model Setup
+
 The implemented numerical model was established based on the dual continuum approach (Diersch et al. (2011)). The BHE is represented by the line elements co-located in the 3D mesh composed mainly by prisms. There are altoghether 3 primary variables on the line elements, namely 1) the inflow temperature 2) the outflow temperature and 3) the grout temperature. The geometry of the model is visualized in Figure 2. The length of the whole domain is 70 m with a square cross section of 20 m by 20 m. The mesh was intentionally extended in the horizontal direction, so that the impact of boundary conditions on the soil temperature distribution can be avoided even for the long-term simulation. The top of the DBHE is situated 10 m below the ground surface, with a total length of 50 m. Detailed parameters for the model configuration can be found in the following table.
 
 | Parameter                                          | Symbol            |  Value              | Unit                        |
@@ -37,7 +39,6 @@ The implemented numerical model was established based on the dual continuum appr
 | Wall thermal conductivity of the inner outflow pipe| $\lambda_{i}$     | 1.3                 | $\mathrm{m}$                |
 | Grout thermal conductivity                         | $\lambda_{g}$     | 0.73                | $\mathrm{W m^{-1} K^{-1}}$  |
 | Grout heat capacity                                | $(\rho c)_{g}$    | $3.8\times10^{6}$   | $\mathrm{Jm^{-3}K^{-1}}$    |
-
 
 {{< img src="../3D_coaxial_deep_BHE_figures/numerical_geometry_model.png" width="80">}}
 

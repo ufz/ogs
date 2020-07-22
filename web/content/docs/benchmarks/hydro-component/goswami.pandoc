@@ -13,19 +13,18 @@ title = "Saturated Variable-Density Flow and Mass Transport (Goswami)"
 
 {{< data-link >}}
 
-
 ## Overview
 
 This benchmark features an Henry-like variable-density flow and transport setup that evaluates saltwater intrusion on laboratory scale. The original benchmark was published by Goswami & Clement (2007); OpenGeoSys5 has been verified for all steady and transient states of the original benchmark (see Kolditz et al., 2012).
 
 For the setup and parameterization, see the chapter "Density dependent flow - The Goswami Problem" in Kolditz et al. (2012).
 
-
 ## Problem description
 
 The Goswami-Clement benchmark is based on experiment observations for intruding and receding saltwater in a laboratory-scale sand tank. Here, we compare numerical results of ogs6 to the original observation data.
 
 ### Model results
+
 An example for the intruding salt front is shown below. The numerical results of OGS-6 coincide with those of OGS-5.
 
 {{< img src="../gif/goswami.gif" title="Results for numerical experiment. The steady state SS2 from the original experimental work is well reproduced.">}}
@@ -36,9 +35,7 @@ A comparison of numerical and laboratory data is shown in the figure below. The 
 
 {{< img src="../Goswami_Exp_Num_Comp.png" title="Results for numerical (colored diamonds) and laboratory data (colored straight lines) on the steady state location of the concentration front (see original research paper).">}}
 
-
 {{< img src="../Goswami_Transient_States.png" title="Results for numerical (colored diamonds) and laboratory data (colored straight lines) on the transient state locations of the concentration front (see original research paper).">}}
-
 
 ## Literature
 

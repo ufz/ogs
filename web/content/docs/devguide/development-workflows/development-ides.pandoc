@@ -24,36 +24,40 @@ Here is a **link list** without specific order:
 The steps to get things started with an IDE basically include **generating** the project files, **importing** them in the IDE and know where to **provide arguments** to the debugging binary.
 
 I will assume, that you have the sources (eg. checked out from github) and that they lie in the **source directory**
+
 ```bash
 /home/user/ogs6/sources
 ```
+
 Please, create a seperate **build directory** for your favorite IDE like
+
 ```bash
 /home/user/ogs6/build_gdb
 ```
 
 __________
 
-
 ## GDB
 
 <https://www.sourceware.org/gdb/download>
 
-### Screenshot
-
-![](../gdb.png)
+![GDB screenshot](../gdb.png)
 
 ### Create project files
 
 1. CD to the build directory
 2. Generate project files with CMake:
-```bash
-cmake ../sources/
-```
+
+    ```bash
+    cmake ../sources/
+    ```
+
 3. Start gdb in graphical mode, without license info (quiet) and with arguments:
-```bash
-gdb -tui -q --args ./bin/ogs ./path/to/BenchmarkName.prj
-```
+
+    ```bash
+    gdb -tui -q --args ./bin/ogs ./path/to/BenchmarkName.prj
+    ```
+
 4. Have fun...
 
 Documentation: <https://sourceware.org/gdb/onlinedocs/gdb/index.html>
@@ -66,24 +70,26 @@ __________
 
 Choose "Eclipse IDE for C/C++ Developers"
 
-### Screenshot
-
-![](../eclipse.png)
+![Eclipse screenshot](../eclipse.png)
 
 ### Import Code
 
 1. CD to the build directory
 2. Generate project files with CMake:
-```bash
-cmake -G "Eclipse CDT4 - Unix Makefiles" ../sources/
-```
+
+    ```bash
+    cmake -G "Eclipse CDT4 - Unix Makefiles" ../sources/
+    ```
+
 3. Open Eclipse and choose *File - Import - Existing Project into Workspace*
 4. Select the **build directory** and click Finish (***Attention:*** Make sure to **not** check the option *Copy projects into workspace*!)
 5. To provide arguments, you will have to run the project once: *Run - Debug* (running will start building first, if not already done).
 6. Then, give arguments via *Run - Debug Configuration - C/C++ Application - ogs*. Choose *Arguments* tab on right side and add your arguments to the line *C/C++ Application*, e.g.
-```bash
-./path/to/BenchmarkName.prj
-```
+
+    ```bash
+    ./path/to/BenchmarkName.prj
+    ```
+
 7. Start debugging...
 
 Documentation: <http://wiki.eclipse.org/Main_Page>
@@ -98,26 +104,28 @@ or
 
 The latter includes already plugins for Fortran, in case you want to cross-compile.
 
-### Screenshot
-
-![](../codeblocks.png)
+![Code::Blocks screenshot](../codeblocks.png)
 
 ### Import Code
 
 1. CD to the build directory
 2. Generate project files with CMake:
-```bash
-cmake -G "CodeBlocks - Unix Makefiles" ../sources/
-```
+
+    ```bash
+    cmake -G "CodeBlocks - Unix Makefiles" ../sources/
+    ```
+
 3. *Open an existing project* and choose before created .cbp file
 4. Choose your compilation target
 5. Give arguments: *Project - Set Programs' Arguments*, select correct target and add *Program arguments* in the bottom
-```bash
-./path/to/BenchmarkName.prj
-```
+
+    ```bash
+    ./path/to/BenchmarkName.prj
+    ```
+
 6. Rock the show...
 
-### Documentation:
+### Documentation
 
 - <http://www.codeblocks.org/user-manual>
 - <http://wiki.codeblocks.org/index.php?title=Main_Page>
@@ -128,9 +136,7 @@ __________
 
 <https://netbeans.org/downloads>
 
-### Screenshot
-
-![](../netbeans.png)
+![NetBeans screenshot](../netbeans.png)
 
 ### Import project files
 
@@ -141,11 +147,13 @@ __________
 5. Click *Next >* until *Finish*
 6. Give arguments via *Run - Set Project Configuration - Customize*
 7. Under *Run*, give *Run Command* on right side:
-```bash
-"${OUTPUT_PATH}" ./path/to/BenchmarkName.prj
-```
-7. When starting debugging, choose correct target
-8. Have a great time...
+
+    ```bash
+    "${OUTPUT_PATH}" ./path/to/BenchmarkName.prj
+    ```
+
+8. When starting debugging, choose correct target
+9. Have a great time...
 
 Documentation: <https://netbeans.org/kb/index.html>
 
@@ -155,9 +163,7 @@ __________
 
 Download: <https://www.jetbrains.com/clion/>
 
-### Screenshot
-
-![](../clion.png)
+![Clion screenshot](../clion.png)
 
 ### Import project
 

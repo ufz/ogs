@@ -10,6 +10,7 @@ weight = 1038
 +++
 
 ::: {.note}
+
 ### <i class="far fa-exclamation-triangle"></i> GCC-like compilers only
 
 Tested on GCC and Clang.
@@ -23,7 +24,7 @@ Tested on GCC and Clang.
 
 Add the following line to your [ccache config file](https://ccache.samba.org/manual.html#_configuration) which is required for pre-compiled headers:
 
-```
+```bash
 sloppiness = pch_defines,time_macros
 ```
 
@@ -37,6 +38,6 @@ Set the option `run_second_cpp = true` or `export CCACHE_CPP2=true` to suppress 
 
 Just load the module:
 
-```
+```bash
 module load /global/apps/modulefiles/ccache/3.3.3
 ```

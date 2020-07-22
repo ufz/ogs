@@ -30,12 +30,13 @@ AddLayer -i <input-mesh> -o <output-mesh> [-t <thickness>]
 
 ## Simple example
 
-![](./SimpleQuadExample_1.png){ width=49% }
-![](./SimpleQuadExampleWithNewTopLayer_1.png){ width=49% }
-*Left*: A simple cube mesh with one material group (red). *Right*: The updated mesh where an additional layer (blue) was added on top of the domain with a second material group.
+![A simple cube mesh with one material group (red).](./SimpleQuadExample_1.png){.m-auto}
+
+![The updated mesh where an additional layer (blue) was added on top of the domain with a second material group.](./SimpleQuadExampleWithNewTopLayer_1.png){.m-auto}
 
 Usage for example:
-```
+
+```bash
 AddLayer -i quad.vtu -o quad_with_new_top_layer.vtu -t 1
 ```
 

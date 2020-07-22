@@ -38,7 +38,8 @@ Where:
 ## Simple example
 
 **Command:**
-```
+
+```bash
 TecPlotTools -i Lake.plt -o Lake.vtu -c
 ```
 
@@ -49,4 +50,3 @@ TecPlotTools -i Lake.plt -o Lake.vtu -c
 **Output:**
 
 ![Converted file visualised in ParaView with all scalar data available.](./PoyangLake-ParaView.png)
-

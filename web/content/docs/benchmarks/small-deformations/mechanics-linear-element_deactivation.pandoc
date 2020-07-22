@@ -41,13 +41,11 @@ The input data set of the element deactivation approach is specified inside the 
 * [3D](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj)
 
 ## Mesh
-2D and 3D meshes:
-![](../element_deactivation_2D_3D_mesh.png)
+
+![2D and 3D meshes](../element_deactivation_2D_3D_mesh.png){.m-auto}
 
 ## Results and evaluation
 
-2D results:
-![](../element_deactivation_2D.png)
-3D results:
-![](../element_deactivation_3D.png)
+![2D results](../element_deactivation_2D.png){.m-auto}
 
+![3D results:](../element_deactivation_3D.png){.m-auto}

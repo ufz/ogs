@@ -18,13 +18,13 @@ author = "Wenqing Wang"
 Theis' problem examines the transient lowering of the water table induced by a pumping well. Theis' fundamental insight was to recognize that Darcy's law is analogous to the law of heat flow by conduction, i.e., hydraulic pressure being analogous to temperature, pressure-gradient to thermal gradient.
 
 The assumptions required by the Theis solution are:
+
 - the aquifer is homogeneous, isotropic, confined, infinite in radial extent,
 - the aquifer has uniform thickness, horizontal piezometric surface
 - the well is fully penetrating the entire aquifer thickness,
 - the well storage effects can be neglected,
 - the well has a constant pumping rate,
 - no other wells or long term changes in regional water levels.
-
 
 ## Analytical solution
 

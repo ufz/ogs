@@ -24,6 +24,7 @@ The minimum prerequisites to build OGS are:
 ::: {.win}
 
 ::: {.note}
+
 ### Alternative setup
 
 Please note that the following setup on Windows is the **native Windows development setup**. This native setup is **quite involved** and **heavy on system resources**. We can recommend an alternative setup in which the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) is used: Setup and development of OGS follows the Linux way but you can use your Windows IDE (especially Visual Studio Code) for development and debugging. If this sounds interesting please [follow the steps here]({{< ref "wsl.pandoc" >}})!
@@ -41,7 +42,7 @@ As we use lots of features of the C++17-standard we support **Visual Studio {{< 
 On Debian-based (e.g. Ubuntu) you need to install the `build-essential`-package (which contains the `gcc`-compiler and the `make`-tool):
 
 ```bash
-$ sudo apt install build-essential
+sudo apt install build-essential
 ```
 
 You need to have at least **gcc {{< dataFile "versions.minimum_version.gcc" >}}**:
@@ -52,6 +53,7 @@ gcc (GCC) {{< dataFile "versions.minimum_version.gcc" >}}.0
 ```
 
 ::: {.note}
+
 ### Install a newer compiler on Ubuntu
 
 We recommend using Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}} as its standard `gcc` package is already at version 9. If you are on an older Ubuntu version you can install a newer compiler from the `ubuntu-toolchain-r/test`-repository:
@@ -74,6 +76,7 @@ If you do not do this you have to specify the compiler during the first CMake ru
 ```bash
 CC=gcc-9 CXX=c++-9 cmake ../ogs [more CMake options]
 ```
+
 :::
 
 :::
@@ -82,7 +85,7 @@ CC=gcc-9 CXX=c++-9 cmake ../ogs [more CMake options]
 Please install Xcode from the App Store. Then please run the following command in the terminal to install the command line tools:
 
 ```bash
-$ xcode-select --install
+xcode-select --install
 ```
 
 Open Xcode one time to install some other Xcode stuff.
@@ -90,8 +93,8 @@ Open Xcode one time to install some other Xcode stuff.
 Now also install the [Homebrew](http://brew.sh) package manager:
 
 ```bash
-$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-$ brew doctor
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew doctor
 ```
 
 The Homebrew package manager is needed for installing other libraries and packages. It is just like a linux package manager.
@@ -111,8 +114,8 @@ This install a new command line called *Git Bash* which should be used for all g
 Let Git know who you are:
 
 ```bash
-$ git config --global user.name "Your Name Here"
-$ git config --global user.email "your_email@example.com"
+git config --global user.name "Your Name Here"
+git config --global user.email "your_email@example.com"
 ```
 
 In some corporate environments you may have to use a proxy server. In this case tell git about it:
@@ -120,6 +123,7 @@ In some corporate environments you may have to use a proxy server. In this case 
 ```bash
 git config --global http.proxy http://yourproxy.example.com
 ```
+
 :::
 
 ::: {.linux}
@@ -133,20 +137,20 @@ git version {{< dataFile "versions.minimum_version.git" >}}
 Otherwise please install Git with your favorite package manager:
 
 ```bash
-$ sudo apt-get install git
+sudo apt-get install git
 ```
 
 Let Git know who you are:
 
 ```bash
-$ git config --global user.name "Your Name Here"
-$ git config --global user.email "your_email@example.com"
+git config --global user.name "Your Name Here"
+git config --global user.email "your_email@example.com"
 ```
 
 Optionally enable password storing when interacting with a remote server:
 
 ```bash
-$ git config --global credential.helper store
+git config --global credential.helper store
 ```
 
 In some corporate environments you may have to use a proxy server. In this case tell git about it:
@@ -154,20 +158,21 @@ In some corporate environments you may have to use a proxy server. In this case 
 ```bash
 git config --global http.proxy http://yourproxy.example.com
 ```
+
 :::
 
 ::: {.mac}
 Install Git with Homebrew:
 
 ```bash
-$ brew install git
+brew install git
 ```
 
 Let Git know who you are:
 
 ```bash
-$ git config --global user.name "Your Name Here"
-$ git config --global user.email "your_email@example.com"
+git config --global user.name "Your Name Here"
+git config --global user.email "your_email@example.com"
 ```
 
 The [graphical GitHub client](http://mac.github.com/) is also maybe worth a look.
@@ -177,6 +182,7 @@ In some corporate environments you may have to use a proxy server. In this case 
 ```bash
 git config --global http.proxy http://yourproxy.example.com
 ```
+
 :::
 
 ## Step: Install Python 3
@@ -209,11 +215,13 @@ Install Python 3 with Homebrew:
 ```bash
 brew install python
 ```
+
 :::
 
 ## Step: Install CMake
 
 ::: {.win}
+
 - Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
 - Execute the installer, please check the **Add CMake to the system path for all users**-option
 :::
@@ -228,8 +236,9 @@ For other linux distributions you want to use your distributions package manager
 Install CMake with Homebrew:
 
 ```bash
-$ brew install cmake
+brew install cmake
 ```
+
 :::
 
 ## Step: Install Conan package manager

@@ -31,7 +31,7 @@ where $T$ could be temperature, the subscripts $D$ and $N$ denote the Dirichlet-
 
 ## Problem specification and analytical solution
 
-We solve the Parabolic equation on a line domain $[60\times 1]$ with $\lambda = 3.2$ and $\rho C_\textrm{p} = 2.5e10^6$ w.r.t. the specific boundary conditions:
+We solve the Parabolic equation on a line domain $[60\times 1]$ with $\lambda = 3.2$ and $\rho C_\textrm{p} = 2.5 \times 10^6$ w.r.t. the specific boundary conditions:
 
 $$
 \eqalign{
@@ -54,10 +54,11 @@ where $T_\textrm{b}$ is the boundary temperature, $\textrm{erfc}$ is the complem
 The main project file is [line_60_heat.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/1D_dirichlet/line_60_heat.prj). It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
 
 As of now a small portion of possible inputs is implemented; one can change:
- - the mesh file
- - the geometry file
- - introduce more/different Dirichlet boundary conditions (different geometry or other constant values)
- - introduce more/different Neumann boundary conditions (different geometry or other constant values)
+
+- the mesh file
+- the geometry file
+- introduce more/different Dirichlet boundary conditions (different geometry or other constant values)
+- introduce more/different Neumann boundary conditions (different geometry or other constant values)
 
 The geometries used to specify the boundary conditions are given in the `line_60_heat.gml` file.
 

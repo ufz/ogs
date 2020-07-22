@@ -39,24 +39,23 @@ The parameter ```n``` determines how many layers are created between the two inp
 
 **Input data:**
 
-![](./createIntermediateRasters-input.png)
-Two input rasters as well as their 3D surface representation. Darker pixels represent values at a lower elevation while brighter pixels represent higher elevaton. In the 3D visualisation, the left-most raster is represented by the green surface and the right-most raster by the yellow surface.
+![Two input rasters as well as their 3D surface representation. Darker pixels represent values at a lower elevation while brighter pixels represent higher elevaton. In the 3D visualisation, the left-most raster is represented by the green surface and the right-most raster by the yellow surface.](./createIntermediateRasters-input.png)
 
 **Command:**
-```
+
+```bash
 createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc -n 1
 ```
 
-![](./createIntermediateRasters-output1.png){ width=66% }
-A new raster is created in the exact center between the two input rasters. In the 3D representation, the new layer is shown in red.
+![A new raster is created in the exact center between the two input rasters. In the 3D representation, the new layer is shown in red.](./createIntermediateRasters-output1.png){ width=66% }
 
 **Command:**
-```
+
+```bash
 createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc -n 2
 ```
 
-![](./createIntermediateRasters-output2.png)
-For ```n>1``` multiple rasters are created at equidistant distances between the two input rasters. For ```n=2```, two new rasters are generated, represented here in red and blue.
+![For ```n>1``` multiple rasters are created at equidistant distances between the two input rasters. For ```n=2```, two new rasters are generated, represented here in red and blue.](./createIntermediateRasters-output2.png)
 
 ## Application
 

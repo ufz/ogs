@@ -16,6 +16,7 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 ## CPU Architecture Optimization
 
 ::: {.win}
+
 ### Default compiler flags
 
 - `/favor:blend`: Optimizes for AMD **and** Intel architectures, see [MSDN docs](https://msdn.microsoft.com/en-us/library/ms173505.aspx)
@@ -28,6 +29,7 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 :::
 
 ::: {.linux}
+
 ### Default compiler flags
 
 - `-march=native`: Optimizes for current cpu
@@ -48,7 +50,6 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 See Linux-tab!
 :::
 
-
 ## Shared vs. static libraries
 
 Try to use static libraries as much as possible. For OGS itself use `BUILD_SHARED_LIBS=OFF`, which already defaults to `OFF`.
@@ -64,4 +65,3 @@ make package
 ```
 
 This creates a zip- or tar-archive which should be redistributable.
-

@@ -34,4 +34,3 @@ Axisymmetric plastic sphere comparison between numerical and analytical results:
 
 Axisymmetric plastic sphere residuals of stress:
 {{< img src="../sphere_axisymmetric_pl_residual_stress.png" >}}
-

@@ -82,7 +82,6 @@ On the right boundary of the domain a Neumann BC is applied.
 There $n = (1, 0)$, which implies that $a \mathop{\mathrm{grad}} u \cdot n
 = a \, \partial u / \partial x$.
 
-
 ## Results
 
 The numerical result obtained from OpenGeoSys is:

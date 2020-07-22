@@ -13,18 +13,15 @@ title = "Unsaturated Mass Transport"
 
 {{< data-link >}}
 
-
 ## Overview
 
 The Richards equation is often used to describe water movement in the unsaturated zone, while the mass transport equation describes solute movement in the liquid phase. Here, we use a monolithic approach to simulate mass transport in an unsaturated medium.
 
 The development of the equation system is given in [this PDF](../RichardsComponentTransport_Equations.pdf). In the following, we present a numerical benchmark that uses experimental data as reference.
 
-
 ## Problem description
 
 We use the Padilla et al. (1999) problem which features a series of saturated and unsaturated laboratory column experiments to validate the implementation. In specific, we refer to experiments "NaCl1" (saturated flow) and "NaCl6" (unsaturated flow) - see also table 1 in Padilla et al. (1999) - and use the following parameters as model input.
-
 
 ### Model setup
 
@@ -36,7 +33,6 @@ Initial conditions are $c = 0$ and hydrostatic pressure conditions with steady s
 
 {{< data-link "The NaCl1 project file" "Parabolic/RichardsComponentTransport/Padilla/Padilla_NaCl1/Padilla_NaCl1.prj" >}}
 {{< data-link "The NaCl6 project file" "Parabolic/RichardsComponentTransport/Padilla/Padilla_NaCl6/Padilla_NaCl6.prj" >}}
-
 
 ### Results
 
@@ -53,4 +49,3 @@ Here is the [ParaView state file]({{< data-url "Parabolic/RichardsComponentTrans
 ## References
 
 Padilla, I. Y., T.-C. J. Yeh, and M. H. Conklin (1999), The effect of water content on solute transport in unsaturated porous media, Water Resour. Res., 35(11), 3303–3313, doi:10.1029/1999WR900171.
-

@@ -21,6 +21,7 @@ and is build when the `OGS_BUILD_UTILS` cmake switch is set `ON`. The build
 executable `GocadSGridReader` is placed in the `bin` directory. The tool is a command line tool.
 
 ## Usage
+
 Running `GocadSGridReader` tool will print the required arguments and a short usage message; for detailed usage add the `--help` argument.
 
 ```bash
@@ -41,25 +42,28 @@ Where:
 
 ## Example
 
-```
+```bash
 GocadSGridReader -s flow_simulation_grid_klein_Rinne.sg -o flow_simulation_grid_klein_Rinne.vtu
 ```
-![](flow_simulation_klein_Grid_Rinne.png)
+
+![Gocad SGrid](flow_simulation_klein_Grid_Rinne.png)
 
 ## Applications
 
 ### Thuringia Syncline (INFLUINS project)
 
-The tool was used to convert Gocad stratigraphic grids ('GoCad Model' in
+![The tool was used to convert Gocad stratigraphic grids ('GoCad Model' in
 figure below) of the Thuringia syncline to a vtk unstructured grid ('VTU'
 in the figure) within the INFLUINS project. Further conversion steps were taken
 to prepare the mesh for the simulation (not part of this tool, see Fischer et
-al. 2015).
-{{< bib "fischer:2015" >}})
-![](WorkflowGO2OGS.png)
+al. 2015).](WorkflowGO2OGS.png)
 
-### Rotenburger Rinne (Geologischer Dienst für Niedersachsen, Referat Hydrogeologie Landesamt für Bergbau, Energie und Geologie (Jörg Elbracht))
+#### Publication
 
-### Heat storage model HH (Christian-Albrechts-Universität zu Kiel, Institut für Geowissenschaften (Janine Struß))
+{{< bib "fischer:2015" >}}
 
-### Geothermal project (British Geological Survey (Richard Haslam))
+### Other
+
+- Rotenburger Rinne (Geologischer Dienst für Niedersachsen, Referat Hydrogeologie Landesamt für Bergbau, Energie und Geologie, Jörg Elbracht)
+- Heat storage model HH (Christian-Albrechts-Universität zu Kiel, Institut für Geowissenschaften, Janine Struß)
+- Geothermal project (British Geological Survey, Richard Haslam)

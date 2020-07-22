@@ -36,13 +36,12 @@ corresponding bulk mesh entities like nodes, elements and faces of elements.
 In the next figures it is explained how a boundary condition can be set to the
 top surface of a quad domain for a OGS-6 simulation. The first figure depicts
 the bulk mesh and the id's of the nodes on the top.
-![](01_bulk_mesh_with_top_node_ids.png)
+![01_bulk_mesh_with_top_node_ids](01_bulk_mesh_with_top_node_ids.png)
 The differently coloured top surface mesh can be obtained for instance by the
 [ExtractSurface]({{< ref "extract-surface" >}}) tool.
-![](02_bulk_mesh_top_surface.png)
+![02_bulk_mesh_top_surface](02_bulk_mesh_top_surface.png)
 For visualisation purposes the top surface is translated upwards. The picture
 shows the bulk mesh and the id's of the nodes on the top of it. Furthermore,
 the translated top surface mesh with the corresponding bulk node id's are
 represented.
-![](03_bulk_mesh_with_ids_top_surface_bulk_node_ids.png)
-
+![03_bulk_mesh_with_ids_top_surface_bulk_node_ids](03_bulk_mesh_with_ids_top_surface_bulk_node_ids.png)

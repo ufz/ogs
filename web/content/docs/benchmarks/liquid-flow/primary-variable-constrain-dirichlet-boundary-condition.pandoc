@@ -45,7 +45,7 @@ $$
 \Gamma^\ast_D = \{ x \in \mathbb{R}^d, x \in \Gamma_D, \text{Condition}(p(x))  \}
 $$
 
-## Examples:
+## Examples
 
 On the left (x=0) and right side (x=1) of the domain $\Omega = [0,1]^3$ the
 usual Dirichlet-type boundary conditions are set, i.e.,
@@ -63,4 +63,3 @@ after the first time step and the PVCDBC is activated in the second time step.
 The effect is depicted in the figure:
 
 {{< img src="../PVCDBC_1_ts_2.png" >}}
-

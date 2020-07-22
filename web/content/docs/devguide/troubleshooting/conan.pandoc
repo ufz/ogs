@@ -32,7 +32,6 @@ Requirements
 
 You can always delete the Conan cache directory in `$HOME/.conan` to start fresh. This can fix errors.
 
-
 ### ERROR: Invalid setting 'X' is not a valid 'settings.compiler.version' value
 
 In `~/.conan/settings.yml` it is defined which compiler versions are supported by Conan on your machine. Unfortunately (and this is also a bit inconvenient) this file is not updated automatically when upgrading Conan. Three possible ways to fix it:
@@ -41,13 +40,13 @@ In `~/.conan/settings.yml` it is defined which compiler versions are supported b
 - simply delete the file, Conan will re-create it on the next run (easiest method)
 - when upgrading Conan it creates a file `~/.conan/settings.new.yml` or similar which you can just rename to `~/.conan/settings.yml`
 
-See also: http://docs.conan.io/en/latest/faq/troubleshooting.html#error-invalid-setting
+See also: <http://docs.conan.io/en/latest/faq/troubleshooting.html#error-invalid-setting>
 
 ### ERROR: Error in system requirements
 
 When your `cmake`-run output looks similar to this:
 
-```
+```bash
 $ cmake ..
 ...
 Running: sudo -A yum update -y
@@ -69,13 +68,13 @@ is incompatible to the glibc library on Ubuntu 16.04 (2.23).
 
 In this case you would get linker errors with the Conan VTK library:
 
-```
+```bash
 error: undefined reference to `getrandom'
 .../expat/vtkexpat/lib/xmlparse.c 694
 ```
 
 If you still want to use your OS / compiler combination you can build the VTK Conan package on your machine. Run this one time:
 
-```
+```bash
 cmake . -DOGS_CONAN_BUILD=vtk
 ```

@@ -50,10 +50,11 @@ where $C_k = \frac{2k-1}{2} \pi$ and $A_k = 2 \Big/ \Big(C_k^2 \cosh\big(C_k\big
 The main project file is [square_1e2_neumann.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.prj). It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
 
 As of now a small portion of possible inputs is implemented; one can change:
- - the mesh file
- - the geometry file
- - introduce more/different Dirichlet boundary conditions (different geometry or other constant values)
- - introduce more/different Neumann boundary conditions (different geometry or other constant values)
+
+- the mesh file
+- the geometry file
+- introduce more/different Dirichlet boundary conditions (different geometry or other constant values)
+- introduce more/different Neumann boundary conditions (different geometry or other constant values)
 
 The geometries used to specify the boundary conditions are given in the [square_1x1.gml](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion/square_1x1.gml) file.
 
@@ -62,14 +63,16 @@ The input mesh `square_1x1_quad_1e2.vtu` is stored in the VTK file format and ca
 ## Running simulation
 
 To start the simulation (after successful compilation) run:
+
 ```bash
-$ ogs square_1e2_neumann.prj
+ogs square_1e2_neumann.prj
 ```
 
 It will produce some output and write the computed result into the `square_1e2_neumann.vtu` for visualization with Paraview.
 
 The output on the console will be similar to the following one (ignore the spurious error messages "Could not find POINT..."):
-```
+
+```bash
 info: This is OpenGeoSys-6 version 6.0.7-619-ge761162.
 info: OGS started on 2016-12-05 11:16:47+0100.
 info: ConstantParameter: K

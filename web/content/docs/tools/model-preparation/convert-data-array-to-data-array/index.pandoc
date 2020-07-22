@@ -26,7 +26,7 @@ data-type.
 
 ## Usage
 
-```
+```bash
 convertVtkDataArrayToVtkDataArray
     --in-mesh <file name>
     --existing-property-name <name of the cell data array as string>
@@ -37,7 +37,7 @@ convertVtkDataArrayToVtkDataArray
 
 ## Example
 
-```
+```bash
 convertVtkDataArrayToVtkDataArray
     -i doubleValuedMaterialIDs.vtu
     -e MaterialIDs_double
@@ -47,6 +47,8 @@ convertVtkDataArrayToVtkDataArray
 ```
 
 ::: {.note}
+
 ### Example Files
+
 [doubleValuedMaterialIDs.vtu](doubleValuedMaterialIDs.vtu)
 :::

@@ -26,6 +26,7 @@ Also on eve the installed git module (2.10) is over 2 years old and we recommend
 ml use /global/apps/modulefiles
 ml git/2.20.1
 ```
+
 :::
 
 ## Run OGS within a container
@@ -37,7 +38,7 @@ Eve has [Singularity](https://www.sylabs.io/singularity) container runtime insta
 Load required modules by sourcing the environment script:
 
 ```bash
-$ source scripts/env/eve/cli.sh
+source scripts/env/eve/cli.sh
 ```
 
 Then do the [build configuration]({{< ref "build-configuration.pandoc" >}}) and [build]({{< ref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
@@ -53,18 +54,18 @@ Follow the instructions on using Python's `virtualenv` [on the Eve-wiki](https:/
 Generating Doxygen documentation:
 
 ```bash
-$ module load Doxygen/1.8.14
+module load Doxygen/1.8.14
 ```
 
 You can [build with Ninja]({{< ref "build-with-ninja" >}}):
 
 ```bash
-$ module load ninja/1.9.0
+module load ninja/1.9.0
 ```
 
 ## Build OGS-5
 
 ```bash
-$ module load CMake/3.11.4
-$ module load GCC/6.4.0-2.28
+module load CMake/3.11.4
+module load GCC/6.4.0-2.28
 ```

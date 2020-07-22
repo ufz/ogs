@@ -28,7 +28,6 @@ Result showing sliding of the upper part of the domain along the fracture:
 
 {{< img src="../LIE_SD_m_result_uy.png" >}}
 
-
 Same benchmark setup with plane strain conditions in 3D:
 {{< img src="../single_joint_3D.png" >}}
 

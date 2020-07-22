@@ -20,16 +20,22 @@ This introduction to geothermal modeling deals with flow and heat transport proc
 :::
 
 ::: {.note}
+
 ### <i class="far fa-download"></i> Downloads
+
 - [<i class="far fa-file-archive"></i> Files for exercise <i>Computational Geothermics</i>](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-I/ComputationalGeothermicsExercises.zip)  
 :::
 
 ::: {.note}
+
 ### <i class="far fa-book"></i> Bibliography
+
 {{< bib "boettcher:2016" >}}
 :::
 
 ::: {.note}
+
 ### <i class="far fa-code-branch"></i> OpenGeoSys Version Info
+
 This book requires [OpenGeoSys-5](/ogs-5/).
 :::

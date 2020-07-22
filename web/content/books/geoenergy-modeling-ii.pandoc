@@ -19,7 +19,9 @@ This book is dedicated to the numerical modeling of shallow geothermal systems. 
 :::
 
 ::: {.note}
+
 ### <i class="far fa-download"></i> Downloads
+
 - [<i class="far fa-file-archive"></i> Benchmarks](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-II/benchmarks.zip)  
 - [<i class="far fa-file-archive"></i> BHE Setup Tool](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-II/bhe_setup_tool.zip)  
 - [<i class="far fa-file-archive"></i> Taucha Model](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-II/taucha_model.zip)  
@@ -27,11 +29,15 @@ This book is dedicated to the numerical modeling of shallow geothermal systems. 
 :::
 
 ::: {.note}
+
 ### <i class="far fa-book"></i> Bibliography
+
 {{< bib "shao:2016" >}}
 :::
 
 ::: {.note}
+
 ### <i class="far fa-code-branch"></i> OpenGeoSys Version Info
+
 This book requires [OpenGeoSys-5](/ogs-5/).
 :::

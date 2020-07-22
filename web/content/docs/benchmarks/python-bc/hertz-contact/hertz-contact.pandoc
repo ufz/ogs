@@ -38,7 +38,6 @@ Compared to the sketch above the prescribed $y$ displacements correspond
 to $w_0/2$, because due to symmetry only half of the system (a section of the
 lower sphere) is simulated.
 
-
 ## Analytical solution
 
 The derivation of the formulae below can be found, e.g.,
@@ -74,7 +73,6 @@ F = \frac{8 a^3}{3\kappa}
 \,.
 \end{equation}
 $$
-
 
 ## Results
 

@@ -34,7 +34,6 @@ The numerical model was established using dual continuum method Diersch et al. (
 | Grout thermal conductivity         | $\lambda_{g}$      | 0.806               | $\mathrm{W m^{-1} K^{-1}}$  |
 | Grout heat capacity                | $(\rho c)_{grout}$ | $3.8\times10^{6}$   | $\mathrm{Jm^{-3}K^{-1}}$    |
 
-
 {{< img src="../3D_Beier_sandbox_figures/numerical_geometry_of_BHE.png" width="200">}}
 
 Figure 1: Sandbox model

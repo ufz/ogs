@@ -33,7 +33,7 @@ You can download the latest benchmark files from GitLab:
 
 See [the Benchmarks section](/docs/benchmarks/) for more information on the benchmarks.
 
-![](../Download_Benchmarks.png)
+![Instructions for downloading benchmarks](../Download_Benchmarks.png)
 
 ## Running
 
@@ -44,7 +44,7 @@ To run it open a new command line shell (called *cmd.exe*). Now simply type `ogs
 
 OGS prints out its usage instructions:
 
-```
+```bash
 PARSE ERROR:
              Required argument missing: project-file
 
@@ -59,9 +59,10 @@ You can see that there is the project-file missing.
 
 Then simply supply the path to a project file as an argument to the OGS executable:
 
+```bash
+ogs .\Path\to\BenchmarkName.prj
 ```
-$ ogs .\Path\to\BenchmarkName.prj
-```
+
 :::
 
 ::: {.linux}
@@ -69,7 +70,7 @@ To run it open a new command line shell (*Terminal*). Now simply type `ogs` (if 
 
 OGS prints out its usage instructions:
 
-```
+```bash
 PARSE ERROR:
              Required argument missing: project-file
 
@@ -84,9 +85,10 @@ You can see that there is the project-file missing.
 
 Then simply supply the path to a project file as an argument to the OGS executable:
 
+```bash
+ogs ./path/to/BenchmarkName.prj
 ```
-$ ogs ./path/to/BenchmarkName.prj
-```
+
 :::
 
 ::: {.mac}

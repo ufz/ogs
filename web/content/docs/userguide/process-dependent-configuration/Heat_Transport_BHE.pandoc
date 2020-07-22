@@ -24,8 +24,8 @@ This part aims to give an explanation of the mathematical framework in configuri
 $$
 \begin{equation}
 \frac{\partial}{\partial t}  \left[ \epsilon \rho_f c_f + ( 1-\epsilon ) \rho_s c_s \right]  T_s
-    + \nabla \cdot \left(  \rho_f c_f \mathbf{v_f} T_s  \right)
-    - \nabla \cdot \left(  \Lambda_s \cdot \nabla T_s  \right) = H_s,
+  + \nabla \cdot \left(  \rho_f c_f \mathbf{v_f} T_s  \right)
+  - \nabla \cdot \left(  \Lambda_s \cdot \nabla T_s  \right) = H_s,
 \end{equation}
 $$
 Here, $\Lambda_s$ denotes the tensor of thermal hydrodynamic dispersion and $H_s$ represents the heat source and sink term.
@@ -53,6 +53,7 @@ In the configuration of `Heat_Transport_BHE` process, it is generally configured
 ### < borehole >
 
 The borehole < length > and < diameter > are difined here. The unit of these parameters are in $\mathrm{m}$. Here is an example of a borehole with 18 m in length and 0.13 m in diameter.
+
 ```bash
 <borehole>
     <length>18.0</length>
@@ -67,6 +68,7 @@ Currently there are 4 types of BHE available. Following the convention in Diersc
 ```bash
 <type>2U</type>
 ```
+
 * 1U: means there is only one single U-tube installed in the borehole;
 * 2U: double U-tubes installed in the borehole;
 * CXA: coaxial pipe with annular space as the inlet downwards flow and the centre part as outlet upwards flow;
@@ -77,8 +79,6 @@ The cross-sections of these 4 types of BHEs are illustrated in the following fig
 {{< img src="../u_type.png" width="50">}}
 
 {{< img src="../coaxial.png" width="50">}}
-
-
 
 ### < pipes >
 
@@ -128,6 +128,7 @@ The unit of < power > is in $\mathrm{W}$ and < flow_rate > is in $\mathrm{m^{3}/
 For all the flow and temperature control options, OpenGeoSys calculates the inlet temperature of each BHE internally. For each BHE, temperature on its inlet pipe is always set as a Dirichlet type boundary condition. Depending on the choice of < flow_and_temperature_control >, the inflow temperature will be calculated dynamically in each time step and iteration to satisfy the given constrains.
 
 Here is an example using `TemperatureCurveConstantFlow`.
+
 ```bash
 <flow_and_temperature_control>
     <type>TemperatureCurveConstantFlow</type>
@@ -146,6 +147,7 @@ The thermal properties of the grout material is defined here.
 * /thermal_conductivity/: thermal conductivity of grout which has the unit of $\mathrm{W·m^{-1} K^{-1}}$.
 
 Here is an example how the typical parameters of borehole grout looks like.
+
 ```bash
 <grout>
     <density>2190.0</density>
@@ -154,6 +156,7 @@ Here is an example how the typical parameters of borehole grout looks like.
     <thermal_conductivity>0.73</thermal_conductivity>
 </grout>
 ```
+
 ### < refrigerant >
 
 The thermal properties of the circulating fluid is defined here. The parameters and their units are listed below.
@@ -165,6 +168,7 @@ The thermal properties of the circulating fluid is defined here. The parameters 
 * /reference_temperature/: When the < flow_and_temperature_control > was not set to TemperatureCurveConstantFlow, OGS needs to have an initial outlet temperature value in the first time step to start the simulation. A reference temperature has to be defined for the calcualtion of initial inflow temperature. The unit of refenrence temperature is in $^{\circ}$C.
 
 Here is an example in which the circulating fluid is water at about 15 $^{\circ}$C.
+
 ```bash
 <refrigerant>
     <density>998</density>

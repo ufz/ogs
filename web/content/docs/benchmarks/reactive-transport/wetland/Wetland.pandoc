@@ -13,24 +13,18 @@ title = "Complex kinetic reaction network"
 
 {{< data-link >}}
 
-
-
-
 ## Overview
 
 The studied system represents a treatment wetland, which can be considered as an engineered ecosystem that mimics natural occuring microbiological processes to treat wastewater.
 Basically, such a system consists of a basin filled with a grained solid media (e.g. gravel or sand) and wastewater is passed through it.
 Multiple types of microbial organisms are present that can metabolize chemical pollutants (e.g. ammoni or organic molecules) present in wastewater, which drives the cycling of carbon and nutrients.
 
-
 The scenario presented here is a modification of a case already described in Boog et al. (2019) without considering heat transport.
 The experimental system consists of a basin of 4.7 m in length, 1.2 m in width and 0.9 m in depth (Figure 1) filled with gravel and saturated with water.
 The domestic wastewater enters the system at a constant flow rate on the left side and leaves it via an overflow at the right side.
 
-
 The coupling of OGS-6 and IPhreeqc used in the simulation requires to include the transport of H^+^--ions to adjust the compulsory charge balance computated by Phreeqc.
 The results obtained by OGS-6--IPhreeqc will be compared to the ones of OGS-5--IPhreeqc.
-
 
 ## Problem Description
 
@@ -49,7 +43,6 @@ For the wastewater components ("pollutants" and oxygen) entering the system, tim
 Respective material properties, initial and boundary conditions are listed in Table 1--2.
 
 ![Network of microbiological reactions described by CWM1. $S_I$ = inert soluble organic matter (COD), $X_I$ = inert particulated COD, $X_S$ = Slowly biodegradable particulate COD, $S_F$ = Fermentable, readily biodegradable soluble COD, $S_A$ = Fermentation products as acetate, $S_{NH}$ = Ammonium and ammonia nitrogen, $S_{NO}$ = Nitrate and nitrite nitrogen, $S_O$ = Dissolved oxygen, $S_{SO}$ = Sulphate sulfur, $S_{H2S}$ = Sulphide sulfur; different type of bacterias are identified as $X_H$, $X_A$, $X_{FB}$, $X_{AMB}$, $X_{ASRB}$ and $X_{SOB}$](../Wetland_cwm1.png){width=60%}
-
 
 -----------------------------------------
 
@@ -70,7 +63,6 @@ Respective material properties, initial and boundary conditions are listed in Ta
 
 Table 1: Media, material and component properties
 
-
 -----------------------------------------
 
 | Parameter | Description | Value | Unit |
@@ -88,9 +80,7 @@ Table 1: Media, material and component properties
 
 Table 2: Initial and boundary conditions
 
-
 -----------------------------------------
-
 
 ## Results
 
@@ -114,6 +104,6 @@ Please note that due to the long computation time of the simulation (~13 h), the
 
 ## References
 
-Boog, J., Kalbacher, T., Nivala, J., Forquet, N., van Afferden, M., Müller, R.A., 2019. Modeling the relationship of aeration, oxygen transfer and treatment performance in aerated horizontal flow treatment wetlands. Water Research. 157 , 321 - 334. https://doi.org/10.1016/j.watres.2019.03.062.
+Boog, J., Kalbacher, T., Nivala, J., Forquet, N., van Afferden, M., Müller, R.A., 2019. Modeling the relationship of aeration, oxygen transfer and treatment performance in aerated horizontal flow treatment wetlands. Water Research. 157 , 321 - 334. <https://doi.org/10.1016/j.watres.2019.03.062>.
 
-Langergraber, G., Rousseau, D.P.L., García, J., Mena, J., 2009. CWM1: A general model to describe biokinetic processes in subsurface flow constructed wetlands. Water Science and Technology, 59 (9), 1687-1697. https://doi.org/10.2166/wst.2009.131.
+Langergraber, G., Rousseau, D.P.L., García, J., Mena, J., 2009. CWM1: A general model to describe biokinetic processes in subsurface flow constructed wetlands. Water Science and Technology, 59 (9), 1687-1697. <https://doi.org/10.2166/wst.2009.131>.
