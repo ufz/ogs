@@ -20,7 +20,8 @@ The problem describes a heat source embedded in a fluid-saturated porous medium.
 The spherical symmetry is modeled using a 10 m x 10 m disc with a point heat source ($Q=150\; \mathrm{W}$) placed at one corner ($r=0$) and a curved boundary at $r=10\; \mathrm{m}$. Applying rotational axial symmetry at one of the linear boundaries, the model region transforms into a half-space configuration of the spherical symmetrical problem.
 The initial temperature and the pore pressure are 273.15 K and 0 Pa, respectively.
 The axis-normal displacements along the symmetry (inner) boundaries were set to zero, whereas the pore pressure, as well as the temperature, are set to their initial values along the outer (curved) boundary.
-The heat coming from the point source is propagated through the medium, causing it to heat up and expand until equilibrium (consolidation) is reached.
+The heat coming from the point source is propagated through the medium, causing the fluid and the solid to expand at different rates. 
+The resulting pore pressure (gradient) is triggering a thermally driven consolidation process caused by the fluid flow away from the heat source until equilibrium is reached.
 The corresponding derivation of the analytical solution can be found in the works cited below.
 The main project input file is `square_1e2.prj`. Geometry and mesh are stored in `square_1x1.gml` and `quarter_002_2nd.vtu`.
 
