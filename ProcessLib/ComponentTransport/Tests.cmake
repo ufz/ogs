@@ -1117,41 +1117,9 @@ AddTest(
     RUNTIME 20
 )
 
-AddTest(
-    NAME 1D_ReactiveMassTransport_KineticReactantBlockTest_AllAsComponents
-    PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS KineticReactant2.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    KineticReactant2_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_ts_42_t_4200.000000_expected.vtu KineticReactant2_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_ts_84_t_8400.000000_expected.vtu KineticReactant2_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_ts_126_t_12600.000000_expected.vtu KineticReactant2_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_ts_168_t_16800.000000_expected.vtu KineticReactant2_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_ts_210_t_21000.000000_expected.vtu KineticReactant2_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
-)
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents/KineticReactant2.prj)
+endif()
 
 AddTest(
     NAME LARGE_2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
