@@ -18,6 +18,8 @@
 namespace ProcessLib
 {
 template <typename ShapeFunction, typename ShapeMatricesType, int GlobalDim,
+          NumLib::ShapeMatrixType SelectedShapeMatrixType =
+              NumLib::ShapeMatrixType::ALL,
           typename IntegrationMethod>
 std::vector<typename ShapeMatricesType::ShapeMatrices,
             Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
