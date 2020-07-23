@@ -86,27 +86,19 @@ public:
           _surface_element_normal(MeshLib::calculateNormalizedSurfaceNormal(
               _surface_element, *(bulk_mesh.getElements()[_bulk_element_id])))
     {
-        auto const fe = NumLib::createIsoparametricFiniteElement<
-            ShapeFunction, ShapeMatricesType>(_surface_element);
+        auto const shape_matrices =
+            initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim,
+                              NumLib::ShapeMatrixType::N_J>(
+                _surface_element, is_axially_symmetric, _integration_method);
+
+        auto const bulk_face_id = bulk_ids[_surface_element.getID()].second;
 
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
-
-        auto const bulk_face_id = bulk_ids[_surface_element.getID()].second;
-        std::vector<
-            typename ShapeMatricesType::ShapeMatrices,
-            Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
-            shape_matrices;
-        shape_matrices.reserve(n_integration_points);
         _ip_data.reserve(n_integration_points);
+
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
-            shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
-                                        ShapeFunction::NPOINTS);
-            fe.template computeShapeFunctions<NumLib::ShapeMatrixType::N_J>(
-                _integration_method.getWeightedPoint(ip).getCoords(),
-                shape_matrices[ip], GlobalDim, is_axially_symmetric);
-
             auto const& wp = _integration_method.getWeightedPoint(ip);
             auto bulk_element_point = MeshLib::getBulkElementPoint(
                 bulk_mesh, _bulk_element_id, bulk_face_id, wp);
