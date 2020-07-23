@@ -78,8 +78,8 @@ public:
 
         auto const shape_matrices_u =
             initShapeMatrices<ShapeFunctionDisplacement, ShapeMatricesType,
-                              IntegrationMethod, GlobalDim>(
-                e, is_axially_symmetric, _integration_method);
+                              GlobalDim>(e, is_axially_symmetric,
+                                         _integration_method);
 
         GlobalDimVectorType element_normal(GlobalDim);
 

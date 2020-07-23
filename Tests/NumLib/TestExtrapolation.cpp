@@ -86,11 +86,9 @@ public:
                        std::size_t const /*local_matrix_size*/,
                        bool is_axially_symmetric,
                        unsigned const integration_order)
-        : _shape_matrices(
-              ProcessLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-                  e, is_axially_symmetric,
-                  IntegrationMethod{integration_order})),
+        : _shape_matrices(ProcessLib::initShapeMatrices<
+                          ShapeFunction, ShapeMatricesType, GlobalDim>(
+              e, is_axially_symmetric, IntegrationMethod{integration_order})),
           _int_pt_values(_shape_matrices.size())
     {
     }

@@ -92,8 +92,8 @@ public:
 
         auto const shape_matrices =
             initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                              IntegrationMethod, DisplacementDim>(
-                e, is_axially_symmetric, _integration_method);
+                              DisplacementDim>(e, is_axially_symmetric,
+                                               _integration_method);
 
         auto& solid_material =
             MaterialLib::Solids::selectSolidConstitutiveRelation(

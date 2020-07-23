@@ -67,12 +67,9 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
-    std::vector<
-        ShapeMatrices,
-        Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
-        shape_matrices = initShapeMatrices<ShapeFunction,
-                                           ShapeMatricesType,
-                                           IntegrationMethod,
+    std::vector<ShapeMatrices, Eigen::aligned_allocator<
+                                   typename ShapeMatricesType::ShapeMatrices>>
+        shape_matrices = initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                            DisplacementDim>(
             e, is_axially_symmetric, _integration_method);
 

@@ -126,9 +126,9 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
                       AssemblyParams const& asm_params)
     : _element(e),
       _integration_method(integration_order),
-      _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                        IntegrationMethod_, GlobalDim>(
-          e, is_axially_symmetric, _integration_method)),
+      _shape_matrices(
+          initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
+              e, is_axially_symmetric, _integration_method)),
       _d(asm_params, _integration_method.getNumberOfPoints(), GlobalDim)
 {
 }

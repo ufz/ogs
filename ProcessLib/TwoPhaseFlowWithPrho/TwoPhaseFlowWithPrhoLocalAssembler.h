@@ -103,9 +103,9 @@ public:
         TwoPhaseFlowWithPrhoProcessData const& process_data)
         : _element(element),
           _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method)),
+          _shape_matrices(
+              initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
+                  element, is_axially_symmetric, _integration_method)),
           _process_data(process_data),
           _saturation(
               std::vector<double>(_integration_method.getNumberOfPoints())),

@@ -43,9 +43,9 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
           dofIndex_to_localIndex),
       _process_data(process_data),
       _integration_method(integration_order),
-      _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                        IntegrationMethod, DisplacementDim>(
-          e, is_axially_symmetric, _integration_method)),
+      _shape_matrices(
+          initShapeMatrices<ShapeFunction, ShapeMatricesType, DisplacementDim>(
+              e, is_axially_symmetric, _integration_method)),
       _element(e)
 {
     assert(_element.getDimension() == DisplacementDim - 1);

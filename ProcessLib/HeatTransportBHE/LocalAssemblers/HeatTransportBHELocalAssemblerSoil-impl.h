@@ -45,9 +45,9 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     _ip_data.reserve(n_integration_points);
     _secondary_data.N.resize(n_integration_points);
 
-    _shape_matrices = initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                        IntegrationMethod, 3 /* GlobalDim */>(
-        e, is_axially_symmetric, _integration_method);
+    _shape_matrices =
+        initShapeMatrices<ShapeFunction, ShapeMatricesType, 3 /* GlobalDim */>(
+            e, is_axially_symmetric, _integration_method);
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element_id);

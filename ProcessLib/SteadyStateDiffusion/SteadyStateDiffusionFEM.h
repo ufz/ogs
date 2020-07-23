@@ -70,9 +70,9 @@ public:
         : _element(element),
           _process_data(process_data),
           _integration_method(integration_order),
-          _shape_matrices(initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                            IntegrationMethod, GlobalDim>(
-              element, is_axially_symmetric, _integration_method))
+          _shape_matrices(
+              initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
+                  element, is_axially_symmetric, _integration_method))
     {
     }
 

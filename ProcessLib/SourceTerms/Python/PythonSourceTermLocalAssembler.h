@@ -72,8 +72,7 @@ public:
             _integration_method.getNumberOfPoints();
 
         auto const shape_matrices =
-            initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                              IntegrationMethod, GlobalDim>(
+            initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
                 _element, _is_axially_symmetric, _integration_method);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)

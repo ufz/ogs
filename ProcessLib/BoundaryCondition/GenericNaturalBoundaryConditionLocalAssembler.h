@@ -60,9 +60,9 @@ private:
             ns_and_weights;
         ns_and_weights.reserve(integration_method.getNumberOfPoints());
 
-        auto sms = initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                     IntegrationMethod, GlobalDim>(
-            e, is_axially_symmetric, integration_method);
+        auto sms =
+            initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
+                e, is_axially_symmetric, integration_method);
         for (unsigned ip = 0; ip < sms.size(); ++ip)
         {
             auto& sm = sms[ip];

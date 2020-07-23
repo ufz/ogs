@@ -54,14 +54,13 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
     auto const shape_matrices_u =
         initShapeMatrices<ShapeFunctionDisplacement,
-                          ShapeMatricesTypeDisplacement, IntegrationMethod,
-                          GlobalDim>(e, is_axially_symmetric,
-                                     integration_method);
+                          ShapeMatricesTypeDisplacement, GlobalDim>(
+            e, is_axially_symmetric, integration_method);
 
     auto const shape_matrices_p =
         initShapeMatrices<ShapeFunctionPressure, ShapeMatricesTypePressure,
-                          IntegrationMethod, GlobalDim>(e, is_axially_symmetric,
-                                                        integration_method);
+                          GlobalDim>(e, is_axially_symmetric,
+                                     integration_method);
 
     auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
         _process_data.solid_materials, _process_data.material_ids, e.getID());

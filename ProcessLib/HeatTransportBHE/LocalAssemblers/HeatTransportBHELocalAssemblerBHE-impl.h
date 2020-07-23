@@ -40,9 +40,8 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices =
-        initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod,
-                          3 /* GlobalDim */>(e, is_axially_symmetric,
-                                             _integration_method);
+        initShapeMatrices<ShapeFunction, ShapeMatricesType, 3 /* GlobalDim */>(
+            e, is_axially_symmetric, _integration_method);
 
     // ip data initialization
     for (unsigned ip = 0; ip < n_integration_points; ip++)

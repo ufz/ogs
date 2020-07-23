@@ -90,7 +90,7 @@ public:
 
         auto const sms =
             ProcessLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                          IntegrationMethod, GlobalDim>(
+                                          GlobalDim>(
                 _e, false /*is_axially_symmetric*/,
                 IntegrationMethod{integration_order});
         IntegrationMethod integration_method{integration_order};

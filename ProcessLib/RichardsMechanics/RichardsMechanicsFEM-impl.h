@@ -50,14 +50,13 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const shape_matrices_u =
         initShapeMatrices<ShapeFunctionDisplacement,
-                          ShapeMatricesTypeDisplacement, IntegrationMethod,
-                          DisplacementDim>(e, is_axially_symmetric,
-                                           _integration_method);
+                          ShapeMatricesTypeDisplacement, DisplacementDim>(
+            e, is_axially_symmetric, _integration_method);
 
     auto const shape_matrices_p =
         initShapeMatrices<ShapeFunctionPressure, ShapeMatricesTypePressure,
-                          IntegrationMethod, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+                          DisplacementDim>(e, is_axially_symmetric,
+                                           _integration_method);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(

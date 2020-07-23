@@ -17,8 +17,8 @@
 
 namespace ProcessLib
 {
-template <typename ShapeFunction, typename ShapeMatricesType,
-          typename IntegrationMethod, unsigned GlobalDim>
+template <typename ShapeFunction, typename ShapeMatricesType, int GlobalDim,
+          typename IntegrationMethod>
 std::vector<typename ShapeMatricesType::ShapeMatrices,
             Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
 initShapeMatrices(MeshLib::Element const& e, bool is_axially_symmetric,
