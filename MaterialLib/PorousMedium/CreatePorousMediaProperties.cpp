@@ -87,8 +87,7 @@ PorousMediaProperties createPorousMediaProperties(
             "The maximum value of MaterialIDs in mesh is {:d}. As the "
             "given number of porous media definitions in the project "
             "file is {:d}, the maximum value of MaterialIDs in mesh must be "
-            "{:d} "
-            "(index starts with zero).",
+            "{:d} (index starts with zero).",
             max_material_id, mat_ids.size(), max_material_id - 1);
     }
 
@@ -96,8 +95,7 @@ PorousMediaProperties createPorousMediaProperties(
         WARN(
             "There are {:d} porous medium definitions in the project file but "
             "only {:d} different values in the MaterialIDs vector/data_array "
-            "in "
-            "the mesh.",
+            "in the mesh.",
             mat_ids.size(), max_material_id - 1);
 
     if (mat_ids.back() != static_cast<int>(mat_ids.size()) - 1)
