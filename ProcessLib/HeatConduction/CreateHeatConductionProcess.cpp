@@ -12,6 +12,9 @@
 
 #include "HeatConductionProcess.h"
 #include "HeatConductionProcessData.h"
+#include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -20,6 +23,18 @@ namespace ProcessLib
 {
 namespace HeatConduction
 {
+void checkMPLProperties(
+    MeshLib::Mesh const& mesh,
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+{
+    std::array const required_medium_properties = {
+        MaterialPropertyLib::PropertyType::thermal_conductivity};
+    std::array<MaterialPropertyLib::PropertyType, 0> const empty{};
+
+    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
+        mesh, media_map, required_medium_properties, empty, empty);
+}
+
 std::unique_ptr<Process> createHeatConductionProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -27,7 +42,8 @@ std::unique_ptr<Process> createHeatConductionProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HEAT_CONDUCTION");
@@ -47,14 +63,12 @@ std::unique_ptr<Process> createHeatConductionProcess(
          "process_variable"});
     process_variables.push_back(std::move(per_process_variables));
 
-    // thermal conductivity parameter.
-    auto& thermal_conductivity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__thermal_conductivity}
-        "thermal_conductivity", parameters, 1, &mesh);
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    DBUG("Use '{:s}' as thermal conductivity parameter.",
-         thermal_conductivity.name);
+    DBUG("Check the media properties of heat conduction process ...");
+    checkMPLProperties(mesh, *media_map);
+    DBUG("Media properties verified.");
 
     // heat capacity parameter.
     auto& heat_capacity = ParameterLib::findParameter<double>(
@@ -76,7 +90,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
 
-    HeatConductionProcessData process_data{thermal_conductivity, heat_capacity,
+    HeatConductionProcessData process_data{std::move(media_map), heat_capacity,
                                            density, mass_lumping};
 
     SecondaryVariableCollection secondary_variables;

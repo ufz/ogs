@@ -13,6 +13,9 @@
 #include <vector>
 
 #include "HeatConductionProcessData.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -90,7 +93,7 @@ public:
         (void)local_matrix_size;
     }
 
-    void assemble(double const t, double const /*dt*/,
+    void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
                   std::vector<double> const& /*local_xdot*/,
                   std::vector<double>& local_M_data,
@@ -113,12 +116,25 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
-            auto const k = _process_data.thermal_conductivity(t, pos)[0];
+            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt));
             auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
             auto const density = _process_data.density(t, pos)[0];
 
@@ -170,6 +186,15 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
@@ -178,7 +203,11 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() * sm.detJ *
                 sm.integralMeasure;
 
-            auto const k = _process_data.thermal_conductivity(t, pos)[0];
+            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt));
             auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
             auto const density = _process_data.density(t, pos)[0];
 
@@ -196,7 +225,7 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        double const t, double const /*dt*/, std::vector<double> const& local_x,
+        double const t, double const dt, std::vector<double> const& local_x,
         std::vector<double> const& /*local_x_dot*/) override
     {
         auto const local_matrix_size = local_x.size();
@@ -212,11 +241,24 @@ public:
         const auto local_x_vec =
             MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
 
+        auto const& medium =
+            *_process_data.media_map->getMedium(_element.getID());
+        MaterialPropertyLib::VariableArray vars;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            medium
+                .property(
+                    MaterialPropertyLib::PropertyType::reference_temperature)
+                .template value<double>(vars, pos, t, dt);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
-            auto const k = _process_data.thermal_conductivity(t, pos)[0];
+            auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt));
             // heat flux only computed for output.
             GlobalDimVectorType const heat_flux = -k * sm.dNdx * local_x_vec;
 

@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <memory>
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+
 namespace ParameterLib
 {
 template <typename T>
@@ -20,7 +23,9 @@ namespace ProcessLib::HeatConduction
 {
 struct HeatConductionProcessData
 {
-    ParameterLib::Parameter<double> const& thermal_conductivity;
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
+
     ParameterLib::Parameter<double> const& heat_capacity;
     ParameterLib::Parameter<double> const& density;
 
