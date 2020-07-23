@@ -71,7 +71,7 @@ std::unique_ptr<Process> createSteadyStateDiffusion(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    DBUG("Check the media properties of GroundwaterFlow process ...");
+    DBUG("Check the media properties of steady state diffusion process ...");
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
