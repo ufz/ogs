@@ -26,13 +26,13 @@ public:
         MeshLib::Mesh const& source_term_mesh,
         std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
         unsigned const integration_order, unsigned const shapefunction_order,
-        ParameterLib::Parameter<double> const& line_source_term_parameter);
+        ParameterLib::Parameter<double> const& source_term_parameter);
 
     void integrate(const double t, GlobalVector const& x, GlobalVector& b,
                    GlobalMatrix* jac) const override;
 
 private:
-    ParameterLib::Parameter<double> const& _line_source_term_parameter;
+    ParameterLib::Parameter<double> const& _source_term_parameter;
     std::vector<std::unique_ptr<LineSourceTermLocalAssemblerInterface>>
         _local_assemblers;
 };
