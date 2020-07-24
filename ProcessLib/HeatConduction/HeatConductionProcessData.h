@@ -26,7 +26,6 @@ struct HeatConductionProcessData
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
 
-    ParameterLib::Parameter<double> const& heat_capacity;
     ParameterLib::Parameter<double> const& density;
 
     /// If set mass lumping will be applied to the equation.

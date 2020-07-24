@@ -28,7 +28,8 @@ void checkMPLProperties(
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
 {
     std::array const required_medium_properties = {
-        MaterialPropertyLib::PropertyType::thermal_conductivity};
+        MaterialPropertyLib::PropertyType::thermal_conductivity,
+        MaterialPropertyLib::PropertyType::heat_capacity};
     std::array<MaterialPropertyLib::PropertyType, 0> const empty{};
 
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
@@ -70,14 +71,6 @@ std::unique_ptr<Process> createHeatConductionProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
-    // heat capacity parameter.
-    auto& heat_capacity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__heat_capacity}
-        "heat_capacity", parameters, 1, &mesh);
-
-    DBUG("Use '{:s}' as heat capacity parameter.", heat_capacity.name);
-
     // density parameter.
     auto& density = ParameterLib::findParameter<double>(
         config,
@@ -90,8 +83,8 @@ std::unique_ptr<Process> createHeatConductionProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
 
-    HeatConductionProcessData process_data{std::move(media_map), heat_capacity,
-                                           density, mass_lumping};
+    HeatConductionProcessData process_data{std::move(media_map), density,
+                                           mass_lumping};
 
     SecondaryVariableCollection secondary_variables;
 

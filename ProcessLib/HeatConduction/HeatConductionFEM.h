@@ -135,7 +135,11 @@ public:
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, pos, t, dt));
-            auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
+            auto const heat_capacity =
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::heat_capacity)
+                    .template value<double>(vars, pos, t, dt);
             auto const density = _process_data.density(t, pos)[0];
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
@@ -208,7 +212,11 @@ public:
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, pos, t, dt));
-            auto const heat_capacity = _process_data.heat_capacity(t, pos)[0];
+            auto const heat_capacity =
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::heat_capacity)
+                    .template value<double>(vars, pos, t, dt);
             auto const density = _process_data.density(t, pos)[0];
 
             laplace.noalias() += sm.dNdx.transpose() * k * sm.dNdx * w;
