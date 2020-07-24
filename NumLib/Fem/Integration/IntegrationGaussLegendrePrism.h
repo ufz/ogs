@@ -21,9 +21,9 @@ namespace NumLib
  */
 class IntegrationGaussLegendrePrism
 {
+public:
     using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 3>;
 
-public:
     /**
      * Construct this object with the given integration order
      *

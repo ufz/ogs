@@ -35,9 +35,9 @@ namespace NumLib
  */
 class IntegrationGaussLegendreTri
 {
+public:
     using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 2>;
 
-public:
     /**
      * Construct this object with the given integration order
      *
