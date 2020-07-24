@@ -13,6 +13,11 @@
 #include <memory>
 #include "ProcessLib/Process.h"
 
+namespace MaterialPropertyLib
+{
+class Medium;
+}
+
 namespace ProcessLib
 {
 namespace HeatConduction
@@ -24,7 +29,8 @@ std::unique_ptr<Process> createHeatConductionProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace HeatConduction
 }  // namespace ProcessLib
