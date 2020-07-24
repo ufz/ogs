@@ -13,20 +13,12 @@
 #include <memory>
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
-namespace ParameterLib
-{
-template <typename T>
-struct Parameter;
-}
-
 namespace ProcessLib::HeatConduction
 {
 struct HeatConductionProcessData
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
-
-    ParameterLib::Parameter<double> const& density;
 
     /// If set mass lumping will be applied to the equation.
     bool const mass_lumping;

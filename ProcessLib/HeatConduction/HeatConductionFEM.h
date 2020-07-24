@@ -20,7 +20,6 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/InitShapeMatrices.h"
@@ -140,7 +139,11 @@ public:
                     .property(
                         MaterialPropertyLib::PropertyType::heat_capacity)
                     .template value<double>(vars, pos, t, dt);
-            auto const density = _process_data.density(t, pos)[0];
+            auto const density =
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::density)
+                    .template value<double>(vars, pos, t, dt);
 
             local_K.noalias() += sm.dNdx.transpose() * k * sm.dNdx * sm.detJ *
                                  wp.getWeight() * sm.integralMeasure;
@@ -217,7 +220,11 @@ public:
                     .property(
                         MaterialPropertyLib::PropertyType::heat_capacity)
                     .template value<double>(vars, pos, t, dt);
-            auto const density = _process_data.density(t, pos)[0];
+            auto const density =
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::density)
+                    .template value<double>(vars, pos, t, dt);
 
             laplace.noalias() += sm.dNdx.transpose() * k * sm.dNdx * w;
             storage.noalias() +=
