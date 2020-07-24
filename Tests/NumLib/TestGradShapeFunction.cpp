@@ -14,36 +14,33 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-#include <cmath>
-
 #include <Eigen/Eigen>
+#include <cmath>
+#include <vector>
 
-#include "MeshLib/ElementCoordinatesMappingLocal.h"
-#include "MeshLib/CoordinateSystem.h"
-
-#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
-#include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
-#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
-
+#include "FeTestData/TestFeHEX20.h"
+#include "FeTestData/TestFeHEX8.h"
 #include "FeTestData/TestFeLINE2.h"
 #include "FeTestData/TestFeLINE2Y.h"
 #include "FeTestData/TestFeLINE3.h"
-#include "FeTestData/TestFeTRI3.h"
-#include "FeTestData/TestFeTRI6.h"
+#include "FeTestData/TestFePRISM15.h"
+#include "FeTestData/TestFePRISM6.h"
+#include "FeTestData/TestFePYRA13.h"
+#include "FeTestData/TestFePYRA5.h"
 #include "FeTestData/TestFeQUAD4.h"
 #include "FeTestData/TestFeQUAD8.h"
 #include "FeTestData/TestFeQUAD9.h"
-#include "FeTestData/TestFeHEX8.h"
-#include "FeTestData/TestFeHEX20.h"
-#include "FeTestData/TestFeTET4.h"
 #include "FeTestData/TestFeTET10.h"
-#include "FeTestData/TestFePRISM6.h"
-#include "FeTestData/TestFePRISM15.h"
-#include "FeTestData/TestFePYRA5.h"
-#include "FeTestData/TestFePYRA13.h"
-
+#include "FeTestData/TestFeTET4.h"
+#include "FeTestData/TestFeTRI3.h"
+#include "FeTestData/TestFeTRI6.h"
+#include "MeshLib/CoordinateSystem.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
+#include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "Tests/TestTools.h"
 
 using namespace NumLib;
@@ -110,11 +107,6 @@ public:
     // Finite element type
     template <typename X>
     using ShapeMatrixPolicy = typename T::template ShapeMatrixPolicy<X>;
-    using FeType =
-        typename TestFeType::template FeType<ShapeMatrixPolicy>::type;
-
-    // Shape matrix data type
-    using ShapeMatricesType = typename ShapeMatrixTypes::ShapeMatrices;
     using MeshElementType = typename TestFeType::MeshElementType;
 
     static const unsigned dim = TestFeType::dim;
@@ -182,23 +174,21 @@ TYPED_TEST_CASE(GradShapeFunctionTest, TestTypes);
 TYPED_TEST(GradShapeFunctionTest,
            CheckGradShapeFunctionByComputingElementVolume)
 {
-    // Refer to typedefs in the fixture
-    using FeType = typename TestFixture::FeType;
-    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
-
-    // create a finite element object
-    FeType fe(*this->mesh_element);
+    auto const shape_matrices =
+        NumLib::initShapeMatrices<typename TestFixture::ShapeFunction,
+                                  typename TestFixture::ShapeMatrixTypes,
+                                  TestFixture::global_dim,
+                                  ShapeMatrixType::N_J>(
+            *this->mesh_element, false /*is_axially_symmetric*/,
+            this->integration_method);
 
     // Compute element volume numerically as V_e = int {1}dA_e
     double computed_element_volume = 0.;
-    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i = 0; i < this->integration_method.getNumberOfPoints();
          i++)
     {
-        shape.setZero();
+        auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.template computeShapeFunctions<ShapeMatrixType::N_J>(
-            wp.getCoords(), shape, this->global_dim, false);
         computed_element_volume += shape.detJ * wp.getWeight();
     }
 

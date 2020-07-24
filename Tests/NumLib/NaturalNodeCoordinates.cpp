@@ -7,15 +7,16 @@
  *
  */
 
+#include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
+
 #include <gtest/gtest.h>
 
 #include <vector>
 
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
-
-#include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
 #include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
@@ -25,8 +26,6 @@ template <typename ShapeFunction, int GlobalDim>
 bool test(MeshLib::Element const& element)
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
-    using FemType =
-        NumLib::TemplateIsoparametric<ShapeFunction, ShapeMatricesType>;
 
     // Test if the cast is possible.
     bool const dynamic_cast_failed =
@@ -37,29 +36,31 @@ bool test(MeshLib::Element const& element)
     {
         return false;
     }
-    FemType fe{
-        static_cast<typename ShapeFunction::MeshElement const&>(element)};
-
-    bool result = true;
 
     // For each node evaluate the shape functions at natural coordinates and
     // test if only the corresponding shape function has value 1 and all others
     // must return 0.
     int const number_nodes = element.getNumberOfNodes();
+    std::vector<MathLib::Point3d> points;
+    points.reserve(number_nodes);
     for (int n = 0; n < number_nodes; ++n)
     {
         // Evaluate shape matrices at natural coordinates.
-        typename ShapeMatricesType::ShapeMatrices shape_matrices{
-            ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS};
         // Compute only N, because for pyramid the detJ becomes zero at the
         // apex, and we only use N in the following test anyway.
-        fe.template computeShapeFunctions<NumLib::ShapeMatrixType::N>(
+        points.emplace_back(
             NumLib::NaturalCoordinates<
-                typename ShapeFunction::MeshElement>::coordinates[n]
-                .data(),
-            shape_matrices, GlobalDim, false /* axial symmetry */);
+                typename ShapeFunction::MeshElement>::coordinates[n]);
+    }
+    auto const shape_matrices =
+        NumLib::computeShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                     GlobalDim, NumLib::ShapeMatrixType::N>(
+            element, false /*is_axially_symmetric*/, points);
 
-        auto const& N = shape_matrices.N;
+    bool result = true;
+    for (int n = 0; n < number_nodes; ++n)
+    {
+        auto const& N = shape_matrices[n].N;
         for (int p = 0; p < static_cast<int>(ShapeFunction::NPOINTS); ++p)
         {
             if (p == n)

@@ -76,18 +76,13 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     // extension of getFlux interface
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    // eval dNdx and invJ at p
-    auto const fe =
-        NumLib::createIsoparametricFiniteElement<ShapeFunction,
-                                                 ShapeMatricesType>(_element);
-
-    typename ShapeMatricesType::ShapeMatrices shape_matrices(
-        ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
-
     // Note: Axial symmetry is set to false here, because we only need dNdx
     // here, which is not affected by axial symmetry.
-    fe.computeShapeFunctions(p_local_coords.getCoords(), shape_matrices,
-                             GlobalDim, false);
+    auto const shape_matrices =
+        NumLib::computeShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                     GlobalDim>(_element,
+                                                false /*is_axially_symmetric*/,
+                                                std::array{p_local_coords})[0];
 
     // create pos object to access the correct media property
     ParameterLib::SpatialPosition pos;

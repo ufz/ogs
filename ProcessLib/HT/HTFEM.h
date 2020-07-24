@@ -95,17 +95,14 @@ public:
                             double const t,
                             std::vector<double> const& local_x) const override
     {
-        // eval dNdx and invJ at given point
-        auto const fe = NumLib::createIsoparametricFiniteElement<
-            ShapeFunction, ShapeMatricesType>(_element);
-
-        typename ShapeMatricesType::ShapeMatrices shape_matrices(
-            ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
-
+        // Eval shape matrices at given point
         // Note: Axial symmetry is set to false here, because we only need dNdx
         // here, which is not affected by axial symmetry.
-        fe.computeShapeFunctions(pnt_local_coords.getCoords(), shape_matrices,
-                                 GlobalDim, false);
+        auto const shape_matrices =
+            NumLib::computeShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                         GlobalDim>(
+                _element, false /*is_axially_symmetric*/,
+                std::array{pnt_local_coords})[0];
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(this->_element.getID());
