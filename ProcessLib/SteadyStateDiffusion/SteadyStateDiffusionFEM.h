@@ -12,7 +12,6 @@
 
 #include <vector>
 
-#include "SteadyStateDiffusionData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/VariableType.h"
@@ -20,12 +19,13 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
+#include "SteadyStateDiffusionData.h"
 
 namespace ProcessLib
 {
@@ -71,7 +71,8 @@ public:
           _process_data(process_data),
           _integration_method(integration_order),
           _shape_matrices(
-              initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
+              NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                        GlobalDim>(
                   element, is_axially_symmetric, _integration_method))
     {
     }

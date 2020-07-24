@@ -11,11 +11,8 @@
 #pragma once
 
 #include "HydroMechanicsLocalAssemblerFracture.h"
-
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
-
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
 
 namespace ProcessLib
@@ -62,14 +59,14 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     _ip_data.reserve(n_integration_points);
 
     auto const shape_matrices_u =
-        initShapeMatrices<ShapeFunctionDisplacement,
-                          ShapeMatricesTypeDisplacement, GlobalDim>(
+        NumLib::initShapeMatrices<ShapeFunctionDisplacement,
+                                  ShapeMatricesTypeDisplacement, GlobalDim>(
             e, is_axially_symmetric, integration_method);
 
     auto const shape_matrices_p =
-        initShapeMatrices<ShapeFunctionPressure, ShapeMatricesTypePressure,
-                          GlobalDim>(e, is_axially_symmetric,
-                                     integration_method);
+        NumLib::initShapeMatrices<ShapeFunctionPressure,
+                                  ShapeMatricesTypePressure, GlobalDim>(
+            e, is_axially_symmetric, integration_method);
 
     auto const& frac_prop = *_process_data.fracture_property;
 

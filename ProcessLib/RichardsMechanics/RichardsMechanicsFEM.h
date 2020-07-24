@@ -13,19 +13,18 @@
 #include <memory>
 #include <vector>
 
+#include "IntegrationPointData.h"
+#include "LocalAssemblerInterface.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "IntegrationPointData.h"
-#include "LocalAssemblerInterface.h"
 #include "RichardsMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -129,10 +128,10 @@ public:
             {
                 ParameterLib::SpatialPosition const x_position{
                     boost::none, _element.getID(), ip,
-                    MathLib::Point3d(
-                        interpolateCoordinates<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                            _element, ip_data.N_u))};
+                    MathLib::Point3d(NumLib::interpolateCoordinates<
+                                     ShapeFunctionDisplacement,
+                                     ShapeMatricesTypeDisplacement>(
+                        _element, ip_data.N_u))};
 
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<

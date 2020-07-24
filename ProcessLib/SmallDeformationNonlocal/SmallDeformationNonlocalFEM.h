@@ -23,6 +23,7 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MeshLib/findElementsWithinRadius.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ParameterLib/Parameter.h"
@@ -30,7 +31,6 @@
 #include "ProcessLib/Deformation/Divergence.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "SmallDeformationNonlocalProcessData.h"
 
@@ -91,9 +91,9 @@ public:
         _secondary_data.N.resize(n_integration_points);
 
         auto const shape_matrices =
-            initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                              DisplacementDim>(e, is_axially_symmetric,
-                                               _integration_method);
+            NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                      DisplacementDim>(e, is_axially_symmetric,
+                                                       _integration_method);
 
         auto& solid_material =
             MaterialLib::Solids::selectSolidConstitutiveRelation(
@@ -337,8 +337,8 @@ public:
             auto const& dNdx = _ip_data[ip].dNdx;
 
             auto const x_coord =
-                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    _element, N);
+                NumLib::interpolateXCoordinate<ShapeFunction,
+                                               ShapeMatricesType>(_element, N);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
@@ -456,8 +456,8 @@ public:
             auto const& dNdx = _ip_data[ip].dNdx;
 
             auto const x_coord =
-                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    _element, N);
+                NumLib::interpolateXCoordinate<ShapeFunction,
+                                               ShapeMatricesType>(_element, N);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,
@@ -595,8 +595,8 @@ public:
             auto const& dNdx = _ip_data[ip].dNdx;
 
             auto const x_coord =
-                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    _element, N);
+                NumLib::interpolateXCoordinate<ShapeFunction,
+                                               ShapeMatricesType>(_element, N);
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,

@@ -10,17 +10,14 @@
 
 #pragma once
 
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
-
+#include "MeshLib/Elements/Elements.h"
+#include "MeshLib/Elements/MapBulkElementPoint.h"
+#include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-
+#include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "MeshLib/Elements/MapBulkElementPoint.h"
-#include "MeshLib/Elements/Elements.h"
-#include "MeshLib/Elements/Utils.h"
 
 namespace ProcessLib
 {
@@ -87,8 +84,8 @@ public:
               _surface_element, *(bulk_mesh.getElements()[_bulk_element_id])))
     {
         auto const shape_matrices =
-            initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim,
-                              NumLib::ShapeMatrixType::N_J>(
+            NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                      GlobalDim, NumLib::ShapeMatrixType::N_J>(
                 _surface_element, is_axially_symmetric, _integration_method);
 
         auto const bulk_face_id = bulk_ids[_surface_element.getID()].second;

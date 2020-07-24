@@ -10,17 +10,14 @@
 
 #pragma once
 
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
-
+#include "MeshLib/Elements/Elements.h"
+#include "MeshLib/Elements/FaceRule.h"
+#include "MeshLib/Elements/MapBulkElementPoint.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-
+#include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "MeshLib/Elements/MapBulkElementPoint.h"
-#include "MeshLib/Elements/FaceRule.h"
-#include "MeshLib/Elements/Elements.h"
 
 namespace ProcessLib
 {

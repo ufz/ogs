@@ -10,27 +10,22 @@
 
 #pragma once
 
-#include "SmallDeformationLocalAssemblerMatrix.h"
-
+#include <Eigen/Eigen>
 #include <valarray>
 #include <vector>
 
-#include <Eigen/Eigen>
-
+#include "IntegrationPointDataMatrix.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
 #include "ProcessLib/LIE/SmallDeformation/SmallDeformationProcessData.h"
-
-#include "IntegrationPointDataMatrix.h"
 #include "SecondaryData.h"
 #include "SmallDeformationLocalAssemblerInterface.h"
+#include "SmallDeformationLocalAssemblerMatrix.h"
 
 namespace ProcessLib
 {
@@ -60,8 +55,9 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices =
-        initShapeMatrices<ShapeFunction, ShapeMatricesType, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+        NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                  DisplacementDim>(e, is_axially_symmetric,
+                                                   _integration_method);
 
     auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
         _process_data.solid_materials, _process_data.material_ids, e.getID());
@@ -131,8 +127,8 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
-                                                                     N);
+            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                _element, N);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,

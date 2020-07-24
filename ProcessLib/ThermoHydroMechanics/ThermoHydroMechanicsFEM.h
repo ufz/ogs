@@ -20,12 +20,12 @@
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ThermoHydroMechanicsProcessData.h"
 

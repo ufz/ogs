@@ -19,10 +19,10 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
@@ -80,7 +80,8 @@ public:
           _process_data(process_data),
           _integration_method(integration_order),
           _shape_matrices(
-              initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
+              NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                        GlobalDim>(
                   element, is_axially_symmetric, _integration_method)),
           _heat_fluxes(
               GlobalDim,

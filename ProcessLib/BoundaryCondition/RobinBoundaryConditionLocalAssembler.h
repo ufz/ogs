@@ -75,7 +75,8 @@ public:
             ParameterLib::SpatialPosition const position{
                 boost::none, Base::_element.getID(), ip,
                 MathLib::Point3d(
-                    interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
                         Base::_element, N))};
 
             double integral_measure = 1.0;

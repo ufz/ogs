@@ -10,15 +10,12 @@
 
 #pragma once
 
-#include "SmallDeformationLocalAssemblerFracture.h"
-
 #include <Eigen/Eigen>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
+#include "SmallDeformationLocalAssemblerFracture.h"
 
 namespace ProcessLib
 {
@@ -44,8 +41,9 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, IntegrationMethod,
       _process_data(process_data),
       _integration_method(integration_order),
       _shape_matrices(
-          initShapeMatrices<ShapeFunction, ShapeMatricesType, DisplacementDim>(
-              e, is_axially_symmetric, _integration_method)),
+          NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                    DisplacementDim>(e, is_axially_symmetric,
+                                                     _integration_method)),
       _element(e)
 {
     assert(_element.getDimension() == DisplacementDim - 1);

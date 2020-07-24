@@ -10,24 +10,20 @@
 #include <gtest/gtest.h>
 
 #include "MathLib/LinAlg/LinAlg.h"
-
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/MatrixProviderUser.h"
 #include "NumLib/Extrapolation/ExtrapolatableElementCollection.h"
 #include "NumLib/Extrapolation/Extrapolator.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "NumLib/NumericsConfig.h"
-
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "ProcessLib/Utils/LocalDataInitializer.h"
-
 #include "Tests/VectorUtils.h"
 
 namespace ExtrapolationTest
@@ -86,7 +82,7 @@ public:
                        std::size_t const /*local_matrix_size*/,
                        bool is_axially_symmetric,
                        unsigned const integration_order)
-        : _shape_matrices(ProcessLib::initShapeMatrices<
+        : _shape_matrices(NumLib::initShapeMatrices<
                           ShapeFunction, ShapeMatricesType, GlobalDim>(
               e, is_axially_symmetric, IntegrationMethod{integration_order})),
           _int_pt_values(_shape_matrices.size())

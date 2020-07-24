@@ -11,15 +11,13 @@
 
 #include <vector>
 
+#include "FiniteElement/TemplateIsoparametric.h"
 #include "MeshLib/Elements/Element.h"
-#include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 
-
-namespace ProcessLib
+namespace NumLib
 {
 template <typename ShapeFunction, typename ShapeMatricesType, int GlobalDim,
-          NumLib::ShapeMatrixType SelectedShapeMatrixType =
-              NumLib::ShapeMatrixType::ALL,
+          ShapeMatrixType SelectedShapeMatrixType = ShapeMatrixType::ALL,
           typename IntegrationMethod>
 std::vector<typename ShapeMatricesType::ShapeMatrices,
             Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
@@ -32,18 +30,19 @@ initShapeMatrices(MeshLib::Element const& e, bool is_axially_symmetric,
         shape_matrices;
 
     auto const fe =
-        NumLib::createIsoparametricFiniteElement<ShapeFunction,
-                                                 ShapeMatricesType>(e);
+        createIsoparametricFiniteElement<ShapeFunction, ShapeMatricesType>(e);
 
-    unsigned const n_integration_points = integration_method.getNumberOfPoints();
+    unsigned const n_integration_points =
+        integration_method.getNumberOfPoints();
 
     shape_matrices.reserve(n_integration_points);
-    for (unsigned ip = 0; ip < n_integration_points; ++ip) {
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
         shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
-                                     ShapeFunction::NPOINTS);
+                                    ShapeFunction::NPOINTS);
         fe.computeShapeFunctions(
-                integration_method.getWeightedPoint(ip).getCoords(),
-                shape_matrices[ip], GlobalDim, is_axially_symmetric);
+            integration_method.getWeightedPoint(ip).getCoords(),
+            shape_matrices[ip], GlobalDim, is_axially_symmetric);
     }
 
     return shape_matrices;
@@ -55,8 +54,7 @@ double interpolateXCoordinate(
     typename ShapeMatricesType::ShapeMatrices::ShapeType const& N)
 {
     auto const fe =
-        NumLib::createIsoparametricFiniteElement<ShapeFunction,
-                                                 ShapeMatricesType>(e);
+        createIsoparametricFiniteElement<ShapeFunction, ShapeMatricesType>(e);
 
     return fe.interpolateZerothCoordinate(N);
 }
@@ -67,10 +65,9 @@ std::array<double, 3> interpolateCoordinates(
     typename ShapeMatricesType::ShapeMatrices::ShapeType const& N)
 {
     auto const fe =
-        NumLib::createIsoparametricFiniteElement<ShapeFunction,
-                                                 ShapeMatricesType>(e);
+        createIsoparametricFiniteElement<ShapeFunction, ShapeMatricesType>(e);
 
     return fe.interpolateCoordinates(N);
 }
 
-}  // namespace ProcessLib
+}  // namespace NumLib

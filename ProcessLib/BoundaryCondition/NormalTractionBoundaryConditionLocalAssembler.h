@@ -77,9 +77,9 @@ public:
         _ip_data.reserve(n_integration_points);
 
         auto const shape_matrices_u =
-            initShapeMatrices<ShapeFunctionDisplacement, ShapeMatricesType,
-                              GlobalDim>(e, is_axially_symmetric,
-                                         _integration_method);
+            NumLib::initShapeMatrices<ShapeFunctionDisplacement,
+                                      ShapeMatricesType, GlobalDim>(
+                e, is_axially_symmetric, _integration_method);
 
         GlobalDimVectorType element_normal(GlobalDim);
 

@@ -13,10 +13,9 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
 #include "TESLocalAssembler.h"
 #include "TESReactionAdaptor.h"
 
@@ -126,9 +125,9 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
                       AssemblyParams const& asm_params)
     : _element(e),
       _integration_method(integration_order),
-      _shape_matrices(
-          initShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim>(
-              e, is_axially_symmetric, _integration_method)),
+      _shape_matrices(NumLib::initShapeMatrices<ShapeFunction,
+                                                ShapeMatricesType, GlobalDim>(
+          e, is_axially_symmetric, _integration_method)),
       _d(asm_params, _integration_method.getNumberOfPoints(), GlobalDim)
 {
 }

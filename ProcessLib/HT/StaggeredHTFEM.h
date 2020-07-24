@@ -14,14 +14,13 @@
 #include <Eigen/Dense>
 #include <vector>
 
+#include "HTFEM.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "HTFEM.h"
 
 namespace ProcessLib
 {

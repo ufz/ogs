@@ -17,8 +17,8 @@
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "ProcessLib/Deformation/GMatrix.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
@@ -59,7 +59,7 @@ std::vector<double> const& getMaterialForces(
         auto const& psi = _ip_data[ip].free_energy_density;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                 element, _ip_data[ip].N);
 
         // For the 2D case the 33-component is needed (and the four entries

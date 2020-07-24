@@ -51,14 +51,15 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     _secondary_data.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
-        initShapeMatrices<ShapeFunctionDisplacement,
-                          ShapeMatricesTypeDisplacement, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+        NumLib::initShapeMatrices<ShapeFunctionDisplacement,
+                                  ShapeMatricesTypeDisplacement,
+                                  DisplacementDim>(e, is_axially_symmetric,
+                                                   _integration_method);
 
     auto const shape_matrices_p =
-        initShapeMatrices<ShapeFunctionPressure, ShapeMatricesTypePressure,
-                          DisplacementDim>(e, is_axially_symmetric,
-                                           _integration_method);
+        NumLib::initShapeMatrices<ShapeFunctionPressure,
+                                  ShapeMatricesTypePressure, DisplacementDim>(
+            e, is_axially_symmetric, _integration_method);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
@@ -211,9 +212,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const T_int_pt = N_T.dot(T);
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
-                                                                  N_u);
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -570,9 +571,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
-                                                                  N_u);
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,

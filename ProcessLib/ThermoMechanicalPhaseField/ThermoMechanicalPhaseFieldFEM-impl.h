@@ -94,8 +94,8 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& dNdx = _ip_data[ip].dNdx;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
-                                                                     N);
+            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                _element, N);
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,

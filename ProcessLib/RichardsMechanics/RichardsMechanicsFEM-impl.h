@@ -49,14 +49,15 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     _secondary_data.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
-        initShapeMatrices<ShapeFunctionDisplacement,
-                          ShapeMatricesTypeDisplacement, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+        NumLib::initShapeMatrices<ShapeFunctionDisplacement,
+                                  ShapeMatricesTypeDisplacement,
+                                  DisplacementDim>(e, is_axially_symmetric,
+                                                   _integration_method);
 
     auto const shape_matrices_p =
-        initShapeMatrices<ShapeFunctionPressure, ShapeMatricesTypePressure,
-                          DisplacementDim>(e, is_axially_symmetric,
-                                           _integration_method);
+        NumLib::initShapeMatrices<ShapeFunctionPressure,
+                                  ShapeMatricesTypePressure, DisplacementDim>(
+            e, is_axially_symmetric, _integration_method);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
@@ -302,9 +303,9 @@ void RichardsMechanicsLocalAssembler<
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
-                                                                  N_u);
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -641,9 +642,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
-                                                                  N_u);
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -1312,9 +1313,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
-                                                                  N_u);
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -1386,9 +1387,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
-                                                                  N_u);
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
