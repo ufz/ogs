@@ -161,14 +161,8 @@
         </parameter>
         <parameter>
             <name>h1</name>
-            <type>CurveScaled</type>
-            <curve>h1_curve</curve>
-            <parameter>h1_spatial</parameter>
-        </parameter>
-        <parameter>
-            <name>h1_spatial</name>
-            <type>Constant</type>
-            <value>1</value>
+            <type>Function</type>
+            <expression>h1_curve(t)</expression>
         </parameter>
     </parameters>
     <curves>

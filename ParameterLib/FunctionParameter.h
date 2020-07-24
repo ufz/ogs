@@ -28,6 +28,23 @@ namespace ParameterLib
 template <typename T>
 struct FunctionParameter final : public Parameter<T>
 {
+    class CurveWrapper : public exprtk::ifunction<T>
+    {
+    public:
+        CurveWrapper(MathLib::PiecewiseLinearInterpolation const& curve)
+            : exprtk::ifunction<T>(1), _curve(curve)
+        {
+            exprtk::disable_has_side_effects(*this);
+        }
+        double operator()(double const& t) override
+        {
+            return _curve.getValue(t);
+        }
+
+    private:
+        MathLib::PiecewiseLinearInterpolation const& _curve;
+    };
+
     using symbol_table_t = exprtk::symbol_table<T>;
     using expression_t = exprtk::expression<T>;
     using parser_t = exprtk::parser<T>;
@@ -40,16 +57,34 @@ struct FunctionParameter final : public Parameter<T>
      * @param vec_expression_str  a vector of mathematical expressions
      * The vector size specifies the number of components of the parameter.
      */
-    FunctionParameter(std::string const& name,
-                      std::vector<std::string> const& vec_expression_str)
+    FunctionParameter(
+        std::string const& name,
+        std::vector<std::string> const& vec_expression_str,
+        std::map<std::string,
+                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+            curves)
         : Parameter<T>(name, nullptr), _vec_expression_str(vec_expression_str)
     {
+        // Convert curves to function objects callable by the exprtk.
+        _curves.reserve(curves.size());
+        std::transform(
+            begin(curves), end(curves), std::back_inserter(_curves),
+            [](auto const& curve) -> std::pair<std::string, CurveWrapper> {
+                return {curve.first, CurveWrapper(*curve.second)};
+            });
+
+        // Create symbol table for variables and functions.
         _symbol_table.add_constants();
         _symbol_table.create_variable("x");
         _symbol_table.create_variable("y");
         _symbol_table.create_variable("z");
         _symbol_table.create_variable("t");
+        for (auto& curve : _curves)
+        {
+            _symbol_table.add_function(curve.first, curve.second);
+        }
 
+        // Compile expressions.
         _vec_expression.resize(_vec_expression_str.size());
         for (unsigned i = 0; i < _vec_expression_str.size(); i++)
         {
@@ -108,6 +143,7 @@ private:
     std::vector<std::string> const _vec_expression_str;
     symbol_table_t _symbol_table;
     std::vector<expression_t> _vec_expression;
+    std::vector<std::pair<std::string, CurveWrapper>> _curves;
 };
 
 std::unique_ptr<ParameterBase> createFunctionParameter(
