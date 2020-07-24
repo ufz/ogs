@@ -7,9 +7,6 @@
             <name>HeatConduction</name>
             <type>HEAT_CONDUCTION</type>
             <integration_order>2</integration_order>
-            <thermal_conductivity>K</thermal_conductivity>
-            <heat_capacity>Cp</heat_capacity>
-            <density>rho</density>
             <process_variables>
                 <process_variable>temperature</process_variable>
             </process_variables>
@@ -18,6 +15,33 @@
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases/>
+            <properties>
+                <property>
+                    <name>density</name>
+                    <type>Constant</type>
+                    <value>2500</value>
+                </property>
+                <property>
+                    <name>heat_capacity</name>
+                    <type>Constant</type>
+                    <value>1000</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>3.2</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="HeatConduction">
@@ -72,21 +96,6 @@
         </output>
     </time_loop>
     <parameters>
-        <parameter>
-            <name>K</name>
-            <type>Constant</type>
-            <value>3.2</value>
-        </parameter>
-        <parameter>
-            <name>Cp</name>
-            <type>Constant</type>
-            <value>1000</value>
-        </parameter>
-        <parameter>
-            <name>rho</name>
-            <type>Constant</type>
-            <value>2500</value>
-        </parameter>
         <parameter>
             <name>T0</name>
             <type>Constant</type>

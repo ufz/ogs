@@ -11,9 +11,6 @@
             <name>HeatConduction</name>
             <type>HEAT_CONDUCTION</type>
             <integration_order>2</integration_order>
-            <thermal_conductivity>lambda</thermal_conductivity>
-            <heat_capacity>c_p</heat_capacity>
-            <density>rho</density>
             <process_variables>
                 <process_variable>temperature</process_variable>
             </process_variables>
@@ -63,22 +60,34 @@
             </variables>
         </output>
     </time_loop>
+    <media>
+        <medium id="0">
+            <phases/>
+            <properties>
+                <property>
+                    <name>density</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>heat_capacity</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>.0001</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <parameters>
-        <parameter>
-            <name>lambda</name>
-            <type>Constant</type>
-            <value>.0001</value>
-        </parameter>
-        <parameter>
-            <name>c_p</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>rho</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
         <parameter>
             <name>T0</name>
             <type>Constant</type>
