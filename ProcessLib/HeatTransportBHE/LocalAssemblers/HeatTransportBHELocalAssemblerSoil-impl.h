@@ -13,15 +13,14 @@
 #include <valarray>
 #include <vector>
 
+#include "HeatTransportBHEProcessAssemblerInterface.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "HeatTransportBHEProcessAssemblerInterface.h"
 #include "SecondaryData.h"
 
 namespace ProcessLib
@@ -45,9 +44,10 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction, IntegrationMethod>::
     _ip_data.reserve(n_integration_points);
     _secondary_data.N.resize(n_integration_points);
 
-    _shape_matrices = initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                        IntegrationMethod, 3 /* GlobalDim */>(
-        e, is_axially_symmetric, _integration_method);
+    _shape_matrices =
+        NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                  3 /* GlobalDim */>(e, is_axially_symmetric,
+                                                     _integration_method);
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element_id);

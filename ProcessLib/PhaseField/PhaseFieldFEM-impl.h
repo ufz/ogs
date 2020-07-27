@@ -87,8 +87,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& dNdx = _ip_data[ip].dNdx;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
-                                                                     N);
+            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                _element, N);
 
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
@@ -185,8 +185,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
             double const d_ip = N.dot(d);
             double const degradation = d_ip * d_ip * (1 - k) + k;
             auto const x_coord =
-                interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                    _element, N);
+                NumLib::interpolateXCoordinate<ShapeFunction,
+                                               ShapeMatricesType>(_element, N);
             auto const& B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunction::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx, N, x_coord,

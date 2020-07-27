@@ -10,17 +10,14 @@
 
 #pragma once
 
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
-
+#include "MeshLib/Elements/Elements.h"
+#include "MeshLib/Elements/FaceRule.h"
+#include "MeshLib/Elements/MapBulkElementPoint.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-
+#include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
-#include "MeshLib/Elements/MapBulkElementPoint.h"
-#include "MeshLib/Elements/FaceRule.h"
-#include "MeshLib/Elements/Elements.h"
 
 namespace ProcessLib
 {
@@ -73,25 +70,15 @@ public:
           _bulk_element_id(bulk_element_ids[surface_element.getID()]),
           _bulk_face_id(bulk_face_ids[surface_element.getID()])
     {
-        auto const fe = NumLib::createIsoparametricFiniteElement<
-            ShapeFunction, ShapeMatricesType>(_surface_element);
-
-        std::size_t const n_integration_points =
+        auto const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        std::vector<
-            typename ShapeMatricesType::ShapeMatrices,
-            Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
-            shape_matrices;
-        shape_matrices.reserve(n_integration_points);
-        _detJ_times_integralMeasure.reserve(n_integration_points);
+        auto const shape_matrices =
+            NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                      GlobalDim, NumLib::ShapeMatrixType::N_J>(
+                _surface_element, is_axially_symmetric, _integration_method);
         for (std::size_t ip = 0; ip < n_integration_points; ++ip)
         {
-            shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
-                                        ShapeFunction::NPOINTS);
-            fe.template computeShapeFunctions<NumLib::ShapeMatrixType::N_J>(
-                _integration_method.getWeightedPoint(ip).getCoords(),
-                shape_matrices[ip], GlobalDim, is_axially_symmetric);
             _detJ_times_integralMeasure.push_back(
                 shape_matrices[ip].detJ * shape_matrices[ip].integralMeasure);
         }

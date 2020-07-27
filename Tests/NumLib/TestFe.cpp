@@ -9,29 +9,26 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-#include <cmath>
-
 #include <Eigen/Eigen>
+#include <cmath>
+#include <vector>
 
-#include "MeshLib/ElementCoordinatesMappingLocal.h"
-#include "MeshLib/CoordinateSystem.h"
-
-#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
-#include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
-#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
-
+#include "FeTestData/TestFeHEX8.h"
 #include "FeTestData/TestFeLINE2.h"
 #include "FeTestData/TestFeLINE2Y.h"
 #include "FeTestData/TestFeLINE3.h"
-#include "FeTestData/TestFeTRI3.h"
-#include "FeTestData/TestFeQUAD4.h"
-#include "FeTestData/TestFeHEX8.h"
-#include "FeTestData/TestFeTET4.h"
 #include "FeTestData/TestFePRISM6.h"
 #include "FeTestData/TestFePYRA5.h"
-
+#include "FeTestData/TestFeQUAD4.h"
+#include "FeTestData/TestFeTET4.h"
+#include "FeTestData/TestFeTRI3.h"
+#include "MeshLib/CoordinateSystem.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
+#include "NumLib/Fem/FiniteElement/C0IsoparametricElements.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "Tests/TestTools.h"
 
 using namespace NumLib;
@@ -49,6 +46,7 @@ struct TestCase
     using ShapeMatrixTypes = ShapeMatrixPolicy_<typename TestFeType::ShapeFunction, GlobalDim>;
     template <typename X>
     using ShapeMatrixPolicy = ShapeMatrixPolicy_<X, GlobalDim>;
+    using ShapeFunction = typename TestFeType::ShapeFunction;
 };
 
 using TestTypes =
@@ -78,6 +76,7 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
 {
  public:
      using ShapeMatrixTypes = typename T::ShapeMatrixTypes;
+     using ShapeFunction = typename T::ShapeFunction;
      using TestFeType = typename T::TestFeType;
      // Matrix types
      using NodalMatrix = typename ShapeMatrixTypes::NodalMatrixType;
@@ -191,21 +190,21 @@ TYPED_TEST_CASE(NumLibFemIsoTest, TestTypes);
 TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
 {
     // Refer to typedefs in the fixture
-    using FeType = typename TestFixture::FeType;
     using NodalMatrix = typename TestFixture::NodalMatrix;
-    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
 
-    // create a finite element object
-    FeType fe(*this->mesh_element);
+    auto const shape_matrices =
+        NumLib::initShapeMatrices<typename TestFixture::ShapeFunction,
+                                  typename TestFixture::ShapeMatrixTypes,
+                                  TestFixture::global_dim,
+                                  ShapeMatrixType::N_J>(
+            *this->mesh_element, false /*is_axially_symmetric*/,
+            this->integration_method);
 
     // evaluate a mass matrix M = int{ N^T D N }dA_e
     NodalMatrix M = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
-    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
-        shape.setZero();
+        auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.template computeShapeFunctions<ShapeMatrixType::N_J>(
-            wp.getCoords(), shape, this->global_dim, false);
         M.noalias() += shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
     }
     //std::cout << "M=\n" << M;
@@ -215,21 +214,21 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
 TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
 {
     // Refer to typedefs in the fixture
-    using FeType = typename TestFixture::FeType;
     using NodalMatrix = typename TestFixture::NodalMatrix;
-    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
 
-    // create a finite element object
-    FeType fe(*this->mesh_element);
+    auto const shape_matrices =
+        NumLib::initShapeMatrices<typename TestFixture::ShapeFunction,
+                                  typename TestFixture::ShapeMatrixTypes,
+                                  TestFixture::global_dim,
+                                  ShapeMatrixType::DNDX>(
+            *this->mesh_element, false /*is_axially_symmetric*/,
+            this->integration_method);
 
     // evaluate a Laplace matrix K = int{ dNdx^T D dNdx }dA_e
     NodalMatrix K = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
-    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
-        shape.setZero();
+        auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.template computeShapeFunctions<ShapeMatrixType::DNDX>(
-            wp.getCoords(), shape, this->global_dim, false);
         K.noalias() += shape.dNdx.transpose() * this->globalD * shape.dNdx * shape.detJ * wp.getWeight();
     }
     //std::cout << "K=\n" << K << std::endl;
@@ -239,21 +238,21 @@ TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
 TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
 {
     // Refer to typedefs in the fixture
-    using FeType = typename TestFixture::FeType;
     using NodalMatrix = typename TestFixture::NodalMatrix;
-    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
 
-    // create a finite element object
-    FeType fe(*this->mesh_element);
+    auto const shape_matrices =
+        NumLib::initShapeMatrices<typename TestFixture::ShapeFunction,
+                                  typename TestFixture::ShapeMatrixTypes,
+                                  TestFixture::global_dim>(
+            *this->mesh_element, false /*is_axially_symmetric*/,
+            this->integration_method);
 
     // evaluate both mass and laplace matrices at once
     NodalMatrix M = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
     NodalMatrix K = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
-    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
-        shape.setZero();
+        auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.computeShapeFunctions(wp.getCoords(), shape, this->global_dim, false);
         M.noalias() += shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
         K.noalias() += shape.dNdx.transpose() * (this->globalD * shape.dNdx) * shape.detJ * wp.getWeight();
     }

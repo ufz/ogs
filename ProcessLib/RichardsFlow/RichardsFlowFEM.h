@@ -21,12 +21,12 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "RichardsFlowProcessData.h"
 
 namespace ProcessLib
@@ -115,9 +115,9 @@ public:
         _ip_data.reserve(n_integration_points);
 
         auto const shape_matrices =
-            initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                              IntegrationMethod, GlobalDim>(
-                element, is_axially_symmetric, _integration_method);
+            NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                      GlobalDim>(element, is_axially_symmetric,
+                                                 _integration_method);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {

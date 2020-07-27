@@ -12,14 +12,12 @@
 
 #include <vector>
 
+#include "IntegrationPointDataMatrix.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
 #include "ProcessLib/LIE/SmallDeformation/SmallDeformationProcessData.h"
-
-#include "IntegrationPointDataMatrix.h"
 #include "SecondaryData.h"
 #include "SmallDeformationLocalAssemblerInterface.h"
 

@@ -12,9 +12,9 @@
 
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
@@ -78,7 +78,8 @@ public:
             ParameterLib::SpatialPosition const position{
                 boost::none, Base::_element.getID(), ip,
                 MathLib::Point3d(
-                    interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
                         Base::_element, N))};
 
             if (_data.integral_measure)

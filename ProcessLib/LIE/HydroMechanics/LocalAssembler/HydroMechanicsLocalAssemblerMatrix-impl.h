@@ -11,14 +11,13 @@
 #pragma once
 
 #include "HydroMechanicsLocalAssemblerMatrix.h"
-
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "MeshLib/ElementStatus.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
@@ -53,15 +52,14 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     _ip_data.reserve(n_integration_points);
 
     auto const shape_matrices_u =
-        initShapeMatrices<ShapeFunctionDisplacement,
-                          ShapeMatricesTypeDisplacement, IntegrationMethod,
-                          GlobalDim>(e, is_axially_symmetric,
-                                     integration_method);
+        NumLib::initShapeMatrices<ShapeFunctionDisplacement,
+                                  ShapeMatricesTypeDisplacement, GlobalDim>(
+            e, is_axially_symmetric, integration_method);
 
     auto const shape_matrices_p =
-        initShapeMatrices<ShapeFunctionPressure, ShapeMatricesTypePressure,
-                          IntegrationMethod, GlobalDim>(e, is_axially_symmetric,
-                                                        integration_method);
+        NumLib::initShapeMatrices<ShapeFunctionPressure,
+                                  ShapeMatricesTypePressure, GlobalDim>(
+            e, is_axially_symmetric, integration_method);
 
     auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
         _process_data.solid_materials, _process_data.material_ids, e.getID());
@@ -203,9 +201,9 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto const& H_u = ip_data.H_u;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
-                                                                  N_u);
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<GlobalDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -339,9 +337,9 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto const& dNdx_u = ip_data.dNdx_u;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunctionDisplacement,
-                                   ShapeMatricesTypeDisplacement>(_element,
-                                                                  N_u);
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<GlobalDim,
                                           ShapeFunctionDisplacement::NPOINTS,

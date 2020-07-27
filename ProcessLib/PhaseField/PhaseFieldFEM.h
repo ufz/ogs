@@ -19,12 +19,12 @@
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/SpatialPosition.h"
 #include "PhaseFieldProcessData.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
@@ -169,9 +169,9 @@ public:
         }
 
         auto const shape_matrices =
-            initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                              IntegrationMethod, DisplacementDim>(
-                e, is_axially_symmetric, _integration_method);
+            NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                      DisplacementDim>(e, is_axially_symmetric,
+                                                       _integration_method);
 
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());

@@ -12,7 +12,7 @@
 
 #include "HeatTransportBHELocalAssemblerBHE.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
@@ -40,9 +40,9 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices =
-        initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod,
-                          3 /* GlobalDim */>(e, is_axially_symmetric,
-                                             _integration_method);
+        NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                  3 /* GlobalDim */>(e, is_axially_symmetric,
+                                                     _integration_method);
 
     // ip data initialization
     for (unsigned ip = 0; ip < n_integration_points; ip++)

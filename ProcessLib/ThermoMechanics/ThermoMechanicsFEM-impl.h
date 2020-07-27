@@ -41,9 +41,9 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices =
-        initShapeMatrices<ShapeFunction, ShapeMatricesType, IntegrationMethod,
-                          DisplacementDim>(e, is_axially_symmetric,
-                                           _integration_method);
+        NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                  DisplacementDim>(e, is_axially_symmetric,
+                                                   _integration_method);
 
     auto& solid_material = MaterialLib::Solids::selectSolidConstitutiveRelation(
         _process_data.solid_materials, _process_data.material_ids, e.getID());
@@ -174,8 +174,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& dNdx = _ip_data[ip].dNdx;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
-                                                                     N);
+            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                _element, N);
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
@@ -376,8 +376,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& dNdx = _ip_data[ip].dNdx;
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
-                                                                     N);
+            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                _element, N);
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,

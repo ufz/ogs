@@ -12,15 +12,13 @@
 
 #include <vector>
 
+#include "HeatTransportBHEProcessAssemblerInterface.h"
+#include "IntegrationPointDataSoil.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
-
-#include "HeatTransportBHEProcessAssemblerInterface.h"
-#include "IntegrationPointDataSoil.h"
 #include "SecondaryData.h"
 
 namespace ProcessLib

@@ -10,34 +10,26 @@
 
 #pragma once
 
-#include "SmallDeformationLocalAssemblerMatrixNearFracture.h"
-
+#include <Eigen/Eigen>
 #include <valarray>
 #include <vector>
 
-#include <Eigen/Eigen>
-
+#include "IntegrationPointDataMatrix.h"
 #include "MaterialLib/PhysicalConstant.h"
-
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MathLib/Point3d.h"
-
 #include "MeshLib/Node.h"
-
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
 #include "ProcessLib/LIE/Common/Utils.h"
-
-#include "IntegrationPointDataMatrix.h"
 #include "SecondaryData.h"
 #include "SmallDeformationLocalAssemblerInterface.h"
+#include "SmallDeformationLocalAssemblerMatrixNearFracture.h"
 
 namespace ProcessLib
 {
@@ -67,14 +59,12 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
       _element(e),
       _is_axially_symmetric(is_axially_symmetric)
 {
-    std::vector<
-        ShapeMatrices,
-        Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
-        shape_matrices = initShapeMatrices<ShapeFunction,
-                                           ShapeMatricesType,
-                                           IntegrationMethod,
-                                           DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+    std::vector<ShapeMatrices, Eigen::aligned_allocator<
+                                   typename ShapeMatricesType::ShapeMatrices>>
+        shape_matrices =
+            NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                      DisplacementDim>(e, is_axially_symmetric,
+                                                       _integration_method);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -234,8 +224,8 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         }
 
         auto const x_coord =
-            interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(_element,
-                                                                     N);
+            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
+                _element, N);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,

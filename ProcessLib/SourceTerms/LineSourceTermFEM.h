@@ -15,9 +15,9 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
 #include "SourceTermIntegrationPointData.h"
 
 namespace ProcessLib
@@ -63,9 +63,9 @@ public:
             _integration_method.getNumberOfPoints();
 
         auto const shape_matrices =
-            initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                              IntegrationMethod, GlobalDim>(
-                _element, is_axially_symmetric, _integration_method);
+            NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                      GlobalDim>(_element, is_axially_symmetric,
+                                                 _integration_method);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -94,8 +94,9 @@ public:
             ParameterLib::SpatialPosition const pos{
                 boost::none, _element.getID(), ip,
                 MathLib::Point3d(
-                    interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
-                        _element, N))};
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N))};
             auto const st_val = _parameter(t, pos)[0];
 
             _local_rhs.noalias() += st_val * w * N;

@@ -13,19 +13,14 @@
 #include <limits>
 
 #include "InfoLib/TestInfo.h"
-
 #include "MathLib/Integration/GaussLegendreTet.h"
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshSubset.h"
-
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
-#include "ProcessLib/Utils/InitShapeMatrices.h"
-
 #include "Tests/VectorUtils.h"
 
 namespace GaussLegendreTest
@@ -89,8 +84,8 @@ public:
         double integral = 0;
 
         auto const sms =
-            ProcessLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                          IntegrationMethod, GlobalDim>(
+            NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                      GlobalDim>(
                 _e, false /*is_axially_symmetric*/,
                 IntegrationMethod{integration_order});
         IntegrationMethod integration_method{integration_order};
