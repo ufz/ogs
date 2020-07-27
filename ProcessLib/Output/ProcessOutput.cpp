@@ -174,7 +174,7 @@ void addProcessDataToMesh(
          ++variable_id)
     {
         ProcessVariable& pv = process_variables[variable_id];
-        int const n_components = pv.getNumberOfComponents();
+        int const n_components = pv.getNumberOfGlobalComponents();
         // If (number_of_dof_variables==1), the case is either the staggered
         // scheme being applied or a single PDE being solved.
         const int sub_meshset_id =
@@ -195,7 +195,7 @@ void addProcessDataToMesh(
 
         DBUG("  process variable {:s}", pv.getName());
 
-        auto const num_comp = pv.getNumberOfComponents();
+        auto const num_comp = pv.getNumberOfGlobalComponents();
         auto& output_data = *MeshLib::getOrCreateMeshProperty<double>(
             mesh, pv.getName(), MeshLib::MeshItemType::Node, num_comp);
 

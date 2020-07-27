@@ -43,14 +43,15 @@ std::unique_ptr<Permeability> createPermeabilityModel(
             "permeability_tensor_entries", parameters, 0);
 
         int dimension = static_cast<int>(
-            std::sqrt(permeability_parameter.getNumberOfComponents()));
-        if (permeability_parameter.getNumberOfComponents() !=
+            std::sqrt(permeability_parameter.getNumberOfGlobalComponents()));
+        if (permeability_parameter.getNumberOfGlobalComponents() !=
             dimension * dimension)
         {
             OGS_FATAL(
                 "The given parameter has {:d} components, but the permeability "
                 "tensor is defined for a {:d} dimensional problem.",
-                permeability_parameter.getNumberOfComponents(), dimension);
+                permeability_parameter.getNumberOfGlobalComponents(),
+                dimension);
         }
 
         return std::make_unique<Permeability>(
@@ -66,14 +67,15 @@ std::unique_ptr<Permeability> createPermeabilityModel(
             "permeability_tensor_entries", parameters, 0);
 
         int dimension = static_cast<int>(
-            std::sqrt(permeability_parameter.getNumberOfComponents()));
-        if (permeability_parameter.getNumberOfComponents() !=
+            std::sqrt(permeability_parameter.getNumberOfGlobalComponents()));
+        if (permeability_parameter.getNumberOfGlobalComponents() !=
             dimension * dimension)
         {
             OGS_FATAL(
                 "The given parameter has {:d} components, but the permeability "
                 "tensor is defined for a {:d} dimensional problem.",
-                permeability_parameter.getNumberOfComponents(), dimension);
+                permeability_parameter.getNumberOfGlobalComponents(),
+                dimension);
         }
 
         return std::make_unique<DupuitPermeability>(permeability_parameter,

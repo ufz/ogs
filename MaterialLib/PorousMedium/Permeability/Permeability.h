@@ -29,13 +29,14 @@ public:
         int const dimension)
         : _permeability_parameter(permeability_parameter), _dimension(dimension)
     {
-        if (permeability_parameter.getNumberOfComponents() !=
+        if (permeability_parameter.getNumberOfGlobalComponents() !=
             _dimension * _dimension)
         {
             OGS_FATAL(
                 "The given parameter has {:d} components, but the permeability "
                 "tensor is defined for a {:d} dimensional problem.",
-                permeability_parameter.getNumberOfComponents(), _dimension);
+                permeability_parameter.getNumberOfGlobalComponents(),
+                _dimension);
         }
     }
 

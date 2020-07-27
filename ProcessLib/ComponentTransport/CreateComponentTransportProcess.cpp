@@ -119,7 +119,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         collected_process_variables.cbegin(),
         collected_process_variables.cend(),
         [](std::reference_wrapper<ProcessLib::ProcessVariable> const& pv) {
-            return pv.get().getNumberOfComponents() != 1;
+            return pv.get().getNumberOfGlobalComponents() != 1;
         });
 
     if (it != collected_process_variables.end())
@@ -129,7 +129,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
             "rather "
             "than {:d}.",
             it->get().getName(),
-            it->get().getNumberOfComponents());
+            it->get().getNumberOfGlobalComponents());
     }
 
     // Allocate the collected process variables into a two-dimensional vector,

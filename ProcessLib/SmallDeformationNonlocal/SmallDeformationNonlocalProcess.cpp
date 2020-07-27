@@ -164,14 +164,14 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 
             // Check the number of components.
             if (ip_meta_data.n_components !=
-                mesh_property.getNumberOfComponents())
+                mesh_property.getNumberOfGlobalComponents())
             {
                 OGS_FATAL(
                     "Different number of components in meta data ({:d}) than "
                     "in "
                     "the integration point field data for '{:s}': {:d}.",
                     ip_meta_data.n_components, name,
-                    mesh_property.getNumberOfComponents());
+                    mesh_property.getNumberOfGlobalComponents());
             }
 
             // Now we have a properly named vtk's field data array and the
@@ -214,7 +214,8 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 
                 std::vector<double> value(
                     &mesh_property[i],
-                    &mesh_property[i] + mesh_property.getNumberOfComponents());
+                    &mesh_property[i] +
+                        mesh_property.getNumberOfGlobalComponents());
                 // TODO (naumov) Check sizes / read size / etc.
                 // OR reconstruct dimensions from size / component =
                 // ip_points

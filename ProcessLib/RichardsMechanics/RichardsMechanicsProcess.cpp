@@ -218,7 +218,7 @@ void RichardsMechanicsProcess<DisplacementDim>::constructDofTable()
         std::generate_n(std::back_inserter(all_mesh_subsets),
                         getProcessVariables(monolithic_process_id)[1]
                             .get()
-                            .getNumberOfComponents(),
+                            .getNumberOfGlobalComponents(),
                         [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{1, DisplacementDim};
@@ -233,10 +233,11 @@ void RichardsMechanicsProcess<DisplacementDim>::constructDofTable()
         // For displacement equation.
         const int process_id = 1;
         std::vector<MeshLib::MeshSubset> all_mesh_subsets;
-        std::generate_n(
-            std::back_inserter(all_mesh_subsets),
-            getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-            [&]() { return *_mesh_subset_all_nodes; });
+        std::generate_n(std::back_inserter(all_mesh_subsets),
+                        getProcessVariables(process_id)[0]
+                            .get()
+                            .getNumberOfGlobalComponents(),
+                        [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{DisplacementDim};
         _local_to_global_index_map =
@@ -371,13 +372,14 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         auto const ip_meta_data = getIntegrationPointMetaData(mesh, name);
 
         // Check the number of components.
-        if (ip_meta_data.n_components != mesh_property.getNumberOfComponents())
+        if (ip_meta_data.n_components !=
+            mesh_property.getNumberOfGlobalComponents())
         {
             OGS_FATAL(
                 "Different number of components in meta data ({:d}) than in "
                 "the integration point field data for '{:s}': {:d}.",
                 ip_meta_data.n_components, name,
-                mesh_property.getNumberOfComponents());
+                mesh_property.getNumberOfGlobalComponents());
         }
 
         // Now we have a properly named vtk's field data array and the

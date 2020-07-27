@@ -121,7 +121,7 @@ public:
 
     int getNumberOfVariableComponents(int variable_id) const;
 
-    int getNumberOfComponents() const;
+    int getNumberOfGlobalComponents() const;
 
     RowColumnIndices operator()(std::size_t const mesh_item_id,
                                 const int component_id) const;

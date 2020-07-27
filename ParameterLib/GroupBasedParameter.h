@@ -51,7 +51,7 @@ struct GroupBasedParameter final : public Parameter<T>
 
     bool isTimeDependent() const override { return false; }
 
-    int getNumberOfComponents() const override
+    int getNumberOfGlobalComponents() const override
     {
         return _vec_values.empty()
                    ? 0

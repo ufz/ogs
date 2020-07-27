@@ -30,7 +30,7 @@ public:
 
     MeshItemType getMeshItemType() const { return _mesh_item_type; }
     std::string const& getPropertyName() const { return _property_name; }
-    int getNumberOfComponents() const { return _n_components; }
+    int getNumberOfGlobalComponents() const { return _n_components; }
 
 protected:
     PropertyVectorBase(std::string property_name,
@@ -68,7 +68,7 @@ public:
     {
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
-        return this->operator[](tuple_index* getNumberOfComponents() +
+        return this->operator[](tuple_index* getNumberOfGlobalComponents() +
                                 component);
     }
 
@@ -78,7 +78,7 @@ public:
     {
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
-        return this->operator[](tuple_index* getNumberOfComponents() +
+        return this->operator[](tuple_index* getNumberOfGlobalComponents() +
                                 component);
     }
 

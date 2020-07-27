@@ -53,14 +53,14 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
     DBUG("Associate displacement with process variable '{:s}'.",
          per_process_variables.back().get().getName());
 
-    if (per_process_variables.back().get().getNumberOfComponents() !=
+    if (per_process_variables.back().get().getNumberOfGlobalComponents() !=
         DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '{:s}' is different "
             "from the displacement dimension: got {:d}, expected {:d}",
             per_process_variables.back().get().getName(),
-            per_process_variables.back().get().getNumberOfComponents(),
+            per_process_variables.back().get().getNumberOfGlobalComponents(),
             DisplacementDim);
     }
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>

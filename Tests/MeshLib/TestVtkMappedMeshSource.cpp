@@ -323,8 +323,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             auto const* const newDoubleProps =
                 newMeshProperties.getPropertyVector<double>(
                     "PointDoubleProperty");
-            ASSERT_EQ(newDoubleProps->getNumberOfComponents(),
-                      doubleProps->getNumberOfComponents());
+            ASSERT_EQ(newDoubleProps->getNumberOfGlobalComponents(),
+                      doubleProps->getNumberOfGlobalComponents());
             ASSERT_EQ(newDoubleProps->getNumberOfTuples(),
                       doubleProps->getNumberOfTuples());
             ASSERT_EQ(newDoubleProps->size(), doubleProps->size());
@@ -338,8 +338,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             auto newUnsignedIds = newMeshProperties.getPropertyVector<unsigned>(
                 "CellUnsignedProperty");
 
-            ASSERT_EQ(newUnsignedIds->getNumberOfComponents(),
-                      unsignedProps->getNumberOfComponents());
+            ASSERT_EQ(newUnsignedIds->getNumberOfGlobalComponents(),
+                      unsignedProps->getNumberOfGlobalComponents());
             ASSERT_EQ(newUnsignedIds->getNumberOfTuples(),
                       unsignedProps->getNumberOfTuples());
             ASSERT_EQ(newUnsignedIds->size(), unsignedProps->size());
@@ -354,8 +354,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                 auto new_p = newMeshProperties.getPropertyVector<int>(
                     "FieldIntProperty");
 
-                ASSERT_EQ(new_p->getNumberOfComponents(),
-                          p->getNumberOfComponents());
+                ASSERT_EQ(new_p->getNumberOfGlobalComponents(),
+                          p->getNumberOfGlobalComponents());
                 ASSERT_EQ(new_p->getNumberOfTuples(), p->getNumberOfTuples());
                 ASSERT_EQ(new_p->size(), p->size());
                 for (std::size_t i = 0; i < unsignedProps->size(); i++)
@@ -368,8 +368,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                 meshProperties.getPropertyVector<int>("MaterialIDs");
             auto const* const newMaterialIds =
                 newMeshProperties.getPropertyVector<int>("MaterialIDs");
-            ASSERT_EQ(newMaterialIds->getNumberOfComponents(),
-                      materialIds->getNumberOfComponents());
+            ASSERT_EQ(newMaterialIds->getNumberOfGlobalComponents(),
+                      materialIds->getNumberOfGlobalComponents());
             ASSERT_EQ(newMaterialIds->getNumberOfTuples(),
                       materialIds->getNumberOfTuples());
             ASSERT_EQ(newMaterialIds->size(), materialIds->size());

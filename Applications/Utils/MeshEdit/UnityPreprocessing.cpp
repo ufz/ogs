@@ -58,7 +58,7 @@ void fillPropVec(MeshLib::PropertyVector<T> const& property,
                  std::vector<std::vector<std::size_t>> const& node_map,
                  std::size_t const total_nodes)
 {
-    assert(property.getNumberOfComponents() == 1);
+    assert(property.getNumberOfGlobalComponents() == 1);
     MeshLib::PropertyVector<T>* new_property =
         new_props.createNewPropertyVector<T>(property.getPropertyName(),
                                              MeshLib::MeshItemType::Node, 1);
@@ -103,7 +103,7 @@ MeshLib::Properties constructProperties(
     Properties new_properties;
     for (auto [name, property] : properties)
     {
-        if (property->getNumberOfComponents() != 1)
+        if (property->getNumberOfGlobalComponents() != 1)
         {
             INFO("Ignoring array '{:s}' (more than one component).", name);
             continue;

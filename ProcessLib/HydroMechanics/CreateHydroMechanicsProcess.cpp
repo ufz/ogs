@@ -87,25 +87,25 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     DBUG("Associate displacement with process variable '{:s}'.",
          variable_u->getName());
 
-    if (variable_u->getNumberOfComponents() != DisplacementDim)
+    if (variable_u->getNumberOfGlobalComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '{:s}' is different "
             "from the displacement dimension: got {:d}, expected {:d}",
             variable_u->getName(),
-            variable_u->getNumberOfComponents(),
+            variable_u->getNumberOfGlobalComponents(),
             DisplacementDim);
     }
 
     DBUG("Associate pressure with process variable '{:s}'.",
          variable_p->getName());
-    if (variable_p->getNumberOfComponents() != 1)
+    if (variable_p->getNumberOfGlobalComponents() != 1)
     {
         OGS_FATAL(
             "Pressure process variable '{:s}' is not a scalar variable but has "
             "{:d} components.",
             variable_p->getName(),
-            variable_p->getNumberOfComponents());
+            variable_p->getNumberOfGlobalComponents());
     }
 
     auto solid_constitutive_relations =

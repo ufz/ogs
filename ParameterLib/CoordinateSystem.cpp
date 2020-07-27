@@ -33,8 +33,8 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
     {
         OGS_FATAL("The parameters for the basis must not be time dependent.");
     }
-    if (_base[0]->getNumberOfComponents() != 2 ||
-        _base[1]->getNumberOfComponents() != 2)
+    if (_base[0]->getNumberOfGlobalComponents() != 2 ||
+        _base[1]->getNumberOfGlobalComponents() != 2)
     {
         OGS_FATAL("The parameters for the 2D basis must have two components.");
     }
@@ -61,9 +61,9 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
     {
         OGS_FATAL("The parameters for the basis must not be time dependent.");
     }
-    if (_base[0]->getNumberOfComponents() != 3 ||
-        _base[1]->getNumberOfComponents() != 3 ||
-        _base[2]->getNumberOfComponents() != 3)
+    if (_base[0]->getNumberOfGlobalComponents() != 3 ||
+        _base[1]->getNumberOfGlobalComponents() != 3 ||
+        _base[2]->getNumberOfGlobalComponents() != 3)
     {
         OGS_FATAL(
             "The parameters for the 3D basis must have three components.");

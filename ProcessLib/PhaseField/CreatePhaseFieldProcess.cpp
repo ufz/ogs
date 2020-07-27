@@ -81,26 +81,26 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     DBUG("Associate displacement with process variable '{:s}'.",
          variable_u->getName());
 
-    if (variable_u->getNumberOfComponents() != DisplacementDim)
+    if (variable_u->getNumberOfGlobalComponents() != DisplacementDim)
     {
         OGS_FATAL(
             "Number of components of the process variable '{:s}' is different "
             "from the displacement dimension: got {:d}, expected {:d}",
             variable_u->getName(),
-            variable_u->getNumberOfComponents(),
+            variable_u->getNumberOfGlobalComponents(),
             DisplacementDim);
     }
 
     DBUG("Associate phase field with process variable '{:s}'.",
          variable_ph->getName());
-    if (variable_ph->getNumberOfComponents() != 1)
+    if (variable_ph->getNumberOfGlobalComponents() != 1)
     {
         OGS_FATAL(
             "Phasefield process variable '{:s}' is not a scalar variable but "
             "has "
             "{:d} components.",
             variable_ph->getName(),
-            variable_ph->getNumberOfComponents());
+            variable_ph->getNumberOfGlobalComponents());
     }
 
     auto solid_constitutive_relations =

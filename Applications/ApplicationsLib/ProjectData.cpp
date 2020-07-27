@@ -221,7 +221,7 @@ boost::optional<ParameterLib::CoordinateSystem> parseLocalCoordinateSystem(
         *config,
         //! \ogs_file_param_special{prj__local_coordinate_system__basis_vector_0}
         "basis_vector_0", parameters, 0 /* any dimension */);
-    int const dimension = basis_vector_0.getNumberOfComponents();
+    int const dimension = basis_vector_0.getNumberOfGlobalComponents();
 
     // check dimension
     if (dimension != 2 && dimension != 3)

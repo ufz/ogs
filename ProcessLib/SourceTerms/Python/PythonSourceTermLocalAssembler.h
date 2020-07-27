@@ -100,7 +100,7 @@ public:
         auto const num_var = dof_table_source_term.getNumberOfVariables();
         auto const num_nodes = ShapeFunction::NPOINTS;
         auto const num_comp_total =
-            dof_table_source_term.getNumberOfComponents();
+            dof_table_source_term.getNumberOfGlobalComponents();
 
         // gather primary variables
         typename ShapeMatricesType::template MatrixType<ShapeFunction::NPOINTS,

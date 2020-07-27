@@ -161,13 +161,14 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         auto const ip_meta_data = getIntegrationPointMetaData(mesh, name);
 
         // Check the number of components.
-        if (ip_meta_data.n_components != mesh_property.getNumberOfComponents())
+        if (ip_meta_data.n_components !=
+            mesh_property.getNumberOfGlobalComponents())
         {
             OGS_FATAL(
                 "Different number of components in meta data ({:d}) than in "
                 "the integration point field data for '{:s}': {:d}.",
                 ip_meta_data.n_components, name,
-                mesh_property.getNumberOfComponents());
+                mesh_property.getNumberOfGlobalComponents());
         }
 
         // Now we have a properly named vtk's field data array and the

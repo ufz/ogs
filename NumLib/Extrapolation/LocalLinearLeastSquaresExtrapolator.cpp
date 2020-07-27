@@ -33,7 +33,7 @@ LocalLinearLeastSquaresExtrapolator::LocalLinearLeastSquaresExtrapolator(
      * likely too simplistic. You better adapt the extrapolation code from
      * some more advanced process, like the TES process.
      */
-    if (dof_table.getNumberOfComponents() != 1)
+    if (dof_table.getNumberOfGlobalComponents() != 1)
     {
         OGS_FATAL(
             "The d.o.f. table passed must be for one variable that has "

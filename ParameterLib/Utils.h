@@ -62,12 +62,13 @@ Parameter<ParameterDataType>* findParameterOptional(
     }
 
     if (num_components != 0 &&
-        parameter->getNumberOfComponents() != num_components)
+        parameter->getNumberOfGlobalComponents() != num_components)
     {
         OGS_FATAL(
             "The read parameter `{:s}' has the wrong number of components "
             "({:d} instead of {:d}).",
-            parameter_name, parameter->getNumberOfComponents(), num_components);
+            parameter_name, parameter->getNumberOfGlobalComponents(),
+            num_components);
     }
 
     // Test the parameter's mesh only if there is a "test"-mesh provided.

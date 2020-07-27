@@ -86,14 +86,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
              variable->getName(), "process_variable");
 
         if (pv_name.find("displacement") != std::string::npos &&
-            variable->getNumberOfComponents() != GlobalDim)
+            variable->getNumberOfGlobalComponents() != GlobalDim)
         {
             OGS_FATAL(
                 "Number of components of the process variable '{:s}' is "
                 "different "
                 "from the displacement dimension: got {:d}, expected {:d}",
                 variable->getName(),
-                variable->getNumberOfComponents(),
+                variable->getNumberOfGlobalComponents(),
                 GlobalDim);
         }
 
