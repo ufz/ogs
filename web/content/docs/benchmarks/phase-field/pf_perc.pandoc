@@ -1,0 +1,27 @@
++++
+project = "PhaseField/me2_pf_case1.prj"
+author = "Keita Yoshioka"
+date = "2017-05-19T09:10:33+01:00"
+title = "Fluid driven percolation"
+weight = 158
+
+[menu]
+  [menu.benchmarks]
+    parent = "Phase-Field"
+
++++
+
+{{< data-link >}}
+
+## Problem description
+
+We simulate two different fluid percolation experiments performed on rock salt samples with a true tri-axial loading system as described in [this] (../Yoshioka_percolation.pdf). The experiments were performed under two different stress configurations as below.
+{{< img src="../ME2_stress_state_1.pdf" >}}
+{{< img src="../ME2_stress_state_2.pdf" >}}
+
+## Results and evaluation
+
+Simulated crack pathes (phase-field) for the two cases are shown below:
+
+{{< img src="../VPF_ME2_case1.png" >}}
+{{< img src="../VPF_ME2_case2.png" >}}
