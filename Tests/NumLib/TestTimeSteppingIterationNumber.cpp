@@ -29,8 +29,12 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
                                                  std::move(multiplier_vector), {});
 
     const double solution_error = 0.;
+    const double end_time = alg.end();
     auto [step_accepted, timestepper_dt] = alg.next(solution_error, 1);
     ASSERT_TRUE(step_accepted);
+    timestepper_dt = (alg.getTimeStep().current() + timestepper_dt > end_time)
+                         ? end_time - alg.getTimeStep().current()
+                         : timestepper_dt;
     alg.resetCurrentTimeStep(timestepper_dt);
     NumLib::TimeStep ts = alg.getTimeStep();
     ASSERT_EQ(1u, ts.steps());
@@ -41,10 +45,16 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     auto [step_accepted1, timestepper_dt1] = alg.next(solution_error, 1);
     ASSERT_TRUE(step_accepted1);
+    timestepper_dt1 = (alg.getTimeStep().current() + timestepper_dt1 > end_time)
+                          ? end_time - alg.getTimeStep().current()
+                          : timestepper_dt1;
     alg.resetCurrentTimeStep(timestepper_dt1);
 
     auto [step_accepted2, timestepper_dt2] = alg.next(solution_error, 3);
     ASSERT_TRUE(step_accepted2);
+    timestepper_dt2 = (alg.getTimeStep().current() + timestepper_dt2 > end_time)
+                          ? end_time - alg.getTimeStep().current()
+                          : timestepper_dt2;
     alg.resetCurrentTimeStep(timestepper_dt2);
     ts = alg.getTimeStep();
     ASSERT_EQ(3u, ts.steps());
@@ -55,6 +65,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     auto [step_accepted3, timestepper_dt3] = alg.next(solution_error, 5);
     ASSERT_TRUE(step_accepted3);
+    timestepper_dt3 = (alg.getTimeStep().current() + timestepper_dt3 > end_time)
+                          ? end_time - alg.getTimeStep().current()
+                          : timestepper_dt3;
     alg.resetCurrentTimeStep(timestepper_dt3);
     ts = alg.getTimeStep();
     ASSERT_EQ(4u, ts.steps());
@@ -65,6 +78,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     auto [step_accepted4, timestepper_dt4] = alg.next(solution_error, 7);
     ASSERT_TRUE(step_accepted4);
+    timestepper_dt4 = (alg.getTimeStep().current() + timestepper_dt4 > end_time)
+                          ? end_time - alg.getTimeStep().current()
+                          : timestepper_dt4;
     alg.resetCurrentTimeStep(timestepper_dt4);
     ts = alg.getTimeStep();
     ASSERT_EQ(5u, ts.steps());
@@ -75,6 +91,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     auto [step_accepted5, timestepper_dt5] = alg.next(solution_error, 8);
     ASSERT_TRUE(step_accepted5);
+    timestepper_dt5 = (alg.getTimeStep().current() + timestepper_dt5 > end_time)
+                          ? end_time - alg.getTimeStep().current()
+                          : timestepper_dt5;
     alg.resetCurrentTimeStep(timestepper_dt5);
     ts = alg.getTimeStep();
     ASSERT_EQ(6u, ts.steps());
@@ -85,6 +104,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 
     auto [step_accepted6, timestepper_dt6] = alg.next(solution_error, 4);
     ASSERT_TRUE(step_accepted6);
+    timestepper_dt6 = (alg.getTimeStep().current() + timestepper_dt6 > end_time)
+                          ? end_time - alg.getTimeStep().current()
+                          : timestepper_dt6;
     alg.resetCurrentTimeStep(timestepper_dt6);
     ts = alg.getTimeStep();
     ASSERT_EQ(7u, ts.steps());

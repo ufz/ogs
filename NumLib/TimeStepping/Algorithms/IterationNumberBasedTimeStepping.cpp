@@ -75,8 +75,24 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
     else
     {
         ++_n_rejected_steps;
+        double dt = getNextTimeStepSize();
+        // In case it is the first time be rejected, re-computed dt again with
+        // current dt
+        if (std::fabs(dt - _ts_current.dt()) <
+            std::numeric_limits<double>::epsilon())
+        {
+            // time step was rejected, keep dt for the next dt computation.
+            _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
+                TimeStep{_ts_prev.previous(), _ts_prev.previous() + dt,
+                         _ts_prev.steps()};
+            dt = getNextTimeStepSize();
+        }
+
         // time step was rejected, keep dt for the next dt computation.
-        return std::make_tuple(false, getNextTimeStepSize());
+        _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
+            TimeStep{_ts_prev.previous(), _ts_prev.previous() + dt,
+                     _ts_prev.steps()};
+        return std::make_tuple(false, dt);
     }
     return {};
 }
@@ -119,15 +135,7 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
         dt = _ts_prev.dt() * findMultiplier(_iter_times);
     }
 
-    dt = std::clamp(dt, _min_dt, _max_dt);
-
-    double const t_next = dt + _ts_prev.current();
-    if (t_next > end())
-    {
-        dt = end() - _ts_prev.current();
-    }
-
-    return dt;
+    return std::clamp(dt, _min_dt, _max_dt);
 }
 
 void IterationNumberBasedTimeStepping::addFixedOutputTimes(

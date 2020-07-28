@@ -36,6 +36,8 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
     std::vector<double> vec_t;
     vec_t.push_back(algorithm.begin());
 
+    const double end_time = algorithm.end();
+
     double const solution_error = 0;
     for (auto const& i : number_iterations)
     {
@@ -51,6 +53,11 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
                 algorithm.getTimeStep().current(), timestepper_dt,
                 fixed_output_times);
         }
+
+        timestepper_dt =
+            (algorithm.getTimeStep().current() + timestepper_dt > end_time)
+                ? end_time - algorithm.getTimeStep().current()
+                : timestepper_dt;
 
         algorithm.resetCurrentTimeStep(timestepper_dt);
         NumLib::TimeStep t = algorithm.getTimeStep();
