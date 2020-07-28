@@ -72,9 +72,9 @@ public:
 
         LineSegment operator*();
 
-        bool operator==(SegmentIterator const& other);
+        bool operator==(SegmentIterator const& other) const;
 
-        bool operator!=(SegmentIterator const& other);
+        bool operator!=(SegmentIterator const& other) const;
 
         SegmentIterator& operator+=(std::vector<GeoLib::Point>::difference_type n);
 

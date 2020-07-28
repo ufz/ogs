@@ -524,12 +524,12 @@ LineSegment Polyline::SegmentIterator::operator*()
     return _polyline->getSegment(_segment_number);
 }
 
-bool Polyline::SegmentIterator::operator==(SegmentIterator const& other)
+bool Polyline::SegmentIterator::operator==(SegmentIterator const& other) const
 {
     return !(*this != other);
 }
 
-bool Polyline::SegmentIterator::operator!=(SegmentIterator const& other)
+bool Polyline::SegmentIterator::operator!=(SegmentIterator const& other) const
 {
     return other._segment_number != _segment_number ||
            other._polyline != _polyline;
