@@ -22,14 +22,13 @@ namespace ProcessLib
 {
 namespace NormalTractionBoundaryCondition
 {
-template <template <typename, typename, unsigned>
-          class LocalAssemblerImplementation>
-NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
+template <int GlobalDim, template <typename, typename, unsigned>
+                         class LocalAssemblerImplementation>
+NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     NormalTractionBoundaryCondition(
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
-        int const variable_id, unsigned const global_dim,
-        MeshLib::Mesh const& bc_mesh,
+        int const variable_id, MeshLib::Mesh const& bc_mesh,
         ParameterLib::Parameter<double> const& pressure)
     : _bc_mesh(bc_mesh),
       _integration_order(integration_order),
@@ -53,15 +52,15 @@ NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, component_ids, std::move(bc_mesh_subset)));
 
-    createLocalAssemblers<LocalAssemblerImplementation>(
-        global_dim, _bc_mesh.getElements(), *_dof_table_boundary,
-        shapefunction_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
-        _integration_order, _pressure);
+    createLocalAssemblers<GlobalDim, LocalAssemblerImplementation>(
+        *_dof_table_boundary, shapefunction_order, _bc_mesh.getElements(),
+        _local_assemblers, _bc_mesh.isAxiallySymmetric(), _integration_order,
+        _pressure);
 }
 
-template <template <typename, typename, unsigned>
-          class LocalAssemblerImplementation>
-void NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
+template <int GlobalDim, template <typename, typename, unsigned>
+                         class LocalAssemblerImplementation>
+void NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
                    int const /*process_id*/, GlobalMatrix& K, GlobalVector& b,
                    GlobalMatrix* Jac)
@@ -71,13 +70,13 @@ void NormalTractionBoundaryCondition<LocalAssemblerImplementation>::
         _local_assemblers, *_dof_table_boundary, t, x, K, b, Jac);
 }
 
+template <int GlobalDim>
 std::unique_ptr<NormalTractionBoundaryCondition<
-    NormalTractionBoundaryConditionLocalAssembler>>
+    GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>
 createNormalTractionBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     unsigned const integration_order, unsigned const shapefunction_order,
-    unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     DBUG("Constructing NormalTractionBoundaryCondition from config.");
@@ -92,9 +91,9 @@ createNormalTractionBoundaryCondition(
     auto const& pressure = ParameterLib::findParameter<double>(
         parameter_name, parameters, 1, &bc_mesh);
     return std::make_unique<NormalTractionBoundaryCondition<
-        NormalTractionBoundaryConditionLocalAssembler>>(
-        integration_order, shapefunction_order, dof_table, variable_id,
-        global_dim, bc_mesh, pressure);
+        GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>(
+        integration_order, shapefunction_order, dof_table, variable_id, bc_mesh,
+        pressure);
 }
 
 }  // namespace NormalTractionBoundaryCondition

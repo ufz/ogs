@@ -21,8 +21,6 @@
 namespace ProcessLib
 {
 
-namespace detail
-{
 template <unsigned GlobalDim, template <typename, typename, unsigned>
                               class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
@@ -33,6 +31,9 @@ void createLocalAssemblers(
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
+    static_assert(
+        GlobalDim == 1 || GlobalDim == 2 || GlobalDim == 3,
+        "Meshes with dimension greater than three are not supported.");
     // Shape matrices initializer
     using LocalDataInitializer =
         LocalDataInitializer<LocalAssemblerInterface,
@@ -50,8 +51,6 @@ void createLocalAssemblers(
         initializer, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
-
-}  // namespace detail
 
 /*! Creates local assemblers for each element of the given \c mesh.
  *
@@ -80,17 +79,17 @@ void createLocalAssemblers(
     switch (dimension)
     {
         case 1:
-            detail::createLocalAssemblers<1, LocalAssemblerImplementation>(
+            createLocalAssemblers<1, LocalAssemblerImplementation>(
                 dof_table, shapefunction_order, mesh_elements, local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         case 2:
-            detail::createLocalAssemblers<2, LocalAssemblerImplementation>(
+            createLocalAssemblers<2, LocalAssemblerImplementation>(
                 dof_table, shapefunction_order, mesh_elements, local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;
         case 3:
-            detail::createLocalAssemblers<3, LocalAssemblerImplementation>(
+            createLocalAssemblers<3, LocalAssemblerImplementation>(
                 dof_table, shapefunction_order, mesh_elements, local_assemblers,
                 std::forward<ExtraCtorArgs>(extra_ctor_args)...);
             break;

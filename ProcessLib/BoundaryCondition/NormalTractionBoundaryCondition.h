@@ -27,8 +27,8 @@ class NormalTractionBoundaryConditionLocalAssemblerInterface;
 ///      \bar{t} := \sigma \mathbf{n} = p \mathbf{n},
 /// \f]
 /// where \f$p\f$ is the value on the boundary given by the parameter tag.
-template <template <typename, typename, unsigned>
-          class LocalAssemblerImplementation>
+template <int GlobalDim, template <typename, typename, unsigned>
+                         class LocalAssemblerImplementation>
 class NormalTractionBoundaryCondition final : public BoundaryCondition
 {
 public:
@@ -38,8 +38,7 @@ public:
     NormalTractionBoundaryCondition(
         unsigned const integration_order, unsigned const shapefunction_order,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
-        int const variable_id, unsigned const global_dim,
-        MeshLib::Mesh const& bc_mesh,
+        int const variable_id, MeshLib::Mesh const& bc_mesh,
         ParameterLib::Parameter<double> const& pressure);
 
     /// Calls local assemblers which calculate their contributions to the global
@@ -72,13 +71,13 @@ private:
     ParameterLib::Parameter<double> const& _pressure;
 };
 
+template <int GlobalDim>
 std::unique_ptr<NormalTractionBoundaryCondition<
-    NormalTractionBoundaryConditionLocalAssembler>>
+    GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>
 createNormalTractionBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     unsigned const integration_order, unsigned const shapefunction_order,
-    unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         parameters);
 
