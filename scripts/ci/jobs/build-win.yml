@@ -6,3 +6,15 @@ build win:
       -DOGS_BUILD_UTILS=ON
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_PYTHON=ON
+
+build win no python:
+  extends: .template-build-win
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - when: manual
+      allow_failure: true
+  variables:
+    BUILD_DIR: build-win-nopython
+    BUILD_TESTS: "false"
+    BUILD_CTEST: "false"
+    CMAKE_ARGS: " "
