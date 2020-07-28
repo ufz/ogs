@@ -10,11 +10,11 @@
 
 #pragma once
 
+#include <exprtk.hpp>
 #include <utility>
 #include <vector>
 
-#include <exprtk.hpp>
-
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "Parameter.h"
 #include "Utils.h"
 
@@ -147,6 +147,10 @@ private:
 };
 
 std::unique_ptr<ParameterBase> createFunctionParameter(
-    std::string const& name, BaseLib::ConfigTree const& config);
+    std::string const& name,
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 
 }  // namespace ParameterLib
