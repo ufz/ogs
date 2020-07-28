@@ -108,6 +108,7 @@ private:
         _local_assemblers;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
+    MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
 };
 
 }  // namespace LiquidFlow
