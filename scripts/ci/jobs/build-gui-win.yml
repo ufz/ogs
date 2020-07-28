@@ -1,6 +1,5 @@
 build gui win:
   extends: .template-build-win
-  stage: build
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:
@@ -17,3 +16,20 @@ build gui win:
       -DOGS_BUILD_SWMM=ON
       -DOGS_USE_NETCDF=ON
       -DOGS_CI_TESTRUNNER_REPEAT=1
+
+build gui win no python:
+  extends: .template-build-win
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - changes:
+      - Applications/DataExplorer/**/*
+    - when: manual
+      allow_failure: true
+  variables:
+    BUILD_DIR: build-gui-win-nopython
+    BUILD_TESTS: "false"
+    BUILD_CTEST: "false"
+    CMAKE_ARGS: >-
+      -DOGS_BUILD_GUI=ON
+      -DOGS_BUILD_SWMM=ON
+      -DOGS_USE_NETCDF=ON
