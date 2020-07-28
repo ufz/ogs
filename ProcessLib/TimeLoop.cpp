@@ -387,6 +387,8 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
         dt = _end_time - t;
     }
 
+    dt = NumLib::possiblyClampDtToNextFixedTime(t, dt,
+                                                _output->getFixedOutputTimes());
     // Check whether the time stepping is stabilized
     if (std::fabs(dt - prev_dt) < std::numeric_limits<double>::epsilon())
     {
@@ -405,9 +407,6 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                  dt);
         }
     }
-
-    dt = NumLib::possiblyClampDtToNextFixedTime(t, dt,
-                                                _output->getFixedOutputTimes());
 
     // Reset the time step with the minimum step size, dt
     // Update the solution of the previous time step.
