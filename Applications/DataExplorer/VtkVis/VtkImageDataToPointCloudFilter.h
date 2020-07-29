@@ -53,6 +53,12 @@ public:
     vtkGetMacro(PointScaleFactor, double);
     vtkSetMacro(PointScaleFactor, double);
 
+    vtkGetMacro(MinValueRange, double);
+    vtkSetMacro(MinValueRange, double);
+
+    vtkGetMacro(MaxValueRange, double);
+    vtkSetMacro(MaxValueRange, double);
+
     vtkGetMacro(MinHeight, double);
     vtkSetMacro(MinHeight, double);
 
@@ -72,6 +78,8 @@ protected:
 
     double Gamma{1.0};
     double PointScaleFactor{1.0};
+    double MinValueRange{-1};
+    double MaxValueRange{-1};
     double MinHeight{0};
     double MaxHeight{1000};
     vtkIdType MinNumberOfPointsPerCell{1};
