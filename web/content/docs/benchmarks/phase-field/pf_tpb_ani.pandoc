@@ -14,6 +14,8 @@ weight = 158
 {{< data-link >}}
 
 ## Problem description
+**Note**, this project file runs only with a modified version of OGS
+which you can find [here](https://github.com/KeitaYoshioka/ogs/tree/H2M_phasefield).
 
 We simulate three point bending tests performed on lamination orthogonal and parallel. The layer lamination is represented through the fracture toughnss $G_c$ as shown below.
 {{< img src="../ME1_ext_2D_orthogonal_init.png" >}}

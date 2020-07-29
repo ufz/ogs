@@ -1,7 +1,7 @@
 +++
 project = "PhaseField/tpb_rgranite.prj"
 author = "Keita Yoshioka"
-date = "2017-05-19T09:10:33+01:00"
+date = "2020-07-27"
 title = "Three point bending test"
 weight = 158
 
@@ -14,6 +14,8 @@ weight = 158
 {{< data-link >}}
 
 ## Problem description
+**Note**, this project file runs only with a modified version of OGS
+which you can find [here](https://github.com/KeitaYoshioka/ogs/tree/H2M_phasefield).
 
 We simulate a three point bending test performed on Rockville granite as shown below. Details of the experiment can be found in Tarok et al. 2017.
 {{< img src="../TPB_exp.png" >}}
