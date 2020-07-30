@@ -12,7 +12,9 @@
 
 #include <cassert>
 
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/ComputeResiduum.h"
 
 namespace ProcessLib
 {
@@ -33,6 +35,8 @@ HeatConductionProcess::HeatConductionProcess(
               std::move(secondary_variables)),
       _process_data(std::move(process_data))
 {
+    _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
 }
 
 void HeatConductionProcess::initializeConcreteProcess(
@@ -87,6 +91,11 @@ void HeatConductionProcess::assembleConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
         b, _coupled_solutions);
+
+    auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+    transformVariableFromGlobalVector(residuum, 0 /*variable id*/,
+                                      *_local_to_global_index_map, *_heat_flux,
+                                      std::negate<double>());
 }
 
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
@@ -106,6 +115,10 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+
+    transformVariableFromGlobalVector(b, 0 /*variable id*/,
+                                      *_local_to_global_index_map, *_heat_flux,
+                                      std::negate<double>());
 }
 
 void HeatConductionProcess::computeSecondaryVariableConcrete(

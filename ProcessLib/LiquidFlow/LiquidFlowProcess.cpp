@@ -18,6 +18,7 @@
 #include "MeshLib/PropertyVector.h"
 // TODO(TF) used for output of flux, if output classes are ready this has to be changed
 #include "MeshLib/IO/writeMeshToFile.h"
+#include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
@@ -42,6 +43,9 @@ LiquidFlowProcess::LiquidFlowProcess(
       _surfaceflux(std::move(surfaceflux))
 {
     DBUG("Create Liquid flow process.");
+
+    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
 }
 
 void LiquidFlowProcess::initializeConcreteProcess(
@@ -80,6 +84,11 @@ void LiquidFlowProcess::assembleConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
         b, _coupled_solutions);
+
+    auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
+    transformVariableFromGlobalVector(residuum, 0 /*variable id*/,
+                                      *_local_to_global_index_map,
+                                      *_hydraulic_flow, std::negate<double>());
 }
 
 void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
