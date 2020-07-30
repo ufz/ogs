@@ -133,7 +133,7 @@ int VtkImageDataToPointCloudFilter::RequestData(
         MathLib::Point3d max_pnt{std::array<double, 3>{
             {p[0] + half_cellsize, p[1] + half_cellsize, MaxHeight}}};
         createPoints(new_points, cells, pnt_idx, density[i], min_pnt, max_pnt);
-        for (std::size_t j = 0; j < density[i]; ++j)
+        for (vtkIdType j = 0; j < density[i]; ++j)
         {
             intensity->InsertValue(pnt_idx + j, pixvals[i * n_comp]);
         }
