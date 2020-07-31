@@ -5,7 +5,7 @@ date = 2018-03-02T12:49:25+01:00
 author = "Lars Bilke"
 
 categories = ["Books"]
-image = "BMB-2-Cover.png"
+image = "/books/BMB-2-Cover.png"
 
 +++
 

@@ -5,7 +5,7 @@ date = 2018-03-07T14:59:32+01:00
 author = "Lars Bilke"
 
 categories = ["Tutorials"]
-image = "geoenergy-modeling-ii.png"
+image = "/books/geoenergy-modeling-ii.png"
 
 aliases = [ "/books/shallow-geothermal-systems" ]
 

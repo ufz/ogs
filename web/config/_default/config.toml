@@ -9,23 +9,6 @@ staticDir = ["dist", "static"]
 [params]
   alert = ""
 
-# Main menu
-[[menu.main]]
-  name = "Releases"
-  url = "/releases/"
-  identifier = "releases"
-  weight = 3
-[[menu.main]]
-  name = "Docs"
-  url = "/docs/"
-  identifier = "docs"
-  weight = 4
-[[menu.main]]
-  name = "Publications"
-  url = "/publications/"
-  identifier = "publications"
-  weight = 5
-
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
   name = "Getting Started"
@@ -155,3 +138,19 @@ staticDir = ["dist", "static"]
   name = "Workflows"
   identifier = "workflows"
   weight = 5
+
+# docs
+[[menu.docs]]
+name = "Data Explorer Manual"
+url = "https://gitlab.opengeosys.org/ogs/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build"
+post = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
+
+[[menu.docs]]
+name = "Source code documentation"
+url = "https://doxygen.opengeosys.org/"
+post = "The OGS source code documentation is automatically generated right from the code itself via Doxygen and is nice reference while coding."
+
+[[menu.docs]]
+name = "Styleguide"
+url = "https://ufz.github.io/styleguide/cppguide.xml"
+post = "OpenGeoSys C++ Style Guide"

@@ -4,6 +4,12 @@ title = "Introduction"
 author = "Lars Bilke"
 weight = 1
 
+[menu.docs]
+name = "User Guide"
+identifier = "userguide"
+weight = 1
+post = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
+
 aliases = [ "/docs/userguide/",
             "/docs/quickstart/",
             "/docs/quickstart/basics/quickstart" ] # Redirect for Hydrology III tutorial
@@ -33,7 +39,7 @@ You can download the latest benchmark files from GitLab:
 
 See [the Benchmarks section](/docs/benchmarks/) for more information on the benchmarks.
 
-![Instructions for downloading benchmarks](../Download_Benchmarks.png)
+![Instructions for downloading benchmarks](/docs/userguide/basics/Download_Benchmarks.png)
 
 ## Running
 

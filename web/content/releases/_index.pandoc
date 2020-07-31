@@ -1,6 +1,10 @@
 +++
 Title = "Releases"
 
+[menu.main]
+name = "Releases"
+weight = 1
+
 aliases = ["/downloads", "/download"] # Redirect for Hydrology II tutorial
 
 [[head_downloads]]
@@ -30,7 +34,7 @@ icon = "fab fa-windows"
 [[head_downloads]]
 name = "Latest Singularity container CLI with Utilities"
 url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images?job=container"
-note = "Download and run .sif-file with [Singularity](/docs/devguide/advanced/singularity/)"
+note = "Download and run .sif-file with [Singularity](/docs/userguide/basics/container/)"
 icon = "far fa-container-storage"
 
 [[head_downloads]]

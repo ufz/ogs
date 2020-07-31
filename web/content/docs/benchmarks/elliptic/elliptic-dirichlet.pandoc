@@ -5,9 +5,15 @@ project = "Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.prj"
 author = "Dmitri Naumov"
 weight = 102
 
-[menu]
-  [menu.benchmarks]
-    parent = "elliptic"
+
+[menu.docs]
+name = "Benchmarks"
+identifier = "benchmarks"
+weight = 3
+post = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
+
+[menu.benchmarks]
+parent = "elliptic"
 
 +++
 

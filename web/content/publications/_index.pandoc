@@ -1,23 +1,8 @@
 +++
 title = "Publications"
 
-[[sections]]
-name = "Paper"
-url = "/publications/paper"
-text = "Peer-reviewed scientific paper about OpenGeoSys and its applications."
-icon = "far fa-users"
-
-[[sections]]
-name = "Books"
-url = "/categories/books"
-text = "Comprehensive benchmark descriptions and theory."
-icon = "far fa-laptop-code"
-
-[[sections]]
-name = "Tutorials"
-url = "/categories/tutorials"
-text = "Step-by-step instructions on specific topics."
-icon = "far fa-rabbit-fast"
+[menu.main]
+weight = 3
 
 +++
 
