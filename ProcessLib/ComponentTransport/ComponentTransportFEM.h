@@ -854,21 +854,14 @@ public:
         auto const local_C = Eigen::Map<const NodalVectorType>(
             &local_x[first_concentration_index], concentration_size);
 
-        // eval shape matrices at given point
-        auto const shape_matrices = [&]() {
-            auto const fe = NumLib::createIsoparametricFiniteElement<
-                ShapeFunction, ShapeMatricesType>(_element);
-
-            typename ShapeMatricesType::ShapeMatrices sm(
-                ShapeFunction::DIM, GlobalDim, ShapeFunction::NPOINTS);
-
-            // Note: Axial symmetry is set to false here, because we only need
-            // dNdx here, which is not affected by axial symmetry.
-            fe.template computeShapeFunctions<NumLib::ShapeMatrixType::DNDX>(
-                pnt_local_coords.getCoords(), sm, GlobalDim, false);
-
-            return sm;
-        }();
+        // Eval shape matrices at given point
+        // Note: Axial symmetry is set to false here, because we only need dNdx
+        // here, which is not affected by axial symmetry.
+        auto const shape_matrices =
+            NumLib::computeShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                         GlobalDim>(
+                _element, false /*is_axially_symmetric*/,
+                std::array{pnt_local_coords})[0];
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());

@@ -20,9 +20,9 @@ namespace NumLib
 /// It is only needed to satisfy the common integration rule concepts.
 class IntegrationPoint
 {
+public:
     using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 1>;
 
-public:
     /// IntegrationPoint constructor for given order.
     explicit IntegrationPoint(unsigned /* order */)
     {

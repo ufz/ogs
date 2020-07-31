@@ -265,22 +265,22 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
 TYPED_TEST(NumLibFemIsoTest, CheckGaussLegendreIntegrationLevel)
 {
     // Refer to typedefs in the fixture
-    using FeType = typename TestFixture::FeType;
     using NodalMatrix = typename TestFixture::NodalMatrix;
-    using ShapeMatricesType = typename TestFixture::ShapeMatricesType;
 
-    // create a finite element object with gauss quadrature level 2
-    FeType fe(*this->mesh_element);
+    auto shape_matrices =
+        NumLib::initShapeMatrices<typename TestFixture::ShapeFunction,
+                                  typename TestFixture::ShapeMatrixTypes,
+                                  TestFixture::global_dim>(
+            *this->mesh_element, false /*is_axially_symmetric*/,
+            this->integration_method);
 
     // evaluate a mass matrix
     NodalMatrix M(this->e_nnodes, this->e_nnodes);
     M.setZero();
-    ShapeMatricesType shape(this->dim, this->global_dim, this->e_nnodes);
     ASSERT_EQ(TestFixture::n_sample_pt_order2, this->integration_method.getNumberOfPoints());
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
-        shape.setZero();
+        auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.computeShapeFunctions(wp.getCoords(), shape);
         M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
     }
     //std::cout << "M=\n" << M << std::endl;
@@ -290,10 +290,17 @@ TYPED_TEST(NumLibFemIsoTest, CheckGaussLegendreIntegrationLevel)
     this->integration_method.setIntegrationOrder(3);
     M *= .0;
     ASSERT_EQ(TestFixture::n_sample_pt_order3, this->integration_method.getNumberOfPoints());
+
+    shape_matrices =
+        NumLib::initShapeMatrices<typename TestFixture::ShapeFunction,
+                                  typename TestFixture::ShapeMatrixTypes,
+                                  TestFixture::global_dim>(
+            *this->mesh_element, false /*is_axially_symmetric*/,
+            this->integration_method);
+
     for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
-        shape.setZero();
+        auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        fe.computeShapeFunctions(wp.getCoords(), shape);
         M.noalias() += shape.N * shape.N.transpose() * shape.detJ * wp.getWeight();
     }
     //std::cout << "M=\n" << M << std::endl;

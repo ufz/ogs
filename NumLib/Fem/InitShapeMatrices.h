@@ -18,11 +18,11 @@ namespace NumLib
 {
 template <typename ShapeFunction, typename ShapeMatricesType, int GlobalDim,
           ShapeMatrixType SelectedShapeMatrixType = ShapeMatrixType::ALL,
-          typename IntegrationMethod>
+          typename PointContainer>
 std::vector<typename ShapeMatricesType::ShapeMatrices,
             Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
-initShapeMatrices(MeshLib::Element const& e, bool is_axially_symmetric,
-                  IntegrationMethod const& integration_method)
+computeShapeMatrices(MeshLib::Element const& e, bool const is_axially_symmetric,
+                     PointContainer const& points)
 {
     std::vector<
         typename ShapeMatricesType::ShapeMatrices,
@@ -32,20 +32,39 @@ initShapeMatrices(MeshLib::Element const& e, bool is_axially_symmetric,
     auto const fe =
         createIsoparametricFiniteElement<ShapeFunction, ShapeMatricesType>(e);
 
-    unsigned const n_integration_points =
-        integration_method.getNumberOfPoints();
-
-    shape_matrices.reserve(n_integration_points);
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    shape_matrices.reserve(points.size());
+    for (auto const& p : points)
     {
         shape_matrices.emplace_back(ShapeFunction::DIM, GlobalDim,
                                     ShapeFunction::NPOINTS);
-        fe.computeShapeFunctions(
-            integration_method.getWeightedPoint(ip).getCoords(),
-            shape_matrices[ip], GlobalDim, is_axially_symmetric);
+        fe.template computeShapeFunctions<SelectedShapeMatrixType>(
+            p.getCoords(), shape_matrices.back(), GlobalDim,
+            is_axially_symmetric);
     }
 
     return shape_matrices;
+}
+
+template <typename ShapeFunction, typename ShapeMatricesType, int GlobalDim,
+          ShapeMatrixType SelectedShapeMatrixType = ShapeMatrixType::ALL,
+          typename IntegrationMethod>
+std::vector<typename ShapeMatricesType::ShapeMatrices,
+            Eigen::aligned_allocator<typename ShapeMatricesType::ShapeMatrices>>
+initShapeMatrices(MeshLib::Element const& e, bool const is_axially_symmetric,
+                  IntegrationMethod const& integration_method)
+{
+    int const n_integration_points = integration_method.getNumberOfPoints();
+
+    std::vector<typename IntegrationMethod::WeightedPoint> points;
+    points.reserve(n_integration_points);
+    for (int ip = 0; ip < n_integration_points; ++ip)
+    {
+        points.push_back(integration_method.getWeightedPoint(ip));
+    }
+
+    return computeShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim,
+                                SelectedShapeMatrixType>(
+        e, is_axially_symmetric, points);
 }
 
 template <typename ShapeFunction, typename ShapeMatricesType>

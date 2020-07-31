@@ -15,6 +15,7 @@
 
 #include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
+#include "NumLib/Fem/InitShapeMatrices.h"
 
 namespace NumLib
 {
@@ -108,11 +109,7 @@ void interpolateToHigherOrderNodes(
 
     using SF = LowerOrderShapeFunction;
     using ShapeMatricesType = ShapeMatrixPolicyType<SF, GlobalDim>;
-    using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    auto const fe =
-        NumLib::createIsoparametricFiniteElement<SF, ShapeMatricesType>(
-            element);
     int const number_base_nodes = element.getNumberOfBaseNodes();
     int const number_all_nodes = element.getNumberOfNodes();
 
@@ -123,21 +120,32 @@ void interpolateToHigherOrderNodes(
         interpolated_values_global_vector[global_index] = node_values[n];
     }
 
-    // Shape matrices storage reused in the interpolation loop.
-    ShapeMatrices shape_matrices{SF::DIM, GlobalDim, SF::NPOINTS};
-
+    //
     // Interpolate values for higher order nodes.
-    for (int n = number_base_nodes; n < number_all_nodes; ++n)
-    {
-        // Evaluated at higher order nodes' coordinates.
-        fe.template computeShapeFunctions<ShapeMatrixType::N>(
-            NaturalCoordinates<HigherOrderMeshElementType>::coordinates[n]
-                .data(),
-            shape_matrices, GlobalDim, is_axially_symmetric);
+    //
 
-        std::size_t const global_index = element.getNodeIndex(n);
+    int const number_higher_order_nodes = number_all_nodes - number_base_nodes;
+    std::vector<MathLib::Point3d> higher_order_nodes;
+    higher_order_nodes.reserve(number_higher_order_nodes);
+    for (int n = 0; n < number_higher_order_nodes; ++n)
+    {
+        higher_order_nodes.emplace_back(
+            NaturalCoordinates<HigherOrderMeshElementType>::coordinates
+                [number_base_nodes + n]);
+    }
+
+    // Shape matrices evaluated at higher order nodes' coordinates.
+    auto const shape_matrices =
+        computeShapeMatrices<SF, ShapeMatricesType, GlobalDim,
+                             ShapeMatrixType::N>(element, is_axially_symmetric,
+                                                 higher_order_nodes);
+
+    for (int n = 0; n < number_higher_order_nodes; ++n)
+    {
+        std::size_t const global_index =
+            element.getNodeIndex(number_base_nodes + n);
         interpolated_values_global_vector[global_index] =
-            shape_matrices.N * node_values;
+            shape_matrices[n].N * node_values;
     }
 }
 
