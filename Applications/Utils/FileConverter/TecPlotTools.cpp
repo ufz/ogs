@@ -7,16 +7,16 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <iostream>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/StringTools.h"
-
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
@@ -57,6 +57,33 @@ std::string getValue(std::string const& line,
 std::string getName(std::string const& line)
 {
     return getValue(line, "T=", true);
+}
+
+std::string_view getZonetype(std::string const& line)
+{
+    auto start = line.find("ZONETYPE=");
+    if (start == std::string::npos)
+    {
+        OGS_FATAL(
+            "A required 'ZONETYPE=' substring is not available in the ZONE "
+            "description: '{:s}'.",
+            line);
+    }
+    start += std::size("ZONETYPE=") - 1;
+
+    auto end = line.find(',', start);
+    if (end == std::string::npos)
+    {
+        OGS_FATAL(
+            "Expected the 'ZONETYPE=type' to be followed by a comma in the "
+            "ZONE description '{:s}'. The zone type starts at position {:d}.",
+            line, start);
+    }
+    if (start == end)
+    {
+        ERR("ZONETYPE string is empty in ZONE description '{:s}'.", line);
+    }
+    return std::string_view(&line[start], end - start);
 }
 
 /// Returns raster dimensions from the "Zone"-description
@@ -359,6 +386,13 @@ int convertFile(std::ifstream& in, std::string const& file_name)
                 resetDataStructures(var_names.size(), scalars, val_count);
             }
             name = getName(line);
+            if (auto const zonetype = getZonetype(line); zonetype != "ORDERED")
+            {
+                ERR("Given zonetype '{:s}' is not supported. Only 'ORDERED' "
+                    "zonetype data can be converted.",
+                    zonetype);
+                return -4;
+            }
             dims = getDimensions(line);
             val_total = dims.first * dims.second;
             val_count = 0;
