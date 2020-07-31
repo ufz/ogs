@@ -1,6 +1,10 @@
 +++
 Title = "Releases"
 
+[menu.main]
+name = "Releases"
+weight = 1
+
 aliases = ["/downloads", "/download"] # Redirect for Hydrology II tutorial
 
 [[head_downloads]]

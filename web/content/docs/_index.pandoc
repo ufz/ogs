@@ -1,48 +1,11 @@
 +++
 title = "Documentation"
+layout = "section/docs.html"
 
-[[sections]]
-name = "User Guide"
-url = "/docs/userguide/basics/introduction/"
-text = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
-icon = "far fa-users"
-
-[[sections]]
-name = "Developer Guide"
-url = "/docs/devguide/getting-started/introduction/"
-text = "You want to contribute to the OpenGeoSys project or implement a custom feature? In the Developer Guide you will find everything to get you started into OpenGeoSys development. Experienced developers will find a comprehensive list of advanced development topics."
-icon = "far fa-laptop-code"
-
-[[sections]]
-name = "Benchmarks"
-url = "/docs/benchmarks/elliptic/elliptic-dirichlet/"
-text = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
-icon = "far fa-rabbit-fast"
-
-[[sections]]
-name = "Tools & Workflows"
-url = "/docs/tools/getting-started/overview/"
-text = "Helpful tools for pre- and postprocessing as well as complete model setup workflows."
-icon = "far fa-tools"
-
-[[sections]]
-name = "Data Explorer Manual"
-url = "https://gitlab.opengeosys.org/ogs/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build"
-text = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
-icon = "far fa-file-image"
-
-[[sections]]
-name = "Source code documentation"
-url = "https://doxygen.opengeosys.org/"
-text = "The OGS source code documentation is automatically generated right from the code itself via Doxygen and is nice reference while coding."
-icon = "far fa-file-code"
-
-[[sections]]
-name = "Styleguide"
-url = "https://ufz.github.io/styleguide/cppguide.xml"
-text = "OpenGeoSys C++ Style Guide"
-icon = "far fa-file-check"
-
+[menu.main]
+name = "Docs"
+identifier = "docs"
+weight = 2
 +++
 
 <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">OpenGeoSys documentation overview</h1>

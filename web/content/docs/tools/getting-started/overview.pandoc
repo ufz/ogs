@@ -4,9 +4,15 @@ title = "Introduction"
 author = "Lars Bilke"
 weight = 100
 
-[menu]
-  [menu.tools]
-    parent = "getting-started"
+
+[menu.docs]
+name = "Tools & Workflows"
+identifier = "tools"
+weight = 4
+post = "Helpful tools for pre- and postprocessing as well as complete model setup workflows."
+
+[menu.tools]
+parent = "getting-started"
 +++
 
 Here is an overview of the currently available command line tools, that might help you to construct your OpenGeoSys model. GUI-based tools are available too:

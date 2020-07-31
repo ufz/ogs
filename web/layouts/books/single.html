@@ -2,7 +2,7 @@
   <div class="container">
     <h1>{{ .Title }} {{ if .Params.subtitle }}<span class="text-regular text-gray-600">– {{ .Params.subtitle }}</span>{{ end }}</h1>
 
-    <img class="w-1/6 float-left mr-4 mb-2 shadow-md" src="../{{ .Params.image }}" alt="">
+    <img class="w-1/6 float-left mr-4 mb-2 shadow-md" src="{{ .Params.image }}" alt="">
     {{ .Content }}
   </div>
 {{ end }}
