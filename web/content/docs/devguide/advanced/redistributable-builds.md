@@ -15,7 +15,7 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 
 ## CPU Architecture Optimization
 
-::: {.win}
+<div class='win'>
 
 ### Default compiler flags
 
@@ -26,9 +26,9 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 
 - `OGS_CPU_ARCHITECTURE`: possible values `AMD64` or `INTEL64` (sets `/favor:{AMD64 | INTEL64}` flag)
 - `OGS_ENABLE_AVX2`: boolean (sets `/arch:AVX2` when set to true), requires at least [Intel Haswell or AMD Excavator-based processors](https://msdn.microsoft.com/en-us//library/7t5yh4fd.aspx)
-:::
+</div>
 
-::: {.linux}
+<div class='linux'>
 
 ### Default compiler flags
 
@@ -44,11 +44,11 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 
 - `OGS_CPU_ARCHITECTURE`: tot to `native` for best optimization for your current cpu, possible values are [listed here](https://stackoverflow.com/a/25095818/80480), more info on [gcc docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html#index-mtune-15)
 - `OGS_ENABLE_AVX2`: boolean (sets `-march=core-avx2` when set to true), requires at least Haswell processors
-:::
+</div>
 
-::: {.mac}
+<div class='mac'>
 See Linux-tab!
-:::
+</div>
 
 ## Shared vs. static libraries
 

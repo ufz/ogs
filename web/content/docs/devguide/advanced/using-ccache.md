@@ -9,12 +9,12 @@ weight = 1038
     parent = "advanced"
 +++
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-exclamation-triangle"></i> GCC-like compilers only
 
 Tested on GCC and Clang.
-:::
+</div>
 
 ## Introduction
 

@@ -13,7 +13,7 @@ weight = 1040
 
 Members of the Department Environmental Informatics of the Helmholtz Centre for Environmental Research - UFZ can use the `frontend1`- and `frontend2`-machines from the Eve cluster system.
 
-::: {.note}
+<div class='note'>
 You need to opt-in to use the [EasyBuild modules](https://wiki.ufz.de/eve/index.php/EasyBuild)! To do so follow these steps:
 
 - Login to `frontend1` or `frontend2`
@@ -27,7 +27,7 @@ ml use /global/apps/modulefiles
 ml git/2.20.1
 ```
 
-:::
+</div>
 
 ## Run OGS within a container
 

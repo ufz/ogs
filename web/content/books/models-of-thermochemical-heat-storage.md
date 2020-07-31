@@ -16,19 +16,19 @@ This book presents an introduction to the computational modelling of the various
 
 This book is intended primarily for graduate students and applied scientists working in the ﬁeld of thermochemical heat storage in particular or nonisothermal reactive transport processes in packed beds in general, especially those interested in applying a freely available and customizable open-source simulation framework in their research. As such, this book will be a valuable help in the training of multi-physical modelling and provides an entry point to a modelling tool which is expandable and highly ﬂexible.
 
-::: {.clearfix}
-:::
+<div class='clearfix'>
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-book"></i> Bibliography
 
 {{< bib "lehmann:2018" >}}
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-code-branch"></i> OpenGeoSys Version Info
 
 This book requires OpenGeoSys-6.
-:::
+</div>

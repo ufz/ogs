@@ -6,6 +6,9 @@ buildFuture = true
 enableGitInfo = true
 staticDir = ["dist", "static"]
 
+[markup.goldmark.renderer]
+unsafe = true
+
 [params]
   alert = ""
 

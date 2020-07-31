@@ -15,19 +15,19 @@ The second volume mainly is dedicated to “closed form solutions” developed a
 
 Also have a look at [Volume 1](http://www.springer.com/de/book/9783642271762) of this book series.
 
-::: {.clearfix}
-:::
+<div class='clearfix'>
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-download"></i> Downloads
 
 - [<i class="far fa-file-archive"></i> Benchmarks Chapter 2](https://ogsstorage.blob.core.windows.net/web/Books/Benchmark-Book-2/Chapter-02.zip)  
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-book"></i> Bibliography
 
 {{< bib "kolditz:2015" >}}
-:::
+</div>

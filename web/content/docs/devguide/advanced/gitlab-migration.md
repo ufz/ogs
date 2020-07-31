@@ -15,7 +15,7 @@ To migrate your repository run the following commands in your local repository (
 
 We used Git LFS to store large files but [switched back to plain git](https://github.com/ufz/ogs/issues/2961).
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-info-circle"></i> IMPORTANT: Normalize LFS files in your existing branches
 
@@ -27,7 +27,7 @@ git commit -m "Converted LFS files to plain git."
 ```
 
 Now you have to squash this conversion commit into your original commit which added the files as Git LFS files. In result your branch history should and **must not** have any Git LFS files! Otherwise GitLab will reject the push!
-:::
+</div>
 
 When you are done migrating your branches you need to disable Git LFS in your local repo:
 

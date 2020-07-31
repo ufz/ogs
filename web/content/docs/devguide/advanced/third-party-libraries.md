@@ -9,12 +9,12 @@ weight = 1039
     parent = "advanced"
 +++
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-exclamation-triangle"></i> Attention
 
 We strongly recommend to simply use [Conan]({{< ref "conan.pandoc" >}}) for handling required third-party libraries.
-:::
+</div>
 
 ## Introduction
 

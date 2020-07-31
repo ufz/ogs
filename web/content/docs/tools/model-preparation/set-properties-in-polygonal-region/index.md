@@ -103,7 +103,7 @@ This workflow was successful used in the INFLUINS project cutting out the Unstru
 
 {{< bib "fischer:2015" >}}
 
-::: {.note}
+<div class='note'>
 
 ### Example Files
 
@@ -111,4 +111,4 @@ This workflow was successful used in the INFLUINS project cutting out the Unstru
 - [TestPolylines.gml](TestPolylines.gml)
 - [hex_5x5x5.vtu](hex_5x5x5.vtu)
 - [Regions.gml](Regions.gml)
-:::
+</div>

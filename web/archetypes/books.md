@@ -13,15 +13,15 @@ image = "[TODO]"
 
 TODO DESCRIPTION
 
-::: {.clearfix}
-:::
+<div class='clearfix'>
+</div>
 
-::: {.note}
+<div class='note'>
 ### <i class="far fa-download"></i> Downloads
 - [<i class="far fa-file-archive"></i> TODO LINK DESCRIPTION](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DOWNLOAD-LINK)  
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 ### <i class="far fa-book"></i> Bibliography
 {{< bib "TODO-BIB-ID" >}}
-:::
+</div>

@@ -16,27 +16,27 @@ This OGS tutorial is the result of close cooperation of the Helmholtz Centre for
 
 This book is intended primarily for graduate students and applied scientists who deal with hydrological system analysis and hydrological modelling. It is also a valuable source of information for professional hydrologists wishing to advance their knowledge in numerical modelling of coupled hydrological-hydrogeological systems. As such, this book will be a valuable aid in training of hydrosystem modelling.
 
-::: {.clearfix}
-:::
+<div class='clearfix'>
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-download"></i> Downloads
 
 - [<i class="far fa-file-archive"></i> Linux Input Files](https://ogsstorage.blob.core.windows.net/web/Books/Computational-Hydrology-I/input_files_linux.zip)  
 - [<i class="far fa-file-archive"></i> Windows Input Files](https://ogsstorage.blob.core.windows.net/web/Books/Computational-Hydrology-I/input_files_win.zip)
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-book"></i> Bibliography
 
 {{< bib "sachse:2015" >}}
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-code-branch"></i> OpenGeoSys Version Info
 
 This book requires [OpenGeoSys-5](/ogs-5/).
-:::
+</div>

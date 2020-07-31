@@ -11,7 +11,7 @@ weight = 1005
 
 ## Build the project
 
-::: {.win}
+<div class='win'>
 
 ### Step: Build with Visual Studio
 
@@ -26,9 +26,9 @@ The reason for this is that you can have only one sub-project of your Visual Stu
 ### How to work with CMake and Visual Studio
 
 You can work normally in Visual Studio but remember that you have to make project changes in the `CMakeLists.txt`-file and not inside Visual Studio. So you can add a new source file within Visual Studios File menu but you have to add that file also to the CMake file. Every time you change a `CMakeLists.txt` and you build the project a new CMake run is automatically invoked. After that Visual Studio informs you that the project files were changed and it reloads them.
-:::
+</div>
 
-::: {.linux}
+<div class='linux'>
 
 ### Option: Make
 
@@ -62,9 +62,9 @@ ccmake -G"Eclipse CDT4 - Unix Makefiles" ../sources
 ```
 
 Start the Eclipse ide. From the menu choose **File / Import**. In the import dialog choose **General / Existing projects into workspace** and click **Next**. In **Select root directory** select your build directory and make sure that **Copy project into workspace** is unchecked. Click **Finish**.
-:::
+</div>
 
-::: {.mac}
+<div class='mac'>
 
 ### Option: Make
 
@@ -102,7 +102,7 @@ open OGS.xcodeproj
 ```
 
 In Xcode choose `ogs` or `ogs-gui` from the drop-down menu on the top right and then hit the Run-button.
-:::
+</div>
 
 ## Waiting
 

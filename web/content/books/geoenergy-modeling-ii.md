@@ -15,10 +15,10 @@ aliases = [ "/books/shallow-geothermal-systems" ]
 
 This book is dedicated to the numerical modeling of shallow geothermal systems. The utilization of shallow geothermal energy involves the integration of multiple Borehole Heat Exchangers (BHE) with Ground Source Heat Pump (GSHP) systems to provide heating and cooling. The modeling practices explained in this book can improve the efficiency of these increasingly common systems. The book begins by explaining the basic theory of heat transport processes in man-made as well as natural media. These techniques are then applied to the simulation of borehole heat exchangers and their interaction with the surrounding soil. The numerical and analytical models are verified against analytical solutions and measured data from a Thermal Response Test, and finally, a real test site is analyzed through the model and discussed with regard to BHE and GSHP system design and optimization.
 
-::: {.clearfix}
-:::
+<div class='clearfix'>
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-download"></i> Downloads
 
@@ -26,18 +26,18 @@ This book is dedicated to the numerical modeling of shallow geothermal systems. 
 - [<i class="far fa-file-archive"></i> BHE Setup Tool](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-II/bhe_setup_tool.zip)  
 - [<i class="far fa-file-archive"></i> Taucha Model](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-II/taucha_model.zip)  
 - [<i class="far fa-file-archive"></i> OGS Windows Executable](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-II/ogs.exe)  
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-book"></i> Bibliography
 
 {{< bib "shao:2016" >}}
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-code-branch"></i> OpenGeoSys Version Info
 
 This book requires [OpenGeoSys-5](/ogs-5/).
-:::
+</div>

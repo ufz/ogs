@@ -48,10 +48,10 @@ removeMeshElements -i TestCube-ResetPropertiesInPolygonalRegion.vtu -o TestCube-
 
 The tool was used to cut the Unstrut catchment out of the Thuringian syncline model and to remove some geological units not necessary for the modeling within the INFLUINS project, see reference [GO2OGS].
 
-::: {.note}
+<div class='note'>
 
 ### Example Files
 
 [TestCube-removeMeshElements.vtu](TestCube-removeMeshElements.vtu)  
 [TestCube-ResetPropertiesInPolygonalRegion](TestCube-ResetPropertiesInPolygonalRegion.vtu)  
-:::
+</div>

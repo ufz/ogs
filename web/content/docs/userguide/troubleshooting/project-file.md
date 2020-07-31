@@ -19,7 +19,7 @@ xmllint --noout myproj.prj
 
 ### Install `xmllint`
 
-::: {.win}
+<div class='win'>
 
 We recommend to install via [Chocolatey](https://chocolatey.org):
 
@@ -27,7 +27,7 @@ We recommend to install via [Chocolatey](https://chocolatey.org):
 choco install xsltproc
 ```
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-info-circle"></i> Alternative installation
 
@@ -37,23 +37,23 @@ Another method is to use the [Windows Subsystem for Linux](https://docs.microsof
 sudo apt-get install libxml2-utils
 ```
 
-:::
+</div>
 
-:::
+</div>
 
-::: {.linux}
+<div class='linux'>
 
 ```bash
 sudo apt-get install libxml2-utils
 ```
 
-:::
+</div>
 
-::: {.mac}
+<div class='mac'>
 `xmllint` is part of the Homebrew xmlstarlet package:
 
 ```bash
 brew install xmlstarlet
 ```
 
-:::
+</div>

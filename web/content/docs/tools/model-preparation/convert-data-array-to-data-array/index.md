@@ -46,9 +46,9 @@ convertVtkDataArrayToVtkDataArray
     -o intValuedMaterialIDs.vtu
 ```
 
-::: {.note}
+<div class='note'>
 
 ### Example Files
 
 [doubleValuedMaterialIDs.vtu](doubleValuedMaterialIDs.vtu)
-:::
+</div>

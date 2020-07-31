@@ -9,12 +9,12 @@ weight = 1003
     parent = "getting-started"
 +++
 
-::: {.note}
+<div class='note'>
 
 ### Attribution
 
 The content of this page is largely taken from the [GitHub-blog](https://github.com/blog/2042-git-2-5-including-multiple-worktrees-and-triangular-workflows).
-:::
+</div>
 
 ## Create a fork
 
@@ -35,9 +35,9 @@ git config push.default current
 
 This creates a new folder `ogs` in your current working directory with the OGS source code. After this step, the remote called `origin` refers to your fork on GitLab. It also sets the default remote for pushes to be `origin` and the default push behavior to `current`. Together this means that if you just type `git push`, the current branch is pushed to the `origin` remote.
 
-::: {.note}
+<div class='note'>
 The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which are smaller than 100 Kbyte. Larger files (e.g. benchmark files, images, PDFs) are fetched on-demand only. This happens automatically and [is a replacement for the previous Git LFS tracked files](https://github.com/ufz/ogs/issues/2961). Requires **git 2.22**!
-:::
+</div>
 
 Create a second remote called `upstream` that points at the main OGS repository and fetch from it:
 

@@ -9,12 +9,12 @@ weight = 1032
     parent = "advanced"
 +++
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-exclamation-triangle"></i> Conan 1.0.0 required
 
 As of OpenGeoSys 6.1.0 Conan version 1.0.0 is required! Please update Conan by running `pip install --upgrade conan` or by downloading the Windows installer.
-:::
+</div>
 
 The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. See [Setup pre-requisites](../../getting-started/prerequisites) for installation instructions. If the Conan executable is found Conan is used for third-party library handling. Set the CMake option `OGS_USE_CONAN=OFF` to disable Conan.
 

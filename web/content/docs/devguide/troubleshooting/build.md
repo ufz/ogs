@@ -12,9 +12,9 @@ weight = 1043
 
 ## Visual Studio out-of-heap or stackoverflow errors
 
-::: {.note}
+<div class='note'>
 **Note:** To prevent this you can also use the [WSL setup]({{< ref "wsl.pandoc" >}}).
-:::
+</div>
 
 The compilation especially of the processes in Release-config can be very memory hungry. Using dynamic Eigen shape matrices can reduce memory usage:
 

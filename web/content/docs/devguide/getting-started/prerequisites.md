@@ -21,14 +21,15 @@ The minimum prerequisites to build OGS are:
 
 ## Step: Install a compiler
 
-::: {.win}
+<div class='win'>
 
-::: {.note}
+<div class='note'>
 
 ### Alternative setup
 
 Please note that the following setup on Windows is the **native Windows development setup**. This native setup is **quite involved** and **heavy on system resources**. We can recommend an alternative setup in which the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) is used: Setup and development of OGS follows the Linux way but you can use your Windows IDE (especially Visual Studio Code) for development and debugging. If this sounds interesting please [follow the steps here]({{< ref "wsl.pandoc" >}})!
-:::
+
+</div>
 
 As we use lots of features of the C++17-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** and up. Therefore you will need at least **Windows 7** (64-bit recommended). It is perfectly fine to use the free Community Edition of Visual Studio.
 
@@ -36,9 +37,10 @@ As we use lots of features of the C++17-standard we support **Visual Studio {{< 
   - Select the *workload* `Desktop Development with C++`
   - You can uncheck everything else
 - When installation finished please start Visual Studio once (when asked for credentials enter your Microsoft account or click on **Skip for now**)
-:::
 
-::: {.linux}
+</div>
+
+<div class='linux'>
 On Debian-based (e.g. Ubuntu) you need to install the `build-essential`-package (which contains the `gcc`-compiler and the `make`-tool):
 
 ```bash
@@ -52,7 +54,7 @@ $ gcc --version
 gcc (GCC) {{< dataFile "versions.minimum_version.gcc" >}}.0
 ```
 
-::: {.note}
+<div class='note'>
 
 ### Install a newer compiler on Ubuntu
 
@@ -77,11 +79,11 @@ If you do not do this you have to specify the compiler during the first CMake ru
 CC=gcc-9 CXX=c++-9 cmake ../ogs [more CMake options]
 ```
 
-:::
+</div>
 
-:::
+</div>
 
-::: {.mac}
+<div class='mac'>
 Please install Xcode from the App Store. Then please run the following command in the terminal to install the command line tools:
 
 ```bash
@@ -98,13 +100,13 @@ brew doctor
 ```
 
 The Homebrew package manager is needed for installing other libraries and packages. It is just like a linux package manager.
-:::
+</div>
 
 ## Step: Install Git
 
 Git is a powerful and distributed version control system. OGS source code is hosted on [GitLab](https://gitlab.opengeosys.org/ogs/ogs). See the developer guide page on [Code Reviews]({{< ref "code-reviews" >}}) for more info on how OGS uses GitLab for collaborative development.
 
-::: {.win}
+<div class='win'>
 Download and install git from the [git homepage](http://git-scm.com/download/win). Use the default installer options but also enable `Enable symbolic links` under the *Configuring extra options* page.
 
 ![Enable symbolic links option](../git-installer-win.png)
@@ -124,9 +126,9 @@ In some corporate environments you may have to use a proxy server. In this case 
 git config --global http.proxy http://yourproxy.example.com
 ```
 
-:::
+</div>
 
-::: {.linux}
+<div class='linux'>
 Please check if Git is already installed:
 
 ```bash
@@ -159,9 +161,9 @@ In some corporate environments you may have to use a proxy server. In this case 
 git config --global http.proxy http://yourproxy.example.com
 ```
 
-:::
+</div>
 
-::: {.mac}
+<div class='mac'>
 Install Git with Homebrew:
 
 ```bash
@@ -183,11 +185,11 @@ In some corporate environments you may have to use a proxy server. In this case 
 git config --global http.proxy http://yourproxy.example.com
 ```
 
-:::
+</div>
 
 ## Step: Install Python 3
 
-::: {.win}
+<div class='win'>
 
 - [Download the Python 3 installer](https://www.python.org/ftp/python/3.7.2/python-3.7.2-amd64-webinstall.exe)
 - Install with the following options
@@ -197,9 +199,9 @@ git config --global http.proxy http://yourproxy.example.com
   - You may check *Install for all users*
   - Check *Add Python to environment variables*!
 
-:::
+</div>
 
-::: {.linux}
+<div class='linux'>
 
 Install Python 3 and pip:
 
@@ -207,39 +209,39 @@ Install Python 3 and pip:
 sudo apt-get install python3 python3-pip
 ```
 
-:::
+</div>
 
-::: {.mac}
+<div class='mac'>
 Install Python 3 with Homebrew:
 
 ```bash
 brew install python
 ```
 
-:::
+</div>
 
 ## Step: Install CMake
 
-::: {.win}
+<div class='win'>
 
 - Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
 - Execute the installer, please check the **Add CMake to the system path for all users**-option
-:::
+</div>
 
-::: {.linux}
+<div class='linux'>
 Install CMake via Kitware's APT Repository by [following their instructions](https://apt.kitware.com/).
 
 For other linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
-:::
+</div>
 
-::: {.mac}
+<div class='mac'>
 Install CMake with Homebrew:
 
 ```bash
 brew install cmake
 ```
 
-:::
+</div>
 
 ## Step: Install Conan package manager
 

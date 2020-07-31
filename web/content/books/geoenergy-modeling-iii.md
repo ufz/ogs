@@ -15,27 +15,27 @@ This tutorial presents the introduction of the open-source software OpenGeoSys f
 
 The book explains basic mathematical equations and numerical methods to modeling flow and heat transport in fractured porous rock formations. In order to help readers gain a system-level understanding of the necessary analysis, the authors include two benchmark examples and two case studies of real deep geothermal test-sites located in Germany and France.
 
-::: {.clearfix}
-:::
+<div class='clearfix'>
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-download"></i> Downloads
 
 - [<i class="far fa-file-archive"></i> Input Files Linux](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-III/GeoEnergyModelingIII_input-files_unix.zip)  
 - [<i class="far fa-file-archive"></i> Input Files Windows](https://ogsstorage.blob.core.windows.net/web/Books/Geoenergy-Model-III/GeoEnergyModelingIII_input-files_windows.zip)  
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-book"></i> Bibliography
 
 {{< bib "watanabe:2017" >}}
-:::
+</div>
 
-::: {.note}
+<div class='note'>
 
 ### <i class="far fa-code-branch"></i> OpenGeoSys Version Info
 
 This book requires [OpenGeoSys-5](/ogs-5/).
-:::
+</div>
