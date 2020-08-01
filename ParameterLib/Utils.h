@@ -66,8 +66,7 @@ Parameter<ParameterDataType>* findParameterOptional(
     {
         OGS_FATAL(
             "The read parameter `{:s}' has the wrong number of components "
-            "({:d} "
-            "instead of {:d}).",
+            "({:d} instead of {:d}).",
             parameter_name, parameter->getNumberOfComponents(), num_components);
     }
 
