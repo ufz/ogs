@@ -1016,109 +1016,11 @@ AddTest(
     ConTracer_2d_pcs_1_ts_329_t_1184400.000000_expected.vtu ConTracer_2d_ts_329_t_1184400.000000.vtu Cs Cs 1e-10 1e-16
 )
 
-AddTest(
-    NAME 1D_ReactiveMassTransport_Phreeqc_EquilibriumPhaseBlockTest
-    PATH Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS calcite.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    calcite_ts_42_t_4200.000000_expected.vtu calcite_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
-    calcite_ts_84_t_8400.000000_expected.vtu calcite_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
-    calcite_ts_126_t_12600.000000_expected.vtu calcite_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
-    calcite_ts_168_t_16800.000000_expected.vtu calcite_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
-    calcite_ts_210_t_21000.000000_expected.vtu calcite_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
-    calcite_ts_42_t_4200.000000_expected.vtu calcite_ts_42_t_4200.000000.vtu Ca Ca 1e-10 1e-16
-    calcite_ts_84_t_8400.000000_expected.vtu calcite_ts_84_t_8400.000000.vtu Ca Ca 1e-10 1e-16
-    calcite_ts_126_t_12600.000000_expected.vtu calcite_ts_126_t_12600.000000.vtu Ca Ca 1e-10 1e-16
-    calcite_ts_168_t_16800.000000_expected.vtu calcite_ts_168_t_16800.000000.vtu Ca Ca 1e-10 1e-16
-    calcite_ts_210_t_21000.000000_expected.vtu calcite_ts_210_t_21000.000000.vtu Ca Ca 1e-10 1e-16
-    calcite_ts_42_t_4200.000000_expected.vtu calcite_ts_42_t_4200.000000.vtu Cl Cl 1e-10 1e-16
-    calcite_ts_84_t_8400.000000_expected.vtu calcite_ts_84_t_8400.000000.vtu Cl Cl 1e-10 1e-16
-    calcite_ts_126_t_12600.000000_expected.vtu calcite_ts_126_t_12600.000000.vtu Cl Cl 1e-10 1e-16
-    calcite_ts_168_t_16800.000000_expected.vtu calcite_ts_168_t_16800.000000.vtu Cl Cl 1e-10 1e-16
-    calcite_ts_210_t_21000.000000_expected.vtu calcite_ts_210_t_21000.000000.vtu Cl Cl 1e-10 1e-16
-    calcite_ts_42_t_4200.000000_expected.vtu calcite_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
-    calcite_ts_84_t_8400.000000_expected.vtu calcite_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
-    calcite_ts_126_t_12600.000000_expected.vtu calcite_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
-    calcite_ts_168_t_16800.000000_expected.vtu calcite_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
-    calcite_ts_210_t_21000.000000_expected.vtu calcite_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
-    calcite_ts_42_t_4200.000000_expected.vtu calcite_ts_42_t_4200.000000.vtu Mg Mg 1e-10 1e-16
-    calcite_ts_84_t_8400.000000_expected.vtu calcite_ts_84_t_8400.000000.vtu Mg Mg 1e-10 1e-16
-    calcite_ts_126_t_12600.000000_expected.vtu calcite_ts_126_t_12600.000000.vtu Mg Mg 1e-10 1e-16
-    calcite_ts_168_t_16800.000000_expected.vtu calcite_ts_168_t_16800.000000.vtu Mg Mg 1e-10 1e-16
-    calcite_ts_210_t_21000.000000_expected.vtu calcite_ts_210_t_21000.000000.vtu Mg Mg 1e-10 1e-16
-    RUNTIME 25
-)
-
-AddTest(
-    NAME 1D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest
-    PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS 1d_isofrac.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    1d_isofrac_ts_42_t_4200.000000_expected.vtu 1d_isofrac_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_84_t_8400.000000_expected.vtu 1d_isofrac_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_126_t_12600.000000_expected.vtu 1d_isofrac_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_168_t_16800.000000_expected.vtu 1d_isofrac_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_210_t_21000.000000_expected.vtu 1d_isofrac_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_42_t_4200.000000_expected.vtu 1d_isofrac_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_84_t_8400.000000_expected.vtu 1d_isofrac_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_126_t_12600.000000_expected.vtu 1d_isofrac_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_168_t_16800.000000_expected.vtu 1d_isofrac_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_210_t_21000.000000_expected.vtu 1d_isofrac_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_42_t_4200.000000_expected.vtu 1d_isofrac_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_84_t_8400.000000_expected.vtu 1d_isofrac_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_126_t_12600.000000_expected.vtu 1d_isofrac_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_168_t_16800.000000_expected.vtu 1d_isofrac_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_210_t_21000.000000_expected.vtu 1d_isofrac_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_42_t_4200.000000_expected.vtu 1d_isofrac_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_ts_84_t_8400.000000_expected.vtu 1d_isofrac_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_ts_126_t_12600.000000_expected.vtu 1d_isofrac_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_ts_168_t_16800.000000_expected.vtu 1d_isofrac_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_ts_210_t_21000.000000_expected.vtu 1d_isofrac_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
-    RUNTIME 85
-)
-
-AddTest(
-    NAME 1D_ReactiveMassTransport_Phreeqc_ChemicalFormulaFlagTest
-    PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS 1d_isofrac_flag_formula.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    1d_isofrac_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_ts_42_t_4200.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_ts_84_t_8400.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu pressure pressure 1e-6 1e-10
-    1d_isofrac_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_ts_42_t_4200.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_ts_84_t_8400.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    1d_isofrac_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_ts_42_t_4200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_ts_84_t_8400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    1d_isofrac_ts_42_t_4200.000000_expected.vtu 1d_isofrac_flag_formula_ts_42_t_4200.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_ts_84_t_8400.000000_expected.vtu 1d_isofrac_flag_formula_ts_84_t_8400.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_ts_126_t_12600.000000_expected.vtu 1d_isofrac_flag_formula_ts_126_t_12600.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_ts_168_t_16800.000000_expected.vtu 1d_isofrac_flag_formula_ts_168_t_16800.000000.vtu H H 1e-10 1e-16
-    1d_isofrac_ts_210_t_21000.000000_expected.vtu 1d_isofrac_flag_formula_ts_210_t_21000.000000.vtu H H 1e-10 1e-16
-    RUNTIME 20
-)
-
 if (NOT OGS_USE_MPI)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents/KineticReactant2.prj)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite.prj RUNTIME 25)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac.prj RUNTIME 20)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac_flag_formula.prj RUNTIME 20)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents/KineticReactant2.prj RUNTIME 60)
 endif()
 
 AddTest(
