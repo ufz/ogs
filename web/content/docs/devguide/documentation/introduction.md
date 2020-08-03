@@ -41,6 +41,23 @@ hugo new docs/benchmarks/elliptic/groundwater-flow-dirichlet/index.md
 
 Or you can simply create a new `index.md`-file in the correct location and fill it by yourself. Prefer to use [page bundles](https://gohugo.io/content-management/page-bundles/) when you want to add other assets, e.g. images, to the page.
 
+<div class="note">
+
+#### Page bundle example structure
+
+```bash
+content/
+├── docs
+│   ├── my-post
+│   │   ├── image1.jpg
+│   │   ├── image2.png
+│   │   └── index.md
+```
+
+This page will be available at the url `/docs/my-post/` and the content of the page is in `index.md`.
+
+</div>
+
 ### Setup navigation for a page
 
 The are submenus (shown in the left sidebar) for specific sections such as for benchmarks. The submenus consist of groups (e.g. *Elliptic*) and page entries. Groups are defined in `config.toml`:
