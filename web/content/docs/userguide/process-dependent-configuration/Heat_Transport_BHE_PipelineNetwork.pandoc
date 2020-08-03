@@ -1,7 +1,7 @@
 +++
 date = "2020-02-03T12:00:13+01:00"
 title = "Heat_Transport_BHE PipeNetwork Feature"
-author = "Shuang Chen, Haibing Shao"
+author = "Shuang Chen, Haibing Shao, Francesco Witte"
 weight = 123
 project = "Parabolic/T/3D_3BHEs_array/3bhes_1U.prj"
 
@@ -31,7 +31,7 @@ pip3 install tespy
 
 ## Creating a pipeline network model with the software TESPy
 
-The Thermal Engineering Systems in Python (TESPy (<https://doi.org/10.5281/zenodo.2555866>)) is a software package developed by Francesco Witte. It is capable of simulating coupled thermal-hydraulic status of working fluids in thermal engineering applications. Such systm typically involves a cirulation network that is composed of pre-defined components including pipes, heat exchangers and different types of turbo machinery. Interested readers may refer to the online documentation (<https://tespy.readthedocs.io/en/master/index.html>#) of TESPy for more detailed introduction of the software. The workflow in this part is built based on the benchmark example "A 3-BHE Array Coupled With Pipe Network" from the OpenGeoSys Documentation (<https://www.opengeosys.org/docs/benchmarks/heat-transport-bhe/3d_3bhes_array/>). One can refer to this benchmark and download its latest benchmark files from GitHub (<https://www.opengeosys.org/docs/userguide/basics/introduction/>) for creating the pipeline network TESPy model. The OpenGeoSys and TESPy version used for this tutorial is (OpenGeoSys 6.2.2) and 0.2.0 accordingly.
+Thermal Engineering Systems in Python (software paper: <https://doi.org/10.21105/joss.02178>, software archive: <https://doi.org/10.5281/zenodo.2555866>) is a software package developed by Francesco Witte. It is capable of simulating coupled thermal-hydraulic status of working fluids in thermal engineering applications. Such systm typically involves a cirulation network that is composed of pre-defined components including pipes, heat exchangers and different types of turbo machinery. Interested readers may refer to the online documentation (<https://tespy.readthedocs.io/en/master/index.html>) of TESPy for more detailed introduction of the software. The workflow in this part is built based on the benchmark example "A 3-BHE Array Coupled With Pipe Network" from the OpenGeoSys Documentation (<https://www.opengeosys.org/docs/benchmarks/heat-transport-bhe/3d_3bhes_array/>). One can refer to this benchmark and download its latest benchmark files from GitHub (<https://www.opengeosys.org/docs/userguide/basics/introduction/>) for creating the pipeline network TESPy model. The OpenGeoSys and TESPy version used for this tutorial is (OpenGeoSys 6.2.2) and 0.3.3 accordingly.
 
 The coupled model that is going to be built is demonstrated in Figure 1. It consists of a pipeline network connected with 3 BHEs, a water pump, a virtual heat pump as the consumer, a splitter to split up the feeding fluid flow and a merge to returned flow. These devices are all defined as `components` in TESPy. A full list of available components can be found in the TESPy components module. In the pipeline network, these components are connected with each other through `connections` parts, which are illustrated by the black lines in the figure. With these two main parts, a completely TESPy pipeline network model can be set up.
 
@@ -41,23 +41,26 @@ Figure 1: Pipeline network model in TESPy
 
 ### < Network >
 
-Firstly a network needs to be created. It is the main container for the model. Several parameters will be set here. For example the required fluids in the network, the unit system and value ranges for the networks variables are specified as follows.\
+Firstly a network needs to be created. It is the main container for the model. Several parameters will be set here. For example the required fluids in the network and the unit systems for the networks variables are specified as follows.\
 
 ```bash
+from tespy.networks import network
+from tespy.connections import connection, ref
+from tespy.components import source, sink, pump, splitter, merge, heat_exchanger_simple, cycle_closer
+from tespy.tools import char_line, dc_cc
+import numpy as np
+
 # %% network
-btes = network(fluids=['water'],
-               T_unit='K', p_unit='bar', h_unit='kJ / kg',
-               T_range=[273.25, 373.15], p_range=[1, 20], h_range=[1, 1000])
+btes = network(fluids=['water'], T_unit='K', p_unit='bar', h_unit='kJ / kg')
 ```
 
 ### < Components >
 
-In the next step different components in the network needed to be configured. In TESPy model the fluid start from `source` and end in the `sink` term. A virtual loop system is also closed when the fluid parameter in `source` and `sink` are specified to be identical. In our model, TESPy components of `source`, `sink`, `pump`, `splitter`, `merge` and `heat_exchanger_simple` are defined with locally defined names surrounded by quotes. To simplify the model the heat pump is specified as a pure heat exchanger to consume the heat.
+In the next step different components in the network needed to be configured. In TESPy model the fluid usually emerges from a `source` and drains in a `sink` term. However, using a virtual loop system can is created by using the component `cycle_closer`. This component ensures, that enthalpy and pressure at the `source` and the `sink` are identical. In our model, TESPy components of type `cycle_closer`, `pump`, `splitter`, `merge` and `heat_exchanger_simple` are created with locally defined names surrounded by quotes. To simplify the model the heat pump is specified as a pure heat exchanger to consume the heat.
 
 ```bash
 # %% components
-fc_in = source('from consumer inflow')
-fc_out = sink('from consumer outflow')
+fc = cycle_closer('cycle closer')
 pu = pump('pump')
 sp = splitter('splitter', num_out=3)
 
@@ -107,12 +110,8 @@ bhe3.set_attr(D=0.013665, L=100, ks=0.00001)
 
 # consumer
 cons.set_attr(D=0.2, L=20, ks=0.00001)
-# busses
-heat = bus('consumer heat demand')
-heat.add_comps({'c': cons, 'p': 'P'})
-btes.add_busses(heat)
 # consumer heat demand
-heat.set_attr(P=-3000) # W
+cons.set_attr(Q=-3000) # W
 ```
 
 ### < Connections >
@@ -121,7 +120,7 @@ Connections are used to link two components. It starts from the outlet of the co
 
 ```bash
 # connections
-fc_pu = connection(fc_in, 'out1', pu, 'in1')
+fc_pu = connection(fc, 'out1', pu, 'in1')
 pu_sp = connection(pu, 'out1', sp, 'in1')
 
 sp_bhe1 = connection(sp, 'out1', bhe1, 'in1')
@@ -133,27 +132,24 @@ bhe2_mg = connection(bhe2, 'out1', mg, 'in2')
 bhe3_mg = connection(bhe3, 'out1', mg, 'in3')
 
 mg_cons = connection(mg, 'out1', cons, 'in1')
-cons_fc = connection(cons, 'out1', fc_out, 'in1')
+cons_fc = connection(cons, 'out1', fc, 'in1')
 
 btes.add_conns(fc_pu, pu_sp, sp_bhe1, sp_bhe2, sp_bhe3, bhe1_mg, bhe2_mg,
                bhe3_mg, mg_cons, cons_fc)
 ```
 
-Here the fluid properties within the connection is set to be identical. It means when two components are connected with each other, the fluid properties for instance the mass flow rate, the pressure, the temperature at the outlet of component 1 will be equal to the values at the inlet of component 2. In order to complete the calculation, several boundary conditions is required to be imposed on the connections. First, the inflow mass flow rate and pressure is fixed. A temporary outflow temperature on each BHEs is specified to make sure the network is computable. In this case the consumed heat on the virtual heat pump is assumed to be totally supplied by the 3 BHEs. Therefore the fluid enthalpy at the outlet of virtual heat pump is set to be equal to that at the inlet of the splitter.
+Here the fluid properties within the connection is set to be identical. It means when two components are connected with each other, the fluid properties for instance the mass flow rate, the pressure, the temperature at the outlet of component 1 will be equal to the values at the inlet of component 2. In order to complete the calculation, several boundary conditions are required to be imposed on the connections. First, the inflow pressure is fixed. A temporary outflow temperature on each BHEs is specified to make sure the network is computable. In this case the consumed heat on the virtual heat pump is assumed to be totally supplied by the 3 BHEs. The cycle closer ensures, that pressure and enthalpy at the consumer's outlet are identical to those at the pump's inlet.
 
 ```bash
 ## connection parametrization
 # system inlet
-fc_pu.set_attr(p=2, m=0.6, fluid={'water': 1})
+fc_pu.set_attr(p=2, fluid={'water': 1})
 
 # for BHEs:
 # Tout:
 bhe1_mg.set_attr(T=303.15)
 bhe2_mg.set_attr(T=303.15)
 bhe3_mg.set_attr(T=303.15)
-
-# imposed boundary condition: ensure all heat from BHEs are consumed on `consumer`
-pu_sp.set_attr(h=ref(cons_fc, 1, 0))
 ```
 
 ### < Solve >
@@ -168,11 +164,11 @@ btes.solve('design')
 
 ### < Save the network >
 
-At last, the built BHE pipe network model needs to be saved into the project working folder. This folder should contain the definition of the network, all connections, busses, components and  their characteristics.
+At last, the built BHE pipe network model needs to be saved into the project working folder.
 
 ```bash
 # %% save to csv:
-btes.save('tespy_nw', structure=True)
+btes.save('tespy_nw')
 ```
 
 ## Connecting the TESPy model with the OGS model
@@ -273,7 +269,7 @@ After the configuration of the OGS project file, all the required files for usin
 
 ## References
 
-[1] Francesco Witte, Thermal engineering systems in python, 2019. URL: <https://doi.org/10.5281/zenodo.2555866>. doi:10.5281/zenodo.2555866.
+[1] Francesco Witte, Ilja Tuschy, TESPy: Thermal Engineering Systems in Python, 2019. URL: <https://doi.org/10.21105/joss.02178>. doi:10.21105/joss.02178.
 
 [2] Haibing Shao, Philipp Hein, Agnes Sachse, and Olaf Kolditz. Geoenergy modeling II: shallow geothermal systems. Springer International Publishing, 2016.
 
