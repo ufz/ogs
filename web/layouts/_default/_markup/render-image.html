@@ -1,8 +1,17 @@
+{{ $url := .Destination }}
+{{ if eq hugo.Environment "staging" }}
+  {{ $imageFile := index (split .Destination "#") 0 }}
+  {{ $imageResource := .Page.Resources.GetMatch ($imageFile) }}
+  {{ with $imageResource }}
+    {{ $url = .RelPermalink }}
+  {{ end }}
+{{ end }}
+
 {{ if .Title }}
   <figure>
-    <img class="m-auto" src="{{ .Destination | safeURL }}" alt="{{ .Text }}">
+    <img class="m-auto" src="{{ $url | safeURL }}" alt="{{ .Text }}">
     <figcaption>{{ .Title | safeHTML | markdownify }}</figcaption>
   </figure>
 {{ else }}
-  <img src="{{ .Destination | safeURL }}" alt="{{ .Text }}">
+  <img src="{{ $url | safeURL }}" alt="{{ .Text }}">
 {{ end }}
