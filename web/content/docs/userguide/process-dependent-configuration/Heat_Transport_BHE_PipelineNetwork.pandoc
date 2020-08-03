@@ -1,7 +1,7 @@
 +++
 date = "2020-02-03T12:00:13+01:00"
 title = "Heat_Transport_BHE PipeNetwork Feature"
-author = "Shuang Chen, Haibing Shao"
+author = "Shuang Chen, Haibing Shao, Francesco Witte"
 weight = 123
 project = "Parabolic/T/3D_3BHEs_array/3bhes_1U.prj"
 
@@ -56,7 +56,7 @@ btes = network(fluids=['water'], T_unit='K', p_unit='bar', h_unit='kJ / kg')
 
 ### < Components >
 
-In the next step different components in the network needed to be configured. In TESPy model the fluid start from `source` and end in the `sink` term. A virtual loop system is also closed when the fluid parameter in `source` and `sink` are specified to be identical. In our model, TESPy components of `source`, `sink`, `pump`, `splitter`, `merge` and `heat_exchanger_simple` are defined with locally defined names surrounded by quotes. To simplify the model the heat pump is specified as a pure heat exchanger to consume the heat.
+In the next step different components in the network needed to be configured. In TESPy model the fluid usually emerges from a `source` and drains in a `sink` term. However, using a virtual loop system can is created by using the component `cycle_closer`. This component ensures, that enthalpy and pressure at the `source` and the `sink` are identical. In our model, TESPy components of type `cycle_closer`, `pump`, `splitter`, `merge` and `heat_exchanger_simple` are created with locally defined names surrounded by quotes. To simplify the model the heat pump is specified as a pure heat exchanger to consume the heat.
 
 ```bash
 # %% components
