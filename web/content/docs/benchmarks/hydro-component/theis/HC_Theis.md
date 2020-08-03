@@ -22,7 +22,7 @@ This benchmark verifies the groundwater level drawdown for an aquifer that is su
 ## Problem description
 
 For pumping from a well, Theis (1935) proposed an analytical solution to calculate the water level drawdown over time and distance from the well. A short summary of the solution can be seen in
-web/content/docs/benchmarks/liquid-flow/liquid-flow-theis-problem.pandoc
+web/content/docs/benchmarks/liquid-flow/liquid-flow-theis-problem.md
 
 Here, we verify pumping abstraction with Theis for the `ComponentTransport` process using a 3D setup. The setup is adapted from Walther (2014), section 3.2.
 

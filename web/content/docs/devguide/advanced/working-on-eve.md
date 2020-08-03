@@ -41,7 +41,7 @@ Load required modules by sourcing the environment script:
 source scripts/env/eve/cli.sh
 ```
 
-Then do the [build configuration]({{< ref "build-configuration.pandoc" >}}) and [build]({{< ref "/docs/devguide/getting-started/build.pandoc" >}}) the project.
+Then do the [build configuration]({{< ref "build-configuration.md" >}}) and [build]({{< ref "/docs/devguide/getting-started/build.md" >}}) the project.
 
 ## Optional steps
 

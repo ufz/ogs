@@ -30,4 +30,4 @@ module load ogs/6.0.9      # Loads stable version 6.0.9 in standard config, not 
 
 You can select only one version at a time. Run `module purge` to unload all previously loaded modules.
 
-See [Quickstart]({{< ref "introduction.pandoc" >}}) for running instructions.
+See [Quickstart]({{< ref "introduction.md" >}}) for running instructions.

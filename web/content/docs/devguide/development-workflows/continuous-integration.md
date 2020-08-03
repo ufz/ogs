@@ -16,10 +16,10 @@ weight = 1013
 So for every proposed change to the source code the following is done automatically:
 
 - Compilation of the changed code merged with the official source code is tested on a variety of platforms (Windows, Linux, Mac OS, different compilers)
-- A comprehensive [test suite]({{< ref "unit-testing.pandoc" >}}) checks validity of the proposed changes
+- A comprehensive [test suite]({{< ref "unit-testing.md" >}}) checks validity of the proposed changes
 - Additional checks regarding code formatting and documentation help in maintaining a good software quality and structure
 
-After the system is done with all these tasks the developer can view build reports highlighting occurred errors and problems. We are using [GitLab CI]({{< ref "gitlab-ci.pandoc" >}}) as our CI system.
+After the system is done with all these tasks the developer can view build reports highlighting occurred errors and problems. We are using [GitLab CI]({{< ref "gitlab-ci.md" >}}) as our CI system.
 
 ## CI on OGS
 
@@ -28,4 +28,4 @@ All of this automatically kicks in when you open a [Merge Request](../code-revie
 
 Click on the pipeline link or the individual pipeline stage icons (circles) to find out the reason for a failed check. If you add more commits to this merge request all checks are run again.
 
-See the [GitLab CI page]({{< ref "gitlab-ci.pandoc" >}}) for more info.
+See the [GitLab CI page]({{< ref "gitlab-ci.md" >}}) for more info.

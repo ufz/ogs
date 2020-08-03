@@ -65,4 +65,4 @@ docker run --rm -i -t -v /host/directory:/container/directory image_name
 
 There are docker images provided on the [GitLab Container Registry](https://gitlab.opengeosys.org/ogs/ogs/container_registry) which include everything necessary to build OGS-6. They are used by the CI but you can also use them for development.
 
-Even better for development is the usage of [Singularity container]({{< relref "singularity.pandoc" >}}) because they offer a transparent mapping of the user to container space.
+Even better for development is the usage of [Singularity container]({{< relref "singularity.md" >}}) because they offer a transparent mapping of the user to container space.

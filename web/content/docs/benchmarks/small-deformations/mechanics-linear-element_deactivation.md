@@ -13,7 +13,7 @@ weight = 111
 
 {{< data-link >}}
 
-The problem definition is exactly the same as that of [Disc with hole]({{<ref "mechanics-linear-disc-with-hole.pandoc">}}). With the element deactivation approach, the problem is solved as 2D and 3D benchmarks, respectively.
+The problem definition is exactly the same as that of [Disc with hole]({{<ref "mechanics-linear-disc-with-hole.md">}}). With the element deactivation approach, the problem is solved as 2D and 3D benchmarks, respectively.
 
 The input data set of the element deactivation approach is specified inside the tag of   `<process_variable> ... </process_variable>`. For example, the following input means to deactivate the elements with MaterialIDs of 0  within a time interval from 0 to 1:
 

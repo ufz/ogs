@@ -42,9 +42,9 @@ When you want to start over with a new configuration simply delete the build-dir
 
 ### Note: Installation of required libraries
 
-It is preferred to use the Conan package manager to install required third-party libraries. If [Conan is installed]({{< ref "prerequisites" >}}#step-install-conan-package-manager) it will automatically download either prebuilt binaries of required libraries or build them locally if a binary for your setup (operating system, compiler, ..) is not available. [Check this]({{< ref "conan-package-manager.pandoc" >}}) for advanced Conan usage.
+It is preferred to use the Conan package manager to install required third-party libraries. If [Conan is installed]({{< ref "prerequisites" >}}#step-install-conan-package-manager) it will automatically download either prebuilt binaries of required libraries or build them locally if a binary for your setup (operating system, compiler, ..) is not available. [Check this]({{< ref "conan-package-manager.md" >}}) for advanced Conan usage.
 
-Instead of using Conan you can optionally [install the required libraries manually]({{< ref "third-party-libraries.pandoc" >}}) **before** running CMake.
+Instead of using Conan you can optionally [install the required libraries manually]({{< ref "third-party-libraries.md" >}}) **before** running CMake.
 
 <div class='win'>
 <div class='note'>
@@ -94,7 +94,7 @@ In the Start menu under *Visual Studio 2017* you find a application link to *x64
 cmake ../ogs
 ```
 
-This even allows for using [Ninja]({{< ref "build-with-ninja.pandoc" >}}) as the build tool which can effectively utilize all CPU cores
+This even allows for using [Ninja]({{< ref "build-with-ninja.md" >}}) as the build tool which can effectively utilize all CPU cores
 
 ### <i class="far fa-check"></i> Pro Tip 2: Use a better terminal application
 

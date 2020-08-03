@@ -17,7 +17,7 @@ The minimum prerequisites to build OGS are:
 - Git (version control tool, at least version {{< dataFile "versions.minimum_version.git" >}})
 - CMake (build configuration tool, at least version {{< dataFile "versions.minimum_version.cmake" >}})
 - A compiler with [C++17](http://en.wikipedia.org/wiki/C%2B%2B17)-support
-- [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) **OR** install [required libraries]({{< ref "third-party-libraries.pandoc" >}}) manually (for advanced users only!)
+- [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) **OR** install [required libraries]({{< ref "third-party-libraries.md" >}}) manually (for advanced users only!)
 
 ## Step: Install a compiler
 
@@ -27,7 +27,7 @@ The minimum prerequisites to build OGS are:
 
 ### Alternative setup
 
-Please note that the following setup on Windows is the **native Windows development setup**. This native setup is **quite involved** and **heavy on system resources**. We can recommend an alternative setup in which the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) is used: Setup and development of OGS follows the Linux way but you can use your Windows IDE (especially Visual Studio Code) for development and debugging. If this sounds interesting please [follow the steps here]({{< ref "wsl.pandoc" >}})!
+Please note that the following setup on Windows is the **native Windows development setup**. This native setup is **quite involved** and **heavy on system resources**. We can recommend an alternative setup in which the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) is used: Setup and development of OGS follows the Linux way but you can use your Windows IDE (especially Visual Studio Code) for development and debugging. If this sounds interesting please [follow the steps here]({{< ref "wsl.md" >}})!
 
 </div>
 
@@ -245,7 +245,7 @@ brew install cmake
 
 ## Step: Install Conan package manager
 
-The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({{< ref "third-party-libraries.pandoc" >}}) instead.
+The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({{< ref "third-party-libraries.md" >}}) instead.
 
 Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
 

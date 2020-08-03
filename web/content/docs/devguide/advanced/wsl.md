@@ -14,7 +14,7 @@ The [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsyste
 ## Setup
 
 - Install WSL by following [this guide](https://www.windowscentral.com/install-windows-subsystem-linux-windows-10). **Important:** Choose **Ubuntu 20.04 LTS** as the Linux distribution. Other distros may not have a sufficient compiler.
-- Follow the [developer guide for Linux]({{< ref "prerequisites.pandoc" >}}) from now on.
+- Follow the [developer guide for Linux]({{< ref "prerequisites.md" >}}) from now on.
 
 ## Using Visual Studio Code as IDE
 

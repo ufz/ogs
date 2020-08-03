@@ -57,4 +57,4 @@ git remote set-url origin git@gitlab.opengeosys.org:YOUR-USERNAME/ogs.git
 
 ----
 
-Or you can clone a fresh repo by following the steps in [Get the source code]({{< ref "get-the-source-code.pandoc" >}}).
+Or you can clone a fresh repo by following the steps in [Get the source code]({{< ref "get-the-source-code.md" >}}).

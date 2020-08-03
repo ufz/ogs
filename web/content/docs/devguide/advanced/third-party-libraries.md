@@ -13,7 +13,7 @@ weight = 1039
 
 ### <i class="far fa-exclamation-triangle"></i> Attention
 
-We strongly recommend to simply use [Conan]({{< ref "conan.pandoc" >}}) for handling required third-party libraries.
+We strongly recommend to simply use [Conan]({{< ref "conan.md" >}}) for handling required third-party libraries.
 </div>
 
 ## Introduction
@@ -30,4 +30,4 @@ If you want to build the Data Explorer you need these too:
 - [Shapelib](http://shapelib.maptools.org) >= 1.3.0
 - [libgeotiff](https://trac.osgeo.org/geotiff/) >= 1.4.2
 
-Please refer to the library documentation on how to build. If you struggle consider using [Conan]({{< ref "conan.pandoc" >}})! Once built CMake tries its best to find the libraries.
+Please refer to the library documentation on how to build. If you struggle consider using [Conan]({{< ref "conan.md" >}})! Once built CMake tries its best to find the libraries.

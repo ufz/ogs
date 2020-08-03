@@ -40,4 +40,4 @@ The following options are affected by this behavior and **should not be changed*
 - `CMAKE_BUILD_TYPE`
 - `BUILD_SHARED_LIBS`
 
-Check also [Conans troubleshooting page]({{< ref "conan.pandoc" >}}) if you use Conan for dependencies.
+Check also [Conans troubleshooting page]({{< ref "conan.md" >}}) if you use Conan for dependencies.

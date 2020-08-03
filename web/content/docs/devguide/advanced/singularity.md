@@ -53,4 +53,4 @@ This starts the container, mounts your home directory inside the container, pass
 
 ## Container generator
 
-You can download a prebuilt container from Docker Hub as shown above (e.g. `singularity pull docker://ogs6/gcc`). But we also provide a [container generator]({{< ref "container.pandoc" >}}) to create a specific container for your needs.
+You can download a prebuilt container from Docker Hub as shown above (e.g. `singularity pull docker://ogs6/gcc`). But we also provide a [container generator]({{< ref "container.md" >}}) to create a specific container for your needs.

@@ -74,7 +74,7 @@ can be found in the following table.
 
 The BHE parameters are only relevant for the numerical model and are adopted
 from the [3D Beier sandbox
-benchmark]({{< ref "3D_Beier_sandbox.pandoc" >}}).
+benchmark]({{< ref "3D_Beier_sandbox.md" >}}).
 
 {{< img src="../3D_BHE_GW_advection_figures/mesh.png" width="150">}}
 
