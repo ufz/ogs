@@ -68,8 +68,12 @@ h4 > .headerlink {
 // Inline code and blocks
 code {
   @apply .p-px;
-  @apply .bg-gray-200;
   @apply .rounded-sm;
+  background-color: #fafafa;
+}
+
+:not(pre) > code {
+  @apply .px-1;
 }
 
 pre {
@@ -273,6 +277,30 @@ figcaption {
   @apply .mb-6;
 }
 
+img[src$='#33%'] {
+  width: 300px;
+}
+
+img[src$='#one-third'] {
+  width: 300px;
+}
+
+img[src$='#50%'] {
+  width: 450px;
+}
+
+img[src$='#one-half'] {
+  width: 450px;
+}
+
+img[src$='#66%'] {
+  width: 600px;
+}
+
+img[src$='#two-third'] {
+  width: 600px;
+}
+
 /* ------------------------------- Components ------------------------------- */
 .btn {
   @apply text-gray-900;
@@ -354,5 +382,4 @@ figcaption {
 
 @tailwind utilities;
 
-@import 'pandoc-highlighting';
 @import url("https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css");

@@ -1,0 +1,124 @@
++++
+date = "2018-02-23T15:28:13+01:00"
+title = "Build configuration"
+author = "Lars Bilke"
+weight = 1004
+
+[menu]
+  [menu.devguide]
+    parent = "getting-started"
++++
+
+## Overview
+
+To separate source code from generated files such as compiled libraries, executables, test outputs and IDE projects we create build-directories. They can be placed arbitrarily but should **not** be placed inside the source code. You can have as many build-directories as you like for e.g. different configurations but they will all use one source code directory. A typically directory structure:
+
+- `ogs-source-code` (or simply `ogs`)
+- `build-release`
+- `build-debug`
+- `build-release-mpi`
+
+So just go ahead and create a build-directory along your source code directory.
+
+## Configure with CMake
+
+For configuring a build the open source [CMake](http://www.cmake.org) tool is used. CMakeLists.txt files replace traditional Makefiles or IDE project files. The CMake tool is run inside the build-directory with a reference to the source code-directory of the project and user-chosen options. CMake then generates based on the chosen *Generator* either Makefiles or project files for IDE such as Visual Studio or Eclipse inside the build directory. Also all the compiled files will be generated in this directory. This keeps the actual source code clean from intermediate files which are generated from the source code. Nothing inside the build directory will ever be version controlled because its contents can be regenerated anytime from the source code.
+
+Because of the separation of the source code and all stuff that is generated as a part of the build process it is no problem to have several build configurations (e.g. a serial configuration and a parallelized MPI-enabled configuration) all referring to the same source code.
+
+When you want to start over with a new configuration simply delete the build-directory, create a new one and reconfigure.
+
+[See this]({{< ref "configuration-options" >}}) for a list of available options.
+
+<div class='win'>
+<div class='note'>
+
+### <i class="far fa-exclamation-triangle"></i> Supported Visual Studio Generators
+
+- `Visual Studio 15 2017 Win64`
+
+</div>
+</div>
+
+### Note: Installation of required libraries
+
+It is preferred to use the Conan package manager to install required third-party libraries. If [Conan is installed]({{< ref "prerequisites" >}}#step-install-conan-package-manager) it will automatically download either prebuilt binaries of required libraries or build them locally if a binary for your setup (operating system, compiler, ..) is not available. [Check this]({{< ref "conan-package-manager.md" >}}) for advanced Conan usage.
+
+Instead of using Conan you can optionally [install the required libraries manually]({{< ref "third-party-libraries.md" >}}) **before** running CMake.
+
+<div class='win'>
+<div class='note'>
+
+#### <i class="far fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
+
+With Conan one build directory corresponds to one configuration. If you want to have e.g. a release and a debug build you need to create two build directories. This is nothing new new to Linux / GCC user but differs to Visual Studios default behavior having just one build-folder / project with different configurations. A typical Visual Studio setup with both Release and Debug configs would be initialized as follows:
+
+```bash
+[assuming you are at the same directory where the source code directory is located]
+mkdir ogs-build && cd ogs-build
+mkdir debug && cd debug
+cmake ../../ogs -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Debug
+cd .. && mkdir release && cd release
+cmake ../../ogs -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release
+```
+
+`..\..\ogs` represents the relative path to the source code (please adapt if you have a different directory layout).
+
+Please also note that in Visual Studio you have to choose the correct configuration (i.e. when opening the solution-file in the release-folder you have to switch the Visual Studio configuration to **Release**)!
+</div>
+</div>
+
+## Option: Configure from the command line
+
+CMake can be run from the shell by invoking the cmake command inside a build directory. You can pass any CMake variable or option with `-DVARIABLE_NAME=VALUE` (note the `-D` in front!). You can also pass the generator you want to use (e.g. `Unix Makefiles` or `Visual Studio 15 2017 Win64`-project files) with the `-G` parameter (to see all available generators just run `cmake --help`), although in most cases the appropriate generator will be chosen automatically. The last parameter to the CMake command is the path to the source code directory. A typical call would look like this:
+
+```bash
+cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release ../ogs
+```
+
+CMake tries to autodetect your compiler so in most cases this should be enough:
+
+```bash
+cmake ../ogs
+```
+
+{{< asciinema url="https://asciinema.org/a/249004" >}}
+
+<div class='note'>
+
+### <i class="far fa-check"></i> Pro Tip: Use the Visual Studio command line
+
+In the Start menu under *Visual Studio 2017* you find a application link to *x64 Native Tools Command Prompt for VS 2017*. This starts a command line setup for Visual Studio 64-bit. When you run CMake commands in this command line the correct generator will be picked up automatically:
+
+```bash
+cmake ../ogs
+```
+
+This even allows for using [Ninja]({{< ref "build-with-ninja.md" >}}) as the build tool which can effectively utilize all CPU cores
+
+### <i class="far fa-check"></i> Pro Tip 2: Use a better terminal application
+
+Use [ConEmu](https://conemu.github.io) for a better terminal experience. It automatically detects all installed terminal applications (e.g. regular Windows cmd.exe, Git shell, VS command lines, ...) and feautures multiple terminals inside tabs.
+</div>
+
+## Option: Configure with a visual tool
+
+<div class='win'>
+CMake comes with a graphical tool called **cmake-gui**. You can find it in the **Windows Start Menu**. First you need to set the source and build directory. Then click **Configure**. Now choose the generator to be used (e.g. **Visual Studio 15 2017 Win64** for Visual Studio 2015 64-bit). Now choose your desired configuration options by toggling the corresponding checkboxes. Click **Configure** again. Click **Configure** often enough until the **Generate**-button becomes visible. Pressing **Generate** will finally generate the project files inside the chosen build directory.
+</div>
+
+<div class='linux'>
+A more convenient way of running cmake on the command line is to use the `ccmake` tool. This is a shell tool but with some graphical user interface. To use it just run `ccmake` inside your build directory with the path to the source code (and optionally the generator you want to use) as parameter:
+
+```bash
+ccmake ../ogs
+```
+
+First press <kbd>C</kbd> to **Configure**. You are now presented the available configuration options. You can navigate in the list with the cursor keys and toggle / alter options with <kbd>Enter</kbd>. You may also press <kbd>T</kbd> to toggle (previously hidden) advanced options. Press <kbd>C</kbd> again until the **Generate**-option becomes visible. Press <kbd>G</kbd> to generate the project files and exit `ccmake`.
+
+There is also the tool `cmake-gui` available, please see the Win-Tab for a description.
+</div>
+
+<div class='mac'>
+Please see the Linux instructions!
+</div>
