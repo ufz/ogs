@@ -458,4 +458,30 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>1d_isofrac_flag_formula_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_isofrac_flag_formula_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>Synthetica</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_isofrac_flag_formula_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>Syntheticb</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_isofrac_flag_formula_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>H</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
