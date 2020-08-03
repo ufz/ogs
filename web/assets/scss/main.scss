@@ -273,6 +273,30 @@ figcaption {
   @apply .mb-6;
 }
 
+img[src$='#33%'] {
+  width: 300px;
+}
+
+img[src$='#one-third'] {
+  width: 300px;
+}
+
+img[src$='#50%'] {
+  width: 450px;
+}
+
+img[src$='#one-half'] {
+  width: 450px;
+}
+
+img[src$='#66%'] {
+  width: 600px;
+}
+
+img[src$='#two-third'] {
+  width: 600px;
+}
+
 /* ------------------------------- Components ------------------------------- */
 .btn {
   @apply text-gray-900;

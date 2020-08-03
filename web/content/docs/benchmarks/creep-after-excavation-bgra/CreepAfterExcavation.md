@@ -19,7 +19,7 @@ this example represents the creep in the near field of
 drift in the deep rock salt after excavation. The domain and the
 geometry are shown in the following figure:
 
-![Mesh and Geometry.](../mesh.png){ width=66% .m-auto }
+![Mesh and Geometry.](../mesh.png#thwo-third "Mesh and Geometry.")
 
 The domain has two material groups, which are highlighted by different
 colors. The material group that is in the

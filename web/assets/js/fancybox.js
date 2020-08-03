@@ -17,6 +17,9 @@ $(document).ready(function(){
     if(img.parentNode.hasAttribute("data-fancybox")) {
       continue;
     }
+    if(img.src.includes("#")) {
+      continue;
+    }
     var wrapper = document.createElement("a");
     wrapper.setAttribute("data-fancybox", "");
     if(img.hasAttribute("alt")) {
