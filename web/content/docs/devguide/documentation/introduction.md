@@ -4,9 +4,8 @@ title = "Introduction"
 author = "Lars Bilke"
 weight = 1024
 
-[menu]
-  [menu.devguide]
-    parent = "documentation"
+[menu.devguide]
+parent = "documentation"
 +++
 
 ## The big picture
@@ -17,7 +16,6 @@ weight = 1024
 ## Requirements
 
 - Download [Hugo](https://github.com/gohugoio/hugo/releases/latest) and put it in your `PATH`. **Attention:** Use the *extended* version: e.g. `hugo_extended_{{< dataFile "versions.minimum_version.hugo" >}}_Windows-64bit.zip`
-- [Install Pandoc](https://pandoc.org/installing.html)
 - Install [Yarn](https://yarnpkg.com/en/docs/install); for downloading required JavaScript & CSS development packages
 
 ## Getting started
@@ -36,12 +34,12 @@ As you make modifications to the site it will be rebuild and the page in the bro
 By using `hugo new` you can create a new page with the correct frontmatter for that kind of page:
 
 ```bash
-hugo new docs/benchmarks/elliptic/groundwater-flow-dirichlet.pandoc
+hugo new docs/benchmarks/elliptic/groundwater-flow-dirichlet/index.md
 ```
 
 - path is relative to `content/` and determines the URL of the page
 
-Or you can simply create a new `.pandoc`-file in the correct location and fill it by yourself.
+Or you can simply create a new `index.md`-file in the correct location and fill it by yourself. Prefer to use [page bundles](https://gohugo.io/content-management/page-bundles/) when you want to add other assets, e.g. images, to the page.
 
 ### Setup navigation for a page
 
@@ -49,9 +47,9 @@ The are submenus (shown in the left sidebar) for specific sections such as for b
 
 ```toml
 [[menu.benchmarks]]
-  name = "Elliptic"
-  identifier = "elliptic"
-  weight = 1
+name = "Elliptic"
+identifier = "elliptic"
+weight = 1
 ```
 
 To add your page to a group as an entry add the following frontmatter:
@@ -59,30 +57,41 @@ To add your page to a group as an entry add the following frontmatter:
 ```toml
 weight = 101
 
-[menu]
-  [menu.benchmarks]
-    parent = "elliptic"
+[menu.benchmarks]
+parent = "elliptic"
 ```
 
-`weight` specifies the order of groups and pages in ascending order (top -> down).
+`weight` specifies the order of groups and pages in ascending order (top `->` down).
 
 ### Write a page
 
-We use [Pandoc Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) for the actual content.
+We use [Markdown](https://commonmark.org/help/) for the actual content. Hugo uses the [GoldMark Markdown parser](https://commonmark.org/help/) with the following additional markdown extensions:
 
-It is an enhanced version of the [original Markdown](http://daringfireball.net/projects/markdown/). Please consult both guides!
+- [Definition lists](https://michelf.ca/projects/php-markdown/extra/#def-list)
+- [Footnotes](https://michelf.ca/projects/php-markdown/extra/#footnotes)
+- [Autolinks](https://github.github.com/gfm/#autolinks-extension-)
+- [Strikethrough](https://github.github.com/gfm/#strikethrough-extension-)
+- [Table](https://github.github.com/gfm/#tables-extension-)
+- [TaskList](https://github.github.com/gfm/#task-list-items-extension-)
+- [Typographer](https://daringfireball.net/projects/smartypants/)
 
 #### Images
 
 Use regular Markdown syntax:
 
 ```md
-![](../square_1e2_neumann_gradients.png)
+![Alt text](square_1e2_neumann_gradients.png "Caption text")
 ```
 
-The path to the image can be absolute (by preceding with `/`) or relative. The relative path starts at your current URL. If your image is in the same directory as your `.pandoc`-file you have to prefix your path with `../` as in the example above.
+The path to the image is the relative path to the current [page bundle](https://gohugo.io/content-management/page-bundles/).
 
-See the [Pandoc Help](https://pandoc.org/MANUAL.html#images) for more options on e.g. image size and captions.
+You can add size attributes to the filename with a `#`-character:
+
+```md
+![Alt text](square_1e2_neumann_gradients.png#two-third "Caption text")
+```
+
+Possible size values are `one-third`, `one-half` and `two-third`.
 
 #### Equations
 
@@ -97,7 +106,7 @@ Files belonging directly to a page (e.g. images shown on that same page) should 
 Bibliography items from *Documentation/bibliography/*.bib can be referenced by their id (always use lowercase ids) with the `bib`-shortcode:
 
 ```bash
-{{< bib "kolditz2012" >}}
+{{</* bib "kolditz2012" */>}}
 ```
 
 The bib-file has to be converted into a yaml-file with the [pybtex-convert](https://docs.pybtex.org/cmdline.html)-tool:
@@ -126,11 +135,3 @@ ALGOLIA_WRITE_KEY=XXX node_modules/.bin/hugo-algolia --toml -s
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
 - [Slick Carousel](http://kenwheeler.github.io/slick/) & [FancyBox](https://fancyapps.com/fancybox/3/) for image galleries
 - [Algolia](https://github.com/algolia/algoliasearch-client-javascript) for site search
-
-### Link checker
-
-```bash
-npm install -g @hashicorp/broken-links-checker
-hugo
-broken-links-checker --path ./public --baseUrl https://www.opengeosys.org
-```

@@ -68,8 +68,12 @@ h4 > .headerlink {
 // Inline code and blocks
 code {
   @apply .p-px;
-  @apply .bg-gray-200;
   @apply .rounded-sm;
+  background-color: #fafafa;
+}
+
+:not(pre) > code {
+  @apply .px-1;
 }
 
 pre {

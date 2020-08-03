@@ -9,6 +9,9 @@ staticDir = ["dist", "static"]
 [markup.goldmark.renderer]
 unsafe = true
 
+[markup.highlight]
+style = "monokailight"
+
 [params]
   alert = ""
 

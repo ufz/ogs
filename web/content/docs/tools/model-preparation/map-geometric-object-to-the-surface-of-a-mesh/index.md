@@ -3,18 +3,13 @@ date = "2018-03-07T15:56:57+01:00"
 title = "Map geometric object to the surface of a mesh"
 author = "Thomas Fischer"
 
-[menu]
-  [menu.tools]
-    parent = "model-preparation"
+[menu.tools]
+parent = "model-preparation"
 +++
 
 ## General
 
 The tool ```MapGeometryToMeshSurface``` adjusts the z-coordinates of geometric points from a given geometry file ```my_geometry.gml``` such that they are located on the surface of a given mesh ```my_mesh.vtu``` and returns an updated geometry file ```my_mapped_geometry.gml```.
-
-*MW: does the tool add points if necessary?*
-
-*MW: what happens, if the geometry is spreading above the boundary of the mesh or not even close to the mesh?*
 
 ## Usage
 
