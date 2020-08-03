@@ -22,9 +22,9 @@ Given a "bulk" mesh (Tests/Data/Mechanics/Linear/disc_with_hole.vtu) and a
 quater circle mesh for heterogeneous boundary condition. OGS requires two
 mappings into the "bulk" mesh, one for the nodes and one for the elements.
 
-![The figure shows a part of the "bulk" mesh with boundary element numbers, and
-the quater circle mesh shown as white line with green
-points.](disc_with_hole_and_bondary.png){width=50% .m-auto}
+![](disc_with_hole_and_bondary.png#one-half "The figure shows a part of the
+'bulk' mesh with boundary element numbers, and the quater circle mesh shown as
+white line with green points.")
 
 To create this mappings we run
 

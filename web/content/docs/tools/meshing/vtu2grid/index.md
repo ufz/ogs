@@ -41,7 +41,7 @@ The ```x```/```y```/```z```-parameters determine the raster size. If only ```x``
 
 ## Simple example
 
-![Original, unstructured grid consisting of 217,128 prism-elements. The subsurface represented by this mesh consists of a number of layers of very different thickness. The very thin layers at the top (reddish tones) and in the middle (green and cyan tones) are particularly difficult to handle during numerical simulation.](./vtu2grid-orig.png){ width=66% }
+![Simple example mesh](vtu2grid-orig.png#two-third "Original, unstructured grid consisting of 217,128 prism-elements. The subsurface represented by this mesh consists of a number of layers of very different thickness. The very thin layers at the top (reddish tones) and in the middle (green and cyan tones) are particularly difficult to handle during numerical simulation.")
 
 **Command:**
 
@@ -49,7 +49,7 @@ The ```x```/```y```/```z```-parameters determine the raster size. If only ```x``
 Vtu2Grid -i input.vtu -o output.vtu -x 200
 ```
 
-![Rasterised grid consisting of 9,240 cubes (equilateral hexahedral elements with an edge length of 200m). The result is severely undersampled and a continuous layer structure is no longer visible.](./vtu2grid-200.png){ width=66% }
+![Rasterised grid](vtu2grid-200.png#two-third "Rasterised grid consisting of 9,240 cubes (equilateral hexahedral elements with an edge length of 200m). The result is severely undersampled and a continuous layer structure is no longer visible.")
 
 **Command:**
 
@@ -57,7 +57,7 @@ Vtu2Grid -i input.vtu -o output.vtu -x 200
 Vtu2Grid -i input.vtu -o output.vtu -x 100
 ```
 
-![Rasterised grid consisting of 74,048 equilateral hexahedral elements with an edge length of 100m. The result is still undersampled but layers become already visible.](./vtu2grid-100.png){ width=66% }
+![Rasterised grid](./vtu2grid-100.png#two-third "Rasterised grid consisting of 74,048 equilateral hexahedral elements with an edge length of 100m. The result is still undersampled but layers become already visible.")
 
 **Command:**
 
@@ -65,7 +65,7 @@ Vtu2Grid -i input.vtu -o output.vtu -x 100
 Vtu2Grid -i input.vtu -o output.vtu -x 50
 ```
 
-![Rasterised grid consisting of 591,757 equilateral hexahedral elements with an edge length of 50m. There's still undersampling in regions containing thin layers but the overall structure is reasonably well represented.](./vtu2grid-50.png){ width=66% }
+![Rasterised grid](./vtu2grid-50.png#two-third "Rasterised grid consisting of 591,757 equilateral hexahedral elements with an edge length of 50m. There's still undersampling in regions containing thin layers but the overall structure is reasonably well represented.")
 
 **Command:**
 
@@ -73,7 +73,7 @@ Vtu2Grid -i input.vtu -o output.vtu -x 50
 Vtu2Grid -i input.vtu -o output.vtu -x 50 -y 50 -z 10
 ```
 
-![Rasterised grid consisting of 2,959,656 cuboid hexahedral elements with an edge length of 50m x 50m x 10m. The structure of the original mesh is very well represented while the number of elements has increased by an order of magnitude.](./vtu2grid-50x50x10.png){ width=66% }
+![Rasterised grid](./vtu2grid-50x50x10.png#two-third "Rasterised grid consisting of 2,959,656 cuboid hexahedral elements with an edge length of 50m x 50m x 10m. The structure of the original mesh is very well represented while the number of elements has increased by an order of magnitude.")
 
 ## Application
 

@@ -38,15 +38,14 @@ and are required for flux calculations during a simulation run of OpenGeoSys.
 
 `ExtractBoundary -i square_1x1_quad.vtu -o square_1x1_quad_border.vtu`
 
-![The square mesh consists of 16 cells/elements. The numbers
+![](ExtractBoundary_square_1x1_quad_border.png "The square mesh consists of 16 cells/elements. The numbers
 in the cells are the cell IDs. The generated boundary grid consists of the
-somewhat thicker and colored line elements.](ExtractBoundary_square_1x1_quad_border.png){.m-auto}
+somewhat thicker and colored line elements.")
 
 ### Extract the boundary from a tri mesh
 
 `ExtractBoundary -i square_1x1_tri.vtu -o square_1x1_tri_border.vtu`
 
-![The square mesh consists of 32 triangle shaped cells. The
+![](ExtractBoundary_square_1x1_tri_border.png "The square mesh consists of 32 triangle shaped cells. The
 numbers in the tri are the cell IDs. The generated boundary grid consists of the
-somewhat thicker and colored line elements.
-](ExtractBoundary_square_1x1_tri_border.png){.m-auto}
+somewhat thicker and colored line elements.")

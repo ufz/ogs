@@ -39,7 +39,7 @@ The parameter ```n``` determines how many layers are created between the two inp
 
 **Input data:**
 
-![Two input rasters as well as their 3D surface representation. Darker pixels represent values at a lower elevation while brighter pixels represent higher elevaton. In the 3D visualisation, the left-most raster is represented by the green surface and the right-most raster by the yellow surface.](./createIntermediateRasters-input.png)
+![Two input rasters](./createIntermediateRasters-input.png "Two input rasters as well as their 3D surface representation. Darker pixels represent values at a lower elevation while brighter pixels represent higher elevaton. In the 3D visualisation, the left-most raster is represented by the green surface and the right-most raster by the yellow surface.")
 
 **Command:**
 
@@ -47,7 +47,7 @@ The parameter ```n``` determines how many layers are created between the two inp
 createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc -n 1
 ```
 
-![A new raster is created in the exact center between the two input rasters. In the 3D representation, the new layer is shown in red.](./createIntermediateRasters-output1.png){ width=66% }
+![A new raster is created in the exact center between the two input rasters](./createIntermediateRasters-output1.png#two-third "A new raster is created in the exact center between the two input rasters. In the 3D representation, the new layer is shown in red.")
 
 **Command:**
 
@@ -55,7 +55,7 @@ createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc 
 createIntermediateRasters --file1 raster1.asc --file2 raster2.asc -o output.asc -n 2
 ```
 
-![For ```n>1``` multiple rasters are created at equidistant distances between the two input rasters. For ```n=2```, two new rasters are generated, represented here in red and blue.](./createIntermediateRasters-output2.png)
+![](./createIntermediateRasters-output2.png "For ```n>1``` multiple rasters are created at equidistant distances between the two input rasters. For ```n=2```, two new rasters are generated, represented here in red and blue.")
 
 ## Application
 

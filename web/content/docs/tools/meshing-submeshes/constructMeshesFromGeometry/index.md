@@ -52,5 +52,5 @@ yields new meshes for each named geometry: `single_fracture_3D_inlet.vtu`,
 `single_fracture_3D_top.vtu`, `single_fracture_3D_bottom.vtu`, and
 `single_fracture_3D_back.vtu`.
 
-![Shows the front part of the mesh with the extracted geometries. Note,
-the lower dimensional inlet boundary, shown as a line.](single_fracture_3D_geometries.png){.m-auto}
+![](single_fracture_3D_geometries.png "Shows the front part of the mesh with the extracted geometries. Note,
+the lower dimensional inlet boundary, shown as a line.")

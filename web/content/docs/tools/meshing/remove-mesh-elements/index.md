@@ -36,9 +36,9 @@ The corresponding element types differ from vtk cell types and can be found in M
 
 ## Examples
 
-![The left figure above is the result of the repeated application of [SetPropertiesInPolygonalRegion]({{< ref "set-properties-in-polygonal-region" >}}). It contains material ids 0 (red), 1 (yellow), 2 (turquoise) and 3 (blue).](ExampleRemoveElements-Input.png)
+![Input](ExampleRemoveElements-Input.png "The left figure above is the result of the repeated application of [SetPropertiesInPolygonalRegion]({{< ref "set-properties-in-polygonal-region" >}}). It contains material ids 0 (red), 1 (yellow), 2 (turquoise) and 3 (blue).")
 
-![The result of the following command line input is depicted.](ExampleRemoveElements-Output.png)
+![](ExampleRemoveElements-Output.png "The result of the following command line input is depicted.")
 
 ```bash
 removeMeshElements -i TestCube-ResetPropertiesInPolygonalRegion.vtu -o TestCube-removeMeshElements.vtu -n MaterialIDs --int-property-value 1 --int-property-value 2 --int-property-value 3

@@ -63,8 +63,8 @@ GocadTSurfaceReader -i d:\GoCAD_data\Top-Lower_Sandy.ts -o d:\GoCAD_data
 
 **Input:**
 
-![GoCAD-Header of file containing triangulated surface.](./Surface-GoCad.png){width=66%}
+![GoCAD-Header](./Surface-GoCad.png#two-third "GoCAD-Header of file containing triangulated surface.")
 
 **Output:**
 
-![Converted surface visualised in ParaView with scalar data added to nodes.](./Surface-ParaView.png)
+![Converted surface](./Surface-ParaView.png "Converted surface visualised in ParaView with scalar data added to nodes.")

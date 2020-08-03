@@ -52,11 +52,11 @@ GocadSGridReader -s flow_simulation_grid_klein_Rinne.sg -o flow_simulation_grid_
 
 ### Thuringia Syncline (INFLUINS project)
 
-![The tool was used to convert Gocad stratigraphic grids ('GoCad Model' in
+![GO2OGS Workflow](WorkflowGO2OGS.png "The tool was used to convert Gocad stratigraphic grids ('GoCad Model' in
 figure below) of the Thuringia syncline to a vtk unstructured grid ('VTU'
 in the figure) within the INFLUINS project. Further conversion steps were taken
 to prepare the mesh for the simulation (not part of this tool, see Fischer et
-al. 2015).](WorkflowGO2OGS.png)
+al. 2015).")
 
 #### Publication
 

@@ -24,9 +24,9 @@ The polylines should be in the vicinity of the mesh nodes, where the user wants 
 
 ## Example
 
-![Shows a mesh of the example domain. Furthermore, a river is depicted (blue color). These data (mesh and geometric description of the river) is given to the tool.](CreateBCFromPolyline-before_1.png)
+![Mesh of the example domain](CreateBCFromPolyline-before_1.png "Shows a mesh of the example domain. Furthermore, a river is depicted (blue color). These data (mesh and geometric description of the river) is given to the tool.")
 
-![The found nodes will be written to a geometry file which may be useful for visual inspection. The found mesh nodes of the example are sketched as small red squares.](CreateBCFromPolyline-result_1.png)
+![Found nodes](CreateBCFromPolyline-result_1.png "The found nodes will be written to a geometry file which may be useful for visual inspection. The found mesh nodes of the example are sketched as small red squares.")
 
 ## Application
 

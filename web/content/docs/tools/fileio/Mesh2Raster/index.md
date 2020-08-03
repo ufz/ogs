@@ -3,9 +3,8 @@ date = "2019-12-03T00:00:00+01:00"
 title = "Mesh2Raster"
 author = "Karsten Rink"
 
-[menu]
-  [menu.tools]
-    parent = "Data Import/Export"
+[menu.tools]
+parent = "Data Import/Export"
 +++
 
 ## Introduction
@@ -36,7 +35,7 @@ The parameter ```c``` specifies the cell size (i.e. pixel size) of the raster. W
 
 **Input data:**
 
-![2D surface mesh.](./Mesh2Raster-input.png)
+![2D surface mesh.](Mesh2Raster-input.png#two-third "2D surface mesh.")
 
 The input mesh for this example is a homogeneous, unstructured triangle mesh with an average edge length of 100m.
 
@@ -46,7 +45,7 @@ The input mesh for this example is a homogeneous, unstructured triangle mesh wit
 Mesh2Raster -i input.vtu -o output.asc -c 50
 ```
 
-![The generated output raster has a size of 340x333 pixels and represents the original surface well. Given the average edge length of 100m in the original mesh, an even smaller cellsize would not have contained more details but resulted in a larger file size.[^1]](./Mesh2Raster-output50.png){ width=66% .m-auto }
+![output50](Mesh2Raster-output50.png#two-third "The generated output raster has a size of 340x333 pixels and represents the original surface well. Given the average edge length of 100m in the original mesh, an even smaller cellsize would not have contained more details but resulted in a larger file size. Conversely, a larger cellsize might result in artefacts due to undersampling, see [Nyquist criterion](https://en.wikipedia.org/wiki/Nyquist_rate).")
 
 **Command:**
 
@@ -54,7 +53,7 @@ Mesh2Raster -i input.vtu -o output.asc -c 50
 Mesh2Raster -i input.vtu -o output.asc -c 200
 ```
 
-![The generated output raster has a size of 85x84 pixels and still represents the original surface reasonably well, despite visible undersampling.](./Mesh2Raster-output200.png){ width=66% .m-auto }
+![output200](Mesh2Raster-output200.png#two-third "The generated output raster has a size of 85x84 pixels and still represents the original surface reasonably well, despite visible undersampling.")
 
 **Command:**
 
@@ -62,10 +61,8 @@ Mesh2Raster -i input.vtu -o output.asc -c 200
 Mesh2Raster -i input.vtu -o output.asc -c 1000
 ```
 
-![The generated output raster has a size of 17x17 pixels and shows severy undersampling. However, this is the resolution that a large number of weather data products are available at.](./Mesh2Raster-output1000.png){ width=66% .m-auto }
+![output1000](Mesh2Raster-output1000.png#two-third "The generated output raster has a size of 17x17 pixels and shows severy undersampling. However, this is the resolution that a large number of weather data products are available at.")
 
 ## Application
 
 The resulting ASCII-rasters can be used to represent surface data in geographic information systems. In the absense of input data, a detailed raster can also be used by OpenGeoSys preprocessing tools to generate new surface meshes with different resolution or properties.
-
-[^1]: Conversely, a larger cellsize might result in artefacts due to undersampling, see [Nyquist criterion](https://en.wikipedia.org/wiki/Nyquist_rate).

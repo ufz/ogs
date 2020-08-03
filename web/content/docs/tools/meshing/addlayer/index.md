@@ -30,9 +30,9 @@ AddLayer -i <input-mesh> -o <output-mesh> [-t <thickness>]
 
 ## Simple example
 
-![A simple cube mesh with one material group (red).](./SimpleQuadExample_1.png){.m-auto}
+![One material](SimpleQuadExample_1.png#one-third "A simple cube mesh with one material group (red).")
 
-![The updated mesh where an additional layer (blue) was added on top of the domain with a second material group.](./SimpleQuadExampleWithNewTopLayer_1.png){.m-auto}
+![Added layer](SimpleQuadExampleWithNewTopLayer_1.png#one-third "The updated mesh where an additional layer (blue) was added on top of the domain with a second material group.")
 
 Usage for example:
 
