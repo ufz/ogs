@@ -626,7 +626,12 @@ void NodePartitionedMeshReader::setElements(
     {
         unsigned long id_offset_elem = elem_data[i];
 
-        const unsigned mat_idx = static_cast<unsigned>( elem_data[id_offset_elem++] );
+        // Unused for now, keep for elem_data documentation purpose here.
+        {
+            const unsigned mat_idx =
+                static_cast<unsigned>(elem_data[id_offset_elem++]);
+            (void)mat_idx;
+        }
         const unsigned long e_type = elem_data[id_offset_elem++];
         unsigned long const nnodes = elem_data[id_offset_elem++];
 
@@ -640,35 +645,30 @@ void NodePartitionedMeshReader::setElements(
         {
             case 1:
                 mesh_elems[i + id_offset_ghost] =
-                    new MeshLib::Point(elem_nodes, mat_idx);
+                    new MeshLib::Point(elem_nodes);
                 break;
             case 2:
-                mesh_elems[i + id_offset_ghost] =
-                    new MeshLib::Line(elem_nodes, mat_idx);
+                mesh_elems[i + id_offset_ghost] = new MeshLib::Line(elem_nodes);
                 break;
             case 6:
-                mesh_elems[i + id_offset_ghost] =
-                    new MeshLib::Quad(elem_nodes, mat_idx);
+                mesh_elems[i + id_offset_ghost] = new MeshLib::Quad(elem_nodes);
                 break;
             case 11:
-                mesh_elems[i + id_offset_ghost] =
-                    new MeshLib::Hex(elem_nodes, mat_idx);
+                mesh_elems[i + id_offset_ghost] = new MeshLib::Hex(elem_nodes);
                 break;
             case 4:
-                mesh_elems[i + id_offset_ghost] =
-                    new MeshLib::Tri(elem_nodes, mat_idx);
+                mesh_elems[i + id_offset_ghost] = new MeshLib::Tri(elem_nodes);
                 break;
             case 9:
-                mesh_elems[i + id_offset_ghost] =
-                    new MeshLib::Tet(elem_nodes, mat_idx);
+                mesh_elems[i + id_offset_ghost] = new MeshLib::Tet(elem_nodes);
                 break;
             case 14:
                 mesh_elems[i + id_offset_ghost] =
-                    new MeshLib::Prism(elem_nodes, mat_idx);
+                    new MeshLib::Prism(elem_nodes);
                 break;
             case 17:
                 mesh_elems[i + id_offset_ghost] =
-                    new MeshLib::Pyramid(elem_nodes, mat_idx);
+                    new MeshLib::Pyramid(elem_nodes);
                 break;
             default:
                 OGS_FATAL(
