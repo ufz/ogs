@@ -454,10 +454,17 @@ endforeach()
 
 # TODO: Parallel LARGE tests not tested!
 foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
+    set(RUNTIME 10)
+    if("${mesh_size}" STREQUAL "1e5")
+        set(RUNTIME 55)
+    endif()
+    if("${mesh_size}" STREQUAL "1e6")
+        set(RUNTIME 430)
+    endif()
     AddTest(
         NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        RUNTIME 61 # Actual RUNTIME?
+        RUNTIME ${RUNTIME}
         EXECUTABLE_ARGS cube_${mesh_size}.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
@@ -470,7 +477,7 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     AddTest(
         NAME SteadyStateDiffusion_cube_1x1x1_Neumann_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        RUNTIME 61 # Actual RUNTIME?
+        RUNTIME ${RUNTIME}
         EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
@@ -509,10 +516,17 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
 endforeach()
 
 foreach(mesh_size 1e5 1e6)
+    set(RUNTIME 10)
+    if("${mesh_size}" STREQUAL "1e5")
+        set(RUNTIME 65)
+    endif()
+    if("${mesh_size}" STREQUAL "1e6")
+        set(RUNTIME 450)
+    endif()
     AddTest(
         NAME SteadyStateDiffusion_square_1x1_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
-        RUNTIME 61 # Actual RUNTIME?
+        RUNTIME ${RUNTIME}
         EXECUTABLE_ARGS square_${mesh_size}.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
@@ -525,7 +539,7 @@ foreach(mesh_size 1e5 1e6)
     AddTest(
         NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
-        RUNTIME 61 # Actual RUNTIME?
+        RUNTIME ${RUNTIME}
         EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
