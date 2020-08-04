@@ -81,7 +81,7 @@ void ConvergenceCriterionPerComponentDeltaX::setDOFTable(
     _dof_table = &dof_table;
     _mesh = &mesh;
 
-    if (_dof_table->getNumberOfComponents() !=
+    if (_dof_table->getNumberOfGlobalComponents() !=
         static_cast<int>(_abstols.size()))
     {
         OGS_FATAL(

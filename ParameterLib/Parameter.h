@@ -146,7 +146,7 @@ struct Parameter : public ParameterBase
 
     //! Returns the number of components this Parameter has at every position
     //! and point in time.
-    virtual int getNumberOfComponents() const = 0;
+    virtual int getNumberOfGlobalComponents() const = 0;
 
     //! Returns the parameter value at the given time and position.
     virtual std::vector<T> operator()(double const t,
@@ -166,7 +166,7 @@ struct Parameter : public ParameterBase
                             double const t) const
     {
         auto const n_nodes = static_cast<int>(element.getNumberOfNodes());
-        auto const n_components = getNumberOfComponents();
+        auto const n_components = getNumberOfGlobalComponents();
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(n_nodes,
                                                                 n_components);
 

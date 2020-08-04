@@ -219,7 +219,7 @@ void VtkMappedMeshSource::addProperty(
     dataArray->SetArray(const_cast<T*>(property.data()),
                         static_cast<vtkIdType>(property.size()),
                         static_cast<int>(!hasArrayOwnership));
-    dataArray->SetNumberOfComponents(property.getNumberOfComponents());
+    dataArray->SetNumberOfComponents(property.getNumberOfGlobalComponents());
     dataArray->SetName(property.getPropertyName().c_str());
 
     if (property.getMeshItemType() == MeshLib::MeshItemType::Node)

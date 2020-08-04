@@ -277,7 +277,7 @@ MeshLib::PropertyVector<T>* PostProcessTool::createProperty(
     MeshLib::PropertyVector<T> const& property)
 {
     auto const item_type = property.getMeshItemType();
-    auto const n_src_comp = property.getNumberOfComponents();
+    auto const n_src_comp = property.getNumberOfGlobalComponents();
     // convert 2D vector to 3D. Otherwise Paraview Calculator filter does
     // not recognize it as a vector
     auto const n_dest_comp = (n_src_comp == 2) ? 3 : n_src_comp;
@@ -322,8 +322,9 @@ void PostProcessTool::copyPropertyValues(
     auto const item_type = source_property.getMeshItemType();
     if (item_type == MeshLib::MeshItemType::Node)
     {
-        auto const n_src_comp = source_property.getNumberOfComponents();
-        auto const n_dest_comp = destination_property->getNumberOfComponents();
+        auto const n_src_comp = source_property.getNumberOfGlobalComponents();
+        auto const n_dest_comp =
+            destination_property->getNumberOfGlobalComponents();
         // copy existing
         for (unsigned i = 0; i < _org_mesh.getNumberOfNodes(); i++)
         {
@@ -366,7 +367,7 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
 {
     auto const& u = *_output_mesh->getProperties().getPropertyVector<double>(
         "displacement");
-    auto const n_u_comp = u.getNumberOfComponents();
+    auto const n_u_comp = u.getNumberOfGlobalComponents();
     assert(u.size() == _output_mesh->getNodes().size() * 3);
     auto& total_u =
         *_output_mesh->getProperties().createNewPropertyVector<double>(

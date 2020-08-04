@@ -62,7 +62,7 @@ public:
         auto const num_var = _data.dof_table_bulk.getNumberOfVariables();
         auto const num_nodes = Base::_element.getNumberOfNodes();
         auto const num_comp_total =
-            _data.dof_table_bulk.getNumberOfComponents();
+            _data.dof_table_bulk.getNumberOfGlobalComponents();
 
         auto const& bulk_node_ids_map =
             *_data.boundary_mesh.getProperties()

@@ -85,10 +85,12 @@ struct SurfaceFluxData
             surface_mesh, property_vector_name, MeshLib::MeshItemType::Cell, 1);
         // initialise the PropertyVector pv with zero values
         std::fill(surfaceflux_pv->begin(), surfaceflux_pv->end(), 0.0);
-        auto surfaceflux_process = ProcessLib::SurfaceFlux(
-            surface_mesh,
-            p.getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-            integration_order);
+        auto surfaceflux_process =
+            ProcessLib::SurfaceFlux(surface_mesh,
+                                    p.getProcessVariables(process_id)[0]
+                                        .get()
+                                        .getNumberOfGlobalComponents(),
+                                    integration_order);
 
         surfaceflux_process.integrate(
             x, *surfaceflux_pv, t, bulk_mesh, active_element_ids,

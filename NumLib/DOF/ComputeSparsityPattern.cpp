@@ -26,8 +26,8 @@ GlobalSparsityPattern computeSparsityPatternPETSc(
     auto const& npmesh =
         *static_cast<MeshLib::NodePartitionedMesh const*>(&mesh);
 
-    auto const max_nonzeroes =   dof_table.getNumberOfComponents()
-                               * npmesh.getMaximumNConnectedNodesToNode();
+    auto const max_nonzeroes = dof_table.getNumberOfGlobalComponents() *
+                               npmesh.getMaximumNConnectedNodesToNode();
 
     // The sparsity pattern is misused here in the sense that it will only
     // contain a single value.

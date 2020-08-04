@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="40" format="appended" RangeMin="45"                   RangeMax="121"                  offset="0"                   />
+    </FieldData>
+    <Piece NumberOfPoints="25"                   NumberOfCells="16"                  >
+      <PointData>
+        <DataArray type="Float64" Name="T" format="appended" RangeMin="0"                    RangeMax="10"                   offset="88"                  />
+        <DataArray type="Float64" Name="darcy_velocity" NumberOfComponents="2" format="appended" RangeMin="0.5"                  RangeMax="0.5"                  offset="272"                 />
+        <DataArray type="Float64" Name="p" format="appended" RangeMin="1"                    RangeMax="2"                    offset="676"                 />
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="1"                    offset="796"                 />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.4142135624"         offset="844"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="976"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1136"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1228"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAAAoAAAALgAAAA==eF4z0zPWM9I1N9FNN0tJtkwyTDQ31UvJLCqp1DMyMDIwMDc2BGIzIxMA0NUKBw==AQAAAACAAADIAAAAdgAAAA==eF5jYAABFQeX5yZNF+wVHPb4m+vuXSju0HjpEUvbV04HBhSg4vCidmYzSJ1lTbchSN3Ow3O4samLS//SBlLnteeHNUjdxpQL0tjUfW336QKpexoS6wZSZzj5mzY2dXtD13WD1P29ucILpO6v4GIjZHUAZGc5nA==AQAAAACAAACQAQAAGwEAAA==eF6TXs8ABA/sQ87OixNRW7jnXDWE/1Tf/CJP0P09bAwQ/qJZtns1fBbtCef4DwT37assnfTunHi/Z9rCf2A+zzOOnQXKh214oOYpGLifaJWutLkENe/D9NkZbCuv7/n1H6I/IvWQ0/XNvTYBUPN2yCiK56Xc23MLat6tFJD8XBs2qHl/i1pidkzcaHMKap6KsNiueW+37eGAuu8T2Pwre1Kg5j0Du/+gzRmoeX5qOiW2tw/ugZnnNXPDha850/echppnE5bs6qV71oYJap7M6o1KS6fd3JMENW/xzcvdh1Q27bkGNW+BT8SLqm2rbUSg5v0Du+/gnn1Q85aA5e/afIb6Vxps3uM9FVDzDPQh4XMbah4DFAAALebFDA==AQAAAACAAADIAAAARgAAAA==eF5jYAADB4sr/4Hgt734IRD93d4EzP9sD5H+AKUZHGyg6sSg6mxwqLOFqpOEqrPCoc4Oqk4Kqs4ahzorqDp5HOoA0xBj9A==AQAAAACAAABAAAAAEAAAAA==eF5jZGBgYMSDCQEAAdAACQ==AQAAAACAAABYAgAAUAAAAA==eF590LERwDAMQlFvlv27jEBJyQipaEh+6PzkO0465y/39e0CN3jAm+3pe13gBg94s3v037rADR7wZu/U3nWBGzzgO2/auy5wg+flD1SCLSk=AQAAAACAAAAAAgAAZAAAAA==eF5djTcOwFAMhX567/X+J80Qs+DlSQjhlP7LYuvYSjyPbeTBi9hWHryM7eTxh94Q24vTG+XB6U3y4Pyd5fGH3hq7iNPb5MHp7fLg/D3k8YfeFXuK07vlwek98uD8feV9Nx4DAQ==AQAAAACAAACAAAAAMwAAAA==eF5jYYAADijNA6UFoLQIlJaA0jJQWgFKq0BpDSitA6UNoLQJlLaA0jZQ2gFKAwBmgAIhAQAAAACAAAAQAAAACwAAAA==eF7j5EQFAATYAJE=
+  </AppendedData>
+</VTKFile>

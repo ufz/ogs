@@ -108,7 +108,7 @@ bool Properties::existsPropertyVector(std::string const& name,
     {
         return false;
     }
-    if (property->getNumberOfComponents() != number_of_components)
+    if (property->getNumberOfGlobalComponents() != number_of_components)
     {
         return false;
     }
@@ -183,12 +183,12 @@ PropertyVector<T> const* Properties::getPropertyVector(
             "requested.",
             name, toString(property->getMeshItemType()), toString(item_type));
     }
-    if (property->getNumberOfComponents() != n_components)
+    if (property->getNumberOfGlobalComponents() != n_components)
     {
         OGS_FATAL(
             "PropertyVector '{:s}' has {:d} components, {:d} components are "
             "needed.",
-            name, property->getNumberOfComponents(), n_components);
+            name, property->getNumberOfGlobalComponents(), n_components);
     }
     return property;
 }
@@ -221,12 +221,12 @@ PropertyVector<T>* Properties::getPropertyVector(std::string const& name,
             "requested.",
             name, toString(property->getMeshItemType()), toString(item_type));
     }
-    if (property->getNumberOfComponents() != n_components)
+    if (property->getNumberOfGlobalComponents() != n_components)
     {
         OGS_FATAL(
             "PropertyVector '{:s}' has {:d} components, {:d} components are "
             "needed.",
-            name, property->getNumberOfComponents(), n_components);
+            name, property->getNumberOfGlobalComponents(), n_components);
     }
     return property;
 }

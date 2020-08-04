@@ -150,7 +150,7 @@ public:
             auto const bulk_flux =
                 getFlux(_bulk_element_id, bulk_element_point, t, x);
             for (int component_id(0);
-                 component_id < specific_flux.getNumberOfComponents();
+                 component_id < specific_flux.getNumberOfGlobalComponents();
                  ++component_id)
             {
                 // TODO find solution for 2d case
@@ -167,7 +167,7 @@ public:
             element_area += _detJ_times_integralMeasure[ip] * wp.getWeight();
         }
         for (int component_id(0);
-             component_id < specific_flux.getNumberOfComponents();
+             component_id < specific_flux.getNumberOfGlobalComponents();
              ++component_id)
         {
             specific_flux.getComponent(element_id, component_id) /=

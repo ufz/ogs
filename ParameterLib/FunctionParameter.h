@@ -101,7 +101,7 @@ struct FunctionParameter final : public Parameter<T>
 
     bool isTimeDependent() const override { return true; }
 
-    int getNumberOfComponents() const override
+    int getNumberOfGlobalComponents() const override
     {
         return _vec_expression.size();
     }
@@ -109,7 +109,7 @@ struct FunctionParameter final : public Parameter<T>
     std::vector<T> operator()(double const t,
                               SpatialPosition const& pos) const override
     {
-        std::vector<T> cache(getNumberOfComponents());
+        std::vector<T> cache(getNumberOfGlobalComponents());
         auto& x = _symbol_table.get_variable("x")->ref();
         auto& y = _symbol_table.get_variable("y")->ref();
         auto& z = _symbol_table.get_variable("z")->ref();

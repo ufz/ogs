@@ -177,10 +177,10 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 {
     initComponents(num_components, selected_component, ComponentOrder);
 
-    ASSERT_EQ(dof_map->getNumberOfComponents(), num_components);
+    ASSERT_EQ(dof_map->getNumberOfGlobalComponents(), num_components);
     ASSERT_EQ(dof_map->size(), mesh->getNumberOfElements());
 
-    ASSERT_EQ(dof_map_boundary->getNumberOfComponents(), 1);
+    ASSERT_EQ(dof_map_boundary->getNumberOfGlobalComponents(), 1);
     ASSERT_EQ(dof_map_boundary->size(), boundary_mesh->getNumberOfElements());
 
     // check mesh elements
@@ -189,7 +189,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
         auto const element_nodes_size = mesh->getElement(e)->getNumberOfNodes();
         auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
 
-        for (int c = 0; c < dof_map->getNumberOfComponents(); ++c)
+        for (int c = 0; c < dof_map->getNumberOfGlobalComponents(); ++c)
         {
             auto const& global_idcs = (*dof_map)(e, c).rows;
             ASSERT_EQ(element_nodes_size, global_idcs.size());
@@ -206,7 +206,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     // check boundary elements
     for (unsigned e=0; e<dof_map_boundary->size(); ++e)
     {
-        ASSERT_EQ(1, dof_map_boundary->getNumberOfComponents());
+        ASSERT_EQ(1, dof_map_boundary->getNumberOfGlobalComponents());
 
         for (int c = 0; c < 1; ++c)
         {
@@ -238,10 +238,10 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 {
     initComponents(num_components, selected_components, ComponentOrder);
 
-    ASSERT_EQ(dof_map->getNumberOfComponents(), num_components);
+    ASSERT_EQ(dof_map->getNumberOfGlobalComponents(), num_components);
     ASSERT_EQ(dof_map->size(), mesh->getNumberOfElements());
 
-    ASSERT_EQ(dof_map_boundary->getNumberOfComponents(),
+    ASSERT_EQ(dof_map_boundary->getNumberOfGlobalComponents(),
               selected_components.size());
     ASSERT_EQ(dof_map_boundary->size(), boundary_mesh->getNumberOfElements());
 
@@ -251,7 +251,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
         auto const element_nodes_size = mesh->getElement(e)->getNumberOfNodes();
         auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
 
-        for (int c = 0; c < dof_map->getNumberOfComponents(); ++c)
+        for (int c = 0; c < dof_map->getNumberOfGlobalComponents(); ++c)
         {
             auto const& global_idcs = (*dof_map)(e, c).rows;
             ASSERT_EQ(element_nodes_size, global_idcs.size());
@@ -269,7 +269,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     for (unsigned e = 0; e < dof_map_boundary->size(); ++e)
     {
         ASSERT_EQ(selected_components.size(),
-                  dof_map_boundary->getNumberOfComponents());
+                  dof_map_boundary->getNumberOfGlobalComponents());
 
         for (int c = 0; c < static_cast<int>(selected_components.size()); ++c)
         {
@@ -296,11 +296,12 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
 void assert_equal(NL::LocalToGlobalIndexMap const& dof1, NL::LocalToGlobalIndexMap const& dof2)
 {
     ASSERT_EQ(dof1.size(), dof2.size());
-    ASSERT_EQ(dof1.getNumberOfComponents(), dof2.getNumberOfComponents());
+    ASSERT_EQ(dof1.getNumberOfGlobalComponents(),
+              dof2.getNumberOfGlobalComponents());
 
     for (unsigned e=0; e<dof1.size(); ++e)
     {
-        for (int c = 0; c < dof1.getNumberOfComponents(); ++c)
+        for (int c = 0; c < dof1.getNumberOfGlobalComponents(); ++c)
         {
             EXPECT_EQ(dof1(e, c).rows, dof2(e, c).rows);
             EXPECT_EQ(dof1(e, c).columns, dof2(e, c).columns);

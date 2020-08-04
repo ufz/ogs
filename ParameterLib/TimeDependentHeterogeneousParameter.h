@@ -29,8 +29,8 @@ public:
                                         std::vector<PairTimeParameterName>
                                             time_parameter_name_mapping);
 
-    /// @copydoc Parameter::getNumberOfComponents()
-    int getNumberOfComponents() const override;
+    /// @copydoc Parameter::getNumberOfGlobalComponents()
+    int getNumberOfGlobalComponents() const override;
 
     bool isTimeDependent() const override;
 

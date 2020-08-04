@@ -34,7 +34,7 @@ void processPropertyVector(MeshLib::PropertyVector<T> const& property,
                            std::vector<std::size_t> const& id_map,
                            MeshLib::Mesh& sfc_mesh)
 {
-    auto const number_of_components = property.getNumberOfComponents();
+    auto const number_of_components = property.getNumberOfGlobalComponents();
 
     auto sfc_prop = getOrCreateMeshProperty<T>(
         sfc_mesh, property.getPropertyName(), property.getMeshItemType(),

@@ -39,9 +39,9 @@ struct CurveScaledParameter final : public Parameter<T>
         ParameterBase::_mesh = _parameter->mesh();
     }
 
-    int getNumberOfComponents() const override
+    int getNumberOfGlobalComponents() const override
     {
-        return _parameter->getNumberOfComponents();
+        return _parameter->getNumberOfGlobalComponents();
     }
 
     std::vector<T> operator()(double const t,
@@ -56,7 +56,7 @@ struct CurveScaledParameter final : public Parameter<T>
         auto const& tup = (*_parameter)(t, pos);
         auto const scaling = _curve.getValue(t);
 
-        auto const num_comp = _parameter->getNumberOfComponents();
+        auto const num_comp = _parameter->getNumberOfGlobalComponents();
         std::vector<T> cache(num_comp);
         for (int c = 0; c < num_comp; ++c)
         {

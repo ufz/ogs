@@ -37,9 +37,9 @@ struct MeshNodeParameter final : public Parameter<T>
 
     bool isTimeDependent() const override { return false; }
 
-    int getNumberOfComponents() const override
+    int getNumberOfGlobalComponents() const override
     {
-        return _property.getNumberOfComponents();
+        return _property.getNumberOfGlobalComponents();
     }
 
     std::vector<T> operator()(double const /*t*/,
@@ -52,7 +52,7 @@ struct MeshNodeParameter final : public Parameter<T>
                 "Trying to access a MeshNodeParameter but the node id is not "
                 "specified.");
         }
-        auto const num_comp = _property.getNumberOfComponents();
+        auto const num_comp = _property.getNumberOfGlobalComponents();
         std::vector<T> cache(num_comp);
         for (int c = 0; c < num_comp; ++c)
         {
@@ -72,7 +72,7 @@ struct MeshNodeParameter final : public Parameter<T>
     {
         auto const n_nodes = element.getNumberOfNodes();
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(
-            n_nodes, getNumberOfComponents());
+            n_nodes, getNumberOfGlobalComponents());
 
         SpatialPosition x_position;
         auto const nodes = element.getNodes();

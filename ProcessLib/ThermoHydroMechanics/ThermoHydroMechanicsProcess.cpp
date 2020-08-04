@@ -109,7 +109,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::constructDofTable()
         std::generate_n(std::back_inserter(all_mesh_subsets),
                         getProcessVariables(monolithic_process_id)[2]
                             .get()
-                            .getNumberOfComponents(),
+                            .getNumberOfGlobalComponents(),
                         [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{1, 1, DisplacementDim};
@@ -124,10 +124,11 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::constructDofTable()
         // For displacement equation.
         const int process_id = 2;
         std::vector<MeshLib::MeshSubset> all_mesh_subsets;
-        std::generate_n(
-            std::back_inserter(all_mesh_subsets),
-            getProcessVariables(process_id)[0].get().getNumberOfComponents(),
-            [&]() { return *_mesh_subset_all_nodes; });
+        std::generate_n(std::back_inserter(all_mesh_subsets),
+                        getProcessVariables(process_id)[0]
+                            .get()
+                            .getNumberOfGlobalComponents(),
+                        [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{DisplacementDim};
         _local_to_global_index_map =

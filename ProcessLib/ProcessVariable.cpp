@@ -248,7 +248,8 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
              deactivated_subdomain_meshes)
         {
             for (int component_id = 0;
-                 component_id < dof_table.getNumberOfComponents();
+                 component_id <
+                 dof_table.getNumberOfVariableComponents(variable_id);
                  component_id++)
             {
                 // Copy the time interval.

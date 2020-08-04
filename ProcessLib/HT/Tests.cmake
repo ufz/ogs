@@ -457,3 +457,7 @@ if(NOT OGS_USE_MPI AND BUILD_TESTING AND Python3_FOUND)
         set_tests_properties(ogs-HT_${ht_invalid_prj_file_short} PROPERTIES WILL_FAIL TRUE)
     endforeach()
 endif()
+
+if (NOT (OGS_USE_MPI))
+    OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/deactivated_subdomain/HT_DeactivatedSubdomain.prj)
+endif()

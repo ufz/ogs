@@ -115,7 +115,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
         {
             continue;
         }
-        auto const n_src_comp = double_property->getNumberOfComponents();
+        auto const n_src_comp = double_property->getNumberOfGlobalComponents();
         auto new_prop =
             new_mesh->getProperties().createNewPropertyVector<double>(
                 name, MeshLib::MeshItemType::Node, n_src_comp);

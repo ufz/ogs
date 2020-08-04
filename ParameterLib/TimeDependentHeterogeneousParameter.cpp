@@ -25,9 +25,9 @@ TimeDependentHeterogeneousParameter::TimeDependentHeterogeneousParameter(
 {
 }
 
-int TimeDependentHeterogeneousParameter::getNumberOfComponents() const
+int TimeDependentHeterogeneousParameter::getNumberOfGlobalComponents() const
 {
-    return _time_parameter_mapping[0].second->getNumberOfComponents();
+    return _time_parameter_mapping[0].second->getNumberOfGlobalComponents();
 }
 
 bool TimeDependentHeterogeneousParameter::isTimeDependent() const
@@ -89,11 +89,12 @@ void TimeDependentHeterogeneousParameter::initialize(
     }
 
     // check that all parameters have the same number of components
-    auto const n = _time_parameter_mapping[0].second->getNumberOfComponents();
+    auto const n =
+        _time_parameter_mapping[0].second->getNumberOfGlobalComponents();
     if (!std::all_of(_time_parameter_mapping.begin(),
                      _time_parameter_mapping.end(),
                      [n](auto const p) {
-                         return n == p.second->getNumberOfComponents();
+                         return n == p.second->getNumberOfGlobalComponents();
                      }))
     {
         OGS_FATAL(

@@ -128,7 +128,7 @@ void Process::setInitialConditions(const int process_id, double const t,
 
         auto const& ic = pv.get().getInitialCondition();
 
-        auto const num_comp = pv.get().getNumberOfComponents();
+        auto const num_comp = pv.get().getNumberOfGlobalComponents();
 
         for (int component_id = 0; component_id < num_comp; ++component_id)
         {
@@ -262,15 +262,16 @@ void Process::constructMonolithicProcessDofTable()
     for (ProcessVariable const& pv : _process_variables[0])
     {
         std::generate_n(std::back_inserter(all_mesh_subsets),
-                        pv.getNumberOfComponents(),
+                        pv.getNumberOfGlobalComponents(),
                         [&]() { return *_mesh_subset_all_nodes; });
     }
 
     // Create a vector of the number of variable components
-    transform(
-        cbegin(_process_variables[0]), cend(_process_variables[0]),
-        back_inserter(vec_var_n_components),
-        [](ProcessVariable const& pv) { return pv.getNumberOfComponents(); });
+    transform(cbegin(_process_variables[0]), cend(_process_variables[0]),
+              back_inserter(vec_var_n_components),
+              [](ProcessVariable const& pv) {
+                  return pv.getNumberOfGlobalComponents();
+              });
 
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
@@ -296,13 +297,13 @@ void Process::constructDofTableOfSpecifiedProsessStaggerdScheme(
     std::generate_n(std::back_inserter(all_mesh_subsets),
                     _process_variables[specified_prosess_id][0]
                         .get()
-                        .getNumberOfComponents(),
+                        .getNumberOfGlobalComponents(),
                     [&]() { return *_mesh_subset_all_nodes; });
 
     // Create a vector of the number of variable components.
     vec_var_n_components.push_back(_process_variables[specified_prosess_id][0]
                                        .get()
-                                       .getNumberOfComponents());
+                                       .getNumberOfGlobalComponents());
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets), vec_var_n_components,
@@ -314,7 +315,7 @@ void Process::constructDofTableOfSpecifiedProsessStaggerdScheme(
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
 Process::getDOFTableForExtrapolatorData() const
 {
-    if (_local_to_global_index_map->getNumberOfComponents() == 1)
+    if (_local_to_global_index_map->getNumberOfGlobalComponents() == 1)
     {
         // For single-variable-single-component processes reuse the existing DOF
         // table.

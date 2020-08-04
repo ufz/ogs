@@ -264,8 +264,8 @@ void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(
         auto const& int_pt_C =
             integration_point_values_vectors[transport_process_id];
 
-        extrapolator.extrapolate(pv.getNumberOfComponents(), extrapolatables, t,
-                                 {int_pt_C},
+        extrapolator.extrapolate(pv.getNumberOfGlobalComponents(),
+                                 extrapolatables, t, {int_pt_C},
                                  {_local_to_global_index_map.get()});
 
         auto const& nodal_values = extrapolator.getNodalValues();

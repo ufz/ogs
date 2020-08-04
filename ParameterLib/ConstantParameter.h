@@ -34,7 +34,7 @@ struct ConstantParameter final : public Parameter<T>
 
     bool isTimeDependent() const override { return false; }
 
-    int getNumberOfComponents() const override
+    int getNumberOfGlobalComponents() const override
     {
         return static_cast<int>(_values.size());
     }
@@ -55,7 +55,7 @@ struct ConstantParameter final : public Parameter<T>
     {
         auto const n_nodes = element.getNumberOfNodes();
         Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> result(
-            n_nodes, getNumberOfComponents());
+            n_nodes, getNumberOfGlobalComponents());
 
         // Column vector of values, copied for each node.
         auto const row_values =

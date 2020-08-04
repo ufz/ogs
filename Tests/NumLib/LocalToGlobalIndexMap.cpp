@@ -138,7 +138,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
         NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(30, dof_map->dofSizeWithGhosts());
-    ASSERT_EQ(3, dof_map->getNumberOfComponents());
+    ASSERT_EQ(3, dof_map->getNumberOfGlobalComponents());
     ASSERT_EQ(2u, dof_map->getNumberOfVariables());
     ASSERT_EQ(1, dof_map->getNumberOfVariableComponents(0));
     ASSERT_EQ(2, dof_map->getNumberOfVariableComponents(1));
@@ -167,7 +167,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
         NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(30, dof_map->dofSizeWithGhosts());
-    ASSERT_EQ(3, dof_map->getNumberOfComponents());
+    ASSERT_EQ(3, dof_map->getNumberOfGlobalComponents());
     ASSERT_EQ(2u, dof_map->getNumberOfVariables());
     ASSERT_EQ(2, dof_map->getNumberOfVariableComponents(0));
     ASSERT_EQ(1, dof_map->getNumberOfVariableComponents(1));
@@ -206,7 +206,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
         NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(22u, dof_map->dofSizeWithGhosts());
-    ASSERT_EQ(3, dof_map->getNumberOfComponents());
+    ASSERT_EQ(3, dof_map->getNumberOfGlobalComponents());
     ASSERT_EQ(2u, dof_map->getNumberOfVariables());
     ASSERT_EQ(2, dof_map->getNumberOfVariableComponents(0));
     ASSERT_EQ(1, dof_map->getNumberOfVariableComponents(1));
@@ -258,7 +258,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
         NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(21u, dof_map->dofSizeWithGhosts());
-    ASSERT_EQ(3, dof_map->getNumberOfComponents());
+    ASSERT_EQ(3, dof_map->getNumberOfGlobalComponents());
     ASSERT_EQ(2u, dof_map->getNumberOfVariables());
     ASSERT_EQ(2, dof_map->getNumberOfVariableComponents(0));
     ASSERT_EQ(1, dof_map->getNumberOfVariableComponents(1));

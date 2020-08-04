@@ -337,7 +337,7 @@ std::size_t copyNodePropertyVectorValues(
 {
     auto const& nodes = p.nodes;
     auto const nnodes = nodes.size();
-    auto const n_components = pv.getNumberOfComponents();
+    auto const n_components = pv.getNumberOfGlobalComponents();
     for (std::size_t i = 0; i < nnodes; ++i)
     {
         const auto global_id = nodes[i]->getID();
@@ -358,7 +358,7 @@ std::size_t copyCellPropertyVectorValues(
     MeshLib::PropertyVector<T>& partitioned_pv)
 {
     std::size_t const n_regular(p.regular_elements.size());
-    auto const n_components = pv.getNumberOfComponents();
+    auto const n_components = pv.getNumberOfGlobalComponents();
     for (std::size_t i = 0; i < n_regular; ++i)
     {
         const auto id = p.regular_elements[i]->getID();
@@ -398,9 +398,9 @@ bool copyPropertyVector(
 
     auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
         pv->getPropertyName(), pv->getMeshItemType(),
-        pv->getNumberOfComponents());
+        pv->getNumberOfGlobalComponents());
     partitioned_pv->resize(total_number_of_tuples.at(item_type) *
-                           pv->getNumberOfComponents());
+                           pv->getNumberOfGlobalComponents());
 
     auto copy_property_vector_values = [&](Partition const& p,
                                            std::size_t offset) {
@@ -729,7 +729,7 @@ bool writePropertyVectorBinary(MeshLib::PropertyVector<T> const* const pv,
     MeshLib::IO::PropertyVectorMetaData pvmd;
     pvmd.property_name = pv->getPropertyName();
     pvmd.fillPropertyVectorMetaDataTypeInfo<T>();
-    pvmd.number_of_components = pv->getNumberOfComponents();
+    pvmd.number_of_components = pv->getNumberOfGlobalComponents();
     pvmd.number_of_tuples = pv->getNumberOfTuples();
     writePropertyVectorValuesBinary(out_val, *pv);
     MeshLib::IO::writePropertyVectorMetaDataBinary(out_meta, pvmd);
