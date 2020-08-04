@@ -35,12 +35,14 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
 endforeach()
 
 foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
+    set(RUNTIME 10)
     if("${mesh_size}" STREQUAL "1e6")
-        set(benchmark_type LARGE_)
+        set(RUNTIME 75)
     endif()
     AddTest(
-        NAME ${benchmark_type}SteadyStateDiffusion_cube_1x1x1_${mesh_size}
+        NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
+        RUNTIME ${RUNTIME}
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_${mesh_size}.prj
         TESTER vtkdiff
@@ -101,12 +103,14 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
 endforeach()
 
 foreach(mesh_size 1e5 1e6)
+    set(RUNTIME 30)
     if("${mesh_size}" STREQUAL "1e6")
-        set(benchmark_type LARGE_)
+        set(RUNTIME 90)
     endif()
     AddTest(
-        NAME ${benchmark_type}SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
+        NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
+        RUNTIME ${RUNTIME}
         EXECUTABLE ogs
         EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
         TESTER vtkdiff
@@ -130,9 +134,9 @@ AddTest(
 
 # The largest test is less accurate
 AddTest(
-    NAME LARGE_SteadyStateDiffusion_square_1x1_1e6
+    NAME SteadyStateDiffusion_square_1x1_1e6
     PATH Elliptic/square_1x1_SteadyStateDiffusion
-    RUNTIME 36
+    RUNTIME 75
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e6.prj
     TESTER vtkdiff
@@ -451,8 +455,9 @@ endforeach()
 # TODO: Parallel LARGE tests not tested!
 foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     AddTest(
-        NAME LARGE_SteadyStateDiffusion_cube_1x1x1_${mesh_size}
+        NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
+        RUNTIME 61 # Actual RUNTIME?
         EXECUTABLE_ARGS cube_${mesh_size}.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
@@ -463,8 +468,9 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     )
 
     AddTest(
-        NAME LARGE_SteadyStateDiffusion_cube_1x1x1_Neumann_${mesh_size}
+        NAME SteadyStateDiffusion_cube_1x1x1_Neumann_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
+        RUNTIME 61 # Actual RUNTIME?
         EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
@@ -504,8 +510,9 @@ endforeach()
 
 foreach(mesh_size 1e5 1e6)
     AddTest(
-        NAME LARGE_SteadyStateDiffusion_square_1x1_${mesh_size}
+        NAME SteadyStateDiffusion_square_1x1_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
+        RUNTIME 61 # Actual RUNTIME?
         EXECUTABLE_ARGS square_${mesh_size}.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
@@ -516,8 +523,9 @@ foreach(mesh_size 1e5 1e6)
     )
 
     AddTest(
-        NAME LARGE_SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
+        NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
+        RUNTIME 61 # Actual RUNTIME?
         EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
@@ -659,8 +667,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_SteadyStateDiffusion_NodalSourceTerm_circle_1e6
+    NAME SteadyStateDiffusion_NodalSourceTerm_circle_1e6
     PATH Elliptic/circle_radius_1
+    RUNTIME 61 # Actual RUNTIME?
     EXECUTABLE ogs
     EXECUTABLE_ARGS circle_1e6_axi.prj
     WRAPPER time
@@ -672,8 +681,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_SteadyStateDiffusion_NodalSourceTerm_square_1e6
+    NAME SteadyStateDiffusion_NodalSourceTerm_square_1e6
     PATH Elliptic/square_1x1_SteadyStateDiffusion
+    RUNTIME 61 # Actual RUNTIME?
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e6_with_nodal_sources.prj
     WRAPPER time

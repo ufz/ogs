@@ -53,9 +53,9 @@ AddTest(
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation
 AddTest(
-    NAME LARGE_ThermoHydroMechanics_square_1e2_point_heat_injection
+    NAME ThermoHydroMechanics_square_1e2_point_heat_injection
     PATH ThermoHydroMechanics/Linear/Point_injection
-    RUNTIME 400
+    RUNTIME 45
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e2.prj
     WRAPPER time
@@ -70,9 +70,9 @@ AddTest(
 )
 # ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation, linear elements for displacement
 AddTest(
-    NAME LARGE_ThermoHydroMechanics_square_1e2_point_heat_injection_lin
+    NAME ThermoHydroMechanics_square_1e2_point_heat_injection_lin
     PATH ThermoHydroMechanics/Linear/Point_injection
-    RUNTIME 400
+    RUNTIME 15
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e2_lin.prj
     WRAPPER time

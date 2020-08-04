@@ -1,7 +1,7 @@
 AddTest(
-    NAME LARGE_2D_TwoPhase_Prho_MoMaS
+    NAME 2D_TwoPhase_Prho_MoMaS
     PATH Parabolic/TwoPhaseFlowPrho/MoMaS
-    RUNTIME 20
+    RUNTIME 30
     EXECUTABLE ogs
     EXECUTABLE_ARGS Twophase_MoMaS_quad.prj
     TESTER vtkdiff
@@ -13,9 +13,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_TwoPhase_Prho_MoMaS_Adaptive_dt
+    NAME 2D_TwoPhase_Prho_MoMaS_Adaptive_dt
     PATH Parabolic/TwoPhaseFlowPrho/MoMaS
-    RUNTIME 200
+    RUNTIME 550
     EXECUTABLE ogs
     EXECUTABLE_ARGS Twophase_MoMaS_quad_adaptive_dt.prj
     TESTER vtkdiff
@@ -31,7 +31,7 @@ AddTest(
 )
 
 AddTest(
-    NAME 2D_TwoPhase_Prho_MoMaS
+    NAME 2D_TwoPhase_Prho_MoMaS_small
     PATH Parabolic/TwoPhaseFlowPrho/MoMaS
     RUNTIME 40
     EXECUTABLE ogs

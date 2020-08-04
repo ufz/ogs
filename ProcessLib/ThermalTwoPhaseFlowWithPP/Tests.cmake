@@ -13,9 +13,9 @@ AddTest(
     ref_t_10000.000000.vtu thermaltwophaseflow_small_pcs_0_ts_100_t_10000.000000.vtu temperature temperature 1e-8 1e-10
 )
 AddTest(
-    NAME LARGE_2D_Thermal_TwoPhase_heatpipe
+    NAME 2D_Thermal_TwoPhase_heatpipe
     PATH Parabolic/ThermalTwoPhaseFlowPP/HeatPipe
-    RUNTIME 200
+    RUNTIME 170
     EXECUTABLE ogs
     EXECUTABLE_ARGS Twophase_HeatPipe_quad_curve_large.prj
     TESTER vtkdiff

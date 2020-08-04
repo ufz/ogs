@@ -143,7 +143,7 @@ AddTest(
 # The 25 BHE array benchmark
 # test results are compared to 2D simulation result
 AddTest(
-    NAME LARGE_BHE_Array_2D
+    NAME BHE_Array_2D
     PATH Parabolic/T/2D_BHE_array
     RUNTIME 90
     EXECUTABLE ogs
@@ -326,9 +326,10 @@ AddTest(
 )
 
 AddTest(
-        NAME LARGE_HeatConduction_3D_LineSourceTermInMiddleOfCylinder_286k_prisms
+        NAME HeatConduction_3D_LineSourceTermInMiddleOfCylinder_286k_prisms
         PATH
         Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms
+        RUNTIME 32
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_source_term_in_cylinder.prj
         TESTER vtkdiff

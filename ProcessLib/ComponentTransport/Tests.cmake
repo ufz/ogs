@@ -675,7 +675,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ComponentTransport_Goswami
+    NAME 2D_ComponentTransport_Goswami
     PATH Parabolic/ComponentTransport/goswami
     RUNTIME 900
     EXECUTABLE ogs
@@ -711,7 +711,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ComponentTransport_Elder
+    NAME 2D_ComponentTransport_Elder
     PATH Parabolic/ComponentTransport/elder
     RUNTIME 2700
     EXECUTABLE ogs
@@ -775,8 +775,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ComponentTransport_ElderPython
+    NAME 2D_ComponentTransport_ElderPython
     PATH Parabolic/ComponentTransport/elder
+    RUNTIME 2700 # Actual RUNTIME?
     EXECUTABLE ogs
     EXECUTABLE_ARGS elder-python.prj
     WRAPPER time
@@ -1024,8 +1025,9 @@ if (NOT OGS_USE_MPI)
 endif()
 
 AddTest(
-    NAME LARGE_2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
+    NAME 2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
     PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents
+    RUNTIME 2600
     EXECUTABLE ogs
     EXECUTABLE_ARGS KineticReactant2_2d.prj
     WRAPPER time
