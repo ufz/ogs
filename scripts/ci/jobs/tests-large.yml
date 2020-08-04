@@ -11,6 +11,7 @@ tests large:
     CMAKE_ARGS: "-DOGS_USE_CONAN=OFF"
   image:
     name: $CONTAINER_GCC_IMAGE
+  timeout: 2h
   script:
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR

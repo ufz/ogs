@@ -2,6 +2,7 @@ build linux petsc:
   extends: .template-build-linux
   tags:
     - envinf1-shell
+  timeout: 2h
   variables:
     BUILD_DIR: "build-petsc"
     BUILD_CTEST_LARGE_ON_MASTER: "true"
