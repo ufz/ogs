@@ -1,8 +1,10 @@
 function (OgsTest)
+    # settings
+    set(LARGE_RUNTIME 60)
+
     if(NOT OGS_BUILD_CLI OR NOT BUILD_TESTING)
         return()
     endif()
-    set(options LARGE)
     set(oneValueArgs PROJECTFILE RUNTIME)
     set(multiValueArgs WRAPPER)
     cmake_parse_arguments(OgsTest "${options}" "${oneValueArgs}"
@@ -20,6 +22,10 @@ function (OgsTest)
         set(OgsTest_RUNTIME 1)
     endif()
 
+    if(${OgsTest_RUNTIME} GREATER ${LARGE_RUNTIME})
+        string(APPEND OgsTest_NAME_WE "-LARGE")
+    endif()
+
     set(OgsTest_SOURCE_DIR "${Data_SOURCE_DIR}/${OgsTest_DIR}")
     set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}")
     file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
@@ -32,10 +38,6 @@ function (OgsTest)
         if (WRAPPER STREQUAL "mpirun")
             set(TEST_NAME "${TEST_NAME}-mpi")
         endif()
-    endif()
-    # Add -LARGE tag.
-    if (${OgsTest_LARGE})
-        set(TEST_NAME "${TEST_NAME}-LARGE")
     endif()
 
     add_test(
