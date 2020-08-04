@@ -8,8 +8,8 @@ container:
   extends:
     - .container-maker-setup
   script:
-    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode
-    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi 4.0.4 --base_image centos:8
+    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --build_args ' --progress=plain'
+    - python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs . --pm system --cvode --ompi 4.0.4 --base_image centos:8 --build_args ' --progress=plain'
   artifacts:
     name: container
     paths:
