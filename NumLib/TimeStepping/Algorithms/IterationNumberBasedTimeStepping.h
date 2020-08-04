@@ -108,8 +108,6 @@ public:
     /// Return the number of repeated steps.
     int getNumberOfRepeatedSteps() const { return _n_rejected_steps; }
 
-    void addFixedOutputTimes(
-        std::vector<double> const& extra_fixed_output_times) override;
 private:
     /// Calculate the next time step size.
     double getNextTimeStepSize() const;

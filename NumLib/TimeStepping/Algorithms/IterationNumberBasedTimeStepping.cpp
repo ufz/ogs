@@ -138,17 +138,6 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
     return std::clamp(dt, _min_dt, _max_dt);
 }
 
-void IterationNumberBasedTimeStepping::addFixedOutputTimes(
-    std::vector<double> const& extra_fixed_output_times)
-{
-    _fixed_output_times.insert(_fixed_output_times.end(),
-                               extra_fixed_output_times.begin(),
-                               extra_fixed_output_times.end());
-
-    // Remove possible duplicated elements. Result will be sorted.
-    BaseLib::makeVectorUnique(_fixed_output_times);
-}
-
 bool IterationNumberBasedTimeStepping::accepted() const
 {
     return _accepted;

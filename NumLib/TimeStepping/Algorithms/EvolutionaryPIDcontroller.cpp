@@ -160,17 +160,6 @@ double EvolutionaryPIDcontroller::limitStepSize(
     return limited_h;
 }
 
-void EvolutionaryPIDcontroller::addFixedOutputTimes(
-    std::vector<double> const& extra_fixed_output_times)
-{
-    _fixed_output_times.insert(_fixed_output_times.end(),
-                               extra_fixed_output_times.begin(),
-                               extra_fixed_output_times.end());
-
-    // Remove possible duplicated elements. Result will be sorted.
-    BaseLib::makeVectorUnique(_fixed_output_times);
-}
-
 bool EvolutionaryPIDcontroller::canReduceTimestepSize() const
 {
     // If current and previous dt are both at minimum dt, then cannot reduce

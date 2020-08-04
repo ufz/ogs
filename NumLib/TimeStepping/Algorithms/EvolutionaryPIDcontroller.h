@@ -72,9 +72,6 @@ public:
 
     virtual bool canReduceTimestepSize() const override;
 
-    void addFixedOutputTimes(
-        std::vector<double> const& extra_fixed_output_times) override;
-
 private:
     const double _kP = 0.075;  ///< Parameter. \see EvolutionaryPIDcontroller
     const double _kI = 0.175;  ///< Parameter. \see EvolutionaryPIDcontroller
