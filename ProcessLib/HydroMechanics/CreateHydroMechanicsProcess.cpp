@@ -59,6 +59,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     ProcessVariable* variable_u;
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
+
+    int const hydraulic_process_id = 0;
+    int mechanics_related_process_id = 0;
+
     if (use_monolithic_scheme)  // monolithic scheme.
     {
         auto per_process_variables = findProcessVariables(
@@ -80,8 +84,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 findProcessVariables(variables, pv_config, {variable_name});
             process_variables.push_back(std::move(per_process_variables));
         }
-        variable_p = &process_variables[0][0].get();
-        variable_u = &process_variables[1][0].get();
+        mechanics_related_process_id = 1;
+        variable_p = &process_variables[hydraulic_process_id][0].get();
+        variable_u = &process_variables[mechanics_related_process_id][0].get();
     }
 
     DBUG("Associate displacement with process variable '{:s}'.",
@@ -166,10 +171,14 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         &mesh);
 
     HydroMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),     std::move(media_map),
+        materialIDs(mesh),
+        std::move(media_map),
         std::move(solid_constitutive_relations),
-        initial_stress,        specific_body_force,
-        mass_lumping};
+        initial_stress,
+        specific_body_force,
+        mass_lumping,
+        hydraulic_process_id,
+        mechanics_related_process_id};
 
     SecondaryVariableCollection secondary_variables;
 

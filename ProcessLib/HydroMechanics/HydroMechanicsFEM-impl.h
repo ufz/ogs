@@ -353,12 +353,11 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const
 {
-    constexpr int process_id = 0;  // monolithic as well as staggered where the
-                                   // hydraulic process has id 0.
+    int hydraulic_process_id = _process_data.hydraulic_process_id;
     auto const indices =
-        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+        NumLib::getIndices(_element.getID(), *dof_table[hydraulic_process_id]);
     assert(!indices.empty());
-    auto const local_x = x[process_id]->get(indices);
+    auto const local_x = x[hydraulic_process_id]->get(indices);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -694,7 +693,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         const LocalCoupledSolutions& /*local_coupled_solutions*/)
 {
     // For the equations with pressure
-    if (process_id == 0)
+    if (process_id == _process_data.hydraulic_process_id)
     {
         assembleWithJacobianForPressureEquations(
             t, dt, local_x, local_xdot, dxdot_dx, dx_dx, local_M_data,
