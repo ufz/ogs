@@ -180,11 +180,7 @@ std::size_t VtkImageDataToPointCloudFilter::interpolate(double low,
                                                         double p,
                                                         double gamma) const
 {
-    if (p < low)
-        p = low;
-    if (p > high)
-        p = high;
-
+    p = std::clamp(p, low, high);
     double const r = (p - low) / (high - low);
     return static_cast<std::size_t>(
         (MaxNumberOfPointsPerCell - MinNumberOfPointsPerCell) * std::pow(r, gamma) +
