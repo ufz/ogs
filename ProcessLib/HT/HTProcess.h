@@ -65,9 +65,7 @@ public:
         HTProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         bool const use_monolithic_scheme,
-        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
-        const int heat_transport_process_id,
-        const int hydraulic_process_id);
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
     //! \name ODESystem interface
     //! @{
 
@@ -131,9 +129,6 @@ private:
     std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
-
-    const int _heat_transport_process_id;
-    const int _hydraulic_process_id;
 };
 
 }  // namespace HT

@@ -31,6 +31,8 @@ struct HTProcessData final
     ParameterLib::Parameter<double> const& biot_constant;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
+    int const heat_transport_process_id;
+    int const hydraulic_process_id;
 };
 
 }  // namespace HT

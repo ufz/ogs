@@ -35,16 +35,12 @@ HTProcess::HTProcess(
     HTProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     bool const use_monolithic_scheme,
-    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
-    const int heat_transport_process_id,
-    const int hydraulic_process_id)
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data)),
-      _surfaceflux(std::move(surfaceflux)),
-      _heat_transport_process_id(heat_transport_process_id),
-      _hydraulic_process_id(hydraulic_process_id)
+      _surfaceflux(std::move(surfaceflux))
 {
 }
 
@@ -72,8 +68,7 @@ void HTProcess::initializeConcreteProcess(
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
             pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order, _process_data,
-            _heat_transport_process_id, _hydraulic_process_id);
+            mesh.isAxiallySymmetric(), integration_order, _process_data);
     }
 
     _secondary_variables.addSecondaryVariable(
@@ -98,7 +93,7 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
     }
     else
     {
-        if (process_id == _heat_transport_process_id)
+        if (process_id == _process_data.heat_transport_process_id)
         {
             DBUG(
                 "Assemble the equations of heat transport process within "
@@ -234,8 +229,10 @@ void HTProcess::setCoupledSolutionsOfPreviousTimeStepPerProcess(
 void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
 {
     _coupled_solutions->coupled_xs_t0.resize(2);
-    setCoupledSolutionsOfPreviousTimeStepPerProcess(_heat_transport_process_id);
-    setCoupledSolutionsOfPreviousTimeStepPerProcess(_hydraulic_process_id);
+    setCoupledSolutionsOfPreviousTimeStepPerProcess(
+        _process_data.heat_transport_process_id);
+    setCoupledSolutionsOfPreviousTimeStepPerProcess(
+        _process_data.hydraulic_process_id);
 }
 
 Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
@@ -268,7 +265,8 @@ void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
             "The condition of process_id = 0 must be satisfied for "
             "monolithic HTProcess, which is a single process.");
     }
-    if (!_use_monolithic_scheme && process_id != _hydraulic_process_id)
+    if (!_use_monolithic_scheme &&
+        process_id != _process_data.hydraulic_process_id)
     {
         DBUG("This is the thermal part of the staggered HTProcess.");
         return;
