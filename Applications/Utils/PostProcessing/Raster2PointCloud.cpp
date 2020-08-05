@@ -50,16 +50,18 @@ int main(int argc, char *argv[])
         "g", "gamma",
         "Exponental increase coefficient. A value of '1' indicates a linear "
         "increase, smaller or larger values indicate a logarithmic or "
-        "exponential increase, respectively.",
-        false, 0.0, "exponential increase (default: 1)");
+        "exponential increase, respectively (default: 1).",
+        false, 0.0, "exponential increase");
     cmd.add(gamma_arg);
     TCLAP::ValueArg<std::size_t> max_points_arg(
-        "p", "max-points", "Maximum number of points per pixel.", false, 0,
-        "maximum points per pixel (default: 1000)");
+        "p", "max-points",
+        "Maximum number of points per pixel (default: 1000).", false, 0,
+        "maximum points per pixel");
     cmd.add(max_points_arg);
     TCLAP::ValueArg<double> max_height_arg(
-        "e", "max-elevation", "Maximum elevation of randomly created points.",
-        false, 0.0, "maximum point elevation (default: 5000");
+        "e", "max-elevation",
+        "Maximum elevation of randomly created points (default: 5000).", false,
+        0.0, "maximum point elevation");
     cmd.add(max_height_arg);
     TCLAP::ValueArg<std::string> output_arg(
         "o", "output",
