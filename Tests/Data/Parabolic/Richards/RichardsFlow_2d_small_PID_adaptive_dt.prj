@@ -109,20 +109,20 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>richards_pcs_{:process_id}</prefix>
+            <prefix>richards_pcs_PID_adaptive_dt</prefix>
+            <suffix>_t_{:gtime}</suffix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
                     <each_steps>100000000</each_steps>
                 </pair>
             </timesteps>
-            <fixed_output_times> 50.0 100.0 500.</fixed_output_times>
+            <fixed_output_times>10.0 50.0 100.0 500. 1000.0</fixed_output_times>
             <output_iteration_results>false</output_iteration_results>
             <variables>
                 <variable>pressure</variable>
                 <variable>saturation</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>

@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cmath>
+#include <tuple>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -84,16 +85,18 @@ public:
     /// reset the current step size from the previous time
     void resetCurrentTimeStep(const double dt)
     {
-        _ts_current = _ts_prev;
+        _ts_prev = _ts_current;
         _ts_current += dt;
+        _dt_vector.push_back(dt);
     }
 
     /// Move to the next time step
     /// \param solution_error Solution error \f$e_n\f$ between two successive
     ///        time steps.
     /// \param number_iterations Number of non-linear iterations used.
-    /// \return true if the next step exists
-    virtual bool next(const double solution_error, int number_iterations) = 0;
+    /// \return A step acceptance flag and the computed step size.
+    virtual std::tuple<bool, double> next(const double solution_error,
+                                          int number_iterations) = 0;
 
     /// return if current time step is accepted or not
     virtual bool accepted() const = 0;

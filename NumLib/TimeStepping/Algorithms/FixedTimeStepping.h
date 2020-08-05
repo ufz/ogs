@@ -58,7 +58,8 @@ public:
     FixedTimeStepping(double t0, double tn,
                       const std::vector<double>& vec_all_dt);
 
-    bool next(double solution_error, int number_iterations) override;
+    std::tuple<bool, double> next(double solution_error,
+                                  int number_iterations) override;
 
     bool accepted() const override { return true; }
 

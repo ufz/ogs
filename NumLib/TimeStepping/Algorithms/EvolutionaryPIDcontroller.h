@@ -58,7 +58,8 @@ public:
                               std::vector<double>&& fixed_output_times,
                               const double tol);
 
-    bool next(double solution_error, int number_iterations) override;
+    std::tuple<bool, double> next(double solution_error,
+                                  int number_iterations) override;
 
     bool accepted() const override { return _is_accepted; }
 

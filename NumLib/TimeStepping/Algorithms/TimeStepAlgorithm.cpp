@@ -10,6 +10,7 @@
 #include "TimeStepAlgorithm.h"
 
 #include <algorithm>
+#include <limits>
 
 namespace NumLib
 {
@@ -25,9 +26,11 @@ double possiblyClampDtToNextFixedTime(
         return dt;
     }
 
-    if ((*specific_time > t) && (t + dt - *specific_time > 0.0))
+    double const t_to_specific_time = *specific_time - t;
+    if ((t_to_specific_time > std::numeric_limits<double>::epsilon()) &&
+        (t + dt - *specific_time > 0.0))
     {
-        return *specific_time - t;
+        return t_to_specific_time;
     }
 
     return dt;

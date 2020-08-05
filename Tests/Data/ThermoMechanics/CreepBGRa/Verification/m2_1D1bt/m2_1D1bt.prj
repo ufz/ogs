@@ -69,6 +69,12 @@
                     <each_steps>200</each_steps>
                 </pair>
             </timesteps>
+            <!-- Due to dt=7.5e-3, the output at t=3.0 is made,
+                 while at t=3.0+1.e-11, an output is made as well due to the
+                 threshold |t-t_end|< std::numeric_limits<double>::epsilon().
+                 In the output file name at t=3.0+1.e-11,the time is shown as
+                 3.0 as well, and the step times is increased by one.
+            -->
             <fixed_output_times>1.5 3.0</fixed_output_times>
             <variables>
                 <variable>displacement</variable>
@@ -275,7 +281,7 @@
         <vtkdiff>
             <file>m2_1D1bt_pcs_0_ts_400_t_3.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>7e-11</absolute_tolerance>
+            <absolute_tolerance>7e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

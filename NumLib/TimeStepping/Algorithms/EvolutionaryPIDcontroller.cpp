@@ -44,8 +44,8 @@ EvolutionaryPIDcontroller::EvolutionaryPIDcontroller(
     }
 }
 
-bool EvolutionaryPIDcontroller::next(double const solution_error,
-                                     int const /*number_iterations*/)
+std::tuple<bool, double> EvolutionaryPIDcontroller::next(
+    double const solution_error, int const /*number_iterations*/)
 {
     const bool is_previous_step_accepted = _is_accepted;
 
@@ -60,11 +60,6 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
                                               : 0.5 * _ts_current.dt();
 
         h_new = limitStepSize(h_new, is_previous_step_accepted);
-        h_new = possiblyClampDtToNextFixedTime(_ts_current.current(), h_new,
-                                               _fixed_output_times);
-
-        _ts_current = _ts_prev;
-        _ts_current += h_new;
 
         WARN(
             "This step is rejected due to the relative change from the"
@@ -76,7 +71,7 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
             "\t or the simulation will be halted.",
             _tol, h_new);
 
-        return false;
+        return std::make_tuple(false, h_new);
     }
 
     // step accepted.
@@ -84,11 +79,9 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
 
     if (_ts_current.steps() == 0)
     {
-        _ts_prev = _ts_current;
-        _ts_current += _h0;
         _e_n_minus1 = e_n;
 
-        _dt_vector.push_back(_h0);
+        return std::make_tuple(true, _h0);
     }
     else
     {
@@ -121,18 +114,14 @@ bool EvolutionaryPIDcontroller::next(double const solution_error,
         }
 
         h_new = limitStepSize(h_new, is_previous_step_accepted);
-        h_new = possiblyClampDtToNextFixedTime(_ts_current.current(), h_new,
-                                               _fixed_output_times);
-        _dt_vector.push_back(h_new);
-
-        _ts_prev = _ts_current;
-        _ts_current += h_new;
 
         _e_n_minus2 = _e_n_minus1;
         _e_n_minus1 = e_n;
+
+        return std::make_tuple(true, h_new);
     }
 
-    return true;
+    return {};
 }
 
 double EvolutionaryPIDcontroller::limitStepSize(

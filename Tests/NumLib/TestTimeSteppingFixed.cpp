@@ -29,7 +29,7 @@ TEST(NumLib, TimeSteppingFixed)
         const std::vector<double> expected_vec_t = {1, 11, 21, 31};
 
         std::vector<double> vec_t =
-            timeStepping(fixed, dummy_number_iterations);
+            timeStepping(fixed, dummy_number_iterations, {});
 
         ASSERT_EQ(expected_vec_t.size(), vec_t.size());
         ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
@@ -43,7 +43,7 @@ TEST(NumLib, TimeSteppingFixed)
         const std::vector<double> expected_vec_t = {1, 11, 21, 31};
 
         std::vector<double> vec_t =
-            timeStepping(fixed, dummy_number_iterations);
+            timeStepping(fixed, dummy_number_iterations, {});
 
         ASSERT_EQ(expected_vec_t.size(), vec_t.size());
         ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
@@ -57,7 +57,7 @@ TEST(NumLib, TimeSteppingFixed)
         const std::vector<double> expected_vec_t = {1, 6, 16, 31};
 
         std::vector<double> vec_t =
-            timeStepping(fixed, dummy_number_iterations);
+            timeStepping(fixed, dummy_number_iterations, {});
 
         ASSERT_EQ(expected_vec_t.size(), vec_t.size());
         ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
@@ -71,7 +71,7 @@ TEST(NumLib, TimeSteppingFixed)
         const std::vector<double> expected_vec_t = {1, 6, 16, 26};
 
         std::vector<double> vec_t =
-            timeStepping(fixed, dummy_number_iterations);
+            timeStepping(fixed, dummy_number_iterations, {});
 
         ASSERT_EQ(expected_vec_t.size(), vec_t.size());
         ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
