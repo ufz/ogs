@@ -85,16 +85,6 @@ template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
 {
-    // When staggered scheme is adopted, nodal pressure and nodal concentration
-    // are accessed by process id.
-    static const int hydraulic_process_id = 0;
-    // TODO (renchao-lu): This variable is used in the calculation of the
-    // fluid's density and flux, indicating the transport process id. For now it
-    // is assumed that these quantities depend on the first occurring transport
-    // process only. The density and flux calculations have to be extended to
-    // all processes.
-    static const int first_transport_process_id = 1;
-
     // When monolithic scheme is adopted, nodal pressure and nodal concentration
     // are accessed by vector index.
     static const int pressure_index = 0;
@@ -428,7 +418,7 @@ public:
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         LocalCoupledSolutions const& coupled_xs) override
     {
-        if (process_id == hydraulic_process_id)
+        if (process_id == _process_data.hydraulic_process_id)
         {
             assembleHydraulicEquation(t, dt, local_x, local_M_data,
                                       local_K_data, local_b_data, coupled_xs);

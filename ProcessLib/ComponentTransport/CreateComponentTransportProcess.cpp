@@ -131,6 +131,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
             it->get().getName(),
             it->get().getNumberOfGlobalComponents());
     }
+    int const hydraulic_process_id = 0;
+    int const first_transport_process_id = use_monolithic_scheme ? 0 : 1;
 
     // Allocate the collected process variables into a two-dimensional vector,
     // depending on what scheme is adopted
@@ -225,9 +227,13 @@ std::unique_ptr<Process> createComponentTransportProcess(
     auto chemical_process_data =
         createChemicalProcessData(chemical_solver_interface);
 
-    ComponentTransportProcessData process_data{
-        std::move(media_map), specific_body_force, has_gravity,
-        non_advective_form, std::move(chemical_process_data)};
+    ComponentTransportProcessData process_data{std::move(media_map),
+                                               specific_body_force,
+                                               has_gravity,
+                                               non_advective_form,
+                                               std::move(chemical_process_data),
+                                               hydraulic_process_id,
+                                               first_transport_process_id};
 
     SecondaryVariableCollection secondary_variables;
 
