@@ -66,11 +66,13 @@ public:
     {
     }
 
-    void assembleForStaggeredScheme(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
-        int const process_id, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        LocalCoupledSolutions const& coupled_xs) override;
+    void assembleForStaggeredScheme(double const t, double const dt,
+                                    Eigen::VectorXd const& local_x,
+                                    Eigen::VectorXd const& local_xdot,
+                                    int const process_id,
+                                    std::vector<double>& local_M_data,
+                                    std::vector<double>& local_K_data,
+                                    std::vector<double>& local_b_data) override;
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
@@ -81,16 +83,16 @@ public:
 private:
     void assembleHydraulicEquation(double const t, double const dt,
                                    Eigen::VectorXd const& local_x,
+                                   Eigen::VectorXd const& local_xdot,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
-                                   std::vector<double>& local_b_data,
-                                   LocalCoupledSolutions const& coupled_xs);
+                                   std::vector<double>& local_b_data);
 
-    void assembleHeatTransportEquation(double const t, double const dt,
+    void assembleHeatTransportEquation(double const t,
+                                       double const dt,
                                        Eigen::VectorXd const& local_x,
                                        std::vector<double>& local_M_data,
-                                       std::vector<double>& local_K_data,
-                                       std::vector<double>& local_b_data);
+                                       std::vector<double>& local_K_data);
 };
 
 }  // namespace HT

@@ -137,11 +137,11 @@ public:
 
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& local_xdot, const double dxdot_dx,
+        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
         const double dx_dx, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions) override;
+        std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data) override;
 
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
@@ -217,29 +217,19 @@ private:
      *
      * @param t               Time
      * @param dt              Time increment
-     * @param local_x         Nodal values of \f$x\f$ of an element.
-     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
-     * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
-     * @param dx_dx           Value of \f$ x \cdot dx\f$.
-     * @param local_M_data    Mass matrix of an element, which takes the form of
-     *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
-     * @param local_K_data    Laplacian matrix of an element, which takes the
-     *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
-     *                        Not used.
+     * @param local_xs         Nodal values of \f$x\f$ of all processes of an
+     * element.
+     * @param local_dot_xs     Nodal values of \f$\dot{x}\f$ of all processes of
+     * an element.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
      *                        method.
-     * @param local_coupled_solutions Nodal values of solutions of the coupled
-     *                                temperature of an element.
      */
 
     void assembleWithJacobianForDeformationEquations(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& local_xdot, const double dxdot_dx,
-        const double dx_dx, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions);
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data);
 
     /**
      * Assemble local matrices and vectors arise from the linearized discretized
@@ -253,28 +243,18 @@ private:
      *
      * @param t               Time
      * @param dt              Time increment
-     * @param local_x         Nodal values of \f$x\f$ of an element.
-     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
-     * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
-     * @param dx_dx           Value of \f$ x \cdot dx\f$.
-     * @param local_M_data    Mass matrix of an element, which takes the form of
-     *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
-     * @param local_K_data    Laplacian matrix of an element, which takes the
-     *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
-     *                        Not used.
+     * @param local_xs         Nodal values of \f$x\f$ of all processes of an
+     * element.
+     * @param local_dot_xs     Nodal values of \f$\dot{x}\f$ of all processes of
+     * an element.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
      *                        method.
-     * @param local_coupled_solutions Nodal values of solutions of the coupled
-     *                                displacement of an element.
      */
     void assembleWithJacobianForHeatConductionEquations(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double> const& local_xdot, const double dxdot_dx,
-        const double dx_dx, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        std::vector<double>& local_Jac_data,
-        LocalCoupledSolutions const& local_coupled_solutions);
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_xdot, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data);
 
     std::size_t setSigma(double const* values);
 

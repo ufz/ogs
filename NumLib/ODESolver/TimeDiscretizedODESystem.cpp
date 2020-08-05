@@ -84,11 +84,10 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const dxdot_dx = _time_disc.getNewXWeight();
 
     std::vector<GlobalVector*> xdot(x_new_timestep.size());
-    for (auto& v : xdot)
+    for (std::size_t i = 0; i < xdot.size(); i++)
     {
-        v = &NumLib::GlobalVectorProvider::provider.getVector();
-        _time_disc.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
-                           *v);
+        xdot[i] = &NumLib::GlobalVectorProvider::provider.getVector();
+        _time_disc.getXdot(*x_new_timestep[i], *x_prev[i], *xdot[i]);
     }
 
     _M->setZero();
@@ -221,11 +220,10 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const dt = _time_disc.getCurrentTimeIncrement();
     auto const& x_curr = *x_new_timestep[process_id];
     std::vector<GlobalVector*> xdot(x_new_timestep.size());
-    for (auto& v : xdot)
+    for (std::size_t i = 0; i < xdot.size(); i++)
     {
-        v = &NumLib::GlobalVectorProvider::provider.getVector();
-        _time_disc.getXdot(*x_new_timestep[process_id], *x_prev[process_id],
-                           *v);
+        xdot[i] = &NumLib::GlobalVectorProvider::provider.getVector();
+        _time_disc.getXdot(*x_new_timestep[i], *x_prev[i], *xdot[i]);
     }
 
     _M->setZero();

@@ -412,40 +412,42 @@ public:
         }
     }
 
-    void assembleForStaggeredScheme(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
-        int const process_id, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        LocalCoupledSolutions const& coupled_xs) override
+    void assembleForStaggeredScheme(double const t, double const dt,
+                                    Eigen::VectorXd const& local_x,
+                                    Eigen::VectorXd const& local_xdot,
+                                    int const process_id,
+                                    std::vector<double>& local_M_data,
+                                    std::vector<double>& local_K_data,
+                                    std::vector<double>& local_b_data) override
     {
         if (process_id == _process_data.hydraulic_process_id)
         {
-            assembleHydraulicEquation(t, dt, local_x, local_M_data,
-                                      local_K_data, local_b_data, coupled_xs);
+            assembleHydraulicEquation(t, dt, local_x, local_xdot, local_M_data,
+                                      local_K_data, local_b_data);
         }
         else
         {
             // Go for assembling in an order of transport process id.
-            assembleComponentTransportEquation(t, dt, local_x, local_M_data,
-                                               local_K_data, local_b_data,
-                                               coupled_xs, process_id);
+            assembleComponentTransportEquation(t, dt, local_x, local_xdot,
+                                               local_M_data, local_K_data,
+                                               local_b_data, process_id);
         }
     }
 
     void assembleHydraulicEquation(double const t,
                                    double const dt,
                                    Eigen::VectorXd const& local_x,
+                                   Eigen::VectorXd const& local_xdot,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
-                                   std::vector<double>& local_b_data,
-                                   LocalCoupledSolutions const& coupled_xs)
+                                   std::vector<double>& local_b_data)
     {
-        auto local_p = local_x.template segment<pressure_size>(pressure_index);
-        auto local_C = local_x.template segment<concentration_size>(
+        auto const local_p =
+            local_x.template segment<pressure_size>(pressure_index);
+        auto const local_C = local_x.template segment<concentration_size>(
             first_concentration_index);
-        auto local_C0 = Eigen::Map<const NodalVectorType>(
-            &coupled_xs.local_coupled_xs0[first_concentration_index],
-            concentration_size);
+        auto const local_Cdot =
+            local_xdot.segment<concentration_size>(first_concentration_index);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, pressure_size, pressure_size);
@@ -535,27 +537,28 @@ public:
 
             // coupling term
             {
-                double C0_int_pt = 0.0;
-                NumLib::shapeFunctionInterpolate(local_C0, N, C0_int_pt);
+                double dot_C_int_pt = 0.0;
+                NumLib::shapeFunctionInterpolate(local_Cdot, N, dot_C_int_pt);
 
-                local_b.noalias() -= w * N.transpose() * porosity * drho_dC *
-                                     (C_int_pt - C0_int_pt) / dt;
+                local_b.noalias() -=
+                    w * N.transpose() * porosity * drho_dC * dot_C_int_pt;
             }
         }
     }
 
     void assembleComponentTransportEquation(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& /*local_b_data*/,
-        LocalCoupledSolutions const& coupled_xs, int const transport_process_id)
+        Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
+        std::vector<double>& local_K_data,
+        std::vector<double>& /*local_b_data*/, int const transport_process_id)
     {
-        auto local_p = local_x.template segment<pressure_size>(pressure_index);
-        auto local_C = local_x.template segment<concentration_size>(
+        auto const local_p =
+            local_x.template segment<pressure_size>(pressure_index);
+        auto const local_C = local_x.template segment<concentration_size>(
             first_concentration_index +
             (transport_process_id - 1) * concentration_size);
-        auto local_p0 = Eigen::Map<const NodalVectorType>(
-            &coupled_xs.local_coupled_xs0[pressure_index], pressure_size);
+        auto const local_pdot =
+            local_xdot.segment<pressure_size>(pressure_index);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);
@@ -690,18 +693,17 @@ public:
 
             if (_process_data.non_advective_form)
             {
-                double p0_int_pt = 0.0;
+                double dot_p_int_pt = 0.0;
 
-                NumLib::shapeFunctionInterpolate(local_p0, N, p0_int_pt);
+                NumLib::shapeFunctionInterpolate(local_pdot, N, dot_p_int_pt);
                 const double drho_dp =
                     phase.property(MaterialPropertyLib::PropertyType::density)
                         .template dValue<double>(
                             vars, MaterialPropertyLib::Variable::phase_pressure,
                             pos, t, dt);
+
                 local_K.noalias() +=
-                    N_t_N *
-                        ((R_times_phi * drho_dp * (p_int_pt - p0_int_pt) / dt) *
-                         w) -
+                    N_t_N * ((R_times_phi * drho_dp * dot_p_int_pt) * w) -
                     dNdx.transpose() * velocity * N * (density * w);
             }
             else
