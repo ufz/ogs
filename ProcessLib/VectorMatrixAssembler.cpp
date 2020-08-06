@@ -111,9 +111,10 @@ void VectorMatrixAssembler::assembleWithJacobian(
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    GlobalMatrix& Jac, CoupledSolutionsForStaggeredScheme const* const cpl_xs)
+    std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+    const double dx_dx, int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, GlobalMatrix& Jac,
+    CoupledSolutionsForStaggeredScheme const* const cpl_xs)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
@@ -123,7 +124,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
               });
 
     auto const& indices = indices_of_processes[process_id];
-    auto const local_xdot = xdot.get(indices);
+    auto const local_xdot = xdot[process_id]->get(indices);
 
     _local_M_data.clear();
     _local_K_data.clear();

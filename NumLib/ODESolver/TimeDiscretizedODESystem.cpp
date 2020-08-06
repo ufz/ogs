@@ -99,9 +99,8 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     _ode.preAssemble(t, dt, x_curr);
     try
     {
-        _ode.assembleWithJacobian(t, dt, x_new_timestep, *xdot[process_id],
-                                  dxdot_dx, 1.0, process_id, *_M, *_K, *_b,
-                                  *_Jac);
+        _ode.assembleWithJacobian(t, dt, x_new_timestep, xdot, dxdot_dx, 1.0,
+                                  process_id, *_M, *_K, *_b, *_Jac);
     }
     catch (AssemblyException const&)
     {
