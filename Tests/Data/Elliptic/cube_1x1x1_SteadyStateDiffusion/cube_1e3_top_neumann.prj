@@ -3,17 +3,7 @@
     <mesh>cube_1x1x1_hex_1e3.vtu</mesh>
     <geometry>cube_1x1x1.gml</geometry>
     <processes>
-        <process>
-            <name>SteadyStateDiffusion</name>
-            <type>STEADY_STATE_DIFFUSION</type>
-            <integration_order>2</integration_order>
-            <process_variables>
-                <process_variable>pressure</process_variable>
-            </process_variables>
-            <secondary_variables>
-                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
-            </secondary_variables>
-        </process>
+        <include file="SteadyStateDiffusion.xml" />
     </processes>
     <media>
         <medium id="0">
