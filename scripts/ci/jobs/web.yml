@@ -50,6 +50,9 @@ deploy web site:
       changes:
         - web/**/*
         - scripts/ci/jobs/web.yml
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: manual
+      allow_failure: true
   script:
     - cd web
     - yarn
