@@ -3,8 +3,10 @@ build linux:
   tags:
     - envinf1
     - docker
+  timeout: 2h
   variables:
     BUILD_DIR: "build"
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_ARGS: >-
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_CONAN=OFF
