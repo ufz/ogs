@@ -45,8 +45,7 @@ void VectorMatrixAssembler::assemble(
         dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& xdot, int const process_id,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    CoupledSolutionsForStaggeredScheme const* const /*cpl_xs*/)
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
@@ -79,18 +78,6 @@ void VectorMatrixAssembler::assemble(
             getCoupledLocalSolutions(xdot, indices_of_processes);
         auto const local_xdot = MathLib::toVector(local_coupled_xdots);
 
-        /*
-        auto local_coupled_xs0 = getCoupledLocalSolutions(cpl_xs->coupled_xs_t0,
-                                                          indices_of_processes);
-
-        auto local_coupled_xs =
-            getCoupledLocalSolutions(x, indices_of_processes);
-
-        auto const local_x = MathLib::toVector(local_coupled_xs);
-
-        ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-            std::move(local_coupled_xs0));
-        */
 
         local_assembler.assembleForStaggeredScheme(
             t, dt, local_x, local_xdot, process_id, _local_M_data,
@@ -125,8 +112,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
     const double dx_dx, int const process_id, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac,
-    CoupledSolutionsForStaggeredScheme const* const /*cpl_xs*/)
+    GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
@@ -162,18 +148,6 @@ void VectorMatrixAssembler::assembleWithJacobian(
             getCoupledLocalSolutions(xdot, indices_of_processes);
         auto const local_xdot = MathLib::toVector(local_coupled_xdots);
 
-        /*
-        auto local_coupled_xs0 = getCoupledLocalSolutions(cpl_xs->coupled_xs_t0,
-                                                          indices_of_processes);
-
-        auto local_coupled_xs =
-            getCoupledLocalSolutions(x, indices_of_processes);
-
-        auto const local_x = MathLib::toVector(local_coupled_xs);
-
-        ProcessLib::LocalCoupledSolutions local_coupled_solutions(
-            std::move(local_coupled_xs0));
-        */
 
         _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
             local_assembler, t, dt, local_x, local_xdot, dxdot_dx, dx_dx,

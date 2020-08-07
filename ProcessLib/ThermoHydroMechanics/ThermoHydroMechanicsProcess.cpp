@@ -254,7 +254,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, xdot, process_id, M, K, b, _coupled_solutions);
+        dof_table, t, dt, x, xdot, process_id, M, K, b);
 }
 
 template <int DisplacementDim>
@@ -304,7 +304,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, dof_tables, t, dt, x, xdot, dxdot_dx, dx_dx,
-        process_id, M, K, b, Jac, _coupled_solutions);
+        process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
         if (_use_monolithic_scheme)

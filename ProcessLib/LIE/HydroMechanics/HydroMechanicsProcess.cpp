@@ -579,7 +579,7 @@ void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, xdot, process_id, M, K, b, _coupled_solutions);
+        dof_table, t, dt, x, xdot, process_id, M, K, b);
 }
 
 template <int GlobalDim>
@@ -599,7 +599,7 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
         transformVariableFromGlobalVector(b, variable_id,

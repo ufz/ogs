@@ -115,7 +115,7 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
@@ -144,7 +144,7 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 }
 
 void HTProcess::preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,

@@ -770,6 +770,10 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             BaseLib::RunTime time_timestep_process;
             time_timestep_process.start();
 
+            // The following setting of coupled_solutions can be removed only if
+            // the CoupledSolutionsForStaggeredScheme and related functions are
+            // removed totally from the computation of the secondary variable
+            // and from post-time functions.
             CoupledSolutionsForStaggeredScheme coupled_solutions(
                 _process_solutions);
 

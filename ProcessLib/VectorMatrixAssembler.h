@@ -50,8 +50,7 @@ public:
                   double const t, double const dt,
                   std::vector<GlobalVector*> const& x,
                   std::vector<GlobalVector*> const& xdot, int const process_id,
-                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-                  CoupledSolutionsForStaggeredScheme const* const cpl_xs);
+                  GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b);
 
     //! Assembles \c M, \c K, \c b, and the Jacobian \c Jac of the residual.
     //! \note The Jacobian must be assembled.
@@ -64,8 +63,7 @@ public:
         const double t, double const dt, std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
         const double dx_dx, int const process_id, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac,
-        CoupledSolutionsForStaggeredScheme const* const cpl_xs);
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac);
 
 private:
     // temporary data only stored here in order to avoid frequent memory

@@ -172,7 +172,7 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b);
 }
 
 void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
