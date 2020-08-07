@@ -20,30 +20,6 @@
 
 namespace NumLib
 {
-EvolutionaryPIDcontroller::EvolutionaryPIDcontroller(
-    const double t0, const double t_end, const double h0, const double h_min,
-    const double h_max, const double rel_h_min, const double rel_h_max,
-    std::vector<double>&& fixed_output_times, const double tol)
-    : TimeStepAlgorithm(t0, t_end),
-      _h0(h0),
-      _h_min(h_min),
-      _h_max(h_max),
-      _rel_h_min(rel_h_min),
-      _rel_h_max(rel_h_max),
-      _fixed_output_times(std::move(fixed_output_times)),
-      _tol(tol),
-      _e_n_minus1(0.),
-      _e_n_minus2(0.),
-      _is_accepted(true)
-{
-    if (!std::is_sorted(cbegin(_fixed_output_times), cend(_fixed_output_times)))
-    {
-        OGS_FATAL(
-            "Vector of fixed time steps passed to the "
-            "EvolutionaryPIDcontroller constructor must be sorted");
-    }
-}
-
 std::tuple<bool, double> EvolutionaryPIDcontroller::next(
     double const solution_error, int const /*number_iterations*/)
 {
@@ -158,17 +134,6 @@ double EvolutionaryPIDcontroller::limitStepSize(
         }
     }
     return limited_h;
-}
-
-void EvolutionaryPIDcontroller::addFixedOutputTimes(
-    std::vector<double> const& extra_fixed_output_times)
-{
-    _fixed_output_times.insert(_fixed_output_times.end(),
-                               extra_fixed_output_times.begin(),
-                               extra_fixed_output_times.end());
-
-    // Remove possible duplicated elements. Result will be sorted.
-    BaseLib::makeVectorUnique(_fixed_output_times);
 }
 
 bool EvolutionaryPIDcontroller::canReduceTimestepSize() const

@@ -26,12 +26,10 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     double const t_initial, double const t_end, double const min_dt,
     double const max_dt, double const initial_dt,
     std::vector<int>&& iter_times_vector,
-    std::vector<double>&& multiplier_vector,
-    std::vector<double>&& fixed_output_times)
+    std::vector<double>&& multiplier_vector)
     : TimeStepAlgorithm(t_initial, t_end),
       _iter_times_vector(std::move(iter_times_vector)),
       _multiplier_vector(std::move(multiplier_vector)),
-      _fixed_output_times(std::move(fixed_output_times)),
       _min_dt(min_dt),
       _max_dt(max_dt),
       _initial_dt(initial_dt),
@@ -51,13 +49,6 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
                         std::end(_iter_times_vector)))
     {
         OGS_FATAL("Vector of iteration numbers must be sorted.");
-    }
-
-    if (!std::is_sorted(cbegin(_fixed_output_times), cend(_fixed_output_times)))
-    {
-        OGS_FATAL(
-            "Vector of fixed time steps passed to the "
-            "IterationNumberBasedTimeStepping constructor must be sorted");
     }
 }
 
@@ -136,17 +127,6 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
     }
 
     return std::clamp(dt, _min_dt, _max_dt);
-}
-
-void IterationNumberBasedTimeStepping::addFixedOutputTimes(
-    std::vector<double> const& extra_fixed_output_times)
-{
-    _fixed_output_times.insert(_fixed_output_times.end(),
-                               extra_fixed_output_times.begin(),
-                               extra_fixed_output_times.end());
-
-    // Remove possible duplicated elements. Result will be sorted.
-    BaseLib::makeVectorUnique(_fixed_output_times);
 }
 
 bool IterationNumberBasedTimeStepping::accepted() const

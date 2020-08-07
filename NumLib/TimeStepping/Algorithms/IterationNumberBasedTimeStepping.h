@@ -81,8 +81,6 @@ public:
      * (\f$a_1\f$, \f$a_2\f$, ..., \f$a_n\f$) corresponding to the intervals
      * given by iter_times_vector.
      * A time step size is calculated by \f$\Delta t_{n+1} = a * \Delta t_{n}\f$
-     * @param fixed_output_times
-     * \copydoc NumLib::IterationNumberBasedTimeStepping::_fixed_output_times
      */
     IterationNumberBasedTimeStepping(double const t_initial,
                                      double const t_end,
@@ -90,8 +88,7 @@ public:
                                      double const max_dt,
                                      double const initial_dt,
                                      std::vector<int>&& iter_times_vector,
-                                     std::vector<double>&& multiplier_vector,
-                                     std::vector<double>&& fixed_output_times);
+                                     std::vector<double>&& multiplier_vector);
 
     ~IterationNumberBasedTimeStepping() override = default;
 
@@ -108,8 +105,6 @@ public:
     /// Return the number of repeated steps.
     int getNumberOfRepeatedSteps() const { return _n_rejected_steps; }
 
-    void addFixedOutputTimes(
-        std::vector<double> const& extra_fixed_output_times) override;
 private:
     /// Calculate the next time step size.
     double getNextTimeStepSize() const;
@@ -122,8 +117,6 @@ private:
     const std::vector<int> _iter_times_vector;
     /// This vector stores the multiplier coefficients.
     const std::vector<double> _multiplier_vector;
-    /// Timesteps to be taken independent of the time stepping scheme.
-    std::vector<double> _fixed_output_times;
     /// The minimum allowed time step size.
     const double _min_dt;
     /// The maximum allowed time step size.

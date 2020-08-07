@@ -42,18 +42,10 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__rel_dt_max}
     auto const rel_h_max = config.getConfigParameter<double>("rel_dt_max");
 
-    auto fixed_output_times =
-        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__fixed_output_times}
-        config.getConfigParameter<std::vector<double>>("fixed_output_times",
-                                                       {});
-    // Remove possible duplicated elements and sort.
-    BaseLib::makeVectorUnique(fixed_output_times);
-
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__tol}
     auto const tol = config.getConfigParameter<double>("tol");
 
     return std::make_unique<EvolutionaryPIDcontroller>(
-        t0, t_end, h0, h_min, h_max, rel_h_min, rel_h_max,
-        std::move(fixed_output_times), tol);
+        t0, t_end, h0, h_min, h_max, rel_h_min, rel_h_max, tol);
 }
 }  // end of namespace NumLib

@@ -43,16 +43,8 @@ std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
         //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__multiplier}
         config.getConfigParameter<std::vector<double>>("multiplier");
 
-    auto fixed_output_times =
-        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__fixed_output_times}
-        config.getConfigParameter<std::vector<double>>("fixed_output_times",
-                                                       {});
-    // Remove possible duplicated elements and sort.
-    BaseLib::makeVectorUnique(fixed_output_times);
-
     return std::make_unique<IterationNumberBasedTimeStepping>(
         t_initial, t_end, minimum_dt, maximum_dt, initial_dt,
-        std::move(number_iterations), std::move(multiplier),
-        std::move(fixed_output_times));
+        std::move(number_iterations), std::move(multiplier));
 }
 }  // namespace NumLib

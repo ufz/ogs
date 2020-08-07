@@ -26,7 +26,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     std::vector<double> multiplier_vector = {2.0, 1.0, 0.5, 0.25};
     NumLib::IterationNumberBasedTimeStepping alg(1, 31, 1, 10, 1,
                                                  std::move(iter_times_vector),
-                                                 std::move(multiplier_vector), {});
+                                                 std::move(multiplier_vector));
 
     const double solution_error = 0.;
     const double end_time = alg.end();
@@ -122,7 +122,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
     std::vector<double> multiplier_vector = {2.0, 1.0, 0.5, 0.25};
     NumLib::IterationNumberBasedTimeStepping alg(1, 31, 1, 10, 1,
                                                  std::move(iter_times_vector),
-                                                 std::move(multiplier_vector), {});
+                                                 std::move(multiplier_vector));
 
     std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 1};
     const std::vector<double> expected_vec_t = {1,  2,  4,  8,  16,
@@ -142,9 +142,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
     std::vector<double> fixed_output_times = {5, 20};
     NumLib::IterationNumberBasedTimeStepping alg(1, 31, 1, 10, 1,
                                                  std::move(iter_times_vector),
-                                                 std::move(multiplier_vector),
-                                                 {}
-                                                 );
+                                                 std::move(multiplier_vector));
 
     std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 1, 1, 1, 1, 1};
     const std::vector<double> expected_vec_t = {1,  2,  4,  5,  7,  9,  10,
