@@ -105,7 +105,6 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
                 "Assemble the equations of single phase fully saturated "
                 "fluid flow process within HTProcess.");
         }
-        setCoupledSolutionsOfPreviousTimeStep();
         dof_tables.emplace_back(*_local_to_global_index_map);
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
@@ -130,7 +129,6 @@ void HTProcess::assembleWithJacobianConcreteProcess(
         dof_tables;
     if (!_use_monolithic_scheme)
     {
-        setCoupledSolutionsOfPreviousTimeStep();
         dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
     }
     else
@@ -145,34 +143,6 @@ void HTProcess::assembleWithJacobianConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
-}
-
-void HTProcess::preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                           const double /*t*/,
-                                           const double /*delta_t*/,
-                                           const int process_id)
-{
-    assert(process_id < 2);
-
-    if (_use_monolithic_scheme)
-    {
-        return;
-    }
-
-    if (!_xs_previous_timestep[process_id])
-    {
-        _xs_previous_timestep[process_id] =
-            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-                *x[process_id]);
-    }
-    else
-    {
-        auto& x0 = *_xs_previous_timestep[process_id];
-        MathLib::LinAlg::copy(*x[process_id], x0);
-    }
-
-    auto& x0 = *_xs_previous_timestep[process_id];
-    MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
 void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
@@ -208,31 +178,6 @@ HTProcess::getDOFTableForExtrapolatorData() const
                                // by location order is needed for output
                                NumLib::ComponentOrder::BY_LOCATION),
                            manage_storage);
-}
-
-void HTProcess::setCoupledSolutionsOfPreviousTimeStepPerProcess(
-    const int process_id)
-{
-    const auto& x_t0 = _xs_previous_timestep[process_id];
-    if (x_t0 == nullptr)
-    {
-        OGS_FATAL(
-            "Memory is not allocated for the global vector of the solution of "
-            "the previous time step for the staggered scheme.\n It can be done "
-            "by overriding Process::preTimestepConcreteProcess (ref. "
-            "HTProcess::preTimestepConcreteProcess) ");
-    }
-
-    _coupled_solutions->coupled_xs_t0[process_id] = x_t0.get();
-}
-
-void HTProcess::setCoupledSolutionsOfPreviousTimeStep()
-{
-    _coupled_solutions->coupled_xs_t0.resize(2);
-    setCoupledSolutionsOfPreviousTimeStepPerProcess(
-        _process_data.heat_transport_process_id);
-    setCoupledSolutionsOfPreviousTimeStepPerProcess(
-        _process_data.hydraulic_process_id);
 }
 
 Eigen::Vector3d HTProcess::getFlux(std::size_t element_id,
