@@ -104,13 +104,6 @@ private:
 
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* _heat_flux = nullptr;
-
-    /// Temperature of the previous time step for staggered scheme.
-    std::unique_ptr<GlobalVector> _previous_T;
-
-    /// Set the increment solutions of the present time step to the coupled
-    /// term.
-    void setCoupledSolutionsOfPreviousTimeStep();
 };
 
 extern template class ThermoMechanicsProcess<2>;

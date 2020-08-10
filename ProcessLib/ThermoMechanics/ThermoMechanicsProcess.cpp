@@ -353,8 +353,6 @@ void ThermoMechanicsProcess<DisplacementDim>::
             dof_tables.emplace_back(
                 *_local_to_global_index_map_single_component);
         }
-
-        setCoupledSolutionsOfPreviousTimeStep();
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
@@ -410,21 +408,6 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
             *x[process_id], t, dt);
         return;
     }
-
-    // For the staggered scheme.
-    if (!_previous_T)
-    {
-        _previous_T = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-            *x[process_id]);
-    }
-    else
-    {
-        auto& x0 = *_previous_T;
-        MathLib::LinAlg::copy(*x[process_id], x0);
-    }
-
-    auto& x0 = *_previous_T;
-    MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
 template <int DisplacementDim>
@@ -445,14 +428,6 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
         pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
         t, dt);
-}
-
-template <int DisplacementDim>
-void ThermoMechanicsProcess<
-    DisplacementDim>::setCoupledSolutionsOfPreviousTimeStep()
-{
-    _coupled_solutions->coupled_xs_t0.resize(1);
-    _coupled_solutions->coupled_xs_t0[0] = _previous_T.get();
 }
 
 template <int DisplacementDim>
