@@ -14,55 +14,52 @@
 #include <regex>
 
 #include "Error.h"
-#include "filesystem.h"
 #include "Logging.h"
+#include "filesystem.h"
 
 namespace BaseLib
 {
-
-ConfigTreeTopLevel::ConfigTreeTopLevel(
-        const std::string& filepath,
-        const bool be_ruthless,
-        ConfigTree::PTree&& ptree)
-    : _ptree(std::move(ptree))
-    , _ctree(_ptree, filepath,
-             ConfigTree::onerror,
+ConfigTreeTopLevel::ConfigTreeTopLevel(const std::string& filepath,
+                                       const bool be_ruthless,
+                                       ConfigTree::PTree&& ptree)
+    : _ptree(std::move(ptree)),
+      _ctree(_ptree, filepath, ConfigTree::onerror,
              be_ruthless ? ConfigTree::onerror : ConfigTree::onwarning)
 {
 }
 
-ConfigTree const&
-ConfigTreeTopLevel::operator*() const
+ConfigTree const& ConfigTreeTopLevel::operator*() const
 {
     return _ctree;
 }
 
-ConfigTree const*
-ConfigTreeTopLevel::operator->() const
+ConfigTree const* ConfigTreeTopLevel::operator->() const
 {
     return &_ctree;
 }
 
-void
-ConfigTreeTopLevel::checkAndInvalidate()
+void ConfigTreeTopLevel::checkAndInvalidate()
 {
     ::BaseLib::checkAndInvalidate(_ctree);
 }
 
 // From https://stackoverflow.com/a/1567703/80480
-class line {
+class line
+{
     std::string data;
+
 public:
-    friend std::istream &operator>>(std::istream &is, line &l) {
+    friend std::istream& operator>>(std::istream& is, line& l)
+    {
         std::getline(is, l.data);
         return is;
     }
     operator std::string() const { return data; }
 };
 
-ConfigTreeTopLevel
-makeConfigTree(const std::string& filepath, const bool be_ruthless,
-               const std::string& toplevel_tag)
+ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
+                                  const bool be_ruthless,
+                                  const std::string& toplevel_tag)
 {
     ConfigTree::PTree ptree;
 
@@ -72,14 +69,14 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
     {
         // Searching for <include filename=".." /> - tags and replacing by the
         // content of the included file.
-        std::ifstream file (filepath);
+        std::ifstream file(filepath);
         std::stringstream output;
 
-        std::transform( std::istream_iterator<line>( file ),
+        std::transform(
+            std::istream_iterator<line>(file),
             std::istream_iterator<line>(),
-            std::ostream_iterator<std::string>( output, "\n" ),
-            [](std::string const& _line)
-            {
+            std::ostream_iterator<std::string>(output, "\n"),
+            [](std::string const& _line) {
                 const std::regex base_regex(".*<include file=\"(.*)\" ?/>.*");
                 std::smatch base_match;
                 if (std::regex_match(_line, base_match, base_regex))
@@ -87,18 +84,17 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
                     if (base_match.size() == 2)
                     {
                         std::string include_filename = base_match[1].str();
-                        std::ifstream include_file (include_filename);
+                        std::ifstream include_file(include_filename);
                         std::string include_content(
-                            (std::istreambuf_iterator<char>(include_file) ),
-                            (std::istreambuf_iterator<char>()) );
+                            (std::istreambuf_iterator<char>(include_file)),
+                            (std::istreambuf_iterator<char>()));
                         INFO("Including {:s} into project file.",
                              include_filename);
                         return include_content;
                     }
                 }
                 return _line;
-            }
-        );
+            });
 
         read_xml(output, ptree,
                  boost::property_tree::xml_parser::no_comments |
@@ -112,7 +108,8 @@ makeConfigTree(const std::string& filepath, const bool be_ruthless,
 
     DBUG("Project configuration from file '{:s}' read.", filepath);
 
-    if (auto child = ptree.get_child_optional(toplevel_tag)) {
+    if (auto child = ptree.get_child_optional(toplevel_tag))
+    {
         return ConfigTreeTopLevel(filepath, be_ruthless, std::move(*child));
     }
     OGS_FATAL("Tag <{:s}> has not been found in file `{:s}'.", toplevel_tag,
