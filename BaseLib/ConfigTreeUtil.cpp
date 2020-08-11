@@ -10,6 +10,7 @@
 
 #include "ConfigTreeUtil.h"
 
+#include <boost/bind.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <regex>
 
@@ -43,19 +44,70 @@ void ConfigTreeTopLevel::checkAndInvalidate()
     ::BaseLib::checkAndInvalidate(_ctree);
 }
 
-// From https://stackoverflow.com/a/1567703/80480
-class Line
+// Adapted from
+// https://stackoverflow.com/questions/8154107/how-do-i-merge-update-a-boostproperty-treeptree/8175833
+template <typename T>
+void traverse_recursive(boost::property_tree::ptree& parent,
+                        const boost::property_tree::ptree::path_type& childPath,
+                        boost::property_tree::ptree& child,
+                        const fs::path benchDir,
+                        T& method)
 {
-    std::string data;
+    using boost::property_tree::ptree;
 
-public:
-    friend std::istream& operator>>(std::istream& is, line& l)
+    method(parent, childPath, child, benchDir);
+    for (ptree::iterator it = child.begin(); it != child.end(); ++it)
     {
-        std::getline(is, l.data);
-        return is;
+        ptree::path_type curPath = childPath / ptree::path_type(it->first);
+        traverse_recursive(child, curPath, it->second, benchDir, method);
     }
-    operator std::string() const { return data; }
-};
+}
+
+template <typename T>
+void traverse(boost::property_tree::ptree& parent, const fs::path benchDir,
+              T& method)
+{
+    traverse_recursive(parent, "", parent, benchDir, method);
+}
+
+void replace_includes(
+    [[maybe_unused]] const boost::property_tree::ptree& parent,
+    [[maybe_unused]] const boost::property_tree::ptree::path_type& childPath,
+    boost::property_tree::ptree& child,
+    const fs::path benchDir)
+{
+    using boost::property_tree::ptree;
+    for (ptree::const_iterator it = child.begin(); it != child.end(); ++it)
+    {
+        if (it->first == "include")
+        {
+            auto filename = it->second.get<std::string>("<xmlattr>.file");
+            auto filepath = fs::path(filename);
+            if (filepath.is_relative())
+            {
+                filename = (benchDir / filepath).string();
+            }
+            INFO("Including {:s} into project file.", filename);
+
+            ptree includeTree;
+            read_xml(filename, includeTree,
+                     boost::property_tree::xml_parser::no_comments |
+                         boost::property_tree::xml_parser::trim_whitespace);
+
+            // Can only insert subtree at child
+            auto& tmpTree = child.put_child("include", includeTree);
+
+            // Move subtree above child
+            std::move(tmpTree.begin(), tmpTree.end(), back_inserter(child));
+
+            // Erase child
+            child.erase("include");
+
+            // There can only be one include under a parent element!
+            break;
+        }
+    }
+}
 
 ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
                                   const bool be_ruthless,
@@ -67,38 +119,14 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
     //       for our configuration tree implementation to work!
     try
     {
-        // Searching for <include filename=".." /> - tags and replacing by the
-        // content of the included file.
-        std::ifstream file(filepath);
-        std::stringstream output;
-
-        std::transform(
-            std::istream_iterator<Line>(file),
-            std::istream_iterator<Line>(),
-            std::ostream_iterator<std::string>(output, "\n"),
-            [](std::string const& _line) {
-                const std::regex base_regex(".*<include file=\"(.*)\" ?/>.*");
-                std::smatch base_match;
-                if (std::regex_match(_line, base_match, base_regex))
-                {
-                    if (base_match.size() == 2)
-                    {
-                        std::string include_filename = base_match[1].str();
-                        std::ifstream include_file(include_filename);
-                        std::string include_content(
-                            (std::istreambuf_iterator<char>(include_file)),
-                            (std::istreambuf_iterator<char>()));
-                        INFO("Including {:s} into project file.",
-                             include_filename);
-                        return include_content;
-                    }
-                }
-                return _line;
-            });
-
-        read_xml(output, ptree,
+        read_xml(filepath, ptree,
                  boost::property_tree::xml_parser::no_comments |
                      boost::property_tree::xml_parser::trim_whitespace);
+
+        if (toplevel_tag == "OpenGeoSysProject")
+        {
+            traverse(ptree, fs::path(filepath).parent_path(), replace_includes);
+        }
     }
     catch (boost::property_tree::xml_parser_error const& e)
     {
