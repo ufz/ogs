@@ -44,7 +44,7 @@ void ConfigTreeTopLevel::checkAndInvalidate()
 }
 
 // From https://stackoverflow.com/a/1567703/80480
-class line
+class Line
 {
     std::string data;
 
@@ -73,8 +73,8 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
         std::stringstream output;
 
         std::transform(
-            std::istream_iterator<line>(file),
-            std::istream_iterator<line>(),
+            std::istream_iterator<Line>(file),
+            std::istream_iterator<Line>(),
             std::ostream_iterator<std::string>(output, "\n"),
             [](std::string const& _line) {
                 const std::regex base_regex(".*<include file=\"(.*)\" ?/>.*");
