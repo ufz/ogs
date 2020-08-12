@@ -129,6 +129,7 @@ string(TIMESTAMP timestamp "%Y.%m.%d")
 if("${file_timestamp}" VERSION_LESS ${timestamp} OR IS_CI)
     file(WRITE ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt "${timestamp}\n")
     set(CONAN_UPDATE UPDATE)
+    set(CONAN_COMMAND ${CONAN_CMD} CACHE INTERNAL "") # Speed up conan_add_remote
     conan_add_remote(NAME ogs INDEX 0
         URL https://ogs.jfrog.io/ogs/api/conan/conan)
     conan_add_remote(NAME conan-community INDEX 1
