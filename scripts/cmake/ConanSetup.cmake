@@ -152,6 +152,8 @@ if(MSVC)
     unset(ENV{CC}) # Disable clcache, e.g. for building qt
     unset(ENV{CXX})
 endif()
+# speed up conan_cmake_run
+set(ARGUMENTS_CONAN_COMMAND ${CONAN_CMD} CACHE INTERNAL "")
 conan_cmake_run(
     BASIC_SETUP
     ${CONAN_UPDATE}
