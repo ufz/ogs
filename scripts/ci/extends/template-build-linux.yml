@@ -19,8 +19,8 @@
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
     - $BUILD_CMD_PREFIX cmake --build . --target package > >(tee make.output)
-    - if $BUILD_TESTS ; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
-    - if $BUILD_CTEST ; then $BUILD_CMD_PREFIX cmake --build . --target ctest ; fi
-    - if $BUILD_CTEST_LARGE ; then $BUILD_CMD_PREFIX cmake --build . --target ctest-large ; fi
-    - if $BUILD_CTEST ; then cp Testing/**/Test.xml Tests/ctest.xml ; fi
-    - if $BUILD_CTEST_LARGE ; then cp Testing/**/Test.xml Tests/ctest-large.xml ; fi
+    - if [ "$BUILD_TESTS" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
+    - if [ "$BUILD_CTEST" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target ctest ; fi
+    - if [ "$BUILD_CTEST_LARGE" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target ctest-large ; fi
+    - if [ "$BUILD_CTEST" = true ] ; then cp Testing/**/Test.xml Tests/ctest.xml ; fi
+    - if [ "$BUILD_CTEST_LARGE" = true ] ; then cp Testing/**/Test.xml Tests/ctest-large.xml ; fi
