@@ -163,8 +163,6 @@ if(OGS_USE_PETSC)
 
 endif()
 
-find_package(OpenSSL)
-
 ## Check MPI package
 if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
