@@ -5,6 +5,7 @@ function (OgsTest)
     if(NOT OGS_BUILD_CLI OR NOT BUILD_TESTING)
         return()
     endif()
+    set(options DISABLED)
     set(oneValueArgs PROJECTFILE RUNTIME)
     set(multiValueArgs WRAPPER)
     cmake_parse_arguments(OgsTest "${options}" "${oneValueArgs}"
@@ -52,7 +53,9 @@ function (OgsTest)
 
     set_tests_properties(${TEST_NAME} PROPERTIES
         ENVIRONMENT VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
-        COST ${OgsTest_RUNTIME})
+        COST ${OgsTest_RUNTIME}
+        DISABLED ${OgsTest_DISABLED}
+    )
 
     if(TARGET ${OgsTest_EXECUTABLE})
         add_dependencies(ctest ${OgsTest_EXECUTABLE})

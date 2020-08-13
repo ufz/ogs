@@ -17,7 +17,8 @@
 #                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
 #   VIS <vtu output file(s)> # optional for documentation
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
-#                          values should be taken from eve serial job
+#                          values should be taken from envinf job
+#   DISABLED # optional, disables the test
 # )
 #
 # Conditional arguments:
@@ -43,7 +44,7 @@ function (AddTest)
     set(LARGE_RUNTIME 60)
 
     # parse arguments
-    set(options NONE)
+    set(options DISABLED)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS VIS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -272,6 +273,7 @@ Use six arguments version of AddTest with absolute and relative tolerances")
     if(DEFINED MPI_PROCESSORS)
         set_tests_properties(${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS})
     endif()
+    set_tests_properties(${TEST_NAME} PROPERTIES DISABLED ${AddTest_DISABLED})
 
     if(TARGET ${AddTest_EXECUTABLE})
         add_dependencies(ctest ${AddTest_EXECUTABLE})
@@ -300,6 +302,9 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         --debug-output
         WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
     )
-    set_tests_properties(${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME})
+    set_tests_properties(${TESTER_NAME} PROPERTIES
+        DEPENDS ${TEST_NAME}
+        DISABLED ${AddTest_DISABLED}
+    )
 
 endfunction()
