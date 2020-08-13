@@ -57,10 +57,10 @@ void traverse_recursive(
     using boost::property_tree::ptree;
 
     method(parent, child_path, child, bench_dir);
-    for (ptree::iterator it = child.begin(); it != child.end(); ++it)
+    for (auto& [key, tree] : child)
     {
-        ptree::path_type cur_path = child_path / ptree::path_type(it->first);
-        traverse_recursive(child, cur_path, it->second, bench_dir, method);
+        ptree::path_type cur_path = child_path / ptree::path_type(key);
+        traverse_recursive(child, cur_path, tree, bench_dir, method);
     }
 }
 
@@ -78,11 +78,11 @@ void replace_includes(
     const fs::path bench_dir)
 {
     using boost::property_tree::ptree;
-    for (ptree::const_iterator it = child.begin(); it != child.end(); ++it)
+    for (auto& [key, tree] : child)
     {
-        if (it->first == "include")
+        if (key == "include")
         {
-            auto filename = it->second.get<std::string>("<xmlattr>.file");
+            auto filename = tree.get<std::string>("<xmlattr>.file");
             auto filepath = fs::path(filename);
             if (filepath.is_relative())
             {
