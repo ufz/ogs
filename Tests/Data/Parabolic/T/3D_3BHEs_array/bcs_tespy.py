@@ -91,7 +91,7 @@ def get_hydraulics(t):
     # get flowrate #m ^ 3 / s
     for i in range(n_BHE):
         for c in nw.conns.index:
-            if c.t.label == data_index[i]:  # t:inlet comp, s:outlet comp
+            if c.target.label == data_index[i]:  # t:inlet comp, s:outlet comp
                 df.loc[df.index[i], 'flowrate'] = c.get_attr('m').val_SI / refrig_density
     return df
 
@@ -195,27 +195,27 @@ data_index = df.index.tolist()
 for i in range(n_BHE):
     for c in nw.conns.index:
         # bhe inlet and outlet conns
-        if c.t.label == data_index[i]:  # inlet conns of bhe
+        if c.target.label == data_index[i]:  # inlet conns of bhe
             localVars['inlet_BHE' + str(i + 1)] = c
-        if c.s.label == data_index[i]:  # outlet conns of bhe
+        if c.source.label == data_index[i]:  # outlet conns of bhe
             localVars['outlet_BHE' + str(i + 1)] = c
 
 # time depended consumer thermal demand
 if switch_dyn_demand == 'on':
     # import the name of bus from the network csv file
-    bus_name = read_csv('./pre/tespy_nw/comps/bus.csv',
+    bus_name = read_csv('./pre/tespy_nw/components/bus.csv',
                     delimiter=';',
                     index_col=[0]).index[0]
 
 # time depended flowrate
 if switch_dyn_frate == 'on':
     # import the name of inlet connection from the network csv file
-    inlet_name = read_csv('./pre/tespy_nw/conn.csv',
+    inlet_name = read_csv('./pre/tespy_nw/connections.csv',
                     delimiter=';',
                     index_col=[0]).iloc[0,0]
     for c in nw.conns.index:
         # bhe inflow conns
-        if c.s.label == inlet_name:  # inlet conns of bhe
+        if c.source.label == inlet_name:  # inlet conns of bhe
             localVars['inlet_name'] = c
 
 # instantiate BC objects referenced in OpenGeoSys
