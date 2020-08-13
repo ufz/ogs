@@ -37,20 +37,20 @@ if (OGS_USE_MFRONT)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/MGIS)
 endif()
 
-# Sync submodules, which is required when a submodule changed its URL
-if(OGS_SYNC_SUBMODULES)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} submodule sync
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        OUTPUT_QUIET
-    )
-endif()
-foreach(SUBMODULE ${REQUIRED_SUBMODULES})
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} submodule status ${SUBMODULE}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        OUTPUT_VARIABLE SUBMODULE_STATE
-    )
+execute_process(
+    COMMAND ${GIT_EXECUTABLE} submodule status
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE SUBMODULES_STATE
+)
+string(REPLACE "\n" ";" SUBMODULES_LIST ${SUBMODULES_STATE})
+
+foreach(SUBMODULE_STATE ${SUBMODULES_LIST})
+
+    string(REGEX MATCH "ThirdParty/[A-Za-z0-9_-]*" SUBMODULE ${SUBMODULE_STATE})
+    if(NOT ${SUBMODULE} IN_LIST REQUIRED_SUBMODULES)
+        continue()
+    endif()
+
     string(REGEX MATCH "^\\-" UNINITIALIZED ${SUBMODULE_STATE})
     string(REGEX MATCH "^\\+" MISMATCH ${SUBMODULE_STATE})
 

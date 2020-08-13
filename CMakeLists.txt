@@ -66,8 +66,6 @@ include(SubmoduleSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
 include(Versions)
-include(CheckTypeSizes)
-include(CheckArchitecture)
 include(Functions)
 include(ConanSetup)
 include(CompilerSetup)
@@ -158,9 +156,6 @@ endif()
 # Code coverage
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
-option(OGS_SYNC_SUBMODULES
-       "Sync git submodules on CMake run. Overwrites custom URLs!" ON)
-
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM
     3
@@ -234,9 +229,6 @@ if(OGS_USE_EIGEN)
     if(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN)
         add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
     endif()
-endif()
-if(MSVC AND OGS_32_BIT)
-    add_definitions(-DEIGEN_MAX_ALIGN_BYTES=0 -DEIGEN_DONT_ALIGN)
 endif()
 # End Eigen
 
