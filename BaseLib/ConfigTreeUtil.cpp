@@ -49,9 +49,9 @@ void ConfigTreeTopLevel::checkAndInvalidate()
 template <typename T>
 void traverse_recursive(
     boost::property_tree::ptree& parent,
-    const boost::property_tree::ptree::path_type& child_path,
+    boost::property_tree::ptree::path_type const& child_path,
     boost::property_tree::ptree& child,
-    const fs::path bench_dir,
+    fs::path const& bench_dir,
     T& method)
 {
     using boost::property_tree::ptree;
@@ -59,7 +59,7 @@ void traverse_recursive(
     method(parent, child_path, child, bench_dir);
     for (auto& [key, tree] : child)
     {
-        ptree::path_type cur_path = child_path / ptree::path_type(key);
+        ptree::path_type const cur_path = child_path / ptree::path_type(key);
         traverse_recursive(child, cur_path, tree, bench_dir, method);
     }
 }
@@ -72,10 +72,10 @@ void traverse(boost::property_tree::ptree& parent, const fs::path bench_dir,
 }
 
 void replace_includes(
-    [[maybe_unused]] const boost::property_tree::ptree& parent,
-    [[maybe_unused]] const boost::property_tree::ptree::path_type& child_path,
+    [[maybe_unused]] boost::property_tree::ptree const& parent,
+    [[maybe_unused]] boost::property_tree::ptree::path_type const& child_path,
     boost::property_tree::ptree& child,
-    const fs::path bench_dir)
+    fs::path const& bench_dir)
 {
     using boost::property_tree::ptree;
     for (auto& [key, tree] : child)
@@ -83,8 +83,8 @@ void replace_includes(
         if (key == "include")
         {
             auto filename = tree.get<std::string>("<xmlattr>.file");
-            auto filepath = fs::path(filename);
-            if (filepath.is_relative())
+            if (auto const filepath = fs::path(filename);
+                filepath.is_relative())
             {
                 filename = (bench_dir / filepath).string();
             }
