@@ -158,9 +158,6 @@ endif()
 # Code coverage
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
-option(OGS_SYNC_SUBMODULES
-       "Sync git submodules on CMake run. Overwrites custom URLs!" ON)
-
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM
     3
