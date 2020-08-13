@@ -359,6 +359,7 @@ AddTest(
 
 # MPI/PETSc tests
 AddTest(
+    DISABLED
     NAME Parallel_2D_ThermalConvection_constviscosity
     PATH Parabolic/HT/ConstViscosity
     RUNTIME 61 # Actual RUNTIME?
@@ -379,6 +380,7 @@ AddTest(
 )
 
 AddTest(
+    DISABLED
     NAME Parallel_2D_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
     RUNTIME 61 # Actual RUNTIME?
@@ -394,6 +396,7 @@ AddTest(
 )
 
 AddTest(
+    DISABLED
     NAME 2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
     RUNTIME 61 # Actual RUNTIME?
