@@ -80,7 +80,7 @@ add_custom_target(
     --output-on-failure --output-log Tests/ctest-large.log
     --tests-regex LARGE
     ${CONFIG_PARAMETER}
-    --timeout 3600
+    --timeout 5400 # 90 minutes
     DEPENDS ${test_dependencies} ctest-large-cleanup
     USES_TERMINAL
 )

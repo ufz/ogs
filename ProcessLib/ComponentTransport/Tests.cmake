@@ -1027,7 +1027,7 @@ endif()
 AddTest(
     NAME 2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
     PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents
-    RUNTIME 2600
+    RUNTIME 3300
     EXECUTABLE ogs
     EXECUTABLE_ARGS KineticReactant2_2d.prj
     WRAPPER time
