@@ -51,10 +51,12 @@ function (OgsTest)
     #    WORKING_DIRECTORY ${OgsTest_BINARY_DIR}
     #    COMMAND ${OgsTest_WRAPPER} $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
 
+    current_dir_as_list(ProcessLib DIR_LABELS)
     set_tests_properties(${TEST_NAME} PROPERTIES
         ENVIRONMENT VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
         COST ${OgsTest_RUNTIME}
         DISABLED ${OgsTest_DISABLED}
+        LABELS "${DIR_LABELS}"
     )
 
     if(TARGET ${OgsTest_EXECUTABLE})

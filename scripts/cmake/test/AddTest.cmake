@@ -259,7 +259,6 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         -DPython3_EXECUTABLE=${Python3_EXECUTABLE}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
-    set_tests_properties(${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME})
     if(DEFINED AddTest_DEPENDS)
         set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
     endif()
@@ -273,7 +272,13 @@ Use six arguments version of AddTest with absolute and relative tolerances")
     if(DEFINED MPI_PROCESSORS)
         set_tests_properties(${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS})
     endif()
-    set_tests_properties(${TEST_NAME} PROPERTIES DISABLED ${AddTest_DISABLED})
+
+    current_dir_as_list(ProcessLib DIR_LABELS)
+    set_tests_properties(${TEST_NAME} PROPERTIES
+        COST ${AddTest_RUNTIME}
+        DISABLED ${AddTest_DISABLED}
+        LABELS "${DIR_LABELS}"
+    )
 
     if(TARGET ${AddTest_EXECUTABLE})
         add_dependencies(ctest ${AddTest_EXECUTABLE})
