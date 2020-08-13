@@ -16,7 +16,7 @@ if(LCOV_PATH AND GENHTML_PATH)
     )
     setup_target_for_coverage_lcov(
         NAME ctest_coverage
-        EXECUTABLE ${CMAKE_COMMAND} --build . --target ctest-serial
+        EXECUTABLE ${CMAKE_COMMAND} --build . --target ctest
     )
 else()
     message(STATUS "No lcov coverage report generated because lcov or genhtml was not found.")
@@ -29,7 +29,7 @@ if(Python3_EXECUTABLE)
     )
     setup_target_for_coverage_gcovr_xml(
         NAME ctest_coverage_cobertura
-        EXECUTABLE ${CMAKE_COMMAND} --build . --target ctest-serial
+        EXECUTABLE ${CMAKE_COMMAND} --build . --target ctest
     )
 else()
     message(STATUS "No cobertura coverage report generated because Python executable was not found.")

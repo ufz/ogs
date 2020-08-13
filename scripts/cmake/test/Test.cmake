@@ -71,18 +71,6 @@ add_custom_target(
     USES_TERMINAL
 )
 
-add_custom_target(
-    ctest-serial
-    COMMAND ${CMAKE_CTEST_COMMAND} -T Test
-    --force-new-ctest-process
-    --output-on-failure --output-log Tests/ctest.log
-    --exclude-regex LARGE
-    ${CONFIG_PARAMETER}
-    --timeout 900 # 15 minutes
-    DEPENDS ${test_dependencies} ctest-cleanup
-    USES_TERMINAL
-)
-
 add_custom_target(ctest-large-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest-large.log)
 
 add_custom_target(
@@ -97,21 +85,9 @@ add_custom_target(
     USES_TERMINAL
 )
 
-add_custom_target(
-    ctest-large-serial
-    COMMAND ${CMAKE_CTEST_COMMAND} -T Test
-    --force-new-ctest-process
-    --output-on-failure --output-log Tests/ctest-large.log
-    --tests-regex LARGE
-    ${CONFIG_PARAMETER}
-    --timeout 3600
-    DEPENDS ${test_dependencies} ctest-large-cleanup
-    USES_TERMINAL
-)
-
 set_directory_properties(PROPERTIES
     ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_BINARY_DIR}/Tests/Data
 )
 
-set_target_properties(ctest ctest-large ctest-large-serial ctest-cleanup ctest-large-cleanup
+set_target_properties(ctest ctest-large ctest-cleanup ctest-large-cleanup
     PROPERTIES FOLDER Testing)
