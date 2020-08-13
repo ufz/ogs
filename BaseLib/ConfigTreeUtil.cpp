@@ -47,34 +47,35 @@ void ConfigTreeTopLevel::checkAndInvalidate()
 // Adapted from
 // https://stackoverflow.com/questions/8154107/how-do-i-merge-update-a-boostproperty-treeptree/8175833
 template <typename T>
-void traverse_recursive(boost::property_tree::ptree& parent,
-                        const boost::property_tree::ptree::path_type& childPath,
-                        boost::property_tree::ptree& child,
-                        const fs::path benchDir,
-                        T& method)
+void traverse_recursive(
+    boost::property_tree::ptree& parent,
+    const boost::property_tree::ptree::path_type& child_path,
+    boost::property_tree::ptree& child,
+    const fs::path bench_dir,
+    T& method)
 {
     using boost::property_tree::ptree;
 
-    method(parent, childPath, child, benchDir);
+    method(parent, child_path, child, bench_dir);
     for (ptree::iterator it = child.begin(); it != child.end(); ++it)
     {
-        ptree::path_type curPath = childPath / ptree::path_type(it->first);
-        traverse_recursive(child, curPath, it->second, benchDir, method);
+        ptree::path_type cur_path = child_path / ptree::path_type(it->first);
+        traverse_recursive(child, cur_path, it->second, bench_dir, method);
     }
 }
 
 template <typename T>
-void traverse(boost::property_tree::ptree& parent, const fs::path benchDir,
+void traverse(boost::property_tree::ptree& parent, const fs::path bench_dir,
               T& method)
 {
-    traverse_recursive(parent, "", parent, benchDir, method);
+    traverse_recursive(parent, "", parent, bench_dir, method);
 }
 
 void replace_includes(
     [[maybe_unused]] const boost::property_tree::ptree& parent,
-    [[maybe_unused]] const boost::property_tree::ptree::path_type& childPath,
+    [[maybe_unused]] const boost::property_tree::ptree::path_type& child_path,
     boost::property_tree::ptree& child,
-    const fs::path benchDir)
+    const fs::path bench_dir)
 {
     using boost::property_tree::ptree;
     for (ptree::const_iterator it = child.begin(); it != child.end(); ++it)
@@ -85,20 +86,20 @@ void replace_includes(
             auto filepath = fs::path(filename);
             if (filepath.is_relative())
             {
-                filename = (benchDir / filepath).string();
+                filename = (bench_dir / filepath).string();
             }
             INFO("Including {:s} into project file.", filename);
 
-            ptree includeTree;
-            read_xml(filename, includeTree,
+            ptree include_tree;
+            read_xml(filename, include_tree,
                      boost::property_tree::xml_parser::no_comments |
                          boost::property_tree::xml_parser::trim_whitespace);
 
             // Can only insert subtree at child
-            auto& tmpTree = child.put_child("include", includeTree);
+            auto& tmp_tree = child.put_child("include", include_tree);
 
             // Move subtree above child
-            std::move(tmpTree.begin(), tmpTree.end(), back_inserter(child));
+            std::move(tmp_tree.begin(), tmp_tree.end(), back_inserter(child));
 
             // Erase child
             child.erase("include");
