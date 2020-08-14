@@ -8,7 +8,6 @@ check header:
   dependencies: [meta_container]
   variables:
     BUILD_DIR: "build-check-header"
-    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
     CMAKE_ARGS: "-DOGS_CHECK_HEADER_COMPILATION=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_GUI=ON -DOGS_USE_PYTHON=ON -DBUILD_SHARED_LIBS=ON"
   image:
     name: $CONTAINER_GCC_GUI_IMAGE
@@ -21,6 +20,3 @@ check header:
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES || true
     - cat CMakeFiles/CMakeError.log
-  cache:
-    paths:
-      - $CCACHE_DIR

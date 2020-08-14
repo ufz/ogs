@@ -20,6 +20,3 @@ build gui linux:
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_NETCDF=ON
-  cache:
-    paths:
-      - $CCACHE_DIR

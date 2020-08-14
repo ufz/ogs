@@ -13,7 +13,3 @@ build linux frontend:
     - source scripts/env/eve/cli.sh
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
-
-  cache:
-    paths:
-      # do not cache CCACHE_DIR

@@ -8,7 +8,6 @@ tests large:
   dependencies: [meta_container]
   variables:
     BUILD_DIR: "build-tests-large"
-    CCACHE_DIR: "$CI_PROJECT_DIR/.ccache"
     CMAKE_ARGS: "-DOGS_USE_CONAN=OFF"
   image:
     name: $CONTAINER_GCC_IMAGE
@@ -24,6 +23,3 @@ tests large:
   artifacts:
     paths:
       - $BUILD_DIR/Tests/ctest.xml
-  cache:
-    paths:
-      - $CCACHE_DIR

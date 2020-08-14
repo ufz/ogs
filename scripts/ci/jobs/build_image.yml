@@ -10,13 +10,13 @@ build container images:
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
-      --pm system --cvode --cppcheck --docs --gcovr --tfel
+      --pm system --cvode --cppcheck --docs --gcovr --tfel --ccache
       --tag $CONTAINER_GCC_IMAGE --upload
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
-      --pm system --cvode --cppcheck --docs --gcovr --gui
+      --pm system --cvode --cppcheck --docs --gcovr --gui --ccache
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
     - python ThirdParty/container-maker/ogscm/cli.py --build --ogs off
-      --compiler clang --compiler_version 9
+      --compiler clang --compiler_version 9 --ccache
       --tag $CONTAINER_CLANG_IMAGE --upload
 
 ### global project images ###
