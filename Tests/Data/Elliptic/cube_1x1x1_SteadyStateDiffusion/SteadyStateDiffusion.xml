@@ -1,0 +1,11 @@
+<process>
+    <name>SteadyStateDiffusion</name>
+    <type>STEADY_STATE_DIFFUSION</type>
+    <integration_order>2</integration_order>
+    <process_variables>
+        <process_variable>pressure</process_variable>
+    </process_variables>
+    <secondary_variables>
+        <secondary_variable internal_name="darcy_velocity" output_name="v"/>
+    </secondary_variables>
+</process>
