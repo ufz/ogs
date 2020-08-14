@@ -26,7 +26,7 @@ AddTest(
 )
 ```
 
-Tests are then run with `make ctest` or for more verbose output with `ctest -VV` (you may also use other [ctest options](https://cmake.org/cmake/help/v3.4/manual/ctest.1.html)). If the checker has some errors they are displayed. `RUNTIME` specifies the typical runtime in seconds on `envinf1`. Tests with a `RUNTIME > 60` are considered `LARGE`-tests.
+Tests are then run with `make ctest` or for more verbose output with `ctest -VV` (you may also use other [ctest options](https://cmake.org/cmake/help/v3.4/manual/ctest.1.html)). If the checker has some errors they are displayed. `RUNTIME` specifies the typical runtime in seconds on an Intel Xeon E5-2680 v2 @ 2.80 GHz with 500 GiB RAM (`envinf1`). Tests with a `RUNTIME > 60` are considered `LARGE`-tests.
 
 The functionality is very flexible and more wrappers and checker can be added later on. e.g. for running some statistics on output files and comparing them with statistics from reference files.
 

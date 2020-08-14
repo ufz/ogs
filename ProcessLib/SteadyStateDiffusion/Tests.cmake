@@ -683,7 +683,7 @@ AddTest(
 AddTest(
     NAME SteadyStateDiffusion_NodalSourceTerm_circle_1e6
     PATH Elliptic/circle_radius_1
-    RUNTIME 61 # Actual RUNTIME?
+    RUNTIME 20
     EXECUTABLE ogs
     EXECUTABLE_ARGS circle_1e6_axi.prj
     WRAPPER time
@@ -697,7 +697,7 @@ AddTest(
 AddTest(
     NAME SteadyStateDiffusion_NodalSourceTerm_square_1e6
     PATH Elliptic/square_1x1_SteadyStateDiffusion
-    RUNTIME 61 # Actual RUNTIME?
+    RUNTIME 200
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e6_with_nodal_sources.prj
     WRAPPER time

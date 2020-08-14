@@ -777,7 +777,7 @@ AddTest(
 AddTest(
     NAME 2D_ComponentTransport_ElderPython
     PATH Parabolic/ComponentTransport/elder
-    RUNTIME 2700 # Actual RUNTIME?
+    RUNTIME 2700
     EXECUTABLE ogs
     EXECUTABLE_ARGS elder-python.prj
     WRAPPER time

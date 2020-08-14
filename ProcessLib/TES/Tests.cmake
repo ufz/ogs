@@ -86,7 +86,7 @@ AddTest(
 AddTest(
     NAME TES_zeolite_discharge
     PATH Parabolic/TES/1D
-    RUNTIME 61 # Actual RUNTIME?
+    RUNTIME 8
     EXECUTABLE_ARGS tes-1D-zeolite-discharge-large.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
