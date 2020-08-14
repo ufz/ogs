@@ -1,21 +1,27 @@
 {{ $gh_release := print "https://github.com/ufz/ogs/releases/tag/" .Params.tag }}
 {{ $gh_download := print "https://github.com/ufz/ogs/releases/download/" .Params.tag }}
+{{ $benchmarks_url := print "https://github.com/ufz/ogs-data/archive/" .Params.tag ".zip" }}
 {{ $type := "GitHub"}}
 {{/* comparison only works for two version parts, strip out 6. */}}
 {{ if gt (slicestr .Params.tag 2) "3.1" }}
   {{ $gh_release = print "https://gitlab.opengeosys.org/ogs/ogs/-/releases/" .Params.tag }}
   {{ $gh_download = print "https://ogsstorage.blob.core.windows.net/binaries/ogs6/" .Params.tag }}
+  {{ $benchmarks_url = print "https://gitlab.opengeosys.org/ogs/ogs/-/archive/" .Params.tag "/ogs-" .Params.tag ".zip?path=Tests/Data" }}
   {{ $type = "GitLab"}}
 {{ end }}
+
 
 {{ $file_prefix := print "ogs-" .Params.tag }}
 <p>Released on {{ dateFormat "Monday, Jan 2, 2006" .Params.release_date }}, <a href="{{ $gh_release }}"><i class="fab fa-{{ $type | lower}}"></i> {{ $type }} release</a></p>
 {{ if .Params.downloads }}
   <div class="note">
     <h3><i class="far fa-download"></i> Benchmark downloads</h3>
-    <div class="flex">
-      <a href="https://github.com/ufz/ogs-data/archive/{{.Params.tag}}.zip"><i class="far fa-arrow-right"></i> Benchmark input files for OpenGeoSys {{ .Params.tag }}</a>
-    </div>
+
+      <p><a href="{{ $benchmarks_url }}"><i class="far fa-arrow-right"></i> All benchmark input files for OpenGeoSys {{ .Params.tag }}</a></p>
+      {{ if eq $type "GitLab"}}
+        <p class="text-sm"><b>Note:</b> Large download! You can also <a href="/docs/userguide/basics/introduction/#download-benchmarks">browse and download individual subdirectories</a> for <a href="https://gitlab.opengeosys.org/ogs/ogs/-/tree/{{ .Params.tag }}/Tests/Data"><i class="far fa-arrow-right"></i> {{ .Params.tag }}</a></p>
+      {{ end }}
+
     <h3><i class="far fa-download"></i> Binary downloads</h3>
     <div class="flex">
       {{ if .Params.downloads.win }}
