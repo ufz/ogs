@@ -55,6 +55,12 @@ int VtkImageDataToPointCloudFilter::RequestData(
     vtkPolyData* output = vtkPolyData::SafeDownCast(
         output_info->Get(vtkDataObject::DATA_OBJECT()));
 
+    if (input->GetScalarSize() != sizeof(float))
+    {
+        vtkDebugMacro("Existing data does not have float-type and cannot be processed. "
+            "Aborting filter process...");
+        return 0;
+    }
     float* pixvals = static_cast<float*>(input->GetScalarPointer());
     int const n_comp = input->GetNumberOfScalarComponents();
     if (n_comp < 1)
