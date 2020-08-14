@@ -11,12 +11,11 @@
  */
 #pragma once
 
+#include "CapillaryPressureSaturation/CreateCapillaryPressureRegularizedVanGenuchten.h"
 #include "CapillaryPressureSaturation/CreateCapillaryPressureVanGenuchten.h"
 #include "CapillaryPressureSaturation/CreateSaturationBrooksCorey.h"
 #include "CapillaryPressureSaturation/CreateSaturationLiakopoulos.h"
 #include "CapillaryPressureSaturation/CreateSaturationVanGenuchten.h"
-#include "CapillaryPressureSaturation/CreateCapillaryPressureRegularizedVanGenuchten.h"
-
 #include "CreateBishopsPowerLaw.h"
 #include "CreateBishopsSaturationCutoff.h"
 #include "CreateConstant.h"
@@ -34,3 +33,4 @@
 #include "RelativePermeability/CreateRelPermBrooksCorey.h"
 #include "RelativePermeability/CreateRelPermLiakopoulos.h"
 #include "RelativePermeability/CreateRelPermVanGenuchten.h"
+#include "SwellingStress/CreateLinearSaturationSwellingStress.h"
