@@ -675,7 +675,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ComponentTransport_Goswami
+    NAME 2D_ComponentTransport_Goswami
     PATH Parabolic/ComponentTransport/goswami
     RUNTIME 900
     EXECUTABLE ogs
@@ -711,7 +711,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ComponentTransport_Elder
+    NAME 2D_ComponentTransport_Elder
     PATH Parabolic/ComponentTransport/elder
     RUNTIME 2700
     EXECUTABLE ogs
@@ -775,8 +775,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_ComponentTransport_ElderPython
+    NAME 2D_ComponentTransport_ElderPython
     PATH Parabolic/ComponentTransport/elder
+    RUNTIME 2700
     EXECUTABLE ogs
     EXECUTABLE_ARGS elder-python.prj
     WRAPPER time
@@ -809,32 +810,32 @@ AddTest(
     elder_pcs_0_ts_500_t_131490000.000000_reference.vtu  elder_python_pcs_0_ts_500_t_131490000.000000.vtu  pressure  pressure  1e-1  1e-5
     elder_pcs_0_ts_60_t_15778800.000000_reference.vtu    elder_python_pcs_0_ts_60_t_15778800.000000.vtu    pressure  pressure  1e-1  1e-5
     elder_pcs_0_ts_80_t_21038400.000000_reference.vtu    elder_python_pcs_0_ts_80_t_21038400.000000.vtu    pressure  pressure  1e-1  1e-5
-    elder_pcs_0_ts_0_t_0.000000_reference.vtu            elder_python_pcs_0_ts_0_t_0.000000.vtu            conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_100_t_26298000.000000_reference.vtu   elder_python_pcs_0_ts_100_t_26298000.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_120_t_31557600.000000_reference.vtu   elder_python_pcs_0_ts_120_t_31557600.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_140_t_36817200.000000_reference.vtu   elder_python_pcs_0_ts_140_t_36817200.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_160_t_42076800.000000_reference.vtu   elder_python_pcs_0_ts_160_t_42076800.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_180_t_47336400.000000_reference.vtu   elder_python_pcs_0_ts_180_t_47336400.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_200_t_52596000.000000_reference.vtu   elder_python_pcs_0_ts_200_t_52596000.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_20_t_5259600.000000_reference.vtu     elder_python_pcs_0_ts_20_t_5259600.000000.vtu     conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_220_t_57855600.000000_reference.vtu   elder_python_pcs_0_ts_220_t_57855600.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_240_t_63115200.000000_reference.vtu   elder_python_pcs_0_ts_240_t_63115200.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_260_t_68374800.000000_reference.vtu   elder_python_pcs_0_ts_260_t_68374800.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_280_t_73634400.000000_reference.vtu   elder_python_pcs_0_ts_280_t_73634400.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_300_t_78894000.000000_reference.vtu   elder_python_pcs_0_ts_300_t_78894000.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_320_t_84153600.000000_reference.vtu   elder_python_pcs_0_ts_320_t_84153600.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_340_t_89413200.000000_reference.vtu   elder_python_pcs_0_ts_340_t_89413200.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_360_t_94672800.000000_reference.vtu   elder_python_pcs_0_ts_360_t_94672800.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_380_t_99932400.000000_reference.vtu   elder_python_pcs_0_ts_380_t_99932400.000000.vtu   conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_400_t_105192000.000000_reference.vtu  elder_python_pcs_0_ts_400_t_105192000.000000.vtu  conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_40_t_10519200.000000_reference.vtu    elder_python_pcs_0_ts_40_t_10519200.000000.vtu    conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_420_t_110451600.000000_reference.vtu  elder_python_pcs_0_ts_420_t_110451600.000000.vtu  conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_440_t_115711200.000000_reference.vtu  elder_python_pcs_0_ts_440_t_115711200.000000.vtu  conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_460_t_120970800.000000_reference.vtu  elder_python_pcs_0_ts_460_t_120970800.000000.vtu  conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_480_t_126230400.000000_reference.vtu  elder_python_pcs_0_ts_480_t_126230400.000000.vtu  conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_500_t_131490000.000000_reference.vtu  elder_python_pcs_0_ts_500_t_131490000.000000.vtu  conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_60_t_15778800.000000_reference.vtu    elder_python_pcs_0_ts_60_t_15778800.000000.vtu    conc      Si      1e-1  1e-5
-    elder_pcs_0_ts_80_t_21038400.000000_reference.vtu    elder_python_pcs_0_ts_80_t_21038400.000000.vtu    conc      Si      1e-1  1e-5
+    elder_pcs_0_ts_0_t_0.000000_reference.vtu            elder_python_pcs_0_ts_0_t_0.000000.vtu            Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_100_t_26298000.000000_reference.vtu   elder_python_pcs_0_ts_100_t_26298000.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_120_t_31557600.000000_reference.vtu   elder_python_pcs_0_ts_120_t_31557600.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_140_t_36817200.000000_reference.vtu   elder_python_pcs_0_ts_140_t_36817200.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_160_t_42076800.000000_reference.vtu   elder_python_pcs_0_ts_160_t_42076800.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_180_t_47336400.000000_reference.vtu   elder_python_pcs_0_ts_180_t_47336400.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_200_t_52596000.000000_reference.vtu   elder_python_pcs_0_ts_200_t_52596000.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_20_t_5259600.000000_reference.vtu     elder_python_pcs_0_ts_20_t_5259600.000000.vtu     Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_220_t_57855600.000000_reference.vtu   elder_python_pcs_0_ts_220_t_57855600.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_240_t_63115200.000000_reference.vtu   elder_python_pcs_0_ts_240_t_63115200.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_260_t_68374800.000000_reference.vtu   elder_python_pcs_0_ts_260_t_68374800.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_280_t_73634400.000000_reference.vtu   elder_python_pcs_0_ts_280_t_73634400.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_300_t_78894000.000000_reference.vtu   elder_python_pcs_0_ts_300_t_78894000.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_320_t_84153600.000000_reference.vtu   elder_python_pcs_0_ts_320_t_84153600.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_340_t_89413200.000000_reference.vtu   elder_python_pcs_0_ts_340_t_89413200.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_360_t_94672800.000000_reference.vtu   elder_python_pcs_0_ts_360_t_94672800.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_380_t_99932400.000000_reference.vtu   elder_python_pcs_0_ts_380_t_99932400.000000.vtu   Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_400_t_105192000.000000_reference.vtu  elder_python_pcs_0_ts_400_t_105192000.000000.vtu  Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_40_t_10519200.000000_reference.vtu    elder_python_pcs_0_ts_40_t_10519200.000000.vtu    Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_420_t_110451600.000000_reference.vtu  elder_python_pcs_0_ts_420_t_110451600.000000.vtu  Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_440_t_115711200.000000_reference.vtu  elder_python_pcs_0_ts_440_t_115711200.000000.vtu  Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_460_t_120970800.000000_reference.vtu  elder_python_pcs_0_ts_460_t_120970800.000000.vtu  Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_480_t_126230400.000000_reference.vtu  elder_python_pcs_0_ts_480_t_126230400.000000.vtu  Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_500_t_131490000.000000_reference.vtu  elder_python_pcs_0_ts_500_t_131490000.000000.vtu  Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_60_t_15778800.000000_reference.vtu    elder_python_pcs_0_ts_60_t_15778800.000000.vtu    Si      Si      1e-1  1e-5
+    elder_pcs_0_ts_80_t_21038400.000000_reference.vtu    elder_python_pcs_0_ts_80_t_21038400.000000.vtu    Si      Si      1e-1  1e-5
 )
 
 AddTest(
@@ -1024,8 +1025,9 @@ if (NOT OGS_USE_MPI)
 endif()
 
 AddTest(
-    NAME LARGE_2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
+    NAME 2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
     PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents
+    RUNTIME 3300
     EXECUTABLE ogs
     EXECUTABLE_ARGS KineticReactant2_2d.prj
     WRAPPER time

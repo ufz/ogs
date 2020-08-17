@@ -1,6 +1,6 @@
 # Monolithic scheme
 AddTest(
-    NAME LARGE_2D_ThermalConvection_constviscosityMonolithic
+    NAME 2D_ThermalConvection_constviscosityMonolithic
     PATH Parabolic/HT/ConstViscosity
     RUNTIME 66
     EXECUTABLE ogs
@@ -161,7 +161,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_HT_calculatesurfaceflux
+    NAME HT_calculatesurfaceflux
     PATH Parabolic/HT/SimpleSynthetics
     RUNTIME 190
     EXECUTABLE ogs
@@ -359,8 +359,10 @@ AddTest(
 
 # MPI/PETSc tests
 AddTest(
-    NAME Parallel_LARGE_2D_ThermalConvection_constviscosity
+    DISABLED
+    NAME Parallel_2D_ThermalConvection_constviscosity
     PATH Parabolic/HT/ConstViscosity
+    RUNTIME 61 # Actual RUNTIME?
     EXECUTABLE_ARGS square_5500x5500.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 4
@@ -378,8 +380,10 @@ AddTest(
 )
 
 AddTest(
-    NAME Parallel_LARGE_2D_ThermalConvection_constviscosityStaggeredScheme
+    DISABLED
+    NAME Parallel_2D_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
+    RUNTIME 61 # Actual RUNTIME?
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
@@ -392,8 +396,10 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
+    DISABLED
+    NAME 2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
+    RUNTIME 61 # Actual RUNTIME?
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme_adaptive_dt.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1

@@ -55,7 +55,6 @@ include:
   - local: '/scripts/ci/jobs/build-gui-win.yml'
   - local: '/scripts/ci/jobs/build-gui-mac.yml'
   - local: '/scripts/ci/jobs/check-header.yml'
-  - local: '/scripts/ci/jobs/tests-large.yml'
   - local: '/scripts/ci/jobs/clang-sanitizer.yml'
   - local: '/scripts/ci/jobs/clang-tidy.yml'
   - local: '/scripts/ci/jobs/web.yml'

@@ -59,9 +59,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_LiquidFlow_Anisotropic_GravityDriven3D
+    NAME LiquidFlow_Anisotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
-    RUNTIME 70
+    RUNTIME 115
     EXECUTABLE ogs
     EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
     WRAPPER time
@@ -72,9 +72,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_LiquidFlow_Isotropic_GravityDriven3D
+    NAME LiquidFlow_Isotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
-    RUNTIME 70
+    RUNTIME 130
     EXECUTABLE ogs
     EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
     WRAPPER time
@@ -203,8 +203,9 @@ AddTest(
     axisym_theis.vtu liquid_pcs_pcs_0_ts_30_t_1728_000000_0.vtu OGS5_pressure pressure 1e-8 1e-8
 )
 AddTest(
-    NAME LARGE_LiquidFlow_Anisotropic_GravityDriven3D
+    NAME LiquidFlow_Anisotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
+    RUNTIME 115
     EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
@@ -215,8 +216,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_LiquidFlow_Isotropic_GravityDriven3D
+    NAME LiquidFlow_Isotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
+    RUNTIME 5
     EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1

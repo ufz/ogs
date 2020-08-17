@@ -17,7 +17,8 @@
 #                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
 #   VIS <vtu output file(s)> # optional for documentation
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
-#                          values should be taken from eve serial job
+#                          values should be taken from envinf job
+#   DISABLED # optional, disables the test
 # )
 #
 # Conditional arguments:
@@ -39,8 +40,11 @@
 #         the benchmark output directory.
 
 function (AddTest)
+    # settings
+    set(LARGE_RUNTIME 60)
+
     # parse arguments
-    set(options NONE)
+    set(options DISABLED)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS VIS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -65,6 +69,10 @@ function (AddTest)
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
         set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE} ${AddTest_EXECUTABLE_ARGS})
+    endif()
+
+    if(${AddTest_RUNTIME} GREATER ${LARGE_RUNTIME})
+        string(PREPEND AddTest_NAME "LARGE_")
     endif()
 
     # --- Implement wrappers ---
@@ -105,6 +113,9 @@ function (AddTest)
                 set(AddTest_WRAPPER_ARGS ${AddTest_WRAPPER_ARGS} --mca btl_openib_allow_ib 1)
             endif()
             set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
+            if("${AddTest_WRAPPER_ARGS}" MATCHES "-np;([0-9]*)")
+                set(MPI_PROCESSORS ${CMAKE_MATCH_1})
+            endif()
         else()
             message(STATUS "ERROR: mpirun was not found but is required for ${AddTest_NAME}!")
             return()
@@ -248,7 +259,6 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         -DPython3_EXECUTABLE=${Python3_EXECUTABLE}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
-    set_tests_properties(${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME})
     if(DEFINED AddTest_DEPENDS)
         set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
     endif()
@@ -259,6 +269,16 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         endif()
         set_tests_properties(${TEST_NAME} PROPERTIES ENVIRONMENT "PYTHONPATH=${PYTHONPATH}")
     endif()
+    if(DEFINED MPI_PROCESSORS)
+        set_tests_properties(${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS})
+    endif()
+
+    current_dir_as_list(ProcessLib DIR_LABELS)
+    set_tests_properties(${TEST_NAME} PROPERTIES
+        COST ${AddTest_RUNTIME}
+        DISABLED ${AddTest_DISABLED}
+        LABELS "${DIR_LABELS}"
+    )
 
     if(TARGET ${AddTest_EXECUTABLE})
         add_dependencies(ctest ${AddTest_EXECUTABLE})
@@ -287,6 +307,9 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         --debug-output
         WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
     )
-    set_tests_properties(${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME})
+    set_tests_properties(${TESTER_NAME} PROPERTIES
+        DEPENDS ${TEST_NAME}
+        DISABLED ${AddTest_DISABLED}
+    )
 
 endfunction()

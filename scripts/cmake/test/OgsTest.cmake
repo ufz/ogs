@@ -1,8 +1,11 @@
 function (OgsTest)
+    # settings
+    set(LARGE_RUNTIME 60)
+
     if(NOT OGS_BUILD_CLI OR NOT BUILD_TESTING)
         return()
     endif()
-    set(options LARGE)
+    set(options DISABLED)
     set(oneValueArgs PROJECTFILE RUNTIME)
     set(multiValueArgs WRAPPER)
     cmake_parse_arguments(OgsTest "${options}" "${oneValueArgs}"
@@ -20,6 +23,10 @@ function (OgsTest)
         set(OgsTest_RUNTIME 1)
     endif()
 
+    if(${OgsTest_RUNTIME} GREATER ${LARGE_RUNTIME})
+        string(APPEND OgsTest_NAME_WE "-LARGE")
+    endif()
+
     set(OgsTest_SOURCE_DIR "${Data_SOURCE_DIR}/${OgsTest_DIR}")
     set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}")
     file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
@@ -33,10 +40,6 @@ function (OgsTest)
             set(TEST_NAME "${TEST_NAME}-mpi")
         endif()
     endif()
-    # Add -LARGE tag.
-    if (${OgsTest_LARGE})
-        set(TEST_NAME "${TEST_NAME}-LARGE")
-    endif()
 
     add_test(
         NAME ${TEST_NAME}
@@ -48,9 +51,13 @@ function (OgsTest)
     #    WORKING_DIRECTORY ${OgsTest_BINARY_DIR}
     #    COMMAND ${OgsTest_WRAPPER} $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR} ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
 
+    current_dir_as_list(ProcessLib DIR_LABELS)
     set_tests_properties(${TEST_NAME} PROPERTIES
         ENVIRONMENT VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
-        COST ${OgsTest_RUNTIME})
+        COST ${OgsTest_RUNTIME}
+        DISABLED ${OgsTest_DISABLED}
+        LABELS "${DIR_LABELS}"
+    )
 
     if(TARGET ${OgsTest_EXECUTABLE})
         add_dependencies(ctest ${OgsTest_EXECUTABLE})

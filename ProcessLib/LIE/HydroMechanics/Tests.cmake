@@ -31,7 +31,7 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_LIE_HM_single_fracture_3D
+    NAME LIE_HM_single_fracture_3D
     PATH LIE/HydroMechanics
     RUNTIME 320
     EXECUTABLE ogs
@@ -59,9 +59,9 @@ AddTest(
 )
 
 AddTest(
-    NAME LARGE_LIE_HM_TaskB
+    NAME LIE_HM_TaskB
     PATH LIE/HydroMechanics
-    RUNTIME 60
+    RUNTIME 80
     EXECUTABLE ogs
     EXECUTABLE_ARGS TaskB.prj
     WRAPPER time
