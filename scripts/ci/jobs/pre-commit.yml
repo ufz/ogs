@@ -1,7 +1,6 @@
 pre commit:
   stage: preparation
-  image:
-    name: $PRECOMMIT_IMAGE
+  image: $PRECOMMIT_IMAGE
   dependencies: [meta_container]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'

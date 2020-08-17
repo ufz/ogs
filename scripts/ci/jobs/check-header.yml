@@ -1,16 +1,13 @@
 check header:
   stage: check
   allow_failure: true
-  tags:
-    - docker
   extends:
     - .rules-master-manual
   dependencies: [meta_container]
   variables:
     BUILD_DIR: "build-check-header"
     CMAKE_ARGS: "-DOGS_CHECK_HEADER_COMPILATION=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_GUI=ON -DOGS_USE_PYTHON=ON -DBUILD_SHARED_LIBS=ON"
-  image:
-    name: $CONTAINER_GCC_GUI_IMAGE
+  image: $CONTAINER_GCC_GUI_IMAGE
   script:
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR

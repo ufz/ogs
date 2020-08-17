@@ -1,7 +1,5 @@
 .template-build-linux:
   stage: build
-  tags:
-    - docker
   extends:
     - .test-artifacts
   dependencies: [meta, meta_container]

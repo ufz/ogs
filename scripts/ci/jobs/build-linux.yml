@@ -1,8 +1,7 @@
 build linux:
+  image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
-  tags:
-    - envinf1
-    - docker
+  tags: [ envinf1 ]
   timeout: 2h
   variables:
     BUILD_DIR: "build"
@@ -12,5 +11,3 @@ build linux:
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_MFRONT=ON
       -DOGS_USE_PYTHON=ON
-  image:
-    name: $CONTAINER_GCC_IMAGE
