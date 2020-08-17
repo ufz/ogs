@@ -15,7 +15,7 @@ container:
       --cmake_args ' -DBUILD_TESTING=OFF'
     - >
       python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs .
-      --build_args '--progress=plain'
+      --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
       --ompi 4.0.4 --base_image centos:8
