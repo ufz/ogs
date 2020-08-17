@@ -17,7 +17,7 @@ cppcheck:
 # Disabled, see !3053
 .code_quality:
   stage: check
-  tags: [docker, envinf1]
+  tags: [envinf1]
   needs: []
   rules:
   variables:

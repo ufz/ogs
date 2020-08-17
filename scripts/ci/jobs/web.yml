@@ -1,13 +1,11 @@
 web url checker:
   stage: check
   allow_failure: true
-  tags:
-    - docker
+  tags: [ docker ]
   extends:
     - .rules-manual
   dependencies: [meta_container]
-  image:
-    name: $WEB_IMAGE
+  image: $WEB_IMAGE
   script:
     - cd web
     - >
@@ -18,6 +16,7 @@ web url checker:
 
 preview web site:
   stage: build
+  tags: [ docker ]
   image: $WEB_IMAGE
   dependencies: [meta_container]
   script:
