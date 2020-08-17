@@ -86,17 +86,17 @@ AddTest(
 AddTest(
     NAME HeatTransportBHE_3D_3BHEs_array
     PATH Parabolic/T/3D_3BHEs_array
-    RUNTIME 70
+    RUNTIME 50
     EXECUTABLE ogs
     EXECUTABLE_ARGS 3bhes_1U.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
     DIFF_DATA
-    3bhes_1U_pcs_0_ts_10_t_7200.000000.vtu 3bhes_1U_pcs_0_ts_10_t_7200.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
-    3bhes_1U_pcs_0_ts_10_t_7200.000000.vtu 3bhes_1U_pcs_0_ts_10_t_7200.000000.vtu temperature_BHE1 temperature_BHE1 1e-10 1e-13
-    3bhes_1U_pcs_0_ts_10_t_7200.000000.vtu 3bhes_1U_pcs_0_ts_10_t_7200.000000.vtu temperature_BHE2 temperature_BHE2 1e-10 1e-13
-    3bhes_1U_pcs_0_ts_10_t_7200.000000.vtu 3bhes_1U_pcs_0_ts_10_t_7200.000000.vtu temperature_BHE3 temperature_BHE3 1e-10 1e-13
+    3bhes_1U_pcs_0_ts_10_t_600.000000.vtu 3bhes_1U_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+    3bhes_1U_pcs_0_ts_10_t_600.000000.vtu 3bhes_1U_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-10 1e-13
+    3bhes_1U_pcs_0_ts_10_t_600.000000.vtu 3bhes_1U_pcs_0_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 1e-10 1e-13
+    3bhes_1U_pcs_0_ts_10_t_600.000000.vtu 3bhes_1U_pcs_0_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 1e-10 1e-13
 )
 
 AddTest(
