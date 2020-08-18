@@ -46,7 +46,7 @@ string(REPLACE "\n" ";" SUBMODULES_LIST ${SUBMODULES_STATE})
 
 foreach(SUBMODULE_STATE ${SUBMODULES_LIST})
 
-    string(REGEX MATCH "ThirdParty/[A-Za-z0-9_-]*" SUBMODULE ${SUBMODULE_STATE})
+    string(REGEX MATCH "ThirdParty/[/A-Za-z0-9_-]*" SUBMODULE ${SUBMODULE_STATE})
     if(NOT ${SUBMODULE} IN_LIST REQUIRED_SUBMODULES)
         continue()
     endif()
