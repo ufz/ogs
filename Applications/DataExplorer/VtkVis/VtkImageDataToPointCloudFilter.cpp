@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <vector>
 
+#include <vtkDoubleArray.h>
 #include <vtkIdList.h>
 #include <vtkImageData.h>
 #include <vtkInformation.h>
@@ -54,7 +55,13 @@ int VtkImageDataToPointCloudFilter::RequestData(
     vtkPolyData* output = vtkPolyData::SafeDownCast(
         output_info->Get(vtkDataObject::DATA_OBJECT()));
 
-    void* pixvals = input->GetScalarPointer();
+    if (input->GetScalarSize() != sizeof(float))
+    {
+        vtkDebugMacro("Existing data does not have float-type and cannot be processed. "
+            "Aborting filter process...");
+        return 0;
+    }
+    float* pixvals = static_cast<float*>(input->GetScalarPointer());
     int const n_comp = input->GetNumberOfScalarComponents();
     if (n_comp < 1)
     {
@@ -75,9 +82,15 @@ int VtkImageDataToPointCloudFilter::RequestData(
 
     double spacing[3];
     input->GetSpacing(spacing);
-    double range[2];
-    vtkPointData* input_data = input->GetPointData();
-    input_data->GetArray(0)->GetRange(range);
+
+    if (MinValueRange == -1 || MaxValueRange == -1)
+    {
+        double range[2];
+        vtkPointData* input_data = input->GetPointData();
+        input_data->GetArray(0)->GetRange(range);
+        MinValueRange = range[0];
+        MaxValueRange = range[1];
+    }
 
     std::vector<vtkIdType> density;
     density.reserve(n_points);
@@ -86,16 +99,16 @@ int VtkImageDataToPointCloudFilter::RequestData(
         // Skip transparent pixels
         if (n_comp == 2 || n_comp == 4)
         {
-            if ((static_cast<float*>(pixvals))[(i + 1) * n_comp - 1] <
-                0.00000001f)
+            if (pixvals[(i + 1) * n_comp - 1] < 0.00000001f)
             {
                 density.push_back(0);
                 continue;
             }
         }
-        float const val((static_cast<float*>(pixvals))[i * n_comp]);
+        double const val(pixvals[i * n_comp]);
         double const calc_gamma = (IsLinear) ? 1 : Gamma;
-        std::size_t const pnts_per_cell = interpolate(range[0], range[1], val, calc_gamma);
+        std::size_t const pnts_per_cell =
+            interpolate(MinValueRange, MaxValueRange, val, calc_gamma);
         density.push_back(static_cast<vtkIdType>(
             std::floor(pnts_per_cell * GetPointScaleFactor())));
     }
@@ -107,7 +120,9 @@ int VtkImageDataToPointCloudFilter::RequestData(
     new_points->SetNumberOfPoints(sum);
     vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
     cells->Allocate(sum);
-
+    vtkSmartPointer<vtkDoubleArray> intensity = vtkSmartPointer<vtkDoubleArray>::New();
+    intensity->Allocate(sum);
+    intensity->SetName("Intensity");
     double const half_cellsize(spacing[0] / 2.0);
     std::size_t pnt_idx(0);
     for (std::size_t i = 0; i < static_cast<std::size_t>(n_points); ++i)
@@ -124,11 +139,17 @@ int VtkImageDataToPointCloudFilter::RequestData(
         MathLib::Point3d max_pnt{std::array<double, 3>{
             {p[0] + half_cellsize, p[1] + half_cellsize, MaxHeight}}};
         createPoints(new_points, cells, pnt_idx, density[i], min_pnt, max_pnt);
+        for (vtkIdType j = 0; j < density[i]; ++j)
+        {
+            intensity->InsertValue(pnt_idx + j, pixvals[i * n_comp]);
+        }
         pnt_idx += density[i];
     }
 
     output->SetPoints(new_points);
     output->SetVerts(cells);
+    output->GetPointData()->AddArray(intensity);
+    output->GetPointData()->SetActiveAttribute("Intensity", vtkDataSetAttributes::SCALARS);
     output->Squeeze();
 
     vtkDebugMacro(<< "Created " << new_points->GetNumberOfPoints() << " points.");
@@ -165,7 +186,7 @@ std::size_t VtkImageDataToPointCloudFilter::interpolate(double low,
                                                         double p,
                                                         double gamma) const
 {
-    assert(p >= low && p <= high);
+    p = std::clamp(p, low, high);
     double const r = (p - low) / (high - low);
     return static_cast<std::size_t>(
         (MaxNumberOfPointsPerCell - MinNumberOfPointsPerCell) * std::pow(r, gamma) +
