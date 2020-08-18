@@ -45,6 +45,7 @@ include:
   - local: '/scripts/ci/jobs/build-linux.yml'
   - local: '/scripts/ci/jobs/build-linux-petsc.yml'
   - local: '/scripts/ci/jobs/build-linux-frontend.yml'
+  - local: '/scripts/ci/jobs/build-linux-conan.yml'
   - local: '/scripts/ci/jobs/build-docs.yml'
   - local: '/scripts/ci/jobs/build-win.yml'
   - local: '/scripts/ci/jobs/build-mac.yml'

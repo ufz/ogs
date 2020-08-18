@@ -1,0 +1,12 @@
+build linux conan:
+  extends:
+    - .template-build-linux
+    - .rules-master-manual
+  tags: [shell]
+  variables:
+    BUILD_DIR: build
+    CMAKE_ARGS: >-
+      -DBUILD_SHARED_LIBS=ON
+      -DOGS_BUILD_UTILS=ON
+      -DOGS_USE_CONAN=ON
+      -DOGS_USE_MFRONT=ON
