@@ -234,16 +234,17 @@
                     <!-- use the following for full simulation
                     <t_end> 15552000 </t_end>
                     -->
-                    <t_end> 7200 </t_end>
+                    <t_end> 600 </t_end>
                     <timesteps>
                         <!-- use the following for full simulation
-                        <pair><repeat>10</repeat><delta_t>720</delta_t></pair>
-                        <pair><repeat>4</repeat><delta_t>3600</delta_t></pair>
+                        <pair><repeat>10</repeat><delta_t>60</delta_t></pair>
+                        <pair><repeat>1</repeat><delta_t>3000</delta_t></pair>
+                        <pair><repeat>5</repeat><delta_t>3600</delta_t></pair>
                         <pair><repeat>1</repeat><delta_t>10800</delta_t></pair>
                         -->
                         <pair>
                             <repeat>10</repeat>
-                            <delta_t>720</delta_t>
+                            <delta_t>60</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -254,7 +255,7 @@
             <prefix>3bhes_1U_pcs_{:process_id}</prefix>
             <timesteps>
                 <!-- use the following for full simulation
-                <pair><repeat> 1</repeat><each_steps> 92 </each_steps></pair>
+                <pair><repeat> 1</repeat><each_steps> 94 </each_steps></pair>
                 <pair><repeat> 1</repeat><each_steps> 80 </each_steps></pair>
                 -->
                 <pair>
