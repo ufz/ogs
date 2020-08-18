@@ -7,7 +7,7 @@ endif()
 
 if(OGS_BUILD_GUI)
     add_executable(Raster2PointCloud Raster2PointCloud.cpp)
-    target_link_libraries(Raster2PointCloud GitInfoLib ApplicationsFileIO BaseLib GeoLib QtDataView VtkVis)
+    target_link_libraries(Raster2PointCloud GitInfoLib ApplicationsFileIO BaseLib GeoLib VtkVis QtDataView)
     set_target_properties(Raster2PointCloud PROPERTIES FOLDER Utilities)
     install(TARGETS Raster2PointCloud RUNTIME DESTINATION bin COMPONENT Utilities)
 endif()
