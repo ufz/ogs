@@ -1,4 +1,4 @@
-@Behaviour<generic> 'lib/libOgsMFrontBehaviour.so' 'MohrCoulombAbboSloan';
+@Behaviour<generic> 'lib/libOgsMFrontBehaviour' 'MohrCoulombAbboSloan';
 @ExternalStateVariable 'Temperature' {0:293.15,3600.:800};
 @ImposedStrain<function> 'EXX' '1.e-2*t';
 @ImposedStrain<function> 'EYY' '1.e-2*t';

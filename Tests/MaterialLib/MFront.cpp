@@ -40,7 +40,7 @@ struct StandardElasticityBrickBehaviour
     static std::unique_ptr<MFront::MFront<Dim>> createConstitutiveRelation()
     {
         auto behaviour =
-            mgis::behaviour::load("libOgsMFrontBehaviour.so",
+            mgis::behaviour::load("libOgsMFrontBehaviour",
                                   "StandardElasticityBrick", hypothesis(Dim));
 
         using P = ParameterLib::ConstantParameter<double>;
@@ -61,7 +61,7 @@ struct ElasticBehaviour
 {
     static std::unique_ptr<MFront::MFront<Dim>> createConstitutiveRelation()
     {
-        auto behaviour = mgis::behaviour::load("libOgsMFrontBehaviour.so",
+        auto behaviour = mgis::behaviour::load("libOgsMFrontBehaviour",
                                                "Elasticity", hypothesis(Dim));
 
         using P = ParameterLib::ConstantParameter<double>;
@@ -84,7 +84,7 @@ struct MohrCoulombAbboSloanBehaviour
     static std::unique_ptr<MFront::MFront<Dim>> createConstitutiveRelation()
     {
         auto behaviour = mgis::behaviour::load(
-            "libOgsMFrontBehaviour.so", "MohrCoulombAbboSloan", hypothesis(Dim));
+            "libOgsMFrontBehaviour", "MohrCoulombAbboSloan", hypothesis(Dim));
 
         using P = ParameterLib::ConstantParameter<double>;
         // Parameters used by mfront model in the order of appearence in the

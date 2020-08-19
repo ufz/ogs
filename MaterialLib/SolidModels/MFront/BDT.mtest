@@ -1,4 +1,4 @@
-@Behaviour<generic> 'libOgsMFrontBehaviour.so' 'BDT';
+@Behaviour<generic> 'libOgsMFrontBehaviour' 'BDT';
 @MaterialProperty<constant> 'YoungModulus' 4.4619E+04;
 @MaterialProperty<constant> 'PoissonRatio' 3.0000E-01;
 @MaterialProperty<constant> 'ThermalExpansion' 1.0000E-05;
