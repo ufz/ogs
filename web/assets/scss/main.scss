@@ -30,26 +30,10 @@ nav a.active {
 }
 
 /* -- Typography -- */
-h1, h2, h3, h4, h5, h6 {
-  @apply font-serif;
-  @apply font-medium;
-  @apply mt-6;
-  @apply mb-4;
-}
-
 h2, h3 {
   @apply border-b;
   @apply border-gray-600;
 }
-
-h1 {
-  @apply mt-0;
-}
-
-h1 { @apply text-3xl; }
-h2 { @apply text-2xl; }
-h3 { @apply text-xl; }
-h4 { @apply text-lg; }
 
 // Anchor links
 h2 > .headerlink,
@@ -68,27 +52,7 @@ h4 > .headerlink {
 
 // Inline code and blocks
 code {
-  @apply p-px;
-  @apply rounded-sm;
   background-color: #fafafa;
-}
-
-:not(pre) > code {
-  @apply px-1;
-}
-
-pre {
-  @apply -ml-2;
-  @apply pl-2;
-  @apply border-l-8;
-  @apply rounded
-}
-pre > code {
-  @apply bg-transparent;
-}
-
-p, ul, pre {
-  @apply mb-4;
 }
 
 .inverse {
@@ -104,19 +68,6 @@ p, ul, pre {
 .inverse a:hover {
   border-color: theme('mycolors.text-inverse');
   color: theme('mycolors.text-accent');
-}
-
-blockquote {
-  @apply bg-gray-200;
-  @apply rounded;
-  @apply border-l-8;
-  @apply italic;
-  @apply p-2;
-  @apply mb-2;
-}
-
-blockquote > p:last-child {
-  @apply mb-0;
 }
 
 cite::before {
@@ -259,19 +210,6 @@ a.btn-inverse {
 a.btn-inverse:hover {
   background: theme('mycolors.bg-default');
   color: theme('mycolors.text-accent');
-}
-
-/* -- Content --*/
-.content {
-  ul {
-    list-style-type: disc;
-    padding-left: theme('padding.4');
-  }
-
-  ol {
-    list-style-type: decimal;
-    padding-left: theme('padding.4');
-  }
 }
 
 /* -------------------------------- Images ---------------------------------- */
