@@ -12,7 +12,7 @@
 @Real 's' 'sin(theta)';
 
 @MaximumNumberOfSubSteps 5; //fails without substepping (residual ping-pong)
-@Behaviour<generic> 'lib/libOgsMFrontBehaviour.so' 'MohrCoulombAbboSloan';
+@Behaviour<generic> 'lib/libOgsMFrontBehaviour' 'MohrCoulombAbboSloan';
 
 @ImposedStrain 'EXX' {0 : 0, 'tmax' : 'em* c'};
 @ImposedStrain 'EYY' {0 : 0, 'tmax' : 'em* s'};
