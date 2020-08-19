@@ -37,24 +37,16 @@ public:
                           initializeDataContainer);
     }
 
-    std::tuple<bool, bool, std::vector<double>> tespyThermalSolver(
+    std::tuple<bool, bool, std::vector<double>, std::vector<double>>
+    tespySolver(
         double t,
         std::vector<double> const& Tin_val,
         std::vector<double> const& Tout_val) const override
     {
-        using Ret = std::tuple<bool, bool, std::vector<double>>;
+        using Ret = std::tuple<bool, bool, std::vector<double>, std::vector<double>>;
         PYBIND11_OVERLOAD(Ret,
                           BHEInflowPythonBoundaryConditionPythonSideInterface,
-                          tespyThermalSolver, t, Tin_val, Tout_val);
-    }
-
-    std::tuple<bool, std::vector<double>> tespyHydroSolver(
-        double t) const override
-    {
-        using Ret = std::tuple<bool, std::vector<double>>;
-        PYBIND11_OVERLOAD(Ret,
-                          BHEInflowPythonBoundaryConditionPythonSideInterface,
-                          tespyHydroSolver, t);
+                          tespySolver, t, Tin_val, Tout_val);
     }
 };
 
@@ -71,12 +63,9 @@ void bheInflowpythonBindBoundaryCondition(pybind11::module& m)
     pybc.def("initializeDataContainer",
              &BHEInflowPythonBoundaryConditionPythonSideInterface::
                  initializeDataContainer);
-    pybc.def("tespyThermalSolver",
+    pybc.def("tespySolver",
              &BHEInflowPythonBoundaryConditionPythonSideInterface::
-                 tespyThermalSolver);
-    pybc.def(
-        "tespyHydroSolver",
-        &BHEInflowPythonBoundaryConditionPythonSideInterface::tespyHydroSolver);
+                 tespySolver);
 }
 
 }  // namespace ProcessLib
