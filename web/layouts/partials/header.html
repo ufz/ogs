@@ -11,11 +11,11 @@
   <title>{{ .Title }}</title>
 
   {{ if .Site.IsServer }}
-  {{ $styles := resources.Get "scss/main.scss" | resources.ToCSS (dict "targetPath" "main.css" "enableSourceMap" true ) | resources.PostCSS }}
-  <link rel="stylesheet" href="{{ $styles.Permalink }}" media="screen">
+    {{ $styles := resources.Get "css/main.css" | resources.PostCSS }}
+    <link rel="stylesheet" href="{{ $styles.Permalink }}" media="screen">
   {{ else }}
-  {{ $styles := resources.Get "scss/main.scss" | resources.ToCSS (dict "targetPath" "main.css" ) | resources.PostCSS | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $styles.Permalink }}" media="screen"> <!-- integrity attribute did not work with netlify deploy previews -->
+    {{ $styles := resources.Get "css/main.css" | resources.PostCSS | minify }}
+    <link rel="stylesheet" href="{{ $styles.Permalink }}" media="screen">
   {{ end }}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
