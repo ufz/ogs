@@ -12,6 +12,8 @@
             <template x-for="topic in topics" :key="topic.id">
               <li>
                 <a x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug" x-text="topic.title"></a>
+                by <span x-text="getUsername(topic)"></span>
+                <img x-bind:src="getUserAvatar(topic)" alt="author avatar">
               </li>
             </template>
           </ul>
@@ -30,6 +32,8 @@
             <template x-for="topic in topics" :key="topic.id">
               <li>
                 <a x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug" x-text="topic.title"></a>
+                <span x-text="getUsername(topic)"></span>
+                <img x-bind:src="getUserAvatar(topic)" alt="">
               </li>
             </template>
           </ul>
@@ -38,26 +42,25 @@
     </div>
 
     <script>
-      // TODO: avatar_template
-      // https://discourse.opengeosys.org/user_avatar/discourse.opengeosys.org/bilke/90/405_2.png
-      // string += element.created_at + " | " + element.tags + " | " + data.users.find(author => author.id === element.posters[0].user_id).name
       function categoryData(category, limit) {
         return {
-          title: 'Category data: ' + category,
           topics: [],
+          users: [],
           reload() {
             sessionStorage.removeItem(category);
             this.topics = [];
+            this.users = [];
             this.init();
           },
           init() {
             // Check if sessionData holds anything, so we don't need to hit the api
             const topics = JSON.parse(sessionStorage.getItem(category));
+            const users = JSON.parse(sessionStorage.getItem(category + '_users'));
 
-            if (topics) {
+            if (topics && users) {
               // make it accessible to x-data
               this.topics = topics;
-              console.log('sessionStorage', topics);
+              this.users = users;
               return;
             }
 
@@ -73,8 +76,25 @@
                 });
                 this.topics = topicsSorted.slice(0, limit);;
                 sessionStorage.setItem(category, JSON.stringify(this.topics));
+
+                let users = response.users;
+                this.users = users;
+                sessionStorage.setItem(category + '_users', JSON.stringify(this.users));
               });
-          }
+          },
+          getUsername(topic) {
+            let user = this.users.find(author => author.id === topic.posters[0].user_id);
+            if (user.name != "") {
+              return user.name;
+            }
+            else {
+              return user.username;
+            }
+          },
+          getUserAvatar(topic) {
+            let user = this.users.find(author => author.id === topic.posters[0].user_id);
+            return 'https://discourse.opengeosys.org' + user.avatar_template.replace('{size}', '90');
+          },
         };
       }
     </script>
