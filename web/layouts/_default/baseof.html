@@ -1,11 +1,58 @@
-{{ partial "header.html" . }}
+<!doctype html>
+<html lang="en">
+<head>
+  {{ partial "header.html" . }}
+</head>
 
-{{ block "main" . }}
+<body class="font-sans leading-normal">
+  <header class="bg-light">
+    <div class="container">
+      <nav class="flex border-b py-4">
+        <div class="hidden sm:block w-1/4">
+          <a href="/">{{ .Site.Title }}</a>
+        </div>
+        {{ $currentPage := . }}
+        {{ $segments := split .RelPermalink "/" }}
+        {{ $section := index $segments 1 }}
+        <div class="w-3/4 sm:w-1/2 flex justify-center">
+          {{ range .Site.Menus.main }}
+          {{ $url_trimmed := trim .URL "/" }}
+          <a href="{{ .URL }}" class="nav-item{{if (eq $section $url_trimmed) }} active{{end}}">{{ .Name }}</a>
+          {{ end }}
+          <a href="https://discourse.opengeosys.org" class="nav-item">Discourse</a>
+        </div>
+        <div class="w-1/4">
+          {{ partial "site-search.html" . }}
+        </div>
+      </nav>
+      {{ if .Site.Params.alert }}
+      <div class="text-sm flex justify-center my-2 p-2 bg-blue-lightest text-blue-darker border-l-4 border-blue">
+        <i class="far fa-exclamation-triangle"></i>&nbsp;
+        <span class="lh-title ml3">{{ .Site.Params.alert | safeHTML }}</span>
+      </div>
+      {{ end }}
+    </div>
+    <div class="container {{if .IsHome}} hidden{{end}}">
+      <div class="w-auto">
+        <div class="text-xs header w-full" id="theHeader">
+          {{ partial "breadcrumb" . }}
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="py-2">
 
-{{ end }}
+    {{ block "main" . }}
+    {{ end }}
 
-{{ block "footer" . }}
+    {{ block "footer" . }}
+    {{ end }}
 
-{{ end }}
+    {{ partial "global-footer-nav.html" . }}
 
-{{ partial "footer.html" . }}
+  </div> <!-- container -->
+
+  {{ partial "footer.html" . }}
+</body>
+
+</html>
