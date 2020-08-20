@@ -46,6 +46,7 @@ See [the Benchmarks section](/docs/benchmarks/) for more information on the benc
 OGS is a command line application and requires the path to a `.prj`-file as an argument.
 
 <div class='win'>
+
 To run it open a new command line shell (called *cmd.exe*). Now simply type `ogs` (if the executable is in your `PATH`-environment variable) or specify its full path (e.g.: `C:\Users\MyUserName\Downloads\ogs.exe`) and hit `ENTER`.
 
 OGS prints out its usage instructions:
@@ -72,6 +73,7 @@ ogs .\Path\to\BenchmarkName.prj
 </div>
 
 <div class='linux'>
+
 To run it open a new command line shell (*Terminal*). Now simply type `ogs` (if the executable is in your `PATH`-environment variable) or specify its full path (e.g.: `./path/to/ogs`) and hit `ENTER`.
 
 OGS prints out its usage instructions:
@@ -98,5 +100,7 @@ ogs ./path/to/BenchmarkName.prj
 </div>
 
 <div class='mac'>
+
 See Linux tab!
+
 </div>

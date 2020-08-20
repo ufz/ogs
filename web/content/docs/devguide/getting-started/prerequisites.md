@@ -107,7 +107,8 @@ The Homebrew package manager is needed for installing other libraries and packag
 Git is a powerful and distributed version control system. OGS source code is hosted on [GitLab](https://gitlab.opengeosys.org/ogs/ogs). See the developer guide page on [Code Reviews]({{< ref "code-reviews" >}}) for more info on how OGS uses GitLab for collaborative development.
 
 <div class='win'>
-Download and install git from the [git homepage](http://git-scm.com/download/win). Use the default installer options but also enable `Enable symbolic links` under the *Configuring extra options* page.
+
+**Download** and install git from the [git homepage](http://git-scm.com/download/win). Use the default installer options but also enable `Enable symbolic links` under the *Configuring extra options* page.
 
 ![Enable symbolic links option](../git-installer-win.png)
 
@@ -129,6 +130,7 @@ git config --global http.proxy http://yourproxy.example.com
 </div>
 
 <div class='linux'>
+
 Please check if Git is already installed:
 
 ```bash
@@ -164,6 +166,7 @@ git config --global http.proxy http://yourproxy.example.com
 </div>
 
 <div class='mac'>
+
 Install Git with Homebrew:
 
 ```bash
@@ -212,6 +215,7 @@ sudo apt-get install python3 python3-pip
 </div>
 
 <div class='mac'>
+
 Install Python 3 with Homebrew:
 
 ```bash
@@ -229,12 +233,14 @@ brew install python
 </div>
 
 <div class='linux'>
+
 Install CMake via Kitware's APT Repository by [following their instructions](https://apt.kitware.com/).
 
 For other linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
 </div>
 
 <div class='mac'>
+
 Install CMake with Homebrew:
 
 ```bash

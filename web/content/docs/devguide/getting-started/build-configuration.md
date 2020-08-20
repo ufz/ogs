@@ -31,6 +31,7 @@ When you want to start over with a new configuration simply delete the build-dir
 [See this]({{< ref "configuration-options" >}}) for a list of available options.
 
 <div class='win'>
+
 <div class='note'>
 
 ### <i class="far fa-exclamation-triangle"></i> Supported Visual Studio Generators
@@ -38,6 +39,7 @@ When you want to start over with a new configuration simply delete the build-dir
 - `Visual Studio 15 2017 Win64`
 
 </div>
+
 </div>
 
 ### Note: Installation of required libraries
@@ -47,6 +49,7 @@ It is preferred to use the Conan package manager to install required third-party
 Instead of using Conan you can optionally [install the required libraries manually]({{< ref "third-party-libraries.md" >}}) **before** running CMake.
 
 <div class='win'>
+
 <div class='note'>
 
 #### <i class="far fa-exclamation-triangle"></i> Multi-configuration with Conan and Visual Studio
@@ -65,7 +68,9 @@ cmake ../../ogs -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release
 `..\..\ogs` represents the relative path to the source code (please adapt if you have a different directory layout).
 
 Please also note that in Visual Studio you have to choose the correct configuration (i.e. when opening the solution-file in the release-folder you have to switch the Visual Studio configuration to **Release**)!
+
 </div>
+
 </div>
 
 ## Option: Configure from the command line
@@ -104,10 +109,13 @@ Use [ConEmu](https://conemu.github.io) for a better terminal experience. It auto
 ## Option: Configure with a visual tool
 
 <div class='win'>
+
 CMake comes with a graphical tool called **cmake-gui**. You can find it in the **Windows Start Menu**. First you need to set the source and build directory. Then click **Configure**. Now choose the generator to be used (e.g. **Visual Studio 15 2017 Win64** for Visual Studio 2015 64-bit). Now choose your desired configuration options by toggling the corresponding checkboxes. Click **Configure** again. Click **Configure** often enough until the **Generate**-button becomes visible. Pressing **Generate** will finally generate the project files inside the chosen build directory.
+
 </div>
 
 <div class='linux'>
+
 A more convenient way of running cmake on the command line is to use the `ccmake` tool. This is a shell tool but with some graphical user interface. To use it just run `ccmake` inside your build directory with the path to the source code (and optionally the generator you want to use) as parameter:
 
 ```bash
@@ -117,8 +125,11 @@ ccmake ../ogs
 First press <kbd>C</kbd> to **Configure**. You are now presented the available configuration options. You can navigate in the list with the cursor keys and toggle / alter options with <kbd>Enter</kbd>. You may also press <kbd>T</kbd> to toggle (previously hidden) advanced options. Press <kbd>C</kbd> again until the **Generate**-option becomes visible. Press <kbd>G</kbd> to generate the project files and exit `ccmake`.
 
 There is also the tool `cmake-gui` available, please see the Win-Tab for a description.
+
 </div>
 
 <div class='mac'>
+
 Please see the Linux instructions!
+
 </div>
