@@ -114,27 +114,27 @@ features:
   layout: right
 #   class: inverse
 
-- headline: Get started
+- headline: Ready to dive in?
   textline: |
   subfeatures:
     - headline: Using OpenGeoSys
       textline: |
-        Start using OpenGeoSys by [downloading](/downloads) a prebuilt package.
-      links:
-        - text: <i class="far fa-download"></i> Download OpenGeoSys
-          url: /releases
+        Start using OpenGeoSys by [downloading](/releases) a prebuilt package.
+#       links:
+#         - text: <i class="far fa-download"></i> Download OpenGeoSys
+#           url: /releases
     - headline: Developing OpenGeoSys
       textline: |
         Getting started developing OpenGeoSys at the [Developer Guide](/docs/devguide).
-      links:
-        - text: <i class="far fa-book"></i> Developer Guide
-          url: /docs/devguide
+#      links:
+#        - text: <i class="far fa-book"></i> Read the Developer Guide
+#          url: /docs/devguide
     - headline: Become part of the Community
       textline: |
         Get in touch with the OpenGeoSys Community via our [Discussion forum](https://discourse.opengeosys.org), [GitLab](https://gitlab.opengeosys.org/ogs/ogs) or by [email](mailto:info@opengeosys.org).
-      links:
-        - text: <i class="fab fa-gitlab"></i> GitLab
-          url: https://gitlab.opengeosys.org/ogs/ogs
+#      links:
+#        - text: <i class="fab fa-gitlab"></i> GitLab
+#          url: https://gitlab.opengeosys.org/ogs/ogs
   layout: vertical
-  class: inverse
+#   class: inverse
 ---

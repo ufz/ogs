@@ -11,8 +11,19 @@
     <div class="w-full md:w-1/2 px-4 md:px-2">
       <h2 class="mt-0">Discussions</h2>
       <div class="py-0 lg:px-4">
-        <ul id="discussions">
-        </ul>
+        <div x-data="" x-init="
+          fetch('https://discourse.opengeosys.org/c/usability.json')
+          .then(response => response.json())
+          .then(data => topics = data.topic_list.topics.slice(0, 3))">
+          <ul>
+            <template x-for="topic in topics" :key="topic.id">
+              <li>
+                <a x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug" x-text="topic.title"></a>
+              </li>
+            </template>
+          </ul>
+        </div>
+
       </div>
     </div>
 
@@ -28,7 +39,7 @@
 {{ define "latest-pages" }}
 <ul>
 
-{{ range first 8 (where .Site.RegularPages "CurrentSection.RelPermalink" "/docs/benchmarks/").ByLastmod.Reverse }}
+  {{ range first 8 (where .Site.RegularPages "CurrentSection.RelPermalink" "/docs/benchmarks/").ByLastmod.Reverse }}
   <li>
     <!-- Two weeks -->
     <a href="{{ .Permalink }}">
@@ -36,6 +47,6 @@
       {{ .Title }}
     </a>
   </li>
-{{ end }}
+  {{ end }}
 </ul>
 {{ end }}
