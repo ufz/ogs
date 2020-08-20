@@ -1,20 +1,13 @@
 <div class="container">
   <div class="flex flex-wrap">
-    <div class="w-full md:w-1/2 px-4 md:px-2">
-      <h2 class="mt-0">News</h2>
-      <div class="py-0 lg:px-4">
-        <ul id="news">
-        </ul>
-      </div>
-    </div>
 
     <div class="w-full md:w-1/2 px-4 md:px-2">
-      <h2 class="mt-0">Discussions</h2>
+      <h2 class="mt-0">Announcements</h2>
       <div class="py-0 lg:px-4">
-        <div x-data="" x-init="
-          fetch('https://discourse.opengeosys.org/c/usability.json')
-          .then(response => response.json())
-          .then(data => topics = data.topic_list.topics.slice(0, 3))">
+        <div x-data="categoryData('announcements', 5)" x-init="init()">
+          <button class="py-2 px-4 rounded bg-blue-500 text-white flex-grow-0" type="button" x-on:click="reload()">
+            Reload
+          </button>
           <ul>
             <template x-for="topic in topics" :key="topic.id">
               <li>
@@ -23,9 +16,68 @@
             </template>
           </ul>
         </div>
-
       </div>
     </div>
+
+    <div class="w-full md:w-1/2 px-4 md:px-2">
+      <h2 class="mt-0">Discussions</h2>
+      <div class="py-0 lg:px-4">
+        <div x-data="categoryData('usability', 4)" x-init="init()">
+          <button class="py-2 px-4 rounded bg-blue-500 text-white flex-grow-0" type="button" x-on:click="reload()">
+            Reload
+          </button>
+          <ul>
+            <template x-for="topic in topics" :key="topic.id">
+              <li>
+                <a x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug" x-text="topic.title"></a>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // TODO: avatar_template
+      // https://discourse.opengeosys.org/user_avatar/discourse.opengeosys.org/bilke/90/405_2.png
+      // string += element.created_at + " | " + element.tags + " | " + data.users.find(author => author.id === element.posters[0].user_id).name
+      function categoryData(category, limit) {
+        return {
+          title: 'Category data: ' + category,
+          topics: [],
+          reload() {
+            sessionStorage.removeItem(category);
+            this.topics = [];
+            this.init();
+          },
+          init() {
+            // Check if sessionData holds anything, so we don't need to hit the api
+            const topics = JSON.parse(sessionStorage.getItem(category));
+
+            if (topics) {
+              // make it accessible to x-data
+              this.topics = topics;
+              console.log('sessionStorage', topics);
+              return;
+            }
+
+            // get gists and parse the description field
+            fetch('https://discourse.opengeosys.org/c/' + category + '.json')
+              .then(response => response.json())
+              .then(response => {
+                let topics = response.topic_list.topics;
+                let topicsSorted = topics.sort(function compare(a, b) {
+                  var dateA = new Date(a.created_at);
+                  var dateB = new Date(b.created_at);
+                  return dateB - dateA;
+                });
+                this.topics = topicsSorted.slice(0, limit);;
+                sessionStorage.setItem(category, JSON.stringify(this.topics));
+              });
+          }
+        };
+      }
+    </script>
 
     <div class="w-full px-4 md:px-2">
       <h2 class="mt-0">Latest Benchmarks</h2>
