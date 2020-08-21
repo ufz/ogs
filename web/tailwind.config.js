@@ -22,6 +22,11 @@ module.exports = {
     './layouts/**/*.html',
   ],
   theme: {
+    extend: {
+      fontSize: {
+        '8xl': '6rem',
+      }
+    },
     mycolors: mycolors,
     fontFamily: {
       'sans': [

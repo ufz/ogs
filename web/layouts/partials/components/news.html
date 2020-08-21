@@ -15,7 +15,7 @@
 
 
 {{ define "discours-posts" }}
-<h2 class="mb-4 text-3xl">
+<h2 class="mb-2 lg:mb-4 text-2xl lg:text-3xl">
   {{ if .heading }}
   {{ .heading }}
   {{ else }}
@@ -25,10 +25,10 @@
 <div class="mt-2 grid lg:grid-cols-3 lg:col-gap-5" x-data="categoryData('{{ .category }}', {{ .count }})"
   x-init="init()">
   <template x-for="topic in topics" :key="topic.id">
-    <div class="mb-3 shadow  rounded-lg p-4">
+    <div class="mb-3 border-b-2 lg:border-b-o lg:shadow lg:rounded-lg p-4">
       <a x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug" class="block">
         <template x-if="topic.tags.length > 0">
-          <div>
+          <div class="float-right lg:float-none">
             <span x-text="topic.tags.slice(0, 1)" x-bind:class="{
                 'bg-indigo-100 text-indigo-800': topic.tags.slice(0, 1) == 'ogs6',
                 'bg-green-100 text-green-800': topic.tags.slice(0, 1) == 'ogs5',
@@ -57,15 +57,6 @@
                     &middot;
                   </span>
                   <span x-text="(topic.posts_count - 1) + ' comment' + ((topic.posts_count - 1) === 1 ? '' : 's')">
-                  </span>
-                </span>
-              </template>
-              <template x-if="topic.tags.length > 0">
-                <span>
-                  <span class="mx-1">
-                    &middot; Tags:
-                  </span>
-                  <span x-text="topic.tags.slice(0, 1)">
                   </span>
                 </span>
               </template>

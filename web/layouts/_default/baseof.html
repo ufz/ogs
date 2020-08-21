@@ -5,11 +5,11 @@
   {{ partial "header.html" . }}
 </head>
 
-<body class="font-sans leading-normal">
-  <div class="container mx-auto py-2">
+<body>
+  <div class="container mx-auto py-2 px-2 md:px-4">
     <!-- This example requires Tailwind CSS v1.4.0+ -->
     <div x-data="{ mobileMenuOpen: false }" class="relative bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
           <div class="lg:w-0 lg:flex-1">
             <a href="#" class="flex">
@@ -476,9 +476,7 @@
     </div>
 
 
-
-    <header class="bg-light">
-
+    <header class="bg-light hidden">
       <nav class="flex border-b py-4">
         <div class="hidden sm:block w-1/4">
           <a href="/">{{ .Site.Title }}</a>
