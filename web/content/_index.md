@@ -93,9 +93,10 @@ features:
 
 - headline: Transparent development workflows
   textline: |
-    Write front-end code with Jekyll or Hugo and push to your Git repo. Forestry will pull in your commits and update the CMS.
+    OpenGeoSys is an open-source project developed by a community of researchers. We try to be
+    open-minded and and make team decisions. We try to help users and developers as best as we can.
 
-    Invite your team to create content in a rich UI. Their updates get committed back without merge conflicts.
+    We invite you to take part in this journey, shape the future of OpenGeoSys together and happily welcome any contribution.
   subfeatures:
     - headline: Setup a development environment
       textline: |
