@@ -73,7 +73,7 @@ The total simulation time is 6 months.
 
 {{< img src="../3D_3BHEs_array_figures/BHE_network.png" width="200">}}
 
-Figure 1: Pipeline network model in TESPy
+Figure 1: One-way pipeline network model in TESPy
 
 ## Results
 
@@ -96,6 +96,28 @@ Figure 3: Evolution of the inflow and outflow refrigerant temperature of each BH
 
 Figure 4: Evolution of the heat extraction rate of each BHE
 
+### Closed loop networt model
+
+The one-way network model used in this example can be replaced by a closed loop network model which illustrated in Figure 5.
+Compared to the configuration in the one-way network, The refrigerant in the closed loop network is circulating through the entire system.
+In this case, the system flow rate will be automatically adjusted by the water pump in each time step, in order to guarantee the energy balance on every point within the system.
+The evolution of inflow refrigerant temperature and flow rate entering the BHE array is shown in Figure 6.
+With the decreasing of the working fluid temperature over the time, the system flow rate dereases gradually accordingly.
+Figure 7 depicts the thermal load shifting phenomenon with closed loop network model.
+Except for the thermal shifiting behavior among the BHEs, the averaged heat extraction rate of all BHEs (black line) increases slightly over the time.
+It indicates that more energy is required to be extracted on the BHE array, since the hydraulic loss within the pipe increases due to the decrease of the system flow rate.
+
+{{< img src="../3D_3BHEs_array_figures/BHE_network_closedloop.png" width="200">}}
+
+Figure 5: Closed loop pipeline network model in TESPy
+
+{{< img src="../3D_3BHEs_array_figures/Inflow_temperature_and_flow_rate.png" width="200">}}
+
+Figure 6: Evolution of the inflow refrigerant temperature and flow rate entering the BHE array
+
+{{< img src="../3D_3BHEs_array_figures/Heat_extraction_rate_closedloop.png" width="200">}}
+
+Figure 7: Evolution of the heat extraction rate of each BHE with close loop network model
 ## References
 
 [1] Diersch, H. J., Bauer, D., Heidemann, W., Rühaak, W., & Schätzl, P. (2011). Finite element modeling of borehole heat exchanger systems: Part 1. Fundamentals. Computers & Geosciences, 37(8), 1122-1135.

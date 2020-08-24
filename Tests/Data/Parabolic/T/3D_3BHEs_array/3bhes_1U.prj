@@ -3,6 +3,9 @@
     <mesh>3bhes_1U.vtu</mesh>
     <geometry>3bhes_1U.gml</geometry>
     <python_script>bcs_tespy.py</python_script>
+    <!-- use the following for closed loop network model
+    <python_script>bcs_tespy_closedloop.py</python_script>
+    -->
     <processes>
         <process>
             <name>HeatTransportBHE</name>
