@@ -15,6 +15,11 @@ style = "monokailight"
 [params]
   alert = ""
 
+[[menu.main]]
+  name = "Discourse"
+  weight = 10
+  url = "https://discourse.opengeosys.org"
+
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
   name = "Getting Started"
