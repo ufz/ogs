@@ -270,7 +270,8 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, SurfaceSearch)
 TEST_F(MeshLibBoundaryElementSearchInSimpleHexMesh, QuadElementsSurfaceSearch)
 {
     ASSERT_TRUE(_hex_mesh != nullptr);
-    auto mesh = MeshLib::createQuadraticOrderMesh(*_hex_mesh);
+    auto mesh = MeshLib::createQuadraticOrderMesh(*_hex_mesh,
+                                                  false /* add centre node*/);
 
     const std::size_t& s = _number_of_subdivisions_per_direction;
     const std::size_t n_nodes_2d = (s + 1) * (3 * s + 1);

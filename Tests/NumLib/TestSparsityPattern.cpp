@@ -52,8 +52,8 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
 {
     std::unique_ptr<MeshLib::Mesh> linear_mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
-    std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::createQuadraticOrderMesh(*linear_mesh));
+    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::createQuadraticOrderMesh(
+        *linear_mesh, false /* add centre node */));
     MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
     std::vector<MeshLib::MeshSubset> components{nodesSubset};
@@ -110,8 +110,8 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
 {
     std::unique_ptr<MeshLib::Mesh> linear_mesh(
         MeshLib::MeshGenerator::generateLineMesh(3u, 1.));
-    std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::createQuadraticOrderMesh(*linear_mesh));
+    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::createQuadraticOrderMesh(
+        *linear_mesh, false /* add centre node */));
     auto base_nodes = MeshLib::getBaseNodes(mesh->getElements());
     auto baseNodesSubset =
         std::make_unique<MeshLib::MeshSubset const>(*mesh, base_nodes);

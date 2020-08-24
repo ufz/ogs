@@ -30,7 +30,8 @@ public:
     {
         linear_mesh.reset(
             MeshGenerator::generateRegularHexMesh(1.0, mesh_size));
-        quadratic_mesh = createQuadraticOrderMesh(*linear_mesh);
+        quadratic_mesh =
+            createQuadraticOrderMesh(*linear_mesh, false /* add centre node*/);
     }
 
     static constexpr int mesh_size = 5;
