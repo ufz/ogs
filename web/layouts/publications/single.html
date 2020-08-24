@@ -1,50 +1,48 @@
 {{ define "main" }}
 
-  <div class="container mx-auto">
-    <h1>{{ .Title }}</h1>
-    {{ .Content }}
-    {{ range where (sort .Site.Data.bib_ogs.entries "year" "desc") "category" "not in" "Book,Tutorial" }}
-    <div class="bg-gray-200 rounded-lg">
-      <div class="my-4 mx-4">
-        <div class="py-2 flex flex-wrap md:flex-no-wrap">
-          <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-            <span class="tracking-widest font-medium title-font text-gray-900">
-                {{ .category }}
-            </span>
-            <span class="mt-1 text-gray-500 text-sm">
-              {{ .year }}
-            </span>
-          </div>
-          <div class="md:flex-grow">
-            <h4 class="text-xl font-medium text-gray-900 title-font mt-0 mb-2"><i>{{ .title | safeHTML }}</i></h4>
-            <p>
-              {{ $len := (len .author) }}
-              {{ range $index, $element := .author }}
-                {{ $element.last }}, {{ $element.first}} {{ if ne (add $index 1) $len }}and{{ end }}
-              {{ end }}
-            </p>
-            <p style="line-height: 0.5em;">
-              {{ if isset . "journal" }}{{ .journal }},{{ end }}
-              {{ if isset . "issue" }}Issue {{ .issue }},{{ end }}
-              {{ if isset . "volume" }}vol. {{ .volume }},{{ end }}
-              {{ if isset . "pages" }}p. {{ .pages }},{{ end }}
-              {{ if isset . "isbn" }}ISBN: {{ .isbn }},{{ end }}
-              {{ if isset . "publisher" }}{{ .publisher }},{{ end }}
-              {{ if isset . "doi" }}
-                DOI:<a href="https://doi.org/{{ .doi }}" class="text-indigo-500 inline-flex items-center mt-4">
-                  {{ .doi }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
-                </a>
-              {{ end }}
-              {{ if isset . "url" }}
-                <a href="{{ .url }}" class="text-indigo-500 inline-flex items-center mt-4">
-                  {{ .url }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
-                </a>
-              {{ end }}
-            </p>
-          </div>
-        </div>
+<h1>{{ .Title }}</h1>
+{{ .Content }}
+{{ range where (sort .Site.Data.bib_ogs.entries "year" "desc") "category" "not in" "Book,Tutorial" }}
+<div class="bg-gray-200 rounded-lg">
+  <div class="my-4 mx-4">
+    <div class="py-2 flex flex-wrap md:flex-no-wrap">
+      <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+        <span class="tracking-widest font-medium title-font text-gray-900">
+          {{ .category }}
+        </span>
+        <span class="mt-1 text-gray-500 text-sm">
+          {{ .year }}
+        </span>
       </div>
+      <div class="md:flex-grow">
+        <h4 class="text-xl font-medium text-gray-900 title-font mt-0 mb-2"><i>{{ .title | safeHTML }}</i></h4>
+        <p>
+          {{ $len := (len .author) }}
+          {{ range $index, $element := .author }}
+          {{ $element.last }}, {{ $element.first}} {{ if ne (add $index 1) $len }}and{{ end }}
+          {{ end }}
+        </p>
+        <p style="line-height: 0.5em;">
+          {{ if isset . "journal" }}{{ .journal }},{{ end }}
+          {{ if isset . "issue" }}Issue {{ .issue }},{{ end }}
+          {{ if isset . "volume" }}vol. {{ .volume }},{{ end }}
+          {{ if isset . "pages" }}p. {{ .pages }},{{ end }}
+          {{ if isset . "isbn" }}ISBN: {{ .isbn }},{{ end }}
+          {{ if isset . "publisher" }}{{ .publisher }},{{ end }}
+          {{ if isset . "doi" }}
+          DOI:<a href="https://doi.org/{{ .doi }}" class="text-indigo-500 inline-flex items-center mt-4">
+            {{ .doi }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
+          </a>
+          {{ end }}
+          {{ if isset . "url" }}
+          <a href="{{ .url }}" class="text-indigo-500 inline-flex items-center mt-4">
+            {{ .url }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
+          </a>
+          {{ end }}
+        </p>
       </div>
-      {{ end }}
+    </div>
   </div>
+</div>
+{{ end }}
 {{ end }}

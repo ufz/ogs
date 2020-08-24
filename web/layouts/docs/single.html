@@ -1,22 +1,23 @@
 {{ define "main" }}
-  <div class="container flex">
-  <nav class="w-1/4">
+<div class="flex">
+  <nav class="w-1/4 hidden md:block">
     {{ $segments := split .RelPermalink "/" }}
     {{ $subsection := index $segments 2 }}
     <ul class="text-sm">
       {{ $currentPage := . }}
       {{ $currentMenu := index .Site.Menus $subsection }}
       {{ range $currentMenu }}
-        {{ if .HasChildren }}
-          <li class="tracking-wide font-bold mt-4">{{ .Name }}</li>
-          {{ range .Children }}
-            <li class="m-1"><a href="{{ .URL }}"{{if $currentPage.IsMenuCurrent $subsection . }} class="active"{{end}}>{{ .Name }}</a></li>
-          {{ end }}
-        {{ end }}
+      {{ if .HasChildren }}
+      <li class="tracking-wide font-bold mt-4">{{ .Name }}</li>
+      {{ range .Children }}
+      <li class="m-1"><a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="active"
+          {{end}}>{{ .Name }}</a></li>
+      {{ end }}
+      {{ end }}
       {{ end }}
     </ul>
   </nav>
-  <div class="w-3/4 ml-4 prose-sm sm:prose sm:max-w-none">
+  <div class="w-full ml-4 pr-6 prose prose-sm max-w-none">
     <h1>{{ .Title }}</h1>
 
     {{ if .CurrentSection.Params.os_selector }}
@@ -29,9 +30,9 @@
 
     <div class="section-docs content">
       {{ if eq .Params.toc true }}
-        <h2>Table of contents</h2>
-        {{.TableOfContents}}
-        <hr>
+      <h2>Table of contents</h2>
+      {{.TableOfContents}}
+      <hr>
       {{ end }}
       {{ .Content }}
     </div>
