@@ -41,35 +41,23 @@ public:
     }
 
     /*!
-     * transfer BHE network dataframe to TESPy and get Tin from TESPy
+     * transfer BHE network dataframe to TESPy and get Tin and flow rate from TESPy
      *
      * \return a tuple (if use tespyThermalSolver, if convergence achieved
-     * in tespy, BHE Tin and Tout value from TESPy)
+     * in tespy, BHE Tin value, BHE flow rate from TESPy)
      * indicating if tespyThermalSolver shall be used at that position, if
-     * themal convergence has been achieved in the tespy and the new
-     * inflow temperature of all BHEs.
+     * themal convergence has been achieved in the tespy, the new
+     * inflow temperature and flow rate for all BHEs.
      */
-    virtual std::tuple<bool, bool, std::vector<double>> tespyThermalSolver(
+    virtual std::tuple<bool, bool, std::vector<double>, std::vector<double>>
+    tespySolver(
         double /*t*/,
         std::vector<double> const& /*Tin_val*/,
         std::vector<double> const& /*Tout_val*/) const
     {
-        _overridden_tespyThermal = false;
-        return std::tuple<bool, bool, std::vector<double>>{false, false, {}};
-    }
-
-    /*!
-     * call Tespy hydraulic solver to get flow velocity in each pipe
-     *
-     * \return a tuple (if use tespyHydroSolver,  f_velocity) indicating if
-     * tespyHydroSolver shall be used at that position and the flow velocity
-     * in each pipe of all BHEs.
-     */
-    virtual std::tuple<bool, std::vector<double>> tespyHydroSolver(
-        double /*t*/) const
-    {
-        _overridden_tespyHydro = false;
-        return std::tuple<bool, std::vector<double>>{false, {}};
+        _overridden_tespy = false;
+        return std::tuple<bool, bool, std::vector<double>, std::vector<double>>{
+            false, false, {}, {}};
     }
 
     //! Tells if initializeDataContainer() has been overridden in the derived
@@ -79,17 +67,11 @@ public:
     //! once.
     bool isOverriddenEssential() const { return _overridden_essential; }
 
-    //! Tells if tespyThermalSolver() has been overridden in the derived class
+    //! Tells if tespySolver() has been overridden in the derived class
     //! in Python.
     //!
-    //! \pre tespyThermalSolver() must already have been called once.
-    bool isOverriddenTespyThermal() const { return _overridden_tespyThermal; }
-
-    //! Tells if tespyHydroSolver() has been overridden in the derived class
-    //! in Python.
-    //!
-    //! \pre tespyHydroSolver() must already have been called once.
-    bool isOverriddenTespyHydro() const { return _overridden_tespyHydro; }
+    //! \pre tespySolver() must already have been called once.
+    bool isOverriddenTespy() const { return _overridden_tespy; }
 
     // BHE network dataframe container
     std::tuple<double,
@@ -105,11 +87,8 @@ private:
     //! Tells if initializeDataContainer() has been overridden in the derived
     //! class in Python.
     mutable bool _overridden_essential = true;
-    //! Tells if tespyThermalSolver() has been overridden in the derived class
+    //! Tells if tespySolver() has been overridden in the derived class
     //! in Python.
-    mutable bool _overridden_tespyThermal = true;
-    //! Tells if tespyHydroSolver() has been overridden in the derived class in
-    //! Python.
-    mutable bool _overridden_tespyHydro = true;
+    mutable bool _overridden_tespy = true;
 };
 }  // namespace ProcessLib
