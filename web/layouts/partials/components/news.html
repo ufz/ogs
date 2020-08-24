@@ -6,22 +6,25 @@
   {{ template "discours-posts" (dict "page" . "category" "usability" "count" "3" "heading" "Discussions") }}
 </div>
 
+{{/*
 <div class="w-full md:w-1/3 px-4 md:px-2">
   <h3 class="mb-4 text-3xl">Latest Benchmarks</h3>
   <div class="py-0 lg:px-4">
     {{ template "latest-pages" . }}
-  </div>
 </div>
-
+</div>
+*/}}
 
 {{ define "discours-posts" }}
+{{/*
 <h2 class="mb-2 lg:mb-4 text-2xl lg:text-3xl">
   {{ if .heading }}
-  {{ .heading }}
-  {{ else }}
-  {{ .category | humanize }}
-  {{ end }}
+{{ .heading }}
+{{ else }}
+{{ .category | humanize }}
+{{ end }}
 </h2>
+*/}}
 <div class="mt-2 grid lg:grid-cols-3 lg:col-gap-5" x-data="categoryData('{{ .category }}', {{ .count }})"
   x-init="init()">
   <template x-for="topic in topics" :key="topic.id">

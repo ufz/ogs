@@ -16,6 +16,8 @@ hero:
     - name: Vis
       anchor: vis
 
+feature_intro: OpenGeoSys' adaptable and modular architecture enables a wide variety of use cases and flexible workflows. In the following we highlight some of its most important features.
+
 features:
 - headline: Comprehensive Pre-Processing Tools
   textline: |
@@ -29,9 +31,9 @@ features:
   visual:
     permalink: "/docs/tools/meshing-submeshes/extract-surface/TopBottomSideSurface.png"
     alt: Extracted surfaces
-  links:
-    - text: See Docs
-      url: "/docs/tools"
+  # links:
+  #   - text: See Docs
+  #     url: "/docs/tools"
   layout: left
   anchor: tools
 

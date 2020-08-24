@@ -1,8 +1,19 @@
 {{ define "main" }}
-  {{ partial "components/hero" .Params.hero }}
-  <!-- {{ partial "components/quicklinks" .Params.hero }} -->
-  {{ partial "components/news" . }}
-  {{ range .Params.features }}
-    {{ partial "components/feature" (dict "page" $ "feature" .) }}
-  {{ end }}
+{{ partial "components/hero" .Params.hero }}
+<!-- {{ partial "components/quicklinks" .Params.hero }} -->
+<h1
+  class="text-center text-3xl lg:text-5xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 mt-6 md:mt-10 lg:mt-16 md:mb-4 lg:mb-6">
+  Announcements & Discussions
+</h1>
+{{ partial "components/news" . }}
+<h1
+  class="text-center text-3xl lg:text-5xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 mt-6 md:mt-10 lg:mt-16">
+  Features
+</h1>
+<p class="mt-4 max-w-3xl mx-auto text-center text-lg lg:text-xl leading-7 text-gray-500 mb-0 md:mb-4 lg:mb-6">
+  {{ markdownify .Params.feature_intro }}
+</p>
+{{ range .Params.features }}
+{{ partial "components/feature" (dict "page" $ "feature" .) }}
+{{ end }}
 {{ end }}

@@ -1,12 +1,12 @@
-<div class="px-8 py-8 {{ .feature.direction | default " left "}} {{ .feature.class }}">
+<div class="py-2 lg:py-6 {{ .feature.class }}">
   <div class="container">
 
     {{ if or ( not .feature.layout ) ( or (eq .feature.layout "left") (eq .feature.layout "right") ) }}
-    <div class="flex flex-wrap items-center -mx-4{{ if eq .feature.layout "right" }} flex-row-reverse{{ end }}">
+    <div class="flex flex-wrap items-center{{ if eq .feature.layout "right" }} flex-row-reverse{{ end }}">
       <div class="w-full md:w-1/2 md:px-4">
         <!-- <p class="leading-6 text-indigo-600 font-semibold tracking-wide uppercase">{{.feature.headline}}</p> -->
         <h2
-          class="mt-2 mb:4 lg:mb-8 text-xl leading-8 font-bold tracking-tight text-gray-900 lg:text-3xl sm:leading-10">
+          class="mt-2 mb:4 lg:mb-8 text-xl leading-8 font-bold tracking-tight text-gray-900 lg:text-2xl xl:text-3xl sm:leading-10">
           {{ if .feature.anchor }}<a id="{{ .feature.anchor }}"></a>{{ end}}{{ markdownify .feature.headline }}</h2>
         <div class="prose text-gray-600">
           {{ markdownify .feature.textline }}
@@ -32,9 +32,10 @@
     {{ if eq .feature.layout "vertical" }}
     <div class="flex flex-wrap text-center">
       <div class="w-full">
-        <h1 class="mt-2 mb-8 text-xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10">
+        <h2
+          class="mt-2 sm:mb-4 lg:mb-8 text-xl leading-8 font-extrabold tracking-tight text-gray-900 lg:text-3xl xl:text-4xl sm:leading-10">
           {{ markdownify .feature.headline }}
-        </h1>
+        </h2>
         <div class="prose text-gray-600">
           {{ markdownify .feature.textline }}
         </div>
