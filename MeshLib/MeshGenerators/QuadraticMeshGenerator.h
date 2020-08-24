@@ -16,7 +16,10 @@ class Mesh;
 
 namespace MeshLib
 {
-/// create a quadratic order mesh from the linear order mesh
-std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh);
+/// Create a quadratic order mesh from the linear order mesh. For some element
+/// types like Quad-4, a centre node might be added if the \c add_centre_node
+/// flag is set, yielding a Quad-9.
+std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh,
+                                               bool const add_centre_node);
 
 } // namespace MeshLib

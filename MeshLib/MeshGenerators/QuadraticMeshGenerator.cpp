@@ -52,9 +52,50 @@ std::unique_ptr<QuadraticElement> convertLinearToQuadratic(
     return std::make_unique<QuadraticElement>(nodes, e.getID());
 }
 
+/// Special case for Quad-9 adding a centre node too.
+template <>
+std::unique_ptr<MeshLib::Quad9> convertLinearToQuadratic<MeshLib::Quad9>(
+    MeshLib::Element const& e)
+{
+    int const n_all_nodes = MeshLib::Quad9::n_all_nodes;
+    int const n_base_nodes = MeshLib::Quad9::n_base_nodes;
+    assert(n_base_nodes == e.getNumberOfBaseNodes());
+
+    // Copy base nodes of element to the quadratic element new nodes'.
+    std::array<MeshLib::Node*, n_all_nodes> nodes{};
+    for (int i = 0; i < n_base_nodes; i++)
+    {
+        nodes[i] = const_cast<MeshLib::Node*>(e.getNode(i));
+    }
+
+    // For each edge create a middle node.
+    int const number_of_edges = e.getNumberOfEdges();
+    for (int i = 0; i < number_of_edges; i++)
+    {
+        auto const& a = *e.getEdgeNode(i, 0);
+        auto const& b = *e.getEdgeNode(i, 1);
+
+        nodes[n_base_nodes + i] = new MeshLib::Node(
+            (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2);
+    }
+
+    // Compute the centre point coordinates.
+    auto* centre_node = new MeshLib::Node(0, 0, 0);
+    for (int i = 0; i < n_base_nodes; i++)
+    {
+        for (int d = 0; d < 3; d++)
+        {
+            (*centre_node)[d] += (*nodes[i])[d] / n_base_nodes;
+        }
+    }
+    nodes[n_all_nodes - 1] = centre_node;
+
+    return std::make_unique<MeshLib::Quad9>(nodes, e.getID());
+}
+
 /// Return a new quadratic element corresponding to the linear element's type.
 std::unique_ptr<MeshLib::Element> createQuadraticElement(
-    MeshLib::Element const& e)
+    MeshLib::Element const& e, bool const add_centre_node)
 {
     if (e.getCellType() == MeshLib::CellType::LINE2)
     {
@@ -70,6 +111,10 @@ std::unique_ptr<MeshLib::Element> createQuadraticElement(
     }
     if (e.getCellType() == MeshLib::CellType::QUAD4)
     {
+        if (add_centre_node)
+        {
+            return convertLinearToQuadratic<MeshLib::Quad9>(e);
+        }
         return convertLinearToQuadratic<MeshLib::Quad8>(e);
     }
     if (e.getCellType() == MeshLib::CellType::HEX8)
@@ -91,7 +136,8 @@ struct nodeByCoordinatesComparator
 
 namespace MeshLib
 {
-std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh)
+std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh,
+                                               bool const add_centre_node)
 {
     // Clone the linear mesh nodes.
     auto quadratic_mesh_nodes = MeshLib::copyNodeVector(linear_mesh.getNodes());
@@ -104,7 +150,7 @@ std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh)
     auto const& linear_mesh_elements = linear_mesh.getElements();
     for (MeshLib::Element const* e : linear_mesh_elements)
     {
-        auto quadratic_element = createQuadraticElement(*e);
+        auto quadratic_element = createQuadraticElement(*e, add_centre_node);
 
         // Replace the base nodes with cloned linear nodes.
         int const number_base_nodes = quadratic_element->getNumberOfBaseNodes();
