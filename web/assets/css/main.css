@@ -223,8 +223,9 @@ img[src$='#two-third'] {
 }
 
 .note h3 {
-  @apply text-orange-500;
-  @apply mb-2;
+  @apply text-orange-500 !important;
+  @apply mt-2 !important;
+  @apply mb-2 !important;
 }
 
 /* ----------------------------- Slick Carousel ----------------------------- */
