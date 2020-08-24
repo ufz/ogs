@@ -8,8 +8,10 @@
 <body>
   {{ partial "nav-bar.html" . }}
 
-  {{ block "main" . }}
-  {{ end }}
+  <div class="xl:container xl:mx-auto">
+    {{ block "main" . }}
+    {{ end }}
+  </div>
 
   {{ block "footer" . }}
   {{ end }}
