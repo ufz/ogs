@@ -10,7 +10,7 @@
     {{ range .Site.Menus.docs }}
     {{ $url_first_char := substr .URL 0 1 }}
     {{ if eq $url_first_char "/" }}
-    <div class=" text-gray-900 mb-2 {{if eq $subsection .Identifier }} text-brand{{ end }}">
+    <div class=" text-gray-700 hover:text-gray-900 mb-2 {{if eq $subsection .Identifier }} text-brand{{ end }}">
       <a href="{{ .URL }}">
         {{ .Name }}
       </a>
@@ -23,7 +23,8 @@
       {{ if .HasChildren }}
       <li class="tracking-wide font-bold mt-6">{{ .Name | upper }}</li>
       {{ range .Children }}
-      <li class="p-1 mr-1 {{if $currentPage.IsMenuCurrent $subsection . }}bg-gray-100 rounded-lg {{ end }}">
+      <li
+        class="p-1 mr-1 {{if $currentPage.IsMenuCurrent $subsection . }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
         <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand" {{end}}>{{ .Name }}
         </a>
       </li>
