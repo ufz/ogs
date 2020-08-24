@@ -192,25 +192,32 @@ BHE3;3;283.15;283.15;0;0
 
 ### < PipeNetwork feature interface >
 
-The python script `bcs_tespy.py` is the data exchange interface for running the PipeNetwork feature. It contains the main procedure of data exchange during the simulation. In the script a network status controller function `network_status`, a system dynamic thermal load function `consumer_demand` and a system dynamic inlet flow rate function `dyn_frate` are optionally required to be pre-defined by the user. The function `network_status` receives the current time step information from OGS and determine if the network is required to be shut off. When the switch for dynamic thermal load `switch_dyn_demand` and dynamic flow rate `switch_dyn_frate` are set to be `off`, the constant thermal load on the heat pump and the system inlet flow rate which was defined in the TESPy model will be used throughout the simulation. When the switchs are set to be `on`, a user defined system thermal load curve and inlet flow rate curve could be specified according to the current time step from OGS.
+The python script `bcs_tespy.py` is the data exchange interface for running the PipeNetwork feature.
+It contains the main procedure of data exchange during the simulation.
+In the script a network status controller function `network_status`, a system dynamic thermal load function `consumer_demand` and a system dynamic inlet flow rate function `dyn_frate` are optionally required to be pre-defined by the user.
+The function `network_status` receives the current time step information from OGS and determines if the network is required to be shut off.
+When the switch for dynamic thermal load `switch_dyn_demand` and dynamic flow rate `switch_dyn_frate` are `off`, the thermal and hydraulic boundary conditions, which were defined in the pre-constructed TESPy model, will be used throughout the simulation.
+When the switches are `on`, a user defined system thermal load curve and inlet flow rate curve can be specified according to the current time step from OGS.
 
 ```bash
-# User setting +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# User setting ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # parameters
-# refrigerant parameters
-refrig_density = 992.92  # kg/m3
+# refrigerant density
+rho_f = 992.92  # kg/m3
 # switch for special boundary conditions
-# 'on','off', switch of the function for dynamic thermal demand from consumer
-switch_dyn_demand = 'on'
-# 'on','off', switch of the function for dynamic flowrate in BHE
-switch_dyn_frate = 'off'
-
+# switch of the function for manually specified dynamic flowrate
+switch_dyn_frate = 'off' # 'on','off'
+# switch of the function for manually specified dynamic thermal demand
+switch_dyn_demand = 'on' # 'on','off'
+if switch_dyn_demand == 'on':
+    #give the consumer name defined by user in the network model
+    consumer_name = 'consumer'
 
 # network status setting
 def network_status(t):
     nw_status = 'on'
     # month for closed network
-    timerange_nw_off_month = [-9999]  # No month for closed network
+    timerange_nw_off_month = []  # No month for closed network
     # t-1 to avoid the calculation problem at special time point,
     # e.g. t = 2592000.
     t_trans = int((t - 1) / 86400 / 30) + 1
@@ -226,6 +233,8 @@ def network_status(t):
 def consumer_demand(t):  # dynamic thermal demand from consumer
     # time conversion
     t_trans = int((t - 1) / 86400 / 30) + 1
+    if t_trans > 12:
+        t_trans = t_trans - 12 * (int(t_trans / 12))
     # thermal demand in each month (assumed specific heat extraction rate*
     # length of BHE* number of BHE)
     month_demand = [
@@ -236,13 +245,16 @@ def consumer_demand(t):  # dynamic thermal demand from consumer
     return month_demand[t_trans - 1]
 
 
-# dynamic hydraulic flow rate
-def dyn_frate(t):  # dynamic flowrate in BHE
+# dynamic hydraulic flow rate at the network inlet
+def dyn_frate(t):
     # time conversion
     t_trans = int((t - 1) / 86400 / 30) + 1
+    if t_trans > 12:
+        t_trans = t_trans - 12 * (int(t_trans / 12))
     # flow rate in kg / s time curve in month
-    month_frate = [-9999]
+    month_frate = []
     return month_frate[t_trans - 1]
+
 
 # End User setting+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ```
