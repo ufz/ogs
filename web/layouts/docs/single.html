@@ -17,18 +17,19 @@
       {{ end }}
     </ul>
   </nav>
-  <div class="w-full ml-4 pr-6 prose prose-sm max-w-none">
-    <h1>{{ .Title }}</h1>
+  <div class="w-full ml-4 pr-6">
+    <h1 class="text-2xl lg:text-3xl font-bold mb-3 lg:mb-5">{{ .Title }}</h1>
 
     {{ if .CurrentSection.Params.os_selector }}
-    <div class="invisible mb-4" id="os-selector">Select OS:
-      <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i> Windows</a>
-      <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i> Linux</a>
-      <a class="btn mx-1" id="btn-mac"><i class="fab fa-apple"></i> macOS</a>
+    <div class="invisible mb-4 bg-gray-200 shadow rounded-lg px-2 py-1 w-auto inline-block" id="os-selector">
+      <span class="text-gray-600">Select OS:</span>
+      <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i><span class="hidden sm:inline"> Windows</span></a>
+      <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i><span class="hidden sm:inline"> Linux</span></a>
+      <a class="btn mx-1" id="btn-mac"><i class="fab fa-apple"></i><span class="hidden sm:inline"> macOS</span></a>
     </div>
     {{ end }}
 
-    <div class="section-docs content">
+    <div class="prose prose-sm lg:prose max-w-none lg:max-w-none">
       {{ if eq .Params.toc true }}
       <h2>Table of contents</h2>
       {{.TableOfContents}}

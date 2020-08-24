@@ -17,24 +17,7 @@ h4:hover>.headerlink {
   @apply no-underline;
 }
 
-/* -- Typography -- */
-.section-docs {
-
-  h2,
-  h3 {
-    @apply border-b;
-    @apply border-gray-600;
-  }
-
-  // Anchor links
-  h2>.headerlink,
-  h3>.headerlink,
-  h4>.headerlink {
-    visibility: hidden;
-  }
-}
-
-// Inline code and blocks
+/* Inline code and blocks */
 code {
   background-color: #fafafa;
 }
@@ -95,24 +78,15 @@ ol.breadcrumb li.active a {
 }
 
 /* -- OS selector -- */
-.os-div {
-  @apply -ml-4;
-  @apply pl-4;
-  @apply border-l-2;
-}
-
 .win {
-  @apply os-div;
   @apply border-green-200;
 }
 
 .linux {
-  @apply os-div;
   @apply border-orange-200;
 }
 
 .mac {
-  @apply os-div;
   @apply border-blue-200;
 }
 
