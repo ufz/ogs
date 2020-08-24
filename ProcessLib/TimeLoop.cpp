@@ -789,18 +789,12 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
             if (!nonlinear_solver_status.error_norms_met)
             {
-                ERR("The nonlinear solver failed in time step #{:d} at t = "
+                WARN(
+                    "The nonlinear solver failed in time step #{:d} at t = "
                     "{:g} s for process #{:d}.",
                     timestep_id, t, process_id);
-
-                if (!process_data->timestepper->canReduceTimestepSize())
-                {
-                    // save unsuccessful solution
-                    _output->doOutputAlways(process_data->process, process_id,
-                                            timestep_id, t, _process_solutions);
-                    OGS_FATAL(timestepper_cannot_reduce_dt.data());
-                }
-                break;
+                _last_step_rejected = true;
+                return nonlinear_solver_status;
             }
 
             // Check the convergence of the coupling iteration
