@@ -1,23 +1,38 @@
 {{ define "main" }}
+
+{{ $segments := split .RelPermalink "/" }}
+{{ $subsection := index $segments 2 }}
+{{ $currentPage := . }}
+
 <div class="flex">
-  <nav class="w-1/4 hidden md:block">
-    {{ $segments := split .RelPermalink "/" }}
-    {{ $subsection := index $segments 2 }}
-    <ul class="text-sm">
-      {{ $currentPage := . }}
+  <!-- TODO: mobile menu -->
+  <nav class="hidden md:block pl-2 pr-4 mt-1 text-sm" style="min-width: 240px;">
+    {{ range .Site.Menus.docs }}
+    {{ $url_first_char := substr .URL 0 1 }}
+    {{ if eq $url_first_char "/" }}
+    <div class=" text-gray-900 mb-2 {{if eq $subsection .Identifier }} text-brand{{ end }}">
+      <a href="{{ .URL }}">
+        {{ .Name }}
+      </a>
+    </div>
+    {{ end }}
+    {{ end }}
+    <ul>
       {{ $currentMenu := index .Site.Menus $subsection }}
       {{ range $currentMenu }}
       {{ if .HasChildren }}
-      <li class="tracking-wide font-bold mt-4">{{ .Name }}</li>
+      <li class="tracking-wide font-bold mt-6">{{ .Name | upper }}</li>
       {{ range .Children }}
-      <li class="m-1"><a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="active"
-          {{end}}>{{ .Name }}</a></li>
+      <li class="p-1 mr-1 {{if $currentPage.IsMenuCurrent $subsection . }}bg-gray-100 rounded-lg {{ end }}">
+        <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand" {{end}}>{{ .Name }}
+        </a>
+      </li>
       {{ end }}
       {{ end }}
       {{ end }}
     </ul>
   </nav>
-  <div class="w-full ml-4 pr-6">
+  <div class="w-full ml-2 pr-2">
     <h1 class="text-2xl lg:text-3xl font-bold mb-3 lg:mb-5">{{ .Title }}</h1>
 
     {{ if .CurrentSection.Params.os_selector }}
@@ -29,7 +44,7 @@
     </div>
     {{ end }}
 
-    <div class="prose prose-sm lg:prose max-w-none lg:max-w-none">
+    <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
       {{ if eq .Params.toc true }}
       <h2>Table of contents</h2>
       {{.TableOfContents}}
@@ -38,7 +53,7 @@
       {{ .Content }}
     </div>
 
-    <hr class="border-2 mb-4">
+    <hr class="border my-4">
     {{ partial "footer-nav.html" . }}
 
     {{ partial "page-info" . }}
