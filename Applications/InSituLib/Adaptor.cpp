@@ -18,8 +18,7 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-
-#include <filesystem>
+#include "filesystem.h"
 
 namespace InSituLib
 {
@@ -41,12 +40,19 @@ void Initialize(BaseLib::ConfigTree const& scripts_config,
     for (auto script_config : scripts_config.getConfigSubtreeList("script"))
     {
         //! \ogs_file_param{prj__insitu__scripts__script__name}
-        auto scriptName = script_config.getConfigParameter<std::string>("name");
-        INFO("Initializing in-situ script: {:s}", scriptName);
-        std::stringstream ss;
-        ss << path << scriptName;
+        auto scriptPath =
+            fs::path(script_config.getConfigParameter<std::string>("name"));
+        if (scriptPath.is_relative())
+        {
+            scriptPath = fs::path(path) / scriptPath;
+        }
+        if (!fs::exists(scriptPath))
+        {
+            ERR("In-situ script {:s} does not exist!", scriptPath.string());
+        }
+        INFO("Initializing in-situ script: {:s}", scriptPath.string());
         vtkNew<vtkCPPythonScriptPipeline> pipeline;
-        pipeline->Initialize(ss.str().c_str());
+        pipeline->Initialize(scriptPath.c_str());
         Processor->AddPipeline(pipeline.GetPointer());
     }
 }
@@ -83,11 +89,11 @@ void CoProcess(MeshLib::Mesh const& mesh, double const time,
         vtkSource->Update();
         dataDescription->GetInputDescriptionByName("input")->SetGrid(
             vtkSource->GetOutput());
-        auto cwd = std::filesystem::current_path();
-        std::filesystem::current_path(output_directory);
+        auto cwd = fs::current_path();
+        fs::current_path(output_directory);
         Processor->CoProcess(dataDescription.GetPointer());
-        std::filesystem::current_path(cwd);
+        fs::current_path(cwd);
         INFO("End InSitu process.");
     }
 }
-}  // namespace
+}  // namespace InSituLib
