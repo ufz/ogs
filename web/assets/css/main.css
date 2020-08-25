@@ -26,23 +26,6 @@ cite::before {
   content: "— ";
 }
 
-/* -- Navigation -- */
-.nav-item {
-  @apply mr-4;
-  @apply text-sm;
-
-  &:last-child {
-    @apply mr-0;
-  }
-}
-
-@screen md {
-  .nav-item {
-    @apply mr-8;
-    @apply text-base;
-  }
-}
-
 /* The sticky class is added to the header with JS when it reaches its scroll position */
 #theHeader.sticky {
   position: fixed;

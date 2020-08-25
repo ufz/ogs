@@ -28,6 +28,9 @@ module.exports = {
       },
       colors: {
         'brand': '#104EB2',
+      },
+      spacing: {
+        '72': '18rem',
       }
     },
     mycolors: mycolors,
