@@ -18,7 +18,7 @@ container:
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
-      --ompi 4.0.4 --base_image centos:8
+      --ompi 4.0.4 --insitu --mpi_benchmarks
   artifacts:
     name: container
     paths:
