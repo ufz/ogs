@@ -211,8 +211,19 @@ void ElementTreeModel::setMesh(MeshLib::Mesh const& mesh)
         {
             array_info.append(propertyBounds(*p));
         }
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<long long>*>(
+                     property))
+        {
+            array_info.append(propertyBounds(*p));
+        }
         else if (auto p = dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
                      property))
+        {
+            array_info.append(propertyBounds(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned long long>*>(
+                         property))
         {
             array_info.append(propertyBounds(*p));
         }

@@ -97,8 +97,17 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
         {
             printBounds(*p);
         }
+        else if (auto p = dynamic_cast<PropertyVector<long long>*>(property))
+        {
+            printBounds(*p);
+        }
         else if (auto p =
                      dynamic_cast<PropertyVector<unsigned long>*>(property))
+        {
+            printBounds(*p);
+        }
+        else if (auto p = dynamic_cast<PropertyVector<unsigned long long>*>(
+                     property))
         {
             printBounds(*p);
         }
