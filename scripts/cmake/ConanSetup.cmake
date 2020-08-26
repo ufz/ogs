@@ -44,7 +44,7 @@ if(OGS_USE_MPI)
 endif()
 
 if(OGS_USE_PETSC)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} petsc/3.8.3@bilke/testing)
+    set(CONAN_REQUIRES ${CONAN_REQUIRES} petsc/${ogs.minimum_version.petsc}@bilke/testing)
     if(OGS_CONAN_USE_SYSTEM_OPENMPI)
         set(CONAN_OPTIONS ${CONAN_OPTIONS} petsc:skip_install_openmpi=True)
     endif()
