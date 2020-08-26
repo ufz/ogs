@@ -25,6 +25,8 @@
 #include <vtkFloatArray.h>
 #include <vtkImageData.h>
 #include <vtkIntArray.h>
+#include <vtkLongArray.h>
+#include <vtkLongLongArray.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnsignedCharArray.h>
@@ -309,6 +311,19 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
     if (vtkCharArray::SafeDownCast(&array))
     {
         VtkMeshConverter::convertTypedArray<char>(array, properties, type);
+        return;
+    }
+
+    if (vtkLongArray::SafeDownCast(&array))
+    {
+        VtkMeshConverter::convertTypedArray<long>(array, properties, type);
+        return;
+    }
+
+    if (vtkLongLongArray::SafeDownCast(&array))
+    {
+        VtkMeshConverter::convertTypedArray<long long>(
+            array, properties, type);
         return;
     }
 
