@@ -162,8 +162,17 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
         {
             addProperty(*p);
         }
+        else if (auto p = dynamic_cast<PropertyVector<long long>*>(property))
+        {
+            addProperty(*p);
+        }
         else if (auto p =
                      dynamic_cast<PropertyVector<unsigned long>*>(property))
+        {
+            addProperty(*p);
+        }
+        else if (auto p =
+                     dynamic_cast<PropertyVector<unsigned long long>*>(property))
         {
             addProperty(*p);
         }
@@ -186,7 +195,8 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
                 "\n\t int,"
                 "\n\t unsigned,"
                 "\n\t long,"
-                "\n\t unsigned long,"
+                "\n\t long long,"
+                "\n\t unsigned long long,"
                 "\n\t char.",
                 property->getPropertyName(),
                 typeid(*property).name());

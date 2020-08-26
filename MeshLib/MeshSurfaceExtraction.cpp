@@ -116,8 +116,19 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
             processPropertyVector(*p, id_map, sfc_mesh);
             vectors_copied++;
         }
+        else if (auto p = dynamic_cast<PropertyVector<long long>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
         else if (auto p =
                      dynamic_cast<PropertyVector<unsigned long>*>(property))
+        {
+            processPropertyVector(*p, id_map, sfc_mesh);
+            vectors_copied++;
+        }
+        else if (auto p = dynamic_cast<PropertyVector<unsigned long long>*>(
+                     property))
         {
             processPropertyVector(*p, id_map, sfc_mesh);
             vectors_copied++;

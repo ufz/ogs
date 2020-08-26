@@ -236,8 +236,19 @@ PostProcessTool::PostProcessTool(
         {
             copyPropertyValues(*p, createProperty(*p));
         }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<long long>*>(property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
         else if (auto p = dynamic_cast<MeshLib::PropertyVector<unsigned long>*>(
                      property))
+        {
+            copyPropertyValues(*p, createProperty(*p));
+        }
+        else if (auto p =
+                     dynamic_cast<MeshLib::PropertyVector<unsigned long long>*>(
+                         property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }
@@ -262,7 +273,9 @@ PostProcessTool::PostProcessTool(
                 "\n\t int,"
                 "\n\t unsigned,"
                 "\n\t long,"
+                "\n\t long long,"
                 "\n\t unsigned long,"
+                "\n\t unsigned long long,"
                 "\n\t char.",
                 property->getPropertyName(),
                 typeid(*property).name());

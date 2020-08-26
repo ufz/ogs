@@ -136,7 +136,20 @@ MeshLib::Properties constructProperties(
             continue;
         }
         else if (auto const p =
+                     dynamic_cast<PropertyVector<long long>*>(property))
+        {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
+            continue;
+        }
+        else if (auto const p =
                      dynamic_cast<PropertyVector<unsigned long>*>(property))
+        {
+            fillPropVec(*p, new_properties, elems, node_map, n_nodes);
+            continue;
+        }
+        else if (auto const p =
+                     dynamic_cast<PropertyVector<unsigned long long>*>(
+                         property))
         {
             fillPropVec(*p, new_properties, elems, node_map, n_nodes);
             continue;
