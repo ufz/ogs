@@ -20,5 +20,6 @@ void Initialize(BaseLib::ConfigTree const& scripts_config,
                 std::string const& path);
 void Finalize();
 void CoProcess(MeshLib::Mesh const& mesh, double const time,
-               unsigned int const timeStep, bool const lastTimeStep);
+               unsigned int const timeStep, bool const lastTimeStep,
+               std::string output_directory);
 }

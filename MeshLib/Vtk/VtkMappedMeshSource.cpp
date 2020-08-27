@@ -79,9 +79,10 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     // Points
     this->Points->Reset();
 
-    vtkNew<VtkMeshNodalCoordinatesTemplate<double>> nodeCoords;
+    VtkMeshNodalCoordinatesTemplate<double>* nodeCoords =
+        VtkMeshNodalCoordinatesTemplate<double>::New();
     nodeCoords->SetNodes(_mesh->getNodes());
-    this->Points->SetData(nodeCoords.GetPointer());
+    this->Points->SetData(nodeCoords);
     output->SetPoints(this->Points.GetPointer());
 
     // Cells

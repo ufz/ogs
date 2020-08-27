@@ -130,4 +130,11 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <insitu>
+        <scripts>
+            <script>
+                <name>square_1e1_neumann-insitu.py</name>
+            </script>
+        </scripts>
+    </insitu>
 </OpenGeoSysProject>
