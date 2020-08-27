@@ -89,8 +89,8 @@ void CoProcess(MeshLib::Mesh const& mesh, double const time,
         vtkSource->Update();
         dataDescription->GetInputDescriptionByName("input")->SetGrid(
             vtkSource->GetOutput());
-        auto cwd = fs::current_path();
-        fs::current_path(output_directory);
+        auto const cwd = fs::current_path();
+        fs::current_path(std::move(output_directory));
         Processor->CoProcess(dataDescription.GetPointer());
         fs::current_path(cwd);
         INFO("End InSitu process.");
