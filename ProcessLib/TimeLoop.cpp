@@ -689,6 +689,10 @@ void postTimestepForAllProcesses(
         pcs.computeSecondaryVariable(t, dt, x, x_dot, process_id);
         pcs.postTimestep(process_solutions, t, dt, process_id);
     }
+    for (auto& x_dot : x_dots)
+    {
+        NumLib::GlobalVectorProvider::provider.releaseVector(*x_dot);
+    }
 }
 
 NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
