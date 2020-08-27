@@ -34,3 +34,7 @@ endif()
 if(OGS_USE_PETSC)
     target_link_libraries(ogs PRIVATE ${PETSC_LIBRARIES})
 endif()
+
+if($ENV{VTK_USE_64BIT_IDS})
+    target_compile_definitions(MeshLib PUBLIC VTK_USE_64BIT_IDS)
+endif()
