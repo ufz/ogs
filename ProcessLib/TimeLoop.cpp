@@ -932,6 +932,10 @@ TimeLoop::~TimeLoop()
     {
         NumLib::GlobalVectorProvider::provider.releaseVector(*x);
     }
+    for (auto* x : _process_solutions_prev)
+    {
+        NumLib::GlobalVectorProvider::provider.releaseVector(*x);
+    }
 
     for (auto* x : _solutions_of_last_cpl_iteration)
     {
