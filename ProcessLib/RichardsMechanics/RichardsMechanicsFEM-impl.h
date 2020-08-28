@@ -401,8 +401,8 @@ void RichardsMechanicsLocalAssembler<
             phi = solid_phase.property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
+            variables[static_cast<int>(MPL::Variable::porosity)] = phi;
         }
-        variables[static_cast<int>(MPL::Variable::porosity)] = phi;
 
         if (alpha < phi)
         {
