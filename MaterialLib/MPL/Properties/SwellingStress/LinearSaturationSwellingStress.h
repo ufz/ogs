@@ -23,14 +23,17 @@ class Phase;
  *   Clay materials like bentonite have a high swelling capacity in dry state,
  * and their swelling property can be described by this model.
  *
- *   The model takes the form
+ *  The original model was proposed in \cite rutqvist2011implementation
+ *  (equations (39) and (40) on pages 758--759). With a simplification of the
+ *  parameters of the original formula and introducing a constraint to avoid
+ *  shrinkage stress when saturation is below the initial saturation, the model
+ *  takes the form
  *    \f[  {\mathbf{\sigma}}^{\text{sw}} =
  * {\alpha}_{\text{sw}}  (S-S_0) \mathbf{I}, \, \forall S \in
  * [S_0, S_\text{max}] \f]
  *  where
- *  \f${\alpha}_{\text{sw}}\f$ is a coefficient,  and \f$S_0\f$ is the
- *  initial saturation, and \f$S_{\text{max}}\f$ is the maximum
- * saturation.
+ *  \f${\alpha}_{\text{sw}}\f$ is a coefficient, and \f$S_0\f$ is the
+ *  initial saturation, and \f$S_{\text{max}}\f$ is the maximum saturation.
  *  The coefficient gives the swelling stress at full saturation, which can be
  *  computed as
  *    \f[ {\alpha}_{\text{sw}} =
