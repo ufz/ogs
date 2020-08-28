@@ -283,6 +283,7 @@ void RichardsMechanicsLocalAssembler<
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
+    MPL::VariableArray variables_prev;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -392,16 +393,13 @@ void RichardsMechanicsLocalAssembler<
 
         auto& porosity = _ip_data[ip].porosity;
         {  // Porosity update
-
-            // Use previous time step porosity for porosity update, ...
-            variables[static_cast<int>(MPL::Variable::porosity)] =
+            variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            porosity =
-                solid_phase.property(MPL::PropertyType::porosity)
-                    .template value<double>(variables, x_position, t, dt);
-            // ... then use new porosity.
-            variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
+            porosity = solid_phase.property(MPL::PropertyType::porosity)
+                           .template value<double>(variables, variables_prev,
+                                                   x_position, t, dt);
         }
+        variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
 
         // Swelling and possibly volumetric strain rate update.
         auto& sigma_sw = _ip_data[ip].sigma_sw;
@@ -622,6 +620,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
+    MPL::VariableArray variables_prev;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -726,13 +725,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& porosity = _ip_data[ip].porosity;
         {  // Porosity update
 
-            // Use previous time step porosity for porosity update, ...
-            variables[static_cast<int>(MPL::Variable::porosity)] =
+            variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            porosity =
-                solid_phase.property(MPL::PropertyType::porosity)
-                    .template value<double>(variables, x_position, t, dt);
-            // ... then use new porosity.
+            porosity = solid_phase.property(MPL::PropertyType::porosity)
+                           .template value<double>(variables, variables_prev,
+                                                   x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
         }
 
@@ -1365,6 +1362,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
+    MPL::VariableArray variables_prev;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -1455,14 +1453,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto& porosity = _ip_data[ip].porosity;
         {  // Porosity update
-
-            // Use previous time step porosity for porosity update, ...
-            variables[static_cast<int>(MPL::Variable::porosity)] =
+            variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            porosity =
-                solid_phase.property(MPL::PropertyType::porosity)
-                    .template value<double>(variables, x_position, t, dt);
-            // ... then use new porosity.
+            porosity = solid_phase.property(MPL::PropertyType::porosity)
+                           .template value<double>(variables, variables_prev,
+                                                   x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = porosity;
         }
 
