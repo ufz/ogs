@@ -33,7 +33,11 @@ std::unique_ptr<Property> createLinearSaturationSwellingStress(
         //! \ogs_file_param{properties__property__LinearSaturationSwellingStress__coefficient}
         config.getConfigParameter<double>("coefficient");
 
-    return std::make_unique<LinearSaturationSwellingStress>(property_name,
-                                                            coefficient);
+    auto const reference_saturation =
+        //! \ogs_file_param{properties__property__LinearSaturationSwellingStress__reference_saturation}
+        config.getConfigParameter<double>("reference_saturation");
+
+    return std::make_unique<LinearSaturationSwellingStress>(
+        property_name, coefficient, reference_saturation);
 }
 }  // namespace MaterialPropertyLib
