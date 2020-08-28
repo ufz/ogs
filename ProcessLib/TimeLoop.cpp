@@ -897,9 +897,8 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
         if (!is_staggered_coupling && output_initial_condition)
         {
             auto const& ode_sys = *process_data->tdisc_ode_sys;
-            // dummy values to handle the time derivative terms more or less
+            // dummy value to handle the time derivative terms more or less
             // correctly, i.e. to ignore them.
-            double const t = 0;
             double const dt = 1;
             process_data->time_disc->nextTimestep(t, dt);
 
@@ -926,9 +925,8 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
                     process_id);
 
             auto const& ode_sys = *process_data->tdisc_ode_sys;
-            // dummy values to handle the time derivative terms more or less
+            // dummy value to handle the time derivative terms more or less
             // correctly, i.e. to ignore them.
-            double const t = 0;
             double const dt = 1;
             process_data->time_disc->nextTimestep(t, dt);
 
