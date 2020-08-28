@@ -16,15 +16,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "VtuInterface.h"
-
 #include <vtkNew.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
 #include "BaseLib/Logging.h"
-
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
+#include "VtuInterface.h"
 
 namespace MeshLib
 {
@@ -34,7 +32,7 @@ template <typename UnstructuredGridWriter>
 bool VtuInterface::writeVTU(std::string const& file_name,
                             const int num_partitions, const int rank)
 {
-    if(!_mesh)
+    if (!_mesh)
     {
         ERR("VtuInterface::write(): No mesh specified.");
         return false;
@@ -84,8 +82,13 @@ bool VtuInterface::writeVTU(std::string const& file_name,
     (void)rank;
 #endif
 
+#ifdef VTK_USE_64BIT_IDS
+    vtuWriter->SetHeaderTypeToUInt64();
+    // set SetIdTypeToInt64() as well?
+#endif
+
     return (vtuWriter->Write() > 0);
 }
 
-} // end namespace IO
-} // end namespace MeshLib
+}  // end namespace IO
+}  // end namespace MeshLib
