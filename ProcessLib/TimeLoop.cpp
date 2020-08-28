@@ -894,7 +894,7 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
         auto const& x = *_process_solutions[process_id];
         auto& pcs = process_data->process;
 
-        if (output_initial_condition)
+        if (!is_staggered_coupling && output_initial_condition)
         {
             auto const& ode_sys = *process_data->tdisc_ode_sys;
             // dummy values to handle the time derivative terms more or less
@@ -914,7 +914,7 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
 
             NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
         }
-        if (is_staggered_coupling)
+        if (is_staggered_coupling && output_initial_condition)
         {
             CoupledSolutionsForStaggeredScheme coupled_solutions(
                 _process_solutions);
@@ -924,6 +924,24 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
             process_data->process
                 .setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
                     process_id);
+
+            auto const& ode_sys = *process_data->tdisc_ode_sys;
+            // dummy values to handle the time derivative terms more or less
+            // correctly, i.e. to ignore them.
+            double const t = 0;
+            double const dt = 1;
+            process_data->time_disc->nextTimestep(t, dt);
+
+            auto& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
+                ode_sys.getMatrixSpecifications(process_id));
+            x_dot.setZero();
+
+            pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+            // Update secondary variables, which might be uninitialized, before
+            // output.
+            pcs.computeSecondaryVariable(_start_time, dt, x, x_dot, process_id);
+
+            NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
         }
         (output_object.*output_class_member)(pcs, process_id, timestep, t,
                                              _process_solutions);
