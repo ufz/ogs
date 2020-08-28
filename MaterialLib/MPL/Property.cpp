@@ -74,13 +74,19 @@ PropertyDataType Property::value() const
     return value_;
 }
 
-/// The default implementation of this method only returns the property value
-/// without altering it.
 PropertyDataType Property::value(VariableArray const& /*variable_array*/,
+                                 VariableArray const& /*variable_array_prev*/,
                                  ParameterLib::SpatialPosition const& /*pos*/,
                                  double const /*t*/, double const /*dt*/) const
 {
     return value_;
+}
+
+PropertyDataType Property::value(VariableArray const& variable_array,
+                                 ParameterLib::SpatialPosition const& pos,
+                                 double const t, double const dt) const
+{
+    return value(variable_array, VariableArray{}, pos, t, dt);
 }
 
 /// The default implementation of this method only returns the

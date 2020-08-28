@@ -54,8 +54,16 @@ public:
     /// This virtual method simply returns the private value_ attribute without
     /// changing it.
     virtual PropertyDataType value() const;
-    /// This virtual method will compute the property value based on the primary
-    /// variables that are passed as arguments.
+    /// This virtual method will compute the property value based on the
+    /// variables that are passed as arguments and the variables from the
+    /// previous time step.
+    virtual PropertyDataType value(VariableArray const& variable_array,
+                                   VariableArray const& variable_array_prev,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t, double const dt) const;
+    /// This virtual method will compute the property value based on the
+    /// variables that are passed as arguments with the default implementation
+    /// using empty variables array for the previous time step.
     virtual PropertyDataType value(VariableArray const& variable_array,
                                    ParameterLib::SpatialPosition const& pos,
                                    double const t, double const dt) const;
@@ -116,6 +124,29 @@ public:
         }
     }
 
+    template <typename T>
+    T value(VariableArray const& variable_array,
+            VariableArray const& variable_array_prev,
+            ParameterLib::SpatialPosition const& pos, double const t,
+            double const dt) const
+    {
+        try
+        {
+            return std::get<T>(
+                value(variable_array, variable_array_prev, pos, t, dt));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The value of {:s} is not of the requested type '{:s}' but a "
+                "{:s}.",
+                description(),
+                typeid(T).name(),
+                property_data_type_names_[value(variable_array,
+                                                variable_array_prev, pos, t, dt)
+                                              .index()]);
+        }
+    }
     template <typename T>
     T value(VariableArray const& variable_array,
             ParameterLib::SpatialPosition const& pos, double const t,
