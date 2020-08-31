@@ -1,56 +1,65 @@
 {{ define "main" }}
 {{ .Content }}
 
-<h2 id="latest"><i class="far fa-wrench"></i> Latest development version</h2>
-<p>
-  Here you can find the latest version of OpenGeoSys. But be warned: although this version was
-  successfully tested by the continuous integration system it may be unstable or incomplete...
-</p>
-<div style="margin-bottom: 3em;" class="note">
-  <h3><i class="far fa-download"></i> Download</h3>
+<div class="prose prose-sm lg:prose max-w-none lg:max-w-none">
+  <h1 id="latest"><i class="far fa-wrench"></i> Latest development version</h1>
   <p>
-    Downloads for the current development version of OpenGeoSys can be found on our continuous integration system:
+    Here you can find the latest version of OpenGeoSys. But be warned: although this version was
+    successfully tested by the continuous integration system it may be unstable or incomplete...
   </p>
+  <div class="bg-gray-100 py-1 px-4 rounded-lg shadow mb-12">
+    <h3><i class="far fa-download"></i> Downloads</h3>
+    <p>
+      Downloads for the current development version of OpenGeoSys can be found on our continuous integration system:
+    </p>
+    <ul>
+      <!-- TODO: does work only if the latest build was successful!
+                 see https://gitlab.com/gitlab-org/gitlab/-/issues/20230
+                 Replace with API call and JavaScript?
+      -->
+      {{ range .Params.head_downloads }}
+      <li>
+        <i class="{{ .icon }}"></i> <a href="{{ .url }}">{{ .name }}</a>{{ if .note }} <span
+          class="text-sm">({{ .note | markdownify }})</span>{{ end }}
+      </li>
+      {{ end }}
+    </ul>
+  </div>
+
+  <hr>
+  {{ range first 1 .Data.Pages }}
+  <h1 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: {{ .Title }} <a class="text-lg"
+      href="{{ .Permalink }}"><i class="far fa-link"></i></a></h1>
+
+  <div>
+    {{ partial "releases-single.html" . }}
+  </div>
+  {{ end }}
+
+  <h2 id="old"><i class="far fa-archive"></i> Older releases</h2>
   <ul>
-    {{ range .Params.head_downloads }}
+    {{ range $index, $element := .Data.Pages }}
+    {{ if (ne $index 0) }}
+    <li><a href="{{ .Permalink }}">{{ .Title }}</a>, {{.Params.release_date}}</li>
+    {{ end }}
+    {{ end }}
+    {{ $urlPre := "https://api.github.com" }}
+    {{ $releases := getJSON $urlPre "/repos/ufz/ogs/releases" }}
+    {{ range $index, $element := $releases }}
+    {{ if not (eq $index 0) }}
+    {{ if and (not .draft) (not .prerelease) }}
     <li>
-      <a href="{{ .url }}"><i class="{{ .icon }}"></i> {{ .name }}</a>{{ if .note }} <span
-        class="text-sm">({{ .note | markdownify }})</span>{{ end }}
+      <a href="{{ .html_url }}" target="_blank">
+        OpenGeoSys {{ .tag_name }}
+      </a>
     </li>
     {{ end }}
+    {{ end }}
+    {{ end }}
   </ul>
-</div>
 
-{{ range first 1 .Data.Pages }}
-<h2 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: {{ .Title }} <a class="text-lg"
-    href="{{ .Permalink }}"><i class="far fa-link"></i></a></h2>
-<div>
-  {{ partial "releases-single.html" . }}
-</div>
-{{ end }}
-
-<h2 id="old"><i class="far fa-archive"></i> Older releases</h2>
-<ul>
-  {{ range $index, $element := .Data.Pages }}
-  {{ if (ne $index 0) }}
-  <li><a href="{{ .Permalink }}">{{ .Title }}</a>, {{.Params.release_date}}</li>
-  {{ end }}
-  {{ end }}
-  {{ $urlPre := "https://api.github.com" }}
-  {{ $releases := getJSON $urlPre "/repos/ufz/ogs/releases" }}
-  {{ range $index, $element := $releases }}
-  {{ if not (eq $index 0) }}
-  {{ if and (not .draft) (not .prerelease) }}
-  <li>
-    <a href="{{ .html_url }}" target="_blank">
-      OpenGeoSys {{ .tag_name }}
-    </a>
-  </li>
-  {{ end }}
-  {{ end }}
-  {{ end }}
-</ul>
-<div class="note">
-  <p>We also provide binaries for <a href="/ogs-5/"><i class="far fa-exclamation-triangle"></i>OpenGeoSys-5</a>!</p>
+  <div class="note">
+    <p>We also provide binaries for <a href="/ogs-5/"><i class="far fa-exclamation-triangle"></i>OpenGeoSys-5</a>!</p>
+  </div>
 </div>
 {{ end }}
