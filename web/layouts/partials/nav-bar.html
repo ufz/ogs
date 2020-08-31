@@ -1,6 +1,7 @@
 {{ $currentPage := . }}
 {{ $segments := split .RelPermalink "/" }}
 {{ $section := index $segments 1 }}
+{{ $subsection := index $segments 2 }}
 
 <div class="py-2 px-2 md:px-4">
   <div x-data="{ mobileMenuOpen: false }" class="relative bg-white">
@@ -31,7 +32,7 @@
         </nav>
         <div class="hidden md:flex items-center justify-end space-x-8 md:flex-1 lg:w-0">
           <label for="search-input" class="hidden text-sm font-medium leading-5 text-gray-700">Search</label>
-          <div class="mt-1 relative rounded-md shadow-sm">
+          <div class="relative rounded-md shadow-sm">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -70,11 +71,25 @@
             </div>
             <div>
               <nav class="grid row-gap-8">
-
                 {{ range .Site.Menus.main }}
                 {{ $url_trimmed := trim .URL "/" }}
                 <a href="{{ .URL }}"
-                  class="text-base leading-6 font-medium text-gray-900 -m-3 p-3 flex items-center space-x-3 rounded-md hover:bg-gray-50 transition ease-in-out duration-150{{if (eq $section $url_trimmed) }} text-brand{{end}}">{{ .Name }}</a>
+                  class="text-base leading-6 font-medium text-gray-900 -m-3 p-3 flex items-center space-x-3 rounded-md hover:bg-gray-50 transition ease-in-out duration-150{{if (eq $section $url_trimmed) }} text-brand{{end}}">
+                  {{ .Name }}
+                </a>
+                {{ if eq $section $url_trimmed }}
+                {{ $currentMenu := index $.Site.Menus $section }}
+                {{ range $currentMenu }}
+                {{ $url_trimmed := trim .URL "/" }}
+                {{ $url_first_char := substr .URL 0 1 }}
+                {{ if eq $url_first_char "/" }}
+                <a class="px-4 text-gray-700 text-sm hover:text-gray-900 {{if eq $subsection .Identifier }} text-brand{{ end }}"
+                  href="{{ .URL }}">
+                  {{ .Name }}
+                </a>
+                {{ end }}
+                {{ end }}
+                {{ end }}
                 {{ end }}
                 <label for="search-input-mobile"
                   class="hidden text-sm font-medium leading-5 text-gray-700">Search</label>
@@ -89,12 +104,11 @@
                   <input id="search-input-mobile" class="form-input block w-full pl-10 sm:text-sm sm:leading-5"
                     placeholder="Search this site">
                 </div>
+              </nav>
             </div>
-            </nav>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>

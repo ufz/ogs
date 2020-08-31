@@ -28,12 +28,10 @@
 
   <hr>
   {{ range first 1 .Data.Pages }}
-  <h1 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: {{ .Title }} <a class="text-lg"
-      href="{{ .Permalink }}"><i class="far fa-link"></i></a></h1>
+  <h1 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: <a style="text-decoration: none;"
+      href="{{ .Permalink }}">{{ .Title }}</a></h1>
 
-  <div>
-    {{ partial "releases-single.html" . }}
-  </div>
+  {{ partial "releases-single.html" . }}
   {{ end }}
 
   <h2 id="old"><i class="far fa-archive"></i> Older releases</h2>

@@ -1,68 +1,33 @@
 {{ define "main" }}
 
-{{ $segments := split .RelPermalink "/" }}
-{{ $subsection := index $segments 2 }}
-{{ $currentPage := . }}
+<div class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+    <h1 class="text-2xl lg:text-3xl font-bold mb-3 lg:mb-5">{{ .Title }}</h1>
 
-<div class="flex overflow-hidden">
-  <!-- TODO: mobile menu -->
-  <div class="hidden md:flex md:flex-shrink-0">
-    <nav class="flex flex-col w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base">
-      {{ range .Site.Menus.docs }}
-      {{ $url_first_char := substr .URL 0 1 }}
-      {{ if eq $url_first_char "/" }}
-      <div class=" text-gray-700 hover:text-gray-900 mb-2 {{if eq $subsection .Identifier }} text-brand{{ end }}">
-        <a href="{{ .URL }}">
-          {{ .Name }}
-        </a>
-      </div>
-      {{ end }}
-      {{ end }}
-      <ul>
-        {{ $currentMenu := index .Site.Menus $subsection }}
-        {{ range $currentMenu }}
-        {{ if .HasChildren }}
-        <li class="tracking-wide font-bold mt-6">{{ .Name | upper }}</li>
-        {{ range .Children }}
-        <li
-          class="p-1 mr-1 {{if $currentPage.IsMenuCurrent $subsection . }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
-          <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand" {{end}}>{{ .Name }}
-          </a>
-        </li>
-        {{ end }}
-        {{ end }}
-        {{ end }}
-      </ul>
-    </nav>
-  </div>
-  <div class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-      <h1 class="text-2xl lg:text-3xl font-bold mb-3 lg:mb-5">{{ .Title }}</h1>
-
-      {{ if .CurrentSection.Params.os_selector }}
-      <div class="invisible mb-4 bg-gray-200 shadow rounded-lg px-2 py-1 w-auto inline-block" id="os-selector">
-        <span class="text-gray-600">Select OS:</span>
-        <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i><span class="hidden sm:inline">
-            Windows</span></a>
-        <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i><span class="hidden sm:inline"> Linux</span></a>
-        <a class="btn mx-1" id="btn-mac"><i class="fab fa-apple"></i><span class="hidden sm:inline"> macOS</span></a>
-      </div>
-      {{ end }}
-
-      <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
-        {{ if eq .Params.toc true }}
-        <h2>Table of contents</h2>
-        {{.TableOfContents}}
-        <hr>
-        {{ end }}
-        {{ .Content }}
-      </div>
-
-      <hr class="border my-4">
-      {{ partial "footer-nav.html" . }}
-
-      {{ partial "page-info" . }}
+    {{ if .CurrentSection.Params.os_selector }}
+    <div class="invisible mb-4 bg-gray-200 shadow rounded-lg px-2 py-1 w-auto inline-block" id="os-selector">
+      <span class="text-gray-600">Select OS:</span>
+      <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i><span class="hidden sm:inline">
+          Windows</span></a>
+      <a class="btn mx-1" id="btn-linux"><i class="fab fa-linux"></i><span class="hidden sm:inline"> Linux</span></a>
+      <a class="btn mx-1" id="btn-mac"><i class="fab fa-apple"></i><span class="hidden sm:inline"> macOS</span></a>
     </div>
+    {{ end }}
+
+    <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
+      {{ if eq .Params.toc true }}
+      <h2>Table of contents</h2>
+      {{.TableOfContents}}
+      <hr>
+      {{ end }}
+      {{ .Content }}
+    </div>
+
+    <hr class="border my-4">
+    {{ partial "footer-nav.html" . }}
+
+    {{ partial "page-info" . }}
   </div>
 </div>
+
 {{ end }}

@@ -1,3 +1,10 @@
+{{ $segments := split .RelPermalink "/" }}
+{{ $section := index $segments 1 }}
+{{ $subsection := index $segments 2 }}
+{{ $currentPage := . }}
+{{ .Scratch.Set "section" $section }}
+{{ .Scratch.Set "subsection" $subsection }}
+
 <!doctype html>
 <html lang="en">
 
@@ -6,11 +13,52 @@
 </head>
 
 <body>
-  {{ partial "nav-bar.html" . }}
+  {{ partialCached "nav-bar.html" . $section $subsection }}
 
   <div class="xl:container xl:mx-auto px-2">
-    {{ block "main" . }}
-    {{ end }}
+    <div class="{{ if $subsection }}flex overflow-hidden{{ end }}">
+
+      {{ if $subsection }}
+      <div class="hidden md:flex md:flex-shrink-0">
+        <nav class="flex flex-col w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base">
+          {{ $currentMenu := index .Site.Menus $section }}
+          {{ range $currentMenu }}
+          {{ $url_first_char := substr .URL 0 1 }}
+          {{ if eq $url_first_char "/" }}
+          <div class=" text-gray-700 hover:text-gray-900 mb-2 {{if eq $subsection .Identifier }} text-brand{{ end }}">
+            <a href="{{ .URL }}">
+              {{ .Name }}
+            </a>
+          </div>
+          {{ end }}
+          {{ end }}
+          {{ $currentSubMenu := index .Site.Menus $subsection }}
+          {{ if $currentSubMenu }}
+          <hr class="mt-3">
+          {{ end }}
+          <ul>
+            {{ range $currentSubMenu }}
+            {{ if .HasChildren }}
+            <li class="tracking-wide font-bold mt-6">{{ .Name | upper }}</li>
+            {{ range .Children }}
+            <li
+              class="p-1 mr-1 {{if $currentPage.IsMenuCurrent $subsection . }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
+              <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand"
+                {{end}}>{{ .Name }}
+              </a>
+            </li>
+            {{ end }}
+            {{ end }}
+            {{ end }}
+          </ul>
+        </nav>
+      </div>
+      {{ end }}
+
+
+      {{ block "main" . }}
+      {{ end }}
+    </div>
   </div>
 
   {{ block "footer" . }}
