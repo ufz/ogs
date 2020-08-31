@@ -14,6 +14,7 @@
 
 #include <Eigen/Dense>
 #include <array>
+#include <string>
 #include <variant>
 
 namespace MaterialPropertyLib
