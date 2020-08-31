@@ -1,22 +1,3 @@
-let primaryColor = "#104EB2";
-let accentColor = "#f6993f";
-let textColor = "#333333";
-let textInverseColor = "#f8fafc"
-
-let mycolors = {
-  'bg-primary': 'transparent',
-  'bg-secondary': 'var(--color-bg-secondary)',
-  'bg-default': 'var(--color-bg-default)',
-  'bg-inverse': primaryColor,
-
-  'text-primary': primaryColor,
-  'text-accent': accentColor,
-  'text-default': textColor,
-  'text-default-soft': 'var(--color-text-default-soft)',
-  'text-inverse': textInverseColor,
-  'text-inverse-soft': 'var(--color-text-inverse-soft)',
-}
-
 module.exports = {
   future: {
     removeDeprecatedGapUtilities: true,
@@ -36,7 +17,6 @@ module.exports = {
         '72': '18rem',
       }
     },
-    mycolors: mycolors,
     fontFamily: {
       'sans': [
         'Open Sans',

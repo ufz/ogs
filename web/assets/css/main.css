@@ -109,21 +109,10 @@ a.button {
   @apply font-serif;
   @apply font-medium;
   @apply uppercase;
-  color: theme('mycolors.text-primary');
 }
 
 a.button:hover {
   @apply bg-gray-100;
-}
-
-a.btn-inverse {
-  background: theme('mycolors.bg-inverse');
-  color: theme('mycolors.text-inverse');
-}
-
-a.btn-inverse:hover {
-  background: theme('mycolors.bg-default');
-  color: theme('mycolors.text-accent');
 }
 
 /* -------------------------------- Images ---------------------------------- */
@@ -198,18 +187,11 @@ img[src$='#two-third'] {
 .slick-prev:before,
 .slick-next:before {
   font-size: 24px;
-  color: theme('mycolors.text-primary');
 }
 
 .slick-dots li button:before,
 .slick-dots li.slick-active button:before {
   font-size: 8px;
-  color: theme('mycolors.text-primary');
-}
-
-.inverse .slick-prev:before,
-.inverse .slick-next:before {
-  color: theme('mycolors.text-inverse');
 }
 
 /* Vertically center images */
