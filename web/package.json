@@ -12,6 +12,6 @@
     "hugo-algolia": "^1.2.13",
     "postcss-cli": "^7.1.0",
     "postcss-import-url": "^5.1.0",
-    "tailwindcss": "^1.7.0"
+    "tailwindcss": "^1.7.6"
   }
 }

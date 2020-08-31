@@ -18,6 +18,9 @@ let mycolors = {
 }
 
 module.exports = {
+  future: {
+    removeDeprecatedGapUtilities: true,
+  },
   purge: [
     './layouts/**/*.html',
   ],
