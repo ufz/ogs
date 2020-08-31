@@ -1,8 +1,10 @@
 {{ define "main" }}
-<h1>{{ .Title }}</h1>
-{{ .Content }}
-<!-- ranges through each of the content files associated with a particular taxonomy term and renders the summary.html content view -->
-{{ range .Pages }}
-{{ .Render "summary"}}
-{{ end }}
+<div class="prose prose-sm lg:prose max-w-none lg:max-w-none">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+  <!-- ranges through each of the content files associated with a particular taxonomy term and renders the summary.html content view -->
+  {{ range .Pages }}
+  {{ .Render "summary"}}
+  {{ end }}
+</div>
 {{ end }}

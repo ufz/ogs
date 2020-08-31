@@ -1,11 +1,13 @@
 {{ define "main" }}
 
-<h1>{{ .Title }}</h1>
-{{ .Content }}
+<div class="prose prose-sm lg:prose max-w-none lg:max-w-none">
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+</div>
 {{ range where (sort .Site.Data.bib_ogs.entries "year" "desc") "category" "not in" "Book,Tutorial" }}
 <div class="bg-gray-200 rounded-lg">
   <div class="my-4 mx-4">
-    <div class="py-2 flex flex-wrap md:flex-no-wrap">
+    <div class="py-4 flex flex-wrap md:flex-no-wrap">
       <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
         <span class="tracking-widest font-medium title-font text-gray-900">
           {{ .category }}
