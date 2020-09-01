@@ -295,6 +295,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             rho_fr * N_p.transpose() * N_p * w *
             ((alpha - porosity) * (1.0 - alpha) / K_S + porosity * beta_p);
 
+        // density dependence on pressure evaluated for Darcy-term,
+        // for laplace and storage terms this dependence is neglected
         add_p_derivative.noalias() += rho_fr * beta_p * dNdx_p.transpose() *
                                       K_over_mu *
                                       (dNdx_p * p - 2.0 * rho_fr * b) * N_p * w;
@@ -457,11 +459,16 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         typename ShapeMatricesTypeDisplacement::template MatrixType<
             pressure_size, pressure_size>>(local_Jac_data, pressure_size,
                                            pressure_size);
-    typename ShapeMatricesTypePressure::NodalMatrixType mass =
+
+    typename ShapeMatricesTypePressure::NodalMatrixType storage =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
+
+    typename ShapeMatricesTypePressure::NodalMatrixType add_p_derivative =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
@@ -530,14 +537,23 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_over_mu = K / mu;
 
-        laplace.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
+        laplace.noalias() +=
+            rho_fr * dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
-        mass.noalias() +=
-            N_p.transpose() * N_p * w *
+        storage.noalias() +=
+            rho_fr * N_p.transpose() * N_p * w *
             ((alpha_b - porosity) * (1.0 - alpha_b) / K_S + porosity * beta_p);
 
         auto const& b = _process_data.specific_body_force;
-        local_rhs.noalias() += dNdx_p.transpose() * rho_fr * K_over_mu * b * w;
+        local_rhs.noalias() +=
+            dNdx_p.transpose() * rho_fr * rho_fr * K_over_mu * b * w;
+
+        // density dependence on pressure evaluated for Darcy-term,
+        // for laplace and storage terms this dependence is neglected (as is
+        // done for monolithic too)
+        add_p_derivative.noalias() += rho_fr * beta_p * dNdx_p.transpose() *
+                                      K_over_mu *
+                                      (dNdx_p * p - 2.0 * rho_fr * b) * N_p * w;
 
         auto& eps = _ip_data[ip].eps;
         auto const x_coord =
@@ -554,11 +570,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps_prev = _ip_data[ip].eps_prev;
         const double dv_dt =
             (Invariants::trace(eps) - Invariants::trace(eps_prev)) / dt;
-        local_rhs.noalias() -= alpha_b * dv_dt * N_p * w;
+        local_rhs.noalias() -= rho_fr * alpha_b * dv_dt * N_p * w;
     }
-    local_Jac.noalias() = laplace + mass / dt;
+    local_Jac.noalias() = laplace + storage / dt + add_p_derivative;
 
-    local_rhs.noalias() -= laplace * p + mass * p_dot;
+    local_rhs.noalias() -= laplace * p + storage * p_dot;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
