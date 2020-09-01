@@ -1,9 +1,12 @@
 {{ $segments := split .RelPermalink "/" }}
 {{ $section := index $segments 1 }}
-{{ $subsection := index $segments 2 }}
-{{ $currentPage := . }}
 {{ .Scratch.Set "section" $section }}
+{{ $currentPage := . }}
+{{ $subsection := "" }}
+{{if gt (len $segments) 4}}
+{{ $subsection = index $segments 2 }}
 {{ .Scratch.Set "subsection" $subsection }}
+{{ end }}
 
 <!doctype html>
 <html lang="en">
