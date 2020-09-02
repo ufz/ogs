@@ -19,6 +19,12 @@ container:
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
       --ompi 4.0.4 --insitu --mpi_benchmarks
+    - >
+      python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs .
+      --build_args ' --progress=plain'
+      --pm system --cvode --ccache
+      --cmake_args ' -DBUILD_TESTING=OFF'
+      --gui
   artifacts:
     name: container
     paths:
