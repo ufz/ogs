@@ -71,3 +71,10 @@ Singularity ogs-6.2.2-serial.sif:...> ls /scif/apps/ogs/bin
 # Exit the container and get back to your hosts shell
 Singularity ogs-6.2.2-serial.sif:...> exit
 ```
+
+### Run the DataExplorer inside a Container
+
+* Get a Singularity container with the DataExplorer (has `-gui` in its name)
+* `singularity exec --app ogs ogs-xxx-gui-xxx.sif DataExplorer`
+
+You may use this container on e.g. `envinf1` with X11 forwarding (`ssh -XY envinf1`).
