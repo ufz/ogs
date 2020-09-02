@@ -45,20 +45,29 @@ cite::before {
 
 /* -- OS selector -- */
 .win {
-  @apply border-green-200;
+  @apply border-blue-200;
+  @apply border-l-2;
+  @apply -ml-4;
+  @apply px-4;
 }
 
 .linux {
   @apply border-orange-200;
+  @apply border-l-2;
+  @apply -ml-4;
+  @apply px-4;
 }
 
 .mac {
-  @apply border-blue-200;
+  @apply border-gray-200;
+  @apply border-l-2;
+  @apply -ml-4;
+  @apply px-4;
 }
 
 #btn-win.active {
-  @apply text-green-500;
-  @apply border-green-500;
+  @apply text-blue-500;
+  @apply border-orange-500;
 }
 
 #btn-linux.active {
@@ -67,12 +76,12 @@ cite::before {
 }
 
 #btn-mac.active {
-  @apply text-blue-500;
-  @apply border-blue-500;
+  @apply text-gray-600;
+  @apply border-orange-500;
 }
 
 #btn-win:hover {
-  @apply border-green-500;
+  @apply border-orange-500;
 }
 
 #btn-linux:hover {
@@ -80,7 +89,7 @@ cite::before {
 }
 
 #btn-mac:hover {
-  @apply border-blue-500;
+  @apply border-orange-500;
 }
 
 /* -- Misc -- */

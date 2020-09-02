@@ -9,7 +9,7 @@
       <div class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
         <div class="lg:w-0 lg:flex-1 text-lg">
           <a href="/" class="flex {{ if .IsHome }} hidden{{ end }}">
-            Open<span class="text-brand">GeoSys</span>
+            Open<span class="text-brand-500">GeoSys</span>
           </a>
         </div>
         <div class="-mr-2 -my-2 md:hidden">
@@ -26,7 +26,7 @@
           {{ range .Site.Menus.main }}
           {{ $url_trimmed := trim .URL "/" }}
           <a href="{{ .URL }}"
-            class="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150{{if (eq $section $url_trimmed) }} text-brand{{end}}">{{ .Name }}</a>
+            class="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150{{if (eq $section $url_trimmed) }} text-brand-500{{end}}">{{ .Name }}</a>
           {{ end }}
 
         </nav>
@@ -57,7 +57,7 @@
           <div class="pt-5 pb-6 px-5 space-y-6">
             <div class="flex items-center justify-between border-b">
               <div>
-                <a href="/">Open<span class="text-brand">GeoSys</span></a>
+                <a href="/">Open<span class="text-brand-500">GeoSys</span></a>
               </div>
               <div class="-mr-2">
                 <button @click="mobileMenuOpen = false" type="button"
@@ -74,7 +74,7 @@
                 {{ range .Site.Menus.main }}
                 {{ $url_trimmed := trim .URL "/" }}
                 <a href="{{ .URL }}"
-                  class="text-base leading-6 font-medium text-gray-900 -m-3 p-3 flex items-center space-x-3 rounded-md hover:bg-gray-50 transition ease-in-out duration-150{{if (eq $section $url_trimmed) }} text-brand{{end}}">
+                  class="text-base leading-6 font-medium text-gray-900 -m-3 p-3 flex items-center space-x-3 rounded-md hover:bg-gray-50 transition ease-in-out duration-150{{if (eq $section $url_trimmed) }} text-brand-500{{end}}">
                   {{ .Name }}
                 </a>
                 {{ if eq $section $url_trimmed }}
@@ -83,7 +83,7 @@
                 {{ $url_trimmed := trim .URL "/" }}
                 {{ $url_first_char := substr .URL 0 1 }}
                 {{ if eq $url_first_char "/" }}
-                <a class="px-4 text-gray-700 text-sm hover:text-gray-900 {{if eq $subsection .Identifier }} text-brand{{ end }}"
+                <a class="px-4 text-gray-700 text-sm hover:text-gray-900 {{if eq $subsection .Identifier }} text-brand-500{{ end }}"
                   href="{{ .URL }}">
                   {{ .Name }}
                 </a>

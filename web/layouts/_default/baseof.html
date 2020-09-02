@@ -28,7 +28,8 @@
           {{ range $currentMenu }}
           {{ $url_first_char := substr .URL 0 1 }}
           {{ if eq $url_first_char "/" }}
-          <div class=" text-gray-700 hover:text-gray-900 mb-2 {{if eq $subsection .Identifier }} text-brand{{ end }}">
+          <div
+            class=" text-gray-700 hover:text-gray-900 mb-2 {{if eq $subsection .Identifier }} text-brand-500{{ end }}">
             <a href="{{ .URL }}">
               {{ .Name }}
             </a>
@@ -46,7 +47,7 @@
             {{ range .Children }}
             <li
               class="p-1 mr-1 {{if $currentPage.IsMenuCurrent $subsection . }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
-              <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand"
+              <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand-500"
                 {{end}}>{{ .Name }}
               </a>
             </li>
