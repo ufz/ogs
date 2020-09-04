@@ -118,9 +118,6 @@ private:
     /// the staggered scheme is used.
     GlobalSparsityPattern _sparsity_pattern_with_linear_element;
 
-    /// Solutions of the previous time step
-    std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
-
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           GlobalVector const& x,
                                           GlobalVector const& x_dot,
