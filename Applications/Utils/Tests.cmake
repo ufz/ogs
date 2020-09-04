@@ -377,3 +377,35 @@ if(OGS_BUILD_GUI)
         RemoveGhostDataOutput.vtu RemoveGhostDataOutput.vtu slice slice 0 0
     )
 endif()
+
+AddTest(
+    NAME Raster2Mesh_Elevation_Test
+    PATH FileConverter
+    EXECUTABLE Raster2Mesh
+    EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-elevation.vtu -e tri -p elevation
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA RainEvent30-elevation.vtu
+)
+
+AddTest(
+    NAME Raster2Mesh_Materials_Test
+    PATH FileConverter
+    EXECUTABLE Raster2Mesh
+    EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-materials.vtu -e quad -p materials
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    RainEvent30-materials.vtu RainEvent30-materials.vtu MaterialIDs MaterialIDs 0 0
+)
+
+AddTest(
+    NAME Raster2Mesh_Scalars_Test
+    PATH FileConverter
+    EXECUTABLE Raster2Mesh
+    EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-scalars.vtu -e tri -p scalar -n ScalarValues
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    RainEvent30-scalars.vtu RainEvent30-scalars.vtu ScalarValues ScalarValues 0 0
+)
