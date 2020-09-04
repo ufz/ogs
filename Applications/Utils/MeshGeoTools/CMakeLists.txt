@@ -3,6 +3,7 @@ set(TOOLS
     constructMeshesFromGeometry
     createIntermediateRasters
     identifySubdomains
+    Raster2Mesh
 )
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
