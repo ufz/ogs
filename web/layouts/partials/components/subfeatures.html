@@ -1,12 +1,12 @@
-<div class="flex flex-wrap -mx-4">
+<div class="flex flex-wrap -mx-4 mt-2 lg:mt-6">
   {{- range . -}}
   <div class="w-full md:w-1/3 md:px-4">
-    <h4>{{ markdownify .headline }}</h4>
-    <div class="mb-8">
+    <h4 class="leading-6 text-brand-500 font-semibold tracking-wide">{{ markdownify .headline }}</h4>
+    <div class="mb-4 prose text-gray-600">
       {{ markdownify .textline }}
     </div>
     {{ range .links }}
-      <a class="button mt-16 mr-2 btn-{{ .feature.class }}" href="{{ .url }}">{{ markdownify .text }}</a>
+    <a class="button mt-16 mr-2 btn-{{ .feature.class }}" href="{{ .url }}">{{ markdownify .text }}</a>
     {{ end }}
   </div>
   {{- end -}}

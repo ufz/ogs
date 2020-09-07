@@ -4,120 +4,143 @@
 {{ $type := "GitHub"}}
 {{/* comparison only works for two version parts, strip out 6. */}}
 {{ if gt (slicestr .Params.tag 2) "3.1" }}
-  {{ $gh_release = print "https://gitlab.opengeosys.org/ogs/ogs/-/releases/" .Params.tag }}
-  {{ $gh_download = print "https://ogsstorage.blob.core.windows.net/binaries/ogs6/" .Params.tag }}
-  {{ $benchmarks_url = print "https://gitlab.opengeosys.org/ogs/ogs/-/archive/" .Params.tag "/ogs-" .Params.tag ".zip?path=Tests/Data" }}
-  {{ $type = "GitLab"}}
+{{ $gh_release = print "https://gitlab.opengeosys.org/ogs/ogs/-/releases/" .Params.tag }}
+{{ $gh_download = print "https://ogsstorage.blob.core.windows.net/binaries/ogs6/" .Params.tag }}
+{{ $benchmarks_url = print "https://gitlab.opengeosys.org/ogs/ogs/-/archive/" .Params.tag "/ogs-" .Params.tag ".zip?path=Tests/Data" }}
+{{ $type = "GitLab"}}
 {{ end }}
 
 
 {{ $file_prefix := print "ogs-" .Params.tag }}
-<p>Released on {{ dateFormat "Monday, Jan 2, 2006" .Params.release_date }}, <a href="{{ $gh_release }}"><i class="fab fa-{{ $type | lower}}"></i> {{ $type }} release</a></p>
+<p>Released on {{ dateFormat "Monday, Jan 2, 2006" .Params.release_date }}, <a href="{{ $gh_release }}"><i
+      class="fab fa-{{ $type | lower}}"></i> {{ $type }} release</a></p>
 {{ if .Params.downloads }}
-  <div class="note">
-    <h3><i class="far fa-download"></i> Benchmark downloads</h3>
+<div>
+  <h2><i class="far fa-download"></i> Downloads</h2>
+  {{ if .Params.downloads.binary }}
+  <div class="flex flex-col">
+    <div class="-my-2 sm:-mx-6 lg:-mx-8">
+      <!-- class="overflow-x-auto" -->
+      <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+        <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr>
+                <th
+                  class="px-6 py-3 bg-gray-50 text-center text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                  Platform
+                </th>
+                <th
+                  class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th
+                  class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                  Additional Functions
+                </th>
+                <th class="px-6 py-3 bg-gray-50"></th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
 
-      <p><a href="{{ $benchmarks_url }}"><i class="far fa-arrow-right"></i> All benchmark input files for OpenGeoSys {{ .Params.tag }}</a></p>
-      {{ if eq $type "GitLab"}}
-        <p class="text-sm"><b>Note:</b> Large download! You can also <a href="/docs/userguide/basics/introduction/#download-benchmarks">browse and download individual subdirectories</a> for <a href="https://gitlab.opengeosys.org/ogs/ogs/-/tree/{{ .Params.tag }}/Tests/Data"><i class="far fa-arrow-right"></i> {{ .Params.tag }}</a></p>
-      {{ end }}
+              {{ range .Params.downloads.binary }}
+              <tr>
+                <td class="text-center">
+                  {{ if in . "Windows"}}
+                  <i class="fab fa-windows text-blue-500"></i>
+                  {{ end }}
+                  {{ if in . "Linux"}}
+                  <i class="fab fa-linux text-orange-500"></i>
+                  {{ end }}
+                  {{ if in . "OSX"}}
+                  <i class="fab fa-apple text-gray-500"></i>
+                  {{ end }}
+                </td>
+                <td>
+                  <a style="text-decoration: none" href=" {{$gh_download}}/{{$file_prefix}}-{{.}}">
+                    OpenGeoSys
+                    {{ if in . "de" }}
+                    + DataExplorer
+                    {{ end }}
+                    {{ if in . "utils" }}
+                    + Utilities
+                    {{ end }}
+                  </a>
+                </td>
+                <td>
+                  {{ if in . "python" }}
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Python bindings</i>
+                  </span>
+                  {{ end }}
+                </td>
+                <td>
+                  <a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">Download</a>
+                </td>
+              </tr>
+              {{ end }}
 
-    <h3><i class="far fa-download"></i> Binary downloads</h3>
-    <div class="flex">
-      {{ if .Params.downloads.win }}
-        <div class="w-1/2">
-          <h4><i class="fab fa-windows"></i> Windows</h4>
-          <ul class="text-sm">
-            {{ range .Params.downloads.win }}
-              <li>
-                <a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">
-                  OpenGeoSys
-                  {{ if in . "python" }}
-                     (with Python bindings <i class="fab fa-python"></i>)
-                  {{ end }}
-                  {{ if in . "de" }}
-                     + DataExplorer
-                  {{ end }}
-                  {{ if in . "utils" }}
-                     + Utilities
-                  {{ end }}
-                </a>
-              </li>
-            {{ end }}
-          </ul>
+              {{ range .Params.downloads.container }}
+              <tr>
+                <td class="text-center">
+                  <i class="far fa-container-storage text-green-500"></i>
+                </td>
+                <td>
+                  <a style="text-decoration: none" href=" {{$gh_download}}/{{$file_prefix}}-{{.}}">
+                    {{$file_prefix}}-{{.}} <span class="text-xs">(Singularity container)</span>
+                  </a>
+                </td>
+                <td>
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                    Python bindings</i>
+                  </span>
+
+                  {{ if in . "openmpi" }}
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    OpenMPI</i>
+                    {{ end }}
+                </td>
+                <td>
+                  <a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">Download</a>
+                </td>
+              </tr>
+              {{ end }}
+              <tr>
+                <td class="text-center">All</td>
+                <td><a style="text-decoration: none" href="{{ $benchmarks_url }}">Benchmark input files</a><br> <span
+                    class="text-xs"><b>Note:</b> Large download! You can also <a
+                      href="/docs/userguide/basics/introduction/#download-benchmarks">browse and download individual
+                      subdirectories</a>
+                    for <a href="https://gitlab.opengeosys.org/ogs/ogs/-/tree/{{ .Params.tag }}/Tests/Data"><i
+                        class="far fa-arrow-right"></i> {{ .Params.tag }}</a></span></td>
+                <td></td>
+                <td>
+                  <a href="{{ $benchmarks_url }}">Download</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      {{ end}}
-      {{ if .Params.downloads.osx }}
-        <div class="w-1/2">
-          <h4><i class="fab fa-apple"></i> macOS</h4>
-          <ul class="text-sm">
-            {{ range .Params.downloads.osx }}
-              <li>
-                <a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">
-                  OpenGeoSys
-                  {{ if in . "python" }}
-                     (with Python bindings <i class="fab fa-python"></i>)
-                  {{ end }}
-                  {{ if in . "de" }}
-                     + DataExplorer
-                  {{ end }}
-                  {{ if in . "utils" }}
-                     + Utilities
-                  {{ end }}
-                </a>
-              </li>
-            {{ end }}
-          </ul>
-        </div>
-      {{ end}}
+      </div>
     </div>
-    <div class="flex">
-      {{ if .Params.downloads.linux }}
-        <div class="w-1/2">
-          <h4><i class="fab fa-linux"></i> Linux</h4>
-          <ul class="text-sm">
-            {{ range .Params.downloads.linux }}
-              <li>
-                <a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">
-                  OpenGeoSys
-                  {{ if in . "python" }}
-                     (with Python bindings <i class="fab fa-python"></i>)
-                  {{ end }}
-                  {{ if in . "de" }}
-                     + DataExplorer
-                  {{ end }}
-                  {{ if in . "utils" }}
-                     + Utilities
-                  {{ end }}
-                </a>
-              </li>
-            {{ end }}
-          </ul>
-        </div>
-      {{ end}}
-      {{ if .Params.downloads.container }}
-        <div class="w-1/2">
-          <h4><i class="far fa-container-storage"></i> Singularity container</h4>
-          <ul class="text-sm">
-            {{ range .Params.downloads.container }}
-              <li><a href="{{$gh_download}}/{{$file_prefix}}-{{.}}">{{$file_prefix}}-{{.}}</a></li>
-            {{ end }}
-          </ul>
-        </div>
-      {{ end}}
-    </div>
-    {{ if .Params.downloads.note }}
-      <div class="text-sm">{{ .Params.downloads.note | markdownify }}</div>
-    {{ end }}
   </div>
+  {{ end }}
+
+  {{ if .Params.downloads.note }}
+  <div class="text-sm px-4">{{ .Params.downloads.note | markdownify }}</div>
+  {{ end }}
+</div>
 {{ end }}
+<hr>
 
 <div class="content">
   {{ if eq $type "GitHub" }}
-    {{ .Content }}
+  {{ .Content }}
   {{ else }}
-    {{ $urlPre := "https://gitlab.opengeosys.org/api/v4" }}
-    {{ $release := getJSON $urlPre "/projects/120/releases/" .Params.tag }}
-    {{ $release.description | markdownify }}
+  {{ $urlPre := "https://gitlab.opengeosys.org/api/v4" }}
+  {{ $release := getJSON $urlPre "/projects/120/releases/" .Params.tag }}
+  {{ $release.description | markdownify }}
   {{ end }}
 </div>

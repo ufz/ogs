@@ -16,6 +16,8 @@ hero:
     - name: Vis
       anchor: vis
 
+feature_intro: OpenGeoSys' adaptable and modular architecture enables a wide variety of use cases and flexible workflows. In the following we highlight some of its most important features.
+
 features:
 - headline: Comprehensive Pre-Processing Tools
   textline: |
@@ -29,9 +31,9 @@ features:
   visual:
     permalink: "/docs/tools/meshing-submeshes/extract-surface/TopBottomSideSurface.png"
     alt: Extracted surfaces
-  links:
-    - text: See Docs
-      url: "/docs/tools"
+  # links:
+  #   - text: See Docs
+  #     url: "/docs/tools"
   layout: left
   anchor: tools
 
@@ -93,9 +95,10 @@ features:
 
 - headline: Transparent development workflows
   textline: |
-    Write front-end code with Jekyll or Hugo and push to your Git repo. Forestry will pull in your commits and update the CMS.
+    OpenGeoSys is an open-source project developed by a community of researchers. We try to be
+    open-minded and and make team decisions. We try to help users and developers as best as we can.
 
-    Invite your team to create content in a rich UI. Their updates get committed back without merge conflicts.
+    We invite you to take part in this journey, shape the future of OpenGeoSys together and happily welcome any contribution.
   subfeatures:
     - headline: Setup a development environment
       textline: |
@@ -114,27 +117,27 @@ features:
   layout: right
 #   class: inverse
 
-- headline: Get started
+- headline: Ready to dive in?
   textline: |
   subfeatures:
     - headline: Using OpenGeoSys
       textline: |
-        Start using OpenGeoSys by [downloading](/downloads) a prebuilt package.
-      links:
-        - text: <i class="far fa-download"></i> Download OpenGeoSys
-          url: /releases
+        Start using OpenGeoSys by [downloading](/releases) a prebuilt package.
+#       links:
+#         - text: <i class="far fa-download"></i> Download OpenGeoSys
+#           url: /releases
     - headline: Developing OpenGeoSys
       textline: |
         Getting started developing OpenGeoSys at the [Developer Guide](/docs/devguide).
-      links:
-        - text: <i class="far fa-book"></i> Developer Guide
-          url: /docs/devguide
+#      links:
+#        - text: <i class="far fa-book"></i> Read the Developer Guide
+#          url: /docs/devguide
     - headline: Become part of the Community
       textline: |
         Get in touch with the OpenGeoSys Community via our [Discussion forum](https://discourse.opengeosys.org), [GitLab](https://gitlab.opengeosys.org/ogs/ogs) or by [email](mailto:info@opengeosys.org).
-      links:
-        - text: <i class="fab fa-gitlab"></i> GitLab
-          url: https://gitlab.opengeosys.org/ogs/ogs
+#      links:
+#        - text: <i class="fab fa-gitlab"></i> GitLab
+#          url: https://gitlab.opengeosys.org/ogs/ogs
   layout: vertical
-  class: inverse
+#   class: inverse
 ---

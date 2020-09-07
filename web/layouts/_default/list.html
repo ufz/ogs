@@ -1,27 +1,24 @@
 {{ define "main" }}
-  <div class="container">
-    {{ $listtitle := .Title }}
-    {{ if or .Title .Content }}
-    <div>
-      {{ with .Title }}<h1>{{ . }}</h1>{{ end }}
-      {{ with .Content }}<div>{{ . }}</div>{{ end }}
+{{ $listtitle := .Title }}
+{{ if or .Title .Content }}
+<div>
+  {{ with .Title }}<h1>{{ . }}</h1>{{ end }}
+  {{ with .Content }}<div>{{ . }}</div>{{ end }}
+</div>
+{{ end }}
+
+<ul>
+  {{ range .Paginator.Pages }}
+  <li>
+    <div class="post-title">
+      {{ if eq $listtitle "Posts" }}
+      {{ .Date.Format "2006-01-02" }} <a href="{{ .RelPermalink }}">{{.Title }}</a>
+      {{ else }}
+      <a href="{{ .RelPermalink }}">{{.Title }}</a>
+      {{ end }}
     </div>
-    {{ end }}
-
-    <ul>
-        {{ range .Paginator.Pages }}
-        <li>
-            <div class="post-title">
-        {{ if eq $listtitle "Posts" }}
-            {{ .Date.Format "2006-01-02" }} <a href="{{ .RelPermalink }}">{{.Title }}</a>
-        {{ else }}
-            <a href="{{ .RelPermalink }}">{{.Title }}</a>
-        {{ end }}
-            </div>
-        </li>
-        {{ end }}
-    </ul>
-    {{ partial "pagination.html" . }}
-  </div>
-
+  </li>
+  {{ end }}
+</ul>
+{{ partial "pagination.html" . }}
 {{ end }}

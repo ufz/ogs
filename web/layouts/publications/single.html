@@ -1,29 +1,33 @@
 {{ define "main" }}
 
-  <div class="container mx-auto">
-    <h1>{{ .Title }}</h1>
-    {{ .Content }}
-    {{ range where (sort .Site.Data.bib_ogs.entries "year" "desc") "category" "not in" "Book,Tutorial" }}
-    <div class="bg-gray-200 rounded-lg">
-      <div class="my-4 mx-4">
-        <div class="py-2 flex flex-wrap md:flex-no-wrap">
-          <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
-            <span class="tracking-widest font-medium title-font text-gray-900">
+<div class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+    <h1 class="text-2xl lg:text-3xl font-bold mb-3 lg:mb-5">{{ .Title }}</h1>
+    <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
+      {{ .Content }}
+
+      {{ range where (sort .Site.Data.bib_ogs.entries "year" "desc") "category" "not in" "Book,Tutorial" }}
+      <div class=" rounded-lg">
+        <div class="my-4 mx-4">
+          <div class="py-2">
+            <div class="mb-2">
+              <span
+                class="px-2 m-0 inline-flex text-xs leading-5 font-semibold rounded-l-full bg-orange-200 text-gray-800">
+                {{ .year }}
+              </span><span
+                class="px-2 m-0 border-l-2 inline-flex text-xs leading-5 font-semibold rounded-r-full bg-gray-200 text-gray-700">
                 {{ .category }}
-            </span>
-            <span class="mt-1 text-gray-500 text-sm">
-              {{ .year }}
-            </span>
-          </div>
-          <div class="md:flex-grow">
-            <h4 class="text-xl font-medium text-gray-900 title-font mt-0 mb-2"><i>{{ .title | safeHTML }}</i></h4>
+              </span>
+            </div>
+            <h4 style="margin-top: 0.5em;" class="text-xl font-medium text-gray-900 title-font mb-2">
+              <i>{{ .title | safeHTML }}</i></h4>
             <p>
+              by
               {{ $len := (len .author) }}
               {{ range $index, $element := .author }}
-                {{ $element.last }}, {{ $element.first}} {{ if ne (add $index 1) $len }}and{{ end }}
+              {{ $element.last }}, {{ $element.first}}{{ if ne (add $index 1) $len }} and{{ else }}.{{ end }}
               {{ end }}
-            </p>
-            <p style="line-height: 0.5em;">
+              <br>
               {{ if isset . "journal" }}{{ .journal }},{{ end }}
               {{ if isset . "issue" }}Issue {{ .issue }},{{ end }}
               {{ if isset . "volume" }}vol. {{ .volume }},{{ end }}
@@ -31,20 +35,21 @@
               {{ if isset . "isbn" }}ISBN: {{ .isbn }},{{ end }}
               {{ if isset . "publisher" }}{{ .publisher }},{{ end }}
               {{ if isset . "doi" }}
-                DOI:<a href="https://doi.org/{{ .doi }}" class="text-indigo-500 inline-flex items-center mt-4">
-                  {{ .doi }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
-                </a>
+              DOI:<a href="https://doi.org/{{ .doi }}" class="inline-flex items-center mt-4">
+                {{ .doi }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
+              </a>
               {{ end }}
               {{ if isset . "url" }}
-                <a href="{{ .url }}" class="text-indigo-500 inline-flex items-center mt-4">
-                  {{ .url }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
-                </a>
+              <a href="{{ .url }}" class="text-indigo-500 inline-flex items-center mt-4">
+                {{ .url }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
+              </a>
               {{ end }}
             </p>
           </div>
         </div>
       </div>
-      </div>
       {{ end }}
+    </div>
   </div>
+</div>
 {{ end }}

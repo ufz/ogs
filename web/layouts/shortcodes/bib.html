@@ -1,12 +1,12 @@
 {{ $full_bib := merge .Site.Data.bib_ogs .Site.Data.bib_other }}
 {{ $bib := index $full_bib.entries (.Get 0) }}
-<p style="line-height: 1em;">
+<p>
   {{ $len := (len $bib.author) }}
   {{ range $index, $element := $bib.author }}
-    {{ $element.last }}, {{ $element.first}} {{ if ne (add $index 1) $len }}and{{ end }}
+  {{ $element.last }}, {{ $element.first}} {{ if ne (add $index 1) $len }}and{{ end }}
   {{ end }}
   ({{$bib.year}}):
-  <i>{{ $bib.title | safeHTML }}</i>.
+  <span class="italic">{{ $bib.title | safeHTML }}</span>.
   {{ if isset $bib "journal" }}{{ $bib.journal }},{{ end }}
   {{ if isset $bib "issue" }}Issue {{ $bib.issue }},{{ end }}
   {{ if isset $bib "volume" }}vol. {{ $bib.volume }},{{ end }}
@@ -14,13 +14,9 @@
   {{ if isset $bib "isbn" }}ISBN: {{ $bib.isbn }},{{ end }}
   {{ if isset $bib "publisher" }}{{ $bib.publisher }},{{ end }}
   {{ if isset $bib "doi" }}
-    DOI:<a href="https://doi.org/{{ $bib.doi }}" class="text-indigo-500 inline-flex items-center mt-4">
-      {{ $bib.doi }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
-    </a>
+  DOI:<a href="https://doi.org/{{ $bib.doi }}" class="mt-4">{{ $bib.doi }}</a>
   {{ end }}
   {{ if isset $bib "url" }}
-    <a href="{{ $bib.url }}" class="text-indigo-500 inline-flex items-center mt-4">
-      {{ $bib.url }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
-    </a>
+  <a href="{{ $bib.url }}" class="mt-4">{{ $bib.url }}</a>
   {{ end }}
 </p>

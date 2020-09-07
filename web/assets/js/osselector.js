@@ -2,17 +2,17 @@
 //            Distributed under a Modified BSD License.
 //              See accompanying file LICENSE.txt or
 //              http://www.opengeosys.org/project/license
-jQuery.fn.visible = function() {
-    return this.css('visibility', 'visible');
+jQuery.fn.visible = function () {
+  return this.css('visibility', 'visible');
 };
 
-jQuery.fn.invisible = function() {
-    return this.css('visibility', 'hidden');
+jQuery.fn.invisible = function () {
+  return this.css('display', 'none');
 };
 
-$("#btn-win").click(function(){ selectOS("win"); });
-$("#btn-linux").click(function(){ selectOS("linux"); });
-$("#btn-mac").click(function(){ selectOS("mac"); });
+$("#btn-win").click(function () { selectOS("win"); });
+$("#btn-linux").click(function () { selectOS("linux"); });
+$("#btn-mac").click(function () { selectOS("mac"); });
 
 function selectOS(os) {
   var os_list = ['win', 'linux', 'mac'];
@@ -39,4 +39,7 @@ if ($(".win").length > 0) {
   else {
     $("#btn-win").click();
   }
+}
+else {
+  $("#os-selector").invisible();
 }

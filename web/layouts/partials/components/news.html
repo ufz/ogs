@@ -1,34 +1,83 @@
-<div class="container">
-  <div class="flex flex-wrap">
-    <div class="w-full md:w-1/2 px-4 md:px-2">
-      <h2 class="mt-0">News</h2>
-      <div class="py-0 lg:px-4">
-        <ul id="news">
-        </ul>
-      </div>
-    </div>
-
-    <div class="w-full md:w-1/2 px-4 md:px-2">
-      <h2 class="mt-0">Discussions</h2>
-      <div class="py-0 lg:px-4">
-        <ul id="discussions">
-        </ul>
-      </div>
-    </div>
-
-    <div class="w-full px-4 md:px-2">
-      <h2 class="mt-0">Latest Benchmarks</h2>
-      <div class="py-0 lg:px-4">
-        {{ template "latest-pages" .}}
-      </div>
-    </div>
-  </div>
+<div class="relative mx-auto lg:max-w-7xl">
+  {{ template "discours-posts" (dict "page" . "category" "announcements" "count" "3") }}
 </div>
+
+<div class="relative mx-auto lg:max-w-7xl mt-8">
+  {{ template "discours-posts" (dict "page" . "category" "usability" "count" "3" "heading" "Discussions") }}
+</div>
+
+{{/*
+<div class="w-full md:w-1/3 px-4 md:px-2">
+  <h3 class="mb-4 text-3xl">Latest Benchmarks</h3>
+  <div class="py-0 lg:px-4">
+    {{ template "latest-pages" . }}
+</div>
+</div>
+*/}}
+
+{{ define "discours-posts" }}
+{{/*
+<h2 class="mb-2 lg:mb-4 text-2xl lg:text-3xl">
+  {{ if .heading }}
+{{ .heading }}
+{{ else }}
+{{ .category | humanize }}
+{{ end }}
+</h2>
+*/}}
+<div class="mt-2 grid lg:grid-cols-3 lg:col-gap-5 gap-4" x-data="categoryData('{{ .category }}', {{ .count }})"
+  x-init="init()">
+  <template x-for="topic in topics" :key="topic.id">
+    <div class="mb-3 border-b-2 lg:border-b-o lg:shadow lg:rounded-lg p-4">
+      <a x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug" class="block">
+        <template x-if="topic.tags.length > 0">
+          <div class="float-right lg:float-none">
+            <span x-text="topic.tags.slice(0, 1)" x-bind:class="{
+                'bg-indigo-100 text-indigo-800': topic.tags.slice(0, 1) == 'ogs6',
+                'bg-green-100 text-green-800': topic.tags.slice(0, 1) == 'ogs5',
+                'bg-pink-100 text-pink-800': topic.tags.slice(0, 1) == 'infrastructure' }"
+              class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium leading-5">
+            </span>
+
+          </div>
+        </template>
+        <h3 x-text="topic.title" class="text-xl font-bold leading-7 text-gray-800 mt-3">
+        </h3>
+        <div class="mt-2 flex items-center">
+          <div class="flex-shrink-0">
+            <img class="h-10 w-10 rounded-full" x-bind:src="getUserAvatar(topic)" alt="author avatar">
+          </div>
+          <div class="ml-3">
+            <p x-text="'by ' + getUsername(topic)" class="text-sm leading-5 font-medium text-gray-800">
+            </p>
+            <div class="flex text-sm leading-5 text-gray-500">
+              <time datetime="2020-03-15"
+                x-text="(new Date(topic.created_at)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })">
+              </time>
+              <template x-if="topic.posts_count > 1">
+                <span>
+                  <span class="mx-1">
+                    &middot;
+                  </span>
+                  <span x-text="(topic.posts_count - 1) + ' comment' + ((topic.posts_count - 1) === 1 ? '' : 's')">
+                  </span>
+                </span>
+              </template>
+            </div>
+          </div>
+        </div>
+      </a>
+  </template>
+  <button class="hidden py-2 px-4 rounded bg-blue-500 text-white flex-grow-0" type="button" x-on:click="reload()">
+    Reload
+  </button>
+</div>
+{{ end }}
 
 {{ define "latest-pages" }}
 <ul>
 
-{{ range first 8 (where .Site.RegularPages "CurrentSection.RelPermalink" "/docs/benchmarks/").ByLastmod.Reverse }}
+  {{ range first 8 (where .Site.RegularPages "CurrentSection.RelPermalink" "/docs/benchmarks/").ByLastmod.Reverse }}
   <li>
     <!-- Two weeks -->
     <a href="{{ .Permalink }}">
@@ -36,6 +85,64 @@
       {{ .Title }}
     </a>
   </li>
-{{ end }}
+  {{ end }}
 </ul>
 {{ end }}
+
+<script>
+  function categoryData(category, limit) {
+    return {
+      topics: [],
+      users: [],
+      reload() {
+        sessionStorage.removeItem(category);
+        this.topics = [];
+        this.users = [];
+        this.init();
+      },
+      init() {
+        // Check if sessionData holds anything, so we don't need to hit the api
+        const topics = JSON.parse(sessionStorage.getItem(category));
+        const users = JSON.parse(sessionStorage.getItem(category + '_users'));
+
+        if (topics && users) {
+          // make it accessible to x-data
+          this.topics = topics;
+          this.users = users;
+          return;
+        }
+
+        // get gists and parse the description field
+        fetch('https://discourse.opengeosys.org/c/' + category + '.json')
+          .then(response => response.json())
+          .then(response => {
+            let topics = response.topic_list.topics;
+            let topicsSorted = topics.sort(function compare(a, b) {
+              var dateA = new Date(a.created_at);
+              var dateB = new Date(b.created_at);
+              return dateB - dateA;
+            });
+            this.topics = topicsSorted.slice(0, limit);;
+            sessionStorage.setItem(category, JSON.stringify(this.topics));
+
+            let users = response.users;
+            this.users = users;
+            sessionStorage.setItem(category + '_users', JSON.stringify(this.users));
+          });
+      },
+      getUsername(topic) {
+        let user = this.users.find(author => author.id === topic.posters[0].user_id);
+        if (user.name != "") {
+          return user.name;
+        }
+        else {
+          return user.username;
+        }
+      },
+      getUserAvatar(topic) {
+        let user = this.users.find(author => author.id === topic.posters[0].user_id);
+        return 'https://discourse.opengeosys.org' + user.avatar_template.replace('{size}', '90');
+      },
+    };
+  }
+</script>

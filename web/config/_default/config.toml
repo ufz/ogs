@@ -15,6 +15,11 @@ style = "monokailight"
 [params]
   alert = ""
 
+[[menu.main]]
+  name = "Discourse"
+  weight = 10
+  url = "https://discourse.opengeosys.org"
+
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
   name = "Getting Started"
@@ -107,16 +112,16 @@ style = "monokailight"
   identifier = "basics"
   weight = 1
 [[menu.userguide]]
-  name = "Process Dependent Configuration"
-  identifier = "process-dependent-configuration"
-  weight = 2
-[[menu.userguide]]
   name = "Post Processing"
   identifier = "post-processing"
-  weight = 3
+  weight = 2
 [[menu.userguide]]
   name = "Troubleshooting"
   identifier = "troubleshooting"
+  weight = 3
+[[menu.userguide]]
+  name = "Process Dependent Configuration"
+  identifier = "process-dependent-configuration"
   weight = 4
 
 # Tools sidebar top-level categories
