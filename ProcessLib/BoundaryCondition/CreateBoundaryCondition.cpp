@@ -21,6 +21,7 @@
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "PrimaryVariableConstraintDirichletBoundaryCondition.h"
 #include "RobinBoundaryCondition.h"
+#include "SolutionDependentDirichletBoundaryCondition.h"
 #include "VariableDependentNeumannBoundaryCondition.h"
 
 #include "BaseLib/TimeInterval.h"
@@ -111,6 +112,12 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     if (type == "PrimaryVariableConstraintDirichlet")
     {
         return createPrimaryVariableConstraintDirichletBoundaryCondition(
+            config.config, config.boundary_mesh, dof_table, variable_id,
+            *config.component_id, parameters);
+    }
+    if (type == "SolutionDependentDirichlet")
+    {
+        return ProcessLib::createSolutionDependentDirichletBoundaryCondition(
             config.config, config.boundary_mesh, dof_table, variable_id,
             *config.component_id, parameters);
     }
