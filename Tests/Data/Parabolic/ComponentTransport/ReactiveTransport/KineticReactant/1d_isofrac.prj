@@ -438,8 +438,8 @@
             <boundary_conditions>
                 <boundary_condition>
                     <mesh>1d_isofrac_upstream</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>c_Synthetica</parameter>
+                    <type>SolutionDependentDirichlet</type>
+                    <initial_value_parameter>c_Synthetica</initial_value_parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
