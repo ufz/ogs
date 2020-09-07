@@ -67,29 +67,29 @@ cite::before {
 
 #btn-win.active {
   @apply text-blue-500;
-  @apply border-orange-500;
+  @apply border-brand-500;
 }
 
 #btn-linux.active {
   @apply text-orange-500;
-  @apply border-orange-500;
+  @apply border-brand-500;
 }
 
 #btn-mac.active {
   @apply text-gray-600;
-  @apply border-orange-500;
+  @apply border-brand-500;
 }
 
 #btn-win:hover {
-  @apply border-orange-500;
+  @apply border-brand-500;
 }
 
 #btn-linux:hover {
-  @apply border-orange-500;
+  @apply border-brand-500;
 }
 
 #btn-mac:hover {
-  @apply border-orange-500;
+  @apply border-brand-500;
 }
 
 /* -- Misc -- */
