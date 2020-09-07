@@ -38,6 +38,7 @@ struct Partition
     /// Non ghost elements
     std::vector<const MeshLib::Element*> regular_elements;
     std::vector<const MeshLib::Element*> ghost_elements;
+    std::vector<bool> duplicate_ghost_cell;
 
     std::size_t numberOfMeshItems(MeshLib::MeshItemType const item_type) const;
 
