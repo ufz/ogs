@@ -433,18 +433,16 @@ void RichardsMechanicsLocalAssembler<
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
             {
-                double& phi_tr = _ip_data[ip].transport_porosity;
 
-                // Use previous time step transport_porosity for
-                // transport_porosity update, ...
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                variables_prev[static_cast<int>(MPL::Variable::transport_porosity)] =
                     _ip_data[ip].transport_porosity_prev;
-                // ... then use new transport_porosity.
-                phi_tr =
+
+                _ip_data[ip].transport_porosity =
                     solid_phase.property(MPL::PropertyType::transport_porosity)
-                        .template value<double>(variables, x_position, t, dt);
+                        .template value<double>(variables, variables_prev,
+                                                x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    phi_tr;
+                    _ip_data[ip].transport_porosity;
             }
             else
             {
@@ -761,18 +759,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
             {
-                double& phi_tr = _ip_data[ip].transport_porosity;
-
-                // Use previous time step transport_porosity for
-                // transport_porosity update, ...
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                variables_prev[static_cast<int>(MPL::Variable::transport_porosity)] =
                     _ip_data[ip].transport_porosity_prev;
-                // ... then use new transport_porosity.
-                phi_tr =
+
+                _ip_data[ip].transport_porosity =
                     solid_phase.property(MPL::PropertyType::transport_porosity)
-                        .template value<double>(variables, x_position, t, dt);
+                        .template value<double>(variables, variables_prev,
+                                                x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    phi_tr;
+                    _ip_data[ip].transport_porosity;
             }
             else
             {
@@ -1462,7 +1457,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Swelling and possibly volumetric strain rate update.
         auto& sigma_sw = _ip_data[ip].sigma_sw;
-        double& phi_tr = _ip_data[ip].transport_porosity;
         {
             auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
 
@@ -1490,16 +1484,16 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
             {
-                // Use previous time step transport_porosity for
-                // transport_porosity update, ...
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                variables_prev[static_cast<int>(
+                    MPL::Variable::transport_porosity)] =
                     _ip_data[ip].transport_porosity_prev;
-                // ... then use new transport_porosity.
-                phi_tr =
+
+                _ip_data[ip].transport_porosity =
                     solid_phase.property(MPL::PropertyType::transport_porosity)
-                        .template value<double>(variables, x_position, t, dt);
+                        .template value<double>(variables, variables_prev,
+                                                x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    phi_tr;
+                    _ip_data[ip].transport_porosity;
             }
             else
             {

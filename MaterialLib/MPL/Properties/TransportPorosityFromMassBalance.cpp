@@ -36,6 +36,7 @@ void TransportPorosityFromMassBalance::checkScale() const
 
 PropertyDataType TransportPorosityFromMassBalance::value(
     VariableArray const& variable_array,
+    VariableArray const& variable_array_prev,
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
@@ -56,10 +57,20 @@ PropertyDataType TransportPorosityFromMassBalance::value(
         std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
 
     double const phi_tr_prev = std::get<double>(
-        variable_array[static_cast<int>(Variable::transport_porosity)]);
+        variable_array_prev[static_cast<int>(Variable::transport_porosity)]);
 
     double const w = dt * (e_dot + p_eff_dot * beta_SR);
     return std::clamp(phi_tr_prev + (alpha_b - phi) * w, phi_min_, phi_max_);
+}
+
+PropertyDataType TransportPorosityFromMassBalance::value(
+    VariableArray const& /*variable_array*/,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
+{
+    OGS_FATAL(
+        "TransportPorosityFromMassBalance value call requires previous time "
+        "step values.");
 }
 
 PropertyDataType TransportPorosityFromMassBalance::dValue(
