@@ -49,7 +49,6 @@ enum class Variable : int
     effective_pore_pressure_rate,
     grain_compressibility,
     liquid_saturation,
-    liquid_saturation_rate,
     phase_pressure,
     porosity,
     solid_grain_pressure,

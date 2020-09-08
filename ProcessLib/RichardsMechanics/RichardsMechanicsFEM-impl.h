@@ -362,8 +362,8 @@ void RichardsMechanicsLocalAssembler<
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
-        variables[static_cast<int>(MPL::Variable::liquid_saturation_rate)] =
-            (S_L - S_L_prev) / dt;
+        variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            S_L_prev;
 
         double const dS_L_dp_cap =
             medium->property(MPL::PropertyType::saturation)
@@ -417,8 +417,8 @@ void RichardsMechanicsLocalAssembler<
                     MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
                         solid_phase
                             .property(MPL::PropertyType::swelling_stress_rate)
-                            .template value<DimMatrix>(variables, x_position, t,
-                                                       dt));
+                            .template value<DimMatrix>(
+                                variables, variables_prev, x_position, t, dt));
                 sigma_sw += sigma_sw_dot * dt;
 
                 auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
@@ -692,8 +692,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
-        variables[static_cast<int>(MPL::Variable::liquid_saturation_rate)] =
-            (S_L - S_L_prev) / dt;
+        variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            S_L_prev;
 
         double const dS_L_dp_cap =
             medium->property(MPL::PropertyType::saturation)
@@ -748,8 +748,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
                         solid_phase
                             .property(MPL::PropertyType::swelling_stress_rate)
-                            .template value<DimMatrix>(variables, x_position, t,
-                                                       dt));
+                            .template value<DimMatrix>(
+                                variables, variables_prev, x_position, t, dt));
                 sigma_sw += sigma_sw_dot * dt;
 
                 variables[static_cast<int>(
@@ -859,8 +859,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     solid_phase
                         .property(MPL::PropertyType::swelling_stress_rate)
                         .template dValue<DimMatrix>(
-                            variables, MPL::Variable::liquid_saturation,
-                            x_position, t, dt));
+                            variables, variables_prev,
+                            MPL::Variable::liquid_saturation, x_position, t,
+                            dt));
             local_Jac
                 .template block<displacement_size, pressure_size>(
                     displacement_index, pressure_index)
@@ -1412,8 +1413,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
-        variables[static_cast<int>(MPL::Variable::liquid_saturation_rate)] =
-            (S_L - S_L_prev) / dt;
+        variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            S_L_prev;
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
             MPL::VariableArray variables;
@@ -1476,8 +1477,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
                         solid_phase
                             .property(MPL::PropertyType::swelling_stress_rate)
-                            .template value<DimMatrix>(variables, x_position, t,
-                                                       dt));
+                            .template value<DimMatrix>(
+                                variables, variables_prev, x_position, t, dt));
                 sigma_sw += sigma_sw_dot * dt;
 
                 variables[static_cast<int>(

@@ -55,13 +55,14 @@ void SaturationDependentSwelling::checkScale() const
 
 PropertyDataType SaturationDependentSwelling::value(
     VariableArray const& variable_array,
+    VariableArray const& variable_array_prev,
     ParameterLib::SpatialPosition const& pos, double const /*t*/,
     double const dt) const
 {
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
-    auto const S_L_dot = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation_rate)]);
+    auto const S_L_prev = std::get<double>(
+        variable_array_prev[static_cast<int>(Variable::liquid_saturation)]);
 
     Eigen::Matrix<double, 3, 3> const e =
         local_coordinate_system_ == nullptr
@@ -75,8 +76,6 @@ PropertyDataType SaturationDependentSwelling::value(
     {
         return delta_sigma_sw;   // still being zero.
     }
-
-    double const S_L_prev = S_L - S_L_dot * dt;
 
     double const S_eff = std::clamp((S_L - S_min_) / (S_max_ - S_min_), 0., 1.);
     double const S_eff_prev =
@@ -100,9 +99,10 @@ PropertyDataType SaturationDependentSwelling::value(
 }
 
 PropertyDataType SaturationDependentSwelling::dValue(
-    VariableArray const& variable_array, Variable const primary_variable,
+    VariableArray const& variable_array,
+    VariableArray const& variable_array_prev, Variable const primary_variable,
     ParameterLib::SpatialPosition const& pos, double const /*t*/,
-    double const dt) const
+    double const /*dt*/) const
 {
     (void)primary_variable;
     assert((primary_variable == Variable::liquid_saturation) &&
@@ -111,8 +111,8 @@ PropertyDataType SaturationDependentSwelling::dValue(
 
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
-    auto const S_L_dot = std::get<double>(
-        variable_array[static_cast<int>(Variable::liquid_saturation_rate)]);
+    auto const S_L_prev = std::get<double>(
+        variable_array_prev[static_cast<int>(Variable::liquid_saturation)]);
 
     Eigen::Matrix<double, 3, 3> const e =
         local_coordinate_system_ == nullptr
@@ -126,8 +126,6 @@ PropertyDataType SaturationDependentSwelling::dValue(
     {
         return delta_sigma_sw;   // still being zero.
     }
-
-    double const S_L_prev = S_L - S_L_dot * dt;
 
     double const S_eff = std::clamp((S_L - S_min_) / (S_max_ - S_min_), 0., 1.);
     double const S_eff_prev =
