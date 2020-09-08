@@ -447,7 +447,8 @@ void applyToPropertyVectors(MeshLib::Properties const& properties, Function f)
                        f(int{}, property) || f(long{}, property) ||
                        f(unsigned{}, property) || f(long{}, property) ||
                        f(static_cast<unsigned long>(0), property) ||
-                       f(std::size_t{}, property) || f(char{}, property);
+                       f(std::size_t{}, property) || f(char{}, property) ||
+                       f(static_cast<unsigned char>(0), property);
         if (!success)
         {
             OGS_FATAL("Could not apply function to PropertyVector '{:s}'.",
@@ -456,6 +457,34 @@ void applyToPropertyVectors(MeshLib::Properties const& properties, Function f)
     }
 }
 
+void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
+                             std::vector<Partition> const& partitions,
+                             std::size_t const total_number_of_cells)
+{
+    auto* vtk_ghost_type =
+        partitioned_properties.createNewPropertyVector<unsigned char>(
+            "vtkGhostType", MeshLib::MeshItemType::Cell);
+    if (vtk_ghost_type == nullptr)
+    {
+        OGS_FATAL("Could not create vtkGhostType cell data array.");
+    }
+
+    vtk_ghost_type->resize(total_number_of_cells);
+    for(auto const& p : partitions)
+    {
+        for (std::size_t i = 0; i < p.duplicate_ghost_cell.size(); ++i)
+        {
+            if (p.duplicate_ghost_cell[i])
+            {
+                (*vtk_ghost_type)[p.ghost_elements[i]->getID()] |=
+                    vtkDataSetAttributes::DUPLICATECELL;
+            }
+        }
+    }
+
+}
+
+/// Partition existing properties and add vtkGhostType cell data array property.
 MeshLib::Properties partitionProperties(
     MeshLib::Properties const& properties,
     std::vector<Partition> const& partitions)
@@ -490,7 +519,34 @@ MeshLib::Properties partitionProperties(
             dynamic_cast<PropertyVector<decltype(type)> const*>(property),
             total_number_of_tuples);
     });
+
+    addVtkGhostTypeProperty(partitioned_properties,
+                            partitions,
+                            total_number_of_tuples.at(MeshItemType::Cell));
+
     return partitioned_properties;
+}
+
+void markDuplicateGhostCells(MeshLib::Mesh const& mesh,
+                             std::vector<Partition>& partitions)
+{
+    std::vector<bool> cell_visited(mesh.getElements().size(), false);
+
+    for (auto& partition : partitions)
+    {
+        partition.duplicate_ghost_cell.resize(partition.ghost_elements.size(),
+                                              false);
+
+        for (std::size_t i = 0; i < partition.ghost_elements.size(); i++)
+        {
+            const auto& ghost_element = *partition.ghost_elements[i];
+            if (!cell_visited[ghost_element.getID()])
+            {
+                cell_visited[ghost_element.getID()] = true;
+                partition.duplicate_ghost_cell[i] = true;
+            }
+        }
+    }
 }
 
 void NodeWiseMeshPartitioner::partitionByMETIS(
@@ -501,6 +557,8 @@ void NodeWiseMeshPartitioner::partitionByMETIS(
         INFO("Processing partition: {:d}", part_id);
         processPartition(part_id, is_mixed_high_order_linear_elems);
     }
+
+    markDuplicateGhostCells(*_mesh, _partitions);
 
     renumberNodeIndices(is_mixed_high_order_linear_elems);
 
@@ -663,6 +721,7 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
         }
     }
 
+    markDuplicateGhostCells(mesh, partitions);
     return partitions;
 }
 

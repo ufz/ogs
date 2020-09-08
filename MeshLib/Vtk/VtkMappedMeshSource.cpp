@@ -185,6 +185,11 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
         {
             addProperty(*p);
         }
+        else if (auto p =
+                     dynamic_cast<PropertyVector<unsigned char>*>(property))
+        {
+            addProperty(*p);
+        }
         else
         {
             OGS_FATAL(
@@ -198,7 +203,8 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
                 "\n\t long,"
                 "\n\t long long,"
                 "\n\t unsigned long long,"
-                "\n\t char.",
+                "\n\t char,",
+                "\n\t unsigned char.",
                 property->getPropertyName(),
                 typeid(*property).name());
         }
