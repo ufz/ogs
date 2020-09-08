@@ -387,9 +387,10 @@ void RichardsMechanicsLocalAssembler<
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         // Set volumetric strain rate for the general case without swelling.
-        double const div_u_dot = identity2.transpose() * B * u_dot;
-        variables[static_cast<int>(MPL::Variable::volumetric_strain_rate)]
-            .emplace<double>(div_u_dot);
+        variables[static_cast<int>(MPL::Variable::volumetric_strain)]
+            .emplace<double>(identity2.transpose() * B * u);
+        variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
+            .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -424,11 +425,14 @@ void RichardsMechanicsLocalAssembler<
                 auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
                     t, x_position, dt, temperature);
 
-                variables[static_cast<int>(
-                              MPL::Variable::volumetric_strain_rate)]
-                    .emplace<double>(div_u_dot + identity2.transpose() *
-                                                     C_el.inverse() *
-                                                     sigma_sw_dot);
+                // !!! Misusing volumetric strain for mechanical volumetric
+                // strain just to update the transport porosity !!!
+                std::get<double>(variables[static_cast<int>(
+                    MPL::Variable::volumetric_strain)]) +=
+                    identity2.transpose() * C_el.inverse() * sigma_sw;
+                std::get<double>(variables_prev[static_cast<int>(
+                    MPL::Variable::volumetric_strain)]) +=
+                    identity2.transpose() * C_el.inverse() * sigma_sw_prev;
             }
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
@@ -715,9 +719,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         // Set volumetric strain rate for the general case without swelling.
-        double const div_u_dot = identity2.transpose() * B * u_dot;
-        variables[static_cast<int>(MPL::Variable::volumetric_strain_rate)]
-            .emplace<double>(div_u_dot);
+        variables[static_cast<int>(MPL::Variable::volumetric_strain)]
+            .emplace<double>(identity2.transpose() * B * u);
+        variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
+            .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -750,11 +755,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                 variables, variables_prev, x_position, t, dt));
                 sigma_sw += sigma_sw_dot * dt;
 
-                variables[static_cast<int>(
-                              MPL::Variable::volumetric_strain_rate)]
-                    .emplace<double>(div_u_dot + identity2.transpose() *
-                                                     C_el.inverse() *
-                                                     sigma_sw_dot);
+                // !!! Misusing volumetric strain for mechanical volumetric
+                // strain just to update the transport porosity !!!
+                std::get<double>(variables[static_cast<int>(
+                    MPL::Variable::volumetric_strain)]) +=
+                    identity2.transpose() * C_el.inverse() * sigma_sw;
+                std::get<double>(variables_prev[static_cast<int>(
+                    MPL::Variable::volumetric_strain)]) +=
+                    identity2.transpose() * C_el.inverse() * sigma_sw_prev;
             }
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
@@ -1441,9 +1449,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         // Set volumetric strain rate for the general case without swelling.
-        double const div_u_dot = identity2.transpose() * B * u_dot;
-        variables[static_cast<int>(MPL::Variable::volumetric_strain_rate)]
-            .emplace<double>(div_u_dot);
+        variables[static_cast<int>(MPL::Variable::volumetric_strain)]
+            .emplace<double>(identity2.transpose() * B * u);
+        variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
+            .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -1475,11 +1484,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                 variables, variables_prev, x_position, t, dt));
                 sigma_sw += sigma_sw_dot * dt;
 
-                variables[static_cast<int>(
-                              MPL::Variable::volumetric_strain_rate)]
-                    .emplace<double>(div_u_dot + identity2.transpose() *
-                                                     C_el.inverse() *
-                                                     sigma_sw_dot);
+                // !!! Misusing volumetric strain for mechanical volumetric
+                // strain just to update the transport porosity !!!
+                std::get<double>(variables[static_cast<int>(
+                    MPL::Variable::volumetric_strain)]) +=
+                    identity2.transpose() * C_el.inverse() * sigma_sw;
+                std::get<double>(variables_prev[static_cast<int>(
+                    MPL::Variable::volumetric_strain)]) +=
+                    identity2.transpose() * C_el.inverse() * sigma_sw_prev;
             }
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))

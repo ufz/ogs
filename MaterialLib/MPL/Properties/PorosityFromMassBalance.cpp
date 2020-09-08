@@ -57,8 +57,11 @@ PropertyDataType PorosityFromMassBalance::value(
             ->property(PropertyType::biot_coefficient)
             .template value<double>(variable_array, pos, t, dt);
 
-    double const e_dot = std::get<double>(
-        variable_array[static_cast<int>(Variable::volumetric_strain_rate)]);
+    double const e = std::get<double>(
+        variable_array[static_cast<int>(Variable::volumetric_strain)]);
+    double const e_prev = std::get<double>(
+        variable_array_prev[static_cast<int>(Variable::volumetric_strain)]);
+    double const delta_e = e - e_prev;
 
     double const p_eff = std::get<double>(
         variable_array[static_cast<int>(Variable::effective_pore_pressure)]);
@@ -70,7 +73,7 @@ PropertyDataType PorosityFromMassBalance::value(
     double const phi_prev = std::get<double>(
         variable_array_prev[static_cast<int>(Variable::porosity)]);
 
-    double const w = dt * e_dot + delta_p_eff * beta_SR;
+    double const w = delta_e + delta_p_eff * beta_SR;
     return std::clamp((phi_prev + alpha_b * w) / (1 + w), phi_min_, phi_max_);
 }
 
