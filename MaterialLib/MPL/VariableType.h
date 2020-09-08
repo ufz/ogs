@@ -46,7 +46,7 @@ enum class Variable : int
     concentration,
     density,
     displacement,
-    effective_pore_pressure_rate,
+    effective_pore_pressure,
     grain_compressibility,
     liquid_saturation,
     phase_pressure,

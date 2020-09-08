@@ -380,11 +380,11 @@ void RichardsMechanicsLocalAssembler<
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
 
-        variables[static_cast<int>(
-            MPL::Variable::effective_pore_pressure_rate)] =
-            (chi_S_L * (-p_cap_ip) -
-             chi_S_L_prev * (-p_cap_ip + p_cap_dot_ip * dt)) /
-            dt;
+        variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
+            -chi_S_L * p_cap_ip;
+        variables_prev[static_cast<int>(
+            MPL::Variable::effective_pore_pressure)] =
+            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         // Set volumetric strain rate for the general case without swelling.
         double const div_u_dot = identity2.transpose() * B * u_dot;
@@ -708,11 +708,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
 
-        variables[static_cast<int>(
-            MPL::Variable::effective_pore_pressure_rate)] =
-            (chi_S_L * (-p_cap_ip) -
-             chi_S_L_prev * (-p_cap_ip + p_cap_dot_ip * dt)) /
-            dt;
+        variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
+            -chi_S_L * p_cap_ip;
+        variables_prev[static_cast<int>(
+            MPL::Variable::effective_pore_pressure)] =
+            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         // Set volumetric strain rate for the general case without swelling.
         double const div_u_dot = identity2.transpose() * B * u_dot;
@@ -1434,11 +1434,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
 
-        variables[static_cast<int>(
-            MPL::Variable::effective_pore_pressure_rate)] =
-            (chi_S_L * (-p_cap_ip) -
-             chi_S_L_prev * (-p_cap_ip + p_cap_dot_ip * dt)) /
-            dt;
+        variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
+            -chi_S_L * p_cap_ip;
+        variables_prev[static_cast<int>(
+            MPL::Variable::effective_pore_pressure)] =
+            -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         // Set volumetric strain rate for the general case without swelling.
         double const div_u_dot = identity2.transpose() * B * u_dot;

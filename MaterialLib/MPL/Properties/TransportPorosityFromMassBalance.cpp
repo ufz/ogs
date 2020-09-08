@@ -50,8 +50,12 @@ PropertyDataType TransportPorosityFromMassBalance::value(
     double const e_dot = std::get<double>(
         variable_array[static_cast<int>(Variable::volumetric_strain_rate)]);
 
-    double const p_eff_dot = std::get<double>(variable_array[static_cast<int>(
-        Variable::effective_pore_pressure_rate)]);
+    double const p_eff = std::get<double>(
+        variable_array[static_cast<int>(Variable::effective_pore_pressure)]);
+    double const p_eff_prev =
+        std::get<double>(variable_array_prev[static_cast<int>(
+            Variable::effective_pore_pressure)]);
+    double const delta_p_eff = p_eff - p_eff_prev;
 
     double const phi =
         std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
@@ -59,7 +63,7 @@ PropertyDataType TransportPorosityFromMassBalance::value(
     double const phi_tr_prev = std::get<double>(
         variable_array_prev[static_cast<int>(Variable::transport_porosity)]);
 
-    double const w = dt * (e_dot + p_eff_dot * beta_SR);
+    double const w = dt * e_dot + delta_p_eff * beta_SR;
     return std::clamp(phi_tr_prev + (alpha_b - phi) * w, phi_min_, phi_max_);
 }
 
