@@ -67,8 +67,17 @@ public:
     virtual PropertyDataType value(VariableArray const& variable_array,
                                    ParameterLib::SpatialPosition const& pos,
                                    double const t, double const dt) const;
-    /// This virtual method will compute the derivative of a property
-    /// with respect to the given variable pv.
+    /// This virtual method will compute the property derivative value based on
+    /// the variables that are passed as arguments and the variables from the
+    /// previous time step.
+    virtual PropertyDataType dValue(VariableArray const& variable_array,
+                                    VariableArray const& variable_array_prev,
+                                    Variable const variable,
+                                    ParameterLib::SpatialPosition const& pos,
+                                    double const t, double const dt) const;
+    /// This virtual method will compute the property derivative value based on
+    /// the variables that are passed as arguments with the default
+    /// implementation using empty variables array for the previous time step.
     virtual PropertyDataType dValue(VariableArray const& variable_array,
                                     Variable const variable,
                                     ParameterLib::SpatialPosition const& pos,
@@ -168,6 +177,28 @@ public:
         }
     }
 
+    template <typename T>
+    T dValue(VariableArray const& variable_array,
+             VariableArray const& variable_array_prev, Variable const variable,
+             ParameterLib::SpatialPosition const& pos, double const t,
+             double const dt) const
+    {
+        try
+        {
+            return std::get<T>(dValue(variable_array, variable_array_prev,
+                                      variable, pos, t, dt));
+        }
+        catch (std::bad_variant_access const&)
+        {
+            OGS_FATAL(
+                "The first derivative value of {:s} is not of the requested "
+                "type '{:s}' but a {:s}.",
+                description(),
+                typeid(T).name(),
+                property_data_type_names_
+                    [dValue(variable_array, variable, pos, t, dt).index()]);
+        }
+    }
     template <typename T>
     T dValue(VariableArray const& variable_array, Variable const variable,
              ParameterLib::SpatialPosition const& pos, double const t,

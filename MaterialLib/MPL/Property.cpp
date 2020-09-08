@@ -89,14 +89,23 @@ PropertyDataType Property::value(VariableArray const& variable_array,
     return value(variable_array, VariableArray{}, pos, t, dt);
 }
 
-/// The default implementation of this method only returns the
-/// property value derivative without altering it.
 PropertyDataType Property::dValue(VariableArray const& /*variable_array*/,
+                                  VariableArray const& /*variable_array_prev*/,
                                   Variable const /*variable*/,
                                   ParameterLib::SpatialPosition const& /*pos*/,
                                   double const /*t*/, double const /*dt*/) const
 {
     return dvalue_;
+}
+
+/// The default implementation of this method only returns the
+/// property value derivative without altering it.
+PropertyDataType Property::dValue(VariableArray const& variable_array,
+                                  Variable const variable,
+                                  ParameterLib::SpatialPosition const& pos,
+                                  double const t, double const dt) const
+{
+    return dValue(variable_array, VariableArray{}, variable, pos, t, dt);
 }
 
 /// Default implementation: 2nd derivative of any constant property is zero.
