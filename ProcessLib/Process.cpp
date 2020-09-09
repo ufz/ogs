@@ -196,8 +196,12 @@ void Process::assemble(const double t, double const dt,
                        int const process_id, GlobalMatrix& M, GlobalMatrix& K,
                        GlobalVector& b)
 {
-    MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
-    MathLib::LinAlg::setLocalAccessibleVector(*xdot[process_id]);
+    assert(x.size() == xdot.size());
+    for (std::size_t i = 0; i < x.size(); i++)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*x[i]);
+        MathLib::LinAlg::setLocalAccessibleVector(*xdot[i]);
+    }
 
     assembleConcreteProcess(t, dt, x, xdot, process_id, M, K, b);
 
@@ -212,14 +216,18 @@ void Process::assemble(const double t, double const dt,
 
 void Process::assembleWithJacobian(const double t, double const dt,
                                    std::vector<GlobalVector*> const& x,
-                                   GlobalVector const& xdot,
+                                   std::vector<GlobalVector*> const& xdot,
                                    const double dxdot_dx, const double dx_dx,
                                    int const process_id, GlobalMatrix& M,
                                    GlobalMatrix& K, GlobalVector& b,
                                    GlobalMatrix& Jac)
 {
-    MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
-    MathLib::LinAlg::setLocalAccessibleVector(xdot);
+    assert(x.size() == xdot.size());
+    for (std::size_t i = 0; i < x.size(); i++)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*x[i]);
+        MathLib::LinAlg::setLocalAccessibleVector(*xdot[i]);
+    }
 
     assembleWithJacobianConcreteProcess(t, dt, x, xdot, dxdot_dx, dx_dx,
                                         process_id, M, K, b, Jac);

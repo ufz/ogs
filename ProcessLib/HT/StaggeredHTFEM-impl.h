@@ -26,21 +26,21 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleForStaggeredScheme(double const t, double const dt,
                                Eigen::VectorXd const& local_x,
+                               Eigen::VectorXd const& local_xdot,
                                int const process_id,
                                std::vector<double>& local_M_data,
                                std::vector<double>& local_K_data,
-                               std::vector<double>& local_b_data,
-                               LocalCoupledSolutions const& coupled_xs)
+                               std::vector<double>& local_b_data)
 {
-    if (process_id == _heat_transport_process_id)
+    if (process_id == this->_process_data.heat_transport_process_id)
     {
         assembleHeatTransportEquation(t, dt, local_x, local_M_data,
-                                      local_K_data, local_b_data);
+                                      local_K_data);
         return;
     }
 
-    assembleHydraulicEquation(t, dt, local_x, local_M_data, local_K_data,
-                              local_b_data, coupled_xs);
+    assembleHydraulicEquation(t, dt, local_x, local_xdot, local_M_data,
+                              local_K_data, local_b_data);
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -48,21 +48,18 @@ template <typename ShapeFunction, typename IntegrationMethod,
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleHydraulicEquation(double const t, double const dt,
                               Eigen::VectorXd const& local_x,
+                              Eigen::VectorXd const& local_xdot,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
-                              std::vector<double>& local_b_data,
-                              LocalCoupledSolutions const& coupled_xs)
+                              std::vector<double>& local_b_data)
 {
     auto const local_p =
         local_x.template segment<pressure_size>(pressure_index);
-
-    auto const local_T1 =
+    auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
-    auto const local_T0 =
-        Eigen::Map<typename ShapeMatricesType::template VectorType<
-            temperature_size> const>(
-            &coupled_xs.local_coupled_xs0[temperature_index], temperature_size);
+    auto const local_Tdot =
+        local_xdot.template segment<temperature_size>(temperature_index);
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_M_data, pressure_size, pressure_size);
@@ -97,12 +94,12 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         auto const& w = ip_data.integration_weight;
 
         double p_int_pt = 0.0;
-        double T1_int_pt = 0.0;
+        double T_int_pt = 0.0;
         NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
-        NumLib::shapeFunctionInterpolate(local_T1, N, T1_int_pt);
+        NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T1_int_pt;
+            T_int_pt;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_int_pt;
 
@@ -166,15 +163,14 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::temperature, pos,
                         t, dt);
-            double T0_int_pt = 0.;
-            NumLib::shapeFunctionInterpolate(local_T0, N, T0_int_pt);
+            double Tdot_int_pt = 0.;
+            NumLib::shapeFunctionInterpolate(local_Tdot, N, Tdot_int_pt);
             auto const biot_constant =
                 process_data.biot_constant(t, pos)[0];
             const double eff_thermal_expansion =
                 3.0 * (biot_constant - porosity) * solid_thermal_expansion -
                 porosity * dfluid_density_dT / fluid_density;
-            local_b.noalias() +=
-                eff_thermal_expansion * (T1_int_pt - T0_int_pt) * w * N / dt;
+            local_b.noalias() += eff_thermal_expansion * Tdot_int_pt * w * N;
         }
     }
 }
@@ -186,13 +182,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                                   double const dt,
                                   Eigen::VectorXd const& local_x,
                                   std::vector<double>& local_M_data,
-                                  std::vector<double>& local_K_data,
-                                  std::vector<double>& /*local_b_data*/)
+                                  std::vector<double>& local_K_data)
 {
     auto const local_p =
         local_x.template segment<pressure_size>(pressure_index);
-
-    auto const local_T1 =
+    auto const local_T =
         local_x.template segment<temperature_size>(temperature_index);
 
     auto local_M = MathLib::createZeroedMatrix<LocalMatrixType>(
@@ -229,11 +223,11 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         double p_at_xi = 0.;
         NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);
-        double T1_at_xi = 0.;
-        NumLib::shapeFunctionInterpolate(local_T1, N, T1_at_xi);
+        double T_at_xi = 0.;
+        NumLib::shapeFunctionInterpolate(local_T, N, T_at_xi);
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            T1_at_xi;
+            T_at_xi;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_at_xi;
 

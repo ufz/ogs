@@ -75,9 +75,9 @@ private:
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac) override;
+        std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+        const double dx_dx, int const process_id, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     double const t, double const dt,
@@ -104,13 +104,6 @@ private:
 
     MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
     MeshLib::PropertyVector<double>* _heat_flux = nullptr;
-
-    /// Temperature of the previous time step for staggered scheme.
-    std::unique_ptr<GlobalVector> _previous_T;
-
-    /// Set the increment solutions of the present time step to the coupled
-    /// term.
-    void setCoupledSolutionsOfPreviousTimeStep();
 };
 
 extern template class ThermoMechanicsProcess<2>;

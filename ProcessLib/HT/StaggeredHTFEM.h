@@ -59,22 +59,20 @@ public:
                    std::size_t const local_matrix_size,
                    bool is_axially_symmetric,
                    unsigned const integration_order,
-                   HTProcessData const& process_data,
-                   const int heat_transport_process_id,
-                   const int hydraulic_process_id)
+                   HTProcessData const& process_data)
         : HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>(
               element, local_matrix_size, is_axially_symmetric,
-              integration_order, process_data, 1),
-        _heat_transport_process_id(heat_transport_process_id),
-        _hydraulic_process_id(hydraulic_process_id)
+              integration_order, process_data, 1)
     {
     }
 
-    void assembleForStaggeredScheme(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
-        int const process_id, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-        LocalCoupledSolutions const& coupled_xs) override;
+    void assembleForStaggeredScheme(double const t, double const dt,
+                                    Eigen::VectorXd const& local_x,
+                                    Eigen::VectorXd const& local_xdot,
+                                    int const process_id,
+                                    std::vector<double>& local_M_data,
+                                    std::vector<double>& local_K_data,
+                                    std::vector<double>& local_b_data) override;
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
@@ -85,18 +83,16 @@ public:
 private:
     void assembleHydraulicEquation(double const t, double const dt,
                                    Eigen::VectorXd const& local_x,
+                                   Eigen::VectorXd const& local_xdot,
                                    std::vector<double>& local_M_data,
                                    std::vector<double>& local_K_data,
-                                   std::vector<double>& local_b_data,
-                                   LocalCoupledSolutions const& coupled_xs);
+                                   std::vector<double>& local_b_data);
 
-    void assembleHeatTransportEquation(double const t, double const dt,
+    void assembleHeatTransportEquation(double const t,
+                                       double const dt,
                                        Eigen::VectorXd const& local_x,
                                        std::vector<double>& local_M_data,
-                                       std::vector<double>& local_K_data,
-                                       std::vector<double>& local_b_data);
-    const int _heat_transport_process_id;
-    const int _hydraulic_process_id;
+                                       std::vector<double>& local_K_data);
 };
 
 }  // namespace HT

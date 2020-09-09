@@ -78,6 +78,11 @@ std::unique_ptr<Process> createHTProcess(
     //! \ogs_file_param{prj__processes__process__HT__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    // Process IDs, which are set according to the appearance order of the
+    // process variables.
+    int const heat_transport_process_id = 0;
+    int hydraulic_process_id = 0;
+
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
@@ -99,11 +104,8 @@ std::unique_ptr<Process> createHTProcess(
                 findProcessVariables(variables, pv_config, {variable_name});
             process_variables.push_back(std::move(per_process_variables));
         }
+        hydraulic_process_id = 1;
     }
-    // Process IDs, which are set according to the appearance order of the
-    // process variables.
-    const int _heat_transport_process_id = 0;
-    const int _hydraulic_process_id = 1;
 
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
@@ -169,9 +171,10 @@ std::unique_ptr<Process> createHTProcess(
     DBUG("Media properties verified.");
 
     HTProcessData process_data{
-        std::move(media_map),     has_fluid_thermal_expansion,
-        *solid_thermal_expansion, *biot_constant,
-        specific_body_force,      has_gravity};
+        std::move(media_map),      has_fluid_thermal_expansion,
+        *solid_thermal_expansion,  *biot_constant,
+        specific_body_force,       has_gravity,
+        heat_transport_process_id, hydraulic_process_id};
 
     SecondaryVariableCollection secondary_variables;
 
@@ -181,8 +184,7 @@ std::unique_ptr<Process> createHTProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        use_monolithic_scheme, std::move(surfaceflux),
-        _heat_transport_process_id, _hydraulic_process_id);
+        use_monolithic_scheme, std::move(surfaceflux));
 }
 
 }  // namespace HT

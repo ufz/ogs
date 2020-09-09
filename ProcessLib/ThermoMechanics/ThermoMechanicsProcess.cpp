@@ -300,16 +300,16 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
+        b);
 }
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::
     assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac)
+        std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+        const double dx_dx, int const process_id, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleJacobian ThermoMechanicsProcess.");
 
@@ -353,8 +353,6 @@ void ThermoMechanicsProcess<DisplacementDim>::
             dof_tables.emplace_back(
                 *_local_to_global_index_map_single_component);
         }
-
-        setCoupledSolutionsOfPreviousTimeStep();
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
@@ -362,7 +360,7 @@ void ThermoMechanicsProcess<DisplacementDim>::
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
     // TODO (naumov): Refactor the copy rhs part. This is copy from HM.
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
@@ -410,21 +408,6 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
             *x[process_id], t, dt);
         return;
     }
-
-    // For the staggered scheme.
-    if (!_previous_T)
-    {
-        _previous_T = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-            *x[process_id]);
-    }
-    else
-    {
-        auto& x0 = *_previous_T;
-        MathLib::LinAlg::copy(*x[process_id], x0);
-    }
-
-    auto& x0 = *_previous_T;
-    MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
 template <int DisplacementDim>
@@ -445,14 +428,6 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
         pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
         t, dt);
-}
-
-template <int DisplacementDim>
-void ThermoMechanicsProcess<
-    DisplacementDim>::setCoupledSolutionsOfPreviousTimeStep()
-{
-    _coupled_solutions->coupled_xs_t0.resize(1);
-    _coupled_solutions->coupled_xs_t0[0] = _previous_T.get();
 }
 
 template <int DisplacementDim>

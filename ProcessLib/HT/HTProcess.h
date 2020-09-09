@@ -65,9 +65,7 @@ public:
         HTProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         bool const use_monolithic_scheme,
-        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
-        const int heat_transport_process_id,
-        const int hydraulic_process_id);
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
     //! \name ODESystem interface
     //! @{
 
@@ -102,20 +100,9 @@ private:
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac) override;
-
-    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                    double const t, double const dt,
-                                    const int process_id) override;
-
-    void setCoupledSolutionsOfPreviousTimeStepPerProcess(const int process_id);
-
-    /// Set the solutions of the previous time step to the coupled term.
-    /// It is only for the staggered scheme, and it must be called within
-    /// the coupling loop because that the coupling term is only created there.
-    void setCoupledSolutionsOfPreviousTimeStep();
+        std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+        const double dx_dx, int const process_id, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
     /**
      * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
@@ -127,13 +114,7 @@ private:
 
     std::vector<std::unique_ptr<HTLocalAssemblerInterface>> _local_assemblers;
 
-    /// Solutions of the previous time step
-    std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
-
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
-
-    const int _heat_transport_process_id;
-    const int _hydraulic_process_id;
 };
 
 }  // namespace HT

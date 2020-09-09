@@ -84,9 +84,9 @@ private:
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac) override;
+        std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+        const double dx_dx, int const process_id, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     double const t, double const dt,
@@ -117,9 +117,6 @@ private:
     /// Sparsity pattern for the flow equation, and it is initialized only if
     /// the staggered scheme is used.
     GlobalSparsityPattern _sparsity_pattern_with_linear_element;
-
-    /// Solutions of the previous time step
-    std::array<std::unique_ptr<GlobalVector>, 2> _xs_previous_timestep;
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           GlobalVector const& x,

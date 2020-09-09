@@ -125,11 +125,6 @@ public:
         std::vector<GlobalVector*> const& integration_point_values_vectors,
         std::vector<GlobalVector*>& nodal_values_vectors) override;
 
-    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
-                                    const double /*t*/,
-                                    const double /*delta_t*/,
-                                    int const process_id) override;
-
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      const double t,
                                      const double delta_t,
@@ -149,19 +144,14 @@ private:
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-        int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac) override;
-
-    void setCoupledSolutionsOfPreviousTimeStep();
+        std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+        const double dx_dx, int const process_id, GlobalMatrix& M,
+        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
 
     ComponentTransportProcessData _process_data;
 
     std::vector<std::unique_ptr<ComponentTransportLocalAssemblerInterface>>
         _local_assemblers;
-
-    /// Solutions of the previous time step
-    std::vector<std::unique_ptr<GlobalVector>> _xs_previous_timestep;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 };

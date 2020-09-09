@@ -27,26 +27,20 @@ namespace ComponentTransport
 {
 struct ComponentTransportProcessData
 {
-    ComponentTransportProcessData(
-        std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>&&
-            media_map_,
-        Eigen::VectorXd const& specific_body_force_, bool const has_gravity_,
-        bool const non_advective_form_,
-        std::unique_ptr<ChemicalProcessData>&& chemical_process_data_)
-        : media_map(std::move(media_map_)),
-          specific_body_force(specific_body_force_),
-          has_gravity(has_gravity_),
-          non_advective_form(non_advective_form_),
-          chemical_process_data(std::move(chemical_process_data_))
-    {
-    }
-
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const non_advective_form;
     std::unique_ptr<ChemicalProcessData> chemical_process_data;
+
+    const int hydraulic_process_id;
+    // TODO (renchao-lu): This variable is used in the calculation of the
+    // fluid's density and flux, indicating the transport process id. For now it
+    // is assumed that these quantities depend on the first occurring transport
+    // process only. The density and flux calculations have to be extended to
+    // all processes.
+    const int first_transport_process_id;
 };
 
 }  // namespace ComponentTransport

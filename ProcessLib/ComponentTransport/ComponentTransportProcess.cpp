@@ -67,8 +67,6 @@ void ComponentTransportProcess::initializeConcreteProcess(
         {
             transport_process_variables.push_back((*pv_iter)[0]);
         }
-
-        _xs_previous_timestep.resize(_process_variables.size());
     }
 
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
@@ -101,7 +99,6 @@ void ComponentTransportProcess::assembleConcreteProcess(
     }
     else
     {
-        setCoupledSolutionsOfPreviousTimeStep();
         std::generate_n(
             std::back_inserter(dof_tables), _process_variables.size(),
             [&]() { return std::ref(*_local_to_global_index_map); });
@@ -110,27 +107,14 @@ void ComponentTransportProcess::assembleConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot, process_id, M, K,
-        b, _coupled_solutions);
-}
-
-void ComponentTransportProcess::setCoupledSolutionsOfPreviousTimeStep()
-{
-    unsigned const number_of_coupled_solutions =
-        _coupled_solutions->coupled_xs.size();
-    _coupled_solutions->coupled_xs_t0.clear();
-    _coupled_solutions->coupled_xs_t0.reserve(number_of_coupled_solutions);
-    for (unsigned i = 0; i < number_of_coupled_solutions; ++i)
-    {
-        auto const& x_t0 = _xs_previous_timestep[i];
-        _coupled_solutions->coupled_xs_t0.emplace_back(x_t0.get());
-    }
+        b);
 }
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& xdot, const double dxdot_dx, const double dx_dx,
-    int const process_id, GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    GlobalMatrix& Jac)
+    std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+    const double dx_dx, int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian ComponentTransportProcess.");
 
@@ -141,7 +125,7 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac, _coupled_solutions);
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 }
 
 Eigen::Vector3d ComponentTransportProcess::getFlux(
@@ -272,31 +256,6 @@ void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(
         MathLib::LinAlg::copy(nodal_values,
                               *nodal_values_vectors[transport_process_id + 1]);
     }
-}
-
-void ComponentTransportProcess::preTimestepConcreteProcess(
-    std::vector<GlobalVector*> const& x, const double /*t*/,
-    const double /*delta_t*/, int const process_id)
-{
-    if (_use_monolithic_scheme)
-    {
-        return;
-    }
-
-    if (!_xs_previous_timestep[process_id])
-    {
-        _xs_previous_timestep[process_id] =
-            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-                *x[process_id]);
-    }
-    else
-    {
-        auto& x0 = *_xs_previous_timestep[process_id];
-        MathLib::LinAlg::copy(*x[process_id], x0);
-    }
-
-    auto& x0 = *_xs_previous_timestep[process_id];
-    MathLib::LinAlg::setLocalAccessibleVector(x0);
 }
 
 void ComponentTransportProcess::postTimestepConcreteProcess(
