@@ -1,0 +1,1 @@
+\copydoc MaterialPropertyLib::LinearSaturationSwellingStress::coefficient_

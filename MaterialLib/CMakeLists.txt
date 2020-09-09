@@ -18,6 +18,7 @@ append_source_files(SOURCES MPL)
 append_source_files(SOURCES MPL/Properties)
 append_source_files(SOURCES MPL/Properties/CapillaryPressureSaturation)
 append_source_files(SOURCES MPL/Properties/RelativePermeability)
+append_source_files(SOURCES MPL/Properties/SwellingStress)
 append_source_files(SOURCES MPL/Components)
 append_source_files(SOURCES MPL/Utils)
 
