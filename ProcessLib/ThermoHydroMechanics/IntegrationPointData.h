@@ -100,14 +100,10 @@ struct IntegrationPointData final
         double const dt,
         DisplacementVectorType const& /*u*/,
         double const T,
-        double const thermal_strain)
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& thermal_strain)
     {
-        auto const& identity2 = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>::identity2;
 
-        // assume isotropic thermal expansion
-        eps_m.noalias() = eps - thermal_strain * identity2;
+        eps_m.noalias() = eps - thermal_strain;
         auto&& solution = solid_material.integrateStress(
             t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
             *material_state_variables, T);
