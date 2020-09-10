@@ -77,8 +77,14 @@ public:
         }
     }
 
+    PropertyDataType value(VariableArray const& variable_array,
+                           ParameterLib::SpatialPosition const& pos,
+                           double const t,
+                           double const dt) const override;
+
     /// \return \f$\Delta  {{\sigma}}^{\text{sw}} \f$.
     PropertyDataType value(VariableArray const& variable_array,
+                           VariableArray const& variable_array_prev,
                            ParameterLib::SpatialPosition const& pos,
                            double const t,
                            double const dt) const override;
