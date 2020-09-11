@@ -63,11 +63,6 @@
                             <value>1</value>
                         </property>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>1e100</value>
-                        </property>
-                        <property>
                             <name>porosity</name>
                             <type>Constant</type>
                             <value>0.8</value>
