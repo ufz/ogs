@@ -22,7 +22,7 @@ namespace
 // Heaviside step function
 inline double Heaviside(bool const v)
 {
-    return v ? 1.0 : 0.0;
+    return v ? 0.5 : -0.5;
 }
 
 }  // namespace
