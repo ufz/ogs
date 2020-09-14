@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh axially_symmetric="true">square_1x1_quad2_1e0.vtu</mesh>
     <geometry>square_1x1.gml</geometry>
@@ -68,16 +68,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>1e-6 0 0 1e-6</value>
-                        </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.4</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>1.75e-6</value>
@@ -93,11 +83,6 @@
                             <value>1714.0</value>
                         </property>
                         <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1.0</value>
-                        </property>
-                        <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
                             <value>0.7e-5</value>
@@ -105,6 +90,23 @@
                     </properties>
                 </phase>
             </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1e-6 0 0 1e-6</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.4</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1.0</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <time_loop>
