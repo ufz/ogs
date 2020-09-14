@@ -16,6 +16,7 @@ weight = 10
 * Linux or [macOS](https://sylabs.io/singularity-desktop-macos/)
   * Note: You can run Singularity on Windows inside a virtual machine using [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or with [Vagrant](https://app.vagrantup.com/sylabs)
 * A running [installation](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps) of Singularity 3.0 or higher
+  * Available on Eve (UFZ), `envinf1` (UFZ), Juwels (SC Jülich), Taurus (TU Dresden)
 
 ### Get a container image
 
