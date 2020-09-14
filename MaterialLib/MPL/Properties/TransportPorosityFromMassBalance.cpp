@@ -36,6 +36,7 @@ void TransportPorosityFromMassBalance::checkScale() const
 
 PropertyDataType TransportPorosityFromMassBalance::value(
     VariableArray const& variable_array,
+    VariableArray const& variable_array_prev,
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
@@ -46,20 +47,37 @@ PropertyDataType TransportPorosityFromMassBalance::value(
             ->property(PropertyType::biot_coefficient)
             .template value<double>(variable_array, pos, t, dt);
 
-    double const e_dot = std::get<double>(
-        variable_array[static_cast<int>(Variable::volumetric_strain_rate)]);
+    double const e = std::get<double>(
+        variable_array[static_cast<int>(Variable::volumetric_strain)]);
+    double const e_prev = std::get<double>(
+        variable_array_prev[static_cast<int>(Variable::volumetric_strain)]);
+    double const delta_e = e - e_prev;
 
-    double const p_eff_dot = std::get<double>(variable_array[static_cast<int>(
-        Variable::effective_pore_pressure_rate)]);
+    double const p_eff = std::get<double>(
+        variable_array[static_cast<int>(Variable::effective_pore_pressure)]);
+    double const p_eff_prev =
+        std::get<double>(variable_array_prev[static_cast<int>(
+            Variable::effective_pore_pressure)]);
+    double const delta_p_eff = p_eff - p_eff_prev;
 
     double const phi =
         std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
 
     double const phi_tr_prev = std::get<double>(
-        variable_array[static_cast<int>(Variable::transport_porosity)]);
+        variable_array_prev[static_cast<int>(Variable::transport_porosity)]);
 
-    double const w = dt * (e_dot + p_eff_dot * beta_SR);
+    double const w = delta_e + delta_p_eff * beta_SR;
     return std::clamp(phi_tr_prev + (alpha_b - phi) * w, phi_min_, phi_max_);
+}
+
+PropertyDataType TransportPorosityFromMassBalance::value(
+    VariableArray const& /*variable_array*/,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
+{
+    OGS_FATAL(
+        "TransportPorosityFromMassBalance value call requires previous time "
+        "step values.");
 }
 
 PropertyDataType TransportPorosityFromMassBalance::dValue(

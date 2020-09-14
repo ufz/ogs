@@ -35,9 +35,20 @@ void PorosityFromMassBalance::checkScale() const
 }
 
 PropertyDataType PorosityFromMassBalance::value(
+    VariableArray const& /*variable_array*/,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
+{
+    OGS_FATAL(
+        "PorosityFromMassBalance value call requires previous time step "
+        "values.");
+}
+
+PropertyDataType PorosityFromMassBalance::value(
     VariableArray const& variable_array,
-    ParameterLib::SpatialPosition const& pos,
-    double const t, double const dt) const
+    VariableArray const& variable_array_prev,
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
     double const beta_SR = std::get<double>(
         variable_array[static_cast<int>(Variable::grain_compressibility)]);
@@ -46,17 +57,24 @@ PropertyDataType PorosityFromMassBalance::value(
             ->property(PropertyType::biot_coefficient)
             .template value<double>(variable_array, pos, t, dt);
 
-    double const e_dot = std::get<double>(
-        variable_array[static_cast<int>(Variable::volumetric_strain_rate)]);
+    double const e = std::get<double>(
+        variable_array[static_cast<int>(Variable::volumetric_strain)]);
+    double const e_prev = std::get<double>(
+        variable_array_prev[static_cast<int>(Variable::volumetric_strain)]);
+    double const delta_e = e - e_prev;
 
-    double const p_eff_dot = std::get<double>(variable_array[static_cast<int>(
-        Variable::effective_pore_pressure_rate)]);
+    double const p_eff = std::get<double>(
+        variable_array[static_cast<int>(Variable::effective_pore_pressure)]);
+    double const p_eff_prev =
+        std::get<double>(variable_array_prev[static_cast<int>(
+            Variable::effective_pore_pressure)]);
+    double const delta_p_eff = p_eff - p_eff_prev;
 
-    double const phi = std::get<double>(
-        variable_array[static_cast<int>(Variable::porosity)]);
+    double const phi_prev = std::get<double>(
+        variable_array_prev[static_cast<int>(Variable::porosity)]);
 
-    double const w = dt * (e_dot + p_eff_dot * beta_SR);
-    return std::clamp((phi + alpha_b * w) / (1 + w), phi_min_, phi_max_);
+    double const w = delta_e + delta_p_eff * beta_SR;
+    return std::clamp((phi_prev + alpha_b * w) / (1 + w), phi_min_, phi_max_);
 }
 
 PropertyDataType PorosityFromMassBalance::dValue(

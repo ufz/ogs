@@ -25,9 +25,20 @@ LinearSaturationSwellingStress::LinearSaturationSwellingStress(
 }
 
 PropertyDataType LinearSaturationSwellingStress::value(
-    const VariableArray& variable_array,
+    const VariableArray& /*variable_array*/,
     const ParameterLib::SpatialPosition& /*pos*/, const double /*t*/,
-    const double dt) const
+    const double /*dt*/) const
+{
+    OGS_FATAL(
+        "LinearSaturationSwellingStress value call requires previous time step "
+        "values.");
+}
+
+PropertyDataType LinearSaturationSwellingStress::value(
+    const VariableArray& variable_array,
+    const VariableArray& variable_array_prev,
+    const ParameterLib::SpatialPosition& /*pos*/, const double /*t*/,
+    const double /*dt*/) const
 {
     // Sl <= S_max is guaranteed by the saturation property or
     // the saturation calculation.
@@ -39,12 +50,10 @@ PropertyDataType LinearSaturationSwellingStress::value(
         return 0.0;
     }
 
-    const double dS =
-        dt *
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::liquid_saturation_rate)]);
+    const double Sl_prev = std::get<double>(
+        variable_array_prev[static_cast<int>(Variable::liquid_saturation)]);
 
-    return coefficient_ * dS;
+    return coefficient_ * (Sl - Sl_prev);
 }
 
 PropertyDataType LinearSaturationSwellingStress::dValue(

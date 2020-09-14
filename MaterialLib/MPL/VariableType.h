@@ -46,10 +46,9 @@ enum class Variable : int
     concentration,
     density,
     displacement,
-    effective_pore_pressure_rate,
+    effective_pore_pressure,
     grain_compressibility,
     liquid_saturation,
-    liquid_saturation_rate,
     phase_pressure,
     porosity,
     solid_grain_pressure,
@@ -57,7 +56,7 @@ enum class Variable : int
     stress,
     temperature,
     transport_porosity,
-    volumetric_strain_rate,
+    volumetric_strain,
     number_of_variables
 };
 
