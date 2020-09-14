@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>mohr_coulomb_load_path.vtu</mesh>
-    <geometry>mohr_coulomb_load_path.gml</geometry>
+    <mesh>coulomb_load_path.vtu</mesh>
+    <geometry>coulomb_load_path.gml</geometry>
     <processes>
         <process>
             <name>SD</name>
@@ -69,7 +69,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>mohr_coulomb_load_path_pcs_{:process_id}</prefix>
+            <prefix>coulomb_load_path_pcs_{:process_id}</prefix>
             <timesteps>
                 <pair>
                     <repeat>5</repeat>
