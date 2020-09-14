@@ -152,3 +152,7 @@ AddTest(
     expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu displacement_jump4 displacement_jump4 1e-16 1e-16
     expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu f_stress_n f_stress_n 1e-6 5e-6
 )
+
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE LIE/Mechanics/elastic_push_pull_two_fractures.prj RUNTIME 1)
+endif()
