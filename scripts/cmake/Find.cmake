@@ -90,6 +90,9 @@ if(OGS_USE_MFRONT)
         set(HAVE_PTHREADS TRUE)
         add_definitions(-DHAVE_PTHREADS)
     endif()
+    if(OGS_USE_CONAN)
+        set(TFEL_INSTALL_PATH ${CONAN_TFEL_ROOT} CACHE INTERNAL "")
+    endif()
 endif()
 
 # Do not search for libs if this option is set
