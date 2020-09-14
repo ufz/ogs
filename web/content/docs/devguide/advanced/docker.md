@@ -15,7 +15,7 @@ weight = 1035
 >
 > <cite>[www.docker.com/whatisdocker](https://www.docker.com/whatisdocker)</cite>
 
-See the [docs](https://docs.docker.com) for installation instructions.
+See the [docs](https://docs.docker.com) for installation instructions (if you are on Windows we highly recommend the [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)).
 
 ## Images
 
@@ -24,7 +24,7 @@ Docker images can be created by [Dockerfiles](https://docs.docker.com/reference/
 To build an image by yourself create a Dockerfile:
 
 ```bash
-FROM ubuntu:17.10
+FROM ubuntu:20.04
 
 RUN ...
 ```
@@ -32,10 +32,9 @@ RUN ...
 Run the `build` command:
 
 ```bash
-docker build --rm -t repo/image_name path/to/directory
+docker build -t repo/image_name path/to/directory
 ```
 
-- `--rm` Cleans up after exiting the container
 - `-t` specifies a name for the image, can be arbitrary chosen (but should match the corresponding image on Docker Hub if there is one)
 - The path should specify the directory where the Dockerfile is located
 
@@ -46,19 +45,21 @@ Now you can see your build image with `$ docker images`.
 To run commands inside a container:
 
 ```bash
-docker run --rm -t image_name command_to_run
+docker run --rm image_name command_to_run
 ```
 
-To run an interactive shell add the `-i`-switch:
+- `--rm` Cleans up after exiting the container
+
+To run an interactive shell add the `-it`-switch:
 
 ```bash
-docker run --rm -i -t image_name
+docker run --rm -it image_name
 ```
 
 It is useful to mount folders from the host operating system in the Docker container, e.g. to edit source code on your host with your favorite editor:
 
 ```bash
-docker run --rm -i -t -v /host/directory:/container/directory image_name
+docker run --rm -it -v /host/directory:/container/directory image_name
 ```
 
 ## Prebuilt OGS-6 Docker images

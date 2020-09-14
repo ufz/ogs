@@ -23,7 +23,7 @@ Singularity per default mounts your home directory and also passes your current 
 ### Prerequisites
 
 - Linux and [Mac](https://sylabs.io/singularity-desktop-macos/) only!
-  - Note: You can run Singularity on Windows inside a virtual machine using [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+  - Note: You can run Singularity **on Windows** inside a lightweight virtual machine using [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Under Ubuntu use Homebrew package `singularity`, under CentOS install via [EPEL](https://sylabs.io/guides/3.0/user-guide/installation.html#install-the-centos-rhel-package-using-yum).
 - [Install Git]({{< ref "prerequisites" >}}/#step-install-git)
 - [Install Singularity](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps)
 
