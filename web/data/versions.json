@@ -2,6 +2,7 @@
   "minimum_version": {
     "gcc": "9.0",
     "clang": "9.0",
+    "apple_clang": "11.0.0",
     "msvc": {
       "year": "2019",
       "number": "16",
