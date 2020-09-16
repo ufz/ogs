@@ -7,6 +7,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <iostream>
+#include <fstream>
+
 // ThirdParty
 #include <tclap/CmdLine.h>
 
@@ -71,6 +74,8 @@ int main(int argc, char* argv[])
 
     std::string const input_name = input_arg.getValue().c_str();
     std::string const output_name = output_arg.getValue().c_str();
+    std::string const base_name = BaseLib::dropFileExtension(output_name);
+    std::string const ext = BaseLib::getFileExtension(output_name);
 
     std::unique_ptr<MeshLib::Mesh> const mesh (MeshLib::IO::readMeshFromFile(input_name));
     if (mesh == nullptr)
@@ -90,6 +95,12 @@ int main(int argc, char* argv[])
         max_id = min_id;
     }
 
+    std::ofstream ostream;
+    if (min_id != max_id)
+    {
+        ostream.open(base_name + "_Layers.txt");
+    }
+
     for (int i = min_id; i <= max_id; ++i)
     {
         INFO("Extracting material group {:d}...", i);
@@ -97,11 +108,14 @@ int main(int argc, char* argv[])
         if (mat_group == nullptr)
             continue;
         MeshLib::IO::VtuInterface vtu(mat_group.get());
-        
-        std::string const base_name = BaseLib::dropFileExtension(output_name);
-        std::string const ext = BaseLib::getFileExtension(output_name);
-        vtu.writeToFile(base_name + "_Layer" + std::to_string(i) + ext);
+        std::string const file_name(base_name + "_Layer" + std::to_string(i) + ext);
+        vtu.writeToFile(file_name);
+        if (ostream.is_open())
+            ostream << file_name << "\n";
     }
-
+    if (ostream.is_open())
+    {
+        ostream.close();
+    }
     return EXIT_SUCCESS;
 }
