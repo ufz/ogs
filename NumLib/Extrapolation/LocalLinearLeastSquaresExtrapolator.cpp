@@ -150,6 +150,12 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
         extrapolatables.getIntegrationPointValues(
             element_index, t, x, dof_table, _integration_point_values_cache);
 
+    // Empty vector means to ignore the values and not to change the counts.
+    if (integration_point_values.empty())
+    {
+        return;
+    }
+
     auto const& N_0 = extrapolatables.getShapeMatrix(element_index, 0);
     auto const num_nodes = static_cast<unsigned>(N_0.cols());
     auto const num_values =
