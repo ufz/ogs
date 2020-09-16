@@ -8,6 +8,7 @@ set(TOOLS
     createQuadraticMesh
     editMaterialID
     ExtractBoundary
+    ExtractMaterials
     ExtractSurface
     MapGeometryToMeshSurface
     MoveMesh
