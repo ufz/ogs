@@ -8,7 +8,10 @@ if(${CMAKE_CXX_COMPILER} MATCHES "clcache" AND CMAKE_BUILD_TYPE STREQUAL "Debug"
 endif()
 
 # Set compiler helper variables
-if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "AppleClang")
+    set(COMPILER_IS_APPLE_CLANG TRUE CACHE INTERNAL "")
+    set(COMPILER_IS_CLANG TRUE CACHE INTERNAL "")
+elseif(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     set(COMPILER_IS_CLANG TRUE CACHE INTERNAL "")
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set(COMPILER_IS_GCC TRUE CACHE INTERNAL "")
@@ -85,9 +88,17 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     endif()
 
     if(COMPILER_IS_CLANG)
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.clang})
-            message(FATAL_ERROR "Aborting: Clang ${ogs.minimum_version.clang} \
-                is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
+        # see https://en.wikipedia.org/wiki/Xcode#Xcode_7.0_-_12.x_(since_Free_On-Device_Development)
+        if(COMPILER_IS_APPLE_CLANG)
+            if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.apple_clang})
+                message(FATAL_ERROR "Aborting: Apple Clang ${ogs.minimum_version.apple_clang} \
+                    is required! Found version ${CMAKE_CXX_COMPILER_VERSION}. Update Xcode!")
+            endif()
+        else()
+            if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.clang})
+                message(FATAL_ERROR "Aborting: Clang ${ogs.minimum_version.clang} \
+                    is required! Found version ${CMAKE_CXX_COMPILER_VERSION}")
+            endif()
         endif()
         include(ClangSanitizer)
     endif()
