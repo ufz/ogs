@@ -68,6 +68,8 @@ cd ogs
 pre-commit install
 ```
 
+For Windows only: This installed `pre-commit` to `.local/bin` (or `C:\Users\[username]\AppData\Roaming\Python\Python37\Scripts` on Windows) in your home directory. Make sure to have this directory in your `PATH`!
+
 ## Optional: Working on a new feature
 
 You only have to follow the above steps once. From then on, whenever you want to work on a new feature, you can more easily interact with the remote repositories.
