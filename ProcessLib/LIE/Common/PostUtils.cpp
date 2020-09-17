@@ -110,8 +110,8 @@ PostProcessTool::PostProcessTool(
             }
 
             auto const eid = org_e->getID();
-            // keep original if the element has levelset=0
-            if ((*prop_levelset)[eid] == 0)
+            // keep original if the element has levelset<=0
+            if ((*prop_levelset)[eid] <= 0)
             {
                 continue;
             }
@@ -156,12 +156,12 @@ PostProcessTool::PostProcessTool(
                         org_mesh.getProperties().getPropertyVector<double>(
                             "levelset" + std::to_string(frac2_id + 1));
                     std::size_t pos = 0;
-                    if ((*prop_levelset2)[eid] == 0)
+                    if ((*prop_levelset2)[eid] <= 0)
                     {
                         // index of this fracture
                         pos = BaseLib::findIndex(br_matids, frac_matid);
                     }
-                    else if ((*prop_levelset2)[eid] == 1)
+                    else if ((*prop_levelset2)[eid] > 0)
                     {
                         // index of the other fracture
                         pos = BaseLib::findIndex(br_matids, *frac2_matid);
@@ -185,7 +185,7 @@ PostProcessTool::PostProcessTool(
                             "levelset" + std::to_string(frac2_id + 1));
 
                     //
-                    if ((*prop_levelset2)[eid] == 0)
+                    if ((*prop_levelset2)[eid] <= 0)
                     {
                         // index of this frac
                         auto const pos =
@@ -193,7 +193,7 @@ PostProcessTool::PostProcessTool(
                         assert(pos != std::numeric_limits<std::size_t>::max());
                         new_node_id = dup_newNodeIDs[pos];
                     }
-                    else if ((*prop_levelset2)[eid] == 1)
+                    else if ((*prop_levelset2)[eid] > 0)
                     {
                         // set the last duplicated node
                         new_node_id = dup_newNodeIDs.back();
