@@ -63,6 +63,15 @@ public:
         }
     }
 
+    void postTimestep(const double t, std::vector<GlobalVector*> const& x,
+                      int const process_id)
+    {
+        for (auto const& bc_ptr : _boundary_conditions)
+        {
+            bc_ptr->postTimestep(t, x, process_id);
+        }
+    }
+
 private:
     mutable std::vector<NumLib::IndexValueVector<GlobalIndexType>> _dirichlet_bcs;
     std::vector<std::unique_ptr<BoundaryCondition>> _boundary_conditions;

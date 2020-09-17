@@ -62,6 +62,13 @@ public:
         // A hook added for solution dependent dirichlet
     }
 
+    virtual void postTimestep(const double /*t*/,
+                              std::vector<GlobalVector*> const& /*x*/,
+                              int const /*process_id*/)
+    {
+        // A hook added for solution dependent dirichlet
+    }
+
     virtual ~BoundaryCondition() = default;
 };
 

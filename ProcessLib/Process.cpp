@@ -384,6 +384,8 @@ void Process::postTimestep(std::vector<GlobalVector*> const& x, const double t,
     for (auto* const solution : x)
         MathLib::LinAlg::setLocalAccessibleVector(*solution);
     postTimestepConcreteProcess(x, t, delta_t, process_id);
+
+    _boundary_conditions[process_id].postTimestep(t, x, process_id);
 }
 
 void Process::postNonLinearSolver(GlobalVector const& x, const double t,
