@@ -17,7 +17,6 @@
 
 #include "MeshLib/Elements/Element.h"
 
-#include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
 namespace ProcessLib
@@ -27,8 +26,7 @@ namespace LIE
 namespace HydroMechanics
 {
 class HydroMechanicsLocalAssemblerInterface
-    : public ProcessLib::LocalAssemblerInterface,
-      public NumLib::ExtrapolatableElement
+    : public ProcessLib::LocalAssemblerInterface
 {
 public:
     HydroMechanicsLocalAssemblerInterface(MeshLib::Element const& element,

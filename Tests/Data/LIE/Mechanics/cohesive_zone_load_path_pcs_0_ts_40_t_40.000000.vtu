@@ -1,97 +1,47 @@
-<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64">
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
   <UnstructuredGrid>
     <FieldData>
-      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="18" format="binary" RangeMin="45" RangeMax="103">
-        EgAAAAAAAAA2LjEuMC02OTEtZ2Y3NWIxNjQ=
-      </DataArray>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="18" format="appended" RangeMin="45"                   RangeMax="103"                  offset="0"                   />
     </FieldData>
-    <Piece NumberOfPoints="6" NumberOfCells="3">
+    <Piece NumberOfPoints="6"                    NumberOfCells="3"                   >
       <PointData>
-        <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="binary" RangeMin="0" RangeMax="1.0004303348e-23">
-          YAAAAAAAAAAAx6tYOD+zugAAAAAAAACAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAADAlwG7j+oHOwAAAAAAAAAAQDPjIFx/B7sA4J5mWnPBugAAAAAAAAAASBOcJF0wKLs=
-        </DataArray>
-        <DataArray type="Float64" Name="displacement_jump1" NumberOfComponents="2" format="binary" RangeMin="0" RangeMax="1.7199612833e-23">
-          YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA1Ax1CQx7MDsA0Fm/NnDauqCOh4CPCis78LHNvgqYL7s=
-        </DataArray>
-        <DataArray type="Float64" Name="sigma_xx" format="binary" RangeMin="-1.2325831108e-08" RangeMax="3.2582111835e-09">
-          MAAAAAAAAAA+CRWXA60mPj0JFZcDrSY+shcXgzJ4Sr6oFxeDMnhKvuD8ftXh/Cs+9Px+1eH8Kz4=
-        </DataArray>
-        <DataArray type="Float64" Name="sigma_xy" format="binary" RangeMin="-9.4959735329e-09" RangeMax="1.1241876699e-08">
-          MAAAAAAAAACR3vN3eyVBvmyD6nZ3ZES+AAAAAAAAEDtiLq99SSRIPmyhyD21VjW+fexwyHHMQ74=
-        </DataArray>
-        <DataArray type="Float64" Name="sigma_yy" format="binary" RangeMin="-4.288407892e-08" RangeMax="8.970427915e-09">
-          MAAAAAAAAAAdGLBj8QVnvm+fP3E6iEC+tH6FfotDQz6lX6Hf4mhmvs3KsFZeRFy+5YLAyKO/GL4=
-        </DataArray>
-        <DataArray type="Float64" Name="sigma_zz" format="binary" RangeMin="-1.3913780336e-08" RangeMax="2.9901426383e-09">
-          MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAN/UgX8u4U2+KP6xqGSvKT4=
-        </DataArray>
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="1.0004303348e-23"     offset="60"                  />
+        <DataArray type="Float64" Name="displacement_jump1" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="1.7199612833e-23"     offset="168"                 />
+        <DataArray type="Float64" Name="sigma_xx" format="appended" RangeMin="-1.6929782132e-08"    RangeMax="6.5919039635e-09"     offset="252"                 />
+        <DataArray type="Float64" Name="sigma_yy" format="appended" RangeMin="-5.3473503862e-08"    RangeMax="1.2764933576e-08"     offset="332"                 />
+        <DataArray type="Float64" Name="sigma_xy" format="appended" RangeMin="-1.3270352102e-08"    RangeMax="1.5752490419e-08"     offset="436"                 />
+        <DataArray type="Float64" Name="sigma_zz" format="appended" RangeMin="0"                    RangeMax="0"                    offset="532"                 />
       </PointData>
       <CellData Scalars="f_stress_n_analytical">
-        <DataArray type="Int32" Name="MaterialIDs" format="binary" RangeMin="0" RangeMax="1">
-          DAAAAAAAAAAAAAAAAQAAAAEAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="aperture" format="binary" RangeMin="0" RangeMax="1e-05">
-          GAAAAAAAAADxaOOItfjkPgAAAAAAAAAAAAAAAAAAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="f_stress_n" format="binary" RangeMin="0" RangeMax="2.2649736533e-12">
-          GAAAAAAAAAA1BoZqROyDPQAAAAAAAAAAAAAAAAAAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="f_stress_s" format="binary" RangeMin="-4.1919722854e-12" RangeMax="0">
-          GAAAAAAAAAB8qqa/vW+SvQAAAAAAAAAAAAAAAAAAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="levelset1" format="binary" RangeMin="0" RangeMax="1">
-          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="strain_xx" format="binary" RangeMin="-1.0839544097e-23" RangeMax="1.1282630054e-23">
-          GAAAAAAAAAAAAAAAAAAAABExVxicRys7WoWYUlo1Krs=
-        </DataArray>
-        <DataArray type="Float64" Name="strain_xy" format="binary" RangeMin="-1.0767753406e-22" RangeMax="0">
-          GAAAAAAAAAAAAAAAAAAAAEB6c95mVCu7hLxdpZJFYLs=
-        </DataArray>
-        <DataArray type="Float64" Name="strain_yy" format="binary" RangeMin="-2.6469779602e-22" RangeMax="0">
-          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAHS7AQAAAAAAaLs=
-        </DataArray>
-        <DataArray type="Float64" Name="strain_zz" format="binary" RangeMin="0" RangeMax="0">
-          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="stress_xx" format="binary" RangeMin="-1.0839544097e-09" RangeMax="1.1282630054e-09">
-          GAAAAAAAAAAAAAAAAAAAAKzrdDYnYhM+Zko/K0ifEr4=
-        </DataArray>
-        <DataArray type="Float64" Name="stress_xy" format="binary" RangeMin="-1.0767753406e-08" RangeMax="0">
-          GAAAAAAAAAAAAAAAAAAAADx5WhQ+axO+dj/RkaIfR74=
-        </DataArray>
-        <DataArray type="Float64" Name="stress_yy" format="binary" RangeMin="-2.5291228667e-08" RangeMax="0">
-          GAAAAAAAAAAAAAAAAAAAAAAAAAAAKFu+AAAAAACYUb4=
-        </DataArray>
-        <DataArray type="Float64" Name="stress_zz" format="binary" RangeMin="0" RangeMax="0">
-          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="w_n" format="binary" RangeMin="0" RangeMax="6.7043220137e-24">
-          GAAAAAAAAAA4QGQ6xjUgOwAAAAAAAAAAAAAAAAAAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="w_s" format="binary" RangeMin="-1.2408237965e-23" RangeMax="0">
-          GAAAAAAAAAAk1LjJUwAuuwAAAAAAAAAAAAAAAAAAAAA=
-        </DataArray>
-        <DataArray type="Float64" Name="f_stress_n_analytical" format="binary" RangeMin="0" RangeMax="0">
-          GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-        </DataArray>
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="1"                    offset="572"                 />
+        <DataArray type="Float64" Name="aperture" format="appended" RangeMin="0"                    RangeMax="1e-05"                offset="616"                 />
+        <DataArray type="Float64" Name="f_stress_n" format="appended" RangeMin="0"                    RangeMax="2.2649736533e-12"     offset="668"                 />
+        <DataArray type="Float64" Name="f_stress_s" format="appended" RangeMin="-4.1919722854e-12"    RangeMax="0"                    offset="716"                 />
+        <DataArray type="Float64" Name="levelset1" format="appended" RangeMin="0"                    RangeMax="1"                    offset="768"                 />
+        <DataArray type="Float64" Name="strain_xx" format="appended" RangeMin="-1.0839544097e-23"    RangeMax="1.1282630054e-23"     offset="812"                 />
+        <DataArray type="Float64" Name="strain_xy" format="appended" RangeMin="-1.0767753406e-22"    RangeMax="0"                    offset="876"                 />
+        <DataArray type="Float64" Name="strain_yy" format="appended" RangeMin="-2.6469779602e-22"    RangeMax="0"                    offset="940"                 />
+        <DataArray type="Float64" Name="strain_zz" format="appended" RangeMin="0"                    RangeMax="0"                    offset="988"                 />
+        <DataArray type="Float64" Name="stress_xx" format="appended" RangeMin="-1.0839544097e-09"    RangeMax="1.1282630054e-09"     offset="1028"                />
+        <DataArray type="Float64" Name="stress_xy" format="appended" RangeMin="-1.0767753406e-08"    RangeMax="0"                    offset="1092"                />
+        <DataArray type="Float64" Name="stress_yy" format="appended" RangeMin="-2.5291228667e-08"    RangeMax="0"                    offset="1156"                />
+        <DataArray type="Float64" Name="stress_zz" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1208"                />
+        <DataArray type="Float64" Name="w_n" format="appended" RangeMin="0"                    RangeMax="6.7043220137e-24"     offset="1248"                />
+        <DataArray type="Float64" Name="w_s" format="appended" RangeMin="-1.2408237965e-23"    RangeMax="0"                    offset="1296"                />
+        <DataArray type="Float64" Name="f_stress_n_analytical" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1348"                />
       </CellData>
       <Points>
-        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="2.2360679775">
-          kAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAA=
-        </DataArray>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="2.2360679775"         offset="1388"                />
       </Points>
       <Cells>
-        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="5">
-          UAAAAAAAAAAFAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAUAAAAAAAAABAAAAAAAAAADAAAAAAAAAAQAAAAAAAAABQAAAAAAAAACAAAAAAAAAA==
-        </DataArray>
-        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="2" RangeMax="10">
-          GAAAAAAAAAACAAAAAAAAAAYAAAAAAAAACgAAAAAAAAA=
-        </DataArray>
-        <DataArray type="UInt8" Name="types" format="binary" RangeMin="3" RangeMax="9">
-          AwAAAAAAAAADCQk=
-        </DataArray>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="1448"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1512"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1560"                />
       </Cells>
     </Piece>
   </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAAASAAAAGgAAAA==eJwz0zPUM9A1szTUTU8zN00yNDMBACUhBCQ=AQAAAACAAABgAAAAPgAAAA==eJxjOL46wsJ+8y4GCGhgQAXofIYD0xl3979it4bxHYwfK8TUs+9meDAvLar4IMwcBg/hOSqxBhq7AfwLEkc=AQAAAACAAABgAAAALQAAAA==eJxjYKAMXOEp5eSpNrBmuBC536zg1q4Ffe0N/Vza1h82nt3HNUN/NwDZLQ5fAQAAAACAAAAwAAAAKQAAAA==eJwTu5Aj8cZWw04CSq/WZWyarxu0bxWU7rm+l/mBv41dKZQGANQ7E+M=AQAAAACAAAAwAAAAOwAAAA==eJwBMADP/wZbMCxmemK+K2zBsJhpSz5aioagXtVDPoyiIahXtWy+yP4o6t6XZ74s+6Ooe59HPhMTF74=AQAAAACAAAAwAAAANAAAAA==eJzLajQVd/jpvu9rjB1bSb3PPgYoqFz79jvTqwC7Iz5Xuv8c1txXrZcuJDPPcx8AxPsThA==AQAAAACAAAAwAAAADAAAAA==eJxjYCANAAAAMAABAQAAAACAAAAMAAAADgAAAA==eJxjYGBgYIRiAAAYAAM=AQAAAACAAAAYAAAAEwAAAA==eJz7mPG4Y+uPJ3YMaAAAc2QFlA==AQAAAACAAAAYAAAAEgAAAA==eJwzZWvLcnnTbMuABgA95wMcAQAAAACAAAAYAAAAEwAAAA==eJyrWbVs/978SXsZ0AAAZr8FBw==AQAAAACAAAAYAAAADwAAAA==eJxjYEAGH+xhLAALrwEwAQAAAACAAAAYAAAAHAAAAA==eJxjYIAAQcNwiTnu2tZRrTOCoky1dgMAJtIFOA==AQAAAACAAAAYAAAAHAAAAA==eJxjYIAAh6rie2kh2rtb9sQuneSasBsAQLAH4A==AQAAAACAAAAYAAAAEgAAAA==eJxjYEAGJbsZwXTGbgAMxgJUAQAAAACAAAAYAAAACwAAAA==eJxjYMAOAAAYAAE=AQAAAACAAAAYAAAAHAAAAA==eJxjYICANa9LzNSThO3SvOy1PeYL7QMANg8F7Q==AQAAAACAAAAYAAAAHAAAAA==eJxjYIAAm8ooEbts4X1l9hcnLpJ33wcAMSEGew==AQAAAACAAAAYAAAAEwAAAA==eJxjYEACGtH7wPSMwH0ADzQC6Q==AQAAAACAAAAYAAAACwAAAA==eJxjYMAOAAAYAAE=AQAAAACAAAAYAAAAEgAAAA==eJyzcEixOmaqYM2ABgAyBAJtAQAAAACAAAAYAAAAEwAAAA==eJxTubLjZDCD3m4GNAAATPQDtg==AQAAAACAAAAYAAAACwAAAA==eJxjYMAOAAAYAAE=AQAAAACAAACQAAAAGwAAAA==eJxjYMAHPtgTEHfAoRGHOLp5MD5CHABcugZsAQAAAACAAABQAAAAHAAAAA==eJxjZYAAFgZUwAilWdHkmdH4MHkmKA0ABegAIg==AQAAAACAAAAYAAAAEAAAAA==eJxjYoAANijNBaUBAPgAEw==AQAAAACAAAADAAAACwAAAA==eJxj5uQEAAAnABY=
+  </AppendedData>
 </VTKFile>

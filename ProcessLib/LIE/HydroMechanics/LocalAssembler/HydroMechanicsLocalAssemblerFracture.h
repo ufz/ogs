@@ -61,15 +61,6 @@ public:
         const double t, double const dt,
         Eigen::VectorXd const& local_x) override;
 
-    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
-        const unsigned integration_point) const override
-    {
-        auto const& N = _ip_data[integration_point].N_p;
-
-        // assumes N is stored contiguously in memory
-        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
-    }
-
 private:
     void assembleWithJacobianConcrete(double const t, double const dt,
                                       Eigen::VectorXd const& local_x,
