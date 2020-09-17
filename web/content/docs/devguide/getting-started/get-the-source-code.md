@@ -61,14 +61,14 @@ Install [pre-commit](https://pre-commit.com/) (a git hook manager) via Pythons `
 pip3 install --user pre-commit
 ```
 
+This installed `pre-commit` to `.local/bin` in your home directory or to `C:\Users\[username]\AppData\Roaming\Python\Python37\Scripts` on Windows. Make sure to have this directory in your `PATH`!
+
 Enable the hooks in the source code with:
 
 ```bash
 cd ogs
 pre-commit install
 ```
-
-For Windows only: This installed `pre-commit` to `.local/bin` (or `C:\Users\[username]\AppData\Roaming\Python\Python37\Scripts` on Windows) in your home directory. Make sure to have this directory in your `PATH`!
 
 ## Optional: Working on a new feature
 
