@@ -19,6 +19,14 @@ The minimum prerequisites to build OGS are:
 - A compiler with [C++17](http://en.wikipedia.org/wiki/C%2B%2B17)-support
 - [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) **OR** install [required libraries]({{< ref "third-party-libraries.md" >}}) manually (for advanced users only!)
 
+<div class='note'>
+
+### Note about skipping installation steps
+
+A fresh system with none of the prerequisites fulfilled is assumed. Skipping installation steps or using a non-supported version might result in unexpected problems. If possible, you may consider reinstalling or manual modifying the configuration of the already installed tool. 
+
+</div>
+
 ## Step: Install a compiler
 
 <div class='win'>
