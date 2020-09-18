@@ -22,10 +22,9 @@ namespace
 bool includesNodeID(std::vector<MeshLib::Node*> const& vec_nodes,
                     std::size_t node_id)
 {
-    auto itr2 = std::find_if(
+    return std::any_of(
         vec_nodes.begin(), vec_nodes.end(),
         [&](MeshLib::Node const* node) { return node->getID() == node_id; });
-    return (itr2 != vec_nodes.end());
 }
 
 std::vector<int> const& getMaterialIdsForNode(
@@ -386,13 +385,7 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
         *_output_mesh->getProperties().createNewPropertyVector<double>(
             "u", MeshLib::MeshItemType::Node, n_u_comp);
     total_u.resize(u.size());
-    for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
-    {
-        for (int j = 0; j < n_u_comp; j++)
-        {
-            total_u[i * n_u_comp + j] = u[i * n_u_comp + j];
-        }
-    }
+    std::copy(cbegin(u), cend(u), begin(total_u));
 
     for (unsigned enrich_id = 0; enrich_id < n_fractures + n_junctions;
          enrich_id++)
