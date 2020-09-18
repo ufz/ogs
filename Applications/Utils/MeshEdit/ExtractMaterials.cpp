@@ -7,7 +7,6 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <iostream>
 #include <fstream>
 
 // ThirdParty
@@ -84,15 +83,29 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    int min_id = 0;
-    std::vector<int> const mat_ids =
-        *mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-    int max_id = *std::max_element(mat_ids.cbegin(), mat_ids.cend());
+    auto mat_ids = MeshLib::materialIDs(*mesh);
+    if (mat_ids == nullptr)
+    {
+        ERR("No material IDs found in mesh. Aborting...");
+        return EXIT_FAILURE;
+    }
 
+    auto id_range = std::minmax_element(mat_ids->cbegin(), mat_ids->cend());
+    int min_id, max_id;
     if (arg_mat_id.isSet())
     {
         min_id = static_cast<int>(arg_mat_id.getValue());
+        if (min_id < *id_range.first || min_id > *id_range.second)
+        {
+            ERR("Specified material ID does not exist.");
+            return EXIT_FAILURE;
+        }
         max_id = min_id;
+    }
+    else
+    {
+        min_id = *id_range.first;
+        max_id = *id_range.second;
     }
 
     std::ofstream ostream;
@@ -106,12 +119,17 @@ int main(int argc, char* argv[])
         INFO("Extracting material group {:d}...", i);
         std::unique_ptr<MeshLib::Mesh> mat_group (extractMatGroup(*mesh, i));
         if (mat_group == nullptr)
+        {
+            WARN("No elements with material group {:d} found.", i);
             continue;
+        }
         MeshLib::IO::VtuInterface vtu(mat_group.get());
         std::string const file_name(base_name + "_Layer" + std::to_string(i) + ext);
         vtu.writeToFile(file_name);
         if (ostream.is_open())
+        {
             ostream << file_name << "\n";
+        }
     }
     if (ostream.is_open())
     {
