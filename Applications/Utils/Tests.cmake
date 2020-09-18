@@ -376,6 +376,17 @@ if(OGS_BUILD_GUI)
         DIFF_DATA
         RemoveGhostDataOutput.vtu RemoveGhostDataOutput.vtu slice slice 0 0
     )
+
+    AddTest(
+        NAME RemoveGhostData_EllipticSquareTest
+        PATH EllipticPETSc/
+        EXECUTABLE RemoveGhostData
+        EXECUTABLE_ARGS -i square_1e1_neumann_pcs_0_ts_1_t_1_000000.pvtu -o ${Data_BINARY_DIR}/EllipticPETSc/square_1e1_neumann_pcs_0_ts_1_t_1_000000.vtu
+        REQUIREMENTS NOT OGS_USE_MPI
+        TESTER diff
+        DIFF_DATA
+        square_1e1_neumann_pcs_0_ts_1_t_1_000000.vtu
+    )
 endif()
 
 AddTest(
