@@ -32,9 +32,13 @@ namespace PhreeqcIOData
 {
 struct Component
 {
-    explicit Component(std::string name_) : name(std::move(name_)) {}
+    explicit Component(std::string name_, std::string chemical_formula_)
+        : name(std::move(name_)), chemical_formula(std::move(chemical_formula_))
+    {
+    }
 
     std::string const name;
+    std::string const chemical_formula;
     std::unique_ptr<GlobalVector> amount;
     static const ItemType item_type = ItemType::Component;
 };
