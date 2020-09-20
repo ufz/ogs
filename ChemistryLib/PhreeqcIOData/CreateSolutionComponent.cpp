@@ -24,14 +24,15 @@ std::vector<Component> createSolutionComponents(
     auto components_config = config.getConfigSubtree("components");
 
     for (
-        auto const& comp_config :
+        auto const& component_config :
         //! \ogs_file_param{prj__chemical_system__solution__components__component}
         components_config.getConfigSubtreeList("component"))
     {
-        auto const component_name = comp_config.getValue<std::string>();
+        auto const component_name = component_config.getValue<std::string>();
         auto const chemical_formula =
             //! \ogs_file_attr{prj__chemical_system__solution__components__component__chemical_formula}
-            comp_config.getConfigAttribute<std::string>("chemical_formula", "");
+            component_config.getConfigAttribute<std::string>("chemical_formula",
+                                                             "");
         components.emplace_back(component_name, chemical_formula);
     }
 
