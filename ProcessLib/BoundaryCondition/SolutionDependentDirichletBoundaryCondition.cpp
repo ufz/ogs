@@ -24,6 +24,7 @@ namespace ProcessLib
 {
 SolutionDependentDirichletBoundaryCondition::
     SolutionDependentDirichletBoundaryCondition(
+        std::string property_name,
         ParameterLib::Parameter<double> const& parameter,
         MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
@@ -41,7 +42,6 @@ SolutionDependentDirichletBoundaryCondition::
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, {component_id}, std::move(bc_mesh_subset)));
 
-    std::string const property_name = "solution_dependent_bc";
     if (bc_mesh.getProperties().existsPropertyVector<double>(property_name))
     {
         OGS_FATAL(
@@ -50,23 +50,23 @@ SolutionDependentDirichletBoundaryCondition::
             property_name);
     }
 
-    auto& solution_dependent_bc = *MeshLib::getOrCreateMeshProperty<double>(
+    _solution_dependent_bc = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(bc_mesh), property_name,
         MeshLib::MeshItemType::Node, 1);
-    solution_dependent_bc.resize(bc_mesh.getNumberOfNodes());
+    _solution_dependent_bc->resize(bc_mesh.getNumberOfNodes());
 
     ParameterLib::SpatialPosition pos;
 
     auto const& nodes = bc_mesh.getNodes();
-    for (std::size_t i = 0; i < solution_dependent_bc.size(); ++i)
+    for (std::size_t i = 0; i < _solution_dependent_bc->size(); ++i)
     {
         auto const id = nodes[i]->getID();
         pos.setNodeID(id);
-        solution_dependent_bc[i] = parameter(0, pos)[0];
+        (*_solution_dependent_bc)[i] = parameter(0, pos)[0];
     }
 
     _parameter = std::make_unique<ParameterLib::MeshNodeParameter<double>>(
-        property_name, bc_mesh, solution_dependent_bc);
+        property_name, bc_mesh, *_solution_dependent_bc);
 }
 
 void SolutionDependentDirichletBoundaryCondition::getEssentialBCValues(
@@ -82,12 +82,8 @@ void SolutionDependentDirichletBoundaryCondition::postTimestep(
     double const /*t*/, std::vector<GlobalVector*> const& x,
     int const process_id)
 {
-    auto& solution_dependent_bc =
-        *const_cast<MeshLib::Properties&>(_bc_mesh.getProperties())
-             .getPropertyVector<double>("solution_dependent_bc");
-
     auto const& nodes = _bc_mesh.getNodes();
-    for (std::size_t i = 0; i < solution_dependent_bc.size(); ++i)
+    for (std::size_t i = 0; i < _solution_dependent_bc->size(); ++i)
     {
         auto const id = nodes[i]->getID();
         auto const global_index = _dof_table_boundary->getGlobalIndex(
@@ -95,7 +91,7 @@ void SolutionDependentDirichletBoundaryCondition::postTimestep(
             _component_id);
 
         assert(global_index >= 0);
-        solution_dependent_bc[i] = x[process_id]->get(global_index);
+        (*_solution_dependent_bc)[i] = x[process_id]->get(global_index);
     }
 }
 
@@ -111,6 +107,10 @@ createSolutionDependentDirichletBoundaryCondition(
         "config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "SolutionDependentDirichlet");
+
+    auto property_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__SolutionDependentDirichlet__property_name}
+        config.getConfigParameter<std::string>("property_name");
 
     auto& initial_value_parameter = ParameterLib::findParameter<double>(
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__SolutionDependentDirichlet__initial_value_parameter}
@@ -132,8 +132,8 @@ createSolutionDependentDirichletBoundaryCondition(
 #endif  // USE_PETSC
 
     return std::make_unique<SolutionDependentDirichletBoundaryCondition>(
-        initial_value_parameter, bc_mesh, dof_table_bulk, variable_id,
-        component_id);
+        std::move(property_name), initial_value_parameter, bc_mesh,
+        dof_table_bulk, variable_id, component_id);
 }
 
 }  // namespace ProcessLib
