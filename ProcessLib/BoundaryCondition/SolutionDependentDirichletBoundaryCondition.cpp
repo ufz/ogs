@@ -45,9 +45,11 @@ SolutionDependentDirichletBoundaryCondition::
     if (bc_mesh.getProperties().existsPropertyVector<double>(property_name))
     {
         OGS_FATAL(
-            "Found mesh property '{:s}' which is the built-in property of the "
+            "Found mesh property '{:s}' in the mesh '{:s}' which is for "
+            "boundary assignment. This mesh property is the built-in property "
+            "of the "
             "class SolutionDependentDirichletBoundaryCondition.",
-            property_name);
+            property_name, bc_mesh.getName());
     }
 
     _solution_dependent_bc = MeshLib::getOrCreateMeshProperty<double>(
