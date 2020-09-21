@@ -201,10 +201,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>2000</t_end>
+                    <t_end>1200</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>20</repeat>
+                            <repeat>12</repeat>
                             <delta_t>100</delta_t>
                         </pair>
                     </timesteps>
@@ -224,10 +224,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>2000</t_end>
+                    <t_end>1200</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>20</repeat>
+                            <repeat>12</repeat>
                             <delta_t>100</delta_t>
                         </pair>
                     </timesteps>
@@ -247,10 +247,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>2000</t_end>
+                    <t_end>1200</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>20</repeat>
+                            <repeat>12</repeat>
                             <delta_t>100</delta_t>
                         </pair>
                     </timesteps>
@@ -270,10 +270,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>2000</t_end>
+                    <t_end>1200</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>20</repeat>
+                            <repeat>12</repeat>
                             <delta_t>100</delta_t>
                         </pair>
                     </timesteps>
@@ -293,10 +293,10 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>2000</t_end>
+                    <t_end>1200</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>20</repeat>
+                            <repeat>12</repeat>
                             <delta_t>100</delta_t>
                         </pair>
                     </timesteps>
@@ -309,7 +309,7 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
-                    <repeat>5</repeat>
+                    <repeat>3</repeat>
                     <each_steps>4</each_steps>
                 </pair>
             </timesteps>
