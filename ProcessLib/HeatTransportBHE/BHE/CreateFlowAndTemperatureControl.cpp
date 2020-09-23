@@ -44,6 +44,22 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
 
         return TemperatureCurveConstantFlow{flow_rate, temperature_curve};
     }
+    if (type == "TemperatureCurveFlowCurve")
+    {
+        auto const& flow_rate_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveFlowCurve__flow_rate_curve}
+            config.getConfigParameter<std::string>("flow_rate_curve"),
+            "Required flow curve not found.");
+
+        auto const& temperature_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveFlowCurve__temperature_curve}
+            config.getConfigParameter<std::string>("temperature_curve"),
+            "Required temperature curve not found.");
+
+        return TemperatureCurveFlowCurve{flow_rate_curve, temperature_curve};
+    }
     if (type == "FixedPowerConstantFlow")
     {
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerConstantFlow__power}
