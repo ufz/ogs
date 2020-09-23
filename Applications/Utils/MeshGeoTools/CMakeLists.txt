@@ -6,6 +6,7 @@ set(TOOLS
     identifySubdomains
     IntegrateBoreholesIntoMesh
     Raster2Mesh
+    VerticalSliceFromLayers
 )
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
