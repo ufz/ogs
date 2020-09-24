@@ -81,8 +81,7 @@ public:
         std::size_t const mesh_item_id,
         NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
         double const dt, GlobalVector const& local_x,
-        GlobalVector const& local_x_dot,
-        CoupledSolutionsForStaggeredScheme const* coupled_xs);
+        GlobalVector const& local_x_dot);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,

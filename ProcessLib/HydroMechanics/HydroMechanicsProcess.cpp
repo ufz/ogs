@@ -528,8 +528,7 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), t, dt, x, x_dot,
-        _coupled_solutions);
+        pv.getActiveElementIDs(), getDOFTable(process_id), t, dt, x, x_dot);
 }
 
 template <int DisplacementDim>

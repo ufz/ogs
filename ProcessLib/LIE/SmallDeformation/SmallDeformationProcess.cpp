@@ -537,7 +537,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
-        dt, x, x_dot, _coupled_solutions);
+        dt, x, x_dot);
 }
 
 template <int DisplacementDim>
