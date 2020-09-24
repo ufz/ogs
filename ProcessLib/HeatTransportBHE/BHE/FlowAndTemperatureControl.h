@@ -37,6 +37,18 @@ struct TemperatureCurveConstantFlow
     MathLib::PiecewiseLinearInterpolation const& temperature_curve;
 };
 
+struct TemperatureCurveFlowCurve
+{
+    FlowAndTemperature operator()(double const /*T_out*/,
+                                  double const time) const
+    {
+        return {flow_rate_curve.getValue(time),
+                temperature_curve.getValue(time)};
+    }
+    MathLib::PiecewiseLinearInterpolation const& flow_rate_curve;
+    MathLib::PiecewiseLinearInterpolation const& temperature_curve;
+};
+
 struct FixedPowerConstantFlow
 {
     FlowAndTemperature operator()(double const T_out,
@@ -106,6 +118,7 @@ struct BuildingPowerCurveConstantFlow
 };
 
 using FlowAndTemperatureControl = std::variant<TemperatureCurveConstantFlow,
+                                               TemperatureCurveFlowCurve,
                                                FixedPowerConstantFlow,
                                                FixedPowerFlowCurve,
                                                PowerCurveConstantFlow,

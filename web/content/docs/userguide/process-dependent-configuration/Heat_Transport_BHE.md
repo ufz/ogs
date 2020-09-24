@@ -121,6 +121,8 @@ Four type of flow and temperature control patterns are provided in OGS.
   The key word < flow_rate > applies here, along with the curve defined in the < curves >.
 * TemperatureCurveConstantFlow:\
   It means BHE has a constant < flow_rate > while the inflow temperature following the values defined in the < curves >.
+* TemperatureCurveFlowCurve:\
+  It means both the BHE inflow rate and temperature values are following the corresponding curves.
 
 The unit of < power > is in $\mathrm{W}$ and < flow_rate > is in $\mathrm{m^{3}/s}$. For heating applications, thermal energy is extracted from the subsurface, then a negative power value should be given. It is vice versa for cooling applications.
 
