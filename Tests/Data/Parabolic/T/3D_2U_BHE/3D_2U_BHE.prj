@@ -15,8 +15,8 @@
                 <borehole_heat_exchanger>
                     <type>2U</type>
                     <flow_and_temperature_control>
-                        <type>TemperatureCurveConstantFlow</type>
-                        <flow_rate>2.0e-4</flow_rate>
+                        <type>TemperatureCurveFlowCurve</type>
+                        <flow_rate_curve>flow_rate</flow_rate_curve><!-- flow rate within each U-pipe -->
                         <temperature_curve>inflow_temperature</temperature_curve>
                     </flow_and_temperature_control>
                     <borehole>
@@ -236,6 +236,11 @@
         </linear_solver>
     </linear_solvers>
     <curves>
+        <curve>
+            <name>flow_rate</name>
+            <coords>0  3600</coords>
+            <values>2.0e-4 2.0e-4</values>
+        </curve>
         <curve>
             <name>inflow_temperature</name>
             <coords>0 60 120 180 240 300 360 420 480 540 600 1200 1800 2400 3000 3600</coords>

@@ -32,7 +32,7 @@ The numerical model was established based on dual continuum method developed by 
 
 ## OGS Input Files
 
-The detailed input parameters can be seen from the 3D_2U_BHE.prj file. The inflow temperature of the BHE, which was imposed as boundary condition of the BHE is shown in Figure 1. All the initial temperatures are set as 22 $^{\circ}$C.
+The detailed input parameters can be seen from the 3D_2U_BHE.prj file. The inflow temperature of the BHE, which was imposed as boundary condition of the BHE is shown in Figure 1. All the initial temperatures are set as 22 $^{\circ}$C. The flow rate within each U-pipe is set to $2.0\times10^{-4}$ $\mathrm{m^{3} s^{-1}}$ during the whole simulation time.
 
 {{< img src="../3D_2U_BHE_figures/In_out_temperature_comparison.png" width="200">}}
 
