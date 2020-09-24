@@ -20,9 +20,9 @@
 namespace
 {
 // Heaviside step function
-inline double Heaviside(double v)
+inline double Heaviside(bool const v)
 {
-    return (v < 0.0) ? 0.0 : 1.0;
+    return v ? 1.0 : 0.0;
 }
 
 }  // namespace
@@ -31,16 +31,14 @@ namespace ProcessLib
 {
 namespace LIE
 {
-double levelsetFracture(FractureProperty const& frac, Eigen::Vector3d const& x)
+bool levelsetFracture(FractureProperty const& frac, Eigen::Vector3d const& x)
 {
-    return boost::math::sign(
-        frac.normal_vector.dot(x - frac.point_on_fracture));
+    return frac.normal_vector.dot(x - frac.point_on_fracture) > 0;
 }
 
-double levelsetBranch(BranchProperty const& branch, Eigen::Vector3d const& x)
+bool levelsetBranch(BranchProperty const& branch, Eigen::Vector3d const& x)
 {
-    return boost::math::sign(
-        branch.normal_vector_branch.dot(x - branch.coords));
+    return branch.normal_vector_branch.dot(x - branch.coords) > 0;
 }
 
 std::vector<double> uGlobalEnrichments(
@@ -50,10 +48,10 @@ std::vector<double> uGlobalEnrichments(
     Eigen::Vector3d const& x)
 {
     // pre-calculate levelsets for all fractures
-    std::vector<double> levelsets(frac_props.size());
+    std::vector<bool> levelsets(frac_props.size());
     for (std::size_t i = 0; i < frac_props.size(); i++)
     {
-        levelsets[i] = Heaviside(levelsetFracture(*frac_props[i], x));
+        levelsets[i] = levelsetFracture(*frac_props[i], x);
     }
 
     std::vector<double> enrichments(frac_props.size() + junction_props.size());
@@ -61,11 +59,11 @@ std::vector<double> uGlobalEnrichments(
     for (std::size_t i = 0; i < frac_props.size(); i++)
     {
         auto const* frac = frac_props[i];
-        enrichments[i] = std::accumulate(
+        enrichments[i] = Heaviside(std::accumulate(
             cbegin(frac->branches_slave), cend(frac->branches_slave),
-            levelsets[i], [&](double const& enrich, auto const& branch) {
-                return enrich * Heaviside(levelsetBranch(branch, x));
-            });
+            levelsets[i], [&](bool const enrich, auto const& branch) {
+                return enrich & levelsetBranch(branch, x);
+            }));
     }
 
     // junctions
@@ -74,8 +72,8 @@ std::vector<double> uGlobalEnrichments(
         auto const* junction = junction_props[i];
         auto fid1 = fracID_to_local.at(junction->fracture_ids[0]);
         auto fid2 = fracID_to_local.at(junction->fracture_ids[1]);
-        double enrich = levelsets[fid1] * levelsets[fid2];
-        enrichments[i + frac_props.size()] = enrich;
+        bool const enrich = levelsets[fid1] & levelsets[fid2];
+        enrichments[i + frac_props.size()] = Heaviside(enrich);
     }
 
     return enrichments;
@@ -91,10 +89,10 @@ std::vector<double> duGlobalEnrichments(
     auto this_frac_local_index = fracID_to_local.at(this_frac_id);
     auto const& this_frac = *frac_props[this_frac_local_index];
     // pre-calculate levelsets for all fractures
-    std::vector<double> levelsets(frac_props.size());
+    std::vector<bool> levelsets(frac_props.size());
     for (std::size_t i = 0; i < frac_props.size(); i++)
     {
-        levelsets[i] = Heaviside(levelsetFracture(*frac_props[i], x));
+        levelsets[i] = levelsetFracture(*frac_props[i], x);
     }
 
     std::vector<double> enrichments(frac_props.size() + junction_props.size());
@@ -116,11 +114,11 @@ std::vector<double> duGlobalEnrichments(
                 continue;
             }
 
-            double singned = boost::math::sign(
+            double sign = boost::math::sign(
                 this_frac.normal_vector.dot(branch.normal_vector_branch));
             auto slave_fid = fracID_to_local.at(branch.slave_fracture_id);
-            double enrich = singned * levelsets[slave_fid];
-            enrichments[slave_fid] = enrich;
+            double const enrich = levelsets[slave_fid] ? 1. : 0.;
+            enrichments[slave_fid] = sign * enrich;
         }
     }
 
@@ -138,7 +136,7 @@ std::vector<double> duGlobalEnrichments(
                 ? junction->fracture_ids[1]
                 : junction->fracture_ids[0];
         auto fid = fracID_to_local.at(another_frac_id);
-        double enrich = levelsets[fid];
+        double const enrich = levelsets[fid] ? 1. : 0.;
         enrichments[i + frac_props.size()] = enrich;
     }
 
