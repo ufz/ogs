@@ -14,7 +14,7 @@
 
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 
-#include "MaterialLib/MPL/Components/GetThermalExpansivity.h"
+#include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
@@ -273,7 +273,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(vars, x_position, t, dt);
 
         double const fluid_volumetric_thermal_expansion_coefficient =
-            MaterialPropertyLib::getThermalExpansivity(
+            MaterialPropertyLib::getLiquidThermalExpansivity(
                 liquid_phase, vars, fluid_density, x_position, t, dt);
 
         // Use the viscosity model to compute the viscosity
