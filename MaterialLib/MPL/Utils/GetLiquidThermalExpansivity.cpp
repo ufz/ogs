@@ -24,13 +24,12 @@ double getLiquidThermalExpansivity(Phase const& phase,
                                    ParameterLib::SpatialPosition const& pos,
                                    double const t, double const dt)
 {
-    auto const thermal_expansivity_ptr =
-        &phase.property(MaterialPropertyLib::PropertyType::thermal_expansivity);
-
     // The thermal expansivity is explicitly given in the project file.
-    if (thermal_expansivity_ptr)
+    if (phase.hasProperty(
+            MaterialPropertyLib::PropertyType::thermal_expansivity))
     {
-        return (*thermal_expansivity_ptr)
+        return phase
+            .property(MaterialPropertyLib::PropertyType::thermal_expansivity)
             .template value<double>(vars, pos, t, dt);
     }
 
