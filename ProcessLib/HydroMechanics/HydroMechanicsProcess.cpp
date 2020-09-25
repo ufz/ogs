@@ -524,6 +524,11 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, GlobalVector const& x,
     GlobalVector const& x_dot, const int process_id)
 {
+    if (process_id != 0)
+    {
+        return;
+    }
+
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
