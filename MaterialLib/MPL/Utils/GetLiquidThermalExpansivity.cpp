@@ -10,7 +10,7 @@
  * Created on August 16, 2019, 3:40 PM
  */
 
-#include "GetThermalExpansivity.h"
+#include "GetLiquidThermalExpansivity.h"
 
 #include "MaterialLib/MPL/Phase.h"
 
@@ -18,10 +18,11 @@ namespace MaterialPropertyLib
 {
 class Phase;
 
-double getThermalExpansivity(Phase const& phase, VariableArray const& vars,
-                             const double density,
-                             ParameterLib::SpatialPosition const& pos,
-                             double const t, double const dt)
+double getLiquidThermalExpansivity(Phase const& phase,
+                                   VariableArray const& vars,
+                                   const double density,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t, double const dt)
 {
     auto const thermal_expansivity_ptr =
         &phase.property(MaterialPropertyLib::PropertyType::thermal_expansivity);

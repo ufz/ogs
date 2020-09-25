@@ -38,8 +38,9 @@ class Phase;
  * \f]
  * where \f$\rho\f$ is the density, \f$T\f$ is the temperature.
  */
-double getThermalExpansivity(Phase const& phase, VariableArray const& vars,
-                             const double density,
-                             ParameterLib::SpatialPosition const& pos,
-                             double const t, double const dt);
+double getLiquidThermalExpansivity(Phase const& phase,
+                                   VariableArray const& vars,
+                                   const double density,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t, double const dt);
 }  // namespace MaterialPropertyLib
