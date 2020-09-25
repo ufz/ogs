@@ -385,7 +385,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
     DBUG("Compute the secondary variables for ThermoHydroMechanicsProcess.");
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
-        getDOFTable(process_id), t, dt, x, x_dot, _coupled_solutions);
+        getDOFTable(process_id), t, dt, x, x_dot);
 }
 
 template <int DisplacementDim>

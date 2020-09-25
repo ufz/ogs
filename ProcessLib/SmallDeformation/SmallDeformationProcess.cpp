@@ -270,8 +270,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), t, dt, x, x_dot,
-        _coupled_solutions);
+        pv.getActiveElementIDs(), getDOFTable(process_id), t, dt, x, x_dot);
 }
 template class SmallDeformationProcess<2>;
 template class SmallDeformationProcess<3>;

@@ -132,7 +132,7 @@ void HeatConductionProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
         _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
-        dt, x, x_dot, _coupled_solutions);
+        dt, x, x_dot);
 }
 
 }  // namespace HeatConduction
