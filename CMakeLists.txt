@@ -263,12 +263,6 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/ThirdParty/vtkdiff/CMakeLists.txt AND BUILD_TEST
     install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
 endif()
 
-# Correct tfel paths (they seem to be hard-coded to /usr/local/tfel/...)
-if(OGS_USE_MFRONT AND OGS_USE_CONAN)
-    set(TFEL_INCLUDE_PATH "${CONAN_TFEL_ROOT}/include")
-    set(TFEL_LIBRARY_PATH "${CONAN_TFEL_ROOT}/lib")
-endif()
-
 include(scripts/cmake/CheckHeaderCompilation.cmake)
 
 add_subdirectory(Applications)

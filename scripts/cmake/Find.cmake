@@ -91,7 +91,7 @@ if(OGS_USE_MFRONT)
         add_definitions(-DHAVE_PTHREADS)
     endif()
     if(OGS_USE_CONAN)
-        set(TFEL_INSTALL_PATH ${CONAN_TFEL_ROOT} CACHE INTERNAL "")
+        set(TFELHOME ${CONAN_TFEL_ROOT} CACHE INTERNAL "")
     endif()
 endif()
 
