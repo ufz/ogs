@@ -28,6 +28,7 @@ class SolutionDependentDirichletBoundaryCondition final
 {
 public:
     SolutionDependentDirichletBoundaryCondition(
+        std::string property_name,
         ParameterLib::Parameter<double> const& parameter,
         MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
@@ -58,6 +59,9 @@ private:
     int const _component_id;
     std::unique_ptr<NumLib::LocalToGlobalIndexMap const> _dof_table_boundary;
     std::unique_ptr<ParameterLib::MeshNodeParameter<double>> _parameter;
+    // avoid repetitively retrieving the desired property from the boundary mesh
+    // over time steps
+    MeshLib::PropertyVector<double>* _solution_dependent_bc;
 };
 
 std::unique_ptr<SolutionDependentDirichletBoundaryCondition>
