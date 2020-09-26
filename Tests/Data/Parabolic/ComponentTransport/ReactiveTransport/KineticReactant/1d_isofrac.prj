@@ -280,7 +280,7 @@
             <pressure>1</pressure>
             <pe>4</pe>
             <components>
-                <component>Synthetica</component>
+                <component chemical_formula="Synthetica">Synthetica</component>
                 <component>Syntheticb</component>
             </components>
         </solution>
