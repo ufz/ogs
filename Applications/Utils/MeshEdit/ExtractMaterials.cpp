@@ -35,7 +35,9 @@ MeshLib::Mesh* extractMatGroup(MeshLib::Mesh const& mesh, int const mat_id)
     }
 
     if (elem_list.empty())
+    {
         return nullptr;
+    }
 
     return MeshLib::removeElements(mesh, elem_list, "matgroup");
 }
@@ -71,8 +73,8 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse( argc, argv );
 
-    std::string const input_name = input_arg.getValue().c_str();
-    std::string const output_name = output_arg.getValue().c_str();
+    std::string const input_name = input_arg.getValue();
+    std::string const output_name = output_arg.getValue();
     std::string const base_name = BaseLib::dropFileExtension(output_name);
     std::string const ext = BaseLib::getFileExtension(output_name);
 
