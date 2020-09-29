@@ -307,11 +307,18 @@ AddTest(
 )
 
 if(SNAKEMAKE AND NOT OGS_USE_MPI)
-    add_test(NAME workflow_ExtractBoundary
+    add_test(NAME snakemake_ExtractBoundary
         COMMAND ${SNAKEMAKE}
                  -j 1
                  --configfile ${PROJECT_BINARY_DIR}/snakemake.yaml
                  -s ${CMAKE_CURRENT_SOURCE_DIR}/ExtractBoundary.smk
+    )
+endif()
+if(PARSL AND NOT OGS_USE_MPI)
+    add_test(NAME parsl_ExtractBoundary
+        COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_CURRENT_SOURCE_DIR}/ExtractBoundary.py
+            ${PROJECT_BINARY_DIR}/snakemake.yaml
     )
 endif()
 
