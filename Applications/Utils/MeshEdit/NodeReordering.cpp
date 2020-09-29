@@ -143,29 +143,36 @@ void reorderNonlinearNodes(MeshLib::Mesh &mesh)
 int main (int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
-        "Reordering of mesh nodes to make OGS Data Explorer 5 meshes "
-        "compatible with OGS6.\n"
-        "Method 1 is the re-ordering between DataExplorer 5 and DataExplorer 6 "
-        "meshes,\n"
-        "Method 2 is the re-ordering with and without InSitu-Lib in OGS6.\n"
-        "Method 3 is the re-ordering of nonlinear nodes.\n\n"
+        "Reorders mesh nodes in elements to make old or incorrectly ordered "
+        "meshes compatible with OGS6.\n"
+        "Three options are available:\n"
+        "Method 1: Re-ordering between DataExplorer 5 and DataExplorer 6 "
+        "(mostly reverses order of the nodes for all element types\n"
+        "Method 2: Re-ordering after introducing InSitu-Lib to OGS6 (only "
+        "adjusts to top and bottom surfaces of prism elements\n"
+        "Method 3: Re-ordering of mesh node vector such that all base nodes "
+        "are sorted before all nonlinear nodes.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2020, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::UnlabeledValueArg<std::string> input_mesh_arg("input_mesh",
-                                                         "the name of the input mesh file",
-                                                         true, "", "oldmesh.msh");
-    cmd.add(input_mesh_arg);
-    TCLAP::UnlabeledValueArg<std::string> output_mesh_arg("output_mesh",
-                                                          "the name of the output mesh file",
-                                                          true, "", "newmesh.vtu");
-    cmd.add(output_mesh_arg);
-    TCLAP::ValueArg<int> method_arg("m", "method", "reordering method selection", false,  1, "value");
 
+    std::vector<int> method_ids{1, 2, 3};
+    TCLAP::ValuesConstraint<int> allowed_values(method_ids);
+    TCLAP::ValueArg<int> method_arg("m", "method",
+                                    "reordering method selection", false, 1,
+                                    &allowed_values);
     cmd.add(method_arg);
+    TCLAP::ValueArg<std::string> output_mesh_arg(
+        "o", "output_mesh", "the name of the output mesh file", true, "",
+        "filename");
+    cmd.add(output_mesh_arg);
+    TCLAP::ValueArg<std::string> input_mesh_arg(
+        "i", "input_mesh", "the name of the input mesh file", true, "",
+        "filename");
+    cmd.add(input_mesh_arg);
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh> mesh(
@@ -188,11 +195,6 @@ int main (int argc, char* argv[])
     else if (method_arg.getValue() == 3)
     {
         reorderNonlinearNodes(*mesh);
-    }
-    else
-    {
-        ERR ("Unknown re-ordering method. Exit program...");
-        return EXIT_FAILURE;
     }
 
     MeshLib::IO::writeMeshToFile(*mesh, output_mesh_arg.getValue());
