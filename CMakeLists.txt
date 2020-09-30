@@ -61,11 +61,11 @@ endif()
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 
 # ---- CMake includes ----
+include(Versions)
 include(PreFind)
 include(SubmoduleSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
-include(Versions)
 include(Functions)
 include(ConanSetup)
 include(CompilerSetup)

@@ -6,7 +6,7 @@ if(DEFINED ENV{OGS_VERSION})
     message(STATUS "OGS VERSION: ${OGS_VERSION} (set via environment)")
 endif()
 
-if(NOT IS_GIT_REPO)
+if(NOT IS_GIT_REPO AND NOT OGS_VERSION)
     execute_process(COMMAND ${GIT_EXECUTABLE} status
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE IS_GIT_REPO
@@ -26,7 +26,7 @@ if(NOT IS_GIT_REPO)
     endif()
 endif()
 
-if(IS_GIT_REPO)
+if(IS_GIT_REPO AND NOT OGS_VERSION)
     # Get version info from Git, implementation based on
     # https://github.com/tomtom-international/cpp-dependencies
     execute_process(
@@ -84,8 +84,31 @@ if(IS_GIT_REPO)
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 endif()
+
+### Python setup ###
+find_program(POETRY poetry)
+if(POETRY)
+    configure_file(${PROJECT_SOURCE_DIR}/scripts/python/poetry.in.toml
+        ${PROJECT_BINARY_DIR}/poetry.toml COPYONLY)
+    if(NOT EXISTS ${PROJECT_BINARY_DIR}/pyproject.toml)
+        configure_file(${PROJECT_SOURCE_DIR}/scripts/python/pyproject.in.toml
+            ${PROJECT_BINARY_DIR}/pyproject.toml)
+    endif()
+    if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
+        execute_process(
+            COMMAND ${POETRY} install
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        )
+    endif()
+    set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
+endif()
+
 if(OGS_USE_PYTHON)
-    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+    find_package(Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter Development REQUIRED)
 else()
-    find_package(Python3 COMPONENTS Interpreter)
+    find_package(Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter)
+endif()
+if(POETRY)
+    set(Python3_VIRTUALENV_SITEPACKAGES
+        ${Python3_ROOT_DIR}/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
 endif()
