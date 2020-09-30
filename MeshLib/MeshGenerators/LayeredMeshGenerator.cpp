@@ -48,8 +48,14 @@ bool LayeredMeshGenerator::createLayers(
 std::unique_ptr<MeshLib::Mesh>
 LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
 {
-    if (_nodes.empty() || _elements.empty())
+    if (_nodes.empty())
     {
+        WARN("LayeredMeshGenerator has not created any nodes.");
+        return nullptr;
+    }
+    if (_elements.empty())
+    {
+        WARN("LayeredMeshGenerator has not created any elements.");
         return nullptr;
     }
 

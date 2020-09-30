@@ -154,8 +154,12 @@ int main (int argc, char* argv[])
     }
 
     INFO("Writing mesh '{:s}' ... ", output_name);
-    auto result_mesh = std::make_unique<MeshLib::Mesh>(
-        *(mapper.getMesh("SubsurfaceMesh").release()));
+    auto result_mesh = mapper.getMesh("SubsurfaceMesh");
+    if (result_mesh == nullptr)
+    {
+        ERR("Mapper returned empty result for 'SubsurfaceMesh'.");
+        return EXIT_FAILURE;
+    }
 
     auto const data_mode =
         use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
