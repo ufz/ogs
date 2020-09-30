@@ -21,7 +21,7 @@ function (MeshTest)
         return()
     endif()
     # parse arguments
-    set(options NONE)
+    set(options WORKING_DIRECTORY_SOURCE)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER RUNTIME)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS)
     cmake_parse_arguments(MeshTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -32,6 +32,11 @@ function (MeshTest)
     file(MAKE_DIRECTORY ${MeshTest_BINARY_PATH})
     file(TO_NATIVE_PATH "${MeshTest_BINARY_PATH}" MeshTest_BINARY_PATH_NATIVE)
     set(MeshTest_STDOUT_FILE_PATH "${MeshTest_BINARY_PATH}/${MeshTest_NAME}_stdout.log")
+    if(MeshTest_WORKING_DIRECTORY_SOURCE)
+        set(MeshTest_WORKING_DIRECTORY ${MeshTest_SOURCE_PATH})
+    else()
+        set(MeshTest_WORKING_DIRECTORY ${MeshTest_BINARY_PATH})
+    endif()
 
     # set defaults
     if (NOT DEFINED MeshTest_REQUIREMENTS)
@@ -140,12 +145,13 @@ function (MeshTest)
         COMMAND ${CMAKE_COMMAND}
         -DEXECUTABLE=${MeshTest_EXECUTABLE_PARSED}
         "-DEXECUTABLE_ARGS=${MeshTest_EXECUTABLE_ARGS}" # Quoted because passed as list
-        -DSOURCE_PATH=${MeshTest_SOURCE_PATH}             # see https://stackoverflow.com/a/33248574/80480
+                                                        # see https://stackoverflow.com/a/33248574/80480
         -DBINARY_PATH=${MeshTest_BINARY_PATH}
         -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
         "-DWRAPPER_ARGS=${MeshTest_WRAPPER_ARGS}"
         "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
         -DSTDOUT_FILE_PATH=${MeshTest_STDOUT_FILE_PATH}
+        -DWORKING_DIRECTORY=${MeshTest_WORKING_DIRECTORY}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     set_tests_properties(${TEST_NAME} PROPERTIES COST ${MeshTest_RUNTIME})
