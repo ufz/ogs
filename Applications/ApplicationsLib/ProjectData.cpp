@@ -288,6 +288,9 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
         // Evaluate in scope of main module
         py::object scope = py::module::import("__main__").attr("__dict__");
+        // add (global) variables
+        auto globals = py::dict(scope);
+        globals["ogs_prj_directory"] = project_directory;
         py::eval_file(script_path, scope);
 #else
         OGS_FATAL("OpenGeoSys has not been built with Python support.");
