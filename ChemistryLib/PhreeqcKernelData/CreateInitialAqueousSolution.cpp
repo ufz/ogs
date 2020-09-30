@@ -28,10 +28,11 @@ InitialAqueousSolution createInitialAqueousSolution(
     //! \ogs_file_param{prj__chemical_system__solution__components}
     auto comp_config = config.getConfigSubtree("components");
     for (
-        auto const& component_name :
+        auto const& component_config :
         //! \ogs_file_param{prj__chemical_system__solution__components__component}
-        comp_config.getConfigParameterList<std::string>("component"))
+        comp_config.getConfigSubtreeList("component"))
     {
+        auto const component_name = component_config.getValue<std::string>();
         Component component(component_name);
         components.emplace(component_name, component);
     }
