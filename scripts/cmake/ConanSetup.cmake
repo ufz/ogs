@@ -1,7 +1,14 @@
 if(NOT OGS_USE_CONAN)
     return()
 endif()
-find_program(CONAN_CMD conan)
+string(TOLOWER ${OGS_USE_CONAN} OGS_USE_CONAN_lower)
+if(OGS_USE_CONAN_lower STREQUAL "auto" AND POETRY)
+    execute_process(
+        COMMAND poetry add conan=${ogs.minimum_version.conan}
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
+endif()
+find_program(CONAN_CMD conan HINTS ${PROJECT_BINARY_DIR}/.venv/bin)
 if(NOT CONAN_CMD)
     message(WARNING "conan executable not found. Consider installing Conan for "
         "automatic third-party library handling. https://www.opengeosys.org/doc"
