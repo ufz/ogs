@@ -48,8 +48,10 @@ void AqueousSolution::print(std::ostream& os,
 
     for (auto const& component : components)
     {
-        os << component.name << " " << (*component.amount)[chemical_system_id]
-           << "\n";
+        os << component.name << " " << (*component.amount)[chemical_system_id];
+        component.chemical_formula.empty()
+            ? os << "\n"
+            : os << " as " << component.chemical_formula << "\n";
     }
 
     os << "\n\n";
