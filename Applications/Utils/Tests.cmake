@@ -2,6 +2,7 @@
 AddTest(
     NAME MapGeometryToMeshSurface_Ammer
     PATH MeshGeoToolsLib/Ammer
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m Ammer-Homogen100m-Final-TopSurface.vtu -i Ammer-Rivers.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/Ammer-Rivers-Mapped.gml
     TESTER diff
@@ -14,6 +15,7 @@ if(NOT "${HOSTNAME}" MATCHES "frontend.*")
     AddTest(
         NAME MapGeometryToMeshSurface_Bode
         PATH MeshGeoToolsLib/Bode
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Bode
         EXECUTABLE MapGeometryToMeshSurface
         EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
         REQUIREMENTS NOT OGS_USE_MPI
@@ -25,6 +27,7 @@ endif()
 AddTest(
     NAME MapGeometryToMeshSurface_Naegelstedt
     PATH MeshGeoToolsLib/Naegelstedt
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Naegelstedt
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m SmallTest.vtu -i RiverNetwork.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/RiverNetwork-Mapped.gml
     REQUIREMENTS NOT OGS_USE_MPI
@@ -35,6 +38,7 @@ AddTest(
 AddTest(
     NAME postLIE
     PATH LIE/PostProcessing
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing
     EXECUTABLE postLIE
     EXECUTABLE_ARGS -i single_joint_pcs_0.pvd -o ${Data_BINARY_DIR}/LIE/PostProcessing/post_single_joint_pcs_0.pvd
     REQUIREMENTS NOT OGS_USE_MPI AND OGS_BUILD_PROCESS_LIE
@@ -46,6 +50,7 @@ AddTest(
 AddTest(
     NAME identifySubdomains_2D_Create
     PATH MeshGeoToolsLib/IdentifySubdomains
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
     EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/new_ -- 2D_mesh_top_boundary.vtu 2D_mesh_bottom_boundary.vtu
     REQUIREMENTS NOT OGS_USE_MPI
@@ -60,6 +65,7 @@ AddTest(
 AddTest(
     NAME identifySubdomains_2D_Check
     PATH MeshGeoToolsLib/IdentifySubdomains
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
     EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/check_ -- 2D_mesh_top.vtu 2D_mesh_bottom.vtu
     REQUIREMENTS NOT OGS_USE_MPI
@@ -74,6 +80,7 @@ AddTest(
 AddTest(
     NAME identifySubdomains_riverTriangleMesh
     PATH MeshGeoToolsLib/IdentifySubdomains
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
     EXECUTABLE_ARGS -m river_domain_triangle.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/triangle_ -- river_bc.vtu
     REQUIREMENTS NOT OGS_USE_MPI
@@ -87,6 +94,7 @@ AddTest(
 AddTest(
     NAME identifySubdomains_riverPrismMesh
     PATH MeshGeoToolsLib/IdentifySubdomains
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
     EXECUTABLE_ARGS -s 1e-3 -m river_domain_prism.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/prism_ -- river_bc.vtu
     REQUIREMENTS NOT OGS_USE_MPI
@@ -102,6 +110,7 @@ AddTest(
 AddTest(
     NAME partmesh_2Dmesh_3partitions_ascii
     PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/ASCII
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/ASCII
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -a -m -n 3 -i 2Dmesh.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/ASCII
     REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
@@ -116,6 +125,7 @@ AddTest(
 AddTest(
     NAME partmesh_2Dmesh_3partitions_binary
     PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -m -n 3 -i 2Dmesh.vtu
                     -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary --
@@ -193,6 +203,7 @@ AddTest(
 AddTest(
     NAME checkMesh_LIE_HM_TaskB
     PATH LIE/HydroMechanics
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/HydroMechanics
     EXECUTABLE checkMesh
     EXECUTABLE_ARGS -p -v TaskB_mesh.vtu
     REQUIREMENTS NOT OGS_USE_MPI
@@ -201,6 +212,7 @@ AddTest(
 AddTest(
     NAME mesh2raster_test
     PATH MeshGeoToolsLib/Hamburg
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE Mesh2Raster
     EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-raster.asc -c 25
     REQUIREMENTS NOT OGS_USE_MPI
@@ -211,6 +223,7 @@ AddTest(
 MeshTest(
     NAME ExtractSurfaceLeft
     PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Left.vtu -x 1 -y 0 -z 0 -a 25
     REQUIREMENTS NOT OGS_USE_MPI
@@ -220,6 +233,7 @@ MeshTest(
 MeshTest(
     NAME ExtractSurfaceRight
     PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Right.vtu -x -1 -y 0 -z 0 -a 25
     REQUIREMENTS NOT OGS_USE_MPI
@@ -229,6 +243,7 @@ MeshTest(
 MeshTest(
     NAME ExtractSurfaceFront
     PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Front.vtu -x 0 -y 1 -z 0 -a 25
     REQUIREMENTS NOT OGS_USE_MPI
@@ -238,6 +253,7 @@ MeshTest(
 MeshTest(
     NAME ExtractSurfaceBack
     PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Back.vtu -x 0 -y -1 -z 0 -a 25
     REQUIREMENTS NOT OGS_USE_MPI
@@ -247,6 +263,7 @@ MeshTest(
 MeshTest(
     NAME GocadTSurface_Mesh_Test
     PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE GocadTSurfaceReader
     EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
     REQUIREMENTS NOT OGS_USE_MPI
@@ -256,6 +273,7 @@ MeshTest(
 AddTest(
     NAME GocadTSurface_Array_Test
     PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE GocadTSurfaceReader
     EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
     REQUIREMENTS NOT OGS_USE_MPI
@@ -268,6 +286,7 @@ AddTest(
 AddTest(
     NAME createIntermediateRasters_test
     PATH MeshGeoToolsLib/Hamburg
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE createIntermediateRasters
     EXECUTABLE_ARGS --file1 layer04.asc --file2 layer17.asc -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/output.asc
     REQUIREMENTS NOT OGS_USE_MPI
@@ -278,6 +297,7 @@ AddTest(
 AddTest(
     NAME Vtu2Grid_Test
     PATH FileIO/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
     EXECUTABLE Vtu2Grid
     EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerGridOutput.vtu -x 200 -y 200 -z 20
     REQUIREMENTS NOT OGS_USE_MPI
@@ -316,6 +336,7 @@ endforeach()
 AddTest(
     NAME partmesh_with_field_data
     PATH NodePartitionedMesh/partmesh
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -n 2 -i cube_1x1x1_hex_8.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh
     TESTER diff
@@ -335,6 +356,7 @@ if(OGS_USE_NETCDF)
     AddTest(
         NAME NetCDF_2D_Test
         PATH FileConverter/
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
         EXECUTABLE NetCdfConverter
         EXECUTABLE_ARGS -i sresa1b_ncar_ccsm3-example.nc -o ${Data_BINARY_DIR}/FileConverter/sresa1b_ncar_ccsm3-example.vtu -v pr -t 0 --dim1 2 --dim2 1 --timestep-first 0 --timestep-last 0 -e tri
         REQUIREMENTS NOT OGS_USE_MPI
@@ -346,6 +368,7 @@ if(OGS_USE_NETCDF)
     AddTest(
         NAME NetCDF_3D_Test
         PATH FileConverter/
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
         EXECUTABLE NetCdfConverter
         EXECUTABLE_ARGS -i slim_100897_198.nc -o ${Data_BINARY_DIR}/FileConverter/slim_100897_198.vtu -v NO -t 0 --dim1 3 --dim2 2 --dim3 1 --timestep-first 0 --timestep-last 0 -e hex
         REQUIREMENTS NOT OGS_USE_MPI
@@ -357,6 +380,7 @@ if(OGS_USE_NETCDF)
     AddTest(
         NAME NetCDF_Image_Test
         PATH FileConverter
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
         EXECUTABLE NetCdfConverter
         EXECUTABLE_ARGS -i sresa1b_ncar_ccsm3-example.nc -o ${Data_BINARY_DIR}/FileConverter/sresa1b_ncar_ccsm3-example.asc -v pr -t 0 --dim1 2 --dim2 1 --timestep-first 0 --timestep-last 0 --images
         REQUIREMENTS NOT OGS_USE_MPI
@@ -369,6 +393,7 @@ if(OGS_BUILD_GUI)
     AddTest(
         NAME RemoveGhostData_Test
         PATH MeshLib/
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
         EXECUTABLE RemoveGhostData
         EXECUTABLE_ARGS -i Mesh3D.pvtu -o ${Data_BINARY_DIR}/MeshLib/RemoveGhostDataOutput.vtu
         REQUIREMENTS NOT OGS_USE_MPI
@@ -380,6 +405,7 @@ if(OGS_BUILD_GUI)
     AddTest(
         NAME RemoveGhostData_EllipticSquareTest
         PATH EllipticPETSc/
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/PATH EllipticPETSc
         EXECUTABLE RemoveGhostData
         EXECUTABLE_ARGS -i square_1e1_neumann_pcs_0_ts_1_t_1_000000.pvtu -o ${Data_BINARY_DIR}/EllipticPETSc/square_1e1_neumann_pcs_0_ts_1_t_1_000000.vtu
         REQUIREMENTS NOT OGS_USE_MPI
@@ -392,6 +418,7 @@ endif()
 AddTest(
     NAME Raster2Mesh_Elevation_Test
     PATH FileConverter
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
     EXECUTABLE Raster2Mesh
     EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-elevation.vtu -e tri -p elevation
     REQUIREMENTS NOT OGS_USE_MPI
@@ -402,6 +429,7 @@ AddTest(
 AddTest(
     NAME Raster2Mesh_Materials_Test
     PATH FileConverter
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
     EXECUTABLE Raster2Mesh
     EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-materials.vtu -e quad -p materials
     REQUIREMENTS NOT OGS_USE_MPI
@@ -413,6 +441,7 @@ AddTest(
 AddTest(
     NAME Raster2Mesh_Scalars_Test
     PATH FileConverter
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
     EXECUTABLE Raster2Mesh
     EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-scalars.vtu -e tri -p scalar -n ScalarValues
     REQUIREMENTS NOT OGS_USE_MPI

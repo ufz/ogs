@@ -21,8 +21,8 @@ function (MeshTest)
         return()
     endif()
     # parse arguments
-    set(options WORKING_DIRECTORY_SOURCE)
-    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER RUNTIME)
+    set(options NONE)
+    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER RUNTIME WORKING_DIRECTORY)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS)
     cmake_parse_arguments(MeshTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -32,11 +32,6 @@ function (MeshTest)
     file(MAKE_DIRECTORY ${MeshTest_BINARY_PATH})
     file(TO_NATIVE_PATH "${MeshTest_BINARY_PATH}" MeshTest_BINARY_PATH_NATIVE)
     set(MeshTest_STDOUT_FILE_PATH "${MeshTest_BINARY_PATH}/${MeshTest_NAME}_stdout.log")
-    if(MeshTest_WORKING_DIRECTORY_SOURCE)
-        set(MeshTest_WORKING_DIRECTORY ${MeshTest_SOURCE_PATH})
-    else()
-        set(MeshTest_WORKING_DIRECTORY ${MeshTest_BINARY_PATH})
-    endif()
 
     # set defaults
     if (NOT DEFINED MeshTest_REQUIREMENTS)
@@ -44,6 +39,9 @@ function (MeshTest)
     endif()
     if (NOT DEFINED MeshTest_RUNTIME)
         set(MeshTest_RUNTIME 1)
+    endif()
+    if(NOT DEFINED MeshTest_WORKING_DIRECTORY)
+        set(MeshTest_WORKING_DIRECTORY ${MeshTest_BINARY_PATH})
     endif()
 
     # --- Implement wrappers ---

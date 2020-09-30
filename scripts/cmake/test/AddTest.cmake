@@ -19,7 +19,7 @@
 #   VIS <vtu output file(s)> # optional for documentation
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
 #                          values should be taken from envinf job
-#   WORKING_DIRECTORY_SOURCE # optional, runs the the test in the source directory
+#   WORKING_DIRECTORY # optional, specify the working directory of the test
 #   DISABLED # optional, disables the test
 # )
 #
@@ -46,8 +46,8 @@ function (AddTest)
     set(LARGE_RUNTIME 60)
 
     # parse arguments
-    set(options DISABLED WORKING_DIRECTORY_SOURCE)
-    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS)
+    set(options DISABLED)
+    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS WORKING_DIRECTORY)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS PYTHON_PACKAGES VIS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -68,9 +68,7 @@ function (AddTest)
     if (NOT DEFINED AddTest_RUNTIME)
         set(AddTest_RUNTIME 1)
     endif()
-    if(AddTest_WORKING_DIRECTORY_SOURCE)
-        set(AddTest_WORKING_DIRECTORY ${AddTest_SOURCE_PATH})
-    else()
+    if(NOT DEFINED AddTest_WORKING_DIRECTORY)
         set(AddTest_WORKING_DIRECTORY ${AddTest_BINARY_PATH})
     endif()
 
