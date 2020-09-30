@@ -57,9 +57,12 @@ int readRasterPaths(std::string const& raster_list_file, std::vector<std::string
 int main (int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
-        "Creates a layered 3D OGS mesh from an existing 2D OGS mesh and raster "
-        "files representing subsurface layers. Supported raster formats are "
-        "ArcGIS ascii rasters (*.asc) and Surfer Grids (*.grd).\n\n"
+        "Creates a layered 3D OGS mesh from an existing 2D OGS mesh and a list "
+        "of raster files representing subsurface layers. Supported raster "
+        "formats are ArcGIS ascii rasters (*.asc) and Surfer Grids (*.grd). "
+        "Only input meshes consisting of line and triangle elements are "
+        "currently supported as mapping of quads might result in invalid mesh "
+        "elements.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
@@ -67,39 +70,38 @@ int main (int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> mesh_arg(
-        "i", "input-mesh-file",
-        "The name of the file containing the 2D input mesh.", true, "",
-        "input file name");
-    cmd.add(mesh_arg);
-
-    TCLAP::ValueArg<std::string> mesh_out_arg(
-        "o", "output-mesh-file",
-        "The name of the file to which the resulting 3D mesh will be written.",
-        true, "", "output file name");
-    cmd.add(mesh_out_arg);
-
-    TCLAP::ValueArg<std::string> raster_path_arg(
-        "r", "raster-list",
-        "An ascii-file containing a list of raster files, starting from top "
-        "(DEM) to bottom.",
-        true, "", "list of raster files");
-    cmd.add(raster_path_arg);
+    TCLAP::ValueArg<bool> use_ascii_arg(
+        "", "ascii_output",
+        "Use ascii format for VTU output.",
+        false, false, "true/false");
+    cmd.add(use_ascii_arg);
 
     double min_thickness(std::numeric_limits<double>::epsilon());
     TCLAP::ValueArg<double> min_thickness_arg(
         "t", "thickness",
         "The minimum thickness of a layer to be integrated at any given "
         "location.",
-        false, min_thickness, "minimum layer thickness");
+        false, min_thickness, "floating point number");
     cmd.add(min_thickness_arg);
 
-    TCLAP::ValueArg<bool> use_ascii_arg(
-        "", "ascii_output",
-        "Use ascii format for data in the vtu output. Due to possible rounding "
-        "the ascii output could result in lower accuracy.",
-        false, false, "boolean value");
-    cmd.add(use_ascii_arg);
+    TCLAP::ValueArg<std::string> raster_path_arg(
+        "r", "raster-list",
+        "An ascii-file containing a list of raster files, starting from top "
+        "(DEM) to bottom.",
+        true, "", "file name");
+    cmd.add(raster_path_arg);
+
+        TCLAP::ValueArg<std::string> mesh_out_arg(
+        "o", "output-mesh-file",
+        "The file name of the resulting 3D mesh.",
+        true, "", "file name");
+    cmd.add(mesh_out_arg);
+
+    TCLAP::ValueArg<std::string> mesh_arg(
+        "i", "input-mesh-file",
+        "The file name of the 2D input mesh.", true, "",
+        "file name");
+    cmd.add(mesh_arg);
 
     cmd.parse(argc, argv);
 
@@ -123,7 +125,7 @@ int main (int argc, char* argv[])
     }
     if (sfc_mesh->getDimension() != 2)
     {
-        ERR("Input mesh needs to be a 2D mesh.");
+        ERR("Input mesh must be a 2D mesh.");
         return EXIT_FAILURE;
     }
     INFO("done.");
