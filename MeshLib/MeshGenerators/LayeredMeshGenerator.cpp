@@ -24,6 +24,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshInformation.h"
 #include "MeshLib/PropertyVector.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
@@ -37,6 +38,14 @@ bool LayeredMeshGenerator::createLayers(
 {
     if (mesh.getDimension() != 2)
     {
+        return false;
+    }
+
+    auto const elem_count = MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
+    if (elem_count.find(MeshLib::MeshElemType::QUAD) != elem_count.end())
+    {
+        ERR("Input mesh contains QUAD-elements. Please use input mesh "
+            "containing LINE and TRIANGLE elements only.");
         return false;
     }
 
