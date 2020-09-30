@@ -7,7 +7,8 @@ ogs_add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(ApplicationsLib
                       PUBLIC BaseLib GeoLib NumLib Processes
-                      PRIVATE MathLib
+                      PRIVATE CMakeInfoLib
+                              MathLib
                               MeshLib
                               MeshGeoToolsLib
                               ParameterLib

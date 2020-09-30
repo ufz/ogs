@@ -15,7 +15,6 @@
 
 #include <algorithm>
 #include <cctype>
-#include "BaseLib/Logging.h"
 #include <set>
 
 #ifdef OGS_USE_PYTHON
@@ -25,8 +24,10 @@
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "GeoLib/GEOObjects.h"
+#include "InfoLib/CMakeInfo.h"
 #include "MaterialLib/MPL/CreateMedium.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
@@ -275,9 +276,12 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 #ifdef OGS_USE_PYTHON
         namespace py = pybind11;
 
-        // Append project's directory to python's module search path.
-        py::module::import("sys").attr("path").attr("append")(
-            project_directory);
+        // Append to python's module search path
+        auto py_path = py::module::import("sys").attr("path");
+        py_path.attr("append")(project_directory);  // .prj directory
+        // virtualenv
+        py_path.attr("append")(
+            CMakeInfoLib::CMakeInfo::python_virtualenv_sitepackages);
 
         auto const script_path =
             BaseLib::copyPathToFileName(*python_script, project_directory);
