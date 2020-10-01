@@ -57,6 +57,10 @@ std::vector<KineticReactant> createKineticReactants(
         auto amount = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
+        auto mesh_prop_amount = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
+        mesh_prop_amount->resize(mesh.getNumberOfElements());
+
         if (chemical_formula.empty() && fix_amount)
         {
             OGS_FATAL(
@@ -67,6 +71,7 @@ std::vector<KineticReactant> createKineticReactants(
         kinetic_reactants.emplace_back(std::move(name),
                                        std::move(chemical_formula),
                                        amount,
+                                       mesh_prop_amount,
                                        initial_amount,
                                        std::move(parameters),
                                        fix_amount);
