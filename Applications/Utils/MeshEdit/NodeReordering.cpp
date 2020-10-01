@@ -28,7 +28,7 @@
 void reorderNodes(std::vector<MeshLib::Element*> &elements)
 {
     std::size_t n_corrected_elements = 0;
-    std::size_t nElements (elements.size());
+    std::size_t const nElements(elements.size());
     for (std::size_t i=0; i<nElements; ++i)
     {
         if (elements[i]->testElementNodeOrder())
@@ -82,7 +82,7 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
 /// Re-ordering prism elements to correct OGS6 meshes with and without InSitu-Lib
 void reorderNodes2(std::vector<MeshLib::Element*> &elements)
 {
-    std::size_t nElements (elements.size());
+    std::size_t const nElements(elements.size());
     for (std::size_t i=0; i<nElements; ++i)
     {
         const unsigned nElemNodes (elements[i]->getNumberOfBaseNodes());
