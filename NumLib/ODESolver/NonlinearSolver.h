@@ -94,6 +94,8 @@ public:
     {
     }
 
+    ~NonlinearSolver();
+
     //! Set the nonlinear equation system that will be solved.
     //! TODO doc
     void setEquationSystem(System& eq, ConvergenceCriterion& conv_crit)
@@ -171,6 +173,8 @@ public:
         : _linear_solver(linear_solver), _maxiter(maxiter)
     {
     }
+
+    ~NonlinearSolver();
 
     //! Set the nonlinear equation system that will be solved.
     //! TODO doc
