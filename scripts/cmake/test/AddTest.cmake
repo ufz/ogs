@@ -298,8 +298,11 @@ Use six arguments version of AddTest with absolute and relative tolerances")
                 ", make sure to have the WRAPPER set to 'poetry'!")
         endif()
         if(POETRY)
+            if(MSVC)
+                set(CMD_PREFIX cmd /C)
+            endif()
             execute_process(
-               COMMAND poetry add ${AddTest_PYTHON_PACKAGES}
+               COMMAND ${CMD_PREFIX} poetry add ${AddTest_PYTHON_PACKAGES}
                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
             )
         else()

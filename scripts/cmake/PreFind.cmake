@@ -95,12 +95,19 @@ if(POETRY)
             ${PROJECT_BINARY_DIR}/pyproject.toml)
     endif()
     if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
+        if(MSVC)
+            set(CMD_PREFIX cmd /C)
+        endif()
         execute_process(
-            COMMAND ${POETRY} install
+            COMMAND ${CMD_PREFIX} ${POETRY} install
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         )
     endif()
     set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
+    set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
+    if(MSVC)
+        set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
+    endif()
 endif()
 
 if(OGS_USE_PYTHON)
