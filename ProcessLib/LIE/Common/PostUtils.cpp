@@ -391,8 +391,10 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
          enrich_id++)
     {
         // nodal value of levelset
-        std::vector<double> nodal_levelset(_output_mesh->getNodes().size(),
-                                           0.0);
+        std::vector<double> nodal_levelset(
+            _output_mesh->getNodes().size(),
+            std::numeric_limits<double>::quiet_NaN());
+
         auto const& ele_levelset =
             *_output_mesh->getProperties().getPropertyVector<double>(
                 "levelset" + std::to_string(enrich_id + 1));
@@ -403,10 +405,6 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
                 continue;
             }
             const double e_levelset = ele_levelset[e->getID()];
-            if (e_levelset == 0)
-            {
-                continue;
-            }
 
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
             {
