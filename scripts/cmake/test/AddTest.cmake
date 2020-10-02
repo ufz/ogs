@@ -126,13 +126,6 @@ function (AddTest)
             message(STATUS "ERROR: mpirun was not found but is required for ${AddTest_NAME}!")
             return()
         endif()
-    elseif(AddTest_WRAPPER STREQUAL "poetry")
-        if(POETRY)
-            set(WRAPPER_COMMAND ${POETRY})
-            set(AddTest_WRAPPER_ARGS "run")
-        else()
-            set(DISABLED_TESTS_LOG "${DISABLED_TESTS_LOG}\nDisabling poetry wrapper for ${AddTest_NAME} as poetry exe was not found!" CACHE INTERNAL "")
-        endif()
     endif()
 
     # --- Implement testers ---
@@ -293,17 +286,10 @@ Use six arguments version of AddTest with absolute and relative tolerances")
     endif()
 
     if(AddTest_PYTHON_PACKAGES)
-        if(NOT AddTest_WRAPPER STREQUAL "poetry")
-            message(FATAL_ERROR "Benchmark ${AddTest_NAME} uses PYTHON_PACKAGES"
-                ", make sure to have the WRAPPER set to 'poetry'!")
-        endif()
         if(POETRY)
-            if(MSVC)
-                set(CMD_PREFIX cmd /C)
-            endif()
             execute_process(
-               COMMAND ${CMD_PREFIX} poetry add ${AddTest_PYTHON_PACKAGES}
-               WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                COMMAND ${CMD_COMMAND} poetry add ${AddTest_PYTHON_PACKAGES}
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
             )
         else()
             message(STATUS "Warning: Benchmark ${AddTest_NAME} requires these "

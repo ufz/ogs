@@ -85,6 +85,10 @@ if(IS_GIT_REPO AND NOT OGS_VERSION)
     )
 endif()
 
+if(MSVC)
+    set(CMD_COMMAND "cmd" "/c" CACHE INTERNAL "")
+endif()
+
 ### Python setup ###
 find_program(POETRY poetry)
 if(POETRY)
@@ -95,13 +99,7 @@ if(POETRY)
             ${PROJECT_BINARY_DIR}/pyproject.toml)
     endif()
     if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
-        if(MSVC)
-            set(CMD_PREFIX cmd /C)
-        endif()
-        execute_process(
-            COMMAND ${CMD_PREFIX} ${POETRY} install
-            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-        )
+        execute_process(COMMAND ${CMD_COMMAND} poetry install)
     endif()
     set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
     set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
@@ -116,6 +114,13 @@ else()
     find_package(Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter)
 endif()
 if(POETRY)
-    set(Python3_VIRTUALENV_SITEPACKAGES
-        ${Python3_ROOT_DIR}/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
+    if(MSVC)
+        file(TO_NATIVE_PATH "${Python3_ROOT_DIR}/Lib/site-packages"
+            Python3_VIRTUALENV_SITEPACKAGES)
+        string(REPLACE "\\" "\\\\" Python3_VIRTUALENV_SITEPACKAGES
+            ${Python3_VIRTUALENV_SITEPACKAGES})
+    else()
+        set(Python3_VIRTUALENV_SITEPACKAGES
+            ${Python3_ROOT_DIR}/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
+    endif()
 endif()
