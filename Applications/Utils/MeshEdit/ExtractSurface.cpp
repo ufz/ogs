@@ -82,7 +82,7 @@ int main (int argc, char* argv[])
     cmd.add(face_prop_name);
 
     TCLAP::ValueArg<double> angle_arg(
-        "a", "angle", "angle between given normal and element normal", false,
+        "a", "angle", "tolerated angle (degree) between given normal and element normal", false,
         90, "floating point value");
     cmd.add(angle_arg);
 
