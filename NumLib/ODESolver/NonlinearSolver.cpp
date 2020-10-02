@@ -448,4 +448,21 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
 #endif
     OGS_FATAL("Unsupported nonlinear solver type '{:s}'.", type.c_str());
 }
+
+NonlinearSolver<NonlinearSolverTag::Picard>::~NonlinearSolver()
+{
+    if (_r_neq != nullptr)
+    {
+        NumLib::GlobalVectorProvider::provider.releaseVector(*_r_neq);
+    }
+}
+
+NonlinearSolver<NonlinearSolverTag::Newton>::~NonlinearSolver()
+{
+    if (_r_neq != nullptr)
+    {
+        NumLib::GlobalVectorProvider::provider.releaseVector(*_r_neq);
+    }
+}
+
 }  // namespace NumLib

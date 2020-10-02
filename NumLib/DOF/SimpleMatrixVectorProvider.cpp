@@ -249,9 +249,19 @@ releaseVector(GlobalVector const& x)
 SimpleMatrixVectorProvider::
 ~SimpleMatrixVectorProvider()
 {
-    if ((!_used_matrices.empty()) || (!_used_vectors.empty())) {
-        WARN("There are still some matrices and vectors in use."
-             " This might be an indicator of a possible waste of memory.");
+    if (!_used_matrices.empty())
+    {
+        WARN(
+            "There are still {:d} global matrices in use."
+            " This might be an indicator of a possible waste of memory.",
+            _used_matrices.size());
+    }
+    if (!_used_vectors.empty())
+    {
+        WARN(
+            "There are still {:d} global vectors in use."
+            " This might be an indicator of a possible waste of memory.",
+            _used_vectors.size());
     }
 
     for (auto& id_ptr : _unused_matrices)
