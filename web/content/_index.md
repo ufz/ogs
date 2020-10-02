@@ -7,7 +7,7 @@ date: 2017-01-13T14:24:23+01:00
 
 hero:
   headline: Open-source multi-physics
-  textline: OpenGeoSys (OGS) is a scientific [open source project](https://gitlab.opengeosys.org/ogs/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. Current version is OpenGeoSys-6 which is documented on this page. For information about OpenGeoSys-5, see [its dedicated section](/ogs-5). OGS has been successfully applied in the fields of regional, contaminant and coastal hydrology, fundamental and geothermal energy systems, geotechnical engineering, energy storage, CO2 sequestration/storage and Nuclear Waste Management and disposal.
+  textline: OpenGeoSys (OGS) is a scientific [open source project](https://gitlab.opengeosys.org/ogs/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. Current version is OpenGeoSys-6 which is documented on this page. For information about OpenGeoSys-5, see [its dedicated section](/ogs-5). OGS has been successfully applied in the fields of regional, contaminant and coastal hydrology, fundamental and geothermal energy systems, geotechnical engineering, energy storage, CO2 sequestration/storage and nuclear waste management and disposal.
   quicklinks:
     - name: Tools
       anchor: tools
