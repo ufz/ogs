@@ -8,5 +8,5 @@ build linux conan:
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
       -DOGS_BUILD_UTILS=ON
-      -DOGS_USE_CONAN=ON
+      -DOGS_USE_CONAN=AUTO
       -DOGS_USE_MFRONT=ON
