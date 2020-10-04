@@ -373,13 +373,21 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     auto const& surface = phreeqc_io._surface;
     int const num_skipped_lines = surface.empty() ? 1 : 2;
 
+    auto& kinetic_reactants = phreeqc_io._chemical_system->kinetic_reactants;
+    for (auto& kinetic_reactant : kinetic_reactants)
+    {
+        std::fill(kinetic_reactant.amount_avg->begin(),
+                  kinetic_reactant.amount_avg->end(), 0.);
+    }
+
     for (std::size_t mesh_item_id = 0;
          mesh_item_id < phreeqc_io.chemical_system_index_map.size();
          ++mesh_item_id)
     {
         auto const& local_chemical_system =
             phreeqc_io.chemical_system_index_map[mesh_item_id];
-        for (std::size_t ip = 0; ip < local_chemical_system.size(); ++ip)
+        auto const num_local_chemical_system = local_chemical_system.size();
+        for (std::size_t ip = 0; ip < num_local_chemical_system; ++ip)
         {
             auto const& chemical_system_id = local_chemical_system[ip];
 
@@ -443,8 +451,6 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
             auto& components = aqueous_solution->components;
             auto& equilibrium_reactants =
                 phreeqc_io._chemical_system->equilibrium_reactants;
-            auto& kinetic_reactants =
-                phreeqc_io._chemical_system->kinetic_reactants;
             auto& user_punch = phreeqc_io._user_punch;
             for (int item_id = 0;
                  item_id < static_cast<int>(accepted_items.size());
@@ -508,6 +514,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                                 "'.");
                         (*kinetic_reactant.amount)[chemical_system_id] =
                             accepted_items[item_id];
+                        (*kinetic_reactant.amount_avg)[mesh_item_id] +=
+                            accepted_items[item_id];
                         break;
                     }
                     case ItemType::SecondaryVariable:
@@ -527,6 +535,12 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                     }
                 }
             }
+        }
+
+        for (auto& kinetic_reactant : kinetic_reactants)
+        {
+            (*kinetic_reactant.amount_avg)[mesh_item_id] /=
+                num_local_chemical_system;
         }
     }
 
