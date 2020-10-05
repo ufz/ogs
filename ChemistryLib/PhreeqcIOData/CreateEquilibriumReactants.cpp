@@ -50,8 +50,15 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
         auto amount = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
-        equilibrium_reactants.emplace_back(
-            std::move(name), amount, initial_amount, saturation_index);
+        auto mesh_prop_amount = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
+        mesh_prop_amount->resize(mesh.getNumberOfElements());
+
+        equilibrium_reactants.emplace_back(std::move(name),
+                                           amount,
+                                           mesh_prop_amount,
+                                           initial_amount,
+                                           saturation_index);
     }
 
     return equilibrium_reactants;
