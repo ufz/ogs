@@ -9,8 +9,12 @@ if(OGS_USE_CONAN_lower STREQUAL "auto" AND POETRY)
         ${PROJECT_BINARY_DIR}/.venv/Scripts
         REQUIRED NO_DEFAULT_PATH
     )
+    find_program(CONAN_CMD conan HINTS ${PROJECT_BINARY_DIR}/.venv/bin
+        REQUIRED NO_DEFAULT_PATH
+    )
+else()
+    find_program(CONAN_CMD conan)
 endif()
-find_program(CONAN_CMD conan HINTS ${PROJECT_BINARY_DIR}/.venv/bin)
 if(NOT CONAN_CMD)
     message(WARNING "conan executable not found. Consider installing Conan for "
         "automatic third-party library handling. https://www.opengeosys.org/doc"
