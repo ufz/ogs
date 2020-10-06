@@ -1,2 +1,0 @@
-snakemake==5.19.3
-parsl==1.0.0

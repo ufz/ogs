@@ -32,3 +32,16 @@ if(POETRY)
             ${Python3_ROOT_DIR}/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
     endif()
 endif()
+
+set(LOCAL_VIRTUALENV_BIN_DIRS
+    ${PROJECT_BINARY_DIR}/.venv/bin
+    ${PROJECT_BINARY_DIR}/.venv/Scripts
+    CACHE INTERNAL ""
+)
+
+if(POETRY AND BUILD_TESTING)
+    execute_process(COMMAND ${CMD_COMMAND} poetry add
+        snakemake=${ogs.minimum_version.snakemake}
+        parsl=${ogs.minimum_version.parsl}
+    )
+endif()

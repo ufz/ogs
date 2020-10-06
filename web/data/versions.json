@@ -17,7 +17,9 @@
     "vtk": "8.1.2",
     "petsc": "3.11.2",
     "qt": "5.12.4",
-    "python": "3.6"
+    "python": "3.6",
+    "snakemake": "5.19.3",
+    "parsl": "1.0.0"
   },
   "tested_version": {
     "vtk": "8.2.0",
