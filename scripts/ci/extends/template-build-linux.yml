@@ -5,12 +5,14 @@
   dependencies: [meta, meta_container]
 
   before_script:
+    - "echo \"For debugging run: docker run --rm -it -v $CI_BUILDS_DIR:/builds -w=$CI_PROJECT_DIR $CI_JOB_IMAGE\""
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     - ([ "${CONAN_USER_HOME}" == "${CI_PROJECT_DIR}/.conan" ]) && conan remove --system-reqs '*'
     - ([ "${CI_COMMIT_BRANCH}" == "master" -a $BUILD_CTEST_LARGE_ON_MASTER ]) && export BUILD_CTEST_LARGE=true
 
   script:
+    - "echo \"Running: cmake .. -G Ninja $CMAKE_ARGS -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES\""
     - >
       cmake .. -G Ninja
       $CMAKE_ARGS
