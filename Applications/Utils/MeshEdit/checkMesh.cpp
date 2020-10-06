@@ -28,7 +28,7 @@
 
 #include "MeshLib/IO/readMeshFromFile.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Checks mesh properties.\n\n"
@@ -38,18 +38,20 @@ int main(int argc, char *argv[])
             "Copyright (c) 2012-2020, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::UnlabeledValueArg<std::string> mesh_arg("mesh-file","input mesh file",true,"","string");
-    cmd.add( mesh_arg );
-    TCLAP::SwitchArg valid_arg("v","validation","validate the mesh");
-    cmd.add( valid_arg );
-    TCLAP::SwitchArg print_properties_arg("p","print_properties","print properties stored in the mesh");
-    cmd.add( print_properties_arg );
+    TCLAP::UnlabeledValueArg<std::string> mesh_arg(
+        "mesh-file", "input mesh file", true, "", "string");
+    cmd.add(mesh_arg);
+    TCLAP::SwitchArg valid_arg("v", "validation", "validate the mesh");
+    cmd.add(valid_arg);
+    TCLAP::SwitchArg print_properties_arg(
+        "p", "print_properties", "print properties stored in the mesh");
+    cmd.add(print_properties_arg);
 
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     // read the mesh file
     BaseLib::MemWatch mem_watch;
-    const unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+    const unsigned long mem_without_mesh(mem_watch.getVirtMemUsage());
     BaseLib::RunTime run_time;
     run_time.start();
     std::unique_ptr<MeshLib::Mesh> mesh(
@@ -59,8 +61,8 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    const unsigned long mem_with_mesh (mem_watch.getVirtMemUsage());
-    if (mem_with_mesh>0)
+    const unsigned long mem_with_mesh(mem_watch.getVirtMemUsage());
+    if (mem_with_mesh > 0)
     {
         INFO("Memory size: {:i} MB",
              (mem_with_mesh - mem_without_mesh) / (1024 * 1024));
@@ -89,7 +91,8 @@ int main(int argc, char *argv[])
 
     MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
-    if (valid_arg.isSet()) {
+    if (valid_arg.isSet())
+    {
         // MeshValidation outputs error messages
         // Remark: MeshValidation can modify the original mesh
         MeshLib::MeshInformation::writeMeshValidationResults(*mesh);
