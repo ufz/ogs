@@ -39,9 +39,14 @@ set(LOCAL_VIRTUALENV_BIN_DIRS
     CACHE INTERNAL ""
 )
 
-if(POETRY AND BUILD_TESTING)
-    execute_process(COMMAND ${CMD_COMMAND} poetry add
-        snakemake=${ogs.minimum_version.snakemake}
-        parsl=${ogs.minimum_version.parsl}
-    )
+if(POETRY)
+    if(BUILD_TESTING)
+        list(APPEND PYTHON_PACKAGES snakemake=${ogs.minimum_version.snakemake})
+        if(NOT WIN32)
+            # Parsl is not supported on Windows yet
+            # https://github.com/Parsl/parsl/issues/1878
+            list(APPEND PYTHON_PACKAGES parsl=${ogs.minimum_version.parsl})
+        endif()
+    endif()
+    execute_process(COMMAND ${CMD_COMMAND} poetry add ${PYTHON_PACKAGES})
 endif()
