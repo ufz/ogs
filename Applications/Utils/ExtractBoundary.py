@@ -41,7 +41,10 @@ def extract_boundary(elem_type, inputs=[], outputs=[],
 @bash_app
 def vtk_diff(fields, inputs=[], outputs=[],
              stderr=parsl.AUTO_LOGNAME, stdout=parsl.AUTO_LOGNAME):
+    import os
     script = ""
+    if os.path.exists(outputs[0]):
+        os.remove(outputs[0])
     for field in fields:
         field_a = field[0]
         offset = 0
@@ -51,10 +54,9 @@ def vtk_diff(fields, inputs=[], outputs=[],
         abs_tol = field[1 + offset]
         rel_tol = field[2 + offset]
 
-        script += f"""rm {outputs[0]} || true
-            vtkdiff {inputs[0]} {inputs[1]} \
+        script += f"""vtkdiff {inputs[0]} {inputs[1]} \
               -a {field_a} -b {field_b} \
-              --abs {abs_tol} --rel {rel_tol} > {outputs[0]}
+              --abs {abs_tol} --rel {rel_tol} >> {outputs[0]}
         """
     return script
 
