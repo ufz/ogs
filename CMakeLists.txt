@@ -62,7 +62,8 @@ option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 
 # ---- CMake includes ----
 include(Versions)
-include(PreFind)
+include(GitSetup)
+include(PythonSetup)
 include(SubmoduleSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
