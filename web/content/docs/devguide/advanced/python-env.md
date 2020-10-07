@@ -9,7 +9,7 @@ weight = 1030
     parent = "advanced"
 +++
 
-In OGS we make us of Python packages at different stages, e.g.:
+In OGS we make use of Python packages at different stages, e.g.:
 
 - [Conan]({{< ref "conan.md" >}}) at configure-time to install third-party dependencies
 - [ogs-container-maker](https://gitlab.opengeosys.org/ogs/container-maker) when the CI prepares its environment
@@ -17,7 +17,7 @@ In OGS we make us of Python packages at different stages, e.g.:
 - [pvpython](https://kitware.github.io/paraview-docs/latest/python/) for pre- and post-processing
 - ...
 
-Python packages are usually installed via `pip` and `virtualenv` provides an isolated environment to install these packages too.
+Python packages are usually installed via `pip` and `virtualenv` provides an isolated environment to install these packages to.
 
 ## Poetry
 
