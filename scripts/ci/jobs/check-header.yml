@@ -3,7 +3,7 @@ check header:
   allow_failure: true
   extends:
     - .rules-master-manual
-  dependencies: [meta_container]
+  dependencies: [meta, meta_container]
   variables:
     BUILD_DIR: "build-check-header"
     CMAKE_ARGS: "-DOGS_CHECK_HEADER_COMPILATION=ON -DOGS_BUILD_UTILS=ON -DOGS_BUILD_GUI=ON -DOGS_USE_PYTHON=ON -DBUILD_SHARED_LIBS=ON"

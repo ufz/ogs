@@ -17,7 +17,7 @@
     "vtk": "8.1.2",
     "petsc": "3.11.2",
     "qt": "5.12.4",
-    "python": "3.7"
+    "python": "3.6"
   },
   "tested_version": {
     "vtk": "8.2.0",
