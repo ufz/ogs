@@ -21,6 +21,7 @@
 #include "MeshLib/Mesh.h"
 
 #include "Output.h"
+#include <algorithm>
 
 namespace ProcessLib
 {
@@ -32,7 +33,16 @@ std::unique_ptr<Output> createOutput(
     DBUG("Parse output configuration:");
 
     //! \ogs_file_param{prj__time_loop__output__type}
-    config.checkConfigParameter("type", "VTK");
+    auto const type = config.getConfigParameter<std::string>("type");
+    constexpr std::array data_formats =  { "VTK", "XDMF" };
+    auto format_is_allowed = std::any_of(data_formats.cbegin(), data_formats.cend(),
+        [&type](std::string i ){ return i == type; });
+    if (!format_is_allowed)
+    {
+        OGS_FATAL("No supported file type provided. Read  `{:s}' from <output><type> \
+                    in prj File. Supported: VTK, XDMF.",
+                    type);
+    }
 
     auto const prefix =
         //! \ogs_file_param{prj__time_loop__output__prefix}
