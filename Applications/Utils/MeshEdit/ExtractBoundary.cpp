@@ -72,7 +72,7 @@ int main (int argc, char* argv[])
     cmd.add(face_prop_name);
 
     TCLAP::ValueArg<bool> use_ascii_arg(
-        "", "ascii_output", "use ascii format for data in the vtu output ", false,
+        "", "ascii_output", "use ascii format for data in the vtu output (0=false, 1=true)", false,
         false, "boolean value");
     cmd.add(use_ascii_arg);
 
