@@ -37,7 +37,8 @@ public:
     };
 
 public:
-    Output(std::string output_directory, std::string prefix, std::string suffix,
+    Output(std::string output_directory, std::string type,
+           std::string prefix, std::string suffix,
            bool const compress_output, std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
@@ -88,6 +89,7 @@ private:
 
 private:
     std::string const _output_directory;
+    std::string const _output_file_type;
     std::string const _output_file_prefix;
     std::string const _output_file_suffix;
 

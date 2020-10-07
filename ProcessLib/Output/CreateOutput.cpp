@@ -39,7 +39,7 @@ std::unique_ptr<Output> createOutput(
         [&type](std::string i ){ return i == type; });
     if (!format_is_allowed)
     {
-        OGS_FATAL("No supported file type provided. Read  `{:s}' from <output><type> \
+        OGS_FATAL("No supported file type provided. Read `{:s}' from <output><type> \
                     in prj File. Supported: VTK, XDMF.",
                     type);
     }
@@ -153,7 +153,7 @@ std::unique_ptr<Output> createOutput(
         config.getConfigParameter<bool>("output_iteration_results", false);
 
     return std::make_unique<Output>(
-        output_directory, prefix, suffix, compress_output, data_mode,
+        output_directory, type, prefix, suffix, compress_output, data_mode,
         output_iteration_results, std::move(repeats_each_steps),
         std::move(fixed_output_times), std::move(output_data_specification),
         std::move(mesh_names_for_output), meshes);
