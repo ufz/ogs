@@ -82,11 +82,10 @@ public:
 
 private:
     struct OutputFile;
-    void outputBulkMesh(OutputFile const& output_file,
+    void outputMesh(OutputFile const& output_file,
                         MeshLib::IO::PVDFile* const pvd_file,
                         MeshLib::Mesh const& mesh,
                         double const t) const;
-
 private:
     std::string const _output_directory;
     std::string const _output_file_type;

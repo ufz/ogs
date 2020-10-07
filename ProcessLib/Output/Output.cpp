@@ -237,7 +237,7 @@ struct Output::OutputFile
     }
 };
 
-void Output::outputBulkMesh(OutputFile const& output_file,
+void Output::outputMesh(OutputFile const& output_file,
                             MeshLib::IO::PVDFile* const pvd_file,
                             MeshLib::Mesh const& mesh,
                             double const t) const
@@ -289,24 +289,31 @@ void Output::doOutputAlways(Process const& process,
         return;
     }
 
-    auto output_bulk_mesh = [&]() {
-        outputBulkMesh(
+    auto output_bulk_mesh = [&](MeshLib::Mesh& mesh) {
+
         OutputFile const file (_output_directory, _output_file_type,
                          _output_file_prefix,
                        _output_file_suffix, mesh.getName(),
                        process_id, timestep, t, _output_file_data_mode,
-                       _output_file_compression),
-            findPVDFile(process, process_id, process.getMesh().getName()),
-            process.getMesh(), t);
+                       _output_file_compression);
+
+        MeshLib::IO::PVDFile* pvd_file = nullptr;
+        if (_output_file_type=="VTK")
+        {
+            pvd_file= findPVDFile(process, process_id, mesh.getName());
+        }
+        outputMesh(file, pvd_file, mesh, t );
     };
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
+        // process related output
         if (process.getMesh().getName() == mesh_output_name)
         {
-            output_bulk_mesh();
+            output_bulk_mesh(process.getMesh());
             continue;
         }
+        // mesh related output
         auto& mesh = *BaseLib::findElementOrError(
             begin(_meshes), end(_meshes),
             [&mesh_output_name](auto const& m) {
@@ -349,23 +356,7 @@ void Output::doOutputAlways(Process const& process,
         // output is mesh related instead of process related. This would also
         // allow for merging bulk mesh output and arbitrary mesh output.
 
-        OutputFile const output_file{_output_directory,
-                                     _output_file_prefix,
-                                     _output_file_suffix,
-                                     mesh.getName(),
-                                     process_id,
-                                     timestep,
-                                     t,
-                                     _output_file_data_mode,
-                                     _output_file_compression};
-
-        auto pvd_file = findPVDFile(process, process_id, mesh.getName());
-        pvd_file->addVTUFile(output_file.name, t);
-
-        DBUG("output to {:s}", output_file.path);
-
-        makeOutput(output_file.path, mesh, output_file.compression,
-                   output_file.data_mode);
+        output_bulk_mesh(mesh);
     }
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
