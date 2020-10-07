@@ -9,18 +9,18 @@ container:
     - .container-maker-setup
   script:
     - >
-      python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs .
+      poetry run ogscm -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
     - >
-      python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs .
+      poetry run ogscm -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
       --ompi 4.0.4 --insitu --mpi_benchmarks
     - >
-      python ThirdParty/container-maker/ogscm/cli.py -B -C -R --ogs .
+      poetry run ogscm -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
@@ -28,4 +28,4 @@ container:
   artifacts:
     name: container
     paths:
-      - _out/images/*.sif
+      - ThirdParty/container-maker/_out/images/*.sif

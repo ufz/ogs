@@ -1,7 +1,5 @@
 .container-maker-setup:
   before_script:
     - git submodule update --init ThirdParty/container-maker
-    - virtualenv .venv
-    - source .venv/bin/activate
-    - pip install -r ThirdParty/container-maker/requirements.txt
-    - export PYTHONPATH="${PYTHONPATH}:${PWD}/ThirdParty/container-maker"
+    - cd ThirdParty/container-maker
+    - poetry install
