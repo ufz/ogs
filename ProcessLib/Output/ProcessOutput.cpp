@@ -251,7 +251,7 @@ void addProcessDataToMesh(
 }
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
-                bool const compress_output, int const data_mode)
+                bool const compress_output, int const data_mode, std::string const& file_type)
 {
     // Write output file
     DBUG("Writing output to '{:s}'.", file_name);
@@ -269,9 +269,15 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
 #endif  //_WIN32
 #endif  //__APPLE__
 
-    MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
-    vtu_interface.writeToFile(file_name);
-
+    if (file_type=="VTK")
+    {
+        MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
+        vtu_interface.writeToFile(file_name);
+    }
+    else if (file_type=="XDMF")
+    {
+        MeshLib::IO::writeXdmf3(mesh, file_name);
+    }
     // Restore floating-point exception handling.
 #ifndef _WIN32
 #ifndef __APPLE__
