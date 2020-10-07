@@ -15,20 +15,18 @@
 #pragma once
 
 #include <string>
-#include "MeshLib/Mesh.h"
 
-namespace MeshLib {
-
+namespace MeshLib
+{
+class Mesh;
 
 namespace IO
 {
-
 /// Writes mesh to XDMF file.
 /// \return True on success, false on error
-bool writeXdmf3(const MeshLib::Mesh& mesh, std::string const &file_name);
 /// \param mesh           Mesh holds all data to be written.
 /// \param file_name      File name.
-/// \return True on success, false on error
+bool writeXdmf3(MeshLib::Mesh const& mesh, std::string const& file_name);
 
-} // end namespace IO
-} // end namespace MeshLib
+}  // end namespace IO
+}  // end namespace MeshLib
