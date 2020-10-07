@@ -72,9 +72,6 @@ int main(int argc, char* argv[])
         "q", "lh_elements", "Mixed linear and high order elements.", false);
     cmd.add(lh_elems_flag);
 
-    TCLAP::SwitchArg ascii_flag("a", "ascii", "Enable ASCII output.", false);
-    cmd.add(ascii_flag);
-
     TCLAP::ValueArg<std::string> log_level_arg("l", "log-level",
                                                "the verbosity of logging "
                                                "messages: none, error, warn, "
@@ -216,16 +213,8 @@ int main(int argc, char* argv[])
             partitioned_properties);
     }
 
-    if (ascii_flag.getValue())
-    {
-        INFO("Write the data of partitions into ASCII files ...");
-        mesh_partitioner.writeASCII(output_file_name_wo_extension);
-    }
-    else
-    {
-        INFO("Write the data of partitions into binary files ...");
-        mesh_partitioner.writeBinary(output_file_name_wo_extension);
-    }
+    INFO("Write the data of partitions into binary files ...");
+    mesh_partitioner.writeBinary(output_file_name_wo_extension);
 
     INFO("Total runtime: {:g} s.", run_timer.elapsed());
     INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
