@@ -118,13 +118,15 @@ private:
         MeshLib::Properties const& properties) const;
 
     /*!
-        \brief Parallel reading of a binary file via MPI_File_read, and it is called by readBinary
-               to read files of mesh data head, nodes, non-ghost elements and ghost elements, respectively.
-        \note           In case of failure during opening of the file, an
-                        error message is printed.
+        Parallel reading of a binary file via MPI_File_read, reading mesh data
+        head, nodes, non-ghost elements and ghost elements.
+
+        \note In case of failure during opening of the file, an error message is
+              printed.
         \note If the number of elements in container is larger than
               MPI_file_read() supports (maximum of current \c int type), an
               error is printed.
+
         \param filename File name containing data.
         \param offset   Displacement of the data accessible from the view.
                         see MPI_File_set_view() documentation.
@@ -132,10 +134,11 @@ private:
         \param data     A container to be filled with data. Its size is used
                         to determine how many values should be read.
         \tparam DATA    A homogeneous contaner type supporting data() and size().
+
         \return         True on success and false otherwise.
      */
     template <typename DATA>
-    bool readBinaryDataFromFile(std::string const& filename, MPI_Offset offset,
+    bool readDataFromFile(std::string const& filename, MPI_Offset offset,
         MPI_Datatype type, DATA& data) const;
 
     /*!
@@ -161,12 +164,12 @@ private:
                            path to the file and without file extension.
          \return           Pointer to Mesh object.
      */
-    MeshLib::NodePartitionedMesh* readBinary(const std::string &file_name_base);
+    MeshLib::NodePartitionedMesh* readMesh(const std::string &file_name_base);
 
-    MeshLib::Properties readPropertiesBinary(
+    MeshLib::Properties readProperties(
         const std::string& file_name_base) const;
 
-    void readPropertiesBinary(const std::string& file_name_base,
+    void readProperties(const std::string& file_name_base,
                               MeshLib::MeshItemType t,
                               MeshLib::Properties& p) const;
 
@@ -198,7 +201,7 @@ private:
                                               pvmd.number_of_components;
         if (!is.read(reinterpret_cast<char*>(pv->data()), number_of_bytes))
             OGS_FATAL(
-                "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+                "Error in NodePartitionedMeshReader::readProperties: "
                 "Could not read part {:d} of the PropertyVector.",
                 _mpi_rank);
     }

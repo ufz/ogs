@@ -93,7 +93,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
     }
 
     INFO("Reading binary mesh file ...");
-    mesh = readBinary(file_name_base);
+    mesh = readMesh(file_name_base);
 
     INFO("[time] Reading the mesh took {:f} s.", timer.elapsed());
 
@@ -104,7 +104,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
 template <typename DATA>
 bool
-NodePartitionedMeshReader::readBinaryDataFromFile(std::string const& filename,
+NodePartitionedMeshReader::readDataFromFile(std::string const& filename,
     MPI_Offset offset, MPI_Datatype type, DATA& data) const
 {
     // Check container size
@@ -139,7 +139,7 @@ NodePartitionedMeshReader::readBinaryDataFromFile(std::string const& filename,
     return true;
 }
 
-MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
+MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
     const std::string &file_name_base)
 {
     //----------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
     const std::string fname_header = file_name_base +  "_partitioned_msh_";
     const std::string fname_num_p_ext = std::to_string(_mpi_comm_size) + ".bin";
 
-    if (!readBinaryDataFromFile(fname_header + "cfg" + fname_num_p_ext,
+    if (!readDataFromFile(fname_header + "cfg" + fname_num_p_ext,
         static_cast<MPI_Offset>(
             static_cast<unsigned>(_mpi_rank) * sizeof(_mesh_info)),
         MPI_LONG, _mesh_info))
@@ -157,7 +157,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
     // Read Nodes
     std::vector<NodeData> nodes(_mesh_info.nodes);
 
-    if (!readBinaryDataFromFile(fname_header + "nod" + fname_num_p_ext,
+    if (!readDataFromFile(fname_header + "nod" + fname_num_p_ext,
         static_cast<MPI_Offset>(_mesh_info.offset[2]), _mpi_node_type, nodes))
         return nullptr;
 
@@ -169,7 +169,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
     // Read non-ghost elements
     std::vector<unsigned long> elem_data(
         _mesh_info.regular_elements + _mesh_info.offset[0]);
-    if (!readBinaryDataFromFile(fname_header + "ele" + fname_num_p_ext,
+    if (!readDataFromFile(fname_header + "ele" + fname_num_p_ext,
         static_cast<MPI_Offset>(_mesh_info.offset[3]), MPI_LONG, elem_data))
         return nullptr;
 
@@ -182,7 +182,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
     std::vector<unsigned long> ghost_elem_data(
         _mesh_info.ghost_elements + _mesh_info.offset[1]);
 
-    if (!readBinaryDataFromFile(fname_header + "ele_g" + fname_num_p_ext,
+    if (!readDataFromFile(fname_header + "ele_g" + fname_num_p_ext,
         static_cast<MPI_Offset>(_mesh_info.offset[4]), MPI_LONG, ghost_elem_data))
         return nullptr;
 
@@ -191,22 +191,22 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readBinary(
 
     //----------------------------------------------------------------------------------
     // read the properties
-    MeshLib::Properties p(readPropertiesBinary(file_name_base));
+    MeshLib::Properties p(readProperties(file_name_base));
 
     return newMesh(BaseLib::extractBaseName(file_name_base), mesh_nodes,
                    glb_node_ids, mesh_elems, p);
 }
 
-MeshLib::Properties NodePartitionedMeshReader::readPropertiesBinary(
+MeshLib::Properties NodePartitionedMeshReader::readProperties(
     const std::string& file_name_base) const
 {
     MeshLib::Properties p;
-    readPropertiesBinary(file_name_base, MeshLib::MeshItemType::Node, p);
-    readPropertiesBinary(file_name_base, MeshLib::MeshItemType::Cell, p);
+    readProperties(file_name_base, MeshLib::MeshItemType::Node, p);
+    readProperties(file_name_base, MeshLib::MeshItemType::Cell, p);
     return p;
 }
 
-void NodePartitionedMeshReader::readPropertiesBinary(
+void NodePartitionedMeshReader::readProperties(
     const std::string& file_name_base, MeshLib::MeshItemType t,
     MeshLib::Properties& p) const
 {
@@ -235,7 +235,7 @@ void NodePartitionedMeshReader::readPropertiesBinary(
         if (!vec_pvmd[i])
         {
             OGS_FATAL(
-                "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+                "Error in NodePartitionedMeshReader::readProperties: "
                 "Could not read the meta data for the PropertyVector {:d}",
                 i);
         }
@@ -261,7 +261,7 @@ void NodePartitionedMeshReader::readPropertiesBinary(
     if (!all_pvpmd_read_ok)
     {
         OGS_FATAL(
-            "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+            "Error in NodePartitionedMeshReader::readProperties: "
             "Could not read the partition meta data for the mpi process {:d}",
             _mpi_rank);
     }
