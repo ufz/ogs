@@ -62,7 +62,7 @@ find_program(PARSL parsl-visualize HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
 ######################
 find_package(Boost ${ogs.minimum_version.boost} REQUIRED)
 
-set(VTK_COMPONENTS vtkIOXML)
+set(VTK_COMPONENTS vtkIOXML vtkIOXdmf3)
 if(OGS_BUILD_GUI)
     set(VTK_COMPONENTS ${VTK_COMPONENTS}
         vtkIOLegacy vtkIOExport vtkImagingCore
