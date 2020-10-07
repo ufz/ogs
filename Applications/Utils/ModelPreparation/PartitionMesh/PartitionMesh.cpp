@@ -214,7 +214,7 @@ int main(int argc, char* argv[])
     }
 
     INFO("Write the data of partitions into binary files ...");
-    mesh_partitioner.writeBinary(output_file_name_wo_extension);
+    mesh_partitioner.write(output_file_name_wo_extension);
 
     INFO("Total runtime: {:g} s.", run_timer.elapsed());
     INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());

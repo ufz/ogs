@@ -42,11 +42,11 @@ struct Partition
 
     std::size_t numberOfMeshItems(MeshLib::MeshItemType const item_type) const;
 
-    std::ostream& writeNodesBinary(
+    std::ostream& writeNodes(
         std::ostream& os,
         std::vector<std::size_t> const& global_node_ids) const;
 
-    std::ostream& writeConfigBinary(std::ostream& os) const;
+    std::ostream& writeConfig(std::ostream& os) const;
 };
 
 /// Creates partitioned mesh properties for nodes and cells.
@@ -100,7 +100,7 @@ public:
 
     /// Write the partitions into binary files
     /// \param file_name_base The prefix of the file name.
-    void writeBinary(const std::string& file_name_base);
+    void write(const std::string& file_name_base);
 
     void writeOtherMesh(
         std::string const& output_filename_base,
