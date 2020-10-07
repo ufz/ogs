@@ -23,7 +23,7 @@ The minimum prerequisites to build OGS are:
 
 ### Note about skipping installation steps
 
-A fresh system with none of the prerequisites fulfilled is assumed. Skipping installation steps or using a non-supported version might result in unexpected problems. If possible, you may consider reinstalling or manual modifying the configuration of the already installed tool. 
+A fresh system with none of the prerequisites fulfilled is assumed. Skipping installation steps or using a non-supported version might result in unexpected problems. If possible, you may consider reinstalling or manual modifying the configuration of the already installed tool.
 
 </div>
 
@@ -275,3 +275,9 @@ Check on a newly opened command line if Conan was installed successfully:
 $ conan --version
 Conan version {{< dataFile "versions.minimum_version.conan" >}}
 ```
+
+<div class='note'>
+
+**Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{< ref "python-env.md" >}}) for details.
+
+</div>

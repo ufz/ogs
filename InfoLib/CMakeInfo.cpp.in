@@ -17,6 +17,7 @@ namespace CMakeInfoLib
 
 namespace CMakeInfo
 {
+    const std::string python_virtualenv_sitepackages("@Python3_VIRTUALENV_SITEPACKAGES@");
     const std::string cmake_args("@CMAKE_ARGS_ESCAPED@");
 }
 }

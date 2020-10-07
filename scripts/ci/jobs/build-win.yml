@@ -6,6 +6,7 @@ build win:
       -DOGS_BUILD_UTILS=ON
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_PYTHON=ON
+      -DOGS_USE_CONAN=AUTO
 
 build win no python:
   extends: .template-build-win

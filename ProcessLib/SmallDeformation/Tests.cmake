@@ -86,6 +86,7 @@ AddTest(
 AddTest(
     NAME Mechanics_DruckerPrager_mfront
     PATH Mechanics/Ehlers/MFront
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/Ehlers/MFront
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e0_dp.prj
     TESTER vtkdiff
@@ -103,6 +104,7 @@ AddTest(
 AddTest(
     NAME SmallDeformation_ring_plane_strain_axi_mfront
     PATH Mechanics/Linear/MFront/axisymm_ring
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/Linear/MFront/axisymm_ring
     EXECUTABLE ogs
     EXECUTABLE_ARGS ring_plane_strain.prj
     TESTER vtkdiff

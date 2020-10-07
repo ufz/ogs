@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "ogs-build"
+version = "@OGS_VERSION@" # is written just once, maybe outdated
+description = "CMake auto-generated"
+authors = [""]
+
+[tool.poetry.dependencies]
+python = "^@ogs.minimum_version.python@, <3.9" # TODO: <3.9 is a tespy requirement
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

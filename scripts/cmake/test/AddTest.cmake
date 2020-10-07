@@ -15,9 +15,11 @@
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
 #                  enable the test, e.g.
 #                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
+#   PYTHON_PACKAGES package_x=1.2.3 package_y=0.1.x # optional
 #   VIS <vtu output file(s)> # optional for documentation
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
 #                          values should be taken from envinf job
+#   WORKING_DIRECTORY # optional, specify the working directory of the test
 #   DISABLED # optional, disables the test
 # )
 #
@@ -45,8 +47,8 @@ function (AddTest)
 
     # parse arguments
     set(options DISABLED)
-    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS)
-    set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS VIS)
+    set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS WORKING_DIRECTORY)
+    set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS PYTHON_PACKAGES VIS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 
@@ -66,9 +68,13 @@ function (AddTest)
     if (NOT DEFINED AddTest_RUNTIME)
         set(AddTest_RUNTIME 1)
     endif()
+    if(NOT DEFINED AddTest_WORKING_DIRECTORY)
+        set(AddTest_WORKING_DIRECTORY ${AddTest_BINARY_PATH})
+    endif()
 
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
-        set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE} ${AddTest_EXECUTABLE_ARGS})
+        set(AddTest_EXECUTABLE_ARGS -o ${AddTest_BINARY_PATH_NATIVE}
+            ${AddTest_SOURCE_PATH}/${AddTest_EXECUTABLE_ARGS})
     endif()
 
     if(${AddTest_RUNTIME} GREATER ${LARGE_RUNTIME})
@@ -251,23 +257,17 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         COMMAND ${CMAKE_COMMAND}
         -DEXECUTABLE=${AddTest_EXECUTABLE_PARSED}
         "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}" # Quoted because passed as list
-        -DSOURCE_PATH=${AddTest_SOURCE_PATH}           # see https://stackoverflow.com/a/33248574/80480
+                                                       # see https://stackoverflow.com/a/33248574/80480
         -DBINARY_PATH=${AddTest_BINARY_PATH}
         -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
         "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
         "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
         -DPython3_EXECUTABLE=${Python3_EXECUTABLE}
+        -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
         -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     if(DEFINED AddTest_DEPENDS)
         set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
-    endif()
-    if(EXISTS ${AddTest_SOURCE_PATH}/requirements.txt)
-        set(PYTHONPATH "${AddTest_BINARY_PATH}/.venv/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
-        if(WIN32)
-            set(PYTHONPATH "${AddTest_BINARY_PATH}/.venv/Lib/site-packages")
-        endif()
-        set_tests_properties(${TEST_NAME} PROPERTIES ENVIRONMENT "PYTHONPATH=${PYTHONPATH}")
     endif()
     if(DEFINED MPI_PROCESSORS)
         set_tests_properties(${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS})
@@ -283,6 +283,20 @@ Use six arguments version of AddTest with absolute and relative tolerances")
     if(TARGET ${AddTest_EXECUTABLE})
         add_dependencies(ctest ${AddTest_EXECUTABLE})
         add_dependencies(ctest-large ${AddTest_EXECUTABLE})
+    endif()
+
+    if(AddTest_PYTHON_PACKAGES)
+        if(POETRY)
+            execute_process(
+                COMMAND ${CMD_COMMAND} poetry add ${AddTest_PYTHON_PACKAGES}
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            )
+        else()
+            message(STATUS "Warning: Benchmark ${AddTest_NAME} requires these "
+                "Python packages: ${AddTest_PYTHON_PACKAGES}!\n Make sure to "
+                "have them installed in your current Python environment OR "
+                "install the Poetry package manager for Python!")
+        endif()
     endif()
 
     if(NOT AddTest_TESTER OR OGS_COVERAGE)
