@@ -208,7 +208,6 @@ struct Output::OutputFile
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
 
-    private:
     static std::string constructFilename(std::string type, std::string prefix,
                                          std::string suffix, std::string mesh_name,
                                          int process_id, int timestep, double t)
@@ -435,10 +434,11 @@ void Output::doOutputNonlinearIteration(Process const& process,
     findPVDFile(process, process_id, process.getMesh().getName());
 
     std::string const output_file_name =
-        BaseLib::constructFormattedFileName(_output_file_prefix,
-                                            process.getMesh().getName(),
-                                            process_id, timestep, t) +
-        "_nliter_" + std::to_string(iteration) + ".vtu";
+        OutputFile::constructFilename(_output_file_type,_output_file_prefix,
+                                       "_ts_{:timestep}_nliter_{:time}",
+                                       process.getMesh().getName(), process_id,
+                                       timestep, iteration);
+
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
 
