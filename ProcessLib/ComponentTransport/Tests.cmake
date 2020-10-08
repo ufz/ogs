@@ -593,15 +593,15 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex_1e3_complete_surface_expected_specificflux.vtu flux_1e3_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_pcs_0_ts_0_t_0.000000.vtu concentration Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_pcs_0_ts_1_t_1.000000.vtu concentration Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_pcs_0_ts_0_t_0.000000.vtu pressure pressure 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_pcs_0_ts_0_t_0.000000.vtu concentration Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu concentration Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_pcs_0_ts_0_t_0.000000.vtu pressure pressure 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-10 1e-16
+    cube_1x1x1_hex_1e3_complete_surface_expected_specificflux.vtu cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
+    cube_1x1x1_hex_1e3_left_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu concentration Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_left_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu concentration Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_left_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu pressure pressure 1e-10 1e-16
+    cube_1x1x1_hex_1e3_left_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu pressure pressure 1e-10 1e-16
+    cube_1x1x1_hex_1e3_right_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu concentration Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu concentration Si 1e-10 1e-16
+    cube_1x1x1_hex_1e3_right_pcs_0_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu pressure pressure 1e-10 1e-16
+    cube_1x1x1_hex_1e3_right_pcs_0_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu pressure pressure 1e-10 1e-16
 )
 
 AddTest(
@@ -613,9 +613,10 @@ AddTest(
     TESTER diff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex_1e3_right_pcs_0.pvd
-    cube_1x1x1_hex_1e3_left_pcs_0.pvd
-    cube_1x1x1_hex_1e3_pcs_0.pvd
+    cube_1x1x1_hex_1e3_right.pvd
+    cube_1x1x1_hex_1e3_left.pvd
+    cube_1x1x1_hex_1e3.pvd
+    cube_1x1x1_hex_1e3_complete_surface.pvd
 )
 
 AddTest(
@@ -627,7 +628,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    flux_1e3_t_1.000000.vtu flux_1e3_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
+    flux_1e3_t_1.000000.vtu cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
     cube_1x1x1_hex_1e3_left_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
     cube_1x1x1_hex_1e3_left_pcs_1_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
     cube_1x1x1_hex_1e3_right_pcs_1_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16

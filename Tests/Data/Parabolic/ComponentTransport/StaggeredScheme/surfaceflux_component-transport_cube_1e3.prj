@@ -177,6 +177,7 @@
                 <mesh>cube_1x1x1_hex_1e3</mesh>
                 <mesh>cube_1x1x1_hex_1e3_left</mesh>
                 <mesh>cube_1x1x1_hex_1e3_right</mesh>
+                <mesh>cube_1x1x1_hex_1e3_complete_surface</mesh>
             </meshes>
             <variables>
                 <variable>Si</variable>
