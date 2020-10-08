@@ -6,7 +6,7 @@ if(DEFINED ENV{OGS_VERSION})
     message(STATUS "OGS VERSION: ${OGS_VERSION} (set via environment)")
 endif()
 
-if(NOT IS_GIT_REPO AND NOT OGS_VERSION)
+if(NOT IS_GIT_REPO)
     execute_process(COMMAND ${GIT_EXECUTABLE} status
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE IS_GIT_REPO

@@ -61,10 +61,10 @@ endif()
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 
 # ---- CMake includes ----
-include(Versions)
 include(GitSetup)
-include(PythonSetup)
 include(SubmoduleSetup)
+include(Versions)
+include(PythonSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
 include(Functions)
