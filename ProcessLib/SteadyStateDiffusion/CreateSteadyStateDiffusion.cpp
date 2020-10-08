@@ -88,7 +88,7 @@ std::unique_ptr<Process> createSteadyStateDiffusion(
     if (calculatesurfaceflux_config)
     {
         surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
-            *calculatesurfaceflux_config, meshes, output_directory);
+            *calculatesurfaceflux_config, meshes);
     }
 
     return std::make_unique<SteadyStateDiffusion>(

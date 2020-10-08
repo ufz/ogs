@@ -158,9 +158,8 @@ std::unique_ptr<Process> createHTProcess(
         config.getConfigSubtreeOptional("calculatesurfaceflux");
     if (calculatesurfaceflux_config)
     {
-        surfaceflux = ProcessLib::SurfaceFluxData::
-            createSurfaceFluxData(*calculatesurfaceflux_config, meshes,
-                                           output_directory);
+        surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
+            *calculatesurfaceflux_config, meshes);
     }
 
     auto media_map =

@@ -113,7 +113,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     if (calculatesurfaceflux_config)
     {
         surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
-            *calculatesurfaceflux_config, meshes, output_directory);
+            *calculatesurfaceflux_config, meshes);
     }
 
     auto media_map =

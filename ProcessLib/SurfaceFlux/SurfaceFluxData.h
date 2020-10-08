@@ -45,8 +45,7 @@ struct SurfaceFluxData
 
     static std::unique_ptr<ProcessLib::SurfaceFluxData> createSurfaceFluxData(
         BaseLib::ConfigTree const& calculatesurfaceflux_config,
-        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-        std::string const& output_directory)
+        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     {
         auto mesh_name =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__mesh}

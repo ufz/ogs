@@ -246,7 +246,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     if (surfaceflux_config)
     {
         surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
-            *surfaceflux_config, meshes, output_directory);
+            *surfaceflux_config, meshes);
     }
 
     return std::make_unique<ComponentTransportProcess>(
