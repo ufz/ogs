@@ -287,7 +287,6 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
 
     _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
                             pv.getActiveElementIDs());
-    _surfaceflux->save(t);
 }
 
 }  // namespace ComponentTransport
