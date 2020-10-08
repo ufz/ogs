@@ -6,7 +6,7 @@ if(DEFINED ENV{OGS_VERSION})
     message(STATUS "OGS VERSION: ${OGS_VERSION} (set via environment)")
 endif()
 
-if(NOT IS_GIT_REPO AND NOT OGS_VERSION)
+if(NOT IS_GIT_REPO)
     execute_process(COMMAND ${GIT_EXECUTABLE} status
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE IS_GIT_REPO
@@ -87,40 +87,4 @@ endif()
 
 if(MSVC)
     set(CMD_COMMAND "cmd" "/c" CACHE INTERNAL "")
-endif()
-
-### Python setup ###
-find_program(POETRY poetry)
-if(POETRY)
-    configure_file(${PROJECT_SOURCE_DIR}/scripts/python/poetry.in.toml
-        ${PROJECT_BINARY_DIR}/poetry.toml COPYONLY)
-    if(NOT EXISTS ${PROJECT_BINARY_DIR}/pyproject.toml)
-        configure_file(${PROJECT_SOURCE_DIR}/scripts/python/pyproject.in.toml
-            ${PROJECT_BINARY_DIR}/pyproject.toml)
-    endif()
-    if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
-        execute_process(COMMAND ${CMD_COMMAND} poetry install)
-    endif()
-    set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
-    set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
-    if(MSVC)
-        set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
-    endif()
-endif()
-
-if(OGS_USE_PYTHON)
-    find_package(Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter Development REQUIRED)
-else()
-    find_package(Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter)
-endif()
-if(POETRY)
-    if(MSVC)
-        file(TO_NATIVE_PATH "${Python3_ROOT_DIR}/Lib/site-packages"
-            Python3_VIRTUALENV_SITEPACKAGES)
-        string(REPLACE "\\" "\\\\" Python3_VIRTUALENV_SITEPACKAGES
-            ${Python3_VIRTUALENV_SITEPACKAGES})
-    else()
-        set(Python3_VIRTUALENV_SITEPACKAGES
-            ${Python3_ROOT_DIR}/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
-    endif()
 endif()
