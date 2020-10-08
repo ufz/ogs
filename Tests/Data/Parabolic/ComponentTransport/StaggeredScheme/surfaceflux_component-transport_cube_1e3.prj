@@ -23,7 +23,6 @@
             <calculatesurfaceflux>
                 <mesh>cube_1x1x1_hex_1e3_complete_surface</mesh>
                 <property_name>specific_flux</property_name>
-                <output_mesh>flux_1e3.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>
     </processes>

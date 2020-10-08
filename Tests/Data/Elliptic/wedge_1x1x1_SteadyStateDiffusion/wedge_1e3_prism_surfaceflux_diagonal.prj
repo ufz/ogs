@@ -20,7 +20,6 @@
             <calculatesurfaceflux>
                 <mesh>wedge_1x1x1_1e3_prism_complete_surface</mesh>
                 <property_name>specific_flux</property_name>
-                <output_mesh>wedge_1x1x1_1e3_prism_complete_surface_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>
     </processes>

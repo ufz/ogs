@@ -26,7 +26,6 @@
             <calculatesurfaceflux>
                 <mesh>cuboid_1x1x1_pyramid_6000_entire_boundary</mesh>
                 <property_name>specific_flux</property_name>
-                <output_mesh>cuboid_1x1x1_pyramid_6000_entire_boundary_left_right_dirichlet_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>
     </processes>

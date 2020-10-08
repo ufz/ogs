@@ -20,7 +20,6 @@
             <!-- <calculatesurfaceflux>
                 <mesh>abstraction_whole_surf</mesh>
                 <property_name>flux</property_name>
-                <output_mesh>out_abstraction_whole_surf_flux.vtu</output_mesh>
             </calculatesurfaceflux> -->
             <specific_body_force>0 0 -9.81</specific_body_force>
         </process>

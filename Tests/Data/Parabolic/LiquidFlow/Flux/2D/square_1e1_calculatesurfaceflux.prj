@@ -26,7 +26,6 @@
             <calculatesurfaceflux>
                 <mesh>square_1x1_quad_1e1_complete_surface</mesh>
                 <property_name>specific_flux</property_name>
-                <output_mesh>square_1x1_quad_1e1_complete_surface_left_right_dirichlet_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>
     </processes>
