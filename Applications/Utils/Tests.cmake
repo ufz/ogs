@@ -108,21 +108,6 @@ AddTest(
 # Mac is producing slightly different partitioning, so the results are not
 # comparable.
 AddTest(
-    NAME partmesh_2Dmesh_3partitions_ascii
-    PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/ASCII
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/ASCII
-    EXECUTABLE partmesh
-    EXECUTABLE_ARGS -a -m -n 3 -i 2Dmesh.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/ASCII
-    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
-    TESTER diff
-    DIFF_DATA 2Dmesh_partitioned_elems_3.msh
-              2Dmesh_partitioned_cfg3.msh
-              2Dmesh_partitioned_nodes_3.msh
-)
-
-# Mac is producing slightly different partitioning, so the results are not
-# comparable.
-AddTest(
     NAME partmesh_2Dmesh_3partitions_binary
     PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
