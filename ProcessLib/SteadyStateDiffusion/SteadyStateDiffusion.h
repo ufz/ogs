@@ -16,9 +16,6 @@
 #include "SteadyStateDiffusionData.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 
-// TODO used for output, if output classes are ready this has to be changed
-#include "MeshLib/IO/writeMeshToFile.h"
-
 namespace ProcessLib
 {
 namespace SteadyStateDiffusion
@@ -83,7 +80,6 @@ public:
 
         _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
                                 _mesh, pv.getActiveElementIDs());
-        _surfaceflux->save(t);
     }
 
 private:
