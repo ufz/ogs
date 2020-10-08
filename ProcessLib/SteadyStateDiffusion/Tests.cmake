@@ -270,7 +270,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu specific_flux specific_flux 5e-15 5e-15
+    cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 5e-15 5e-15
 )
 AddTest(
     NAME SteadyStateDiffusion_cube_1x1x1_1e3_neumann_calculatesurfaceflux
@@ -280,7 +280,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex_1e3_complete_surface_neumann_specific_flux_t_1.000000.vtu cube_1x1x1_hex_1e3_complete_surface_neumann_specific_flux_t_1.000000.vtu specific_flux specific_flux 2e-14 2e-14
+    cube_1x1x1_hex_1e3_complete_surface_neumann_specific_flux_t_1.000000.vtu cube_1e3_neumann_balance_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 2e-14 2e-14
 )
 AddTest(
     NAME SteadyStateDiffusion_cube_1x1x1_2e3_prism_surfaceflux_left_right
@@ -290,7 +290,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu specific_flux specific_flux 1e-14 1e-14
+    cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_2e3_surface_flux_left_right_cube_1x1x1_prism_2e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-14 1e-14
 )
 
 AddTest(
@@ -301,7 +301,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_prism_2e3_complete_surface_front_back_dirichlet_specific_flux_t_1.000000.vtu cube_1x1x1_prism_2e3_complete_surface_front_back_dirichlet_specific_flux_t_1.000000.vtu specific_flux specific_flux  1e-14 1e-14
+    cube_1x1x1_prism_2e3_complete_surface_front_back_dirichlet_specific_flux_t_1.000000.vtu cube_2e3_surface_flux_front_back_cube_1x1x1_prism_2e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux  1e-14 1e-14
 )
 
 AddTest(
@@ -312,7 +312,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_prism_2e3_complete_surface_top_bottom_dirichlet_specific_flux_t_1.000000.vtu cube_1x1x1_prism_2e3_complete_surface_top_bottom_dirichlet_specific_flux_t_1.000000.vtu specific_flux specific_flux 1e-14 1e-14
+    cube_1x1x1_prism_2e3_complete_surface_top_bottom_dirichlet_specific_flux_t_1.000000.vtu cube_2e3_surface_flux_top_bottom_cube_1x1x1_prism_2e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-14 1e-14
 )
 
 AddTest(
@@ -323,7 +323,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu specific_flux specific_flux 2e-14 0
+    wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu wedge_1e3_surfaceflux_wedge_1x1x1_1e3_prism_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 2e-14 0
 )
 
 # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC

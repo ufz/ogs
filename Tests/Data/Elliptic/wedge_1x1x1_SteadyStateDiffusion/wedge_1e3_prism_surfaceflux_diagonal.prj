@@ -43,12 +43,16 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>wedge_1e3_surfaceflux_pcs_{:process_id}</prefix>
+            <prefix>wedge_1e3_surfaceflux_{:meshname}</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <meshes>
+                <mesh>wedge_1x1x1_1e3_prism</mesh>
+                <mesh>wedge_1x1x1_1e3_prism_complete_surface</mesh>
+            </meshes>
         </output>
     </time_loop>
     <media>
