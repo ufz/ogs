@@ -715,9 +715,13 @@ void TetGenInterface::write2dElements(std::ofstream &out,
 {
     // the surfaces header
     auto const& types = MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
-    const unsigned nTotalTriangles =
-        (types.at(MeshLib::MeshElemType::TRIANGLE) +
-         (2 * types.at(MeshLib::MeshElemType::QUAD)));
+    std::size_t const n_tri =
+        (types.find(MeshLib::MeshElemType::TRIANGLE) != types.end())
+        ? types.at(MeshLib::MeshElemType::TRIANGLE) : 0;
+    std::size_t const n_quad =
+        (types.find(MeshLib::MeshElemType::QUAD) != types.end())
+        ? types.at(MeshLib::MeshElemType::QUAD) : 0;
+    unsigned const nTotalTriangles = n_tri + 2 * n_quad;
     out << nTotalTriangles << " 1\n";
 
     const std::vector<MeshLib::Element*> &elements = mesh.getElements();
