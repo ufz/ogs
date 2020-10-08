@@ -57,7 +57,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_pcs_{:process_id}</prefix>
+            <prefix>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_{:meshname}</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -68,7 +69,10 @@
                 <variable> pressure </variable>
                 <variable> v </variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <meshes>
+                <mesh>cuboid_1x1x1_pyramid_6000</mesh>
+                <mesh>cuboid_1x1x1_pyramid_6000_entire_boundary</mesh>
+            </meshes>
         </output>
     </time_loop>
     <media>

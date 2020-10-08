@@ -57,7 +57,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>LF_cube_1e3_calculatesurfaceflux_pcs_{:process_id}</prefix>
+            <prefix>LF_cube_1e3_calculatesurfaceflux_{:meshname}</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -68,7 +69,10 @@
                 <variable> pressure </variable>
                 <variable> v </variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <meshes>
+                <mesh>cube_1x1x1_hex_1e3</mesh>
+                <mesh>cube_1x1x1_hex_1e3_complete_surface</mesh>
+            </meshes>
         </output>
     </time_loop>
     <media>

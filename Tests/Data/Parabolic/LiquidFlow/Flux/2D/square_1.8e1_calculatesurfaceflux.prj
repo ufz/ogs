@@ -57,7 +57,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>LF_square_1x1_tri_1.8e1_surfaceflux_pcs_{:process_id}</prefix>
+            <prefix>LF_square_1x1_tri_1.8e1_surfaceflux_{:meshname}</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -68,7 +69,10 @@
                 <variable> pressure </variable>
                 <variable> v </variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <meshes>
+                <mesh>square_1x1_tri_1.8e1</mesh>
+                <mesh>square_1x1_tri_1.8e1_complete_boundary</mesh>
+            </meshes>
         </output>
     </time_loop>
     <media>
