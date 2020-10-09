@@ -133,12 +133,11 @@ void Output::addProcess(ProcessLib::Process const& process,
         _mesh_names_for_output.push_back(process.getMesh().getName());
     }
 
-
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
         auto const filename =
-            constructPVDName(_output_directory, _output_file_prefix,
-                             process_id, mesh_output_name);
+            constructPVDName(_output_directory, _output_file_prefix, process_id,
+                             mesh_output_name);
         _process_to_pvd_file.emplace(std::piecewise_construct,
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
@@ -288,12 +287,10 @@ void Output::doOutputAlways(Process const& process,
     }
 
     auto output_bulk_mesh = [&](MeshLib::Mesh& mesh) {
-
-        OutputFile const file (_output_directory, _output_file_type,
-                         _output_file_prefix,
-                       _output_file_suffix, mesh.getName(),
-                       process_id, timestep, t, _output_file_data_mode,
-                       _output_file_compression);
+        OutputFile const file(_output_directory, _output_file_type,
+                              _output_file_prefix, _output_file_suffix,
+                              mesh.getName(), process_id, timestep, t,
+                              _output_file_data_mode, _output_file_compression);
 
         MeshLib::IO::PVDFile* pvd_file = nullptr;
         if (_output_file_type == ProcessLib::OutputTypes::vtk)
