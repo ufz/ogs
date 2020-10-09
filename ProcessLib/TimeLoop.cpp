@@ -88,6 +88,67 @@ bool isMonolithicProcess(ProcessLib::ProcessData const& process_data)
 
 namespace ProcessLib
 {
+void preTimestepForAllProcesses(
+    double const t, double const dt,
+    std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
+    std::vector<GlobalVector*> const& _process_solutions)
+{
+    for (auto& process_data : per_process_data)
+    {
+        auto const process_id = process_data->process_id;
+        auto& pcs = process_data->process;
+        pcs.preTimestep(_process_solutions, t, dt, process_id);
+    }
+}
+
+void postTimestepForAllProcesses(
+    double const t, double const dt,
+    std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
+    std::vector<GlobalVector*> const& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions_prev)
+{
+    std::vector<GlobalVector*> x_dots;
+    x_dots.reserve(per_process_data.size());
+    for (auto& process_data : per_process_data)
+    {
+        auto const process_id = process_data->process_id;
+        auto const& ode_sys = *process_data->tdisc_ode_sys;
+        auto const& time_discretization = *process_data->time_disc;
+
+        x_dots.emplace_back(&NumLib::GlobalVectorProvider::provider.getVector(
+            ode_sys.getMatrixSpecifications(process_id)));
+
+        time_discretization.getXdot(*process_solutions[process_id],
+                                    *process_solutions_prev[process_id],
+                                    *x_dots[process_id]);
+    }
+
+    // All _per_process_data share the first process.
+    bool const is_staggered_coupling =
+        !isMonolithicProcess(*per_process_data[0]);
+
+    for (auto& process_data : per_process_data)
+    {
+        auto const process_id = process_data->process_id;
+        auto& pcs = process_data->process;
+
+        if (is_staggered_coupling)
+        {
+            CoupledSolutionsForStaggeredScheme coupled_solutions(
+                process_solutions);
+            pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
+        }
+        auto& x = *process_solutions[process_id];
+        auto& x_dot = *x_dots[process_id];
+        pcs.computeSecondaryVariable(t, dt, x, x_dot, process_id);
+        pcs.postTimestep(process_solutions, t, dt, process_id);
+    }
+    for (auto& x_dot : x_dots)
+    {
+        NumLib::GlobalVectorProvider::provider.releaseVector(*x_dot);
+    }
+}
+
 template <NumLib::ODESystemTag ODETag>
 void setTimeDiscretizedODESystem(
     ProcessData& process_data,
@@ -558,6 +619,9 @@ bool TimeLoop::loop()
             non_equilibrium_initial_residuum_computed = true;
         }
 
+        preTimestepForAllProcesses(t, dt, _per_process_data,
+                                   _process_solutions);
+
         if (is_staggered_coupling)
         {
             nonlinear_solver_status =
@@ -568,6 +632,10 @@ bool TimeLoop::loop()
             nonlinear_solver_status =
                 solveUncoupledEquationSystems(t, dt, timesteps);
         }
+
+        postTimestepForAllProcesses(t, dt, _per_process_data,
+                                    _process_solutions,
+                                    _process_solutions_prev);
 
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
@@ -614,19 +682,6 @@ bool TimeLoop::loop()
     return nonlinear_solver_status.error_norms_met;
 }
 
-void preTimestepForAllProcesses(
-    double const t, double const dt,
-    std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
-    std::vector<GlobalVector*> const& _process_solutions)
-{
-    for (auto& process_data : per_process_data)
-    {
-        auto const process_id = process_data->process_id;
-        auto& pcs = process_data->process;
-        pcs.preTimestep(_process_solutions, t, dt, process_id);
-    }
-}
-
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     const double t, const double dt, const std::size_t timestep_id,
     ProcessData const& process_data, std::vector<GlobalVector*>& x,
@@ -647,59 +702,9 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
 static constexpr std::string_view timestepper_cannot_reduce_dt =
     "Time stepper cannot reduce the time step size further.";
 
-void postTimestepForAllProcesses(
-    double const t, double const dt,
-    std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
-    std::vector<GlobalVector*> const& process_solutions,
-    std::vector<GlobalVector*> const& process_solutions_prev)
-{
-    std::vector<GlobalVector*> x_dots;
-    x_dots.reserve(per_process_data.size());
-    for (auto& process_data : per_process_data)
-    {
-        auto const process_id = process_data->process_id;
-        auto const& ode_sys = *process_data->tdisc_ode_sys;
-        auto const& time_discretization = *process_data->time_disc;
-
-        x_dots.emplace_back(&NumLib::GlobalVectorProvider::provider.getVector(
-            ode_sys.getMatrixSpecifications(process_id)));
-
-        time_discretization.getXdot(*process_solutions[process_id],
-                                    *process_solutions_prev[process_id],
-                                    *x_dots[process_id]);
-    }
-
-    // All _per_process_data share the first process.
-    bool const is_staggered_coupling =
-        !isMonolithicProcess(*per_process_data[0]);
-
-    for (auto& process_data : per_process_data)
-    {
-        auto const process_id = process_data->process_id;
-        auto& pcs = process_data->process;
-
-        if (is_staggered_coupling)
-        {
-            CoupledSolutionsForStaggeredScheme coupled_solutions(
-                process_solutions);
-            pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
-        }
-        auto& x = *process_solutions[process_id];
-        auto& x_dot = *x_dots[process_id];
-        pcs.computeSecondaryVariable(t, dt, x, x_dot, process_id);
-        pcs.postTimestep(process_solutions, t, dt, process_id);
-    }
-    for (auto& x_dot : x_dots)
-    {
-        NumLib::GlobalVectorProvider::provider.releaseVector(*x_dot);
-    }
-}
-
 NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
     const double t, const double dt, const std::size_t timestep_id)
 {
-    preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
-
     NumLib::NonlinearSolverStatus nonlinear_solver_status;
     for (auto& process_data : _per_process_data)
     {
@@ -727,9 +732,6 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         }
     }
 
-    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
-                                _process_solutions_prev);
-
     return nonlinear_solver_status;
 }
 
@@ -752,8 +754,6 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             conv_crit->reset();
         }
     };
-
-    preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
 
     NumLib::NonlinearSolverStatus nonlinear_solver_status{false, -1};
     bool coupling_iteration_converged = true;
@@ -862,9 +862,6 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
     }
-
-    postTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions,
-                                _process_solutions_prev);
 
     return nonlinear_solver_status;
 }
