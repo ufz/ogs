@@ -20,10 +20,14 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # RPATH setup
-set(CMAKE_MACOSX_RPATH TRUE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 if(APPLE)
-    set(CMAKE_INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}")
+    set(basePoint @loader_path)
 else()
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+    set(basePoint $ORIGIN)
 endif()
+file(RELATIVE_PATH relDir
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+)
+set(CMAKE_INSTALL_RPATH ${basePoint} ${basePoint}/${relDir})
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
