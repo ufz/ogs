@@ -33,7 +33,7 @@ icon = "fab fa-windows"
 
 [[head_downloads]]
 name = "Latest Singularity container CLI with Utilities"
-url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images?job=container"
+url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/ThirdParty/container-maker/_out/images?job=container"
 note = "Download and run .sif-file with [Singularity](/docs/userguide/basics/container/)"
 icon = "far fa-container-storage"
 

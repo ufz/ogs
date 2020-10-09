@@ -2,4 +2,5 @@
   before_script:
     - git submodule update --init ThirdParty/container-maker
     - cd ThirdParty/container-maker
+    - rm -rf _out
     - poetry install
