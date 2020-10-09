@@ -610,7 +610,7 @@ void ProjectData::parseProcesses(
                 ProcessLib::SteadyStateDiffusion::createSteadyStateDiffusion(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config, _mesh_vec, output_directory, _media);
+                    process_config, _mesh_vec, _media);
         }
         else
 #endif
@@ -620,7 +620,7 @@ void ProjectData::parseProcesses(
             process = ProcessLib::LiquidFlow::createLiquidFlowProcess(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
-                process_config, _mesh_vec, output_directory, _media);
+                process_config, _mesh_vec, _media);
         }
         else
 #endif
@@ -730,7 +730,7 @@ void ProjectData::parseProcesses(
             process = ProcessLib::HT::createHTProcess(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
-                process_config, _mesh_vec, output_directory, _media);
+                process_config, _mesh_vec, _media);
         }
         else
 #endif
@@ -741,7 +741,7 @@ void ProjectData::parseProcesses(
                 ProcessLib::ComponentTransport::createComponentTransportProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config, _mesh_vec, output_directory, _media,
+                    process_config, _mesh_vec, _media,
                     chemical_solver_interface);
         }
         else
