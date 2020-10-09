@@ -152,3 +152,36 @@ AddTest(
     expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu displacement_jump4 displacement_jump4 1e-16 1e-16
     expected_sfrac_pcs_0_ts_1_t_1.000000.vtu sfrac_pcs_0_ts_1_t_1.000000.vtu f_stress_n f_stress_n 1e-6 5e-6
 )
+
+AddTest(
+    NAME LIE_M_coulomb_load_path
+    PATH LIE/Mechanics
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS coulomb_load_path.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu displacement displacement 1e-16 0
+    expected_coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu displacement displacement 1e-16 0
+    expected_coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu displacement displacement 1e-16 0
+    expected_coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 0
+    expected_coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu displacement_jump1 displacement_jump1 1e-16 0
+    expected_coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu displacement_jump1 displacement_jump1 1e-16 0
+    expected_coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu sigma_xx sigma_xx 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu sigma_xx sigma_xx 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu sigma_xx sigma_xx 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
+    expected_coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu coulomb_load_path_pcs_0_ts_100_t_1.000000.vtu aperture aperture 1e-16 0
+    expected_coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu coulomb_load_path_pcs_0_ts_200_t_2.000000.vtu aperture aperture 1e-16 0
+    expected_coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu coulomb_load_path_pcs_0_ts_401_t_4.000000.vtu aperture aperture 1e-16 0
+)
+
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE LIE/Mechanics/elastic_push_pull_two_fractures.prj RUNTIME 1)
+endif()

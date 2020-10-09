@@ -22,10 +22,9 @@ namespace
 bool includesNodeID(std::vector<MeshLib::Node*> const& vec_nodes,
                     std::size_t node_id)
 {
-    auto itr2 = std::find_if(
+    return std::any_of(
         vec_nodes.begin(), vec_nodes.end(),
         [&](MeshLib::Node const* node) { return node->getID() == node_id; });
-    return (itr2 != vec_nodes.end());
 }
 
 std::vector<int> const& getMaterialIdsForNode(
@@ -111,8 +110,8 @@ PostProcessTool::PostProcessTool(
             }
 
             auto const eid = org_e->getID();
-            // keep original if the element has levelset=0
-            if ((*prop_levelset)[eid] == 0)
+            // keep original if the element has levelset<=0
+            if ((*prop_levelset)[eid] <= 0)
             {
                 continue;
             }
@@ -157,12 +156,12 @@ PostProcessTool::PostProcessTool(
                         org_mesh.getProperties().getPropertyVector<double>(
                             "levelset" + std::to_string(frac2_id + 1));
                     std::size_t pos = 0;
-                    if ((*prop_levelset2)[eid] == 0)
+                    if ((*prop_levelset2)[eid] <= 0)
                     {
                         // index of this fracture
                         pos = BaseLib::findIndex(br_matids, frac_matid);
                     }
-                    else if ((*prop_levelset2)[eid] == 1)
+                    else if ((*prop_levelset2)[eid] > 0)
                     {
                         // index of the other fracture
                         pos = BaseLib::findIndex(br_matids, *frac2_matid);
@@ -186,7 +185,7 @@ PostProcessTool::PostProcessTool(
                             "levelset" + std::to_string(frac2_id + 1));
 
                     //
-                    if ((*prop_levelset2)[eid] == 0)
+                    if ((*prop_levelset2)[eid] <= 0)
                     {
                         // index of this frac
                         auto const pos =
@@ -194,7 +193,7 @@ PostProcessTool::PostProcessTool(
                         assert(pos != std::numeric_limits<std::size_t>::max());
                         new_node_id = dup_newNodeIDs[pos];
                     }
-                    else if ((*prop_levelset2)[eid] == 1)
+                    else if ((*prop_levelset2)[eid] > 0)
                     {
                         // set the last duplicated node
                         new_node_id = dup_newNodeIDs.back();
@@ -386,20 +385,16 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
         *_output_mesh->getProperties().createNewPropertyVector<double>(
             "u", MeshLib::MeshItemType::Node, n_u_comp);
     total_u.resize(u.size());
-    for (unsigned i = 0; i < _output_mesh->getNodes().size(); i++)
-    {
-        for (int j = 0; j < n_u_comp; j++)
-        {
-            total_u[i * n_u_comp + j] = u[i * n_u_comp + j];
-        }
-    }
+    std::copy(cbegin(u), cend(u), begin(total_u));
 
     for (unsigned enrich_id = 0; enrich_id < n_fractures + n_junctions;
          enrich_id++)
     {
         // nodal value of levelset
-        std::vector<double> nodal_levelset(_output_mesh->getNodes().size(),
-                                           0.0);
+        std::vector<double> nodal_levelset(
+            _output_mesh->getNodes().size(),
+            std::numeric_limits<double>::quiet_NaN());
+
         auto const& ele_levelset =
             *_output_mesh->getProperties().getPropertyVector<double>(
                 "levelset" + std::to_string(enrich_id + 1));
@@ -410,10 +405,6 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
                 continue;
             }
             const double e_levelset = ele_levelset[e->getID()];
-            if (e_levelset == 0)
-            {
-                continue;
-            }
 
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
             {
