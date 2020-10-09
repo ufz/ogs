@@ -13,34 +13,18 @@
 #include <memory>
 #include <string>
 
-#include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
-#include "MeshLib/IO/readMeshFromFile.h"
-
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 
 namespace ProcessLib
 {
-struct SurfaceFluxData
+struct SurfaceFluxData final
 {
-    SurfaceFluxData(
-        std::string&& surfaceflux_mesh_name,
-        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-        std::string&& surfaceflux_property_vector_name)
-        : surface_mesh(*BaseLib::findElementOrError(
-              meshes.begin(), meshes.end(),
-              [&surfaceflux_mesh_name](auto const& m) {
-                  return surfaceflux_mesh_name == m->getName();
-              },
-              "Expected to find a mesh named " + surfaceflux_mesh_name +
-                  " for the surfaceflux calculation.")),
-          mesh_name(std::move(surfaceflux_mesh_name)),
+    SurfaceFluxData(MeshLib::Mesh& surfaceflux_mesh,
+                    std::string&& surfaceflux_property_vector_name)
+        : surface_mesh(surfaceflux_mesh),
           property_vector_name(std::move(surfaceflux_property_vector_name))
     {
-        DBUG(
-            "Read surfaceflux meta data:\n\tmesh:'{:s}'\n\tproperty name: "
-            "'{:s}'\n",
-            mesh_name, property_vector_name);
     }
 
     static std::unique_ptr<ProcessLib::SurfaceFluxData> createSurfaceFluxData(
@@ -58,8 +42,20 @@ struct SurfaceFluxData
         {
             return nullptr;
         }
+
+        DBUG(
+            "Read surfaceflux meta data:\n\tmesh:'{:s}'\n\tproperty name: "
+            "'{:s}'\n",
+            mesh_name, surfaceflux_pv_name);
+
+        auto& surface_mesh = *BaseLib::findElementOrError(
+            meshes.begin(), meshes.end(),
+            [&mesh_name](auto const& m) { return mesh_name == m->getName(); },
+            "Expected to find a mesh named " + mesh_name +
+                " for the surfaceflux calculation.");
+
         return std::make_unique<SurfaceFluxData>(
-            std::move(mesh_name), meshes, std::move(surfaceflux_pv_name));
+            surface_mesh, std::move(surfaceflux_pv_name));
     }
 
     void integrate(std::vector<GlobalVector*> const& x, double const t,
@@ -88,7 +84,6 @@ struct SurfaceFluxData
 
 private:
     MeshLib::Mesh& surface_mesh;
-    std::string const mesh_name;
     std::string const property_vector_name;
 };
 }  // namespace ProcessLib
