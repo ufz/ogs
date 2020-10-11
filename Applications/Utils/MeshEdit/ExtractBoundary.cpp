@@ -71,9 +71,10 @@ int main (int argc, char* argv[])
         false, "bulk_face_ids", "string");
     cmd.add(face_prop_name);
 
-    TCLAP::ValueArg<bool> use_ascii_arg(
-        "", "ascii_output", "use ascii format for data in the vtu output ", false,
-        false, "boolean value");
+    TCLAP::SwitchArg use_ascii_arg("", "ascii-output",
+                                   "If the switch is set use ascii instead of "
+                                   "binary format for data in the vtu output.",
+                                   false);
     cmd.add(use_ascii_arg);
 
     cmd.parse(argc, argv);
