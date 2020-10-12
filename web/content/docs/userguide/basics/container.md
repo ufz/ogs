@@ -26,7 +26,7 @@ Simply download an image from the [releases]({{< ref "/releases" >}}) page.
 
 #### Option: Download image from the latest master-branch build
 
-Simply download an image from the [latest master-branch build](https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/_out/images?job=container) page.
+Simply download an image from the [latest master-branch build](https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/ThirdParty/container-maker/_out/images?job=container) page.
 
 ### Run OGS inside a Container (called from outside)
 
