@@ -1,5 +1,8 @@
 # Usage, e.g.:
-#   snakemake -s ExtractBoundary.smk -j 1 --configfile $HOME/code/ogs6/build/Tests/snakemake.yaml
+#   snakemake -s ExtractBoundary.smk -j 1 --configfile $HOME/code/ogs6/build/buildinfo.yaml
+#
+# buildinfo.yaml contains variables such as Data_BINARY_DIR
+
 output_path = "FileIO"
 
 import os
