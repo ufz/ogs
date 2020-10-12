@@ -31,7 +31,7 @@ class Properties;
 
 namespace IO
 {
-/// Class for parallel reading of ascii or binary partitioned mesh files into a
+/// Class for parallel reading of binary partitioned mesh files into a
 /// NodePartitionedMesh via MPI.
 class NodePartitionedMeshReader final
 {
@@ -42,9 +42,8 @@ public:
     ~NodePartitionedMeshReader();
 
     /*!
-         \brief Create a NodePartitionedMesh object, read data to it,
-                and return a pointer to it. Data files are either in
-                ASCII format or binary format.
+         \brief Create a NodePartitionedMesh object, read data to it, and return
+                a pointer to it. Data files are in binary format.
          \param file_name_base  Name of file to be read, and it must be base name without name extension.
          \return                Pointer to Mesh object. If the creation of mesh object
                                 fails, return a null pointer.
@@ -94,8 +93,7 @@ private:
                                           /// element of global mesh,
         unsigned long global_nodes;  ///< 7: Number of all nodes of global mesh,
         unsigned long offset[5];   ///< 8~12: Offsets of positions of partitions
-                                   /// in the data arrays (only 8 and 9 are used
-                                   /// for ascii input)
+                                   /// in the data arrays.
         unsigned long extra_flag;  ///< 13: Reserved for extra flag.
 
         std::size_t size() const { return 14; }
@@ -120,13 +118,15 @@ private:
         MeshLib::Properties const& properties) const;
 
     /*!
-        \brief Parallel reading of a binary file via MPI_File_read, and it is called by readBinary
-               to read files of mesh data head, nodes, non-ghost elements and ghost elements, respectively.
-        \note           In case of failure during opening of the file, an
-                        error message is printed.
+        Parallel reading of a binary file via MPI_File_read, reading mesh data
+        head, nodes, non-ghost elements and ghost elements.
+
+        \note In case of failure during opening of the file, an error message is
+              printed.
         \note If the number of elements in container is larger than
               MPI_file_read() supports (maximum of current \c int type), an
               error is printed.
+
         \param filename File name containing data.
         \param offset   Displacement of the data accessible from the view.
                         see MPI_File_set_view() documentation.
@@ -134,10 +134,11 @@ private:
         \param data     A container to be filled with data. Its size is used
                         to determine how many values should be read.
         \tparam DATA    A homogeneous contaner type supporting data() and size().
+
         \return         True on success and false otherwise.
      */
     template <typename DATA>
-    bool readBinaryDataFromFile(std::string const& filename, MPI_Offset offset,
+    bool readDataFromFile(std::string const& filename, MPI_Offset offset,
         MPI_Datatype type, DATA& data) const;
 
     /*!
@@ -163,12 +164,12 @@ private:
                            path to the file and without file extension.
          \return           Pointer to Mesh object.
      */
-    MeshLib::NodePartitionedMesh* readBinary(const std::string &file_name_base);
+    MeshLib::NodePartitionedMesh* readMesh(const std::string &file_name_base);
 
-    MeshLib::Properties readPropertiesBinary(
+    MeshLib::Properties readProperties(
         const std::string& file_name_base) const;
 
-    void readPropertiesBinary(const std::string& file_name_base,
+    void readProperties(const std::string& file_name_base,
                               MeshLib::MeshItemType t,
                               MeshLib::Properties& p) const;
 
@@ -200,90 +201,10 @@ private:
                                               pvmd.number_of_components;
         if (!is.read(reinterpret_cast<char*>(pv->data()), number_of_bytes))
             OGS_FATAL(
-                "Error in NodePartitionedMeshReader::readPropertiesBinary: "
+                "Error in NodePartitionedMeshReader::readProperties: "
                 "Could not read part {:d} of the PropertyVector.",
                 _mpi_rank);
     }
-
-    /*!
-        \brief Open ASCII files of node partitioned mesh data.
-
-        \param file_name_base  Name of file to be read, which must be a name
-       with the
-                               path to the file and without file extension.
-        \param is_cfg          Input stream for the file contains
-       configuration data.
-        \param is_node         Input stream for the file contains node data.
-        \param is_elem         Input stream for the file contains element
-       data.
-        \return                Return true if all files are good.
-     */
-    bool openASCIIFiles(std::string const& file_name_base,
-                        std::ifstream& is_cfg, std::ifstream& is_node,
-                        std::ifstream& is_elem) const;
-
-    /*!
-        \brief Read mesh nodes from an ASCII file and cast to the corresponding rank.
-
-        \param is_node      Input stream for the file contains node data.
-        \param part_id      Partition ID.
-        \param mesh_nodes   Node vector to be filled.
-        \param glb_node_ids Global Node IDs to be filled.
-     */
-    bool readCastNodesASCII(std::ifstream& is_node, const int part_id,
-        std::vector<MeshLib::Node*> &mesh_nodes,
-        std::vector<unsigned long> &glb_node_ids) const;
-
-    /*!
-        \brief Read mesh elements from an ASCII file and cast to the corresponding rank.
-
-        \param is_elem    Input stream for the file contains element data.
-        \param part_id    Partition ID.
-        \param data_size  Total size of the data to be read. This type is an
-                          int because of MPI_Send() implicit cast.
-        \param process_ghost Flag to process ghost element.
-        \param mesh_nodes Node vector to be filled.
-        \param mesh_elems Element vector to be filled.
-     */
-    bool readCastElemsASCII(std::ifstream& is_elem, const int part_id,
-        const std::size_t data_size, const bool process_ghost,
-        const std::vector<MeshLib::Node*> &mesh_nodes,
-        std::vector<MeshLib::Element*> &mesh_elems) const;
-
-    /*!
-         \brief Create a NodePartitionedMesh object, read ASCII mesh data,
-                and return a pointer to it.
-                Three ASCII files have to been read in this function named as:
-                file_name_base+_partitioned_cfg[number of partitions].msh
-                file_name_base+_partitioned_nodes[number of partitions].msh
-                file_name_base+_partitioned_elems[number of partitions].msh
-                in which, the first file contains an array of integers for the
-                PartitionMeshInfo for all partitions
-
-                the second file contains nodes information of global IDs and coordinates
-                of all partitions.
-
-                the third file contains element information of material ID, element type
-                and node IDs of each element of all partitoions.
-         \param file_name_base  Name of file to be read, which must be a name with the
-                           path to the file and without file extension.
-         \return           Pointer to Mesh object.
-     */
-    MeshLib::NodePartitionedMesh* readASCII(const std::string &file_name_base);
-
-    /*!
-         \brief Read elements data from ASCII file.
-         \param ins       Input stream.
-         \param elem_data Vector that contains element data, which to be filled.
-                          Note: Entries from 0 to ne-1, where ne is the number of elements,
-                                contain the ID of the starting entry of each element. While
-                                entries after ne-1 store element data including material ID,
-                                element type, and node IDs.
-         \param ghost     Flag to read ghost elements.
-     */
-    void readElementASCII(std::ifstream &ins,
-        std::vector<unsigned long>& elem_data,
-        const bool ghost = false) const;
 
     /*!
          \brief Set mesh nodes from a tempory array containing node data read from file.

@@ -42,11 +42,11 @@ struct Partition
 
     std::size_t numberOfMeshItems(MeshLib::MeshItemType const item_type) const;
 
-    std::ostream& writeNodesBinary(
+    std::ostream& writeNodes(
         std::ostream& os,
         std::vector<std::size_t> const& global_node_ids) const;
 
-    std::ostream& writeConfigBinary(std::ostream& os) const;
+    std::ostream& writeConfig(std::ostream& os) const;
 };
 
 /// Creates partitioned mesh properties for nodes and cells.
@@ -98,13 +98,9 @@ public:
         MeshLib::PropertyVector<std::size_t>* const bulk_element_ids_pv,
         std::vector<Partition> const& local_partitions) const;
 
-    /// Write the partitions into ASCII files
-    /// \param file_name_base The prefix of the file name.
-    void writeASCII(const std::string& file_name_base);
-
     /// Write the partitions into binary files
     /// \param file_name_base The prefix of the file name.
-    void writeBinary(const std::string& file_name_base);
+    void write(const std::string& file_name_base);
 
     void writeOtherMesh(
         std::string const& output_filename_base,
@@ -146,30 +142,6 @@ private:
 
     void processPartition(std::size_t const part_id,
                           const bool is_mixed_high_order_linear_elems);
-
-    /// Write the configuration data of the partition data in ASCII files.
-    /// \param file_name_base The prefix of the file name.
-    void writeConfigDataASCII(const std::string& file_name_base);
-
-    ///  Write the element integer variables of all partitions into
-    ///  ASCII files.
-    /// \param file_name_base The prefix of the file name.
-    void writeElementsASCII(const std::string& file_name_base);
-
-    ///  Write the nodes of all partitions into a ASCII file.
-    /// \param file_name_base The prefix of the file name.
-    void writeNodesASCII(const std::string& file_name_base);
-
-    /*!
-        \brief Write local indices of element nodes to a ASCII file
-        \param os              Output stream
-        \param elem            Element
-        \param local_node_ids  Local node indices of a partition
-    */
-    void writeLocalElementNodeIndices(
-        std::ostream& os,
-        const MeshLib::Element& elem,
-        const std::vector<IntegerType>& local_node_ids);
 };
 
 }  // namespace ApplicationUtils

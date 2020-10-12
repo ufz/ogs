@@ -40,7 +40,7 @@ struct PropertyVectorMetaData
     }
 };
 
-inline void writePropertyVectorMetaDataBinary(
+inline void writePropertyVectorMetaData(
     std::ostream& os, PropertyVectorMetaData const& pvmd)
 {
     std::string::size_type s(pvmd.property_name.length());

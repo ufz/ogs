@@ -57,7 +57,7 @@ std::size_t Partition::numberOfMeshItems(
     OGS_FATAL("Mesh items other than nodes and cells are not supported.");
 }
 
-std::ostream& Partition::writeNodesBinary(
+std::ostream& Partition::writeNodes(
     std::ostream& os, std::vector<std::size_t> const& global_node_ids) const
 {
     std::vector<NodeStruct> nodes_buffer;
@@ -87,7 +87,7 @@ NodeWiseMeshPartitioner::IntegerType getNumberOfIntegerVariablesOfElements(
                            });
 }
 
-std::ostream& Partition::writeConfigBinary(std::ostream& os) const
+std::ostream& Partition::writeConfig(std::ostream& os) const
 {
     long const data[] = {
         static_cast<long>(nodes.size()),
@@ -763,16 +763,16 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
 }
 
 template <typename T>
-void writePropertyVectorValuesBinary(std::ostream& os,
-                                     MeshLib::PropertyVector<T> const& pv)
+void writePropertyVectorValues(std::ostream& os,
+                               MeshLib::PropertyVector<T> const& pv)
 {
     os.write(reinterpret_cast<const char*>(pv.data()), pv.size() * sizeof(T));
 }
 
 template <typename T>
-bool writePropertyVectorBinary(MeshLib::PropertyVector<T> const* const pv,
-                               MeshLib::MeshItemType const mesh_item_type,
-                               std::ostream& out_val, std::ostream& out_meta)
+bool writePropertyVector(MeshLib::PropertyVector<T> const* const pv,
+                         MeshLib::MeshItemType const mesh_item_type,
+                         std::ostream& out_val, std::ostream& out_meta)
 {
     if (pv == nullptr)
     {
@@ -790,15 +790,15 @@ bool writePropertyVectorBinary(MeshLib::PropertyVector<T> const* const pv,
     pvmd.fillPropertyVectorMetaDataTypeInfo<T>();
     pvmd.number_of_components = pv->getNumberOfGlobalComponents();
     pvmd.number_of_tuples = pv->getNumberOfTuples();
-    writePropertyVectorValuesBinary(out_val, *pv);
-    MeshLib::IO::writePropertyVectorMetaDataBinary(out_meta, pvmd);
+    writePropertyVectorValues(out_val, *pv);
+    MeshLib::IO::writePropertyVectorMetaData(out_meta, pvmd);
     return true;
 }
 
-void writePropertiesBinary(const std::string& file_name_base,
-                           MeshLib::Properties const& partitioned_properties,
-                           std::vector<Partition> const& partitions,
-                           MeshLib::MeshItemType const mesh_item_type)
+void writeProperties(const std::string& file_name_base,
+                     MeshLib::Properties const& partitioned_properties,
+                     std::vector<Partition> const& partitions,
+                     MeshLib::MeshItemType const mesh_item_type)
 {
     auto const number_of_properties =
         partitioned_properties.size(mesh_item_type);
@@ -831,7 +831,7 @@ void writePropertiesBinary(const std::string& file_name_base,
 
     applyToPropertyVectors(
         partitioned_properties, [&](auto type, auto const& property) {
-            return writePropertyVectorBinary<decltype(type)>(
+            return writePropertyVector<decltype(type)>(
                 dynamic_cast<MeshLib::PropertyVector<decltype(type)> const*>(
                     property),
                 mesh_item_type, out_val, out);
@@ -858,10 +858,10 @@ struct ConfigOffsets
     long element_rank_offset;
     long ghost_element_rank_offset;
 
-    std::ostream& writeConfigBinary(std::ostream& os) const;
+    std::ostream& writeConfig(std::ostream& os) const;
 };
 
-std::ostream& ConfigOffsets::writeConfigBinary(std::ostream& os) const
+std::ostream& ConfigOffsets::writeConfig(std::ostream& os) const
 {
     os.write(reinterpret_cast<const char*>(this), sizeof(ConfigOffsets));
 
@@ -910,7 +910,7 @@ ConfigOffsets incrementConfigOffsets(ConfigOffsets const& oldConfig,
 ///  1. The number of all non-ghost element integer variables for each
 ///     partition.
 ///  2. The number of all ghost element integer variables for each partition.
-std::tuple<std::vector<long>, std::vector<long>> writeConfigDataBinary(
+std::tuple<std::vector<long>, std::vector<long>> writeConfigData(
     const std::string& file_name_base, std::vector<Partition> const& partitions)
 {
     auto const file_name_cfg = file_name_base + "_partitioned_msh_cfg" +
@@ -929,9 +929,9 @@ std::tuple<std::vector<long>, std::vector<long>> writeConfigDataBinary(
     ConfigOffsets config_offsets = {0, 0, 0};  // 0 for first partition.
     for (const auto& partition : partitions)
     {
-        partition.writeConfigBinary(of_bin_cfg);
+        partition.writeConfig(of_bin_cfg);
 
-        config_offsets.writeConfigBinary(of_bin_cfg);
+        config_offsets.writeConfig(of_bin_cfg);
         auto const& new_offsets = computePartitionElementOffsets(partition);
         config_offsets = incrementConfigOffsets(config_offsets, new_offsets);
 
@@ -989,10 +989,10 @@ std::unordered_map<std::size_t, long> enumerateLocalNodeIds(
 /// \param num_elem_integers    The numbers of all non-ghost element
 ///                             integer variables of each partitions.
 /// \param num_g_elem_integers  The numbers of all ghost element
-void writeElementsBinary(std::string const& file_name_base,
-                         std::vector<Partition> const& partitions,
-                         std::vector<long> const& num_elem_integers,
-                         std::vector<long> const& num_g_elem_integers)
+void writeElements(std::string const& file_name_base,
+                   std::vector<Partition> const& partitions,
+                   std::vector<long> const& num_elem_integers,
+                   std::vector<long> const& num_g_elem_integers)
 {
     const std::string npartitions_str = std::to_string(partitions.size());
 
@@ -1058,9 +1058,9 @@ void writeElementsBinary(std::string const& file_name_base,
 /// \param file_name_base The prefix of the file name.
 /// \param partitions the list of partitions
 /// \param global_node_ids global numbering of nodes
-void writeNodesBinary(const std::string& file_name_base,
-                      std::vector<Partition> const& partitions,
-                      std::vector<std::size_t> const& global_node_ids)
+void writeNodes(const std::string& file_name_base,
+                std::vector<Partition> const& partitions,
+                std::vector<std::size_t> const& global_node_ids)
 {
     auto const file_name = file_name_base + "_partitioned_msh_nod" +
                            std::to_string(partitions.size()) + ".bin";
@@ -1072,28 +1072,27 @@ void writeNodesBinary(const std::string& file_name_base,
 
     for (const auto& partition : partitions)
     {
-        partition.writeNodesBinary(os, global_node_ids);
+        partition.writeNodes(os, global_node_ids);
     }
 }
 
-void NodeWiseMeshPartitioner::writeBinary(const std::string& file_name_base)
+void NodeWiseMeshPartitioner::write(const std::string& file_name_base)
 {
-    writePropertiesBinary(file_name_base, _partitioned_properties, _partitions,
-                          MeshLib::MeshItemType::Node);
-    writePropertiesBinary(file_name_base, _partitioned_properties, _partitions,
-                          MeshLib::MeshItemType::Cell);
+    writeProperties(file_name_base, _partitioned_properties, _partitions,
+                    MeshLib::MeshItemType::Node);
+    writeProperties(file_name_base, _partitioned_properties, _partitions,
+                    MeshLib::MeshItemType::Cell);
 
-    const auto elem_integers =
-        writeConfigDataBinary(file_name_base, _partitions);
+    const auto elem_integers = writeConfigData(file_name_base, _partitions);
 
     const std::vector<IntegerType>& num_elem_integers =
         std::get<0>(elem_integers);
     const std::vector<IntegerType>& num_g_elem_integers =
         std::get<1>(elem_integers);
-    writeElementsBinary(file_name_base, _partitions, num_elem_integers,
-                        num_g_elem_integers);
+    writeElements(file_name_base, _partitions, num_elem_integers,
+                  num_g_elem_integers);
 
-    writeNodesBinary(file_name_base, _partitions, _nodes_global_ids);
+    writeNodes(file_name_base, _partitions, _nodes_global_ids);
 }
 
 void NodeWiseMeshPartitioner::writeOtherMesh(
@@ -1101,131 +1100,21 @@ void NodeWiseMeshPartitioner::writeOtherMesh(
     std::vector<Partition> const& partitions,
     MeshLib::Properties const& partitioned_properties) const
 {
-    writeNodesBinary(output_filename_base, partitions, _nodes_global_ids);
+    writeNodes(output_filename_base, partitions, _nodes_global_ids);
 
     const auto elem_integers =
-        writeConfigDataBinary(output_filename_base, partitions);
+        writeConfigData(output_filename_base, partitions);
 
     const std::vector<IntegerType>& num_elem_integers =
         std::get<0>(elem_integers);
     const std::vector<IntegerType>& num_g_elem_integers =
         std::get<1>(elem_integers);
-    writeElementsBinary(output_filename_base, partitions, num_elem_integers,
-                        num_g_elem_integers);
+    writeElements(output_filename_base, partitions, num_elem_integers,
+                  num_g_elem_integers);
 
-    writePropertiesBinary(output_filename_base, partitioned_properties,
-                          partitions, MeshLib::MeshItemType::Node);
-    writePropertiesBinary(output_filename_base, partitioned_properties,
-                          partitions, MeshLib::MeshItemType::Cell);
+    writeProperties(output_filename_base, partitioned_properties, partitions,
+                    MeshLib::MeshItemType::Node);
+    writeProperties(output_filename_base, partitioned_properties, partitions,
+                    MeshLib::MeshItemType::Cell);
 }
-
-void NodeWiseMeshPartitioner::writeConfigDataASCII(
-    const std::string& file_name_base)
-{
-    const std::string fname = file_name_base + "_partitioned_cfg" +
-                              std::to_string(_npartitions) + ".msh";
-    std::fstream os_subd_head(fname, std::ios::out | std::ios::trunc);
-    const std::string mesh_info =
-        "Subdomain mesh ("
-        "Number of nodes; Number of base nodes;"
-        " Number of regular elements; Number of ghost elements;"
-        " Number of non-ghost base nodes; Number of non-ghost nodes"
-        " Number of base nodes of the global mesh;"
-        " Number of nodes of the global mesh;"
-        " Number of integer variables to define non-ghost elements;"
-        " Number of integer variables to define ghost elements.)";
-    os_subd_head << mesh_info << "\n";
-    os_subd_head << _npartitions << "\n";
-
-    for (const auto& partition : _partitions)
-    {
-        os_subd_head << partition.nodes.size();
-        os_subd_head << " " << partition.number_of_base_nodes;
-        os_subd_head << " " << partition.regular_elements.size();
-        os_subd_head << " " << partition.ghost_elements.size();
-        os_subd_head << " " << partition.number_of_non_ghost_base_nodes;
-        os_subd_head << " " << partition.number_of_non_ghost_nodes;
-        os_subd_head << " " << _mesh->getNumberOfBaseNodes();
-        os_subd_head << " " << _mesh->getNumberOfNodes();
-        os_subd_head << " "
-                     << getNumberOfIntegerVariablesOfElements(
-                            partition.regular_elements);
-        os_subd_head << " "
-                     << getNumberOfIntegerVariablesOfElements(
-                            partition.ghost_elements)
-                     << " 0\n";
-    }
-}
-
-void NodeWiseMeshPartitioner::writeElementsASCII(
-    const std::string& file_name_base)
-{
-    const std::string fname = file_name_base + "_partitioned_elems_" +
-                              std::to_string(_npartitions) + ".msh";
-    std::fstream os_subd(fname, std::ios::out | std::ios::trunc);
-    for (const auto& partition : _partitions)
-    {
-        // Set the local node indices of the current partition.
-        IntegerType node_local_id_offset = 0;
-        std::vector<IntegerType> nodes_local_ids(_mesh->getNumberOfNodes(), -1);
-        for (const auto* node : partition.nodes)
-        {
-            nodes_local_ids[node->getID()] = node_local_id_offset;
-            ++node_local_id_offset;
-        }
-
-        for (const auto* elem : partition.regular_elements)
-        {
-            writeLocalElementNodeIndices(os_subd, *elem, nodes_local_ids);
-        }
-        for (const auto* elem : partition.ghost_elements)
-        {
-            writeLocalElementNodeIndices(os_subd, *elem, nodes_local_ids);
-        }
-        os_subd << std::endl;
-    }
-}
-
-void NodeWiseMeshPartitioner::writeNodesASCII(const std::string& file_name_base)
-{
-    const std::string fname = file_name_base + "_partitioned_nodes_" +
-                              std::to_string(_npartitions) + ".msh";
-    std::fstream os_subd_node(fname, std::ios::out | std::ios::trunc);
-    os_subd_node.precision(std::numeric_limits<double>::digits10);
-    os_subd_node.setf(std::ios::scientific);
-
-    for (const auto& partition : _partitions)
-    {
-        for (const auto* node : partition.nodes)
-        {
-            double const* coords = node->getCoords();
-            os_subd_node << _nodes_global_ids[node->getID()] << " " << coords[0]
-                         << " " << coords[1] << " " << coords[2] << "\n";
-        }
-        os_subd_node << std::endl;
-    }
-}
-
-void NodeWiseMeshPartitioner::writeASCII(const std::string& file_name_base)
-{
-    writeConfigDataASCII(file_name_base);
-    writeElementsASCII(file_name_base);
-    writeNodesASCII(file_name_base);
-}
-
-void NodeWiseMeshPartitioner::writeLocalElementNodeIndices(
-    std::ostream& os,
-    const MeshLib::Element& elem,
-    const std::vector<IntegerType>& local_node_ids)
-{
-    unsigned mat_id = 0;  // TODO: Material ID to be set from the mesh data
-    os << mat_id << " " << static_cast<unsigned>(elem.getCellType()) << " "
-       << elem.getNumberOfNodes() << " ";
-    for (unsigned i = 0; i < elem.getNumberOfNodes(); i++)
-    {
-        os << " " << local_node_ids[elem.getNodeIndex(i)];
-    }
-    os << "\n";
-}
-
 }  // namespace ApplicationUtils
