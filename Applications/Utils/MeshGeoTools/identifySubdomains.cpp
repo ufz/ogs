@@ -54,14 +54,8 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<bool> force_overwrite_arg(
-        "f",
-        "force",
-        "Overwrites the existing subdomain meshes. (default: 0, do not "
-        "overwrite.)",
-        false,
-        false,
-        "1/0");
+    TCLAP::SwitchArg force_overwrite_arg(
+        "f", "force", "Overwriting existing subdomain meshes.");
     cmd.add(force_overwrite_arg);
 
     TCLAP::ValueArg<std::string> output_prefix_arg(
