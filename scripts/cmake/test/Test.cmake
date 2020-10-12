@@ -91,3 +91,8 @@ set_directory_properties(PROPERTIES
 
 set_target_properties(ctest ctest-large ctest-cleanup ctest-large-cleanup
     PROPERTIES FOLDER Testing)
+
+add_dependencies(ctest ogs)
+add_dependencies(ctest-large ogs)
+
+configure_file(${PROJECT_SOURCE_DIR}/scripts/test/buildinfo.in.yaml ${PROJECT_BINARY_DIR}/buildinfo.yaml)

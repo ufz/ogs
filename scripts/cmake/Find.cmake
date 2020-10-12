@@ -54,6 +54,9 @@ find_program(PANDOC_CITEPROC pandoc-citeproc)
 find_program(MODULE_CMD modulecmd
     PATHS /usr/local/modules/3.2.10-1/Modules/3.2.10/bin)
 
+find_program(SNAKEMAKE snakemake HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
+find_program(PARSL parsl-visualize HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
+
 ######################
 ### Find libraries ###
 ######################
