@@ -26,7 +26,6 @@
             <calculatesurfaceflux>
                 <mesh>square_1x1_quad_1e1_complete_surface</mesh>
                 <property_name>specific_flux</property_name>
-                <output_mesh>square_1x1_quad_1e1_complete_surface_left_right_dirichlet_specific_flux.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>
     </processes>
@@ -57,7 +56,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>LF_square_1e1_surfaceflux_pcs_{:process_id}</prefix>
+            <prefix>LF_square_1e1_surfaceflux_{:meshname}</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -68,7 +68,10 @@
                 <variable> pressure </variable>
                 <variable> v </variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <meshes>
+                <mesh>square_1x1_quad_1e1</mesh>
+                <mesh>square_1x1_quad_1e1_complete_surface</mesh>
+            </meshes>
         </output>
     </time_loop>
     <media>

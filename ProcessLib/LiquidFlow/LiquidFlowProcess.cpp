@@ -16,8 +16,6 @@
 
 #include "LiquidFlowLocalAssembler.h"
 #include "MeshLib/PropertyVector.h"
-// TODO(TF) used for output of flux, if output classes are ready this has to be changed
-#include "MeshLib/IO/writeMeshToFile.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
@@ -154,7 +152,6 @@ void LiquidFlowProcess::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
                             pv.getActiveElementIDs());
-    _surfaceflux->save(t);
 }
 
 }  // namespace LiquidFlow

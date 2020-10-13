@@ -57,7 +57,6 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::string const& output_directory,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
@@ -113,7 +112,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     if (calculatesurfaceflux_config)
     {
         surfaceflux = ProcessLib::SurfaceFluxData::createSurfaceFluxData(
-            *calculatesurfaceflux_config, meshes, output_directory);
+            *calculatesurfaceflux_config, meshes);
     }
 
     auto media_map =

@@ -22,7 +22,6 @@
             <calculatesurfaceflux>
                 <mesh>cube_1x1x1_hex_1e4_complete_surface</mesh>
                 <property_name>specific_flux</property_name>
-                <output_mesh>flux_1e4.vtu</output_mesh>
             </calculatesurfaceflux>
         </process>
     </processes>
@@ -156,7 +155,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>ConstViscosityThermalConvection_pcs_{:process_id}</prefix>
+            <prefix>ThermalConvection_{:meshname}</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat> 10 </repeat>
@@ -168,7 +168,10 @@
                 <variable>p</variable>
                 <variable>darcy_velocity</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <meshes>
+                <mesh>cube_1x1x1_hex_1e4</mesh>
+                <mesh>cube_1x1x1_hex_1e4_complete_surface</mesh>
+            </meshes>
         </output>
     </time_loop>
     <parameters>

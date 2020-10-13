@@ -13,45 +13,23 @@
 #include <memory>
 #include <string>
 
-#include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
-#include "MeshLib/IO/readMeshFromFile.h"
-// TODO used for output, if output classes are ready this has to be changed
-#include "MeshLib/IO/writeMeshToFile.h"
-
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 
 namespace ProcessLib
 {
-struct SurfaceFluxData
+struct SurfaceFluxData final
 {
-    SurfaceFluxData(
-        std::string&& surfaceflux_mesh_name,
-        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-        std::string&& surfaceflux_property_vector_name,
-        std::string&& surfaceflux_output_mesh_file_name)
-        : surface_mesh(*BaseLib::findElementOrError(
-              meshes.begin(), meshes.end(),
-              [&surfaceflux_mesh_name](auto const& m) {
-                  return surfaceflux_mesh_name == m->getName();
-              },
-              "Expected to find a mesh named " + surfaceflux_mesh_name +
-                  " for the surfaceflux calculation.")),
-          mesh_name(std::move(surfaceflux_mesh_name)),
-          property_vector_name(std::move(surfaceflux_property_vector_name)),
-          output_mesh_file_name(std::move(surfaceflux_output_mesh_file_name))
+    SurfaceFluxData(MeshLib::Mesh& surfaceflux_mesh,
+                    std::string&& surfaceflux_property_vector_name)
+        : surface_mesh(surfaceflux_mesh),
+          property_vector_name(std::move(surfaceflux_property_vector_name))
     {
-        DBUG(
-            "read surfaceflux meta data:\n\tsurfaceflux "
-            "mesh:'{:s}'\n\tproperty "
-            "name: '{:s}'\n\toutput to: '{:s}'",
-            mesh_name, property_vector_name, output_mesh_file_name);
     }
 
     static std::unique_ptr<ProcessLib::SurfaceFluxData> createSurfaceFluxData(
         BaseLib::ConfigTree const& calculatesurfaceflux_config,
-        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-        std::string const& output_directory)
+        std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     {
         auto mesh_name =
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__mesh}
@@ -60,20 +38,24 @@ struct SurfaceFluxData
             //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__property_name}
             calculatesurfaceflux_config.getConfigParameter<std::string>(
                 "property_name");
-        auto surfaceflux_out_fname =
-            //! \ogs_file_param{prj__processes__process__calculatesurfaceflux__output_mesh}
-            calculatesurfaceflux_config.getConfigParameter<std::string>(
-                "output_mesh");
-
         if (mesh_name.empty())
         {
             return nullptr;
         }
-        surfaceflux_out_fname = BaseLib::copyPathToFileName(
-            surfaceflux_out_fname, output_directory);
+
+        DBUG(
+            "Read surfaceflux meta data:\n\tmesh:'{:s}'\n\tproperty name: "
+            "'{:s}'\n",
+            mesh_name, surfaceflux_pv_name);
+
+        auto& surface_mesh = *BaseLib::findElementOrError(
+            meshes.begin(), meshes.end(),
+            [&mesh_name](auto const& m) { return mesh_name == m->getName(); },
+            "Expected to find a mesh named " + mesh_name +
+                " for the surfaceflux calculation.");
+
         return std::make_unique<SurfaceFluxData>(
-            std::move(mesh_name), meshes, std::move(surfaceflux_pv_name),
-            std::move(surfaceflux_out_fname));
+            surface_mesh, std::move(surfaceflux_pv_name));
     }
 
     void integrate(std::vector<GlobalVector*> const& x, double const t,
@@ -100,20 +82,8 @@ struct SurfaceFluxData
             });
     }
 
-    void save(double const t) const
-    {
-        // TODO (TomFischer) output, if output classes are ready this has to be
-        // changed
-        std::string const fname =
-            BaseLib::dropFileExtension(output_mesh_file_name) + "_t_" +
-            std::to_string(t) + ".vtu";
-        MeshLib::IO::writeMeshToFile(surface_mesh, fname);
-    }
-
 private:
     MeshLib::Mesh& surface_mesh;
-    std::string const mesh_name;
     std::string const property_vector_name;
-    std::string const output_mesh_file_name;
 };
 }  // namespace ProcessLib
