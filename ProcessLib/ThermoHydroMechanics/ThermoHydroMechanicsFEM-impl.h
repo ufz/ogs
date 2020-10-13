@@ -178,6 +178,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         KuT;
     KuT.setZero(displacement_size, temperature_size);
 
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
+        *_process_data.solid_materials[0];
+
+
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -233,9 +237,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
-        auto const specific_storage =
-            solid_phase.property(MaterialPropertyLib::PropertyType::storage)
-                .template value<double>(vars, x_position, t, dt);
+
         // Consider anisotropic thermal expansion.
         // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
         // component.
@@ -255,6 +257,11 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             solid_phase
                 .property(MaterialPropertyLib::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
+
+        auto const K_skeleton = solid_material.getBulkModulus(t, x_position);
+
+        auto const beta_SR = (1 - alpha) / K_skeleton;
+
         // For stress dependent permeability.
         vars[static_cast<int>(MaterialPropertyLib::Variable::stress)]
             .emplace<SymmetricTensor>(
@@ -271,6 +278,13 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
+
+        auto const drho_dp =
+                liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template dValue<double>(
+                    vars, MaterialPropertyLib::Variable::phase_pressure, x_position, t, dt);
+
+        auto const fluid_compressibility = 1 / fluid_density * drho_dp;
 
         double const fluid_volumetric_thermal_expansion_coefficient =
             MaterialPropertyLib::getLiquidThermalExpansivity(
@@ -330,7 +344,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         laplace_p.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
-        storage_p.noalias() += N_p.transpose() * specific_storage * N_p * w;
+        storage_p.noalias() += N_p.transpose() * (porosity * fluid_compressibility + (alpha - porosity) * beta_SR) * N_p * w;
         //
         //  RHS, pressure part
         //
