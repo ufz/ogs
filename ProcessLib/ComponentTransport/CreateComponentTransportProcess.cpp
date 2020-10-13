@@ -95,7 +95,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         //! \ogs_file_param{prj__processes__process__ComponentTransport__coupling_scheme}
         config.getConfigParameter<std::string>("coupling_scheme",
                                                "monolithic_scheme");
-    const bool use_monolithic_scheme = (coupling_scheme == "staggered");
+    const bool use_monolithic_scheme = (coupling_scheme != "staggered");
 
     // Process variable.
 
