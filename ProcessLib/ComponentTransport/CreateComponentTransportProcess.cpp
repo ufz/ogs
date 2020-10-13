@@ -91,11 +91,12 @@ std::unique_ptr<Process> createComponentTransportProcess(
     config.checkConfigParameter("type", "ComponentTransport");
 
     DBUG("Create ComponentTransportProcess.");
-    auto const staggered_scheme =
+
+    auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__ComponentTransport__coupling_scheme}
-        config.getConfigParameterOptional<std::string>("coupling_scheme");
-    const bool use_monolithic_scheme =
-        !(staggered_scheme && (*staggered_scheme == "staggered"));
+        config.getConfigParameter<std::string>("coupling_scheme",
+                                               "monolithic_scheme");
+    const bool use_monolithic_scheme = (coupling_scheme == "staggered");
 
     // Process variable.
 
