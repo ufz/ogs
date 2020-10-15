@@ -6,7 +6,7 @@ import numpy as np
 from scipy.special import erfc
 
 r = vtkXMLUnstructuredGridReader()
-r.SetFileName('mesh.vtu')
+r.SetFileName("mesh.vtu")
 r.Update()
 m = r.GetOutput()
 ps = m.GetPoints()
@@ -23,13 +23,15 @@ q = 2
 
 
 def temperature(x, t):
-    return T_inf + 2 * q / lambda_coeff * (np.sqrt(alpha * t / np.pi) * np.exp(
-        -x**2 / (4 * alpha * t)) - x / 2 * erfc(x / (2 * np.sqrt(alpha * t))))
+    return T_inf + 2 * q / lambda_coeff * (
+        np.sqrt(alpha * t / np.pi) * np.exp(-(x ** 2) / (4 * alpha * t))
+        - x / 2 * erfc(x / (2 * np.sqrt(alpha * t)))
+    )
 
 
 def addSolution(t):
     T = vtkDoubleArray()
-    T.SetName('temperature_' + str(t) + 's')
+    T.SetName("temperature_" + str(t) + "s")
     T.SetNumberOfComponents(1)
     T.SetNumberOfTuples(ps.GetNumberOfPoints())
 
@@ -44,6 +46,6 @@ for t in 78125 * np.array([1, 3, 65, 405, 500]):
     addSolution(t)
 
 w = vtkXMLUnstructuredGridWriter()
-w.SetFileName('x.vtu')
+w.SetFileName("x.vtu")
 w.SetInputData(m)
 w.Update()
