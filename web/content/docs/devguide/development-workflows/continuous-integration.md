@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Continuous Integration"
 author = "Lars Bilke"
-weight = 1013
+weight = 1016
 
 [menu]
   [menu.devguide]
