@@ -1,9 +1,7 @@
 FROM python:slim
 
-RUN pip install pre-commit==2.4.0
+RUN pip install pre-commit==2.7.1
 CMD ["bash"]
 RUN apt-get update \
- && apt-get install -y --no-install-recommends git curl \
- && curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash \
- && apt-get install git-lfs \
- && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends git gcc g++ \
+    && rm -rf /var/lib/apt/lists/*
