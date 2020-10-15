@@ -1,10 +1,8 @@
 pre commit:
   stage: preparation
   image: $PRECOMMIT_IMAGE
-  dependencies: [meta_container]
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
   script:
     - pre-commit install
     - pre-commit run --all-files
