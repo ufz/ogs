@@ -52,6 +52,11 @@
                                     <reference_condition>293.15</reference_condition>
                                     <slope>-3.98e-4</slope>
                                 </independent_variable>
+                                <independent_variable>
+                                    <variable_name>phase_pressure</variable_name>
+                                    <reference_condition>0.0</reference_condition>
+                                    <slope>1e-10</slope>
+                                </independent_variable>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -79,11 +84,6 @@
                             <value>0.0</value>
                         </property>
                         <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>1e-10</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>2768.5</value>
@@ -101,7 +101,7 @@
                         <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
-                            <value>1.0</value>
+                            <value>0.99999</value>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -162,7 +162,7 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>2.7e9</value>
+            <value>1.0e0</value>
         </parameter>
         <parameter>
             <name>nu</name>

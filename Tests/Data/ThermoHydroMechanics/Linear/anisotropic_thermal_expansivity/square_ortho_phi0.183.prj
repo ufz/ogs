@@ -52,6 +52,11 @@
                                     <reference_condition>293.15</reference_condition>
                                     <slope>-3.98e-4</slope>
                                 </independent_variable>
+                                <independent_variable>
+                                    <variable_name>phase_pressure</variable_name>
+                                    <reference_condition>0.0</reference_condition>
+                                    <slope>2e-15</slope>
+                                </independent_variable>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -77,11 +82,6 @@
                             <name>porosity</name>
                             <type>Constant</type>
                             <value>0.183</value>
-                        </property>
-                        <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>1e-16</value>
                         </property>
                         <property>
                             <name>density</name>

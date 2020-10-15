@@ -78,11 +78,6 @@
                             <value>0.1</value>
                         </property>
                         <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>1.75e-6</value>
@@ -158,11 +153,6 @@
                         </property>
                         <property>
                             <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
-                        </property>
-                        <property>
-                            <name>storage</name>
                             <type>Constant</type>
                             <value>0.0</value>
                         </property>
@@ -244,11 +234,6 @@
                             <name>porosity</name>
                             <type>Constant</type>
                             <value>0.1</value>
-                        </property>
-                        <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
                         </property>
                         <property>
                             <name>density</name>
