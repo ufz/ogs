@@ -47,12 +47,17 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
 
             dirs = tag_path_comment.split(".")[:-1]
             p = os.path.join(doxdir, *dirs)
-            if os.path.isfile(os.path.join(p, "t_" + tag_name_comment + ".dox")) \
-            or os.path.isfile(os.path.join(p, tag_name_comment, "i_" + tag_name_comment + ".dox")) \
-            or os.path.isfile(os.path.join(p, tag_name_comment, "c_" + tag_name_comment + ".dox")) :
+            if (
+                os.path.isfile(os.path.join(p, "t_" + tag_name_comment + ".dox"))
+                or os.path.isfile(
+                    os.path.join(p, tag_name_comment, "i_" + tag_name_comment + ".dox")
+                )
+                or os.path.isfile(
+                    os.path.join(p, tag_name_comment, "c_" + tag_name_comment + ".dox")
+                )
+            ):
                 good_tagpaths.add((tag_path_comment, "param"))
-            elif os.path.isfile(
-                    os.path.join(p, "a_" + tag_name_comment + ".dox")):
+            elif os.path.isfile(os.path.join(p, "a_" + tag_name_comment + ".dox")):
                 good_tagpaths.add((tag_path_comment, "attr"))
             else:
                 no_doc_page.append((tag_path_comment, inline[1], inline[2]))
@@ -67,8 +72,7 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
         elif status == "UNNEEDED":
             unneeded_comments.append(inline[1:])
         elif status == "SPECIAL":
-            debug("SPECIAL: " +
-                  " ".join(inline[1:]))  # TODO implement proper handling
+            debug("SPECIAL: " + " ".join(inline[1:]))  # TODO implement proper handling
             # unneeded.append(inline[1:])
         else:
             debug("ERROR: unrecognized status {0}".format(status))
@@ -77,23 +81,23 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
 # traverse dox file hierarchy
 srcdocdir = os.path.join(srcdir, "Documentation", "ProjectFile")
 for (dirpath, _, filenames) in os.walk(srcdocdir):
-    reldirpath = dirpath[len(srcdocdir) + 1:]
+    reldirpath = dirpath[len(srcdocdir) + 1 :]
 
     for f in filenames:
-        if not f.endswith(".md"): continue
+        if not f.endswith(".md"):
+            continue
         filepath = os.path.join(reldirpath, f)
         tag_or_attr = "param"
 
         if f.startswith("i_") or f.startswith("c_"):
             tagpath = reldirpath
         elif f.startswith("t_"):
-            tagpath = os.path.join(reldirpath, f[2:-len(".md")])
+            tagpath = os.path.join(reldirpath, f[2 : -len(".md")])
         elif f.startswith("a_"):
-            tagpath = os.path.join(reldirpath, f[2:-len(".md")])
+            tagpath = os.path.join(reldirpath, f[2 : -len(".md")])
             tag_or_attr = "attr"
         else:
-            debug("ERROR: Found md file with unrecognized name: {0}"
-                  .format(filepath))
+            debug("ERROR: Found md file with unrecognized name: {0}".format(filepath))
             continue
 
         tagpath = tagpath.replace(os.sep, ".")
@@ -113,8 +117,10 @@ if unneeded_md_files:
             parenttagpath = ".".join(tagpath)
             if (parenttagpath, "param") in unneeded_md_files:
                 del unneeded_md_files[(parenttagpath, "param")]
-                if not unneeded_md_files: break
-        if not unneeded_md_files: break
+                if not unneeded_md_files:
+                    break
+        if not unneeded_md_files:
+            break
 
 if undocumented:
     qa_status_succeeded = False
@@ -125,8 +131,12 @@ if undocumented:
     for u in sorted(undocumented):
         u2 = list(u)
         u2.append(github_src_url)
-        print_(("| {0} | {1} | {3} | <tt>{4}</tt> | <tt>{5}</tt> " +
-                "| [&rarr; ufz/ogs/master]({6}/{0}#L{1})").format(*u2))
+        print_(
+            (
+                "| {0} | {1} | {3} | <tt>{4}</tt> | <tt>{5}</tt> "
+                + "| [&rarr; ufz/ogs/master]({6}/{0}#L{1})"
+            ).format(*u2)
+        )
 
 if unneeded_comments:
     qa_status_succeeded = False
@@ -138,8 +148,11 @@ if unneeded_comments:
         u2 = list(u)
         u2.append(github_src_url)
         u2[2] = re.sub(r'([\\@&$#<>%".|])', r"\\\1", u2[2])
-        print_(("| {0} | {1} | {2} " +
-                "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |").format(*u2))
+        print_(
+            ("| {0} | {1} | {2} " + "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |").format(
+                *u2
+            )
+        )
 
 if wrong_input:
     qa_status_succeeded = False
@@ -151,8 +164,11 @@ if wrong_input:
         w2 = list(w)
         w2.append(github_src_url)
         w2[2] = re.sub(r'([\\@&$#<>%".|])', r"\\\1", w2[2])
-        print_(("| {0} | {1} | {2} " +
-                "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |").format(*w2))
+        print_(
+            ("| {0} | {1} | {2} " + "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |").format(
+                *w2
+            )
+        )
 
 if no_doc_page:
     qa_status_succeeded = False
@@ -163,8 +179,11 @@ if no_doc_page:
     for n in sorted(no_doc_page):
         n2 = list(n)
         n2.append(github_src_url)
-        print_(("| {0} | {1} | {2} " +
-                "| [&rarr; ufz/ogs/master]({3}/{1}#L{2}) |").format(*n2))
+        print_(
+            ("| {0} | {1} | {2} " + "| [&rarr; ufz/ogs/master]({3}/{1}#L{2}) |").format(
+                *n2
+            )
+        )
 
 if unneeded_md_files:
     qa_status_succeeded = False
@@ -174,15 +193,19 @@ if unneeded_md_files:
     print_("| ---- | --------- | ---- |")
     for (tagpath, tag_or_attr), filepath in sorted(unneeded_md_files.items()):
         print_(
-            (r'| \ref ogs_file_{0}__{1} | Documentation/ProjectFile/{2} ' +
-             "| [&rarr; ufz/ogs/master]({3}/Documentation/ProjectFile/{2}#) |")
-            .format(tag_or_attr,
-                    tagpath.replace(".", "__"), filepath, github_src_url))
+            (
+                r"| \ref ogs_file_{0}__{1} | Documentation/ProjectFile/{2} "
+                + "| [&rarr; ufz/ogs/master]({3}/Documentation/ProjectFile/{2}#) |"
+            ).format(tag_or_attr, tagpath.replace(".", "__"), filepath, github_src_url)
+        )
 
 with open(os.path.join(docauxdir, "untested-parameters-cache.json")) as fh:
     untested_tags_attrs = json.load(fh)
-    utags = [ ut for ut in untested_tags_attrs["tags"] \
-            if ut != "gml" and not ut.startswith("gml.") ]
+    utags = [
+        ut
+        for ut in untested_tags_attrs["tags"]
+        if ut != "gml" and not ut.startswith("gml.")
+    ]
     if utags:
         qa_status_succeeded = False
         print_()
@@ -191,8 +214,11 @@ with open(os.path.join(docauxdir, "untested-parameters-cache.json")) as fh:
             pagename = "ogs_file_param__" + utag.replace(".", "__")
             print_(r'- \ref {0} "{1}"'.format(pagename, utag))
 
-    uattrs = [ ua for ua in untested_tags_attrs["attributes"] \
-            if ua != "gml" and not ua.startswith("gml.") ]
+    uattrs = [
+        ua
+        for ua in untested_tags_attrs["attributes"]
+        if ua != "gml" and not ua.startswith("gml.")
+    ]
     if uattrs:
         qa_status_succeeded = False
         print_()

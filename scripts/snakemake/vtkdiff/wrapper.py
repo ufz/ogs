@@ -7,7 +7,9 @@ __license__ = "BSD"
 import os
 from snakemake.shell import shell
 
-output_path = os.getcwd().replace("\\", "/").replace(snakemake.config["Data_BINARY_DIR"], "")
+output_path = (
+    os.getcwd().replace("\\", "/").replace(snakemake.config["Data_BINARY_DIR"], "")
+)
 if os.path.exists(snakemake.output[0]):
     os.remove(snakemake.output[0])
 
