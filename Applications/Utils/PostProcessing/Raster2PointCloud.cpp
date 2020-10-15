@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 
     for (std::size_t i = 0; i < n_rasters; ++i)
     {
-        std::string const file_name = 
+        std::string const file_name =
             ibase_name + std::to_string(i) + ifile_ext;
         vtkSmartPointer<VtkGeoImageSource> geo_image =
             vtkSmartPointer<VtkGeoImageSource>::New();
