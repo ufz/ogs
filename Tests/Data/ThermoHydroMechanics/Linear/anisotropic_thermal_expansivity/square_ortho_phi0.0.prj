@@ -55,7 +55,7 @@
                                 <independent_variable>
                                     <variable_name>phase_pressure</variable_name>
                                     <reference_condition>0.0</reference_condition>
-                                    <slope>1e-10</slope>
+                                    <slope>1e-4</slope>
                                 </independent_variable>
                         </property>
                         <property>
@@ -81,7 +81,7 @@
                         <property>
                             <name>porosity</name>
                             <type>Constant</type>
-                            <value>0.0</value>
+                            <value>1.0e-6</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -101,7 +101,7 @@
                         <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
-                            <value>0.99999</value>
+                            <value>1.0</value>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -162,7 +162,7 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>1.0e0</value>
+            <value>1.0</value>
         </parameter>
         <parameter>
             <name>nu</name>
