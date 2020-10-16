@@ -4,7 +4,7 @@ AddTest(
     PATH MeshGeoToolsLib/Ammer
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
     EXECUTABLE MapGeometryToMeshSurface
-    EXECUTABLE_ARGS -m Ammer-Homogen100m-Final-TopSurface.vtu -i Ammer-Rivers.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/Ammer-Rivers-Mapped.gml
+    EXECUTABLE_ARGS -m Ammer-Homogen100m-Final-TopSurface.vtu -i Ammer-Rivers.gml -a -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/Ammer-Rivers-Mapped.gml
     TESTER diff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Ammer-Rivers-Mapped.gml
@@ -17,7 +17,7 @@ if(NOT "${HOSTNAME}" MATCHES "frontend.*")
         PATH MeshGeoToolsLib/Bode
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Bode
         EXECUTABLE MapGeometryToMeshSurface
-        EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
+        EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -a -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
         REQUIREMENTS NOT OGS_USE_MPI
         TESTER diff
         DIFF_DATA BodeEZG_Fliessgewaesser-Mapped.gml
@@ -29,7 +29,7 @@ AddTest(
     PATH MeshGeoToolsLib/Naegelstedt
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Naegelstedt
     EXECUTABLE MapGeometryToMeshSurface
-    EXECUTABLE_ARGS -m SmallTest.vtu -i RiverNetwork.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/RiverNetwork-Mapped.gml
+    EXECUTABLE_ARGS -m SmallTest.vtu -i RiverNetwork.gml -a -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/RiverNetwork-Mapped.gml
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA RiverNetwork-Mapped.gml
