@@ -357,11 +357,10 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 }
 
 template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<
-    DisplacementDim>::postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                                         const double t,
-                                                         double const dt,
-                                                         const int process_id)
+void ThermoHydroMechanicsProcess<DisplacementDim>::
+    postNonLinearSolverConcreteProcess(GlobalVector const& x,
+                                       GlobalVector const& xdot, const double t,
+                                       double const dt, const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
     {

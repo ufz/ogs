@@ -553,11 +553,10 @@ void RichardsMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 }
 
 template <int DisplacementDim>
-void RichardsMechanicsProcess<
-    DisplacementDim>::postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                                         const double t,
-                                                         double const dt,
-                                                         const int process_id)
+void RichardsMechanicsProcess<DisplacementDim>::
+    postNonLinearSolverConcreteProcess(GlobalVector const& x,
+                                       GlobalVector const& xdot, const double t,
+                                       double const dt, const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
     {
