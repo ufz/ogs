@@ -123,12 +123,15 @@ void LocalAssemblerInterface::postTimestep(
 void LocalAssemblerInterface::postNonLinearSolver(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
-    double const t, double const dt, bool const use_monolithic_scheme)
+    GlobalVector const& xdot, double const t, double const dt,
+    bool const use_monolithic_scheme)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
+    auto const local_xdot = xdot.get(indices);
 
-    postNonLinearSolverConcrete(local_x, t, dt, use_monolithic_scheme);
+    postNonLinearSolverConcrete(local_x, local_xdot, t, dt,
+                                use_monolithic_scheme);
 }
 
 }  // namespace ProcessLib

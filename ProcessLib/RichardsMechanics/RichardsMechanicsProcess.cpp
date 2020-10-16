@@ -569,7 +569,7 @@ void RichardsMechanicsProcess<DisplacementDim>::
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, t, dt,
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
         _use_monolithic_scheme);
 }
 
