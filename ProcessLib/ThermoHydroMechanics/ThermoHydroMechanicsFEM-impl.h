@@ -258,7 +258,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .property(MaterialPropertyLib::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
 
-        auto const K_skeleton = solid_material.getBulkModulus(t, x_position);
+        auto const solid_skeleton_compressibility = 1 / solid_material.getBulkModulus(t, x_position);
 
         auto const beta_SR = (1 - alpha) / K_skeleton;
 
