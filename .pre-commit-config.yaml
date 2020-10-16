@@ -35,4 +35,4 @@ repos:
     rev: stable
     hooks:
     - id: black
-      exclude: 'ThirdParty|MohrCoulombAbboSloanAnisotropic/run_script.py|LinearMFront/generate_ref.py'
+      exclude: 'ThirdParty|LinearMFront/generate_ref.py'
