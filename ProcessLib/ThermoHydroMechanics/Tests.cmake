@@ -151,3 +151,36 @@ AddTest(
      expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
      expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
+AddTest(
+     NAME ThermoHydroMechanics_cube_storage_incompressible_fluid
+     PATH ThermoHydroMechanics/Linear/Storage
+     RUNTIME 5
+     EXECUTABLE ogs
+     EXECUTABLE_ARGS cube_incompressible_fluid.prj
+     WRAPPER time
+     TESTER vtkdiff
+     REQUIREMENTS NOT OGS_USE_MPI
+     DIFF_DATA
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
+)
+AddTest(
+     NAME ThermoHydroMechanics_cube_storage_isochoric_heat-up
+     PATH ThermoHydroMechanics/Linear/Storage
+     RUNTIME 5
+     EXECUTABLE ogs
+     EXECUTABLE_ARGS cube_isochoric_heat-up.prj
+     WRAPPER time
+     TESTER vtkdiff
+     REQUIREMENTS NOT OGS_USE_MPI
+     DIFF_DATA
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
+)
+
