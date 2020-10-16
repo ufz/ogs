@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <geometry>square_1x1.gml</geometry>
-    <mesh>square_1x1_quad_1e0.vtu</mesh>
+    <meshes>
+        <mesh>single_cube_bulk.vtu</mesh>
+        <mesh>single_cube_x0_surface.vtu</mesh>
+        <mesh>single_cube_x10_surface.vtu</mesh>
+        <mesh>single_cube_y0_surface.vtu</mesh>
+        <mesh>single_cube_y10_surface.vtu</mesh>
+        <mesh>single_cube_z0_surface.vtu</mesh>
+        <mesh>single_cube_z10_surface.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>THERMO_HYDRO_MECHANICS</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>4</integration_order>
-            <dimension>2</dimension>
+            <dimension>3</dimension>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
@@ -21,9 +28,10 @@
             </process_variables>
             <secondary_variables>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
+                    <!-- analytical solution: neumann0/(3*K+3*α^2/((α-ϕ)*(1-α)/K)) -->
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
-            <specific_body_force>0 0</specific_body_force>
+            <specific_body_force>0 0 0</specific_body_force>
         </process>
     </processes>
 
@@ -55,7 +63,7 @@
                                 <independent_variable>
                                     <variable_name>phase_pressure</variable_name>
                                     <reference_condition>0.0</reference_condition>
-                                    <slope>2e-15</slope>
+                                    <slope>0.0</slope>
                                 </independent_variable>
                         </property>
                         <property>
@@ -76,7 +84,7 @@
                         <property>
                             <name>permeability</name>
                             <type>Constant</type>
-                            <value>3e-20 0 0 3e-20</value>
+                            <value>3e-20 0 0 0 3e-20 0 0 0 3e-20</value>
                         </property>
                         <property>
                             <name>porosity</name>
@@ -101,16 +109,12 @@
                         <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
-                            <value>1.0</value>
+                            <value>0.623</value>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
-                                <!--  sum_eps = (β_F*ϕ+(1-ϕ)*(sum(thermal_expansivity)))*ΔT 
-                                      sigma_ii = ((2*G+2*λ)*sum_eps-(2*λ+2*G)*(sum(thermal_expansivity))*ΔT)/2
-                                      eps_ii = sigma_ii*((1-ν)/(2*G+λ))+thermal_expansivity*ΔT
-                                //-->
-                            <value>1.5e-5 2.5e-5 0.0</value>
+                            <value>1.5e-5</value>
                         </property>
                     </properties>
                 </phase>
@@ -125,7 +129,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-5 1e-2 1e-5 1e-5</abstols>
+                    <abstols>1e-5 1e-2 1e-5 1e-5 1e-5</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -145,7 +149,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>THM_square_ortho-thermal-expansion-phi0.183</prefix>
+            <prefix>THM_incompressible_fluid</prefix>
             <timesteps>
                 <pair>
                     <repeat>100</repeat>
@@ -175,12 +179,12 @@
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
-            <values>0 0</values>
+            <values>0 0 0</values>
         </parameter>
         <parameter>
             <name>pressure_ic</name>
             <type>Constant</type>
-            <values>0</values>
+            <values>0.0</values>
         </parameter>
         <parameter>
             <name>dirichlet0</name>
@@ -190,7 +194,7 @@
         <parameter>
             <name>neumann0</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>1.523e6</value>
         </parameter>
         <parameter>
             <name>pressure_bc_left</name>
@@ -224,36 +228,44 @@
     <process_variables>
         <process_variable>
             <name>displacement</name>
-            <components>2</components>
+            <components>3</components>
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>single_cube_x0_surface</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
+                    <mesh>single_cube_y0_surface</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
-                    <type>Neumann</type>
-                    <component>0</component>
+                    <mesh>single_cube_z0_surface</mesh>
+                    <type>Dirichlet</type>
+                    <component>2</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>top</geometry>
+                    <mesh>single_cube_x10_surface</mesh>
+                    <type>Neumann</type>
+                    <component>0</component>
+                    <parameter>neumann0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>single_cube_y10_surface</mesh>
                     <type>Neumann</type>
                     <component>1</component>
+                    <parameter>neumann0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>single_cube_z10_surface</mesh>
+                    <type>Neumann</type>
+                    <component>2</component>
                     <parameter>neumann0</parameter>
                 </boundary_condition>
             </boundary_conditions>
@@ -273,32 +285,40 @@
             <initial_condition>temperature0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>single_cube_x10_surface</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>temperature1</parameter>
+                    <parameter>temperature0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
+                    <mesh>single_cube_y10_surface</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>temperature1</parameter>
+                    <parameter>temperature0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>single_cube_z10_surface</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>temperature1</parameter>
+                    <parameter>temperature0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>top</geometry>
+                    <mesh>single_cube_x0_surface</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
-                    <parameter>temperature1</parameter>
+                    <parameter>temperature0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>single_cube_y0_surface</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>temperature0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>single_cube_z0_surface</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>temperature0</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
