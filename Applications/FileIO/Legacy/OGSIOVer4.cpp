@@ -55,7 +55,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
     std::string line;
     std::size_t cnt(0);
 
-    getline(in, line);
+    std::getline(in, line);
     // geometric key words start with the hash #
     // while not found a new key word do ...
     while (line.find('#') == std::string::npos && !in.eof() && !in.fail())
@@ -109,7 +109,7 @@ std::string readPoints(std::istream &in, std::vector<GeoLib::Point*>* pnt_vec,
             }
             cnt++;
         }
-        getline(in, line);
+        std::getline(in, line);
     }
 
     return line;
@@ -502,7 +502,7 @@ bool readGLIFileV4(const std::string& fname,
     std::string tag;
     while (tag.find("#POINTS") == std::string::npos && !in.eof())
     {
-        getline(in, tag);
+        std::getline(in, tag);
     }
 
     // read names of points into vector of strings

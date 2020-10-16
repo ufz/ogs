@@ -418,10 +418,8 @@ void Output::doOutputNonlinearIteration(Process const& process,
         BaseLib::joinPaths(_output_directory, output_file_name);
 
     DBUG("output iteration results to {:s}", output_file_path);
-
-    INFO("[time] Output took {:g} s.", time_output.elapsed());
-
     makeOutput(output_file_path, process.getMesh(), _output_file_compression,
                _output_file_data_mode);
+    INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 }  // namespace ProcessLib

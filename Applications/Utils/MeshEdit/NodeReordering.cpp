@@ -25,11 +25,11 @@
 #include "MeshLib/Node.h"
 
 /// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with Data Explorer 6.
-void reorderNodes(std::vector<MeshLib::Element*> &elements)
+void reorderNodes(std::vector<MeshLib::Element*>& elements)
 {
     std::size_t n_corrected_elements = 0;
-    std::size_t nElements (elements.size());
-    for (std::size_t i=0; i<nElements; ++i)
+    std::size_t const nElements(elements.size());
+    for (std::size_t i = 0; i < nElements; ++i)
     {
         if (elements[i]->testElementNodeOrder())
         {
@@ -37,8 +37,9 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
         }
         n_corrected_elements++;
 
-        const unsigned nElemNodes (elements[i]->getNumberOfBaseNodes());
-        std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(), elements[i]->getNodes() + nElemNodes);
+        const unsigned nElemNodes(elements[i]->getNumberOfBaseNodes());
+        std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(),
+                                          elements[i]->getNodes() + nElemNodes);
 
         switch (elements[i]->getGeomType())
         {
@@ -55,17 +56,17 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
                 elements[i]->setNode(3, nodes[2]);
                 break;
             case MeshLib::MeshElemType::PRISM:
-                for(std::size_t j = 0; j < 3; ++j)
+                for (std::size_t j = 0; j < 3; ++j)
                 {
-                    elements[i]->setNode(j, nodes[j+3]);
-                    elements[i]->setNode(j+3, nodes[j]);
+                    elements[i]->setNode(j, nodes[j + 3]);
+                    elements[i]->setNode(j + 3, nodes[j]);
                 }
                 break;
             case MeshLib::MeshElemType::HEXAHEDRON:
-                for(std::size_t j = 0; j < 4; ++j)
+                for (std::size_t j = 0; j < 4; ++j)
                 {
-                    elements[i]->setNode(j, nodes[j+4]);
-                    elements[i]->setNode(j+4, nodes[j]);
+                    elements[i]->setNode(j, nodes[j + 4]);
+                    elements[i]->setNode(j + 4, nodes[j]);
                 }
                 break;
             default:
@@ -80,13 +81,14 @@ void reorderNodes(std::vector<MeshLib::Element*> &elements)
 }
 
 /// Re-ordering prism elements to correct OGS6 meshes with and without InSitu-Lib
-void reorderNodes2(std::vector<MeshLib::Element*> &elements)
+void reorderNodes2(std::vector<MeshLib::Element*>& elements)
 {
-    std::size_t nElements (elements.size());
-    for (std::size_t i=0; i<nElements; ++i)
+    std::size_t const nElements(elements.size());
+    for (std::size_t i = 0; i < nElements; ++i)
     {
-        const unsigned nElemNodes (elements[i]->getNumberOfBaseNodes());
-        std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(), elements[i]->getNodes() + nElemNodes);
+        const unsigned nElemNodes(elements[i]->getNumberOfBaseNodes());
+        std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(),
+                                          elements[i]->getNodes() + nElemNodes);
 
         for (std::size_t j = 0; j < nElemNodes; ++j)
         {

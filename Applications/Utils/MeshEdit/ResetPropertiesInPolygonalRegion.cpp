@@ -114,15 +114,14 @@ int main(int argc, char* argv[])
     }
 
     // *** check if the polyline is closed (i.e. is a polygon)
-    bool closed(ply->isClosed());
-    if (!closed)
+    if (!ply->isClosed())
     {
         ERR("Polyline '{:s}' is not closed, i.e. does not describe a region.",
             polygon_name_arg.getValue());
         return EXIT_FAILURE;
     }
 
-    GeoLib::Polygon polygon(*(ply));
+    GeoLib::Polygon const polygon(*(ply));
 
     // *** read mesh
     auto mesh = std::unique_ptr<MeshLib::Mesh>(

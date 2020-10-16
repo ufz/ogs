@@ -224,8 +224,7 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     {
         OGS_FATAL(
             "Function `{:s}' is not defined in the python script file, or "
-            "there "
-            "was no python script file specified.",
+            "there was no python script file specified.",
             bc_object);
     }
 
@@ -237,8 +236,7 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     {
         OGS_FATAL(
             "Variable id or component id too high. Actual values: ({:d}, "
-            "{:d}), "
-            "maximum values: ({:d}, {:d}).",
+            "{:d}), maximum values: ({:d}, {:d}).",
             variable_id, component_id, dof_table.getNumberOfVariables(),
             dof_table.getNumberOfVariableComponents(variable_id));
     }
