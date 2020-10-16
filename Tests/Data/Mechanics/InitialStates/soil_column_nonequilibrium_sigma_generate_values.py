@@ -8,10 +8,11 @@ def createStressArray(points):
     sigma.SetNumberOfTuples(points.GetNumberOfPoints())
     for i in range(points.GetNumberOfPoints()):
         y = points.GetPoint(i)[1]
-        sigma.SetTuple4(i, 2200 * 9.81 * 0.8 * (y - 100),
-                        -0.5 * 1e6 + 2200 * 9.81 * (y - 100), 0, 0)
-        #sigma.SetTuple4(i, 4*i, 4*i + 1, 4*i + 2, 4*i + 3) # for debugging
-    sigma.SetName('nonequilibrium_stress')
+        sigma.SetTuple4(
+            i, 2200 * 9.81 * 0.8 * (y - 100), -0.5 * 1e6 + 2200 * 9.81 * (y - 100), 0, 0
+        )
+        # sigma.SetTuple4(i, 4*i, 4*i + 1, 4*i + 2, 4*i + 3) # for debugging
+    sigma.SetName("nonequilibrium_stress")
     return sigma
 
 
@@ -32,14 +33,15 @@ def writeDataToFile(mesh, filename):
     w.SetInputData(mesh)
     w.Write()
 
+
 def addStressArraysToMesh(mesh):
     mesh.GetPointData().AddArray(createStressArrayForNodes(mesh))
     mesh.GetCellData().AddArray(createStressArrayForCells(mesh))
 
 
 r = vtkXMLUnstructuredGridReader()
-r.SetFileName('soil_column.vtu')
+r.SetFileName("soil_column.vtu")
 r.Update()
 m = r.GetOutput()
 addStressArraysToMesh(m)
-writeDataToFile(m, 'soil_column_nonequilibrium_sigma.vtu')
+writeDataToFile(m, "soil_column_nonequilibrium_sigma.vtu")

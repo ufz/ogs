@@ -8,6 +8,7 @@
 
 # prevent broken pipe error
 from signal import signal, SIGPIPE, SIG_DFL
+
 signal(SIGPIPE, SIG_DFL)
 
 import os
@@ -28,7 +29,7 @@ ext = sys.argv[1]
 datadir = sys.argv[2]
 docauxdir = sys.argv[3]
 
-extension = '.' + ext
+extension = "." + ext
 datadir = os.path.abspath(datadir)
 docauxdir = os.path.abspath(docauxdir)
 docdir = os.path.join(docauxdir, "dox", "ProjectFile")
@@ -67,19 +68,20 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
 
 # traverse dox file hierarchy
 for (dirpath, _, filenames) in os.walk(docdir):
-    reldirpath = dirpath[len(docdir) + 1:]
+    reldirpath = dirpath[len(docdir) + 1 :]
     istag = True
 
     for f in filenames:
-        if not f.endswith(".dox"): continue
+        if not f.endswith(".dox"):
+            continue
 
         if f.startswith("i_") or f.startswith("c_"):
             tagpath = reldirpath
         elif f.startswith("t_"):
-            tagpath = os.path.join(reldirpath, f[2:-len(".dox")])
+            tagpath = os.path.join(reldirpath, f[2 : -len(".dox")])
             istag = True
         elif f.startswith("a_"):
-            tagpath = os.path.join(reldirpath, f[2:-len(".dox")])
+            tagpath = os.path.join(reldirpath, f[2 : -len(".dox")])
             istag = False
 
         tagpath = tagpath.replace(os.sep, ".")
@@ -100,8 +102,7 @@ for (dirpath, _, filenames) in os.walk(docdir):
                     for info in dict_tag_info[tagpath]:
                         path = info[1]
                         line = info[2]
-                        fh.write(("\n## From {0} line {1}\n\n")
-                                 .format(path, line))
+                        fh.write(("\n## From {0} line {1}\n\n").format(path, line))
 
                         method = info[6]
                         if method.endswith("Optional"):
@@ -115,30 +116,35 @@ for (dirpath, _, filenames) in os.walk(docdir):
 
                         datatype = info[5]
                         if datatype:
-                            fh.write("- Data type: <tt>{0}</tt>\n".format(
-                                datatype))
+                            fh.write("- Data type: <tt>{0}</tt>\n".format(datatype))
 
-                        fh.write("- Expanded tag path: {0}\n".format(
-                            tagpath_expanded))
+                        fh.write("- Expanded tag path: {0}\n".format(tagpath_expanded))
 
                         fh.write(
-                            "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n"
-                            .format(path, line, github_src_url))
+                            "- Go to source code: [&rarr; ogs/ogs/master]({2}/{0}#L{1})\n".format(
+                                path, line, github_src_url
+                            )
+                        )
                 else:
                     fh.write("\nNo additional info.\n")
 
             if tagpath_expanded:
                 fh.write("\n\n# Used in the following test data files\n\n")
                 try:
-                    datafiles = tested_tags_attrs["tags" if istag else
-                                                  "attributes"][tagpath]
+                    datafiles = tested_tags_attrs["tags" if istag else "attributes"][
+                        tagpath
+                    ]
 
                     for df in sorted(datafiles):
-                        pagename = "ogs_ctest_prj__" + df.replace(
-                            "/", "__").replace(".", "__")
-                        fh.write(("- \\[[&rarr; ogs/ogs/master]({1}/{0}) | " \
-                                + "\\ref {2} \"&rarr; doc\"\\]&emsp;{0}\n") \
-                                .format(df, github_data_url, pagename))
+                        pagename = "ogs_ctest_prj__" + df.replace("/", "__").replace(
+                            ".", "__"
+                        )
+                        fh.write(
+                            (
+                                "- \\[[&rarr; ogs/ogs/master]({1}/{0}) | "
+                                + '\\ref {2} "&rarr; doc"\\]&emsp;{0}\n'
+                            ).format(df, github_data_url, pagename)
+                        )
                 except KeyError:
                     fh.write("Used in no end-to-end test cases.\n")
             else:

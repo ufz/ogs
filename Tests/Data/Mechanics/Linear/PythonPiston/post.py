@@ -15,6 +15,7 @@ pvd_file = "out/piston_pcs_0.pvd"
 ### helpers ##############################################
 
 import os
+
 try:
     import xml.etree.cElementTree as ET
 except:
@@ -26,6 +27,7 @@ def relpathfrom(origin, relpath):
         return relpath
     return os.path.join(origin, relpath)
 
+
 def read_pvd_file(fn):
     try:
         path = fn.name
@@ -34,21 +36,26 @@ def read_pvd_file(fn):
     pathroot = os.path.dirname(path)
     pvdtree = ET.parse(fn)
     node = pvdtree.getroot()
-    if node.tag != "VTKFile": return None, None
+    if node.tag != "VTKFile":
+        return None, None
     children = list(node)
-    if len(children) != 1: return None, None
+    if len(children) != 1:
+        return None, None
     node = children[0]
-    if node.tag != "Collection": return None, None
+    if node.tag != "Collection":
+        return None, None
 
     ts = []
     fs = []
 
     for child in node:
-        if child.tag != "DataSet": return None, None
+        if child.tag != "DataSet":
+            return None, None
         ts.append(float(child.get("timestep")))
         fs.append(relpathfrom(pathroot, child.get("file")))
 
     return ts, fs
+
 
 ### helpers end ##########################################
 
@@ -59,7 +66,7 @@ reader = vtk.vtkXMLUnstructuredGridReader()
 
 
 loc_points = vtk.vtkPoints()
-loc_points.InsertNextPoint([0.0, 0.0,  0.0])
+loc_points.InsertNextPoint([0.0, 0.0, 0.0])
 loc = vtk.vtkPolyData()
 loc.SetPoints(loc_points)
 
@@ -76,8 +83,8 @@ for i, (t, fn) in enumerate(zip(ts, fns)):
     probe.Update()
 
     grid = probe.GetOutput()
-    uy = vtk_to_numpy(grid.GetPointData().GetArray("displacement"))[0,1]
-    p = vtk_to_numpy(grid.GetPointData().GetArray("sigma"))[0,1]
+    uy = vtk_to_numpy(grid.GetPointData().GetArray("displacement"))[0, 1]
+    p = vtk_to_numpy(grid.GetPointData().GetArray("sigma"))[0, 1]
 
     uys[i] = uy
     ps[i] = -p

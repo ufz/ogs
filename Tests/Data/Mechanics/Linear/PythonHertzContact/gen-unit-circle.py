@@ -12,10 +12,10 @@ def distribute_points_evenly(c2):
     assert np.sqrt(c2.shape[0]).is_integer()
 
     CELLS_PER_DIRECTION = int(np.sqrt(c2.shape[0])) - 1
-    r2 = np.sqrt(c2[:,0]**2 + c2[:,1]**2)
-    alpha2 = np.arctan2(c2[:,1], c2[:,0])
+    r2 = np.sqrt(c2[:, 0] ** 2 + c2[:, 1] ** 2)
+    alpha2 = np.arctan2(c2[:, 1], c2[:, 0])
 
-    bins = [ [] for _ in range(CELLS_PER_DIRECTION+1) ]
+    bins = [[] for _ in range(CELLS_PER_DIRECTION + 1)]
     nbin = np.round(r2 * CELLS_PER_DIRECTION).astype(int)
     for node, b in enumerate(nbin):
         bins[b].append(node)
@@ -53,10 +53,10 @@ a = np.empty(coords.shape[0])
 
 for i, (x, y, z) in enumerate(coords):
     if x > y:
-        R = np.sqrt(1 + (y/x)**2)
+        R = np.sqrt(1 + (y / x) ** 2)
         a[i] = 1.0 / R
     elif x < y:
-        R = np.sqrt(1 + (x/y)**2)
+        R = np.sqrt(1 + (x / y) ** 2)
         a[i] = 1.0 / R
     else:
         a[i] = np.sqrt(0.5)
@@ -81,28 +81,32 @@ writer.SetInputData(grid)
 writer.Write()
 
 # extract boundary of unit circle
-R_squared = new_coords[:,0]**2 + new_coords[:,1]**2
-phi = np.arctan2(new_coords[:,1], new_coords[:,0])
+R_squared = new_coords[:, 0] ** 2 + new_coords[:, 1] ** 2
+phi = np.arctan2(new_coords[:, 1], new_coords[:, 0])
 
 idcs = np.where(abs(R_squared - 1) < 1e-8)[0]
 idcs = idcs[np.argsort(phi[idcs])]  # sorted with ascending polar angle
 
 
 with open(out_geom, "w") as fh:
-    fh.write("""<?xml version="1.0" encoding="ISO-8859-1"?>
+    fh.write(
+        """<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysGLI>
     <name>geom</name>
     <points>
         <point id="0" x="0" y="0" z="0" name="center"/>
         <point id="1" x="0" y="1" z="0" name="top"/>
         <point id="2" x="1" y="0" z="0"/>
-""")
+"""
+    )
 
     for i, (x, y, z) in enumerate(new_coords[idcs]):
-        fh.write('        <point id="{}" x="{}" y="{}" z="{}" />\n'.format(
-            i+3, x, y, z))
+        fh.write(
+            '        <point id="{}" x="{}" y="{}" z="{}" />\n'.format(i + 3, x, y, z)
+        )
 
-    fh.write("""
+    fh.write(
+        """
     </points>
 
     <polylines>
@@ -114,11 +118,14 @@ with open(out_geom, "w") as fh:
             <pnt>0</pnt>
             <pnt>2</pnt>
         </polyline>
-        <polyline id="2" name="outer">\n""")
+        <polyline id="2" name="outer">\n"""
+    )
 
     for i in range(len(idcs)):
-        fh.write("            <pnt>{}</pnt>\n".format(i+3))
+        fh.write("            <pnt>{}</pnt>\n".format(i + 3))
 
-    fh.write("""</polyline>
+    fh.write(
+        """</polyline>
     </polylines>
-</OpenGeoSysGLI>""")
+</OpenGeoSysGLI>"""
+    )

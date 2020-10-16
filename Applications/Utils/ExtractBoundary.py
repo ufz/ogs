@@ -35,7 +35,11 @@ def generate_meshes(
 
 @bash_app
 def extract_boundary(
-    elem_type, inputs=[], outputs=[], stderr=parsl.AUTO_LOGNAME, stdout=parsl.AUTO_LOGNAME
+    elem_type,
+    inputs=[],
+    outputs=[],
+    stderr=parsl.AUTO_LOGNAME,
+    stdout=parsl.AUTO_LOGNAME,
 ):
     return f"""ExtractBoundary -i {inputs[0].filepath} \
             -o square_1x1_{elem_type}_boundary.vtu"""

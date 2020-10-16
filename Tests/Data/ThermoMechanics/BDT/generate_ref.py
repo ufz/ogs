@@ -12,9 +12,9 @@ grid = reader.GetOutput()
 nnodes = grid.GetNumberOfPoints()
 
 ref_A = np.loadtxt("bdt.res")
-ts = ref_A[:,0]
-epss = ref_A[:,1:(1+6)]
-sigmas = ref_A[:,(1+6):(1+12)]
+ts = ref_A[:, 0]
+epss = ref_A[:, 1 : (1 + 6)]
+sigmas = ref_A[:, (1 + 6) : (1 + 12)]
 
 for t, eps, sigma in zip(ts, epss, sigmas):
     # assert that we don't have to bother with permuting the shear

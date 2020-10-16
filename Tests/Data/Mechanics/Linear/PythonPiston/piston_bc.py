@@ -23,7 +23,6 @@ class BC_Y(OpenGeoSys.BoundaryCondition):
 
         return (False, 0.0)
 
-
     def getFlux(self, t, coords, primary_vars):
         x, y, z = coords
 
@@ -32,10 +31,10 @@ class BC_Y(OpenGeoSys.BoundaryCondition):
             ux, uy = primary_vars
 
             p = p_chamber(uy)
-            Jac = [ 0.0, dp_chamber_du_y(uy) ]
+            Jac = [0.0, dp_chamber_du_y(uy)]
             return (True, p, Jac)
 
-        return (False, 0.0, [ 0.0, 0.0 ])
+        return (False, 0.0, [0.0, 0.0])
 
 
 # instantiate the BC objects used by OpenGeoSys

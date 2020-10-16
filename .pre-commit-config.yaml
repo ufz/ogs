@@ -4,17 +4,20 @@ repos:
     hooks:
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
+        exclude: 'ThirdParty/*|Tests/Data/*|web/static/images/xsd'
     -   id: check-added-large-files
         args: [--maxkb 1024]
     -   id: check-merge-conflict
     -   id: check-xml
     -   id: check-yaml
+    -   id: check-toml
 -   repo: local
     hooks:
     -   id: git-diff-check
         name: Run git diff --check
         entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
         language: system
+        exclude: 'ThirdParty/*|Tests/Data/*|web/static/images/xsd'
         stages: [commit, manual]
     -   id: file-extensions
         name: Check file extensions
@@ -28,5 +31,8 @@ repos:
         language: system
         files: 'CMakeLists.txt'
         stages: [commit, manual]
-
-exclude: 'ThirdParty/*|Tests/Data/*|web/static/images/xsd'
+-   repo: https://github.com/ambv/black
+    rev: stable
+    hooks:
+    - id: black
+      exclude: 'ThirdParty|LinearMFront/generate_ref.py'

@@ -39,8 +39,8 @@ void Initialize(BaseLib::ConfigTree const& scripts_config,
     //! \ogs_file_param{prj__insitu__scripts__script}
     for (auto script_config : scripts_config.getConfigSubtreeList("script"))
     {
-        //! \ogs_file_param{prj__insitu__scripts__script__name}
         auto scriptPath =
+            //! \ogs_file_param{prj__insitu__scripts__script__name}
             fs::path(script_config.getConfigParameter<std::string>("name"));
         if (scriptPath.is_relative())
         {
