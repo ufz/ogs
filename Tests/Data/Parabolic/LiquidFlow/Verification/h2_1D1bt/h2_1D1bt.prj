@@ -89,7 +89,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>h2_1D1bt_pcs_{:process_id}</prefix>
+            <prefix>h2_1D1bt</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
