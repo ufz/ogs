@@ -70,10 +70,12 @@ LinearElasticOrthotropic<DisplacementDim>::getElasticTensor(
     auto const Q = [this, &x]() -> KelvinMatrixType<3> {
         if (!_local_coordinate_system)
         {
-            return MathLib::KelvinVector::KelvinMatrixType<3>::Identity();
+            return KelvinMatrixType<3>::Identity();
         }
-        return MathLib::KelvinVector::fourthOrderRotationMatrix(
-            _local_coordinate_system->transformation<3>(x));
+        Eigen::Matrix3d R = Eigen::Matrix3d::Identity();
+        R.template topLeftCorner<DisplacementDim, DisplacementDim>().noalias() =
+            _local_coordinate_system->transformation<DisplacementDim>(x);
+        return fourthOrderRotationMatrix(R);
     }();
 
     // Rotate the forth-order tenser in Kelvin mapping with Q*C_ortho*Q^T and
