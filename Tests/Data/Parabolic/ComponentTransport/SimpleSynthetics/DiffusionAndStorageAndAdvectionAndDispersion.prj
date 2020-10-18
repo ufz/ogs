@@ -151,7 +151,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>DiffusionAndStorageAndAdvectionAndDispersion_pcs_{:process_id}</prefix>
+            <prefix>DiffusionAndStorageAndAdvectionAndDispersion</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>

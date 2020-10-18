@@ -117,7 +117,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>elder_python_pcs_{:process_id}</prefix>
+            <prefix>elder_python</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
