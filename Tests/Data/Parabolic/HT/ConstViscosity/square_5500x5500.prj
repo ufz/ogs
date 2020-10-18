@@ -223,7 +223,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>ConstViscosityThermalConvection_pcs_{:process_id}</prefix>
+            <prefix>ConstViscosityThermalConvection</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>

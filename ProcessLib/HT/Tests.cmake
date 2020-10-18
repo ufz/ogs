@@ -9,10 +9,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000.000000.vtu T T 1e-7 1e-9
-    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000.000000.vtu p p 1e-9 1e-3
-    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    VIS ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000.000000.vtu
+    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu T T 1e-7 1e-9
+    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu p p 1e-9 1e-3
+    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    VIS ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu
 )
 
 AddTest(
@@ -24,10 +24,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu T T 1e-10 1e-16
-    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu p p 1e-10 1e-16
-    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    VIS IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu
+    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_ts_1_t_1.000000.vtu T T 1e-10 1e-16
+    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_ts_1_t_1.000000.vtu p p 1e-10 1e-16
+    IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    VIS IsothermalFluidFlow_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -39,10 +39,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_pcs_0_ts_1_t_1.000000.vtu linear_top2_to_bottom1 T 1e-10 1e-16
-    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 p 1e-10 1e-16
-    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    VIS PressureDiffusionTemperatureDiffusion_pcs_0_ts_1_t_1.000000.vtu
+    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu linear_top2_to_bottom1 T 1e-10 1e-16
+    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu Linear_1_to_minus1 p 1e-10 1e-16
+    PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    VIS PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -54,10 +54,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_pcs_0_ts_1_t_1.000000.vtu T T 1e-10 1e-16
-    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_pcs_0_ts_1_t_1.000000.vtu p p 1e-10 1e-16
-    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    VIS IsothermalFluidFlow_pcs_0_ts_1_t_1.000000.vtu
+    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_ts_1_t_1.000000.vtu T T 1e-10 1e-16
+    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_ts_1_t_1.000000.vtu p p 1e-10 1e-16
+    IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    VIS IsothermalFluidFlow_ts_1_t_1.000000.vtu
 )
 
 
@@ -70,36 +70,36 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_1_t_0.100000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_1_t_0.100000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_1_t_0.100000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_2_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_2_t_0.200000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_2_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_2_t_0.200000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_2_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_2_t_0.200000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_3_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_3_t_0.300000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_3_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_3_t_0.300000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_3_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_3_t_0.300000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_4_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_4_t_0.400000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_4_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_4_t_0.400000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_4_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_4_t_0.400000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_5_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_5_t_0.500000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_5_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_5_t_0.500000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_5_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_5_t_0.500000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_6_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_6_t_0.600000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_6_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_6_t_0.600000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_6_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_6_t_0.600000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_7_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_7_t_0.700000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_7_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_7_t_0.700000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_7_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_7_t_0.700000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_8_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_8_t_0.800000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_8_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_8_t_0.800000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_8_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_8_t_0.800000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_9_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_9_t_0.900000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_9_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_9_t_0.900000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_9_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_9_t_0.900000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_10_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_10_t_1.000000.vtu T T 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_10_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_10_t_1.000000.vtu p p 1e-10 1e-16
-    PressureParabolicTemperatureParabolic_ts_10_expected.vtu PressureParabolicTemperatureParabolic_pcs_0_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_2_expected.vtu PressureParabolicTemperatureParabolic_ts_2_t_0.200000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_2_expected.vtu PressureParabolicTemperatureParabolic_ts_2_t_0.200000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_2_expected.vtu PressureParabolicTemperatureParabolic_ts_2_t_0.200000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_3_expected.vtu PressureParabolicTemperatureParabolic_ts_3_t_0.300000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_3_expected.vtu PressureParabolicTemperatureParabolic_ts_3_t_0.300000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_3_expected.vtu PressureParabolicTemperatureParabolic_ts_3_t_0.300000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_4_expected.vtu PressureParabolicTemperatureParabolic_ts_4_t_0.400000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_4_expected.vtu PressureParabolicTemperatureParabolic_ts_4_t_0.400000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_4_expected.vtu PressureParabolicTemperatureParabolic_ts_4_t_0.400000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_5_expected.vtu PressureParabolicTemperatureParabolic_ts_5_t_0.500000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_5_expected.vtu PressureParabolicTemperatureParabolic_ts_5_t_0.500000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_5_expected.vtu PressureParabolicTemperatureParabolic_ts_5_t_0.500000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_6_expected.vtu PressureParabolicTemperatureParabolic_ts_6_t_0.600000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_6_expected.vtu PressureParabolicTemperatureParabolic_ts_6_t_0.600000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_6_expected.vtu PressureParabolicTemperatureParabolic_ts_6_t_0.600000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_7_expected.vtu PressureParabolicTemperatureParabolic_ts_7_t_0.700000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_7_expected.vtu PressureParabolicTemperatureParabolic_ts_7_t_0.700000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_7_expected.vtu PressureParabolicTemperatureParabolic_ts_7_t_0.700000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_8_expected.vtu PressureParabolicTemperatureParabolic_ts_8_t_0.800000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_8_expected.vtu PressureParabolicTemperatureParabolic_ts_8_t_0.800000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_8_expected.vtu PressureParabolicTemperatureParabolic_ts_8_t_0.800000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_9_expected.vtu PressureParabolicTemperatureParabolic_ts_9_t_0.900000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_9_expected.vtu PressureParabolicTemperatureParabolic_ts_9_t_0.900000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_9_expected.vtu PressureParabolicTemperatureParabolic_ts_9_t_0.900000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_10_expected.vtu PressureParabolicTemperatureParabolic_ts_10_t_1.000000.vtu T T 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_10_expected.vtu PressureParabolicTemperatureParabolic_ts_10_t_1.000000.vtu p p 1e-10 1e-16
+    PressureParabolicTemperatureParabolic_ts_10_expected.vtu PressureParabolicTemperatureParabolic_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
 )
 
 AddTest(
@@ -111,36 +111,36 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_1_t_0.100000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_1_t_0.100000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_1_t_0.100000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_2_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_2_t_0.200000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_2_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_2_t_0.200000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_2_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_2_t_0.200000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_3_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_3_t_0.300000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_3_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_3_t_0.300000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_3_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_3_t_0.300000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_4_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_4_t_0.400000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_4_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_4_t_0.400000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_4_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_4_t_0.400000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_5_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_5_t_0.500000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_5_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_5_t_0.500000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_5_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_5_t_0.500000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_6_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_6_t_0.600000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_6_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_6_t_0.600000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_6_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_6_t_0.600000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_7_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_7_t_0.700000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_7_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_7_t_0.700000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_7_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_7_t_0.700000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_8_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_8_t_0.800000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_8_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_8_t_0.800000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_8_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_8_t_0.800000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_9_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_9_t_0.900000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_9_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_9_t_0.900000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_9_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_9_t_0.900000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_10_t_1.000000.vtu T T 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_10_t_1.000000.vtu p p 1e-10 1e-16
-    CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_pcs_0_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_2_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_2_t_0.200000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_2_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_2_t_0.200000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_2_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_2_t_0.200000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_3_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_3_t_0.300000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_3_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_3_t_0.300000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_3_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_3_t_0.300000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_4_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_4_t_0.400000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_4_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_4_t_0.400000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_4_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_4_t_0.400000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_5_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_5_t_0.500000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_5_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_5_t_0.500000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_5_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_5_t_0.500000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_6_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_6_t_0.600000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_6_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_6_t_0.600000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_6_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_6_t_0.600000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_7_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_7_t_0.700000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_7_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_7_t_0.700000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_7_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_7_t_0.700000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_8_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_8_t_0.800000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_8_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_8_t_0.800000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_8_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_8_t_0.800000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_9_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_9_t_0.900000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_9_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_9_t_0.900000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_9_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_9_t_0.900000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_10_t_1.000000.vtu T T 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_10_t_1.000000.vtu p p 1e-10 1e-16
+    CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
 )
 
 AddTest(
@@ -369,14 +369,14 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_0.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_0.vtu p p 1e-15 1e-14
-    ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_1.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_1.vtu p p 1e-15 1e-14
-    ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_2.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_2.vtu p p 1e-15 1e-14
-    ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_3.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_3.vtu p p 1e-15 1e-14
-    ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_0.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_0.vtu T T 1e-15 1e-14
-    ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_1.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_1.vtu T T 1e-15 1e-14
-    ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_2.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_2.vtu T T 1e-15 1e-14
-    ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_3.vtu ConstViscosityThermalConvection_pcs_0_ts_149_t_50000000000_000000_3.vtu T T 1e-15 1e-14
+    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_0.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_0.vtu p p 1e-15 1e-14
+    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_1.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_1.vtu p p 1e-15 1e-14
+    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_2.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_2.vtu p p 1e-15 1e-14
+    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_3.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_3.vtu p p 1e-15 1e-14
+    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_0.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_0.vtu T T 1e-15 1e-14
+    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_1.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_1.vtu T T 1e-15 1e-14
+    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_2.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_2.vtu T T 1e-15 1e-14
+    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_3.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_3.vtu T T 1e-15 1e-14
 )
 
 AddTest(
@@ -437,10 +437,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    ThermalConvection_pcs_0_ts_1_t_0.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_0.000000.vtu T T 1e-10 1e-16
-    ThermalConvection_pcs_0_ts_1_t_0.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_0.000000.vtu p p 7e-7 1e-12
-    ThermalConvection_pcs_0_ts_1_t_0.000000_expected.vtu ThermalConvection_pcs_0_ts_1_t_0.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
-    VIS ThermalConvection_pcs_0_ts_1_t_0.000000.vtu
+    ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu T T 1e-10 1e-16
+    ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu p p 7e-7 1e-12
+    ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
+    VIS ThermalConvection_ts_1_t_0.000000.vtu
 )
 
 if(NOT OGS_USE_MPI AND BUILD_TESTING AND Python3_FOUND)
