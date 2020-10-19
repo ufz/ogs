@@ -176,14 +176,22 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
 }
 
 void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
-    const double /*t*/, double const /*dt*/,
-    std::vector<GlobalVector*> const& /*x*/,
-    std::vector<GlobalVector*> const& /*xdot*/, const double /*dxdot_dx*/,
-    const double /*dx_dx*/, int const /*process_id*/, GlobalMatrix& /*M*/,
-    GlobalMatrix& /*K*/, GlobalVector& /*b*/, GlobalMatrix& /*Jac*/)
+    const double t, double const dt, std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
+    const double dx_dx, int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+    GlobalVector& b, GlobalMatrix& Jac)
 {
-    OGS_FATAL(
-        "HeatTransportBHE: analytical Jacobian assembly is not implemented");
+    DBUG("AssembleWithJacobian HeatTransportBHE process.");
+
+    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
+        dof_table = {std::ref(*_local_to_global_index_map)};
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    // Call global assembler for each local assembly item.
+    GlobalExecutor::executeSelectedMemberDereferenced(
+        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 }
 
 void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
