@@ -56,7 +56,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e3_pcs_{:process_id}</prefix>
+            <prefix>square_1e3</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>

@@ -41,7 +41,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>cube_3e4_pcs_{:process_id}</prefix>
+            <prefix>cube_3e4</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>

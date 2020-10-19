@@ -51,7 +51,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e4_axi_pcs_{:process_id}</prefix>
+            <prefix>square_1e4_axi</prefix>
             <variables>
                 <variable> temperature </variable>
                 <variable> v      </variable>
