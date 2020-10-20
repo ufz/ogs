@@ -95,8 +95,9 @@ public:
 
     void postNonLinearSolver(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                             GlobalVector const& x, double const t,
-                             double const dt, bool const use_monolithic_scheme);
+                             GlobalVector const& x, GlobalVector const& xdot,
+                             double const t, double const dt,
+                             bool const use_monolithic_scheme);
 
     virtual std::vector<double> interpolateNodalValuesToIntegrationPoints(
         std::vector<double> const& /*local_x*/)
@@ -143,7 +144,8 @@ private:
     }
 
     virtual void postNonLinearSolverConcrete(
-        std::vector<double> const& /*local_x*/, double const /*t*/,
+        std::vector<double> const& /*local_x*/,
+        std::vector<double> const& /*local_xdot*/, double const /*t*/,
         double const /*dt*/, bool const /*use_monolithic_scheme*/)
     {
     }

@@ -127,6 +127,7 @@ public:
         std::vector<double> const& local_x_dot) override;
 
     void postNonLinearSolverConcrete(std::vector<double> const& local_x,
+                                     std::vector<double> const& local_xdot,
                                      double const t, double const dt,
                                      bool const use_monolithic_scheme) override;
 

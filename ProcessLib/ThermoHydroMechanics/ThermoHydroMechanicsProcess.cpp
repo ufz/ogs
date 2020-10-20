@@ -357,11 +357,10 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 }
 
 template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<
-    DisplacementDim>::postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                                         const double t,
-                                                         double const dt,
-                                                         const int process_id)
+void ThermoHydroMechanicsProcess<DisplacementDim>::
+    postNonLinearSolverConcreteProcess(GlobalVector const& x,
+                                       GlobalVector const& xdot, const double t,
+                                       double const dt, const int process_id)
 {
     if (!hasMechanicalProcess(process_id))
     {
@@ -372,7 +371,7 @@ void ThermoHydroMechanicsProcess<
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        getDOFTable(process_id), x, t, dt, _use_monolithic_scheme);
+        getDOFTable(process_id), x, xdot, t, dt, _use_monolithic_scheme);
 }
 
 template <int DisplacementDim>

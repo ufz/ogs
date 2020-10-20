@@ -93,6 +93,7 @@ private:
                                     const int process_id) override;
 
     void postNonLinearSolverConcreteProcess(GlobalVector const& x,
+                                            GlobalVector const& xdot,
                                             const double t, double const dt,
                                             int const process_id) override;
 
