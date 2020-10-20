@@ -108,6 +108,16 @@ AddTest(
 # Mac is producing slightly different partitioning, so the results are not
 # comparable.
 AddTest(
+    NAME partmesh_2Dmesh_ogs2metis
+    PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i 2Dmesh.vtu --ogs2metis
+                    -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
+    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+)
+
+AddTest(
     NAME partmesh_2Dmesh_3partitions_binary
     PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
@@ -121,6 +131,7 @@ AddTest(
                     2Dmesh_POINT4.vtu
                     2Dmesh_POINT5.vtu
     REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+    DEPENDS partmesh_2Dmesh_ogs2metis
     TESTER diff
     DIFF_DATA 2Dmesh_partitioned_node_properties_val3.bin
               2Dmesh_partitioned_node_properties_cfg3.bin

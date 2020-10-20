@@ -169,13 +169,13 @@ int main(int argc, char* argv[])
         }
     }
     mesh_partitioner.resetPartitionIdsForNodes(
-        readMetisData(input_file_name_wo_extension, num_partitions,
+        readMetisData(output_file_name_wo_extension, num_partitions,
                       mesh_partitioner.mesh().getNumberOfNodes()));
 
     // Remove metis partitioning files only if metis was run internally.
     if (exe_metis_flag.getValue())
     {
-        removeMetisPartitioningFiles(input_file_name_wo_extension,
+        removeMetisPartitioningFiles(output_file_name_wo_extension,
                                      num_partitions);
     }
 
