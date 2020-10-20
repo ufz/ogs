@@ -114,11 +114,15 @@ int main(int argc, char* argv[])
          mesh_ptr->getNumberOfNodes(),
          mesh_ptr->getNumberOfElements());
 
+    std::string const output_file_name_wo_extension = BaseLib::joinPaths(
+        output_directory_arg.getValue(),
+        BaseLib::extractBaseNameWithoutExtension(mesh_input.getValue()));
+
     if (ogs2metis_flag.getValue())
     {
         INFO("Write the mesh into METIS input file.");
         ApplicationUtils::writeMETIS(mesh_ptr->getElements(),
-                                     input_file_name_wo_extension + ".mesh");
+                                     output_file_name_wo_extension + ".mesh");
         INFO("Total runtime: {:g} s.", run_timer.elapsed());
         INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
 
@@ -128,9 +132,6 @@ int main(int argc, char* argv[])
     ApplicationUtils::NodeWiseMeshPartitioner mesh_partitioner(
         nparts.getValue(), std::move(mesh_ptr));
 
-    std::string const output_file_name_wo_extension = BaseLib::joinPaths(
-        output_directory_arg.getValue(),
-        BaseLib::extractBaseNameWithoutExtension(mesh_input.getValue()));
     const int num_partitions = nparts.getValue();
 
     if (num_partitions < 1)
