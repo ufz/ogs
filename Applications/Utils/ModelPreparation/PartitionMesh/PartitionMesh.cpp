@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
 
         const std::string mpmetis_com =
             BaseLib::joinPaths(exe_path, "mpmetis") + " -gtype=nodal " + "'" +
-            input_file_name_wo_extension + ".mesh" + "' " +
+            output_file_name_wo_extension + ".mesh" + "' " +
             std::to_string(nparts.getValue());
 
         const int status = system(mpmetis_com.c_str());
