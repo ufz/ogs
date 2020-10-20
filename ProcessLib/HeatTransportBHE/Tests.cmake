@@ -113,3 +113,17 @@ AddTest(
     BHE_1P_pcs_0_ts_10_t_600.000000.vtu BHE_1P_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
     BHE_1P_pcs_0_ts_10_t_600.000000.vtu BHE_1P_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
+
+AddTest(
+    NAME HeatTransportBHE_single_pipe_flow_EUBHE_newton
+    PATH Parabolic/T/BHE_1P
+    RUNTIME 60
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS BHE_1P_newton.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    BHE_1P_pcs_0_ts_10_t_600.000000.vtu BHE_1P_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    BHE_1P_pcs_0_ts_10_t_600.000000.vtu BHE_1P_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+)
