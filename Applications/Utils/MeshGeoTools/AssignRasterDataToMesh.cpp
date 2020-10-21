@@ -18,7 +18,6 @@
 #include "GeoLib/Raster.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-//#include "MeshLib/MeshEnums.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshEditing/RasterDataToMesh.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
@@ -54,8 +53,8 @@ int main(int argc, char *argv[])
     cmd.add(set_nodes_arg);
 
     TCLAP::ValueArg<std::string> array_name_arg(
-        "s", "scalar", "The name of the newly created scalar array.", true, "",
-        "scalar array name");
+        "s", "scalar-name", "The name of the newly created scalar array.", true,
+        "", "scalar array name");
     cmd.add(array_name_arg);
     TCLAP::ValueArg<std::string> raster_arg("r", "raster",
                                             "Name of the input raster (*.asc)",
@@ -72,22 +71,12 @@ int main(int argc, char *argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-    bool create_node_array(true);
-    bool create_cell_array(false);
-    if (set_cells_arg.isSet())
-    {
-        create_cell_array = true;
-        create_node_array = false;
-    }
+    bool create_cell_array(set_cells_arg.isSet());
+    bool create_node_array = (create_cell_array) ? set_nodes_arg.isSet() : true;
 
-    if (set_nodes_arg.isSet())
-    {
-        create_node_array = true;
-    }
-
-    std::string const mesh_name = input_arg.getValue().c_str();
-    std::string const output_name = output_arg.getValue().c_str();
-    std::string const raster_name = raster_arg.getValue().c_str();
+    std::string const& mesh_name = input_arg.getValue();
+    std::string const& output_name = output_arg.getValue();
+    std::string const& raster_name = raster_arg.getValue();
 
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(mesh_name));
@@ -100,10 +89,9 @@ int main(int argc, char *argv[])
     std::unique_ptr<GeoLib::Raster> const raster(
         FileIO::AsciiRasterInterface::getRasterFromASCFile(raster_name));
 
-    bool assigned(false);
     if (create_node_array)
     {
-        assigned = MeshLib::RasterDataToMesh::projectToNodes(
+        bool assigned = MeshLib::RasterDataToMesh::projectToNodes(
             *mesh, *raster, nodata_arg.getValue(), array_name_arg.getValue());
 
         if (!assigned)
@@ -116,7 +104,7 @@ int main(int argc, char *argv[])
 
     if (create_cell_array)
     {
-        assigned = MeshLib::RasterDataToMesh::projectToElements(
+        bool assigned = MeshLib::RasterDataToMesh::projectToElements(
             *mesh, *raster, nodata_arg.getValue(), array_name_arg.getValue());
 
                 if (!assigned)
