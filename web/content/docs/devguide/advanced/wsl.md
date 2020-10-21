@@ -9,11 +9,12 @@ weight = 1042
     parent = "advanced"
 +++
 
-The [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) is an alternative way to setup a complete development environment on Windows. It offers a Linux environment with a seamless bridge to the Windows world. We recommend this setup for Windows developers.
+The [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) is an alternative way to setup a complete development environment on Windows. It offers a Linux environment with a seamless bridge to the Windows world. **We recommend this setup for Windows developers**.
 
 ## Setup
 
-- Install WSL by following [this guide](https://www.windowscentral.com/install-windows-subsystem-linux-windows-10). **Important:** Choose **Ubuntu 20.04 LTS** as the Linux distribution. Other distros may not have a sufficient compiler.
+- Install WSL2 by following [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10). **Important:** Choose **Ubuntu 20.04 LTS** as the Linux distribution. Other distros may not have a sufficient compiler.
+- Optional but recommended: Install the new [Windows Terminal](https://docs.microsoft.com/en-us/windows/terminal/get-started)
 - Follow the [developer guide for Linux]({{< ref "prerequisites.md" >}}) from now on.
 
 ## Using Visual Studio Code as IDE
