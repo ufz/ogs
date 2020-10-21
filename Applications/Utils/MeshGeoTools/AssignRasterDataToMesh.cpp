@@ -70,14 +70,15 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-    bool create_cell_array(set_cells_arg.isSet());
-    bool create_node_array = (create_cell_array) ? set_nodes_arg.isSet() : true;
+    bool const create_cell_array(set_cells_arg.isSet());
+    bool const create_node_array =
+        (create_cell_array) ? set_nodes_arg.isSet() : true;
 
     std::string const& mesh_name = input_arg.getValue();
     std::string const& output_name = output_arg.getValue();
     std::string const& raster_name = raster_arg.getValue();
 
-    std::unique_ptr<MeshLib::Mesh> mesh(
+    std::unique_ptr<MeshLib::Mesh> const mesh(
         MeshLib::IO::readMeshFromFile(mesh_name));
     if (mesh->getDimension() > 2)
     {
@@ -90,7 +91,7 @@ int main(int argc, char* argv[])
 
     if (create_node_array)
     {
-        bool assigned = MeshLib::RasterDataToMesh::projectToNodes(
+        bool const assigned = MeshLib::RasterDataToMesh::projectToNodes(
             *mesh, *raster, nodata_arg.getValue(), array_name_arg.getValue());
 
         if (!assigned)
@@ -103,7 +104,7 @@ int main(int argc, char* argv[])
 
     if (create_cell_array)
     {
-        bool assigned = MeshLib::RasterDataToMesh::projectToElements(
+        bool const assigned = MeshLib::RasterDataToMesh::projectToElements(
             *mesh, *raster, nodata_arg.getValue(), array_name_arg.getValue());
 
         if (!assigned)
