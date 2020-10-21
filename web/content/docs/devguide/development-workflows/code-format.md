@@ -21,6 +21,8 @@ Use [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html). Can be added
 
 Current style is defined in [.clang-format](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.clang-format).
 
+A pre-commit hook for git checking the code formatting can be found [here](https://gitlab.opengeosys.org/ogs/ogs-utils/-/tree/master/dev/code-formatting/clang-format-pre-commit-hook).
+
 ## Python
 
 Use [`black`](https://black.readthedocs.io/en/stable/). Can be added to be automatically run on save in your editor / IDE:
