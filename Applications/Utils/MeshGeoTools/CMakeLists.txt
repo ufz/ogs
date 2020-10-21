@@ -1,4 +1,5 @@
 set(TOOLS
+    AssignRasterDataToMesh
     computeSurfaceNodeIDsInPolygonalRegion
     constructMeshesFromGeometry
     createIntermediateRasters
