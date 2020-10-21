@@ -102,27 +102,9 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__material_property}
     auto const& mat_config = config.getConfigSubtree("material_property");
 
-    std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties>
-        material = nullptr;
-
-    if (mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
-    {
-        INFO("The twophase flow is in heterogeneous porous media.");
-        auto const& mat_ids =
-            mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-        material = createThermalTwoPhaseFlowWithPPMaterialProperties(
-            mat_config, *mat_ids, parameters);
-    }
-    else
-    {
-        INFO("The twophase flow is in homogeneous porous media.");
-        MeshLib::Properties dummy_property;
-        auto const& dummy_property_vector =
-            dummy_property.createNewPropertyVector<int>(
-                "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
-        material = createThermalTwoPhaseFlowWithPPMaterialProperties(
-            mat_config, *dummy_property_vector, parameters);
-    }
+    std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties> material =
+        createThermalTwoPhaseFlowWithPPMaterialProperties(
+            mat_config, materialIDs(mesh), parameters);
 
     ThermalTwoPhaseFlowWithPPProcessData process_data{specific_body_force,
                                                       has_gravity,
