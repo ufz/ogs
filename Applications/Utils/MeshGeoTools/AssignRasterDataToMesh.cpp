@@ -13,16 +13,15 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
-
-#include "GeoLib/Raster.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/MeshEditing/RasterDataToMesh.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
+#include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/RasterDataToMesh.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Assigns the pixel information of a raster file to a scalar array of a "
@@ -39,17 +38,17 @@ int main(int argc, char *argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<double> nodata_arg("e", "nodata",
-                                       "The no data value used for missing values",
-                                       false, 0, "a number");
+    TCLAP::ValueArg<double> nodata_arg(
+        "e", "nodata", "The no data value used for missing values", false, 0,
+        "a number");
     cmd.add(nodata_arg);
 
     TCLAP::SwitchArg set_cells_arg("c", "cell-array",
                                    "Assigns raster data to cell array");
     cmd.add(set_cells_arg);
 
-    TCLAP::SwitchArg set_nodes_arg("n", "node-array",
-                                   "Assigns raster data to node array (default)");
+    TCLAP::SwitchArg set_nodes_arg(
+        "n", "node-array", "Assigns raster data to node array (default)");
     cmd.add(set_nodes_arg);
 
     TCLAP::ValueArg<std::string> array_name_arg(
@@ -107,7 +106,7 @@ int main(int argc, char *argv[])
         bool assigned = MeshLib::RasterDataToMesh::projectToElements(
             *mesh, *raster, nodata_arg.getValue(), array_name_arg.getValue());
 
-                if (!assigned)
+        if (!assigned)
         {
             ERR("Error assigning raster data to scalar cell array");
             return EXIT_FAILURE;
