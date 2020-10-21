@@ -49,6 +49,15 @@ int main(int argc, char* argv[])
         "file name of input mesh");
     cmd.add(mesh_input);
 
+    TCLAP::ValueArg<std::string> metis_mesh_input(
+        "x", "metis-mesh-input-file",
+        "base name (without .mesh extension) of the file containing the "
+        "metis input mesh",
+        false, "",
+        "base name (without .mesh extension) of the file containing the metis "
+        "input mesh");
+    cmd.add(metis_mesh_input);
+
     TCLAP::ValueArg<std::string> output_directory_arg(
         "o", "output", "directory name for the output files", false, "",
         "directory");
@@ -114,11 +123,15 @@ int main(int argc, char* argv[])
          mesh_ptr->getNumberOfNodes(),
          mesh_ptr->getNumberOfElements());
 
+    std::string const output_file_name_wo_extension = BaseLib::joinPaths(
+        output_directory_arg.getValue(),
+        BaseLib::extractBaseNameWithoutExtension(mesh_input.getValue()));
+
     if (ogs2metis_flag.getValue())
     {
         INFO("Write the mesh into METIS input file.");
         ApplicationUtils::writeMETIS(mesh_ptr->getElements(),
-                                     input_file_name_wo_extension + ".mesh");
+                                     output_file_name_wo_extension + ".mesh");
         INFO("Total runtime: {:g} s.", run_timer.elapsed());
         INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
 
@@ -128,9 +141,6 @@ int main(int argc, char* argv[])
     ApplicationUtils::NodeWiseMeshPartitioner mesh_partitioner(
         nparts.getValue(), std::move(mesh_ptr));
 
-    std::string const output_file_name_wo_extension = BaseLib::joinPaths(
-        output_directory_arg.getValue(),
-        BaseLib::extractBaseNameWithoutExtension(mesh_input.getValue()));
     const int num_partitions = nparts.getValue();
 
     if (num_partitions < 1)
@@ -146,6 +156,12 @@ int main(int argc, char* argv[])
             "-np=1'.");
     }
 
+    auto metis_mesh = output_file_name_wo_extension;
+    if (metis_mesh_input.getValue() != "")
+    {
+        metis_mesh = metis_mesh_input.getValue();
+    }
+
     // Execute mpmetis via system(...)
     if (exe_metis_flag.getValue())
     {
@@ -156,9 +172,9 @@ int main(int argc, char* argv[])
 
         const std::string mpmetis_com =
             BaseLib::joinPaths(exe_path, "mpmetis") + " -gtype=nodal " + "'" +
-            input_file_name_wo_extension + ".mesh" + "' " +
-            std::to_string(nparts.getValue());
+            metis_mesh + ".mesh" + "' " + std::to_string(nparts.getValue());
 
+        INFO("Running: {:s}", mpmetis_com);
         const int status = system(mpmetis_com.c_str());
         if (status != 0)
         {
@@ -168,14 +184,13 @@ int main(int argc, char* argv[])
         }
     }
     mesh_partitioner.resetPartitionIdsForNodes(
-        readMetisData(input_file_name_wo_extension, num_partitions,
+        readMetisData(metis_mesh, num_partitions,
                       mesh_partitioner.mesh().getNumberOfNodes()));
 
     // Remove metis partitioning files only if metis was run internally.
     if (exe_metis_flag.getValue())
     {
-        removeMetisPartitioningFiles(input_file_name_wo_extension,
-                                     num_partitions);
+        removeMetisPartitioningFiles(metis_mesh, num_partitions);
     }
 
     INFO("Partitioning the mesh in the node wise way ...");
