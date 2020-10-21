@@ -105,8 +105,6 @@ AddTest(
     river_bc_prism.vtu prism_river_bc.vtu number_bulk_elements number_bulk_elements 0 0
 )
 
-# Mac is producing slightly different partitioning, so the results are not
-# comparable.
 AddTest(
     NAME partmesh_2Dmesh_ogs2metis
     PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
@@ -114,7 +112,7 @@ AddTest(
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -i 2Dmesh.vtu --ogs2metis
                     -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
-    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+    REQUIREMENTS NOT (OGS_USE_MPI)
 )
 
 AddTest(
@@ -130,8 +128,10 @@ AddTest(
                     2Dmesh_PLY_SOUTH.vtu
                     2Dmesh_POINT4.vtu
                     2Dmesh_POINT5.vtu
+    # Mac is producing slightly different partitioning, so the results are not
+    # comparable.
     REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
-    DEPENDS partmesh_2Dmesh_ogs2metis
+    DEPENDS partmesh-partmesh_2Dmesh_ogs2metis
     TESTER diff
     DIFF_DATA 2Dmesh_partitioned_node_properties_val3.bin
               2Dmesh_partitioned_node_properties_cfg3.bin
@@ -323,7 +323,7 @@ AddTest(
     PATH NodePartitionedMesh/partmesh
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh
     EXECUTABLE partmesh
-    EXECUTABLE_ARGS -n 2 -i cube_1x1x1_hex_8.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh
+    EXECUTABLE_ARGS -n 2 -i cube_1x1x1_hex_8.vtu -x cube_1x1x1_hex_8 -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh
     TESTER diff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
