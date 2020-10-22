@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh> const mesh(
         MeshLib::IO::readMeshFromFile(mesh_name));
-    if (mesh->getDimension() > 2)
+    if (mesh->getDimension() != 2)
     {
         ERR("Method can only be applied to 2D meshes.");
         return EXIT_FAILURE;
