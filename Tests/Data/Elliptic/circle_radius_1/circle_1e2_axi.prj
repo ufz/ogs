@@ -41,7 +41,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>circle_1e2_axi_pcs_{:process_id}</prefix>
+            <prefix>circle_1e2_axi</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>

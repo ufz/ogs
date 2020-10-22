@@ -51,7 +51,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>quad_20x10_GroundWaterFlow_result_pcs_{:process_id}</prefix>
+            <prefix>quad_20x10_GroundWaterFlow_result</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>

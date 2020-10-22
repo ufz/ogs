@@ -52,7 +52,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>TestSet_01_pcs_{:process_id}</prefix>
+            <prefix>TestSet_01</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v </variable>

@@ -129,7 +129,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>Goswami_Component_Transport_pcs_{:process_id}</prefix>
+            <prefix>Goswami_Component_Transport</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>

@@ -109,7 +109,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>out_ogs5_H_pcs_{:process_id}</prefix>
+            <prefix>out_ogs5_H</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>

@@ -91,7 +91,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>sat_1D_pcs_{:process_id}</prefix>
+            <prefix>sat_1D</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>

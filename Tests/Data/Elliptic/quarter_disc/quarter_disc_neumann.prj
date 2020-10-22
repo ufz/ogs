@@ -37,7 +37,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>neumann_along_line_pcs_{:process_id}</prefix>
+            <prefix>neumann_along_line</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>

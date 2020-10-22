@@ -117,7 +117,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>mass_conservation_ogsOutput_pcs_{:process_id}</prefix>
+            <prefix>mass_conservation_ogsOutput</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>

@@ -8,7 +8,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
 
     AddTest(
@@ -19,7 +19,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_newton_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_newton_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
 
     AddTest(
@@ -30,7 +30,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-1 1e-1
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-1 1e-1
     )
 endforeach()
 
@@ -48,7 +48,7 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
     )
 
     AddTest(
@@ -59,7 +59,7 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-2 1e-2
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-2 1e-2
     )
 endforeach()
 
@@ -72,7 +72,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex20_1e0.vtu cube_1e0_quadratic_hex_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+    cube_1x1x1_hex20_1e0.vtu cube_1e0_quadratic_hex_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
 )
 
 # SQUARE 1x1 GROUNDWATER FLOW TESTS
@@ -85,8 +85,8 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
-        VIS square_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu
+        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
+        VIS square_${mesh_size}_ts_1_t_1.000000.vtu
     )
 
     AddTest(
@@ -97,8 +97,8 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-1 1e-1
-        VIS square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu
+        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-1 1e-1
+        VIS square_${mesh_size}_neumann_ts_1_t_1.000000.vtu
     )
 endforeach()
 
@@ -116,7 +116,7 @@ foreach(mesh_size 1e5 1e6)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-02 1e-02
+        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-02 1e-02
     )
 endforeach()
 
@@ -129,7 +129,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    square_1x1_quad_1e5.vtu square_1e5_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-16
+    square_1x1_quad_1e5.vtu square_1e5_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-16
 )
 
 # The largest test is less accurate
@@ -142,7 +142,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    square_1x1_quad_1e6.vtu square_1e6_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 3e-12 1e-16
+    square_1x1_quad_1e6.vtu square_1e6_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 3e-12 1e-16
 )
 
 # LINE 1 GROUNDWATER FLOW TESTS
@@ -155,7 +155,7 @@ foreach(mesh_size 1e1)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+        line_1_line_${mesh_size}.vtu line_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
 
     AddTest(
@@ -166,7 +166,7 @@ foreach(mesh_size 1e1)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
+        line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
     )
 
     AddTest(
@@ -177,7 +177,7 @@ foreach(mesh_size 1e1)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_right_picard_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure 4e-14 2e-14
+        line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_right_picard_ts_1_t_1.000000.vtu D1_left_N1_right pressure 4e-14 2e-14
     )
 
     AddTest(
@@ -188,7 +188,7 @@ foreach(mesh_size 1e1)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_left_picard_pcs_0_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
+        line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_left_picard_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
     )
 
     AddTest(
@@ -199,9 +199,9 @@ foreach(mesh_size 1e1)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_pcs_0_ts_1_t_1.000000.vtu t_1s pressure 1e-14 1e-14
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_pcs_0_ts_5_t_5.000000.vtu t_5s pressure 1e-14 1e-14
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_pcs_0_ts_10_t_10.000000.vtu t_10s pressure 1e-14 1e-14
+        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_ts_1_t_1.000000.vtu t_1s pressure 1e-14 1e-14
+        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_ts_5_t_5.000000.vtu t_5s pressure 1e-14 1e-14
+        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_ts_10_t_10.000000.vtu t_10s pressure 1e-14 1e-14
     )
 
     AddTest(
@@ -212,9 +212,9 @@ foreach(mesh_size 1e1)
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_pcs_0_ts_1_t_1.000000.vtu t_1s pressure 1e-14 1e-14
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_pcs_0_ts_5_t_5.000000.vtu t_5s pressure 1e-14 1e-14
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_pcs_0_ts_10_t_10.000000.vtu t_10s pressure 1e-14 1e-14
+        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_ts_1_t_1.000000.vtu t_1s pressure 1e-14 1e-14
+        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_ts_5_t_5.000000.vtu t_5s pressure 1e-14 1e-14
+        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_ts_10_t_10.000000.vtu t_10s pressure 1e-14 1e-14
     )
 endforeach()
 
@@ -227,7 +227,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_top_neumann.vtu cube_1e3_top_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
+    cube_1e3_top_neumann.vtu cube_1e3_top_neumann_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
 AddTest(
     NAME SteadyStateDiffusion_cube_bottom
@@ -237,7 +237,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
+    cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
 # Some Neumann BC tests -- Newton
 AddTest(
@@ -248,7 +248,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_top_neumann.vtu cube_1e3_top_neumann_newton_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
+    cube_1e3_top_neumann.vtu cube_1e3_top_neumann_newton_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
 AddTest(
     NAME SteadyStateDiffusion_cube_bottom_Newton
@@ -258,7 +258,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_newton_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
+    cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_newton_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
 
 # test SurfaceFlux
@@ -336,7 +336,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    wedge-1e2-ang-0.02-surface.vtu square_1e2_axi_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1.6e-5 1e-5
+    wedge-1e2-ang-0.02-surface.vtu square_1e2_axi_ts_1_t_1.000000.vtu temperature temperature 1.6e-5 1e-5
 )
 # # WEDGE 1x1 GROUNDWATER FLOW TEST -- computes reference results for the above test
 # AddTest(
@@ -356,7 +356,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    wedge-1e4-ang-0.02-surface.vtu square_1e4_axi_pcs_0_ts_1_t_1.000000.vtu temperature temperature 1.6e-5 1e-5
+    wedge-1e4-ang-0.02-surface.vtu square_1e4_axi_ts_1_t_1.000000.vtu temperature temperature 1.6e-5 1e-5
 )
 # # WEDGE 1x1 GROUNDWATER FLOW TEST -- computes reference results for the above test
 # AddTest(
@@ -376,9 +376,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_0.vtu quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure 2e-15 1e-16
-    quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_1.vtu quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_1.vtu pressure pressure 2e-15 1e-16
-    quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_2.vtu quad_20x10_GroundWaterFlow_result_pcs_0_ts_1_t_1_000000_2.vtu pressure pressure 2e-15 1e-16
+    quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_0.vtu quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_0.vtu pressure pressure 2e-15 1e-16
+    quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_1.vtu quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_1.vtu pressure pressure 2e-15 1e-16
+    quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_2.vtu quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_2.vtu pressure pressure 2e-15 1e-16
 )
 
 AddTest(
@@ -390,9 +390,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 2e-15 1e-16
-    cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu Linear_1_to_minus1 pressure 2e-15 1e-16
-    cube_1e3_pcs_0_ts_1_t_1_000000_2.vtu cube_1e3_pcs_0_ts_1_t_1_000000_2.vtu Linear_1_to_minus1 pressure 2e-15 1e-16
+    cube_1e3_ts_1_t_1_000000_0.vtu cube_1e3_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 2e-15 1e-16
+    cube_1e3_ts_1_t_1_000000_1.vtu cube_1e3_ts_1_t_1_000000_1.vtu Linear_1_to_minus1 pressure 2e-15 1e-16
+    cube_1e3_ts_1_t_1_000000_2.vtu cube_1e3_ts_1_t_1_000000_2.vtu Linear_1_to_minus1 pressure 2e-15 1e-16
 )
 
 AddTest(
@@ -404,9 +404,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_0.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure 1e-2 1e-2
-    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_1.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_1.vtu D1_left_front_N1_right pressure 1e-2 1e-2
-    cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu cube_1e3_neumann_pcs_0_ts_1_t_1_000000_2.vtu D1_left_front_N1_right pressure 1e-2 1e-2
+    cube_1e3_neumann_ts_1_t_1_000000_0.vtu cube_1e3_neumann_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure 1e-2 1e-2
+    cube_1e3_neumann_ts_1_t_1_000000_1.vtu cube_1e3_neumann_ts_1_t_1_000000_1.vtu D1_left_front_N1_right pressure 1e-2 1e-2
+    cube_1e3_neumann_ts_1_t_1_000000_2.vtu cube_1e3_neumann_ts_1_t_1_000000_2.vtu D1_left_front_N1_right pressure 1e-2 1e-2
 )
 
 AddTest(
@@ -418,10 +418,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure 1e-2 0
-    square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu D1_left_bottom_N1_right pressure 1e-2 0
-    square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu pressure pressure 1e-14 0
-    square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
+    square_1e1_neumann_ts_1_t_1_000000_0.vtu square_1e1_neumann_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure 1e-2 0
+    square_1e1_neumann_ts_1_t_1_000000_1.vtu square_1e1_neumann_ts_1_t_1_000000_1.vtu D1_left_bottom_N1_right pressure 1e-2 0
+    square_1e1_neumann_ts_1_t_1_000000_0.vtu square_1e1_neumann_ts_1_t_1_000000_0.vtu pressure pressure 1e-14 0
+    square_1e1_neumann_ts_1_t_1_000000_1.vtu square_1e1_neumann_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
 )
 
 # Single core
@@ -436,7 +436,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
 
     AddTest(
@@ -448,7 +448,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure 1e-1 1e-1
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure 1e-1 1e-1
     )
 endforeach()
 
@@ -471,7 +471,7 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-7 1e-7
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-7 1e-7
     )
 
     AddTest(
@@ -484,7 +484,7 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure 1e-2 1e-2
+        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1_000000_0.vtu D1_left_front_N1_right pressure 1e-2 1e-2
     )
 endforeach()
 
@@ -499,7 +499,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
+        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
     )
 
     AddTest(
@@ -511,7 +511,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure 1e-1 1e-1
+        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure 1e-1 1e-1
     )
 endforeach()
 
@@ -533,7 +533,7 @@ foreach(mesh_size 1e5 1e6)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-7 1e-7
+        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-7 1e-7
     )
 
     AddTest(
@@ -546,7 +546,7 @@ foreach(mesh_size 1e5 1e6)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure 1e-02 1e-02
+        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1_000000_0.vtu D1_left_bottom_N1_right pressure 1e-02 1e-02
     )
 endforeach()
 
@@ -561,7 +561,7 @@ foreach(mesh_size 1e1)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_pcs_0_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+        line_1_line_${mesh_size}.vtu line_${mesh_size}_ts_1_t_1_000000_0.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
 
     AddTest(
@@ -573,7 +573,7 @@ foreach(mesh_size 1e1)
         TESTER vtkdiff
         REQUIREMENTS OGS_USE_MPI
         DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_pcs_0_ts_1_t_1_000000_0.vtu D1_left_N1_right pressure 1e-14 1e-14
+        line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_ts_1_t_1_000000_0.vtu D1_left_N1_right pressure 1e-14 1e-14
     )
 endforeach()
 
@@ -585,7 +585,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    inhomogeneous_permeability.vtu inhomogeneous_permeability_pcs_0_ts_1_t_1.000000.vtu mass_flux_ref mass_flux 4e-2 1e-16
+    inhomogeneous_permeability.vtu inhomogeneous_permeability_ts_1_t_1.000000.vtu mass_flux_ref mass_flux 4e-2 1e-16
 )
 
 AddTest(
@@ -596,8 +596,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure 2e-14 0
-    expected_neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu neumann_nonuniform_pcs_0_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-12 0
+    expected_neumann_nonuniform_ts_1_t_1.000000.vtu neumann_nonuniform_ts_1_t_1.000000.vtu pressure pressure 2e-14 0
+    expected_neumann_nonuniform_ts_1_t_1.000000.vtu neumann_nonuniform_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-12 0
 )
 
 AddTest(
@@ -608,7 +608,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu dirichlet_nonuniform_pcs_0_ts_1_t_1.000000.vtu pressure pressure 1e-14 0
+    expected_dirichlet_nonuniform_ts_1_t_1.000000.vtu dirichlet_nonuniform_ts_1_t_1.000000.vtu pressure pressure 1e-14 0
 )
 
 # tests for nodal source term implementation
@@ -624,8 +624,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    line_1_lines_1e1_expected.vtu circle_1e1_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 0.7 1e-16
-    VIS circle_1e1_axi_pcs_0_ts_1_t_1.000000.vtu
+    line_1_lines_1e1_expected.vtu circle_1e1_axi_ts_1_t_1.000000.vtu analytical_solution pressure 0.7 1e-16
+    VIS circle_1e1_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -637,8 +637,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    line_1_lines_1e2_expected.vtu circle_1e2_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1.1 1e-16
-    VIS circle_1e2_axi_pcs_0_ts_1_t_1.000000.vtu
+    line_1_lines_1e2_expected.vtu circle_1e2_axi_ts_1_t_1.000000.vtu analytical_solution pressure 1.1 1e-16
+    VIS circle_1e2_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -650,8 +650,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    line_1_lines_1e3_expected.vtu circle_1e3_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1.6 1e-16
-    VIS circle_1e3_axi_pcs_0_ts_1_t_1.000000.vtu
+    line_1_lines_1e3_expected.vtu circle_1e3_axi_ts_1_t_1.000000.vtu analytical_solution pressure 1.6 1e-16
+    VIS circle_1e3_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -663,8 +663,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    line_1_lines_1e4_expected.vtu circle_1e4_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1.8 1e-16
-    VIS circle_1e4_axi_pcs_0_ts_1_t_1.000000.vtu
+    line_1_lines_1e4_expected.vtu circle_1e4_axi_ts_1_t_1.000000.vtu analytical_solution pressure 1.8 1e-16
+    VIS circle_1e4_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -676,8 +676,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    line_1_lines_1e5_expected.vtu circle_1e5_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 2.15 1e-16
-    VIS circle_1e5_axi_pcs_0_ts_1_t_1.000000.vtu
+    line_1_lines_1e5_expected.vtu circle_1e5_axi_ts_1_t_1.000000.vtu analytical_solution pressure 2.15 1e-16
+    VIS circle_1e5_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -690,8 +690,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    line_1_lines_1e6_expected.vtu circle_1e6_axi_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 2.52 1e-16
-    VIS circle_1e6_axi_pcs_0_ts_1_t_1.000000.vtu
+    line_1_lines_1e6_expected.vtu circle_1e6_axi_ts_1_t_1.000000.vtu analytical_solution pressure 2.52 1e-16
+    VIS circle_1e6_axi_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -704,8 +704,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_1x1_quad_1e6_nodal_sources_expected.vtu square_1e6_with_nodal_sources_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1.41 1e-16
-    VIS square_1e6__nodal_sources_expected_pcs_0_ts_1_t_1.000000.vtu
+    square_1x1_quad_1e6_nodal_sources_expected.vtu square_1e6_with_nodal_sources_ts_1_t_1.000000.vtu analytical_solution pressure 1.41 1e-16
+    VIS square_1e6__nodal_sources_expected_ts_1_t_1.000000.vtu
 )
 
 AddTest(
@@ -717,7 +717,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_1x1_quad_1e2_volumetricsourceterm_analytical_solution.vtu square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1e-14 1e-16
+    square_1x1_quad_1e2_volumetricsourceterm_analytical_solution.vtu square_1e2_volumetricsourceterm_ts_1_t_1.000000.vtu analytical_solution pressure 1e-14 1e-16
 )
 
 AddTest(
@@ -729,7 +729,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_1x1_quad_1e3_volumetricsourceterm_analytical_solution.vtu square_1e3_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 1e-10 1e-11
+    square_1x1_quad_1e3_volumetricsourceterm_analytical_solution.vtu square_1e3_volumetricsourceterm_ts_1_t_1.000000.vtu analytical_solution pressure 1e-10 1e-11
 )
 
 AddTest(
@@ -741,7 +741,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    quarter_disc_r_1.vtu neumann_along_line_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 6e-5 0
+    quarter_disc_r_1.vtu neumann_along_line_ts_1_t_1.000000.vtu analytical_solution pressure 6e-5 0
 )
 
 AddTest(
@@ -753,7 +753,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    quarter_circle_r_1.vtu neumann_in_center_pcs_0_ts_1_t_1.000000.vtu pressure_nodal_source_term pressure 1e-14 1e-14
+    quarter_circle_r_1.vtu neumann_in_center_ts_1_t_1.000000.vtu pressure_nodal_source_term pressure 1e-14 1e-14
 )
 
 AddTest(
@@ -767,7 +767,7 @@ AddTest(
     # the analytical solution is: sin(2*Pi*x-Pi/2)*sin(2*Pi*y-Pi/2)
     # the source term in the data array was set to: -2*(2*Pi)^2 * sin(2*Pi*x-Pi/2)*sin(2*Pi*y-Pi/2)
     DIFF_DATA
-    square_1x1_quad_1e3_volumetricsourcetermdataarray.vtu square_1e3_volumetricsourcetermdataarray_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 2e-2 1e-16
+    square_1x1_quad_1e3_volumetricsourcetermdataarray.vtu square_1e3_volumetricsourcetermdataarray_ts_1_t_1.000000.vtu analytical_solution pressure 2e-2 1e-16
 )
 
 AddTest(
@@ -779,7 +779,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_PYTHON AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    python_laplace_eq_ref.vtu square_1e3_neumann_pcs_0_ts_1_t_1.000000.vtu pressure_expected pressure 4e-4 1e-16
+    python_laplace_eq_ref.vtu square_1e3_neumann_ts_1_t_1.000000.vtu pressure_expected pressure 4e-4 1e-16
 )
 
 AddTest(
@@ -791,7 +791,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_PYTHON AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_1x1_quad_1e3.vtu square_1e3_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 0.7e-2 1e-16
+    square_1x1_quad_1e3.vtu square_1e3_volumetricsourceterm_ts_1_t_1.000000.vtu analytical_solution pressure 0.7e-2 1e-16
 )
 
 AddTest(
@@ -803,7 +803,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_PYTHON AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    square_1x1_quad_1e5.vtu square_1e5_volumetricsourceterm_pcs_0_ts_1_t_1.000000.vtu analytical_solution pressure 0.75e-4 1e-16
+    square_1x1_quad_1e5.vtu square_1e5_volumetricsourceterm_ts_1_t_1.000000.vtu analytical_solution pressure 0.75e-4 1e-16
 )
 
 AddTest(
@@ -815,7 +815,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_MPI)
     DIFF_DATA
-    square_1x1_quad_1e2.vtu square_1e2_GMRES_pcs_0_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-14 1e-14
+    square_1x1_quad_1e2.vtu square_1e2_GMRES_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-14 1e-14
 )
 
 if (NOT OGS_USE_MPI)

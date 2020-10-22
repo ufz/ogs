@@ -212,7 +212,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>h1_3Dhydstat_pcs_{:process_id}</prefix>
+            <prefix>h1_3Dhydstat</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
