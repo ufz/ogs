@@ -31,7 +31,7 @@ namespace ThermalTwoPhaseFlowWithPP
 std::unique_ptr<ThermalTwoPhaseFlowWithPPMaterialProperties>
 createThermalTwoPhaseFlowWithPPMaterialProperties(
     BaseLib::ConfigTree const& config,
-    MeshLib::PropertyVector<int> const& material_ids,
+    MeshLib::PropertyVector<int> const* material_ids,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         parameters);
 
