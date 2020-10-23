@@ -436,7 +436,7 @@ AddTest(
 )
 
 AddTest(
-    NAME AssignRasterDataToMesh_Test
+    NAME AssignRasterDataToMesh2D_Test
     PATH MeshGeoToolsLib/Ammer
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
     EXECUTABLE AssignRasterDataToMesh
@@ -446,4 +446,17 @@ AddTest(
     DIFF_DATA
     AmmerGWN.vtu AmmerGWN.vtu GWN GWN 0 0
     AmmerGWN.vtu AmmerGWN.vtu GWN-2 GWN-2 0 0
+)
+
+AddTest(
+    NAME AssignRasterDataToMesh1D_Test
+    PATH MeshGeoToolsLib/Ammer
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
+    EXECUTABLE AssignRasterDataToMesh
+    EXECUTABLE_ARGS -i AmmerRivers.vtu -r AmmerGWN.asc -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerRiversGWN.vtu -s GWN -c -n
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    AmmerRiversGWN.vtu AmmerRiversGWN.vtu GWN GWN 0 0
+    AmmerRiversGWN.vtu AmmerRiversGWN.vtu GWN-2 GWN-2 0 0
 )

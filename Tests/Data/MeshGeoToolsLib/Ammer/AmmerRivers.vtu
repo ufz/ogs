@@ -1,0 +1,48 @@
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="6" NumberOfCells="5">
+      <PointData>
+      </PointData>
+      <CellData Scalars="PolylineIDs">
+        <DataArray type="Int32" Name="PolylineIDs" format="ascii" RangeMin="0" RangeMax="4">
+          0 1 2 3 4
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="ascii" RangeMin="6415010.609016309" RangeMax="6415307.25710424">
+          3489381.75 5382989.5 399.30999755859375 3489500 5382985.5 398.57000732421875
+          3489597 5382982 398.29998779296875 3489689.25 5383081.5 398.29998779296875
+          3489796.75 5383074 396.57000732421875 3489888 5382985 394.2099914550781
+          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              6415010.609
+            </Value>
+            <Value index="1">
+              6415307.2571
+            </Value>
+          </InformationKey>
+          <InformationKey name="L2_NORM_FINITE_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              6415010.609
+            </Value>
+            <Value index="1">
+              6415307.2571
+            </Value>
+          </InformationKey>
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="0" RangeMax="5">
+          0 1 1 2 2 3
+          3 4 4 5
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="2" RangeMax="10">
+          2 4 6 8 10
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="ascii" RangeMin="3" RangeMax="3">
+          3 3 3 3 3
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>
