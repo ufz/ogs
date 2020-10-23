@@ -1,21 +1,17 @@
 build win:
   extends: .template-build-win
+  rules:
+    - if: '$USE_PYTHON =~ /ON$/'
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - when: manual
+      allow_failure: true
   variables:
     BUILD_DIR: build-win
     CMAKE_ARGS: >-
       -DOGS_BUILD_UTILS=ON
       -DOGS_CI_TESTRUNNER_REPEAT=1
-      -DOGS_USE_PYTHON=ON
+      -DOGS_$USE_PYTHON
       -DOGS_USE_CONAN=AUTO
-
-build win no python:
-  extends: .template-build-win
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-    - when: manual
-      allow_failure: true
-  variables:
-    BUILD_DIR: build-win-nopython
-    BUILD_TESTS: "false"
-    BUILD_CTEST: "false"
-    CMAKE_ARGS: " "
+  parallel:
+    matrix:
+      - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
