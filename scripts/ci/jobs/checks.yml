@@ -5,7 +5,7 @@ compiler warnings:
   allow_failure: true
   needs:
     - job: build linux
-    - job: build win
+    - job: "build win: [USE_PYTHON=ON]"
     - job: build mac
   script:
     - exit_code=0
