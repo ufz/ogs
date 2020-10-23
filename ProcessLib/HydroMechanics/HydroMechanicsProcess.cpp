@@ -516,7 +516,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
-        _use_monolithic_scheme);
+        _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>

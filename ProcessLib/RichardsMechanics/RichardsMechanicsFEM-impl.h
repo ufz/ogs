@@ -181,11 +181,13 @@ std::size_t RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-void RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setInitialConditionsConcrete(std::vector<double> const&
-                                                       local_x,
-                                                   double const t)
+void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                     ShapeFunctionPressure, IntegrationMethod,
+                                     DisplacementDim>::
+    setInitialConditionsConcrete(std::vector<double> const& local_x,
+                                 double const t,
+                                 bool const /*use_monolithic_scheme*/,
+                                 int const /*process_id*/)
 {
     assert(local_x.size() == pressure_size + displacement_size);
 
@@ -1286,7 +1288,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                 std::vector<double> const& /*local_xdot*/,
                                 double const t, double const dt,
-                                bool const use_monolithic_scheme)
+                                bool const use_monolithic_scheme,
+                                int const /*process_id*/)
 {
     const int displacement_offset =
         use_monolithic_scheme ? displacement_index : 0;

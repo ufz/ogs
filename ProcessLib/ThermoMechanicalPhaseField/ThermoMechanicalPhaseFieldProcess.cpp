@@ -315,7 +315,7 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
-        use_monolithic_scheme);
+        use_monolithic_scheme, process_id);
 }
 
 template class ThermoMechanicalPhaseFieldProcess<2>;
