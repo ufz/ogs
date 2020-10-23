@@ -52,13 +52,9 @@ int main(int argc, char* argv[])
         "filename for mesh output");
     cmd.add(out_mesh_arg);
 
-    TCLAP::ValueArg<bool> refinement_raster_output_arg(
-        "",
-        "output-refined-raster",
-        "write refined raster to a new ASC file",
-        false,
-        false,
-        "0");
+    TCLAP::SwitchArg refinement_raster_output_arg(
+        "", "output-refined-raster",
+        "Write refined raster to an additional, new ASC file.");
     cmd.add(refinement_raster_output_arg);
 
     TCLAP::ValueArg<unsigned> refinement_arg(

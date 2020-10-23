@@ -42,10 +42,10 @@ int main (int argc, char* argv[])
         "the name of the file containing the input geometry", true,
         "", "file name");
     cmd.add(input_geometry_fname);
-    TCLAP::ValueArg<bool> additional_insert_mapping("a", "additional-insert-mapping",
-        "if true advanced mapping algorithm will be applied, i.e. a new "
-        "geometry will be created and possibly new points will be inserted.", false,
-        true, "boolean value");
+    TCLAP::SwitchArg additional_insert_mapping(
+        "a", "additional-insert-mapping",
+        "Advanced mapping algorithm will be applied, i.e. a new geometry will "
+        "be created and possibly new points will be inserted.");
     cmd.add(additional_insert_mapping);
     TCLAP::ValueArg<std::string> output_geometry_fname("o", "output-geometry",
         "the name of the file containing the input geometry", true,

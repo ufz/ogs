@@ -70,10 +70,8 @@ int main (int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<bool> use_ascii_arg(
-        "", "ascii_output",
-        "Use ascii format for VTU output.",
-        false, false, "true/false");
+    TCLAP::SwitchArg use_ascii_arg("", "ascii_output",
+                                   "Write VTU output in ASCII format.");
     cmd.add(use_ascii_arg);
 
     double min_thickness(std::numeric_limits<double>::epsilon());

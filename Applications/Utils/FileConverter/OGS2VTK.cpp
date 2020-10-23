@@ -41,11 +41,10 @@ int main (int argc, char* argv[])
         "the name of the file the mesh will be written to", true, "",
         "file name of output mesh");
     cmd.add(mesh_out);
-    TCLAP::ValueArg<bool> use_ascii_arg(
+    TCLAP::SwitchArg use_ascii_arg(
         "", "ascii_output",
-        "Use ascii format for data in the vtu output. Due to possible rounding "
-        "the ascii output could result in lower accuracy.",
-        false, false, "boolean value");
+        "Write VTU output in ASCII format. Due to possible rounding the ascii "
+        "output could result in lower accuracy.");
     cmd.add(use_ascii_arg);
     cmd.parse(argc, argv);
 

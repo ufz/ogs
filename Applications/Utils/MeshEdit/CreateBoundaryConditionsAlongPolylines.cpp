@@ -133,8 +133,7 @@ int main (int argc, char* argv[])
             "Copyright (c) 2012-2020, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<bool> gml_arg("", "gml",
-        "if switched on write found nodes to file in gml format", false, false, "bool");
+    TCLAP::SwitchArg gml_arg("", "gml", "Write found nodes to gml file.");
     cmd.add(gml_arg);
 
     TCLAP::ValueArg<std::string> output_base_fname("o", "output-base-file-name",

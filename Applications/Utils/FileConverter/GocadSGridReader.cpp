@@ -40,10 +40,8 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<bool> face_set_arg(
-        "f", "generate-face-sets",
-        "generate face sets; default false, i.e. do not generate face sets",
-        false, false, "true/false");
+    TCLAP::SwitchArg face_set_arg("f", "generate-face-sets",
+                                  "Generate face sets.");
     cmd.add(face_set_arg);
 
     TCLAP::ValueArg<std::string> mesh_output_arg(
