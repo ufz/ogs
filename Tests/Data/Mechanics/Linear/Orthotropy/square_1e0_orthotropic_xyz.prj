@@ -69,23 +69,17 @@
     <local_coordinate_system>
         <basis_vector_0>e0</basis_vector_0>
         <basis_vector_1>e1</basis_vector_1>
-        <basis_vector_2>e2</basis_vector_2>
     </local_coordinate_system>
     <parameters>
         <parameter>
             <name>e0</name>
             <type>Constant</type>
-            <values>1 0 0</values>
+            <values>1 0</values>
         </parameter>
         <parameter>
             <name>e1</name>
             <type>Constant</type>
-            <values>0 1 0</values>
-        </parameter>
-        <parameter>
-            <name>e2</name>
-            <type>Constant</type>
-            <values>0 0 1</values>
+            <values>0 1</values>
         </parameter>
         <parameter>
             <name>E</name>
