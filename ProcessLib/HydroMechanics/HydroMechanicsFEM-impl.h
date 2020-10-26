@@ -704,6 +704,18 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
+    setInitialConditionsConcrete(std::vector<double> const& /*local_x*/,
+                                 double const /*t*/,
+                                 bool const /*use_monolithic_scheme*/,
+                                 int const /*process_id*/)
+{
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                  ShapeFunctionPressure, IntegrationMethod,
+                                  DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                 std::vector<double> const& /*local_xdot*/,
                                 double const t, double const dt,
