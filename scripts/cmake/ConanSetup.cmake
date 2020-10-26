@@ -21,7 +21,8 @@ endif()
 
 if(CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
     message(FATAL_ERROR "Multi-config generators are not yet supported when "
-        "using Conan. Specify CMAKE_BUILD_TYPE!")
+        "using Conan. Specify CMAKE_BUILD_TYPE, e.g. via cmd line: "
+        "cmake . -DCMAKE_BUILD_TYPE=Release!")
 endif()
 
 # Treat Conan includes as system includes to suppress warnings
