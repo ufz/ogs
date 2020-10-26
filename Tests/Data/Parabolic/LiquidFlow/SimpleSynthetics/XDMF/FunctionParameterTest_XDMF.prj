@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Almost same as FunctionParameterTest - changed XDMF output and 
+boundary meshes will be written as well -->
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>square_5x5_tris_32.vtu</mesh>
+        <mesh>square_5x5_tris_32_left_boundary.vtu</mesh>
+        <mesh>square_5x5_tris_32_right_boundary.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>LiquidFlow</name>
+            <type>LIQUID_FLOW</type>
+            <integration_order>2</integration_order>
+            <darcy_gravity>
+                <axis_id>1</axis_id>
+                <g>0</g>
+            </darcy_gravity>
+            <process_variables>
+                <process_variable>pressure</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 0.0011373 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1000 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>3.2439e-12</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.17</value>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value> 0.0 </value>
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <parameters>
+        <parameter>
+             <name>p_0</name>
+             <type>Function</type>
+             <expression>z</expression>
+        </parameter>
+        <parameter>
+             <name>p_polyline_left</name>
+             <type>Function</type>
+             <expression>x+1</expression>
+        </parameter>
+        <parameter>
+             <name>p_polyline_right</name>
+             <type>Function</type>
+             <expression>x-5</expression>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <order>1</order>
+            <components>1</components>
+            <initial_condition>p_0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <type>Dirichlet</type>
+                    <mesh>square_5x5_tris_32_left_boundary</mesh>
+                    <parameter>p_polyline_left</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <type>Dirichlet</type>
+                    <mesh>square_5x5_tris_32_right_boundary</mesh>
+                    <parameter>p_polyline_right</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <time_loop>
+        <processes>
+            <process ref="LiquidFlow">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1.e-6</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial> 0 </t_initial>
+                    <t_end> 1 </t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>XDMF</type>
+            <prefix>{:meshname}</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <meshes>
+                <mesh>square_5x5_tris_32</mesh>
+                <mesh>square_5x5_tris_32_left_boundary</mesh>
+				<mesh>square_5x5_tris_32_right_boundary</mesh>
+            </meshes>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <output_iteration_results>false</output_iteration_results>
+            <variables>
+                <variable> pressure </variable>
+                <variable> v </variable>
+            </variables>
+        </output>
+    </time_loop>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>10</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i cg -p jacobi -tol 1e-15 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>BiCGSTAB</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>1000</max_iteration_step>
+                <error_tolerance>1e-16</error_tolerance>
+            </eigen>
+            <petsc>
+                <prefix>lf</prefix>
+                <parameters>-lf_ksp_type cg -lf_pc_type bjacobi -lf_ksp_rtol 1e-16 -lf_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>square_5x5_tris_32_ts_1_t_1.000000.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
