@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- Almost same as FunctionParameterTest - changed XDMF output and 
+<!-- Almost same as FunctionParameterTest - changed XDMF output and
 boundary meshes will be written as well -->
 <OpenGeoSysProject>
     <meshes>
