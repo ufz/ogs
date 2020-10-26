@@ -102,8 +102,10 @@
                         </property>
                         <property>
                             <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.4</value>
+                            <type>PorosityFromMassBalance</type>
+                            <initial_porosity>phi0</initial_porosity>
+                            <minimal_porosity>0</minimal_porosity>
+                            <maximal_porosity>1</maximal_porosity>
                         </property>
                     </properties>
                 </phase>
@@ -227,6 +229,11 @@
             <name>nu</name>
             <type>Constant</type>
             <values>.0 .0 .0</values>
+        </parameter>
+        <parameter>
+            <name>phi0</name>
+            <type>Constant</type>
+            <value>0.4</value>
         </parameter>
         <parameter>
             <name>displacement0</name>
