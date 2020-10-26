@@ -363,9 +363,9 @@ void HydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 {
     if (_use_monolithic_scheme)
     {
-        const int process_id_of_hydromechancs = 0;
+        const int process_id_of_hydromechanics = 0;
         initializeProcessBoundaryConditionsAndSourceTerms(
-            *_local_to_global_index_map, process_id_of_hydromechancs);
+            *_local_to_global_index_map, process_id_of_hydromechanics);
         return;
     }
 

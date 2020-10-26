@@ -291,7 +291,7 @@ protected:
      * which is stored in the
      * member of this class, @c _local_to_global_index_map.
      */
-    void constructDofTableOfSpecifiedProsessStaggerdScheme(
+    void constructDofTableOfSpecifiedProsessStaggeredScheme(
         const int specified_prosess_id);
 
     /**
