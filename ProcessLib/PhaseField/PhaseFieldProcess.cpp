@@ -94,7 +94,7 @@ void PhaseFieldProcess<DisplacementDim>::constructDofTable()
 {
     // For displacement equation.
     const int mechanics_process_id = 0;
-    constructDofTableOfSpecifiedProsessStaggerdScheme(mechanics_process_id);
+    constructDofTableOfSpecifiedProsessStaggeredScheme(mechanics_process_id);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain

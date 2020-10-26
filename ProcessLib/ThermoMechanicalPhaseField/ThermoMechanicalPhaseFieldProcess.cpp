@@ -105,7 +105,7 @@ template <int DisplacementDim>
 void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::constructDofTable()
 {
     // For displacement equation.
-    constructDofTableOfSpecifiedProsessStaggerdScheme(
+    constructDofTableOfSpecifiedProsessStaggeredScheme(
         _mechanics_related_process_id);
 
     // TODO move the two data members somewhere else.

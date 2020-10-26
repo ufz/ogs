@@ -250,8 +250,8 @@ void Process::constructDofTable()
     }
 
     // For staggered scheme:
-    const int specified_prosess_id = 0;
-    constructDofTableOfSpecifiedProsessStaggerdScheme(specified_prosess_id);
+    const int specified_process_id = 0;
+    constructDofTableOfSpecifiedProsessStaggeredScheme(specified_process_id);
 }
 
 void Process::constructMonolithicProcessDofTable()
@@ -289,8 +289,8 @@ void Process::constructMonolithicProcessDofTable()
     assert(_local_to_global_index_map);
 }
 
-void Process::constructDofTableOfSpecifiedProsessStaggerdScheme(
-    const int specified_prosess_id)
+void Process::constructDofTableOfSpecifiedProsessStaggeredScheme(
+    const int specified_process_id)
 {
     // Create single component dof in every of the mesh nodes.
     _mesh_subset_all_nodes =
@@ -303,13 +303,13 @@ void Process::constructDofTableOfSpecifiedProsessStaggerdScheme(
     std::vector<int> vec_var_n_components;
     // Collect the mesh subsets in a vector for each variables' components.
     std::generate_n(std::back_inserter(all_mesh_subsets),
-                    _process_variables[specified_prosess_id][0]
+                    _process_variables[specified_process_id][0]
                         .get()
                         .getNumberOfGlobalComponents(),
                     [&]() { return *_mesh_subset_all_nodes; });
 
     // Create a vector of the number of variable components.
-    vec_var_n_components.push_back(_process_variables[specified_prosess_id][0]
+    vec_var_n_components.push_back(_process_variables[specified_process_id][0]
                                        .get()
                                        .getNumberOfGlobalComponents());
     _local_to_global_index_map =
