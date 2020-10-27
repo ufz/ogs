@@ -30,17 +30,16 @@ std::unique_ptr<Output> createOutput(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
 {
     DBUG("Parse output configuration:");
-
-    OutputTypes const output_type = [](auto output_type)
+    OutputType const output_type = [](auto output_type)
     {
         try
         {
-            const std::map<std::string, OutputTypes> outputType_to_enum = {
-                {"VTK", OutputTypes::vtk}, {"XDMF", OutputTypes::xdmf}};
+            const std::map<std::string, OutputType> outputType_to_enum = {
+                {"VTK", OutputType::vtk}, {"XDMF", OutputType::xdmf}};
             auto type = outputType_to_enum.at(output_type);
 
 #ifdef USE_PETSC
-            if (type == ProcessLib::OutputTypes::xdmf)
+            if (type == ProcessLib::OutputType::xdmf)
             {
                 OGS_FATAL("Parallel XDMF output is not supported (yet).");
             }

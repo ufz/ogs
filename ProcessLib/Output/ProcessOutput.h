@@ -46,12 +46,12 @@ void addProcessDataToMesh(
 ///
 /// See Output::_output_file_data_mode documentation for the data_mode
 /// parameter.
-enum class OutputTypes : uint8_t
+enum class OutputType : uint8_t
 {
     vtk,
     xdmf
 };
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 bool const compress_output, int const data_mode,
-                OutputTypes const file_type);
+                OutputType const file_type);
 }  // namespace ProcessLib

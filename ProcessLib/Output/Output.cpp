@@ -95,7 +95,7 @@ bool Output::shallDoOutput(int timestep, double const t)
     return false;
 }
 
-Output::Output(std::string output_directory, OutputTypes output_file_type,
+Output::Output(std::string output_directory, OutputType output_file_type,
                std::string output_file_prefix, std::string output_file_suffix,
                bool const compress_output, std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
@@ -180,7 +180,7 @@ MeshLib::IO::PVDFile* Output::findPVDFile(
 
 struct Output::OutputFile
 {
-    OutputFile(std::string const& directory, OutputTypes const type,
+    OutputFile(std::string const& directory, OutputType const type,
                std::string const& prefix, std::string const& suffix,
                std::string const& mesh_name, int const process_id,
                int const timestep, double const t, int const data_mode_,
@@ -196,7 +196,7 @@ struct Output::OutputFile
 
     std::string const name;
     std::string const path;
-    OutputTypes const type;
+    OutputType const type;
     //! Chooses vtk's data mode for output following the enumeration given
     /// in the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
     /// documentation
@@ -206,28 +206,27 @@ struct Output::OutputFile
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
 
-    static std::string constructFilename(OutputTypes type, std::string prefix,
+    static std::string constructFilename(OutputType const type, std::string prefix,
                                          std::string suffix,
-                                         std::string mesh_name, int process_id,
-                                         int timestep, double t)
+                                         std::string mesh_name, int const process_id,
+                                         int const timestep, double const t)
     {
-        std::map<OutputTypes, std::string> filetype_to_extension = {
-            {OutputTypes::vtk, "vtu"}, {OutputTypes::xdmf, "xdmf"}};
+        std::map<OutputType, std::string> filetype_to_extension = {
+            {OutputType::vtk, "vtu"}, {OutputType::xdmf, "xdmf"}};
 
         try
         {
             std::string extension = filetype_to_extension.at(type);
-            std::string name = BaseLib::constructFormattedFileName(
-                                   prefix, mesh_name, process_id, timestep, t) +
-                               BaseLib::constructFormattedFileName(
-                                   suffix, mesh_name, process_id, timestep, t) +
-                               "." + extension;
-            return name;
+            return BaseLib::constructFormattedFileName(
+                       prefix, mesh_name, process_id, timestep, t) +
+                   BaseLib::constructFormattedFileName(
+                       suffix, mesh_name, process_id, timestep, t) +
+                   "." + extension;
         }
         catch (std::out_of_range& e)
         {
             OGS_FATAL(
-                "No supported file type provided. Read  `{:s}' from <output><type> \
+                "No supported file type provided. Read `{:s}' from <output><type> \
                     in prj file. Supported: VTK, XDMF.",
                 type);
         }
@@ -241,7 +240,7 @@ void Output::outputMesh(OutputFile const& output_file,
 {
     DBUG("output to {:s}", output_file.path);
 
-    if (output_file.type == OutputTypes::vtk)
+    if (output_file.type == OutputType::vtk)
     {
         pvd_file->addVTUFile(output_file.name, t);
     }
@@ -293,7 +292,7 @@ void Output::doOutputAlways(Process const& process,
                               _output_file_data_mode, _output_file_compression);
 
         MeshLib::IO::PVDFile* pvd_file = nullptr;
-        if (_output_file_type == ProcessLib::OutputTypes::vtk)
+        if (_output_file_type == ProcessLib::OutputType::vtk)
         {
             pvd_file = findPVDFile(process, process_id, mesh.getName());
         }

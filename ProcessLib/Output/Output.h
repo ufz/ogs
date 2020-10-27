@@ -37,7 +37,7 @@ public:
     };
 
 public:
-    Output(std::string output_directory, OutputTypes type,
+    Output(std::string output_directory, OutputType const type,
            std::string prefix, std::string suffix,
            bool const compress_output, std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
@@ -88,7 +88,7 @@ private:
                         double const t) const;
 private:
     std::string const _output_directory;
-    OutputTypes const _output_file_type;
+    OutputType const _output_file_type;
     std::string const _output_file_prefix;
     std::string const _output_file_suffix;
 
