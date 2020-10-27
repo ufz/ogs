@@ -31,20 +31,28 @@ std::unique_ptr<Output> createOutput(
 {
     DBUG("Parse output configuration:");
 
-    OutputTypes const output_type = [](auto type)
+    OutputTypes const output_type = [](auto output_type)
     {
         try
         {
+            const std::map<std::string, OutputTypes> outputType_to_enum = {
+                {"VTK", OutputTypes::vtk}, {"XDMF", OutputTypes::xdmf}};
+            auto type = outputType_to_enum.at(output_type);
 
-            const std::map<std::string, OutputTypes> outputType_to_enum=
-                {{"VTK",OutputTypes::vtk}, {"XDMF", OutputTypes::xdmf}};
-            return outputType_to_enum.at(type);
+#ifdef USE_PETSC
+            if (type == ProcessLib::OutputTypes::xdmf)
+            {
+                OGS_FATAL("Parallel XDMF output is not supported (yet).");
+            }
+#endif
+
+            return type;
         }
         catch (std::out_of_range& e)
         {
             OGS_FATAL("No supported file type provided. Read `{:s}' from <output><type> \
                 in prj File. Supported: VTK, XDMF.",
-                type);
+                output_type);
         }
     //! \ogs_file_param{prj__time_loop__output__type}
     }(config.getConfigParameter<std::string>("type"));
