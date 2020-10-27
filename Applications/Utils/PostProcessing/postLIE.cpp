@@ -66,7 +66,8 @@ void postVTU(std::string const& int_vtu_filename,
 }
 
 void postPVD(std::string const& in_pvd_filename,
-             std::string const& out_pvd_filename)
+             std::string const& out_pvd_filename,
+             bool const allow_overwrite)
 {
     auto const in_pvd_file_dir = BaseLib::extractPath(in_pvd_filename);
     auto const out_pvd_file_dir = BaseLib::extractPath(out_pvd_filename);
@@ -100,7 +101,12 @@ void postPVD(std::string const& in_pvd_filename,
         auto const dest_vtu_filename = "post_" + org_vtu_filebasename;
         auto const dest_vtu_filepath =
             BaseLib::joinPaths(out_pvd_file_dir, dest_vtu_filename);
-        postVTU(org_vtu_filepath, dest_vtu_filepath);
+        if (!allow_overwrite && BaseLib::IsFileExisting(dest_vtu_filepath))
+        {
+            INFO("the destination file already exists. skip overwriting it.");
+        } else {
+            postVTU(org_vtu_filepath, dest_vtu_filepath);
+        }
 
         // create a new VTU file and update XML
         dataset.second.put("<xmlattr>.file", dest_vtu_filename);
@@ -132,13 +138,17 @@ int main(int argc, char* argv[])
         "i", "input-file", "the original PVD or VTU file name", true, "",
         "path");
     cmd.add(arg_in_file);
+    TCLAP::SwitchArg nooverwrite_arg("",
+                                  "no-overwrite",
+                                  "don't overwirte existing post processed VTU files");
+    cmd.add(nooverwrite_arg);
 
     cmd.parse(argc, argv);
 
     auto const in_file_ext = BaseLib::getFileExtension(arg_in_file.getValue());
     if (in_file_ext == ".pvd")
     {
-        postPVD(arg_in_file.getValue(), arg_out_file.getValue());
+        postPVD(arg_in_file.getValue(), arg_out_file.getValue(), !nooverwrite_arg.getValue());
     }
     else if (in_file_ext == ".vtu")
     {
