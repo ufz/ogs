@@ -255,7 +255,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>3bhes_1U_pcs_{:process_id}</prefix>
+            <prefix>3bhes_1U</prefix>
             <timesteps>
                 <!-- use the following for full simulation
                 <pair><repeat> 1</repeat><each_steps> 94 </each_steps></pair>

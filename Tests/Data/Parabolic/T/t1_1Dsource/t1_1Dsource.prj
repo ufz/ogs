@@ -93,7 +93,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>t1_1Dsource_pcs_{:process_id}</prefix>
+            <prefix>t1_1Dsource</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>

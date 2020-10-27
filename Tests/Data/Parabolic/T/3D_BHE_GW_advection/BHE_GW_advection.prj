@@ -164,7 +164,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>BHE_GW_advection_pcs_{:process_id}</prefix>
+            <prefix>BHE_GW_advection</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1</repeat>

@@ -165,7 +165,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>fixed_power_constant_flow_pcs_{:process_id}</prefix>
+            <prefix>fixed_power_constant_flow</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1</repeat>

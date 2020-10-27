@@ -68,7 +68,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>t1_1Dsteady_pcs_{:process_id}</prefix>
+            <prefix>t1_1Dsteady</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>
