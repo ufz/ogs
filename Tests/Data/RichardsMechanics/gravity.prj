@@ -164,7 +164,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>gravity_pcs_{:process_id}</prefix>
+            <prefix>gravity</prefix>
             <timesteps>
                 <pair>
                     <repeat>100000</repeat>
@@ -277,43 +277,43 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>gravity_pcs_0_ts_.*_t_.*.vtu</regex>
+            <regex>gravity_ts_.*_t_.*.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>gravity_pcs_0_ts_.*_t_.*.vtu</regex>
+            <regex>gravity_ts_.*_t_.*.vtu</regex>
             <field>sigma</field>
             <absolute_tolerance>5e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>gravity_pcs_0_ts_.*_t_.*.vtu</regex>
+            <regex>gravity_ts_.*_t_.*.vtu</regex>
             <field>epsilon</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>gravity_pcs_0_ts_.*_t_.*.vtu</regex>
+            <regex>gravity_ts_.*_t_.*.vtu</regex>
             <field>pressure</field>
             <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>gravity_pcs_0_ts_.*_t_.*.vtu</regex>
+            <regex>gravity_ts_.*_t_.*.vtu</regex>
             <field>velocity</field>
             <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>gravity_pcs_0_ts_.*_t_.*.vtu</regex>
+            <regex>gravity_ts_.*_t_.*.vtu</regex>
             <field>HydraulicFlow</field>
             <absolute_tolerance>1e-5</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>gravity_pcs_0_ts_.*_t_.*.vtu</regex>
+            <regex>gravity_ts_.*_t_.*.vtu</regex>
             <field>NodalForces</field>
             <absolute_tolerance>2e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
