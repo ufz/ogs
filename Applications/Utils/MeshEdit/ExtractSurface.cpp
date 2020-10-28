@@ -32,66 +32,64 @@
 int main (int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
-        "Tool extracts the surface of the given mesh. The documentation is "
-        "available at "
-        "https://docs.opengeosys.org/docs/tools/meshing-submeshes/"
-        "extract-surface.\n\n"
+        "Extracts a 2D surface from a 3D input mesh by specifying a normal "
+        "vector and an angle. (The surface normal (0, 0, 0) will extract the "
+        "complete outer boundary of the 3D mesh.)\n"
+        "An extensive documentation can be found at "
+        "https://docs.opengeosys.org/docs/tools/meshing-submeshes/extract-surface\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2020, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> mesh_in(
-        "i", "mesh-input-file",
-        "the name of the file containing the input mesh", true, "",
-        "file name of input mesh");
-    cmd.add(mesh_in);
-    TCLAP::ValueArg<std::string> mesh_out(
-        "o", "mesh-output-file",
-        "the name of the file the surface mesh should be written to", false, "",
-        "file name of output mesh");
-    cmd.add(mesh_out);
-    TCLAP::ValueArg<double> x("x", "x-component", "x component of the normal",
-                              false, 0, "floating point value");
-    cmd.add(x);
-    TCLAP::ValueArg<double> y("y", "y-component", "y component of the normal",
-                              false, 0, "floating point value");
-    cmd.add(y);
-    TCLAP::ValueArg<double> z("z", "z-component", "z component of the normal",
-                              false, -1.0, "floating point value");
-    cmd.add(z);
-
-    TCLAP::ValueArg<std::string> node_prop_name(
-        "n", "node-property-name",
-        "the name of the data array the subsurface/bulk node id will be stored "
-        "to",
-        false, "bulk_node_ids", "string");
-    cmd.add(node_prop_name);
-    TCLAP::ValueArg<std::string> element_prop_name(
-        "e", "element-property-name",
-        "the name of the data array the subsurface/bulk element id will be "
-        "stored to",
-        false, "bulk_element_ids", "string");
-    cmd.add(element_prop_name);
+    TCLAP::SwitchArg use_ascii_arg("", "ascii-output",
+                                   "If the switch is set use ascii instead of "
+                                   "binary format for data in the vtu output.",
+                                   false);
+    cmd.add(use_ascii_arg);
     TCLAP::ValueArg<std::string> face_prop_name(
         "f", "face-property-name",
         "the name of the data array the surface face id of the subsurface/bulk "
         "element will be stored to",
         false, "bulk_face_ids", "string");
     cmd.add(face_prop_name);
-
+    TCLAP::ValueArg<std::string> element_prop_name(
+        "e", "element-property-name",
+        "the name of the data array the subsurface/bulk element id will be "
+        "stored to",
+        false, "bulk_element_ids", "string");
+    cmd.add(element_prop_name);
+    TCLAP::ValueArg<std::string> node_prop_name(
+        "n", "node-property-name",
+        "the name of the data array the subsurface/bulk node id will be stored "
+        "to",
+        false, "bulk_node_ids", "string");
+    cmd.add(node_prop_name);
     TCLAP::ValueArg<double> angle_arg(
-        "a", "angle", "tolerated angle (degree) between given normal and element normal", false,
-        90, "floating point value");
+        "a", "angle",
+        "tolerated angle (in degrees) between given normal and element normal",
+        false, 90, "floating point value");
     cmd.add(angle_arg);
-
-    TCLAP::SwitchArg use_ascii_arg("", "ascii-output",
-                                   "If the switch is set use ascii instead of "
-                                   "binary format for data in the vtu output.",
-                                   false);
-    cmd.add(use_ascii_arg);
-
+    TCLAP::ValueArg<double> z("z", "z-component", "z component of the normal",
+                              false, -1.0, "floating point value");
+    cmd.add(z);
+    TCLAP::ValueArg<double> y("y", "y-component", "y component of the normal",
+                              false, 0, "floating point value");
+    cmd.add(y);
+    TCLAP::ValueArg<double> x("x", "x-component", "x component of the normal",
+                              false, 0, "floating point value");
+    cmd.add(x);
+    TCLAP::ValueArg<std::string> mesh_out(
+        "o", "mesh-output-file",
+        "the name of the file the surface mesh should be written to", false, "",
+        "file name of output mesh");
+    cmd.add(mesh_out);
+    TCLAP::ValueArg<std::string> mesh_in(
+        "i", "mesh-input-file",
+        "the name of the file containing the input mesh", true, "",
+        "file name of input mesh");
+    cmd.add(mesh_in);
     cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
@@ -99,6 +97,13 @@ int main (int argc, char* argv[])
 
     if (!mesh)
     {
+        ERR("Error reading mesh file.");
+        return EXIT_FAILURE;
+    }
+
+    if (mesh->getDimension() != 3)
+    {
+        ERR("Surfaces can currently only be extracted from 3D meshes.");
         return EXIT_FAILURE;
     }
 
