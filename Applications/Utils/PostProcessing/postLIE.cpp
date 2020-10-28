@@ -104,7 +104,9 @@ void postPVD(std::string const& in_pvd_filename,
         if (!allow_overwrite && BaseLib::IsFileExisting(dest_vtu_filepath))
         {
             INFO("the destination file already exists. skip overwriting it.");
-        } else {
+        }
+        else
+        {
             postVTU(org_vtu_filepath, dest_vtu_filepath);
         }
 
@@ -138,9 +140,10 @@ int main(int argc, char* argv[])
         "i", "input-file", "the original PVD or VTU file name", true, "",
         "path");
     cmd.add(arg_in_file);
-    TCLAP::SwitchArg nooverwrite_arg("",
-                                  "no-overwrite",
-                                  "don't overwirte existing post processed VTU files");
+    TCLAP::SwitchArg nooverwrite_arg(
+        "",
+        "no-overwrite",
+        "don't overwirte existing post processed VTU files");
     cmd.add(nooverwrite_arg);
 
     cmd.parse(argc, argv);
@@ -148,7 +151,8 @@ int main(int argc, char* argv[])
     auto const in_file_ext = BaseLib::getFileExtension(arg_in_file.getValue());
     if (in_file_ext == ".pvd")
     {
-        postPVD(arg_in_file.getValue(), arg_out_file.getValue(), !nooverwrite_arg.getValue());
+        postPVD(arg_in_file.getValue(), arg_out_file.getValue(),
+                !nooverwrite_arg.getValue());
     }
     else if (in_file_ext == ".vtu")
     {
