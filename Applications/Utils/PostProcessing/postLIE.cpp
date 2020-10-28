@@ -103,7 +103,7 @@ void postPVD(std::string const& in_pvd_filename,
             BaseLib::joinPaths(out_pvd_file_dir, dest_vtu_filename);
         if (!allow_overwrite && BaseLib::IsFileExisting(dest_vtu_filepath))
         {
-            INFO("the destination file already exists. skip overwriting it.");
+            INFO("The destination file already exists. Skip overwriting it.");
         }
         else
         {
