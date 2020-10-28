@@ -17,6 +17,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/bishops_effective_stress_power_law.prj)
     OgsTest(PROJECTFILE RichardsMechanics/bishops_effective_stress_saturation_cutoff.prj)
     OgsTest(PROJECTFILE RichardsMechanics/alternative_mass_balance_anzInterval_10.prj)
+    OgsTest(PROJECTFILE RichardsMechanics/rotated_consolidation.prj)
 endif()
 
 

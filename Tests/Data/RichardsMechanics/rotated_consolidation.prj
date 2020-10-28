@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    Modified consolidation test
+    - Column geometry rotated at -45 degrees
+    - Gravity rotated
+    - Local coordinate system activated/rotated
+
+    Geometry
+    - Column 1x10 m^2
+
+    Boundary conditions
+    - u_x(x,10) = u_y(x,10)=0
+    - t(x,0) = 0
+    - p(x,10) = 0
+
+    Further considerations
+    - Orthotropic linear elastic material
+    - Orthotropic permeability tensor (local_coordinate_system = true)
+
+    Notes
+    - Solution converges to steady state p = \rho_w * height * gravity magnitude
+    - The rotated displacement solution can be compared with the unrotated using \sqrt(2)/2(x+y) and \sqrt(2)/(x-y) for the normal and tangential components, respectively.
+-->
+<OpenGeoSysProject>
+    <mesh axially_symmetric="false">rotated_consolidation_1x10_quad_8.vtu</mesh>
+    <geometry>rotated_consolidation_1x10.gml</geometry>
+    <processes>
+        <process>
+            <name>RM</name>
+            <type>RICHARDS_MECHANICS</type>
+            <integration_order>4</integration_order>
+            <dimension>2</dimension>
+            <constitutive_relation>
+                <type>LinearElasticOrthotropic</type>
+                <youngs_moduli>E</youngs_moduli>
+                <shear_moduli>G</shear_moduli>
+                <poissons_ratios>nu</poissons_ratios>
+            </constitutive_relation>
+            <process_variables>
+                <pressure>pressure</pressure>
+                <displacement>displacement</displacement>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
+                <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable type="static" internal_name="velocity" output_name="velocity"/>
+                <secondary_variable type="static" internal_name="saturation" output_name="saturation"/>
+            </secondary_variables>
+            <specific_body_force>-6.933889096 -6.933889096</specific_body_force>
+        </process>
+    </processes>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>bulk_modulus</name>
+                            <type>Constant</type>
+                            <value>1e9</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>bulk_modulus</name>
+                            <type>Constant</type>
+                            <value>1e9</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2780.0</value>
+                        </property>
+                        <property>
+                            <name>biot_coefficient</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                        <property>
+                            <name>permeability</name>
+                            <type>Parameter</type>
+                            <parameter_name>k_i</parameter_name>
+                        </property>
+                        <property>
+                            <name>storage</name>
+                            <type>Constant</type>
+                            <value>1e-10</value>
+                        </property>
+                        <property>
+                            <name>porosity</name>
+                            <type>Constant</type>
+                            <value>0.4</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>relative_permeability</name>
+                    <type>RelativePermeabilityVanGenuchten</type>
+                    <residual_liquid_saturation>0.0</residual_liquid_saturation>
+                    <residual_gas_saturation>0</residual_gas_saturation>
+                    <exponent>0.4</exponent>
+                    <minimum_relative_permeability_liquid>1e-25</minimum_relative_permeability_liquid>
+                </property>
+                <property>
+                    <name>saturation</name>
+                    <type>SaturationVanGenuchten</type>
+                    <residual_liquid_saturation>0.0</residual_liquid_saturation>
+                    <residual_gas_saturation>0</residual_gas_saturation>
+                    <exponent>0.4</exponent>
+                    <p_b>42e6</p_b>
+                </property>
+                <property>
+                    <name>bishops_effective_stress</name>
+                    <type>BishopsPowerLaw</type>
+                    <exponent>1</exponent>
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <processes>
+            <process ref="RM">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>PerComponentDeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstols>1e-3 1e-10 1e-10</abstols>
+                </convergence_criterion>
+                <compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>3e4</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>4</repeat>
+                            <delta_t>100</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>rotated_consolidation</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <timesteps>
+                <pair>
+                    <repeat>200000</repeat>
+                    <each_steps>100</each_steps>
+                </pair>
+                <pair>
+                    <repeat>200</repeat>
+                    <each_steps>50</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>pressure</variable>
+                <!--
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>velocity</variable>
+                <variable>saturation</variable>
+                -->
+            </variables>
+            <output_iteration_results>false</output_iteration_results>
+            <fixed_output_times>1000 2000 3000</fixed_output_times>
+        </output>
+    </time_loop>
+    <local_coordinate_system>
+        <basis_vector_0>e0</basis_vector_0>
+        <basis_vector_1>e1</basis_vector_1>
+    </local_coordinate_system>
+    <parameters>
+        <parameter>
+            <name>e0</name>
+            <type>Constant</type>
+            <values>0.7071067811865475244 -0.7071067811865475244</values>
+        </parameter>
+        <parameter>
+            <name>e1</name>
+            <type>Constant</type>
+            <values>0.7071067811865475244 0.7071067811865475244</values>
+        </parameter>
+        <parameter>
+            <name>k_i</name>
+            <type>Constant</type>
+            <values>2.00E-13    0.00    0.00    2.00E-13</values>
+            <use_local_coordinate_system>true</use_local_coordinate_system>
+        </parameter>
+        <parameter>
+            <name>E</name>
+            <type>Constant</type>
+            <values>150E+06 100E+06 100E+06</values>
+        </parameter>
+        <parameter>
+            <name>G</name>
+            <type>Constant</type>
+            <values>75E+06 50E+06 75E+06</values>
+        </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <values>.0 .0 .0</values>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>pressure_ic</name>
+            <type>Constant</type>
+            <values>0</values>
+        </parameter>
+        <parameter>
+            <name>dirichlet0</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>traction</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>dirichlet_pressure</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>2</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>2D_meter</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>2D_meter</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>2D_meter</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>traction</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>pressure_ic</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>2D_meter</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet_pressure</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>30</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>rotated_consolidation_ts_100_t_10000.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>5e-9</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>rotated_consolidation_ts_300_t_30000.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>5e-10</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>rotated_consolidation_ts_100_t_10000.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>rotated_consolidation_ts_300_t_30000.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
