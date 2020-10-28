@@ -207,7 +207,8 @@ private:
     virtual void initializeBoundaryConditions();
 
     virtual void setInitialConditionsConcreteProcess(GlobalVector const& /*x*/,
-                                                     double const /*t*/)
+                                                     double const /*t*/,
+                                                     int const /*process_id*/)
     {
     }
 

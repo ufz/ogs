@@ -371,7 +371,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        getDOFTable(process_id), x, xdot, t, dt, _use_monolithic_scheme);
+        getDOFTable(process_id), x, xdot, t, dt, _use_monolithic_scheme,
+        process_id);
 }
 
 template <int DisplacementDim>

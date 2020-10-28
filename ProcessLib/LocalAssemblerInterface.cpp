@@ -83,12 +83,12 @@ void LocalAssemblerInterface::computeSecondaryVariable(
 void LocalAssemblerInterface::setInitialConditions(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
-    double const t)
+    double const t, bool const use_monolithic_scheme, int const process_id)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
 
-    setInitialConditionsConcrete(local_x, t);
+    setInitialConditionsConcrete(local_x, t, use_monolithic_scheme, process_id);
 }
 
 void LocalAssemblerInterface::initialize(
@@ -124,14 +124,14 @@ void LocalAssemblerInterface::postNonLinearSolver(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
     GlobalVector const& xdot, double const t, double const dt,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme, int const process_id)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
     auto const local_xdot = xdot.get(indices);
 
     postNonLinearSolverConcrete(local_x, local_xdot, t, dt,
-                                use_monolithic_scheme);
+                                use_monolithic_scheme, process_id);
 }
 
 }  // namespace ProcessLib

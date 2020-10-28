@@ -516,7 +516,22 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
-        _use_monolithic_scheme);
+        _use_monolithic_scheme, process_id);
+}
+
+template <int DisplacementDim>
+void HydroMechanicsProcess<
+    DisplacementDim>::setInitialConditionsConcreteProcess(GlobalVector const& x,
+                                                          double const t,
+                                                          int const process_id)
+{
+    DBUG("Set initial conditions of HydroMechanicsProcess.");
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerIF::setInitialConditions, _local_assemblers,
+        pv.getActiveElementIDs(), getDOFTable(process_id), x, t,
+        _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>
