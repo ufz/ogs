@@ -18973,7 +18973,7 @@
     </Proxy>
     <Proxy group="sources" type="PVDReader" id="15413" servers="1">
       <Property name="FileName" id="15413.FileName" number_of_elements="1">
-        <Element index="0" value="/home/waltherm/01_Bearbeitung/ogs5_vs_ogs6/RichardsComponentTransport/Padilla/RichardsHC_PadillaNaCl6/h_us_out_pcs_0.pvd"/>
+        <Element index="0" value="/home/waltherm/01_Bearbeitung/ogs5_vs_ogs6/RichardsComponentTransport/Padilla/RichardsHC_PadillaNaCl6/h_us_out.pvd"/>
         <Domain name="files" id="15413.FileName.files"/>
       </Property>
       <Property name="TimestepValues" id="15413.TimestepValues" number_of_elements="402">
@@ -19383,7 +19383,7 @@
     </Proxy>
     <Proxy group="sources" type="PVDReader" id="15545" servers="1">
       <Property name="FileName" id="15545.FileName" number_of_elements="1">
-        <Element index="0" value="/home/waltherm/01_Bearbeitung/ogs5_vs_ogs6/RichardsComponentTransport/Padilla/RichardsHC/h_us_out_pcs_0.pvd"/>
+        <Element index="0" value="/home/waltherm/01_Bearbeitung/ogs5_vs_ogs6/RichardsComponentTransport/Padilla/RichardsHC/h_us_out.pvd"/>
         <Domain name="files" id="15545.FileName.files"/>
       </Property>
       <Property name="TimestepValues" id="15545.TimestepValues" number_of_elements="402">
