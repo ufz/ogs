@@ -11,7 +11,7 @@ AddTest(
     EXECUTABLE_ARGS RichardsFlow_2d_compare_ogs5.prj
     TESTER vtkdiff
     DIFF_DATA
-    h_us_quad_1000.vtu richards_pcs_0_ts_100_t_100.000000.vtu PRESSURE1 pressure 1e-1 1e-1
+    h_us_quad_1000.vtu richards_ts_100_t_100.000000.vtu PRESSURE1 pressure 1e-1 1e-1
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -22,7 +22,7 @@ AddTest(
     EXECUTABLE_ARGS RichardsFlow_2d_small.prj
     TESTER vtkdiff
     DIFF_DATA
-    ref_t_1600.000000.vtu richards_pcs_0_ts_1100_t_1600.000000.vtu pressure pressure 1e-8 1e-8
+    ref_t_1600.000000.vtu richards_ts_1100_t_1600.000000.vtu pressure pressure 1e-8 1e-8
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -34,7 +34,7 @@ AddTest(
     EXECUTABLE_ARGS RichardsFlow_2d_large.prj
     TESTER vtkdiff
     DIFF_DATA
-    ref_t_20000.000000.vtu richards_pcs_0_ts_18200_t_20000.000000.vtu pressure pressure 1e-8 1e-8
+    ref_t_20000.000000.vtu richards_ts_18200_t_20000.000000.vtu pressure pressure 1e-8 1e-8
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -88,7 +88,7 @@ AddTest(
 #    REQUIREMENTS OGS_USE_MPI
 #    RUNTIME 220
 #    DIFF_DATA
-#    ref_t_1600.000000.vtu richards_pcs_0_ts_803_t_1600_000000_0.vtu pressure pressure 1e-8 1e-3
+#    ref_t_1600.000000.vtu richards_ts_803_t_1600_000000_0.vtu pressure pressure 1e-8 1e-3
 #)
 
 # Comparison test for richards mechanics w/o deformations.
@@ -101,6 +101,6 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu pressure pressure 5e-8 1e-10
-    RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_pcs_0_ts_99_t_1900_000000_0.vtu saturation saturation 1e-10 1e-11
+    RichardsFlow_2d_richardsflow_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_ts_99_t_1900_000000_0.vtu pressure pressure 5e-8 1e-10
+    RichardsFlow_2d_richardsflow_ts_99_t_1900.000000.vtu RichardsFlow_2d_richardsflow_ts_99_t_1900_000000_0.vtu saturation saturation 1e-10 1e-11
 )
