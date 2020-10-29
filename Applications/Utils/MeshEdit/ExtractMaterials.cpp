@@ -93,6 +93,11 @@ int main(int argc, char* argv[])
     }
 
     auto id_range = std::minmax_element(mat_ids->cbegin(), mat_ids->cend());
+    if (id_range.first == id_range.second)
+    {
+        ERR("Mesh only contains one material, no extraction required.");
+        return EXIT_FAILURE;
+    }
     int min_id, max_id;
     if (arg_mat_id.isSet())
     {
