@@ -45,7 +45,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>source_term_middle_restricted_pcs_{:process_id}</prefix>
+            <prefix>source_term_middle_restricted</prefix>
             <timesteps>
                 <pair>
                     <repeat> 10000 </repeat>

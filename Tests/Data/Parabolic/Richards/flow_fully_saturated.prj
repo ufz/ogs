@@ -114,7 +114,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>flow_fully_saturated_pcs_{:process_id}</prefix>
+            <prefix>flow_fully_saturated</prefix>
             <timesteps>
                 <pair>
                     <repeat>10000</repeat>
@@ -191,13 +191,13 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>flow_fully_saturated_pcs_0_ts_.*.vtu</regex>
+            <regex>flow_fully_saturated_ts_.*.vtu</regex>
             <field>pressure</field>
             <absolute_tolerance>1e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>flow_fully_saturated_pcs_0_ts_.*.vtu</regex>
+            <regex>flow_fully_saturated_ts_.*.vtu</regex>
             <field>darcy_velocity</field>
             <absolute_tolerance>1e-11</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
