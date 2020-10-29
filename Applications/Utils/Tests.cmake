@@ -464,6 +464,7 @@ AddTest(
 AddTest(
     NAME ExtractMaterials_Test
     PATH MeshGeoToolsLib/Naegelstedt
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Naegelstedt
     EXECUTABLE ExtractMaterials
     EXECUTABLE_ARGS -i SmallTest.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/SmallTest.vtu
     REQUIREMENTS NOT OGS_USE_MPI
