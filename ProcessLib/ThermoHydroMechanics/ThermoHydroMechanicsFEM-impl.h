@@ -387,7 +387,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         KTT.noalias() +=
             (dNdx_T.transpose() * effective_thermal_condictivity * dNdx_T +
-             dNdx_T.transpose() * velocity * N_p * fluid_density * c_f) *
+             N_p.transpose() * velocity.transpose() * dNdx_p * fluid_density * c_f) *
             w;
 
         auto const effective_volumetric_heat_capacity =
