@@ -322,7 +322,9 @@ void MeshView::extractSurfaceMesh()
     MathLib::Vector3 const& dir (dlg.getNormal());
     int const tolerance (dlg.getTolerance());
     std::unique_ptr<MeshLib::Mesh> sfc_mesh(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, tolerance));
+        MeshLib::MeshSurfaceExtraction::getMeshSurface(
+            *mesh, dir, tolerance, "Bulk Mesh Node IDs",
+            "Bulk Mesh Element IDs", "Bulk Mesh Face IDs"));
     if (sfc_mesh)
     {
         static_cast<MeshModel*>(model())->addMesh(std::move(sfc_mesh));
