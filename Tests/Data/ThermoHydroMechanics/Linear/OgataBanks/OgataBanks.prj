@@ -7,13 +7,6 @@
         <mesh>geometry_top.vtu</mesh>
         <mesh>geometry_bottom.vtu</mesh>
     </meshes>
-
-    <!--mesh>mesh_q.vtu</mesh>
-    <geometry>geometry.gml</geometry>
-    <search_length_algorithm>
-        <type>fixed</type>
-        <value>1.0e-6</value>
-    </search_length_algorithm-->
     <processes>
         <process>
             <name>OgataBanks</name>
