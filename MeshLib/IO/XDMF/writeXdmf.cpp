@@ -34,7 +34,7 @@ bool writeXdmf3(const MeshLib::Mesh& mesh, std::string const& file_name)
     vtkSource->Update();
     writer->SetInputData(vtkSource->GetOutput());
     writer->Write();
-    return 0;
+    return true;
 }
 }  // end namespace IO
 }  // end namespace MeshLib
