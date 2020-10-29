@@ -9,8 +9,8 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 20
     DIFF_DATA
-    beier_sandbox_pcs_0_ts_10_t_600.000000.vtu beier_sandbox_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    beier_sandbox_pcs_0_ts_10_t_600.000000.vtu beier_sandbox_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
+    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
+    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
 )
 
 AddTest(
@@ -23,8 +23,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    fixed_power_constant_flow_pcs_0_ts_10_t_600.000000.vtu fixed_power_constant_flow_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    fixed_power_constant_flow_pcs_0_ts_10_t_600.000000.vtu fixed_power_constant_flow_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
+    fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
+    fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
 )
 
 AddTest(
@@ -37,8 +37,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    3D_deep_BHE_CXA_pcs_0_ts_10_t_600.000000.vtu 3D_deep_BHE_CXA_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    3D_deep_BHE_CXA_pcs_0_ts_10_t_600.000000.vtu 3D_deep_BHE_CXA_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
+    3D_deep_BHE_CXA_ts_10_t_600.000000.vtu 3D_deep_BHE_CXA_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
+    3D_deep_BHE_CXA_ts_10_t_600.000000.vtu 3D_deep_BHE_CXA_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
 )
 
 AddTest(
@@ -51,8 +51,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    3D_deep_BHE_CXC_pcs_0_ts_10_t_600.000000.vtu 3D_deep_BHE_CXC_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    3D_deep_BHE_CXC_pcs_0_ts_10_t_600.000000.vtu 3D_deep_BHE_CXC_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
+    3D_deep_BHE_CXC_ts_10_t_600.000000.vtu 3D_deep_BHE_CXC_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
+    3D_deep_BHE_CXC_ts_10_t_600.000000.vtu 3D_deep_BHE_CXC_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
 )
 
 AddTest(
@@ -65,8 +65,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu 3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu 3D_2U_BHE_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+    3D_2U_BHE_ts_10_t_600.000000.vtu 3D_2U_BHE_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    3D_2U_BHE_ts_10_t_600.000000.vtu 3D_2U_BHE_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
 
 AddTest(
@@ -79,8 +79,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    BHE_GW_advection_pcs_0_ts_10_t_500.000000.vtu BHE_GW_advection_pcs_0_ts_10_t_500.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    BHE_GW_advection_pcs_0_ts_10_t_500.000000.vtu BHE_GW_advection_pcs_0_ts_10_t_500.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+    BHE_GW_advection_ts_10_t_500.000000.vtu BHE_GW_advection_ts_10_t_500.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    BHE_GW_advection_ts_10_t_500.000000.vtu BHE_GW_advection_ts_10_t_500.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
 
 AddTest(
@@ -94,10 +94,10 @@ AddTest(
     REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
     PYTHON_PACKAGES TESPy=0.3.2
     DIFF_DATA
-    3bhes_1U_pcs_0_ts_10_t_600.000000.vtu 3bhes_1U_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
-    3bhes_1U_pcs_0_ts_10_t_600.000000.vtu 3bhes_1U_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-10 1e-13
-    3bhes_1U_pcs_0_ts_10_t_600.000000.vtu 3bhes_1U_pcs_0_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 1e-10 1e-13
-    3bhes_1U_pcs_0_ts_10_t_600.000000.vtu 3bhes_1U_pcs_0_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 1e-10 1e-13
+    3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+    3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-10 1e-13
+    3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 1e-10 1e-13
+    3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 1e-10 1e-13
 )
 
 AddTest(
@@ -110,8 +110,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    BHE_1P_pcs_0_ts_10_t_600.000000.vtu BHE_1P_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    BHE_1P_pcs_0_ts_10_t_600.000000.vtu BHE_1P_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+    BHE_1P_ts_10_t_600.000000.vtu BHE_1P_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    BHE_1P_ts_10_t_600.000000.vtu BHE_1P_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
 
 AddTest(
@@ -124,6 +124,6 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    BHE_1P_pcs_0_ts_10_t_600.000000.vtu BHE_1P_pcs_0_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    BHE_1P_pcs_0_ts_10_t_600.000000.vtu BHE_1P_pcs_0_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+    BHE_1P_ts_10_t_600.000000.vtu BHE_1P_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    BHE_1P_ts_10_t_600.000000.vtu BHE_1P_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
