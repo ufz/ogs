@@ -460,3 +460,16 @@ AddTest(
     AmmerRiversGWN.vtu AmmerRiversGWN.vtu GWN GWN 0 0
     AmmerRiversGWN.vtu AmmerRiversGWN.vtu GWN-2 GWN-2 0 0
 )
+
+AddTest(
+    NAME ExtractMaterials_Test
+    PATH MeshGeoToolsLib/Naegelstedt
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Naegelstedt
+    EXECUTABLE ExtractMaterials
+    EXECUTABLE_ARGS -i SmallTest.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/SmallTest.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA SmallTest_Layer1.vtu
+              SmallTest_Layer2.vtu
+              SmallTest_Layer3.vtu
+)
