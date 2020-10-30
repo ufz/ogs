@@ -26,8 +26,8 @@ GroutParameters createGroutParameters(BaseLib::ConfigTree const& config)
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout__porosity}
         config.getConfigParameter<double>("porosity");
     const auto grout_heat_capacity =
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout__heat_capacity}
-        config.getConfigParameter<double>("heat_capacity");
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout__specific_heat_capacity}
+        config.getConfigParameter<double>("specific_heat_capacity");
     const auto grout_thermal_conductivity =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout__thermal_conductivity}
         config.getConfigParameter<double>("thermal_conductivity");
