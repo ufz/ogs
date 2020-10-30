@@ -26,7 +26,7 @@
                     <grout>
                         <density>2190.0</density>
                         <porosity>0.0</porosity>
-                        <heat_capacity>1735.160</heat_capacity>
+                        <specific_heat_capacity>1735.160</specific_heat_capacity>
                         <thermal_conductivity>0.73</thermal_conductivity>
                     </grout>
                     <pipes>
