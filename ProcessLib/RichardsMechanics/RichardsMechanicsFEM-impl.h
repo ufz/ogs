@@ -404,6 +404,14 @@ void RichardsMechanicsLocalAssembler<
         }
         variables[static_cast<int>(MPL::Variable::porosity)] = phi;
 
+        if (alpha < phi)
+        {
+            OGS_FATAL(
+                "RichardsMechanics: Biot-coefficient {} is smaller than "
+                "porosity {} in element/integration point {}/{}.",
+                alpha, phi, _element.getID(), ip);
+        }
+
         // Swelling and possibly volumetric strain rate update.
         auto& sigma_sw = _ip_data[ip].sigma_sw;
         {
@@ -735,6 +743,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
+        }
+
+        if (alpha < phi)
+        {
+            OGS_FATAL(
+                "RichardsMechanics: Biot-coefficient {} is smaller than "
+                "porosity {} in element/integration point {}/{}.",
+                alpha, phi, _element.getID(), ip);
         }
 
         // Swelling and possibly volumetric strain rate update.

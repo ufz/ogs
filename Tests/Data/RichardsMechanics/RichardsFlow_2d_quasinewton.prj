@@ -60,7 +60,7 @@
                         <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
-                            <value>0</value>
+                            <value>0.38</value>
                         </property>
                         <property>
                             <name>density</name>
