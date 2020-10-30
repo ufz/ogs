@@ -39,12 +39,12 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
-      _process_data(std::move(process_data))
+      process_data_(std::move(process_data))
 {
-    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
+    nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
-    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
+    hydraulic_flow_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
 
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
@@ -58,11 +58,11 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getSigma();
                 }
 
@@ -75,11 +75,11 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getSaturation();
                 }
 
@@ -92,11 +92,11 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getPorosity();
                 }
 
@@ -110,11 +110,11 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getTransportPorosity();
                 }
 
@@ -129,11 +129,11 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getSwellingStress();
                 }
 
@@ -148,11 +148,11 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
+                result.resize(local_assemblers_.size());
 
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
                 {
-                    auto const& local_asm = *_local_assemblers[i];
+                    auto const& local_asm = *local_assemblers_[i];
                     result[i] = local_asm.getEpsilon();
                 }
 
@@ -183,29 +183,29 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::constructDofTable()
     _mesh_subset_all_nodes =
         std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
     // Create single component dof in the mesh's base nodes.
-    _base_nodes = MeshLib::getBaseNodes(_mesh.getElements());
-    _mesh_subset_base_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _base_nodes);
+    base_nodes_ = MeshLib::getBaseNodes(_mesh.getElements());
+    mesh_subset_base_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, base_nodes_);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
-    std::vector<MeshLib::MeshSubset> all_mesh_subsets_single_component{
+    std::vector<MeshLib::MeshSubset> all__meshsubsets_single_component{
         *_mesh_subset_all_nodes};
-    _local_to_global_index_map_single_component =
+    local_to_global_index_map_single_component_ =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets_single_component),
+            std::move(all__meshsubsets_single_component),
             // by location order is needed for output
             NumLib::ComponentOrder::BY_LOCATION);
 
     // For temperature, which is the first variable.
-    std::vector<MeshLib::MeshSubset> all_mesh_subsets{*_mesh_subset_base_nodes};
+    std::vector<MeshLib::MeshSubset> all__meshsubsets{*mesh_subset_base_nodes_};
 
     // For pressure, which is the second variable
-    all_mesh_subsets.push_back(*_mesh_subset_base_nodes);
+    all__meshsubsets.push_back(*mesh_subset_base_nodes_);
 
     // For displacement.
     const int monolithic_process_id = 0;
-    std::generate_n(std::back_inserter(all_mesh_subsets),
+    std::generate_n(std::back_inserter(all__meshsubsets),
                     getProcessVariables(monolithic_process_id)[2]
                         .get()
                         .getNumberOfGlobalComponents(),
@@ -214,7 +214,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::constructDofTable()
     std::vector<int> const vec_n_components{1, 1, DisplacementDim};
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
-            std::move(all_mesh_subsets), vec_n_components,
+            std::move(all__meshsubsets), vec_n_components,
             NumLib::ComponentOrder::BY_LOCATION);
     assert(_local_to_global_index_map);
 }
@@ -236,8 +236,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         getProcessVariables(mechanical_process_id)[deformation_variable_id]
             .get()
             .getShapeFunctionOrder(),
-        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-        _process_data);
+        local_assemblers_, mesh.isAxiallySymmetric(), integration_order,
+        process_data_);
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
@@ -245,7 +245,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
-                             _local_assemblers,
+                             local_assemblers_,
                              std::move(get_ip_values_function)));
     };
 
@@ -282,28 +282,28 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     // enable output of internal variables defined by material models
     //
     ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
-        LocalAssemblerIF>(_process_data.solid_materials,
+        LocalAssemblerIF>(process_data_.solid_materials,
                           add_secondary_variable);
 
-    _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
+    process_data_.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
         MeshLib::MeshItemType::Cell, 1);
 
-    _process_data.element_porosity = MeshLib::getOrCreateMeshProperty<double>(
+    process_data_.element_porosity = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
         MeshLib::MeshItemType::Cell, 1);
 
-    _process_data.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
+    process_data_.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_avg",
         MeshLib::MeshItemType::Cell,
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim>::RowsAtCompileTime);
 
-    _process_data.pressure_interpolated =
+    process_data_.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
             MeshLib::MeshItemType::Node, 1);
-    _process_data.temperature_interpolated =
+    process_data_.temperature_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "temperature_interpolated",
             MeshLib::MeshItemType::Node, 1);
@@ -317,11 +317,11 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         {
             continue;
         }
-        auto const& mesh_property =
+        auto const& _meshproperty =
             *mesh.getProperties().template getPropertyVector<double>(name);
 
         // The mesh property must be defined on integration points.
-        if (mesh_property.getMeshItemType() !=
+        if (_meshproperty.getMeshItemType() !=
             MeshLib::MeshItemType::IntegrationPoint)
         {
             continue;
@@ -331,23 +331,23 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
         // Check the number of components.
         if (ip_meta_data.n_components !=
-            mesh_property.getNumberOfGlobalComponents())
+            _meshproperty.getNumberOfGlobalComponents())
         {
             OGS_FATAL(
                 "Different number of components in meta data ({:d}) than in "
                 "the integration point field data for '{:s}': {:d}.",
                 ip_meta_data.n_components, name,
-                mesh_property.getNumberOfGlobalComponents());
+                _meshproperty.getNumberOfGlobalComponents());
         }
 
         // Now we have a properly named vtk's field data array and the
         // corresponding meta data.
         std::size_t position = 0;
-        for (auto& local_asm : _local_assemblers)
+        for (auto& local_asm : local_assemblers_)
         {
             std::size_t const integration_points_read =
                 local_asm->setIPDataInitialConditions(
-                    name, &mesh_property[position],
+                    name, &_meshproperty[position],
                     ip_meta_data.integration_order);
             if (integration_points_read == 0)
             {
@@ -361,7 +361,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(&LocalAssemblerIF::initialize,
-                                                _local_assemblers,
+                                                local_assemblers_,
                                                 *_local_to_global_index_map);
 }
 
@@ -383,7 +383,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
     DBUG("SetInitialConditions ThermoRichardsMechanicsProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerIF::setInitialConditions, _local_assemblers,
+        &LocalAssemblerIF::setInitialConditions, local_assemblers_,
         *_local_to_global_index_map, *x[process_id], t, _use_monolithic_scheme,
         process_id);
 }
@@ -422,7 +422,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
+        local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector) {
@@ -430,8 +430,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
                                           output_vector, std::negate<double>());
     };
 
-    copyRhs(1, *_hydraulic_flow);
-    copyRhs(2, *_nodal_forces);
+    copyRhs(1, *hydraulic_flow_);
+    copyRhs(2, *nodal_forces_);
 }
 
 template <int DisplacementDim>
@@ -446,7 +446,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerIF::postTimestep, _local_assemblers,
+        &LocalAssemblerIF::postTimestep, local_assemblers_,
         pv.getActiveElementIDs(), dof_tables, x, t, dt);
 }
 
@@ -466,7 +466,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
+        &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
 }
 
@@ -475,7 +475,7 @@ std::tuple<NumLib::LocalToGlobalIndexMap*, bool> ThermoRichardsMechanicsProcess<
     DisplacementDim>::getDOFTableForExtrapolatorData() const
 {
     const bool manage_storage = false;
-    return std::make_tuple(_local_to_global_index_map_single_component.get(),
+    return std::make_tuple(local_to_global_index_map_single_component_.get(),
                            manage_storage);
 }
 

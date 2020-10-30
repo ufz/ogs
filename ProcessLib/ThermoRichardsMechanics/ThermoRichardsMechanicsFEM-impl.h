@@ -37,45 +37,45 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         bool const is_axially_symmetric,
         unsigned const integration_order,
         ThermoRichardsMechanicsProcessData<DisplacementDim>& process_data)
-    : _process_data(process_data),
-      _integration_method(integration_order),
-      _element(e),
-      _is_axially_symmetric(is_axially_symmetric)
+    : process_data_(process_data),
+      integration_method_(integration_order),
+      element_(e),
+      is_axially_symmetric_(is_axially_symmetric)
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
-    _secondary_data.N_u.resize(n_integration_points);
+    ip_data_.reserve(n_integration_points);
+    secondary_data_.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
                                   ShapeMatricesTypeDisplacement,
                                   DisplacementDim>(e, is_axially_symmetric,
-                                                   _integration_method);
+                                                   integration_method_);
 
     auto const shape_matrices_p =
         NumLib::initShapeMatrices<ShapeFunctionPressure,
                                   ShapeMatricesTypePressure, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+            e, is_axially_symmetric, integration_method_);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
-            _process_data.solid_materials, _process_data.material_ids,
+            process_data_.solid_materials, process_data_.material_ids,
             e.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        _ip_data.emplace_back(solid_material);
-        auto& ip_data = _ip_data[ip];
+        ip_data_.emplace_back(solid_material);
+        auto& ip_data = ip_data_[ip];
         auto const& sm_u = shape_matrices_u[ip];
-        _ip_data[ip].integration_weight =
-            _integration_method.getWeightedPoint(ip).getWeight() *
+        ip_data_[ip].integration_weight =
+            integration_method_.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
         ip_data.N_u_op = ShapeMatricesTypeDisplacement::template MatrixType<
@@ -114,7 +114,7 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                             double>::quiet_NaN() /* t independent */);
         }
 
-        _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
+        secondary_data_.N_u[ip] = shape_matrices_u[ip].N;
     }
 }
 
@@ -127,53 +127,53 @@ std::size_t ThermoRichardsMechanicsLocalAssembler<
                                                  int const integration_order)
 {
     if (integration_order !=
-        static_cast<int>(_integration_method.getIntegrationOrder()))
+        static_cast<int>(integration_method_.getIntegrationOrder()))
     {
         OGS_FATAL(
             "Setting integration point initial conditions; The integration "
             "order of the local assembler for element {:d} is different "
             "from the integration order in the initial condition.",
-            _element.getID());
+            element_.getID());
     }
 
     if (name == "sigma_ip")
     {
-        if (_process_data.initial_stress != nullptr)
+        if (process_data_.initial_stress != nullptr)
         {
             OGS_FATAL(
                 "Setting initial conditions for stress from integration "
                 "point data and from a parameter '{:s}' is not possible "
                 "simultaneously.",
-                _process_data.initial_stress->name);
+                process_data_.initial_stress->name);
         }
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_eff);
+            values, ip_data_, &IpData::sigma_eff);
     }
 
     if (name == "saturation_ip")
     {
-        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+        return ProcessLib::setIntegrationPointScalarData(values, ip_data_,
                                                          &IpData::saturation);
     }
     if (name == "porosity_ip")
     {
-        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+        return ProcessLib::setIntegrationPointScalarData(values, ip_data_,
                                                          &IpData::porosity);
     }
     if (name == "transport_porosity_ip")
     {
         return ProcessLib::setIntegrationPointScalarData(
-            values, _ip_data, &IpData::transport_porosity);
+            values, ip_data_, &IpData::transport_porosity);
     }
     if (name == "swelling_stress_ip")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_sw);
+            values, ip_data_, &IpData::sigma_sw);
     }
     if (name == "epsilon_ip")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::eps);
+            values, ip_data_, &IpData::eps);
     }
     return 0;
 }
@@ -196,19 +196,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size> const>(local_x.data() + pressure_index,
                                   pressure_size);
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
 
-        auto const& N_p = _ip_data[ip].N_p;
+        auto const& N_p = ip_data_[ip].N_p;
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -219,7 +219,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Note: temperature dependent saturation model is not considered so
         // far.
-        _ip_data[ip].saturation_prev =
+        ip_data_[ip].saturation_prev =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(
                     variables, x_position, t,
@@ -326,39 +326,39 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size, displacement_size>::Zero(pressure_size,
                                                     displacement_size);
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data_[ip].integration_weight;
 
-        auto const& N_u_op = _ip_data[ip].N_u_op;
+        auto const& N_u_op = ip_data_[ip].N_u_op;
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+                element_, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N_p, T_ip);
@@ -376,20 +376,20 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
         variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
 
-        auto& eps = _ip_data[ip].eps;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
-        auto& S_L = _ip_data[ip].saturation;
-        auto const S_L_prev = _ip_data[ip].saturation_prev;
+        auto& eps = ip_data_[ip].eps;
+        auto const& sigma_eff = ip_data_[ip].sigma_eff;
+        auto& S_L = ip_data_[ip].saturation;
+        auto const S_L_prev = ip_data_[ip].saturation_prev;
         auto const alpha =
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
-        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
             t, x_position, dt, T_ip);
 
         auto const beta_SR =
             (1 - alpha) /
-            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+            ip_data_[ip].solid_material.getBulkModulus(t, x_position, &C_el);
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
 
@@ -400,7 +400,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
 
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
@@ -435,11 +435,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
             .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
 
-        auto& phi = _ip_data[ip].porosity;
+        auto& phi = ip_data_[ip].porosity;
         {  // Porosity update
 
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
-                _ip_data[ip].porosity_prev;
+                ip_data_[ip].porosity_prev;
             phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
@@ -451,13 +451,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             OGS_FATAL(
                 "ThermoRichardsMechanics: Biot-coefficient {} is smaller than "
                 "porosity {} in element/integration point {}/{}.",
-                alpha, phi, _element.getID(), ip);
+                alpha, phi, element_.getID(), ip);
         }
 
         // Swelling and possibly volumetric strain rate update.
-        auto& sigma_sw = _ip_data[ip].sigma_sw;
+        auto& sigma_sw = ip_data_[ip].sigma_sw;
         {
-            auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
+            auto const& sigma_sw_prev = ip_data_[ip].sigma_sw_prev;
 
             // If there is swelling, compute it. Update volumetric strain rate,
             // s.t. it corresponds to the mechanical part only.
@@ -488,14 +488,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             {
                 variables_prev[static_cast<int>(
                     MPL::Variable::transport_porosity)] =
-                    _ip_data[ip].transport_porosity_prev;
+                    ip_data_[ip].transport_porosity_prev;
 
-                _ip_data[ip].transport_porosity =
+                ip_data_[ip].transport_porosity =
                     solid_phase.property(MPL::PropertyType::transport_porosity)
                         .template value<double>(variables, variables_prev,
                                                 x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    _ip_data[ip].transport_porosity;
+                    ip_data_[ip].transport_porosity;
             }
             else
             {
@@ -515,7 +515,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::stress)]
             .emplace<SymmetricTensor>(
                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                    (_ip_data[ip].sigma_eff +
+                    (ip_data_[ip].sigma_eff +
                      alpha * chi_S_L * identity2 * p_cap_ip)
                         .eval()));
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
@@ -551,7 +551,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps - dthermal_strain);
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(variables, t,
+        auto C = ip_data_[ip].updateConstitutiveRelation(variables, t,
                                                          x_position, dt, T_ip);
 
         local_Jac
@@ -686,7 +686,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // pressure equation, temperature part.
         //
-        // Note:  d (rho_l * beta _T)/dp * dotT
+        // Note:  d (rho_l * beta T_)/dp * dotT
         // Add the thermal expansion term is the point is in the fully
         // saturated zone.
         if (p_cap_ip <= 0.0)  // p_l>0.0
@@ -760,7 +760,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
     }
 
-    if (_process_data.apply_mass_lumping)
+    if (process_data_.apply_mass_lumping)
     {
         storage_p_a_p = storage_p_a_p.colwise().sum().eval().asDiagonal();
         storage_p_a_S = storage_p_a_S.colwise().sum().eval().asDiagonal();
@@ -864,7 +864,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::sigma_eff, cache);
+        ip_data_, &IpData::sigma_eff, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -895,7 +895,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
 {
     constexpr int kelvin_vector_size =
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
-    auto const n_integration_points = _ip_data.size();
+    auto const n_integration_points = ip_data_.size();
 
     cache.clear();
     auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -904,7 +904,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ++ip)
     {
-        auto const& sigma_sw = _ip_data[ip].sigma_sw;
+        auto const& sigma_sw = ip_data_[ip].sigma_sw;
         cache_mat.col(ip) =
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_sw);
     }
@@ -939,7 +939,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::eps, cache);
+        ip_data_, &IpData::eps, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -954,7 +954,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -963,7 +963,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        cache_matrix.col(ip).noalias() = _ip_data[ip].v_darcy;
+        cache_matrix.col(ip).noalias() = ip_data_[ip].v_darcy;
     }
 
     return cache;
@@ -992,7 +992,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        _ip_data, &IpData::saturation, cache);
+        ip_data_, &IpData::saturation, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1017,7 +1017,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    return ProcessLib::getIntegrationPointScalarData(_ip_data,
+    return ProcessLib::getIntegrationPointScalarData(ip_data_,
                                                      &IpData::porosity, cache);
 }
 
@@ -1044,7 +1044,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        _ip_data, &IpData::transport_porosity, cache);
+        ip_data_, &IpData::transport_porosity, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1059,7 +1059,7 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        _ip_data, &IpData::dry_density_solid, cache);
+        ip_data_, &IpData::dry_density_solid, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1089,19 +1089,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
     auto const& solid_phase = medium->phase("Solid");
 
-    int const n_integration_points = _integration_method.getNumberOfPoints();
+    int const n_integration_points = integration_method_.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N_p, T_ip);
         double T_dot_ip;
@@ -1111,14 +1111,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+                element_, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
-        auto& eps = _ip_data[ip].eps;
+        auto& eps = ip_data_[ip].eps;
         eps.noalias() = B * u;
         // Consider anisotropic thermal expansion.
         // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
@@ -1141,7 +1141,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps - dthermal_strain);
 
-        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
+        ip_data_[ip].updateConstitutiveRelation(variables, t, x_position, dt,
                                                 T_ip);
     }
 }
@@ -1172,17 +1172,17 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
         identity2;
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(element_.getID());
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method_.getNumberOfPoints();
 
     double saturation_avg = 0;
     double porosity_avg = 0;
@@ -1193,19 +1193,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+                element_, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N_p, T_ip);
@@ -1224,9 +1224,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
 
-        auto& eps = _ip_data[ip].eps;
-        auto& S_L = _ip_data[ip].saturation;
-        auto const S_L_prev = _ip_data[ip].saturation_prev;
+        auto& eps = ip_data_[ip].eps;
+        auto& S_L = ip_data_[ip].saturation;
+        auto const S_L_prev = ip_data_[ip].saturation_prev;
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
@@ -1247,12 +1247,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
-        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
             t, x_position, dt, T_ip);
 
         auto const beta_SR =
             (1 - alpha) /
-            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+            ip_data_[ip].solid_material.getBulkModulus(t, x_position, &C_el);
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
 
@@ -1268,10 +1268,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
             .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
 
-        auto& phi = _ip_data[ip].porosity;
+        auto& phi = ip_data_[ip].porosity;
         {  // Porosity update
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
-                _ip_data[ip].porosity_prev;
+                ip_data_[ip].porosity_prev;
             phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
@@ -1279,9 +1279,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         // Swelling and possibly volumetric strain rate update.
-        auto& sigma_sw = _ip_data[ip].sigma_sw;
+        auto& sigma_sw = ip_data_[ip].sigma_sw;
         {
-            auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
+            auto const& sigma_sw_prev = ip_data_[ip].sigma_sw_prev;
 
             // If there is swelling, compute it. Update volumetric strain rate,
             // s.t. it corresponds to the mechanical part only.
@@ -1312,14 +1312,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             {
                 variables_prev[static_cast<int>(
                     MPL::Variable::transport_porosity)] =
-                    _ip_data[ip].transport_porosity_prev;
+                    ip_data_[ip].transport_porosity_prev;
 
-                _ip_data[ip].transport_porosity =
+                ip_data_[ip].transport_porosity =
                     solid_phase.property(MPL::PropertyType::transport_porosity)
                         .template value<double>(variables, variables_prev,
                                                 x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    _ip_data[ip].transport_porosity;
+                    ip_data_[ip].transport_porosity;
             }
             else
             {
@@ -1338,7 +1338,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::stress)]
             .emplace<SymmetricTensor>(
                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                    (_ip_data[ip].sigma_eff +
+                    (ip_data_[ip].sigma_eff +
                      alpha * chi_S_L * identity2 * p_cap_ip)
                         .eval()));
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
@@ -1351,7 +1351,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
 
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        auto const& sigma_eff = ip_data_[ip].sigma_eff;
         double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
@@ -1359,7 +1359,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
-        _ip_data[ip].dry_density_solid = (1 - phi) * rho_SR;
+        ip_data_[ip].dry_density_solid = (1 - phi) * rho_SR;
 
         eps.noalias() = B * u;
 
@@ -1384,14 +1384,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps - dthermal_strain);
 
-        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
+        ip_data_[ip].updateConstitutiveRelation(variables, t, x_position, dt,
                                                 T_ip);
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = process_data_.specific_body_force;
 
         // Compute the velocity
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
-        _ip_data[ip].v_darcy.noalias() =
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
+        ip_data_[ip].v_darcy.noalias() =
             -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
 
         saturation_avg += S_L;
@@ -1402,21 +1402,21 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     porosity_avg /= n_integration_points;
     sigma_avg /= n_integration_points;
 
-    (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
-    (*_process_data.element_porosity)[_element.getID()] = porosity_avg;
+    (*process_data_.element_saturation)[element_.getID()] = saturation_avg;
+    (*process_data_.element_porosity)[element_.getID()] = porosity_avg;
 
-    Eigen::Map<KV>(&(*_process_data.element_stresses)[_element.getID() *
+    Eigen::Map<KV>(&(*process_data_.element_stresses)[element_.getID() *
                                                       KV::RowsAtCompileTime]) =
         MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, p_L,
-                         *_process_data.pressure_interpolated);
+        DisplacementDim>(element_, is_axially_symmetric_, p_L,
+                         *process_data_.pressure_interpolated);
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, T,
-                         *_process_data.temperature_interpolated);
+        DisplacementDim>(element_, is_axially_symmetric_, T,
+                         *process_data_.temperature_interpolated);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1425,7 +1425,7 @@ unsigned ThermoRichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::getNumberOfIntegrationPoints() const
 {
-    return _integration_method.getNumberOfPoints();
+    return integration_method_.getNumberOfPoints();
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1437,7 +1437,7 @@ ThermoRichardsMechanicsLocalAssembler<
     DisplacementDim>::getMaterialStateVariablesAt(unsigned integration_point)
     const
 {
-    return *_ip_data[integration_point].material_state_variables;
+    return *ip_data_[integration_point].material_state_variables;
 }
 }  // namespace ThermoRichardsMechanics
 }  // namespace ProcessLib
