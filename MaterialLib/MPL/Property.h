@@ -44,7 +44,21 @@ PropertyDataType fromVector(std::vector<double> const& values);
 class Property
 {
 public:
+#ifndef NDEBUG
+    virtual ~Property()
+    {
+        if(property_used)
+        {
+            DBUG("Property is used: '{:s}'", description());
+        }
+        else
+        {
+            WARN("Property is not used: '{:s}'", description());
+        }
+    }
+#else
     virtual ~Property() = default;
+#endif
 
     /// Returns the initial (or reference) value of the property.
     /// The default implementation forwards to the value function.
@@ -120,6 +134,9 @@ public:
     {
         try
         {
+#ifndef NDEBUG
+            property_used = true;
+#endif
             return std::get<T>(value());
         }
         catch (std::bad_variant_access const&)
@@ -141,6 +158,9 @@ public:
     {
         try
         {
+#ifndef NDEBUG
+            property_used = true;
+#endif
             return std::get<T>(
                 value(variable_array, variable_array_prev, pos, t, dt));
         }
@@ -163,6 +183,9 @@ public:
     {
         try
         {
+#ifndef NDEBUG
+            property_used = true;
+#endif
             return std::get<T>(value(variable_array, pos, t, dt));
         }
         catch (std::bad_variant_access const&)
@@ -185,6 +208,9 @@ public:
     {
         try
         {
+#ifndef NDEBUG
+            property_used = true;
+#endif
             return std::get<T>(dValue(variable_array, variable_array_prev,
                                       variable, pos, t, dt));
         }
@@ -206,6 +232,9 @@ public:
     {
         try
         {
+#ifndef NDEBUG
+            property_used = true;
+#endif
             return std::get<T>(dValue(variable_array, variable, pos, t, dt));
         }
         catch (std::bad_variant_access const&)
@@ -227,6 +256,9 @@ public:
     {
         try
         {
+#ifndef NDEBUG
+            property_used = true;
+#endif
             return std::get<T>(
                 d2Value(variable_array, variable1, variable2, pos, t, dt));
         }
@@ -260,6 +292,9 @@ private:
         // medium, phase or component
     }
     std::string description() const;
+#ifndef NDEBUG
+    mutable bool property_used = false;
+#endif
 
 private:
     /// Corresponds to the PropertyDataType

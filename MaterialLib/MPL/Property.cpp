@@ -71,6 +71,9 @@ PropertyDataType Property::initialValue(
 
 PropertyDataType Property::value() const
 {
+#ifndef NDEBUG
+    property_used = true;
+#endif
     return value_;
 }
 
@@ -79,6 +82,9 @@ PropertyDataType Property::value(VariableArray const& /*variable_array*/,
                                  ParameterLib::SpatialPosition const& /*pos*/,
                                  double const /*t*/, double const /*dt*/) const
 {
+#ifndef NDEBUG
+    property_used = true;
+#endif
     return value_;
 }
 
@@ -86,6 +92,9 @@ PropertyDataType Property::value(VariableArray const& variable_array,
                                  ParameterLib::SpatialPosition const& pos,
                                  double const t, double const dt) const
 {
+#ifndef NDEBUG
+    property_used = true;
+#endif
     return value(variable_array, VariableArray{}, pos, t, dt);
 }
 
@@ -95,6 +104,9 @@ PropertyDataType Property::dValue(VariableArray const& /*variable_array*/,
                                   ParameterLib::SpatialPosition const& /*pos*/,
                                   double const /*t*/, double const /*dt*/) const
 {
+#ifndef NDEBUG
+    property_used = true;
+#endif
     return dvalue_;
 }
 
@@ -105,6 +117,9 @@ PropertyDataType Property::dValue(VariableArray const& variable_array,
                                   ParameterLib::SpatialPosition const& pos,
                                   double const t, double const dt) const
 {
+#ifndef NDEBUG
+    property_used = true;
+#endif
     return dValue(variable_array, VariableArray{}, variable, pos, t, dt);
 }
 
@@ -116,6 +131,9 @@ PropertyDataType Property::d2Value(VariableArray const& /*variable_array*/,
                                    double const /*t*/,
                                    double const /*dt*/) const
 {
+#ifndef NDEBUG
+    property_used = true;
+#endif
     return 0.0;
 }
 
