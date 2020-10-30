@@ -46,3 +46,6 @@
 [submodule "ThirdParty/spdlog"]
 	path = ThirdParty/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "ThirdParty/xdmfdiff"]
+	path = ThirdParty/xdmfdiff
+	url = https://gitlab.opengeosys.org/ogs/xdmfdiff.git

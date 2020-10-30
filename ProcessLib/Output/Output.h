@@ -37,7 +37,8 @@ public:
     };
 
 public:
-    Output(std::string output_directory, std::string prefix, std::string suffix,
+    Output(std::string output_directory, OutputType const type,
+           std::string prefix, std::string suffix,
            bool const compress_output, std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
@@ -81,13 +82,13 @@ public:
 
 private:
     struct OutputFile;
-    void outputBulkMesh(OutputFile const& output_file,
+    void outputMesh(OutputFile const& output_file,
                         MeshLib::IO::PVDFile* const pvd_file,
                         MeshLib::Mesh const& mesh,
                         double const t) const;
-
 private:
     std::string const _output_directory;
+    OutputType const _output_file_type;
     std::string const _output_file_prefix;
     std::string const _output_file_suffix;
 

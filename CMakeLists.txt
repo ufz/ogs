@@ -265,6 +265,12 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/ThirdParty/vtkdiff/CMakeLists.txt AND BUILD_TEST
     install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
 endif()
 
+# xdmfdiff
+if(EXISTS ${PROJECT_SOURCE_DIR}/ThirdParty/xdmfdiff/CMakeLists.txt AND BUILD_TESTING)
+    add_subdirectory(ThirdParty/xdmfdiff)
+    install(PROGRAMS $<TARGET_FILE:xdmfdiff> DESTINATION bin COMPONENT ogs_extras)
+endif()
+
 include(scripts/cmake/CheckHeaderCompilation.cmake)
 
 add_subdirectory(Applications)

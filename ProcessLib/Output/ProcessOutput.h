@@ -42,11 +42,16 @@ void addProcessDataToMesh(
         integration_point_writer,
     OutputDataSpecification const& output_data_specification);
 
-//! Writes output to the given \c file_name using the VTU file format.
+//! Writes output to the given \c file_name using the specified file format.
 ///
 /// See Output::_output_file_data_mode documentation for the data_mode
 /// parameter.
+enum class OutputType : uint8_t
+{
+    vtk,
+    xdmf
+};
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
-                bool const compress_output, int const data_mode);
-
+                bool const compress_output, int const data_mode,
+                OutputType const file_type);
 }  // namespace ProcessLib

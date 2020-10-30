@@ -62,7 +62,7 @@ find_program(PARSL parsl-visualize HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
 ######################
 find_package(Boost ${ogs.minimum_version.boost} REQUIRED)
 
-set(VTK_COMPONENTS vtkIOXML)
+set(VTK_COMPONENTS vtkIOXML vtkIOXdmf3)
 if(OGS_BUILD_GUI)
     set(VTK_COMPONENTS ${VTK_COMPONENTS}
         vtkIOLegacy vtkIOExport vtkImagingCore
@@ -80,6 +80,12 @@ else()
     find_package(VTK ${ogs.minimum_version.vtk} REQUIRED COMPONENTS ${VTK_COMPONENTS})
     include(${VTK_USE_FILE})
 endif()
+include_directories(SYSTEM
+    # Xdmf:
+    ${VTK_INSTALL_PREFIX}/include
+    # libxml:
+    ${VTK_INSTALL_PREFIX}/include/vtk-${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR}/vtklibxml2
+)
 
 find_package(Eigen3 ${ogs.minimum_version.eigen} REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})

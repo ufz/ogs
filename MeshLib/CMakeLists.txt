@@ -12,6 +12,7 @@ append_source_files(SOURCES Elements)
 append_source_files(SOURCES IO)
 append_source_files(SOURCES IO/Legacy)
 append_source_files(SOURCES IO/VtkIO)
+append_source_files(SOURCES IO/XDMF)
 append_source_files(SOURCES MeshQuality)
 append_source_files(SOURCES Vtk)
 

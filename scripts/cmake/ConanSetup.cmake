@@ -41,6 +41,7 @@ set(CONAN_OPTIONS
     boost:header_only=True
     vtk:minimal=True
     vtk:ioxml=True
+    vtk:ioxdmf3=True
     CACHE INTERNAL ""
 )
 

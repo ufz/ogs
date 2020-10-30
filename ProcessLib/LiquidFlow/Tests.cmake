@@ -430,6 +430,24 @@ AddTest(
     LF_square_1x1_tri_1.8e1_surfaceflux_ts_2_t_0.864000_expected.vtu LF_square_1x1_tri_1.8e1_surfaceflux_square_1x1_tri_1.8e1_ts_2_t_0.864000.vtu pressure pressure 1e-7 1e-13
 )
 
+AddTest(
+    NAME SimpleSynthetics_XDMF
+    PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
+    WRAPPER time
+    TESTER xdmfdiff
+    # See https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/3184#note_85104
+    REQUIREMENTS NOT OGS_USE_MPI AND NOT COMPILER_IS_APPLE_CLANG
+    DIFF_DATA
+    square_5x5_tris_32_right_boundary_ts_0_t_0.000000.xdmf square_5x5_tris_32_right_boundary_ts_0_t_0.000000.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_right_boundary_ts_1_t_1.000000.xdmf square_5x5_tris_32_right_boundary_ts_1_t_1.000000.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_left_boundary_ts_0_t_0.000000.xdmf square_5x5_tris_32_left_boundary_ts_0_t_0.000000.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_left_boundary_ts_1_t_1.000000.xdmf square_5x5_tris_32_left_boundary_ts_1_t_1.000000.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_ts_0_t_0.000000.xdmf square_5x5_tris_32_ts_0_t_0.000000.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_ts_1_t_1.000000.xdmf square_5x5_tris_32_ts_1_t_1.000000.xdmf pressure pressure 1e-7 1e-13
+)
+
 #AddTest(
 #    NAME LiquidFlow_SimpleSynthetics_constraint_dirichlet_bc
 #    PATH Parabolic/LiquidFlow/SimpleSynthetics
