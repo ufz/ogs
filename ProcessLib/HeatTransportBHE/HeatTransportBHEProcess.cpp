@@ -297,6 +297,37 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                 "Error!!! The BHE boundary nodes are not correctly found, "
                 "for every single BHE, there should be 2 boundary nodes.");
         }
+
+        // For 1U, 2U, CXC, CXA type BHE, the node order in the boundary nodes vector
+        // should be rearranged according to its z coordinate in descending order. In
+        // these BHE types, the z coordinate on the top and bottom node is different.
+        // The BHE top node with a higher z coordinate should be placed at the first, while
+        // the BHE bottom node with a lower z coordinate should be placed at the second.
+        // For other horizontal BHE types e.g. 1P-type BHE, the z coordinate on the top
+        // and bottom node is identical. Thus the node order in the boundary nodes vector
+        // can not be rearranged according to its z coordinate. For these BHE types, the
+        // boundary node order is according to the default node id order in the model mesh.
+        // for 1P-type BHE
+        if (bhe_boundary_nodes[0]->getCoords()[2] ==
+            bhe_boundary_nodes[1]->getCoords()[2])
+        {
+            INFO(
+                "For 1P-type BHE, the BHE inflow and outflow "
+                "nodes are identified according to their mesh node "
+                "id in ascending order");
+        }
+        // for 1U, 2U, CXC, CXA type BHE
+        else
+        {
+            // swap the boundary nodes if the z coordinate of the
+            // first node is lower than it on the second node
+            if (bhe_boundary_nodes[0]->getCoords()[2] <
+                bhe_boundary_nodes[1]->getCoords()[2])
+            {
+                std::swap(bhe_boundary_nodes[0], bhe_boundary_nodes[1]);
+            }
+        }
+
         auto get_global_index =
             [&](std::size_t const node_id, int const component) {
                 return _local_to_global_index_map->getGlobalIndex(
