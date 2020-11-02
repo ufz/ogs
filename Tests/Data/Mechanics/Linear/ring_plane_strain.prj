@@ -41,7 +41,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>ring_plane_strain_pcs_{:process_id}</prefix>
+            <prefix>ring_plane_strain</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -156,13 +156,13 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu</file>
+            <file>ring_plane_strain_ts_1_t_1.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>6e-4</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu</file>
+            <file>ring_plane_strain_ts_1_t_1.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>6e-4</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

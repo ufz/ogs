@@ -54,7 +54,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_with_deactivated_hole_pcs_{:process_id}</prefix>
+            <prefix>square_with_deactivated_hole</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -172,13 +172,13 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu</file>
+            <file>square_with_deactivated_hole_ts_4_t_1.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-14</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>square_with_deactivated_hole_pcs_0_ts_4_t_1.000000.vtu</file>
+            <file>square_with_deactivated_hole_ts_4_t_1.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-14</relative_tolerance>

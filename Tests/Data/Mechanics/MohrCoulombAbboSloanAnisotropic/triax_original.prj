@@ -62,7 +62,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>triax_0_pcs_{:process_id}</prefix>
+            <prefix>triax_0</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>

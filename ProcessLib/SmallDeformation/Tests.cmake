@@ -76,8 +76,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    disc_with_hole_expected_pcs_0_ts_4_t_1.000000.vtu disc_with_hole_pcs_0_ts_4_t_1.000000.vtu displacement displacement 1e-16 1e-16
-    VIS disc_with_hole_pcs_0_ts_4_t_1.000000.vtu
+    disc_with_hole_expected_ts_4_t_1.000000.vtu disc_with_hole_ts_4_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    VIS disc_with_hole_ts_4_t_1.000000.vtu
 )
 
 # Tests that internal state variables work correcly.
@@ -92,9 +92,9 @@ AddTest(
     # The reference solution has been computed by OGS's Ehlers model.
     # See also the prj file.
     DIFF_DATA
-    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu displacement displacement 1e-14 0
-    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu sigma sigma 2e-13 0
-    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_pcs_0_ts_203_t_5.100000.vtu epsilon epsilon 1e-14 0
+    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_ts_203_t_5.100000.vtu displacement displacement 1e-14 0
+    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_ts_203_t_5.100000.vtu sigma sigma 2e-13 0
+    cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_ts_203_t_5.100000.vtu epsilon epsilon 1e-14 0
 )
 
 # Tests that axial symmetry works correctly.
@@ -108,8 +108,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    ../../ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
-    ../../ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu ring_plane_strain_pcs_0_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
+    ../../ring_plane_strain_ts_1_t_1.000000.vtu ring_plane_strain_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
+    ../../ring_plane_strain_ts_1_t_1.000000.vtu ring_plane_strain_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
 )
 
 endif()
@@ -122,7 +122,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    m1_1Dload_pcs_0_ts_1_t_1.000000.vtu m1_1Dload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    m1_1Dload_ts_1_t_1.000000.vtu m1_1Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
 
 AddTest(
@@ -133,7 +133,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    m1_1Dlozenge_pcs_0_ts_1_t_1.000000.vtu m1_1Dlozenge_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    m1_1Dlozenge_ts_1_t_1.000000.vtu m1_1Dlozenge_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
 
 AddTest(
@@ -144,7 +144,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    m1_2Dload_pcs_0_ts_1_t_1.000000.vtu m1_2Dload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    m1_2Dload_ts_1_t_1.000000.vtu m1_2Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
 
 AddTest(
@@ -155,7 +155,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MFRONT AND NOT OGS_USE_MPI
     DIFF_DATA
-    m1_3Dbottom_pcs_0_ts_1_t_1.000000.vtu m1_3Dbottom_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    m1_3Dbottom_ts_1_t_1.000000.vtu m1_3Dbottom_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
 
 AddTest(
@@ -166,7 +166,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    m1_3Dgravity_pcs_0_ts_1_t_1.000000.vtu m1_3Dgravity_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    m1_3Dgravity_ts_1_t_1.000000.vtu m1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
 
 AddTest(
@@ -177,7 +177,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    m1_3Dload_pcs_0_ts_1_t_1.000000.vtu m1_3Dload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    m1_3Dload_ts_1_t_1.000000.vtu m1_3Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
 
 AddTest(
@@ -188,7 +188,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    m1_3Dsquare_pcs_0_ts_1_t_1.000000.vtu m1_3Dsquare_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    m1_3Dsquare_ts_1_t_1.000000.vtu m1_3Dsquare_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
 
 AddTest(
@@ -199,7 +199,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    m1_3Dtopload_pcs_0_ts_1_t_1.000000.vtu m1_3Dtopload_pcs_0_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    m1_3Dtopload_ts_1_t_1.000000.vtu m1_3Dtopload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
 
 # Tests for Principal Stress Output
@@ -212,6 +212,6 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    output_pcs_0_ts_1_t_1.000000.vtu output_pcs_0_ts_1_t_1.000000.vtu displacement displacement 0 1e-12
-    output_pcs_0_ts_1_t_1.000000.vtu output_pcs_0_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
+    output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu displacement displacement 0 1e-12
+    output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
 )
