@@ -12,7 +12,7 @@ build gui mac:
     BUILD_DIR: "build-gui-mac"
     BUILD_CTEST: "false"
     CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=OFF
+      -DOGS_USE_CONAN=auto
       -DOGS_USE_PCH=OFF
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
