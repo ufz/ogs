@@ -479,11 +479,11 @@ AddTest(
     PATH MeshGeoToolsLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib
     EXECUTABLE IntegrateBoreholesIntoMesh
-    EXECUTABLE_ARGS -i PrismCube10x10x10.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/PrismBHE_4-8.vtu -g testpoints.gml --min-id 4 --max-id 8
+    EXECUTABLE_ARGS -i PrismCube10x10x10.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/PrismBHE_mat.vtu -g testpoints.gml --min-id 4 --max-id 8
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA
-    PrismBHE_4-8.vtu
+    PrismBHE_mat.vtu
 )
 
 AddTest(
@@ -491,9 +491,9 @@ AddTest(
     PATH MeshGeoToolsLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib
     EXECUTABLE IntegrateBoreholesIntoMesh
-    EXECUTABLE_ARGS -i PrismCube10x10x10.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/PrismBHE_4.5-10.vtu -g testpoints.gml --min-id 4 --max-id 8 --min-elevation 4.5 --max-elevation 10
+    EXECUTABLE_ARGS -i PrismCube10x10x10.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/PrismBHE_elev.vtu -g testpoints.gml --min-id 4 --max-id 8 --min-elevation 4.5 --max-elevation 10
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA
-    PrismBHE_4.5-10.vtu
+    PrismBHE_elev.vtu
 )
