@@ -81,7 +81,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>sm_out_pcs_{:process_id}</prefix>
+            <prefix>sm_out</prefix>
             <timesteps>
                 <pair>
                     <repeat>10000</repeat>

@@ -80,7 +80,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>out_bar_fine_ED_pcs_{:process_id}</prefix>
+            <prefix>out_bar_fine_ED</prefix>
             <timesteps>
                 <pair>
                     <repeat>10000</repeat>
@@ -279,73 +279,73 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_30_t_0.300000.vtu</file>
+            <file>out_bar_fine_ED_ts_30_t_0.300000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>1e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_30_t_0.300000.vtu</file>
+            <file>out_bar_fine_ED_ts_30_t_0.300000.vtu</file>
             <field>damage</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_30_t_0.300000.vtu</file>
+            <file>out_bar_fine_ED_ts_30_t_0.300000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>5e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_30_t_0.300000.vtu</file>
+            <file>out_bar_fine_ED_ts_30_t_0.300000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_60_t_0.600000.vtu</file>
+            <file>out_bar_fine_ED_ts_60_t_0.600000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>1e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_60_t_0.600000.vtu</file>
+            <file>out_bar_fine_ED_ts_60_t_0.600000.vtu</file>
             <field>damage</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_60_t_0.600000.vtu</file>
+            <file>out_bar_fine_ED_ts_60_t_0.600000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>5e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_60_t_0.600000.vtu</file>
+            <file>out_bar_fine_ED_ts_60_t_0.600000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_90_t_0.900000.vtu</file>
+            <file>out_bar_fine_ED_ts_90_t_0.900000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>1e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_90_t_0.900000.vtu</file>
+            <file>out_bar_fine_ED_ts_90_t_0.900000.vtu</file>
             <field>damage</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_90_t_0.900000.vtu</file>
+            <file>out_bar_fine_ED_ts_90_t_0.900000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>6e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>out_bar_fine_ED_pcs_0_ts_90_t_0.900000.vtu</file>
+            <file>out_bar_fine_ED_ts_90_t_0.900000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

@@ -49,7 +49,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e2_pcs_{:process_id}</prefix>
+            <prefix>square_1e2</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -152,13 +152,13 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>square_1e2_pcs_0_ts_4_t_1.000000.vtu</file>
+            <file>square_1e2_ts_4_t_1.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>square_1e2_pcs_0_ts_4_t_1.000000.vtu</file>
+            <file>square_1e2_ts_4_t_1.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

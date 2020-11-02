@@ -55,7 +55,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>two_material_gravity_Emodulus_pcs_{:process_id}</prefix>
+            <prefix>two_material_gravity_Emodulus</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -159,19 +159,19 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>two_material_gravity_Emodulus_pcs_0_ts_1_t_1.000000.vtu</file>
+            <file>two_material_gravity_Emodulus_ts_1_t_1.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>5e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>two_material_gravity_Emodulus_pcs_0_ts_1_t_1.000000.vtu</file>
+            <file>two_material_gravity_Emodulus_ts_1_t_1.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>1e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>two_material_gravity_Emodulus_pcs_0_ts_1_t_1.000000.vtu</file>
+            <file>two_material_gravity_Emodulus_ts_1_t_1.000000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>5e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
