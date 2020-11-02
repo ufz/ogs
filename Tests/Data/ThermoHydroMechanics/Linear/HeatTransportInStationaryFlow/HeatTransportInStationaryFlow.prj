@@ -9,7 +9,7 @@
     </meshes>
     <processes>
         <process>
-            <name>OgataBanks</name>
+            <name>HeatTransportInStationaryFlow</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>2</integration_order>
             <dimension>2</dimension>
@@ -115,7 +115,7 @@
     </media>
     <time_loop>
         <processes>
-            <process ref="OgataBanks">
+            <process ref="HeatTransportInStationaryFlow">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
@@ -140,7 +140,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>OgataBanks</prefix>
+            <prefix>HeatTransportInStationaryFlow</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -159,7 +159,6 @@
         </output>
     </time_loop>
     <parameters>
-        <!-- Mechanics -->
         <parameter>
             <name>E</name>
             <type>Constant</type>
@@ -170,7 +169,6 @@
             <type>Constant</type>
             <value>.3</value>
         </parameter>
-
         <parameter>
             <name>T0</name>
             <type>Constant</type>
