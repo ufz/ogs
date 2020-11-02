@@ -13,7 +13,6 @@ build gui mac:
     BUILD_CTEST: "false"
     CMAKE_ARGS: >-
       -DOGS_USE_CONAN=auto
-      -DOGS_USE_PCH=OFF
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
-      -DOGS_USE_NETCDF=ON
+      -DOGS_USE_NETCDF=OFF
