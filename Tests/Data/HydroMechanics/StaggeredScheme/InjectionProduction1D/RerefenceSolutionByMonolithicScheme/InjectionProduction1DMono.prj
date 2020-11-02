@@ -117,7 +117,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>InjectionProduction1D_Mono_pcs_{:process_id}</prefix>
+            <prefix>InjectionProduction1D_Mono</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
