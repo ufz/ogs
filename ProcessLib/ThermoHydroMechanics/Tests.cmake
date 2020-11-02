@@ -184,16 +184,16 @@ AddTest(
      expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 AddTest(
-    NAME ThermoHydroMechanics_OgataBanks
-    PATH ThermoHydroMechanics/Linear/OgataBanks
+    NAME ThermoHydroMechanics_HeatTransportInStationaryFlow
+    PATH ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
     EXECUTABLE ogs
-    EXECUTABLE_ARGS OgataBanks.prj
+    EXECUTABLE_ARGS HeatTransportInStationaryFlow.prj
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 17
     DIFF_DATA
-    HT_OgataBanks_ts_50_t_50000.000000.vtu OgataBanks_ts_50_t_50000.000000.vtu temperature  temperature_interpolated 5e-3 1e-10
-    HT_OgataBanks_ts_50_t_50000.000000.vtu OgataBanks_ts_50_t_50000.000000.vtu pressure  pressure_interpolated 1e-10 1e-10
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature_interpolated 5e-3 1e-10
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure_interpolated 1e-10 1e-10
 )
 
