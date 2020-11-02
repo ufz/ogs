@@ -19,13 +19,13 @@
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/Node.h"
 
 std::vector<std::size_t> getNodes(
     GeoLib::Point const& pnt, std::vector<MeshLib::Node*> const& nodes,
@@ -60,7 +60,7 @@ std::vector<std::size_t> getNodes(
     }
     else
     {
-        // sort found nodes from top to bottom (required for BHD simulations)
+        // sort found nodes from top to bottom (required for BHE simulations)
         std::sort(pnt_nodes.begin(), pnt_nodes.end(),
                   [nodes](std::size_t a, std::size_t b) {
                       return (*nodes[a])[2] > (*nodes[b])[2];
@@ -89,20 +89,20 @@ int main(int argc, char* argv[])
 
     double const dmax = std::numeric_limits<double>::max();
     TCLAP::ValueArg<double> max_elevation_arg(
-        "", "max-elevation", "Maximum elevation for an integrated borehole", false, 0,
-        "a number");
+        "", "max-elevation", "Maximum elevation for an integrated borehole",
+        false, 0, "a number");
     cmd.add(max_elevation_arg);
     TCLAP::ValueArg<double> min_elevation_arg(
-        "", "min-elevation", "Minimum elevation for an integrated borehole", false, 0,
-        "a number");
+        "", "min-elevation", "Minimum elevation for an integrated borehole",
+        false, 0, "a number");
     cmd.add(min_elevation_arg);
     TCLAP::ValueArg<int> max_id_arg(
-        "", "max-id", "Maximum MaterialID for an integrated borehole", false, -1,
-        "a number");
+        "", "max-id", "Maximum MaterialID for an integrated borehole", false,
+        -1, "a number");
     cmd.add(max_id_arg);
     TCLAP::ValueArg<int> min_id_arg(
-        "", "min-id", "Minimum MaterialID for an integrated borehole", false, -1,
-        "a number");
+        "", "min-id", "Minimum MaterialID for an integrated borehole", false,
+        -1, "a number");
     cmd.add(min_id_arg);
     TCLAP::ValueArg<std::string> geo_arg("g", "geo",
                                          "Name of the geometry file (*.gml)",
@@ -119,11 +119,13 @@ int main(int argc, char* argv[])
     cmd.parse(argc, argv);
 
     std::pair<int, int> mat_limits(0, std::numeric_limits<int>::max());
-    std::pair<double, double> elevation_limits(std::numeric_limits<double>::lowest(), dmax);
+    std::pair<double, double> elevation_limits(
+        std::numeric_limits<double>::lowest(), dmax);
 
     if (min_id_arg.isSet() != max_id_arg.isSet())
     {
-        ERR("If minimum MaterialID is set, maximum ID must be set, too (and vice versa).");
+        ERR("If minimum MaterialID is set, maximum ID must be set, too (and "
+            "vice versa).");
         return EXIT_FAILURE;
     }
     if (min_id_arg.isSet() && max_id_arg.isSet())
@@ -133,7 +135,7 @@ int main(int argc, char* argv[])
     }
     if (mat_limits.first > mat_limits.second)
     {
-            std::swap(mat_limits.first, mat_limits.second);
+        std::swap(mat_limits.first, mat_limits.second);
     }
     if (min_id_arg.isSet() && (mat_limits.first < 0 || mat_limits.second < 0))
     {
@@ -142,7 +144,8 @@ int main(int argc, char* argv[])
     }
     if (min_elevation_arg.isSet() != max_elevation_arg.isSet())
     {
-        ERR("If minimum elevation is set, maximum elevation must be set, too (and vice versa).");
+        ERR("If minimum elevation is set, maximum elevation must be set, too "
+            "(and vice versa).");
         return EXIT_FAILURE;
     }
     if (min_elevation_arg.isSet() && max_elevation_arg.isSet())
@@ -166,7 +169,8 @@ int main(int argc, char* argv[])
         ERR("Failed to read geometry file `{:s}'.", geo_name);
         return EXIT_FAILURE;
     }
-    std::vector<GeoLib::Point*> const& points = *geo.getPointVec(geo.getGeometryNames()[0]);
+    std::vector<GeoLib::Point*> const& points =
+        *geo.getPointVec(geo.getGeometryNames()[0]);
 
     std::unique_ptr<MeshLib::Mesh> const mesh(
         MeshLib::IO::readMeshFromFile(mesh_name));
@@ -193,14 +197,15 @@ int main(int argc, char* argv[])
     MeshLib::Properties props;
     auto new_mat_ids = props.createNewPropertyVector<int>(
         "MaterialIDs", MeshLib::MeshItemType::Cell);
-    std::copy(mat_ids->cbegin(), mat_ids->cend(), std::back_inserter(*new_mat_ids));
+    std::copy(mat_ids->cbegin(), mat_ids->cend(),
+              std::back_inserter(*new_mat_ids));
     int const max_id = *std::max_element(mat_ids->begin(), mat_ids->end());
     std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(nodes);
     std::size_t const n_points = points.size();
     std::vector<MeshLib::Element*> new_elems =
         MeshLib::copyElementVector(elems, new_nodes);
 
-    for (std::size_t i=0; i<n_points; ++i)
+    for (std::size_t i = 0; i < n_points; ++i)
     {
         std::vector<std::size_t> const& line_nodes =
             getNodes(*points[i], nodes, *mat_ids, mat_limits, elevation_limits);
@@ -209,7 +214,7 @@ int main(int argc, char* argv[])
         {
             continue;
         }
-        for (std::size_t j=0; j<n_line_nodes-1; ++j)
+        for (std::size_t j = 0; j < n_line_nodes - 1; ++j)
         {
             new_elems.push_back(new MeshLib::Line(
                 {new_nodes[line_nodes[j]], new_nodes[line_nodes[j + 1]]},
@@ -218,9 +223,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    std::unique_ptr<MeshLib::Mesh> result(
-        new MeshLib::Mesh("result", new_nodes, new_elems, props));
-    MeshLib::IO::VtuInterface vtu(result.get());
+    MeshLib::Mesh const result("result", new_nodes, new_elems, props);
+    MeshLib::IO::VtuInterface vtu(&result);
     vtu.writeToFile(output_name);
     return EXIT_SUCCESS;
 }
