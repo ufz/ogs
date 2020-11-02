@@ -24,7 +24,7 @@
   "tested_version": {
     "vtk": "8.2.0",
     "qt": {
-      "linux": "5.14.1",
+      "linux": "5.14.2",
       "win": "5.13.2"
     },
     "ubuntu": "20.04"
