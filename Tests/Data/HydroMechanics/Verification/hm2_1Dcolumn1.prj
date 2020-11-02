@@ -115,7 +115,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>hm2_1Dcolumn1_pcs_{:process_id}</prefix>
+            <prefix>hm2_1Dcolumn1</prefix>
             <compress_output>false</compress_output>
             <timesteps>
                 <pair>

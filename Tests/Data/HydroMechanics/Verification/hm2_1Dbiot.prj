@@ -115,7 +115,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>hm2_1Dbiot_pcs_{:process_id}</prefix>
+            <prefix>hm2_1Dbiot</prefix>
             <compress_output>false</compress_output>
             <timesteps>
                 <pair>
