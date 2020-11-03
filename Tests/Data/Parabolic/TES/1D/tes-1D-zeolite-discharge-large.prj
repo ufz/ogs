@@ -101,7 +101,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tes_zeolite_discharge_large_pcs_{:process_id}</prefix>
+            <prefix>tes_zeolite_discharge_large</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
