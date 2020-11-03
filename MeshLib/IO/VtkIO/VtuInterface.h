@@ -41,9 +41,14 @@ public:
                           int dataMode = vtkXMLWriter::Appended,
                           bool compressed = false);
 
-    /// Read an unstructured grid from a VTU file
+    /// Read an unstructured grid from a VTU file.
     /// \return The converted mesh or a nullptr if reading failed
     static MeshLib::Mesh* readVTUFile(std::string const &file_name);
+
+    /// Read an unstructured grid from a legacy VTK file.
+    /// Other data structures such as PolyData are ignored.
+    /// \return The converted mesh or a nullptr if reading failed
+    static MeshLib::Mesh* readVTKFile(std::string const& file_name);
 
     /// Writes the given mesh to file.
     /// \return True on success, false on error

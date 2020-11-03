@@ -101,7 +101,7 @@ public:
         if (t == ImportFileType::OGS_STN)
             return "OpenGeosys files (*.stn)";
         if (t == ImportFileType::OGS_MSH)
-            return "OpenGeosys files (*.vtu *.msh)";
+            return "OpenGeosys files (*.vtu *.vtk *.msh)";
         if (t == ImportFileType::PETREL)
             return "Petrel files (*)";
         if (t == ImportFileType::RASTER)
