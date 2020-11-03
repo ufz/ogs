@@ -54,7 +54,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tm1_2Dbeam_pcs_{:process_id}</prefix>
+            <prefix>tm1_2Dbeam</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>

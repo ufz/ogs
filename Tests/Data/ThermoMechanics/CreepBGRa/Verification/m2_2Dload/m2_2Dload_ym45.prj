@@ -63,7 +63,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>m2_2Dload_ym45_pcs_{:process_id}</prefix>
+            <prefix>m2_2Dload_ym45</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -240,55 +240,55 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_1_t_0.000000.vtu</file>
+            <file>m2_2Dload_ym45_ts_1_t_0.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_1_t_0.000000.vtu</file>
+            <file>m2_2Dload_ym45_ts_1_t_0.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>1e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_1_t_0.000000.vtu</file>
+            <file>m2_2Dload_ym45_ts_1_t_0.000000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_51_t_0.500000.vtu</file>
+            <file>m2_2Dload_ym45_ts_51_t_0.500000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_51_t_0.500000.vtu</file>
+            <file>m2_2Dload_ym45_ts_51_t_0.500000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>2.0e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_51_t_0.500000.vtu</file>
+            <file>m2_2Dload_ym45_ts_51_t_0.500000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_101_t_1.000000.vtu</file>
+            <file>m2_2Dload_ym45_ts_101_t_1.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_101_t_1.000000.vtu</file>
+            <file>m2_2Dload_ym45_ts_101_t_1.000000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>m2_2Dload_ym45_pcs_0_ts_101_t_1.000000.vtu</file>
+            <file>m2_2Dload_ym45_ts_101_t_1.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>2.1e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
