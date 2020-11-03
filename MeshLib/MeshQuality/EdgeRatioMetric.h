@@ -2,7 +2,7 @@
  * \file
  * \author Thomas Fischer
  * \date   2011-03-03
- * \brief  Definition of the AreaMetric class.
+ * \brief  Definition of the EdgeRatioMetric class.
  *
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
@@ -23,28 +23,12 @@ namespace MeshLib
 /**
  * Calculates the quality of mesh elements based on the ratio between shortest and longest edge of an element
  */
-class EdgeRatioMetric : public ElementQualityMetric
+class EdgeRatioMetric final : public ElementQualityMetric
 {
 public:
     explicit EdgeRatioMetric(Mesh const& mesh);
     ~EdgeRatioMetric() override = default;
 
     void calculateQuality() override;
-
-private:
-    double checkTriangle (MathLib::Point3d const& a,
-                          MathLib::Point3d const& b,
-                          MathLib::Point3d const& c) const;
-    double checkQuad (MathLib::Point3d const& a,
-                      MathLib::Point3d const& b,
-                      MathLib::Point3d const& c,
-                      MathLib::Point3d const& d) const;
-    double checkTetrahedron (MathLib::Point3d const& a,
-                             MathLib::Point3d const& b,
-                             MathLib::Point3d const& c,
-                             MathLib::Point3d const& d) const;
-    double checkPrism (std::vector<const MathLib::Point3d*> const& pnts) const;
-    double checkPyramid (std::vector<const MathLib::Point3d*> const& pnts) const;
-    double checkHexahedron (std::vector<const MathLib::Point3d*> const& pnts) const;
 };
 }  // namespace MeshLib
