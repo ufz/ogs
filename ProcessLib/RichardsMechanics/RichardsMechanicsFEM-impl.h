@@ -351,10 +351,6 @@ void RichardsMechanicsLocalAssembler<
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
 
-        auto const K_LR =
-            liquid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t, dt);
-
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
@@ -510,6 +506,10 @@ void RichardsMechanicsLocalAssembler<
         //
         // pressure equation, pressure part.
         //
+        auto const K_LR =
+            liquid_phase.property(MPL::PropertyType::bulk_modulus)
+                .template value<double>(variables, x_position, t, dt);
+
         double const a0 = S_L * (alpha - phi) * beta_SR;
         // Volumetric average specific storage of the solid and fluid phases.
         double const specific_storage =
@@ -692,10 +692,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
-
-        auto const K_LR =
-            liquid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t, dt);
 
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
@@ -902,6 +898,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         laplace_p.noalias() +=
             dNdx_p.transpose() * k_rel * rho_Ki_over_mu * dNdx_p * w;
+
+        auto const K_LR =
+            liquid_phase.property(MPL::PropertyType::bulk_modulus)
+                .template value<double>(variables, x_position, t, dt);
 
         double const a0 = (alpha - phi) * beta_SR;
         double const specific_storage_a_p = S_L * (phi / K_LR + S_L * a0);
