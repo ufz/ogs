@@ -298,15 +298,17 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                 "for every single BHE, there should be 2 boundary nodes.");
         }
 
-        // For 1U, 2U, CXC, CXA type BHE, the node order in the boundary nodes vector
-        // should be rearranged according to its z coordinate in descending order. In
-        // these BHE types, the z coordinate on the top and bottom node is different.
-        // The BHE top node with a higher z coordinate should be placed at the first, while
-        // the BHE bottom node with a lower z coordinate should be placed at the second.
-        // For other horizontal BHE types e.g. 1P-type BHE, the z coordinate on the top
-        // and bottom node is identical. Thus the node order in the boundary nodes vector
-        // can not be rearranged according to its z coordinate. For these BHE types, the
-        // boundary node order is according to the default node id order in the model mesh.
+        // For 1U, 2U, CXC, CXA type BHE, the node order in the boundary nodes
+        // vector should be rearranged according to its z coordinate in
+        // descending order. In these BHE types, the z coordinate on the top and
+        // bottom node is different. The BHE top node with a higher z coordinate
+        // should be placed at the first, while the BHE bottom node with a lower
+        // z coordinate should be placed at the second. For other horizontal BHE
+        // types e.g. 1P-type BHE, the z coordinate on the top and bottom node
+        // is identical. Thus the node order in the boundary nodes vector can
+        // not be rearranged according to its z coordinate. For these BHE types,
+        // the boundary node order is according to the default node id order in
+        // the model mesh.
         // for 1P-type BHE
         if (bhe_boundary_nodes[0]->getCoords()[2] ==
             bhe_boundary_nodes[1]->getCoords()[2])
