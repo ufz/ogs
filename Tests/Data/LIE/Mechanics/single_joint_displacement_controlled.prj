@@ -69,7 +69,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>single_joint_displacement_controlled_pcs_{:process_id}</prefix>
+            <prefix>single_joint_displacement_controlled</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
