@@ -98,6 +98,9 @@
 #ifdef OGS_BUILD_PROCESS_TES
 #include "ProcessLib/TES/CreateTESProcess.h"
 #endif
+#ifdef OGS_BUILD_PROCESS_TH2M
+#include "ProcessLib/TH2M/CreateTH2MProcess.h"
+#endif
 #ifdef OGS_BUILD_PROCESS_THERMALTWOPHASEFLOWWITHPP
 #include "ProcessLib/ThermalTwoPhaseFlowWithPP/CreateThermalTwoPhaseFlowWithPPProcess.h"
 #endif
@@ -634,6 +637,32 @@ void ProjectData::parseProcesses(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config);
+        }
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_TH2M
+            if (type == "TH2M")
+        {
+            //! \ogs_file_param{prj__processes__process__TH2M__dimension}
+            switch (_mesh_vec[0]->getDimension())
+            {
+                case 2:
+                    process = ProcessLib::TH2M::createTH2MProcess<2>(
+                        name, *_mesh_vec[0], std::move(jacobian_assembler),
+                        _process_variables, _parameters,
+                        _local_coordinate_system, integration_order,
+                        process_config, _media);
+                    break;
+                case 3:
+                    process = ProcessLib::TH2M::createTH2MProcess<3>(
+                        name, *_mesh_vec[0], std::move(jacobian_assembler),
+                        _process_variables, _parameters,
+                        _local_coordinate_system, integration_order,
+                        process_config, _media);
+                    break;
+                default:
+                    OGS_FATAL("TH2M process does not support given dimension");
+            }
         }
         else
 #endif
