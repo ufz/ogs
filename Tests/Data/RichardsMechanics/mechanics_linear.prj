@@ -68,7 +68,7 @@
                         <property>
                             <name>biot_coefficient</name>
                             <type>Constant</type>
-                            <value>0</value>
+                            <value>0.5</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -78,17 +78,12 @@
                         <property>
                             <name>porosity</name>
                             <type>Constant</type>
-                            <value>0</value>
-                        </property>
-                        <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>1e+300</value>
+                            <value>0.5</value>
                         </property>
                         <property>
                             <name>permeability</name>
                             <type>Constant</type>
-                            <value>1e-100</value>
+                            <value>1</value>
                         </property>
                     </properties>
                 </phase>
