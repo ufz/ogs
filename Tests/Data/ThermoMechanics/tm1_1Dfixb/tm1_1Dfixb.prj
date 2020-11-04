@@ -54,7 +54,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>tm1_1Dfixb_pcs_{:process_id}</prefix>
+            <prefix>tm1_1Dfixb</prefix>
             <data_mode>Ascii</data_mode>
             <compress_output>false</compress_output>
             <timesteps>

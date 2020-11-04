@@ -61,7 +61,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>non_equilibrium_initial_state_pcs_{:process_id}</prefix>
+            <prefix>non_equilibrium_initial_state</prefix>
             <timesteps>
                 <pair>
                     <repeat>2</repeat>
@@ -238,13 +238,13 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>non_equilibrium_initial_state_pcs_0_ts_1_t_2.000000.vtu</file>
+            <file>non_equilibrium_initial_state_ts_1_t_2.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>non_equilibrium_initial_state_pcs_0_ts_1_t_2.000000.vtu</file>
+            <file>non_equilibrium_initial_state_ts_1_t_2.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
