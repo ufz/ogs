@@ -14,6 +14,7 @@
 #include "VtuInterface.h"
 
 #include <vtkNew.h>
+#include <vtkGenericDataObjectReader.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 #if defined(USE_PETSC) || defined(USE_MPI)
@@ -70,6 +71,42 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
 
     std::string const mesh_name (BaseLib::extractBaseNameWithoutExtension(file_name));
     return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid, mesh_name);
+}
+
+MeshLib::Mesh* VtuInterface::readVTKFile(std::string const& file_name)
+{
+    if (!BaseLib::IsFileExisting(file_name))
+    {
+        ERR("File '{:s}' does not exist.", file_name);
+        return nullptr;
+    }
+
+    vtkSmartPointer<vtkGenericDataObjectReader> reader =
+        vtkSmartPointer<vtkGenericDataObjectReader>::New();
+    reader->SetFileName(file_name.c_str());
+    reader->Update();
+
+    // check for unstructured grid
+    if (reader->ReadOutputType() != 4)
+    {
+        ERR("Only VTK-files with dataset type \"Unstructured Grid\" are "
+            "currently supported.");
+        return nullptr;
+    }
+
+    reader->ReadAllFieldsOn();
+    reader->ReadAllScalarsOn();
+    vtkUnstructuredGrid* vtkGrid = reader->GetUnstructuredGridOutput();
+    if (vtkGrid->GetNumberOfPoints() == 0)
+    {
+        ERR("Mesh '{:s}' contains zero points.", file_name);
+        return nullptr;
+    }
+
+    std::string const mesh_name(
+        BaseLib::extractBaseNameWithoutExtension(file_name));
+    return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid,
+                                                              mesh_name);
 }
 
 #ifdef USE_PETSC

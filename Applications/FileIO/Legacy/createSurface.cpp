@@ -18,7 +18,6 @@
 #include "filesystem.h"
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
-#include "Applications/FileIO/Gmsh/GmshReader.h"
 
 #include "BaseLib/StringTools.h"
 
@@ -28,6 +27,7 @@
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
 
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/convertMeshToGeo.h"
 #include "MeshLib/Mesh.h"
 
@@ -83,11 +83,10 @@ bool createSurface(GeoLib::Polyline const& ply,
     auto msh_file = fs::temp_directory_path() /= BaseLib::randomString(32);
 
     gmsh_io.writeToFile(geo_file.string());
-    // Newer gmsh versions write a newer file format for meshes per default. At
-    // the moment we can't read this new format. This is a switch for gmsh to
-    // write the 'old' file format.
+    // Using GMSH's vtk output here so we don't have to deal with GMSH and it's
+    // various file format versions here
     std::string gmsh_command =
-        "\"" + gmsh_binary + "\" -2 -algo meshadapt -format msh22 -o "
+        "\"" + gmsh_binary + "\" -2 -algo meshadapt -format vtk -o "
         + msh_file.string() + " " + geo_file.string();
 
     int const gmsh_return_value = std::system(gmsh_command.c_str());
@@ -96,8 +95,7 @@ bool createSurface(GeoLib::Polyline const& ply,
         WARN("Call to '{:s}' returned non-zero value {:d}.", gmsh_command,
              gmsh_return_value);
     }
-    auto surface_mesh =
-        FileIO::GMSH::readGMSHMesh(msh_file.string());
+    auto surface_mesh = MeshLib::IO::readMeshFromFile(msh_file.string());
     if (!surface_mesh)
     {
         WARN("The surface mesh could not be created.");

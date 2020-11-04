@@ -80,6 +80,11 @@ MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name)
         return MeshLib::IO::VtuInterface::readVTUFile(file_name);
     }
 
+    if (BaseLib::hasFileExtension(".vtk", file_name))
+    {
+        return MeshLib::IO::VtuInterface::readVTKFile(file_name);
+    }
+
     ERR("readMeshFromFile(): Unknown mesh file format in file {:s}.",
         file_name);
     return nullptr;

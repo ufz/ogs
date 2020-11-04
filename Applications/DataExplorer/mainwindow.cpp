@@ -585,7 +585,9 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
             }
         }
         // OpenGeoSys mesh files
-        else if (fi.suffix().toLower() == "msh" || fi.suffix().toLower() == "vtu")
+        else if (fi.suffix().toLower() == "msh" ||
+                 fi.suffix().toLower() == "vtu" ||
+                 fi.suffix().toLower() == "vtk")
         {
 #ifndef NDEBUG
             QTime myTimer0;
@@ -987,7 +989,9 @@ void MainWindow::mapGeometry(const std::string &geo_name)
     MeshLib::Mesh* mesh (nullptr);
     if (choice == 0) // load mesh from file
     {
-        if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "msh")
+        if (fi.suffix().toLower() == "vtu" ||
+            fi.suffix().toLower() == "vtk" ||
+            fi.suffix().toLower() == "msh")
         {
             mesh = MeshLib::IO::readMeshFromFile(file_name.toStdString());
         }
