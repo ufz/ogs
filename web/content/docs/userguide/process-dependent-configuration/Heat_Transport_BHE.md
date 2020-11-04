@@ -139,13 +139,15 @@ Here is an example using `TemperatureCurveConstantFlow`.
 </flow_and_temperature_control>
 ```
 
+For 2U-type BHE configuration, the flow rate in < flow_and_temperature_control > indicates the flow rate within each U-pipe.
+When a fixed power or power curve is imposed on a 2U-type BHE, the given value in < flow_and_temperature_control > or in the related power curve should be speficed with half of the user's presumed entire borehole exchanger power.
 ### < grout >
 
 The thermal properties of the grout material is defined here.
 
 * /density/: density of grout which has the unit of $\mathrm{kg/m^{3}}$;
 * /porosity/: porosity of grout which is dimensionless;
-* /heat_capacity/: heat capacaity of grout which has the unit of $\mathrm{J·kg^{-1} K^{-1}}$;
+* /specific_heat_capacity/: specific heat capacity of grout which has the unit of $\mathrm{J·kg^{-1} K^{-1}}$;
 * /thermal_conductivity/: thermal conductivity of grout which has the unit of $\mathrm{W·m^{-1} K^{-1}}$.
 
 Here is an example how the typical parameters of borehole grout looks like.
@@ -154,7 +156,7 @@ Here is an example how the typical parameters of borehole grout looks like.
 <grout>
     <density>2190.0</density>
     <porosity>0.0</porosity>
-    <heat_capacity>1735.1</heat_capacity>
+    <specific_heat_capacity>1735.1</specific_heat_capacity>
     <thermal_conductivity>0.73</thermal_conductivity>
 </grout>
 ```
