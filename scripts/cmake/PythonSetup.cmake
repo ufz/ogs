@@ -45,7 +45,9 @@ if(POETRY)
         if(NOT WIN32)
             # Parsl is not supported on Windows yet
             # https://github.com/Parsl/parsl/issues/1878
-            list(APPEND PYTHON_PACKAGES parsl=${ogs.minimum_version.parsl})
+            list(APPEND PYTHON_PACKAGES parsl=${ogs.minimum_version.parsl}
+                asn1crypto # module dep of crypthography is missing on CI Linux
+            )
         endif()
     endif()
     execute_process(COMMAND ${CMD_COMMAND} poetry add ${PYTHON_PACKAGES})
