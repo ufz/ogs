@@ -67,7 +67,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>two_joints_pcs_{:process_id}</prefix>
+            <prefix>two_joints</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>

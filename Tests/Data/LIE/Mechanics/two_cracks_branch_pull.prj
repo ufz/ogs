@@ -67,7 +67,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>two_cracks_branch_pull_pcs_{:process_id}</prefix>
+            <prefix>two_cracks_branch_pull</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
