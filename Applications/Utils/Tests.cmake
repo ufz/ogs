@@ -40,11 +40,11 @@ AddTest(
     PATH LIE/PostProcessing
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing
     EXECUTABLE postLIE
-    EXECUTABLE_ARGS -i single_joint_pcs_0.pvd -o ${Data_BINARY_DIR}/LIE/PostProcessing/post_single_joint_pcs_0.pvd
+    EXECUTABLE_ARGS -i single_joint.pvd -o ${Data_BINARY_DIR}/LIE/PostProcessing/post_single_joint.pvd
     REQUIREMENTS NOT OGS_USE_MPI AND OGS_BUILD_PROCESS_LIE
     TESTER vtkdiff
     DIFF_DATA
-    expected_post_single_joint_pcs_0_ts_1_t_1.000000.vtu post_single_joint_pcs_0_ts_1_t_1.000000.vtu u u 1e-14 1e-14
+    expected_post_single_joint_ts_1_t_1.000000.vtu post_single_joint_ts_1_t_1.000000.vtu u u 1e-14 1e-14
 )
 
 AddTest(
