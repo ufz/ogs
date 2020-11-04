@@ -174,7 +174,7 @@
         <parameter>
             <name>phi0</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>0.5</value>
         </parameter>
         <!-- Model parameters -->
         <parameter>
