@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
+#include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
@@ -775,6 +776,59 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
                               N.transpose() * velocity_L.dot(dNdx * T) / k_rel *
                               dk_rel_dS_L * dS_L_dp_cap * N * w;
+        }
+
+        if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion))
+        {
+            variables[static_cast<int>(MPL::Variable::density)] = rho_LR;
+
+            double const rho_wv =
+                liquid_phase.property(MaterialPropertyLib::vapour_density)
+                    .template value<double>(variables, x_position, t, dt);
+
+            double const drho_wv_dp =
+                liquid_phase.property(MaterialPropertyLib::vapour_density)
+                    .template dValue<double>(variables,
+                                             MPL::Variable::phase_pressure,
+                                             x_position, t, dt);
+
+            double const storage_coefficient_by_water_vapor =
+                phi * (rho_wv * dS_L_dp_cap + (1 - S_L) * drho_wv_dp);
+
+            storage_p_a_p.noalias() +=
+                N.transpose() * storage_coefficient_by_water_vapor * N * w;
+
+            double const drho_wv_dT =
+                liquid_phase.property(MaterialPropertyLib::vapour_density)
+                    .template dValue<double>(variables,
+                                             MPL::Variable::temperature,
+                                             x_position, t, dt);
+            double const vapor_expansion_factor = phi * (1 - S_L) * drho_wv_dT;
+            M_pT.noalias() += N.transpose() * vapor_expansion_factor * N * w;
+
+            auto const f_Tv =
+                liquid_phase
+                    .property(
+                        MPL::PropertyType::thermal_diffusion_enhancement_factor)
+                    .template value<double>(variables, x_position, t, dt);
+
+            variables[static_cast<int>(MPL::Variable::porosity)] = phi;
+            double const D_v =
+                liquid_phase.property(MPL::PropertyType::vapour_diffusion)
+                    .template value<double>(variables, x_position, t, dt);
+
+            double const f_Tv_D_Tv = f_Tv * D_v * drho_wv_dT;
+
+            local_Jac
+                .template block<pressure_size, temperature_size>(
+                    pressure_index, temperature_index)
+                .noalias() += dNdx.transpose() * f_Tv_D_Tv * dNdx * w;
+
+            local_rhs.template segment<pressure_size>(pressure_index)
+                .noalias() -= f_Tv_D_Tv * dNdx.transpose() * (dNdx * T) * w;
+
+            double const D_pv = D_v * drho_wv_dp;
+            laplace_p.noalias() += dNdx.transpose() * D_pv * dNdx * w;
         }
     }
 
