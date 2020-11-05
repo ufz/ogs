@@ -3,6 +3,9 @@
   extends:
     - .test-artifacts
   dependencies: [meta, meta_container]
+  retry:
+    max: 2
+    when: runner_system_failure
 
   before_script:
     - "echo \"For debugging run: docker run --rm -it -v $CI_BUILDS_DIR:/builds -w=$CI_PROJECT_DIR $CI_JOB_IMAGE\""
