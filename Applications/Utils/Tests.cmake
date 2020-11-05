@@ -473,3 +473,27 @@ AddTest(
               SmallTest_Layer2.vtu
               SmallTest_Layer3.vtu
 )
+
+AddTest(
+    NAME IntegrateBoreholesIntoMesh_MatOnly_Test
+    PATH MeshGeoToolsLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib
+    EXECUTABLE IntegrateBoreholesIntoMesh
+    EXECUTABLE_ARGS -i PrismCube10x10x10.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/PrismBHE_mat.vtu -g testpoints.gml --min-id 4 --max-id 8
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA
+    PrismBHE_mat.vtu
+)
+
+AddTest(
+    NAME IntegrateBoreholesIntoMesh_ElevationAndMat_Test
+    PATH MeshGeoToolsLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib
+    EXECUTABLE IntegrateBoreholesIntoMesh
+    EXECUTABLE_ARGS -i PrismCube10x10x10.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/PrismBHE_elev.vtu -g testpoints.gml --min-id 4 --max-id 8 --min-elevation 4.5 --max-elevation 10
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA
+    PrismBHE_elev.vtu
+)

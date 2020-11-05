@@ -4,6 +4,7 @@ set(TOOLS
     constructMeshesFromGeometry
     createIntermediateRasters
     identifySubdomains
+    IntegrateBoreholesIntoMesh
     Raster2Mesh
 )
 foreach(TOOL ${TOOLS})
