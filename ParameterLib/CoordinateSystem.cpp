@@ -16,6 +16,12 @@
 
 namespace ParameterLib
 {
+static double const tolerance = 1.e-15;
+static const char*const error_info =
+    "The determinant of the coordinate system transformation matrix is "
+    "'{:g}', which is not sufficiently close to unity with the tolerance of "
+    "'{:g}'. Please adjust the accuracy of the local system bases";
+
 CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
                                    Parameter<double> const& e1)
     : _base{&e0, &e1, nullptr}
@@ -87,12 +93,9 @@ Eigen::Matrix<double, 2, 2> CoordinateSystem::transformation<2>(
     t << e0[0], e1[0], e0[1], e1[1];
 
 #ifndef NDEBUG
-    if (std::abs(t.determinant() - 1) > std::numeric_limits<double>::epsilon())
+    if (std::abs(t.determinant() - 1) > tolerance)
     {
-        OGS_FATAL(
-            "The determinant of the coordinate system transformation matrix is "
-            "'{:g}', which is not sufficiently close to unity.",
-            t.determinant());
+        OGS_FATAL(error_info, t.determinant(), tolerance);
     }
 #endif  // NDEBUG
     return t;
@@ -116,12 +119,9 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
     t << e0[0], e1[0], e2[0], e0[1], e1[1], e2[1], e0[2], e1[2], e2[2];
 
 #ifndef NDEBUG
-    if (std::abs(t.determinant() - 1) > std::numeric_limits<double>::epsilon())
+    if (std::abs(t.determinant() - 1) > tolerance)
     {
-        OGS_FATAL(
-            "The determinant of the coordinate system transformation matrix is "
-            "'{:g}', which is not sufficiently close to unity.",
-            t.determinant());
+        OGS_FATAL(error_info, t.determinant(), tolerance);
     }
 #endif  // NDEBUG
     return t;
@@ -141,12 +141,9 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation_3d(
     t.template topLeftCorner<2, 2>() << e0[0], e1[0], e0[1], e1[1];
 
 #ifndef NDEBUG
-    if (std::abs(t.determinant() - 1) > std::numeric_limits<double>::epsilon())
+    if (std::abs(t.determinant() - 1) > tolerance)
     {
-        OGS_FATAL(
-            "The determinant of the coordinate system transformation matrix is "
-            "'{:g}', which is not sufficiently close to unity.",
-            t.determinant());
+        OGS_FATAL(error_info, t.determinant(), tolerance);
     }
 #endif  // NDEBUG
     return t;
