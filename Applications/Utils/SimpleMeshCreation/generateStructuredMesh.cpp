@@ -250,9 +250,9 @@ int main (int argc, char* argv[])
              mesh->getNumberOfNodes(), mesh->getNumberOfElements());
 
         // write into a file
-        MeshLib::IO::writeMeshToFile(*(mesh.get()), mesh_out.getValue());
+        MeshLib::IO::writeMeshToFile(
+            *(mesh.get()), std::filesystem::path(mesh_out.getValue()));
     }
 
     return EXIT_SUCCESS;
 }
-

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 namespace MeshLib
 {
@@ -26,7 +26,7 @@ namespace IO
 /// \return True on success, false on error
 /// \param mesh           Mesh holds all data to be written.
 /// \param file_name      File name.
-bool writeXdmf3(MeshLib::Mesh const& mesh, std::string const& file_name);
+bool writeXdmf3(MeshLib::Mesh const& mesh, std::filesystem::path const& file_path);
 
 }  // end namespace IO
 }  // end namespace MeshLib

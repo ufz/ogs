@@ -43,18 +43,18 @@ std::string Writer::writeToString()
     return std::string("");
 }
 
-int Writer::writeToFile(std::string const& filename)
+int Writer::writeToFile(std::filesystem::path const& file_path)
 {
     std::string file_content = this->writeToString();
     if (!file_content.empty())
     {
         std::ofstream fileStream;
-        fileStream.open (filename.c_str());
+        fileStream.open(file_path.c_str());
 
         // check file stream
         if (!fileStream)
         {
-            ERR("Could not open file '{:s}'!", filename);
+            ERR("Could not open file '{:s}'!", file_path.string());
             return 0;
         }
 

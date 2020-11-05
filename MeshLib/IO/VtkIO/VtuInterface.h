@@ -15,6 +15,7 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 #include <vtkXMLWriter.h>
 
 namespace MeshLib {
@@ -52,7 +53,7 @@ public:
 
     /// Writes the given mesh to file.
     /// \return True on success, false on error
-    bool writeToFile(std::string const &file_name);
+    bool writeToFile(std::filesystem::path const& file_path);
 
     /// Writes the given mesh to vtu file.
     /// \param file_name      File name.
