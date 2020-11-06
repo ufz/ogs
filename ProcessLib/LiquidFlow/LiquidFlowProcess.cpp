@@ -15,6 +15,8 @@
 #include <cassert>
 
 #include "LiquidFlowLocalAssembler.h"
+#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "MeshLib/PropertyVector.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
