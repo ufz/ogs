@@ -83,6 +83,10 @@ void LiquidFlowProcess::assembleConcreteProcess(
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
         b);
 
+    MathLib::finalizeMatrixAssembly(M);
+    MathLib::finalizeMatrixAssembly(K);
+    MathLib::finalizeVectorAssembly(b);
+
     auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
     transformVariableFromGlobalVector(residuum, 0 /*variable id*/,
                                       *_local_to_global_index_map,
