@@ -13,6 +13,7 @@
 #pragma once
 
 #include <limits>
+#include <Eigen/Dense>
 
 #include "mathlib_export.h"
 
@@ -47,8 +48,9 @@ inline MathLib::Point3d operator*(MATRIX const& mat, MathLib::Point3d const& p)
 inline
 double sqrDist(MathLib::Point3d const& p0, MathLib::Point3d const& p1)
 {
-    const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-    return MathLib::scalarProduct<double,3>(v,v);
+    return (Eigen::Map<Eigen::Vector3d>(const_cast<double*>(p0.getCoords())) -
+            Eigen::Map<Eigen::Vector3d>(const_cast<double*>(p1.getCoords())))
+        .squaredNorm();
 }
 
 /// Computes the squared distance between the orthogonal projection of the two
