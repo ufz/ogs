@@ -481,3 +481,32 @@ AddTest(
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 1.e-6 1e-10
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 1e-10 1e-10
 )
+
+AddTest(
+    NAME HT_ComponentTransport_ThermalDiffusion_TemperatureField
+    PATH Parabolic/ComponentTransport/ThermalDiffusion
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS TemperatureField.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    TemperatureFieldts_0_t_0.000000_expected.vtu TemperatureFieldts_0_t_0.000000.vtu T T 1e-10 1e-10
+    TemperatureFieldts_73_t_6307200.000000_expected.vtu TemperatureFieldts_73_t_6307200.000000.vtu T T 1e-10 1e-10
+    TemperatureFieldts_146_t_12614400.000000_expected.vtu TemperatureFieldts_146_t_12614400.000000.vtu T T 1e-10 1e-10
+    TemperatureFieldts_219_t_18921600.000000_expected.vtu TemperatureFieldts_219_t_18921600.000000.vtu T T 1e-10 1e-10
+    TemperatureFieldts_292_t_25228800.000000_expected.vtu TemperatureFieldts_292_t_25228800.000000.vtu T T 1e-10 1e-10
+    TemperatureFieldts_365_t_31536000.000000_expected.vtu TemperatureFieldts_365_t_31536000.000000.vtu T T 1e-10 1e-10
+    TemperatureFieldts_0_t_0.000000_expected.vtu TemperatureFieldts_0_t_0.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
+    TemperatureFieldts_73_t_6307200.000000_expected.vtu TemperatureFieldts_73_t_6307200.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
+    TemperatureFieldts_146_t_12614400.000000_expected.vtu TemperatureFieldts_146_t_12614400.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
+    TemperatureFieldts_219_t_18921600.000000_expected.vtu TemperatureFieldts_219_t_18921600.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
+    TemperatureFieldts_292_t_25228800.000000_expected.vtu TemperatureFieldts_292_t_25228800.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
+    TemperatureFieldts_365_t_31536000.000000_expected.vtu TemperatureFieldts_365_t_31536000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
+    TemperatureFieldts_0_t_0.000000_expected.vtu TemperatureFieldts_0_t_0.000000.vtu p p 1e-10 1e-10
+    TemperatureFieldts_73_t_6307200.000000_expected.vtu TemperatureFieldts_73_t_6307200.000000.vtu p p 1e-10 1e-10
+    TemperatureFieldts_146_t_12614400.000000_expected.vtu TemperatureFieldts_146_t_12614400.000000.vtu p p 1e-10 1e-10
+    TemperatureFieldts_219_t_18921600.000000_expected.vtu TemperatureFieldts_219_t_18921600.000000.vtu p p 1e-10 1e-10
+    TemperatureFieldts_292_t_25228800.000000_expected.vtu TemperatureFieldts_292_t_25228800.000000.vtu p p 1e-10 1e-10
+    TemperatureFieldts_365_t_31536000.000000_expected.vtu TemperatureFieldts_365_t_31536000.000000.vtu p p 1e-10 1e-10
+)
