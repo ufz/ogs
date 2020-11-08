@@ -15,6 +15,7 @@
 #include <boost/algorithm/string.hpp>
 #include <cmath>
 #include <fstream>
+#include <iomanip>
 #include <numeric>
 
 #include "BaseLib/Algorithm.h"
@@ -212,6 +213,8 @@ void PhreeqcIO::writeInputsToFile(double const dt)
                   _phreeqc_input_file);
     }
 
+    out << std::scientific
+        << std::setprecision(std::numeric_limits<double>::digits10);
     out << (*this << dt);
 
     if (!out)
