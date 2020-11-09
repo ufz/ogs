@@ -258,6 +258,30 @@ void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(
     }
 }
 
+void ComponentTransportProcess::computeSecondaryVariableConcrete(
+    double const t,
+    double const dt,
+    std::vector<GlobalVector*> const& x,
+    GlobalVector const& x_dot,
+    int const process_id)
+{
+    if (process_id != 0)
+    {
+        return;
+    }
+
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(x.size());
+    std::generate_n(std::back_inserter(dof_tables), x.size(),
+                    [&]() { return _local_to_global_index_map.get(); });
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_dot, process_id);
+}
+
 void ComponentTransportProcess::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
     const double t,
