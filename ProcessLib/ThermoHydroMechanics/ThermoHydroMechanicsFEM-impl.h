@@ -355,7 +355,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         auto const beta =
             porosity * fluid_volumetric_thermal_expansion_coefficient +
-            (1 - porosity) * solid_linear_thermal_expansion_coefficient.trace();
+            (alpha - porosity) * solid_linear_thermal_expansion_coefficient.trace();
         storage_T.noalias() += N_T.transpose() * beta * N_T * w;
 
         //
