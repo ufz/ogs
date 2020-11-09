@@ -116,8 +116,6 @@ if(OPENMP_FOUND)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-find_package(Metis QUIET)
-
 ## Qt5 library ##
 if(OGS_BUILD_GUI)
     set(QT_MODULES Gui Widgets Xml XmlPatterns)

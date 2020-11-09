@@ -85,7 +85,7 @@ endif()
 
 if(OGS_BUILD_UTILS)
     include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
-    list(APPEND DISABLE_WARNINGS_TARGETS metis mpmetis)
+    list(APPEND DISABLE_WARNINGS_TARGETS ogs_metis mpmetis)
 endif()
 
 foreach(TARGET ${DISABLE_WARNINGS_TARGETS})

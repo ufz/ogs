@@ -22,19 +22,19 @@ include_directories(BEFORE ${METIS_PATH}/libmetis)
 # Find sources.
 file(GLOB metis_sources ${METIS_PATH}/libmetis/*.c)
 # Build libmetis.
-add_library(metis ${GKlib_sources} ${metis_sources})
+add_library(ogs_metis ${GKlib_sources} ${metis_sources})
 if(OPENMP_FOUND)
-    target_link_libraries(metis OpenMP::OpenMP_C)
+    target_link_libraries(ogs_metis OpenMP::OpenMP_C)
 endif()
 if(BUILD_SHARED_LIBS)
-    install(TARGETS metis LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    install(TARGETS ogs_metis LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 if(UNIX)
-  target_link_libraries(metis m)
+  target_link_libraries(ogs_metis m)
 elseif(MSVC)
   include(GenerateExportHeader)
-  generate_export_header(metis)
+  generate_export_header(ogs_metis)
 endif()
 
 ## Compile mpmetis
@@ -48,12 +48,12 @@ set(METIS_SOURCES
    ${METIS_PATH}/programs/stat.c
    )
 add_executable(mpmetis ${METIS_SOURCES})
-target_link_libraries(mpmetis metis)
+target_link_libraries(mpmetis ogs_metis)
 install(TARGETS mpmetis RUNTIME DESTINATION bin COMPONENT ogs_partmesh)
 
 # Disable warnings
 if(MSVC)
-    set_target_properties(metis mpmetis PROPERTIES COMPILE_FLAGS /W0)
+    set_target_properties(ogs_metis mpmetis PROPERTIES COMPILE_FLAGS /W0)
 else()
-    set_target_properties(metis mpmetis PROPERTIES COMPILE_FLAGS -w)
+    set_target_properties(ogs_metis mpmetis PROPERTIES COMPILE_FLAGS -w)
 endif()
