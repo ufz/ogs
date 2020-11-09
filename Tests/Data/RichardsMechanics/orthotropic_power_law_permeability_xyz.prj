@@ -8,11 +8,13 @@
             <type>RICHARDS_MECHANICS</type>
             <integration_order>3</integration_order>
             <dimension>2</dimension>
+            <!-- Keep for testing
             <jacobian_assembler>
                 <type>CentralDifferences</type>
                 <component_magnitudes>1e5 1e5 1e5 1e5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5 1e-5</component_magnitudes>
                 <relative_epsilons>1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8</relative_epsilons>
             </jacobian_assembler>
+            -->
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
