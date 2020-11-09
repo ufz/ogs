@@ -10,4 +10,7 @@ build linux:
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_MFRONT=ON
-      -DOGS_USE_PYTHON=ON
+      -DOGS_$USE_PYTHON
+  parallel:
+    matrix:
+      - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
