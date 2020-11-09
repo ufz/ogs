@@ -80,9 +80,9 @@ public:
 
     virtual void computeSecondaryVariable(
         std::size_t const mesh_item_id,
-        NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
-        double const dt, GlobalVector const& local_x,
-        GlobalVector const& local_x_dot);
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+        double const t, double const dt, std::vector<GlobalVector*> const& x,
+        GlobalVector const& x_dot, int const process_id);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -157,8 +157,8 @@ private:
     virtual void computeSecondaryVariableConcrete(
         double const /*t*/,
         double const /*dt*/,
-        std::vector<double> const& /*local_x*/,
-        std::vector<double> const& /*local_x_dot*/)
+        Eigen::VectorXd const& /*local_x*/,
+        Eigen::VectorXd const& /*local_x_dot*/)
     {
     }
 

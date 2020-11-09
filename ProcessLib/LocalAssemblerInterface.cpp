@@ -9,10 +9,12 @@
  */
 
 #include "LocalAssemblerInterface.h"
+
 #include <cassert>
-#include "NumLib/DOF/DOFTableUtil.h"
 
 #include "CoupledSolutionsForStaggeredScheme.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 
 namespace ProcessLib
 {
@@ -71,12 +73,30 @@ void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
 
 void LocalAssemblerInterface::computeSecondaryVariable(
     std::size_t const mesh_item_id,
-    NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
-    double const dt, GlobalVector const& x, GlobalVector const& x_dot)
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+    double const t, double const dt, std::vector<GlobalVector*> const& x,
+    GlobalVector const& x_dot, int const process_id)
 {
-    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
-    auto const local_x = x.get(indices);
-    auto const local_x_dot = x_dot.get(indices);
+    std::vector<double> local_x_vec;
+
+    auto const n_processes = x.size();
+    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+    {
+        auto const indices =
+            NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
+        assert(!indices.empty());
+        auto const local_solution = x[process_id]->get(indices);
+        local_x_vec.insert(std::end(local_x_vec), std::begin(local_solution),
+                           std::end(local_solution));
+    }
+    auto const local_x = MathLib::toVector(local_x_vec);
+
+    // Todo: A more decent way is to directly pass x_dots as done for x
+    auto const indices =
+        NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
+    auto const local_x_dot_vec = x_dot.get(indices);
+    auto const local_x_dot = MathLib::toVector(local_x_dot_vec);
+
     computeSecondaryVariableConcrete(t, dt, local_x, local_x_dot);
 }
 
