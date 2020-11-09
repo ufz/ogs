@@ -11,6 +11,9 @@ project(OGS-6)
 
 include(scripts/cmake/CMakeSetup.cmake)
 include(ParseCMakeArgs)
+if(DEFINED ENV{CI})
+    message(STATUS "CMake arguments: ${CMAKE_ARGS}")
+endif()
 include(CTest)
 
 # ---- Preliminary Options ----

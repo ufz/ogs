@@ -51,8 +51,7 @@ find_program(YARN yarn)
 find_program(PIP pip)
 find_program(PANDOC_CITEPROC pandoc-citeproc)
 
-find_program(MODULE_CMD modulecmd
-    PATHS /usr/local/modules/3.2.10-1/Modules/3.2.10/bin)
+find_program(MODULE_CMD lmod PATHS /software/lmod/lmod/libexec)
 
 find_program(SNAKEMAKE snakemake HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
 find_program(PARSL parsl-visualize HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
@@ -115,8 +114,6 @@ if(OPENMP_FOUND)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
-
-find_package(Metis QUIET)
 
 ## Qt5 library ##
 if(OGS_BUILD_GUI)
