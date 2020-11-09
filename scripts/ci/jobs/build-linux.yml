@@ -1,7 +1,7 @@
 build linux:
   image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
-  tags: [ envinf1 ]
+  tags: [ docker ]
   timeout: 2h
   variables:
     BUILD_DIR: "build"
