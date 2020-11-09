@@ -934,6 +934,14 @@ public:
         return cache;
     }
 
+    void computeSecondaryVariableConcrete(
+        double const /*t*/,
+        double const /*dt*/,
+        Eigen::VectorXd const& /*local_x*/,
+        Eigen::VectorXd const& /*local_x_dot*/) override
+    {
+    }
+
 private:
     MeshLib::Element const& _element;
     ComponentTransportProcessData const& _process_data;
