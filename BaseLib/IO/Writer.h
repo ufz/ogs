@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <filesystem.h>
 #include <string>
 #include <sstream>
 
@@ -38,7 +39,7 @@ public:
     std::string writeToString();
 
     /// @brief Writes the object to the given file.
-    int writeToFile(std::string const& filename);
+    int writeToFile(std::filesystem::path const& file_path);
 
     /// @brief Sets the decimal precision.
     void setPrecision(unsigned int precision);

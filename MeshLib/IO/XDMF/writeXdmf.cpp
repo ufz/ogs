@@ -23,12 +23,13 @@ namespace MeshLib
 {
 namespace IO
 {
-bool writeXdmf3(const MeshLib::Mesh& mesh, std::string const& file_name)
+bool writeXdmf3(const MeshLib::Mesh& mesh,
+                std::filesystem::path const& file_path)
 {
     vtkSmartPointer<vtkXdmf3Writer> writer =
         vtkSmartPointer<vtkXdmf3Writer>::New();
 
-    writer->SetFileName(file_name.c_str());
+    writer->SetFileName(file_path.string().c_str());
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(&mesh);
     vtkSource->Update();

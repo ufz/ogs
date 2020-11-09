@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 namespace MeshLib
@@ -16,6 +17,7 @@ namespace MeshLib
 class Mesh;
 namespace IO
 {
-int writeMeshToFile(const MeshLib::Mesh &mesh, const std::string &file_name);
+int writeMeshToFile(const MeshLib::Mesh& mesh,
+                    std::filesystem::path const& file_path);
 }
 }
