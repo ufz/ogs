@@ -11,7 +11,7 @@ AddTest(
 )
 
 # Disable test on eve frontends
-if(NOT "${HOSTNAME}" MATCHES "frontend.*")
+if("${HOSTNAME}" MATCHES "envinf1")
     AddTest(
         NAME MapGeometryToMeshSurface_Bode
         PATH MeshGeoToolsLib/Bode
