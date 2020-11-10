@@ -23,6 +23,42 @@ struct Parameter;
 
 namespace MaterialPropertyLib
 {
+/**
+ * \brief A strain dependent intrinsic permeability model.
+ *
+ *  The model was proposed
+ *  in \cite xu2011simulation and it was further investigated
+ *  in \cite xu2013coupled .
+ *
+ *   The model takes the form of
+ *  \f[ \mathbf{k} =f(\epsilon_v) e^{b_1  {\bar\epsilon}^p}\mathbf{k}_0
+ *  \f]
+ *  with
+ *  \f[ f(\epsilon_v)=
+ *      \begin{cases}
+ *       10^{b_2  \epsilon_v}, & \epsilon_v <=0\\
+ *      10^{b_3  \epsilon_v}, & \epsilon_v >0
+ *      \end{cases}
+ *  \f]
+ *   where
+ *   <table>
+ *   <tr><td>\f$ \epsilon_v \f$  <td> the volumetric strain,
+ *   <tr><td> \f$ {\bar\epsilon}^p\f$ <td> the equivalent plastic
+ *    strain,
+ *   <tr><td>\f$\mathbf{k}_0\f$  <td> the initial intrinsic permeability,
+ *   <tr><td>\f$b_1,\,b_2,\,b_3\f$  <td> the three parameters.
+ * </table>
+ *
+ *  * Note: In \cite xu2011simulation  and \cite xu2013coupled ,
+ * from the point of view of experiment of permeability change, the symbols of
+ * \f$ \Delta \epsilon_v \f$ and \f$\Delta {\bar\epsilon}^p\f$  are used for \f$
+ * \epsilon_v \f$ and \f$
+ * {\bar\epsilon}^p\f$, respectively. That means that the symbols of
+ * \f$ \Delta \epsilon_v \f$ and \f$\Delta {\bar\epsilon}^p\f$
+ *  refer to the increment of the volumetric strain and the increment of the
+ * equivalent plastic strain, respectively, from the beginning of the
+ * experiment.
+ */
 template <int DisplacementDim>
 class StrainDependentPermeability final : public Property
 {
