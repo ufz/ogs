@@ -73,6 +73,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createIdealGasLaw(config);
     }
 
+    if (boost::iequals(property_type, "StrainDependentPermeability"))
+    {
+        return createStrainDependentPermeability(
+            geometry_dimension, config, parameters, local_coordinate_system);
+    }
+
     if (boost::iequals(property_type,
                        "PermeabilityMohrCoulombFailureIndexModel"))
     {
