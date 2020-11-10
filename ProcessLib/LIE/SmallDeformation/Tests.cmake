@@ -174,9 +174,9 @@ AddTest(
     expected_coulomb_load_path_ts_100_t_1.000000.vtu coulomb_load_path_ts_100_t_1.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
     expected_coulomb_load_path_ts_200_t_2.000000.vtu coulomb_load_path_ts_200_t_2.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
     expected_coulomb_load_path_ts_401_t_4.000000.vtu coulomb_load_path_ts_401_t_4.000000.vtu sigma_yy sigma_yy 1e-6 1e-6
-    expected_coulomb_load_path_ts_100_t_1.000000.vtu coulomb_load_path_ts_100_t_1.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
-    expected_coulomb_load_path_ts_200_t_2.000000.vtu coulomb_load_path_ts_200_t_2.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
-    expected_coulomb_load_path_ts_401_t_4.000000.vtu coulomb_load_path_ts_401_t_4.000000.vtu sigma_xy sigma_xy 1e-6 1e-6
+    expected_coulomb_load_path_ts_100_t_1.000000.vtu coulomb_load_path_ts_100_t_1.000000.vtu sigma_xy sigma_xy 5e-4 1e-6
+    expected_coulomb_load_path_ts_200_t_2.000000.vtu coulomb_load_path_ts_200_t_2.000000.vtu sigma_xy sigma_xy 5e-4 1e-6
+    expected_coulomb_load_path_ts_401_t_4.000000.vtu coulomb_load_path_ts_401_t_4.000000.vtu sigma_xy sigma_xy 5e-4 1e-6
     expected_coulomb_load_path_ts_100_t_1.000000.vtu coulomb_load_path_ts_100_t_1.000000.vtu aperture aperture 1e-16 0
     expected_coulomb_load_path_ts_200_t_2.000000.vtu coulomb_load_path_ts_200_t_2.000000.vtu aperture aperture 1e-16 0
     expected_coulomb_load_path_ts_401_t_4.000000.vtu coulomb_load_path_ts_401_t_4.000000.vtu aperture aperture 1e-16 0

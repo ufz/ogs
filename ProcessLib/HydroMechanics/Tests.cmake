@@ -72,7 +72,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu pressure pressure 1.0e-9 0.0
+    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu pressure pressure 2.0e-9 0.0
     hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu displacement displacement 1.0e-9 0.0
     hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu sigma_xx sigma_xx 5.0e-8 0.0
     hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu sigma_yy sigma_yy 5.0e-8 0.0

@@ -21,7 +21,7 @@
                 <process_variable>pressure</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="darcy_velocity" output_name="v"/>
+                <secondary_variable internal_name="darcy_velocity" output_name="v" />
             </secondary_variables>
         </process>
     </processes>
@@ -206,7 +206,7 @@
         <vtkdiff>
             <regex>part_of_left_boundary_to_part_of_right_boundary_primary_variable_constraint_dirichlet_top_3_ts_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>1.2e-15</absolute_tolerance>
+            <absolute_tolerance>2e-15</absolute_tolerance>
             <relative_tolerance>1e-14</relative_tolerance>
         </vtkdiff>
     </test_definition>
