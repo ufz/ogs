@@ -17,3 +17,4 @@ build gui linux:
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_NETCDF=ON
+      -DOGS_INSTALL_DEPENDENCIES=ON

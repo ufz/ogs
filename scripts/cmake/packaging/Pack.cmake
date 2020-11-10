@@ -3,6 +3,7 @@ if(IS_SUBPROJECT)
     return()
 endif()
 
+option(OGS_INSTALL_DEPENDENCIES "Package dependencies.")
 include(packaging/PackagingMacros)
 include(packaging/ArchiveTestdata)
 
@@ -102,7 +103,7 @@ if(EXISTS ${PROJECT_BINARY_DIR}/cmake-args)
 endif()
 
 # Install dependencies via GET_RUNTIME_DEPENDENCIES. Available since CMake 3.16.
-if(${CMAKE_VERSION} VERSION_LESS 3.16)
+if(${CMAKE_VERSION} VERSION_LESS 3.16 OR NOT OGS_INSTALL_DEPENDENCIES)
     return()
 endif()
 install(CODE [[

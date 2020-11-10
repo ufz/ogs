@@ -11,6 +11,7 @@ build linux:
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_MFRONT=ON
       -DOGS_$USE_PYTHON
+      -DOGS_INSTALL_DEPENDENCIES=ON
   parallel:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
