@@ -22,6 +22,7 @@ class VolumetricSourceTerm final : public SourceTerm
 {
 public:
     VolumetricSourceTerm(
+        unsigned const bulk_mesh_dimension,
         MeshLib::Mesh const& source_term_mesh,
         std::unique_ptr<NumLib::LocalToGlobalIndexMap> source_term_dof_table,
         unsigned const integration_order, unsigned const shapefunction_order,
