@@ -95,9 +95,9 @@ TEST(MaterialPropertyLib, PermeabilityMohrCoulombFailureIndexModel)
     auto const k_apex_f =
         MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
 
-    double const k_apex_expacted = 7.2849707418474819e-15;
-    ASSERT_LE(std::fabs(k_apex_expacted - k_apex_f(0, 0)) / k_apex_expacted,
-              1e-19)
+    double const k_apex_expected = 7.2849707418474819e-15;
+    ASSERT_LE(std::fabs(k_apex_expected - k_apex_f(0, 0)) / k_apex_expected,
+              5e-16)
         << "for expected untouched permeability" << k_non_f_expected
         << " and for computed untouched permeability." << k_apex_f(0, 0);
 }

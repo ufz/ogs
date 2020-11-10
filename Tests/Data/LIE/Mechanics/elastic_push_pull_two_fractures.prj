@@ -34,9 +34,9 @@
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <secondary_variables>
-                <secondary_variable internal_name="sigma_xx" output_name="sigma_xx"/>
-                <secondary_variable internal_name="sigma_yy" output_name="sigma_yy"/>
-                <secondary_variable internal_name="sigma_xy" output_name="sigma_xy"/>
+                <secondary_variable internal_name="sigma_xx" output_name="sigma_xx" />
+                <secondary_variable internal_name="sigma_yy" output_name="sigma_yy" />
+                <secondary_variable internal_name="sigma_xy" output_name="sigma_xy" />
             </secondary_variables>
         </process>
     </processes>
@@ -274,13 +274,13 @@
         <vtkdiff>
             <regex>elastic_push_pull_two_fractures_t_.*.vtu</regex>
             <field>sigma_xx</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
+            <absolute_tolerance>5e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>elastic_push_pull_two_fractures_t_.*.vtu</regex>
             <field>sigma_yy</field>
-            <absolute_tolerance>1e-11</absolute_tolerance>
+            <absolute_tolerance>5e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

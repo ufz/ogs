@@ -2,7 +2,7 @@ build linux conan:
   extends:
     - .template-build-linux
     - .rules-master-manual
-  tags: [shell]
+  tags: [shell, envinf1-shell]
   variables:
     BUILD_DIR: build
     CMAKE_ARGS: >-
@@ -10,3 +10,4 @@ build linux conan:
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_CONAN=AUTO
       -DOGS_USE_MFRONT=ON
+      -DOGS_USE_PYTHON=ON

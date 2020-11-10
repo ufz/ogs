@@ -1,5 +1,6 @@
 build docs:
   stage: build
+  tags: [ docker ]
   image:
     name: $CONTAINER_GCC_IMAGE
   dependencies: [meta, meta_container]
@@ -20,6 +21,7 @@ build docs:
 
 check docs links:
   stage: check
+  tags: [ docker ]
   image: $WEB_IMAGE
   dependencies: [meta_container, "build docs"]
   extends:
@@ -35,6 +37,7 @@ check docs links:
 
 deploy doxygen:
   stage: package
+  tags: [ docker ]
   image: $WEB_IMAGE
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
