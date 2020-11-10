@@ -3,6 +3,7 @@ if(IS_SUBPROJECT)
     return()
 endif()
 
+option(OGS_INSTALL_DEPENDENCIES "Package dependencies.")
 include(packaging/PackagingMacros)
 include(packaging/ArchiveTestdata)
 
@@ -102,18 +103,24 @@ if(EXISTS ${PROJECT_BINARY_DIR}/cmake-args)
 endif()
 
 # Install dependencies via GET_RUNTIME_DEPENDENCIES. Available since CMake 3.16.
-if(${CMAKE_VERSION} VERSION_LESS 3.16)
+if(${CMAKE_VERSION} VERSION_LESS 3.16 OR NOT OGS_INSTALL_DEPENDENCIES)
     return()
 endif()
 install(CODE [[
+  include(GNUInstallDirs)
+  if(WIN32)
+    set(INSTALL_DIR ${CMAKE_INSTALL_FULL_BINDIR})
+  else()
+    set(INSTALL_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
+  endif()
   file(GET_RUNTIME_DEPENDENCIES
-    EXECUTABLES $<TARGET_FILE:ogs>
+    EXECUTABLES $<$<TARGET_EXISTS:ogs>:$<TARGET_FILE:ogs>> $<$<TARGET_EXISTS:DataExplorer>:$<TARGET_FILE:DataExplorer>>
     RESOLVED_DEPENDENCIES_VAR _r_deps
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
     POST_EXCLUDE_REGEXES "/opt/local/lib/lib.*" # Disable macports zlib
   )
   file(INSTALL ${_r_deps}
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
+    DESTINATION ${INSTALL_DIR}
     FOLLOW_SYMLINK_CHAIN
   )
   list(LENGTH _u_deps _u_length)

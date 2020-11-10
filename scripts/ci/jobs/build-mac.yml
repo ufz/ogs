@@ -7,3 +7,4 @@ build mac:
     CMAKE_ARGS: >-
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_PYTHON=ON
+      -DOGS_INSTALL_DEPENDENCIES=ON
