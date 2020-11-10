@@ -48,6 +48,7 @@ enum class Variable : int
     density,
     displacement,
     effective_pore_pressure,
+    equivalent_plastic_strain,
     grain_compressibility,
     liquid_saturation,
     phase_pressure,
