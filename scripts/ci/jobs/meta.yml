@@ -2,7 +2,7 @@ meta:
   stage: .pre
   tags: [shell]
   script:
-    - git fetch --depth 500
+    - git fetch --depth 1000
     - echo "OGS_VERSION=${CI_COMMIT_TAG:-`git describe --tags --long --dirty --always`}" >> build.env
     - cat build.env
   artifacts:
