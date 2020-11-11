@@ -1033,7 +1033,7 @@ AddTest(
     EXECUTABLE_ARGS KineticReactant2_2d.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT OGS_USE_MPI AND ("${HOSTNAME}" MATCHES "envinf1" OR APPLE OR MSVC)
     DIFF_DATA
     KineticReactant2_2d_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu pressure pressure 1e-6 1e-10
     KineticReactant2_2d_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu pressure pressure 1e-6 1e-10
