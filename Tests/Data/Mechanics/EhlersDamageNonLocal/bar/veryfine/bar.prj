@@ -47,9 +47,9 @@
                 <process_variable>displacement</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="damage" output_name="damage"/>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="damage" output_name="damage" />
+                <secondary_variable internal_name="sigma" output_name="sigma" />
+                <secondary_variable internal_name="epsilon" output_name="epsilon" />
             </secondary_variables>
         </process>
     </processes>
@@ -293,7 +293,7 @@
         <vtkdiff>
             <file>out_bar_veryfine_ED_ts_30_t_0.300000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>6e-7</absolute_tolerance>
+            <absolute_tolerance>8e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
