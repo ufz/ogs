@@ -232,6 +232,11 @@ struct StateVariables
         damage_prev = damage;
     }
 
+    double getEquivalentPlasticStrain() const override;
+
+    static int const KelvinVectorSize =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 

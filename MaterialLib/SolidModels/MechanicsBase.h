@@ -59,6 +59,7 @@ struct MechanicsBase
     {
         virtual ~MaterialStateVariables() = default;
         virtual void pushBackState(){};
+        virtual double getEquivalentPlasticStrain() const { return 0.0; }
     };
 
     /// Polymorphic creator for MaterialStateVariables objects specific for a
