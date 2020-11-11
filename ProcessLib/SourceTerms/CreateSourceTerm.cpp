@@ -10,7 +10,6 @@
 
 #include "CreateSourceTerm.h"
 
-#include "CreateLineSourceTerm.h"
 #include "CreateNodalSourceTerm.h"
 #include "CreateVolumetricSourceTerm.h"
 #ifdef OGS_USE_PYTHON
@@ -78,7 +77,7 @@ std::unique_ptr<SourceTerm> createSourceTerm(
             parameters);
     }
 
-    if (type == "Line")
+    if (type == "Line" || type == "Volumetric")
     {
         std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_source_term(
             dof_table_bulk.deriveBoundaryConstrainedMap(
@@ -88,21 +87,10 @@ std::unique_ptr<SourceTerm> createSourceTerm(
             dof_table_bulk.getMeshSubset(variable_id, *config.component_id)
                 .getMesh()
                 .getDimension();
-        return ProcessLib::createLineSourceTerm(
+        return ProcessLib::createVolumetricSourceTerm(
             config.config, bulk_mesh_dimension, config.mesh,
             std::move(dof_table_source_term), parameters, integration_order,
             shapefunction_order);
-    }
-
-    if (type == "Volumetric")
-    {
-        std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_source_term(
-            dof_table_bulk.deriveBoundaryConstrainedMap(
-                variable_id, {*config.component_id},
-                std::move(source_term_mesh_subset)));
-        return ProcessLib::createVolumetricSourceTerm(
-            config.config, config.mesh, std::move(dof_table_source_term),
-            parameters, integration_order, shapefunction_order);
     }
 
     if (type == "Python")
