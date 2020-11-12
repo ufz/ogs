@@ -482,6 +482,24 @@ AddTest(
     quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu permeability permeability 1.0e-6 1.e-9
 )
 
+AddTest(
+    NAME HydroMechanicsStrainDependentPermeability
+    PATH HydroMechanics/StrainDependentPermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS gas_loading.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu pressure pressure 1.0e-10 1.e-10
+    output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu displacement displacement 1.0e-10 1.e-10
+    output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu sigma_xx sigma_xx 1.0e-6 1.e-9
+    output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu sigma_yy sigma_yy 1.0e-6 1.e-9
+    output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu sigma_zz sigma_zz 1.0e-10 1.e-10
+    output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu sigma_xy sigma_xy 1.0e-6 1.e-9
+    output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu permeability permeability 1.0e-6 1.e-9
+)
+
 ### With staggered scheme
 AddTest(
     NAME StaggeredInjectionProduction1D
