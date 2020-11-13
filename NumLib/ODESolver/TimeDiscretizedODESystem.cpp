@@ -236,6 +236,11 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     LinAlg::finalizeAssembly(*_M);
     LinAlg::finalizeAssembly(*_K);
     LinAlg::finalizeAssembly(*_b);
+
+    for (auto& v : xdot)
+    {
+        NumLib::GlobalVectorProvider::provider.releaseVector(*v);
+    }
 }
 
 void TimeDiscretizedODESystem<
