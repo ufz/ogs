@@ -79,7 +79,7 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
     std::size_t vectors_skipped(0);
     for (auto [name, property] : properties)
     {
-        if (property->getMeshItemType() != MeshItemType::Cell ||
+        if (property->getMeshItemType() != MeshItemType::Cell &&
             property->getMeshItemType() != MeshItemType::Node)
         {
             WARN(
