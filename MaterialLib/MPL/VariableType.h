@@ -56,6 +56,7 @@ enum class Variable : int
     strain,
     stress,
     temperature,
+    total_stress,
     transport_porosity,
     volumetric_strain,
     number_of_variables

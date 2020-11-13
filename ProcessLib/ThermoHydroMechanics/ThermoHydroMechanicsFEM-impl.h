@@ -263,7 +263,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const beta_SR = (1 - alpha) * solid_skeleton_compressibility;
 
         // For stress dependent permeability.
-        vars[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+        vars[static_cast<int>(MaterialPropertyLib::Variable::total_stress)]
             .emplace<SymmetricTensor>(
                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                     (_ip_data[ip].sigma_eff - alpha * identity2 * p_int_pt)
@@ -529,7 +529,7 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
                 .property(MaterialPropertyLib::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
         // For stress dependent permeability.
-        vars[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+        vars[static_cast<int>(MaterialPropertyLib::Variable::total_stress)]
             .emplace<SymmetricTensor>(
                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                     (_ip_data[ip].sigma_eff - alpha * identity2 * p_int_pt)
