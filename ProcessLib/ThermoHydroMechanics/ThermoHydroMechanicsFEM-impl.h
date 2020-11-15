@@ -646,20 +646,17 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                         ShapeFunctionPressure,
                                         IntegrationMethod, DisplacementDim>::
     computeSecondaryVariableConcrete(double const /*t*/, double const /*dt*/,
-                                     std::vector<double> const& local_x,
-                                     std::vector<double> const& /*local_x_dot*/)
+                                     Eigen::VectorXd const& local_x,
+                                     Eigen::VectorXd const& /*local_x_dot*/)
 {
-    auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        pressure_size> const>(local_x.data() + pressure_index, pressure_size);
+    auto const p = local_x.template segment<pressure_size>(pressure_index);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(_element, _is_axially_symmetric, p,
                          *_process_data.pressure_interpolated);
 
-    auto T = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-        pressure_size> const>(local_x.data() + temperature_index,
-                              temperature_size);
+    auto T = local_x.template segment<temperature_size>(temperature_index);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,

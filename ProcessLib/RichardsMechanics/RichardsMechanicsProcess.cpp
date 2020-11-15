@@ -580,16 +580,28 @@ void RichardsMechanicsProcess<DisplacementDim>::
 template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::
     computeSecondaryVariableConcrete(const double t, const double dt,
-                                     GlobalVector const& x,
+                                     std::vector<GlobalVector*> const& x,
                                      GlobalVector const& x_dot,
                                      int const process_id)
 {
-    DBUG("Compute the secondary variables for RichardsMechanicsProcess.");
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    if (process_id != 0)
+    {
+        return;
+    }
 
+    DBUG("Compute the secondary variables for RichardsMechanicsProcess.");
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    auto const n_processes = x.size();
+    dof_tables.reserve(n_processes);
+    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+    {
+        dof_tables.push_back(&getDOFTable(process_id));
+    }
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), t, dt, x, x_dot);
+        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
 }
 
 template <int DisplacementDim>

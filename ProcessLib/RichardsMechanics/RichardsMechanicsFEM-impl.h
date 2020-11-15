@@ -1356,27 +1356,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
-                                     std::vector<double> const& local_x,
-                                     std::vector<double> const& local_x_dot)
+                                     Eigen::VectorXd const& local_x,
+                                     Eigen::VectorXd const& local_x_dot)
 {
-    auto p_L =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x.data() + pressure_index,
-                                  pressure_size);
+    auto p_L = local_x.template segment<pressure_size>(pressure_index);
+    auto u = local_x.template segment<displacement_size>(displacement_index);
 
-    auto u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_index,
-                                      displacement_size);
-
-    auto p_L_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x_dot.data() + pressure_index,
-                                  pressure_size);
+    auto p_L_dot = local_x_dot.template segment<pressure_size>(pressure_index);
     auto u_dot =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x_dot.data() + displacement_index,
-                                      displacement_size);
+        local_x_dot.template segment<displacement_size>(displacement_index);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
