@@ -206,9 +206,10 @@ struct Output::OutputFile
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
 
-    static std::string constructFilename(OutputType const type, std::string prefix,
-                                         std::string suffix,
-                                         std::string mesh_name, int const process_id,
+    static std::string constructFilename(OutputType const type,
+                                         std::string prefix, std::string suffix,
+                                         std::string mesh_name,
+                                         int const process_id,
                                          int const timestep, double const t)
     {
         std::map<OutputType, std::string> filetype_to_extension = {
