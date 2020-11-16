@@ -20,7 +20,6 @@
 #include "IntegrationPointWriter.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/IO/XDMF/writeXdmf.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 /// Copies the ogs_version string containing the release number and the git
