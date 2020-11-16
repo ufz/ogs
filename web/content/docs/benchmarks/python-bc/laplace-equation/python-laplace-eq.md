@@ -1,5 +1,5 @@
 +++
-project = "Elliptic/square_1x1_GroundWaterFlow_Python/square_1e3_laplace_eq.prj"
+project = "Elliptic/square_1x1_SteadyStateDiffusion_Python/square_1e3_laplace_eq.prj"
 author = "Christoph Lehmann"
 date = "2018-06-01T14:16:55+02:00"
 title = "Manufactured Solution for Laplace's Equation with Python"
@@ -33,14 +33,14 @@ We solve Laplace's Equation in 2D on a $1 \times 1$ square domain.
 Laplace's equation is
 $$
 \begin{equation}
-- \mathop{\mathrm{div}} (a \mathop{\mathrm{grad}} u) = 0
+\- \mathop{\mathrm{div}} (a \mathop{\mathrm{grad}} u) = 0
 \end{equation}
 $$
 The weak form is derived as usual by multiplying with a test function $v$ and
 integrating over the domain $\Omega$:
 $$
 \begin{equation}
-- \int_{\Omega} v \mathop{\mathrm{div}} (a \mathop{\mathrm{grad}} u) \, \mathrm{d}\Omega = 0
+\- \int_{\Omega} v \mathop{\mathrm{div}} (a \mathop{\mathrm{grad}} u) \, \mathrm{d}\Omega = 0
 \,,
 \end{equation}
 $$
@@ -50,13 +50,14 @@ $$
 \int_{\Omega} a \mathop{\mathrm{grad}} v \cdot \mathop{\mathrm{grad}} u \, \mathrm{d}\Omega = \int_{\Omega} \mathop{\mathrm{div}} (v a \mathop{\mathrm{grad}} u) \, \mathrm{d}\Omega = \int_{\Gamma_{\mathrm{N}}} v a \mathop{\mathrm{grad}} u \cdot n \, \mathrm{d}\Gamma \,,
 \end{equation}
 $$
+
 where in the second equality Gauss's theorem has been applied.
-As usual, the domain boundary $\partial\Omega = \Gamma_{\mathrm{D}} \cup \Gamma_{\mathrm{N}}$ is subdivided
+As usual, the domain boundary $\partial\Omega = \Gamma\_{\mathrm{D}} \cup \Gamma\_{\mathrm{N}}$ is subdivided
 into the dirichlet and the Neumann boundary and $v$ vanishes on
-$\Gamma_{\mathrm{D}}$.
+$\Gamma\_{\mathrm{D}}$.
 The r.h.s. of the above equation is the total flux associated with $u$ flowing
-**into** the domain $\Omega$ through $\Gamma_{\mathrm{N}}$:
-$-a \mathop{\mathrm{grad}} u$ is the flux density and $-n$ is the inwards directed surface
+**into** the domain $\Omega$ through $\Gamma\_{\mathrm{N}}$:
+$-a \mathop{\mathrm{grad}} u$ is the flux density and $\-n$ is the inwards directed surface
 normal.
 
 The weak form just derived is implemented (after FEM discretization) in  the
@@ -64,7 +65,7 @@ groundwater flow process in OpenGeoSys.
 Note that for the application of Neumann boundary conditions, it is necessary to
 know whether the flux has to be applied with a positive or a negative sign!
 
-## Analytial solution
+## Analytical solution
 
 The coefficient $a$ of Laplace's equation is taken to be unity.
 By differentiation it can be easily checked that
@@ -77,7 +78,7 @@ solves Laplace's equation inside $\Omega$ for any $b$.
 In this example we set $b = \tfrac 23 \pi$.
 
 As boundary conditions we apply Dirichlet BCs at the top, left and bottom of the
-domain with values from $u(x,y)|_{\Gamma_{\mathrm{D}}}$.
+domain with values from $u(x,y)|\_{\Gamma_{\mathrm{D}}}$.
 On the right boundary of the domain a Neumann BC is applied.
 There $n = (1, 0)$, which implies that $a \mathop{\mathrm{grad}} u \cdot n
 = a \, \partial u / \partial x$.
