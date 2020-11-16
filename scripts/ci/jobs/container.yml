@@ -18,7 +18,7 @@ container:
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
-      --ompi 4.0.4 --insitu --mpi_benchmarks
+      --ompi 4.0.5 --mpi_benchmarks
     - >
       poetry run ogscm -B -C -R --ogs ../..
       --build_args ' --progress=plain'
