@@ -64,7 +64,7 @@ std::unique_ptr<Output> createOutput(
     auto const suffix =
         //! \ogs_file_param{prj__time_loop__output__suffix}
         config.getConfigParameter<std::string>("suffix",
-                                               "ts_{:timestep}_t_{:time}");
+                                               "_ts_{:timestep}_t_{:time}");
 
     auto const compress_output =
         //! \ogs_file_param{prj__time_loop__output__compress_output}
