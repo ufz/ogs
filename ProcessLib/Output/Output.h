@@ -48,7 +48,7 @@ public:
            std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes);
 
     //! TODO doc. Opens a PVD file for each process.
-    void addProcess(ProcessLib::Process const& process, const int process_id);
+    void addProcess(ProcessLib::Process const& process);
 
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.

@@ -47,14 +47,12 @@ int convertVtkDataMode(std::string const& data_mode)
 
 std::string constructPVDName(std::string const& output_directory,
                              std::string const& output_file_prefix,
-                             int const process_id,
                              std::string const& mesh_name)
 {
-    return BaseLib::joinPaths(
-        output_directory,
-        BaseLib::constructFormattedFileName(output_file_prefix, mesh_name,
-                                            process_id, 0, 0) +
-            ".pvd");
+    return BaseLib::joinPaths(output_directory,
+                              BaseLib::constructFormattedFileName(
+                                  output_file_prefix, mesh_name, 0, 0) +
+                                  ".pvd");
 }
 }  // namespace
 
@@ -125,8 +123,7 @@ Output::Output(std::string output_directory, OutputType output_file_type,
     }
 }
 
-void Output::addProcess(ProcessLib::Process const& process,
-                        const int process_id)
+void Output::addProcess(ProcessLib::Process const& process)
 {
     if (_mesh_names_for_output.empty())
     {
@@ -135,9 +132,8 @@ void Output::addProcess(ProcessLib::Process const& process,
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
-        auto const filename =
-            constructPVDName(_output_directory, _output_file_prefix, process_id,
-                             mesh_output_name);
+        auto const filename = constructPVDName(
+            _output_directory, _output_file_prefix, mesh_output_name);
         _process_to_pvd_file.emplace(std::piecewise_construct,
                                      std::forward_as_tuple(&process),
                                      std::forward_as_tuple(filename));
@@ -150,9 +146,8 @@ MeshLib::IO::PVDFile* Output::findPVDFile(
     const int process_id,
     std::string const& mesh_name_for_output)
 {
-    auto const filename =
-        constructPVDName(_output_directory, _output_file_prefix, process_id,
-                         mesh_name_for_output);
+    auto const filename = constructPVDName(
+        _output_directory, _output_file_prefix, mesh_name_for_output);
     auto range = _process_to_pvd_file.equal_range(&process);
     int counter = 0;
     MeshLib::IO::PVDFile* pvd_file = nullptr;
@@ -182,11 +177,9 @@ struct Output::OutputFile
 {
     OutputFile(std::string const& directory, OutputType const type,
                std::string const& prefix, std::string const& suffix,
-               std::string const& mesh_name, int const process_id,
-               int const timestep, double const t, int const data_mode_,
-               bool const compression_)
-        : name(constructFilename(type, prefix, suffix, mesh_name, process_id,
-                                 timestep, t)),
+               std::string const& mesh_name, int const timestep, double const t,
+               int const data_mode_, bool const compression_)
+        : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t)),
           path(BaseLib::joinPaths(directory, name)),
           type(type),
           data_mode(data_mode_),
@@ -209,7 +202,6 @@ struct Output::OutputFile
     static std::string constructFilename(OutputType const type,
                                          std::string prefix, std::string suffix,
                                          std::string mesh_name,
-                                         int const process_id,
                                          int const timestep, double const t)
     {
         std::map<OutputType, std::string> filetype_to_extension = {
@@ -218,10 +210,10 @@ struct Output::OutputFile
         try
         {
             std::string extension = filetype_to_extension.at(type);
-            return BaseLib::constructFormattedFileName(
-                       prefix, mesh_name, process_id, timestep, t) +
-                   BaseLib::constructFormattedFileName(
-                       suffix, mesh_name, process_id, timestep, t) +
+            return BaseLib::constructFormattedFileName(prefix, mesh_name,
+                                                       timestep, t) +
+                   BaseLib::constructFormattedFileName(suffix, mesh_name,
+                                                       timestep, t) +
                    "." + extension;
         }
         catch (std::out_of_range& e)
@@ -289,7 +281,7 @@ void Output::doOutputAlways(Process const& process,
     auto output_bulk_mesh = [&](MeshLib::Mesh& mesh) {
         OutputFile const file(_output_directory, _output_file_type,
                               _output_file_prefix, _output_file_suffix,
-                              mesh.getName(), process_id, timestep, t,
+                              mesh.getName(), timestep, t,
                               _output_file_data_mode, _output_file_compression);
 
         MeshLib::IO::PVDFile* pvd_file = nullptr;
@@ -429,11 +421,10 @@ void Output::doOutputNonlinearIteration(Process const& process,
     // Only check whether a process data is available for output.
     findPVDFile(process, process_id, process.getMesh().getName());
 
-    std::string const output_file_name =
-        OutputFile::constructFilename(_output_file_type,_output_file_prefix,
-                                       "_ts_{:timestep}_nliter_{:time}",
-                                       process.getMesh().getName(), process_id,
-                                       timestep, iteration);
+    std::string const output_file_name = OutputFile::constructFilename(
+        _output_file_type, _output_file_prefix,
+        "_ts_{:timestep}_nliter_{:time}", process.getMesh().getName(), timestep,
+        iteration);
 
     std::string const output_file_path =
         BaseLib::joinPaths(_output_directory, output_file_name);
