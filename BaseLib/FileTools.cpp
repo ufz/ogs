@@ -110,7 +110,6 @@ bool substituteKeyword(std::string& result, std::string& parenthesized_string,
 
 std::string constructFormattedFileName(std::string const& format_specification,
                                        std::string const& mesh_name,
-                                       int const process_id,
                                        int const timestep,
                                        double const t)
 {
@@ -128,9 +127,7 @@ std::string constructFormattedFileName(std::string const& format_specification,
         std::tie(str, begin, end) =
             getParenthesizedString(result, open_char, close_char, begin);
         if (!substituteKeyword(result, str, begin, end, "timestep", timestep) &&
-            !substituteKeyword(result, str, begin, end, "time", t) &&
-            !substituteKeyword(result, str, begin, end, "process_id",
-                               process_id))
+            !substituteKeyword(result, str, begin, end, "time", t))
         {
             substituteKeyword(result, str, begin, end, "meshname", mesh_name);
         }
