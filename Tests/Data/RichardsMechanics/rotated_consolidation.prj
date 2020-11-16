@@ -145,7 +145,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-3 1e-10 1e-10</abstols>
+                    <abstols>1e-8 1e-14 1e-14</abstols>
                 </convergence_criterion>
                 <compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
                 <time_discretization>
@@ -327,7 +327,7 @@
         <vtkdiff>
             <file>rotated_consolidation_ts_300_t_30000.000000.vtu</file>
             <field>pressure</field>
-            <absolute_tolerance>5e-10</absolute_tolerance>
+            <absolute_tolerance>1e-9</absolute_tolerance>
             <relative_tolerance>1e-14</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
