@@ -4,6 +4,9 @@ build docs:
   image:
     name: $CONTAINER_GCC_IMAGE
   dependencies: [meta, meta_container]
+  retry:
+    max: 2
+    when: runner_system_failure
   before_script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
