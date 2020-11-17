@@ -218,7 +218,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>thermaltwophaseflow_small_pcs_{:process_id}</prefix>
+            <prefix>thermaltwophaseflow_small</prefix>
             <timesteps>
                 <!-- only output last timestep -->
                 <pair>
