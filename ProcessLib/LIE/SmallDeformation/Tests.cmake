@@ -184,4 +184,5 @@ AddTest(
 
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE LIE/Mechanics/elastic_push_pull_two_fractures.prj RUNTIME 1)
+    OgsTest(PROJECTFILE LIE/Mechanics/mohr_coulomb_load_path_nu0p3.prj RUNTIME 15)
 endif()
