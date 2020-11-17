@@ -1,7 +1,8 @@
 build container images:
   stage: preparation
   rules:
-    - changes:
+    - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
+      changes:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
   dependencies: [meta_container]
