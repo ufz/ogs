@@ -432,9 +432,8 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        double const /*t*/, double const /*dt*/,
-        std::vector<double> const& /*x*/,
-        std::vector<double> const& /*x_dot*/) override
+        double const /*t*/, double const /*dt*/, Eigen::VectorXd const& /*x*/,
+        Eigen::VectorXd const& /*x_dot*/) override
     {
         int const elem_id = _element.getID();
         ParameterLib::SpatialPosition x_position;

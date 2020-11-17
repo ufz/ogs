@@ -125,6 +125,12 @@ public:
         std::vector<GlobalVector*> const& integration_point_values_vectors,
         std::vector<GlobalVector*>& nodal_values_vectors) override;
 
+    void computeSecondaryVariableConcrete(double const /*t*/,
+                                          double const /*dt*/,
+                                          std::vector<GlobalVector*> const& x,
+                                          GlobalVector const& /*x_dot*/,
+                                          int const /*process_id*/) override;
+
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      const double t,
                                      const double delta_t,

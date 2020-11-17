@@ -138,9 +138,9 @@ void postTimestepForAllProcesses(
                 process_solutions);
             pcs.setCoupledSolutionsForStaggeredScheme(&coupled_solutions);
         }
-        auto& x = *process_solutions[process_id];
         auto& x_dot = *x_dots[process_id];
-        pcs.computeSecondaryVariable(t, dt, x, x_dot, process_id);
+        pcs.computeSecondaryVariable(t, dt, process_solutions, x_dot,
+                                     process_id);
         pcs.postTimestep(process_solutions, t, dt, process_id);
     }
     for (auto& x_dot : x_dots)
@@ -893,7 +893,6 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
         }
 
         auto const process_id = process_data->process_id;
-        auto const& x = *_process_solutions[process_id];
         auto& pcs = process_data->process;
 
         if (!is_staggered_coupling && output_initial_condition)
@@ -911,7 +910,8 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
             pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
             // Update secondary variables, which might be uninitialized, before
             // output.
-            pcs.computeSecondaryVariable(_start_time, dt, x, x_dot, process_id);
+            pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
+                                         x_dot, process_id);
 
             NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
         }
@@ -939,7 +939,8 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
             pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
             // Update secondary variables, which might be uninitialized, before
             // output.
-            pcs.computeSecondaryVariable(_start_time, dt, x, x_dot, process_id);
+            pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
+                                         x_dot, process_id);
 
             NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
         }

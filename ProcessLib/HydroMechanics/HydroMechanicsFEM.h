@@ -192,8 +192,8 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        double const t, double const dt, std::vector<double> const& local_x,
-        std::vector<double> const& local_x_dot) override;
+        double const t, double const dt, Eigen::VectorXd const& local_xs,
+        Eigen::VectorXd const& local_x_dot) override;
 
     void postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                      std::vector<double> const& local_xdot,

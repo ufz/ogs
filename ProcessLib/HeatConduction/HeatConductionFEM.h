@@ -241,21 +241,14 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        double const t, double const dt, std::vector<double> const& local_x,
-        std::vector<double> const& /*local_x_dot*/) override
+        double const t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& /*local_x_dot*/) override
     {
-        auto const local_matrix_size = local_x.size();
-        // This assertion is valid only if all nodal d.o.f. use the same shape
-        // matrices.
-        assert(local_matrix_size == ShapeFunction::NPOINTS * NUM_NODAL_DOF);
-
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
-        const auto local_x_vec =
-            MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
 
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
@@ -276,7 +269,7 @@ public:
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, pos, t, dt));
             // heat flux only computed for output.
-            GlobalDimVectorType const heat_flux = -k * sm.dNdx * local_x_vec;
+            GlobalDimVectorType const heat_flux = -k * sm.dNdx * local_x;
 
             for (unsigned d = 0; d < GlobalDim; ++d)
             {

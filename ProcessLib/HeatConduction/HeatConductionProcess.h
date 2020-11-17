@@ -41,7 +41,7 @@ public:
     bool isLinear() const override { return true; }
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
-                                          GlobalVector const& x,
+                                          std::vector<GlobalVector*> const& x,
                                           GlobalVector const& x_dot,
                                           int const process_id) override;
 

@@ -115,16 +115,20 @@ void LiquidFlowProcess::assembleWithJacobianConcreteProcess(
 }
 
 void LiquidFlowProcess::computeSecondaryVariableConcrete(
-    double const t, double const dt, GlobalVector const& x,
+    double const t, double const dt, std::vector<GlobalVector*> const& x,
     GlobalVector const& x_dot, int const process_id)
 {
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     DBUG("Compute the velocity for LiquidFlowProcess.");
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(x.size());
+    std::generate_n(std::back_inserter(dof_tables), x.size(),
+                    [&]() { return _local_to_global_index_map.get(); });
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LiquidFlowLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id), t,
-        dt, x, x_dot);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_dot, process_id);
 }
 
 Eigen::Vector3d LiquidFlowProcess::getFlux(

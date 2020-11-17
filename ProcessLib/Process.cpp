@@ -399,11 +399,12 @@ void Process::postNonLinearSolver(GlobalVector const& x,
 
 void Process::computeSecondaryVariable(double const t,
                                        double const dt,
-                                       GlobalVector const& x,
+                                       std::vector<GlobalVector*> const& x,
                                        GlobalVector const& x_dot,
                                        int const process_id)
 {
-    MathLib::LinAlg::setLocalAccessibleVector(x);
+    for (auto const* solution : x)
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
     MathLib::LinAlg::setLocalAccessibleVector(x_dot);
 
     computeSecondaryVariableConcrete(t, dt, x, x_dot, process_id);
