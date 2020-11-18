@@ -20,7 +20,9 @@ $$
 \left( c \rho_R + \phi \frac{\partial \rho_R}{\partial p}\right) \frac{\partial
 p}{\partial t} - \nabla \cdot
 \left[ \rho_R \frac{\kappa}{\mu} \left( \nabla p + \rho_R g \right) \right]
-- Q_p = 0.
+$$
+$$
+Q_p = 0.
 $$
 where
 
