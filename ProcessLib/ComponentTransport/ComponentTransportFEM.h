@@ -935,11 +935,29 @@ public:
     }
 
     void computeSecondaryVariableConcrete(
-        double const /*t*/,
+        double const t,
         double const /*dt*/,
-        Eigen::VectorXd const& /*local_x*/,
+        Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& /*local_x_dot*/) override
     {
+        auto const local_p =
+            local_x.template segment<pressure_size>(pressure_index);
+        auto const local_C = local_x.template segment<concentration_size>(
+            first_concentration_index);
+
+        std::vector<double> ele_velocity;
+        calculateIntPtDarcyVelocity(t, local_p, local_C, ele_velocity);
+
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        auto const ele_velocity_mat =
+            MathLib::toMatrix(ele_velocity, GlobalDim, n_integration_points);
+
+        auto ele_id = _element.getID();
+        Eigen::Map<LocalVectorType>(
+            &(*_process_data.mesh_prop_velocity)[ele_id * GlobalDim],
+            GlobalDim) =
+            ele_velocity_mat.rowwise().sum() / n_integration_points;
     }
 
 private:

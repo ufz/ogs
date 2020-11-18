@@ -45,6 +45,10 @@ void ComponentTransportProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    _process_data.mesh_prop_velocity = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "velocity",
+        MeshLib::MeshItemType::Cell, mesh.getDimension());
+
     const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
