@@ -21,6 +21,12 @@ namespace MaterialPropertyLib
 class Medium;
 }
 
+namespace MeshLib
+{
+template <typename PROP_VAL_TYPE>
+class PropertyVector;
+}
+
 namespace ProcessLib
 {
 namespace ComponentTransport
@@ -41,6 +47,8 @@ struct ComponentTransportProcessData
     // process only. The density and flux calculations have to be extended to
     // all processes.
     const int first_transport_process_id;
+
+    MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
 };
 
 }  // namespace ComponentTransport
