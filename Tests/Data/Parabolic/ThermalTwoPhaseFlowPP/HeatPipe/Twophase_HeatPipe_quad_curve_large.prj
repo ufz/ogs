@@ -218,7 +218,8 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>thermaltwophaseflow_large_pcs_{:process_id}</prefix>
+            <prefix>thermaltwophaseflow_large</prefix>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <timesteps>
                 <!-- only output last timestep -->
                 <pair>
@@ -234,7 +235,6 @@
                 <variable> pressure_wetting </variable>
                 <variable> temperature </variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <process_variables>

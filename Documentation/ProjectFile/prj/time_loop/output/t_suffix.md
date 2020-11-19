@@ -1,11 +1,10 @@
 Template for the suffix which will be appended to the output files. Allowed
 template expressions are:
 - {:meshname}
-- {:process_id}
 - {:timestep}
 - {:time}.
 
-Default value: ts_{:timestep}_t_{:time}
+Default value: _ts_{:timestep}_t_{:time}
 
 Remark: The name of the result files will be constructed out of the prefix and
 the suffix.

@@ -96,11 +96,11 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
-    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
-    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
-    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
-    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
+    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
+    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
+    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
+    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
+    expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 # ThermoHydroMechanics; Small deformation, linear elastic, porosity!=0, anisotropic thermal expansion
 AddTest(
@@ -113,11 +113,11 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
-    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
-    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
-    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
-    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 AddTest(
      NAME ThermoHydroMechanics_square_ortho-thermal-expansion-phi0
@@ -129,11 +129,11 @@ AddTest(
      TESTER vtkdiff
      REQUIREMENTS NOT OGS_USE_MPI
      DIFF_DATA
-     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
-     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
-     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
-     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
-     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
+     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
+     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
+     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
+     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
+     expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 AddTest(
      NAME ThermoHydroMechanics_square_ortho-thermal-expansion
@@ -145,11 +145,11 @@ AddTest(
      TESTER vtkdiff
      REQUIREMENTS NOT OGS_USE_MPI
      DIFF_DATA
-     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
-     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
-     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
-     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
-     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
+     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
+     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
+     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
+     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
+     expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 AddTest(
      NAME ThermoHydroMechanics_cube_storage_incompressible_fluid
@@ -161,11 +161,11 @@ AddTest(
      TESTER vtkdiff
      REQUIREMENTS NOT OGS_USE_MPI
      DIFF_DATA
-     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
-     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
-     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
-     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
-     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluidts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluid_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluid_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluid_ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluid_ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
+     expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluid_ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 AddTest(
      NAME ThermoHydroMechanics_cube_storage_isochoric_heat-up
@@ -177,11 +177,11 @@ AddTest(
      TESTER vtkdiff
      REQUIREMENTS NOT OGS_USE_MPI
      DIFF_DATA
-     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
-     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
-     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
-     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
-     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-upts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-up_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-up_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-up_ts_10_t_1.000000.vtu temperature temperature 1e-8 1e-8
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-up_ts_10_t_1.000000.vtu sigma sigma 1e-5 1e-5
+     expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-up_ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 AddTest(
     NAME ThermoHydroMechanics_HeatTransportInStationaryFlow
