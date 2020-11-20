@@ -18,7 +18,6 @@
 #include "mathlib_export.h"
 
 #include "TemplatePoint.h"
-#include "MathTools.h"
 
 namespace MathLib
 {
