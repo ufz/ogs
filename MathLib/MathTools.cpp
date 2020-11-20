@@ -7,32 +7,39 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "MathTools.h"
+
+#include <Eigen/Dense>
 #include <cmath>
 
-#include "MathTools.h"
+#include "Point3d.h"
 
 namespace MathLib
 {
 
-double calcProjPntToLineAndDists(const double p[3], const double a[3],
-        const double b[3], double &lambda, double &d0)
+double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
+                                 Point3d const& pb, double& lambda, double& d0)
 {
-    // g (lambda) = a + lambda v, v = b-a
-    double v[3] = {b[0] - a[0], b[1] - a[1], b[2] - a[2]};
-    // orthogonal projection: (g(lambda)-p) * v = 0 => in order to compute lambda we define a help vector u
-    double u[3] = {p[0] - a[0], p[1] - a[1], p[2] - a[2]};
-    lambda = scalarProduct<double,3> (u, v) / scalarProduct<double,3> (v, v);
+    auto const a =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pa.getCoords()));
+    auto const b =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pb.getCoords()));
+    auto const p =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pp.getCoords()));
+    // g(lambda) = a + lambda v, v = b-a
+    Eigen::Vector3d const v = b - a;
+
+    // orthogonal projection: (p - g(lambda))^T * v = 0
+    // <=> (a-p - lambda (b-a))^T * (b-a) = 0
+    // <=> (a-p)^T * (b-a) = lambda (b-a)^T ) (b-a)
+    lambda = (((p - a).transpose() * v) / v.squaredNorm())(0, 0);
 
     // compute projected point
-    double proj_pnt[3];
-    for (std::size_t k(0); k < 3; k++)
-    {
-        proj_pnt[k] = a[k] + lambda * v[k];
-    }
+    Eigen::Vector3d const proj_pnt = a + lambda * v;
 
-    d0 = std::sqrt (sqrDist (proj_pnt, a));
+    d0 = (proj_pnt - a).norm();
 
-    return std::sqrt (sqrDist (p, proj_pnt));
+    return (p - proj_pnt).norm();
 }
 
 double getAngle (const double p0[3], const double p1[3], const double p2[3])
