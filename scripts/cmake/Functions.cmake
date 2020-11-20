@@ -85,9 +85,9 @@ function(ogs_add_library targetName)
         # OR does not work with cotire
         # $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,
             #    $<CXX_COMPILER_ID:GNU>>:-Wall -Wextra>
-        $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra>
-        $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra>
-        $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra>
+        $<$<CXX_COMPILER_ID:Clang>:-Wall -Wextra -Wunreachable-code>
+        $<$<CXX_COMPILER_ID:AppleClang>:-Wall -Wextra -Wunreachable-code>
+        $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -Wunreachable-code>
         $<$<CXX_COMPILER_ID:MSVC>:/W3>)
 
     if(BUILD_SHARED_LIBS)
