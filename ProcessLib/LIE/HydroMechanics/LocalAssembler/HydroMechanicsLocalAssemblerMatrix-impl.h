@@ -184,6 +184,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
     auto const& gravity_vec = _process_data.specific_body_force;
 
+    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -229,7 +230,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         eps.noalias() = B * u;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
+            variables, t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
             _process_data.reference_temperature);
 
         if (!solution)
@@ -316,6 +317,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& u)
 {
+    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -349,7 +351,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         eps.noalias() = B * u;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
+            variables, t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
             _process_data.reference_temperature);
 
         if (!solution)

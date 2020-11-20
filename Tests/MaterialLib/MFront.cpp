@@ -119,10 +119,11 @@ struct MaterialLib_SolidModelsMFront : public testing::Test
         constitutive_relation = TestBehaviour::createConstitutiveRelation();
     }
 
+    MaterialPropertyLib::VariableArray variable_array_prev;
+    MaterialPropertyLib::VariableArray variable_array;
     KelvinVector<Dim> const eps_prev = KelvinVector<Dim>::Zero();
     KelvinVector<Dim> const eps = KelvinVector<Dim>::Zero();
     KelvinVector<Dim> const sigma_prev = KelvinVector<Dim>::Zero();
-
     double t = 0;
     ParameterLib::SpatialPosition x;
     double dt = 0;
@@ -153,8 +154,8 @@ TYPED_TEST(MaterialLib_SolidModelsMFront2, IntegrateZeroDisplacement)
     auto state = this->constitutive_relation->createMaterialStateVariables();
 
     auto solution = this->constitutive_relation->integrateStress(
-        this->t, this->x, this->dt, this->eps_prev, this->eps, this->sigma_prev,
-        *state, this->T);
+        this->variable_array_prev, this->variable_array, this->t, this->x,
+        this->dt, this->eps_prev, this->eps, this->sigma_prev, *state, this->T);
 
     ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));
@@ -169,8 +170,8 @@ TYPED_TEST(MaterialLib_SolidModelsMFront3, IntegrateZeroDisplacement)
     auto state = this->constitutive_relation->createMaterialStateVariables();
 
     auto solution = this->constitutive_relation->integrateStress(
-        this->t, this->x, this->dt, this->eps_prev, this->eps, this->sigma_prev,
-        *state, this->T);
+        this->variable_array_prev, this->variable_array, this->t, this->x,
+        this->dt, this->eps_prev, this->eps, this->sigma_prev, *state, this->T);
 
     ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));

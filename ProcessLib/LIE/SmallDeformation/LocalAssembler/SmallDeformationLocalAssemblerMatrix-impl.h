@@ -116,6 +116,7 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
+    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -147,7 +148,7 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, IntegrationMethod,
                     local_x.data(), ShapeFunction::NPOINTS * DisplacementDim);
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_prev, *state,
+            variables, t, x_position, dt, eps_prev, eps, sigma_prev, *state,
             _process_data._reference_temperature);
 
         if (!solution)

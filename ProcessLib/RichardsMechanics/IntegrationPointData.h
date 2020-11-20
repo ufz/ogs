@@ -90,6 +90,7 @@ struct IntegrationPointData final
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     computeElasticTangentStiffness(
+        MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
@@ -99,7 +100,8 @@ struct IntegrationPointData final
         auto const null_state = solid_material.createMaterialStateVariables();
         KV const zero = KV::Zero();
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, zero, zero, zero, *null_state, temperature);
+            variable_array, t, x_position, dt, zero, zero, zero, *null_state,
+            temperature);
 
         if (!solution)
         {
@@ -114,6 +116,7 @@ struct IntegrationPointData final
 
     template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+        MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
@@ -121,7 +124,7 @@ struct IntegrationPointData final
         double const temperature)
     {
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev,
+            variable_array, t, x_position, dt, eps_prev, eps, sigma_eff_prev,
             *material_state_variables, temperature);
 
         if (!solution)

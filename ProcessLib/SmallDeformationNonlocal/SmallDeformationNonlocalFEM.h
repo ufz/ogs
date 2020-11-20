@@ -38,6 +38,8 @@ namespace ProcessLib
 {
 namespace SmallDeformationNonlocal
 {
+namespace MPL = MaterialPropertyLib;
+
 /// Used for the extrapolation of the integration point values. It is ordered
 /// (and stored) by integration points.
 template <typename ShapeMatrixType>
@@ -326,6 +328,7 @@ public:
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
 
+        MPL::VariableArray variables;
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
@@ -373,8 +376,8 @@ public:
                                      // calculateDamage() function.
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
-                t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
-                _process_data.reference_temperature);
+                variables, t, x_position, dt, eps_prev, eps, sigma_eff_prev,
+                *state, _process_data.reference_temperature);
 
             if (!solution)
             {

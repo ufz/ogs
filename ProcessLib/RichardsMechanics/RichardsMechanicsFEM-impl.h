@@ -343,7 +343,7 @@ void RichardsMechanicsLocalAssembler<
                 .template value<double>(variables, x_position, t, dt);
 
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            variables, t, x_position, dt, temperature);
 
         auto const beta_SR =
             (1 - alpha) /
@@ -429,7 +429,7 @@ void RichardsMechanicsLocalAssembler<
                 sigma_sw += sigma_sw_dot * dt;
 
                 auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-                    t, x_position, dt, temperature);
+                    variables, t, x_position, dt, temperature);
 
                 // !!! Misusing volumetric strain for mechanical volumetric
                 // strain just to update the transport porosity !!!
@@ -489,8 +489,8 @@ void RichardsMechanicsLocalAssembler<
         //
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
-                                                         temperature);
+        auto C = _ip_data[ip].updateConstitutiveRelation(
+            variables, t, x_position, dt, u, temperature);
 
         //
         // displacement equation, displacement part
@@ -687,7 +687,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
 
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            variables, t, x_position, dt, temperature);
 
         auto const beta_SR =
             (1 - alpha) /
@@ -827,8 +827,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         eps.noalias() = B * u;
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
-                                                         temperature);
+        auto C = _ip_data[ip].updateConstitutiveRelation(
+            variables, t, x_position, dt, u, temperature);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -1349,7 +1349,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
 
-        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt, u,
                                                 temperature);
     }
 }
@@ -1448,7 +1448,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
 
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            variables, t, x_position, dt, temperature);
 
         auto const beta_SR =
             (1 - alpha) /
@@ -1564,7 +1564,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt, u,
                                                 temperature);
 
         auto const& b = _process_data.specific_body_force;

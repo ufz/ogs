@@ -163,6 +163,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
+    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -216,7 +217,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             linear_thermal_strain_increment * Invariants::identity2;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
+            variables, t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state,
+            T_ip);
 
         if (!solution)
         {
@@ -356,6 +358,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
+    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -409,7 +412,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             linear_thermal_strain_increment * Invariants::identity2;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
+            variables, t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state,
+            T_ip);
 
         if (!solution)
         {

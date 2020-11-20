@@ -74,6 +74,7 @@ struct IntegrationPointData final
 
     template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
+        MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
@@ -84,8 +85,8 @@ struct IntegrationPointData final
 
         eps_m.noalias() = eps - thermal_strain;
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
-            *material_state_variables, T);
+            variable_array, t, x_position, dt, eps_m_prev, eps_m,
+            sigma_eff_prev, *material_state_variables, T);
 
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");

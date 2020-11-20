@@ -181,6 +181,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
         *_process_data.solid_materials[0];
 
+    MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -319,7 +320,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         eps.noalias() = B * u;
         auto C = _ip_data[ip].updateConstitutiveRelationThermal(
-            t, x_position, dt, u,
+            variables, t, x_position, dt, u,
             _process_data.reference_temperature(t, x_position)[0],
             thermal_strain);
 
@@ -581,6 +582,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
 
+    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
@@ -634,7 +636,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         eps.noalias() = B * u;
 
         _ip_data[ip].updateConstitutiveRelationThermal(
-            t, x_position, dt, u,
+            variables, t, x_position, dt, u,
             _process_data.reference_temperature(t, x_position)[0],
             thermal_strain);
     }
