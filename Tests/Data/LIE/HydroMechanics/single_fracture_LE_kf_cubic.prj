@@ -152,7 +152,7 @@
             <name>nu</name>
             <type>Constant</type>
             <!--value>0.0</value-->
-            <value>0.3</value>			
+            <value>0.0</value>			
         </parameter>
         <!-- Fracture properties -->
         <parameter>
