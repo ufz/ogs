@@ -21,7 +21,7 @@ const unsigned LineRule2::edge_nodes[1][2] =
 
 double LineRule2::computeVolume(Node const* const* _nodes)
 {
-    return sqrt(MathLib::sqrDist(_nodes[0]->getCoords(), _nodes[1]->getCoords()));
+    return sqrt(MathLib::sqrDist(*_nodes[0], *_nodes[1]));
 }
 
 bool LineRule2::isPntInElement(Node const* const* nodes,

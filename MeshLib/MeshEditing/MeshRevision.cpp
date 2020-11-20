@@ -179,8 +179,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(double eps) const
                 }
 
                 // calc distance
-                if (MathLib::sqrDist(node->getCoords(),
-                                     test_node->getCoords()) < sqr_eps)
+                if (MathLib::sqrDist(*node, *test_node) < sqr_eps)
                 {
                     id_map[test_node->getID()] = node->getID();
                 }

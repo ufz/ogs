@@ -163,9 +163,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
                 ss << "- bulk node: " << (*bulk_nodes[id])[0] << ", "
                    << (*bulk_nodes[id])[1] << ", " << (*bulk_nodes[id])[2]
                    << ", distance: "
-                   << std::sqrt(MathLib::sqrDist(bulk_nodes[id]->getCoords(),
-                                                 p.getCoords()))
-                   << "\n";
+                   << std::sqrt(MathLib::sqrDist(*bulk_nodes[id], p)) << "\n";
             }
             OGS_FATAL(
                 "Found {:d} nodes in the mesh for point {:d} : ({:g}, {:g}, "
