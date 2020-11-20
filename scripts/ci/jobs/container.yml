@@ -9,18 +9,18 @@ container:
     - .container-maker-setup
   script:
     - >
-      poetry run ogscm -B -C -R --ogs ../..
+      poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON'
     - >
-      poetry run ogscm -B -C -R --ogs ../..
+      poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
-      --ompi 4.0.5 --mpi_benchmarks
+      --base_image 'centos:8' --ompi 4.0.5 --mpi_benchmarks
     - >
-      poetry run ogscm -B -C -R --ogs ../..
+      poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF'
