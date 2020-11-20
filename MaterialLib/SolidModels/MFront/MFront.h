@@ -85,12 +85,8 @@ public:
         double const t,
         ParameterLib::SpatialPosition const& x,
         double const dt,
-        KelvinVector const& eps_prev,
-        KelvinVector const& eps,
-        KelvinVector const& sigma_prev,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables,
-        double const T) const override;
+            material_state_variables) const override;
 
     std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
     getInternalVariables() const override;

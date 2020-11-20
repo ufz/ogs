@@ -74,38 +74,6 @@ struct MechanicsBase
     using KelvinMatrix =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
-    /// Dynamic size Kelvin vector and matrix wrapper for the polymorphic
-    /// constitutive relation compute function.
-    /// Returns nothing in case of errors in the computation if Newton
-    /// iterations did not converge, for example.
-    std::optional<std::tuple<
-        KelvinVector, std::unique_ptr<MaterialStateVariables>, KelvinMatrix>>
-    integrateStress(
-        MaterialPropertyLib::VariableArray const& variable_array_prev,
-        MaterialPropertyLib::VariableArray const& variable_array,
-        double const t,
-        ParameterLib::SpatialPosition const& x,
-        double const dt,
-        Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps_prev,
-        Eigen::Matrix<double, Eigen::Dynamic, 1> const& eps,
-        Eigen::Matrix<double, Eigen::Dynamic, 1> const& sigma_prev,
-        MaterialStateVariables const& material_state_variables,
-        double const T) const
-    {
-        // TODO Avoid copies of data:
-        // Using MatrixBase<Derived> not possible because template functions
-        // cannot be virtual. Maybe there is a workaround for this.  Using
-        // Map<Matrix<double, ...>> makes the interface (for the material model
-        // implementation) unnecessary difficult.
-        KelvinVector const eps_prev_{eps_prev};
-        KelvinVector const eps_{eps};
-        KelvinVector const sigma_prev_{sigma_prev};
-
-        return integrateStress(variable_array_prev, variable_array, t, x, dt,
-                               eps_prev_, eps_, sigma_prev_,
-                               material_state_variables, T);
-    }
-
     /// Computation of the constitutive relation for specific material model.
     /// This should be implemented in the derived model. Fixed Kelvin vector and
     /// matrix size version; for dynamic size arguments there is an overloaded
@@ -120,11 +88,7 @@ struct MechanicsBase
         double const t,
         ParameterLib::SpatialPosition const& x,
         double const dt,
-        KelvinVector const& eps_prev,
-        KelvinVector const& eps,
-        KelvinVector const& sigma_prev,
-        MaterialStateVariables const& material_state_variables,
-        double const T) const = 0;
+        MaterialStateVariables const& material_state_variables) const = 0;
 
     /// Helper type for providing access to internal variables.
     struct InternalVariable
