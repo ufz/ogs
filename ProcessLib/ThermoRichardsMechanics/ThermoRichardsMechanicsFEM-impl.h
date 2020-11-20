@@ -393,10 +393,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
 
-        auto const K_LR =
-            liquid_phase.property(MPL::PropertyType::bulk_modulus)
-                .template value<double>(variables, x_position, t, dt);
-
         auto const rho_LR =
             liquid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
@@ -625,13 +621,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         laplace_p.noalias() +=
             dNdx_p.transpose() * k_rel * rho_Ki_over_mu * dNdx_p * w;
 
-        const double alphaB_minu_phi = alpha - phi;
-        double const a0 = alphaB_minu_phi * beta_SR;
-        double const specific_storage_a_p = S_L * (phi / K_LR + S_L * a0);
+        auto const beta_LR = 1 / rho_LR *
+                             liquid_phase.property(MPL::PropertyType::density)
+                                 .template dValue<double>(
+                                     variables, MPL::Variable::phase_pressure,
+                                     x_position, t, dt);
+
+        const double alphaB_minus_phi = alpha - phi;
+        double const a0 = alphaB_minus_phi * beta_SR;
+        double const specific_storage_a_p = S_L * (phi * beta_LR + S_L * a0);
         double const specific_storage_a_S = phi - p_cap_ip * S_L * a0;
 
         double const dspecific_storage_a_p_dp_cap =
-            dS_L_dp_cap * (phi / K_LR + 2 * S_L * a0);
+            dS_L_dp_cap * (phi * beta_LR + 2 * S_L * a0);
         double const dspecific_storage_a_S_dp_cap =
             -a0 * (S_L + p_cap_ip * dS_L_dp_cap);
 
@@ -695,7 +697,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 MPL::getLiquidThermalExpansivity(liquid_phase, variables,
                                                  rho_LR, x_position, t, dt);
             const double eff_thermal_expansion =
-                alphaB_minu_phi *
+                alphaB_minus_phi *
                     solid_linear_thermal_expansion_coefficient.trace() +
                 phi * fluid_volumetric_thermal_expansion_coefficient;
 

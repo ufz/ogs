@@ -40,19 +40,19 @@
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>2e9</value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1e-3</value>
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>1e3</value>
+                            <type>Linear</type>
+                            <reference_value>1e3</reference_value>
+                            <independent_variable>
+                                <variable_name>phase_pressure</variable_name>
+                                <reference_condition>0</reference_condition>
+                                <slope>5e-10</slope>
+                            </independent_variable>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>

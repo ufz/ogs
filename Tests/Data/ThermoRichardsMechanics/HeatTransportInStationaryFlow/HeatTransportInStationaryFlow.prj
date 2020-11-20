@@ -38,11 +38,6 @@
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>100e100</value>
-                        </property>
-                        <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
                             <value>4182</value>

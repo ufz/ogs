@@ -33,11 +33,6 @@
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>2.2e300</value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value> 1.e-3 </value>
