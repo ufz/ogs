@@ -1,6 +1,10 @@
 # LIE; HydroMechanics
 if (NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_constK.prj)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_const.prj)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_cubic.prj)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_LE_kf_const.prj)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_LE_kf_cubic.prj)
 endif()
 
 AddTest(
