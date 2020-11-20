@@ -43,19 +43,19 @@ void AngleSkewMetric::calculateQuality ()
             _element_quality_metric[k] = -1.0;
             break;
         case MeshElemType::TRIANGLE:
-            _element_quality_metric[k] = checkTriangle (elem);
+            _element_quality_metric[k] = checkTriangle(elem);
             break;
         case MeshElemType::QUAD:
-            _element_quality_metric[k] = checkQuad (elem);
+            _element_quality_metric[k] = checkQuad(elem);
             break;
         case MeshElemType::TETRAHEDRON:
-            _element_quality_metric[k] = checkTetrahedron (elem);
+            _element_quality_metric[k] = checkTetrahedron(elem);
             break;
         case MeshElemType::HEXAHEDRON:
-            _element_quality_metric[k] = checkHexahedron (elem);
+            _element_quality_metric[k] = checkHexahedron(elem);
             break;
         case MeshElemType::PRISM:
-            _element_quality_metric[k] = checkPrism (elem);
+            _element_quality_metric[k] = checkPrism(elem);
             break;
         default:
             break;
@@ -63,153 +63,128 @@ void AngleSkewMetric::calculateQuality ()
     }
 }
 
-double AngleSkewMetric::checkTriangle (Element const& elem) const
+double AngleSkewMetric::checkTriangle(Element const& elem) const
 {
-    double const* const node0 (elem.getNode(0)->getCoords());
-    double const* const node1 (elem.getNode(1)->getCoords());
-    double const* const node2 (elem.getNode(2)->getCoords());
-
-    double min_angle(two_pi);
-    double max_angle(0.0);
-    getMinMaxAngleFromTriangle (node0, node1, node2, min_angle, max_angle);
-
+    auto const& [min_angle, max_angle] = getMinMaxAngleFromTriangle(
+        *elem.getNode(0), *elem.getNode(1), *elem.getNode(2));
     return std::max((max_angle - third_pi) / two_thirds_pi,
                     (third_pi - min_angle) / third_pi);
 }
 
-double AngleSkewMetric::checkQuad (Element const& elem) const
+double AngleSkewMetric::checkQuad(Element const& elem) const
 {
-    double const* const node0 (elem.getNode(0)->getCoords());
-    double const* const node1 (elem.getNode(1)->getCoords());
-    double const* const node2 (elem.getNode(2)->getCoords());
-    double const* const node3 (elem.getNode(3)->getCoords());
+    auto const& [min_angle, max_angle] = getMinMaxAngleFromQuad(
+        *elem.getNode(0), *elem.getNode(1), *elem.getNode(2), *elem.getNode(3));
 
-    double min_angle (two_pi);
-    double max_angle (0.0);
-
-    getMinMaxAngleFromQuad (node0, node1, node2, node3, min_angle, max_angle);
 
     return std::max((max_angle - half_pi) / half_pi,
                     (half_pi - min_angle) / half_pi);
 }
 
-double AngleSkewMetric::checkTetrahedron (Element const& elem) const
+double AngleSkewMetric::checkTetrahedron(Element const& elem) const
 {
-    double const* const node0 (elem.getNode(0)->getCoords());
-    double const* const node1 (elem.getNode(1)->getCoords());
-    double const* const node2 (elem.getNode(2)->getCoords());
-    double const* const node3 (elem.getNode(3)->getCoords());
+    std::array<double, 4> min;
+    std::array<double, 4> max;
+    for (auto face_number = 0; face_number < 4; ++face_number)
+    {
+        auto const& face = *elem.getFace(face_number);
+        std::tie(min[face_number], max[face_number]) = getMinMaxAngleFromTri(
+            *face.getNode(0), *face.getNode(1), *face.getNode(2));
+    }
 
-    double min_angle (two_pi);
-    double max_angle (0.0);
-
-    // first triangle (0,1,2)
-    getMinMaxAngleFromTriangle(node0, node1, node2, min_angle, max_angle);
-    // second triangle (0,1,3)
-    getMinMaxAngleFromTriangle(node0, node1, node3, min_angle, max_angle);
-    // third triangle (0,2,3)
-    getMinMaxAngleFromTriangle(node0, node2, node3, min_angle, max_angle);
-    // fourth triangle (1,2,3)
-    getMinMaxAngleFromTriangle(node1, node2, node3, min_angle, max_angle);
+    double const min_angle = *std::min_element(min.begin(), min.end());
+    double const max_angle = *std::max_element(max.begin(), max.end());
 
     return std::max((max_angle - third_pi) / two_thirds_pi,
                     (third_pi - min_angle) / third_pi);
 }
 
-double AngleSkewMetric::checkHexahedron (Element const& elem) const
+double AngleSkewMetric::checkHexahedron(Element const& elem) const
 {
-    double const* const node0 (elem.getNode(0)->getCoords());
-    double const* const node1 (elem.getNode(1)->getCoords());
-    double const* const node2 (elem.getNode(2)->getCoords());
-    double const* const node3 (elem.getNode(3)->getCoords());
-    double const* const node4 (elem.getNode(4)->getCoords());
-    double const* const node5 (elem.getNode(5)->getCoords());
-    double const* const node6 (elem.getNode(6)->getCoords());
-    double const* const node7 (elem.getNode(7)->getCoords());
+    std::array<double, 6> min;
+    std::array<double, 6> max;
+    for (auto face_number = 0; face_number < 6; ++face_number)
+    {
+        auto const& face = *elem.getFace(face_number);
+        std::tie(min[face_number], max[face_number]) =
+            getMinMaxAngleFromQuad(*face.getNode(0), *face.getNode(1),
+                                   *face.getNode(2), *face.getNode(3));
+    }
 
-    double min_angle (two_pi);
-    double max_angle (0.0);
-
-    // first surface (0,1,2,3)
-    getMinMaxAngleFromQuad (node0, node1, node2, node3, min_angle, max_angle);
-    // second surface (0,3,7,4)
-    getMinMaxAngleFromQuad (node0, node3, node7, node4, min_angle, max_angle);
-    // third surface (4,5,6,7)
-    getMinMaxAngleFromQuad (node4, node5, node6, node7, min_angle, max_angle);
-    // fourth surface (5,1,2,6)
-    getMinMaxAngleFromQuad (node5, node1, node2, node6, min_angle, max_angle);
-    // fifth surface (5,1,0,4)
-    getMinMaxAngleFromQuad (node5, node1, node0, node4, min_angle, max_angle);
-    // sixth surface (6,2,3,7)
-    getMinMaxAngleFromQuad (node6, node2, node3, node7, min_angle, max_angle);
+    double const min_angle = *std::min_element(min.begin(), min.end());
+    double const max_angle = *std::max_element(max.begin(), max.end());
 
     return std::max((max_angle - half_pi) / half_pi,
                     (half_pi - min_angle) / half_pi);
 }
 
-double AngleSkewMetric::checkPrism (Element const& elem) const
+double AngleSkewMetric::checkPrism(Element const& elem) const
 {
-    double const* const node0 (elem.getNode(0)->getCoords());
-    double const* const node1 (elem.getNode(1)->getCoords());
-    double const* const node2 (elem.getNode(2)->getCoords());
-    double const* const node3 (elem.getNode(3)->getCoords());
-    double const* const node4 (elem.getNode(4)->getCoords());
-    double const* const node5 (elem.getNode(5)->getCoords());
-
-    double min_angle_tri (two_pi);
-    double max_angle_tri (0.0);
-
     // first triangle (0,1,2)
-    getMinMaxAngleFromTriangle (node0, node1, node2, min_angle_tri, max_angle_tri);
+    auto const& [min_angle_tri0, max_angle_tri0] = getMinMaxAngleFromTriangle(
+        *elem.getNode(0), *elem.getNode(1), *elem.getNode(2));
     // second surface (3,4,5)
-    getMinMaxAngleFromTriangle (node3, node4, node5, min_angle_tri, max_angle_tri);
+    auto const& [min_angle_tri1, max_angle_tri1] = getMinMaxAngleFromTriangle(
+        *elem.getNode(3), *elem.getNode(4), *elem.getNode(5));
+    double const min_angle_tri = std::min(min_angle_tri0, min_angle_tri1);
+    double const max_angle_tri = std::max(max_angle_tri0, max_angle_tri1);
 
     double const tri_criterion(
         std::max((max_angle_tri - third_pi) / two_thirds_pi,
                  (third_pi - min_angle_tri) / third_pi));
 
-    double min_angle_quad (two_pi);
-    double max_angle_quad (0.0);
     // surface (0,3,4,1)
-    getMinMaxAngleFromQuad (node0, node3, node4, node1, min_angle_quad, max_angle_quad);
+    auto const& [min_angle_quad0, max_angle_quad0] = getMinMaxAngleFromQuad(
+        *elem.getNode(0), *elem.getNode(3), *elem.getNode(4), *elem.getNode(1));
     // surface (2,5,3,0)
-    getMinMaxAngleFromQuad (node2, node5, node3, node0, min_angle_quad, max_angle_quad);
+    auto const& [min_angle_quad1, max_angle_quad1] = getMinMaxAngleFromQuad(
+        *elem.getNode(2), *elem.getNode(5), *elem.getNode(3), *elem.getNode(0));
     // surface (1,2,5,4)
-    getMinMaxAngleFromQuad (node1, node2, node5, node4, min_angle_quad, max_angle_quad);
+    auto const& [min_angle_quad2, max_angle_quad2] = getMinMaxAngleFromQuad(
+        *elem.getNode(1), *elem.getNode(2), *elem.getNode(5), *elem.getNode(4));
 
-    double const quad_criterion(std::max((max_angle_quad - half_pi) / half_pi,
-                                         (half_pi - min_angle_quad) / half_pi));
-
-    return std::min (tri_criterion, quad_criterion);
+    double const min_angle_quad =
+        std::min({min_angle_quad0, min_angle_quad1, min_angle_quad2});
+    double const max_angle_quad =
+        std::max({max_angle_quad0, max_angle_quad1, max_angle_quad2});
 }
 
-void AngleSkewMetric::getMinMaxAngleFromQuad (
-        double const* const n0, double const* const n1,
-        double const* const n2, double const* const n3,
-        double &min_angle, double &max_angle) const
+std::tuple<double, double> AngleSkewMetric::getMinMaxAngleFromQuad(
+    MeshLib::Node const& n0, MeshLib::Node const& n1, MeshLib::Node const& n2,
+    MeshLib::Node const& n3) const
 {
-    const double* nodes[4] = {n0, n1, n2, n3};
-    for (unsigned i=0; i<4; ++i)
+    double min_angle(two_pi);
+    double max_angle(0.0);
+
+    std::array const nodes = {n0, n1, n2, n3};
+    for (unsigned i = 0; i < nodes.size(); ++i)
     {
-        const double angle (MathLib::getAngle (nodes[i], nodes[(i+1)%4], nodes[(i+2)%4]));
+        const double angle(MathLib::getAngle(nodes[i].getCoords(),
+                                             nodes[(i + 1) % 4].getCoords(),
+                                             nodes[(i + 2) % 4].getCoords()));
         min_angle = std::min(angle, min_angle);
         max_angle = std::max(angle, max_angle);
     }
+    return {min_angle, max_angle};
 }
 
-void AngleSkewMetric::getMinMaxAngleFromTriangle(double const* const n0,
-                                                          double const* const n1,
-                                                          double const* const n2,
-                                                          double &min_angle,
-                                                          double &max_angle) const
+std::tuple<double, double> AngleSkewMetric::getMinMaxAngleFromTriangle(
+    MeshLib::Node const& n0, MeshLib::Node const& n1,
+    MeshLib::Node const& n2) const
 {
-    const double* nodes[3] = {n0, n1, n2};
+    double min_angle(two_pi);
+    double max_angle(0.0);
+
+    std::array nodes = {n0, n1, n2};
     for (unsigned i=0; i<3; ++i)
     {
-        const double angle (MathLib::getAngle (nodes[i], nodes[(i+1)%3], nodes[(i+2)%3]));
+        const double angle(MathLib::getAngle(nodes[i].getCoords(),
+                                             nodes[(i + 1) % 3].getCoords(),
+                                             nodes[(i + 2) % 3].getCoords()));
         min_angle = std::min(angle, min_angle);
         max_angle = std::max(angle, max_angle);
     }
+    return {min_angle, max_angle};
 }
 
 } // end namespace MeshLib
