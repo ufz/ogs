@@ -464,11 +464,12 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
             double const lower_lambda(-epsilon_radius / seg_length);
             double const upper_lambda(1 + epsilon_radius / seg_length);
 
-            if (lower_lambda <= lambda && lambda <= upper_lambda) {
+            if (lower_lambda <= lambda && lambda <= upper_lambda)
+            {
                 found = true;
                 dist = act_length_of_ply + dist;
                 break;
-            } // end if lambda
+            }  // end if lambda
         }
     } // end line segment loop
 
