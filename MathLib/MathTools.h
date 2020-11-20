@@ -81,14 +81,6 @@ double calcProjPntToLineAndDists(MathLib::Point3d const& pp,
                                  MathLib::Point3d const& pb, double& lambda,
                                  double& d0);
 
-/** squared dist between double arrays p0 and p1 (size of arrays is 3) */
-inline
-double sqrDist(const double* p0, const double* p1)
-{
-    const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-    return scalarProduct<double,3>(v,v);
-}
-
 /**
  * Let \f$p_0, p_1, p_2 \in R^3\f$. The function getAngle
  * computes the angle between the edges \f$(p_0,p_1)\f$ and \f$(p_1,p_2)\f$
