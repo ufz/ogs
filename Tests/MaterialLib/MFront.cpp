@@ -9,12 +9,16 @@
 
 #ifdef OGS_USE_MFRONT
 
+#include "MaterialLib/SolidModels/MFront/MFront.h"
+
 #include <gtest/gtest.h>
+
 #include <MGIS/Behaviour/Integrate.hxx>
 
-#include "MaterialLib/SolidModels/MFront/MFront.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "ParameterLib/ConstantParameter.h"
 
+namespace MPL = MaterialPropertyLib;
 using namespace MaterialLib::Solids;
 template <int Dim>
 using KelvinVector = MathLib::KelvinVector::KelvinVectorType<Dim>;
@@ -116,18 +120,26 @@ struct MaterialLib_SolidModelsMFront : public testing::Test
 {
     MaterialLib_SolidModelsMFront()
     {
+        variable_array_prev[static_cast<int>(MPL::Variable::stress)]
+            .emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
+        variable_array_prev[static_cast<int>(MPL::Variable::strain)]
+            .emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
+        variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(0);
+
+        variable_array[static_cast<int>(MPL::Variable::strain)]
+            .emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
+        variable_array[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(0);
         constitutive_relation = TestBehaviour::createConstitutiveRelation();
     }
 
-    MaterialPropertyLib::VariableArray variable_array_prev;
-    MaterialPropertyLib::VariableArray variable_array;
-    KelvinVector<Dim> const eps_prev = KelvinVector<Dim>::Zero();
-    KelvinVector<Dim> const eps = KelvinVector<Dim>::Zero();
-    KelvinVector<Dim> const sigma_prev = KelvinVector<Dim>::Zero();
+    MPL::VariableArray variable_array_prev;
+    MPL::VariableArray variable_array;
+
     double t = 0;
     ParameterLib::SpatialPosition x;
     double dt = 0;
-    double T = 0;
 
     std::unique_ptr<MechanicsBase<Dim>> constitutive_relation;
 };
@@ -155,7 +167,7 @@ TYPED_TEST(MaterialLib_SolidModelsMFront2, IntegrateZeroDisplacement)
 
     auto solution = this->constitutive_relation->integrateStress(
         this->variable_array_prev, this->variable_array, this->t, this->x,
-        this->dt, this->eps_prev, this->eps, this->sigma_prev, *state, this->T);
+        this->dt, *state);
 
     ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));
@@ -171,7 +183,7 @@ TYPED_TEST(MaterialLib_SolidModelsMFront3, IntegrateZeroDisplacement)
 
     auto solution = this->constitutive_relation->integrateStress(
         this->variable_array_prev, this->variable_array, this->t, this->x,
-        this->dt, this->eps_prev, this->eps, this->sigma_prev, *state, this->T);
+        this->dt, *state);
 
     ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));
