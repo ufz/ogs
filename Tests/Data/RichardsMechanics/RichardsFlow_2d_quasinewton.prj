@@ -38,19 +38,19 @@
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
-                            <name>bulk_modulus</name>
-                            <type>Constant</type>
-                            <value>2.2e300</value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value> 1.e-3 </value>
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Constant</type>
-                            <value> 1 </value>
+                            <type>Linear</type>
+                            <reference_value>1</reference_value>
+                            <independent_variable>
+                                <variable_name>phase_pressure</variable_name>
+                                <reference_condition>-5000</reference_condition>
+                                <slope>0.45454545454545454545e-300</slope>
+                            </independent_variable>
                         </property>
                     </properties>
                 </phase>
