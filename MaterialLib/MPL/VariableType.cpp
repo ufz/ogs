@@ -32,6 +32,10 @@ Variable convertStringToVariable(std::string const& input)
     {
         return Variable::density;
     }
+    if (boost::iequals(input, "equivalent_plastic_strain"))
+    {
+        return Variable::equivalent_plastic_strain;
+    }
     if (boost::iequals(input, "temperature"))
     {
         return Variable::temperature;

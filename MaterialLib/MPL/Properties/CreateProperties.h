@@ -29,6 +29,7 @@
 #include "CreatePermeabilityOrthotropicPowerLaw.h"
 #include "CreatePorosityFromMassBalance.h"
 #include "CreateSaturationDependentSwelling.h"
+#include "CreateStrainDependentPermeability.h"
 #include "CreateTransportPorosityFromMassBalance.h"
 #include "RelativePermeability/CreateRelPermBrooksCorey.h"
 #include "RelativePermeability/CreateRelPermLiakopoulos.h"
