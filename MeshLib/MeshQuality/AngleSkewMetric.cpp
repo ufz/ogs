@@ -88,8 +88,9 @@ double AngleSkewMetric::checkTetrahedron(Element const& elem) const
     for (auto face_number = 0; face_number < 4; ++face_number)
     {
         auto const& face = *elem.getFace(face_number);
-        std::tie(min[face_number], max[face_number]) = getMinMaxAngleFromTri(
-            *face.getNode(0), *face.getNode(1), *face.getNode(2));
+        std::tie(min[face_number], max[face_number]) =
+            getMinMaxAngleFromTriangle(*face.getNode(0), *face.getNode(1),
+                                      *face.getNode(2));
     }
 
     double const min_angle = *std::min_element(min.begin(), min.end());
@@ -159,9 +160,8 @@ std::tuple<double, double> AngleSkewMetric::getMinMaxAngleFromQuad(
     std::array const nodes = {n0, n1, n2, n3};
     for (unsigned i = 0; i < nodes.size(); ++i)
     {
-        const double angle(MathLib::getAngle(nodes[i].getCoords(),
-                                             nodes[(i + 1) % 4].getCoords(),
-                                             nodes[(i + 2) % 4].getCoords()));
+        const double angle(MathLib::getAngle(
+            nodes[i], nodes[(i + 1) % 4], nodes[(i + 2) % 4]));
         min_angle = std::min(angle, min_angle);
         max_angle = std::max(angle, max_angle);
     }
@@ -178,9 +178,8 @@ std::tuple<double, double> AngleSkewMetric::getMinMaxAngleFromTriangle(
     std::array nodes = {n0, n1, n2};
     for (unsigned i=0; i<3; ++i)
     {
-        const double angle(MathLib::getAngle(nodes[i].getCoords(),
-                                             nodes[(i + 1) % 3].getCoords(),
-                                             nodes[(i + 2) % 3].getCoords()));
+        const double angle(MathLib::getAngle(
+            nodes[i], nodes[(i + 1) % 3], nodes[(i + 2) % 3]));
         min_angle = std::min(angle, min_angle);
         max_angle = std::max(angle, max_angle);
     }
