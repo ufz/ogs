@@ -96,7 +96,11 @@ cs.setEntryName("ShearFactor");
     const int step = sig.size() + 1;
     Hill[0] = cn;
     Hill[step] = Hill[step * 2] = 1. / cn;
-    Hill[step * 3] = Hill[step * 4] = cs;
+    Hill[step * 3] = cs;
+    if (step == 7)  // 3D case
+    {
+        Hill[step * 5] = cs;
+    }
 
     // Compute initial elastic strain
     const auto S = invert(D);
@@ -146,7 +150,11 @@ cs.setEntryName("ShearFactor");
     const int step = sig.size() + 1;
     Hill[0] = cn;
     Hill[step] = Hill[step * 2] = 1. / cn;
-    Hill[step * 3] = Hill[step * 4] = cs;
+    Hill[step * 3] = cs;
+    if (step == 7)  // 3D case
+    {
+        Hill[step * 5] = cs;
+    }
     if (F)
     {
         const auto sig_scaled = Hill * sig;
