@@ -30,8 +30,7 @@ bool LineRule2::isPntInElement(Node const* const* nodes,
     double tmp;
     double tmp_dst(0);
     double const dist = MathLib::calcProjPntToLineAndDists(
-        pnt.getCoords(), nodes[0]->getCoords(), nodes[1]->getCoords(), tmp,
-        tmp_dst);
+        pnt, *nodes[0], *nodes[1], tmp, tmp_dst);
     return (dist < eps);
 }
 
