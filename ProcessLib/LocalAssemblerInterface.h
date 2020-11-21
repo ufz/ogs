@@ -141,7 +141,7 @@ private:
     {
     }
 
-    virtual void postTimestepConcrete(std::vector<double> const& /*local_x*/,
+    virtual void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
                                       double const /*t*/, double const /*dt*/)
     {
     }
