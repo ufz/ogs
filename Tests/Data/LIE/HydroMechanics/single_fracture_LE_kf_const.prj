@@ -41,7 +41,7 @@
                 <biot_coefficient>biot_f</biot_coefficient>
                 <permeability_model>
                     <type>ConstantPermeability</type>
-                    <value>8.33333E-12</value>					
+                    <value>8.33333E-12</value>
                 </permeability_model>
             </fracture_properties>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
@@ -80,7 +80,7 @@
                             <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
-                </time_stepping>			
+                </time_stepping>
             </process>
         </processes>
         <output>
@@ -94,7 +94,7 @@
                 <pair>
                     <repeat>1</repeat>
                     <each_steps>100</each_steps>
-                </pair>				
+                </pair>
             </timesteps>
             <variables>
                 <variable>pressure</variable>
@@ -152,7 +152,7 @@
             <name>nu</name>
             <type>Constant</type>
             <!--value>0.0</value-->
-            <value>0.0</value>	
+            <value>0.0</value>
         </parameter>
         <!-- Fracture properties -->
         <parameter>
@@ -174,7 +174,7 @@
             <name>Kn</name>
             <type>Constant</type>
             <!--value>1e100</value-->
-            <value>1e9</value>		
+            <value>1e9</value>
         </parameter>
         <parameter>
             <name>Ks</name>
@@ -296,14 +296,14 @@
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>InjectionPoint</geometry>
                     <type>Dirichlet</type>
-					<component>0</component>
+                    <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>OutletPoint</geometry>
                     <type>Dirichlet</type>
-					<component>0</component>
+                    <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
             </boundary_conditions>

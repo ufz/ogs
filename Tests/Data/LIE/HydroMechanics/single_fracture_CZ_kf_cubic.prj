@@ -42,14 +42,14 @@
                 <peak_normal_traction>t_np</peak_normal_traction>
                 <penalty_aperture_cutoff>1e-8</penalty_aperture_cutoff>
                 <tension_cutoff>1</tension_cutoff>
-            </fracture_model>			
+            </fracture_model>
             <fracture_properties>
                 <material_id>0</material_id>
                 <initial_aperture>aperture0</initial_aperture>
                 <specific_storage>S_f</specific_storage>
                 <biot_coefficient>biot_f</biot_coefficient>
                 <permeability_model>
-                    <type>CubicLaw</type>			
+                    <type>CubicLaw</type>
                 </permeability_model>
             </fracture_properties>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
@@ -88,7 +88,7 @@
                             <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
-                </time_stepping>			
+                </time_stepping>
             </process>
         </processes>
         <output>
@@ -102,7 +102,7 @@
                 <pair>
                     <repeat>1</repeat>
                     <each_steps>100</each_steps>
-                </pair>				
+                </pair>
             </timesteps>
             <variables>
                 <variable>pressure</variable>
@@ -177,7 +177,7 @@
             <type>Constant</type>
             <value>1</value>
         </parameter>
-		<!--fracture model-->
+        <!--fracture model-->
         <parameter>
             <name>Kn</name>
             <type>Constant</type>
@@ -198,8 +198,8 @@
             <name>t_np</name>
             <type>Constant</type>
             <!--value>1e7</value-->
-			<value>5.0e4</value>
-        </parameter>	
+            <value>5.0e4</value>
+        </parameter>
         <!-- Flow properties -->
         <parameter>
             <name>p0</name>
@@ -315,14 +315,14 @@
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>InjectionPoint</geometry>
                     <type>Dirichlet</type>
-					<component>0</component>
+                    <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>OutletPoint</geometry>
                     <type>Dirichlet</type>
-					<component>0</component>
+                    <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
             </boundary_conditions>
