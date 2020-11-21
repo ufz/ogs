@@ -89,10 +89,10 @@ public:
                              GlobalVector const& x, double const t,
                              double const delta_t);
 
-    virtual void postTimestep(std::size_t const mesh_item_id,
-                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                              GlobalVector const& x, double const t,
-                              double const dt);
+    virtual void postTimestep(
+        std::size_t const mesh_item_id,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+        std::vector<GlobalVector*> const& x, double const t, double const dt);
 
     void postNonLinearSolver(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
