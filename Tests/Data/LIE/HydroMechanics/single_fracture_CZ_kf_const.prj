@@ -27,13 +27,6 @@
             <fluid_density>rho_fr</fluid_density>
             <specific_body_force>0 0</specific_body_force>
             <initial_effective_stress>effective_stress0</initial_effective_stress>
-            <!--fracture_model>
-                <type>LinearElasticIsotropic</type>
-                <normal_stiffness>Kn</normal_stiffness>
-                <shear_stiffness>Ks</shear_stiffness>
-                <penalty_aperture_cutoff>0</penalty_aperture_cutoff>
-                <tension_cutoff>1</tension_cutoff>
-            </fracture_model-->
             <fracture_model>
                 <type>CohesiveZoneModeI</type>
                 <normal_stiffness>Kn</normal_stiffness>
@@ -182,7 +175,6 @@
         <parameter>
             <name>Kn</name>
             <type>Constant</type>
-            <!--value>1e100</value-->
             <value>1e9</value>
         </parameter>
         <parameter>
@@ -193,13 +185,11 @@
         <parameter>
             <name>Gc</name>
             <type>Constant</type>
-            <!--value>200</value-->
             <value>4</value>
         </parameter>
         <parameter>
             <name>t_np</name>
             <type>Constant</type>
-            <!--value>1e7</value-->
             <value>5.0e4</value>
         </parameter>
         <!-- Flow properties -->
@@ -341,9 +331,6 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <!--This is working but extremely slow
-            <lis>-i bicgstab -p ssor -ssor_w 1.5 -tol 1e-12 -maxiter 100000</lis>
-            -->
             <eigen>
                 <!--
                 <solver_type>PardisoLU</solver_type>

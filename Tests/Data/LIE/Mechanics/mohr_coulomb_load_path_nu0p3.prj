@@ -258,9 +258,6 @@
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <scaling>1</scaling>
-                <precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-16</error_tolerance>
             </eigen>
         </linear_solver>
     </linear_solvers>

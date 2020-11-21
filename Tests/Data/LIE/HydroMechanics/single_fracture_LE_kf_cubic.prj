@@ -145,13 +145,11 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <!--value>1e100</value-->
             <value>1e9</value>
         </parameter>
         <parameter>
             <name>nu</name>
             <type>Constant</type>
-            <!--value>0.0</value-->
             <value>0.0</value>
         </parameter>
         <!-- Fracture properties -->
@@ -173,7 +171,6 @@
         <parameter>
             <name>Kn</name>
             <type>Constant</type>
-            <!--value>1e100</value-->
             <value>1e9</value>
         </parameter>
         <parameter>
@@ -320,9 +317,6 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <!--This is working but extremely slow
-            <lis>-i bicgstab -p ssor -ssor_w 1.5 -tol 1e-12 -maxiter 100000</lis>
-            -->
             <eigen>
                 <!--
                 <solver_type>PardisoLU</solver_type>
