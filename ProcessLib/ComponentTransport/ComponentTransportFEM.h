@@ -48,6 +48,7 @@ struct IntegrationPointData final
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
 
+    double porosity = std::numeric_limits<double>::quiet_NaN();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
@@ -135,11 +136,15 @@ public:
             _integration_method.getNumberOfPoints();
         _ip_data.reserve(n_integration_points);
 
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                       GlobalDim>(element, is_axially_symmetric,
                                                  _integration_method);
-
+        auto const& medium =
+            _process_data.media_map->getMedium(_element.getID());
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
@@ -147,6 +152,12 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ);
+
+            pos.setIntegrationPoint(ip);
+
+            _ip_data[ip].porosity =
+                medium->property(MaterialPropertyLib::PropertyType::porosity)
+                    .template initialValue<double>(pos, 0.);
         }
 
         if (_process_data.chemical_process_data)
@@ -277,10 +288,11 @@ public:
         {
             pos.setIntegrationPoint(ip);
 
-            auto const& ip_data = _ip_data[ip];
+            auto& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
+            auto& porosity = ip_data.porosity;
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
@@ -293,8 +305,8 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            // porosity model
-            auto const porosity =
+            // update according to a particular porosity model
+            porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
 
@@ -474,10 +486,11 @@ public:
         {
             pos.setIntegrationPoint(ip);
 
-            auto const& ip_data = _ip_data[ip];
+            auto& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
+            auto& porosity = ip_data.porosity;
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
@@ -490,8 +503,8 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            // porosity model
-            auto const porosity =
+            // update according to a particular porosity model
+            porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
 
@@ -591,10 +604,11 @@ public:
         {
             pos.setIntegrationPoint(ip);
 
-            auto const& ip_data = _ip_data[ip];
+            auto& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
+            auto& porosity = ip_data.porosity;
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
@@ -607,8 +621,8 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            // porosity model
-            auto const porosity =
+            // update according to a particular porosity model
+            porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
 
