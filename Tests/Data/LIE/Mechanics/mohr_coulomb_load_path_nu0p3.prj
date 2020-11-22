@@ -69,7 +69,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>out_mohr_coulomb_load_path_nu0p3</prefix>          
+            <prefix>out_mohr_coulomb_load_path_nu0p3</prefix>
             <timesteps>
                 <pair>
                     <repeat>50000</repeat>
@@ -258,9 +258,6 @@
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <scaling>1</scaling>
-                <precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-16</error_tolerance>
             </eigen>
         </linear_solver>
     </linear_solvers>
@@ -292,7 +289,7 @@
       <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_0.500000.vtu</regex>
             <field>stress_xy</field>
-            <absolute_tolerance>2e-12</absolute_tolerance>
+            <absolute_tolerance>3e-4</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -304,15 +301,15 @@
         <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_2.500000.vtu</regex>
             <field>stress_xy</field>
-            <absolute_tolerance>5e-4</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
+            <absolute_tolerance>2e-3</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_4.000000.vtu</regex>
             <field>stress_xy</field>
-            <absolute_tolerance>1e-7</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>   
+            <absolute_tolerance>4e-4</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
        <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_0.500000.vtu</regex>
             <field>displacement_jump1</field>
@@ -360,6 +357,6 @@
             <field>f_stress_s</field>
             <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>           
+        </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

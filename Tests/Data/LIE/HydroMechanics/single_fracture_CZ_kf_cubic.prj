@@ -27,13 +27,6 @@
             <fluid_density>rho_fr</fluid_density>
             <specific_body_force>0 0</specific_body_force>
             <initial_effective_stress>effective_stress0</initial_effective_stress>
-            <!--fracture_model>
-                <type>LinearElasticIsotropic</type>
-                <normal_stiffness>Kn</normal_stiffness>
-                <shear_stiffness>Ks</shear_stiffness>
-                <penalty_aperture_cutoff>0</penalty_aperture_cutoff>
-                <tension_cutoff>1</tension_cutoff>
-            </fracture_model-->
             <fracture_model>
                 <type>CohesiveZoneModeI</type>
                 <normal_stiffness>Kn</normal_stiffness>
@@ -42,14 +35,14 @@
                 <peak_normal_traction>t_np</peak_normal_traction>
                 <penalty_aperture_cutoff>1e-8</penalty_aperture_cutoff>
                 <tension_cutoff>1</tension_cutoff>
-            </fracture_model>			
+            </fracture_model>
             <fracture_properties>
                 <material_id>0</material_id>
                 <initial_aperture>aperture0</initial_aperture>
                 <specific_storage>S_f</specific_storage>
                 <biot_coefficient>biot_f</biot_coefficient>
                 <permeability_model>
-                    <type>CubicLaw</type>			
+                    <type>CubicLaw</type>
                 </permeability_model>
             </fracture_properties>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
@@ -88,7 +81,7 @@
                             <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
-                </time_stepping>			
+                </time_stepping>
             </process>
         </processes>
         <output>
@@ -102,7 +95,7 @@
                 <pair>
                     <repeat>1</repeat>
                     <each_steps>100</each_steps>
-                </pair>				
+                </pair>
             </timesteps>
             <variables>
                 <variable>pressure</variable>
@@ -177,7 +170,7 @@
             <type>Constant</type>
             <value>1</value>
         </parameter>
-		<!--fracture model-->
+        <!--fracture model-->
         <parameter>
             <name>Kn</name>
             <type>Constant</type>
@@ -191,15 +184,13 @@
         <parameter>
             <name>Gc</name>
             <type>Constant</type>
-            <!--value>200</value-->
             <value>4</value>
         </parameter>
         <parameter>
             <name>t_np</name>
             <type>Constant</type>
-            <!--value>1e7</value-->
-			<value>5.0e4</value>
-        </parameter>	
+            <value>5.0e4</value>
+        </parameter>
         <!-- Flow properties -->
         <parameter>
             <name>p0</name>
@@ -315,14 +306,14 @@
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>InjectionPoint</geometry>
                     <type>Dirichlet</type>
-					<component>0</component>
+                    <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>single_fracture</geometrical_set>
                     <geometry>OutletPoint</geometry>
                     <type>Dirichlet</type>
-					<component>0</component>
+                    <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
             </boundary_conditions>
@@ -339,9 +330,6 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <!--This is working but extremely slow
-            <lis>-i bicgstab -p ssor -ssor_w 1.5 -tol 1e-12 -maxiter 100000</lis>
-            -->
             <eigen>
                 <!--
                 <solver_type>PardisoLU</solver_type>
@@ -353,31 +341,31 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>out_single_fracture_CZ_kf_cubic_ts_(.*)_t_10000.000000.vtu</regex>
+            <regex>out_single_fracture_CZ_kf_cubic_.*.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>out_single_fracture_CZ_kf_cubic_ts_(.*)_t_10000.000000.vtu</regex>
+            <regex>out_single_fracture_CZ_kf_cubic_.*.vtu</regex>
             <field>pressure_interpolated</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>1e-12</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>out_single_fracture_CZ_kf_cubic_ts_(.*)_t_10000.000000.vtu</regex>
+            <regex>out_single_fracture_CZ_kf_cubic_.*.vtu</regex>
             <field>displacement_jump1</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>1e-12</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>out_single_fracture_CZ_kf_cubic_ts_(.*)_t_10000.000000.vtu</regex>
+            <regex>out_single_fracture_CZ_kf_cubic_.*.vtu</regex>
             <field>k_f</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>1e-12</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>out_single_fracture_CZ_kf_cubic_ts_(.*)_t_10000.000000.vtu</regex>
+            <regex>out_single_fracture_CZ_kf_cubic_.*.vtu</regex>
             <field>velocity</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>1e-12</relative_tolerance>
