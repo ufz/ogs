@@ -286,14 +286,24 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
                                 double const dt,
                                 int const process_id)
 {
+    if (process_id != 0)
+    {
+        return;
+    }
+
     DBUG("PostTimestep ThermoMechanicalPhaseFieldProcess.");
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    auto const n_processes = x.size();
+    dof_tables.reserve(n_processes);
+    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+    {
+        dof_tables.push_back(&getDOFTable(process_id));
+    }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id),
-        *x[process_id], t, dt);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
 }
 
 template <int DisplacementDim>

@@ -178,7 +178,7 @@ public:
         }
     }
 
-    void postTimestepConcrete(std::vector<double> const& /*local_x*/,
+    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
                               double const /*t*/,
                               double const /*dt*/) override
     {

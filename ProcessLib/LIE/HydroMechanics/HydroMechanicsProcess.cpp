@@ -459,18 +459,27 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, const double t, double const dt,
     int const process_id)
 {
-    DBUG("Compute the secondary variables for HydroMechanicsProcess.");
-    const auto& dof_table = getDOFTable(process_id);
-
+    if (process_id == 0)
     {
+        DBUG("PostTimestep HydroMechanicsProcess.");
+        std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+        auto const n_processes = x.size();
+        dof_tables.reserve(n_processes);
+        for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+        {
+            dof_tables.push_back(&getDOFTable(process_id));
+        }
+
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
-
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::postTimestep,
-            _local_assemblers, pv.getActiveElementIDs(), dof_table,
-            *x[process_id], t, dt);
+            _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
     }
+
+    DBUG("Compute the secondary variables for HydroMechanicsProcess.");
+
+    const auto& dof_table = getDOFTable(process_id);
 
     // Copy displacement jumps in a solution vector to mesh property
     // Remark: the copy is required because mesh properties for primary

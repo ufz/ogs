@@ -100,13 +100,11 @@ public:
         }
     }
 
-    void postTimestepConcrete(std::vector<double> const& local_x_,
-                              const double t, double const dt) override
+    void postTimestepConcrete(Eigen::VectorXd const& local_x_, const double t,
+                              double const dt) override
     {
-        auto const local_dof_size = local_x_.size();
-
         _local_u.setZero();
-        for (unsigned i = 0; i < local_dof_size; i++)
+        for (Eigen::Index i = 0; i < local_x_.rows(); i++)
         {
             _local_u[_dofIndex_to_localIndex[i]] = local_x_[i];
         }
