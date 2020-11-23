@@ -4,7 +4,9 @@
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE HydroMechanics/Linear/Confined_Compression/square_1e2.prj)
 endif()
-
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE HydroMechanics/Linear/DrainageEexcavation/HMdrainage.prj)
+endif()
 AddTest(
     NAME HydroMechanics_HML_square_1e2_quad9_confined_compression
     PATH HydroMechanics/Linear/Confined_Compression
