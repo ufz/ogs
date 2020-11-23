@@ -251,7 +251,8 @@ void addProcessDataToMesh(
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 bool const compress_output, int const data_mode,
-                OutputType const file_type)
+                OutputType const file_type, int const time_step,
+                double const time)
 {
     // Write output file
     DBUG("Writing output to '{:s}'.", file_name);
@@ -278,13 +279,18 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
             vtu_interface.writeToFile(file_name);
             break;
         }
+
         case OutputType::xdmf:
         {
-            MeshLib::IO::writeXdmf3(mesh, file_name);
+            MeshLib::IO::Xdmf3Writer writer(
+                file_name, MeshLib::IO::transformGeometry(mesh),
+                MeshLib::IO::transformTopology(mesh),
+                MeshLib::IO::transformAttributes(mesh), time_step);
+            writer.WriteStep(time_step, time);
         }
     }
 
-    // Restore floating-point exception handling.
+        // Restore floating-point exception handling.
 #ifndef _WIN32
 #ifndef __APPLE__
     fesetenv(&fe_env);

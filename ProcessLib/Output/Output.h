@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "MeshLib/IO/VtkIO/PVDFile.h"
+#include "MeshLib/IO/XDMF/Xdmf3Writer.h"
 #include "ProcessOutput.h"
 
 namespace ProcessLib
@@ -82,11 +83,18 @@ public:
 
 private:
     struct OutputFile;
+
     void outputMesh(OutputFile const& output_file,
                         MeshLib::IO::PVDFile* const pvd_file,
                         MeshLib::Mesh const& mesh,
+                        const int timestep,
                         double const t) const;
+    void outputMeshXdmf(OutputFile const& output_file,
+                        MeshLib::Mesh const& mesh,
+                        const int timestep,
+                        double const t);
 private:
+    std::unique_ptr<MeshLib::IO::Xdmf3Writer>_mesh_xdmf_writer;
     std::string const _output_directory;
     OutputType const _output_file_type;
     std::string const _output_file_prefix;

@@ -53,5 +53,5 @@ enum class OutputType : uint8_t
 };
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 bool const compress_output, int const data_mode,
-                OutputType const file_type);
+                OutputType const file_type, int const timestep, double const t);
 }  // namespace ProcessLib

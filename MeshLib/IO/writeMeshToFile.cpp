@@ -14,7 +14,8 @@
 #include "BaseLib/StringTools.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/IO/XDMF/writeXdmf.h"
+#include "MeshLib/IO/XDMF/Xdmf3Writer.h"
+#include "MeshLib/IO/XDMF/transformData.h"
 #include "MeshLib/Mesh.h"
 
 namespace MeshLib
