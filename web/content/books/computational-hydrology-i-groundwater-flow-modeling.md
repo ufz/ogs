@@ -16,7 +16,7 @@ This OGS tutorial is the result of close cooperation of the Helmholtz Centre for
 
 This book is intended primarily for graduate students and applied scientists who deal with hydrological system analysis and hydrological modelling. It is also a valuable source of information for professional hydrologists wishing to advance their knowledge in numerical modelling of coupled hydrological-hydrogeological systems. As such, this book will be a valuable aid in training of hydrosystem modelling.
 
-<div class='clearfix'>
+<div class='flow-root'>
 </div>
 
 <div class='note'>

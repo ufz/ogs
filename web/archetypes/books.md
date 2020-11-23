@@ -13,7 +13,7 @@ image = "[TODO]"
 
 TODO DESCRIPTION
 
-<div class='clearfix'>
+<div class='flow-root'>
 </div>
 
 <div class='note'>
