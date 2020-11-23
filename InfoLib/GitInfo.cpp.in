@@ -17,6 +17,7 @@ namespace GitInfoLib
 
 namespace GitInfo
 {
+    const std::string OGS_VERSION = "OGS_VERSION";
     const std::string git_version_sha1_short("@GIT_SHA1_SHORT@");
     const std::string ogs_version("@OGS_VERSION@");
 }

@@ -27,7 +27,7 @@
 static void addOgsVersion(MeshLib::Mesh& mesh)
 {
     auto& ogs_version_field = *MeshLib::getOrCreateMeshProperty<char>(
-        mesh, "OGS_VERSION", MeshLib::MeshItemType::IntegrationPoint, 1);
+        mesh, GitInfoLib::GitInfo::OGS_VERSION, MeshLib::MeshItemType::IntegrationPoint, 1);
 
     ogs_version_field.assign(GitInfoLib::GitInfo::ogs_version.begin(),
                              GitInfoLib::GitInfo::ogs_version.end());
