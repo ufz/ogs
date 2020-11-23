@@ -30,13 +30,22 @@ int main(int argc, char *argv[])
             "Copyright (c) 2012-2020, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> mesh_in_arg(
-        "i", "input_mesh_file", "input mesh file", true, "", "string");
-    cmd.add(mesh_in_arg);
+
     TCLAP::ValueArg<std::string> mesh_out_arg(
         "o", "output_mesh_file", "output mesh file", true, "", "string");
     cmd.add(mesh_out_arg);
-
+    std::vector<std::string> allowed_element_criterions{
+        "ElementSize", "EdgeRatio", "EquiAngleSkew", "RadiusEdgeRatio",
+        "SizeDifference"};
+    TCLAP::ValuesConstraint<std::string> element_criterions{
+        allowed_element_criterions};
+    TCLAP::ValueArg<std::string> criterion_arg{
+        "c", "quality_criterion", "quality criterion", true,
+        "",  &element_criterions};
+    cmd.add(criterion_arg);
+    TCLAP::ValueArg<std::string> mesh_in_arg(
+        "i", "input_mesh_file", "input mesh file", true, "", "string");
+    cmd.add(mesh_in_arg);
     cmd.parse(argc, argv);
 
     // read the mesh file
@@ -51,11 +60,11 @@ int main(int argc, char *argv[])
     INFO("Time for reading: {:g} s", run_time.elapsed());
 
     // Geometric information
-    MeshLib::MeshQualityType const type = MeshLib::MeshQualityType::EDGERATIO;
+    MeshLib::MeshQualityType const type =
+        MeshLib::String2MeshQualityType(criterion_arg.getValue());
     MeshLib::ElementQualityInterface element_quality(*mesh, type);
     auto const element_quality_vector = element_quality.getQualityVector();
-    INFO("{:d}", element_quality_vector.size());
-    MeshLib::addPropertyToMesh(*mesh, "element_quality",
+    MeshLib::addPropertyToMesh(*mesh, criterion_arg.getValue(),
                                MeshLib::MeshItemType::Cell, 1,
                                element_quality_vector);
     INFO("Writing mesh '{:s}' ... ", mesh_out_arg.getValue());
