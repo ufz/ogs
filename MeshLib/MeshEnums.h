@@ -105,5 +105,6 @@ std::vector<std::string> getMeshElemTypeStringsShort();
 std::string CellType2String(const CellType t);
 
 std::string MeshQualityType2String(const MeshQualityType t);
+MeshLib::MeshQualityType String2MeshQualityType(std::string const& s);
 
 }  // namespace MeshLib

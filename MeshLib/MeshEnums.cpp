@@ -207,4 +207,29 @@ std::string MeshQualityType2String(const MeshQualityType t)
     return "none";
 }
 
+MeshLib::MeshQualityType String2MeshQualityType(std::string const& s)
+{
+    if (boost::iequals(s, "ElementSize"))
+    {
+        return MeshQualityType::ELEMENTSIZE;
+    }
+    if (boost::iequals(s, "EdgeRatio"))
+    {
+        return MeshQualityType::EDGERATIO;
+    }
+    if (boost::iequals(s, "EquiAngleSkew"))
+    {
+        return MeshQualityType::EQUIANGLESKEW;
+    }
+    if (boost::iequals(s, "RadiusEdgeRatio"))
+    {
+        return MeshQualityType::RADIUSEDGERATIO;
+    }
+    if (boost::iequals(s, "SizeDifference"))
+    {
+        return MeshQualityType::SIZEDIFFERENCE;
+    }
+    return MeshQualityType::INVALID;
+}
+
 }  // namespace MeshLib
