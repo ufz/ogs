@@ -31,14 +31,16 @@ Simply download an image from the [latest master-branch build](https://gitlab.op
 ### Run OGS inside a Container (called from outside)
 
 ```bash
+# Linux only:
 singularity exec --app ogs ogs-6.2.2-serial.sif ogs some/path/project.prj
 ```
 
 This starts the container, mounts your home directory inside the container, passes the current working directory and runs the ogs executable (in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When ogs finishes the container stops and you returns to the host system.
 
-The `--app ogs` selects a pre-defined execution environment in the container (i.e. setting the `PATH` to `/scif/apps/ogs/bin` in which all the executables are located). You could also run without the `--app`-parameter but then you had to specify the full executable path in the container:
+The `--app ogs` selects a pre-defined execution environment in the container (i.e. setting the `PATH` to `/scif/apps/ogs/bin` in which all the executables are located). You could also (and **on macOS you have to**) run without the `--app`-parameter but then you had to specify the full executable path in the container:
 
 ```bash
+# Works on macOS too:
 singularity exec ogs-6.2.2-serial.sif /scif/apps/ogs/bin/ogs ...
 ```
 
