@@ -18,6 +18,7 @@ set(REQUIRED_SUBMODULES
     ThirdParty/spdlog
     ThirdParty/tclap
     ThirdParty/tetgen
+    ThirdParty/xdmf
     ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
 if(BUILD_TESTING)

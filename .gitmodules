@@ -49,3 +49,6 @@
 [submodule "ThirdParty/xdmfdiff"]
 	path = ThirdParty/xdmfdiff
 	url = https://gitlab.opengeosys.org/ogs/xdmfdiff.git
+[submodule "ThirdParty/xdmf"]
+	path = ThirdParty/xdmf
+	url = https://gitlab.opengeosys.org/ogs/xdmflib.git
