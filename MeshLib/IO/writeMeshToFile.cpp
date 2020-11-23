@@ -18,9 +18,7 @@
 #include "MeshLib/IO/XDMF/transformData.h"
 #include "MeshLib/Mesh.h"
 
-namespace MeshLib
-{
-namespace IO
+namespace MeshLib::IO
 {
 int writeMeshToFile(const MeshLib::Mesh& mesh,
                     std::filesystem::path const& file_path)
@@ -46,19 +44,21 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     }
     if (file_path.extension().string() == ".xdmf")
     {
-        if (auto const result = writeXdmf3(mesh, file_path); !result)
-        {
-            ERR("writeMeshToFile(): Could not write mesh to '{:s}'.",
-                file_path.string());
-            return -1;
-        }
+        auto writer =
+            std::make_unique<MeshLib::IO::Xdmf3Writer>(MeshLib::IO::Xdmf3Writer(
+                file_path, MeshLib::IO::transformGeometry(mesh),
+                MeshLib::IO::transformTopology(mesh),
+                MeshLib::IO::transformAttributes(mesh), 0));
+        // \TODO Errorhandling, Change data model into static and time depended,
+        // then is is not neccessary to give time step 0 a special treatment
+        // here
+        writer->WriteStep(0, 0);
+
         return 0;
     }
     ERR("writeMeshToFile(): Unknown mesh file format in file {:s}.",
         file_path.string());
     return -1;
-
 }
 
-} // end namespace IO
-} // end namespace MeshLib
+}  // namespace MeshLib::IO
