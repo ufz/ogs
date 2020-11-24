@@ -99,19 +99,6 @@ MeshLib::Node Element::getCenterOfGravity() const
     return center;
 }
 
-void Element::computeSqrEdgeLengthRange(double &min, double &max) const
-{
-    min = std::numeric_limits<double>::max();
-    max = 0;
-    const unsigned nEdges (this->getNumberOfEdges());
-    for (unsigned i=0; i<nEdges; i++)
-    {
-        const double dist (MathLib::sqrDist(*getEdgeNode(i,0), *getEdgeNode(i,1)));
-        min = (dist<min) ? dist : min;
-        max = (dist>max) ? dist : max;
-    }
-}
-
 void Element::computeSqrNodeDistanceRange(double &min, double &max, bool check_allnodes) const
 {
     min = std::numeric_limits<double>::max();
@@ -232,6 +219,21 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
     return os;
 }
 #endif  // NDEBUG
+
+std::pair<double, double> computeSqrEdgeLengthRange(Element const& element)
+{
+    double min = std::numeric_limits<double>::max();
+    double max = 0;
+    const unsigned nEdges(element.getNumberOfEdges());
+    for (unsigned i = 0; i < nEdges; i++)
+    {
+        const double dist(MathLib::sqrDist(*element.getEdgeNode(i, 0),
+                                           *element.getEdgeNode(i, 1)));
+        min = std::min(dist, min);
+        max = std::max(dist, max);
+    }
+    return {min, max};
+}
 
 bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
 {

@@ -36,9 +36,6 @@ class Element
     friend class Mesh;
 
 public:
-    /// Compute the minimum and maximum squared edge length for this element
-    virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
-
     /// Compute the minimum and maximum node distances for this element.
     void computeSqrNodeDistanceRange(double& min, double& max,
                                      bool check_allnodes = true) const;
@@ -227,6 +224,9 @@ protected:
     void setNeighbor(Element* neighbor, unsigned const face_id);
 
 }; /* class */
+
+/// Compute the minimum and maximum squared edge length for this element
+std::pair<double, double> computeSqrEdgeLengthRange(Element const& element);
 
 /// Let \f$p'\f$ the orthogonal projection to the \f$x\f$-\f$y\f$ plane of the
 /// point \c p and \f$e'\f$ the orthogonal projection to the \f$x\f$-\f$y\f$

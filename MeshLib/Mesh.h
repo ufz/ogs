@@ -163,7 +163,9 @@ protected:
     std::size_t const _id;
     unsigned _mesh_dimension;
     /// The minimal and maximal edge length over all elements in the mesh
-    std::pair<double, double> _edge_length;
+    std::pair<double, double> _edge_length = {
+        std::numeric_limits<double>::quiet_NaN(),
+        std::numeric_limits<double>::quiet_NaN()};
     /// The minimal and maximal distance of nodes within an element over all elements in the mesh
     std::pair<double, double> _node_distance;
     std::string _name;
