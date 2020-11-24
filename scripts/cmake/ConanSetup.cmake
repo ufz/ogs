@@ -34,6 +34,7 @@ set(CONAN_REQUIRES
     boost/${ogs.minimum_version.boost}@conan/stable
     eigen/${ogs.minimum_version.eigen}@conan/stable
     vtk/${ogs.tested_version.vtk}@bilke/stable
+    hdf5/${ogs.tested_version.hdf5}
     CACHE INTERNAL ""
 )
 
@@ -41,7 +42,6 @@ set(CONAN_OPTIONS
     boost:header_only=True
     vtk:minimal=True
     vtk:ioxml=True
-    vtk:ioxdmf3=True
     CACHE INTERNAL ""
 )
 
