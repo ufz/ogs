@@ -73,27 +73,6 @@ struct IntegrationPointData final
     }
 
     template <typename DisplacementVectorType>
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        DisplacementVectorType const& /*u*/,
-        double const T)
-    {
-        auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
-            *material_state_variables, T);
-
-        if (!solution)
-            OGS_FATAL("Computation of local constitutive relation failed.");
-
-        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
-        std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
-
-        return C;
-    }
-
-    template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
         double const t,
         ParameterLib::SpatialPosition const& x_position,
