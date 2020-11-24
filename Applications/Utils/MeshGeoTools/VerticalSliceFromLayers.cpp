@@ -30,7 +30,7 @@
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Polygon.h"
-#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
@@ -40,6 +40,8 @@
 #include "MeshGeoToolsLib/GeoMapper.h"
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
+
+#include <QApplication>
 
 /// deletes temporary output files
 void removeFile(std::string const& filename)
@@ -194,13 +196,6 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
     std::size_t const n_lines = lines->size();
     geo.addPointVec(std::move(points), merged_geo_name);
     geo.addPolylineVec(std::move(lines), merged_geo_name);
-
-    // setting names for polylines because BoostXmlInterface will ignore all polylines without name
-    auto ply_vec = geo.getPolylineVecObj(merged_geo_name);
-    for (std::size_t i = 0; i < n_lines; ++i)
-    {
-        ply_vec->setNameForElement(i, std::to_string(i));
-    }
 }
 
 /// rotates the merged geometry into the XY-plane
@@ -232,14 +227,13 @@ void consolidateGeometry(GeoLib::GEOObjects& geo,
                          bool const keep_gml_file)
 {
     std::string const filename(output_name + ".gml");
-    GeoLib::IO::BoostXmlGmlInterface writer(geo);
-    writer.setNameForExport(merged_geo_name);
-    writer.writeToFile(filename);
+    GeoLib::IO::XmlGmlInterface xml(geo);
+    xml.setNameForExport(merged_geo_name);
+    xml.writeToFile(filename);
 
     geo.removePolylineVec(merged_geo_name);
     geo.removePointVec(merged_geo_name);
 
-    GeoLib::IO::BoostXmlGmlInterface xml(geo);
     xml.readFile(filename);
 
     if (!keep_gml_file)
@@ -298,14 +292,6 @@ MeshLib::Mesh* removeLineElements(MeshLib::Mesh mesh)
             line_idx.push_back(e->getID());
         }
     });
-        /*
-    for (std::size_t i = 0; i < n_elems; ++i)
-    {
-        if (elems[i]->getGeomType() == MeshLib::MeshElemType::LINE)
-        {
-            line_idx.push_back(i);
-        }
-    }*/
     if (line_idx.size() == mesh.getNumberOfElements())
     {
         return nullptr;
@@ -315,6 +301,7 @@ MeshLib::Mesh* removeLineElements(MeshLib::Mesh mesh)
 
 int main(int argc, char* argv[])
 {
+    QApplication a(argc, argv);
     TCLAP::CmdLine cmd(
         "Creates a triangle-mesh of a vertical slice out of a list of input "
         "layer meshes. The slice is defined by a start- and end-point. In "
