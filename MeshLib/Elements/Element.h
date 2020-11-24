@@ -40,7 +40,8 @@ public:
     virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
 
     /// Compute the minimum and maximum node distances for this element.
-    virtual void computeSqrNodeDistanceRange(double &min, double &max, bool check_allnodes=true) const;
+    void computeSqrNodeDistanceRange(double& min, double& max,
+                                     bool check_allnodes = true) const;
 
     /**
      * \brief Tries to add an element e as neighbour to this element.
