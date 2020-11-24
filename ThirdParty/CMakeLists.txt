@@ -93,3 +93,9 @@ foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
         $<$<CXX_COMPILER_ID:MSVC>:/W0>)
 endforeach()
+
+set(XDMF_LIBNAME "ogs_xdmf" CACHE INTERNAL "")
+add_subdirectory(xdmf)
+# ZLIB is HDF5 dependency
+find_package(ZLIB REQUIRED)
+target_link_libraries(ogs_xdmf ZLIB::ZLIB)
