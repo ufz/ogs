@@ -8,11 +8,13 @@ container:
   extends:
     - .container-maker-setup
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON'
+      --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial --upload
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
