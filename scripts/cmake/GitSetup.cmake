@@ -88,6 +88,10 @@ if(IS_GIT_REPO AND NOT OGS_VERSION)
     )
 endif()
 
+if(DEFINED OGS_VERSION)
+    message(STATUS "Using user-provided OGS_VERSION=${OGS_VERSION}")
+endif()
+
 if(MSVC)
     set(CMD_COMMAND "cmd" "/c" CACHE INTERNAL "")
 endif()
