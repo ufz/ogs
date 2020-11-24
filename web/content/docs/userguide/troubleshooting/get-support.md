@@ -9,7 +9,7 @@ weight = 1
     parent = "troubleshooting"
 +++
 
-If you encounter issues using or developing OGS please let us know. To help you in the best possible way we need detailed information about the problem from you. In the best case we can reproduce the issue by ourselves and fix it for you. So please provide the following information:
+If you encounter issues using or developing OGS let us know. To help you in the best possible way we need detailed information about the problem from you. In the best case we can reproduce the issue by ourselves and possibly fix it for you. Please provide the following information:
 
 ### Report contents
 
