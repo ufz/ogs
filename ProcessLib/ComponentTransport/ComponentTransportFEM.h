@@ -974,6 +974,11 @@ public:
             ele_velocity_mat.rowwise().sum() / n_integration_points;
     }
 
+    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
+                              double const /*t*/, double const /*dt*/) override
+    {
+    }
+
 private:
     MeshLib::Element const& _element;
     ComponentTransportProcessData const& _process_data;

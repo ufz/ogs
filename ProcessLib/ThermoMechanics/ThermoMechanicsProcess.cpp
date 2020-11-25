@@ -415,19 +415,24 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, double const dt,
     int const process_id)
 {
-    if (process_id != _process_data.mechanics_process_id)
+    if (process_id != 0)
     {
         return;
     }
 
     DBUG("PostTimestep ThermoMechanicsProcess.");
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    auto const n_processes = x.size();
+    dof_tables.reserve(n_processes);
+    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+    {
+        dof_tables.push_back(&getDOFTable(process_id));
+    }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
-        t, dt);
+        pv.getActiveElementIDs(), dof_tables, x, t, dt);
 }
 
 template <int DisplacementDim>

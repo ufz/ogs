@@ -302,13 +302,15 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
                                 int const process_id)
 {
     DBUG("PostTimestep SmallDeformationNonlocalProcess.");
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(x.size());
+    std::generate_n(std::back_inserter(dof_tables), x.size(),
+                    [&]() { return _local_to_global_index_map.get(); });
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
-        t, dt);
+        pv.getActiveElementIDs(), dof_tables, x, t, dt);
 }
 
 template <int DisplacementDim>

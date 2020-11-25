@@ -289,30 +289,28 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
 void ComponentTransportProcess::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
     const double t,
-    const double /*delta_t*/,
+    const double dt,
     int const process_id)
 {
-    // For the monolithic scheme, process_id is always zero.
-    if (_use_monolithic_scheme && process_id != 0)
+    if (process_id != 0)
     {
-        OGS_FATAL(
-            "The condition of process_id = 0 must be satisfied for "
-            "monolithic ComponentTransportProcess, which is a single process.");
-    }
-    if (!_use_monolithic_scheme && process_id != 0)
-    {
-        DBUG(
-            "This is the transport part of the staggered "
-            "ComponentTransportProcess.");
         return;
     }
+
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(x.size());
+    std::generate_n(std::back_inserter(dof_tables), x.size(),
+                    [&]() { return _local_to_global_index_map.get(); });
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &ComponentTransportLocalAssemblerInterface::postTimestep,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
+
     if (!_surfaceflux)  // computing the surfaceflux is optional
     {
         return;
     }
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
                             pv.getActiveElementIDs());
 }
