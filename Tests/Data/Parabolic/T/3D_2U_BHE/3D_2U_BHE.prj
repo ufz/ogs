@@ -18,7 +18,8 @@
                         <!-- if power type boundary conditions are selected, the related
                         power value should be set with half of the presumed BHE power-->
                         <type>TemperatureCurveFlowCurve</type>
-                        <flow_rate_curve>flow_rate</flow_rate_curve><!-- flow rate within each U-pipe -->
+                        <flow_rate_curve>flow_rate</flow_rate_curve>
+                        <!-- flow rate within each U-pipe -->
                         <temperature_curve>inflow_temperature</temperature_curve>
                     </flow_and_temperature_control>
                     <borehole>

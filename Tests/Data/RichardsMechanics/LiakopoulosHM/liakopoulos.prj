@@ -139,18 +139,30 @@
                     <t_initial> 0.0 </t_initial>
                     <t_end>7200</t_end>
                     <timesteps>
-                        <pair><repeat>10</repeat>
-                              <delta_t>1</delta_t></pair>
-                        <pair><repeat>9</repeat>
-                              <delta_t>10</delta_t></pair>
-                        <pair><repeat>11</repeat>
-                              <delta_t>100</delta_t></pair>
-                        <pair><repeat>3</repeat>
-                              <delta_t>200</delta_t></pair>
-                        <pair><repeat>3</repeat>
-                              <delta_t>400</delta_t></pair>
-                        <pair><repeat>7</repeat>
-                              <delta_t>600</delta_t></pair>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>9</repeat>
+                            <delta_t>10</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>11</repeat>
+                            <delta_t>100</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>3</repeat>
+                            <delta_t>200</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>3</repeat>
+                            <delta_t>400</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>7</repeat>
+                            <delta_t>600</delta_t>
+                        </pair>
                     </timesteps>
                 </time_stepping>
             </process>
@@ -159,7 +171,7 @@
             <type>VTK</type>
             <prefix>{:meshname}</prefix>
             <suffix>_t_{:gtime}</suffix>
-           <timesteps>
+            <timesteps>
                 <pair>
                     <repeat>500</repeat>
                     <each_steps>10</each_steps>

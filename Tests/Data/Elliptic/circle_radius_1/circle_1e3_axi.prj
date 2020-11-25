@@ -3,7 +3,7 @@
     <mesh axially_symmetric="true">line_1_lines_1e3.vtu</mesh>
     <geometry>circle_1_axi.gml</geometry>
     <processes>
-        <include file="../cube_1x1x1_SteadyStateDiffusion/SteadyStateDiffusion.xml" />
+        <include file="../cube_1x1x1_SteadyStateDiffusion/SteadyStateDiffusion.xml"/>
     </processes>
     <media>
         <medium id="0">

@@ -69,19 +69,19 @@ boundary meshes will be written as well -->
     </media>
     <parameters>
         <parameter>
-             <name>p_0</name>
-             <type>Function</type>
-             <expression>z</expression>
+            <name>p_0</name>
+            <type>Function</type>
+            <expression>z</expression>
         </parameter>
         <parameter>
-             <name>p_polyline_left</name>
-             <type>Function</type>
-             <expression>x+1</expression>
+            <name>p_polyline_left</name>
+            <type>Function</type>
+            <expression>x+1</expression>
         </parameter>
         <parameter>
-             <name>p_polyline_right</name>
-             <type>Function</type>
-             <expression>x-5</expression>
+            <name>p_polyline_right</name>
+            <type>Function</type>
+            <expression>x-5</expression>
         </parameter>
     </parameters>
     <process_variables>
@@ -136,7 +136,7 @@ boundary meshes will be written as well -->
             <meshes>
                 <mesh>square_5x5_tris_32</mesh>
                 <mesh>square_5x5_tris_32_left_boundary</mesh>
-				<mesh>square_5x5_tris_32_right_boundary</mesh>
+                <mesh>square_5x5_tris_32_right_boundary</mesh>
             </meshes>
             <timesteps>
                 <pair>

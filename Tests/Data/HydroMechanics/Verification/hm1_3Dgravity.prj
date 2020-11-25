@@ -111,8 +111,8 @@
             <process ref="HM">
                 <!--For the equations of pressure-->
                 <nonlinear_solver>
-		    basic_newton_pressure
-		</nonlinear_solver>
+            basic_newton_pressure
+        </nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
@@ -136,8 +136,8 @@
             <process ref="HM">
                 <!--For the equations of deformation-->
                 <nonlinear_solver>
-		    basic_newton_displacement
-		</nonlinear_solver>
+            basic_newton_displacement
+        </nonlinear_solver>
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>

@@ -64,7 +64,7 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-                 <time_stepping>
+                <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
                     <t_end>10000</t_end>

@@ -73,7 +73,6 @@
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
-
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
@@ -148,7 +147,7 @@
         </parameter>
         <parameter>
             <name>gc</name>
-<!--             <type>Constant</type>
+            <!--             <type>Constant</type>
             <value>100</value> -->
             <type>MeshElement</type>
             <field_name>Gc</field_name>
@@ -175,7 +174,7 @@
         </parameter>
         <parameter>
             <name>phasefield_ic</name>
-<!--             <type>MeshNode</type>
+            <!--             <type>MeshNode</type>
             <field_name>pf-ic</field_name> -->
             <type>Constant</type>
             <value>1</value>

@@ -33,7 +33,6 @@
             <specific_body_force>0 0 0</specific_body_force>
         </process>
     </processes>
-
     <media>
         <medium id="0">
             <phases>
@@ -54,16 +53,16 @@
                             <name>density</name>
                             <type>Linear</type>
                             <reference_value>999.1</reference_value>
-                                <independent_variable>
-                                    <variable_name>temperature</variable_name>
-                                    <reference_condition>293.15</reference_condition>
-                                    <slope>-3.98e-4</slope>
-                                </independent_variable>
-                                <independent_variable>
-                                    <variable_name>phase_pressure</variable_name>
-                                    <reference_condition>0.0</reference_condition>
-                                    <slope>1e-4</slope>
-                                </independent_variable>
+                            <independent_variable>
+                                <variable_name>temperature</variable_name>
+                                <reference_condition>293.15</reference_condition>
+                                <slope>-3.98e-4</slope>
+                            </independent_variable>
+                            <independent_variable>
+                                <variable_name>phase_pressure</variable_name>
+                                <reference_condition>0.0</reference_condition>
+                                <slope>1e-4</slope>
+                            </independent_variable>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -121,7 +120,6 @@
             </phases>
         </medium>
     </media>
-
     <time_loop>
         <processes>
             <process ref="THERMO_HYDRO_MECHANICS">
