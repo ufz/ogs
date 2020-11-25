@@ -35,7 +35,7 @@ std::unique_ptr<UserPunch> createUserPunch(
         auto value = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh),
             variable_name,
-            MeshLib::MeshItemType::Node,
+            MeshLib::MeshItemType::IntegrationPoint,
             1);
         std::fill(std::begin(*value),
                   std::end(*value),

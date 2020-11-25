@@ -113,6 +113,11 @@ void PhreeqcIO::initialize()
         });
 
     _chemical_system->initialize(_num_chemical_systems);
+
+    if (_user_punch)
+    {
+        _user_punch->initialize(_num_chemical_systems);
+    }
 }
 
 void PhreeqcIO::executeInitialCalculation(
