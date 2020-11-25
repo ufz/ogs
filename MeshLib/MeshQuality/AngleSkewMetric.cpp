@@ -73,8 +73,7 @@ double AngleSkewMetric::checkTriangle (Element const& elem) const
     double max_angle(0.0);
     getMinMaxAngleFromTriangle (node0, node1, node2, min_angle, max_angle);
 
-    return 1.0 -
-           std::max((max_angle - third_pi) / two_thirds_pi,
+    return std::max((max_angle - third_pi) / two_thirds_pi,
                     (third_pi - min_angle) / third_pi);
 }
 
@@ -90,8 +89,8 @@ double AngleSkewMetric::checkQuad (Element const& elem) const
 
     getMinMaxAngleFromQuad (node0, node1, node2, node3, min_angle, max_angle);
 
-    return 1.0 -
-           std::max((max_angle - two_pi) / (-pi), (two_pi - min_angle) / (two_pi));
+    return std::max((max_angle - half_pi) / half_pi,
+                    (half_pi - min_angle) / half_pi);
 }
 
 double AngleSkewMetric::checkTetrahedron (Element const& elem) const
@@ -113,8 +112,8 @@ double AngleSkewMetric::checkTetrahedron (Element const& elem) const
     // fourth triangle (1,2,3)
     getMinMaxAngleFromTriangle(node1, node2, node3, min_angle, max_angle);
 
-    return 1.0 - std::max((max_angle - two_pi) / two_thirds_pi,
-                          (third_pi - min_angle) / third_pi);
+    return std::max((max_angle - third_pi) / two_thirds_pi,
+                    (third_pi - min_angle) / third_pi);
 }
 
 double AngleSkewMetric::checkHexahedron (Element const& elem) const
@@ -144,8 +143,8 @@ double AngleSkewMetric::checkHexahedron (Element const& elem) const
     // sixth surface (6,2,3,7)
     getMinMaxAngleFromQuad (node6, node2, node3, node7, min_angle, max_angle);
 
-    return 1.0 -
-           std::max((max_angle - two_pi) / (-pi), (two_pi - min_angle) / two_pi);
+    return std::max((max_angle - half_pi) / half_pi,
+                    (half_pi - min_angle) / half_pi);
 }
 
 double AngleSkewMetric::checkPrism (Element const& elem) const
@@ -165,8 +164,9 @@ double AngleSkewMetric::checkPrism (Element const& elem) const
     // second surface (3,4,5)
     getMinMaxAngleFromTriangle (node3, node4, node5, min_angle_tri, max_angle_tri);
 
-    double tri_criterion (1.0 - std::max((max_angle_tri - two_pi) / two_thirds_pi,
-                                         (third_pi - min_angle_tri) / third_pi));
+    double const tri_criterion(
+        std::max((max_angle_tri - third_pi) / two_thirds_pi,
+                 (third_pi - min_angle_tri) / third_pi));
 
     double min_angle_quad (two_pi);
     double max_angle_quad (0.0);
@@ -177,8 +177,8 @@ double AngleSkewMetric::checkPrism (Element const& elem) const
     // surface (1,2,5,4)
     getMinMaxAngleFromQuad (node1, node2, node5, node4, min_angle_quad, max_angle_quad);
 
-    double quad_criterion (1.0 - std::max((max_angle_quad - two_pi) / (-pi),
-                                          (two_pi - min_angle_quad) / two_pi));
+    double const quad_criterion(std::max((max_angle_quad - half_pi) / half_pi,
+                                         (half_pi - min_angle_quad) / half_pi));
 
     return std::min (tri_criterion, quad_criterion);
 }
