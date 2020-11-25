@@ -12,8 +12,11 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include <filesystem>
 #include <vector>
+
+class XdmfArrayType;
 
 namespace MeshLib::IO
 {

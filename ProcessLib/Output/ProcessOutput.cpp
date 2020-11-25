@@ -20,6 +20,8 @@
 #include "IntegrationPointWriter.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/XDMF/Xdmf3Writer.h"
+#include "MeshLib/IO/XDMF/transformData.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 /// Copies the ogs_version string containing the release number and the git
@@ -27,7 +29,8 @@
 static void addOgsVersion(MeshLib::Mesh& mesh)
 {
     auto& ogs_version_field = *MeshLib::getOrCreateMeshProperty<char>(
-        mesh, GitInfoLib::GitInfo::OGS_VERSION, MeshLib::MeshItemType::IntegrationPoint, 1);
+        mesh, GitInfoLib::GitInfo::OGS_VERSION,
+        MeshLib::MeshItemType::IntegrationPoint, 1);
 
     ogs_version_field.assign(GitInfoLib::GitInfo::ogs_version.begin(),
                              GitInfoLib::GitInfo::ogs_version.end());
@@ -267,8 +270,8 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
     fegetenv(&fe_env);
     fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
                            // exceptions.
-#endif  //_WIN32
-#endif  //__APPLE__
+#endif                     //_WIN32
+#endif                     //__APPLE__
 
     switch (file_type)
     {

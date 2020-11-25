@@ -6,5 +6,6 @@ fi
 
 source $DIR/cli.sh
 module load vtk/8.2.0/foss2019b/openmpi
+module load HDF5/1.10.5
 export CC=mpicc
 export CXX=mpic++
