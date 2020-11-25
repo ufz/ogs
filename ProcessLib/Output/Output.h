@@ -39,8 +39,8 @@ public:
 
 public:
     Output(std::string output_directory, OutputType const type,
-           std::string prefix, std::string suffix,
-           bool const compress_output, std::string const& data_mode,
+           std::string prefix, std::string suffix, bool const compress_output,
+           std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
            std::vector<double>&& fixed_output_times,
@@ -54,47 +54,48 @@ public:
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.
     void doOutput(Process const& process, const int process_id,
-                  const int timestep, const double t,
+                  int const timestep, const double t,
                   std::vector<GlobalVector*> const& x);
 
     //! Writes output for the given \c process if it has not been written yet.
     //! This method is intended for doing output after the last timestep in
     //! order to make sure that its results are written.
     void doOutputLastTimestep(Process const& process, const int process_id,
-                              const int timestep, const double t,
+                              int const timestep, const double t,
                               std::vector<GlobalVector*> const& x);
 
     //! Writes output for the given \c process.
     //! This method will always write.
     //! It is intended to write output in error handling routines.
     void doOutputAlways(Process const& process, const int process_id,
-                        const int timestep, const double t,
+                        int const timestep, const double t,
                         std::vector<GlobalVector*> const& x);
 
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
     void doOutputNonlinearIteration(Process const& process,
-                                    const int process_id, const int timestep,
+                                    const int process_id, int const timestep,
                                     const double t,
                                     std::vector<GlobalVector*> const& x,
                                     const int iteration);
 
-    std::vector<double> getFixedOutputTimes() {return _fixed_output_times;}
+    std::vector<double> getFixedOutputTimes() { return _fixed_output_times; }
 
 private:
     struct OutputFile;
 
     void outputMesh(OutputFile const& output_file,
-                        MeshLib::IO::PVDFile* const pvd_file,
-                        MeshLib::Mesh const& mesh,
-                        const int timestep,
-                        double const t) const;
+                    MeshLib::IO::PVDFile* const pvd_file,
+                    MeshLib::Mesh const& mesh,
+                    int const timestep,
+                    double const t) const;
     void outputMeshXdmf(OutputFile const& output_file,
                         MeshLib::Mesh const& mesh,
-                        const int timestep,
+                        int const timestep,
                         double const t);
+
 private:
-    std::unique_ptr<MeshLib::IO::Xdmf3Writer>_mesh_xdmf_writer;
+    std::unique_ptr<MeshLib::IO::Xdmf3Writer> _mesh_xdmf_writer;
     std::string const _output_directory;
     OutputType const _output_file_type;
     std::string const _output_file_prefix;

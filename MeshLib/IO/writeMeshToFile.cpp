@@ -52,7 +52,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
         // \TODO Errorhandling, Change data model into static and time depended,
         // then is is not neccessary to give time step 0 a special treatment
         // here
-        writer->WriteStep(0, 0);
+        writer->writeStep(0, 0);
 
         return 0;
     }

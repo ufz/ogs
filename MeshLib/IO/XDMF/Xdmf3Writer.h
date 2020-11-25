@@ -47,7 +47,7 @@ public:
     Xdmf3Writer(std::filesystem::path const& filepath,
                 Geometry const& geometry,
                 Topology const& topology,
-                std::vector<AttributeMeta> const& attributes,
+                std::vector<AttributeMeta> attributes,
                 int time_step);
     /**
      * \brief Write attribute data that has modified to previous time step or
@@ -56,8 +56,7 @@ public:
      * @param time_step number of the step (temporal collection)
      * @param time time value of the current time_step
      */
-
-    void WriteStep(int time_step, double time);
+    void writeStep(int time_step, double time);
 
 private:
     boost::shared_ptr<XdmfGridCollection> _gridCollection;

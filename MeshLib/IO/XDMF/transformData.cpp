@@ -82,7 +82,7 @@ std::optional<AttributeMeta> transformAttribute(
     std::pair<std::string, PropertyVectorBase*> const& property)
 {
     // lambda f : Transforms property to AttributeMeta, first parameter is
-    // semantic output because the boolean return type is used to allow kind of
+    // output parameter because the boolean return type is used to allow kind of
     // pipe using || operator
     auto f = [&](std::optional<AttributeMeta>& attribute_meta,
                  auto basic_type,
@@ -191,7 +191,6 @@ std::optional<AttributeMeta> transformAttribute(
         }
         else
         {
-            // attribute_meta = std:
             return false;
         }
 
@@ -289,7 +288,7 @@ Topology transformTopology(MeshLib::Mesh const& mesh)
             values.push_back(celltype->getNodesPerElement());
         }
 
-        for (size_t i = 0; i < cell->getNumberOfNodes(); ++i)
+        for (std::size_t i = 0; i < cell->getNumberOfNodes(); ++i)
         {
             MeshLib::Node const* node = cell->getNode(i);
             values.push_back(node->getID());

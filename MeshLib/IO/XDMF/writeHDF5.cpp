@@ -17,7 +17,7 @@
 #include "XdmfArrayType.hpp"
 #include "hdf5.h"
 
-unsigned short int const compression_factor = 9;
+static unsigned short int const compression_factor = 9;
 
 hid_t XdmfType2Hdf5Type(boost::shared_ptr<XdmfArrayType const> xdmf)
 {
@@ -58,7 +58,7 @@ int writeHDF5Step(std::filesystem::path const& filepath, int const step,
     // C++API negative value is failure
     hid_t file = H5Fopen(filepath.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
 
-    std::string time_section = getTimeSection(step);
+    std::string const time_section = getTimeSection(step);
 
     // Open or create Group
     hid_t group_id = [](auto file, auto time_section) {
@@ -110,9 +110,8 @@ std::pair<int, bool> writeHDF5Initial(
 {
     // Check if gzip compression is available and can be used for both
     // compression and decompression.
-    htri_t avail = H5Zfilter_avail(H5Z_FILTER_DEFLATE);
     bool has_compression_lib = true;
-    if (!avail)
+    if (htri_t avail = H5Zfilter_avail(H5Z_FILTER_DEFLATE); !avail)
     {
         WARN("gzip filter not available.\n");
         has_compression_lib = false;
@@ -148,7 +147,7 @@ std::pair<int, bool> writeHDF5Initial(
     {
         hid_t file = H5Fcreate(filepath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT,
                                H5P_DEFAULT);
-        std::string time_section = getTimeSection(step);
+        std::string const time_section = getTimeSection(step);
         hid_t group_id = H5Gcreate2(file, time_section.c_str(), H5P_DEFAULT,
                                     H5P_DEFAULT, H5P_DEFAULT);
 

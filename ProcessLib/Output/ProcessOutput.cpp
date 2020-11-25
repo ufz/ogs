@@ -270,8 +270,8 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
     fegetenv(&fe_env);
     fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
                            // exceptions.
-#endif                     //_WIN32
-#endif                     //__APPLE__
+#endif  //_WIN32
+#endif  //__APPLE__
 
     switch (file_type)
     {
@@ -289,7 +289,7 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 file_name, MeshLib::IO::transformGeometry(mesh),
                 MeshLib::IO::transformTopology(mesh),
                 MeshLib::IO::transformAttributes(mesh), time_step);
-            writer.WriteStep(time_step, time);
+            writer.writeStep(time_step, time);
         }
     }
 

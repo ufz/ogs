@@ -27,14 +27,13 @@
 #include "XdmfData.h"
 #include "writeHDF5.h"
 
+using namespace MeshLib::IO;
 using namespace std::string_literals;
 
 static std::string getTimeSection(int const step, std::string const& name)
 {
     return "t_"s + std::to_string(step) + "/"s + name;
 }
-
-using namespace MeshLib::IO;
 
 static boost::shared_ptr<XdmfGeometry> getLightGeometry(
     std::string const& hdf5filename, int const step, Geometry const& geometry)
@@ -96,19 +95,20 @@ namespace MeshLib::IO
 Xdmf3Writer::Xdmf3Writer(std::filesystem::path const& filepath,
                          Geometry const& geometry,
                          Topology const& topology,
-                         std::vector<AttributeMeta> const& attributes,
+                         std::vector<AttributeMeta>
+                             attributes,
                          int const timestep)
     : _attributes(std::move(attributes)),
       _hdf5filepath(filepath.parent_path() /
                     (std::string(filepath.stem()) + ".h5"))
 {
-    std::filesystem::path xdmf_filepath =
+    std::filesystem::path const xdmf_filepath =
         filepath.parent_path() / (std::string(filepath.stem()) + ".xdmf");
-    auto ret_hdf5 = writeHDF5Initial(geometry.flattend_values,
-                                     geometry.vldims,
-                                     topology.flattend_values,
-                                     timestep,
-                                     _hdf5filepath);
+    auto const ret_hdf5 = writeHDF5Initial(geometry.flattend_values,
+                                           geometry.vldims,
+                                           topology.flattend_values,
+                                           timestep,
+                                           _hdf5filepath);
     // If we find a library for compression we use it
     _use_compression = ret_hdf5.second;
 
@@ -132,24 +132,24 @@ Xdmf3Writer::Xdmf3Writer(std::filesystem::path const& filepath,
     _root->insert(grid_collection);
 }
 
-void Xdmf3Writer::WriteStep(int const time_step, double const time)
+void Xdmf3Writer::writeStep(int const time_step, double const time)
 {
     auto grid = XdmfUnstructuredGrid::New();
     grid->setGeometry(_initial_geometry);
     grid->setTopology(_initial_topology);
     grid->setTime(XdmfTime::New(time));
 
-    for (auto const& attribute_data : _attributes)
+    for (auto const& attribute : _attributes)
     {
         writeHDF5Step(_hdf5filepath,
                       time_step,
-                      attribute_data.name,
-                      attribute_data.data_start,
-                      attribute_data.vldims,
-                      attribute_data.data_type,
+                      attribute.name,
+                      attribute.data_start,
+                      attribute.vldims,
+                      attribute.data_type,
                       _use_compression);
-        grid->insert(getLightAttribute(
-            _hdf5filepath.filename(), time_step, attribute_data));
+        grid->insert(
+            getLightAttribute(_hdf5filepath.filename(), time_step, attribute));
     }
 
     auto gridcollection = _root->getGridCollection(0);
