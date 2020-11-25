@@ -11,10 +11,11 @@ else()
     find_program(CONAN_CMD conan)
 endif()
 if(NOT CONAN_CMD)
-    message(WARNING "conan executable not found. Consider installing Conan for "
-        "automatic third-party library handling. https://www.opengeosys.org/doc"
-        "s/devguide/getting-started/prerequisites/#step-install-conan-package-m"
-        "anager OR disable this warning with OGS_USE_CONAN=OFF")
+    message(WARNING "conan executable not found. Specify CMake option "
+        "OGS_USE_CONAN=auto for automatic installation in the build directory "
+        "OR install it system-wide (https://www.opengeosys.org/docs/devguide/"
+        "getting-started/prerequisites/#step-install-conan-package-manager) "
+        "OR disable this warning with OGS_USE_CONAN=OFF.")
     return()
 endif()
 
@@ -35,6 +36,7 @@ set(CONAN_REQUIRES
     eigen/${ogs.minimum_version.eigen}@conan/stable
     vtk/${ogs.tested_version.vtk}@bilke/stable
     hdf5/${ogs.tested_version.hdf5}
+    libxml2/${ogs.tested_version.libxml2}
     CACHE INTERNAL ""
 )
 
