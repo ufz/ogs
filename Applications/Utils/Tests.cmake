@@ -479,6 +479,17 @@ AddTest(
 )
 
 AddTest(
+    NAME VerticalSliceFromLayers_Test
+    PATH MeshGeoToolsLib/Ammer
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
+    EXECUTABLE VerticalSliceFromLayers
+    EXECUTABLE_ARGS -i AmmerLayers.txt -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerSlice --start-x 3491000 --start-y 5380000 --end-x 3495000 --end-y 5385000 -r 200
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA AmmerSlice.vtu
+)
+
+AddTest(
     NAME IntegrateBoreholesIntoMesh_MatOnly_Test
     PATH MeshGeoToolsLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib
