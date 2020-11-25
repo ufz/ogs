@@ -27,8 +27,8 @@ class XdmfDomain;
 
 namespace MeshLib::IO
 {
-class Geometry;
-class Topology;
+struct Geometry;
+struct Topology;
 }  // namespace MeshLib::IO
 
 namespace MeshLib::IO
