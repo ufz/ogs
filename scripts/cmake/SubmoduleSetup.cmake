@@ -22,7 +22,7 @@ set(REQUIRED_SUBMODULES
     ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
 if(BUILD_TESTING)
-    list(APPEND REQUIRED_SUBMODULES ThirdParty/vtkdiff ThirdParty/xdmfdiff)
+    list(APPEND REQUIRED_SUBMODULES ThirdParty/vtkdiff)
 endif()
 if(OGS_BUILD_UTILS)
     # Required by the partmesh tool, which is build with utils only.
