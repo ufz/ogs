@@ -26,7 +26,7 @@ ogs_add_library(MeshLib ${SOURCES})
 
 target_link_libraries(
     MeshLib
-    PUBLIC BaseLib GeoLib GitInfoLib MathLib ${VTK_LIBRARIES} Xdmf
+    PUBLIC BaseLib GeoLib GitInfoLib MathLib ${VTK_LIBRARIES} OgsXdmf
     PRIVATE spdlog::spdlog)
 
 if(OGS_USE_MPI AND TARGET MPI::MPI_CXX)

@@ -95,18 +95,28 @@ foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
 endforeach()
 
 find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
+set(XDMF_LIBNAME OgsXdmf CACHE INTERNAL "")
 add_subdirectory(xdmf)
-target_include_directories(Xdmf PUBLIC
+target_include_directories(${XDMF_LIBNAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf
     ${PROJECT_BINARY_DIR}/ThirdParty/xdmf
 )
 if(OGS_USE_CONAN AND UNIX AND APPLE)
     find_package(Iconv REQUIRED)
 endif()
-target_link_libraries(Xdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
-target_include_directories(XdmfCore PUBLIC
+target_link_libraries(${XDMF_LIBNAME} Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
+target_include_directories(${XDMF_LIBNAME}Core PUBLIC
     ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf/core
     ${PROJECT_BINARY_DIR}/ThirdParty/xdmf/core
 )
 find_package(LibXml2 REQUIRED) # LibXml2 is a XdmfCore dependency
-target_link_libraries(XdmfCore PUBLIC LibXml2::LibXml2)
+target_link_libraries(${XDMF_LIBNAME}Core PUBLIC LibXml2::LibXml2)
+
+set_target_properties(${XDMF_LIBNAME} ${XDMF_LIBNAME}Core PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+    LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+)
+if(BUILD_SHARED_LIBS)
+    install(TARGETS ${XDMF_LIBNAME} ${XDMF_LIBNAME}Core LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
