@@ -100,10 +100,13 @@ target_include_directories(Xdmf PUBLIC
     ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf
     ${PROJECT_BINARY_DIR}/ThirdParty/xdmf
 )
+if(OGS_USE_CONAN AND UNIX AND APPLE)
+    find_package(Iconv REQUIRED)
+endif()
 target_link_libraries(Xdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
 target_include_directories(XdmfCore PUBLIC
     ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf/core
     ${PROJECT_BINARY_DIR}/ThirdParty/xdmf/core
 )
 find_package(LibXml2 REQUIRED) # LibXml2 is a XdmfCore dependency
-target_link_libraries(XdmfCore PUBLIC ${Iconv_LIBRARIES} LibXml2::LibXml2)
+target_link_libraries(XdmfCore PUBLIC LibXml2::LibXml2)

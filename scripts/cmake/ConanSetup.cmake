@@ -47,6 +47,9 @@ set(CONAN_OPTIONS
     vtk:iolegacy=True
     CACHE INTERNAL ""
 )
+if(UNIX AND NOT APPLE)
+    list(APPEND CONAN_OPTIONS libxml2:iconv=False)
+endif()
 
 if((UNIX AND NOT APPLE) AND BUILD_SHARED_LIBS)
     set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:fPIC=True)
