@@ -191,3 +191,5 @@ endif()
 find_package(Filesystem REQUIRED COMPONENTS Final Experimental)
 configure_file(${PROJECT_SOURCE_DIR}/BaseLib/filesystem.h.in
                ${PROJECT_BINARY_DIR}/BaseLib/filesystem.h)
+
+find_package(Iconv REQUIRED)

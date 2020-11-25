@@ -271,6 +271,7 @@ endif()
 # xdmfdiff
 if(EXISTS ${PROJECT_SOURCE_DIR}/ThirdParty/xdmfdiff/CMakeLists.txt AND BUILD_TESTING)
     add_subdirectory(ThirdParty/xdmfdiff)
+    target_link_libraries(xdmfdiff Xdmf)
     install(PROGRAMS $<TARGET_FILE:xdmfdiff> DESTINATION bin COMPONENT ogs_extras)
 endif()
 

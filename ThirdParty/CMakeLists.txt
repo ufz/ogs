@@ -94,8 +94,16 @@ foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
         $<$<CXX_COMPILER_ID:MSVC>:/W0>)
 endforeach()
 
-set(XDMF_LIBNAME "ogs_xdmf" CACHE INTERNAL "")
+find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
 add_subdirectory(xdmf)
-# ZLIB is HDF5 dependency
-find_package(ZLIB REQUIRED)
-target_link_libraries(ogs_xdmf ZLIB::ZLIB)
+target_include_directories(Xdmf PUBLIC
+    ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf
+    ${PROJECT_BINARY_DIR}/ThirdParty/xdmf
+)
+target_link_libraries(Xdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
+target_include_directories(XdmfCore PUBLIC
+    ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf/core
+    ${PROJECT_BINARY_DIR}/ThirdParty/xdmf/core
+)
+find_package(LibXml2 REQUIRED) # LibXml2 is a XdmfCore dependency
+target_link_libraries(XdmfCore PUBLIC ${Iconv_LIBRARIES} LibXml2::LibXml2)
