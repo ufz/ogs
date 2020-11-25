@@ -3,7 +3,7 @@
     <mesh>cube_1x1x1_hex_1e5.vtu</mesh>
     <geometry>cube_1x1x1.gml</geometry>
     <processes>
-        <include file="SteadyStateDiffusion.xml" />
+        <include file="SteadyStateDiffusion.xml"/>
     </processes>
     <media>
         <medium id="0">

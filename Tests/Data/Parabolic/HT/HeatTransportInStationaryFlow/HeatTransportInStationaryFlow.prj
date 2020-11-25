@@ -87,7 +87,6 @@
                     <type>Constant</type>
                     <value>0</value>
                 </property>
-
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>

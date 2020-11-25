@@ -8,8 +8,6 @@
         <mesh>BC_TPB_bot_sx.vtu</mesh>
         <mesh>BC_LinearElastic_rev8.vtu</mesh>
     </meshes>
-
-
     <processes>
         <process>
             <name>PhaseField</name>
@@ -29,7 +27,6 @@
                 <kinetic_coefficient>M</kinetic_coefficient>
                 <history_field>H</history_field>
             </phasefield_parameters>
-
             <solid_density>rho_sr</solid_density>
             <process_variables>
                 <phasefield>phasefield</phasefield>
@@ -42,7 +39,6 @@
             <specific_body_force>0 0 0</specific_body_force>
         </process>
     </processes>
-
     <time_loop>
         <global_process_coupling>
             <max_iter> 1000 </max_iter>
@@ -130,7 +126,6 @@
             </timesteps>
         </output>
     </time_loop>
-
     <parameters>
         <parameter>
             <name>E</name>
@@ -174,13 +169,11 @@
             <type>Constant</type>
             <value>0.0</value>
         </parameter>
-
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0 0</values>
         </parameter>
-
         <parameter>
             <name>Dirichlet_left_x</name>
             <type>Constant</type>
@@ -206,20 +199,17 @@
             <type>Constant</type>
             <value>0.</value>
         </parameter>
-
         <parameter>
             <name>Dirichlet_top_spatial</name>
             <type>Constant</type>
             <value>1</value>
         </parameter>
-
         <parameter>
             <name>Dirichlet_top</name>
             <type>CurveScaled</type>
             <curve>Dirichlet_top_temporal</curve>
             <parameter>Dirichlet_top_spatial</parameter>
         </parameter>
-
         <parameter>
             <name>phasefield_ic</name>
             <type>MeshNode</type>
@@ -233,24 +223,19 @@
             <value>1.0</value>
         </parameter>
     </parameters>
-
     <curves>
         <curve>
             <name>Dirichlet_top_temporal</name>
             <coords>0. 1.</coords>
             <values>0. -3.0</values>
         </curve>
-
     </curves>
-
     <process_variables>
         <process_variable>
             <name>displacement</name>
             <components>3</components>
             <order>1</order>
-
             <initial_condition>displacement0</initial_condition>
-
             <boundary_conditions>
                 <!-- fixed boundaries -->
                 <!--boundary_condition>
@@ -259,14 +244,12 @@
                     <component>0</component>
                     <parameter>Dirichlet_left_x</parameter>
                 </boundary_condition>-->
-
                 <boundary_condition>
                     <mesh>BC_TPB_bot_sx</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>Dirichlet_left_y</parameter>
                 </boundary_condition>
-
                 <boundary_condition>
                     <mesh>BC_TPB_bot_sx</mesh>
                     <type>Dirichlet</type>
@@ -279,71 +262,58 @@
                     <component>2</component>
                     <parameter>Dirichlet_left_z</parameter>
                 </boundary_condition>-->
-
                 <!--boundary_condition>
                     <mesh>BC_TPB_p3</mesh>
                     <type>Dirichlet</type>
                     <component>2</component>
                     <parameter>Dirichlet_left_z</parameter>
                 </boundary_condition>-->
-
-
                 <boundary_condition>
                     <mesh>BC_TPB_bot_dx</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>Dirichlet_right_y</parameter>
                 </boundary_condition>
-
                 <boundary_condition>
                     <mesh>BC_TPB_tamper1</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>Dirichlet_top</parameter>
                 </boundary_condition>
-
                 <boundary_condition>
                     <mesh>BC_TPB_tamper2</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>Dirichlet_top</parameter>
                 </boundary_condition>
-
             </boundary_conditions>
-
         </process_variable>
-
         <process_variable>
             <name>phasefield</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>phasefield_ic</initial_condition>
             <boundary_conditions>
-
-                  <!--boundary_condition>
+                <!--boundary_condition>
                     <mesh>BC_TPB_bot_dx</mesh>
                     <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
                     <component>0</component>
                 </boundary_condition>-->
-
                 <!--boundary_condition>
                     <mesh>BC_TPB_tamper</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>-->
-
                 <boundary_condition>
                     <mesh>BC_LinearElastic_rev8</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
-
             </boundary_conditions>
         </process_variable>
     </process_variables>
-
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>petsc_snes</name>
@@ -378,5 +348,4 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
-
 </OpenGeoSysProject>

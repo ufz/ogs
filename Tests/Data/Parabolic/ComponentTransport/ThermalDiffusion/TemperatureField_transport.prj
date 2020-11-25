@@ -103,7 +103,7 @@
         </global_process_coupling>
         <processes>
             <!-- convergence criterion for hydraulic equation -->
-             <process ref="TemperatureField_transport">
+            <process ref="TemperatureField_transport">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
@@ -125,8 +125,8 @@
                     </timesteps>
                 </time_stepping>
             </process>
-           <!-- convergence criterion for component transport equation (Cs) -->
-             <process ref="TemperatureField_transport">
+            <!-- convergence criterion for component transport equation (Cs) -->
+            <process ref="TemperatureField_transport">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>

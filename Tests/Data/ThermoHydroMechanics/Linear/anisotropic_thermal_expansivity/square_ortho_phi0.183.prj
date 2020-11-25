@@ -26,7 +26,6 @@
             <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
-
     <media>
         <medium id="0">
             <phases>
@@ -47,16 +46,16 @@
                             <name>density</name>
                             <type>Linear</type>
                             <reference_value>999.1</reference_value>
-                                <independent_variable>
-                                    <variable_name>temperature</variable_name>
-                                    <reference_condition>293.15</reference_condition>
-                                    <slope>-3.98e-4</slope>
-                                </independent_variable>
-                                <independent_variable>
-                                    <variable_name>phase_pressure</variable_name>
-                                    <reference_condition>0.0</reference_condition>
-                                    <slope>2e-15</slope>
-                                </independent_variable>
+                            <independent_variable>
+                                <variable_name>temperature</variable_name>
+                                <reference_condition>293.15</reference_condition>
+                                <slope>-3.98e-4</slope>
+                            </independent_variable>
+                            <independent_variable>
+                                <variable_name>phase_pressure</variable_name>
+                                <reference_condition>0.0</reference_condition>
+                                <slope>2e-15</slope>
+                            </independent_variable>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -106,10 +105,10 @@
                         <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
-                                <!--  sum_eps = (β_F*ϕ+(1-ϕ)*(sum(thermal_expansivity)))*ΔT 
-                                      sigma_ii = ((2*G+2*λ)*sum_eps-(2*λ+2*G)*(sum(thermal_expansivity))*ΔT)/2
-                                      eps_ii = sigma_ii*((1-ν)/(2*G+λ))+thermal_expansivity*ΔT
-                                //-->
+                            <!--  sum_eps = (β_F*ϕ+(1-ϕ)*(sum(thermal_expansivity)))*ΔT
+                                  sigma_ii = ((2*G+2*λ)*sum_eps-(2*λ+2*G)*(sum(thermal_expansivity))*ΔT)/2
+                                  eps_ii = sigma_ii*((1-ν)/(2*G+λ))+thermal_expansivity*ΔT
+                            -->
                             <value>1.5e-5 2.5e-5 0.0</value>
                         </property>
                     </properties>
@@ -117,7 +116,6 @@
             </phases>
         </medium>
     </media>
-
     <time_loop>
         <processes>
             <process ref="THERMO_HYDRO_MECHANICS">

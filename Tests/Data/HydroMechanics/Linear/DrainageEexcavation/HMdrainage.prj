@@ -44,7 +44,7 @@
                         </property>
                         <property>
                             <name>density</name>
-							<type>Parameter</type>
+                            <type>Parameter</type>
                             <parameter_name>load-water</parameter_name>
                         </property>
                     </properties>
@@ -191,7 +191,7 @@
             <curve>time_ramp</curve>
             <parameter>load_min</parameter>
         </parameter>
-        	<parameter>
+        <parameter>
             <name>maximum_density</name>
             <type>Constant</type>
             <value>2600</value>
@@ -202,7 +202,7 @@
             <curve>material_ramp</curve>
             <parameter>maximum_density</parameter>
         </parameter>
-		<parameter>
+        <parameter>
             <name>maximum_density_water</name>
             <type>Constant</type>
             <value>1000</value>
