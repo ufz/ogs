@@ -48,6 +48,7 @@ PetscErrorCode updateResidual(SNES /*snes*/, Vec x, Vec petsc_r,
     context->system->getResidual(*context->x[context->process_id],
                                  *context->x_prev[context->process_id],
                                  *context->r);
+    context->r->finalizeAssembly();
     context->J->finalizeAssembly();
 
     context->system->getJacobian(*context->J);
