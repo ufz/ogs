@@ -124,6 +124,14 @@ a.button:hover {
   @apply bg-gray-100;
 }
 
+section.footnotes {
+  @apply text-sm;
+}
+
+section.footnotes p {
+  margin-top: 0;
+}
+
 /* -------------------------------- Images ---------------------------------- */
 body {
   counter-reset: figcaption;
