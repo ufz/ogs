@@ -56,7 +56,7 @@ int writeHDF5Step(std::filesystem::path const& filepath, int const step,
 {
     // \TODO (tm) Errhandling, not implemented as we will change from CAPI to
     // C++API negative value is failure
-    hid_t file = H5Fopen(filepath.c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
+    hid_t file = H5Fopen(filepath.string().c_str(), H5F_ACC_RDWR, H5P_DEFAULT);
 
     std::string const time_section = getTimeSection(step);
 
@@ -145,7 +145,7 @@ std::pair<int, bool> writeHDF5Initial(
     hid_t topology_space = H5Screate_simple(1, topology_dims, nullptr);
 
     {
-        hid_t file = H5Fcreate(filepath.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT,
+        hid_t file = H5Fcreate(filepath.string().c_str(), H5F_ACC_TRUNC, H5P_DEFAULT,
                                H5P_DEFAULT);
         std::string const time_section = getTimeSection(step);
         hid_t group_id = H5Gcreate2(file, time_section.c_str(), H5P_DEFAULT,

@@ -100,10 +100,10 @@ Xdmf3Writer::Xdmf3Writer(std::filesystem::path const& filepath,
                          int const timestep)
     : _attributes(std::move(attributes)),
       _hdf5filepath(filepath.parent_path() /
-                    (std::string(filepath.stem()) + ".h5"))
+                    (filepath.stem().string() + ".h5"))
 {
     std::filesystem::path const xdmf_filepath =
-        filepath.parent_path() / (std::string(filepath.stem()) + ".xdmf");
+        filepath.parent_path() / (filepath.stem().string() + ".xdmf");
     auto const ret_hdf5 = writeHDF5Initial(geometry.flattend_values,
                                            geometry.vldims,
                                            topology.flattend_values,
@@ -113,11 +113,11 @@ Xdmf3Writer::Xdmf3Writer(std::filesystem::path const& filepath,
     _use_compression = ret_hdf5.second;
 
     _initial_geometry =
-        getLightGeometry(_hdf5filepath.filename(), timestep, geometry);
+        getLightGeometry(_hdf5filepath.filename().string(), timestep, geometry);
     _initial_topology =
-        getLightTopology(_hdf5filepath.filename(), timestep, topology);
+        getLightTopology(_hdf5filepath.filename().string(), timestep, topology);
 
-    _writer = XdmfWriter::New(xdmf_filepath);
+    _writer = XdmfWriter::New(xdmf_filepath.string());
     _writer->setMode(XdmfWriter::DistributedHeavyData);
 
     auto version = XdmfInformation::New();
@@ -149,7 +149,7 @@ void Xdmf3Writer::writeStep(int const time_step, double const time)
                       attribute.data_type,
                       _use_compression);
         grid->insert(
-            getLightAttribute(_hdf5filepath.filename(), time_step, attribute));
+            getLightAttribute(_hdf5filepath.filename().string(), time_step, attribute));
     }
 
     auto gridcollection = _root->getGridCollection(0);

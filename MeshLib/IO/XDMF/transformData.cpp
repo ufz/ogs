@@ -8,13 +8,16 @@
  */
 
 // \TODO (tm) Extend xdmf lib with 64bit datatypes
+#if !_MSC_VER
 #pragma GCC diagnostic ignored "-Wnarrowing"
+#endif
 
 #include "transformData.h"
 
 #include <XdmfArrayType.hpp>
 #include <XdmfAttributeCenter.hpp>
 #include <XdmfTopologyType.hpp>
+#include <optional>
 #include <variant>
 
 #include "InfoLib/GitInfo.h"
@@ -103,8 +106,8 @@ std::optional<AttributeMeta> transformAttribute(
         auto const global_components =
             property_base->getNumberOfGlobalComponents();
         auto const size = typed_property->getNumberOfTuples();
-        auto const vdims = [](auto num_components,
-                              auto size) -> std::vector<XdmfDimType> {
+        auto const vdims = [](XdmfDimType num_components,
+                              XdmfDimType size) -> std::vector<XdmfDimType> {
             if (num_components > 1)
             {
                 return {size, num_components};
@@ -115,8 +118,8 @@ std::optional<AttributeMeta> transformAttribute(
         // \TODO (tm) Remove code duplicationby eliminating the need for a
         // second vldim at all by modification of XdmfHdf5Controller
         // taking unsigned long long
-        auto const vldims = [](auto num_components,
-                               auto size) -> std::vector<Hdf5DimType> {
+        auto const vldims = [](XdmfDimType num_components,
+                               XdmfDimType size) -> std::vector<Hdf5DimType> {
             if (num_components > 1)
             {
                 return std::vector<Hdf5DimType>{size, num_components};
@@ -151,25 +154,26 @@ std::optional<AttributeMeta> transformAttribute(
                           "Signed int has 32-1 bits");
             data_type = XdmfArrayType::Int32();
         }
-        else if constexpr (std::is_same_v<long, decltype(basic_type)>)
-        {
-            static_assert((std::numeric_limits<long>::digits == 63),
-                          "Signed int has 64-1 bits");
-            data_type = XdmfArrayType::Int64();
-        }
+        // \TODO (tm) Reimplement size checks
+        // else if constexpr (std::is_same_v<long, decltype(basic_type)>)
+        // {
+        //     static_assert((std::numeric_limits<long>::digits == 63),
+        //                   "Signed int has 64-1 bits");
+        //     data_type = XdmfArrayType::Int64();
+        // }
         else if constexpr (std::is_same_v<unsigned int, decltype(basic_type)>)
         {
             static_assert((std::numeric_limits<unsigned int>::digits == 32),
                           "Unsigned int has 32 bits");
             data_type = XdmfArrayType::UInt32();
         }
-        else if constexpr (std::is_same_v<unsigned long, decltype(basic_type)>)
-        {
-            static_assert((std::numeric_limits<unsigned long>::digits == 64),
-                          "UnSigned long has 64 bits");
-            // \TODO (tm) Extend XdmfLibrary with 64bit datatypes
-            data_type = XdmfArrayType::UInt32();
-        }
+        // else if constexpr (std::is_same_v<unsigned long, decltype(basic_type)>)
+        // {
+        //     static_assert((std::numeric_limits<unsigned long>::digits == 64),
+        //                   "Unsigned long has 64 bits");
+        //     // \TODO (tm) Extend XdmfLibrary with 64bit datatypes
+        //     data_type = XdmfArrayType::UInt32();
+        // }
         else if constexpr (std::is_same_v<std::size_t, decltype(basic_type)>)
         {
             static_assert((std::numeric_limits<std::size_t>::digits == 64),
@@ -264,7 +268,7 @@ Geometry transformGeometry(MeshLib::Mesh const& mesh)
         values.insert(values.cend(), x, x + 3);
     }
 
-    std::vector<XdmfDimType> const vdims = {nodes.size(), 3};
+    std::vector<XdmfDimType> const vdims = {static_cast<XdmfDimType>(nodes.size()), 3};
     std::vector<Hdf5DimType> const vldims = {nodes.size(), 3};
     std::vector<XdmfDimType> const starts = {0, 0, 0};
     std::vector<XdmfDimType> const strides = {1, 1, 1};
@@ -297,7 +301,7 @@ Topology transformTopology(MeshLib::Mesh const& mesh)
 
     std::vector<XdmfDimType> const starts = {0};
     std::vector<XdmfDimType> const strides = {1};
-    std::vector<XdmfDimType> const vdims = {values.size()};
+    std::vector<XdmfDimType> const vdims = {static_cast<XdmfDimType>(values.size())};
     std::vector<Hdf5DimType> const vldims = {values.size()};
 
     return Topology{std::move(values), starts, strides, vdims, vldims};
