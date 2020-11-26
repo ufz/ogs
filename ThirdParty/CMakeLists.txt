@@ -104,7 +104,13 @@ target_include_directories(${XDMF_LIBNAME} PUBLIC
 if(OGS_USE_CONAN AND UNIX AND APPLE)
     find_package(Iconv REQUIRED)
 endif()
-target_link_libraries(${XDMF_LIBNAME} Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
+
+if(MSVC AND OGS_USE_CONAN)
+    # Hack: Conan HDF5 not found on Windows
+    target_link_libraries(${XDMF_LIBNAME} ${CONAN_LIBS})
+else()
+    target_link_libraries(${XDMF_LIBNAME} Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
+endif()
 target_include_directories(${XDMF_LIBNAME}Core PUBLIC
     ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf/core
     ${PROJECT_BINARY_DIR}/ThirdParty/xdmf/core
