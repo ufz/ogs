@@ -1,5 +1,8 @@
 /**
  * \file
+ * \author Tobias Meisel
+ * \date   2020-11-13
+ * \brief  Transforms OGS Mesh into vectorized data
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -7,10 +10,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#pragma once
+#include <vector>
 
-#include <filesystem>
-#include <string>
+#include "XdmfData.h"
 
 namespace MeshLib
 {
@@ -19,6 +21,7 @@ class Mesh;
 
 namespace MeshLib::IO
 {
-int writeMeshToFile(MeshLib::Mesh const& mesh,
-                    std::filesystem::path const& file_path);
+std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh);
+Geometry transformGeometry(MeshLib::Mesh const& mesh);
+Topology transformTopology(MeshLib::Mesh const& mesh);
 }  // namespace MeshLib::IO

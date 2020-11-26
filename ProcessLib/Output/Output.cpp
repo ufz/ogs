@@ -16,9 +16,10 @@
 #include <vector>
 
 #include "Applications/InSituLib/Adaptor.h"
-#include "BaseLib/Logging.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
+#include "MeshLib/IO/XDMF/transformData.h"
 #include "ProcessLib/Process.h"
 
 namespace
@@ -226,9 +227,29 @@ struct Output::OutputFile
     }
 };
 
+void Output::outputMeshXdmf(OutputFile const& output_file,
+                            MeshLib::Mesh const& mesh,
+                            int const timestep,
+                            double const t)
+{
+    // \TODO (tm) Refactor to a dedicated VTKOutput and XdmfOutput
+    // The XdmfOutput will create on contruction the Xdmf3Writer
+    if (!_mesh_xdmf_writer)
+    {
+        std::filesystem::path path(output_file.path);
+        _mesh_xdmf_writer =
+            std::make_unique<MeshLib::IO::Xdmf3Writer>(MeshLib::IO::Xdmf3Writer(
+                path, MeshLib::IO::transformGeometry(mesh),
+                MeshLib::IO::transformTopology(mesh),
+                MeshLib::IO::transformAttributes(mesh), timestep));
+    }
+    _mesh_xdmf_writer->writeStep(timestep, t);
+}
+
 void Output::outputMesh(OutputFile const& output_file,
                         MeshLib::IO::PVDFile* const pvd_file,
                         MeshLib::Mesh const& mesh,
+                        int const timestep,
                         double const t) const
 {
     DBUG("output to {:s}", output_file.path);
@@ -239,12 +260,12 @@ void Output::outputMesh(OutputFile const& output_file,
     }
 
     makeOutput(output_file.path, mesh, output_file.compression,
-               output_file.data_mode, output_file.type);
+               output_file.data_mode, output_file.type, timestep, t);
 }
 
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
-                            const int timestep,
+                            int const timestep,
                             const double t,
                             std::vector<GlobalVector*> const& x)
 {
@@ -279,17 +300,26 @@ void Output::doOutputAlways(Process const& process,
     }
 
     auto output_bulk_mesh = [&](MeshLib::Mesh& mesh) {
-        OutputFile const file(_output_directory, _output_file_type,
-                              _output_file_prefix, _output_file_suffix,
-                              mesh.getName(), timestep, t,
-                              _output_file_data_mode, _output_file_compression);
-
         MeshLib::IO::PVDFile* pvd_file = nullptr;
         if (_output_file_type == ProcessLib::OutputType::vtk)
         {
+            OutputFile const file(
+                _output_directory, _output_file_type, _output_file_prefix,
+                _output_file_suffix, mesh.getName(), timestep, t,
+                _output_file_data_mode, _output_file_compression);
+
             pvd_file = findPVDFile(process, process_id, mesh.getName());
+            outputMesh(file, pvd_file, mesh, timestep, t);
         }
-        outputMesh(file, pvd_file, mesh, t);
+        else if (_output_file_type == ProcessLib::OutputType::xdmf)
+        {
+            OutputFile const file(_output_directory, _output_file_type,
+                                  _output_file_prefix, "", mesh.getName(),
+                                  timestep, t, _output_file_data_mode,
+                                  _output_file_compression);
+
+            outputMeshXdmf(file, mesh, timestep, t);
+        }
     };
 
     for (auto const& mesh_output_name : _mesh_names_for_output)
@@ -351,7 +381,7 @@ void Output::doOutputAlways(Process const& process,
 
 void Output::doOutput(Process const& process,
                       const int process_id,
-                      const int timestep,
+                      int const timestep,
                       const double t,
                       std::vector<GlobalVector*> const& x)
 {
@@ -362,13 +392,14 @@ void Output::doOutput(Process const& process,
 #ifdef USE_INSITU
     // Note: last time step may be output twice: here and in
     // doOutputLastTimestep() which throws a warning.
-    InSituLib::CoProcess(process.getMesh(), t, timestep, false, _output_directory);
+    InSituLib::CoProcess(process.getMesh(), t, timestep, false,
+                         _output_directory);
 #endif
 }
 
 void Output::doOutputLastTimestep(Process const& process,
                                   const int process_id,
-                                  const int timestep,
+                                  int const timestep,
                                   const double t,
                                   std::vector<GlobalVector*> const& x)
 {
@@ -377,13 +408,14 @@ void Output::doOutputLastTimestep(Process const& process,
         doOutputAlways(process, process_id, timestep, t, x);
     }
 #ifdef USE_INSITU
-    InSituLib::CoProcess(process.getMesh(), t, timestep, true, _output_directory);
+    InSituLib::CoProcess(process.getMesh(), t, timestep, true,
+                         _output_directory);
 #endif
 }
 
 void Output::doOutputNonlinearIteration(Process const& process,
                                         const int process_id,
-                                        const int timestep, const double t,
+                                        int const timestep, const double t,
                                         std::vector<GlobalVector*> const& x,
                                         const int iteration)
 {
@@ -431,7 +463,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
 
     DBUG("output iteration results to {:s}", output_file_path);
     makeOutput(output_file_path, process.getMesh(), _output_file_compression,
-               _output_file_data_mode, _output_file_type);
+               _output_file_data_mode, _output_file_type, timestep, t);
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 }  // namespace ProcessLib

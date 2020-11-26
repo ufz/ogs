@@ -1,6 +1,6 @@
 container:
   stage: package
-  tags: [docker-shell]
+  tags: [envinf2-shell]
   needs: [meta]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'

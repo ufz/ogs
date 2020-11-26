@@ -1,3 +1,7 @@
+### xdmfdiff ###
+add_subdirectory(xdmfdiff)
+
+### testrunner ###
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # VS2012 doesn't support correctly the tuples yet See

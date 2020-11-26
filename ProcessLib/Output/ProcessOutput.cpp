@@ -20,7 +20,8 @@
 #include "IntegrationPointWriter.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/IO/XDMF/writeXdmf.h"
+#include "MeshLib/IO/XDMF/Xdmf3Writer.h"
+#include "MeshLib/IO/XDMF/transformData.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 /// Copies the ogs_version string containing the release number and the git
@@ -28,7 +29,8 @@
 static void addOgsVersion(MeshLib::Mesh& mesh)
 {
     auto& ogs_version_field = *MeshLib::getOrCreateMeshProperty<char>(
-        mesh, "OGS_VERSION", MeshLib::MeshItemType::IntegrationPoint, 1);
+        mesh, GitInfoLib::GitInfo::OGS_VERSION,
+        MeshLib::MeshItemType::IntegrationPoint, 1);
 
     ogs_version_field.assign(GitInfoLib::GitInfo::ogs_version.begin(),
                              GitInfoLib::GitInfo::ogs_version.end());
@@ -252,7 +254,8 @@ void addProcessDataToMesh(
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 bool const compress_output, int const data_mode,
-                OutputType const file_type)
+                OutputType const file_type, int const time_step,
+                double const time)
 {
     // Write output file
     DBUG("Writing output to '{:s}'.", file_name);
@@ -279,13 +282,18 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
             vtu_interface.writeToFile(file_name);
             break;
         }
+
         case OutputType::xdmf:
         {
-            MeshLib::IO::writeXdmf3(mesh, file_name);
+            MeshLib::IO::Xdmf3Writer writer(
+                file_name, MeshLib::IO::transformGeometry(mesh),
+                MeshLib::IO::transformTopology(mesh),
+                MeshLib::IO::transformAttributes(mesh), time_step);
+            writer.writeStep(time_step, time);
         }
     }
 
-    // Restore floating-point exception handling.
+        // Restore floating-point exception handling.
 #ifndef _WIN32
 #ifndef __APPLE__
     fesetenv(&fe_env);
