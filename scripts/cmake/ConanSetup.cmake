@@ -112,7 +112,7 @@ if(OGS_BUILD_GUI)
 endif()
 
 if(OGS_USE_NETCDF)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} netcdf-cxx/4.3.1@bilke/testing)
+    set(CONAN_REQUIRES ${CONAN_REQUIRES} netcdf-cxx/4.3.1-1@bilke/testing)
 endif()
 
 conan_check(VERSION ${ogs.minimum_version.conan})
