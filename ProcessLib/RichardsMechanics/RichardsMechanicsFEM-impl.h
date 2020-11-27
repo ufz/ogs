@@ -378,8 +378,9 @@ void RichardsMechanicsLocalAssembler<
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
 
+        double const p_FR = -chi_S_L * p_cap_ip;
         variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
-            -chi_S_L * p_cap_ip;
+            p_FR;
         variables_prev[static_cast<int>(
             MPL::Variable::effective_pore_pressure)] =
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
@@ -409,8 +410,8 @@ void RichardsMechanicsLocalAssembler<
         }
 
         // Swelling and possibly volumetric strain rate update.
-        auto& sigma_sw = _ip_data[ip].sigma_sw;
         {
+            auto& sigma_sw = _ip_data[ip].sigma_sw;
             auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
 
             // If there is swelling, compute it. Update volumetric strain rate,
@@ -465,9 +466,11 @@ void RichardsMechanicsLocalAssembler<
             liquid_phase.property(MPL::PropertyType::viscosity)
                 .template value<double>(variables, x_position, t, dt);
 
-        auto const sigma_total = (_ip_data[ip].sigma_eff + sigma_sw +
-                                  alpha * chi_S_L * identity2 * p_cap_ip)
-                                     .eval();
+        auto const& sigma_sw = _ip_data[ip].sigma_sw;
+        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        auto const sigma_total =
+            (sigma_eff + sigma_sw - alpha * p_FR * identity2).eval();
+
         // For stress dependent permeability.
         variables[static_cast<int>(MPL::Variable::total_stress)]
             .emplace<SymmetricTensor>(
