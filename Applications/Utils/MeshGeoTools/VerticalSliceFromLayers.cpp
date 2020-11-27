@@ -58,7 +58,7 @@ std::vector<std::string> readLayerFile(std::string const& layer_file)
 {
     std::vector<std::string> layer_names;
     std::ifstream in(layer_file);
-    if (!in.is_open())
+    if (!in)
     {
         ERR("Could not open layer file {:s}.", layer_file);
         return layer_names;
@@ -72,11 +72,12 @@ std::vector<std::string> readLayerFile(std::string const& layer_file)
 }
 
 /// creates a vector of sampling points based on the specified resolution
-std::vector<GeoLib::Point*>* createPoints(MathLib::Point3d const& start,
-                                          MathLib::Point3d const& end,
-                                          std::size_t n_intervals)
+std::unique_ptr<std::vector<GeoLib::Point*>> createPoints(
+    MathLib::Point3d const& start,
+    MathLib::Point3d const& end,
+    std::size_t const n_intervals)
 {
-    std::vector<GeoLib::Point*>* points = new std::vector<GeoLib::Point*>;
+    auto points = std::make_unique <std::vector<GeoLib::Point*>>();
     points->push_back(new GeoLib::Point(start, 0));
     double const length = sqrt(MathLib::sqrDist(start, end));
     double const interval = length / n_intervals;
@@ -355,8 +356,8 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-    std::string const input_name = input_arg.getValue().c_str();
-    std::string const output_name = output_arg.getValue().c_str();
+    std::string const input_name = input_arg.getValue();
+    std::string const output_name = output_arg.getValue();
 
     MathLib::Point3d const pnt_start{
         {start_x_arg.getValue(), start_y_arg.getValue(), 0.0}};
@@ -388,14 +389,11 @@ int main(int argc, char* argv[])
     std::string merged_geo_name = "merged_geometries";
     mergeGeometries(geo, geo_name_list, merged_geo_name);
     std::vector<GeoLib::Point*> points = *geo.getPointVec(merged_geo_name);
-    std::vector<GeoLib::Polyline*>* lines =
-        const_cast<std::vector<GeoLib::Polyline*>*>(
-            geo.getPolylineVec(merged_geo_name));
-
     MathLib::DenseMatrix<double> rot_mat(3, 3);
     double z_shift(0);
     rotateGeometryToXY(points, rot_mat, z_shift);
     consolidateGeometry(geo, output_name, merged_geo_name, test_arg.getValue());
+
     std::unique_ptr<MeshLib::Mesh> mesh(
         generateMesh(geo, merged_geo_name, output_name, interval_length));
     if (!test_arg.getValue())
