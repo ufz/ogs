@@ -125,13 +125,11 @@ struct IntegrationPointData final
         return C;
     }
 
-    template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
-        DisplacementVectorType const& /*u*/,
         double const temperature)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;

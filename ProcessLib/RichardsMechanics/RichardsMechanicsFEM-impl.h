@@ -498,7 +498,7 @@ void RichardsMechanicsLocalAssembler<
                 eps);
 
         auto C = _ip_data[ip].updateConstitutiveRelation(
-            variables, t, x_position, dt, u, temperature);
+            variables, t, x_position, dt, temperature);
 
         //
         // displacement equation, displacement part
@@ -842,7 +842,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 eps);
 
         auto C = _ip_data[ip].updateConstitutiveRelation(
-            variables, t, x_position, dt, u, temperature);
+            variables, t, x_position, dt, temperature);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -1366,7 +1366,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
 
-        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt, u,
+        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
                                                 temperature);
     }
 }
@@ -1588,7 +1588,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
 
-        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt, u,
+        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
                                                 temperature);
 
         auto const& b = _process_data.specific_body_force;
