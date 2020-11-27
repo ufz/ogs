@@ -43,16 +43,6 @@
 
 #include <QApplication>
 
-/// deletes temporary output files
-void removeFile(std::string const& filename)
-{
-    std::string remove_cmd("rm " + filename);
-#ifdef _WIN32
-    remove_cmd = "del " + filename;
-#endif
-    system(remove_cmd.c_str());
-}
-
 /// reads the list of mesh files into a string vector
 std::vector<std::string> readLayerFile(std::string const& layer_file)
 {
@@ -239,7 +229,8 @@ void consolidateGeometry(GeoLib::GEOObjects& geo,
 
     if (!keep_gml_file)
     {
-        removeFile(filename);
+        BaseLib::removeFile(filename);
+        BaseLib::removeFile(filename + ".md5");
     }
 }
 
@@ -398,8 +389,8 @@ int main(int argc, char* argv[])
         generateMesh(geo, merged_geo_name, output_name, interval_length));
     if (!test_arg.getValue())
     {
-        removeFile(output_name + ".geo");
-        removeFile(output_name + ".msh");
+        BaseLib::removeFile(output_name + ".geo");
+        BaseLib::removeFile(output_name + ".msh");
     }
     if (mesh == nullptr)
     {
