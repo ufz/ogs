@@ -374,10 +374,10 @@ void RichardsMechanicsLocalAssembler<
                                          x_position, t, dt);
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
-            MPL::VariableArray variables;
-            variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+            MPL::VariableArray vs;
+            vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
-                .template value<double>(variables, x_position, t, dt);
+                .template value<double>(vs, x_position, t, dt);
         };
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
@@ -724,10 +724,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                          x_position, t, dt);
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
-            MPL::VariableArray variables;
-            variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+            MPL::VariableArray vs;
+            vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
-                .template value<double>(variables, x_position, t, dt);
+                .template value<double>(vs, x_position, t, dt);
         };
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
@@ -1451,11 +1451,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             S_L_prev;
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
-            MPL::VariableArray variables;
-            variables.fill(std::numeric_limits<double>::quiet_NaN());
-            variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
+            MPL::VariableArray vs;
+            vs.fill(std::numeric_limits<double>::quiet_NaN());
+            vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
-                .template value<double>(variables, x_position, t, dt);
+                .template value<double>(vs, x_position, t, dt);
         };
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
