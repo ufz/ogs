@@ -15,3 +15,18 @@ build linux:
   parallel:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
+
+
+build linux (no unity):
+  image: $CONTAINER_GCC_IMAGE
+  extends: .template-build-linux
+  tags: [ docker ]
+  timeout: 1h
+  variables:
+    BUILD_DIR: "build-no-unity"
+    BUILD_TESTS: "false"
+    BUILD_CTEST: "false"
+    CMAKE_ARGS: >-
+      -DOGS_BUILD_UTILS=ON
+      -DOGS_USE_CONAN=OFF
+      -DOGS_USE_UNITY_BUILDS=OFF
