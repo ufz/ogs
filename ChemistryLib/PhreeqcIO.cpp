@@ -113,6 +113,11 @@ void PhreeqcIO::initialize()
         });
 
     _chemical_system->initialize(_num_chemical_systems);
+
+    if (_user_punch)
+    {
+        _user_punch->initialize(_num_chemical_systems);
+    }
 }
 
 void PhreeqcIO::executeInitialCalculation(
@@ -191,8 +196,7 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
         OGS_FATAL("Could not open phreeqc dump file '{:s}'.", dump_file);
     }
 
-    std::size_t const num_chemical_systems = _mesh.getNumberOfBaseNodes();
-    _dump->readDumpFile(in, num_chemical_systems);
+    _dump->readDumpFile(in, _num_chemical_systems);
 
     if (!in)
     {

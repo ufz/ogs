@@ -48,6 +48,8 @@ struct UserPunch
     {
     }
 
+    void initialize(std::size_t const num_chemical_systems);
+
     friend std::ostream& operator<<(std::ostream& os,
                                     UserPunch const& user_punch);
 

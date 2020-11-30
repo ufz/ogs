@@ -15,6 +15,14 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
+void UserPunch::initialize(std::size_t const num_chemical_systems)
+{
+    for (auto& secondary_variable : secondary_variables)
+    {
+        secondary_variable.value->resize(num_chemical_systems);
+    }
+}
+
 std::ostream& operator<<(std::ostream& os, UserPunch const& user_punch)
 {
     os << "USER_PUNCH" << "\n";
