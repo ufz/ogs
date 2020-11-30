@@ -163,6 +163,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
+    MPL::VariableArray variables;
+    MPL::VariableArray variables_prev;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -215,8 +217,22 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             eps_m_prev + eps - eps_prev -
             linear_thermal_strain_increment * Invariants::identity2;
 
+        variables_prev[static_cast<int>(MPL::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_prev);
+        variables_prev[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m_prev);
+        variables_prev[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(T_ip);
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m);
+        variables[static_cast<int>(MPL::Variable::temperature)].emplace<double>(
+            T_ip);
+
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
+            variables_prev, variables, t, x_position, dt, *state);
 
         if (!solution)
         {
@@ -356,6 +372,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
+    MPL::VariableArray variables;
+    MPL::VariableArray variables_prev;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -408,8 +426,22 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
             eps_m_prev + eps - eps_prev -
             linear_thermal_strain_increment * Invariants::identity2;
 
+        variables_prev[static_cast<int>(MPL::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_prev);
+        variables_prev[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m_prev);
+        variables_prev[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(T_ip);
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m);
+        variables[static_cast<int>(MPL::Variable::temperature)].emplace<double>(
+            T_ip);
+
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_prev, *state, T_ip);
+            variables_prev, variables, t, x_position, dt, *state);
 
         if (!solution)
         {

@@ -184,6 +184,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
     auto const& gravity_vec = _process_data.specific_body_force;
 
+    MPL::VariableArray variables;
+    MPL::VariableArray variables_prev;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -228,9 +230,21 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
+        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(eps);
+
+        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
+                sigma_eff_prev);
+        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
+                eps_prev);
+        variables_prev[static_cast<int>(
+                           MaterialPropertyLib::Variable::temperature)]
+            .emplace<double>(_process_data.reference_temperature);
+
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
-            _process_data.reference_temperature);
+            variables_prev, variables, t, x_position, dt, *state);
 
         if (!solution)
         {
@@ -316,6 +330,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         Eigen::Ref<const Eigen::VectorXd> const& p,
         Eigen::Ref<const Eigen::VectorXd> const& u)
 {
+    MPL::VariableArray variables;
+    MPL::VariableArray variables_prev;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -348,9 +364,21 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
+        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(eps);
+
+        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
+                sigma_eff_prev);
+        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
+                eps_prev);
+        variables_prev[static_cast<int>(
+                           MaterialPropertyLib::Variable::temperature)]
+            .emplace<double>(_process_data.reference_temperature);
+
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev, *state,
-            _process_data.reference_temperature);
+            variables_prev, variables, t, x_position, dt, *state);
 
         if (!solution)
         {

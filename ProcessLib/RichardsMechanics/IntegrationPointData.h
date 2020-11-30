@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "MaterialLib/MPL/VariableType.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -90,16 +91,28 @@ struct IntegrationPointData final
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     computeElasticTangentStiffness(
+        MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
         double const temperature)
     {
-        using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+        namespace MPL = MaterialPropertyLib;
         auto const null_state = solid_material.createMaterialStateVariables();
-        KV const zero = KV::Zero();
-        auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, zero, zero, zero, *null_state, temperature);
+
+        MPL::VariableArray variable_array_prev;
+        variable_array_prev[static_cast<int>(MPL::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_eff_prev);
+        variable_array_prev[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_prev);
+        variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
+            .emplace<double>(temperature);
+
+        auto&& solution =
+            solid_material.integrateStress(variable_array_prev, variable_array,
+                                           t, x_position, dt, *null_state);
 
         if (!solution)
         {
@@ -114,15 +127,29 @@ struct IntegrationPointData final
 
     template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+        MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
         DisplacementVectorType const& /*u*/,
         double const temperature)
     {
+        MaterialPropertyLib::VariableArray variable_array_prev;
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_eff_prev);
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_prev);
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::temperature)]
+            .emplace<double>(temperature);
+
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev,
-            *material_state_variables, temperature);
+            variable_array_prev, variable_array, t, x_position, dt,
+            *material_state_variables);
 
         if (!solution)
         {

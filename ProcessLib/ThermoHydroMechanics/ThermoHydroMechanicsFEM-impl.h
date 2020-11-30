@@ -181,6 +181,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
         *_process_data.solid_materials[0];
 
+    MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -226,6 +227,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
         auto& eps = _ip_data[ip].eps;
+        auto& eps_m = _ip_data[ip].eps_m;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -318,10 +320,14 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // displacement equation, displacement part
         //
         eps.noalias() = B * u;
+        eps_m.noalias() = eps - thermal_strain;
+        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m);
+
         auto C = _ip_data[ip].updateConstitutiveRelationThermal(
-            t, x_position, dt, u,
-            _process_data.reference_temperature(t, x_position)[0],
-            thermal_strain);
+            variables, t, x_position, dt, u,
+            _process_data.reference_temperature(t, x_position)[0]);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -581,6 +587,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
 
+    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
@@ -633,10 +640,16 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
 
+        auto& eps_m = _ip_data[ip].eps_m;
+        eps_m.noalias() = eps - thermal_strain;
+
+        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m);
+
         _ip_data[ip].updateConstitutiveRelationThermal(
-            t, x_position, dt, u,
-            _process_data.reference_temperature(t, x_position)[0],
-            thermal_strain);
+            variables, t, x_position, dt, u,
+            _process_data.reference_temperature(t, x_position)[0]);
     }
 }
 

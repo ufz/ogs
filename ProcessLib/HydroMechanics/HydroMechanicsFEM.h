@@ -31,6 +31,8 @@ namespace ProcessLib
 {
 namespace HydroMechanics
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
           typename ShapeMatricesTypePressure, int DisplacementDim, int NPoints>
 struct IntegrationPointData final
@@ -71,15 +73,29 @@ struct IntegrationPointData final
 
     template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+        MPL::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
         DisplacementVectorType const& /*u*/,
         double const T)
     {
+        MaterialPropertyLib::VariableArray variable_array_prev;
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_eff_prev);
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_prev);
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::temperature)]
+            .emplace<double>(T);
+
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_prev, eps, sigma_eff_prev,
-            *material_state_variables, T);
+            variable_array_prev, variable_array, t, x_position, dt,
+            *material_state_variables);
 
         if (!solution)
         {

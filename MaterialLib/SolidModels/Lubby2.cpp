@@ -9,6 +9,10 @@
 
 #include "Lubby2.h"
 
+#include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
+
+namespace MPL = MaterialPropertyLib;
+
 namespace MaterialLib
 {
 namespace Solids
@@ -72,13 +76,19 @@ std::optional<std::tuple<typename Lubby2<DisplacementDim>::KelvinVector,
                              DisplacementDim>::MaterialStateVariables>,
                          typename Lubby2<DisplacementDim>::KelvinMatrix>>
 Lubby2<DisplacementDim>::integrateStress(
-    double const t, ParameterLib::SpatialPosition const& x, double const dt,
-    KelvinVector const& eps_prev, KelvinVector const& eps,
-    KelvinVector const& sigma_prev,
+    MaterialPropertyLib::VariableArray const& variable_array_prev,
+    MaterialPropertyLib::VariableArray const& variable_array, double const t,
+    ParameterLib::SpatialPosition const& x, double const dt,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables,
-    double const /*T*/) const
+        material_state_variables) const
 {
+    auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array[static_cast<int>(MPL::Variable::strain)]);
+    auto const& eps_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(MPL::Variable::strain)]);
+    auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
+
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     assert(dynamic_cast<MaterialStateVariables const*>(

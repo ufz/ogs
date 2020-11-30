@@ -73,40 +73,30 @@ struct IntegrationPointData final
     }
 
     template <typename DisplacementVectorType>
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
+        MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
         DisplacementVectorType const& /*u*/,
         double const T)
     {
+        MaterialPropertyLib::VariableArray variable_array_prev;
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::stress)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                sigma_eff_prev);
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m_prev);
+        variable_array_prev[static_cast<int>(
+                                MaterialPropertyLib::Variable::temperature)]
+            .emplace<double>(T);
+
         auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
-            *material_state_variables, T);
-
-        if (!solution)
-            OGS_FATAL("Computation of local constitutive relation failed.");
-
-        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
-        std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
-
-        return C;
-    }
-
-    template <typename DisplacementVectorType>
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        DisplacementVectorType const& /*u*/,
-        double const T,
-        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& thermal_strain)
-    {
-
-        eps_m.noalias() = eps - thermal_strain;
-        auto&& solution = solid_material.integrateStress(
-            t, x_position, dt, eps_m_prev, eps_m, sigma_eff_prev,
-            *material_state_variables, T);
+            variable_array_prev, variable_array, t, x_position, dt,
+            *material_state_variables);
 
         if (!solution)
             OGS_FATAL("Computation of local constitutive relation failed.");

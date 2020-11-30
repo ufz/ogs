@@ -13,7 +13,10 @@
 
 #include <limits>
 
+#include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
 #include "MaterialLib/PhysicalConstant.h"
+
+namespace MPL = MaterialPropertyLib;
 
 namespace MaterialLib
 {
@@ -33,13 +36,21 @@ std::optional<std::tuple<typename CreepBGRa<DisplacementDim>::KelvinVector,
                              DisplacementDim>::MaterialStateVariables>,
                          typename CreepBGRa<DisplacementDim>::KelvinMatrix>>
 CreepBGRa<DisplacementDim>::integrateStress(
-    double const t, ParameterLib::SpatialPosition const& x, double const dt,
-    KelvinVector const& eps_prev, KelvinVector const& eps,
-    KelvinVector const& sigma_prev,
+    MaterialPropertyLib::VariableArray const& variable_array_prev,
+    MaterialPropertyLib::VariableArray const& variable_array, double const t,
+    ParameterLib::SpatialPosition const& x, double const dt,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-    /*material_state_variables*/,
-    double const T) const
+    /*material_state_variables*/) const
 {
+    auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array[static_cast<int>(MPL::Variable::strain)]);
+    auto const& eps_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(MPL::Variable::strain)]);
+    auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
+    auto const T = std::get<double>(
+        variable_array_prev[static_cast<int>(MPL::Variable::temperature)]);
+
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     Eigen::FullPivLU<Eigen::Matrix<double, KelvinVectorSize, KelvinVectorSize,

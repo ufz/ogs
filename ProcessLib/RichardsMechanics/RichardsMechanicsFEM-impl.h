@@ -342,8 +342,12 @@ void RichardsMechanicsLocalAssembler<
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
 
+        // use old value for elastic tangent stiffness update
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            variables, t, x_position, dt, temperature);
 
         auto const beta_SR =
             (1 - alpha) /
@@ -428,8 +432,9 @@ void RichardsMechanicsLocalAssembler<
                                 variables, variables_prev, x_position, t, dt));
                 sigma_sw += sigma_sw_dot * dt;
 
+                // TODO (naumov) Maybe not needed, because computed above.
                 auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-                    t, x_position, dt, temperature);
+                    variables, t, x_position, dt, temperature);
 
                 // !!! Misusing volumetric strain for mechanical volumetric
                 // strain just to update the transport porosity !!!
@@ -488,9 +493,12 @@ void RichardsMechanicsLocalAssembler<
         // displacement equation, displacement part
         //
         eps.noalias() = B * u;
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
-                                                         temperature);
+        auto C = _ip_data[ip].updateConstitutiveRelation(
+            variables, t, x_position, dt, u, temperature);
 
         //
         // displacement equation, displacement part
@@ -686,8 +694,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            variables, t, x_position, dt, temperature);
 
         auto const beta_SR =
             (1 - alpha) /
@@ -826,9 +837,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // displacement equation, displacement part
         //
         eps.noalias() = B * u;
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
-                                                         temperature);
+        auto C = _ip_data[ip].updateConstitutiveRelation(
+            variables, t, x_position, dt, u, temperature);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -1348,8 +1362,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
-        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt, u,
                                                 temperature);
     }
 }
@@ -1447,8 +1464,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
+        // use old value for elastic tangent stiffness update
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            variables, t, x_position, dt, temperature);
 
         auto const beta_SR =
             (1 - alpha) /
@@ -1563,8 +1584,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _ip_data[ip].dry_density_solid = (1 - phi) * rho_SR;
 
         eps.noalias() = B * u;
+        variables[static_cast<int>(MPL::Variable::strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
-        _ip_data[ip].updateConstitutiveRelation(t, x_position, dt, u,
+        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt, u,
                                                 temperature);
 
         auto const& b = _process_data.specific_body_force;

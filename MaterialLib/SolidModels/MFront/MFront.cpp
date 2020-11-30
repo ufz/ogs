@@ -11,7 +11,11 @@
 
 #include <MGIS/Behaviour/Integrate.hxx>
 
+#include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "NumLib/Exceptions.h"
+
+namespace MPL = MaterialPropertyLib;
 
 namespace
 {
@@ -248,15 +252,13 @@ std::optional<std::tuple<typename MFront<DisplacementDim>::KelvinVector,
                              DisplacementDim>::MaterialStateVariables>,
                          typename MFront<DisplacementDim>::KelvinMatrix>>
 MFront<DisplacementDim>::integrateStress(
+    MPL::VariableArray const& variable_array_prev,
+    MPL::VariableArray const& variable_array,
     double const t,
     ParameterLib::SpatialPosition const& x,
     double const dt,
-    KelvinVector const& eps_prev,
-    KelvinVector const& eps,
-    KelvinVector const& sigma_prev,
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-        material_state_variables,
-    double const T) const
+        material_state_variables) const
 {
     using namespace MathLib::KelvinVector;
 
@@ -284,10 +286,18 @@ MFront<DisplacementDim>::integrateStress(
         assert(out == behaviour_data.s1.material_properties.end());
     }
 
+    if (!behaviour_data.s0.external_state_variables.empty())
+    {
+        // assuming that there is only temperature
+        behaviour_data.s1.external_state_variables[0] = std::get<double>(
+            variable_array_prev[static_cast<int>(MPL::Variable::temperature)]);
+    }
+
     if (!behaviour_data.s1.external_state_variables.empty())
     {
         // assuming that there is only temperature
-        behaviour_data.s1.external_state_variables[0] = T;
+        behaviour_data.s1.external_state_variables[0] = std::get<double>(
+            variable_array[static_cast<int>(MPL::Variable::temperature)]);
     }
 
     // rotation tensor
@@ -300,6 +310,8 @@ MFront<DisplacementDim>::integrateStress(
             _local_coordinate_system->transformation<DisplacementDim>(x));
     }();
 
+    auto const& eps_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(MPL::Variable::strain)]);
     auto const eps_prev_MFront =
         OGSToMFront(Q.transpose()
                         .template topLeftCorner<
@@ -309,6 +321,8 @@ MFront<DisplacementDim>::integrateStress(
     std::copy_n(eps_prev_MFront.data(), KelvinVector::SizeAtCompileTime,
                 behaviour_data.s0.gradients.data());
 
+    auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array[static_cast<int>(MPL::Variable::strain)]);
     auto const eps_MFront =
         OGSToMFront(Q.transpose()
                         .template topLeftCorner<
@@ -318,6 +332,8 @@ MFront<DisplacementDim>::integrateStress(
     std::copy_n(eps_MFront.data(), KelvinVector::SizeAtCompileTime,
                 behaviour_data.s1.gradients.data());
 
+    auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
     auto const sigma_prev_MFront =
         OGSToMFront(Q.transpose()
                         .template topLeftCorner<

@@ -30,6 +30,8 @@ namespace ProcessLib
 {
 namespace ThermoMechanics
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename BMatricesType, typename ShapeMatricesType,
           int DisplacementDim>
 struct IntegrationPointData final

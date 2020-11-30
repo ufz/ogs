@@ -158,12 +158,12 @@ public:
                        DisplacementDim>::MaterialStateVariables>,
                    typename MechanicsBase<DisplacementDim>::KelvinMatrix>>
     integrateStress(
+        MaterialPropertyLib::VariableArray const& variable_array_prev,
+        MaterialPropertyLib::VariableArray const& variable_array,
         double const t, ParameterLib::SpatialPosition const& x,
-        double const /*dt*/, KelvinVector const& eps_prev,
-        KelvinVector const& eps, KelvinVector const& sigma_prev,
+        double const /*dt*/,
         typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
-            material_state_variables,
-        double const T) const override;
+            material_state_variables) const override;
 
     KelvinMatrix getElasticTensor(double const t,
                                   ParameterLib::SpatialPosition const& x,

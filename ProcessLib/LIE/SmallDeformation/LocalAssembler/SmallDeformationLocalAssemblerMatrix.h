@@ -27,6 +27,8 @@ namespace LIE
 {
 namespace SmallDeformation
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 class SmallDeformationLocalAssemblerMatrix

@@ -26,6 +26,8 @@ namespace LIE
 {
 namespace HydroMechanics
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename ShapeFunctionDisplacement,
           typename ShapeFunctionPressure,
           typename IntegrationMethod,
