@@ -128,15 +128,6 @@ public:
      */
     virtual CellType getCellType() const = 0;
 
-
-    /**
-     * Returns true if the element has zero length/area/volume.
-     */
-    bool hasZeroVolume() const
-    {
-        return this->getContent() < std::numeric_limits<double>::epsilon();
-    }
-
     /// Returns true if the element is located at a boundary (i.e. has at least one face without neighbour)
     virtual bool isBoundaryElement() const;
 
@@ -217,6 +208,12 @@ protected:
     void setNeighbor(Element* neighbor, unsigned const face_id);
 
 }; /* class */
+
+/// Returns true if elem is a neighbour of this element and false otherwise.
+bool areNeighbors(Element const* const element, Element const* const other);
+
+/// Returns true if the element has zero length/area/volume.
+bool hasZeroVolume(MeshLib::Element const& element);
 
 /// Calculates the center of gravity for the mesh element
 MeshLib::Node getCenterOfGravity(MeshLib::Element const& element);

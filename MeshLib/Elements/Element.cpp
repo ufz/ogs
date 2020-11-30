@@ -188,6 +188,12 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
 }
 #endif  // NDEBUG
 
+
+bool hasZeroVolume(MeshLib::Element const& element)
+{
+    return element.getContent() < std::numeric_limits<double>::epsilon();
+}
+
 MeshLib::Node getCenterOfGravity(Element const& element)
 {
     const unsigned nNodes(element.getNumberOfBaseNodes());
