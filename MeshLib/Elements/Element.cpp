@@ -99,22 +99,6 @@ MeshLib::Node Element::getCenterOfGravity() const
     return center;
 }
 
-void Element::computeSqrNodeDistanceRange(double &min, double &max, bool check_allnodes) const
-{
-    min = std::numeric_limits<double>::max();
-    max = 0;
-    const unsigned nnodes = check_allnodes ? getNumberOfNodes() : getNumberOfBaseNodes();
-    for (unsigned i=0; i<nnodes; i++)
-    {
-        for (unsigned j=i+1; j<nnodes; j++)
-        {
-            const double dist (MathLib::sqrDist(*getNode(i), *getNode(j)));
-            min = std::min(dist, min);
-            max = std::max(dist, max);
-        }
-    }
-}
-
 const Element* Element::getNeighbor(unsigned i) const
 {
 #ifndef NDEBUG
@@ -219,6 +203,26 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
     return os;
 }
 #endif  // NDEBUG
+
+std::pair<double, double> computeSqrNodeDistanceRange(
+    MeshLib::Element const& element, bool const check_allnodes)
+{
+    double min = std::numeric_limits<double>::max();
+    double max = 0;
+    const unsigned nnodes = check_allnodes ? element.getNumberOfNodes()
+                                           : element.getNumberOfBaseNodes();
+    for (unsigned i = 0; i < nnodes; i++)
+    {
+        for (unsigned j = i + 1; j < nnodes; j++)
+        {
+            const double dist(
+                MathLib::sqrDist(*element.getNode(i), *element.getNode(j)));
+            min = std::min(dist, min);
+            max = std::max(dist, max);
+        }
+    }
+    return {min, max};
+}
 
 std::pair<double, double> computeSqrEdgeLengthRange(Element const& element)
 {

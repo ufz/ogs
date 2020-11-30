@@ -43,10 +43,10 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
             n_sampling += n_edges;
         }
     } else {
-        double min = 0;
-        double max = 0;
-        for (const MeshLib::Element* e : elements) {
-            e->computeSqrNodeDistanceRange(min, max, true);
+        for (const MeshLib::Element* e : elements)
+        {
+            auto const [min, max] =
+                MeshLib::computeSqrNodeDistanceRange(*e, true);
             sum += std::sqrt(min);
             sum_of_sqr += min;
         }

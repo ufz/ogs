@@ -36,10 +36,6 @@ class Element
     friend class Mesh;
 
 public:
-    /// Compute the minimum and maximum node distances for this element.
-    void computeSqrNodeDistanceRange(double& min, double& max,
-                                     bool check_allnodes = true) const;
-
     /**
      * \brief Tries to add an element e as neighbour to this element.
      * If the elements really are neighbours, the element is added to the
@@ -224,6 +220,10 @@ protected:
     void setNeighbor(Element* neighbor, unsigned const face_id);
 
 }; /* class */
+
+/// Compute the minimum and maximum node distances for this element.
+std::pair<double, double> computeSqrNodeDistanceRange(
+    MeshLib::Element const& element, bool const check_allnodes = true);
 
 /// Compute the minimum and maximum squared edge length for this element
 std::pair<double, double> computeSqrEdgeLengthRange(Element const& element);
