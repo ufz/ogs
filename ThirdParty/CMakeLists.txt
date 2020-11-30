@@ -88,12 +88,7 @@ if(OGS_BUILD_UTILS)
     list(APPEND DISABLE_WARNINGS_TARGETS ogs_metis mpmetis)
 endif()
 
-foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
-    target_compile_options(${TARGET} PRIVATE
-        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
-        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
-endforeach()
-
+# Xdmf
 find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
 set(XDMF_LIBNAME OgsXdmf CACHE INTERNAL "")
 add_subdirectory(xdmf)
@@ -126,3 +121,11 @@ set_target_properties(${XDMF_LIBNAME} ${XDMF_LIBNAME}Core PROPERTIES
 if(BUILD_SHARED_LIBS)
     install(TARGETS ${XDMF_LIBNAME} ${XDMF_LIBNAME}Core LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
+list(APPEND DISABLE_WARNINGS_TARGETS ${XDMF_LIBNAME} ${XDMF_LIBNAME}Core)
+# Xdmf end
+
+foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
+    target_compile_options(${TARGET} PRIVATE
+        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
+        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
+endforeach()

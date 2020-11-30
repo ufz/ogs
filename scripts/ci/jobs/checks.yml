@@ -1,18 +1,19 @@
 compiler warnings:
   stage: check
+  image: ubuntu:20.04
   variables:
     GIT_STRATEGY: none
   allow_failure: true
   needs:
-    - job: build linux
+    - job: "build linux (no unity)"
     - job: "build win: [USE_PYTHON=ON]"
     - job: build mac
   script:
     - exit_code=0
-    - cd build
-    - "if [[ $(cat make.output | grep warning -i) ]]; then echo 'There were GCC compiler warnings:'; cat make.output | grep warning -i; exit_code=1; fi"
+    - cd build-no-unity
+    - "if [[ $(cat make.output | grep warning -i) ]]; then printf 'There were GCC compiler warnings:\n\n'; cat make.output | grep warning -i; exit_code=1; fi"
     - cd ../build-win
-    - "if [[ $(cat make.output | grep ': warning' -i) ]]; then echo 'There were MSVC compiler warnings:'; cat make.output | grep ': warning' -i; exit_code=1; fi"
+    - "if [[ $(cat make.output | grep ': warning' -i) ]]; then printf 'There were MSVC compiler warnings:\n\n'; cat make.output | grep ': warning' -i; exit_code=1; fi"
     - cd ../build-mac
-    - "if [[ $(cat make.output | grep warning -i) ]]; then echo 'There were Clang (macOS) compiler warnings:'; cat make.output | grep warning -i; exit_code=1; fi"
+    - "if [[ $(cat make.output | grep warning -i) ]]; then printf 'There were Clang (macOS) compiler warnings:\n\n'; cat make.output | grep warning -i; exit_code=1; fi"
     - exit $exit_code
