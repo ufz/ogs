@@ -2,7 +2,7 @@ clang tidy:
   stage: check
   extends:
     - .rules-manual
-  dependencies: [meta_container]
+  needs: ["pre commit"]
   variables:
     BUILD_DIR: "build-tidy"
     CMAKE_ARGS: "-DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DCMAKE_CXX_CLANG_TIDY=clang-tidy-9"

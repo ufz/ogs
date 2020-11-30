@@ -2,7 +2,7 @@ clang sanitizer:
   stage: check
   extends:
     - .rules-manual
-  dependencies: [meta_container]
+  needs: ["pre commit"]
   variables:
     BUILD_DIR: "build-sanitizer"
     CMAKE_ARGS: "-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON -DOGS_BUILD_UTILS=ON"
