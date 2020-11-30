@@ -782,7 +782,7 @@ void TetGenInterface::write3dElements(std::ofstream &out,
         if (materialIds)
         {
             attribute_points.emplace_back(
-                elements[i]->getCenterOfGravity().getCoords(),
+                MeshLib::getCenterOfGravity(*elements[i]).getCoords(),
                 (*materialIds)[i]);
         }
     }

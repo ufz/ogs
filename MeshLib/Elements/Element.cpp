@@ -83,22 +83,6 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
     return boost::optional<unsigned>();
 }
 
-MeshLib::Node Element::getCenterOfGravity() const
-{
-    const unsigned nNodes (this->getNumberOfBaseNodes());
-    MeshLib::Node center(0,0,0);
-    for (unsigned i=0; i<nNodes; ++i)
-    {
-        center[0] += (*_nodes[i])[0];
-        center[1] += (*_nodes[i])[1];
-        center[2] += (*_nodes[i])[2];
-    }
-    center[0] /= nNodes;
-    center[1] /= nNodes;
-    center[2] /= nNodes;
-    return center;
-}
-
 const Element* Element::getNeighbor(unsigned i) const
 {
 #ifndef NDEBUG
@@ -203,6 +187,22 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
     return os;
 }
 #endif  // NDEBUG
+
+MeshLib::Node getCenterOfGravity(Element const& element)
+{
+    const unsigned nNodes(element.getNumberOfBaseNodes());
+    MeshLib::Node center(0, 0, 0);
+    for (unsigned i = 0; i < nNodes; ++i)
+    {
+        center[0] += (*element.getNode(i))[0];
+        center[1] += (*element.getNode(i))[1];
+        center[2] += (*element.getNode(i))[2];
+    }
+    center[0] /= nNodes;
+    center[1] /= nNodes;
+    center[2] /= nNodes;
+    return center;
+}
 
 std::pair<double, double> computeSqrNodeDistanceRange(
     MeshLib::Element const& element, bool const check_allnodes)

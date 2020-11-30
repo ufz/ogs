@@ -81,7 +81,7 @@ bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     double const no_data = raster.getHeader().no_data;
     std::transform(elems.cbegin(), elems.cend(), std::back_inserter(*vec),
                    [&](auto const elem) {
-                       auto node = elem->getCenterOfGravity();
+                       auto node = getCenterOfGravity(*elem);
                        return evaluatePixel(raster.getValueAtPoint(node),
                                             no_data, default_replacement);
                    });

@@ -19,7 +19,7 @@ namespace MeshLib {
 
 bool CellRule::testElementNodeOrder(const Element* e)
 {
-    const MathLib::Vector3 c (e->getCenterOfGravity());
+    const MathLib::Vector3 c(getCenterOfGravity(*e));
     const unsigned nFaces (e->getNumberOfFaces());
     for (unsigned j=0; j<nFaces; ++j)
     {

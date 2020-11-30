@@ -44,9 +44,6 @@ public:
      */
     boost::optional<unsigned> addNeighbor(Element* e);
 
-    /// Calculates the center of gravity for the mesh element
-    MeshLib::Node getCenterOfGravity() const;
-
     /// Returns the length, area or volume of a 1D, 2D or 3D element
     double getContent() const { return _content; }
 
@@ -220,6 +217,9 @@ protected:
     void setNeighbor(Element* neighbor, unsigned const face_id);
 
 }; /* class */
+
+/// Calculates the center of gravity for the mesh element
+MeshLib::Node getCenterOfGravity(MeshLib::Element const& element);
 
 /// Compute the minimum and maximum node distances for this element.
 std::pair<double, double> computeSqrNodeDistanceRange(

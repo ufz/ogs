@@ -196,11 +196,11 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers, std::size_t nEl
             }
             else
             {
-                MeshLib::Node attr = high->getCenterOfGravity();
+                MeshLib::Node attr = MeshLib::getCenterOfGravity(*high);
                 _attribute_points.emplace_back(
                     attr[0],
                     attr[1],
-                    (attr[2] + low->getCenterOfGravity()[2]) / 2.0,
+                    (attr[2] + MeshLib::getCenterOfGravity(*low)[2]) / 2.0,
                     _materials[lower_offset + j]);
             }
         }

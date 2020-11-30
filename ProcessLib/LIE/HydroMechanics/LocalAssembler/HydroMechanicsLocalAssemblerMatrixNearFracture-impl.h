@@ -36,7 +36,7 @@ HydroMechanicsLocalAssemblerMatrixNearFracture<ShapeFunctionDisplacement,
                                          IntegrationMethod, GlobalDim>(
           e, n_variables, local_matrix_size, dofIndex_to_localIndex,
           is_axially_symmetric, integration_order, process_data),
-      _e_center_coords(e.getCenterOfGravity().getCoords())
+      _e_center_coords(getCenterOfGravity(e).getCoords())
 {
     // currently not supporting multiple fractures
     _fracture_props.push_back(process_data.fracture_property.get());
