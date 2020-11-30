@@ -98,7 +98,7 @@ int writeHDF5Step(std::filesystem::path const& filepath, int const step,
     status = H5Gclose(group_id);
     status = H5Fclose(file);
 
-    return 0;
+    return status;
 }
 
 std::pair<int, bool> writeHDF5Initial(
@@ -145,8 +145,8 @@ std::pair<int, bool> writeHDF5Initial(
     hid_t topology_space = H5Screate_simple(1, topology_dims, nullptr);
 
     {
-        hid_t file = H5Fcreate(filepath.string().c_str(), H5F_ACC_TRUNC, H5P_DEFAULT,
-                               H5P_DEFAULT);
+        hid_t file = H5Fcreate(filepath.string().c_str(), H5F_ACC_TRUNC,
+                               H5P_DEFAULT, H5P_DEFAULT);
         std::string const time_section = getTimeSection(step);
         hid_t group_id = H5Gcreate2(file, time_section.c_str(), H5P_DEFAULT,
                                     H5P_DEFAULT, H5P_DEFAULT);
