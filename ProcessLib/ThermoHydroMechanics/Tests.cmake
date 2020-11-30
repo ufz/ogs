@@ -196,4 +196,20 @@ AddTest(
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature_interpolated 5e-3 1e-10
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure_interpolated 1e-10 1e-10
 )
-
+# ThermoHydroMechanics; thermo_osmosis and thermo_filtration effects, linear poroelastic, cylindrical cavity consolidation
+AddTest(
+    NAME ThermoHydroMechanics_thermo_osmosis_filtration_effects_CylindricalCavity
+    PATH ThermoHydroMechanics/Linear/Cylindrical_cavity
+    RUNTIME 4000
+	EXECUTABLE ogs
+    EXECUTABLE_ARGS CylindricalCavity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_CylindricalCavity_ts_68_t_7200000.000000.vtu CylindricalCavityts_68_t_7200000.000000.vtu displacement displacement 1e-5 1e-5
+    expected_CylindricalCavity_ts_68_t_7200000.000000.vtu CylindricalCavityts_68_t_7200000.000000.vtu pressure pressure 1e-5 1e-5
+    expected_CylindricalCavity_ts_68_t_7200000.000000.vtu CylindricalCavityts_68_t_7200000.000000.vtu temperature temperature 1e-5 1e-5
+    expected_CylindricalCavity_ts_68_t_7200000.000000.vtu CylindricalCavityts_68_t_7200000.000000.vtu epsilon epsilon 1e-5 1e-5
+    expected_CylindricalCavity_ts_68_t_7200000.000000.vtu CylindricalCavityts_68_t_7200000.000000.vtu sigma sigma 1e-5 1e-5
+)

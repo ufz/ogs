@@ -154,6 +154,11 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     typename ShapeMatricesTypePressure::NodalMatrixType MTT;
     MTT.setZero(temperature_size, temperature_size);
 
+    typename ShapeMatricesTypeDisplacement::template MatrixType<
+        temperature_size, displacement_size>
+        MTu;
+    MTu.setZero(temperature_size, displacement_size);
+
     typename ShapeMatricesTypePressure::NodalMatrixType KTT;
     KTT.setZero(temperature_size, temperature_size);
 
@@ -162,6 +167,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace_p;
     laplace_p.setZero(pressure_size, pressure_size);
+
+    typename ShapeMatricesTypePressure::NodalMatrixType laplace_T;
+    laplace_T.setZero(pressure_size, temperature_size);
 
     typename ShapeMatricesTypePressure::NodalMatrixType storage_p;
     storage_p.setZero(pressure_size, pressure_size);
@@ -313,7 +321,20 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const rho_s = solid_density * (1 -
                 solid_linear_thermal_expansion_coefficient.trace() * delta_T);
 
-        auto velocity = (-K_over_mu * dNdx_p * p).eval();
+        auto const K_pT_thermal_osmosis =
+            (solid_phase.hasProperty(
+                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
+                 ? MaterialPropertyLib::formEigenTensor<DisplacementDim>(
+                       solid_phase
+                           .property(MaterialPropertyLib::PropertyType::
+                                         thermal_osmosis_coefficient)
+                           .value(vars, x_position, t, dt))
+                 : MaterialPropertyLib::formEigenTensor<DisplacementDim>(0));
+
+        // Add thermo-osmosis effect on velocity
+        auto velocity =
+            (-K_over_mu * dNdx_p * p - K_pT_thermal_osmosis * dNdx_T * T)
+                .eval();
         velocity += K_over_mu * fluid_density * b;
 
         //
@@ -351,6 +372,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         laplace_p.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
         storage_p.noalias() += N_p.transpose() * (porosity * fluid_compressibility + (alpha - porosity) * beta_SR) * N_p * w;
+
+        // Add thermo-osmosis effect on laplace_T
+        laplace_T.noalias() +=
+            dNdx_p.transpose() * K_pT_thermal_osmosis * dNdx_T * w;
         //
         //  RHS, pressure part
         //
@@ -391,10 +416,13 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     .value(vars, x_position, t, dt),
                 fluid_thermal_conductivity, porosity);
 
+        // Add thermo-osmosis effect on KTT
         KTT.noalias() +=
             (dNdx_T.transpose() * effective_thermal_condictivity * dNdx_T +
              N_p.transpose() * velocity.transpose() * dNdx_p * fluid_density * c_f) *
-            w;
+                w -
+            fluid_density * c_f * N_T.transpose() * (dNdx_T * T).transpose() *
+                K_pT_thermal_osmosis * dNdx_T * w;
 
         auto const effective_volumetric_heat_capacity =
             porosity * fluid_density * c_f +
@@ -410,8 +438,41 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // temperature equation, pressure part
         //
-        KTp.noalias() += fluid_density * c_f * N_T.transpose() *
-                         (dNdx_T * T).transpose() * K_over_mu * dNdx_p * w;
+        // Add thermo-osmosis effect on KTp
+        KTp.noalias() +=
+            fluid_density * c_f * N_T.transpose() * (dNdx_T * T).transpose() *
+                K_over_mu * dNdx_p * w -
+            dNdx_T.transpose() * T_int_pt * K_pT_thermal_osmosis * dNdx_p * w;
+
+        // Add heat sink on MTu, KTT, KTp and fw when fluid_compressibility != 0
+        if (fluid_compressibility != 0)
+        {
+            local_rhs.template segment<temperature_size>(temperature_index)
+                .noalias() +=
+                dNdx_T.transpose() *
+                (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient /
+                 fluid_compressibility) *
+                fluid_density * K_over_mu * b * w;
+
+            MTu.noalias() +=
+                (-T_int_pt *
+                 solid_linear_thermal_expansion_coefficient.trace() /
+                 solid_skeleton_compressibility) *
+                N_T.transpose() * identity2.transpose() * B * w;
+
+            // Add thermo-osmosis effect on KTT
+            KTT.noalias() +=
+                dNdx_T.transpose() *
+                (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient *
+                 K_pT_thermal_osmosis / fluid_compressibility) *
+                dNdx_T * w;
+
+            KTp.noalias() +=
+                dNdx_T.transpose() *
+                (T_int_pt * fluid_volumetric_thermal_expansion_coefficient *
+                 K_over_mu / fluid_compressibility) *
+                dNdx_p * w;
+        }
     }
     // temperature equation, temperature part
     local_Jac
@@ -424,6 +485,13 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         .template block<temperature_size, pressure_size>(temperature_index,
                                                          pressure_index)
         .noalias() -= KTp;
+
+    // temperature equation,displacement part
+    local_Jac
+        .template block<temperature_size, displacement_size>(temperature_index,
+                                                             displacement_index)
+        .noalias() += MTu / dt;
+
     // displacement equation, temperature part
     local_Jac
         .template block<displacement_size, temperature_size>(displacement_index,
@@ -440,7 +508,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     local_Jac
         .template block<pressure_size, temperature_size>(pressure_index,
                                                          temperature_index)
-        .noalias() -= storage_T / dt;
+        .noalias() -= storage_T / dt - laplace_T;
 
     // pressure equation, pressure part.
     local_Jac
@@ -456,7 +524,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     // pressure equation (f_p)
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-        laplace_p * p + storage_p * p_dot - storage_T * T_dot +
+        laplace_p * p + laplace_T * T + storage_p * p_dot - storage_T * T_dot +
         Kup.transpose() * u_dot;
 
     // displacement equation (f_u)
@@ -553,10 +621,21 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
                 .template value<double>(vars, x_position, t, dt);
         auto const& b = _process_data.specific_body_force;
 
-        // Compute the velocity
+        auto const K_pT_thermal_osmosis =
+            (solid_phase.hasProperty(
+                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
+                 ? MaterialPropertyLib::formEigenTensor<DisplacementDim>(
+                       solid_phase
+                           .property(MaterialPropertyLib::PropertyType::
+                                         thermal_osmosis_coefficient)
+                           .value(vars, x_position, t, dt))
+                 : MaterialPropertyLib::formEigenTensor<DisplacementDim>(0));
+
+        // Compute the velocity and add thermal osmosis effect on velocity
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
-        cache_matrix.col(ip).noalias() =
-            -K_over_mu * dNdx_p * p + K_over_mu * fluid_density * b;
+        cache_matrix.col(ip).noalias() = -K_over_mu * dNdx_p * p -
+                                         K_pT_thermal_osmosis * dNdx_p * T +
+                                         K_over_mu * fluid_density * b;
     }
 
     return cache;
