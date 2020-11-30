@@ -85,7 +85,7 @@ inline void setFractureProperty(int const dim, MeshLib::Element const& e,
     // a fracture is not curving
     for (int j = 0; j < 3; j++)
     {
-        frac_prop.point_on_fracture[j] = e.getCenterOfGravity().getCoords()[j];
+        frac_prop.point_on_fracture[j] = getCenterOfGravity(e).getCoords()[j];
     }
     computeNormalVector(e, dim, n);
     frac_prop.R.resize(dim, dim);

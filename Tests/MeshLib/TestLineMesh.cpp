@@ -71,14 +71,14 @@ TEST_F(MeshLibLineMesh, ElementNeigbors)
     // elements.
     ASSERT_EQ(1u, count_neighbors(elements.front()));
     ASSERT_EQ(1u, count_neighbors(elements.back()));
-    ASSERT_TRUE(elements.front()->hasNeighbor(elements[1]));
-    ASSERT_TRUE(elements.back()->hasNeighbor(elements[elements.size()-2]));
+    ASSERT_TRUE(areNeighbors(elements.front(), elements[1]));
+    ASSERT_TRUE(areNeighbors(elements.back(), elements[elements.size()-2]));
 
     for (std::size_t i = 1; i < elements.size() - 1; ++i)
     {
         ASSERT_EQ(2u, count_neighbors(elements[i]));
-        ASSERT_TRUE(elements[i]->hasNeighbor(elements[i-1]));
-        ASSERT_TRUE(elements[i]->hasNeighbor(elements[i+1]));
+        ASSERT_TRUE(areNeighbors(elements[i], elements[i-1]));
+        ASSERT_TRUE(areNeighbors(elements[i], elements[i+1]));
     }
 }
 

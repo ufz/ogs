@@ -221,12 +221,12 @@ TEST_F(MeshLibQuadMesh, ElementNeighbors)
                                 std::pair<Indices, Indices> const& neighbors) {
         for (auto i_neighbor : neighbors.first)
         {
-            ASSERT_TRUE(e->hasNeighbor(getElement(i_neighbor, j)));
+            ASSERT_TRUE(areNeighbors(e, getElement(i_neighbor, j)));
         }
 
         for (auto j_neighbor : neighbors.second)
         {
-            ASSERT_TRUE(e->hasNeighbor(getElement(i, j_neighbor)));
+            ASSERT_TRUE(areNeighbors(e, getElement(i, j_neighbor)));
         }
     };
 

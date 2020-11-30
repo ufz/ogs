@@ -65,7 +65,7 @@ unsigned QuadRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
 ElementErrorCode QuadRule4::validate(const Element* e)
 {
     ElementErrorCode error_code;
-    error_code[ElementErrorFlag::ZeroVolume] = e->hasZeroVolume();
+    error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
     Node const* const* _nodes = e->getNodes();
     error_code[ElementErrorFlag::NonCoplanar] =
         (!MathLib::isCoplanar(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]));

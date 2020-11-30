@@ -52,7 +52,7 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
         return boost::optional<unsigned>();
     }
 
-    if (this->hasNeighbor(e))
+    if (areNeighbors(this, e))
     {
         return boost::optional<unsigned>();
     }
@@ -81,51 +81,6 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
     }
 
     return boost::optional<unsigned>();
-}
-
-MeshLib::Node Element::getCenterOfGravity() const
-{
-    const unsigned nNodes (this->getNumberOfBaseNodes());
-    MeshLib::Node center(0,0,0);
-    for (unsigned i=0; i<nNodes; ++i)
-    {
-        center[0] += (*_nodes[i])[0];
-        center[1] += (*_nodes[i])[1];
-        center[2] += (*_nodes[i])[2];
-    }
-    center[0] /= nNodes;
-    center[1] /= nNodes;
-    center[2] /= nNodes;
-    return center;
-}
-
-void Element::computeSqrEdgeLengthRange(double &min, double &max) const
-{
-    min = std::numeric_limits<double>::max();
-    max = 0;
-    const unsigned nEdges (this->getNumberOfEdges());
-    for (unsigned i=0; i<nEdges; i++)
-    {
-        const double dist (MathLib::sqrDist(*getEdgeNode(i,0), *getEdgeNode(i,1)));
-        min = (dist<min) ? dist : min;
-        max = (dist>max) ? dist : max;
-    }
-}
-
-void Element::computeSqrNodeDistanceRange(double &min, double &max, bool check_allnodes) const
-{
-    min = std::numeric_limits<double>::max();
-    max = 0;
-    const unsigned nnodes = check_allnodes ? getNumberOfNodes() : getNumberOfBaseNodes();
-    for (unsigned i=0; i<nnodes; i++)
-    {
-        for (unsigned j=i+1; j<nnodes; j++)
-        {
-            const double dist (MathLib::sqrDist(*getNode(i), *getNode(j)));
-            min = std::min(dist, min);
-            max = std::max(dist, max);
-        }
-    }
 }
 
 const Element* Element::getNeighbor(unsigned i) const
@@ -194,19 +149,6 @@ std::size_t Element::getNodeIndex(unsigned i) const
 #endif
 }
 
-bool Element::hasNeighbor(Element* elem) const
-{
-    unsigned nNeighbors (this->getNumberOfNeighbors());
-    for (unsigned i = 0; i < nNeighbors; i++)
-    {
-        if (this->_neighbors[i] == elem)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool Element::isBoundaryElement() const
 {
     return std::any_of(_neighbors, _neighbors + this->getNumberOfNeighbors(),
@@ -232,6 +174,75 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
     return os;
 }
 #endif  // NDEBUG
+
+bool areNeighbors(Element const* const element, Element const* const other)
+{
+    unsigned nNeighbors(element->getNumberOfNeighbors());
+    for (unsigned i = 0; i < nNeighbors; i++)
+    {
+        if (element->getNeighbor(i) == other)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool hasZeroVolume(MeshLib::Element const& element)
+{
+    return element.getContent() < std::numeric_limits<double>::epsilon();
+}
+
+MeshLib::Node getCenterOfGravity(Element const& element)
+{
+    const unsigned nNodes(element.getNumberOfBaseNodes());
+    MeshLib::Node center(0, 0, 0);
+    for (unsigned i = 0; i < nNodes; ++i)
+    {
+        center[0] += (*element.getNode(i))[0];
+        center[1] += (*element.getNode(i))[1];
+        center[2] += (*element.getNode(i))[2];
+    }
+    center[0] /= nNodes;
+    center[1] /= nNodes;
+    center[2] /= nNodes;
+    return center;
+}
+
+std::pair<double, double> computeSqrNodeDistanceRange(
+    MeshLib::Element const& element, bool const check_allnodes)
+{
+    double min = std::numeric_limits<double>::max();
+    double max = 0;
+    const unsigned nnodes = check_allnodes ? element.getNumberOfNodes()
+                                           : element.getNumberOfBaseNodes();
+    for (unsigned i = 0; i < nnodes; i++)
+    {
+        for (unsigned j = i + 1; j < nnodes; j++)
+        {
+            const double dist(
+                MathLib::sqrDist(*element.getNode(i), *element.getNode(j)));
+            min = std::min(dist, min);
+            max = std::max(dist, max);
+        }
+    }
+    return {min, max};
+}
+
+std::pair<double, double> computeSqrEdgeLengthRange(Element const& element)
+{
+    double min = std::numeric_limits<double>::max();
+    double max = 0;
+    const unsigned nEdges(element.getNumberOfEdges());
+    for (unsigned i = 0; i < nEdges; i++)
+    {
+        const double dist(MathLib::sqrDist(*element.getEdgeNode(i, 0),
+                                           *element.getEdgeNode(i, 1)));
+        min = std::min(dist, min);
+        max = std::max(dist, max);
+    }
+    return {min, max};
+}
 
 bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
 {

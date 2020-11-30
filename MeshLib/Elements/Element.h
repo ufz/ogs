@@ -36,12 +36,6 @@ class Element
     friend class Mesh;
 
 public:
-    /// Compute the minimum and maximum squared edge length for this element
-    virtual void computeSqrEdgeLengthRange(double &min, double &max) const;
-
-    /// Compute the minimum and maximum node distances for this element.
-    virtual void computeSqrNodeDistanceRange(double &min, double &max, bool check_allnodes=true) const;
-
     /**
      * \brief Tries to add an element e as neighbour to this element.
      * If the elements really are neighbours, the element is added to the
@@ -49,9 +43,6 @@ public:
      * is returned. Otherwise the maximum value of the value type is returned.
      */
     boost::optional<unsigned> addNeighbor(Element* e);
-
-    /// Calculates the center of gravity for the mesh element
-    MeshLib::Node getCenterOfGravity() const;
 
     /// Returns the length, area or volume of a 1D, 2D or 3D element
     double getContent() const { return _content; }
@@ -137,15 +128,6 @@ public:
      */
     virtual CellType getCellType() const = 0;
 
-
-    /**
-     * Returns true if the element has zero length/area/volume.
-     */
-    bool hasZeroVolume() const
-    {
-        return this->getContent() < std::numeric_limits<double>::epsilon();
-    }
-
     /// Returns true if the element is located at a boundary (i.e. has at least one face without neighbour)
     virtual bool isBoundaryElement() const;
 
@@ -164,9 +146,6 @@ public:
      * Tests if the element is geometrically valid.
      */
     virtual ElementErrorCode validate() const = 0;
-
-    /// Returns true if elem is a neighbour of this element and false otherwise.
-    bool hasNeighbor(Element* elem) const;
 
     /// Destructor
     virtual ~Element();
@@ -226,6 +205,22 @@ protected:
     void setNeighbor(Element* neighbor, unsigned const face_id);
 
 }; /* class */
+
+/// Returns true if elem is a neighbour of this element and false otherwise.
+bool areNeighbors(Element const* const element, Element const* const other);
+
+/// Returns true if the element has zero length/area/volume.
+bool hasZeroVolume(MeshLib::Element const& element);
+
+/// Calculates the center of gravity for the mesh element
+MeshLib::Node getCenterOfGravity(MeshLib::Element const& element);
+
+/// Compute the minimum and maximum node distances for this element.
+std::pair<double, double> computeSqrNodeDistanceRange(
+    MeshLib::Element const& element, bool const check_allnodes = true);
+
+/// Compute the minimum and maximum squared edge length for this element
+std::pair<double, double> computeSqrEdgeLengthRange(Element const& element);
 
 /// Let \f$p'\f$ the orthogonal projection to the \f$x\f$-\f$y\f$ plane of the
 /// point \c p and \f$e'\f$ the orthogonal projection to the \f$x\f$-\f$y\f$

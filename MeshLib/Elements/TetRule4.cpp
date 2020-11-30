@@ -93,7 +93,7 @@ unsigned TetRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
 ElementErrorCode TetRule4::validate(const Element* e)
 {
     ElementErrorCode error_code;
-    error_code[ElementErrorFlag::ZeroVolume] = e->hasZeroVolume();
+    error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
     error_code[ElementErrorFlag::NodeOrder]  = !e->testElementNodeOrder();
     return error_code;
 }

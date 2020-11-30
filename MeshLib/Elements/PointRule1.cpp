@@ -44,7 +44,7 @@ unsigned PointRule1::identifyFace(Node const* const* _nodes, Node* nodes[1])
 ElementErrorCode PointRule1::validate(const Element* e)
 {
     ElementErrorCode error_code;
-    error_code[ElementErrorFlag::ZeroVolume] = e->hasZeroVolume();
+    error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
     return error_code;
 }
 

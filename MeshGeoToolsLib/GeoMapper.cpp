@@ -458,9 +458,7 @@ static bool snapPointToElementNode(MathLib::Point3d& p,
                                    MeshLib::Element const& elem, double rel_eps)
 {
     // values will be initialized within computeSqrNodeDistanceRange
-    double sqr_min;
-    double sqr_max;
-    elem.computeSqrNodeDistanceRange(sqr_min, sqr_max);
+    auto const [sqr_min, sqr_max] = MeshLib::computeSqrNodeDistanceRange(elem);
 
     double const sqr_eps(rel_eps*rel_eps * sqr_min);
     for (std::size_t k(0); k<elem.getNumberOfNodes(); ++k) {

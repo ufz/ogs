@@ -108,7 +108,7 @@ unsigned PyramidRule5::identifyFace(Node const* const* _nodes, Node* nodes[3])
 ElementErrorCode PyramidRule5::validate(const Element* e)
 {
     ElementErrorCode error_code;
-    error_code[ElementErrorFlag::ZeroVolume] = e->hasZeroVolume();
+    error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
 
     std::unique_ptr<MeshLib::Quad const> const base{
         dynamic_cast<MeshLib::Quad const*>(e->getFace(4))};
