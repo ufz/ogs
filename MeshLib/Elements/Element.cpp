@@ -52,7 +52,7 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
         return boost::optional<unsigned>();
     }
 
-    if (this->hasNeighbor(e))
+    if (areNeighbors(this, e))
     {
         return boost::optional<unsigned>();
     }
@@ -149,19 +149,6 @@ std::size_t Element::getNodeIndex(unsigned i) const
 #endif
 }
 
-bool Element::hasNeighbor(Element* elem) const
-{
-    unsigned nNeighbors (this->getNumberOfNeighbors());
-    for (unsigned i = 0; i < nNeighbors; i++)
-    {
-        if (this->_neighbors[i] == elem)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool Element::isBoundaryElement() const
 {
     return std::any_of(_neighbors, _neighbors + this->getNumberOfNeighbors(),
@@ -188,6 +175,18 @@ std::ostream& operator<<(std::ostream& os, Element const& e)
 }
 #endif  // NDEBUG
 
+bool areNeighbors(Element const* const element, Element const* const other)
+{
+    unsigned nNeighbors(element->getNumberOfNeighbors());
+    for (unsigned i = 0; i < nNeighbors; i++)
+    {
+        if (element->getNeighbor(i) == other)
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
 bool hasZeroVolume(MeshLib::Element const& element)
 {

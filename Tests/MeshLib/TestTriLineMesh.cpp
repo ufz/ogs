@@ -107,13 +107,13 @@ TEST_F(MeshLibTriLineMesh, NodeToElementConnectivity)
 TEST_F(MeshLibTriLineMesh, ElementToElementConnectivity)
 {
     // Triangles have other triangles as neighbors only.
-    EXPECT_TRUE(elements[0]->hasNeighbor(elements[1]));
-    EXPECT_TRUE(elements[1]->hasNeighbor(elements[0]));
+    EXPECT_TRUE(areNeighbors(elements[0], elements[1]));
+    EXPECT_TRUE(areNeighbors(elements[1], elements[0]));
 
-    EXPECT_FALSE(elements[0]->hasNeighbor(elements[2]));
-    EXPECT_FALSE(elements[1]->hasNeighbor(elements[2]));
+    EXPECT_FALSE(areNeighbors(elements[0], elements[2]));
+    EXPECT_FALSE(areNeighbors(elements[1], elements[2]));
 
     // Line has no neighbors
-    EXPECT_FALSE(elements[2]->hasNeighbor(elements[0]));
-    EXPECT_FALSE(elements[2]->hasNeighbor(elements[1]));
+    EXPECT_FALSE(areNeighbors(elements[2], elements[0]));
+    EXPECT_FALSE(areNeighbors(elements[2], elements[1]));
 }

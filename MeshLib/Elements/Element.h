@@ -147,9 +147,6 @@ public:
      */
     virtual ElementErrorCode validate() const = 0;
 
-    /// Returns true if elem is a neighbour of this element and false otherwise.
-    bool hasNeighbor(Element* elem) const;
-
     /// Destructor
     virtual ~Element();
 
