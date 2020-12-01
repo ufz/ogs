@@ -1023,6 +1023,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac.prj RUNTIME 20)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac_flag_formula.prj RUNTIME 20)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents/KineticReactant2.prj RUNTIME 60)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption.prj RUNTIME 60)
 endif()
 
 AddTest(
