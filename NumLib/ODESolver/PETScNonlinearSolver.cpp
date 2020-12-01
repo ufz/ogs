@@ -78,9 +78,25 @@ PetscErrorCode updateJacobian(SNES /*snes*/, Vec /*x*/, Mat J,
 namespace NumLib
 {
 PETScNonlinearSolver::PETScNonlinearSolver(
-    GlobalLinearSolver& /*linear_solver*/)
+    GlobalLinearSolver& /*linear_solver*/, int const maxiter,
+    std::string prefix)
 {
     SNESCreate(PETSC_COMM_WORLD, &_snes_solver);
+    if (!prefix.empty())
+    {
+        prefix = prefix + "_";
+        SNESSetOptionsPrefix(_snes_solver, prefix.c_str());
+    }
+    // force SNESSolve() to take at least one iteration regardless of the
+    // initial residual norm
+    SNESSetForceIteration(_snes_solver, PETSC_TRUE);
+
+    // Set the maximum iterations.
+    PetscReal atol, rtol, stol;
+    PetscInt maxf;
+    SNESGetTolerances(_snes_solver, &atol, &rtol, &stol, nullptr, &maxf);
+    SNESSetTolerances(_snes_solver, atol, rtol, stol, maxiter, maxf);
+
     SNESSetFromOptions(_snes_solver);
 #ifndef NDEBUG
     PetscOptionsView(nullptr, PETSC_VIEWER_STDOUT_WORLD);
