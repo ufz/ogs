@@ -6,12 +6,11 @@ ${CPPCHECK_TOOL_PATH} \
         --std=c++17 \
         --enable=all \
         --inconclusive \
-        -j 4 \
-        -i ${PROJECT_BINARY_DIR}/CMakeFiles \
-        -i ${PROJECT_SOURCE_DIR}/ThirdParty \
-        -i ${PROJECT_SOURCE_DIR}/Applications/DataExplorer \
-        -i ${PROJECT_SOURCE_DIR}/Tests \
-        --template='{\n  "description": "{message}",\n  "location": {\n    "path": "{file}",\n    "lines": {\n      "begin": {line}\n    }\n  }\n},' \
+        -j ${CPPCHECK_PARALLEL} \
+        --suppress=*:*/usr/local\* \
+        --suppress=*:*ThirdParty\* \
+        --suppress=*:*Tests\* \
+        --template='{\n  "description": "{message}",\n  "severity": "info",\n    "location": {\n    "path": "{file}",\n    "lines": {\n      "begin": {line}\n    }\n  }\n},' \
         --output-file=$OUTPUT_FILE \
 
 echo "$( \
@@ -26,3 +25,7 @@ echo "$( \
   sed '$s/,$//'; \
   printf ']\n')" \
   > $OUTPUT_FILE
+
+if [ -f ${Python3_EXECUTABLE} ]; then
+    ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/test/cppcheck_gen_hashes.py $OUTPUT_FILE
+fi

@@ -1,18 +1,18 @@
 cppcheck:
   stage: check
   image: $CONTAINER_GCC_IMAGE
-  needs: ["pre commit"]
+  needs: ["pre commit", meta]
   before_script:
     - mkdir -p build
     - cd build
-  script: >-
-    cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF \
+  script:
+    - >
+      cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF
       -DOGS_USE_UNITY_BUILDS=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-    bash cppcheck.sh
+    - bash cppcheck.sh
   artifacts:
     reports:
       codequality: build/cppcheck.json
-    expire_in: 1 week
 
 # Disabled, see !3053
 .code_quality:
