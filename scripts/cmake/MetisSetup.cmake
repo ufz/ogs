@@ -38,6 +38,7 @@ elseif(MSVC)
 endif()
 
 ## Compile mpmetis
+add_compile_definitions(IDXTYPEWIDTH=64)
 add_definitions(-DSVNINFO="")
 include_directories(${METIS_PATH}/libmetis)
 include_directories(${METIS_PATH}/programs)
