@@ -27,7 +27,6 @@ TEST(MaterialPropertyLib, RelPermUdell)
     std::stringstream m;
 
     m << "<medium>\n";
-    //    m_beg << "<phases></phases>\n";
     m << "<properties>\n";
     m << "  <property>\n";
     m << "    <name>relative_permeability</name>\n";
@@ -80,13 +79,8 @@ TEST(MaterialPropertyLib, RelPermUdell)
         3.18744740712E-04, 0.00000000000E+00, 0.00000000000E+00,
         0.00000000000E+00};
 
-    for (size_t idx = 0; idx < ref_saturation.size(); idx++)
+    for (std::size_t idx = 0; idx < ref_saturation.size(); idx++)
     {
-        // std::stringstream m_sat;
-        // m_sat << "    <value>" << ref_saturation[idx] << "</value>\n";
-        // std::stringstream m;
-        // m << m_beg.str() << m_sat.str() << m_end.str();
-
         auto const& medium = Tests::createTestMaterial(m.str());
         MaterialPropertyLib::VariableArray variable_array;
         ParameterLib::SpatialPosition const pos;

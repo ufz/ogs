@@ -2,7 +2,6 @@
  * \file
  * \author Norbert Grunwald
  * \date   01.12.2020
- * \brief
  *
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
@@ -32,11 +31,12 @@ RelPermUdell::RelPermUdell(std::string name,
       min_relative_permeability_gas_(min_relative_permeability_gas)
 {
     name_ = std::move(name);
-};
+}
 
-PropertyDataType RelPermUdell::value(VariableArray const& variable_array,
-                                     ParameterLib::SpatialPosition const& pos,
-                                     double const t, double const dt) const
+PropertyDataType RelPermUdell::value(
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     const double s_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
@@ -70,10 +70,10 @@ PropertyDataType RelPermUdell::value(VariableArray const& variable_array,
     return Eigen::Vector2d{std::max(k_rel_LR, k_rel_min_LR),
                            std::max(k_rel_GR, k_rel_min_GR)};
 }
-PropertyDataType RelPermUdell::dValue(VariableArray const& variable_array,
-                                      Variable const primary_variable,
-                                      ParameterLib::SpatialPosition const& pos,
-                                      double const t, double const dt) const
+PropertyDataType RelPermUdell::dValue(
+    VariableArray const& variable_array, Variable const primary_variable,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     (void)primary_variable;
     assert((primary_variable == Variable::liquid_saturation) &&
@@ -88,7 +88,9 @@ PropertyDataType RelPermUdell::dValue(VariableArray const& variable_array,
     auto const s = (s_L - s_L_res) / (s_L_max - s_L_res);
 
     if ((s < 0.) || (s > 1.))
+    {
         return Eigen::Vector2d{0., 0.};
+    }
 
     auto const d_se_d_sL = 1. / (s_L_max - s_L_res);
 

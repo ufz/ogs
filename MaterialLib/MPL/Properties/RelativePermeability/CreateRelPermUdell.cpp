@@ -43,7 +43,7 @@ std::unique_ptr<RelPermUdell> createRelPermUdell(
     if ((min_relative_permeability_liquid < 0) ||
         (min_relative_permeability_gas < 0))
     {
-        OGS_FATAL("Minimal relative permeabilities must be positive.");
+        OGS_FATAL("Minimal relative permeabilities must be non-negative.");
     }
 
     return std::make_unique<RelPermUdell>(
