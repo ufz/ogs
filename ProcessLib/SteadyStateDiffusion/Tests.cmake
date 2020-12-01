@@ -168,7 +168,9 @@ foreach(mesh_size 1e1)
         DIFF_DATA
         line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
     )
-
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj)
+endif()
     AddTest(
         NAME SteadyStateDiffusion_line_1_Robin_Right_Picard_${mesh_size}
         PATH Elliptic/line_1_SteadyStateDiffusion
