@@ -7,10 +7,9 @@ ${CPPCHECK_TOOL_PATH} \
         --enable=all \
         --inconclusive \
         -j 4 \
-        -i ${PROJECT_BINARY_DIR}/CMakeFiles \
-        -i ${PROJECT_SOURCE_DIR}/ThirdParty \
-        -i ${PROJECT_SOURCE_DIR}/Applications/DataExplorer \
-        -i ${PROJECT_SOURCE_DIR}/Tests \
+        --suppress=*:*/usr/local\* \
+        --suppress=*:*ThirdParty\* \
+        --suppress=*:*Tests\* \
         --template='{\n  "description": "{message}",\n  "location": {\n    "path": "{file}",\n    "lines": {\n      "begin": {line}\n    }\n  }\n},' \
         --output-file=$OUTPUT_FILE \
 
