@@ -35,4 +35,5 @@
 #include "RelativePermeability/CreateRelPermBrooksCorey.h"
 #include "RelativePermeability/CreateRelPermLiakopoulos.h"
 #include "RelativePermeability/CreateRelPermVanGenuchten.h"
+#include "RelativePermeability/CreateRelPermUdell.h"
 #include "SwellingStress/CreateLinearSaturationSwellingStress.h"
