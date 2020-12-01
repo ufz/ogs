@@ -1,8 +1,6 @@
 pre commit:
   stage: preparation
   image: $PRECOMMIT_IMAGE
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
   script:
     - pre-commit install
     - pre-commit run --all-files
