@@ -22,6 +22,12 @@ AddTest(
     DIFF_DATA
     mesh2D.vtu sat_2D_lflow_ts_1_t_1.000000.vtu OGS5_Results pressure 1e-8 1e-8
 )
+
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/DrainageExcavation/drainage_LiquidFlow.prj)
+endif()
+
+
 AddTest(
     NAME LiquidFlow_GravityDriven
     PATH Parabolic/LiquidFlow/GravityDriven
