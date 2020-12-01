@@ -10,7 +10,7 @@ ${CPPCHECK_TOOL_PATH} \
         --suppress=*:*/usr/local\* \
         --suppress=*:*ThirdParty\* \
         --suppress=*:*Tests\* \
-        --template='{\n  "description": "{message}",\n  "location": {\n    "path": "{file}",\n    "lines": {\n      "begin": {line}\n    }\n  }\n},' \
+        --template='{\n  "description": "{message}",\n  "severity": "info",\n    "location": {\n    "path": "{file}",\n    "lines": {\n      "begin": {line}\n    }\n  }\n},' \
         --output-file=$OUTPUT_FILE \
 
 echo "$( \
@@ -25,3 +25,7 @@ echo "$( \
   sed '$s/,$//'; \
   printf ']\n')" \
   > $OUTPUT_FILE
+
+if [ -f ${Python3_EXECUTABLE} ]; then
+    ${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/test/cppcheck_gen_hashes.py $OUTPUT_FILE
+fi
