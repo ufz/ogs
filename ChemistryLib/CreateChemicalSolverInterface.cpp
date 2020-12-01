@@ -124,10 +124,10 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         *chemical_system, user_punch, use_high_precision, project_file_name);
 
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
-        std::move(project_file_name), *meshes[mesh.getID()],
-        std::move(path_to_database), std::move(chemical_system),
-        std::move(reaction_rates), std::move(surface), std::move(user_punch),
-        std::move(output), std::move(dump), std::move(knobs));
+        std::move(project_file_name), std::move(path_to_database),
+        std::move(chemical_system), std::move(reaction_rates),
+        std::move(surface), std::move(user_punch), std::move(output),
+        std::move(dump), std::move(knobs));
 }
 
 template <>
