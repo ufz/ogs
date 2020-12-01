@@ -329,7 +329,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                            .property(MaterialPropertyLib::PropertyType::
                                          thermal_osmosis_coefficient)
                            .value(vars, x_position, t, dt))
-                 : MaterialPropertyLib::formEigenTensor<DisplacementDim>(0));
+                 : Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim));
 
         // Add thermo-osmosis effect on velocity
         auto velocity =
