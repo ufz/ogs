@@ -15,7 +15,7 @@ The second volume mainly is dedicated to “closed form solutions” developed a
 
 Also have a look at [Volume 1](http://www.springer.com/de/book/9783642271762) of this book series.
 
-<div class='clearfix'>
+<div class='flow-root'>
 </div>
 
 <div class='note'>

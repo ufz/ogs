@@ -24,7 +24,7 @@ build container images:
 build xunit-to-junit image:
   stage: .pre
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/saxon/**/*
       - scripts/ci/jobs/build_image.yml
@@ -39,7 +39,7 @@ build xunit-to-junit image:
 build pre-commit image:
   stage: .pre
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/Dockerfile.pre-commit
       - scripts/ci/jobs/build_image.yml
@@ -53,7 +53,7 @@ build pre-commit image:
 build web image:
   stage: .pre
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/Dockerfile.web
       - scripts/ci/jobs/build_image.yml

@@ -1,12 +1,18 @@
 module.exports = {
-  future: {
-    removeDeprecatedGapUtilities: true,
-  },
   purge: [
     './layouts/**/*.html',
   ],
   theme: {
     extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            a: {
+              color: '#104EB2',
+            }
+          },
+        },
+      },
       fontSize: {
         '8xl': '6rem',
       },
@@ -68,15 +74,6 @@ module.exports = {
         'monospace',
       ]
     },
-    typography: (theme) => ({
-      default: {
-        css: {
-          a: {
-            color: theme('colors.brand.500'),
-          }
-        },
-      },
-    }),
   },
   plugins: [
     require('@tailwindcss/typography'),

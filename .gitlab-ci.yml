@@ -39,8 +39,8 @@ include:
   - local: '/scripts/ci/extends/vs2019-environment.yml'
   - local: '/scripts/ci/extends/test-artifacts.yml'
   - local: '/scripts/ci/jobs/meta.yml'
-  # jobs, can be indiviually disabled for testing
   - local: '/scripts/ci/jobs/pre-commit.yml'
+  # jobs, can be indiviually disabled for testing
   - local: '/scripts/ci/jobs/build_image.yml'
   - local: '/scripts/ci/jobs/build-linux.yml'
   - local: '/scripts/ci/jobs/build-linux-petsc.yml'

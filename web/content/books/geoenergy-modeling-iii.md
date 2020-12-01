@@ -15,7 +15,7 @@ This tutorial presents the introduction of the open-source software OpenGeoSys f
 
 The book explains basic mathematical equations and numerical methods to modeling flow and heat transport in fractured porous rock formations. In order to help readers gain a system-level understanding of the necessary analysis, the authors include two benchmark examples and two case studies of real deep geothermal test-sites located in Germany and France.
 
-<div class='clearfix'>
+<div class='flow-root'>
 </div>
 
 <div class='note'>

@@ -4,7 +4,7 @@ web url checker:
   tags: [ docker ]
   extends:
     - .rules-manual
-  dependencies: [meta_container]
+  needs: ["pre commit"]
   image: $WEB_IMAGE
   script:
     - cd web
@@ -18,7 +18,7 @@ preview web site:
   stage: build
   tags: [ docker ]
   image: $WEB_IMAGE
-  dependencies: [meta_container]
+  needs: ["pre commit"]
   script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=web/public/index.html">' >> WebPreview.html
@@ -43,7 +43,7 @@ preview web site:
 deploy web site:
   stage: package
   image: $WEB_IMAGE
-  dependencies: [meta_container]
+  needs: ["pre commit"]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       changes:
