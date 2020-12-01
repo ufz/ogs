@@ -5,7 +5,8 @@ python3 mesh_basin.py
 python3 msh2vtu.py mesh_basin.msh --ogs --rdcd
 
 #run OpenGeoSys (with the debug level information)
-ogsr -l debug OGSinput_basin.prj
+myPATH2OGS=~/Forschung/gitprojects/OGS/build-release/bin
+${myPATH2OGS}/ogs -l debug OGSinput_basin.prj
 
 #do the postprocessing with ParaView
 paraview OGSoutput_basin0.pvd
