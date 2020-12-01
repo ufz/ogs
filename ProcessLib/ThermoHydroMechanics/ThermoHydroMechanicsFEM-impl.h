@@ -629,7 +629,7 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
                            .property(MaterialPropertyLib::PropertyType::
                                          thermal_osmosis_coefficient)
                            .value(vars, x_position, t, dt))
-                 : MaterialPropertyLib::formEigenTensor<DisplacementDim>(0));
+                 : Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim));
 
         // Compute the velocity and add thermal osmosis effect on velocity
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
