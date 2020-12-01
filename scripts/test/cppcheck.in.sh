@@ -6,7 +6,7 @@ ${CPPCHECK_TOOL_PATH} \
         --std=c++17 \
         --enable=all \
         --inconclusive \
-        -j 4 \
+        -j ${CPPCHECK_PARALLEL} \
         --suppress=*:*/usr/local\* \
         --suppress=*:*ThirdParty\* \
         --suppress=*:*Tests\* \
