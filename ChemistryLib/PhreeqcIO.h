@@ -35,7 +35,6 @@ class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
     PhreeqcIO(std::string const project_file_name,
-              MeshLib::Mesh const& mesh,
               std::string&& database,
               std::unique_ptr<ChemicalSystem>&& chemical_system,
               std::vector<ReactionRate>&& reaction_rates,
@@ -83,7 +82,6 @@ private:
 
     void setAqueousSolutionsPrevFromDumpFile();
 
-    MeshLib::Mesh const& _mesh;
     std::string const _database;
     std::unique_ptr<ChemicalSystem> _chemical_system;
     std::vector<ReactionRate> const _reaction_rates;

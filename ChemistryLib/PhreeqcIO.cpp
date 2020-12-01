@@ -51,7 +51,6 @@ std::ostream& operator<<(std::ostream& os,
 }  // namespace
 
 PhreeqcIO::PhreeqcIO(std::string const project_file_name,
-                     MeshLib::Mesh const& mesh,
                      std::string&& database,
                      std::unique_ptr<ChemicalSystem>&& chemical_system,
                      std::vector<ReactionRate>&& reaction_rates,
@@ -61,7 +60,6 @@ PhreeqcIO::PhreeqcIO(std::string const project_file_name,
                      std::unique_ptr<Dump>&& dump,
                      Knobs&& knobs)
     : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
-      _mesh(mesh),
       _database(std::move(database)),
       _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
@@ -245,7 +243,8 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
     auto const& reaction_rates = phreeqc_io._reaction_rates;
     if (!reaction_rates.empty())
     {
-        os << "RATES" << "\n";
+        os << "RATES"
+           << "\n";
         os << reaction_rates << "\n";
     }
 
@@ -274,8 +273,10 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                 }
             }
 
-            os << "USE solution none" << "\n";
-            os << "END" << "\n\n";
+            os << "USE solution none"
+               << "\n";
+            os << "END"
+               << "\n\n";
 
             os << "USE solution " << chemical_system_id + 1 << "\n\n";
 
@@ -300,7 +301,8 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                 {
                     kinetic_reactant.print(os, chemical_system_id);
                 }
-                os << "-steps " << phreeqc_io._dt << "\n" << "\n";
+                os << "-steps " << phreeqc_io._dt << "\n"
+                   << "\n";
             }
 
             auto const& surface = phreeqc_io._surface;
@@ -312,13 +314,16 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                         ? chemical_system_id + 1
                         : phreeqc_io._num_chemical_systems +
                               chemical_system_id + 1;
-                os << "-equilibrate with solution " << aqueous_solution_id << "\n";
-                os << "-sites_units DENSITY" << "\n";
+                os << "-equilibrate with solution " << aqueous_solution_id
+                   << "\n";
+                os << "-sites_units DENSITY"
+                   << "\n";
                 os << surface << "\n";
                 os << "SAVE solution " << chemical_system_id + 1 << "\n";
             }
 
-            os << "END" << "\n\n";
+            os << "END"
+               << "\n\n";
         }
     }
 
