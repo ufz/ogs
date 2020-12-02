@@ -250,13 +250,13 @@ findGhostNodesInPartition(
     std::vector<MeshLib::Node*> base_nodes;
     std::vector<MeshLib::Node*> ghost_nodes;
 
-    std::vector<bool> nodes_reserved(nodes.size(), false);
+    std::vector<bool> is_ghost_node(nodes.size(), false);
     for (const auto* ghost_elem : ghost_elements)
     {
         for (unsigned i = 0; i < ghost_elem->getNumberOfNodes(); i++)
         {
             auto const& n = ghost_elem->getNode(i);
-            if (nodes_reserved[n->getID()])
+            if (is_ghost_node[n->getID()])
             {
                 continue;
             }
@@ -272,7 +272,7 @@ findGhostNodesInPartition(
                 {
                     ghost_nodes.push_back(nodes[n->getID()]);
                 }
-                nodes_reserved[n->getID()] = true;
+                is_ghost_node[n->getID()] = true;
             }
         }
     }
