@@ -17,7 +17,7 @@
 #include "XdmfArrayType.hpp"
 #include "hdf5.h"
 
-static unsigned short int const compression_factor = 9;
+static unsigned short int const compression_factor = 5;
 
 hid_t XdmfType2Hdf5Type(boost::shared_ptr<XdmfArrayType const> xdmf)
 {
