@@ -55,6 +55,7 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     auto local_Jac = MathLib::createZeroedMatrix(local_Jac_data,
                                              num_r_c, num_r_c);
     _local_x_perturbed_data = local_x_data;
+    _local_xdot_perturbed_data = local_xdot_data;
 
     auto const num_dofs_per_component =
         local_x_data.size() / _absolute_epsilons.size();
@@ -73,16 +74,19 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
         auto const eps = _absolute_epsilons[component];
 
         _local_x_perturbed_data[i] += eps;
+        _local_xdot_perturbed_data[i] = local_xdot_data[i] + eps / dt;
         local_assembler.assemble(t, dt, _local_x_perturbed_data,
-                                 local_xdot_data, local_M_data, local_K_data,
-                                 local_b_data);
+                                 _local_xdot_perturbed_data, local_M_data,
+                                 local_K_data, local_b_data);
 
         _local_x_perturbed_data[i] = local_x_data[i] - eps;
+        _local_xdot_perturbed_data[i] = local_xdot_data[i] - eps / dt;
         local_assembler.assemble(t, dt, _local_x_perturbed_data,
-                                 local_xdot_data, _local_M_data, _local_K_data,
-                                 _local_b_data);
+                                 _local_xdot_perturbed_data, _local_M_data,
+                                 _local_K_data, _local_b_data);
 
         _local_x_perturbed_data[i] = local_x_data[i];
+        _local_xdot_perturbed_data[i] = local_xdot_data[i];
 
         if (!local_M_data.empty()) {
             auto const local_M_p =
