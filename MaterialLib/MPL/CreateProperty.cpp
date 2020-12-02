@@ -14,15 +14,13 @@
 
 #include <string>
 #include <vector>
+
 #include "BaseLib/ConfigTree.h"
-
-#include "Properties/CreateProperties.h"
-
-#include "Properties/Properties.h"
-
 #include "Component.h"
 #include "Medium.h"
 #include "Phase.h"
+#include "Properties/CreateProperties.h"
+#include "Properties/Properties.h"
 
 namespace
 {
@@ -61,6 +59,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     if (property_type == "Parameter")
     {
         return createParameterProperty(config, parameters);
+    }
+
+    if (boost::iequals(property_type, "AverageMolarMass"))
+    {
+        return createAverageMolarMass(config);
     }
 
     if (boost::iequals(property_type, "Dupuit"))

@@ -11,6 +11,7 @@
  */
 #pragma once
 
+#include "AverageMolarMass.h"
 #include "BishopsPowerLaw.h"
 #include "BishopsSaturationCutoff.h"
 #include "Constant.h"
@@ -27,6 +28,5 @@
 #include "RelativePermeability/RelPermBrooksCorey.h"
 #include "RelativePermeability/RelPermLiakopoulos.h"
 #include "RelativePermeability/RelPermVanGenuchten.h"
-
 #include "SaturationDependentSwelling.h"
 #include "TransportPorosityFromMassBalance.h"
