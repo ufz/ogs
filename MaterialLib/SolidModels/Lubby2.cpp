@@ -82,10 +82,11 @@ Lubby2<DisplacementDim>::integrateStress(
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables) const
 {
-    auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array[static_cast<int>(MPL::Variable::strain)]);
-    auto const& eps_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(MPL::Variable::strain)]);
+    auto const& eps_m = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]);
+    auto const& eps_m_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(
+            MPL::Variable::mechanical_strain)]);
     auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
         variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
 
@@ -102,11 +103,11 @@ Lubby2<DisplacementDim>::integrateStress(
 
     // calculation of deviatoric parts
     auto const& P_dev = Invariants::deviatoric_projection;
-    KelvinVector const epsd_i = P_dev * eps;
-    KelvinVector const epsd_t = P_dev * eps_prev;
+    KelvinVector const eps_m_d_i = P_dev * eps_m;
+    KelvinVector const eps_m_d_t = P_dev * eps_m_prev;
 
     // initial guess as elastic predictor.
-    KelvinVector sigd_j = 2.0 * (epsd_i - state.eps_M_t - state.eps_K_t);
+    KelvinVector sigd_j = 2.0 * (eps_m_d_i - state.eps_M_t - state.eps_K_t);
     // Note: sigd_t contains dimensionless stresses!
     KelvinVector sigd_t = P_dev * sigma_prev / local_lubby2_properties.GM0;
 
@@ -139,7 +140,7 @@ Lubby2<DisplacementDim>::integrateStress(
             Eigen::Matrix<double, KelvinVectorSize * 3, 1>;
 
         auto const update_residual = [&](LocalResidualVector& residual) {
-            calculateResidualBurgers(dt, epsd_i, epsd_t, sigd_j, sigd_t,
+            calculateResidualBurgers(dt, eps_m_d_i, eps_m_d_t, sigd_j, sigd_t,
                                      state.eps_K_j, state.eps_K_t,
                                      state.eps_M_j, state.eps_M_t, residual,
                                      local_lubby2_properties);
@@ -197,12 +198,13 @@ Lubby2<DisplacementDim>::integrateStress(
                                            linear_solver);
 
     // Hydrostatic part for the stress and the tangent.
-    double const delta_eps_trace = Invariants::trace(eps - eps_prev);
+    double const delta_eps_m_trace = Invariants::trace(eps_m - eps_m_prev);
     double const sigma_trace_prev = Invariants::trace(sigma_prev);
-    KelvinVector const sigma = local_lubby2_properties.GM0 * sigd_j +
-                               (local_lubby2_properties.KM0 * delta_eps_trace +
-                                sigma_trace_prev / 3.) *
-                                   Invariants::identity2;
+    KelvinVector const sigma =
+        local_lubby2_properties.GM0 * sigd_j +
+        (local_lubby2_properties.KM0 * delta_eps_m_trace +
+         sigma_trace_prev / 3.) *
+            Invariants::identity2;
     return {std::make_tuple(
         sigma,
         std::unique_ptr<

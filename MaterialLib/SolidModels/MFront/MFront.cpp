@@ -321,19 +321,20 @@ MFront<DisplacementDim>::integrateStress(
             _local_coordinate_system->transformation<DisplacementDim>(x));
     }();
 
-    auto const& eps_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(MPL::Variable::strain)]);
+    auto const& eps_m_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(
+            MPL::Variable::mechanical_strain)]);
     auto const eps_prev_MFront =
         OGSToMFront(Q.transpose()
                         .template topLeftCorner<
                             KelvinVectorDimensions<DisplacementDim>::value,
                             KelvinVectorDimensions<DisplacementDim>::value>() *
-                    eps_prev);
+                    eps_m_prev);
     std::copy_n(eps_prev_MFront.data(), KelvinVector::SizeAtCompileTime,
                 behaviour_data.s0.gradients.data());
 
     auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array[static_cast<int>(MPL::Variable::strain)]);
+        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]);
     auto const eps_MFront =
         OGSToMFront(Q.transpose()
                         .template topLeftCorner<

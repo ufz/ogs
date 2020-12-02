@@ -522,10 +522,11 @@ SolidEhlers<DisplacementDim>::integrateStress(
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
         material_state_variables) const
 {
-    auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array[static_cast<int>(MPL::Variable::strain)]);
-    auto const& eps_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(MPL::Variable::strain)]);
+    auto const& eps_m = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]);
+    auto const& eps_m_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(
+            MPL::Variable::mechanical_strain)]);
     auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
         variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
 
@@ -540,17 +541,17 @@ SolidEhlers<DisplacementDim>::integrateStress(
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     // volumetric strain
-    double const eps_V = Invariants::trace(eps);
+    double const eps_V = Invariants::trace(eps_m);
 
     auto const& P_dev = Invariants::deviatoric_projection;
     // deviatoric strain
-    KelvinVector const eps_D = P_dev * eps;
+    KelvinVector const eps_D = P_dev * eps_m;
 
     // do the evaluation once per function call.
     MaterialProperties const mp(t, x, _mp);
 
-    KelvinVector sigma = predict_sigma<DisplacementDim>(mp.G, mp.K, sigma_prev,
-                                                        eps, eps_prev, eps_V);
+    KelvinVector sigma = predict_sigma<DisplacementDim>(
+        mp.G, mp.K, sigma_prev, eps_m, eps_m_prev, eps_V);
 
     KelvinMatrix tangentStiffness;
 

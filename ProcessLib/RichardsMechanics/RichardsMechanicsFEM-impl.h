@@ -317,6 +317,7 @@ void RichardsMechanicsLocalAssembler<
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
         auto& eps = _ip_data[ip].eps;
+        auto& eps_m = _ip_data[ip].eps_m;
         eps.noalias() = B * u;
 
         auto& S_L = _ip_data[ip].saturation;
@@ -475,9 +476,10 @@ void RichardsMechanicsLocalAssembler<
         // For stress dependent permeability.
         {
             auto const sigma_total =
-                (sigma_eff + sigma_sw - alpha * p_FR * identity2).eval();
-            variables[static_cast<int>(
-                          MaterialPropertyLib::Variable::total_stress)]
+                (sigma_eff - alpha * p_FR * identity2).eval();
+
+            // For stress dependent permeability.
+            variables[static_cast<int>(MPL::Variable::total_stress)]
                 .emplace<SymmetricTensor>(
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
@@ -500,9 +502,10 @@ void RichardsMechanicsLocalAssembler<
         //
         // displacement equation, displacement part
         //
-        variables[static_cast<int>(MPL::Variable::strain)]
+        eps_m.noalias() = eps - C_el.inverse() * sigma_sw;
+        variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
+                eps_m);
 
         auto C = _ip_data[ip].updateConstitutiveRelation(
             variables, t, x_position, dt, temperature);
@@ -516,7 +519,7 @@ void RichardsMechanicsLocalAssembler<
 
         double const rho = rho_SR * (1 - phi) + S_L * phi * rho_LR;
         rhs.template segment<displacement_size>(displacement_index).noalias() +=
-            N_u_op.transpose() * rho * b * w - B.transpose() * sigma_sw * w;
+            N_u_op.transpose() * rho * b * w;
 
         //
         // pressure equation, pressure part.
@@ -694,6 +697,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto& eps = _ip_data[ip].eps;
+        auto& eps_m = _ip_data[ip].eps_m;
         eps.noalias() = B * u;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
         auto& S_L = _ip_data[ip].saturation;
@@ -828,11 +832,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
         {
-            auto const sigma_total = (_ip_data[ip].sigma_eff + sigma_sw +
+            auto const sigma_total = (_ip_data[ip].sigma_eff +
                                       alpha * chi_S_L * identity2 * p_cap_ip)
                                          .eval();
-            variables[static_cast<int>(
-                          MaterialPropertyLib::Variable::total_stress)]
+            // For stress dependent permeability.
+            variables[static_cast<int>(MPL::Variable::total_stress)]
                 .emplace<SymmetricTensor>(
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
@@ -854,9 +858,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // displacement equation, displacement part
         //
-        variables[static_cast<int>(MPL::Variable::strain)]
+        eps_m.noalias() = eps + C_el.inverse() * sigma_sw;
+        variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
+                eps_m);
 
         auto C = _ip_data[ip].updateConstitutiveRelation(
             variables, t, x_position, dt, temperature);
@@ -869,16 +874,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
-            p_FR - (sigma_eff + sigma_sw).dot(identity2) / (3 * (1 - phi));
+            p_FR - sigma_eff.dot(identity2) / (3 * (1 - phi));
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
 
         double const rho = rho_SR * (1 - phi) + S_L * phi * rho_LR;
         local_rhs.template segment<displacement_size>(displacement_index)
-            .noalias() -= (B.transpose() * (sigma_eff + sigma_sw) -
-                           N_u_op.transpose() * rho * b) *
-                          w;
+            .noalias() -=
+            (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
 
         //
         // displacement equation, pressure part
@@ -1404,6 +1408,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto& eps = _ip_data[ip].eps;
+        auto& eps_m = _ip_data[ip].eps_m;
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
         S_L = medium->property(MPL::PropertyType::saturation)
@@ -1516,11 +1521,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
         {
-            auto const sigma_total = (_ip_data[ip].sigma_eff + sigma_sw +
+            auto const sigma_total = (_ip_data[ip].sigma_eff +
                                       alpha * chi_S_L * identity2 * p_cap_ip)
                                          .eval();
-            variables[static_cast<int>(
-                          MaterialPropertyLib::Variable::total_stress)]
+            // For stress dependent permeability.
+            variables[static_cast<int>(MPL::Variable::total_stress)]
                 .emplace<SymmetricTensor>(
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
@@ -1547,16 +1552,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
-            p_FR - (sigma_eff + sigma_sw).dot(identity2) / (3 * (1 - phi));
+            p_FR - sigma_eff.dot(identity2) / (3 * (1 - phi));
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
         _ip_data[ip].dry_density_solid = (1 - phi) * rho_SR;
 
         eps.noalias() = B * u;
-        variables[static_cast<int>(MPL::Variable::strain)]
+        eps_m.noalias() = eps + C_el.inverse() * sigma_sw;
+        variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
+                eps_m);
 
         _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
                                                 temperature);
