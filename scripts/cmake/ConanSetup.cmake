@@ -195,8 +195,11 @@ if(OGS_USE_PETSC)
     set(PETSC_DIR ${CONAN_PETSC_ROOT} CACHE INTERNAL "")
 endif()
 
-if(MSVC AND OGS_USE_CONAN)
+if(MSVC)
     # Hack: Conan HDF5 not found on Windows
     # Use custom FindHDF5 with forced values from Conan
     list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/scripts/cmake/conan/win-hdf5")
+else()
+    # Hack: Suppress hdf5 compiler wrapper checks
+    set(HDF5_C_COMPILER_EXECUTABLE "OFF" CACHE INTERNAL "")
 endif()
