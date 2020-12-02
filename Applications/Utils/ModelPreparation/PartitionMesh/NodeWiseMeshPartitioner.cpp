@@ -134,7 +134,7 @@ std::size_t partitionLookup(
 /// other ids; used by boundary meshes, for example.
 /// \return a pair of base node and extra nodes.
 std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
-findNonGhostNodesInPartition(
+findRegularNodesInPartition(
     std::size_t const part_id,
     const bool is_mixed_high_order_linear_elems,
     std::size_t const n_base_nodes,
@@ -286,7 +286,7 @@ void NodeWiseMeshPartitioner::processPartition(
     auto& partition = _partitions[part_id];
     std::vector<MeshLib::Node*> higher_order_regular_nodes;
     std::tie(partition.nodes, higher_order_regular_nodes) =
-        findNonGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
+        findRegularNodesInPartition(part_id, is_mixed_high_order_linear_elems,
                                      _mesh->getNumberOfBaseNodes(),
                                      _mesh->getNodes(), _nodes_partition_ids);
 
@@ -683,7 +683,7 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
 
         std::vector<MeshLib::Node*> higher_order_regular_nodes;
         std::tie(partition.nodes, higher_order_regular_nodes) =
-            findNonGhostNodesInPartition(
+            findRegularNodesInPartition(
                 part_id, is_mixed_high_order_linear_elems,
                 mesh.getNumberOfBaseNodes(), mesh.getNodes(),
                 _nodes_partition_ids, bulk_node_ids);
