@@ -1,4 +1,5 @@
 set(TOOLS
+    AddElementQuality
     AddLayer
     appendLinesAlongPolyline
     checkMesh
