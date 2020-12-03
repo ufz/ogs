@@ -94,8 +94,8 @@ std::ostream& Partition::writeConfig(std::ostream& os) const
         static_cast<long>(number_of_base_nodes),
         static_cast<long>(regular_elements.size()),
         static_cast<long>(ghost_elements.size()),
-        static_cast<long>(number_of_non_ghost_base_nodes),
-        static_cast<long>(number_of_non_ghost_nodes),
+        static_cast<long>(number_of_regular_base_nodes),
+        static_cast<long>(number_of_regular_nodes),
         static_cast<long>(number_of_mesh_base_nodes),
         static_cast<long>(number_of_mesh_all_nodes),
         static_cast<long>(
@@ -134,7 +134,7 @@ std::size_t partitionLookup(
 /// other ids; used by boundary meshes, for example.
 /// \return a pair of base node and extra nodes.
 std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
-findNonGhostNodesInPartition(
+findRegularNodesInPartition(
     std::size_t const part_id,
     const bool is_mixed_high_order_linear_elems,
     std::size_t const n_base_nodes,
@@ -250,13 +250,13 @@ findGhostNodesInPartition(
     std::vector<MeshLib::Node*> base_nodes;
     std::vector<MeshLib::Node*> ghost_nodes;
 
-    std::vector<bool> nodes_reserved(nodes.size(), false);
+    std::vector<bool> is_ghost_node(nodes.size(), false);
     for (const auto* ghost_elem : ghost_elements)
     {
         for (unsigned i = 0; i < ghost_elem->getNumberOfNodes(); i++)
         {
             auto const& n = ghost_elem->getNode(i);
-            if (nodes_reserved[n->getID()])
+            if (is_ghost_node[n->getID()])
             {
                 continue;
             }
@@ -272,7 +272,7 @@ findGhostNodesInPartition(
                 {
                     ghost_nodes.push_back(nodes[n->getID()]);
                 }
-                nodes_reserved[n->getID()] = true;
+                is_ghost_node[n->getID()] = true;
             }
         }
     }
@@ -286,13 +286,13 @@ void NodeWiseMeshPartitioner::processPartition(
     auto& partition = _partitions[part_id];
     std::vector<MeshLib::Node*> higher_order_regular_nodes;
     std::tie(partition.nodes, higher_order_regular_nodes) =
-        findNonGhostNodesInPartition(part_id, is_mixed_high_order_linear_elems,
+        findRegularNodesInPartition(part_id, is_mixed_high_order_linear_elems,
                                      _mesh->getNumberOfBaseNodes(),
                                      _mesh->getNodes(), _nodes_partition_ids);
 
-    partition.number_of_non_ghost_base_nodes = partition.nodes.size();
-    partition.number_of_non_ghost_nodes =
-        partition.number_of_non_ghost_base_nodes +
+    partition.number_of_regular_base_nodes = partition.nodes.size();
+    partition.number_of_regular_nodes =
+        partition.number_of_regular_base_nodes +
         higher_order_regular_nodes.size();
 
     std::tie(partition.regular_elements, partition.ghost_elements) =
@@ -683,14 +683,14 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
 
         std::vector<MeshLib::Node*> higher_order_regular_nodes;
         std::tie(partition.nodes, higher_order_regular_nodes) =
-            findNonGhostNodesInPartition(
+            findRegularNodesInPartition(
                 part_id, is_mixed_high_order_linear_elems,
                 mesh.getNumberOfBaseNodes(), mesh.getNodes(),
                 _nodes_partition_ids, bulk_node_ids);
 
-        partition.number_of_non_ghost_base_nodes = partition.nodes.size();
-        partition.number_of_non_ghost_nodes =
-            partition.number_of_non_ghost_base_nodes +
+        partition.number_of_regular_base_nodes = partition.nodes.size();
+        partition.number_of_regular_nodes =
+            partition.number_of_regular_base_nodes +
             higher_order_regular_nodes.size();
 
         std::tie(partition.regular_elements, partition.ghost_elements) =
@@ -733,7 +733,7 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     // -- Base nodes
     for (auto& partition : _partitions)
     {
-        for (std::size_t i = 0; i < partition.number_of_non_ghost_base_nodes;
+        for (std::size_t i = 0; i < partition.number_of_regular_base_nodes;
              i++)
         {
             _nodes_global_ids[partition.nodes[i]->getID()] =
@@ -751,8 +751,8 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     for (auto& partition : _partitions)
     {
         const std::size_t end_id = partition.number_of_base_nodes +
-                                   partition.number_of_non_ghost_nodes -
-                                   partition.number_of_non_ghost_base_nodes;
+                                   partition.number_of_regular_nodes -
+                                   partition.number_of_regular_base_nodes;
         for (std::size_t i = partition.number_of_base_nodes; i < end_id; i++)
         {
             _nodes_global_ids[partition.nodes[i]->getID()] =
