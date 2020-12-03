@@ -13,11 +13,14 @@ endif()
 ogs_add_library(GeoLib ${SOURCES})
 
 target_link_libraries(GeoLib
-    PUBLIC BaseLib
-           MathLib
-           $<$<BOOL:${OGS_BUILD_GUI}>:"Qt5::Xml Qt5::XmlPatterns">
-    PRIVATE tet
-            spdlog::spdlog
+    PUBLIC
+        BaseLib
+        MathLib
+        $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
+        $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
+    PRIVATE
+        tet
+        spdlog::spdlog
 )
 
 configure_file(IO/XmlIO/OpenGeoSysGLI.xsd

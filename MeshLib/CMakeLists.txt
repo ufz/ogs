@@ -34,7 +34,6 @@ target_link_libraries(
         $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
     PRIVATE
         spdlog::spdlog
-        $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_LIBRARIES}>
 )
 
 if($ENV{VTK_USE_64BIT_IDS})

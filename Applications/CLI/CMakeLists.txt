@@ -54,8 +54,8 @@ target_link_libraries(ogs
         BaseLib
         CMakeInfoLib
         GitInfoLib
+        MeshLib
         ProcessLib
-        $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_LIBRARIES}>
         $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
         $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>

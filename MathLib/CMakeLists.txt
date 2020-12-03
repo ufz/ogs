@@ -41,10 +41,13 @@ target_link_libraries(MathLib
         BaseLib
         ${OpenMP_CXX_LIBRARIES}
         $<$<BOOL:${CVODE_FOUND}>:${CVODE_LIBRARIES}>
-        $<$<BOOL:${LAPACK_FOUND}>:${BLAS_LIBRARIES} ${LAPACK_LIBRARIES}>
+        $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
         $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
         $<$<BOOL:${OGS_USE_MKL}>:${MKL_LIBRARIES}>
-        $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_LIBRARIES}>
     PRIVATE
         spdlog::spdlog
 )
+
+if(OGS_USE_PETSC)
+    target_link_libraries(MathLib PUBLIC ${PETSC_LIBRARIES})
+endif()
