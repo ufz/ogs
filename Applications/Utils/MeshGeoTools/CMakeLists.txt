@@ -9,6 +9,8 @@ set(TOOLS
 )
 
 if(OGS_BUILD_GUI)
+    # Utility requires that GUI is build because it uses Qt-based functionality
+    # Also requires gmsh at runtime
     list(APPEND TOOLS VerticalSliceFromLayers)
 endif()
 

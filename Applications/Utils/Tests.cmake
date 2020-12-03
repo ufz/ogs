@@ -478,8 +478,8 @@ AddTest(
               SmallTest_Layer3.vtu
 )
 
-# Utility requires that GUI is build because it uses Qt-based functionality
-if(TARGET VerticalSliceFromLayers)
+# Tests requires gmsh
+if(TARGET VerticalSliceFromLayers AND GMSH)
     AddTest(
         NAME VerticalSliceFromLayers_Test
         PATH MeshGeoToolsLib/Ammer
