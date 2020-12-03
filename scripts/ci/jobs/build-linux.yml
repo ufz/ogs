@@ -12,6 +12,7 @@ build linux:
       -DOGS_USE_MFRONT=ON
       -DOGS_$USE_PYTHON
       -DOGS_INSTALL_DEPENDENCIES=ON
+      -DOGS_USE_XDMF=ON
   parallel:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
@@ -30,3 +31,4 @@ build linux (no unity):
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_UNITY_BUILDS=OFF
+      -DOGS_USE_XDMF=ON

@@ -12,6 +12,7 @@ build win:
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_$USE_PYTHON
       -DOGS_USE_CONAN=AUTO
+      -DOGS_USE_XDMF=ON
   parallel:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
