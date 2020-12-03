@@ -19,24 +19,25 @@ append_source_files(SOURCES Utils)
 
 ogs_add_library(ProcessLib ${SOURCES})
 
-target_link_libraries(
-    ProcessLib
-    PUBLIC BaseLib MaterialLib MathLib MeshGeoToolsLib MeshLib NumLib
-    PRIVATE ParameterLib GitInfoLib spdlog::spdlog)
-
-if (OGS_BUILD_PROCESS_ComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport)
-    target_link_libraries(ProcessLib PUBLIC ChemistryLib)
-endif()
-
 if(OGS_USE_PYTHON)
     add_subdirectory(BoundaryCondition/Python)
-    target_link_libraries(ProcessLib PUBLIC ProcessLibBoundaryConditionPython)
-
     add_subdirectory(SourceTerms/Python)
-    target_link_libraries(ProcessLib PUBLIC ProcessLibSourceTermPython)
 endif()
 
-if(OGS_INSITU)
-    target_link_libraries(ProcessLib PRIVATE InSituLib)
-endif()
+target_link_libraries(ProcessLib
+    PUBLIC
+        BaseLib
+        MaterialLib
+        MathLib
+        MeshGeoToolsLib
+        MeshLib
+        NumLib
+        $<$<OR:$<BOOL:${OGS_BUILD_PROCESS_ComponentTransport}>,$<BOOL:${OGS_BUILD_PROCESS_RichardsComponentTransport}>>:ChemistryLib>
+        $<$<TARGET_EXISTS:ProcessLibBoundaryConditionPython>:ProcessLibBoundaryConditionPython>
+        $<$<TARGET_EXISTS:ProcessLibSourceTermPython>:ProcessLibSourceTermPython>
+    PRIVATE
+        ParameterLib
+        GitInfoLib
+        spdlog::spdlog
+        $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+)

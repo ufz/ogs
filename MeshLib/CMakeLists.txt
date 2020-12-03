@@ -31,14 +31,11 @@ target_link_libraries(
     PUBLIC
         BaseLib GeoLib GitInfoLib MathLib ${VTK_LIBRARIES}
         $<$<TARGET_EXISTS:OgsXdmf>:OgsXdmf>
-    PRIVATE spdlog::spdlog)
-
-if(OGS_USE_MPI AND TARGET MPI::MPI_CXX)
-    target_link_libraries(MeshLib PUBLIC MPI::MPI_CXX)
-endif()
-if(OGS_USE_PETSC)
-    target_link_libraries(ogs PRIVATE ${PETSC_LIBRARIES})
-endif()
+        $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+    PRIVATE
+        spdlog::spdlog
+        $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_LIBRARIES}>
+)
 
 if($ENV{VTK_USE_64BIT_IDS})
     target_compile_definitions(MeshLib PUBLIC VTK_USE_64BIT_IDS)

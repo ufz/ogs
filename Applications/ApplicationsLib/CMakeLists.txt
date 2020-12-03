@@ -13,7 +13,9 @@ target_link_libraries(ApplicationsLib
                               MeshGeoToolsLib
                               ParameterLib
                               ProcessLib
-                              spdlog::spdlog)
+                              spdlog::spdlog
+                              $<$<BOOL:${OGS_USE_PYTHON}>:pybind11::pybind11>
+)
 
 # Set cpp definitions if the cmake option is enabled for the given process.
 foreach(process ${ProcessesList})
@@ -24,7 +26,3 @@ foreach(process ${ProcessesList})
                      PROPERTY COMPILE_DEFINITIONS ${EnableProcess})
     endif()
 endforeach()
-
-if(OGS_USE_PYTHON)
-    target_link_libraries(ApplicationsLib PRIVATE pybind11::pybind11)
-endif()

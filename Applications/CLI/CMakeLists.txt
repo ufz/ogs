@@ -1,14 +1,3 @@
-add_executable(ogs ogs.cpp)
-
-target_link_libraries(ogs
-    PRIVATE
-        ApplicationsLib
-        BaseLib
-        CMakeInfoLib
-        GitInfoLib
-        ProcessLib
-)
-
 if(OGS_USE_PYTHON)
     # Troubleshooting: If you get linker errors, such as   ogs.cpp:(.text+0xb4):
     # undefined reference to `_Py_ZeroStruct' it could be that OGS is compiled
@@ -43,33 +32,34 @@ if(OGS_USE_PYTHON)
     # provides the minimal set of parameters to ensure that the code using
     # pybind11 compiles, but it does not pass these extra compiler flags (i.e.
     # this is up to you). TODO: Enable further compiler/linker flags.
-    target_link_libraries(ogs_embedded_python PUBLIC pybind11::embed)
-    target_compile_definitions(ogs_embedded_python PUBLIC OGS_USE_PYTHON)
     target_link_libraries(ogs_embedded_python
-                          PRIVATE ProcessLibBoundaryConditionPythonModule
-                                  ProcessLibSourceTermPythonModule)
-
-    target_link_libraries(ogs PRIVATE ogs_embedded_python)
-
-    if(BUILD_SHARED_LIBS)
+        PUBLIC pybind11::embed
+        PRIVATE ProcessLibBoundaryConditionPythonModule
+                ProcessLibSourceTermPythonModule
+    )
+    target_compile_definitions(ogs_embedded_python
+        PUBLIC OGS_USE_PYTHON
         # Add macro definition, because static libs make special handling
         # necessary s.t. the embedded OpenGeoSys Python module won't be removed
         # by the linker.
-        target_compile_definitions(ogs_embedded_python PRIVATE
-                                   OGS_BUILD_SHARED_LIBS)
-    endif()
+        $<$<BOOL:${BUILD_SHARED_LIBS}>:PRIVATE OGS_BUILD_SHARED_LIBS>
+    )
 endif()
 
-if(OGS_USE_PETSC)
-    target_link_libraries(ogs PRIVATE ${PETSC_LIBRARIES})
-endif()
-if(OGS_USE_MPI AND TARGET MPI::MPI_CXX)
-    target_link_libraries(ogs PRIVATE MPI::MPI_CXX)
-endif()
+add_executable(ogs ogs.cpp)
 
-if(OGS_INSITU)
-    target_link_libraries(ogs PRIVATE InSituLib)
-endif()
+target_link_libraries(ogs
+    PRIVATE
+        ApplicationsLib
+        BaseLib
+        CMakeInfoLib
+        GitInfoLib
+        ProcessLib
+        $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_LIBRARIES}>
+        $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
+        $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+        $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+)
 
 # ---- Tests ----
 add_test(NAME ogs_no_args COMMAND ogs)
