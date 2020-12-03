@@ -25,6 +25,7 @@ public:
                            ParameterLib::SpatialPosition const& /*pos*/,
                            double const /*t*/,
                            double const /*dt*/) const override;
+
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
                             ParameterLib::SpatialPosition const& /*pos*/,

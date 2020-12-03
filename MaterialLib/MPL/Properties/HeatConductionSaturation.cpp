@@ -33,8 +33,7 @@ void HeatConductionSaturationDependent::checkScale() const
     {
         OGS_FATAL(
             "The property 'HeatConductionSaturationDependent' must be given in "
-            "the "
-            "'Solid' phase, not in '{:s}' phase.",
+            "the 'Solid' phase, not in '{:s}' phase.",
             phase->name);
     }
 }
@@ -51,7 +50,7 @@ PropertyDataType HeatConductionSaturationDependent::value(
 }
 
 PropertyDataType HeatConductionSaturationDependent::dValue(
-    VariableArray const& variable_array, Variable const variable,
+    VariableArray const& /*variable_array*/, Variable const variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
