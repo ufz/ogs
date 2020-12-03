@@ -17,31 +17,30 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
+#include <QCoreApplication>
 
+#include "Applications/FileIO/Gmsh/GMSHInterface.h"
+#include "Applications/FileIO/Gmsh/GmshReader.h"
 #include "BaseLib/FileTools.h"
-#include "MathLib/MathTools.h"
-#include "MathLib/Point3d.h"
-#include "MathLib/Vector3.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
-#include "GeoLib/Point.h"
-#include "GeoLib/Polyline.h"
-#include "GeoLib/Polygon.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "GeoLib/Point.h"
+#include "GeoLib/Polygon.h"
+#include "GeoLib/Polyline.h"
+#include "InfoLib/GitInfo.h"
+#include "MathLib/LinAlg/Dense/DenseMatrix.h"
+#include "MathLib/MathTools.h"
+#include "MathLib/Point3d.h"
+#include "MathLib/Vector3.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
-#include "Applications/FileIO/Gmsh/GMSHInterface.h"
-#include "Applications/FileIO/Gmsh/GmshReader.h"
-
-#include <QApplication>
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/Node.h"
 
 /// reads the list of mesh files into a string vector
 std::vector<std::string> readLayerFile(std::string const& layer_file)
@@ -67,7 +66,7 @@ std::unique_ptr<std::vector<GeoLib::Point*>> createPoints(
     MathLib::Point3d const& end,
     std::size_t const n_intervals)
 {
-    auto points = std::make_unique <std::vector<GeoLib::Point*>>();
+    auto points = std::make_unique<std::vector<GeoLib::Point*>>();
     points->push_back(new GeoLib::Point(start, 0));
     double const length = std::sqrt(MathLib::sqrDist(start, end));
     double const interval = length / n_intervals;
@@ -243,8 +242,8 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
     std::vector<std::string> gmsh_geo;
     gmsh_geo.push_back(geo_name);
     FileIO::GMSH::GMSHInterface gmsh_io(
-        geo, true, FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
-        res, 0, 0, gmsh_geo, false, false);
+        geo, true, FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, res, 0,
+        0, gmsh_geo, false, false);
     gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
     bool const success = gmsh_io.writeToFile(gmsh_geo_name);
 
@@ -255,7 +254,8 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
     if (return_value != 0)
     {
         ERR("Execution of gmsh command returned non-zero "
-            "status, %d", return_value);
+            "status, %d",
+            return_value);
     }
     return FileIO::GMSH::readGMSHMesh(gmsh_mesh_name);
 }
@@ -292,7 +292,7 @@ MeshLib::Mesh* removeLineElements(MeshLib::Mesh const& mesh)
 
 int main(int argc, char* argv[])
 {
-    QApplication a(argc, argv);
+    QCoreApplication a(argc, argv);
     TCLAP::CmdLine cmd(
         "Creates a triangle-mesh of a vertical slice out of a list of input "
         "layer meshes. The slice is defined by a start- and end-point. In "
@@ -301,7 +301,8 @@ int main(int argc, char* argv[])
         "specified. The utility requires access to the meshing utility GMSH to "
         "work correctly.\n\n"
         "OpenGeoSys-6 software, version " +
-            GitInfoLib::GitInfo::ogs_version + ".\n"
+            GitInfoLib::GitInfo::ogs_version +
+            ".\n"
             "Copyright (c) 2012-2020, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
@@ -309,32 +310,27 @@ int main(int argc, char* argv[])
     cmd.add(test_arg);
     TCLAP::ValueArg<double> res_arg(
         "r", "resolution",
-        "desired edge length of triangles in the resulting slice.",
-        true, 0, "floating point number");
+        "desired edge length of triangles in the resulting slice.", true, 0,
+        "floating point number");
     cmd.add(res_arg);
     TCLAP::ValueArg<double> end_y_arg(
-        "", "end-y",
-        "y-coordinates of the end point defining the slice", true,
+        "", "end-y", "y-coordinates of the end point defining the slice", true,
         0, "floating point number");
     cmd.add(end_y_arg);
     TCLAP::ValueArg<double> end_x_arg(
-        "", "end-x",
-        "x-coordinates of the end point defining the slice", true,
+        "", "end-x", "x-coordinates of the end point defining the slice", true,
         0, "floating point number");
     cmd.add(end_x_arg);
     TCLAP::ValueArg<double> start_y_arg(
-        "", "start-y",
-        "y-coordinates of the start point defining the slice", true,
-        0, "floating point number");
+        "", "start-y", "y-coordinates of the start point defining the slice",
+        true, 0, "floating point number");
     cmd.add(start_y_arg);
     TCLAP::ValueArg<double> start_x_arg(
-        "", "start-x",
-        "x-coordinates of the start point defining the slice", true,
-        0, "floating point number");
+        "", "start-x", "x-coordinates of the start point defining the slice",
+        true, 0, "floating point number");
     cmd.add(start_x_arg);
-    TCLAP::ValueArg<std::string> output_arg("o", "output",
-                                            "name of output mesh (*.vtu)",
-                                            true, "", "string");
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output", "name of output mesh (*.vtu)", true, "", "string");
     cmd.add(output_arg);
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input",
