@@ -69,7 +69,7 @@ std::unique_ptr<std::vector<GeoLib::Point*>> createPoints(
 {
     auto points = std::make_unique <std::vector<GeoLib::Point*>>();
     points->push_back(new GeoLib::Point(start, 0));
-    double const length = sqrt(MathLib::sqrDist(start, end));
+    double const length = std::sqrt(MathLib::sqrDist(start, end));
     double const interval = length / n_intervals;
 
     GeoLib::Point const vec((end[0] - start[0]), (end[1] - start[1]),
@@ -255,7 +255,7 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
     if (return_value != 0)
     {
         ERR("Execution of gmsh command returned non-zero "
-            "status, %d" + return_value);
+            "status, %d", return_value);
     }
     return FileIO::GMSH::readGMSHMesh(gmsh_mesh_name);
 }
@@ -273,11 +273,10 @@ void rotateMesh(MeshLib::Mesh& mesh,
 }
 
 /// removes line elements from mesh such that only triangles remain
-MeshLib::Mesh* removeLineElements(MeshLib::Mesh mesh)
+MeshLib::Mesh* removeLineElements(MeshLib::Mesh const& mesh)
 {
     std::vector<std::size_t> line_idx;
-    std::vector<MeshLib::Element*>const& elems = mesh.getElements();
-    std::size_t const n_elems = elems.size();
+    std::vector<MeshLib::Element*> const& elems = mesh.getElements();
     std::for_each(elems.begin(), elems.end(), [&](auto e) {
         if (e->getGeomType() == MeshLib::MeshElemType::LINE)
         {
@@ -306,9 +305,7 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2020, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::SwitchArg test_arg(
-        "t", "testdata",
-        "keep test data", false, false);
+    TCLAP::SwitchArg test_arg("t", "testdata", "keep test data", false);
     cmd.add(test_arg);
     TCLAP::ValueArg<double> res_arg(
         "r", "resolution",
