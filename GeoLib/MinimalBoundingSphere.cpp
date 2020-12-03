@@ -182,7 +182,7 @@ MinimalBoundingSphere::recurseCalculation(
 
 double MinimalBoundingSphere::pointDistanceSquared(MathLib::Point3d const& pnt) const
 {
-    return MathLib::sqrDist(_center.getCoords(), pnt.getCoords())-(_radius*_radius);
+    return MathLib::sqrDist(_center, pnt)-(_radius*_radius);
 }
 
 std::vector<MathLib::Point3d*>* MinimalBoundingSphere::getRandomSpherePoints(std::size_t n_points) const

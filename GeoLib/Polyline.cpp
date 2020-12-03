@@ -455,10 +455,10 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
         // is the orthogonal projection of the j-th node to the
         // line g(lambda) = _ply->getPoint(k) + lambda * (_ply->getPoint(k+1) - _ply->getPoint(k))
         // at the k-th line segment of the polyline, i.e. 0 <= lambda <= 1?
-        if (MathLib::calcProjPntToLineAndDists(pnt.getCoords(),
-                        (getPoint(k))->getCoords(), (getPoint(k + 1))->getCoords(),
-                        lambda, dist) <= epsilon_radius) {
-
+        if (MathLib::calcProjPntToLineAndDists(pnt, *getPoint(k),
+                                               *getPoint(k + 1), lambda,
+                                               dist) <= epsilon_radius)
+        {
             double act_length_of_ply(getLength(k));
             double seg_length (getLength(k+1)-getLength(k));
             double lower_lambda (- epsilon_radius / seg_length);

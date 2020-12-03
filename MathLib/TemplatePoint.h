@@ -171,17 +171,6 @@ bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
     return true;
 }
 
-/** Distance between points p0 and p1 in the maximum norm. */
-template <typename T>
-T maxNormDist(const MathLib::TemplatePoint<T>* p0, const MathLib::TemplatePoint<T>* p1)
-{
-    const T x = fabs((*p1)[0] - (*p0)[0]);
-    const T y = fabs((*p1)[1] - (*p0)[1]);
-    const T z = fabs((*p1)[2] - (*p0)[2]);
-
-    return std::max(x, std::max(y, z));
-}
-
 /** overload the output operator for class Point */
 template <typename T, std::size_t DIM>
 std::ostream& operator<< (std::ostream &os, const TemplatePoint<T,DIM> &p)

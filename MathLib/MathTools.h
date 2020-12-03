@@ -17,6 +17,9 @@
 
 namespace MathLib
 {
+template <typename T, std::size_t DIM> class TemplatePoint;
+using Point3d = MathLib::TemplatePoint<double, 3>;
+
 /**
  * standard inner product in R^N
  * \param v0 array of type T representing the vector
@@ -65,24 +68,18 @@ inline T scalarProduct(T const* const v0, T const* const v1, int const n)
  * \f$g(\lambda) = a + \lambda (b - a)\f$,
  * the distance between p and the projected point
  * and the distances between the projected point and the end
- * points a, b of the line
- * \param p the (mesh) point
- * \param a first point of line
- * \param b second point of line
+ * points pa, pb of the line
+ * \param pp the (mesh) point
+ * \param pa first point of line
+ * \param pb second point of line
  * \param lambda the projected point described by the line equation above
  * \param d0 distance to the line point a
- * \returns the distance between p and the orthogonal projection of p
+ * \returns the distance between pp and the orthogonal projection of pp
  */
-double calcProjPntToLineAndDists(const double p[3], const double a[3],
-                                 const double b[3], double &lambda, double &d0);
-
-/** squared dist between double arrays p0 and p1 (size of arrays is 3) */
-inline
-double sqrDist(const double* p0, const double* p1)
-{
-    const double v[3] = {p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]};
-    return scalarProduct<double,3>(v,v);
-}
+double calcProjPntToLineAndDists(MathLib::Point3d const& pp,
+                                 MathLib::Point3d const& pa,
+                                 MathLib::Point3d const& pb, double& lambda,
+                                 double& d0);
 
 /**
  * Let \f$p_0, p_1, p_2 \in R^3\f$. The function getAngle
