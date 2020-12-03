@@ -10,3 +10,4 @@ build linux conan:
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_CONAN=AUTO
       -DOGS_USE_MFRONT=ON
+      -DOGS_USE_XDMF=ON

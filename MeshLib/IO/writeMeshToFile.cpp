@@ -42,6 +42,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
         }
         return 0;
     }
+#ifdef OGS_USE_XDMF
     if (file_path.extension().string() == ".xdmf")
     {
         auto writer =
@@ -56,6 +57,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
 
         return 0;
     }
+#endif
     ERR("writeMeshToFile(): Unknown mesh file format in file {:s}.",
         file_path.string());
     return -1;

@@ -110,6 +110,7 @@ option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
 option(OGS_USE_NETCDF "Add NetCDF support." OFF)
+option(OGS_USE_XDMF "Add Xdmf file IO support" OFF)
 
 # Eigen
 option(OGS_USE_EIGEN "Use Eigen linear solver" ON)
@@ -236,6 +237,10 @@ if(OGS_USE_EIGEN)
     endif()
 endif()
 # End Eigen
+
+if(OGS_USE_XDMF)
+    add_definitions(-DOGS_USE_XDMF)
+endif()
 
 if(OGS_FATAL_ABORT)
     add_definitions(-DOGS_FATAL_ABORT)
