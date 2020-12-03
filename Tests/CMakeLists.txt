@@ -1,5 +1,7 @@
 ### xdmfdiff ###
-add_subdirectory(xdmfdiff)
+if(OGS_USE_XDMF)
+    add_subdirectory(xdmfdiff)
+endif()
 
 ### testrunner ###
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)

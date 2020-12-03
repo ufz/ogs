@@ -12,7 +12,9 @@ append_source_files(SOURCES Elements)
 append_source_files(SOURCES IO)
 append_source_files(SOURCES IO/Legacy)
 append_source_files(SOURCES IO/VtkIO)
-append_source_files(SOURCES IO/XDMF)
+if(OGS_USE_XDMF)
+    append_source_files(SOURCES IO/XDMF)
+endif()
 append_source_files(SOURCES MeshQuality)
 append_source_files(SOURCES Vtk)
 
@@ -26,7 +28,9 @@ ogs_add_library(MeshLib ${SOURCES})
 
 target_link_libraries(
     MeshLib
-    PUBLIC BaseLib GeoLib GitInfoLib MathLib ${VTK_LIBRARIES} OgsXdmf
+    PUBLIC
+        BaseLib GeoLib GitInfoLib MathLib ${VTK_LIBRARIES}
+        $<$<TARGET_EXISTS:OgsXdmf>:OgsXdmf>
     PRIVATE spdlog::spdlog)
 
 if(OGS_USE_MPI AND TARGET MPI::MPI_CXX)

@@ -285,11 +285,17 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
 
         case OutputType::xdmf:
         {
+#ifdef OGS_USE_XDMF
             MeshLib::IO::Xdmf3Writer writer(
                 file_name, MeshLib::IO::transformGeometry(mesh),
                 MeshLib::IO::transformTopology(mesh),
                 MeshLib::IO::transformAttributes(mesh), time_step);
             writer.writeStep(time_step, time);
+#else
+            OGS_FATAL(
+                "Trying to write Xdmf file but OGS was not built with "
+                "Xdmf-support.");
+#endif
         }
     }
 

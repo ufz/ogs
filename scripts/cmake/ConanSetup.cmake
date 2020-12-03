@@ -35,8 +35,6 @@ set(CONAN_REQUIRES
     boost/${ogs.minimum_version.boost}@conan/stable
     eigen/${ogs.minimum_version.eigen}@conan/stable
     vtk/${ogs.tested_version.vtk}@bilke/stable
-    hdf5/${ogs.tested_version.hdf5}
-    libxml2/${ogs.tested_version.libxml2}
     CACHE INTERNAL ""
 )
 
@@ -47,9 +45,6 @@ set(CONAN_OPTIONS
     vtk:iolegacy=True
     CACHE INTERNAL ""
 )
-if(UNIX AND NOT APPLE)
-    list(APPEND CONAN_OPTIONS libxml2:iconv=False)
-endif()
 
 if((UNIX AND NOT APPLE) AND BUILD_SHARED_LIBS)
     set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:fPIC=True)
@@ -57,6 +52,24 @@ endif()
 
 if(OGS_USE_MPI)
     set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:mpi_minimal=True)
+endif()
+
+if(OGS_USE_XDMF)
+    list(APPEND CONAN_REQUIRES
+        hdf5/${ogs.tested_version.hdf5}
+        libxml2/${ogs.tested_version.libxml2}
+    )
+    if(UNIX AND NOT APPLE)
+        list(APPEND CONAN_OPTIONS libxml2:iconv=False)
+    endif()
+    if(MSVC)
+        # Hack: Conan HDF5 not found on Windows
+        # Use custom FindHDF5 with forced values from Conan
+        list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/scripts/cmake/conan/win-hdf5")
+    else()
+        # Hack: Suppress hdf5 compiler wrapper checks
+        set(HDF5_C_COMPILER_EXECUTABLE "OFF" CACHE INTERNAL "")
+    endif()
 endif()
 
 if(OGS_USE_PETSC)
@@ -193,13 +206,4 @@ endif()
 
 if(OGS_USE_PETSC)
     set(PETSC_DIR ${CONAN_PETSC_ROOT} CACHE INTERNAL "")
-endif()
-
-if(MSVC)
-    # Hack: Conan HDF5 not found on Windows
-    # Use custom FindHDF5 with forced values from Conan
-    list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/scripts/cmake/conan/win-hdf5")
-else()
-    # Hack: Suppress hdf5 compiler wrapper checks
-    set(HDF5_C_COMPILER_EXECUTABLE "OFF" CACHE INTERNAL "")
 endif()
