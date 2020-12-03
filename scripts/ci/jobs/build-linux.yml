@@ -31,4 +31,18 @@ build linux (no unity):
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_UNITY_BUILDS=OFF
+      -DOGS_USE_MFRONT=ON
       -DOGS_USE_XDMF=ON
+
+build linux (no deps, no procs):
+  image: $CONTAINER_GCC_IMAGE
+  extends: .template-build-linux
+  tags: [ docker ]
+  timeout: 1h
+  variables:
+    BUILD_DIR: "build-no-unity"
+    BUILD_TESTS: "false"
+    BUILD_CTEST: "false"
+    BUILD_PROCESSES: "SteadyStateDiffusion"
+    CMAKE_ARGS: >-
+      -DOGS_USE_CONAN=OFF
