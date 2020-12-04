@@ -226,15 +226,20 @@ void setProjectDirectory(std::string const& dir)
     project_directory_is_set = true;
 }
 
+void removeFile(std::string const& filename)
+{
+    bool const success = fs::remove(fs::path(filename));
+    if (success)
+    {
+        DBUG("Removed '{:s}'", filename);
+    }
+}
+
 void removeFiles(std::vector<std::string> const& files)
 {
     for (auto const& file : files)
     {
-        bool const success = fs::remove(fs::path(file));
-        if (success)
-        {
-            DBUG("Removed '{:s}'", file);
-        }
+        removeFile(file);
     }
 }
 } // end namespace BaseLib

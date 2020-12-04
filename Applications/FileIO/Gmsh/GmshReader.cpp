@@ -80,13 +80,10 @@ std::pair<MeshLib::Element*, int> readElement(
     unsigned dummy;
     int mat_id;
     std::vector<unsigned> node_ids;
-    in >> idx >> type >> n_tags >> mat_id >> dummy;
 
-    // skip tags
-    for (std::size_t j = 2; j < n_tags; j++)
-    {
-        in >> dummy;
-    }
+    //element format is structured like this:
+    //element-id element-type n-tags physical-entity elementary entity node-ids
+    in >> idx >> type >> n_tags >> dummy >> mat_id;
 
     switch (type)
     {
