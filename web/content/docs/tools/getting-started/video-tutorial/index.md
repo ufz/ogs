@@ -4,12 +4,6 @@ title = "Video Tutorial"
 author = "Dominik Kern"
 weight = 105
 
-[menu.docs]
-name = "Tools & Workflows"
-identifier = "tools"
-weight = 4
-post = "Helpful tools for pre- and postprocessing as well as complete model setup workflows."
-
 [menu.tools]
 parent = "getting-started"
 +++
