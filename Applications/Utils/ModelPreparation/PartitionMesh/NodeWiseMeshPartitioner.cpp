@@ -470,16 +470,19 @@ void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
     }
 
     vtk_ghost_type->resize(total_number_of_cells);
-    for(auto const& p : partitions)
+    std::size_t offset = 0;
+    for(auto const& partition : partitions)
     {
-        for (std::size_t i = 0; i < p.duplicate_ghost_cell.size(); ++i)
+        offset += partition.regular_elements.size();
+        for (std::size_t i = 0; i < partition.ghost_elements.size(); ++i)
         {
-            if (p.duplicate_ghost_cell[i])
+            if (partition.duplicate_ghost_cell[i])
             {
-                (*vtk_ghost_type)[p.ghost_elements[i]->getID()] |=
+                (*vtk_ghost_type)[offset + i] |=
                     vtkDataSetAttributes::DUPLICATECELL;
             }
         }
+        offset += partition.ghost_elements.size();
     }
 
 }
