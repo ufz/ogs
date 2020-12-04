@@ -1025,36 +1025,33 @@ void writeElements(std::string const& file_name_base,
         // partition
         std::vector<long> ele_info(regular_element_offsets[i]);
 
-        // Non-ghost elements.
-        long counter = partition.regular_elements.size();
+        auto writeElementData =
+            [&local_node_ids](
+                std::vector<MeshLib::Element const*> const& elements,
+                long const element_offsets,
+                std::ofstream& output_stream) {
+                long counter = elements.size();
+                std::vector<long> ele_info(element_offsets);
 
-        for (std::size_t j = 0; j < partition.regular_elements.size(); j++)
-        {
-            const auto* elem = partition.regular_elements[j];
-            ele_info[j] = counter;
-            getElementIntegerVariables(*elem, local_node_ids, ele_info,
-                                       counter);
-        }
-        // Write vector data of non-ghost elements
-        element_info_os.write(reinterpret_cast<const char*>(ele_info.data()),
-                              ele_info.size() * sizeof(long));
+                for (std::size_t j = 0; j < elements.size(); j++)
+                {
+                    const auto* elem = elements[j];
+                    ele_info[j] = counter;
+                    getElementIntegerVariables(*elem, local_node_ids, ele_info,
+                                               counter);
+                }
+                // Write vector data of regular elements
+                output_stream.write(
+                    reinterpret_cast<const char*>(ele_info.data()),
+                    ele_info.size() * sizeof(long));
+            };
 
+        // regular elements.
+        writeElementData(partition.regular_elements, regular_element_offsets[i],
+                         element_info_os);
         // Ghost elements
-        ele_info.resize(num_g_elem_integers[i]);
-
-        counter = partition.ghost_elements.size();
-
-        for (std::size_t j = 0; j < partition.ghost_elements.size(); j++)
-        {
-            const auto* elem = partition.ghost_elements[j];
-            ele_info[j] = counter;
-            getElementIntegerVariables(*elem, local_node_ids, ele_info,
-                                       counter);
-        }
-        // Write vector data of ghost elements
-        ghost_element_info_os.write(
-            reinterpret_cast<const char*>(ele_info.data()),
-            ele_info.size() * sizeof(long));
+        writeElementData(partition.ghost_elements, ghost_element_offsets[i],
+                         ghost_element_info_os);
     }
 }
 
