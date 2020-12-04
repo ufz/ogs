@@ -12,6 +12,10 @@
 
 namespace MaterialPropertyLib
 {
+/// saturation dependend model for effective heat conduction
+/// \details This property must be a medium property, it
+/// computes the effetive heat conductivity based on a wet
+/// and a dry value
 class HeatConductionSaturationDependent final : public Property
 {
 public:
@@ -25,7 +29,6 @@ public:
                            ParameterLib::SpatialPosition const& /*pos*/,
                            double const /*t*/,
                            double const /*dt*/) const override;
-
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
                             ParameterLib::SpatialPosition const& /*pos*/,

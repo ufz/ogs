@@ -22,19 +22,11 @@ HeatConductionSaturationDependent::HeatConductionSaturationDependent(
 
 void HeatConductionSaturationDependent::checkScale() const
 {
-    if (!std::holds_alternative<Phase*>(scale_))
+    if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
             "The property 'HeatConductionSaturationDependent' is "
-            "implemented on the 'phase' scales only.");
-    }
-    auto const phase = std::get<Phase*>(scale_);
-    if (phase->name != "Solid")
-    {
-        OGS_FATAL(
-            "The property 'HeatConductionSaturationDependent' must be given in "
-            "the 'Solid' phase, not in '{:s}' phase.",
-            phase->name);
+            "implemented on the 'medium' scale only.");
     }
 }
 

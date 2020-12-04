@@ -25,5 +25,4 @@ namespace MaterialPropertyLib
 {
 std::unique_ptr<HeatConductionSaturationDependent>
 createHeatConductionSaturation(BaseLib::ConfigTree const& config);
-
 }  // namespace MaterialPropertyLib
