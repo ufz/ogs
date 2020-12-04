@@ -287,8 +287,8 @@ void NodeWiseMeshPartitioner::processPartition(
     std::vector<MeshLib::Node*> higher_order_regular_nodes;
     std::tie(partition.nodes, higher_order_regular_nodes) =
         findRegularNodesInPartition(part_id, is_mixed_high_order_linear_elems,
-                                     _mesh->getNumberOfBaseNodes(),
-                                     _mesh->getNodes(), _nodes_partition_ids);
+                                    _mesh->getNumberOfBaseNodes(),
+                                    _mesh->getNodes(), _nodes_partition_ids);
 
     partition.number_of_regular_base_nodes = partition.nodes.size();
     partition.number_of_regular_nodes =
