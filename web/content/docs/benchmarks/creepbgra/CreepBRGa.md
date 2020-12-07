@@ -98,7 +98,8 @@ with $\alpha_T$ the linear thermal expansion.
 
  To solve the stress, the
 Newton-Raphson is applied to .
- Let $$\begin{gathered}
+ Let
+ $$\begin{gathered}
  \mathbf{r}= { \mathbf \sigma}^{n+1} -
  { \mathbf \sigma}^{n} - \mathbf{C} (\Delta { \mathbf \epsilon} - \alpha_T \Delta T \mathbf I)
 + 2bG \Delta t {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}

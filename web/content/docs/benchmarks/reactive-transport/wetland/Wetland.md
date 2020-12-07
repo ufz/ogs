@@ -50,14 +50,14 @@ Respective material properties, initial and boundary conditions are listed in Ta
 |:-------- | :---------- | :---- | :--- |
 | Influent & effluent zone |||
 | $\phi$   | Porosity    | 0.38  | - |
-| $\kappa$ | Permeability | 1.0e-7 | m^2^ |
+| $\kappa$ | Permeability | 1.0e-7 | $m^2$ |
 | $S$   | Storage | 0.0     | - |
-| $a_L$ | long. Dispersion length | 0.45   | m |
+| $a_L$ | long. Dispersion length | 0.45   | $m$ |
 | Treatment zone |||
 | $\phi$   | Porosity    | 0.38  | - |
-| $\kappa$ | Permeability | 1.0e-8 | m^2^ |
+| $\kappa$ | Permeability | 1.0e-8 | $m^2$ |
 | $S$   | Storage | 0.0     | - |
-| $a_L$ | long. Dispersion length | 0.40   | m |
+| $a_L$ | long. Dispersion length | 0.40   | $m$ |
 
 -----------------------------------------
 
@@ -67,7 +67,7 @@ Table 1: Media, material and component properties
 
 | Parameter | Description | Value | Unit |
 |:--------- | :---------- | :---- | :--- |
-| $p(t=0)$  | Initial pressure | 8829  | Pa |
+| $p(t=0)$  | Initial pressure | 8829  | $Pa$ |
 | $g_{N,in}^p$ | Water influx | 5.555e-3 | kg s^-1^ |
 | $g_{D,out}^p$ | Pressure at outlet | 8829 | Pa |
 | $c_{components}(t=0)$  | Initial component concentrations | 1.0e-4     | g kg^-1^~water~ |
