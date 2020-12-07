@@ -17,7 +17,7 @@ weight = 70
 ## Problem description
 
 The problem describes a heat source embedded in a fluid-saturated porous medium.
-The spherical symmetry is modeled using a 10 m x 10 m disc with a point heat source ($Q=150\; \mathrm{W}$) placed at one corner ($r=0$) and a curved boundary at $r=10\; \mathrm{m}$. Applying rotational axial symmetry at one of the linear boundaries, the model region transforms into a half-space configuration of the spherical symmetrical problem.
+The spherical symmetry is modeled using a 10 m x 10 m disc with a point heat source ($Q=150\\;\mathrm{W}$) placed at one corner ($r=0$) and a curved boundary at $r=10\\;\mathrm{m}$. Applying rotational axial symmetry at one of the linear boundaries, the model region transforms into a half-space configuration of the spherical symmetrical problem.
 The initial temperature and the pore pressure are 273.15 K and 0 Pa, respectively.
 The axis-normal displacements along the symmetry (inner) boundaries were set to zero, whereas the pore pressure, as well as the temperature, are set to their initial values along the outer (curved) boundary.
 The heat coming from the point source is propagated through the medium, causing the fluid and the solid to expand at different rates.

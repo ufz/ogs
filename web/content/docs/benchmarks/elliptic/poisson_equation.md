@@ -18,13 +18,13 @@ weight = 102
 The Poisson equation is:
 $$
 \begin{equation}
-- k\; \Delta p = Q \quad \text{in }\Omega
+\- k\\;\Delta p = Q \quad \text{in }\Omega
 \end{equation}$$
 w.r.t boundary conditions
 $$
 \eqalign{
 p(x) = g_D(x) &\quad \text{on }\Gamma_D,\cr
-k\;{\partial p(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
+k\\;{\partial p(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
 }$$
 
 where $p$ could be the pressure, the subscripts $D$ and $N$ denote the

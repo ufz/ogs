@@ -55,14 +55,14 @@ This simple example should demonstrate the use of the time depenendent
 heterogeneous parameter. We start with homogeneous parabolic problem:
 $$
 \begin{equation}
-s\; \frac{\partial p}{\partial t} + k\; \Delta p = q(t,x) \quad \text{in }\Omega
+s\\;\frac{\partial p}{\partial t} + k\; \Delta p = q(t,x) \quad \text{in }\Omega
 \end{equation}
 $$
 w.r.t boundary conditions
 $$
 \eqalign{
 p(t, x) = g_D(t, x) &\quad \text{on }\Gamma_D,\cr
-k\;{\partial p(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
+k\\;{\partial p(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
 }$$
 
 The example the domain $\Omega = [0,1]^2$ is a square. On the left
