@@ -13,7 +13,7 @@
 namespace MaterialPropertyLib
 {
 /// Saturation dependent model for effective heat conduction
-/// \details This property must be a medium property, it
+/// \details This model is for the porous media with isotropic heat conductivity. This property must be a medium property, it
 /// computes the effetive heat conductivity based on a wet
 /// and a dry value
 /// \f$ K_{\mathrm{eff}} = S K_{\mathrm{wet}} + (1-S) K_{\mathrm{dry}} \f$
