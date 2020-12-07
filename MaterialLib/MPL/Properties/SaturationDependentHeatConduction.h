@@ -12,7 +12,7 @@
 
 namespace MaterialPropertyLib
 {
-/// saturation dependend model for effective heat conduction
+/// Saturation dependent model for effective heat conduction
 /// \details This property must be a medium property, it
 /// computes the effetive heat conductivity based on a wet
 /// and a dry value
