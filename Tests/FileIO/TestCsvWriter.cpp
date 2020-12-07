@@ -21,7 +21,7 @@
 
 TEST(CsvWriter, WriteReadTest)
 {
-    std::string test_file(
+    std::string const test_file(
         (fs::temp_directory_path() /= BaseLib::randomString(32)).string());
 
     std::vector<std::string> str_vec {"Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet" };
