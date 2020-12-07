@@ -2,15 +2,12 @@
  * \file
  * \author Norbert Grunwald
  * \date   Jul 07 2020
- * \brief
  *
- * \file
  * \copyright
  * Copyright (c) 2012-2020, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #include "MaterialLib/MPL/Properties/AverageMolarMass.h"
@@ -55,15 +52,15 @@ PropertyDataType AverageMolarMass::value(
             "to two components.");
     }
 
-    // TODO: Task here is to retrieve the individual molar fractions of each
-    // compontne in the phase. Those are not static properties (as in case of
-    // molar mass), but they depend on some state-dependent rule. Option 1 is to
-    // call that rule here, option 2 would be to wrap this composition info into
-    // some container and to put it into the variable_array. This would have to
-    // be a vector of variable size, depending on the number of components.
-    // Unfortunately, the data types of MPL::VariableArray do not include such a
-    // type.
-
+    // TODO (grunwald) : Task here is to retrieve the individual molar fractions
+    // of each compontne in the phase. Those are not static properties (as in
+    // case of molar mass), but they depend on some state-dependent rule. Option
+    // 1 is to call that rule here, option 2 would be to wrap this composition
+    // info into some container and to put it into the variable_array. This
+    // would have to be a vector of variable size, depending on the number of
+    // components. Unfortunately, the data types of MPL::VariableArray do not
+    // include such a type.
+    //
     // Therefore, I go with option 1 here, which unfortunately only allows the
     // use of binary mixtures at the moment.
     auto const molar_fraction =
@@ -110,7 +107,7 @@ PropertyDataType AverageMolarMass::dValue(
             "phase components only.");
     }
 
-    // TODO: This should return a vector of length
+    // TODO (grunwald) : This should return a vector of length
     // phase->numberOfComponents(). Currently, this feature is implemented
     // for binary phases only.
     auto const dxnC = phase->property(PropertyType::mole_fraction)
