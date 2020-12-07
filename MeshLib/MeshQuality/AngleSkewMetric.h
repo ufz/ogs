@@ -35,11 +35,5 @@ private:
     double checkTetrahedron(Element const& elem) const;
     double checkHexahedron(Element const& elem) const;
     double checkPrism(Element const& elem) const;
-    std::tuple<double, double> getMinMaxAngleFromQuad(
-        MeshLib::Node const& n0, MeshLib::Node const& n1,
-        MeshLib::Node const& n2, MeshLib::Node const& n3) const;
-    std::tuple<double, double> getMinMaxAngleFromTriangle(
-        MeshLib::Node const& n0, MeshLib::Node const& n1,
-        MeshLib::Node const& n2) const;
 };
 }  // namespace MeshLib
