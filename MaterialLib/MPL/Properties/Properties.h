@@ -17,6 +17,7 @@
 #include "CapillaryPressureSaturation/SaturationBrooksCorey.h"
 #include "CapillaryPressureSaturation/SaturationLiakopoulos.h"
 #include "CapillaryPressureSaturation/SaturationVanGenuchten.h"
+#include "ClausiusClapeyron.h"
 #include "Constant.h"
 #include "Curve.h"
 #include "DupuitPermeability.h"

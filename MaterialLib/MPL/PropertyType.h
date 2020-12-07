@@ -52,6 +52,7 @@ enum PropertyType : int
     drhodT,
     effective_stress,
     entry_pressure,
+    evaporation_enthalpy,
     fredlund_parameters,
     heat_capacity,
     /// used to compute the hydrodynamic dispersion tensor.
@@ -84,6 +85,7 @@ enum PropertyType : int
     transport_porosity,
     /// used to compute the hydrodynamic dispersion tensor.
     transversal_dispersivity,
+    vapor_pressure,
     viscosity,
     number_of_properties
 };
@@ -162,6 +164,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "entry_pressure"))
     {
         return PropertyType::entry_pressure;
+    }
+    if (boost::iequals(inString, "evaporation_enthalpy"))
+    {
+        return PropertyType::evaporation_enthalpy;
     }
     if (boost::iequals(inString, "fredlund_parameters"))
     {
@@ -275,6 +281,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::transversal_dispersivity;
     }
+    if (boost::iequals(inString, "vapor_pressure"))
+    {
+        return PropertyType::vapor_pressure;
+    }
     if (boost::iequals(inString, "viscosity"))
     {
         return PropertyType::viscosity;
@@ -306,6 +316,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "drhodT",
                              "effective_stress",
                              "entry_pressure",
+                             "evaporation_enthalpy",
                              "fredlund_parameters",
                              "heat_capacity",
                              "longitudinal_dispersivity",
@@ -334,6 +345,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "thermal_transversal_dispersivity",
                              "transport_porosity",
                              "transversal_dispersivity",
+                             "vapor_pressure",
                              "viscosity"}};
 
 /// This data type is based on a std::array. It can hold pointers to objects of
