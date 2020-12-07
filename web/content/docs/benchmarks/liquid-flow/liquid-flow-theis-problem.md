@@ -81,8 +81,8 @@ The figure shows that there is a good match between the analytical solution and
 <td style="text-align: left;">Solution (<span class="math inline"><em>h</em><sub><em>a</em></sub></span>)</td>
 <td style="text-align: left;">(<span class="math inline"><em>h</em><sub>5</sub></span>)</td>
 <td style="text-align: left;">(<span class="math inline"><em>h</em><sub>6</sub></span>)</td>
-<td style="text-align: left;">(<span class="math inline">$$|\frac{h_5-h_a}{h_a}|$$</span>)</td>
-<td style="text-align: left;">(<span class="math inline">$$|\frac{h_6-h_a}{h_a}|$$</span>)</td>
+<td style="text-align: left;">(<span class="math inline">$|\frac{h_5-h_a}{h_a}|$</span>)</td>
+<td style="text-align: left;">(<span class="math inline">$|\frac{h_6-h_a}{h_a}|$</span>)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">0</td>
