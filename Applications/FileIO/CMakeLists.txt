@@ -29,20 +29,12 @@ target_link_libraries(ApplicationsFileIO
                              DataHolderLib
                              GeoLib
                              MathLib
-                      PRIVATE MeshLib GitInfoLib std::filesystem spdlog::spdlog)
-
-if(OGS_BUILD_GUI)
-    # Needed for the XmlPrjInterface, which links the DE/Base/OGSError.h.
-    target_link_libraries(ApplicationsFileIO PUBLIC QtBase)
-endif()
-
-if(Shapelib_FOUND)
-    target_link_libraries(ApplicationsFileIO PRIVATE ${Shapelib_LIBRARIES})
-endif()
-
-if(OGS_BUILD_SWMM)
-    target_link_libraries(ApplicationsFileIO PRIVATE SwmmInterface)
-endif()
+                             # Needed for the XmlPrjInterface, which links the DE/Base/OGSError.h.
+                             $<$<BOOL:${OGS_BUILD_GUI}>:QtBase>
+                             $<$<BOOL:${Shapelib_FOUND}>:${Shapelib_LIBRARIES}>
+                             $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
+                      PRIVATE MeshLib GitInfoLib std::filesystem spdlog::spdlog
+)
 
 configure_file(XmlIO/OpenGeoSysCND.xsd
                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysCND.xsd COPYONLY)

@@ -41,9 +41,12 @@ include(GenerateExportHeader)
 generate_export_header(MaterialLib)
 target_include_directories(MaterialLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(MaterialLib PRIVATE MathLib MeshLib ParameterLib
-    spdlog::spdlog)
-
-if(OGS_USE_MFRONT)
-    target_link_libraries(MaterialLib PUBLIC MaterialLib_SolidModels_MFront)
-endif()
+target_link_libraries(MaterialLib
+    PUBLIC
+        $<$<TARGET_EXISTS:MaterialLib_SolidModels_MFront>:MaterialLib_SolidModels_MFront>
+    PRIVATE
+        MathLib
+        MeshLib
+        ParameterLib
+        spdlog::spdlog
+)

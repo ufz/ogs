@@ -8,10 +8,11 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 target_link_libraries(InSituLib
+    PUBLIC
+        BaseLib
     INTERFACE
-      VTK::PythonUsed
+        VTK::PythonUsed
     PRIVATE
-      ParaView::PythonCatalyst
-      VTK::CommonDataModel)
-
-target_link_libraries(InSituLib PUBLIC BaseLib PRIVATE MeshLib)
+        MeshLib
+        ParaView::PythonCatalyst
+        VTK::CommonDataModel)

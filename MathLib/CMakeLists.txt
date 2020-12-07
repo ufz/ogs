@@ -26,33 +26,28 @@ endif()
 
 # Create the library
 ogs_add_library(MathLib ${SOURCES})
-target_include_directories(MathLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(MathLib
+    PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}
+        $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_INCLUDE_DIRS}>
+    PRIVATE
+        $<$<BOOL:${CVODE_FOUND}>:${CVODE_INCLUDE_DIRS}>
+)
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(
-    MathLib
-    PUBLIC BaseLib ${OpenMP_CXX_LIBRARIES}
-    PRIVATE spdlog::spdlog)
-
-if(CVODE_FOUND)
-    target_include_directories(MathLib PRIVATE ${CVODE_INCLUDE_DIRS})
-    target_link_libraries(MathLib PUBLIC ${CVODE_LIBRARIES})
-endif()
-
-if(LAPACK_FOUND)
-    target_link_libraries(MathLib PUBLIC ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
-endif()
-
-if(OGS_USE_LIS)
-    target_link_libraries(MathLib PUBLIC ${LIS_LIBRARIES})
-endif()
-
-if(OGS_USE_MKL)
-    target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
-endif()
+target_link_libraries(MathLib
+    PUBLIC
+        BaseLib
+        ${OpenMP_CXX_LIBRARIES}
+        $<$<BOOL:${CVODE_FOUND}>:${CVODE_LIBRARIES}>
+        $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
+        $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
+        $<$<BOOL:${OGS_USE_MKL}>:${MKL_LIBRARIES}>
+    PRIVATE
+        spdlog::spdlog
+)
 
 if(OGS_USE_PETSC)
-    target_include_directories(MathLib PUBLIC ${PETSC_INCLUDE_DIRS})
     target_link_libraries(MathLib PUBLIC ${PETSC_LIBRARIES})
 endif()

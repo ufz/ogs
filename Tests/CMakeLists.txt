@@ -49,49 +49,41 @@ add_executable(testrunner ${TEST_SOURCES})
 set_target_properties(testrunner PROPERTIES FOLDER Testing)
 
 target_link_libraries(testrunner
-                      ApplicationsFileIO
-                      gtest
-                      MeshGeoToolsLib
-                      MaterialLib
-                      MeshLib
-                      NumLib
-                      ParameterLib
-                      ProcessLib
-                      TestInfoLib
-                      Threads::Threads
-                      ${VTK_LIBRARIES})
-
-if(OGS_BUILD_PROCESS_LIE)
-    target_link_libraries(testrunner LIE)
-endif()
+    PRIVATE
+        ApplicationsFileIO
+        gtest
+        MeshGeoToolsLib
+        MaterialLib
+        MeshLib
+        NumLib
+        ParameterLib
+        ProcessLib
+        TestInfoLib
+        Threads::Threads
+        ${VTK_LIBRARIES}
+        $<$<TARGET_EXISTS:LIE>:LIE>
+        $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+        $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
+        $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+)
 
 if(OGS_USE_PETSC)
-    target_link_libraries(testrunner ${PETSC_LIBRARIES})
-endif()
-
-if(OGS_USE_MPI)
-    target_link_libraries(testrunner MPI::MPI_CXX)
-endif()
-
-if(OGS_BUILD_SWMM)
-    target_link_libraries(testrunner SwmmInterface)
-endif()
-
-if(OGS_INSITU)
-    target_link_libraries(testrunner InSituLib)
+    target_link_libraries(testrunner PRIVATE ${PETSC_LIBRARIES})
 endif()
 
 if(OGS_BUILD_GUI)
     target_link_libraries(testrunner
-                          GitInfoLib
-                          Qt5::Core
-                          Qt5::Gui
-                          Qt5::Xml
-                          Qt5::Network
-                          VtkVis
-                          QtDataView)
+        PRIVATE
+            GitInfoLib
+            Qt5::Core
+            Qt5::Gui
+            Qt5::Xml
+            Qt5::Network
+            VtkVis
+            QtDataView
+    )
     if(GEOTIFF_FOUND)
-        target_link_libraries(testrunner ${GEOTIFF_LIBRARIES})
+        target_link_libraries(testrunner PRIVATE ${GEOTIFF_LIBRARIES})
     endif()
 endif()
 
