@@ -1,0 +1,1 @@
+\copydoc MaterialPropertyLib::SaturationDependentHeatConduction::K_wet_
