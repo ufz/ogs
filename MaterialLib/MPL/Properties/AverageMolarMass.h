@@ -29,7 +29,7 @@ class Component;
 class AverageMolarMass final : public Property
 {
 public:
-    AverageMolarMass(std::string name);
+    explicit AverageMolarMass(std::string name);
 
     void checkScale() const override;
 
