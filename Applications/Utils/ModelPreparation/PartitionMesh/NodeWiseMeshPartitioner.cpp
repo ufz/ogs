@@ -962,7 +962,7 @@ void getElementIntegerVariables(
     std::vector<long>& elem_info,
     long& counter)
 {
-    unsigned mat_id = 0;  // TODO: Material ID to be set from the mesh data
+    constexpr unsigned mat_id = 0;  // TODO: Material ID to be set from the mesh data
     const long nn = elem.getNumberOfNodes();
     elem_info[counter++] = mat_id;
     elem_info[counter++] = static_cast<long>(elem.getCellType());
