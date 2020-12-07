@@ -16,6 +16,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <memory>
 #include <string>
+
 #include "BaseLib/Error.h"
 
 namespace MaterialPropertyLib
