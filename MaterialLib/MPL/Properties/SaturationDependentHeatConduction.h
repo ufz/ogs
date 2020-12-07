@@ -37,7 +37,7 @@ public:
                             double const /*dt*/) const override;
 
 private:
-    double const K_dry_;
-    double const K_wet_;
+    double const K_dry_; //< Effective thermal conductivity of the dry material.
+    double const K_wet_; //< Effective thermal conductivity of the wet material.
 };
 }  // namespace MaterialPropertyLib
