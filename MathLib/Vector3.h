@@ -19,8 +19,8 @@
 #include <Eigen/Eigen>
 #include <cmath>
 
-#include "TemplatePoint.h"
 #include "MathTools.h"
+#include "TemplatePoint.h"
 
 namespace MathLib
 {
@@ -198,10 +198,6 @@ template <typename T1> TemplateVector3<T1> operator*(
 using Vector3 = TemplateVector3<double>;
 
 /// Calculates the scalar triple (u x v) . w
-double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,
-                    MathLib::Vector3 const& w);
-
-/// Calculates the scalar triple (u x v) . w using Eigen functionality
 double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
                     Eigen::Vector3d const& w);
 }  // namespace MathLib

@@ -12,18 +12,6 @@
 namespace MathLib
 {
 
-double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,
-                    MathLib::Vector3 const& w)
-{
-    auto const pu =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(u.getCoords()));
-    auto const pv =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(v.getCoords()));
-    auto const pw =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(w.getCoords()));
-    return pu.cross(pv).dot(pw);
-}
-
 double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
                     Eigen::Vector3d const& w)
 {
