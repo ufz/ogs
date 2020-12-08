@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <cstddef>
 
 #ifdef _OPENMP

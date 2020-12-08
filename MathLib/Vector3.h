@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
 #include <cmath>
 
 #include "MathTools.h"
