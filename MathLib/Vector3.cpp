@@ -24,10 +24,10 @@ double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,
     return pu.cross(pv).dot(pw);
 }
 
-//double scalarTriple(EigenLib::Vector3d const& u, EigenLib::Vector3d const& v,
-//                    EigenLib::Vector3d const& w)
-//{
-//    return (u.cross(v).dot(w))(0,0);
-//}
+double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
+                    Eigen::Vector3d const& w)
+{
+    return u.cross(v).dot(w);
+}
 
 }  // end namespace MathLib

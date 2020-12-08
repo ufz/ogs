@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <cmath>
 
 #include "TemplatePoint.h"
@@ -200,4 +201,7 @@ using Vector3 = TemplateVector3<double>;
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,
                     MathLib::Vector3 const& w);
 
+/// Calculates the scalar triple (u x v) . w using Eigen functionality
+double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
+                    Eigen::Vector3d const& w);
 }  // namespace MathLib
