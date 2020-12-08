@@ -6,7 +6,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dlozengebt/m2_1Dlozengebt.prj RUNTIME 82)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Drelax/m2_1Drelax.prj)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dload/m2_2Dload.prj)
-    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dload/m2_2Dload_ym45.prj RUNTIME 43)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dload/m2_2Dload_ym45.prj RUNTIME 70)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dloadbt/m2_2Dloadbt.prj RUNTIME 64)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_3Dload/m2_3Dload.prj RUNTIME 24)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_3Dloadbt/m2_3Dloadbt.prj RUNTIME 67)
@@ -133,6 +133,7 @@ AddTest(
 AddTest(
     NAME ThermoMechanics_tm1_3Dsquare
     PATH ThermoMechanics/tm1_3Dsquare
+    RUNTIME 200
     EXECUTABLE ogs
     EXECUTABLE_ARGS tm1_3Dsquare.prj
     WRAPPER time
@@ -168,7 +169,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 80
     DIFF_DATA
     tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu temperature temperature 1e-10 0.0
     tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu displacement displacement 1e-11 0.0

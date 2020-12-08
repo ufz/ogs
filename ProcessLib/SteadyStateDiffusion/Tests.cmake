@@ -52,8 +52,9 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     )
 
     AddTest(
-        NAME ${benchmark_type}SteadyStateDiffusion_cube_1x1x1_Neumann_${mesh_size}
+        NAME SteadyStateDiffusion_cube_1x1x1_Neumann_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
+        RUNTIME ${RUNTIME}
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
         TESTER vtkdiff
