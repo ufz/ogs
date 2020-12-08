@@ -292,6 +292,9 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 MeshLib::IO::transformAttributes(mesh), time_step);
             writer.writeStep(time_step, time);
 #else
+            // silence compiler warnings
+            (void)(time_step);
+            (void)(time);
             OGS_FATAL(
                 "Trying to write Xdmf file but OGS was not built with "
                 "Xdmf-support.");
