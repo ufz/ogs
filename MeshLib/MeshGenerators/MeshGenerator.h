@@ -229,7 +229,7 @@ Mesh* generateRegularHexMesh(const BaseLib::ISubdivision &div_x,
 Mesh* generateRegularHexMesh(const double length,
                              const std::size_t subdivision,
                              MathLib::Point3d const& origin = MathLib::ORIGIN,
-                             std::string   const& mesh_name = "mesh");
+                             std::string const& mesh_name = "mesh");
 
 /**
  * Generate a regular 3D Hex-Element mesh.
