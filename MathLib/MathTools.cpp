@@ -51,4 +51,10 @@ double getAngle (const double p0[3], const double p1[3], const double p2[3])
     return std::acos (scalarProduct<double,3> (v0,v1) / (std::sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
 }
 
+double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
+                    Eigen::Vector3d const& w)
+{
+    return u.cross(v).dot(w);
+}
+
 }  // namespace MathLib

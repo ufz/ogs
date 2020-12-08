@@ -196,8 +196,4 @@ template <typename T1> TemplateVector3<T1> operator*(
 }
 
 using Vector3 = TemplateVector3<double>;
-
-/// Calculates the scalar triple (u x v) . w
-double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
-                    Eigen::Vector3d const& w);
 }  // namespace MathLib
