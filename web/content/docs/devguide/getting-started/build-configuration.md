@@ -36,7 +36,7 @@ When you want to start over with a new configuration simply delete the build-dir
 
 ### <i class="far fa-exclamation-triangle"></i> Supported Visual Studio Generators
 
-- `Visual Studio 15 2017 Win64`
+- `Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}`
 
 </div>
 
@@ -60,9 +60,9 @@ With Conan one build directory corresponds to one configuration. If you want to 
 [assuming you are at the same directory where the source code directory is located]
 mkdir ogs-build && cd ogs-build
 mkdir debug && cd debug
-cmake ../../ogs -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Debug
+cmake ../../ogs -G "Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}" -DCMAKE_BUILD_TYPE=Debug
 cd .. && mkdir release && cd release
-cmake ../../ogs -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release
+cmake ../../ogs -G "Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}" -DCMAKE_BUILD_TYPE=Release
 ```
 
 `..\..\ogs` represents the relative path to the source code (please adapt if you have a different directory layout).
@@ -75,10 +75,10 @@ Please also note that in Visual Studio you have to choose the correct configurat
 
 ## Option: Configure from the command line
 
-CMake can be run from the shell by invoking the cmake command inside a build directory. You can pass any CMake variable or option with `-DVARIABLE_NAME=VALUE` (note the `-D` in front!). You can also pass the generator you want to use (e.g. `Unix Makefiles` or `Visual Studio 15 2017 Win64`-project files) with the `-G` parameter (to see all available generators just run `cmake --help`), although in most cases the appropriate generator will be chosen automatically. The last parameter to the CMake command is the path to the source code directory. A typical call would look like this:
+CMake can be run from the shell by invoking the cmake command inside a build directory. You can pass any CMake variable or option with `-DVARIABLE_NAME=VALUE` (note the `-D` in front!). You can also pass the generator you want to use (e.g. `Unix Makefiles` or `Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}`-project files) with the `-G` parameter (to see all available generators just run `cmake --help`), although in most cases the appropriate generator will be chosen automatically. The last parameter to the CMake command is the path to the source code directory. A typical call would look like this:
 
 ```bash
-cmake -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Release ../ogs
+cmake -G "Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}" -DCMAKE_BUILD_TYPE=Release ../ogs
 ```
 
 CMake tries to autodetect your compiler so in most cases this should be enough:
@@ -93,7 +93,7 @@ cmake ../ogs
 
 ### <i class="far fa-check"></i> Pro Tip: Use the Visual Studio command line
 
-In the Start menu under *Visual Studio 2017* you find a application link to *x64 Native Tools Command Prompt for VS 2017*. This starts a command line setup for Visual Studio 64-bit. When you run CMake commands in this command line the correct generator will be picked up automatically:
+In the Start menu under *Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}* you find a application link to *x64 Native Tools Command Prompt for VS {{< dataFile "versions.minimum_version.msvc.year" >}}*. This starts a command line setup for Visual Studio 64-bit. When you run CMake commands in this command line the correct generator will be picked up automatically:
 
 ```bash
 cmake ../ogs
@@ -103,14 +103,14 @@ This even allows for using [Ninja]({{< ref "build-with-ninja.md" >}}) as the bui
 
 ### <i class="far fa-check"></i> Pro Tip 2: Use a better terminal application
 
-Use [ConEmu](https://conemu.github.io) for a better terminal experience. It automatically detects all installed terminal applications (e.g. regular Windows cmd.exe, Git shell, VS command lines, ...) and feautures multiple terminals inside tabs.
+Use the [Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701) for a better terminal experience. It offers modern terminal features such as multiple tabs and panes.
 </div>
 
 ## Option: Configure with a visual tool
 
 <div class='win'>
 
-CMake comes with a graphical tool called **cmake-gui**. You can find it in the **Windows Start Menu**. First you need to set the source and build directory. Then click **Configure**. Now choose the generator to be used (e.g. **Visual Studio 15 2017 Win64** for Visual Studio 2015 64-bit). Now choose your desired configuration options by toggling the corresponding checkboxes. Click **Configure** again. Click **Configure** often enough until the **Generate**-button becomes visible. Pressing **Generate** will finally generate the project files inside the chosen build directory.
+CMake comes with a graphical tool called **cmake-gui**. You can find it in the **Windows Start Menu**. First you need to set the source and build directory. Then click **Configure**. Now choose the generator to be used (e.g. **Visual Studio {{< dataFile "versions.minimum_version.msvc.number" >}} {{< dataFile "versions.minimum_version.msvc.year" >}}** for Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}). Now choose your desired configuration options by toggling the corresponding checkboxes. Click **Configure** again. Click **Configure** often enough until the **Generate**-button becomes visible. Pressing **Generate** will finally generate the project files inside the chosen build directory.
 
 </div>
 
