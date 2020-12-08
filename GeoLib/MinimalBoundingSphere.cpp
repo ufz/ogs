@@ -93,20 +93,17 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
     Eigen::Vector3d const va = vq - vp;
     Eigen::Vector3d const vb = vr - vp;
     Eigen::Vector3d const vc = vs - vp;
-    MathLib::Vector3 const a(p, q);
-    MathLib::Vector3 const b(p, r);
-    MathLib::Vector3 const c(p, s);
 
     if (!MathLib::isCoplanar(p, q, r, s))
     {
         double const denom = 2.0 * MathLib::scalarTriple(va, vb, vc);
-        MathLib::Vector3 const o = (scalarProduct(c,c) * crossProduct(a,b)
-                                  + scalarProduct(b,b) * crossProduct(c,a)
-                                  + scalarProduct(a,a) * crossProduct(b,c))
-                                  * (1.0 / denom);
+        Eigen::Vector3d const o =
+            (vc.dot(vc) * va.cross(vb) + vb.dot(vb) * vc.cross(va) +
+             va.dot(va) * vb.cross(vc)) /
+            denom;
 
-        _radius = o.getLength() + std::numeric_limits<double>::epsilon();
-        _center = MathLib::Vector3(p) + o;
+        _radius = o.norm() + std::numeric_limits<double>::epsilon();
+        _center = MathLib::Vector3(p) + MathLib::Vector3(o[0], o[1], o[2]);
     }
     else
     {
