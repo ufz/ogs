@@ -18,7 +18,7 @@
 
 #include "MathLib/Point3d.h"
 #include "MathLib/GeometricBasics.h"
-#include "MathLib/Vector3.h"
+#include "MathLib/MathTools.h"
 
 namespace GeoLib {
 MinimalBoundingSphere::MinimalBoundingSphere() = default;
@@ -81,13 +81,25 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
     MathLib::Point3d const& r,
     MathLib::Point3d const& s)
 {
+    auto const vp =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(p.getCoords()));
+    auto const vq =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(q.getCoords()));
+    auto const vr =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(r.getCoords()));
+    auto const vs =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(s.getCoords()));
+
+    Eigen::Vector3d const va = vq - vp;
+    Eigen::Vector3d const vb = vr - vp;
+    Eigen::Vector3d const vc = vs - vp;
     MathLib::Vector3 const a(p, q);
     MathLib::Vector3 const b(p, r);
     MathLib::Vector3 const c(p, s);
 
     if (!MathLib::isCoplanar(p, q, r, s))
     {
-        double const denom = 2.0 * MathLib::scalarTriple(a,b,c);
+        double const denom = 2.0 * MathLib::scalarTriple(va, vb, vc);
         MathLib::Vector3 const o = (scalarProduct(c,c) * crossProduct(a,b)
                                   + scalarProduct(b,b) * crossProduct(c,a)
                                   + scalarProduct(a,a) * crossProduct(b,c))

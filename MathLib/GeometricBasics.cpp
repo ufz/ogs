@@ -23,10 +23,15 @@ double orientation3d(MathLib::Point3d const& p,
                      MathLib::Point3d const& b,
                      MathLib::Point3d const& c)
 {
-    MathLib::Vector3 const ap (a, p);
-    MathLib::Vector3 const bp (b, p);
-    MathLib::Vector3 const cp (c, p);
-    return MathLib::scalarTriple(bp,cp,ap);
+    auto const pp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
+    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
+    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
+    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+
+    Eigen::Vector3d const ap = pp - pa;
+    Eigen::Vector3d const bp = pp - pb;
+    Eigen::Vector3d const cp = pp - pc;
+    return MathLib::scalarTriple(bp, cp, ap);
 }
 
 double calcTetrahedronVolume(MathLib::Point3d const& a,
@@ -34,9 +39,13 @@ double calcTetrahedronVolume(MathLib::Point3d const& a,
                              MathLib::Point3d const& c,
                              MathLib::Point3d const& d)
 {
-    const MathLib::Vector3 ab(a, b);
-    const MathLib::Vector3 ac(a, c);
-    const MathLib::Vector3 ad(a, d);
+    auto const va = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
+    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
+    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    auto const vd = Eigen::Map<Eigen::Vector3d const>(d.getCoords());
+    Eigen::Vector3d const ab = vb - va;
+    Eigen::Vector3d const ac = vc - va;
+    Eigen::Vector3d const ad = vd - va;
     return std::abs(MathLib::scalarTriple(ac, ad, ab)) / 6.0;
 }
 
