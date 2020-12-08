@@ -15,8 +15,19 @@ namespace MathLib
 double scalarTriple(MathLib::Vector3 const& u, MathLib::Vector3 const& v,
                     MathLib::Vector3 const& w)
 {
-    MathLib::Vector3 const cross(MathLib::crossProduct(u, v));
-    return MathLib::scalarProduct(cross,w);
+    auto const pu =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(u.getCoords()));
+    auto const pv =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(v.getCoords()));
+    auto const pw =
+        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(w.getCoords()));
+    return pu.cross(pv).dot(pw);
 }
+
+//double scalarTriple(EigenLib::Vector3d const& u, EigenLib::Vector3d const& v,
+//                    EigenLib::Vector3d const& w)
+//{
+//    return (u.cross(v).dot(w))(0,0);
+//}
 
 }  // end namespace MathLib
