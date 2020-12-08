@@ -8,6 +8,7 @@
  */
 
 #include <memory>
+#include <numeric>
 #include <random>
 
 #include "gtest/gtest.h"
