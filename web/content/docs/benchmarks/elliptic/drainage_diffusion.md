@@ -6,7 +6,7 @@ project = "/Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj"
 
 [menu]
   [menu.benchmarks]
-    parent = "liquid-flow"
+    parent = "elliptic"
 
 +++
 

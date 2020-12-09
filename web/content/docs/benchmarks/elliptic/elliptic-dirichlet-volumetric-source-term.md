@@ -18,13 +18,13 @@ weight = 102
 We start with Poisson equation:
 $$
 \begin{equation}
-- k\; \Delta p = Q \quad \text{in }\Omega
+\- k\\; \Delta p = Q \quad \text{in }\Omega
 \end{equation}$$
 w.r.t boundary conditions
 $$
 \eqalign{
 p(x) = g_D(x) &\quad \text{on }\Gamma_D,\cr
-k\;{\partial p(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
+k\\;{\partial p(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
 }$$
 
 where $p$ could be the pressure, the subscripts $D$ and $N$ denote the Dirichlet- and Neumann-type boundary conditions, $n$ is the normal vector pointing outside of $\Omega$, and $\Gamma = \Gamma_D \cup \Gamma_N$ and $\Gamma_D \cap \Gamma_N = \emptyset$.
@@ -36,7 +36,7 @@ $$
 \eqalign{
 p(x,y) = 1 &\quad \text{on } (x=0,y) \subset \Gamma_D,\cr
 p(x,y) = 0 &\quad \text{on } (x=1,y) \subset \Gamma_D,\cr
-k\;{\partial p(x,y) \over \partial n} = 0 &\quad \text{on }\Gamma_N.
+k\\;{\partial p(x,y) \over \partial n} = 0 &\quad \text{on }\Gamma_N.
 }$$
 and the source term is $Q=1$.
 

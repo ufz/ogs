@@ -18,7 +18,7 @@ weight = 104
 We start with simple linear homogeneous elliptic problem:
 $$
 \begin{equation*}
-k\; \Delta h = 0 \quad \text{in }\Omega
+k\\;\Delta h = 0 \quad \text{in }\Omega
 \end{equation*}$$
 w.r.t boundary conditions
 $$

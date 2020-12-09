@@ -18,13 +18,13 @@ weight = 104
 We solve the Poisson equation:
 $$
 \begin{equation}
-k\; \Delta h = f(x) \quad \text{in }\Omega
+k\\;\Delta h = f(x) \quad \text{in }\Omega
 \end{equation}$$
 w.r.t boundary conditions
 $$
 \eqalign{
 h(x) = g_D(x) &\quad \text{on }\Gamma_D,\cr
-k\;{\partial h(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
+k\\;{\partial h(x) \over \partial n} = g_N(x) &\quad \text{on }\Gamma_N,
 }$$
 
 where $h$ could be hydraulic head, the subscripts $D$ and $N$ denote the Dirichlet- and Neumann-type boundary conditions, $n$ is the normal vector pointing outside of $\Omega$, and $\Gamma = \Gamma_D \cup \Gamma_N$ and $\Gamma_D \cap \Gamma_N = \emptyset$.

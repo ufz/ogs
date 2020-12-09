@@ -43,11 +43,13 @@ $$
 \end{equation}
 $$
 with $C_i$ (mol m$^{-3}$) standing for the molar concentration of component $i$, $v$ (m s$^{-1}$) for the pore velocity in the fluid phase, $D_h$ (m$^2$ s$^{-1}$) for the dispersion tensor of component $i$, $Q_i$ (mol m$^{-3}$ s$^{-1}$) for a source/sink term, and $\Gamma_i$ (C$_1$ ...C$_m$) (mol m$^{-3}$ s$^{-1}$) being a source/sink term for component $i$ due to chemical reactions with $m$ other components. The Scheidegger dispersion tensor is implemented in two dimensions as
+
 $$
 \begin{equation}
 D_{kl} = \alpha_T |v| \delta_{kl} + \left( \alpha_L - \alpha_T \right) \frac{v_k v_l}{|v|} + D_e,
 \end{equation}
 $$
+
 where $\alpha_L$ (m) and $\alpha_T$ (m) are the longitudinal and transversal dispersion length, respectively. $\delta_{kl}$ (–) is the Kronecker symbol, $v_{k,l}$ (m s$^{-1}$) is the fluid pore velocity in direction $k$,$l$, and $D_e$ (m$^2$ s$^{-1}$) is the molecular diffusion coefficient.
 
 ## Model setup

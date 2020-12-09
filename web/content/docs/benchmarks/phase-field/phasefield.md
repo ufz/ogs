@@ -48,4 +48,3 @@ $$
 \begin{equation}
 I (\varepsilon, k) =  \int_0^1  \dfrac{1}{d (x)^2 + k} \mathrm{d}x
 \end{equation}
-$$
