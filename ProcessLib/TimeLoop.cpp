@@ -302,17 +302,19 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto const nonlinear_solver_status =
         nonlinear_solver.solve(x, x_prev, post_iteration_callback, process_id);
 
-    if (nonlinear_solver_status.error_norms_met)
+    if (!nonlinear_solver_status.error_norms_met)
     {
-        GlobalVector& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
-            ode_sys.getMatrixSpecifications(process_id));
-
-        time_disc.getXdot(*x[process_id], *x_prev[process_id], x_dot);
-
-        process.postNonLinearSolver(*x[process_id], x_dot, t, delta_t,
-                                    process_id);
-        NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
+        return nonlinear_solver_status;
     }
+
+    GlobalVector& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
+        ode_sys.getMatrixSpecifications(process_id));
+
+    time_disc.getXdot(*x[process_id], *x_prev[process_id], x_dot);
+
+    process.postNonLinearSolver(*x[process_id], x_dot, t, delta_t,
+                                process_id);
+    NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
 
     return nonlinear_solver_status;
 }
