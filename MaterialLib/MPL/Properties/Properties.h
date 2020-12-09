@@ -29,5 +29,6 @@
 #include "RelativePermeability/RelPermLiakopoulos.h"
 #include "RelativePermeability/RelPermUdell.h"
 #include "RelativePermeability/RelPermVanGenuchten.h"
+#include "SaturationDependentHeatConduction.h"
 #include "SaturationDependentSwelling.h"
 #include "TransportPorosityFromMassBalance.h"

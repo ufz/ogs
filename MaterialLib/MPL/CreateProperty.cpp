@@ -151,6 +151,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createRelPermUdell(config);
     }
 
+    if (boost::iequals(property_type, "SaturationDependentHeatConduction"))
+    {
+        return createSaturationDependentHeatConduction(config);
+    }
+
     if (boost::iequals(property_type, "SaturationDependentSwelling"))
     {
         return createSaturationDependentSwelling(config,
