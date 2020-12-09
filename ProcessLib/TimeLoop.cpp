@@ -615,9 +615,15 @@ bool TimeLoop::loop()
                 solveUncoupledEquationSystems(t, dt, timesteps);
         }
 
-        postTimestepForAllProcesses(t, dt, _per_process_data,
-                                    _process_solutions,
-                                    _process_solutions_prev);
+        // Run post time step only if the last iteration was successful.
+        // Otherwise it runs the risks to get the same errors as in the last
+        // iteration, an exception thrown in assembly, for example.
+        if (nonlinear_solver_status.error_norms_met)
+        {
+            postTimestepForAllProcesses(t, dt, _per_process_data,
+                                        _process_solutions,
+                                        _process_solutions_prev);
+        }
 
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
