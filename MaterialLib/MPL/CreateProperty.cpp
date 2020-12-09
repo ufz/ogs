@@ -146,6 +146,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createRelPermVanGenuchten(config);
     }
 
+    if (boost::iequals(property_type, "RelativePermeabilityUdell"))
+    {
+        return createRelPermUdell(config);
+    }
+
     if (boost::iequals(property_type, "SaturationDependentSwelling"))
     {
         return createSaturationDependentSwelling(config,
