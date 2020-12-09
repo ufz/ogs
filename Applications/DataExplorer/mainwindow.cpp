@@ -1128,23 +1128,9 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                     "Error");
             }
 
-            if (delete_geo_file) // delete file
+            if (delete_geo_file)
             {
-                std::string remove_command ("rm ");
-#ifdef _WIN32
-                remove_command = "del ";
-#endif
-                remove_command += fileName.toStdString();
-                INFO("remove command: {:s}", remove_command);
-                auto const return_value = system(remove_command.c_str());
-                if (return_value != 0)
-                {
-                    QString const message =
-                        "Execution of remove command returned non-zero "
-                        "status, " +
-                        QString::number(return_value);
-                    OGSError::box(message, "Error");
-                }
+                BaseLib::removeFile(fileName.toStdString());
             }
         }
     }
