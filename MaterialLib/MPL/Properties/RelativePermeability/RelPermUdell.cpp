@@ -97,7 +97,7 @@ PropertyDataType RelPermUdell::dValue(
     auto const dk_rel_LRdse = 3. * s * s;
     auto const dk_rel_LRdsL = dk_rel_LRdse * d_se_d_sL;
 
-    auto const dk_rel_GRdse = 3. * (1. - s) * (1. - s);
+    auto const dk_rel_GRdse = -3. * (1. - s) * (1. - s);
     auto const dk_rel_GRdsL = dk_rel_GRdse * d_se_d_sL;
 
     return Eigen::Vector2d{dk_rel_LRdsL, dk_rel_GRdsL};
