@@ -493,7 +493,7 @@ endif()
 
 foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDifference)
     AddTest(
-        NAME AmmerElementQuality_${criterion}_Test
+        NAME TrianglesGoodElementQuality_${criterion}_Test
         PATH MeshGeoToolsLib/Ammer
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
         EXECUTABLE AddElementQuality
@@ -502,6 +502,34 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
         AmmerGWNWithElementQuality.vtu AmmerGWNWithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+    )
+endforeach()
+
+foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDifference)
+    AddTest(
+        NAME TrianglesPoorElementQuality_${criterion}_Test
+        PATH MeshGeoToolsLib/Hamburg
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
+        EXECUTABLE AddElementQuality
+        EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-surface-WithElementQuality_${criterion}.vtu -c ${criterion}
+        TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
+        DIFF_DATA
+        00-surface-WithElementQuality.vtu 00-surface-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
+    )
+endforeach()
+
+foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDifference)
+    AddTest(
+        NAME Mixed3DElementQuality_${criterion}_Test
+        PATH FileIO
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
+        EXECUTABLE AddElementQuality
+        EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu -c ${criterion}
+        TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
+        DIFF_DATA
+        AmmerSubsurfaceCoarse-WithElementQuality.vtu AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
     )
 endforeach()
 
