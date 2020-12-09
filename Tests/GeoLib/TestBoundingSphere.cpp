@@ -19,6 +19,29 @@
 #include "GeoLib/MinimalBoundingSphere.h"
 #include "MathLib/Point3d.h"
 
+std::vector<MathLib::Point3d*>* getRandomSpherePoints(
+    MathLib::Point3d const& center, double const radius, std::size_t n_points)
+{
+    MathLib::Vector3 const c(center);
+    auto* pnts = new std::vector<MathLib::Point3d*>;
+    pnts->reserve(n_points);
+    srand(static_cast<unsigned>(time(nullptr)));
+
+    for (std::size_t k(0); k < n_points; ++k)
+    {
+        MathLib::Vector3 vec(0, 0, 0);
+        double sum(0);
+        for (unsigned i = 0; i < 3; ++i)
+        {
+            vec[i] = static_cast<double>(rand()) - (RAND_MAX / 2.0);
+            sum += (vec[i] * vec[i]);
+        }
+        double const fac(radius / std::sqrt(sum));
+        pnts->push_back(new MathLib::Point3d(c + fac * vec));
+    }
+    return pnts;
+}
+
 TEST(GeoLib, TestBoundingSphere)
 {
     std::vector<MathLib::Point3d*> pnts;
@@ -113,8 +136,8 @@ TEST(GeoLib, TestBoundingSphere)
     }
 
     /// Calculates the bounding sphere of points on a bounding sphere
-    auto sphere_points = std::unique_ptr<
-        std::vector<MathLib::Point3d*>>(s.getRandomSpherePoints(1000));
+    auto sphere_points = std::unique_ptr<std::vector<MathLib::Point3d*>>(
+        getRandomSpherePoints(s.getCenter(), s.getRadius(), 1000));
     GeoLib::MinimalBoundingSphere t(*sphere_points);
     for (auto p : *sphere_points)
     {

@@ -194,25 +194,4 @@ double MinimalBoundingSphere::pointDistanceSquared(MathLib::Point3d const& pnt) 
     return MathLib::sqrDist(_center, pnt)-(_radius*_radius);
 }
 
-std::vector<MathLib::Point3d*>* MinimalBoundingSphere::getRandomSpherePoints(std::size_t n_points) const
-{
-    auto* pnts = new std::vector<MathLib::Point3d*>;
-    pnts->reserve(n_points);
-    srand ( static_cast<unsigned>(time(nullptr)) );
-
-    for (std::size_t k(0); k<n_points; ++k)
-    {
-        MathLib::Vector3 vec (0,0,0);
-        double sum (0);
-        for (unsigned i=0; i<3; ++i)
-        {
-            vec[i] = static_cast<double>(rand())-(RAND_MAX/2.0);
-            sum+=(vec[i]*vec[i]);
-        }
-        double const fac (_radius/sqrt(sum));
-        pnts->push_back(new MathLib::Point3d(_center+fac * vec));
-    }
-    return pnts;
-}
-
 }  // namespace GeoLib

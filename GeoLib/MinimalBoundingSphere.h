@@ -55,10 +55,6 @@ public:
     /// Returns the squared euclidean distance of a point from the sphere (for points within the sphere distance is negative)
     double pointDistanceSquared(MathLib::Point3d const& pnt) const;
 
-    /// Creates n_points random points located on the surface of the bounding sphere (useful for visualisation)
-    std::vector<MathLib::Point3d*>*
-    getRandomSpherePoints(std::size_t n_points) const;
-
 private:
     /// Constructor using no points
     MinimalBoundingSphere();
