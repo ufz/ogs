@@ -17,13 +17,11 @@
 #include "TestMPL.h"
 #include "Tests/TestTools.h"
 
-TEST(MaterialPropertyLib, RelPermUdell)
+std::stringstream config(const double ref_residual_liquid_saturation,
+                         const double ref_residual_gas_saturation,
+                         const double ref_k_rel_L_min,
+                         const double ref_k_rel_G_min)
 {
-    const double ref_residual_liquid_saturation = 0.01;
-    const double ref_residual_gas_saturation = 0.01;
-    const double ref_k_rel_L_min = 1.e-9;
-    const double ref_k_rel_G_min = 1.e-7;
-
     std::stringstream m;
 
     m << "<medium>\n";
@@ -42,7 +40,107 @@ TEST(MaterialPropertyLib, RelPermUdell)
     m << "  </property>\n";
     m << "</properties>\n";
     m << "</medium>\n";
+    return m;
+}
 
+TEST(MaterialPropertyLib, RelPermUdellDerivatives)
+{
+    const double ref_residual_liquid_saturation = 0.01;
+    const double ref_residual_gas_saturation = 0.01;
+    const double ref_k_rel_L_min = 1.e-9;
+    const double ref_k_rel_G_min = 1.e-7;
+    const double s_max = 1. - ref_residual_gas_saturation;
+    const double stepsize = 0.01;
+
+    for (double s_L = ref_residual_liquid_saturation + stepsize;
+         s_L <= s_max - stepsize;
+         s_L += stepsize)
+    {
+        const std::stringstream m =
+            config(ref_residual_liquid_saturation, ref_residual_gas_saturation,
+                   ref_k_rel_L_min, ref_k_rel_G_min);
+
+        auto const& medium = Tests::createTestMaterial(m.str());
+        MaterialPropertyLib::VariableArray variable_array;
+        ParameterLib::SpatialPosition const pos;
+        double const time = std::numeric_limits<double>::quiet_NaN();
+        double const dt = std::numeric_limits<double>::quiet_NaN();
+
+        variable_array[static_cast<int>(
+            MaterialPropertyLib::Variable::liquid_saturation)] = s_L;
+
+        auto k_rel =
+            medium
+                ->property(
+                    MaterialPropertyLib::PropertyType::relative_permeability)
+                .template value<Eigen::Vector2d>(variable_array, pos, time, dt);
+
+        auto dk_rel_ds_L =
+            medium
+                ->property(
+                    MaterialPropertyLib::PropertyType::relative_permeability)
+                .template dValue<Eigen::Vector2d>(
+                    variable_array,
+                    MaterialPropertyLib::Variable::liquid_saturation, pos, time,
+                    dt);
+
+        const double eps = 1.e-8;
+
+        variable_array[static_cast<int>(
+            MaterialPropertyLib::Variable::liquid_saturation)] = s_L + eps;
+
+        auto k_rel_plus =
+            medium
+                ->property(
+                    MaterialPropertyLib::PropertyType::relative_permeability)
+                .template value<Eigen::Vector2d>(variable_array, pos, time, dt);
+
+        variable_array[static_cast<int>(
+            MaterialPropertyLib::Variable::liquid_saturation)] = s_L - eps;
+        auto k_rel_minus =
+            medium
+                ->property(
+                    MaterialPropertyLib::PropertyType::relative_permeability)
+                .template value<Eigen::Vector2d>(variable_array, pos, time, dt);
+
+        enum
+        {
+            liquid_phase,
+            gas_phase
+        };
+
+        const auto Dk_rel = (k_rel_plus - k_rel_minus) / (2 * eps);
+
+        if ((s_L < ref_residual_liquid_saturation) || (s_L > s_max))
+        {
+            ASSERT_EQ(Dk_rel[liquid_phase], 0.)
+                << "for saturation " << s_L
+                << " and relative liquid phase permeability "
+                << k_rel[liquid_phase];
+            ASSERT_EQ(Dk_rel[gas_phase], 0.)
+                << "for saturation " << s_L
+                << " and relative gas phase permeability " << k_rel[gas_phase];
+        }
+        else
+        {
+            ASSERT_LE(
+                std::abs(dk_rel_ds_L[liquid_phase] - Dk_rel[liquid_phase]),
+                1e-7)
+                << "with " << dk_rel_ds_L[liquid_phase] << " and "
+                << Dk_rel[liquid_phase] << " for saturation " << s_L
+                << " and relative liquid phase permeability "
+                << k_rel[liquid_phase];
+            ASSERT_LE(std::abs(dk_rel_ds_L[gas_phase] - Dk_rel[gas_phase]),
+                      1e-7)
+                << "with " << dk_rel_ds_L[gas_phase] << " and "
+                << Dk_rel[gas_phase] << " for saturation " << s_L
+                << " and relative gas phase permeability " << k_rel[gas_phase];
+        }
+    }
+}
+
+TEST(MaterialPropertyLib, RelPermUdellRefValues)
+{
     std::array<double, 16> ref_saturation = {
         -0.01, 0.00, 0.01, 0.02, 0.04, 0.10, 0.20, 0.40,
         0.60,  0.80, 0.90, 0.96, 0.98, 0.99, 1.00, 1.01};
@@ -72,15 +170,24 @@ TEST(MaterialPropertyLib, RelPermUdell)
         0.00000000000E+00};
 
     std::array<double, 16> ref_dk_rel_G_ds_L = {
-        0.00000000000E+00, 0.00000000000E+00, 3.06122448980E+00,
-        2.99906926536E+00, 2.87667128492E+00, 2.52477709118E+00,
-        1.98928592678E+00, 1.10955044242E+00, 4.84810750623E-01,
-        1.15066851397E-01, 2.58183239977E-02, 2.86870266641E-03,
-        3.18744740712E-04, 0.00000000000E+00, 0.00000000000E+00,
+        0.00000000000E+00,  0.00000000000E+00,  -3.06122448980E+00,
+        -2.99906926536E+00, -2.87667128492E+00, -2.52477709118E+00,
+        -1.98928592678E+00, -1.10955044242E+00, -4.84810750623E-01,
+        -1.15066851397E-01, -2.58183239977E-02, -2.86870266641E-03,
+        -3.18744740712E-04, 0.00000000000E+00,  0.00000000000E+00,
         0.00000000000E+00};
 
     for (std::size_t idx = 0; idx < ref_saturation.size(); idx++)
     {
+        const double ref_residual_liquid_saturation = 0.01;
+        const double ref_residual_gas_saturation = 0.01;
+        const double ref_k_rel_L_min = 1.e-9;
+        const double ref_k_rel_G_min = 1.e-7;
+
+        const std::stringstream m =
+            config(ref_residual_liquid_saturation, ref_residual_gas_saturation,
+                   ref_k_rel_L_min, ref_k_rel_G_min);
+
         auto const& medium = Tests::createTestMaterial(m.str());
         MaterialPropertyLib::VariableArray variable_array;
         ParameterLib::SpatialPosition const pos;
@@ -106,15 +213,9 @@ TEST(MaterialPropertyLib, RelPermUdell)
                     MaterialPropertyLib::Variable::liquid_saturation, pos, time,
                     dt);
 
-        auto k_rel_L = k_rel[0];
-        auto k_rel_G = k_rel[1];
-
-        auto dk_rel_L_ds_L = dk_rel_ds_L[0];
-        auto dk_rel_G_ds_L = dk_rel_ds_L[1];
-
-        ASSERT_NEAR(k_rel_L, ref_k_rel_L[idx], 1.0e-10);
-        ASSERT_NEAR(k_rel_G, ref_k_rel_G[idx], 1.0e-10);
-        ASSERT_NEAR(dk_rel_L_ds_L, ref_dk_rel_L_ds_L[idx], 1.0e-10);
-        ASSERT_NEAR(dk_rel_G_ds_L, ref_dk_rel_G_ds_L[idx], 1.0e-10);
+        ASSERT_NEAR(k_rel[0], ref_k_rel_L[idx], 1.0e-10);
+        ASSERT_NEAR(k_rel[1], ref_k_rel_G[idx], 1.0e-10);
+        ASSERT_NEAR(dk_rel_ds_L[0], ref_dk_rel_L_ds_L[idx], 1.0e-10);
+        ASSERT_NEAR(dk_rel_ds_L[1], ref_dk_rel_G_ds_L[idx], 1.0e-10);
     }
 }
