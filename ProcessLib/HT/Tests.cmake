@@ -201,7 +201,7 @@ AddTest(
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme_adaptive_dt.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI) AND ("${HOSTNAME}" MATCHES "envinf1" OR APPLE OR MSVC)
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
     square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_ts_141_t_50000000000.000000.vtu T_ref T 1e-3  1.e-3
     square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_ts_141_t_50000000000.000000.vtu p_ref p  1e-3  2.e-3
