@@ -16,7 +16,6 @@
 
 #include <vector>
 
-#include "MathLib/Vector3.h"
 #include "MathLib/Point3d.h"
 
 namespace GeoLib
@@ -47,7 +46,7 @@ public:
         std::vector<MathLib::Point3d*> const& points);
 
     /// Returns the center point of the sphere
-    MathLib::Point3d getCenter() const { return MathLib::Point3d(_center); }
+    MathLib::Point3d getCenter() const { return _center; }
 
     /// Returns the radius of the sphere
     double getRadius() const {return _radius; }
@@ -79,9 +78,9 @@ private:
         std::size_t n_boundary_points);
 
     double _radius{-1};
-    MathLib::Vector3 _center{std::numeric_limits<double>::max(),
-                             std::numeric_limits<double>::max(),
-                             std::numeric_limits<double>::max()};
+    MathLib::Point3d _center{{std::numeric_limits<double>::max(),
+                              std::numeric_limits<double>::max(),
+                              std::numeric_limits<double>::max()}};
 };
 
 }  // namespace GeoLib

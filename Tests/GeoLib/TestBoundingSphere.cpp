@@ -18,6 +18,7 @@
 
 #include "GeoLib/MinimalBoundingSphere.h"
 #include "MathLib/Point3d.h"
+#include "MathLib/Vector3.h"
 
 std::vector<MathLib::Point3d*>* getRandomSpherePoints(
     MathLib::Point3d const& center, double const radius, std::size_t n_points)
