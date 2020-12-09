@@ -61,10 +61,10 @@ The analytical solution of the coupled THM consolidation problem can be expresse
 and
 
 \begin{equation}
-    g^{A}_{,\,i}= \dfrac{2x_{i}At}{r^{4}}\left(f^{A}-1+\dfrac{r}{\sqrt{\pi At}}\exp\left(-\dfrac{r^{2}}{4At}\right)\right),\quad i=1,2,3
+    g^{A}\_{,i} = \dfrac{2x_{i}At}{r^{4}}\left(f^{A}-1+\dfrac{r}{\sqrt{\pi At}}\exp\left(-\dfrac{r^{2}}{4At}\right)\right),\quad i=1,2,3
 \end{equation}
 \begin{equation}
-    g^{\ast}_{,\,i} = Yg^{\kappa}_{,\,i}-Zg^{c}_{,\,i}
+    g^{\ast}\_{,i} = Yg^{\kappa}\_{,i}-Zg^{c}_{,i}
 \end{equation}
 
 For the temperature, porepressure and displacements, the correct solution can be found in the original work:
@@ -72,7 +72,7 @@ For the temperature, porepressure and displacements, the correct solution can be
     \Delta T = \dfrac{Q}{4\pi Kr}f^{\kappa}
 \end{equation}
 \begin{equation}
-    p = \dfrac{X\,Q}{\left(1-\dfrac{c}{\kappa}\right)\,4\pi Kr}\left(f^{\kappa}-f^{c}\right)
+    p = \dfrac{X\,Q}{\left(1-\dfrac{c}{\kappa}\right)4\pi Kr}\left(f^{\kappa}-f^{c}\right)
 \end{equation}
 \begin{equation}
     u_{i} = \dfrac{Q a_\text{u}x_{i}}{4\pi Kr}\;g^{\ast}
@@ -81,10 +81,10 @@ For the temperature, porepressure and displacements, the correct solution can be
 For the stress components the corrected expressions can be found in the work of Chaudhry et al. (2019):
 
 \begin{equation}
-    \sigma^{\prime}_{ij\,|\,j=i} = \dfrac{Q a_\text{u}}{4\pi Kr}\left( 2G\left[g^{\ast}\left(1-\dfrac{x^{2}_{i}}{r^{2}}\right)+x_{i}g^{\ast}_{,\,i}\right]+\lambda \left[x_{i}g^{\ast}_{,\,i}+2g^{\ast}\right]\right)-b^{\prime}\Delta T
+    \sigma^{\prime}\_{ij\,|\,j=i} = \dfrac{Q a_\text{u}}{4\pi Kr}\left( 2G\left[g^{\ast}\left(1-\dfrac{x^{2}_{i}}{r^{2}}\right)+x_{i}g^{\ast}_{,i}\right]+\lambda \left[x_{i}g^{\ast}_{,i}+2g^{\ast}\right]\right)-b^{\prime}\Delta T
 \end{equation}
 \begin{equation}
-    \sigma^{\prime}_{ij\,|\,j \neq i} = \dfrac{Q a_\text{u}}{4\pi Kr}\left( G\left[x_{i}g^{\ast}_{,\,j}+x_{j}g^{\ast}_{,\,i}-2g^{\ast}\dfrac{x_{i}x_{j}}{r^{2}}\right]\right)
+    \sigma^{\prime}\_{ij\,|\,j \neq i} = \dfrac{Q a_\text{u}}{4\pi Kr}\left( G\left[x_{i}g^{\ast}_{,j}+x_{j}g^{\ast}_{,i}-2g^{\ast}\dfrac{x_{i}x_{j}}{r^{2}}\right]\right)
 \end{equation}
 
 ## Results and evaluation
