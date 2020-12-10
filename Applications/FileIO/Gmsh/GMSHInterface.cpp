@@ -241,14 +241,14 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
 
 void GMSHInterface::writePoints(std::ostream& out) const
 {
-    for (auto & gmsh_pnt : _gmsh_pnts) {
+    for (auto& gmsh_pnt : _gmsh_pnts)
+    {
         // reverse rotation
-        if (gmsh_pnt) {
-            double* tmp = _inverse_rot_mat * gmsh_pnt->getCoords();
-            (*gmsh_pnt)[0] = tmp[0];
-            (*gmsh_pnt)[1] = tmp[1];
-            (*gmsh_pnt)[2] = tmp[2];
-            delete [] tmp;
+        if (gmsh_pnt)
+        {
+            auto p = Eigen::Map<Eigen::Vector3d>(
+                const_cast<double*>(gmsh_pnt->getCoords()));
+            p = _inverse_rot_mat * p;
             out << *gmsh_pnt << "\n";
         }
     }

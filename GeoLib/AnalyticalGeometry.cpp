@@ -286,12 +286,13 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
     return false;
 }
 
-void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat, std::vector<GeoLib::Point*> &pnts)
+void rotatePoints(Eigen::Matrix3d const& rot_mat,
+                  std::vector<GeoLib::Point*>& pnts)
 {
     rotatePoints(rot_mat, pnts.begin(), pnts.end());
 }
 
-MathLib::DenseMatrix<double> rotatePointsToXY(std::vector<GeoLib::Point*>& pnts)
+Eigen::Matrix3d rotatePointsToXY(std::vector<GeoLib::Point*>& pnts)
 {
     return rotatePointsToXY(pnts.begin(), pnts.end(), pnts.begin(), pnts.end());
 }
@@ -375,7 +376,7 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     // 2 rotate points
     double d_polygon;
     std::tie(plane_normal, d_polygon) = GeoLib::getNewellPlane(*polygon_pnts);
-    MathLib::DenseMatrix<double> rot_mat(3,3);
+    Eigen::Matrix3d rot_mat;
     GeoLib::computeRotationMatrixToXY(plane_normal, rot_mat);
     GeoLib::rotatePoints(rot_mat, *polygon_pnts);
 

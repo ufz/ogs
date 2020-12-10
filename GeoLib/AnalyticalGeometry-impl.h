@@ -192,26 +192,21 @@ void computeRotationMatrixToXY(Eigen::Vector3d const& n, T_MATRIX& rot_mat)
 }
 
 template <typename InputIterator>
-void rotatePoints(
-        MathLib::DenseMatrix<double> const& rot_mat,
-        InputIterator pnts_begin, InputIterator pnts_end)
+void rotatePoints(Eigen::Matrix3d const& rot_mat, InputIterator pnts_begin,
+                  InputIterator pnts_end)
 {
-    double* tmp (nullptr);
-    for (auto it=pnts_begin; it!=pnts_end; ++it) {
-        tmp = rot_mat * (*it)->getCoords();
-        for (std::size_t j(0); j < 3; j++)
-        {
-            (*(*it))[j] = tmp[j];
-        }
-        delete [] tmp;
+    for (auto it = pnts_begin; it != pnts_end; ++it)
+    {
+        Eigen::Map<Eigen::Vector3d>((*it)->getCoords()) =
+            rot_mat * Eigen::Map<Eigen::Vector3d const>((*it)->getCoords());
     }
 }
 
 template <typename InputIterator1, typename InputIterator2>
-MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
-                                              InputIterator1 p_pnts_end,
-                                              InputIterator2 r_pnts_begin,
-                                              InputIterator2 r_pnts_end)
+Eigen::Matrix3d rotatePointsToXY(InputIterator1 p_pnts_begin,
+                                 InputIterator1 p_pnts_end,
+                                 InputIterator2 r_pnts_begin,
+                                 InputIterator2 r_pnts_end)
 {
     assert(std::distance(p_pnts_begin, p_pnts_end) > 2);
 
@@ -220,7 +215,7 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
         GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end);
 
     // rotate points into x-y-plane
-    MathLib::DenseMatrix<double> rot_mat(3, 3);
+    Eigen::Matrix3d rot_mat;
     computeRotationMatrixToXY(plane_normal, rot_mat);
     rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
 
@@ -233,8 +228,7 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
 }
 
 template <typename P>
-void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
-    std::vector<P*> const& pnts)
+void rotatePoints(Eigen::Matrix3d const& rot_mat, std::vector<P*> const& pnts)
 {
     rotatePoints(rot_mat, pnts.begin(), pnts.end());
 }

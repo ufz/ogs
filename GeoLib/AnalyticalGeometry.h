@@ -94,7 +94,7 @@ void compute2DRotationMatrixToX(MathLib::Vector3 const& v, T_MATRIX & rot_mat);
  * @param rot_mat  a 3x3 rotation matrix
  */
 template <class T_MATRIX>
-void compute3DRotationMatrixToX(MathLib::Vector3  const& v, T_MATRIX & rot_mat);
+void compute3DRotationMatrixToX(MathLib::Vector3 const& v, T_MATRIX& rot_mat);
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to
@@ -112,9 +112,8 @@ void computeRotationMatrixToXY(Eigen::Vector3d const& n, T_MATRIX& rot_mat);
  * @param pnts_end Iterator pointing to the element following the last element in a vector of points to be rotated
  */
 template <typename InputIterator>
-void rotatePoints(
-        MathLib::DenseMatrix<double> const& rot_mat,
-        InputIterator pnts_begin, InputIterator pnts_end);
+void rotatePoints(Eigen::Matrix3d const& rot_mat, InputIterator pnts_begin,
+                  InputIterator pnts_end);
 
 /**
  * rotate points according to the rotation matrix
@@ -122,8 +121,7 @@ void rotatePoints(
  * @param pnts vector of points
  */
 template <typename P>
-void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
-    std::vector<P*> const& pnts);
+void rotatePoints(Eigen::Matrix3d const& rot_mat, std::vector<P*> const& pnts);
 
 /**
  * rotate points to X-Y plane
@@ -131,7 +129,7 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
  * Points are rotated using a rotation matrix computed from the first three points
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
-MathLib::DenseMatrix<double> rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
+Eigen::Matrix3d rotatePointsToXY(std::vector<GeoLib::Point*>& pnts);
 
 /**
  * rotate points to X-Y plane
@@ -143,10 +141,10 @@ MathLib::DenseMatrix<double> rotatePointsToXY(std::vector<GeoLib::Point*> &pnts)
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
 template <typename InputIterator1, typename InputIterator2>
-MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
-                                              InputIterator1 p_pnts_end,
-                                              InputIterator2 r_pnts_begin,
-                                              InputIterator2 r_pnts_end);
+Eigen::Matrix3d rotatePointsToXY(InputIterator1 p_pnts_begin,
+                                 InputIterator1 p_pnts_end,
+                                 InputIterator2 r_pnts_begin,
+                                 InputIterator2 r_pnts_end);
 
 /**
  * test for intersections of the line segments of the Polyline

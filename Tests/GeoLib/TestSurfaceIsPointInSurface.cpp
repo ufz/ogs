@@ -59,10 +59,9 @@ getEdgeMiddlePoints(GeoLib::Triangle const& tri)
 }
 
 /// Computes rotation matrix according to the z,x',z'' convention
-inline MathLib::DenseMatrix<double, std::size_t>
-getRotMat(double alpha, double beta, double gamma)
+inline Eigen::Matrix3d getRotMat(double alpha, double beta, double gamma)
 {
-    MathLib::DenseMatrix<double, std::size_t> rot_mat(3,3);
+    Eigen::Matrix3d rot_mat;
     rot_mat(0,0) = cos(alpha)*cos(gamma) - sin(alpha)*cos(beta)*sin(gamma);
     rot_mat(0,1) = sin(alpha)*cos(gamma) + cos(alpha)*cos(beta)*sin(gamma);
     rot_mat(0,2) = sin(beta)*sin(gamma);
@@ -125,8 +124,8 @@ TEST(GeoLib, SurfaceIsPointInSurface)
             normal_dist_angles(random_engine_mt19937)
             }};
 
-        MathLib::DenseMatrix<double, std::size_t> rot_mat(getRotMat(
-            euler_angles[0], euler_angles[1], euler_angles[2]));
+        Eigen::Matrix3d rot_mat(
+            getRotMat(euler_angles[0], euler_angles[1], euler_angles[2]));
 
         std::vector<MeshLib::Node*> const& nodes(sfc_mesh->getNodes());
         GeoLib::rotatePoints<MeshLib::Node>(rot_mat, nodes);

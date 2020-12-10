@@ -110,8 +110,7 @@ private:
     std::unique_ptr<GMSH::GMSHMeshDensityStrategy> _mesh_density_strategy;
     /// Holds the inverse rotation matrix. The matrix is used in writePoints() to
     /// revert the rotation done in writeGMSHInputFile().
-    MathLib::DenseMatrix<double> _inverse_rot_mat =
-        MathLib::DenseMatrix<double>(3, 3, 0);
+    Eigen::Matrix3d _inverse_rot_mat = Eigen::Matrix3d::Zero();
     /// Signals if the input points should be rotated or projected to the
     /// \f$x\f$-\f$y\f$-plane
     bool const _rotate = false;
