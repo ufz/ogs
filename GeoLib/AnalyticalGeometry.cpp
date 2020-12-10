@@ -363,7 +363,7 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
 }
 
 GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
-    MathLib::Vector3 & plane_normal)
+                                  Eigen::Vector3d& plane_normal)
 {
     // 1 copy all points
     auto* polygon_pnts(new std::vector<GeoLib::Point*>);
@@ -373,12 +373,8 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     }
 
     // 2 rotate points
-    auto const [normal, d_polygon] = GeoLib::getNewellPlane(*polygon_pnts);
-    // ToDo (TF) remove when computeRotationMatrixToXY uses Eigen
-    plane_normal[0] = normal[0];
-    plane_normal[1] = normal[1];
-    plane_normal[2] = normal[2];
-
+    double d_polygon;
+    std::tie(plane_normal, d_polygon) = GeoLib::getNewellPlane(*polygon_pnts);
     MathLib::DenseMatrix<double> rot_mat(3,3);
     GeoLib::computeRotationMatrixToXY(plane_normal, rot_mat);
     GeoLib::rotatePoints(rot_mat, *polygon_pnts);

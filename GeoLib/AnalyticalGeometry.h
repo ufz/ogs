@@ -223,7 +223,7 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
  * @return a rotated polygon
  */
 GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
-    MathLib::Vector3 & plane_normal);
+                                  Eigen::Vector3d& plane_normal);
 
 /// Sorts the vector of segments such that the \f$i\f$-th segment is connected
 /// with the \f$i+1\f$st segment, i.e. the end point of the \f$i\f$-th segment
