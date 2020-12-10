@@ -169,6 +169,12 @@ TYPED_TEST(MaterialLib_SolidModelsMFront2, IntegrateZeroDisplacement)
         this->variable_array_prev, this->variable_array, this->t, this->x,
         this->dt, *state);
 
+    double const epls_strain = state->getEquivalentPlasticStrain();
+    double const expected_epls_strain = 0.0;
+    ASSERT_LE(std::fabs(expected_epls_strain - epls_strain), 1e-10)
+        << "for expected equivalent plastic strain " << expected_epls_strain
+        << " and for computed equivalent plastic strain " << epls_strain;
+
     ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));
     ASSERT_TRUE(state != nullptr);
@@ -184,6 +190,12 @@ TYPED_TEST(MaterialLib_SolidModelsMFront3, IntegrateZeroDisplacement)
     auto solution = this->constitutive_relation->integrateStress(
         this->variable_array_prev, this->variable_array, this->t, this->x,
         this->dt, *state);
+
+    double const epls_strain = state->getEquivalentPlasticStrain();
+    double const expected_epls_strain = 0.0;
+    ASSERT_LE(std::fabs(expected_epls_strain - epls_strain), 1e-10)
+        << "for expected equivalent plastic strain " << expected_epls_strain
+        << " and for computed equivalent plastic strain " << epls_strain;
 
     ASSERT_TRUE(solution != std::nullopt);
     state = std::move(std::get<1>(*solution));
