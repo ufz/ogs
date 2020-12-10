@@ -168,7 +168,7 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
  * @param w second vector
  * @return true if the vectors are in parallel, else false
 */
-bool parallel(MathLib::Vector3 v, MathLib::Vector3 w);
+bool parallel(Eigen::Vector3d v, Eigen::Vector3d w);
 
 /**
  * A line segment is given by its two end-points. The function checks,

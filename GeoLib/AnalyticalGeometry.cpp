@@ -86,17 +86,18 @@ Orientation getOrientationFast(MathLib::Point3d const& p0,
     return COLLINEAR;
 }
 
-bool parallel(MathLib::Vector3 v, MathLib::Vector3 w)
+bool parallel(Eigen::Vector3d v, Eigen::Vector3d w)
 {
     const double eps(std::numeric_limits<double>::epsilon());
+    double const eps_squared = eps * eps;
 
     // check degenerated cases
-    if (v.getLength() < eps)
+    if (v.squaredNorm() < eps_squared)
     {
         return false;
     }
 
-    if (w.getLength() < eps)
+    if (w.squaredNorm() < eps_squared)
     {
         return false;
     }
@@ -144,34 +145,46 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
                           GeoLib::LineSegment const& s1,
                           GeoLib::Point& s)
 {
-    GeoLib::Point const& a{s0.getBeginPoint()};
-    GeoLib::Point const& b{s0.getEndPoint()};
-    GeoLib::Point const& c{s1.getBeginPoint()};
-    GeoLib::Point const& d{s1.getEndPoint()};
+    GeoLib::Point const& pa{s0.getBeginPoint()};
+    GeoLib::Point const& pb{s0.getEndPoint()};
+    GeoLib::Point const& pc{s1.getBeginPoint()};
+    GeoLib::Point const& pd{s1.getEndPoint()};
 
-    if (!isCoplanar(a, b, c, d))
+    if (!isCoplanar(pa, pb, pc, pd))
     {
         return false;
     }
 
+    auto const a =
+        Eigen::Map<Eigen::Vector3d const>(s0.getBeginPoint().getCoords());
+    auto const b =
+        Eigen::Map<Eigen::Vector3d const>(s0.getEndPoint().getCoords());
+    auto const c =
+        Eigen::Map<Eigen::Vector3d const>(s1.getBeginPoint().getCoords());
+    auto const d =
+        Eigen::Map<Eigen::Vector3d const>(s1.getEndPoint().getCoords());
+
+    Eigen::Vector3d const v = b - a;
+    Eigen::Vector3d const w = d - c;
+    Eigen::Vector3d const qp = c - a;
+    Eigen::Vector3d const pq = a - c;
+
+    double const eps = std::numeric_limits<double>::epsilon();
+    double const squared_eps = eps * eps;
     // handle special cases here to avoid computing intersection numerical
-    if (MathLib::sqrDist(a, c) < std::numeric_limits<double>::epsilon() ||
-        MathLib::sqrDist(a, d) < std::numeric_limits<double>::epsilon()) {
-        s = a;
+    if (qp.squaredNorm() < squared_eps || (d - a).squaredNorm() < squared_eps)
+    {
+        s = pa;
         return true;
     }
-    if (MathLib::sqrDist(b, c) < std::numeric_limits<double>::epsilon() ||
-        MathLib::sqrDist(b, d) < std::numeric_limits<double>::epsilon()) {
-        s = b;
+    if ((c - b).squaredNorm() < squared_eps ||
+        (d - b).squaredNorm() < squared_eps)
+    {
+        s = pb;
         return true;
     }
 
-    MathLib::Vector3 const v(a, b);
-    MathLib::Vector3 const w(c, d);
-    MathLib::Vector3 const qp(a, c);
-    MathLib::Vector3 const pq(c, a);
-
-    auto isLineSegmentIntersectingAB = [&v](MathLib::Vector3 const& ap,
+    auto isLineSegmentIntersectingAB = [&v](Eigen::Vector3d const& ap,
                                             std::size_t i)
     {
         // check if p is located at v=(a,b): (ap = t*v, t in [0,1])
@@ -195,12 +208,13 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
             std::size_t i_max(std::abs(v[0]) <= std::abs(v[1]) ? 1 : 0);
             i_max = std::abs(v[i_max]) <= std::abs(v[2]) ? 2 : i_max;
             if (isLineSegmentIntersectingAB(qp, i_max)) {
-                s = c;
+                s = pc;
                 return true;
             }
-            MathLib::Vector3 const ad(a, d);
-            if (isLineSegmentIntersectingAB(ad, i_max)) {
-                s = d;
+            Eigen::Vector3d const ad = d - a;
+            if (isLineSegmentIntersectingAB(ad, i_max))
+            {
+                s = pd;
                 return true;
             }
             return false;
@@ -209,17 +223,16 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
     }
 
     // general case
-    const double sqr_len_v(v.getSqrLength());
-    const double sqr_len_w(w.getSqrLength());
+    const double sqr_len_v(v.squaredNorm());
+    const double sqr_len_w(w.squaredNorm());
 
     Eigen::Matrix2d mat;
     mat(0,0) = sqr_len_v;
-    mat(0,1) = -1.0 * MathLib::scalarProduct(v,w);
+    mat(0,1) = -v.dot(w);
     mat(1,1) = sqr_len_w;
     mat(1,0) = mat(0,1);
 
-    Eigen::Vector2d rhs;
-    rhs << MathLib::scalarProduct(v, qp), MathLib::scalarProduct(w, pq);
+    Eigen::Vector2d rhs{v.dot(qp), w.dot(pq)};
 
     rhs = mat.partialPivLu().solve(rhs);
 
