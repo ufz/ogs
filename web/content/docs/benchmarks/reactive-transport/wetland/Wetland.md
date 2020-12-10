@@ -23,7 +23,7 @@ The scenario presented here is a modification of a case already described in Boo
 The experimental system consists of a basin of 4.7 m in length, 1.2 m in width and 0.9 m in depth (Figure 1) filled with gravel and saturated with water.
 The domestic wastewater enters the system at a constant flow rate on the left side and leaves it via an overflow at the right side.
 
-The coupling of OGS-6 and IPhreeqc used in the simulation requires to include the transport of H^+^--ions to adjust the compulsory charge balance computated by Phreeqc.
+The coupling of OGS-6 and IPhreeqc used in the simulation requires to include the transport of H$^+$--ions to adjust the compulsory charge balance computated by Phreeqc.
 The results obtained by OGS-6--IPhreeqc will be compared to the ones of OGS-5--IPhreeqc.
 
 ## Problem Description
@@ -36,9 +36,9 @@ For the water efflux, a constant pressure is defined as boundary ($g_{D,\text{ou
 
 ![Schematic representation of the experimental system and 1D model domain used in the simulation. The influent and effluent zone in the 1D model are represented by solid lines.](../Wetland_domain.png)
 
-The microbiological processes are modeled by a complex network of kinetic reactions based on the Constructed Wetland Model No. 1 (CWM1) described in Langergraber, (2009).
+The microbiological processes are modeled by a complex network of kinetic reactions based on the Constructed Wetland Model No. 1 (CWM1) described in Langergraber (2009).
 The network includes dissolved oxygen ($So$) and nine different soluble and particulated components ("pollutants") that some of them can be metabolized by six bacterial groups resulting in 17 kinetic reactions (Figure 2).
-A "clean" system is assumed at start-up in the basin, therefore, initial concentrations of all components (oxygen + "pollutants") and bacteria are set to 1.0e-4 and 1.0e-3 mg L^-1^, respectively.
+A "clean" system is assumed at start-up in the basin, therefore, initial concentrations of all components (oxygen + "pollutants") and bacteria are set to 1.0e-4 and 1.0e-3 mg L$^-1$, respectively.
 For the wastewater components ("pollutants" and oxygen) entering the system, time-dependent Dirichlet BC are defined at the influx point.
 Respective material properties, initial and boundary conditions are listed in Table 1--2.
 
@@ -50,14 +50,14 @@ Respective material properties, initial and boundary conditions are listed in Ta
 |:-------- | :---------- | :---- | :--- |
 | Influent & effluent zone |||
 | $\phi$   | Porosity    | 0.38  | - |
-| $\kappa$ | Permeability | 1.0e-7 | $m^2$ |
+| $\kappa$ | Permeability | 1.0e-7 | m$^2$ |
 | $S$   | Storage | 0.0     | - |
-| $a_L$ | long. Dispersion length | 0.45   | $m$ |
+| $a_L$ | long. Dispersion length | 0.45   | m |
 | Treatment zone |||
 | $\phi$   | Porosity    | 0.38  | - |
-| $\kappa$ | Permeability | 1.0e-8 | $m^2$ |
+| $\kappa$ | Permeability | 1.0e-8 | m$^2$ |
 | $S$   | Storage | 0.0     | - |
-| $a_L$ | long. Dispersion length | 0.40   | $m$ |
+| $a_L$ | long. Dispersion length | 0.40   | m |
 
 -----------------------------------------
 
@@ -67,14 +67,14 @@ Table 1: Media, material and component properties
 
 | Parameter | Description | Value | Unit |
 |:--------- | :---------- | :---- | :--- |
-| $p(t=0)$  | Initial pressure | 8829  | $Pa$ |
-| $g_{N,in}^p$ | Water influx | 5.555e-3 | kg s^-1^ |
+| $p(t=0)$  | Initial pressure | 8829  | Pa |
+| $g_{N,in}^p$ | Water influx | 5.555e-3 | kg s$^{-1}$ |
 | $g_{D,out}^p$ | Pressure at outlet | 8829 | Pa |
-| $c_{components}(t=0)$  | Initial component concentrations | 1.0e-4     | g kg^-1^~water~ |
-| $c_{bacteria}(t=0)$  | Initial bacteria concentrations | 1.0e-3  | g kg^-1^~water~ |
-| $c_{\text{H}^+}(t=0)$  | Initial concentration of $\text{H}^+$ | 1.0e-7     |  mol kg^-1^~water~ |
-|  $g_{D,in}^{components_c}$ | Influent component concentrations |  $f(t)$ | g kg^-1^~water~ |
-|  $g_{D,in}^{\text{H}^+}$ | Influent concentration of $\text{H}^+$ |  1.0e-7 | mol kg^-1^~water~ |
+| $c_{components}(t=0)$  | Initial component concentrations | 1.0e-4     | g kg$^{-1}$ water |
+| $c_{bacteria}(t=0)$  | Initial bacteria concentrations | 1.0e-3  | g kg${^-1}$ water |
+| $c_{\text{H}^+}(t=0)$  | Initial concentration of $\text{H}^+$ | 1.0e-7     |  mol kg${^-1}$ water |
+|  $g_{D,in}^{components_c}$ | Influent component concentrations |  $f(t)$ | g kg${^-1}$ water |
+|  $g_{D,in}^{\text{H}^+}$ | Influent concentration of $\text{H}^+$ |  1.0e-7 | mol kg${^-1}$ water |
 
 -----------------------------------------
 
@@ -94,7 +94,7 @@ After 20 days (1.7286e+6 seconds) the microbial reaction network in the wetland 
 The biochemical reactions are now governing the system behaviour.
 
 Both, OGS-6 and OGS-5 simulations yield the same results.
-For instance, the difference between the OGS-6 and the OGS-5 computation for the concentration of $S_A$  expressed as root mean squared error is 1.11e-4 g L^-1^ (over all time steps and mesh nodes); the corresponding relative mean squared error is 0.37%.
+For instance, the difference between the OGS-6 and the OGS-5 computation for the concentration of $S_A$  expressed as root mean squared error is 1.11e-4 g L$^{-1}$ (over all time steps and mesh nodes); the corresponding relative mean squared error is 0.37%.
 The relatively high error may be associated with the missing transport or charge in the OGS-6 simulation, which affects computations by Phreeqc.
 Please note that due to the long computation time of the simulation (~13 h), the corresponding test (Wetland_1d.prj) is reduced to the first four time steps (28800 s).
 
