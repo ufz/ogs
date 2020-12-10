@@ -11,11 +11,11 @@
 namespace GeoLib
 {
 template <typename InputIterator>
-std::pair<MathLib::Vector3, double> getNewellPlane(InputIterator pnts_begin,
-                                                   InputIterator pnts_end)
+std::pair<Eigen::Vector3d, double> getNewellPlane(InputIterator pnts_begin,
+                                                  InputIterator pnts_end)
 {
-    MathLib::Vector3 plane_normal;
-    MathLib::Vector3 centroid;
+    Eigen::Vector3d plane_normal({0, 0, 0});
+    Eigen::Vector3d centroid({0, 0, 0});
     for (auto i=std::prev(pnts_end), j=pnts_begin; j!=pnts_end; i = j, ++j) {
         auto &pt_i = *(*i);
         auto &pt_j = *(*j);
@@ -26,7 +26,7 @@ std::pair<MathLib::Vector3, double> getNewellPlane(InputIterator pnts_begin,
         plane_normal[2] += (pt_i[0] - pt_j[0])
                            * (pt_i[1] + pt_j[1]); // projection on xy
 
-        centroid += MathLib::Vector3(pt_j);
+        centroid += Eigen::Map<Eigen::Vector3d const>(pt_j.getCoords());
     }
 
     plane_normal.normalize();
@@ -35,24 +35,24 @@ std::pair<MathLib::Vector3, double> getNewellPlane(InputIterator pnts_begin,
     double d = 0.0;
     if (n_pnts > 0)
     {
-        d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
+        d = centroid.dot(plane_normal) / n_pnts;
     }
     return std::make_pair(plane_normal, d);
 }
 
 template <class T_POINT>
-std::pair<MathLib::Vector3, double> getNewellPlane(
+std::pair<Eigen::Vector3d, double> getNewellPlane(
     const std::vector<T_POINT*>& pnts)
 {
     return getNewellPlane(pnts.begin(), pnts.end());
 }
 
 template <class T_POINT>
-std::pair<MathLib::Vector3, double> getNewellPlane(
+std::pair<Eigen::Vector3d, double> getNewellPlane(
     const std::vector<T_POINT>& pnts)
 {
-    MathLib::Vector3 plane_normal;
-    MathLib::Vector3 centroid;
+    Eigen::Vector3d plane_normal({0, 0, 0});
+    Eigen::Vector3d centroid({0, 0, 0});
     std::size_t n_pnts(pnts.size());
     for (std::size_t i = n_pnts - 1, j = 0; j < n_pnts; i = j, j++) {
         plane_normal[0] += (pnts[i][1] - pnts[j][1])
@@ -62,11 +62,11 @@ std::pair<MathLib::Vector3, double> getNewellPlane(
         plane_normal[2] += (pnts[i][0] - pnts[j][0])
                            * (pnts[i][1] + pnts[j][1]); // projection on xy
 
-        centroid += MathLib::Vector3(pnts[j]);
+        centroid += Eigen::Map<Eigen::Vector3d const>(pnts[j].getCoords());
     }
 
     plane_normal.normalize();
-    double d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
+    double const d = centroid.dot(plane_normal) / n_pnts;
     return std::make_pair(plane_normal, d);
 }
 
@@ -219,10 +219,13 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
     // compute the plane normal
     auto const [plane_normal, d] =
         GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end);
+    // ToDo (TF) remove when computeRotationMatrixToXY uses Eigen
+    MathLib::Vector3 const tmp_plane_normal(
+        {plane_normal[0], plane_normal[1], plane_normal[2]});
 
     // rotate points into x-y-plane
     MathLib::DenseMatrix<double> rot_mat(3, 3);
-    computeRotationMatrixToXY(plane_normal, rot_mat);
+    computeRotationMatrixToXY(tmp_plane_normal, rot_mat);
     rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
 
     for (auto it = r_pnts_begin; it != r_pnts_end; ++it)

@@ -57,12 +57,13 @@ void getRotationMatrixToGlobal(const unsigned element_dimension,
     else if (global_dim == 3 && element_dimension == 2)
     {
         // get plane normal
-        MathLib::Vector3 plane_normal;
-        double d;
-        std::tie(plane_normal, d) = GeoLib::getNewellPlane(points);
+        auto const [plane_normal, d] = GeoLib::getNewellPlane(points);
+        // ToDo (TF) remove when computeRotationMatrixToXY uses Eigen
+        MathLib::Vector3 const tmp_plane_normal(
+            {plane_normal[0], plane_normal[1], plane_normal[2]});
 
         // compute a rotation matrix to XY
-        GeoLib::computeRotationMatrixToXY(plane_normal, matR);
+        GeoLib::computeRotationMatrixToXY(tmp_plane_normal, matR);
         // set a transposed matrix
         matR.transposeInPlace();
     }

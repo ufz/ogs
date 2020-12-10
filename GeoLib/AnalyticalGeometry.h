@@ -58,8 +58,8 @@ Orientation getOrientationFast(MathLib::Point3d const& p0,
  * polygon is located in, d parameter from the plane equation
  */
 template <typename InputIterator>
-std::pair<MathLib::Vector3, double> getNewellPlane(InputIterator pnts_begin,
-                                                   InputIterator pnts_end);
+std::pair<Eigen::Vector3d, double> getNewellPlane(InputIterator pnts_begin,
+                                                  InputIterator pnts_end);
 
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
@@ -71,13 +71,13 @@ std::pair<MathLib::Vector3, double> getNewellPlane(InputIterator pnts_begin,
  * polygon is located in, parameter d from the plane equation
  */
 template <class T_POINT>
-std::pair<MathLib::Vector3, double> getNewellPlane(
+std::pair<Eigen::Vector3d, double> getNewellPlane(
     const std::vector<T_POINT*>& pnts);
 
-/** Same as getNewellPlane(pnts, plane_normal, d).
+/** Same as getNewellPlane(pnts).
  */
 template <class T_POINT>
-std::pair<MathLib::Vector3, double> getNewellPlane(
+std::pair<Eigen::Vector3d, double> getNewellPlane(
     const std::vector<T_POINT>& pnts);
 
 /**

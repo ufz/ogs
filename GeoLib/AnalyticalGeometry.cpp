@@ -373,8 +373,12 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     }
 
     // 2 rotate points
-    double d_polygon (0.0);
-    std::tie(plane_normal, d_polygon) = GeoLib::getNewellPlane(*polygon_pnts);
+    auto const [normal, d_polygon] = GeoLib::getNewellPlane(*polygon_pnts);
+    // ToDo (TF) remove when computeRotationMatrixToXY uses Eigen
+    plane_normal[0] = normal[0];
+    plane_normal[1] = normal[1];
+    plane_normal[2] = normal[2];
+
     MathLib::DenseMatrix<double> rot_mat(3,3);
     GeoLib::computeRotationMatrixToXY(plane_normal, rot_mat);
     GeoLib::rotatePoints(rot_mat, *polygon_pnts);
