@@ -43,8 +43,12 @@ public:
     struct MaterialStateVariables
         : public MechanicsBase<DisplacementDim>::MaterialStateVariables
     {
-        explicit MaterialStateVariables(mgis::behaviour::Behaviour const& b)
-            : _behaviour_data{b}
+        explicit MaterialStateVariables(
+            int const equivalent_plastic_strain_offset,
+            mgis::behaviour::Behaviour const& b)
+            : equivalent_plastic_strain_offset_(
+                  equivalent_plastic_strain_offset),
+              _behaviour_data{b}
         {
         }
 
@@ -56,7 +60,10 @@ public:
             mgis::behaviour::update(_behaviour_data);
         }
 
+        int const equivalent_plastic_strain_offset_;
         mgis::behaviour::BehaviourData _behaviour_data;
+
+        double getEquivalentPlasticStrain() const override;
     };
 
     using KelvinVector =
@@ -70,10 +77,9 @@ public:
            boost::optional<ParameterLib::CoordinateSystem> const&
                local_coordinate_system);
 
-        std::unique_ptr<
-            typename MechanicsBase<DisplacementDim>::
-                MaterialStateVariables> createMaterialStateVariables()
-            const override;
+    std::unique_ptr<
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
+    createMaterialStateVariables() const override;
 
     std::optional<std::tuple<KelvinVector,
                              std::unique_ptr<typename MechanicsBase<
@@ -106,6 +112,7 @@ public:
 
 private:
     mgis::behaviour::Behaviour _behaviour;
+    int const equivalent_plastic_strain_offset_;
     std::vector<ParameterLib::Parameter<double> const*> _material_properties;
     ParameterLib::CoordinateSystem const* const _local_coordinate_system;
 };
