@@ -292,10 +292,15 @@ Use six arguments version of AddTest with absolute and relative tolerances")
 
     if(AddTest_PYTHON_PACKAGES)
         if(POETRY)
+            file(WRITE ${PROJECT_BINARY_DIR}/tmp_poetry_add.bat "poetry add ${AddTest_PYTHON_PACKAGES}")
+            if(WIN32)
+                set(EXEC_CMD tmp_poetry_add.bat)
+            else()
+                set(EXEC_CMD ${BASH_TOOL_PATH} tmp_poetry_add.bat)
+            endif()
             execute_process(
-                COMMAND ${CMD_COMMAND} poetry add ${AddTest_PYTHON_PACKAGES}
-                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-            )
+                    COMMAND ${EXEC_CMD}
+                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
         else()
             message(STATUS "Warning: Benchmark ${AddTest_NAME} requires these "
                 "Python packages: ${AddTest_PYTHON_PACKAGES}!\n Make sure to "
