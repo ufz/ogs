@@ -24,7 +24,7 @@ auto test3equal = [](double a, double b, double c, double const* result)
 
 TEST(GeoLib, ComputeRotationMatrixToXYnegative)
 {
-    MathLib::Vector3 const n(0.0, -1.0, 0.0);
+    Eigen::Vector3d const n({0.0, -1.0, 0.0});
     MathLib::DenseMatrix<double> rot_mat(3,3,0.0);
 
     GeoLib::computeRotationMatrixToXY(n, rot_mat);
@@ -50,7 +50,7 @@ TEST(GeoLib, ComputeRotationMatrixToXYnegative)
 
 TEST(GeoLib, ComputeRotationMatrixToXYpositive)
 {
-    MathLib::Vector3 const n(0.0, 1.0, 0.0);
+    Eigen::Vector3d const n{0.0, 1.0, 0.0};
     MathLib::DenseMatrix<double> rot_mat(3,3,0.0);
 
     GeoLib::computeRotationMatrixToXY(n, rot_mat);

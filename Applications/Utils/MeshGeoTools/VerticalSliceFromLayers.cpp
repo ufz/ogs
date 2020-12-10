@@ -196,11 +196,8 @@ void rotateGeometryToXY(std::vector<GeoLib::Point*>& points,
     // compute the plane normal
     auto const [plane_normal, d] =
         GeoLib::getNewellPlane(points.begin(), points.end());
-    // ToDo (TF) remove when computeRotationMatrixToXY uses Eigen
-    MathLib::Vector3 const tmp_plane_normal(
-        {plane_normal[0], plane_normal[1], plane_normal[2]});
     // rotate points into x-y-plane
-    GeoLib::computeRotationMatrixToXY(tmp_plane_normal, rotation_matrix);
+    GeoLib::computeRotationMatrixToXY(plane_normal, rotation_matrix);
     GeoLib::rotatePoints(rotation_matrix, points.begin(), points.end());
 
     GeoLib::AABB aabb(points.begin(), points.end());

@@ -118,8 +118,7 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v,
 }
 
 template <class T_MATRIX>
-void computeRotationMatrixToXY(MathLib::Vector3 const& n,
-        T_MATRIX & rot_mat)
+void computeRotationMatrixToXY(Eigen::Vector3d const& n, T_MATRIX& rot_mat)
 {
     // check if normal points already in the right direction
     if (n[0] == 0 && n[1] == 0) {
@@ -178,7 +177,7 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& n,
         return;
     }
 
-    double h1(1 / n.getLength());
+    double const h1(1 / n.norm());
 
     // general case: calculate entries of rotation matrix
     rot_mat(0, 0) = n[2] / h0;
@@ -219,13 +218,10 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
     // compute the plane normal
     auto const [plane_normal, d] =
         GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end);
-    // ToDo (TF) remove when computeRotationMatrixToXY uses Eigen
-    MathLib::Vector3 const tmp_plane_normal(
-        {plane_normal[0], plane_normal[1], plane_normal[2]});
 
     // rotate points into x-y-plane
     MathLib::DenseMatrix<double> rot_mat(3, 3);
-    computeRotationMatrixToXY(tmp_plane_normal, rot_mat);
+    computeRotationMatrixToXY(plane_normal, rot_mat);
     rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
 
     for (auto it = r_pnts_begin; it != r_pnts_end; ++it)

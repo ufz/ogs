@@ -103,7 +103,7 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v, T_MATRIX & rot_mat);
  * @param rot_mat 3x3 rotation matrix
  */
 template <class T_MATRIX>
-void computeRotationMatrixToXY(MathLib::Vector3 const& n, T_MATRIX& rot_mat);
+void computeRotationMatrixToXY(Eigen::Vector3d const& n, T_MATRIX& rot_mat);
 
 /**
  * rotate points according to the rotation matrix

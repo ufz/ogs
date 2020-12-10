@@ -27,8 +27,11 @@ std::vector<bool> markNodesOutSideOfPolygon(
     std::vector<MeshLib::Node*> const& nodes, GeoLib::Polygon const& polygon)
 {
     // *** rotate polygon to xy_plane
-    MathLib::Vector3 normal;
-    GeoLib::Polygon rot_polygon(GeoLib::rotatePolygonToXY(polygon, normal));
+    MathLib::Vector3 tmp_normal;
+    GeoLib::Polygon rot_polygon(GeoLib::rotatePolygonToXY(polygon, tmp_normal));
+    // ToDo (TF) remove when computeRotationMatrixToXY accepts Eigen normal
+    auto const normal = Eigen::Map<Eigen::Vector3d>(
+        const_cast<double*>(tmp_normal.getCoords()));
 
     // *** rotate mesh nodes to xy-plane
     // 1 copy all mesh nodes to GeoLib::Points
