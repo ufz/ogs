@@ -10,12 +10,11 @@
 
 namespace GeoLib
 {
-
 template <typename InputIterator>
-void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
-                     MathLib::Vector3 &plane_normal,
-                     double& d)
+std::pair<MathLib::Vector3, double> getNewellPlane(InputIterator pnts_begin,
+                                                   InputIterator pnts_end)
 {
+    MathLib::Vector3 plane_normal;
     MathLib::Vector3 centroid;
     for (auto i=std::prev(pnts_end), j=pnts_begin; j!=pnts_end; i = j, ++j) {
         auto &pt_i = *(*i);
@@ -33,18 +32,19 @@ void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
     plane_normal.normalize();
     auto n_pnts(std::distance(pnts_begin, pnts_end));
     assert(n_pnts > 2);
+    double d = 0.0;
     if (n_pnts > 0)
     {
         d = MathLib::scalarProduct(centroid, plane_normal) / n_pnts;
     }
+    return std::make_pair(plane_normal, d);
 }
 
 template <class T_POINT>
-void getNewellPlane (const std::vector<T_POINT*>& pnts,
-                     MathLib::Vector3 &plane_normal,
-                     double& d)
+std::pair<MathLib::Vector3, double> getNewellPlane(
+    const std::vector<T_POINT*>& pnts)
 {
-    getNewellPlane(pnts.begin(), pnts.end(), plane_normal, d);
+    return getNewellPlane(pnts.begin(), pnts.end());
 }
 
 template <class T_POINT>
@@ -216,11 +216,9 @@ MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
 {
     assert(std::distance(p_pnts_begin, p_pnts_end) > 2);
 
-    // calculate supporting plane
-    MathLib::Vector3 plane_normal;
-    double d;
     // compute the plane normal
-    GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end, plane_normal, d);
+    auto const [plane_normal, d] =
+        GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end);
 
     // rotate points into x-y-plane
     MathLib::DenseMatrix<double> rot_mat(3, 3);

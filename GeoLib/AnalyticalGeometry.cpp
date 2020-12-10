@@ -374,7 +374,7 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
 
     // 2 rotate points
     double d_polygon (0.0);
-    GeoLib::getNewellPlane (*polygon_pnts, plane_normal, d_polygon);
+    std::tie(plane_normal, d_polygon) = GeoLib::getNewellPlane(*polygon_pnts);
     MathLib::DenseMatrix<double> rot_mat(3,3);
     GeoLib::computeRotationMatrixToXY(plane_normal, rot_mat);
     GeoLib::rotatePoints(rot_mat, *polygon_pnts);

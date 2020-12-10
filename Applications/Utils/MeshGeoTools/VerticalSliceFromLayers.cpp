@@ -193,10 +193,9 @@ void rotateGeometryToXY(std::vector<GeoLib::Point*>& points,
                         MathLib::DenseMatrix<double>& rotation_matrix,
                         double& z_shift)
 {
-    MathLib::Vector3 plane_normal;
-    double d;
     // compute the plane normal
-    GeoLib::getNewellPlane(points.begin(), points.end(), plane_normal, d);
+    auto const [plane_normal, d] =
+        GeoLib::getNewellPlane(points.begin(), points.end());
     // rotate points into x-y-plane
     GeoLib::computeRotationMatrixToXY(plane_normal, rotation_matrix);
     GeoLib::rotatePoints(rotation_matrix, points.begin(), points.end());

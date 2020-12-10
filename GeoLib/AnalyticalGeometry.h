@@ -54,13 +54,12 @@ Orientation getOrientationFast(MathLib::Point3d const& p0,
  * \cite Ericson:2004:RCD:1121584 .
  * @param pnts_begin Iterator pointing to the initial point of a closed polyline describing a polygon
  * @param pnts_end Iterator pointing to the element following the last point of a closed polyline describing a polygon
- * @param plane_normal the normal of the plane the polygon is located in
- * @param d parameter from the plane equation
+ * @return pair of plane_normal and the parameter d: the normal of the plane the
+ * polygon is located in, d parameter from the plane equation
  */
 template <typename InputIterator>
-void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
-                     MathLib::Vector3 &plane_normal,
-                     double& d);
+std::pair<MathLib::Vector3, double> getNewellPlane(InputIterator pnts_begin,
+                                                   InputIterator pnts_end);
 
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
@@ -68,18 +67,18 @@ void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
  * it holds \f$ n \cdot p + d = 0\f$. The Newell algorithm is described in
  * \cite Ericson:2004:RCD:1121584 .
  * @param pnts points of a closed polyline describing a polygon
- * @param plane_normal the normal of the plane the polygon is located in
- * @param d parameter from the plane equation
+ * @return pair of plane_normal and the parameter d: the normal of the plane the
+ * polygon is located in, parameter d from the plane equation
  */
 template <class T_POINT>
-void getNewellPlane (const std::vector<T_POINT*>& pnts,
-                     MathLib::Vector3 &plane_normal,
-                     double& d);
+std::pair<MathLib::Vector3, double> getNewellPlane(
+    const std::vector<T_POINT*>& pnts);
 
 /** Same as getNewellPlane(pnts, plane_normal, d).
  */
 template <class T_POINT>
-std::pair<MathLib::Vector3, double> getNewellPlane(const std::vector<T_POINT>& pnts);
+std::pair<MathLib::Vector3, double> getNewellPlane(
+    const std::vector<T_POINT>& pnts);
 
 /**
  * Computes a rotation matrix that rotates the given 2D normal vector parallel to X-axis
