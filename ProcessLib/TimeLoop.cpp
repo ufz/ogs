@@ -514,11 +514,6 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
 /// initialize output, convergence criterion, etc.
 void TimeLoop::initialize()
 {
-    if (_chemical_solver_interface != nullptr)
-    {
-        _chemical_solver_interface->initialize();
-    }
-
     for (auto& process_data : _per_process_data)
     {
         auto& pcs = process_data->process;

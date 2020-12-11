@@ -12,6 +12,7 @@
 
 #include <cassert>
 
+#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -81,6 +82,11 @@ void ComponentTransportProcess::initializeConcreteProcess(
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data,
         transport_process_variables);
+
+    if (_chemical_solver_interface)
+    {
+        _chemical_solver_interface->initialize();
+    }
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
