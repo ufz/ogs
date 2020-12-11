@@ -363,6 +363,7 @@ AddTest(
     NAME Parallel_2D_ThermalConvection_constviscosity
     PATH Parabolic/HT/ConstViscosity
     RUNTIME 61 # Actual RUNTIME?
+    EXECUTABLE ogs
     EXECUTABLE_ARGS square_5500x5500.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 4
@@ -383,6 +384,7 @@ AddTest(
     DISABLED
     NAME Parallel_2D_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
+    EXECUTABLE ogs
     RUNTIME 61 # Actual RUNTIME?
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme.prj
     WRAPPER mpirun
@@ -399,6 +401,7 @@ AddTest(
     DISABLED
     NAME 2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
     PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
+    EXECUTABLE ogs
     RUNTIME 61 # Actual RUNTIME?
     EXECUTABLE_ARGS square_5500x5500_staggered_scheme_adaptive_dt.prj
     WRAPPER mpirun
@@ -416,6 +419,7 @@ AddTest(
 # AddTest(
 #     NAME HT_a_DECOVALEX_THMC_based_Example
 #     PATH Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
+#     EXECUTABLE ogs
 #     EXECUTABLE_ARGS th_decovalex.prj
 #     WRAPPER mpirun
 #     WRAPPER_ARGS -np 1

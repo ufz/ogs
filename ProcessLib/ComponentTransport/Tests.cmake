@@ -659,6 +659,7 @@ AddTest(
 AddTest(
     NAME Parallel_2D_StaggeredScheme_ComponentTransport_TracerSimulation
     PATH Parabolic/ComponentTransport/TracerSimulation
+    EXECUTABLE ogs
     EXECUTABLE_ARGS TracerSimulation.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 4

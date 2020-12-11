@@ -71,6 +71,7 @@ AddTest(
 AddTest(
     NAME TES_zeolite_discharge_small
     PATH Parabolic/TES/1D
+    EXECUTABLE ogs
     EXECUTABLE_ARGS tes-1D-zeolite-discharge-small.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
@@ -87,6 +88,7 @@ AddTest(
     NAME TES_zeolite_discharge
     PATH Parabolic/TES/1D
     RUNTIME 8
+    EXECUTABLE ogs
     EXECUTABLE_ARGS tes-1D-zeolite-discharge-large.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1
