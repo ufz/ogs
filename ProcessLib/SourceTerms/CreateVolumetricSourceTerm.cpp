@@ -30,11 +30,13 @@ std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
     auto const type = config.peekConfigParameter<std::string>("type");
     if (type == "Line")
     {
+        //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
         config.checkConfigParameter("type", "Line");
         DBUG("Constructing LineSourceTerm from config.");
     }
     else
     {
+        //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
         config.checkConfigParameter("type", "Volumetric");
         DBUG("Constructing VolumetricSourceTerm from config.");
     }
