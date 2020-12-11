@@ -12,7 +12,6 @@
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
-#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "CoupledSolutionsForStaggeredScheme.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
@@ -323,16 +322,13 @@ TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
                    const int global_coupling_max_iterations,
                    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                        global_coupling_conv_crit,
-                   std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-                       chemical_solver_interface,
                    const double start_time, const double end_time)
     : _output(std::move(output)),
       _per_process_data(std::move(per_process_data)),
       _start_time(start_time),
       _end_time(end_time),
       _global_coupling_max_iterations(global_coupling_max_iterations),
-      _global_coupling_conv_crit(std::move(global_coupling_conv_crit)),
-      _chemical_solver_interface(std::move(chemical_solver_interface))
+      _global_coupling_conv_crit(std::move(global_coupling_conv_crit))
 {
 }
 

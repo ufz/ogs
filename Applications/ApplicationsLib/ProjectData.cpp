@@ -353,7 +353,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
     //! \ogs_file_param{prj__time_loop}
     parseTimeLoop(project_config.getConfigSubtree("time_loop"),
-                  output_directory, std::move(chemical_solver_interface));
+                  output_directory);
 }
 
 void ProjectData::parseProcessVariables(
@@ -1036,17 +1036,13 @@ void ProjectData::parseProcesses(
     }
 }
 
-void ProjectData::parseTimeLoop(
-    BaseLib::ConfigTree const& config,
-    std::string const& output_directory,
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-        chemical_solver_interface)
+void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
+                                std::string const& output_directory)
 {
     DBUG("Reading time loop configuration.");
 
     _time_loop = ProcessLib::createTimeLoop(
-        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec,
-        std::move(chemical_solver_interface));
+        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec);
 
     if (!_time_loop)
     {

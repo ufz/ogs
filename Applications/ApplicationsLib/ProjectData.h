@@ -107,9 +107,7 @@ private:
 
     /// Parses the time loop configuration.
     void parseTimeLoop(BaseLib::ConfigTree const& config,
-                       const std::string& output_directory,
-                       std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-                           chemical_solver_interface);
+                       const std::string& output_directory);
 
     void parseLinearSolvers(BaseLib::ConfigTree const& config);
 
