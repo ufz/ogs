@@ -79,6 +79,8 @@ public:
         return _x.data();
     }
 
+    T* getCoords() { return _x.data(); }
+
     /** write point coordinates into stream (used from operator<<)
      * \param os a standard output stream
      */
