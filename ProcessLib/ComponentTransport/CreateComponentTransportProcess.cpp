@@ -9,7 +9,6 @@
  */
 
 #include "CreateComponentTransportProcess.h"
-#include "CreateChemicalProcessData.h"
 
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
@@ -225,14 +224,11 @@ std::unique_ptr<Process> createComponentTransportProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
-    auto chemical_process_data =
-        createChemicalProcessData(chemical_solver_interface.get());
-
     ComponentTransportProcessData process_data{std::move(media_map),
                                                specific_body_force,
                                                has_gravity,
                                                non_advective_form,
-                                               std::move(chemical_process_data),
+                                               chemical_solver_interface.get(),
                                                hydraulic_process_id,
                                                first_transport_process_id};
 
