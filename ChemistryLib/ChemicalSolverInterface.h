@@ -36,6 +36,6 @@ public:
     virtual ~ChemicalSolverInterface() = default;
 
 public:
-    std::vector<std::vector<GlobalIndexType>> chemical_system_index_map;
+    std::vector<GlobalIndexType> chemical_system_index_map;
 };
 }  // namespace ChemistryLib
