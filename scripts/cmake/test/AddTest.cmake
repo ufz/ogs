@@ -42,8 +42,6 @@
 #         the benchmark output directory.
 
 function (AddTest)
-    # settings
-    set(LARGE_RUNTIME 60)
 
     # parse arguments
     set(options DISABLED)
@@ -77,7 +75,7 @@ function (AddTest)
             ${AddTest_SOURCE_PATH}/${AddTest_EXECUTABLE_ARGS})
     endif()
 
-    if(${AddTest_RUNTIME} GREATER ${LARGE_RUNTIME})
+    if(${AddTest_RUNTIME} GREATER ${ogs.ctest.large_runtime})
         string(PREPEND AddTest_NAME "LARGE_")
     endif()
 

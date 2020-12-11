@@ -1,6 +1,4 @@
 function (OgsTest)
-    # settings
-    set(LARGE_RUNTIME 60)
 
     if(NOT OGS_BUILD_CLI OR NOT BUILD_TESTING)
         return()
@@ -23,7 +21,7 @@ function (OgsTest)
         set(OgsTest_RUNTIME 1)
     endif()
 
-    if(${OgsTest_RUNTIME} GREATER ${LARGE_RUNTIME})
+    if(${OgsTest_RUNTIME} GREATER ${ogs.ctest.large_runtime})
         string(APPEND OgsTest_NAME_WE "-LARGE")
     endif()
 

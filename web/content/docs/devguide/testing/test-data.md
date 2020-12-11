@@ -17,16 +17,16 @@ An executable test can be run with several *wrappers*, e.g. with `valgrind`, `me
 AddTest(
     NAME GroundWaterFlowProcess
     PATH Elliptic/quad_20x10_GroundWaterFlow
-    RUNTIME 35                                                        # optional
-    EXECUTABLE ogs                                                    # optional
+    EXECUTABLE ogs
     EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj
+    RUNTIME 35                                                        # optional
     WRAPPER time                                                      # optional
     TESTER diff                                                       # optional
     DIFF_DATA quad_20x10_constMat0.mesh.vtu quad_20x10_left_right.gml # optional
 )
 ```
 
-Tests are then run with `make ctest` or for more verbose output with `ctest -VV` (you may also use other [ctest options](https://cmake.org/cmake/help/v3.4/manual/ctest.1.html)). If the checker has some errors they are displayed. `RUNTIME` specifies the typical runtime in seconds on an Intel Xeon E5-2680 v2 @ 2.80 GHz with 500 GiB RAM (`envinf1`). Tests with a `RUNTIME > 60` are considered `LARGE`-tests.
+Tests are then run with `make ctest` or for more verbose output with `ctest -VV` (you may also use other [ctest options](https://cmake.org/cmake/help/v3.4/manual/ctest.1.html)). If the checker has some errors they are displayed. `RUNTIME` specifies the typical runtime in seconds on an Intel Xeon E5-2680 v2 @ 2.80 GHz with 500 GiB RAM (`envinf1`). Tests with a `RUNTIME > {{< dataFile "versions.ctest.large_runtime" >}}` are considered `LARGE`-tests.
 
 The functionality is very flexible and more wrappers and checker can be added later on. e.g. for running some statistics on output files and comparing them with statistics from reference files.
 
