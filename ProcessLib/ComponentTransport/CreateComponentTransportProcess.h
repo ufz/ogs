@@ -37,6 +37,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
-    ChemistryLib::ChemicalSolverInterface* chemical_solver_interface);
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+        chemical_solver_interface);
 }  // namespace ComponentTransport
 }  // namespace ProcessLib

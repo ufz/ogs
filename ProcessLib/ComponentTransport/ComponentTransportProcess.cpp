@@ -31,12 +31,15 @@ ComponentTransportProcess::ComponentTransportProcess(
     ComponentTransportProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     bool const use_monolithic_scheme,
-    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+        chemical_solver_interface)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data)),
-      _surfaceflux(std::move(surfaceflux))
+      _surfaceflux(std::move(surfaceflux)),
+      _chemical_solver_interface(std::move(chemical_solver_interface))
 {
 }
 
