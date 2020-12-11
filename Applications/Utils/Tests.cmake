@@ -321,6 +321,9 @@ if(PARSL AND NOT OGS_USE_MPI)
         set_tests_properties(parsl_ExtractBoundary PROPERTIES DEPENDS snakemake_ExtractBoundary)
     endif()
 endif()
+if(SNAKEMAKE OR PARSL)
+    add_dependencies(ctest ExtractBoundary)
+endif()
 
 AddTest(
     NAME partmesh_with_field_data

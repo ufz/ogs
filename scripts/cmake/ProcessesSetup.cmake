@@ -33,6 +33,9 @@ set(OGS_BUILD_PROCESSES
     CACHE STRING "Semicolon-separated list of processes to build")
 if(NOT OGS_BUILD_CLI)
     set(OGS_BUILD_PROCESSES OFF "" CACHE INTERNAL "")
+    message(STATUS "ATTENTION: OGS_BUILD_CLI=OFF -> OGS_BUILD_PROCESSES is set to OFF too.\n"
+        "   If cli is switched on again, remember to switch processes back to on \n"
+        "   too with -DOGS_BUILD_PROCESSES=\"\"!")
 endif()
 if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
     if(${OGS_BUILD_PROCESSES})
