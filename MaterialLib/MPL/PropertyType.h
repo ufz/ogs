@@ -77,6 +77,8 @@ enum PropertyType : int
     /// specify retardation factor used in component transport process.
     retardation_factor,
     saturation,
+    /// capillary pressure saturation relationship for microstructure.
+    saturation_micro,
     specific_heat_capacity,
     storage,
     swelling_stress_rate,
@@ -257,6 +259,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::saturation;
     }
+    if (boost::iequals(inString, "saturation_micro"))
+    {
+        return PropertyType::saturation_micro;
+    }
     if (boost::iequals(inString, "specific_heat_capacity"))
     {
         return PropertyType::specific_heat_capacity;
@@ -358,6 +364,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "residual_liquid_saturation",
                              "retardation_factor",
                              "saturation",
+                             "saturation_micro",
                              "specific_heat_capacity",
                              "storage",
                              "swelling_stress_rate",
