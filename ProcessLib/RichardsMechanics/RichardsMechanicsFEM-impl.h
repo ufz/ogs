@@ -219,6 +219,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+        _ip_data[ip].liquid_pressure_m_prev = -p_cap_ip;
+        _ip_data[ip].liquid_pressure_m = -p_cap_ip;
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
@@ -228,6 +230,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _ip_data[ip].saturation_prev =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
+
+        _ip_data[ip].saturation_m_prev = _ip_data[ip].saturation_prev;
 
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
