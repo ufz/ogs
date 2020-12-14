@@ -1313,61 +1313,6 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, IntegrationMethod,
                                      DisplacementDim>::
-    postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                std::vector<double> const& /*local_xdot*/,
-                                double const t, double const dt,
-                                bool const use_monolithic_scheme,
-                                int const /*process_id*/)
-{
-    const int displacement_offset =
-        use_monolithic_scheme ? displacement_index : 0;
-
-    auto u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_offset,
-                                      displacement_size);
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    MPL::VariableArray variables;
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
-    int const n_integration_points = _integration_method.getNumberOfPoints();
-    for (int ip = 0; ip < n_integration_points; ip++)
-    {
-        x_position.setIntegrationPoint(ip);
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
-        auto const temperature =
-            medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(variables, x_position, t, dt);
-        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
-
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
-        auto const B =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
-
-        auto& eps = _ip_data[ip].eps;
-        eps.noalias() = B * u;
-        variables[static_cast<int>(MPL::Variable::strain)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
-
-        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
-                                                temperature);
-    }
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, IntegrationMethod,
-                                     DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& local_x_dot)

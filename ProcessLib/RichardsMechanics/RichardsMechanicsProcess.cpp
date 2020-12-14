@@ -564,27 +564,6 @@ void RichardsMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
 template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::
-    postNonLinearSolverConcreteProcess(GlobalVector const& x,
-                                       GlobalVector const& xdot, const double t,
-                                       double const dt, const int process_id)
-{
-    if (!hasMechanicalProcess(process_id))
-    {
-        return;
-    }
-
-    DBUG("PostNonLinearSolver RichardsMechanicsProcess.");
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
-    // Calculate strain, stress or other internal variables of mechanics.
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, xdot, t, dt,
-        _use_monolithic_scheme, process_id);
-}
-
-template <int DisplacementDim>
-void RichardsMechanicsProcess<DisplacementDim>::
     computeSecondaryVariableConcrete(const double t, const double dt,
                                      std::vector<GlobalVector*> const& x,
                                      GlobalVector const& x_dot,
