@@ -62,8 +62,9 @@
             <properties>
                 <property>
                     <name>permeability</name>
-                    <type>Parameter</type>
-                    <parameter_name>kappa</parameter_name>
+                    <type>KozenyCarman</type>
+                    <initial_permeability>kappa</initial_permeability>
+                    <initial_porosity>porosity</initial_porosity>
                 </property>
                 <property>
                     <name>porosity</name>
