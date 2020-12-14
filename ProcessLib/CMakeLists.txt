@@ -1,5 +1,3 @@
-include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
-
 # Collect the process libraries in interface library
 add_library(Processes INTERFACE)
 
@@ -48,4 +46,14 @@ target_link_libraries(ProcessLib
         GitInfoLib
         spdlog::spdlog
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+)
+
+target_compile_definitions(ProcessLib PUBLIC
+    # Enabled elements
+    OGS_MAX_ELEMENT_DIM=${OGS_MAX_ELEMENT_DIM}
+    OGS_MAX_ELEMENT_ORDER=${OGS_MAX_ELEMENT_ORDER}
+    $<$<BOOL:${OGS_ENABLE_ELEMENT_SIMPLEX}>:OGS_ENABLE_ELEMENT_SIMPLEX>
+    $<$<BOOL:${OGS_ENABLE_ELEMENT_CUBOID}>:OGS_ENABLE_ELEMENT_CUBOID>
+    $<$<BOOL:${OGS_ENABLE_ELEMENT_PRISM}>:OGS_ENABLE_ELEMENT_PRISM>
+    $<$<BOOL:${OGS_ENABLE_ELEMENT_PYRAMID}>:OGS_ENABLE_ELEMENT_PYRAMID>
 )

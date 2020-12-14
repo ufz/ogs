@@ -172,6 +172,12 @@ option(OGS_ENABLE_ELEMENT_CUBOID
        "Build FEM elements for cuboids (quads, hexahedra)." ON)
 option(OGS_ENABLE_ELEMENT_PRISM "Build FEM elements for prisms." ON)
 option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
+if(NOT OGS_MAX_ELEMENT_DIM MATCHES "^[0-3]$")
+  message(FATAL_ERROR "OGS_MAX_ELEMENT_DIM must be an integer between 0 and 3.")
+endif()
+if(NOT OGS_MAX_ELEMENT_ORDER MATCHES "^[0-9]$")
+  message(FATAL_ERROR "OGS_MAX_ELEMENT_ORDER must be an integer.")
+endif()
 
 option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation."
        OFF)
