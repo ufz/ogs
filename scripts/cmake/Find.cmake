@@ -158,9 +158,6 @@ if(OGS_USE_PETSC)
     find_package(PETSc ${ogs.minimum_version.petsc} REQUIRED)
 
     include_directories(SYSTEM ${PETSC_INCLUDES})
-
-    add_definitions(-DPETSC_VERSION_NUMBER=PETSC_VERSION_MAJOR*1000+PETSC_VERSION_MINOR*10)
-
 endif()
 
 ## Check MPI package
