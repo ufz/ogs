@@ -26,6 +26,9 @@ endif()
 if(OGS_USE_PETSC)
     target_compile_definitions(ProcessLib PUBLIC USE_PETSC)
 endif()
+if(OGS_USE_XDMF)
+    target_compile_definitions(ProcessLib PUBLIC OGS_USE_XDMF)
+endif()
 target_link_libraries(ProcessLib
     PUBLIC
         BaseLib
