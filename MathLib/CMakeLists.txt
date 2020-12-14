@@ -44,6 +44,9 @@ endif()
 if(OGS_USE_PETSC)
     target_compile_definitions(MathLib PUBLIC USE_PETSC)
 endif()
+if(OGS_USE_EIGEN)
+    target_compile_definitions(MathLib PUBLIC OGS_USE_EIGEN)
+endif()
 
 target_link_libraries(MathLib
     PUBLIC

@@ -195,27 +195,27 @@ if(OGS_USE_MKL)
 endif()
 
 # Eigen
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
-endif()
-
-if(EIGEN_NO_DEBUG)
-    add_definitions(-DEIGEN_NO_DEBUG)
-endif()
-
-if(EIGEN_DONT_VECTORIZE)
-    add_definitions(-DEIGEN_DONT_VECTORIZE)
-endif()
-
-if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
-    add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
-endif()
-
 if(OGS_USE_EIGEN)
-    add_definitions(-DOGS_USE_EIGEN)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
+    endif()
+
+    if(EIGEN_NO_DEBUG)
+        add_definitions(-DEIGEN_NO_DEBUG)
+    endif()
+
+    if(EIGEN_DONT_VECTORIZE)
+        add_definitions(-DEIGEN_DONT_VECTORIZE)
+    endif()
+
+    if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
+        add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
+    endif()
+
     if(OGS_USE_EIGEN_UNSUPPORTED)
         add_definitions(-DUSE_EIGEN_UNSUPPORTED)
     endif()
+
     if(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN)
         add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
     endif()
