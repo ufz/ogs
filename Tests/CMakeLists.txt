@@ -72,6 +72,7 @@ if(OGS_USE_PETSC)
 endif()
 
 if(OGS_BUILD_GUI)
+    target_compile_definitions(testrunner PUBLIC OGS_BUILD_GUI)
     target_link_libraries(testrunner
         PRIVATE
             GitInfoLib

@@ -93,9 +93,6 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
 endif() # GCC AND GPROF_PATH
 
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
-if(OGS_BUILD_GUI)
-    add_definitions(-DOGS_BUILD_GUI)
-endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 if(WIN32)

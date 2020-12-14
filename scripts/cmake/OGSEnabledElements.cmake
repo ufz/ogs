@@ -1,3 +1,4 @@
+# TODO: Move to process lib
 # Definitions controlling which FEM elements will be compiled
 if(NOT OGS_MAX_ELEMENT_DIM MATCHES "^[0-3]$")
   message(FATAL_ERROR "OGS_MAX_ELEMENT_DIM must be an integer between 0 and 3.")
