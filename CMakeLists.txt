@@ -186,7 +186,6 @@ option(OGS_USE_MFRONT
        OFF)
 # ---- Definitions ----
 if(OGS_USE_LIS)
-    add_definitions(-DUSE_LIS)
     include_directories(SYSTEM ${LIS_INCLUDE_DIR})
     set(OGS_USE_EIGEN ON)
 endif()

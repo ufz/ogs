@@ -4,7 +4,9 @@ set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 
 # Library
 ogs_add_library(ApplicationsLib ${LIB_SOURCES})
-
+if(USE_LIS)
+    target_compile_definitions(ApplicationsLib PUBLIC USE_LIS)
+endif()
 target_link_libraries(ApplicationsLib
                       PUBLIC BaseLib GeoLib NumLib Processes
                       PRIVATE CMakeInfoLib

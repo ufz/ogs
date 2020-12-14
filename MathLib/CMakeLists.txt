@@ -35,6 +35,9 @@ target_include_directories(MathLib
 )
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
+if(USE_LIS)
+    target_compile_definitions(MathLib PUBLIC USE_LIS)
+endif()
 
 target_link_libraries(MathLib
     PUBLIC
