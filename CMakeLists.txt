@@ -228,10 +228,6 @@ include(scripts/cmake/packaging/Pack.cmake)
 # ---- Subdirectories ----
 
 # External projects
-if(OGS_INSITU)
-    add_definitions(-DUSE_INSITU)
-endif()
-
 add_subdirectory(ThirdParty)
 include_directories(
     SYSTEM

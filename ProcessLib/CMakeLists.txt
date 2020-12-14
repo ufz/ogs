@@ -29,6 +29,9 @@ endif()
 if(OGS_USE_XDMF)
     target_compile_definitions(ProcessLib PUBLIC OGS_USE_XDMF)
 endif()
+if(USE_INSITU)
+    target_compile_definitions(ProcessLib PRIVATE USE_INSITU)
+endif()
 target_link_libraries(ProcessLib
     PUBLIC
         BaseLib

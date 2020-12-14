@@ -50,6 +50,9 @@ add_executable(ogs ogs.cpp)
 if(OGS_USE_PETSC)
     target_compile_definitions(ogs PRIVATE USE_PETSC)
 endif()
+if(USE_INSITU)
+    target_compile_definitions(ogs PRIVATE USE_INSITU)
+endif()
 target_link_libraries(ogs
     PRIVATE
         ApplicationsLib
