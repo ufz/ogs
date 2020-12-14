@@ -25,6 +25,9 @@ using namespace boost::math::double_constants;
 
 namespace MeshLib
 {
+
+namespace
+{
 template <unsigned long N>
 std::tuple<double, double> getMinMaxAngle(
     std::array<MeshLib::Node, N> const& nodes)
@@ -42,45 +45,7 @@ std::tuple<double, double> getMinMaxAngle(
     return {min_angle, max_angle};
 }
 
-AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) :
-    ElementQualityMetric(mesh)
-{}
-
-void AngleSkewMetric::calculateQuality ()
-{
-    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
-    const std::size_t nElements (_mesh.getNumberOfElements());
-
-    for (std::size_t k(0); k < nElements; k++)
-    {
-        Element const& elem (*elements[k]);
-        switch (elem.getGeomType())
-        {
-        case MeshElemType::LINE:
-            _element_quality_metric[k] = -1.0;
-            break;
-        case MeshElemType::TRIANGLE:
-            _element_quality_metric[k] = checkTriangle(elem);
-            break;
-        case MeshElemType::QUAD:
-            _element_quality_metric[k] = checkQuad(elem);
-            break;
-        case MeshElemType::TETRAHEDRON:
-            _element_quality_metric[k] = checkTetrahedron(elem);
-            break;
-        case MeshElemType::HEXAHEDRON:
-            _element_quality_metric[k] = checkHexahedron(elem);
-            break;
-        case MeshElemType::PRISM:
-            _element_quality_metric[k] = checkPrism(elem);
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-double AngleSkewMetric::checkTriangle(Element const& elem) const
+double checkTriangle(Element const& elem)
 {
     std::array const nodes = {*elem.getNode(0), *elem.getNode(1),
                               *elem.getNode(2)};
@@ -89,18 +54,17 @@ double AngleSkewMetric::checkTriangle(Element const& elem) const
                     (third_pi - min_angle) / third_pi);
 }
 
-double AngleSkewMetric::checkQuad(Element const& elem) const
+double checkQuad(Element const& elem)
 {
     std::array const nodes = {*elem.getNode(0), *elem.getNode(1),
                               *elem.getNode(2), *elem.getNode(3)};
     auto const& [min_angle, max_angle] = getMinMaxAngle(nodes);
 
-
     return std::max((max_angle - half_pi) / half_pi,
                     (half_pi - min_angle) / half_pi);
 }
 
-double AngleSkewMetric::checkTetrahedron(Element const& elem) const
+double checkTetrahedron(Element const& elem)
 {
     std::array<double, 4> min;
     std::array<double, 4> max;
@@ -119,7 +83,7 @@ double AngleSkewMetric::checkTetrahedron(Element const& elem) const
                     (third_pi - min_angle) / third_pi);
 }
 
-double AngleSkewMetric::checkHexahedron(Element const& elem) const
+double checkHexahedron(Element const& elem)
 {
     std::array<double, 6> min;
     std::array<double, 6> max;
@@ -138,7 +102,7 @@ double AngleSkewMetric::checkHexahedron(Element const& elem) const
                     (half_pi - min_angle) / half_pi);
 }
 
-double AngleSkewMetric::checkPrism(Element const& elem) const
+double checkPrism(Element const& elem)
 {
     // face 0: triangle (0,1,2)
     auto const& f0 = *elem.getFace(0);
@@ -176,6 +140,46 @@ double AngleSkewMetric::checkPrism(Element const& elem) const
                                          (half_pi - min_angle_quad) / half_pi));
 
     return std::min(tri_criterion, quad_criterion);
+}
+
+}  // end unnamed namespace
+
+AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) :
+    ElementQualityMetric(mesh)
+{}
+
+void AngleSkewMetric::calculateQuality ()
+{
+    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
+    const std::size_t nElements (_mesh.getNumberOfElements());
+
+    for (std::size_t k(0); k < nElements; k++)
+    {
+        Element const& elem (*elements[k]);
+        switch (elem.getGeomType())
+        {
+        case MeshElemType::LINE:
+            _element_quality_metric[k] = -1.0;
+            break;
+        case MeshElemType::TRIANGLE:
+            _element_quality_metric[k] = checkTriangle(elem);
+            break;
+        case MeshElemType::QUAD:
+            _element_quality_metric[k] = checkQuad(elem);
+            break;
+        case MeshElemType::TETRAHEDRON:
+            _element_quality_metric[k] = checkTetrahedron(elem);
+            break;
+        case MeshElemType::HEXAHEDRON:
+            _element_quality_metric[k] = checkHexahedron(elem);
+            break;
+        case MeshElemType::PRISM:
+            _element_quality_metric[k] = checkPrism(elem);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 } // end namespace MeshLib

@@ -28,12 +28,5 @@ public:
     explicit AngleSkewMetric(Mesh const& mesh);
 
     void calculateQuality() override;
-
-private:
-    double checkTriangle(Element const& elem) const;
-    double checkQuad(Element const& elem) const;
-    double checkTetrahedron(Element const& elem) const;
-    double checkHexahedron(Element const& elem) const;
-    double checkPrism(Element const& elem) const;
 };
 }  // namespace MeshLib
