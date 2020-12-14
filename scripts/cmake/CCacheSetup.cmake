@@ -27,10 +27,6 @@ if(COMPILER_IS_CLANG)
     add_compile_options(-Qunused-arguments)
 endif()
 
-if($ENV{TRAVIS})
-    return()
-endif()
-
 # Check ccache pre-compiled headers config
 execute_process(COMMAND ${CCACHE_TOOL_PATH} -p
     OUTPUT_VARIABLE CCACHE_CONFIG
