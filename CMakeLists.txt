@@ -191,7 +191,6 @@ if(OGS_USE_LIS)
 endif()
 
 if(OGS_USE_MKL)
-    add_definitions(-DUSE_MKL)
     include_directories(SYSTEM ${MKL_INCLUDE_DIR})
 endif()
 
