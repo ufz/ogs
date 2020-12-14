@@ -47,12 +47,7 @@ if(OGS_USE_PYTHON)
 endif()
 
 add_executable(ogs ogs.cpp)
-if(OGS_USE_PETSC)
-    target_compile_definitions(ogs PRIVATE USE_PETSC)
-endif()
-if(USE_INSITU)
-    target_compile_definitions(ogs PRIVATE USE_INSITU)
-endif()
+
 target_link_libraries(ogs
     PRIVATE
         ApplicationsLib
@@ -64,6 +59,12 @@ target_link_libraries(ogs
         $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
         $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+)
+
+target_compile_definitions(ogs
+    PRIVATE
+    $<$<BOOL:${USE_INSITU}>:USE_INSITU>
+    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
 )
 
 # ---- Tests ----

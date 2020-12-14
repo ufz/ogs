@@ -36,12 +36,10 @@ target_link_libraries(
         spdlog::spdlog
 )
 
-if($ENV{VTK_USE_64BIT_IDS})
-    target_compile_definitions(MeshLib PUBLIC VTK_USE_64BIT_IDS)
-endif()
-if(OGS_USE_PETSC)
-    target_compile_definitions(MeshLib PUBLIC USE_PETSC)
-endif()
-if(OGS_USE_XDMF)
-    target_compile_definitions(MeshLib PRIVATE OGS_USE_XDMF)
-endif()
+target_compile_definitions(MeshLib
+    PUBLIC
+    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:$ENV{VTK_USE_64BIT_IDS}>:VTK_USE_64BIT_IDS>
+    PRIVATE
+    $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
+)

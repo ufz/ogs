@@ -21,15 +21,7 @@ if(OGS_USE_PYTHON)
     add_subdirectory(BoundaryCondition/Python)
     add_subdirectory(SourceTerms/Python)
 endif()
-if(OGS_USE_PETSC)
-    target_compile_definitions(ProcessLib PUBLIC USE_PETSC)
-endif()
-if(OGS_USE_XDMF)
-    target_compile_definitions(ProcessLib PUBLIC OGS_USE_XDMF)
-endif()
-if(USE_INSITU)
-    target_compile_definitions(ProcessLib PRIVATE USE_INSITU)
-endif()
+
 target_link_libraries(ProcessLib
     PUBLIC
         BaseLib
@@ -48,7 +40,10 @@ target_link_libraries(ProcessLib
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>
 )
 
-target_compile_definitions(ProcessLib PUBLIC
+target_compile_definitions(ProcessLib
+    PUBLIC
+    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
     # Enabled elements
     OGS_MAX_ELEMENT_DIM=${OGS_MAX_ELEMENT_DIM}
     OGS_MAX_ELEMENT_ORDER=${OGS_MAX_ELEMENT_ORDER}
@@ -56,4 +51,6 @@ target_compile_definitions(ProcessLib PUBLIC
     $<$<BOOL:${OGS_ENABLE_ELEMENT_CUBOID}>:OGS_ENABLE_ELEMENT_CUBOID>
     $<$<BOOL:${OGS_ENABLE_ELEMENT_PRISM}>:OGS_ENABLE_ELEMENT_PRISM>
     $<$<BOOL:${OGS_ENABLE_ELEMENT_PYRAMID}>:OGS_ENABLE_ELEMENT_PYRAMID>
+    PRIVATE
+    $<$<BOOL:${USE_INSITU}>:USE_INSITU>
 )

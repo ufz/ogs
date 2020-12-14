@@ -35,21 +35,6 @@ target_include_directories(MathLib
 )
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
-if(USE_LIS)
-    target_compile_definitions(MathLib PUBLIC USE_LIS)
-endif()
-if(OGS_USE_MKL)
-    target_compile_definitions(MathLib PRIVATE USE_MKL)
-endif()
-if(OGS_USE_PETSC)
-    target_compile_definitions(MathLib PUBLIC USE_PETSC)
-endif()
-if(OGS_USE_EIGEN)
-    target_compile_definitions(MathLib PUBLIC OGS_USE_EIGEN)
-endif()
-if(CVODE_FOUND)
-    target_compile_definitions(MathLib PUBLIC CVODE_FOUND)
-endif()
 
 target_link_libraries(MathLib
     PUBLIC
@@ -68,3 +53,13 @@ endif()
 if(OGS_USE_CVODE)
     target_link_libraries(MathLib PUBLIC ${CVODE_LIBRARIES})
 endif()
+
+target_compile_definitions(MathLib
+    PUBLIC
+    $<$<BOOL:${USE_LIS}>:USE_LIS>
+    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:${OGS_USE_EIGEN}>:OGS_USE_EIGEN>
+    $<$<BOOL:${CVODE_FOUND}>:CVODE_FOUND>
+    PRIVATE
+    $<$<BOOL:${USE_MKL}>:USE_MKL>
+)

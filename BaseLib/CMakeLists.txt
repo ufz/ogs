@@ -7,16 +7,16 @@ endif()
 
 # Create the library
 ogs_add_library(BaseLib ${SOURCES})
-if(OGS_USE_PETSC)
-    target_compile_definitions(BaseLib PRIVATE USE_PETSC)
-endif()
-if(OGS_FATAL_ABORT)
-    target_compile_definitions(BaseLib PUBLIC OGS_FATAL_ABORT)
-endif()
+
 target_link_libraries(BaseLib PUBLIC Boost::boost
                                      spdlog::spdlog
                                      std::filesystem
                                      $<$<BOOL:${MSVC}>:WinMM> # needed for timeGetTime
                                      $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
                                      $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
+)
+
+target_compile_definitions(BaseLib
+    PUBLIC $<$<BOOL:${OGS_FATAL_ABORT}>:OGS_FATAL_ABORT>
+    PRIVATE $<$<BOOL:${USE_PETSC}>:USE_PETSC>
 )

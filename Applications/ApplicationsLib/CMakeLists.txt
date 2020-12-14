@@ -4,12 +4,7 @@ set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
 
 # Library
 ogs_add_library(ApplicationsLib ${LIB_SOURCES})
-if(USE_LIS)
-    target_compile_definitions(ApplicationsLib PUBLIC USE_LIS)
-endif()
-if(OGS_USE_PETSC)
-    target_compile_definitions(ApplicationsLib PUBLIC USE_PETSC)
-endif()
+
 target_link_libraries(ApplicationsLib
                       PUBLIC BaseLib GeoLib NumLib Processes
                       PRIVATE CMakeInfoLib
@@ -20,6 +15,12 @@ target_link_libraries(ApplicationsLib
                               ProcessLib
                               spdlog::spdlog
                               $<$<BOOL:${OGS_USE_PYTHON}>:pybind11::pybind11>
+)
+
+target_compile_definitions(ApplicationsLib
+    PUBLIC
+    $<$<BOOL:${USE_LIS}>:USE_LIS>
+    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
 )
 
 # Set cpp definitions if the cmake option is enabled for the given process.
