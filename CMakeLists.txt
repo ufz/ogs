@@ -222,10 +222,6 @@ if(OGS_USE_EIGEN)
 endif()
 # End Eigen
 
-if(OGS_FATAL_ABORT)
-    add_definitions(-DOGS_FATAL_ABORT)
-endif()
-
 # Packaging
 include(scripts/cmake/packaging/Pack.cmake)
 

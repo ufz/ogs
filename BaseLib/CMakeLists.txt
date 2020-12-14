@@ -10,6 +10,9 @@ ogs_add_library(BaseLib ${SOURCES})
 if(OGS_USE_PETSC)
     target_compile_definitions(BaseLib PRIVATE USE_PETSC)
 endif()
+if(OGS_FATAL_ABORT)
+    target_compile_definitions(BaseLib PUBLIC OGS_FATAL_ABORT)
+endif()
 target_link_libraries(BaseLib PUBLIC Boost::boost
                                      spdlog::spdlog
                                      std::filesystem
