@@ -13,19 +13,19 @@
 
 #include "VtuInterface.h"
 
-#include <vtkNew.h>
 #include <vtkGenericDataObjectReader.h>
+#include <vtkNew.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
-#if defined(USE_PETSC) || defined(USE_MPI)
+#if defined(USE_PETSC)
 #include <vtkXMLPUnstructuredGridWriter.h>
 #endif
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
-#include "BaseLib/Logging.h"
-
 #include <boost/algorithm/string/erase.hpp>
+
+#include "BaseLib/Logging.h"
 
 #ifdef USE_PETSC
 #include <petsc.h>
@@ -40,9 +40,9 @@ namespace MeshLib
 {
 namespace IO
 {
-
-VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compress) :
-    _mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
+VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode,
+                           bool compress)
+    : _mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
 {
     if (_data_mode == vtkXMLWriter::Ascii && compress)
     {
@@ -50,9 +50,10 @@ VtuInterface::VtuInterface(const MeshLib::Mesh* mesh, int dataMode, bool compres
     }
 }
 
-MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
+MeshLib::Mesh* VtuInterface::readVTUFile(std::string const& file_name)
 {
-    if (!BaseLib::IsFileExisting(file_name)) {
+    if (!BaseLib::IsFileExisting(file_name))
+    {
         ERR("File '{:s}' does not exist.", file_name);
         return nullptr;
     }
@@ -69,8 +70,10 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const &file_name)
         return nullptr;
     }
 
-    std::string const mesh_name (BaseLib::extractBaseNameWithoutExtension(file_name));
-    return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid, mesh_name);
+    std::string const mesh_name(
+        BaseLib::extractBaseNameWithoutExtension(file_name));
+    return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid,
+                                                              mesh_name);
 }
 
 MeshLib::Mesh* VtuInterface::readVTKFile(std::string const& file_name)
@@ -161,6 +164,5 @@ int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
     return 0;
 }
 
-
-} // end namespace IO
-} // end namespace MeshLib
+}  // end namespace IO
+}  // end namespace MeshLib

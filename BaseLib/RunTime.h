@@ -14,7 +14,7 @@
 
 #pragma once
 
-#ifdef USE_MPI
+#ifdef USE_PETSC
 #include <mpi.h>
 #else
 #include <chrono>
@@ -22,38 +22,37 @@
 
 namespace BaseLib
 {
-
 /// Count the running time.
 class RunTime
 {
-    public:
-        /// Start the timer.
-        void start()
-        {
-#ifdef USE_MPI
-            _start_time = MPI_Wtime();
+public:
+    /// Start the timer.
+    void start()
+    {
+#ifdef USE_PETSC
+        _start_time = MPI_Wtime();
 #else
-            _start_time = std::chrono::system_clock::now();
+        _start_time = std::chrono::system_clock::now();
 #endif
-        }
+    }
 
-        /// Get the elapsed time in seconds.
-        double elapsed() const
-        {
-#ifdef USE_MPI
-            return MPI_Wtime() - _start_time;
+    /// Get the elapsed time in seconds.
+    double elapsed() const
+    {
+#ifdef USE_PETSC
+        return MPI_Wtime() - _start_time;
 #else
-            using namespace std::chrono;
-            return duration<double>(system_clock::now() - _start_time).count();
+        using namespace std::chrono;
+        return duration<double>(system_clock::now() - _start_time).count();
 #endif
-        }
+    }
 
-    private:
-#ifdef USE_MPI
-        double _start_time = std::numeric_limits<double>::quiet_NaN();
+private:
+#ifdef USE_PETSC
+    double _start_time = std::numeric_limits<double>::quiet_NaN();
 #else
-        std::chrono::time_point<std::chrono::system_clock> _start_time;
+    std::chrono::time_point<std::chrono::system_clock> _start_time;
 #endif
 };
 
-} // end namespace BaseLib
+}  // end namespace BaseLib
