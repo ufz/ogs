@@ -7,7 +7,9 @@ endif()
 
 # Create the library
 ogs_add_library(BaseLib ${SOURCES})
-
+if(OGS_USE_PETSC)
+    target_compile_definitions(BaseLib PRIVATE USE_PETSC)
+endif()
 target_link_libraries(BaseLib PUBLIC Boost::boost
                                      spdlog::spdlog
                                      std::filesystem

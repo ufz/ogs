@@ -41,6 +41,9 @@ endif()
 if(OGS_USE_MKL)
     target_compile_definitions(MathLib PRIVATE USE_MKL)
 endif()
+if(OGS_USE_PETSC)
+    target_compile_definitions(MathLib PUBLIC USE_PETSC)
+endif()
 
 target_link_libraries(MathLib
     PUBLIC

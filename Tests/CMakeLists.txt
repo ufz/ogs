@@ -54,6 +54,7 @@ target_link_libraries(testrunner
         gtest
         MeshGeoToolsLib
         MaterialLib
+        MathLib
         MeshLib
         NumLib
         ParameterLib

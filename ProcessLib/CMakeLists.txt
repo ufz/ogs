@@ -23,7 +23,9 @@ if(OGS_USE_PYTHON)
     add_subdirectory(BoundaryCondition/Python)
     add_subdirectory(SourceTerms/Python)
 endif()
-
+if(OGS_USE_PETSC)
+    target_compile_definitions(ProcessLib PUBLIC USE_PETSC)
+endif()
 target_link_libraries(ProcessLib
     PUBLIC
         BaseLib

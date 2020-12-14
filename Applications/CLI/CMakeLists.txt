@@ -47,7 +47,9 @@ if(OGS_USE_PYTHON)
 endif()
 
 add_executable(ogs ogs.cpp)
-
+if(OGS_USE_PETSC)
+    target_compile_definitions(ogs PRIVATE USE_PETSC)
+endif()
 target_link_libraries(ogs
     PRIVATE
         ApplicationsLib

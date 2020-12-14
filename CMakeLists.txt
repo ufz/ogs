@@ -194,10 +194,6 @@ if(OGS_USE_MKL)
     include_directories(SYSTEM ${MKL_INCLUDE_DIR})
 endif()
 
-if(OGS_USE_PETSC)
-    add_definitions(-DUSE_PETSC)
-endif()
-
 if(OGS_USE_MPI)
     add_definitions(-DUSE_MPI)
 endif()

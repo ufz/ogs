@@ -39,3 +39,6 @@ target_link_libraries(
 if($ENV{VTK_USE_64BIT_IDS})
     target_compile_definitions(MeshLib PUBLIC VTK_USE_64BIT_IDS)
 endif()
+if(OGS_USE_PETSC)
+    target_compile_definitions(MeshLib PUBLIC USE_PETSC)
+endif()

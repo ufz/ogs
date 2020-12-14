@@ -7,6 +7,9 @@ ogs_add_library(ApplicationsLib ${LIB_SOURCES})
 if(USE_LIS)
     target_compile_definitions(ApplicationsLib PUBLIC USE_LIS)
 endif()
+if(OGS_USE_PETSC)
+    target_compile_definitions(ApplicationsLib PUBLIC USE_PETSC)
+endif()
 target_link_libraries(ApplicationsLib
                       PUBLIC BaseLib GeoLib NumLib Processes
                       PRIVATE CMakeInfoLib
