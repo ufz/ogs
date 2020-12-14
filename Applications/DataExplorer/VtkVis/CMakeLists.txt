@@ -131,6 +131,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 ogs_add_library(VtkVis STATIC ${SOURCES} ${HEADERS} ${UIS})
 
 if(GEOTIFF_FOUND)
+    target_compile_definitions(VtkVis PRIVATE GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
     target_link_libraries(VtkVis PUBLIC ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND

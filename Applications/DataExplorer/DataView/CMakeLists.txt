@@ -142,6 +142,7 @@ target_link_libraries(QtDataView
                               Qt5::Gui)
 
 if(GEOTIFF_FOUND)
+    target_compile_definitions(QtDataView PRIVATE GEOTIFF_FOUND)
     target_link_libraries(QtDataView PRIVATE ${GEOTIFF_LIBRARIES})
 endif() # GEOTIFF_FOUND
 

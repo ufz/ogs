@@ -133,9 +133,6 @@ find_package(LAPACK QUIET)
 
 ## geotiff ##
 find_package(LibGeoTiff)
-if(GEOTIFF_FOUND)
-    add_definitions(-DGEOTIFF_FOUND)
-endif() # GEOTIFF_FOUND
 
 ## lis ##
 if(OGS_USE_LIS)
