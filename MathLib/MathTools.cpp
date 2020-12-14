@@ -20,12 +20,10 @@ namespace MathLib
 double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
                                  Point3d const& pb, double& lambda, double& d0)
 {
-    auto const a =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pa.getCoords()));
-    auto const b =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pb.getCoords()));
-    auto const p =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pp.getCoords()));
+    auto const a = Eigen::Map<Eigen::Vector3d const>(pa.getCoords());
+    auto const b = Eigen::Map<Eigen::Vector3d const>(pb.getCoords());
+    auto const p = Eigen::Map<Eigen::Vector3d const>(pp.getCoords());
+
     // g(lambda) = a + lambda v, v = b-a
     Eigen::Vector3d const v = b - a;
 
