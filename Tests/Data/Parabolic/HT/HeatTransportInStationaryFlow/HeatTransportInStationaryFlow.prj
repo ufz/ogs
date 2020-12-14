@@ -66,12 +66,12 @@
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>
-                            <value>5.0</value>
+                            <value>0.0</value>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
-                            <value>6000000</value>
+                            <value>0.0</value>
                         </property>
                     </properties>
                 </phase>
