@@ -54,13 +54,12 @@ Orientation getOrientationFast(MathLib::Point3d const& p0,
  * \cite Ericson:2004:RCD:1121584 .
  * @param pnts_begin Iterator pointing to the initial point of a closed polyline describing a polygon
  * @param pnts_end Iterator pointing to the element following the last point of a closed polyline describing a polygon
- * @param plane_normal the normal of the plane the polygon is located in
- * @param d parameter from the plane equation
+ * @return pair of plane_normal and the parameter d: the normal of the plane the
+ * polygon is located in, d parameter from the plane equation
  */
 template <typename InputIterator>
-void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
-                     MathLib::Vector3 &plane_normal,
-                     double& d);
+std::pair<Eigen::Vector3d, double> getNewellPlane(InputIterator pnts_begin,
+                                                  InputIterator pnts_end);
 
 /**
  * compute a supporting plane (represented by plane_normal and the value d) for the polygon
@@ -68,18 +67,18 @@ void getNewellPlane (InputIterator pnts_begin, InputIterator pnts_end,
  * it holds \f$ n \cdot p + d = 0\f$. The Newell algorithm is described in
  * \cite Ericson:2004:RCD:1121584 .
  * @param pnts points of a closed polyline describing a polygon
- * @param plane_normal the normal of the plane the polygon is located in
- * @param d parameter from the plane equation
+ * @return pair of plane_normal and the parameter d: the normal of the plane the
+ * polygon is located in, parameter d from the plane equation
  */
 template <class T_POINT>
-void getNewellPlane (const std::vector<T_POINT*>& pnts,
-                     MathLib::Vector3 &plane_normal,
-                     double& d);
+std::pair<Eigen::Vector3d, double> getNewellPlane(
+    const std::vector<T_POINT*>& pnts);
 
-/** Same as getNewellPlane(pnts, plane_normal, d).
+/** Same as getNewellPlane(pnts).
  */
 template <class T_POINT>
-std::pair<MathLib::Vector3, double> getNewellPlane(const std::vector<T_POINT>& pnts);
+std::pair<Eigen::Vector3d, double> getNewellPlane(
+    const std::vector<T_POINT>& pnts);
 
 /**
  * Computes a rotation matrix that rotates the given 2D normal vector parallel to X-axis
@@ -95,7 +94,7 @@ void compute2DRotationMatrixToX(MathLib::Vector3 const& v, T_MATRIX & rot_mat);
  * @param rot_mat  a 3x3 rotation matrix
  */
 template <class T_MATRIX>
-void compute3DRotationMatrixToX(MathLib::Vector3  const& v, T_MATRIX & rot_mat);
+void compute3DRotationMatrixToX(MathLib::Vector3 const& v, T_MATRIX& rot_mat);
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to
@@ -104,7 +103,7 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v, T_MATRIX & rot_mat);
  * @param rot_mat 3x3 rotation matrix
  */
 template <class T_MATRIX>
-void computeRotationMatrixToXY(MathLib::Vector3 const& n, T_MATRIX& rot_mat);
+void computeRotationMatrixToXY(Eigen::Vector3d const& n, T_MATRIX& rot_mat);
 
 /**
  * rotate points according to the rotation matrix
@@ -113,9 +112,8 @@ void computeRotationMatrixToXY(MathLib::Vector3 const& n, T_MATRIX& rot_mat);
  * @param pnts_end Iterator pointing to the element following the last element in a vector of points to be rotated
  */
 template <typename InputIterator>
-void rotatePoints(
-        MathLib::DenseMatrix<double> const& rot_mat,
-        InputIterator pnts_begin, InputIterator pnts_end);
+void rotatePoints(Eigen::Matrix3d const& rot_mat, InputIterator pnts_begin,
+                  InputIterator pnts_end);
 
 /**
  * rotate points according to the rotation matrix
@@ -123,8 +121,7 @@ void rotatePoints(
  * @param pnts vector of points
  */
 template <typename P>
-void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
-    std::vector<P*> const& pnts);
+void rotatePoints(Eigen::Matrix3d const& rot_mat, std::vector<P*> const& pnts);
 
 /**
  * rotate points to X-Y plane
@@ -132,7 +129,7 @@ void rotatePoints(MathLib::DenseMatrix<double> const& rot_mat,
  * Points are rotated using a rotation matrix computed from the first three points
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
-MathLib::DenseMatrix<double> rotatePointsToXY(std::vector<GeoLib::Point*> &pnts);
+Eigen::Matrix3d rotatePointsToXY(std::vector<GeoLib::Point*>& pnts);
 
 /**
  * rotate points to X-Y plane
@@ -144,10 +141,10 @@ MathLib::DenseMatrix<double> rotatePointsToXY(std::vector<GeoLib::Point*> &pnts)
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
 template <typename InputIterator1, typename InputIterator2>
-MathLib::DenseMatrix<double> rotatePointsToXY(InputIterator1 p_pnts_begin,
-                                              InputIterator1 p_pnts_end,
-                                              InputIterator2 r_pnts_begin,
-                                              InputIterator2 r_pnts_end);
+Eigen::Matrix3d rotatePointsToXY(InputIterator1 p_pnts_begin,
+                                 InputIterator1 p_pnts_end,
+                                 InputIterator2 r_pnts_begin,
+                                 InputIterator2 r_pnts_end);
 
 /**
  * test for intersections of the line segments of the Polyline
@@ -168,7 +165,7 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
  * @param w second vector
  * @return true if the vectors are in parallel, else false
 */
-bool parallel(MathLib::Vector3 v, MathLib::Vector3 w);
+bool parallel(Eigen::Vector3d v, Eigen::Vector3d w);
 
 /**
  * A line segment is given by its two end-points. The function checks,
@@ -224,7 +221,7 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
  * @return a rotated polygon
  */
 GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
-    MathLib::Vector3 & plane_normal);
+                                  Eigen::Vector3d& plane_normal);
 
 /// Sorts the vector of segments such that the \f$i\f$-th segment is connected
 /// with the \f$i+1\f$st segment, i.e. the end point of the \f$i\f$-th segment

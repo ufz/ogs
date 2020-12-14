@@ -27,7 +27,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
     std::vector<MeshLib::Node*> const& nodes, GeoLib::Polygon const& polygon)
 {
     // *** rotate polygon to xy_plane
-    MathLib::Vector3 normal;
+    Eigen::Vector3d normal;
     GeoLib::Polygon rot_polygon(GeoLib::rotatePolygonToXY(polygon, normal));
 
     // *** rotate mesh nodes to xy-plane
@@ -38,7 +38,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
         rotated_nodes.push_back(new GeoLib::Point(*node, node->getID()));
     }
     // 2 rotate the Points
-    MathLib::DenseMatrix<double> rot_mat(3, 3);
+    Eigen::Matrix3d rot_mat;
     GeoLib::computeRotationMatrixToXY(normal, rot_mat);
     GeoLib::rotatePoints(rot_mat, rotated_nodes);
     // 3 set z coord to zero

@@ -193,13 +193,22 @@ void rotateGeometryToXY(std::vector<GeoLib::Point*>& points,
                         MathLib::DenseMatrix<double>& rotation_matrix,
                         double& z_shift)
 {
-    MathLib::Vector3 plane_normal;
-    double d;
     // compute the plane normal
-    GeoLib::getNewellPlane(points.begin(), points.end(), plane_normal, d);
+    auto const [plane_normal, d] =
+        GeoLib::getNewellPlane(points.begin(), points.end());
     // rotate points into x-y-plane
-    GeoLib::computeRotationMatrixToXY(plane_normal, rotation_matrix);
-    GeoLib::rotatePoints(rotation_matrix, points.begin(), points.end());
+    // Todo (TF) Remove when rotateGeometryToXY uses Eigen for rot_mat
+    Eigen::Matrix3d rotation_matrix_;
+    GeoLib::computeRotationMatrixToXY(plane_normal, rotation_matrix_);
+    GeoLib::rotatePoints(rotation_matrix_, points.begin(), points.end());
+    // Todo (TF) Remove when rotateGeometryToXY uses Eigen for rot_mat
+    for (int r = 0; r < 3; r++)
+    {
+        for (int c = 0; c < 3; c++)
+        {
+            rotation_matrix(r, c) = rotation_matrix_(r, c);
+        }
+    }
 
     GeoLib::AABB aabb(points.begin(), points.end());
     z_shift = (aabb.getMinPoint()[2] + aabb.getMaxPoint()[2]) / 2.0;
@@ -268,8 +277,16 @@ void rotateMesh(MeshLib::Mesh& mesh,
     std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
     std::for_each(nodes.begin(), nodes.end(),
                   [z_shift](MeshLib::Node* n) { (*n)[2] += z_shift; });
-    MathLib::DenseMatrix<double> inverse_rot_mat = *rot_mat.transpose();
-    GeoLib::rotatePoints(inverse_rot_mat, nodes.begin(), nodes.end());
+    Eigen::Matrix3d rot_mat_eigen;
+    // Todo (TF) Remove when rotateMesh uses Eigen for rot_mat
+    for (int r = 0; r < 3; r++)
+    {
+        for (int c = 0; c < 3; c++)
+        {
+            rot_mat_eigen(r, c) = rot_mat(r, c);
+        }
+    }
+    GeoLib::rotatePoints(rot_mat_eigen.transpose(), nodes.begin(), nodes.end());
 }
 
 /// removes line elements from mesh such that only triangles remain

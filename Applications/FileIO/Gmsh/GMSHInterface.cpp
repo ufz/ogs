@@ -33,6 +33,19 @@ namespace FileIO
 {
 namespace GMSH
 {
+static std::ostream& operator<<(std::ostream& os,
+                                std::vector<GMSHPoint*> const& points)
+{
+    for (auto& point : points)
+    {
+        if (point)
+        {
+            os << *point << "\n";
+        }
+    }
+    return os;
+}
+
 GMSHInterface::GMSHInterface(
     GeoLib::GEOObjects& geo_objs, bool /*include_stations_as_constraints*/,
     GMSH::MeshDensityAlgorithm const mesh_density_algorithm,
@@ -218,7 +231,9 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     // *** finally write data :-)
-    writePoints(out);
+    GeoLib::rotatePoints(_inverse_rot_mat, _gmsh_pnts);
+    out << _gmsh_pnts;
+
     std::size_t pnt_id_offset(_gmsh_pnts.size());
     for (auto* polygon_tree : _polygon_tree_list)
     {
@@ -237,21 +252,6 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     return 0;
-}
-
-void GMSHInterface::writePoints(std::ostream& out) const
-{
-    for (auto & gmsh_pnt : _gmsh_pnts) {
-        // reverse rotation
-        if (gmsh_pnt) {
-            double* tmp = _inverse_rot_mat * gmsh_pnt->getCoords();
-            (*gmsh_pnt)[0] = tmp[0];
-            (*gmsh_pnt)[1] = tmp[1];
-            (*gmsh_pnt)[2] = tmp[2];
-            delete [] tmp;
-            out << *gmsh_pnt << "\n";
-        }
-    }
 }
 
 } // end namespace GMSH

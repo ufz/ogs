@@ -12,13 +12,12 @@
 #include "gtest/gtest.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
-#include "MathLib/Vector3.h"
 
 TEST(GeoLib, TestParallel)
 {
     // parallel vectors
-    MathLib::Vector3 v(0.0, 1.0, 2.0);
-    MathLib::Vector3 w(0.0, 2.0, 4.0);
+    Eigen::Vector3d v(0.0, 1.0, 2.0);
+    Eigen::Vector3d w(0.0, 2.0, 4.0);
     EXPECT_TRUE(GeoLib::parallel(v,w));
     EXPECT_TRUE(GeoLib::parallel(w,v));
 
