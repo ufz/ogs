@@ -47,6 +47,9 @@ endif()
 if(OGS_USE_EIGEN)
     target_compile_definitions(MathLib PUBLIC OGS_USE_EIGEN)
 endif()
+if(CVODE_FOUND)
+    target_compile_definitions(MathLib PUBLIC CVODE_FOUND)
+endif()
 
 target_link_libraries(MathLib
     PUBLIC

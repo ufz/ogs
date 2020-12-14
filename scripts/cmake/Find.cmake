@@ -178,7 +178,6 @@ endif()
 ## Sundials cvode ode-solver library
 if(OGS_USE_CVODE)
     find_package(CVODE REQUIRED)
-    add_definitions(-DCVODE_FOUND)
 endif()
 
 find_package(Filesystem REQUIRED COMPONENTS Final Experimental)
