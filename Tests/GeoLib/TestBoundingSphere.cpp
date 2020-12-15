@@ -18,6 +18,7 @@
 
 #include "GeoLib/MinimalBoundingSphere.h"
 #include "MathLib/Point3d.h"
+#include "MathLib/Vector3.h"
 
 TEST(GeoLib, TestBoundingSphere)
 {
@@ -111,20 +112,6 @@ TEST(GeoLib, TestBoundingSphere)
     ASSERT_NEAR(0.6, center[2], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.9273, s.getRadius(), 0.0001);
     }
-
-    /// Calculates the bounding sphere of points on a bounding sphere
-    auto sphere_points = std::unique_ptr<
-        std::vector<MathLib::Point3d*>>(s.getRandomSpherePoints(1000));
-    GeoLib::MinimalBoundingSphere t(*sphere_points);
-    for (auto p : *sphere_points)
-    {
-        delete p;
-    }
-    MathLib::Point3d center = s.getCenter();
-    ASSERT_NEAR(0.5, center[0], std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(0.5, center[1], std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(0.6, center[2], std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(0.9273, s.getRadius(), 0.0001);
 
     std::for_each(pnts.begin(), pnts.end(),
         std::default_delete<MathLib::Point3d>());

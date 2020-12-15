@@ -302,31 +302,37 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     MathLib::Point3d const& c, MathLib::Point3d const& p,
     MathLib::Point3d const& q)
 {
-    const MathLib::Vector3 pq(p, q);
-    const MathLib::Vector3 pa(p, a);
-    const MathLib::Vector3 pb(p, b);
-    const MathLib::Vector3 pc(p, c);
+    auto const va = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
+    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
+    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
+    auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
 
-    double u (MathLib::scalarTriple(pq, pc, pb));
+    Eigen::Vector3d const pq = vq - vp;
+    Eigen::Vector3d const pa = va - vp;
+    Eigen::Vector3d const pb = vb - vp;
+    Eigen::Vector3d const pc = vc - vp;
+
+    double u(MathLib::scalarTriple(pq, pc, pb));
     if (u < 0)
     {
         return nullptr;
     }
-    double v (MathLib::scalarTriple(pq, pa, pc));
+    double v(MathLib::scalarTriple(pq, pa, pc));
     if (v < 0)
     {
         return nullptr;
     }
-    double w (MathLib::scalarTriple(pq, pb, pa));
+    double w(MathLib::scalarTriple(pq, pb, pa));
     if (w < 0)
     {
         return nullptr;
     }
 
-    const double denom (1.0/(u+v+w));
-    u*=denom;
-    v*=denom;
-    w*=denom;
+    const double denom(1.0 / (u + v + w));
+    u *= denom;
+    v *= denom;
+    w *= denom;
     return std::make_unique<GeoLib::Point>(u * a[0] + v * b[0] + w * c[0],
                                            u * a[1] + v * b[1] + w * c[1],
                                            u * a[2] + v * b[2] + w * c[2]);
