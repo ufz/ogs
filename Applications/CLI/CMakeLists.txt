@@ -64,7 +64,7 @@ target_link_libraries(ogs
 target_compile_definitions(ogs
     PRIVATE
     $<$<BOOL:${USE_INSITU}>:USE_INSITU>
-    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
 )
 
 # ---- Tests ----

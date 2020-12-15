@@ -20,7 +20,7 @@ target_link_libraries(ApplicationsLib
 target_compile_definitions(ApplicationsLib
     PUBLIC
     $<$<BOOL:${USE_LIS}>:USE_LIS>
-    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
 )
 
 # Set cpp definitions if the cmake option is enabled for the given process.

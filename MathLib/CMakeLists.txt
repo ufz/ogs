@@ -57,7 +57,7 @@ endif()
 target_compile_definitions(MathLib
     PUBLIC
     $<$<BOOL:${USE_LIS}>:USE_LIS>
-    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
     $<$<BOOL:${OGS_USE_EIGEN}>:OGS_USE_EIGEN>
     $<$<BOOL:${CVODE_FOUND}>:CVODE_FOUND>
     PRIVATE

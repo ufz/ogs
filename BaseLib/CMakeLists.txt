@@ -18,5 +18,5 @@ target_link_libraries(BaseLib PUBLIC Boost::boost
 
 target_compile_definitions(BaseLib
     PUBLIC $<$<BOOL:${OGS_FATAL_ABORT}>:OGS_FATAL_ABORT>
-    PRIVATE $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    PRIVATE $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
 )

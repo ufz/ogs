@@ -42,7 +42,7 @@ target_link_libraries(ProcessLib
 
 target_compile_definitions(ProcessLib
     PUBLIC
-    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
     $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
     # Enabled elements
     OGS_MAX_ELEMENT_DIM=${OGS_MAX_ELEMENT_DIM}

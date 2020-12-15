@@ -38,7 +38,7 @@ target_link_libraries(
 
 target_compile_definitions(MeshLib
     PUBLIC
-    $<$<BOOL:${USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
     $<$<BOOL:$ENV{VTK_USE_64BIT_IDS}>:VTK_USE_64BIT_IDS>
     PRIVATE
     $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
