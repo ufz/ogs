@@ -24,6 +24,7 @@
 #include "CreateDupuitPermeability.h"
 #include "CreateExponential.h"
 #include "CreateIdealGasLaw.h"
+#include "CreateKozenyCarmanModel.h"
 #include "CreateLinear.h"
 #include "CreateParameter.h"
 #include "CreatePermeabilityMohrCoulombFailureIndexModel.h"

@@ -89,6 +89,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             geometry_dimension, config, parameters, local_coordinate_system);
     }
 
+    if (boost::iequals(property_type, "KozenyCarman"))
+    {
+        return createKozenyCarmanModel(config, parameters);
+    }
+
     if (boost::iequals(property_type, "PermeabilityOrthotropicPowerLaw"))
     {
         return createPermeabilityOrthotropicPowerLaw(config,

@@ -309,6 +309,8 @@ public:
             porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
+            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                porosity;
 
             auto const& retardation_factor =
                 component
@@ -507,6 +509,8 @@ public:
             porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
+            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                porosity;
 
             // Use the fluid density model to compute the density
             // TODO: Concentration of which component as one of arguments for
@@ -625,6 +629,8 @@ public:
             porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
+            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                porosity;
 
             auto const& retardation_factor =
                 component
@@ -802,6 +808,7 @@ public:
             auto const& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
+            auto const& porosity = ip_data.porosity;
 
             pos.setIntegrationPoint(ip);
 
@@ -815,6 +822,8 @@ public:
                 MaterialPropertyLib::Variable::concentration)] = C_int_pt;
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                porosity;
 
             // TODO (naumov) Temporary value not used by current material
             // models. Need extension of secondary variables interface.
