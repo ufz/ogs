@@ -14,8 +14,7 @@
 #include "BaseLib/StringTools.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/IO/XDMF/Xdmf3Writer.h"
-#include "MeshLib/IO/XDMF/transformData.h"
+#include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
 #include "MeshLib/Mesh.h"
 
 namespace MeshLib::IO
@@ -46,10 +45,8 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     if (file_path.extension().string() == ".xdmf")
     {
         auto writer =
-            std::make_unique<MeshLib::IO::Xdmf3Writer>(MeshLib::IO::Xdmf3Writer(
-                file_path, MeshLib::IO::transformGeometry(mesh),
-                MeshLib::IO::transformTopology(mesh),
-                MeshLib::IO::transformAttributes(mesh), 0));
+            std::make_unique<MeshLib::IO::XdmfHdfWriter>(MeshLib::IO::XdmfHdfWriter(
+                 mesh, file_path, 0));
         // \TODO Errorhandling, Change data model into static and time depended,
         // then is is not neccessary to give time step 0 a special treatment
         // here

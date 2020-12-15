@@ -38,13 +38,6 @@ std::unique_ptr<Output> createOutput(
                 {"VTK", OutputType::vtk}, {"XDMF", OutputType::xdmf}};
             auto type = outputType_to_enum.at(output_type);
 
-#ifdef USE_PETSC
-            if (type == ProcessLib::OutputType::xdmf)
-            {
-                OGS_FATAL("Parallel XDMF output is not supported (yet).");
-            }
-#endif
-
             return type;
         }
         catch (std::out_of_range& e)
