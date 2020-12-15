@@ -13,7 +13,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y yarn \
   && rm -rf /var/lib/apt/lists/*
 RUN yarn global add netlify-cli
-ENV HUGO_VERSION=0.74.3
+ENV HUGO_VERSION=0.79.0
 RUN curl -fSL -O "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_Linux-64bit.deb" \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y /hugo_extended_${HUGO_VERSION}_Linux-64bit.deb \
   && rm /hugo_extended_${HUGO_VERSION}_Linux-64bit.deb
