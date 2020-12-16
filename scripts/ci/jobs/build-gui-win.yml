@@ -8,9 +8,9 @@ build gui win:
       allow_failure: true
   variables:
     BUILD_DIR: build-gui-win
-    BUILD_CTEST: "false"
     CMAKE_ARGS: >-
       -DOGS_$USE_PYTHON
+      -DOGS_BUILD_CLI=OFF
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
       -DOGS_BUILD_SWMM=ON

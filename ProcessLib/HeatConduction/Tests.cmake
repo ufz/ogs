@@ -170,6 +170,7 @@ AddTest(
 AddTest(
     NAME 1D_HeatConduction_dirichlet_SourceTerm_PETSc
     PATH Parabolic/T/1D_dirichlet_source-term
+    EXECUTABLE ogs
     EXECUTABLE_ARGS line_1_line_1e2_source_term.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1

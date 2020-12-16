@@ -19,7 +19,7 @@
     <PPoints>
       <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
     </PPoints>
-    <Piece Source="square_1e1_neumann_pcs_0_ts_1_t_1_000000_0.vtu"/>
-    <Piece Source="square_1e1_neumann_pcs_0_ts_1_t_1_000000_1.vtu"/>
+    <Piece Source="square_1e1_neumann_ts_1_t_1_000000_0.vtu"/>
+    <Piece Source="square_1e1_neumann_ts_1_t_1_000000_1.vtu"/>
   </PUnstructuredGrid>
 </VTKFile>

@@ -3,6 +3,15 @@ if(OGS_USE_XDMF)
     add_subdirectory(xdmfdiff)
 endif()
 
+### ctest dependencies
+foreach(tool vtkdiff xdmfdiff)
+    if(TARGET ${tool})
+        list(APPEND test_dependencies ${tool})
+    endif()
+endforeach()
+add_dependencies(ctest ${test_dependencies})
+add_dependencies(ctest-large ${test_dependencies})
+
 ### testrunner ###
 
 # VS2012 doesn't support correctly the tuples yet See

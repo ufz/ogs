@@ -42,8 +42,6 @@
 #         the benchmark output directory.
 
 function (AddTest)
-    # settings
-    set(LARGE_RUNTIME 60)
 
     # parse arguments
     set(options DISABLED)
@@ -60,7 +58,7 @@ function (AddTest)
 
     # set defaults
     if(NOT DEFINED AddTest_EXECUTABLE)
-        set(AddTest_EXECUTABLE ogs)
+        message(FATAL_ERROR "Test ${AddTest_NAME}: No EXECUTABLE set!")
     endif()
     if (NOT DEFINED AddTest_REQUIREMENTS)
         set(AddTest_REQUIREMENTS TRUE)
@@ -77,11 +75,16 @@ function (AddTest)
             ${AddTest_SOURCE_PATH}/${AddTest_EXECUTABLE_ARGS})
     endif()
 
-    if(${AddTest_RUNTIME} GREATER ${LARGE_RUNTIME})
+    if(${AddTest_RUNTIME} GREATER ${ogs.ctest.large_runtime})
         string(PREPEND AddTest_NAME "LARGE_")
     endif()
 
     # --- Implement wrappers ---
+    # check if exe is part of build
+    if(NOT TARGET ${AddTest_EXECUTABLE})
+        set(DISABLED_TESTS_LOG "${DISABLED_TESTS_LOG}\nTest exe ${AddTest_EXECUTABLE} not built! Disabling test ${AddTest_NAME}." CACHE INTERNAL "")
+        return()
+    endif()
     # check requirements, disable if not met
     if(${AddTest_REQUIREMENTS})
         message(DEBUG "Enabling test ${AddTest_NAME}.")
@@ -285,10 +288,8 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         LABELS "${DIR_LABELS}"
     )
 
-    if(NOT "${AddTest_EXECUTABLE}" STREQUAL "ogs" AND TARGET ${AddTest_EXECUTABLE})
-        add_dependencies(ctest ${AddTest_EXECUTABLE})
-        add_dependencies(ctest-large ${AddTest_EXECUTABLE})
-    endif()
+    add_dependencies(ctest ${AddTest_EXECUTABLE})
+    add_dependencies(ctest-large ${AddTest_EXECUTABLE})
 
     if(AddTest_PYTHON_PACKAGES)
         if(POETRY)

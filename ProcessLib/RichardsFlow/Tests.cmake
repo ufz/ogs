@@ -95,6 +95,7 @@ AddTest(
 AddTest(
     NAME Parallel_RichardsMechanics_RichardsFlow_2d_richardsflow
     PATH RichardsMechanics
+    EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_richardsflow.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 1

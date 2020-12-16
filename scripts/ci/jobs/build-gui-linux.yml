@@ -11,9 +11,9 @@ build gui linux:
       allow_failure: true
   variables:
     BUILD_DIR: "build-gui-linux"
-    BUILD_CTEST: "false"
     CMAKE_ARGS: >-
       -DOGS_USE_CONAN=OFF
+      -DOGS_BUILD_CLI=OFF
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
       -DOGS_USE_NETCDF=ON

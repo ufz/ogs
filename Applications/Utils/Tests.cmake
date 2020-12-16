@@ -321,6 +321,9 @@ if(PARSL AND NOT OGS_USE_MPI)
         set_tests_properties(parsl_ExtractBoundary PROPERTIES DEPENDS snakemake_ExtractBoundary)
     endif()
 endif()
+if(SNAKEMAKE OR PARSL)
+    add_dependencies(ctest ExtractBoundary)
+endif()
 
 AddTest(
     NAME partmesh_with_field_data
@@ -381,7 +384,7 @@ endif()
 if(OGS_BUILD_GUI)
     AddTest(
         NAME RemoveGhostData_Test
-        PATH MeshLib/
+        PATH MeshLib
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
         EXECUTABLE RemoveGhostData
         EXECUTABLE_ARGS -i Mesh3D.pvtu -o ${Data_BINARY_DIR}/MeshLib/RemoveGhostDataOutput.vtu
@@ -393,14 +396,14 @@ if(OGS_BUILD_GUI)
 
     AddTest(
         NAME RemoveGhostData_EllipticSquareTest
-        PATH EllipticPETSc/
-        WORKING_DIRECTORY ${Data_SOURCE_DIR}/PATH EllipticPETSc
+        PATH EllipticPETSc
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/EllipticPETSc
         EXECUTABLE RemoveGhostData
-        EXECUTABLE_ARGS -i square_1e1_neumann_pcs_0_ts_1_t_1_000000.pvtu -o ${Data_BINARY_DIR}/EllipticPETSc/square_1e1_neumann_pcs_0_ts_1_t_1_000000.vtu
+        EXECUTABLE_ARGS -i square_1e1_neumann_ts_1_t_1_000000.pvtu -o ${Data_BINARY_DIR}/EllipticPETSc/square_1e1_neumann_ts_1_t_1_000000.vtu
         REQUIREMENTS NOT OGS_USE_MPI
         TESTER diff
         DIFF_DATA
-        square_1e1_neumann_pcs_0_ts_1_t_1_000000.vtu
+        square_1e1_neumann_ts_1_t_1_000000.vtu
     )
 endif()
 
