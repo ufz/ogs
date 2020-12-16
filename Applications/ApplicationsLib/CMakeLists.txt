@@ -17,6 +17,12 @@ target_link_libraries(ApplicationsLib
                               $<$<BOOL:${OGS_USE_PYTHON}>:pybind11::pybind11>
 )
 
+target_compile_definitions(ApplicationsLib
+    PUBLIC
+    $<$<BOOL:${USE_LIS}>:USE_LIS>
+    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
+)
+
 # Set cpp definitions if the cmake option is enabled for the given process.
 foreach(process ${ProcessesList})
     if(OGS_BUILD_PROCESS_${process})

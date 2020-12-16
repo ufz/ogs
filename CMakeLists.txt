@@ -93,9 +93,6 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
 endif() # GCC AND GPROF_PATH
 
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
-if(OGS_BUILD_GUI)
-    add_definitions(-DOGS_BUILD_GUI)
-endif()
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 if(WIN32)
@@ -175,6 +172,12 @@ option(OGS_ENABLE_ELEMENT_CUBOID
        "Build FEM elements for cuboids (quads, hexahedra)." ON)
 option(OGS_ENABLE_ELEMENT_PRISM "Build FEM elements for prisms." ON)
 option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
+if(NOT OGS_MAX_ELEMENT_DIM MATCHES "^[0-3]$")
+  message(FATAL_ERROR "OGS_MAX_ELEMENT_DIM must be an integer between 0 and 3.")
+endif()
+if(NOT OGS_MAX_ELEMENT_ORDER MATCHES "^[0-9]$")
+  message(FATAL_ERROR "OGS_MAX_ELEMENT_ORDER must be an integer.")
+endif()
 
 option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation."
        OFF)
@@ -187,64 +190,43 @@ endif()
 option(OGS_USE_MFRONT
        "Enable solid material models by MFront (https://tfel.sourceforge.net)"
        OFF)
-if(OGS_USE_MFRONT)
-    add_definitions(-DOGS_USE_MFRONT)
-endif()
 # ---- Definitions ----
 if(OGS_USE_LIS)
-    add_definitions(-DUSE_LIS)
     include_directories(SYSTEM ${LIS_INCLUDE_DIR})
     set(OGS_USE_EIGEN ON)
 endif()
 
 if(OGS_USE_MKL)
-    add_definitions(-DUSE_MKL)
     include_directories(SYSTEM ${MKL_INCLUDE_DIR})
 endif()
 
-if(OGS_USE_PETSC)
-    add_definitions(-DUSE_PETSC)
-endif()
-
-if(OGS_USE_MPI)
-    add_definitions(-DUSE_MPI)
-endif()
-
 # Eigen
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
-endif()
-
-if(EIGEN_NO_DEBUG)
-    add_definitions(-DEIGEN_NO_DEBUG)
-endif()
-
-if(EIGEN_DONT_VECTORIZE)
-    add_definitions(-DEIGEN_DONT_VECTORIZE)
-endif()
-
-if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
-    add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
-endif()
-
 if(OGS_USE_EIGEN)
-    add_definitions(-DOGS_USE_EIGEN)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
+    endif()
+
+    if(EIGEN_NO_DEBUG)
+        add_definitions(-DEIGEN_NO_DEBUG)
+    endif()
+
+    if(EIGEN_DONT_VECTORIZE)
+        add_definitions(-DEIGEN_DONT_VECTORIZE)
+    endif()
+
+    if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
+        add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
+    endif()
+
     if(OGS_USE_EIGEN_UNSUPPORTED)
         add_definitions(-DUSE_EIGEN_UNSUPPORTED)
     endif()
+
     if(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN)
         add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
     endif()
 endif()
 # End Eigen
-
-if(OGS_USE_XDMF)
-    add_definitions(-DOGS_USE_XDMF)
-endif()
-
-if(OGS_FATAL_ABORT)
-    add_definitions(-DOGS_FATAL_ABORT)
-endif()
 
 # Packaging
 include(scripts/cmake/packaging/Pack.cmake)
@@ -252,10 +234,6 @@ include(scripts/cmake/packaging/Pack.cmake)
 # ---- Subdirectories ----
 
 # External projects
-if(OGS_INSITU)
-    add_definitions(-DUSE_INSITU)
-endif()
-
 add_subdirectory(ThirdParty)
 include_directories(
     SYSTEM

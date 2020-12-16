@@ -133,9 +133,6 @@ find_package(LAPACK QUIET)
 
 ## geotiff ##
 find_package(LibGeoTiff)
-if(GEOTIFF_FOUND)
-    add_definitions(-DGEOTIFF_FOUND)
-endif() # GEOTIFF_FOUND
 
 ## lis ##
 if(OGS_USE_LIS)
@@ -161,9 +158,6 @@ if(OGS_USE_PETSC)
     find_package(PETSc ${ogs.minimum_version.petsc} REQUIRED)
 
     include_directories(SYSTEM ${PETSC_INCLUDES})
-
-    add_definitions(-DPETSC_VERSION_NUMBER=PETSC_VERSION_MAJOR*1000+PETSC_VERSION_MINOR*10)
-
 endif()
 
 ## Check MPI package
@@ -181,7 +175,6 @@ endif()
 ## Sundials cvode ode-solver library
 if(OGS_USE_CVODE)
     find_package(CVODE REQUIRED)
-    add_definitions(-DCVODE_FOUND)
 endif()
 
 find_package(Filesystem REQUIRED COMPONENTS Final Experimental)

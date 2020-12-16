@@ -53,3 +53,13 @@ endif()
 if(OGS_USE_CVODE)
     target_link_libraries(MathLib PUBLIC ${CVODE_LIBRARIES})
 endif()
+
+target_compile_definitions(MathLib
+    PUBLIC
+    $<$<BOOL:${USE_LIS}>:USE_LIS>
+    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
+    $<$<BOOL:${OGS_USE_EIGEN}>:OGS_USE_EIGEN>
+    $<$<BOOL:${CVODE_FOUND}>:CVODE_FOUND>
+    PRIVATE
+    $<$<BOOL:${USE_MKL}>:USE_MKL>
+)

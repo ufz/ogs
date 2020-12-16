@@ -15,6 +15,7 @@
 */
 
 #include "PETScLinearSolver.h"
+
 #include "BaseLib/RunTime.h"
 #include "MathLib/LinAlg/LinearSolverOptions.h"
 
@@ -83,12 +84,7 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
     PetscMemoryGetCurrentUsage(&mem1);
 #endif
 
-#if (PETSC_VERSION_NUMBER > 3040)
     KSPSetOperators(_solver, A.getRawMatrix(), A.getRawMatrix());
-#else
-    KSPSetOperators(_solver, A.getRawMatrix(), A.getRawMatrix(),
-                    DIFFERENT_NONZERO_PATTERN);
-#endif
 
     KSPSolve(_solver, b.getRawVector(), x.getRawVector());
 
@@ -187,4 +183,4 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
     return converged;
 }
 
-}  // end of namespace
+}  // namespace MathLib

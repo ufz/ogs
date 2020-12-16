@@ -4,7 +4,6 @@ if(OGS_USE_XDMF)
 endif()
 
 ### testrunner ###
-include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
 
 # VS2012 doesn't support correctly the tuples yet See
 # http://code.google.com/p/googletest/issues/detail?id=412
@@ -54,6 +53,7 @@ target_link_libraries(testrunner
         gtest
         MeshGeoToolsLib
         MaterialLib
+        MathLib
         MeshLib
         NumLib
         ParameterLib
@@ -72,6 +72,7 @@ if(OGS_USE_PETSC)
 endif()
 
 if(OGS_BUILD_GUI)
+    target_compile_definitions(testrunner PUBLIC OGS_BUILD_GUI)
     target_link_libraries(testrunner
         PRIVATE
             GitInfoLib

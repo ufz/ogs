@@ -20,8 +20,6 @@ if(OGS_BUILD_SWMM)
     set(SOURCES ${SOURCES} ${SOURCES_SWMM})
 endif()
 
-include(${PROJECT_SOURCE_DIR}/scripts/cmake/OGSEnabledElements.cmake)
-
 # Create the library
 ogs_add_library(ApplicationsFileIO ${SOURCES})
 target_link_libraries(ApplicationsFileIO

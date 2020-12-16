@@ -15,3 +15,8 @@ target_link_libraries(BaseLib PUBLIC Boost::boost
                                      $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
                                      $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
 )
+
+target_compile_definitions(BaseLib
+    PUBLIC $<$<BOOL:${OGS_FATAL_ABORT}>:OGS_FATAL_ABORT>
+    PRIVATE $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
+)

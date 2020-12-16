@@ -61,6 +61,12 @@ target_link_libraries(ogs
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>
 )
 
+target_compile_definitions(ogs
+    PRIVATE
+    $<$<BOOL:${USE_INSITU}>:USE_INSITU>
+    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
+)
+
 # ---- Tests ----
 add_test(NAME ogs_no_args COMMAND ogs)
 set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
