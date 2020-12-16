@@ -148,36 +148,32 @@ AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) :
     ElementQualityMetric(mesh)
 {}
 
-void AngleSkewMetric::calculateQuality ()
+void AngleSkewMetric::calculateQuality()
 {
-    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
-    const std::size_t nElements (_mesh.getNumberOfElements());
-
-    for (std::size_t k(0); k < nElements; k++)
+    for (auto const e : _mesh.getElements())
     {
-        Element const& elem (*elements[k]);
-        switch (elem.getGeomType())
+        switch (e->getGeomType())
         {
-        case MeshElemType::LINE:
-            _element_quality_metric[k] = -1.0;
-            break;
-        case MeshElemType::TRIANGLE:
-            _element_quality_metric[k] = checkTriangle(elem);
-            break;
-        case MeshElemType::QUAD:
-            _element_quality_metric[k] = checkQuad(elem);
-            break;
-        case MeshElemType::TETRAHEDRON:
-            _element_quality_metric[k] = checkTetrahedron(elem);
-            break;
-        case MeshElemType::HEXAHEDRON:
-            _element_quality_metric[k] = checkHexahedron(elem);
-            break;
-        case MeshElemType::PRISM:
-            _element_quality_metric[k] = checkPrism(elem);
-            break;
-        default:
-            break;
+            case MeshElemType::LINE:
+                _element_quality_metric[e->getID()] = -1.0;
+                break;
+            case MeshElemType::TRIANGLE:
+                _element_quality_metric[e->getID()] = checkTriangle(*e);
+                break;
+            case MeshElemType::QUAD:
+                _element_quality_metric[e->getID()] = checkQuad(*e);
+                break;
+            case MeshElemType::TETRAHEDRON:
+                _element_quality_metric[e->getID()] = checkTetrahedron(*e);
+                break;
+            case MeshElemType::HEXAHEDRON:
+                _element_quality_metric[e->getID()] = checkHexahedron(*e);
+                break;
+            case MeshElemType::PRISM:
+                _element_quality_metric[e->getID()] = checkPrism(*e);
+                break;
+            default:
+                break;
         }
     }
 }
