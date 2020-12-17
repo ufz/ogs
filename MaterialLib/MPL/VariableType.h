@@ -56,7 +56,6 @@ enum class Variable : int
     phase_pressure,
     porosity,
     solid_grain_pressure,
-    strain,
     stress,
     temperature,
     total_stress,
