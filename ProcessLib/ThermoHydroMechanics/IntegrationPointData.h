@@ -86,8 +86,8 @@ struct IntegrationPointData final
                                 MaterialPropertyLib::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 sigma_eff_prev);
-        variable_array_prev[static_cast<int>(
-                                MaterialPropertyLib::Variable::strain)]
+        variable_array_prev[static_cast<int>(MaterialPropertyLib::Variable::
+                                                 mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m_prev);
         variable_array_prev[static_cast<int>(

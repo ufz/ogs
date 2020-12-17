@@ -230,13 +230,15 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+        variables[static_cast<int>(
+                      MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(eps);
 
         variables_prev[static_cast<int>(MaterialPropertyLib::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 sigma_eff_prev);
-        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+        variables_prev[static_cast<int>(
+                           MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 eps_prev);
         variables_prev[static_cast<int>(
@@ -364,13 +366,15 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         eps.noalias() = B * u;
 
-        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+        variables[static_cast<int>(
+                      MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(eps);
 
         variables_prev[static_cast<int>(MaterialPropertyLib::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 sigma_eff_prev);
-        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+        variables_prev[static_cast<int>(
+                           MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 eps_prev);
         variables_prev[static_cast<int>(

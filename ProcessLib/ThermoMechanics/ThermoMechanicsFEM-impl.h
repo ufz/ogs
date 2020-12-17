@@ -220,12 +220,12 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         variables_prev[static_cast<int>(MPL::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 sigma_prev);
-        variables_prev[static_cast<int>(MPL::Variable::strain)]
+        variables_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m_prev);
         variables_prev[static_cast<int>(MPL::Variable::temperature)]
             .emplace<double>(T_ip);
-        variables[static_cast<int>(MPL::Variable::strain)]
+        variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
         variables[static_cast<int>(MPL::Variable::temperature)].emplace<double>(
@@ -429,12 +429,12 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         variables_prev[static_cast<int>(MPL::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 sigma_prev);
-        variables_prev[static_cast<int>(MPL::Variable::strain)]
+        variables_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m_prev);
         variables_prev[static_cast<int>(MPL::Variable::temperature)]
             .emplace<double>(T_ip);
-        variables[static_cast<int>(MPL::Variable::strain)]
+        variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
         variables[static_cast<int>(MPL::Variable::temperature)].emplace<double>(
