@@ -10,7 +10,6 @@
 
 #include "ConfigTreeUtil.h"
 
-#include <boost/bind.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <regex>
 
