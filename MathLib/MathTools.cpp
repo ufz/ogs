@@ -20,12 +20,10 @@ namespace MathLib
 double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
                                  Point3d const& pb, double& lambda, double& d0)
 {
-    auto const a =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pa.getCoords()));
-    auto const b =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pb.getCoords()));
-    auto const p =
-        Eigen::Map<Eigen::Vector3d>(const_cast<double*>(pp.getCoords()));
+    auto const a = Eigen::Map<Eigen::Vector3d const>(pa.getCoords());
+    auto const b = Eigen::Map<Eigen::Vector3d const>(pb.getCoords());
+    auto const p = Eigen::Map<Eigen::Vector3d const>(pp.getCoords());
+
     // g(lambda) = a + lambda v, v = b-a
     Eigen::Vector3d const v = b - a;
 
@@ -42,13 +40,17 @@ double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
     return (p - proj_pnt).norm();
 }
 
-double getAngle (const double p0[3], const double p1[3], const double p2[3])
+double getAngle(Point3d const& p0, Point3d const& p1, Point3d const& p2)
 {
-    const double v0[3] = {p0[0]-p1[0], p0[1]-p1[1], p0[2]-p1[2]};
-    const double v1[3] = {p2[0]-p1[0], p2[1]-p1[1], p2[2]-p1[2]};
+    auto const a = Eigen::Map<Eigen::Vector3d const>(p0.getCoords());
+    auto const b = Eigen::Map<Eigen::Vector3d const>(p1.getCoords());
+    auto const c = Eigen::Map<Eigen::Vector3d const>(p2.getCoords());
+    Eigen::Vector3d const v0 = a - b;
+    Eigen::Vector3d const v1 = c - b;
 
     // apply Cauchy Schwarz inequality
-    return std::acos (scalarProduct<double,3> (v0,v1) / (std::sqrt(scalarProduct<double,3>(v0,v0)) * sqrt(scalarProduct<double,3>(v1,v1))));
+    return std::acos(
+        (v0.transpose() * v1 / (v0.norm() * v1.norm()))(0, 0));
 }
 
 double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
