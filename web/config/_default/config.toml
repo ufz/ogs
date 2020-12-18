@@ -13,142 +13,142 @@ unsafe = true
 style = "monokailight"
 
 [params]
-  alert = ""
+alert = ""
 
 [[menu.main]]
-  name = "Discourse"
-  weight = 10
-  url = "https://discourse.opengeosys.org"
+name = "Discourse"
+weight = 10
+url = "https://discourse.opengeosys.org"
 
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
-  name = "Getting Started"
-  identifier = "getting-started"
-  weight = 1
+name = "Getting Started"
+identifier = "getting-started"
+weight = 1
 
 [[menu.devguide]]
-  name = "Development Workflows"
-  identifier = "development-workflows"
-  weight = 2
+name = "Development Workflows"
+identifier = "development-workflows"
+weight = 2
 
 [[menu.devguide]]
-  name = "Testing"
-  identifier = "testing"
-  weight = 3
+name = "Testing"
+identifier = "testing"
+weight = 3
 
 [[menu.devguide]]
-  name = "Documentation"
-  identifier = "documentation"
-  weight = 4
+name = "Documentation"
+identifier = "documentation"
+weight = 4
 
 [[menu.devguide]]
-  name = "Advanced"
-  identifier = "advanced"
-  weight = 5
+name = "Advanced"
+identifier = "advanced"
+weight = 5
 
 [[menu.devguide]]
-  name = "Troubleshooting"
-  identifier = "troubleshooting"
-  weight = 6
+name = "Troubleshooting"
+identifier = "troubleshooting"
+weight = 6
 
 [[menu.devguide]]
-  name = "Procedures"
-  identifier = "procedures"
-  weight = 7
+name = "Procedures"
+identifier = "procedures"
+weight = 7
 
 # Benchmarks sidebar top-level categories
 [[menu.benchmarks]]
-  name = "Elliptic"
-  identifier = "elliptic"
-  weight = 1
+name = "Elliptic"
+identifier = "elliptic"
+weight = 1
 [[menu.benchmarks]]
-  name = "Small Deformations"
-  identifier = "small-deformations"
-  weight = 2
+name = "Small Deformations"
+identifier = "small-deformations"
+weight = 2
 [[menu.benchmarks]]
-  name = "Heatconduction"
-  identifier = "heatconduction"
-  weight = 3
+name = "Heatconduction"
+identifier = "heatconduction"
+weight = 3
 [[menu.benchmarks]]
-  name = "Heat Transport BHE"
-  identifier = "heat-transport-bhe"
-  weight = 12
+name = "Heat Transport BHE"
+identifier = "heat-transport-bhe"
+weight = 12
 [[menu.benchmarks]]
-  name = "Richards Flow"
-  identifier = "richards-flow"
-  weight = 4
+name = "Richards Flow"
+identifier = "richards-flow"
+weight = 4
 [[menu.benchmarks]]
-  name = "Richards-Mechanics"
-  identifier = "richards-mechanics"
-  weight = 5
+name = "Richards-Mechanics"
+identifier = "richards-mechanics"
+weight = 5
 [[menu.benchmarks]]
-  name = "Hydro-Mechanics"
-  identifier = "hydro-mechanics"
-  weight = 6
+name = "Hydro-Mechanics"
+identifier = "hydro-mechanics"
+weight = 6
 [[menu.benchmarks]]
-  name = "Thermo-Hydro-Mechanics"
-  identifier = "thermo-hydro-mechanics"
-  weight = 8
+name = "Thermo-Hydro-Mechanics"
+identifier = "thermo-hydro-mechanics"
+weight = 8
 [[menu.benchmarks]]
-  name = "Hydro-Thermal"
-  identifier = "hydro-thermal"
-  weight = 7
+name = "Hydro-Thermal"
+identifier = "hydro-thermal"
+weight = 7
 [[menu.benchmarks]]
-  name = "Liquid Flow"
-  identifier = "liquid-flow"
-  weight = 9
+name = "Liquid Flow"
+identifier = "liquid-flow"
+weight = 9
 [[menu.benchmarks]]
-  name = "Two-phase Flow"
-  identifier = "two-phase-flow"
-  weight = 10
+name = "Two-phase Flow"
+identifier = "two-phase-flow"
+weight = 10
 [[menu.benchmarks]]
-  name = "Python Boundary Conditions"
-  identifier = "python-bc"
-  weight = 11
+name = "Python Boundary Conditions"
+identifier = "python-bc"
+weight = 11
 
 # Quickstart sidebar top-level categories
 [[menu.userguide]]
-  name = "Basics"
-  identifier = "basics"
-  weight = 1
+name = "Basics"
+identifier = "basics"
+weight = 1
 [[menu.userguide]]
-  name = "Post Processing"
-  identifier = "post-processing"
-  weight = 2
+name = "Post Processing"
+identifier = "post-processing"
+weight = 2
 [[menu.userguide]]
-  name = "Troubleshooting"
-  identifier = "troubleshooting"
-  weight = 3
+name = "Troubleshooting"
+identifier = "troubleshooting"
+weight = 3
 [[menu.userguide]]
-  name = "Process Dependent Configuration"
-  identifier = "process-dependent-configuration"
-  weight = 4
+name = "Process Dependent Configuration"
+identifier = "process-dependent-configuration"
+weight = 4
 
 # Tools sidebar top-level categories
 [[menu.tools]]
-  name = "Getting Started"
-  identifier = "getting-started"
-  weight = 1
+name = "Getting Started"
+identifier = "getting-started"
+weight = 1
 
 [[menu.tools]]
-  name = "Meshing: Bulk meshes"
-  identifier = "meshing"
-  weight = 2
+name = "Meshing: Bulk meshes"
+identifier = "meshing"
+weight = 2
 
 [[menu.tools]]
-  name = "Meshing: Subdomains"
-  identifier = "meshing-submeshes"
-  weight = 3
+name = "Meshing: Subdomains"
+identifier = "meshing-submeshes"
+weight = 3
 
 [[menu.tools]]
-  name = "Model Preparation"
-  identifier = "model-preparation"
-  weight = 4
+name = "Model Preparation"
+identifier = "model-preparation"
+weight = 4
 
 [[menu.tools]]
-  name = "Workflows"
-  identifier = "workflows"
-  weight = 5
+name = "Workflows"
+identifier = "workflows"
+weight = 5
 
 # docs
 [[menu.docs]]
@@ -159,7 +159,7 @@ post = "Manual for the graphical user interface for OpenGeoSys, the Data Explore
 [[menu.docs]]
 name = "Source code documentation"
 url = "https://doxygen.opengeosys.org/"
-post = "The OGS source code documentation is automatically generated right from the code itself via Doxygen and is nice reference while coding."
+post = "The OGS source code documentation is automatically generated right from the code itself via Doxygen and is a nice reference while coding."
 
 [[menu.docs]]
 name = "Styleguide"

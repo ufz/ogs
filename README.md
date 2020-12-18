@@ -19,7 +19,7 @@ waste deposition. OGS is comprised of the THMC-simulator (simply referred to as
 
 - Good starting point for users as well as for developers is the [documentation][documentation]
 - Check your code against our [styleguide](http://ufz.github.io/styleguide/cppguide.xml)
-- Have a look at the [source code documentation][docs]
+- Have a look at the [source code documentation for the current release][docs] or [for the latest commit][docs-latest]
 
 ## License ##
 
@@ -29,4 +29,5 @@ OpenGeoSys is distributed under the Modified BSD License. See the
 [ogs]: https://www.opengeosys.org
 [documentation]: https://www.opengeosys.org/docs/
 [docs]: https://doxygen.opengeosys.org
+[docs-latest]: https://doxygen-latest.opengeosys.org
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt
