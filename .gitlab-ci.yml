@@ -2,6 +2,7 @@ stages:
   - preparation
   - build
   - check
+  - release
   - package
 
 variables:
