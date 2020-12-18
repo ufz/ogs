@@ -60,3 +60,4 @@ include:
   - local: '/scripts/ci/jobs/clang-tidy.yml'
   - local: '/scripts/ci/jobs/web.yml'
   - local: '/scripts/ci/jobs/container.yml'
+  - local: '/scripts/ci/jobs/release.yml'
