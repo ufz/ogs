@@ -69,12 +69,6 @@ public:
     /// Get number of elements the node is part of.
     std::size_t getNumberOfElements() const { return _elements.size(); }
 
-    /// Shift the node according to the displacement vector v.
-    Node operator-(MathLib::Vector3 const& v) const
-    {
-        return Node(_x[0]-v[0], _x[1]-v[1], _x[2]-v[2]);
-    }
-
 protected:
     /// Update coordinates of a node.
     /// This method automatically also updates the areas/volumes of all connected elements.

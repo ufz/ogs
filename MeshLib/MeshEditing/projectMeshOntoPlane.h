@@ -39,16 +39,20 @@ MeshLib::Mesh* projectMeshOntoPlane(MeshLib::Mesh const& mesh,
 {
     std::size_t const n_nodes (mesh.getNumberOfNodes());
     std::vector<MeshLib::Node*> const& nodes (mesh.getNodes());
-    MathLib::Vector3 normal (plane_normal);
+    Eigen::Vector3d normal({plane_normal[0], plane_normal[1], plane_normal[2]});
     normal.normalize();
     std::vector<MeshLib::Node*> new_nodes;
     new_nodes.reserve(n_nodes);
     for (std::size_t i=0; i<n_nodes; ++i)
     {
-        MeshLib::Node const& node(*nodes[i]);
-        MathLib::Vector3 const v(plane_origin, node);
-        double const dist (MathLib::scalarProduct(v,normal));
-        new_nodes.push_back(new MeshLib::Node(node - dist * normal));
+        auto const node =
+            Eigen::Map<Eigen::Vector3d const>(nodes[i]->getCoords());
+        Eigen::Vector3d const v =
+            node - Eigen::Map<Eigen::Vector3d const>(plane_origin.getCoords());
+        double const dist(v.dot(normal));
+        Eigen::Vector3d const new_node = node - dist * normal;
+        new_nodes.push_back(
+            new MeshLib::Node(new_node[0], new_node[1], new_node[2]));
     }
 
     return new MeshLib::Mesh("Projected_Mesh", new_nodes,
