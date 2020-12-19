@@ -91,8 +91,4 @@ double calcProjPntToLineAndDists(MathLib::Point3d const& pp,
  * @return the angle between the edges
  */
 double getAngle(Point3d const& p0, Point3d const& p1, Point3d const& p2);
-
-/// Calculates the scalar triple (u x v) . w
-double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
-                    Eigen::Vector3d const& w);
 }  // namespace MathLib
