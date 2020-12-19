@@ -12,7 +12,6 @@
 #include <Eigen/Dense>
 
 #include "Point3d.h"
-#include "Vector3.h"
 
 #include "GeometricBasics.h"
 
@@ -28,10 +27,10 @@ double orientation3d(MathLib::Point3d const& p,
     auto const pb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
     auto const pc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
 
-    Eigen::Vector3d const ap = pp - pa;
-    Eigen::Vector3d const bp = pp - pb;
-    Eigen::Vector3d const cp = pp - pc;
-    return MathLib::scalarTriple(bp, cp, ap);
+    Eigen::Vector3d const u = pp - pa;
+    Eigen::Vector3d const v = pp - pb;
+    Eigen::Vector3d const w = pp - pc;
+    return u.cross(v).dot(w);
 }
 
 double calcTetrahedronVolume(MathLib::Point3d const& a,
@@ -43,19 +42,22 @@ double calcTetrahedronVolume(MathLib::Point3d const& a,
     auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
     auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
     auto const vd = Eigen::Map<Eigen::Vector3d const>(d.getCoords());
-    Eigen::Vector3d const ab = vb - va;
-    Eigen::Vector3d const ac = vc - va;
-    Eigen::Vector3d const ad = vd - va;
-    return std::abs(MathLib::scalarTriple(ac, ad, ab)) / 6.0;
+    Eigen::Vector3d const w = vb - va;
+    Eigen::Vector3d const u = vc - va;
+    Eigen::Vector3d const v = vd - va;
+    return std::abs(u.cross(v).dot(w)) / 6.0;
 }
 
 double calcTriangleArea(MathLib::Point3d const& a, MathLib::Point3d const& b,
                         MathLib::Point3d const& c)
 {
-    MathLib::Vector3 const u(a, c);
-    MathLib::Vector3 const v(a, b);
-    MathLib::Vector3 const w(MathLib::crossProduct(u, v));
-    return 0.5 * w.getLength();
+    auto const va = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
+    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
+    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    Eigen::Vector3d const u = vc - va;
+    Eigen::Vector3d const v = vb - va;
+    Eigen::Vector3d const w = u.cross(v);
+    return 0.5 * w.norm();
 }
 
 bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
@@ -123,17 +125,20 @@ bool gaussPointInTriangle(MathLib::Point3d const& q,
                           double eps_pnt_out_of_plane,
                           double eps_pnt_out_of_tri)
 {
-    MathLib::Vector3 const v(a, b);
-    MathLib::Vector3 const w(a, c);
+    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
+    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
+    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    Eigen::Vector3d const v = pb - pa;
+    Eigen::Vector3d const w = pc - pa;
 
     Eigen::Matrix2d mat;
-    mat(0, 0) = v.getSqrLength();
+    mat(0, 0) = v.squaredNorm();
     mat(0, 1) = v[0] * w[0] + v[1] * w[1] + v[2] * w[2];
     mat(1, 0) = mat(0, 1);
-    mat(1, 1) = w.getSqrLength();
-    Eigen::Vector2d y;
-    y << v[0] * (q[0] - a[0]) + v[1] * (q[1] - a[1]) + v[2] * (q[2] - a[2]),
-        w[0] * (q[0] - a[0]) + w[1] * (q[1] - a[1]) + w[2] * (q[2] - a[2]);
+    mat(1, 1) = w.squaredNorm();
+    Eigen::Vector2d y(
+        v[0] * (q[0] - a[0]) + v[1] * (q[1] - a[1]) + v[2] * (q[2] - a[2]),
+        w[0] * (q[0] - a[0]) + w[1] * (q[1] - a[1]) + w[2] * (q[2] - a[2]));
 
     y = mat.partialPivLu().solve(y);
 
@@ -167,17 +172,21 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
         return false;
     }
 
-    MathLib::Vector3 const pa(p, a);
-    MathLib::Vector3 const pb(p, b);
-    MathLib::Vector3 const pc(p, c);
+    auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
+    auto const va = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
+    auto const vb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
+    auto const vc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    Eigen::Vector3d const pa = va - vp;
+    Eigen::Vector3d const pb = vb - vp;
+    Eigen::Vector3d const pc = vc - vp;
     double const area_x_2(calcTriangleArea(a, b, c) * 2);
 
-    double const alpha((MathLib::crossProduct(pb, pc).getLength()) / area_x_2);
+    double const alpha((pb.cross(pc).norm()) / area_x_2);
     if (alpha < -eps_pnt_out_of_tri || alpha > 1 + eps_pnt_out_of_tri)
     {
         return false;
     }
-    double const beta((MathLib::crossProduct(pc, pa).getLength()) / area_x_2);
+    double const beta((pc.cross(pa).norm()) / area_x_2);
     if (beta < -eps_pnt_out_of_tri || beta > 1 + eps_pnt_out_of_tri)
     {
         return false;
@@ -228,25 +237,30 @@ bool dividedByPlane(const MathLib::Point3d& a, const MathLib::Point3d& b,
 bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
                 const MathLib::Point3d& c, const MathLib::Point3d& d)
 {
-    const MathLib::Vector3 ab(a, b);
-    const MathLib::Vector3 ac(a, c);
-    const MathLib::Vector3 ad(a, d);
+    auto const pa = Eigen::Map<Eigen::Vector3d const>(a.getCoords());
+    auto const pb = Eigen::Map<Eigen::Vector3d const>(b.getCoords());
+    auto const pc = Eigen::Map<Eigen::Vector3d const>(c.getCoords());
+    auto const pd = Eigen::Map<Eigen::Vector3d const>(d.getCoords());
 
-    if (ab.getSqrLength() < pow(std::numeric_limits<double>::epsilon(), 2) ||
-        ac.getSqrLength() < pow(std::numeric_limits<double>::epsilon(), 2) ||
-        ad.getSqrLength() < pow(std::numeric_limits<double>::epsilon(), 2))
+    Eigen::Vector3d const ab = pb - pa;
+    Eigen::Vector3d const ac = pc - pa;
+    Eigen::Vector3d const ad = pd - pa;
+
+    auto const eps_squared =
+        std::pow(std::numeric_limits<double>::epsilon(), 2);
+    if (ab.squaredNorm() < eps_squared || ac.squaredNorm() < eps_squared ||
+        ad.squaredNorm() < eps_squared)
     {
         return true;
     }
 
     // In exact arithmetic <ac*ad^T, ab> should be zero
     // if all four points are coplanar.
-    const double sqr_scalar_triple(
-        pow(MathLib::scalarProduct(MathLib::crossProduct(ac, ad), ab), 2));
+    const double sqr_scalar_triple(std::pow(ac.cross(ad).dot(ab), 2));
     // Due to evaluating the above numerically some cancellation or rounding
     // can occur. For this reason a normalisation factor is introduced.
     const double normalisation_factor =
-        (ab.getSqrLength() * ac.getSqrLength() * ad.getSqrLength());
+        (ab.squaredNorm() * ac.squaredNorm() * ad.squaredNorm());
 
     // tolerance 1e-11 is choosen such that
     // a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-6) are considered as
