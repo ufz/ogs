@@ -33,7 +33,6 @@
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
-#include "MeshLib/MeshEditing/projectMeshOntoPlane.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 
 namespace MeshGeoToolsLib {
