@@ -49,8 +49,7 @@ double getAngle(Point3d const& p0, Point3d const& p1, Point3d const& p2)
     Eigen::Vector3d const v1 = c - b;
 
     // apply Cauchy Schwarz inequality
-    return std::acos(
-        (v0.transpose() * v1 / (v0.norm() * v1.norm()))(0, 0));
+    return std::acos(v0.dot(v1) / (v0.norm() * v1.norm()));
 }
 
 double scalarTriple(Eigen::Vector3d const& u, Eigen::Vector3d const& v,
