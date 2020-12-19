@@ -377,17 +377,17 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
     Eigen::Vector3d const pb = vb - vp;
     Eigen::Vector3d const pc = vc - vp;
 
-    double u(MathLib::scalarTriple(pq, pc, pb));
+    double u = pq.cross(pc).dot(pb);
     if (u < 0)
     {
         return nullptr;
     }
-    double v(MathLib::scalarTriple(pq, pa, pc));
+    double v = pq.cross(pa).dot(pc);
     if (v < 0)
     {
         return nullptr;
     }
-    double w(MathLib::scalarTriple(pq, pb, pa));
+    double w = pq.cross(pb).dot(pa);
     if (w < 0)
     {
         return nullptr;
