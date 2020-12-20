@@ -56,15 +56,12 @@ public:
     }
     Eigen::RowVector3d getOrientedSurfaceNormal(MeshLib::Element const& e)
     {
-        auto surface_element_normal = MeshLib::FaceRule::getSurfaceNormal(&e);
-        surface_element_normal.normalize();
         // At the moment (2016-09-28) the surface normal is not oriented
         // according to the right hand rule
         // for correct results it is necessary to multiply the normal with -1
-        surface_element_normal *= -1;
-        return Eigen::Map<Eigen::RowVector3d const>(
-            surface_element_normal.getCoords(),
-            _data.process.getMesh().getDimension());
+        auto const surface_element_normal =
+            -1.0 * MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
+        return surface_element_normal;
     }
 
     void assemble(std::size_t const mesh_item_id,

@@ -41,7 +41,7 @@ public:
     static Eigen::Vector3d getSecondSurfaceVector(Element const* const e);
 
     /// Returns the surface normal of a 2D element.
-    static MathLib::Vector3 getSurfaceNormal(const Element* e);
+    static Eigen::Vector3d getSurfaceNormal(const Element* e);
 
 }; /* class */
 

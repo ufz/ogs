@@ -109,16 +109,18 @@ public:
     {
         auto get_surface_normal =
             [this, &bulk_mesh](
-                MeshLib::Element const& surface_element) -> MathLib::Vector3 {
-            MathLib::Vector3 surface_element_normal;
+                MeshLib::Element const& surface_element) -> Eigen::Vector3d {
+            Eigen::Vector3d surface_element_normal;
             if (surface_element.getGeomType() == MeshLib::MeshElemType::LINE)
             {
                 auto const bulk_normal = MeshLib::FaceRule::getSurfaceNormal(
                     bulk_mesh.getElements()[_bulk_element_id]);
-                MathLib::Vector3 const line{*_surface_element.getNodes()[0],
-                                            *_surface_element.getNodes()[1]};
-                surface_element_normal =
-                    MathLib::crossProduct(line, bulk_normal);
+                auto const l0 = Eigen::Map<Eigen::Vector3d const>(
+                    _surface_element.getNode(0)->getCoords());
+                auto const l1 = Eigen::Map<Eigen::Vector3d const>(
+                    _surface_element.getNode(1)->getCoords());
+                Eigen::Vector3d const line = l1 - l0;
+                surface_element_normal = line.cross(bulk_normal);
             }
             else
             {
@@ -157,8 +159,7 @@ public:
                 double const bulk_grad_times_normal(
                     Eigen::Map<Eigen::RowVectorXd const>(bulk_flux.data(),
                                                          bulk_flux.size())
-                        .dot(Eigen::Map<Eigen::RowVectorXd const>(
-                            surface_element_normal.getCoords(), 3)));
+                        .dot(surface_element_normal));
 
                 specific_flux.getComponent(element_id, component_id) +=
                     bulk_grad_times_normal * _detJ_times_integralMeasure[ip] *

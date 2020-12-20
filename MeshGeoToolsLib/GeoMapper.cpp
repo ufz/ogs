@@ -418,12 +418,13 @@ static void mapPointOnSurfaceElement(MeshLib::Element const& elem,
                                      MathLib::Point3d& q)
 {
     // create plane equation: n*p = d
-    MathLib::Vector3 const p(*(elem.getNode(0)));
-    MathLib::Vector3 const n(MeshLib::FaceRule::getSurfaceNormal(&elem));
+    auto const p =
+        Eigen::Map<Eigen::Vector3d const>(elem.getNode(0)->getCoords());
+    Eigen::Vector3d const n(MeshLib::FaceRule::getSurfaceNormal(&elem));
     if (n[2] == 0.0) { // vertical plane, z coordinate is arbitrary
         q[2] = p[2];
     } else {
-        double const d(MathLib::scalarProduct(n, p));
+        double const d(n.dot(p));
         q[2] = (d - n[0]*q[0] - n[1]*q[1])/n[2];
     }
 }

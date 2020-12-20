@@ -41,19 +41,21 @@ inline std::vector<Node*> getBaseNodes(std::vector<Element*> const& elements)
     return base_nodes;
 }
 
-inline MathLib::Vector3 calculateNormalizedSurfaceNormal(
+inline Eigen::Vector3d calculateNormalizedSurfaceNormal(
     MeshLib::Element const& surface_element,
     MeshLib::Element const& bulk_element)
 {
-    MathLib::Vector3 surface_element_normal;
+    Eigen::Vector3d surface_element_normal;
     if (surface_element.getDimension() < 2)
     {
-        auto const bulk_element_normal = MeshLib::FaceRule::getSurfaceNormal(
-            &bulk_element);
-        MathLib::Vector3 const edge_vector(*surface_element.getNode(0),
-                                           *surface_element.getNode(1));
-        surface_element_normal =
-            MathLib::crossProduct(bulk_element_normal, edge_vector);
+        auto const bulk_element_normal =
+            MeshLib::FaceRule::getSurfaceNormal(&bulk_element);
+        auto const v0 = Eigen::Map<Eigen::Vector3d const>(
+            surface_element.getNode(0)->getCoords());
+        auto const v1 = Eigen::Map<Eigen::Vector3d const>(
+            surface_element.getNode(1)->getCoords());
+        Eigen::Vector3d const edge_vector = v1 - v0;
+        surface_element_normal = bulk_element_normal.cross(edge_vector);
     }
     else
     {

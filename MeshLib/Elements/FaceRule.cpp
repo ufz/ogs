@@ -41,12 +41,11 @@ Eigen::Vector3d FaceRule::getSecondSurfaceVector(Element const* const e)
     return v;
 }
 
-MathLib::Vector3 FaceRule::getSurfaceNormal(const Element* e)
+Eigen::Vector3d FaceRule::getSurfaceNormal(const Element* e)
 {
     Eigen::Vector3d const u = getFirstSurfaceVector(e);
     Eigen::Vector3d const v = getSecondSurfaceVector(e);
-    Eigen::Vector3d const normal = u.cross(v);
-    return MathLib::Vector3{normal[0], normal[1], normal[2]};
+    return u.cross(v);
 }
 
 }  // namespace MeshLib

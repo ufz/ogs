@@ -289,6 +289,8 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
     std::vector<std::size_t>& element_to_bulk_face_id_map,
     const MathLib::Vector3& dir, double angle, unsigned mesh_dimension)
 {
+    auto const d = Eigen::Map<Eigen::Vector3d const>(dir.getCoords());
+
     if (mesh_dimension < 2 || mesh_dimension > 3)
     {
         ERR("Cannot handle meshes of dimension {:i}", mesh_dimension);
@@ -298,7 +300,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
 
     double const pi(boost::math::constants::pi<double>());
     double const cos_theta(std::cos(angle * pi / 180.0));
-    MathLib::Vector3 const norm_dir(dir.getNormalizedVector());
+    Eigen::Vector3d const norm_dir(d.normalized());
 
     for (auto const* elem : all_elements)
     {
@@ -313,8 +315,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
             if (!complete_surface)
             {
                 auto const* face = elem;
-                if (MathLib::scalarProduct(
-                        FaceRule::getSurfaceNormal(face).getNormalizedVector(),
+                if (FaceRule::getSurfaceNormal(face).normalized().dot(
                         norm_dir) > cos_theta)
                 {
                     continue;
@@ -342,10 +343,9 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
                     std::unique_ptr<MeshLib::Element const>{elem->getFace(j)};
                 if (!complete_surface)
                 {
-                    if (MathLib::scalarProduct(
-                            FaceRule::getSurfaceNormal(face.get())
-                                .getNormalizedVector(),
-                            norm_dir) < cos_theta)
+                    if (FaceRule::getSurfaceNormal(face.get())
+                            .normalized()
+                            .dot(norm_dir) < cos_theta)
                     {
                         continue;
                     }
