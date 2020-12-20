@@ -21,23 +21,32 @@ bool FaceRule::testElementNodeOrder(const Element* e)
     return getSurfaceNormal(e)[2] < 0;
 }
 
-MathLib::Vector3 FaceRule::getFirstSurfaceVector(Element const* const e)
+Eigen::Vector3d FaceRule::getFirstSurfaceVector(Element const* const e)
 {
-    Node* const* const _nodes = e->getNodes();
-    return {*_nodes[1], *_nodes[0]};
+    auto const a =
+        Eigen::Map<Eigen::Vector3d const>(e->getNode(0)->getCoords());
+    auto const b =
+        Eigen::Map<Eigen::Vector3d const>(e->getNode(1)->getCoords());
+    Eigen::Vector3d const v = a - b;
+    return v;
 }
 
-MathLib::Vector3 FaceRule::getSecondSurfaceVector(Element const* const e)
+Eigen::Vector3d FaceRule::getSecondSurfaceVector(Element const* const e)
 {
-    Node* const* const _nodes = e->getNodes();
-    return {*_nodes[1], *_nodes[2]};
+    auto const a =
+        Eigen::Map<Eigen::Vector3d const>(e->getNode(1)->getCoords());
+    auto const b =
+        Eigen::Map<Eigen::Vector3d const>(e->getNode(2)->getCoords());
+    Eigen::Vector3d const v = b - a;
+    return v;
 }
 
 MathLib::Vector3 FaceRule::getSurfaceNormal(const Element* e)
 {
-    const MathLib::Vector3 u = getFirstSurfaceVector(e);
-    const MathLib::Vector3 v = getSecondSurfaceVector(e);
-    return MathLib::crossProduct(u, v);
+    Eigen::Vector3d const u = getFirstSurfaceVector(e);
+    Eigen::Vector3d const v = getSecondSurfaceVector(e);
+    Eigen::Vector3d const normal = u.cross(v);
+    return MathLib::Vector3{normal[0], normal[1], normal[2]};
 }
 
 }  // namespace MeshLib

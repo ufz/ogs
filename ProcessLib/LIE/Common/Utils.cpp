@@ -49,9 +49,9 @@ void computeRotationMatrix(MeshLib::Element const& e, Eigen::Vector3d const& n,
     else if (global_dim == 3)
     {
         auto const u =
-            MeshLib::FaceRule::getFirstSurfaceVector(&e).getNormalizedVector();
+            MeshLib::FaceRule::getFirstSurfaceVector(&e).normalized();
         auto const v =
-            MeshLib::FaceRule::getSecondSurfaceVector(&e).getNormalizedVector();
+            MeshLib::FaceRule::getSecondSurfaceVector(&e).normalized();
 
         R.resize(3, 3);
         R << u[0], u[1], u[2], v[0], v[1], v[2], n[0], n[1], n[2];
