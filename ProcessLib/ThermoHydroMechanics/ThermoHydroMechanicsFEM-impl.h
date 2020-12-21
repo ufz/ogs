@@ -419,7 +419,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Add thermo-osmosis effect on KTT
         KTT.noalias() +=
             (dNdx_T.transpose() * effective_thermal_condictivity * dNdx_T +
-             N_p.transpose() * velocity.transpose() * dNdx_p * fluid_density * c_f) *
+             N_T.transpose() * velocity.transpose() * dNdx_T * fluid_density * c_f) *
                 w -
             fluid_density * c_f * N_T.transpose() * (dNdx_T * T).transpose() *
                 K_pT_thermal_osmosis * dNdx_T * w;
