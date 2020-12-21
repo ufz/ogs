@@ -13,21 +13,18 @@
 
 #include "GeoLib/AnalyticalGeometry.h"
 
-auto test3equal = [](double a, double b, double c, double const* result)
-{
+auto test3equal = [](double a, double b, double c,
+                     Eigen::Vector3d const& result) {
     EXPECT_EQ(a, result[0]);
     EXPECT_EQ(b, result[1]);
     EXPECT_EQ(c, result[2]);
-
-    delete[] result;
 };
 
 TEST(GeoLib, ComputeRotationMatrixToXYnegative)
 {
     Eigen::Vector3d const n({0.0, -1.0, 0.0});
-    MathLib::DenseMatrix<double> rot_mat(3,3,0.0);
+    Eigen::Matrix3d const rot_mat = GeoLib::computeRotationMatrixToXY(n);
 
-    GeoLib::computeRotationMatrixToXY(n, rot_mat);
     EXPECT_EQ(1.0, rot_mat(0,0));
     EXPECT_EQ(0.0, rot_mat(0,1));
     EXPECT_EQ(0.0, rot_mat(0,2));
@@ -38,22 +35,21 @@ TEST(GeoLib, ComputeRotationMatrixToXYnegative)
     EXPECT_EQ(-1.0, rot_mat(2,1));
     EXPECT_EQ(0.0, rot_mat(2,2));
 
-    MathLib::Vector3 const x(0.0,1.0,0.0);
-    test3equal(0, 0, -1, rot_mat*x.getCoords());
+    Eigen::Vector3d const x({0.0, 1.0, 0.0});
+    test3equal(0, 0, -1, rot_mat * x);
 
-    MathLib::Vector3 const x0(10.0,1.0,0.0);
-    test3equal(10, 0, -1, rot_mat*x0.getCoords());
+    Eigen::Vector3d const x0({10.0, 1.0, 0.0});
+    test3equal(10, 0, -1, rot_mat * x0);
 
-    MathLib::Vector3 const x1(10.0,0.0,10.0);
-    test3equal(10, 10, 0, rot_mat*x1.getCoords());
+    Eigen::Vector3d const x1({10.0, 0.0, 10.0});
+    test3equal(10, 10, 0, rot_mat * x1);
 }
 
 TEST(GeoLib, ComputeRotationMatrixToXYpositive)
 {
     Eigen::Vector3d const n{0.0, 1.0, 0.0};
-    MathLib::DenseMatrix<double> rot_mat(3,3,0.0);
+    Eigen::Matrix3d const rot_mat = GeoLib::computeRotationMatrixToXY(n);
 
-    GeoLib::computeRotationMatrixToXY(n, rot_mat);
     EXPECT_EQ(1.0, rot_mat(0,0));
     EXPECT_EQ(0.0, rot_mat(0,1));
     EXPECT_EQ(0.0, rot_mat(0,2));
@@ -64,13 +60,13 @@ TEST(GeoLib, ComputeRotationMatrixToXYpositive)
     EXPECT_EQ(1.0, rot_mat(2,1));
     EXPECT_EQ(0.0, rot_mat(2,2));
 
-    MathLib::Vector3 const x(0.0,1.0,0.0);
-    test3equal(0, 0, 1, rot_mat*x.getCoords());
+    Eigen::Vector3d const x(0.0, 1.0, 0.0);
+    test3equal(0, 0, 1, rot_mat * x);
 
-    MathLib::Vector3 const x0(10.0,1.0,0.0);
-    test3equal(10, 0, 1, rot_mat*x0.getCoords());
+    Eigen::Vector3d const x0(10.0, 1.0, 0.0);
+    test3equal(10, 0, 1, rot_mat * x0);
 
-    MathLib::Vector3 const x1(10.0,0.0,10.0);
-    test3equal(10, -10, 0, rot_mat*x1.getCoords());
+    Eigen::Vector3d const x1(10.0, 0.0, 10.0);
+    test3equal(10, -10, 0, rot_mat * x1);
 }
 

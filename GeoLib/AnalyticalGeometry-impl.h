@@ -117,80 +117,6 @@ void compute3DRotationMatrixToX(MathLib::Vector3  const& v,
     }
 }
 
-template <class T_MATRIX>
-void computeRotationMatrixToXY(Eigen::Vector3d const& n, T_MATRIX& rot_mat)
-{
-    // check if normal points already in the right direction
-    if (n[0] == 0 && n[1] == 0) {
-        rot_mat(0,1) = 0.0;
-        rot_mat(0,2) = 0.0;
-        rot_mat(1,0) = 0.0;
-        rot_mat(1,1) = 1.0;
-        rot_mat(1,2) = 0.0;
-        rot_mat(2,0) = 0.0;
-        rot_mat(2,1) = 0.0;
-
-        if (n[2] > 0) {
-            // identity matrix
-            rot_mat(0,0) = 1.0;
-            rot_mat(2,2) = 1.0;
-        } else {
-            // rotate by pi about the y-axis
-            rot_mat(0,0) = -1.0;
-            rot_mat(2,2) = -1.0;
-        }
-
-        return;
-    }
-
-    // sqrt (n_1^2 + n_3^2)
-    double const h0(sqrt(n[0]*n[0]+n[2]*n[2]));
-
-    // In case the x and z components of the normal are both zero the rotation
-    // to the x-z-plane is not required, i.e. only the rotation in the z-axis is
-    // required. The angle is either pi/2 or 3/2*pi. Thus the components of
-    // rot_mat are as follows.
-    if (h0 < std::numeric_limits<double>::epsilon()) {
-        rot_mat(0,0) = 1.0;
-        rot_mat(0,1) = 0.0;
-        rot_mat(0,2) = 0.0;
-        rot_mat(1,0) = 0.0;
-        rot_mat(1,1) = 0.0;
-        if (n[1] > 0)
-        {
-            rot_mat(1,2) = -1.0;
-        }
-        else
-        {
-            rot_mat(1, 2) = 1.0;
-        }
-        rot_mat(2,0) = 0.0;
-        if (n[1] > 0)
-        {
-            rot_mat(2,1) = 1.0;
-        }
-        else
-        {
-            rot_mat(2, 1) = -1.0;
-        }
-        rot_mat(2,2) = 0.0;
-        return;
-    }
-
-    double const h1(1 / n.norm());
-
-    // general case: calculate entries of rotation matrix
-    rot_mat(0, 0) = n[2] / h0;
-    rot_mat(0, 1) = 0;
-    rot_mat(0, 2) = - n[0] / h0;
-    rot_mat(1, 0) = - n[1]*n[0]/h0 * h1;
-    rot_mat(1, 1) = h0 * h1;
-    rot_mat(1, 2) = - n[1]*n[2]/h0 * h1;
-    rot_mat(2, 0) = n[0] * h1;
-    rot_mat(2, 1) = n[1] * h1;
-    rot_mat(2, 2) = n[2] * h1;
-}
-
 template <typename InputIterator>
 void rotatePoints(Eigen::Matrix3d const& rot_mat, InputIterator pnts_begin,
                   InputIterator pnts_end)
@@ -215,8 +141,7 @@ Eigen::Matrix3d rotatePointsToXY(InputIterator1 p_pnts_begin,
         GeoLib::getNewellPlane(p_pnts_begin, p_pnts_end);
 
     // rotate points into x-y-plane
-    Eigen::Matrix3d rot_mat;
-    computeRotationMatrixToXY(plane_normal, rot_mat);
+    Eigen::Matrix3d const rot_mat = computeRotationMatrixToXY(plane_normal);
     rotatePoints(rot_mat, r_pnts_begin, r_pnts_end);
 
     for (auto it = r_pnts_begin; it != r_pnts_end; ++it)

@@ -292,6 +292,69 @@ void rotatePoints(Eigen::Matrix3d const& rot_mat,
     rotatePoints(rot_mat, pnts.begin(), pnts.end());
 }
 
+Eigen::Matrix3d computeRotationMatrixToXY(Eigen::Vector3d const& n)
+{
+    Eigen::Matrix3d rot_mat = Eigen::Matrix3d::Zero();
+    // check if normal points already in the right direction
+    if (n[0] == 0 && n[1] == 0)
+    {
+        rot_mat(1, 1) = 1.0;
+
+        if (n[2] > 0)
+        {
+            // identity matrix
+            rot_mat(0, 0) = 1.0;
+            rot_mat(2, 2) = 1.0;
+        }
+        else
+        {
+            // rotate by pi about the y-axis
+            rot_mat(0, 0) = -1.0;
+            rot_mat(2, 2) = -1.0;
+        }
+
+        return rot_mat;
+    }
+
+    // sqrt (n_1^2 + n_3^2)
+    double const h0(std::sqrt(n[0] * n[0] + n[2] * n[2]));
+
+    // In case the x and z components of the normal are both zero the rotation
+    // to the x-z-plane is not required, i.e. only the rotation in the z-axis is
+    // required. The angle is either pi/2 or 3/2*pi. Thus the components of
+    // rot_mat are as follows.
+    if (h0 < std::numeric_limits<double>::epsilon())
+    {
+        rot_mat(0, 0) = 1.0;
+        if (n[1] > 0)
+        {
+            rot_mat(1, 2) = -1.0;
+            rot_mat(2, 1) = 1.0;
+        }
+        else
+        {
+            rot_mat(1, 2) = 1.0;
+            rot_mat(2, 1) = -1.0;
+        }
+        return rot_mat;
+    }
+
+    double const h1(1 / n.norm());
+
+    // general case: calculate entries of rotation matrix
+    rot_mat(0, 0) = n[2] / h0;
+    rot_mat(0, 1) = 0;
+    rot_mat(0, 2) = -n[0] / h0;
+    rot_mat(1, 0) = -n[1] * n[0] / h0 * h1;
+    rot_mat(1, 1) = h0 * h1;
+    rot_mat(1, 2) = -n[1] * n[2] / h0 * h1;
+    rot_mat(2, 0) = n[0] * h1;
+    rot_mat(2, 1) = n[1] * h1;
+    rot_mat(2, 2) = n[2] * h1;
+
+    return rot_mat;
+}
+
 Eigen::Matrix3d rotatePointsToXY(std::vector<GeoLib::Point*>& pnts)
 {
     return rotatePointsToXY(pnts.begin(), pnts.end(), pnts.begin(), pnts.end());
@@ -382,8 +445,8 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     // 2 rotate points
     double d_polygon;
     std::tie(plane_normal, d_polygon) = GeoLib::getNewellPlane(*polygon_pnts);
-    Eigen::Matrix3d rot_mat;
-    GeoLib::computeRotationMatrixToXY(plane_normal, rot_mat);
+    Eigen::Matrix3d const rot_mat =
+        GeoLib::computeRotationMatrixToXY(plane_normal);
     GeoLib::rotatePoints(rot_mat, *polygon_pnts);
 
     // 3 set z coord to zero
