@@ -16,7 +16,7 @@ namespace BaseLib
 {
 namespace IO
 {
-/// Reads a list of strings from a file into a vector
+/// Reads non-empty lines from a list of strings from a file into a vector
 std::vector<std::string> readStringListFromFile(std::string const& filename);
 }
 }  // namespace BaseLib
