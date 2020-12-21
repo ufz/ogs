@@ -16,7 +16,7 @@ The minimum prerequisites to build OGS are:
 - An 64-bit operating system (Linux, Windows 7 and up, macOS)
 - Git (version control tool, at least version {{< dataFile "versions.minimum_version.git" >}})
 - CMake (build configuration tool, at least version {{< dataFile "versions.minimum_version.cmake" >}})
-- A compiler with [C++17](http://en.wikipedia.org/wiki/C%2B%2B17)-support
+- A compiler with [C++20](http://en.wikipedia.org/wiki/C%2B%2B20)-support
 - [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) **OR** install [required libraries]({{< ref "third-party-libraries.md" >}}) manually (for advanced users only!)
 
 <div class='note'>
@@ -39,7 +39,7 @@ Please note that the following setup on Windows is the **native Windows developm
 
 </div>
 
-As we use lots of features of the C++17-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** and up. Therefore you will need at least **Windows 7** (64-bit recommended). It is perfectly fine to use the free Community Edition of Visual Studio.
+As we use lots of features of the C++17-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** with compiler version **{{< dataFile "versions.minimum_version.msvc.compiler" >}}** and up. Therefore you will need at least **Windows 7** (64-bit required). It is perfectly fine to use the free Community Edition of Visual Studio.
 
 - Download and install [Visual Studio Community](https://www.visualstudio.com)
   - Select the *workload* `Desktop Development with C++`
