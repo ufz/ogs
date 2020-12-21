@@ -10,7 +10,6 @@
  */
 
 #include <algorithm>
-#include <fstream>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -20,6 +19,7 @@
 
 #include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/IO/readStringListFromFile.h"
 
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -27,32 +27,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
-
-int readRasterPaths(std::string const& raster_list_file, std::vector<std::string> &raster_path_vec)
-{
-    std::ifstream in (raster_list_file.c_str());
-    if (in.fail())
-    {
-        ERR("Could not open file {:s}.", raster_list_file);
-        return -1;
-    }
-    std::string line;
-    while (getline(in, line))
-    {
-        if (line.empty())
-        {
-            continue;
-        }
-        raster_path_vec.push_back(line);
-    }
-    if (raster_path_vec.size()<2)
-    {
-        ERR ("At least two raster files needed to create 3D mesh.");
-        return -2;
-    }
-    std::reverse(raster_path_vec.begin(), raster_path_vec.end());
-    return 0;
-}
 
 int main (int argc, char* argv[])
 {
@@ -128,11 +102,14 @@ int main (int argc, char* argv[])
     }
     INFO("done.");
 
-    std::vector<std::string> raster_paths;
-    if (readRasterPaths(raster_path_arg.getValue(), raster_paths) != 0)
+    std::vector<std::string> raster_paths =
+        BaseLib::IO::readStringListFromFile(raster_path_arg.getValue());
+    if (raster_paths.size()<2)
     {
+        ERR ("At least two raster files needed to create 3D mesh.");
         return EXIT_FAILURE;
     }
+    std::reverse(raster_paths.begin(), raster_paths.end());
 
     MeshLib::MeshLayerMapper mapper;
     if (auto rasters = FileIO::readRasters(raster_paths))

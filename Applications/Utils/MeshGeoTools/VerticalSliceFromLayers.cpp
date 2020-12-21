@@ -9,19 +9,18 @@
 
 #include <algorithm>
 #include <cmath>
-#include <fstream>
 #include <memory>
 #include <string>
 #include <vector>
 
 // ThirdParty
 #include <tclap/CmdLine.h>
-
 #include <QCoreApplication>
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/IO/readStringListFromFile.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
@@ -41,24 +40,6 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/Node.h"
-
-/// reads the list of mesh files into a string vector
-std::vector<std::string> readLayerFile(std::string const& layer_file)
-{
-    std::vector<std::string> layer_names;
-    std::ifstream in(layer_file);
-    if (!in)
-    {
-        ERR("Could not open layer file {:s}.", layer_file);
-        return layer_names;
-    }
-    std::string line;
-    while (std::getline(in, line))
-    {
-        layer_names.push_back(line);
-    }
-    return layer_names;
-}
 
 /// creates a vector of sampling points based on the specified resolution
 std::unique_ptr<std::vector<GeoLib::Point*>> createPoints(
@@ -369,7 +350,8 @@ int main(int argc, char* argv[])
     std::size_t const res = std::ceil(length / res_arg.getValue());
     double const interval_length = length / res;
 
-    std::vector<std::string> const layer_names = readLayerFile(input_name);
+    std::vector<std::string> const layer_names =
+        BaseLib::IO::readStringListFromFile(input_name);
     if (layer_names.size() < 2)
     {
         ERR("At least two layers are required to extract a slice.");
