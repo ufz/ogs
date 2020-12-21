@@ -33,7 +33,7 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
     boost/${ogs.minimum_version.boost}@conan/stable
-    eigen/${ogs.minimum_version.eigen}@conan/stable
+    eigen/${ogs.minimum_version.eigen}
     vtk/${ogs.tested_version.vtk}@bilke/stable
     CACHE INTERNAL ""
 )
