@@ -6,7 +6,8 @@
     "msvc": {
       "year": "2019",
       "number": "16",
-      "toolset": "142"
+      "toolset": "142",
+      "compiler": "19.24"
     },
     "conan": "1.21.0",
     "git": "2.14",
