@@ -24,7 +24,6 @@
 #include "GeoLib/Triangle.h"
 #include "GeoLib/AnalyticalGeometry.h"
 
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/Point3d.h"
 
 #include "MeshLib/Mesh.h"
