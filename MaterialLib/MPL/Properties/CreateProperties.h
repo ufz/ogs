@@ -19,6 +19,7 @@
 #include "CreateAverageMolarMass.h"
 #include "CreateBishopsPowerLaw.h"
 #include "CreateBishopsSaturationCutoff.h"
+#include "CreateClausiusClapeyron.h"
 #include "CreateConstant.h"
 #include "CreateCurve.h"
 #include "CreateDupuitPermeability.h"

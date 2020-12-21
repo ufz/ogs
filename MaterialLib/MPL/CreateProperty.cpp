@@ -66,6 +66,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createAverageMolarMass(config);
     }
 
+    if (boost::iequals(property_type, "ClausiusClapeyron"))
+    {
+        return createClausiusClapeyron(config);
+    }
+
     if (boost::iequals(property_type, "Dupuit"))
     {
         return createDupuitPermeability(config, parameters);
