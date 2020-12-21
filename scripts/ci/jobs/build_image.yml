@@ -1,7 +1,7 @@
 build container images:
   stage: preparation
   rules:
-    - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
+    - if: '$CI_PROJECT_NAMESPACE == "endjunction" || $CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
