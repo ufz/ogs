@@ -534,22 +534,6 @@ void TimeLoop::initialize()
     std::tie(_process_solutions, _process_solutions_prev) =
         setInitialConditions(_start_time, _per_process_data);
 
-    if (_chemical_solver_interface)
-    {
-        BaseLib::RunTime time_phreeqc;
-        time_phreeqc.start();
-
-        auto& pcs = _per_process_data[0]->process;
-        _chemical_solver_interface->executeInitialCalculation(
-            pcs.interpolateNodalValuesToIntegrationPoints(_process_solutions));
-
-        pcs.extrapolateIntegrationPointValuesToNodes(
-            0., _chemical_solver_interface->getIntPtProcessSolutions(),
-            _process_solutions);
-
-        INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
-    }
-
     // All _per_process_data share the first process.
     bool const is_staggered_coupling =
         !isMonolithicProcess(*_per_process_data[0]);

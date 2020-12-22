@@ -12,6 +12,7 @@
 
 #include <cassert>
 
+#include "BaseLib/RunTime.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
@@ -96,9 +97,28 @@ void ComponentTransportProcess::initializeConcreteProcess(
 }
 
 void ComponentTransportProcess::setInitialConditionsConcreteProcess(
-    std::vector<GlobalVector*>& /*x*/, double const /*t*/,
-    int const /*process_id*/)
+    std::vector<GlobalVector*>& x, double const t, int const process_id)
 {
+    if (!_chemical_solver_interface)
+    {
+        return;
+    }
+
+    if (process_id != static_cast<int>(x.size() - 1))
+    {
+        return;
+    }
+
+    BaseLib::RunTime time_phreeqc;
+    time_phreeqc.start();
+
+    _chemical_solver_interface->executeInitialCalculation(
+        interpolateNodalValuesToIntegrationPoints(x));
+
+    extrapolateIntegrationPointValuesToNodes(
+        t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
+
+    INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
 }
 
 void ComponentTransportProcess::assembleConcreteProcess(
