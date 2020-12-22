@@ -34,7 +34,7 @@ std::vector<std::string> CsvInterface::getColumnNames(std::string const& fname,
         return std::vector<std::string>();
     }
     std::string line;
-    if (!getline(in, line))
+    if (!std::getline(in, line))
     {
         return {};
     }
@@ -71,12 +71,12 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     }
 
     std::string line;
-    getline(in, line);
+    std::getline(in, line);
 
     std::size_t line_count(0);
     std::size_t error_count(0);
     std::list<std::string>::const_iterator it;
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         line_count++;
         std::list<std::string> const fields = BaseLib::splitString(line, delim);
@@ -124,7 +124,7 @@ int CsvInterface::readPoints(std::string const& fname, char delim,
     }
 
     std::string line;
-    getline(in, line);
+    std::getline(in, line);
     std::array<std::size_t, 3> const column_idx = {
         {CsvInterface::findColumn(line, delim, x_column_name),
          CsvInterface::findColumn(line, delim, y_column_name),
@@ -185,7 +185,7 @@ int CsvInterface::readPoints(std::ifstream& in, char delim,
     std::size_t error_count(0);
     std::list<std::string>::const_iterator it;
 
-    while (getline(in, line))
+    while (std::getline(in, line))
     {
         line_count++;
         std::list<std::string> const fields = BaseLib::splitString(line, delim);
