@@ -208,7 +208,9 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
             /* add other horizon features here */
 
             double depth (horizon.attribute("z").toDouble());
-            if (fabs(depth - depth_check) > std::numeric_limits<double>::epsilon()) // skip soil-layer if its thickness is zero
+            if (std::abs(depth - depth_check) >
+                std::numeric_limits<double>::
+                    epsilon())  // skip soil-layer if its thickness is zero
             {
                 borehole->addSoilLayer(horizon.attribute("x").toDouble(),
                                        horizon.attribute("y").toDouble(),
@@ -326,7 +328,7 @@ void XmlStnInterface::writeBoreholeData(QDomDocument &doc,
     boreholeTag.appendChild(stationDepthTag);
     QDomText stationDepthText = doc.createTextNode(QString::number(borehole->getDepth(), 'f'));
     stationDepthTag.appendChild(stationDepthText);
-    if (fabs(borehole->getDate()) > 0)
+    if (std::abs(borehole->getDate()) > 0)
     {
         QDomElement stationDateTag = doc.createElement("bdate");
         boreholeTag.appendChild(stationDateTag);
