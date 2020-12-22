@@ -59,7 +59,7 @@ std::size_t ElementSizeMetric::calc1dQuality()
         double area(std::numeric_limits<double>::max());
         _element_quality_metric[k] = elements[k]->getContent();
         if (_element_quality_metric[k] <
-            sqrt(fabs(std::numeric_limits<double>::epsilon())))
+            std::sqrt(fabs(std::numeric_limits<double>::epsilon())))
         {
             error_count++;
         }

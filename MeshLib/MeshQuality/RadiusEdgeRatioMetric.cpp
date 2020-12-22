@@ -36,7 +36,7 @@ void RadiusEdgeRatioMetric::calculateQuality ()
         std::copy_n(elem.getNodes(), n_nodes, pnts.begin());
         GeoLib::MinimalBoundingSphere const s(pnts);
         auto const& [min, max] = computeSqrEdgeLengthRange(elem);
-        _element_quality_metric[k] = sqrt(min)/(2*s.getRadius());
+        _element_quality_metric[k] = std::sqrt(min) / (2 * s.getRadius());
     }
 }
 
