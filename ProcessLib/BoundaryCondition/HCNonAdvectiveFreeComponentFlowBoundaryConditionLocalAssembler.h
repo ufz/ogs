@@ -106,7 +106,11 @@ private:
         // At the moment (2016-09-28) the surface normal is not oriented
         // according to the right hand rule
         // for correct results it is necessary to multiply the normal with -1
-        return -MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
+        Eigen::Vector3d surface_normal =
+            -MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
+        auto const zeros_size = 3 - _data.process.getMesh().getDimension();
+        surface_normal.tail(zeros_size).setZero();
+        return surface_normal;
     }
 
     HCNonAdvectiveFreeComponentFlowBoundaryConditionData const& _data;
