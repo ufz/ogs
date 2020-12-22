@@ -34,7 +34,7 @@ bool PiecewiseLinearMonotonicCurve::isStrongMonotonic() const
 {
     const double gradient0 = getDerivative(_supp_pnts[0]);
 
-    if (std::fabs(gradient0) < std::numeric_limits<double>::min())
+    if (std::abs(gradient0) < std::numeric_limits<double>::min())
     {
         return false;
     }
