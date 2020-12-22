@@ -41,7 +41,7 @@ struct SecondaryData
     std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N_u;
 };
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 class ThermoRichardsMechanicsLocalAssembler
     : public RichardsMechanics::LocalAssemblerInterface<DisplacementDim>
@@ -51,13 +51,11 @@ public:
         ShapeMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
     // Note: temperature variable uses the same shape functions as that are used
     // by pressure variable.
-    using ShapeMatricesTypePressure =
-        ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
+    using ShapeMatricesType =
+        ShapeMatrixPolicyType<ShapeFunction, DisplacementDim>;
 
-    using GlobalDimMatrixType =
-        typename ShapeMatricesTypePressure::GlobalDimMatrixType;
-    using GlobalDimVectorType =
-        typename ShapeMatricesTypePressure::GlobalDimVectorType;
+    using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
+    using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
 
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
@@ -65,7 +63,7 @@ public:
 
     using IpData =
         IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
-                             ShapeMatricesTypePressure, DisplacementDim,
+                             ShapeMatricesType, DisplacementDim,
                              ShapeFunctionDisplacement::NPOINTS>;
 
     static int const KelvinVectorSize =
@@ -244,10 +242,10 @@ private:
         secondary_data_;
 
     static const int temperature_index = 0;
-    static const int temperature_size = ShapeFunctionPressure::NPOINTS;
+    static const int temperature_size = ShapeFunction::NPOINTS;
     static const int pressure_index = temperature_size;
-    static const int pressure_size = ShapeFunctionPressure::NPOINTS;
-    static const int displacement_index = 2 * ShapeFunctionPressure::NPOINTS;
+    static const int pressure_size = ShapeFunction::NPOINTS;
+    static const int displacement_index = 2 * ShapeFunction::NPOINTS;
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
 };

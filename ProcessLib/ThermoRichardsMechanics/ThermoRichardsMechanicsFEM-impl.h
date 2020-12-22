@@ -26,11 +26,10 @@ namespace ProcessLib
 {
 namespace ThermoRichardsMechanics
 {
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                      ShapeFunctionPressure, IntegrationMethod,
-                                      DisplacementDim>::
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     ThermoRichardsMechanicsLocalAssembler(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
@@ -54,10 +53,10 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   DisplacementDim>(e, is_axially_symmetric,
                                                    integration_method_);
 
-    auto const shape_matrices_p =
-        NumLib::initShapeMatrices<ShapeFunctionPressure,
-                                  ShapeMatricesTypePressure, DisplacementDim>(
-            e, is_axially_symmetric, integration_method_);
+    auto const shape_matrices =
+        NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
+                                  DisplacementDim>(e, is_axially_symmetric,
+                                                   integration_method_);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
@@ -92,10 +91,11 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ip_data.N_u = sm_u.N;
         ip_data.dNdx_u = sm_u.dNdx;
 
-        ip_data.N_p = shape_matrices_p[ip].N;
-        ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
+        // ip_data.N_p and ip_data.dNdx_p are used for both p and T variables
+        ip_data.N_p = shape_matrices[ip].N;
+        ip_data.dNdx_p = shape_matrices[ip].dNdx;
 
-        // Initial porosity. Could be read from intergration point data or mesh.
+        // Initial porosity. Could be read from integration point data or mesh.
         ip_data.porosity =
             medium->property(MPL::porosity)
                 .template initialValue<double>(
@@ -118,10 +118,10 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 std::size_t ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
     DisplacementDim>::setIPDataInitialConditions(std::string const& name,
                                                  double const* values,
                                                  int const integration_order)
@@ -178,11 +178,11 @@ std::size_t ThermoRichardsMechanicsLocalAssembler<
     return 0;
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunctionPressure,
-                                           IntegrationMethod, DisplacementDim>::
+                                           ShapeFunction, IntegrationMethod,
+                                           DisplacementDim>::
     setInitialConditionsConcrete(std::vector<double> const& local_x,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
@@ -191,10 +191,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     assert(local_x.size() ==
            temperature_size + pressure_size + displacement_size);
 
-    auto p_L =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x.data() + pressure_index,
-                                  pressure_size);
+    auto p_L = Eigen::Map<
+        typename ShapeMatricesType::template VectorType<pressure_size> const>(
+        local_x.data() + pressure_index, pressure_size);
 
     auto const& medium = process_data_.media_map->getMedium(element_.getID());
     MPL::VariableArray variables;
@@ -208,10 +207,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
 
-        auto const& N_p = ip_data_[ip].N_p;
+        // N is used for both T and p variables.
+        auto const& N = ip_data_[ip].N_p;
 
         double p_cap_ip;
-        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+        NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
@@ -227,11 +227,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunctionPressure,
-                                           IntegrationMethod, DisplacementDim>::
+                                           ShapeFunction, IntegrationMethod,
+                                           DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_xdot,
@@ -245,14 +245,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         displacement_size + pressure_size + temperature_size;
     assert(local_x.size() == local_matrix_dim);
 
-    auto const T =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            temperature_size> const>(local_x.data() + temperature_index,
-                                     temperature_size);
-    auto const p_L =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x.data() + pressure_index,
-                                  pressure_size);
+    auto const T = Eigen::Map<typename ShapeMatricesType::template VectorType<
+        temperature_size> const>(local_x.data() + temperature_index,
+                                 temperature_size);
+    auto const p_L = Eigen::Map<
+        typename ShapeMatricesType::template VectorType<pressure_size> const>(
+        local_x.data() + pressure_index, pressure_size);
 
     auto const u =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
@@ -260,13 +258,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                       displacement_size);
 
     auto const T_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+        Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(local_xdot.data() + temperature_index,
                                      temperature_size);
-    auto const p_L_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_xdot.data() + pressure_index,
-                                  pressure_size);
+    auto const p_L_dot = Eigen::Map<
+        typename ShapeMatricesType::template VectorType<pressure_size> const>(
+        local_xdot.data() + pressure_index, pressure_size);
     auto const u_dot =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
             displacement_size> const>(local_xdot.data() + displacement_index,
@@ -286,33 +283,29 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
         identity2;
 
-    typename ShapeMatricesTypePressure::NodalMatrixType M_TT =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(temperature_size,
-                                                         temperature_size);
-    typename ShapeMatricesTypePressure::NodalMatrixType K_TT =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(temperature_size,
-                                                         temperature_size);
-    typename ShapeMatricesTypePressure::NodalMatrixType K_Tp =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(temperature_size,
-                                                         pressure_size);
-    typename ShapeMatricesTypePressure::NodalMatrixType M_pT =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
-                                                         temperature_size);
-    typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
-                                                         pressure_size);
+    typename ShapeMatricesType::NodalMatrixType M_TT =
+        ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
+                                                 temperature_size);
+    typename ShapeMatricesType::NodalMatrixType K_TT =
+        ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
+                                                 temperature_size);
+    typename ShapeMatricesType::NodalMatrixType K_Tp =
+        ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
+                                                 pressure_size);
+    typename ShapeMatricesType::NodalMatrixType M_pT =
+        ShapeMatricesType::NodalMatrixType::Zero(pressure_size,
+                                                 temperature_size);
+    typename ShapeMatricesType::NodalMatrixType laplace_p =
+        ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType storage_p_a_p =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
-                                                         pressure_size);
+    typename ShapeMatricesType::NodalMatrixType storage_p_a_p =
+        ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType storage_p_a_S_Jpp =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
-                                                         pressure_size);
+    typename ShapeMatricesType::NodalMatrixType storage_p_a_S_Jpp =
+        ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType storage_p_a_S =
-        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
-                                                         pressure_size);
+    typename ShapeMatricesType::NodalMatrixType storage_p_a_S =
+        ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
     typename ShapeMatricesTypeDisplacement::template MatrixType<
         displacement_size, pressure_size>
@@ -347,8 +340,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_u = ip_data_[ip].N_u;
         auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const& N_p = ip_data_[ip].N_p;
-        auto const& dNdx_p = ip_data_[ip].dNdx_p;
+        // N and dNdx are used for both p and T variables
+        auto const& N = ip_data_[ip].N_p;
+        auto const& dNdx = ip_data_[ip].dNdx_p;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -361,15 +355,15 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
         double T_ip;
-        NumLib::shapeFunctionInterpolate(T, N_p, T_ip);
+        NumLib::shapeFunctionInterpolate(T, N, T_ip);
         double T_dot_ip;
-        NumLib::shapeFunctionInterpolate(T_dot, N_p, T_dot_ip);
+        NumLib::shapeFunctionInterpolate(T_dot, N, T_dot_ip);
 
         double p_cap_ip;
-        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+        NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
         double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+        NumLib::shapeFunctionInterpolate(-p_L_dot, N, p_cap_dot_ip);
 
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
@@ -572,7 +566,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // displacement equation, pressure part
         //
-        Kup.noalias() += B.transpose() * alpha * chi_S_L * identity2 * N_p * w;
+        Kup.noalias() += B.transpose() * alpha * chi_S_L * identity2 * N * w;
 
         auto const dchi_dS_L =
             medium->property(MPL::PropertyType::bishops_effective_stress)
@@ -584,13 +578,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 displacement_index, pressure_index)
             .noalias() -= B.transpose() * alpha *
                           (chi_S_L + dchi_dS_L * p_cap_ip * dS_L_dp_cap) *
-                          identity2 * N_p * w;
+                          identity2 * N * w;
 
         local_Jac
             .template block<displacement_size, pressure_size>(
                 displacement_index, pressure_index)
             .noalias() +=
-            N_u_op.transpose() * phi * rho_LR * dS_L_dp_cap * b * N_p * w;
+            N_u_op.transpose() * phi * rho_LR * dS_L_dp_cap * b * N * w;
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
@@ -607,19 +601,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template block<displacement_size, pressure_size>(
                     displacement_index, pressure_index)
                 .noalias() +=
-                B.transpose() * dsigma_sw_dS_L * dS_L_dp_cap * N_p * w;
+                B.transpose() * dsigma_sw_dS_L * dS_L_dp_cap * N * w;
         }
         //
         // pressure equation, displacement part.
         //
-        Kpu.noalias() += N_p.transpose() * S_L * rho_LR * alpha *
+        Kpu.noalias() += N.transpose() * S_L * rho_LR * alpha *
                          identity2.transpose() * B * w;
 
         //
         // pressure equation, pressure part.
         //
         laplace_p.noalias() +=
-            dNdx_p.transpose() * k_rel * rho_Ki_over_mu * dNdx_p * w;
+            dNdx.transpose() * k_rel * rho_Ki_over_mu * dNdx * w;
 
         auto const beta_LR = 1 / rho_LR *
                              liquid_phase.property(MPL::PropertyType::density)
@@ -638,57 +632,57 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             -a0 * (S_L + p_cap_ip * dS_L_dp_cap);
 
         storage_p_a_p.noalias() +=
-            N_p.transpose() * rho_LR * specific_storage_a_p * N_p * w;
+            N.transpose() * rho_LR * specific_storage_a_p * N * w;
         if (p_cap_dot_ip != 0)  // prevent division by zero.
         {
-            storage_p_a_S.noalias() -= N_p.transpose() * rho_LR *
+            storage_p_a_S.noalias() -= N.transpose() * rho_LR *
                                        specific_storage_a_S * (S_L - S_L_prev) /
-                                       (dt * p_cap_dot_ip) * N_p * w;
+                                       (dt * p_cap_dot_ip) * N * w;
         }
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() += N_p.transpose() * p_cap_dot_ip * rho_LR *
-                          dspecific_storage_a_p_dp_cap * N_p * w;
+            .noalias() += N.transpose() * p_cap_dot_ip * rho_LR *
+                          dspecific_storage_a_p_dp_cap * N * w;
 
         storage_p_a_S_Jpp.noalias() -=
-            N_p.transpose() * rho_LR *
+            N.transpose() * rho_LR *
             ((S_L - S_L_prev) * dspecific_storage_a_S_dp_cap +
              specific_storage_a_S * dS_L_dp_cap) /
-            dt * N_p * w;
+            dt * N * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() -= N_p.transpose() * rho_LR * dS_L_dp_cap * alpha *
-                          identity2.transpose() * B * u_dot * N_p * w;
+            .noalias() -= N.transpose() * rho_LR * dS_L_dp_cap * alpha *
+                          identity2.transpose() * B * u_dot * N * w;
 
         double const dk_rel_dS_l =
             medium->property(MPL::PropertyType::relative_permeability)
                 .template dValue<double>(variables,
                                          MPL::Variable::liquid_saturation,
                                          x_position, t, dt);
-        GlobalDimVectorType const grad_p_cap = -dNdx_p * p_L;
+        GlobalDimVectorType const grad_p_cap = -dNdx * p_L;
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() += dNdx_p.transpose() * rho_Ki_over_mu * grad_p_cap *
-                          dk_rel_dS_l * dS_L_dp_cap * N_p * w;
+            .noalias() += dNdx.transpose() * rho_Ki_over_mu * grad_p_cap *
+                          dk_rel_dS_l * dS_L_dp_cap * N * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
-            .noalias() += dNdx_p.transpose() * rho_LR * rho_Ki_over_mu * b *
-                          dk_rel_dS_l * dS_L_dp_cap * N_p * w;
+            .noalias() += dNdx.transpose() * rho_LR * rho_Ki_over_mu * b *
+                          dk_rel_dS_l * dS_L_dp_cap * N * w;
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
-            dNdx_p.transpose() * rho_LR * k_rel * rho_Ki_over_mu * b * w;
+            dNdx.transpose() * rho_LR * k_rel * rho_Ki_over_mu * b * w;
 
         //
         // pressure equation, temperature part.
         //
-        // Note:  d (rho_l * beta T_)/dp * dotT
+        // Note:  d (rho_l * beta _T)/dp * dotT
         // Add the thermal expansion term is the point is in the fully
         // saturated zone.
         if (p_cap_ip <= 0.0)  // p_l>0.0
@@ -702,7 +696,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 phi * fluid_volumetric_thermal_expansion_coefficient;
 
             M_pT.noalias() -=
-                N_p.transpose() * rho_LR * eff_thermal_expansion * N_p * w;
+                N.transpose() * rho_LR * eff_thermal_expansion * N * w;
         }
 
         //
@@ -724,7 +718,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 w *
                 (rho_SR * specific_heat_capacity_solid * (1 - phi) +
                  (S_L * rho_LR * specific_heat_capacity_fluid) * phi) *
-                N_p.transpose() * N_p;
+                N.transpose() * N;
 
             auto const thermal_conductivity_solid =
                 solid_phase
@@ -745,20 +739,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      thermal_conductivity_fluid, phi);
 
             GlobalDimVectorType const velocity_l =
-                GlobalDimVectorType(-Ki_over_mu * (dNdx_p * p_L - rho_LR * b));
+                GlobalDimVectorType(-Ki_over_mu * (dNdx * p_L - rho_LR * b));
 
-            K_TT.noalias() +=
-                (dNdx_p.transpose() * thermal_conductivity * dNdx_p +
-                 N_p.transpose() * velocity_l.transpose() * dNdx_p * rho_LR *
-                     specific_heat_capacity_fluid) *
-                w;
+            K_TT.noalias() += (dNdx.transpose() * thermal_conductivity * dNdx +
+                               N.transpose() * velocity_l.transpose() * dNdx *
+                                   rho_LR * specific_heat_capacity_fluid) *
+                              w;
 
             //
             // temperature equation, pressure part
             //
             K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
-                              N_p.transpose() * (dNdx_p * T).transpose() *
-                              Ki_over_mu * dNdx_p * w;
+                              N.transpose() * (dNdx * T).transpose() *
+                              Ki_over_mu * dNdx * w;
         }
     }
 
@@ -839,10 +832,10 @@ std::vector<double> transposeInPlace(
     return result;
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
     DisplacementDim>::getSigma() const
 {
     constexpr int kelvin_vector_size =
@@ -854,11 +847,11 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
         });
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     getIntPtSigma(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -869,10 +862,10 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         ip_data_, &IpData::sigma_eff, cache);
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
     DisplacementDim>::getSwellingStress() const
 {
     constexpr int kelvin_vector_size =
@@ -884,11 +877,11 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
         });
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     getIntPtSwellingStress(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -914,10 +907,10 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
     return cache;
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
     DisplacementDim>::getEpsilon() const
 {
     constexpr int kelvin_vector_size =
@@ -929,11 +922,11 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
         });
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     getIntPtEpsilon(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -944,11 +937,11 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         ip_data_, &IpData::eps, cache);
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     getIntPtDarcyVelocity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -971,10 +964,10 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
     return cache;
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
     DisplacementDim>::getSaturation() const
 {
     std::vector<double> result;
@@ -982,11 +975,11 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
     return result;
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     getIntPtSaturation(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -997,10 +990,10 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         ip_data_, &IpData::saturation, cache);
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
     DisplacementDim>::getPorosity() const
 {
     std::vector<double> result;
@@ -1008,11 +1001,11 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
     return result;
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     getIntPtPorosity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1023,10 +1016,10 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
                                                      &IpData::porosity, cache);
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 std::vector<double> ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
     DisplacementDim>::getTransportPorosity() const
 {
     std::vector<double> result;
@@ -1034,11 +1027,11 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
     return result;
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     getIntPtTransportPorosity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1049,11 +1042,11 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         ip_data_, &IpData::transport_porosity, cache);
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
-std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::
+std::vector<double> const&
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
     getIntPtDryDensitySolid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -1064,11 +1057,11 @@ std::vector<double> const& ThermoRichardsMechanicsLocalAssembler<
         ip_data_, &IpData::dry_density_solid, cache);
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunctionPressure,
-                                           IntegrationMethod, DisplacementDim>::
+                                           ShapeFunction, IntegrationMethod,
+                                           DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                 std::vector<double> const& local_xdot,
                                 double const t, double const dt,
@@ -1078,12 +1071,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     const int displacement_offset =
         use_monolithic_scheme ? displacement_index : 0;
 
-    auto const T =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            temperature_size> const>(local_x.data() + temperature_index,
-                                     temperature_size);
+    auto const T = Eigen::Map<typename ShapeMatricesType::template VectorType<
+        temperature_size> const>(local_x.data() + temperature_index,
+                                 temperature_size);
     auto const T_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+        Eigen::Map<typename ShapeMatricesType::template VectorType<
             temperature_size> const>(local_xdot.data() + temperature_index,
                                      temperature_size);
 
@@ -1101,13 +1093,15 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& N_p = ip_data_[ip].N_p;
+
+        // N is used for both p and T variables
+        auto const& N = ip_data_[ip].N_p;
         auto const& N_u = ip_data_[ip].N_u;
         auto const& dNdx_u = ip_data_[ip].dNdx_u;
         double T_ip;
-        NumLib::shapeFunctionInterpolate(T, N_p, T_ip);
+        NumLib::shapeFunctionInterpolate(T, N, T_ip);
         double T_dot_ip;
-        NumLib::shapeFunctionInterpolate(T_dot, N_p, T_dot_ip);
+        NumLib::shapeFunctionInterpolate(T_dot, N, T_dot_ip);
         variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
 
         auto const x_coord =
@@ -1148,11 +1142,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunctionPressure,
-                                           IntegrationMethod, DisplacementDim>::
+                                           ShapeFunction, IntegrationMethod,
+                                           DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& local_x_dot)
@@ -1195,7 +1189,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& N_p = ip_data_[ip].N_p;
+
+        // N is used for both p and T variables
+        auto const& N = ip_data_[ip].N_p;
         auto const& N_u = ip_data_[ip].N_u;
         auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
@@ -1210,15 +1206,15 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 dNdx_u, N_u, x_coord, is_axially_symmetric_);
 
         double T_ip;
-        NumLib::shapeFunctionInterpolate(T, N_p, T_ip);
+        NumLib::shapeFunctionInterpolate(T, N, T_ip);
         double T_dot_ip;
-        NumLib::shapeFunctionInterpolate(T_dot, N_p, T_dot_ip);
+        NumLib::shapeFunctionInterpolate(T_dot, N, T_dot_ip);
 
         double p_cap_ip;
-        NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
+        NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
         double p_cap_dot_ip;
-        NumLib::shapeFunctionInterpolate(-p_L_dot, N_p, p_cap_dot_ip);
+        NumLib::shapeFunctionInterpolate(-p_L_dot, N, p_cap_dot_ip);
 
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
@@ -1392,9 +1388,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& b = process_data_.specific_body_force;
 
         // Compute the velocity
-        auto const& dNdx_p = ip_data_[ip].dNdx_p;
+        auto const& dNdx = ip_data_[ip].dNdx_p;
         ip_data_[ip].v_darcy.noalias() =
-            -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
+            -K_over_mu * dNdx * p_L + rho_LR * K_over_mu * b;
 
         saturation_avg += S_L;
         porosity_avg += phi;
@@ -1412,32 +1408,31 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
 
     NumLib::interpolateToHigherOrderNodes<
-        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        ShapeFunction, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(element_, is_axially_symmetric_, p_L,
                          *process_data_.pressure_interpolated);
     NumLib::interpolateToHigherOrderNodes<
-        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        ShapeFunction, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(element_, is_axially_symmetric_, T,
                          *process_data_.temperature_interpolated);
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 unsigned ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    ShapeFunctionDisplacement, ShapeFunction, IntegrationMethod,
     DisplacementDim>::getNumberOfIntegrationPoints() const
 {
     return integration_method_.getNumberOfPoints();
 }
 
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 typename MaterialLib::Solids::MechanicsBase<
     DisplacementDim>::MaterialStateVariables const&
-ThermoRichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::getMaterialStateVariablesAt(unsigned integration_point)
-    const
+ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
+                                      IntegrationMethod, DisplacementDim>::
+    getMaterialStateVariablesAt(unsigned integration_point) const
 {
     return *ip_data_[integration_point].material_state_variables;
 }
