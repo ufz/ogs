@@ -197,6 +197,31 @@ void ComponentTransportProcess::
         _local_assemblers, pv.getActiveElementIDs(), _coupled_solutions);
 }
 
+void ComponentTransportProcess::solveReactionEquation(
+    std::vector<GlobalVector*>& x, double const t, double const dt)
+{
+    if (!_chemical_solver_interface)
+    {
+        return;
+    }
+
+    // Sequential non-iterative approach applied here to perform water
+    // chemistry calculation followed by resolving component transport
+    // process.
+    // TODO: move into a global loop to consider both mass balance over
+    // space and localized chemical equilibrium between solutes.
+    BaseLib::RunTime time_phreeqc;
+    time_phreeqc.start();
+
+    _chemical_solver_interface->doWaterChemistryCalculation(
+        interpolateNodalValuesToIntegrationPoints(x), dt);
+
+    extrapolateIntegrationPointValuesToNodes(
+        t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
+
+    INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
+}
+
 std::vector<GlobalVector>
 ComponentTransportProcess::interpolateNodalValuesToIntegrationPoints(
     std::vector<GlobalVector*> const& nodal_values_vectors) const

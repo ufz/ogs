@@ -823,26 +823,9 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             timestep_id, t);
     }
 
-    if (_chemical_solver_interface)
     {
-        // Sequential non-iterative approach applied here to perform water
-        // chemistry calculation followed by resolving component transport
-        // process.
-        // TODO: move into a global loop to consider both mass balance over
-        // space and localized chemical equilibrium between solutes.
-        BaseLib::RunTime time_phreeqc;
-        time_phreeqc.start();
-
         auto& pcs = _per_process_data[0]->process;
-        _chemical_solver_interface->doWaterChemistryCalculation(
-            pcs.interpolateNodalValuesToIntegrationPoints(_process_solutions),
-            dt);
-
-        pcs.extrapolateIntegrationPointValuesToNodes(
-            t, _chemical_solver_interface->getIntPtProcessSolutions(),
-            _process_solutions);
-
-        INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
+        pcs.solveReactionEquation(_process_solutions, t, dt);
     }
 
     return nonlinear_solver_status;

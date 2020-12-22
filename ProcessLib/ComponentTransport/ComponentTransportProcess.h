@@ -124,6 +124,9 @@ public:
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const process_id) override;
 
+    void solveReactionEquation(std::vector<GlobalVector*>& x, double const t,
+                               double const dt) override;
+
     std::vector<GlobalVector> interpolateNodalValuesToIntegrationPoints(
         std::vector<GlobalVector*> const& nodal_values_vectors) const override;
 
