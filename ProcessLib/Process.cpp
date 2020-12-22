@@ -108,9 +108,15 @@ void Process::initialize()
     initializeBoundaryConditions();
 }
 
-void Process::setInitialConditions(const int process_id, double const t,
-                                   GlobalVector& x)
+void Process::setInitialConditions(
+    std::vector<GlobalVector*>& process_solutions,
+    std::vector<GlobalVector*>& process_solutions_prev,
+    double const t,
+    int const process_id)
 {
+    auto& x = *process_solutions[process_id];
+    auto& x_prev = *process_solutions_prev[process_id];
+
     // getDOFTableOfProcess can be overloaded by the specific process.
     auto const& dof_table_of_process = getDOFTable(process_id);
 
@@ -163,6 +169,10 @@ void Process::setInitialConditions(const int process_id, double const t,
             }
         }
     }
+
+    MathLib::LinAlg::finalizeAssembly(x);
+    MathLib::LinAlg::copy(x, x_prev);  // pushState
+
     setInitialConditionsConcreteProcess(x, t, process_id);
 }
 

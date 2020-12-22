@@ -218,10 +218,7 @@ setInitialConditions(
 
     for (auto& process_data : per_process_data)
     {
-        auto& pcs = process_data->process;
         auto const process_id = process_data->process_id;
-        auto& time_disc = *process_data->time_disc;
-
         auto& ode_sys = *process_data->tdisc_ode_sys;
 
         // append a solution vector of suitable size
@@ -232,13 +229,12 @@ setInitialConditions(
             &NumLib::GlobalVectorProvider::provider.getVector(
                 ode_sys.getMatrixSpecifications(process_id)));
 
-        auto& x = *process_solutions[process_id];
-        auto& x_prev = *process_solutions_prev[process_id];
-        pcs.setInitialConditions(process_id, t0, x);
-        MathLib::LinAlg::finalizeAssembly(x);
+        auto& pcs = process_data->process;
+        pcs.setInitialConditions(process_solutions, process_solutions_prev, t0,
+                                 process_id);
 
+        auto& time_disc = *process_data->time_disc;
         time_disc.setInitialState(t0);     // push IC
-        MathLib::LinAlg::copy(x, x_prev);  // pushState
     }
 
     return {process_solutions, process_solutions_prev};
