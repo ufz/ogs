@@ -13,6 +13,7 @@ mfront_behaviours_check_library(
     Elasticity
     Lubby2
     Lubby2mod
+    ModCamClay_semiExplParaInit
     MohrCoulombAbboSloan
     MohrCoulombAbboSloanAniso
     MohrCoulombAbboSloanOrtho
