@@ -88,8 +88,8 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
     double const yIdx (std::floor(yPos));    //  so not to over- or underflow.
 
     // weights for bilinear interpolation
-    double const xShift = std::fabs((xPos - xIdx) - 0.5);
-    double const yShift = std::fabs((yPos - yIdx) - 0.5);
+    double const xShift = std::abs((xPos - xIdx) - 0.5);
+    double const yShift = std::abs((yPos - yIdx) - 0.5);
     std::array<double,4> weight = {{ (1-xShift)*(1-yShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
 
     // neighbors to include in interpolation
@@ -119,7 +119,8 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
         }
 
         // remove no data values
-        if (std::fabs(pix_val[j] - _header.no_data) < std::numeric_limits<double>::epsilon())
+        if (std::abs(pix_val[j] - _header.no_data) <
+            std::numeric_limits<double>::epsilon())
         {
             weight[j] = 0;
             no_data_count++;

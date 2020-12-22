@@ -458,7 +458,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     dt = NumLib::possiblyClampDtToNextFixedTime(t, dt,
                                                 _output->getFixedOutputTimes());
     // Check whether the time stepping is stabilized
-    if (std::fabs(dt - prev_dt) < std::numeric_limits<double>::epsilon())
+    if (std::abs(dt - prev_dt) < std::numeric_limits<double>::epsilon())
     {
         if (_last_step_rejected)
         {
@@ -656,7 +656,7 @@ bool TimeLoop::loop()
         }
 
         dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
-        if (std::fabs(t - _end_time) < std::numeric_limits<double>::epsilon() ||
+        if (std::abs(t - _end_time) < std::numeric_limits<double>::epsilon() ||
             t + dt > _end_time)
         {
             break;

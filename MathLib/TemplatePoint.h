@@ -155,8 +155,8 @@ bool lessEq(TemplatePoint<T, DIM> const& a, TemplatePoint<T, DIM> const& b,
 {
     auto coordinateIsLargerEps = [&eps](T const u, T const v) -> bool
     {
-        return std::fabs(u - v) > eps * std::min(std::fabs(v), std::fabs(u)) &&
-               std::fabs(u - v) > eps;
+        return std::abs(u - v) > eps * std::min(std::abs(v), std::abs(u)) &&
+               std::abs(u - v) > eps;
     };
 
     for (std::size_t i = 0; i < DIM; ++i)

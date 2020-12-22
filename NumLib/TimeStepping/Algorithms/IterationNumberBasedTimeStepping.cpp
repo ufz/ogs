@@ -69,7 +69,7 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
         double dt = getNextTimeStepSize();
         // In case it is the first time be rejected, re-computed dt again with
         // current dt
-        if (std::fabs(dt - _ts_current.dt()) <
+        if (std::abs(dt - _ts_current.dt()) <
             std::numeric_limits<double>::epsilon())
         {
             // time step was rejected, keep dt for the next dt computation.

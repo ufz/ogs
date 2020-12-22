@@ -112,7 +112,7 @@ public:
     }
 
     //! Returns the size of the current search interval.
-    double getRange() const { return std::fabs(_a - _b); }
+    double getRange() const { return std::abs(_a - _b); }
 
 private:
     Function const& _f;
