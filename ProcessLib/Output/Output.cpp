@@ -64,7 +64,7 @@ bool Output::shallDoOutput(int timestep, double const t)
     auto const fixed_output_time = std::lower_bound(
         cbegin(_fixed_output_times), cend(_fixed_output_times), t);
     if ((fixed_output_time != cend(_fixed_output_times)) &&
-        (std::fabs(*fixed_output_time - t) <
+        (std::abs(*fixed_output_time - t) <
          std::numeric_limits<double>::epsilon()))
     {
         return true;
