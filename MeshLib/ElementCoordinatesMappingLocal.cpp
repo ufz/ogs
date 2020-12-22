@@ -42,17 +42,17 @@ MeshLib::RotationMatrix getRotationMatrixToGlobal(
     // coordinates
     if (element_dimension == 1)
     {
-        auto const a = Eigen::Map<Eigen::Vector3d const>(points[0].getCoords());
-        auto const b = Eigen::Map<Eigen::Vector3d const>(points[1].getCoords());
-        Eigen::Vector3d xx = b - a;
-        xx.normalize();
+        Eigen::Vector3d const xx =
+            (Eigen::Map<Eigen::Vector3d const>(points[1].getCoords()) -
+             Eigen::Map<Eigen::Vector3d const>(points[0].getCoords()))
+                .normalized();
         if (global_dim == 2)
         {
-            GeoLib::compute2DRotationMatrixToX(xx, matR);
+            matR = GeoLib::compute2DRotationMatrixToX(xx);
         }
         else
         {
-            GeoLib::compute3DRotationMatrixToX(xx, matR);
+            matR = GeoLib::compute3DRotationMatrixToX(xx);
         }
         matR.transposeInPlace();
     }
