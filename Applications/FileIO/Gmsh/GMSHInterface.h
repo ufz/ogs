@@ -18,7 +18,6 @@
 
 #include "Applications/FileIO/Gmsh/GMSHPoint.h"
 #include "BaseLib/IO/Writer.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
 namespace GeoLib
 {

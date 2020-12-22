@@ -18,7 +18,6 @@
 #include <Eigen/Eigen>
 
 #include "GeoLib/AnalyticalGeometry.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 
 #include "MeshLib/CoordinateSystem.h"
 #include "MeshLib/Node.h"

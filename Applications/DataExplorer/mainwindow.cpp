@@ -26,7 +26,7 @@
 #include <QSettings>
 #include <QSignalMapper>
 #ifndef NDEBUG
-#include <QTime>
+#include <QElapsedTimer>
 #endif  // NDEBUG
 
 // VTK includes
@@ -590,15 +590,13 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
                  fi.suffix().toLower() == "vtk")
         {
 #ifndef NDEBUG
-            QTime myTimer0;
-            QTime myTimer1;
-            myTimer0.start();
+            QElapsedTimer myTimer;
+            myTimer.start();
 #endif
             std::unique_ptr<MeshLib::Mesh> mesh(
                 MeshLib::IO::readMeshFromFile(fileName.toStdString()));
 #ifndef NDEBUG
-            INFO("Mesh loading time: {:d} ms.", myTimer0.elapsed());
-            myTimer1.start();
+            INFO("Mesh loading time: {:d} ms.", myTimer.restart());
 #endif
             if (mesh)
             {
@@ -609,7 +607,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
                 OGSError::box("Failed to load mesh file.");
             }
 #ifndef NDEBUG
-            INFO("Mesh model setup time: {:d} ms.", myTimer1.elapsed());
+            INFO("Mesh model setup time: {:d} ms.", myTimer.elapsed());
 #endif
         }
 

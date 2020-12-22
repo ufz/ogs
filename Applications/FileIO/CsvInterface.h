@@ -29,18 +29,18 @@
 #include "BaseLib/StringTools.h"
 #include "BaseLib/IO/Writer.h"
 
-namespace GeoLib {
-    class Point;
+namespace GeoLib
+{
+class Point;
 }
 
-namespace FileIO {
-
+namespace FileIO
+{
 /**
  * Interface for reading CSV file formats.
  */
-class CsvInterface  : public BaseLib::IO::Writer
+class CsvInterface : public BaseLib::IO::Writer
 {
-
 public:
     /// Contructor (only needed for writing files)
     CsvInterface();
@@ -59,19 +59,21 @@ public:
     /// Stores if the CSV file to be written should include a header or not.
     void setCsvHeader(bool write_header) { _writeCsvHeader = write_header; }
 
-    /// Adds a data vector to the CSV file. All data vectors have to have the same size.
-    /// Vectors will be written in the same sequence they have been added to the interface.
-    template<typename T>
-    bool addVectorForWriting(std::string const& vec_name, std::vector<T> const& vec)
+    /// Adds a data vector to the CSV file. All data vectors have to have the
+    /// same size. Vectors will be written in the same sequence they have been
+    /// added to the interface.
+    template <typename T>
+    bool addVectorForWriting(std::string const& vec_name,
+                             std::vector<T> const& vec)
     {
-        static_assert(std::is_same<T, std::string>::value
-                || std::is_same<T, double>::value
-                || std::is_same<T, int>::value,
-                "CsvInterface can only write vectors of strings, doubles or ints.");
+        static_assert(
+            std::is_same<T, std::string>::value ||
+                std::is_same<T, double>::value || std::is_same<T, int>::value,
+            "CsvInterface can only write vectors of strings, doubles or ints.");
 
         if (!_data.empty())
         {
-            std::size_t const vec_size (getVectorSize(0));
+            std::size_t const vec_size(getVectorSize(0));
             if (vec_size != vec.size())
             {
                 ERR("Vector size does not match existing data (should be "
@@ -91,15 +93,15 @@ public:
 
     /**
      * Reads 3D points from a CSV file. It is assumed that the file has a header
-     * specifying a name for each of the columns. The first three columns will be
-     * interpreted as x-, y- and z-coordinate, respectively.
-     * \param fname    Name of the file to be read
-     * \param delim    Deliminator, default is ','
+     * specifying a name for each of the columns. The first three columns will
+     * be interpreted as x-, y- and z-coordinate, respectively. \param fname
+     * Name of the file to be read \param delim    Deliminator, default is ','
      * \param points   A vector containing the 3D points read from the file
-     * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
+     * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1
+     * error reading file)
      */
     static int readPoints(std::string const& fname, char delim,
-                          std::vector<GeoLib::Point*> &points);
+                          std::vector<GeoLib::Point*>& points);
 
     /**
      * Reads 3D points from a CSV file. It is assumed that the file has a header
@@ -109,14 +111,15 @@ public:
      * z-coordinates will be set to zero.
      * \param fname           Name of the file to be read
      * \param delim           Deliminator, default is ','
-     * \param points          A vector containing the 3D points read from the file
-     * \param x_column_name   Name of the column to be interpreted as x-coordinate
-     * \param y_column_name   Name of the column to be interpreted as y-coordinate
-     * \param z_column_name   Name of the column to be interpreted as z-coordinate
-     * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
+     * \param points          A vector containing the 3D points read from the
+     * file \param x_column_name   Name of the column to be interpreted as
+     * x-coordinate \param y_column_name   Name of the column to be interpreted
+     * as y-coordinate \param z_column_name   Name of the column to be
+     * interpreted as z-coordinate \return An error code (0 = ok, 0<i<max =
+     * number of skipped lines, -1 error reading file)
      */
     static int readPoints(std::string const& fname, char delim,
-                          std::vector<GeoLib::Point*> &points,
+                          std::vector<GeoLib::Point*>& points,
                           std::string const& x_column_name,
                           std::string const& y_column_name,
                           std::string const& z_column_name = "");
@@ -128,17 +131,18 @@ public:
      * z-coordinates will be set to zero.
      * \param fname          Name of the file to be read
      * \param delim          Deliminator, default is ','
-     * \param points         A vector containing the 3D points read from the file
-     * \param x_column_idx   Index of the column to be interpreted as x-coordinate
-     * \param y_column_idx   Index of the column to be interpreted as y-coordinate
-     * \param z_column_idx   Index of the column to be interpreted as z-coordinate
-     * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
+     * \param points         A vector containing the 3D points read from the
+     * file \param x_column_idx   Index of the column to be interpreted as
+     * x-coordinate \param y_column_idx   Index of the column to be interpreted
+     * as y-coordinate \param z_column_idx   Index of the column to be
+     * interpreted as z-coordinate \return An error code (0 = ok, 0<i<max =
+     * number of skipped lines, -1 error reading file)
      */
-    static int readPoints(std::string const& fname, char delim,
-                          std::vector<GeoLib::Point*> &points,
-                          std::size_t x_column_idx,
-                          std::size_t y_column_idx,
-                          std::size_t z_column_idx = std::numeric_limits<std::size_t>::max());
+    static int readPoints(
+        std::string const& fname, char delim,
+        std::vector<GeoLib::Point*>& points, std::size_t x_column_idx,
+        std::size_t y_column_idx,
+        std::size_t z_column_idx = std::numeric_limits<std::size_t>::max());
 
     /**
      * Reads a column of the given name from a CSV file.
@@ -146,22 +150,25 @@ public:
      * \param delim        Deliminator, default is ','
      * \param data_array   A vector containing the data read from the file
      * \param column_name  The column's name to read
-     * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1 error reading file)
+     * \return An error code (0 = ok, 0<i<max = number of skipped lines, -1
+     * error reading file)
      */
     template <typename T>
     static int readColumn(std::string const& fname, char delim,
-                          std::vector<T> &data_array,
+                          std::vector<T>& data_array,
                           std::string const& column_name)
     {
         std::ifstream in(fname.c_str());
-        if (!in.is_open()) {
+        if (!in.is_open())
+        {
             ERR("CsvInterface::readColumn(): Could not open file {:s}.", fname);
             return -1;
         }
 
         std::string line;
         getline(in, line);
-        std::size_t const column_idx = CsvInterface::findColumn(line, delim, column_name);
+        std::size_t const column_idx =
+            CsvInterface::findColumn(line, delim, column_name);
         if (column_idx == std::numeric_limits<std::size_t>::max())
         {
             ERR("Column '{:s}' not found in file header.", column_name);
@@ -172,11 +179,11 @@ public:
 
     template <typename T>
     static int readColumn(std::string const& fname, char delim,
-                              std::vector<T> &data_array,
-                              std::size_t column_idx)
+                          std::vector<T>& data_array, std::size_t column_idx)
     {
         std::ifstream in(fname.c_str());
-        if (!in.is_open()) {
+        if (!in.is_open())
+        {
             ERR("CsvInterface::readColumn(): Could not open file {:s}.", fname);
             return -1;
         }
@@ -185,26 +192,26 @@ public:
 
 private:
     /// Actual point reader for public methods
-    static int readPoints(std::ifstream &in, char delim,
-                          std::vector<GeoLib::Point*> &points,
+    static int readPoints(std::ifstream& in, char delim,
+                          std::vector<GeoLib::Point*>& points,
                           std::array<std::size_t, 3> const& column_idx);
 
     /// Actual column reader for public methods
     template <typename T>
-    static int readColumn(std::ifstream &in, char delim,
-                       std::vector<T> &data_array,
-                       std::size_t column_idx)
+    static int readColumn(std::ifstream& in, char delim,
+                          std::vector<T>& data_array, std::size_t column_idx)
     {
         std::string line;
         std::size_t line_count(0);
         std::size_t error_count(0);
         std::list<std::string>::const_iterator it;
-        while ( getline(in, line) )
+        while (std::getline(in, line))
         {
             line_count++;
-            std::list<std::string> const fields = BaseLib::splitString(line, delim);
+            std::list<std::string> const fields =
+                BaseLib::splitString(line, delim);
 
-            if (fields.size() < column_idx+1)
+            if (fields.size() < column_idx + 1)
             {
                 ERR("Line {:d} contains not enough columns of data. Skipping "
                     "line...",
@@ -229,8 +236,10 @@ private:
         return error_count;
     }
 
-    /// Returns the number of the column with column_name (or std::numeric_limits::max() if no such column has been found).
-    static std::size_t findColumn(std::string const& line, char delim, std::string const& column_name);
+    /// Returns the number of the column with column_name (or
+    /// std::numeric_limits::max() if no such column has been found).
+    static std::size_t findColumn(std::string const& line, char delim,
+                                  std::string const& column_name);
 
     /// Returns the size of the vector with the given index
     std::size_t getVectorSize(std::size_t idx) const;
@@ -244,7 +253,7 @@ private:
 
     bool _writeCsvHeader{true};
     std::vector<std::string> _vec_names;
-    std::vector< boost::any > _data;
+    std::vector<boost::any> _data;
 };
 
 }  // namespace FileIO
