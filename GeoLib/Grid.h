@@ -431,7 +431,7 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
     std::array<double,6> dists(getPointCellBorderDistances(pnt, coords));
 
     if (calcNearestPointInGridCell(pnt, coords, sqr_min_dist, nearest_pnt)) {
-        double min_dist(sqrt(sqr_min_dist));
+        double min_dist(std::sqrt(sqr_min_dist));
         if (dists[0] >= min_dist && dists[1] >= min_dist
             && dists[2] >= min_dist && dists[3] >= min_dist
             && dists[4] >= min_dist && dists[5] >= min_dist) {
@@ -478,7 +478,7 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
         } // end while
     } // end else
 
-    double len(sqrt(MathLib::sqrDist(pnt, *nearest_pnt)));
+    double len(std::sqrt(MathLib::sqrDist(pnt, *nearest_pnt)));
     // search all other grid cells within the cube with the edge nodes
     std::vector<std::vector<POINT*> const*> vecs_of_pnts(
         getPntVecsOfGridCellsIntersectingCube(pnt, len));

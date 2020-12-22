@@ -249,8 +249,9 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
     GeoLib::Point const p0(a[0]+rhs[0]*v[0], a[1]+rhs[0]*v[1], a[2]+rhs[0]*v[2]);
     GeoLib::Point const p1(c[0]+rhs[1]*w[0], c[1]+rhs[1]*w[1], c[2]+rhs[1]*w[2]);
 
-    double const min_dist(sqrt(MathLib::sqrDist(p0, p1)));
-    double const min_seg_len(std::min(sqrt(sqr_len_v), sqrt(sqr_len_w)));
+    double const min_dist(std::sqrt(MathLib::sqrDist(p0, p1)));
+    double const min_seg_len(
+        std::min(std::sqrt(sqr_len_v), std::sqrt(sqr_len_w)));
     if (min_dist < min_seg_len * 1e-6) {
         s[0] = 0.5 * (p0[0] + p1[0]);
         s[1] = 0.5 * (p0[1] + p1[1]);
