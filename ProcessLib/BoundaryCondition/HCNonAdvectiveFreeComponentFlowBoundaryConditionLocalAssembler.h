@@ -54,13 +54,14 @@ public:
           _surface_normal(getOrientedSurfaceNormal(e))
     {
     }
-    Eigen::RowVector3d getOrientedSurfaceNormal(MeshLib::Element const& e)
+
+    Eigen::Vector3d getOrientedSurfaceNormal(MeshLib::Element const& e)
     {
         // At the moment (2016-09-28) the surface normal is not oriented
         // according to the right hand rule
         // for correct results it is necessary to multiply the normal with -1
         auto const surface_element_normal =
-            -1.0 * MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
+            -MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
         return surface_element_normal;
     }
 
@@ -112,7 +113,7 @@ public:
 private:
     HCNonAdvectiveFreeComponentFlowBoundaryConditionData const& _data;
     std::size_t const _local_matrix_size;
-    Eigen::RowVector3d const _surface_normal;
+    Eigen::Vector3d const _surface_normal;
 };
 
 }  // namespace ProcessLib
