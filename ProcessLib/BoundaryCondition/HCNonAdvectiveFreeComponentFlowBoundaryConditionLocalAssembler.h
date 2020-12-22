@@ -55,16 +55,6 @@ public:
     {
     }
 
-    Eigen::Vector3d getOrientedSurfaceNormal(MeshLib::Element const& e)
-    {
-        // At the moment (2016-09-28) the surface normal is not oriented
-        // according to the right hand rule
-        // for correct results it is necessary to multiply the normal with -1
-        auto const surface_element_normal =
-            -MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
-        return surface_element_normal;
-    }
-
     void assemble(std::size_t const mesh_item_id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
                   double const t, std::vector<GlobalVector*> const& x,
@@ -111,6 +101,14 @@ public:
     }
 
 private:
+    Eigen::Vector3d getOrientedSurfaceNormal(MeshLib::Element const& e)
+    {
+        // At the moment (2016-09-28) the surface normal is not oriented
+        // according to the right hand rule
+        // for correct results it is necessary to multiply the normal with -1
+        return -MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
+    }
+
     HCNonAdvectiveFreeComponentFlowBoundaryConditionData const& _data;
     std::size_t const _local_matrix_size;
     Eigen::Vector3d const _surface_normal;
