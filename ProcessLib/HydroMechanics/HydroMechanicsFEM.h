@@ -48,7 +48,7 @@ struct IntegrationPointData final
 
     typename ShapeMatrixTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
-        N_u_op;
+        N_u_op; /**< for interpolation of the displacement vector, whereas N_u interpolates one component (scalar) */
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
