@@ -54,11 +54,6 @@
                                 <slope>5e-10</slope>
                             </independent_variable>
                         </property>
-                        <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value>1e3</value>
-                        </property>
                     </properties>
                 </phase>
                 <phase>
