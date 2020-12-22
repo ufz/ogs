@@ -173,7 +173,7 @@ void Process::setInitialConditions(
     MathLib::LinAlg::finalizeAssembly(x);
     MathLib::LinAlg::copy(x, x_prev);  // pushState
 
-    setInitialConditionsConcreteProcess(x, t, process_id);
+    setInitialConditionsConcreteProcess(process_solutions, t, process_id);
 }
 
 MathLib::MatrixSpecifications Process::getMatrixSpecifications(

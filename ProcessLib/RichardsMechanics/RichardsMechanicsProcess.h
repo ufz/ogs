@@ -73,7 +73,7 @@ private:
 
     void initializeBoundaryConditions() override;
 
-    void setInitialConditionsConcreteProcess(GlobalVector const& x,
+    void setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
                                              double const t,
                                              int const process_id) override;
 
