@@ -86,6 +86,10 @@ void ComponentTransportProcess::initializeConcreteProcess(
 
     if (_chemical_solver_interface)
     {
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
+            &ComponentTransportLocalAssemblerInterface::setChemicalSystemID,
+            _local_assemblers, pv.getActiveElementIDs());
+
         _chemical_solver_interface->initialize();
     }
 

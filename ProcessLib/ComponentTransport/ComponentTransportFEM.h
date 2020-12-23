@@ -48,6 +48,8 @@ struct IntegrationPointData final
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
 
+    GlobalIndexType chemical_system_id = 0;
+
     double porosity = std::numeric_limits<double>::quiet_NaN();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -65,6 +67,8 @@ public:
     {
         _coupled_solutions = coupling_term;
     }
+
+    virtual void setChemicalSystemID(std::size_t const /*mesh_item_id*/) = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
@@ -159,23 +163,23 @@ public:
                 medium->property(MaterialPropertyLib::PropertyType::porosity)
                     .template initialValue<double>(pos, 0.);
         }
+    }
 
-        if (_process_data.chemical_process_data)
+    void setChemicalSystemID(std::size_t const /*mesh_item_id*/) override
+    {
+        assert(_process_data.chemical_solver_interface);
+        // chemical system index map
+        auto& chemical_system_index_map =
+            _process_data.chemical_solver_interface->chemical_system_index_map;
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            // chemical system index map
-            auto& chemical_system_index_map =
-                _process_data.chemical_process_data->chemical_system_index_map;
-
-            GlobalIndexType const start_value =
-                chemical_system_index_map.empty()
-                    ? 0
-                    : chemical_system_index_map.back().back() + 1;
-
-            std::vector<GlobalIndexType> indices(
-                _integration_method.getNumberOfPoints());
-            std::iota(indices.begin(), indices.end(), start_value);
-
-            chemical_system_index_map.push_back(std::move(indices));
+            _ip_data[ip].chemical_system_id = chemical_system_index_map.empty()
+                                     ? 0
+                                     : chemical_system_index_map.back() + 1;
+            chemical_system_index_map.push_back(_ip_data[ip].chemical_system_id);
         }
     }
 
