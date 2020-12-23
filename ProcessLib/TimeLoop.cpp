@@ -228,8 +228,12 @@ setInitialConditions(
         process_solutions_prev.emplace_back(
             &NumLib::GlobalVectorProvider::provider.getVector(
                 ode_sys.getMatrixSpecifications(process_id)));
+    }
 
+    for (auto& process_data : per_process_data)
+    {
         auto& pcs = process_data->process;
+        auto const process_id = process_data->process_id;
         pcs.setInitialConditions(process_solutions, process_solutions_prev, t0,
                                  process_id);
 
