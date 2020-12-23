@@ -35,6 +35,7 @@ namespace MaterialPropertyLib
 enum PropertyType : int
 {
     acentric_factor,
+    amount,
     binary_interaction_coefficient,
     biot_coefficient,
     bishops_effective_stress,
@@ -289,6 +290,11 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::viscosity;
     }
+    // TODO (renchao): replace property "amount" with volume fraction
+    if (boost::iequals(inString, "amount"))
+    {
+        return PropertyType::amount;
+    }
 
     OGS_FATAL(
         "The property name '{:s}' does not correspond to any known property",
@@ -300,6 +306,7 @@ inline PropertyType convertStringToProperty(std::string const& inString)
 
 static const std::array<std::string, PropertyType::number_of_properties>
     property_enum_to_string{{"acentric_factor",
+                             "amount",
                              "binary_interaction_coefficient",
                              "biot_coefficient",
                              "bishops_effective_stress",
