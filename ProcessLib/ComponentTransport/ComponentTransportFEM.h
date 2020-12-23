@@ -980,11 +980,24 @@ public:
         auto const ele_velocity_mat =
             MathLib::toMatrix(ele_velocity, GlobalDim, n_integration_points);
 
-        auto ele_id = _element.getID();
+        auto const ele_id = _element.getID();
         Eigen::Map<LocalVectorType>(
             &(*_process_data.mesh_prop_velocity)[ele_id * GlobalDim],
             GlobalDim) =
             ele_velocity_mat.rowwise().sum() / n_integration_points;
+
+        if (_process_data.chemical_solver_interface)
+        {
+            std::vector<GlobalIndexType> chemical_system_indices;
+            chemical_system_indices.reserve(n_integration_points);
+            std::transform(
+                _ip_data.begin(), _ip_data.end(),
+                std::back_inserter(chemical_system_indices),
+                [](auto const& ip_data) { return ip_data.chemical_system_id; });
+
+            _process_data.chemical_solver_interface->computeSecondaryVariable(
+                ele_id, chemical_system_indices);
+        }
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,

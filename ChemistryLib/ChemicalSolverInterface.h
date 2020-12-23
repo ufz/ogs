@@ -33,6 +33,12 @@ public:
         return {};
     }
 
+    virtual void computeSecondaryVariable(
+        std::size_t const /*ele_id*/,
+        std::vector<GlobalIndexType> const& /*chemical_system_indices*/)
+    {
+    }
+
     virtual ~ChemicalSolverInterface() = default;
 
 public:

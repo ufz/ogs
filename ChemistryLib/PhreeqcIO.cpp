@@ -530,5 +530,35 @@ std::vector<std::string> const PhreeqcIO::getComponentList() const
 
     return component_names;
 }
+
+void PhreeqcIO::computeSecondaryVariable(
+    std::size_t const ele_id,
+    std::vector<GlobalIndexType> const& chemical_system_indices)
+{
+    auto const num_chemical_systems = chemical_system_indices.size();
+    for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
+    {
+        double amount_avg = std::accumulate(
+            chemical_system_indices.begin(), chemical_system_indices.end(), 0.0,
+            [&](double amount, auto const& id) {
+                return amount + (*kinetic_reactant.amount)[id];
+            });
+
+        amount_avg /= num_chemical_systems;
+        (*kinetic_reactant.amount_avg)[ele_id] = amount_avg;
+    }
+
+    for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
+    {
+        double amount_avg = std::accumulate(
+            chemical_system_indices.begin(), chemical_system_indices.end(), 0.0,
+            [&](double amount, auto const& id) {
+                return amount + (*equilibrium_reactant.amount)[id];
+            });
+
+        amount_avg /= num_chemical_systems;
+        (*equilibrium_reactant.amount_avg)[ele_id] = amount_avg;
+    }
+}
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

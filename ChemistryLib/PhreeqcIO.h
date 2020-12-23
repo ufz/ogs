@@ -69,6 +69,10 @@ public:
 
     friend std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io);
 
+    void computeSecondaryVariable(
+        std::size_t const ele_id,
+        std::vector<GlobalIndexType> const& chemical_system_indices) override;
+
     std::vector<std::string> const getComponentList() const override;
 
     std::string const _phreeqc_input_file;
