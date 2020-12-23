@@ -319,6 +319,8 @@ void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(
         auto const& nodal_values = extrapolator.getNodalValues();
         MathLib::LinAlg::copy(nodal_values,
                               *nodal_values_vectors[transport_process_id + 1]);
+        MathLib::LinAlg::finalizeAssembly(
+            *nodal_values_vectors[transport_process_id + 1]);
     }
 }
 
