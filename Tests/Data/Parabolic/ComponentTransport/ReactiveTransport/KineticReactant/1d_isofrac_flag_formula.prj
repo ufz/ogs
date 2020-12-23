@@ -104,6 +104,21 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <components>
+                        <component>
+                            <name>Productd</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1e-6</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -288,7 +303,6 @@
             <kinetic_reactant>
                 <name>Productd</name>
                 <chemical_formula>SyntheticaSyntheticb 1</chemical_formula>
-                <initial_amount>1e-6</initial_amount>
             </kinetic_reactant>
         </kinetic_reactants>
         <rates>

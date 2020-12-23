@@ -168,6 +168,21 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <components>
+                        <component>
+                            <name>Calcite</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>10</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -445,7 +460,6 @@
         <equilibrium_reactants>
             <phase_component>
 		    <name>Calcite</name>
-                <initial_amount>10</initial_amount>
                 <saturation_index>0.0</saturation_index>
             </phase_component>
         </equilibrium_reactants>
