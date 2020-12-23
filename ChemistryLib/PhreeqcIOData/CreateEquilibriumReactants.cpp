@@ -37,11 +37,6 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
             //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__name}
             equilibrium_reactant_config.getConfigParameter<std::string>("name");
 
-        double const initial_amount =
-            //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__initial_amount}
-            equilibrium_reactant_config.getConfigParameter<double>(
-                "initial_amount");
-
         double const saturation_index =
             //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__saturation_index}
             equilibrium_reactant_config.getConfigParameter<double>(
@@ -57,7 +52,6 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
         equilibrium_reactants.emplace_back(std::move(name),
                                            amount,
                                            mesh_prop_amount,
-                                           initial_amount,
                                            saturation_index);
     }
 
