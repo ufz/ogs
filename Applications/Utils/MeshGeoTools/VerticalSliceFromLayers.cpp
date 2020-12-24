@@ -178,9 +178,8 @@ void rotateGeometryToXY(std::vector<GeoLib::Point*>& points,
     auto const [plane_normal, d] =
         GeoLib::getNewellPlane(points.begin(), points.end());
     // rotate points into x-y-plane
-    // Todo (TF) Remove when rotateGeometryToXY uses Eigen for rot_mat
-    Eigen::Matrix3d rotation_matrix_;
-    GeoLib::computeRotationMatrixToXY(plane_normal, rotation_matrix_);
+    Eigen::Matrix3d const rotation_matrix_ =
+        GeoLib::computeRotationMatrixToXY(plane_normal);
     GeoLib::rotatePoints(rotation_matrix_, points.begin(), points.end());
     // Todo (TF) Remove when rotateGeometryToXY uses Eigen for rot_mat
     for (int r = 0; r < 3; r++)

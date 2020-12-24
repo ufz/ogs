@@ -59,7 +59,7 @@ void getRotationMatrixToGlobal(const unsigned element_dimension,
         // get plane normal
         auto const [plane_normal, d] = GeoLib::getNewellPlane(points);
         // compute a rotation matrix to XY
-        GeoLib::computeRotationMatrixToXY(plane_normal, matR);
+        matR = GeoLib::computeRotationMatrixToXY(plane_normal);
         // set a transposed matrix
         matR.transposeInPlace();
     }

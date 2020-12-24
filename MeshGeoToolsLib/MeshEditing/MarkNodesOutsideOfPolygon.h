@@ -16,9 +16,6 @@
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/Polygon.h"
 
-#include "MathLib/Vector3.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
-
 #include "MeshLib/Node.h"
 
 namespace MeshGeoToolsLib
@@ -38,8 +35,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
         rotated_nodes.push_back(new GeoLib::Point(*node, node->getID()));
     }
     // 2 rotate the Points
-    Eigen::Matrix3d rot_mat;
-    GeoLib::computeRotationMatrixToXY(normal, rot_mat);
+    Eigen::Matrix3d const rot_mat = GeoLib::computeRotationMatrixToXY(normal);
     GeoLib::rotatePoints(rot_mat, rotated_nodes);
     // 3 set z coord to zero
     std::for_each(rotated_nodes.begin(), rotated_nodes.end(),
