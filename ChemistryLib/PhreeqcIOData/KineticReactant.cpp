@@ -28,15 +28,12 @@ void KineticReactant::print(std::ostream& os,
 
     os << "-m  " << (*molality)[global_id] << "\n";
 
-    if (!parameters.empty())
+    os << "-parms";
+    for (auto const& parameter : parameters)
     {
-        os << "-parms";
-        for (auto const& parameter : parameters)
-        {
-            os << " " << parameter;
-        }
-        os << "\n";
+        os << " " << parameter;
     }
+    os << "\n";
 }
 const ItemType KineticReactant::item_type;
 }  // namespace PhreeqcIOData
