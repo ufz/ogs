@@ -83,7 +83,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
         return _direct_values;
     }
 
-    MathLib::Vector3 const dir(0.0, 0.0, -1.0);
+    Eigen::Vector3d const dir({0.0, 0.0, -1.0});
     double const angle(90);
     std::string const prop_name("bulk_node_ids");
     std::unique_ptr<MeshLib::Mesh> surface_mesh(

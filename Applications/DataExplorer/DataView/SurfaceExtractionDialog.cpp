@@ -27,9 +27,9 @@ SurfaceExtractionDialog::SurfaceExtractionDialog(QDialog* parent)
 
 void SurfaceExtractionDialog::accept()
 {
-    _dir = MathLib::Vector3(xNormalEdit->text().toDouble(),
+    _dir = Eigen::Vector3d({xNormalEdit->text().toDouble(),
                             yNormalEdit->text().toDouble(),
-                            zNormalEdit->text().toDouble());
+                            zNormalEdit->text().toDouble()});
     _tolerance = degreesSpinBox->text().toInt();
 
     this->done(QDialog::Accepted);

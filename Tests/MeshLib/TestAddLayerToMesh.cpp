@@ -219,7 +219,7 @@ TEST(MeshLib, AddTopLayerToHexMesh)
         MeshLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(150, n_elems.at(MeshLib::MeshElemType::HEXAHEDRON));
 
-    MathLib::Vector3 const dir(0, 0, -1);
+    Eigen::Vector3d const dir({0, 0, -1});
     std::unique_ptr<MeshLib::Mesh> const test_input (
         MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90));
     std::unique_ptr<MeshLib::Mesh> const test_output (
@@ -243,7 +243,7 @@ TEST(MeshLib, AddBottomLayerToHexMesh)
         MeshLib::MeshInformation::getNumberOfElementTypes(*result);
     ASSERT_EQ(150, n_elems.at(MeshLib::MeshElemType::HEXAHEDRON));
 
-    MathLib::Vector3 const dir(0, 0, 1);
+    Eigen::Vector3d const dir({0, 0, 1});
     std::unique_ptr<MeshLib::Mesh> const test_input (
         MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90));
     std::unique_ptr<MeshLib::Mesh> const test_output (
@@ -270,7 +270,7 @@ TEST(MeshLib, AddTopLayerToPrismMesh)
     ASSERT_EQ(50, n_elems.at(MeshLib::MeshElemType::TRIANGLE));
     ASSERT_EQ(100, n_elems.at(MeshLib::MeshElemType::PRISM));
 
-    MathLib::Vector3 const dir(0, 0, -1);
+    Eigen::Vector3d const dir({0, 0, -1});
     std::unique_ptr<MeshLib::Mesh> test_input (
         MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh2, dir, 90));
     std::unique_ptr<MeshLib::Mesh> test_output (
@@ -312,7 +312,7 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
     ASSERT_EQ(mesh2->getNumberOfElements(), std::count(new_mats->cbegin(), new_mats->cend(), 0));
     ASSERT_EQ(mesh->getNumberOfElements(), std::count(new_mats->cbegin(), new_mats->cend(), 1));
 
-    MathLib::Vector3 const dir(0, 0, 1);
+    Eigen::Vector3d const dir({0, 0, 1});
     std::unique_ptr<MeshLib::Mesh> test_input (
         MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh2, dir, 90));
     std::unique_ptr<MeshLib::Mesh> test_output (

@@ -82,8 +82,9 @@ void GeoMapper::mapOnMesh(MeshLib::Mesh const*const mesh)
     }
     else
     {
-        const MathLib::Vector3 dir(0,0,-1);
-        _surface_mesh = MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
+        Eigen::Vector3d const dir(0,0,-1);
+        _surface_mesh =
+            MeshLib::MeshSurfaceExtraction::getMeshSurface(*mesh, dir, 90);
     }
 
     // init grid
@@ -577,7 +578,7 @@ void GeoMapper::advancedMapOnMesh(MeshLib::Mesh const& mesh)
     if (mesh.getDimension()<3) {
         _surface_mesh = new MeshLib::Mesh(mesh);
     } else {
-        const MathLib::Vector3 dir(0,0,-1);
+        Eigen::Vector3d const dir({0, 0, -1});
         _surface_mesh =
             MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, 90+1e-6);
     }

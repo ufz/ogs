@@ -102,11 +102,11 @@ int main (int argc, char* argv[])
          geo_objs.getPointVec(geo_name)->size(),
          geo_objs.getPolylineVec(geo_name)->size());
 
-    MathLib::Vector3 const dir(0.0, 0.0, -1.0);
+    Eigen::Vector3d const dir({0.0, 0.0, -1.0});
     double angle(90);
 
     auto computeElementTopSurfaceAreas = [](MeshLib::Mesh const& mesh,
-        MathLib::Vector3 const& d, double angle)
+        Eigen::Vector3d const& d, double angle)
     {
         std::unique_ptr<MeshLib::Mesh> surface_mesh(
             MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, d, angle));
@@ -115,8 +115,9 @@ int main (int argc, char* argv[])
     };
 
     std::vector<double> areas(computeElementTopSurfaceAreas(*mesh, dir, angle));
+    MathLib::Vector3 const mal_dir(dir[0], dir[1], dir[2]);
     std::vector<MeshLib::Node*> all_sfc_nodes(
-        MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, dir, angle)
+        MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, mal_dir, angle)
     );
 
     std::for_each(all_sfc_nodes.begin(), all_sfc_nodes.end(),
