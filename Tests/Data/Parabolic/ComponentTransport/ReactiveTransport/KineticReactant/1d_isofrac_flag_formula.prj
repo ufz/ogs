@@ -111,7 +111,7 @@
                             <name>Productd</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1e-6</value>
                                 </property>

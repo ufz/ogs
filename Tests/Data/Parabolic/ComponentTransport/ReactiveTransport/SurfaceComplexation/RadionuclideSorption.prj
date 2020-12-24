@@ -175,7 +175,7 @@
                             <name>Calcite</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>10</value>
                                 </property>

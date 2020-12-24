@@ -279,7 +279,7 @@
                             <name>Aeration</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -289,7 +289,7 @@
                             <name>AttDetachment_Xi</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -299,7 +299,7 @@
                             <name>AttDetachment_Xs</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -309,7 +309,7 @@
                             <name>Hydrolysis_Xs_m</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -319,7 +319,7 @@
                             <name>Hydrolysis_Xs_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -329,7 +329,7 @@
                             <name>Aerobic_Growth_Xh_on_Sf</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -339,7 +339,7 @@
                             <name>Anoxic_Growth_Xh_on_Sf</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -349,7 +349,7 @@
                             <name>Aerobic_Growth_Xh_on_Sa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -359,7 +359,7 @@
                             <name>Anoxic_Growth_Xh_on_Sa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -369,7 +369,7 @@
                             <name>Lysis_Xh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -379,7 +379,7 @@
                             <name>Aerobic_Growth_Xa_on_Snh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -389,7 +389,7 @@
                             <name>Lysis_Xa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -399,7 +399,7 @@
                             <name>Growth_Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -409,7 +409,7 @@
                             <name>Lysis_Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -419,7 +419,7 @@
                             <name>Growth_Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -429,7 +429,7 @@
                             <name>Lysis_Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -439,7 +439,7 @@
                             <name>Growth_Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -449,7 +449,7 @@
                             <name>Lysis_Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -459,7 +459,7 @@
                             <name>Aerobic_Growth_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -469,7 +469,7 @@
                             <name>Anoxic_Growth_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -479,7 +479,7 @@
                             <name>Lysis_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -489,7 +489,7 @@
                             <name>Xh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -499,7 +499,7 @@
                             <name>Xa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -509,7 +509,7 @@
                             <name>Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -519,7 +519,7 @@
                             <name>Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -529,7 +529,7 @@
                             <name>Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -539,7 +539,7 @@
                             <name>Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -549,7 +549,7 @@
                             <name>Xs_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-4</value>
                                 </property>
@@ -559,7 +559,7 @@
                             <name>Xi_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-4</value>
                                 </property>
@@ -837,7 +837,7 @@
                             <name>Aeration</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -847,7 +847,7 @@
                             <name>AttDetachment_Xi</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -857,7 +857,7 @@
                             <name>AttDetachment_Xs</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -867,7 +867,7 @@
                             <name>Hydrolysis_Xs_m</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -877,7 +877,7 @@
                             <name>Hydrolysis_Xs_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -887,7 +887,7 @@
                             <name>Aerobic_Growth_Xh_on_Sf</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -897,7 +897,7 @@
                             <name>Anoxic_Growth_Xh_on_Sf</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -907,7 +907,7 @@
                             <name>Aerobic_Growth_Xh_on_Sa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -917,7 +917,7 @@
                             <name>Anoxic_Growth_Xh_on_Sa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -927,7 +927,7 @@
                             <name>Lysis_Xh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -937,7 +937,7 @@
                             <name>Aerobic_Growth_Xa_on_Snh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -947,7 +947,7 @@
                             <name>Lysis_Xa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -957,7 +957,7 @@
                             <name>Growth_Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -967,7 +967,7 @@
                             <name>Lysis_Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -977,7 +977,7 @@
                             <name>Growth_Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -987,7 +987,7 @@
                             <name>Lysis_Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -997,7 +997,7 @@
                             <name>Growth_Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1007,7 +1007,7 @@
                             <name>Lysis_Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1017,7 +1017,7 @@
                             <name>Aerobic_Growth_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1027,7 +1027,7 @@
                             <name>Anoxic_Growth_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1037,7 +1037,7 @@
                             <name>Lysis_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1047,7 +1047,7 @@
                             <name>Xh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1057,7 +1057,7 @@
                             <name>Xa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1067,7 +1067,7 @@
                             <name>Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1077,7 +1077,7 @@
                             <name>Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1087,7 +1087,7 @@
                             <name>Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1097,7 +1097,7 @@
                             <name>Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1107,7 +1107,7 @@
                             <name>Xs_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-4</value>
                                 </property>
@@ -1117,7 +1117,7 @@
                             <name>Xi_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-4</value>
                                 </property>
@@ -1395,7 +1395,7 @@
                             <name>Aeration</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1405,7 +1405,7 @@
                             <name>AttDetachment_Xi</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1415,7 +1415,7 @@
                             <name>AttDetachment_Xs</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1425,7 +1425,7 @@
                             <name>Hydrolysis_Xs_m</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1435,7 +1435,7 @@
                             <name>Hydrolysis_Xs_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1445,7 +1445,7 @@
                             <name>Aerobic_Growth_Xh_on_Sf</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1455,7 +1455,7 @@
                             <name>Anoxic_Growth_Xh_on_Sf</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1465,7 +1465,7 @@
                             <name>Aerobic_Growth_Xh_on_Sa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1475,7 +1475,7 @@
                             <name>Anoxic_Growth_Xh_on_Sa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1485,7 +1485,7 @@
                             <name>Lysis_Xh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1495,7 +1495,7 @@
                             <name>Aerobic_Growth_Xa_on_Snh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1505,7 +1505,7 @@
                             <name>Lysis_Xa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1515,7 +1515,7 @@
                             <name>Growth_Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1525,7 +1525,7 @@
                             <name>Lysis_Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1535,7 +1535,7 @@
                             <name>Growth_Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1545,7 +1545,7 @@
                             <name>Lysis_Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1555,7 +1555,7 @@
                             <name>Growth_Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1565,7 +1565,7 @@
                             <name>Lysis_Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1575,7 +1575,7 @@
                             <name>Aerobic_Growth_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1585,7 +1585,7 @@
                             <name>Anoxic_Growth_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1595,7 +1595,7 @@
                             <name>Lysis_Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
@@ -1605,7 +1605,7 @@
                             <name>Xh</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1615,7 +1615,7 @@
                             <name>Xa</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1625,7 +1625,7 @@
                             <name>Xfb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1635,7 +1635,7 @@
                             <name>Xamb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1645,7 +1645,7 @@
                             <name>Xasrb</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1655,7 +1655,7 @@
                             <name>Xsob</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-3</value>
                                 </property>
@@ -1665,7 +1665,7 @@
                             <name>Xs_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-4</value>
                                 </property>
@@ -1675,7 +1675,7 @@
                             <name>Xi_im</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0e-4</value>
                                 </property>
