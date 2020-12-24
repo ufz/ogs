@@ -366,17 +366,16 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
 }
 
 std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
-    const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle)
+    const MeshLib::Mesh& mesh, Eigen::Vector3d const& dir, double angle)
 {
     INFO("Extracting surface nodes...");
     std::vector<MeshLib::Element*> sfc_elements;
     std::vector<std::size_t> element_to_bulk_element_id_map;
     std::vector<std::size_t> element_to_bulk_face_id_map;
 
-    auto const edir = Eigen::Map<Eigen::Vector3d const>(dir.getCoords());
     get2DSurfaceElements(
         mesh.getElements(), sfc_elements, element_to_bulk_element_id_map,
-        element_to_bulk_face_id_map, edir, angle, mesh.getDimension());
+        element_to_bulk_face_id_map, dir, angle, mesh.getDimension());
 
     std::vector<MeshLib::Node*> surface_nodes;
     std::tie(surface_nodes, std::ignore) =

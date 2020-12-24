@@ -115,9 +115,8 @@ int main (int argc, char* argv[])
     };
 
     std::vector<double> areas(computeElementTopSurfaceAreas(*mesh, dir, angle));
-    MathLib::Vector3 const mal_dir(dir[0], dir[1], dir[2]);
     std::vector<MeshLib::Node*> all_sfc_nodes(
-        MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, mal_dir, angle)
+        MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, dir, angle)
     );
 
     std::for_each(all_sfc_nodes.begin(), all_sfc_nodes.end(),
