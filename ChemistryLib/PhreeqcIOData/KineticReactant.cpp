@@ -28,7 +28,7 @@ void KineticReactant::print(std::ostream& os,
 
     os << "-m  " << (*molality)[global_id] << "\n";
 
-    os << "-parms";
+    os << "-parms " << (*molality)[global_id];
     for (auto const& parameter : parameters)
     {
         os << " " << parameter;
