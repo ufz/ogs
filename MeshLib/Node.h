@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "MathLib/Point3dWithID.h"
-#include "MathLib/Vector3.h"
 
 namespace ApplicationUtils
 {

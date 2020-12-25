@@ -11,6 +11,7 @@
 #pragma once
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "MathLib/Vector3.h"
 #include "MeshLib/Elements/FaceRule.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ParameterLib/Parameter.h"

@@ -89,7 +89,6 @@ void GeoMapper::mapOnMesh(MeshLib::Mesh const*const mesh)
 
     // init grid
     MathLib::Point3d origin(std::array<double,3>{{0,0,0}});
-    MathLib::Vector3 normal(0,0,-1);
     std::vector<MeshLib::Node> flat_nodes;
     flat_nodes.reserve(_surface_mesh->getNumberOfNodes());
     // copy nodes and project the copied nodes to the x-y-plane, i.e. set

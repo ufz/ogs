@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "MathLib/Vector3.h"
 #include "Element.h"
 
 namespace MeshLib

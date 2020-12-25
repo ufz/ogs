@@ -9,6 +9,7 @@
 
 #include "Utils.h"
 
+#include "MathLib/Vector3.h"
 #include "MeshLib/Elements/FaceRule.h"
 
 namespace ProcessLib
