@@ -17,7 +17,6 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
@@ -158,7 +157,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     int mrank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
     // Add entries
-    MathLib::DenseMatrix<double> loc_m(2, 2);
+    Eigen::Matrix2d loc_m;
     loc_m(0, 0) = 1. +  mrank;
     loc_m(0, 1) = 2. +  mrank;
     loc_m(1, 0) = 3. +  mrank;
