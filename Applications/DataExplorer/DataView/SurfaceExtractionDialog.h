@@ -17,8 +17,6 @@
 #include "ui_SurfaceExtraction.h"
 #include <QDialog>
 
-#include "MathLib/Vector3.h"
-
 namespace MeshLib {
     class Mesh;
 }
