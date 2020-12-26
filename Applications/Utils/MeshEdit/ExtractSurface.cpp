@@ -24,8 +24,6 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
-#include "MathLib/Vector3.h"
-
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 

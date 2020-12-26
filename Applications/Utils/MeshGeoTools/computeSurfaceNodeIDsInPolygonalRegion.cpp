@@ -23,7 +23,6 @@
 #include "BaseLib/FileTools.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
-#include "MathLib/Vector3.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSurfaceExtraction.h"

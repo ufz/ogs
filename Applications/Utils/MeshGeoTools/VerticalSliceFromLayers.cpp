@@ -31,7 +31,6 @@
 #include "InfoLib/GitInfo.h"
 #include "MathLib/MathTools.h"
 #include "MathLib/Point3d.h"
-#include "MathLib/Vector3.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
