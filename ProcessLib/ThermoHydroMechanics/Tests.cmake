@@ -1,6 +1,6 @@
 # ThermoHydroMechanics; Small deformation, linear poroelastic, homogeneous
 if (NOT OGS_USE_MPI)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj RUNTIME 45)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj RUNTIME 60)
 endif()
 
 AddTest(
