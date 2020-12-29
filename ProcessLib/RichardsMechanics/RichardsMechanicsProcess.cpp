@@ -432,18 +432,23 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions()
 }
 
 template <int DisplacementDim>
-void RichardsMechanicsProcess<
-    DisplacementDim>::setInitialConditionsConcreteProcess(GlobalVector const& x,
-                                                          double const t,
-                                                          int const process_id)
+void RichardsMechanicsProcess<DisplacementDim>::
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+                                        double const t,
+                                        int const process_id)
 {
+    if (process_id != 0)
+    {
+        return;
+    }
+
     DBUG("SetInitialConditions RichardsMechanicsProcess.");
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, t,
+        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
         _use_monolithic_scheme, process_id);
 }
 

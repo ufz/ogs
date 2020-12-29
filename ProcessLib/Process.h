@@ -82,8 +82,11 @@ public:
 
     void initialize();
 
-    void setInitialConditions(const int process_id, const double t,
-                              GlobalVector& x);
+    void setInitialConditions(
+        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector*>& process_solutions_prev,
+        double const t,
+        int const process_id);
 
     MathLib::MatrixSpecifications getMatrixSpecifications(
         const int process_id) const override;
@@ -206,9 +209,10 @@ private:
     /// processes. It is called by initialize().
     virtual void initializeBoundaryConditions();
 
-    virtual void setInitialConditionsConcreteProcess(GlobalVector const& /*x*/,
-                                                     double const /*t*/,
-                                                     int const /*process_id*/)
+    virtual void setInitialConditionsConcreteProcess(
+        std::vector<GlobalVector*>& /*x*/,
+        double const /*t*/,
+        int const /*process_id*/)
     {
     }
 
