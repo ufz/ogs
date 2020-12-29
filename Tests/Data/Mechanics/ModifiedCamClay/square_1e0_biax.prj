@@ -90,7 +90,7 @@
             <type>Constant</type>
             <value>0.3</value>
         </parameter>
-       <parameter>
+        <parameter>
             <name>CriticalStateLineSlope</name>
             <type>Constant</type>
             <value>1.5</value>
@@ -141,7 +141,7 @@
             <type>Function</type>
             <expression> 0.05*t</expression>
         </parameter>
-          <parameter>
+        <parameter>
             <name>dirichletLinearNeg</name>
             <type>Function</type>
             <expression>-0.05*t</expression>
@@ -154,7 +154,7 @@
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
-                 <!--fix left in-x-->
+                <!--fix left in-x-->
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>left</geometry>
@@ -162,7 +162,7 @@
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
-                 <!--fix bottom in y-->
+                <!--fix bottom in y-->
                 <boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>bottom</geometry>

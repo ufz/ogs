@@ -2,11 +2,11 @@
 <!-- units: kg, m, s, N -->
 <OpenGeoSysProject>
     <meshes>
-    <mesh axially_symmetric="true">model.vtu</mesh>
-    <mesh axially_symmetric="true">geometry_left.vtu</mesh> 
-    <mesh axially_symmetric="true">geometry_right.vtu</mesh>
-    <mesh axially_symmetric="true">geometry_top.vtu</mesh>
-    <mesh axially_symmetric="true">geometry_bottom.vtu</mesh>
+        <mesh axially_symmetric="true">model.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_left.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_right.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_top.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_bottom.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -15,7 +15,7 @@
             <integration_order>2</integration_order>
             <constitutive_relation>
                 <type>MFront</type>
-                <behaviour>ModCamClay_semiExplParaInit</behaviour> 
+                <behaviour>ModCamClay_semiExplParaInit</behaviour>
                 <material_properties>
                     <material_property name="YoungModulus" parameter="YoungModulus"/>
                     <material_property name="PoissonRatio" parameter="PoissonRatio"/>
@@ -84,8 +84,8 @@
         </output>
     </time_loop>
     <parameters>
-    <!--Modified Cam clay parameters-->
-          <parameter>
+        <!--Modified Cam clay parameters-->
+        <parameter>
             <name>YoungModulus</name>
             <type>Constant</type>
             <value>52e6</value><!--Pa-->
@@ -120,7 +120,7 @@
             <type>Constant</type>
             <value>0.44</value>
         </parameter>
-       <!-- Initial and boundary values -->
+        <!-- Initial and boundary values -->
         <parameter>
             <name>rho_sr</name>
             <type>Constant</type>
@@ -199,7 +199,7 @@
                     <component>1</component>
                     <parameter>axial_pressure</parameter>
                 </boundary_condition>
-                  <!--compression in -radial direction-->
+                <!--compression in -radial direction-->
                 <boundary_condition>
                     <mesh>geometry_right</mesh>
                     <type>Neumann</type>
