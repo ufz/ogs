@@ -118,7 +118,7 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     // elastic estimators
     const auto sig_el = computeElasticPrediction();
     const auto s_el = deviator(sig_el);
-    const auto q_el = sqrt(1.5 * s_el | s_el);
+    const auto q_el = std::sqrt(1.5 * s_el | s_el);
     const auto p_el = -trace(sig_el) / 3 + pamb;
     // add the ambient pressure to ensure an initial elastic range
 
@@ -136,62 +136,60 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     // elastic range:
     if (withinElasticRange)
     {
-        /* nothing to do */
+        return true;
     }
-    else
-    {  // plastic range:
-        const auto epsr = strain(1.e-12);
-        // calculate invariants from current stress sig
-        const auto s = deviator(sig);
-        const auto q = sqrt(1.5 * s | s);
-        const auto p = -trace(sig) / 3 + pamb;
-        // update the internal (state) variables (rpc holds the old value!)
-        const auto rpcNew = rpc + theta * drpc;
-        const auto pcNew = rpcNew * young;
-        // calculate the direction of plastic flow
-        const auto f = (q * q + M2 * p * (p - pcNew));
-        const auto df_dp = M2 * (2 * p - pcNew);
-        const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
-        auto norm =
-            sqrt(6 * q * q + df_dp * df_dp / 3);  // = sqrt(df_dsig|df_dsig);
-        norm = max(norm, epsr * young);
-        const auto n = df_dsig / norm;
-        const auto ntr = -df_dp / norm;
-        // plastic strain and volumetric part
-        auto depl = eval(dlp * n);
-        const auto deplV = trace(depl);
+    // plastic range:
+    const auto epsr = strain(1.e-12);
+    // calculate invariants from current stress sig
+    const auto s = deviator(sig);
+    const auto q = std::sqrt(1.5 * s | s);
+    const auto p = -trace(sig) / 3 + pamb;
+    // update the internal (state) variables (rpc holds the old value!)
+    const auto rpcNew = rpc + theta * drpc;
+    const auto pcNew = rpcNew * young;
+    // calculate the direction of plastic flow
+    const auto f = (q * q + M2 * p * (p - pcNew));
+    const auto df_dp = M2 * (2 * p - pcNew);
+    const auto df_dsig = eval(3 * s - df_dp * id2 / 3);
+    auto norm =
+        std::sqrt(6 * q * q + df_dp * df_dp / 3);  // = std::sqrt(df_dsig|df_dsig);
+    norm = std::max(norm, epsr * young);
+    const auto n = df_dsig / norm;
+    const auto ntr = -df_dp / norm;
+    // plastic strain and volumetric part
+    auto depl = eval(dlp * n);
+    const auto deplV = trace(depl);
 
-        const auto fchar = pc0 * young;  // OR: young*young
+    const auto fchar = pc0 * young;  // OR: young*young
 
-        // residual
-        feel += depl;
-        flp = f / fchar;
-        frpc = drpc + deplV * the * rpcNew;
+    // residual
+    feel += depl;
+    flp = f / fchar;
+    frpc = drpc + deplV * the * rpcNew;
 
-        // auxiliary derivatives
-        const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
-        const auto dn_ddeel =
-            (3 * Pr4 + 2 * M2 / 9 * (id2 ^ id2) - (n ^ dnorm_dsig)) / norm * D *
-            theta;
-        const auto dn_ddrpc =
-            (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
-        const auto dfrpc_ddeplV = the * rpcNew;
+    // auxiliary derivatives
+    const auto dnorm_dsig = (9 * s - 2 * M2 / 9 * df_dp * id2) / norm;
+    const auto dn_ddeel =
+        (3 * Pr4 + 2 * M2 / 9 * (id2 ^ id2) - (n ^ dnorm_dsig)) / norm * D *
+        theta;
+    const auto dn_ddrpc =
+        (id2 + df_dp * n / norm) * M2 / (3 * norm) * theta * young;
+    const auto dfrpc_ddeplV = the * rpcNew;
 
-        // jacobian (all other parts are zero)
-        dfeel_ddeel += dlp * dn_ddeel;
-        dfeel_ddlp = n;
-        dfeel_ddrpc = dlp * dn_ddrpc;
+    // jacobian (all other parts are zero)
+    dfeel_ddeel += dlp * dn_ddeel;
+    dfeel_ddlp = n;
+    dfeel_ddrpc = dlp * dn_ddrpc;
 
-        dflp_ddeel = (df_dsig | D) * theta /
-                     fchar;     // in case of problems with zero use:
-        dflp_ddlp = strain(0);  // (q<epsr) ? strain(1) : strain(0);
-        dflp_ddrpc = -M2 * p * theta / fchar * young;
+    dflp_ddeel =
+        (df_dsig | D) * theta / fchar;  // in case of problems with zero use:
+    dflp_ddlp = strain(0);              // (q<epsr) ? strain(1) : strain(0);
+    dflp_ddrpc = -M2 * p * theta / fchar * young;
 
-        dfrpc_ddlp = dfrpc_ddeplV * ntr;
-        dfrpc_ddeel = dfrpc_ddeplV * dlp * (id2 | dn_ddeel);
-        dfrpc_ddrpc =
-            1 + (deplV * the + dfrpc_ddeplV * dlp * trace(dn_ddrpc)) * theta;
-    }
+    dfrpc_ddlp = dfrpc_ddeplV * ntr;
+    dfrpc_ddeel = dfrpc_ddeplV * dlp * (id2 | dn_ddeel);
+    dfrpc_ddrpc =
+        1 + (deplV * the + dfrpc_ddeplV * dlp * trace(dn_ddrpc)) * theta;
 }
 
 // explicit treatment as long as change of v (or e) during time increment is small
@@ -200,7 +198,6 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = 1 + pore numb
     Time += dt;
     pc += drpc * young;
     epl_V += trace(deto - deel);
-    // const auto deplV = trace(depl);
     const auto detoV = trace(deto);
     // calculate change of porosity
     const auto dphi = (1 - phi) * (1 - exp(-detoV));
