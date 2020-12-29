@@ -1,8 +1,6 @@
 +++
 author = "Christian Silbermann, Thomas Nagel"
-project = "Mechanics/ModifiedCamClay/square_1e0_shear.prj"
-project = "Mechanics/ModifiedCamClay/square_1e0_biax.prj"
-project = "Mechanics/ModifiedCamClay/model_triaxtest.prj"
+project = "Mechanics/ModifiedCamClay"
 date = "2020-12-14T14:39:39+01:00"
 title = "Modified Cam clay model"
 
@@ -13,7 +11,12 @@ title = "Modified Cam clay model"
 
 +++
 
-{{< data-link >}}
+## Test cases
+
+Three tests are presented:
+ - {{< data-link "shear" "Mechanics/ModifiedCamClay/square_1e0_shear.prj" >}},
+ - {{< data-link "biaxial" "Mechanics/ModifiedCamClay/square_1e0_biax.prj" >}}, and
+ - {{< data-link "triaxial" "Mechanics/ModifiedCamClay/model_triaxtest.prj" >}}.
 
 ## Problem description
 
