@@ -132,8 +132,7 @@ public:
             double const bulk_grad_times_normal(
                 Eigen::Map<Eigen::RowVectorXd const>(bulk_flux.data(),
                                                      bulk_flux.size())
-                    .dot(Eigen::Map<Eigen::RowVectorXd const>(
-                        _surface_element_normal.getCoords(), 3)));
+                    .dot(_surface_element_normal));
 
             integrated_value +=
                 bulk_grad_times_normal *
@@ -149,7 +148,7 @@ private:
 
     IntegrationMethod const _integration_method;
     std::size_t const _bulk_element_id;
-    MathLib::Vector3 const _surface_element_normal;
+    Eigen::Vector3d const _surface_element_normal;
 };
 
 }  // namespace ProcessLib

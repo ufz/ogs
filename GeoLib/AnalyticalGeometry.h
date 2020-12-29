@@ -86,7 +86,7 @@ std::pair<Eigen::Vector3d, double> getNewellPlane(
  * @param rot_mat  a 2x2 rotation matrix
  */
 template<class T_MATRIX>
-void compute2DRotationMatrixToX(MathLib::Vector3 const& v, T_MATRIX & rot_mat);
+void compute2DRotationMatrixToX(Eigen::Vector3d const& v, T_MATRIX & rot_mat);
 
 /**
  * Computes a rotation matrix that rotates the given 3D normal vector parallel to X-axis
@@ -94,7 +94,7 @@ void compute2DRotationMatrixToX(MathLib::Vector3 const& v, T_MATRIX & rot_mat);
  * @param rot_mat  a 3x3 rotation matrix
  */
 template <class T_MATRIX>
-void compute3DRotationMatrixToX(MathLib::Vector3 const& v, T_MATRIX& rot_mat);
+void compute3DRotationMatrixToX(Eigen::Vector3d const& v, T_MATRIX& rot_mat);
 
 /**
  * Method computes the rotation matrix that rotates the given vector parallel to

@@ -58,14 +58,13 @@ MeshLib::Element const* getProjectedElement(
     return nullptr;
 }
 
-double getElevation(MeshLib::Element const& element,
-                    MeshLib::Node const& node)
+double getElevation(MeshLib::Element const& element, MeshLib::Node const& node)
 {
-    MathLib::Vector3 const v =
-        MathLib::Vector3(node) - MathLib::Vector3(*element.getNode(0));
-    MathLib::Vector3 const n =
-        MeshLib::FaceRule::getSurfaceNormal(&element).getNormalizedVector();
-    return node[2] - scalarProduct(n, v) * n[2];
+    Eigen::Vector3d const v =
+        Eigen::Map<Eigen::Vector3d const>(node.getCoords()) -
+        Eigen::Map<Eigen::Vector3d const>(element.getNode(0)->getCoords());
+    auto const n = MeshLib::FaceRule::getSurfaceNormal(&element).normalized();
+    return node[2] - n.dot(v) * n[2];
 }
 
 }  // namespace ProjectPointOnMesh

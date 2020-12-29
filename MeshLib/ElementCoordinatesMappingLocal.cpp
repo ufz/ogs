@@ -42,7 +42,9 @@ void getRotationMatrixToGlobal(const unsigned element_dimension,
     // coordinates
     if (element_dimension == 1)
     {
-        MathLib::Vector3 xx(points[0], points[1]);
+        auto const a = Eigen::Map<Eigen::Vector3d const>(points[0].getCoords());
+        auto const b = Eigen::Map<Eigen::Vector3d const>(points[1].getCoords());
+        Eigen::Vector3d xx = b - a;
         xx.normalize();
         if (global_dim == 2)
         {

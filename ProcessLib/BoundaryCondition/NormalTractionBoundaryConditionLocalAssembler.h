@@ -94,11 +94,11 @@ public:
         }
         else
         {
-            auto const element_normal_vector =
-                MeshLib::FaceRule::getSurfaceNormal(&e).getNormalizedVector();
-
-            std::copy_n(element_normal_vector.getCoords(), GlobalDim,
-                        element_normal.data());
+            auto const n = MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
+            for (decltype(GlobalDim) i = 0; i < GlobalDim; ++i)
+            {
+                element_normal[i] = n[i];
+            }
         }
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)

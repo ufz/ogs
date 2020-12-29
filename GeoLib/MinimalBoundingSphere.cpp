@@ -94,7 +94,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
 
     if (!MathLib::isCoplanar(p, q, r, s))
     {
-        double const denom = 2.0 * MathLib::scalarTriple(va, vb, vc);
+        double const denom = 2.0 * va.cross(vb).dot(vc);
         Eigen::Vector3d o =
             (vc.dot(vc) * va.cross(vb) + vb.dot(vb) * vc.cross(va) +
              va.dot(va) * vb.cross(vc)) /

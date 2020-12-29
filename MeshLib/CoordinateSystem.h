@@ -12,7 +12,6 @@
 #include <cmath>
 
 #include "GeoLib/AABB.h"
-#include "MathLib/Vector3.h"
 
 namespace MeshLib
 {
