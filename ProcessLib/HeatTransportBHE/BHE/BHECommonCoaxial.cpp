@@ -88,18 +88,18 @@ BHECommonCoaxial::pipeHeatConductions() const
 
 std::array<Eigen::Vector3d, BHECommonCoaxial::number_of_unknowns>
 BHECommonCoaxial::pipeAdvectionVectors(
-    Eigen::Vector3d const& /*elem_direction*/) const
+    Eigen::Vector3d const& elem_direction) const
 {
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
-    auto v = velocities();
+    auto const v = velocities();
 
-    return {{// pipe i, Eq. 26 and Eq. 23
-             {0, 0, -rho_r * Cp_r * std::abs(v[0])},
-             // pipe o, Eq. 27 and Eq. 24
-             {0, 0, rho_r * Cp_r * std::abs(v[1])},
-             // grout g, Eq. 28 and Eq. 25
-             {0, 0, 0}}};
+    return {// pipe i, Eq. 26 and Eq. 23
+            rho_r * Cp_r * std::abs(v[0]) * elem_direction,
+            // pipe o, Eq. 27 and Eq. 24
+            -rho_r * Cp_r * std::abs(v[1]) * elem_direction,
+            // grout g, Eq. 28 and Eq. 25
+            {0, 0, 0}};
 }
 
 std::array<double, BHECommonCoaxial::number_of_unknowns>
