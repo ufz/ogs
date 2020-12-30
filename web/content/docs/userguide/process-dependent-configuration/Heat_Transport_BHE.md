@@ -74,6 +74,8 @@ Currently there are 4 types of BHE available. Following the convention in Diersc
 * CXA: coaxial pipe with annular space as the inlet downwards flow and the centre part as outlet upwards flow;
 * CXC: coaxial pipe with a reversed flow direction to CXA type.
 
+Especially in CXA and CXC type, the direction of the borehole itself could be deviated by any angle, which is defined by mesh. The inflow direction will be in accordance with the direction of the line element (represents the BHE borehole) in the mesh. And the outlet direction is the opposite of the inflow direction.
+
 The cross-sections of these 4 types of BHEs are illustrated in the following figures.
 
 {{< img src="../u_type.png" width="50">}}
