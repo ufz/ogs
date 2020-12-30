@@ -12,7 +12,6 @@
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
-#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "CoupledSolutionsForStaggeredScheme.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
@@ -323,16 +322,13 @@ TimeLoop::TimeLoop(std::unique_ptr<Output>&& output,
                    const int global_coupling_max_iterations,
                    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
                        global_coupling_conv_crit,
-                   std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-                       chemical_solver_interface,
                    const double start_time, const double end_time)
     : _output(std::move(output)),
       _per_process_data(std::move(per_process_data)),
       _start_time(start_time),
       _end_time(end_time),
       _global_coupling_max_iterations(global_coupling_max_iterations),
-      _global_coupling_conv_crit(std::move(global_coupling_conv_crit)),
-      _chemical_solver_interface(std::move(chemical_solver_interface))
+      _global_coupling_conv_crit(std::move(global_coupling_conv_crit))
 {
 }
 
@@ -518,11 +514,6 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
 /// initialize output, convergence criterion, etc.
 void TimeLoop::initialize()
 {
-    if (_chemical_solver_interface != nullptr)
-    {
-        _chemical_solver_interface->initialize();
-    }
-
     for (auto& process_data : _per_process_data)
     {
         auto& pcs = process_data->process;
@@ -542,22 +533,6 @@ void TimeLoop::initialize()
     // initial solution storage
     std::tie(_process_solutions, _process_solutions_prev) =
         setInitialConditions(_start_time, _per_process_data);
-
-    if (_chemical_solver_interface)
-    {
-        BaseLib::RunTime time_phreeqc;
-        time_phreeqc.start();
-
-        auto& pcs = _per_process_data[0]->process;
-        _chemical_solver_interface->executeInitialCalculation(
-            pcs.interpolateNodalValuesToIntegrationPoints(_process_solutions));
-
-        pcs.extrapolateIntegrationPointValuesToNodes(
-            0., _chemical_solver_interface->getIntPtProcessSolutions(),
-            _process_solutions);
-
-        INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
-    }
 
     // All _per_process_data share the first process.
     bool const is_staggered_coupling =
@@ -848,26 +823,9 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             timestep_id, t);
     }
 
-    if (_chemical_solver_interface)
     {
-        // Sequential non-iterative approach applied here to perform water
-        // chemistry calculation followed by resolving component transport
-        // process.
-        // TODO: move into a global loop to consider both mass balance over
-        // space and localized chemical equilibrium between solutes.
-        BaseLib::RunTime time_phreeqc;
-        time_phreeqc.start();
-
         auto& pcs = _per_process_data[0]->process;
-        _chemical_solver_interface->doWaterChemistryCalculation(
-            pcs.interpolateNodalValuesToIntegrationPoints(_process_solutions),
-            dt);
-
-        pcs.extrapolateIntegrationPointValuesToNodes(
-            t, _chemical_solver_interface->getIntPtProcessSolutions(),
-            _process_solutions);
-
-        INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
+        pcs.solveReactionEquation(_process_solutions, t, dt);
     }
 
     return nonlinear_solver_status;

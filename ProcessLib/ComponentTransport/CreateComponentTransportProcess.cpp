@@ -84,7 +84,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
-    ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface)
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+        chemical_solver_interface)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "ComponentTransport");
@@ -225,7 +226,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     DBUG("Media properties verified.");
 
     auto chemical_process_data =
-        createChemicalProcessData(chemical_solver_interface);
+        createChemicalProcessData(chemical_solver_interface.get());
 
     ComponentTransportProcessData process_data{std::move(media_map),
                                                specific_body_force,
@@ -253,7 +254,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        use_monolithic_scheme, std::move(surfaceflux));
+        use_monolithic_scheme, std::move(surfaceflux),
+        std::move(chemical_solver_interface));
 }
 
 }  // namespace ComponentTransport

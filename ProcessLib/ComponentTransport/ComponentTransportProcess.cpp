@@ -12,6 +12,8 @@
 
 #include <cassert>
 
+#include "BaseLib/RunTime.h"
+#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -31,12 +33,15 @@ ComponentTransportProcess::ComponentTransportProcess(
     ComponentTransportProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     bool const use_monolithic_scheme,
-    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux)
+    std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+        chemical_solver_interface)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data)),
-      _surfaceflux(std::move(surfaceflux))
+      _surfaceflux(std::move(surfaceflux)),
+      _chemical_solver_interface(std::move(chemical_solver_interface))
 {
 }
 
@@ -79,6 +84,11 @@ void ComponentTransportProcess::initializeConcreteProcess(
         mesh.isAxiallySymmetric(), integration_order, _process_data,
         transport_process_variables);
 
+    if (_chemical_solver_interface)
+    {
+        _chemical_solver_interface->initialize();
+    }
+
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
         makeExtrapolator(
@@ -87,9 +97,28 @@ void ComponentTransportProcess::initializeConcreteProcess(
 }
 
 void ComponentTransportProcess::setInitialConditionsConcreteProcess(
-    std::vector<GlobalVector*>& /*x*/, double const /*t*/,
-    int const /*process_id*/)
+    std::vector<GlobalVector*>& x, double const t, int const process_id)
 {
+    if (!_chemical_solver_interface)
+    {
+        return;
+    }
+
+    if (process_id != static_cast<int>(x.size() - 1))
+    {
+        return;
+    }
+
+    BaseLib::RunTime time_phreeqc;
+    time_phreeqc.start();
+
+    _chemical_solver_interface->executeInitialCalculation(
+        interpolateNodalValuesToIntegrationPoints(x));
+
+    extrapolateIntegrationPointValuesToNodes(
+        t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
+
+    INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
 }
 
 void ComponentTransportProcess::assembleConcreteProcess(
@@ -166,6 +195,31 @@ void ComponentTransportProcess::
         &ComponentTransportLocalAssemblerInterface::
             setStaggeredCoupledSolutions,
         _local_assemblers, pv.getActiveElementIDs(), _coupled_solutions);
+}
+
+void ComponentTransportProcess::solveReactionEquation(
+    std::vector<GlobalVector*>& x, double const t, double const dt)
+{
+    if (!_chemical_solver_interface)
+    {
+        return;
+    }
+
+    // Sequential non-iterative approach applied here to perform water
+    // chemistry calculation followed by resolving component transport
+    // process.
+    // TODO: move into a global loop to consider both mass balance over
+    // space and localized chemical equilibrium between solutes.
+    BaseLib::RunTime time_phreeqc;
+    time_phreeqc.start();
+
+    _chemical_solver_interface->doWaterChemistryCalculation(
+        interpolateNodalValuesToIntegrationPoints(x), dt);
+
+    extrapolateIntegrationPointValuesToNodes(
+        t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
+
+    INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
 }
 
 std::vector<GlobalVector>
@@ -265,6 +319,8 @@ void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(
         auto const& nodal_values = extrapolator.getNodalValues();
         MathLib::LinAlg::copy(nodal_values,
                               *nodal_values_vectors[transport_process_id + 1]);
+        MathLib::LinAlg::finalizeAssembly(
+            *nodal_values_vectors[transport_process_id + 1]);
     }
 }
 

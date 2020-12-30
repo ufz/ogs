@@ -179,6 +179,11 @@ public:
         return Eigen::Vector3d{};
     }
 
+    virtual void solveReactionEquation(std::vector<GlobalVector*>& /*x*/,
+                                       double const /*t*/, double const /*dt*/)
+    {
+    }
+
 protected:
     NumLib::Extrapolator& getExtrapolator() const
     {

@@ -15,6 +15,11 @@
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "ProcessLib/Process.h"
 
+namespace ChemistryLib
+{
+class ChemicalSolverInterface;
+}
+
 namespace ProcessLib
 {
 struct SurfaceFluxData;
@@ -102,7 +107,9 @@ public:
         ComponentTransportProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         bool const use_monolithic_scheme,
-        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux);
+        std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
+        std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
+            chemical_solver_interface);
 
     //! \name ODESystem interface
     //! @{
@@ -116,6 +123,9 @@ public:
 
     void setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
         int const process_id) override;
+
+    void solveReactionEquation(std::vector<GlobalVector*>& x, double const t,
+                               double const dt) override;
 
     std::vector<GlobalVector> interpolateNodalValuesToIntegrationPoints(
         std::vector<GlobalVector*> const& nodal_values_vectors) const override;
@@ -164,6 +174,9 @@ private:
         _local_assemblers;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
+
+    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
+        _chemical_solver_interface;
 };
 
 }  // namespace ComponentTransport

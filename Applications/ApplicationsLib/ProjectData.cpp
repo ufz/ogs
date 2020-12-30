@@ -343,7 +343,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"),
                    project_directory, output_directory,
-                   chemical_solver_interface.get());
+                   std::move(chemical_solver_interface));
 
     //! \ogs_file_param{prj__linear_solvers}
     parseLinearSolvers(project_config.getConfigSubtree("linear_solvers"));
@@ -353,7 +353,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
     //! \ogs_file_param{prj__time_loop}
     parseTimeLoop(project_config.getConfigSubtree("time_loop"),
-                  output_directory, std::move(chemical_solver_interface));
+                  output_directory);
 }
 
 void ProjectData::parseProcessVariables(
@@ -570,7 +570,7 @@ void ProjectData::parseProcesses(
     BaseLib::ConfigTree const& processes_config,
     std::string const& project_directory,
     std::string const& output_directory,
-    [[maybe_unused]] ChemistryLib::ChemicalSolverInterface* const
+    [[maybe_unused]] std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
         chemical_solver_interface)
 {
     (void)project_directory;  // to avoid compilation warning
@@ -742,7 +742,7 @@ void ProjectData::parseProcesses(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _mesh_vec, _media,
-                    chemical_solver_interface);
+                    std::move(chemical_solver_interface));
         }
         else
 #endif
@@ -1036,17 +1036,13 @@ void ProjectData::parseProcesses(
     }
 }
 
-void ProjectData::parseTimeLoop(
-    BaseLib::ConfigTree const& config,
-    std::string const& output_directory,
-    std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
-        chemical_solver_interface)
+void ProjectData::parseTimeLoop(BaseLib::ConfigTree const& config,
+                                std::string const& output_directory)
 {
     DBUG("Reading time loop configuration.");
 
     _time_loop = ProcessLib::createTimeLoop(
-        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec,
-        std::move(chemical_solver_interface));
+        config, output_directory, _processes, _nonlinear_solvers, _mesh_vec);
 
     if (!_time_loop)
     {
