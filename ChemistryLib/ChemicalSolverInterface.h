@@ -33,9 +33,15 @@ public:
         return {};
     }
 
+    virtual void computeSecondaryVariable(
+        std::size_t const /*ele_id*/,
+        std::vector<GlobalIndexType> const& /*chemical_system_indices*/)
+    {
+    }
+
     virtual ~ChemicalSolverInterface() = default;
 
 public:
-    std::vector<std::vector<GlobalIndexType>> chemical_system_index_map;
+    std::vector<GlobalIndexType> chemical_system_index_map;
 };
 }  // namespace ChemistryLib

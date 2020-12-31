@@ -69,6 +69,10 @@ public:
 
     friend std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io);
 
+    void computeSecondaryVariable(
+        std::size_t const ele_id,
+        std::vector<GlobalIndexType> const& chemical_system_indices) override;
+
     std::vector<std::string> const getComponentList() const override;
 
     std::string const _phreeqc_input_file;
@@ -92,7 +96,7 @@ private:
     Knobs const _knobs;
     double _dt = std::numeric_limits<double>::quiet_NaN();
     const int phreeqc_instance_id = 0;
-    int _num_chemical_systems = -1;
+    std::size_t _num_chemical_systems = -1;
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
