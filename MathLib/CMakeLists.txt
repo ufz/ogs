@@ -60,5 +60,5 @@ target_compile_definitions(MathLib
     $<$<BOOL:${OGS_USE_EIGEN}>:OGS_USE_EIGEN>
     $<$<BOOL:${CVODE_FOUND}>:CVODE_FOUND>
     PRIVATE
-    $<$<BOOL:${USE_MKL}>:USE_MKL>
+    $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>
 )
