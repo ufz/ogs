@@ -227,7 +227,7 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(
 }
 
 MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
-    const MeshLib::Mesh& subsfc_mesh, const MathLib::Vector3& dir, double angle,
+    const MeshLib::Mesh& subsfc_mesh, Eigen::Vector3d const& dir, double angle,
     std::string const& subsfc_node_id_prop_name,
     std::string const& subsfc_element_id_prop_name,
     std::string const& face_id_prop_name)
@@ -287,20 +287,18 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
     std::vector<MeshLib::Element*>& sfc_elements,
     std::vector<std::size_t>& element_to_bulk_element_id_map,
     std::vector<std::size_t>& element_to_bulk_face_id_map,
-    const MathLib::Vector3& dir, double angle, unsigned mesh_dimension)
+    Eigen::Vector3d const& dir, double angle, unsigned mesh_dimension)
 {
-    auto const d = Eigen::Map<Eigen::Vector3d const>(dir.getCoords());
-
     if (mesh_dimension < 2 || mesh_dimension > 3)
     {
         ERR("Cannot handle meshes of dimension {:i}", mesh_dimension);
     }
 
-    bool const complete_surface = (MathLib::scalarProduct(dir, dir) == 0);
+    bool const complete_surface = (dir.dot(dir) == 0);
 
     double const pi(boost::math::constants::pi<double>());
     double const cos_theta(std::cos(angle * pi / 180.0));
-    Eigen::Vector3d const norm_dir(d.normalized());
+    Eigen::Vector3d const norm_dir(dir.normalized());
 
     for (auto const* elem : all_elements)
     {
@@ -368,12 +366,13 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
 }
 
 std::vector<MeshLib::Node*> MeshSurfaceExtraction::getSurfaceNodes(
-    const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle)
+    const MeshLib::Mesh& mesh, Eigen::Vector3d const& dir, double angle)
 {
     INFO("Extracting surface nodes...");
     std::vector<MeshLib::Element*> sfc_elements;
     std::vector<std::size_t> element_to_bulk_element_id_map;
     std::vector<std::size_t> element_to_bulk_face_id_map;
+
     get2DSurfaceElements(
         mesh.getElements(), sfc_elements, element_to_bulk_element_id_map,
         element_to_bulk_face_id_map, dir, angle, mesh.getDimension());

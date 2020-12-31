@@ -17,7 +17,6 @@
 #include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
-#include "MathLib/Vector3.h"
 
 #include <QCoreApplication>
 
@@ -66,7 +65,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    MathLib::Vector3 displacement(0.0, 0.0, 0.0);
+    Eigen::Vector3d displacement = Eigen::Vector3d::Zero();
     if (x_arg.isSet())
     {
         displacement[0] = x_arg.getValue();

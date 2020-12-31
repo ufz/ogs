@@ -88,8 +88,8 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
                               bool copy_material_ids)
 {
     INFO("Extracting top surface of mesh '{:s}' ... ", mesh.getName());
-    int const flag = (on_top) ? -1 : 1;
-    const MathLib::Vector3 dir(0, 0, flag);
+    double const flag = on_top ? -1.0 : 1.0;
+    Eigen::Vector3d const dir({0, 0, flag});
     double const angle(90);
     std::unique_ptr<MeshLib::Mesh> sfc_mesh (nullptr);
 

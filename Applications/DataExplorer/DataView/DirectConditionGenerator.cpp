@@ -44,7 +44,7 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
             return _direct_values;
         }
 
-        const MathLib::Vector3 dir(0, 0, -1);
+        Eigen::Vector3d const dir = -Eigen::Vector3d::UnitZ();
         const std::vector<MeshLib::Node*> surface_nodes(
             MeshLib::MeshSurfaceExtraction::getSurfaceNodes(mesh, dir, 90));
         const double no_data(raster->getHeader().no_data);
@@ -83,7 +83,7 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
         return _direct_values;
     }
 
-    MathLib::Vector3 const dir(0.0, 0.0, -1.0);
+    Eigen::Vector3d const dir({0.0, 0.0, -1.0});
     double const angle(90);
     std::string const prop_name("bulk_node_ids");
     std::unique_ptr<MeshLib::Mesh> surface_mesh(

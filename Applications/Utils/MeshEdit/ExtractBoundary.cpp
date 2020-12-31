@@ -19,7 +19,6 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
 #include "InfoLib/GitInfo.h"
-#include "MathLib/Vector3.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"

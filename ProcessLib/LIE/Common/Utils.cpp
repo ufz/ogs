@@ -22,8 +22,9 @@ void computeNormalVector(MeshLib::Element const& e, unsigned const global_dim,
     if (global_dim == 2)
     {
         assert(e.getGeomType() == MeshLib::MeshElemType::LINE);
-        auto v1 =
-            MathLib::Vector3(*e.getNode(1)) - MathLib::Vector3(*e.getNode(0));
+        Eigen::Vector3d const v1 =
+            Eigen::Map<Eigen::Vector3d const>(e.getNode(1)->getCoords()) -
+            Eigen::Map<Eigen::Vector3d const>(e.getNode(0)->getCoords());
         element_normal[0] = -v1[1];
         element_normal[1] = v1[0];
         element_normal[2] = 0;  // not used in 2d but needed for normalization

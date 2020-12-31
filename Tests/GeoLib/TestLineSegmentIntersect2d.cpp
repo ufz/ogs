@@ -38,12 +38,12 @@ public:
     SymmSegmentGenerator segment_generator2 = SymmSegmentGenerator{point_generator2,
         std::bind(ac::reflect, point_generator2.center, std::placeholders::_1)};
 
-    MathLib::Vector3 const translation_vector1 = {2,2,0};
+    Eigen::Vector3d const translation_vector1 = {2, 2, 0};
     PairSegmentGenerator pair_segment_generator1 = PairSegmentGenerator{
         segment_generator1,
         std::bind(ac::translate, translation_vector1, std::placeholders::_1)};
 
-    MathLib::Vector3 const translation_vector2 = {0,0,0};
+    Eigen::Vector3d const translation_vector2 = {0, 0, 0};
     PairSegmentGenerator pair_segment_generator2 = PairSegmentGenerator{
         segment_generator1,
         std::bind(ac::translate, translation_vector2, std::placeholders::_1)};

@@ -10,6 +10,7 @@
 
 #include "LineRule2.h"
 
+#include "MathLib/MathTools.h"
 #include "MeshLib/Node.h"
 
 namespace MeshLib {

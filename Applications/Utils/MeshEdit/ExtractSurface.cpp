@@ -24,8 +24,6 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
-#include "MathLib/Vector3.h"
-
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
@@ -111,7 +109,7 @@ int main (int argc, char* argv[])
          mesh->getNumberOfElements());
 
     // extract surface
-    MathLib::Vector3 const dir(x.getValue(), y.getValue(), z.getValue());
+    Eigen::Vector3d const dir({x.getValue(), y.getValue(), z.getValue()});
     double const angle(angle_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(

@@ -18,7 +18,6 @@
 
 #include "GeoLib/MinimalBoundingSphere.h"
 #include "MathLib/Point3d.h"
-#include "MathLib/Vector3.h"
 
 TEST(GeoLib, TestBoundingSphere)
 {

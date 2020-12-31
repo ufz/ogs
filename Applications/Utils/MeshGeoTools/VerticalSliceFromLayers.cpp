@@ -29,10 +29,8 @@
 #include "GeoLib/Polygon.h"
 #include "GeoLib/Polyline.h"
 #include "InfoLib/GitInfo.h"
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/MathTools.h"
 #include "MathLib/Point3d.h"
-#include "MathLib/Vector3.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -170,30 +168,22 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
 }
 
 /// rotates the merged geometry into the XY-plane
-void rotateGeometryToXY(std::vector<GeoLib::Point*>& points,
-                        MathLib::DenseMatrix<double>& rotation_matrix,
-                        double& z_shift)
+std::pair<Eigen::Matrix3d, double> rotateGeometryToXY(
+    std::vector<GeoLib::Point*>& points)
 {
     // compute the plane normal
     auto const [plane_normal, d] =
         GeoLib::getNewellPlane(points.begin(), points.end());
     // rotate points into x-y-plane
-    Eigen::Matrix3d const rotation_matrix_ =
+    Eigen::Matrix3d const rotation_matrix =
         GeoLib::computeRotationMatrixToXY(plane_normal);
-    GeoLib::rotatePoints(rotation_matrix_, points.begin(), points.end());
-    // Todo (TF) Remove when rotateGeometryToXY uses Eigen for rot_mat
-    for (int r = 0; r < 3; r++)
-    {
-        for (int c = 0; c < 3; c++)
-        {
-            rotation_matrix(r, c) = rotation_matrix_(r, c);
-        }
-    }
+    GeoLib::rotatePoints(rotation_matrix, points.begin(), points.end());
 
     GeoLib::AABB aabb(points.begin(), points.end());
-    z_shift = (aabb.getMinPoint()[2] + aabb.getMaxPoint()[2]) / 2.0;
+    double const z_shift = (aabb.getMinPoint()[2] + aabb.getMaxPoint()[2]) / 2.0;
     std::for_each(points.begin(), points.end(),
                   [z_shift](GeoLib::Point* p) { (*p)[2] -= z_shift; });
+    return {rotation_matrix, z_shift};
 }
 
 /// This encapsulates a workaround:
@@ -250,23 +240,13 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
 }
 
 /// inverse rotation of the mesh, back into original position
-void rotateMesh(MeshLib::Mesh& mesh,
-                MathLib::DenseMatrix<double> const& rot_mat,
+void rotateMesh(MeshLib::Mesh& mesh, Eigen::Matrix3d const& rot_mat,
                 double const z_shift)
 {
     std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
     std::for_each(nodes.begin(), nodes.end(),
                   [z_shift](MeshLib::Node* n) { (*n)[2] += z_shift; });
-    Eigen::Matrix3d rot_mat_eigen;
-    // Todo (TF) Remove when rotateMesh uses Eigen for rot_mat
-    for (int r = 0; r < 3; r++)
-    {
-        for (int c = 0; c < 3; c++)
-        {
-            rot_mat_eigen(r, c) = rot_mat(r, c);
-        }
-    }
-    GeoLib::rotatePoints(rot_mat_eigen.transpose(), nodes.begin(), nodes.end());
+    GeoLib::rotatePoints(rot_mat.transpose(), nodes.begin(), nodes.end());
 }
 
 /// removes line elements from mesh such that only triangles remain
@@ -371,9 +351,7 @@ int main(int argc, char* argv[])
     std::string merged_geo_name = "merged_geometries";
     mergeGeometries(geo, geo_name_list, merged_geo_name);
     std::vector<GeoLib::Point*> points = *geo.getPointVec(merged_geo_name);
-    MathLib::DenseMatrix<double> rot_mat(3, 3);
-    double z_shift(0);
-    rotateGeometryToXY(points, rot_mat, z_shift);
+    auto const [rot_mat, z_shift] = rotateGeometryToXY(points);
     consolidateGeometry(geo, output_name, merged_geo_name, test_arg.getValue());
 
     std::unique_ptr<MeshLib::Mesh> mesh(

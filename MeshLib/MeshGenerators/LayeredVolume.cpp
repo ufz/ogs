@@ -14,8 +14,6 @@
 
 #include "LayeredVolume.h"
 
-#include "MathLib/Vector3.h"
-
 #include "GeoLib/Raster.h"
 
 #include "MeshLib/Elements/Tri.h"
@@ -147,15 +145,25 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh &layer, std::size_t n
                     MeshLib::Node* n2 = _nodes[offset + nNodes + elem->getNodeIndex((i+1)%nElemNodes)];
                     MeshLib::Node* n3 = _nodes[offset + nNodes + elem->getNodeIndex(i)];
 
-                    if (MathLib::Vector3(*n1, *n2).getLength() > std::numeric_limits<double>::epsilon())
+                    auto const v0 =
+                        Eigen::Map<Eigen::Vector3d const>(n0->getCoords());
+                    auto const v1 =
+                        Eigen::Map<Eigen::Vector3d const>(n1->getCoords());
+                    auto const v2 =
+                        Eigen::Map<Eigen::Vector3d const>(n2->getCoords());
+                    auto const v3 =
+                        Eigen::Map<Eigen::Vector3d const>(n3->getCoords());
+                    double const eps = std::numeric_limits<double>::epsilon();
+
+                    if ((v2 - v1).norm() > eps)
                     {
-                        const std::array<MeshLib::Node*,3> tri_nodes = {{ n0, n2, n1 }};
+                        const std::array tri_nodes = {n0, n2, n1};
                         _elements.push_back(new MeshLib::Tri(tri_nodes));
                         _materials.push_back(nLayers+j);
                     }
-                    if (MathLib::Vector3(*n0, *n3).getLength() > std::numeric_limits<double>::epsilon())
+                    if ((v3 - v0).norm() > eps)
                     {
-                        const std::array<MeshLib::Node*,3> tri_nodes = {{ n0, n3, n2 }};
+                        const std::array tri_nodes = {n0, n3, n2};
                         _elements.push_back(new MeshLib::Tri(tri_nodes));
                         _materials.push_back(nLayers+j);
                     }

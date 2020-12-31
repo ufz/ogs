@@ -19,7 +19,7 @@ MathLib::Point3d reflect(MathLib::Point3d const& c, MathLib::Point3d const& p)
         std::array<double, 3>{{2 * c[0] - p[0], 2 * c[1] - p[1], 0.0}});
 }
 
-GeoLib::LineSegment translate(MathLib::Vector3 const& translation,
+GeoLib::LineSegment translate(Eigen::Vector3d const& translation,
                               GeoLib::LineSegment const& line_seg)
 {
     auto a = std::make_unique<GeoLib::Point>(line_seg.getBeginPoint());

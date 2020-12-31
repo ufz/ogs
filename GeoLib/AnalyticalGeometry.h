@@ -16,9 +16,6 @@
 
 #include <memory>
 
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
-#include "MathLib/Vector3.h"
-
 #include "Polygon.h"
 
 namespace GeoLib

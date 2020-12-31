@@ -17,8 +17,6 @@
 #include "ui_SurfaceExtraction.h"
 #include <QDialog>
 
-#include "MathLib/Vector3.h"
-
 namespace MeshLib {
     class Mesh;
 }
@@ -35,7 +33,7 @@ public:
     ~SurfaceExtractionDialog() override = default;
 
     int getTolerance() const { return _tolerance; }
-    MathLib::Vector3 const& getNormal() const { return _dir; }
+    Eigen::Vector3d const& getNormal() const { return _dir; }
 
 private slots:
     /// Instructions if the OK-Button has been pressed.
@@ -46,5 +44,5 @@ private slots:
 
 private:
     int _tolerance{90};
-    MathLib::Vector3 _dir{0, 0, -1};
+    Eigen::Vector3d _dir{0, 0, -1};
 };

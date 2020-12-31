@@ -18,7 +18,6 @@
 #include "MeshLib/Node.h"
 #include "MathLib/MathTools.h"
 #include "MathLib/Point3d.h"
-#include "MathLib/Vector3.h"
 
 namespace detail
 {

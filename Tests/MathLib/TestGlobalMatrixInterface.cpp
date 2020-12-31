@@ -15,6 +15,8 @@
 
 #include <gtest/gtest.h>
 
+#include <Eigen/Eigen>
+
 #include "MathLib/LinAlg/LinAlg.h"
 
 #if defined(USE_PETSC)
@@ -23,7 +25,6 @@
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #endif
 
-#include "MathLib/LinAlg/Dense/DenseMatrix.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 
 #include "NumLib/NumericsConfig.h"
@@ -45,7 +46,8 @@ void checkGlobalMatrixInterface(T_MATRIX &m)
     m.add(0, 0, 1.0);
     m.setZero();
 
-    MathLib::DenseMatrix<double> local_m(2, 2, 1.0);
+    Eigen::Matrix2d local_m;
+    local_m << 1.0, 1.0, 1.0, 1.0;
     std::vector<GlobalIndexType> vec_pos(2);
     vec_pos[0] = 1;
     vec_pos[1] = 3;
@@ -77,7 +79,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
-    MathLib::DenseMatrix<double> loc_m(2, 2);
+    Eigen::Matrix2d loc_m(2, 2);
     loc_m(0, 0) = 1.;
     loc_m(0, 1) = 2.;
     loc_m(1, 0) = 3.;
@@ -140,7 +142,7 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
-    MathLib::DenseMatrix<double> loc_m(2, 3);
+    Eigen::Matrix<double, 2, 3> loc_m;
     loc_m(0, 0) = 1.;
     loc_m(0, 1) = 2.;
     loc_m(0, 2) = 3.;

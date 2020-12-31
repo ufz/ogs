@@ -129,10 +129,10 @@ TEST(GeoLib, SurfaceIsPointInSurface)
         std::vector<MeshLib::Node*> const& nodes(sfc_mesh->getNodes());
         GeoLib::rotatePoints<MeshLib::Node>(rot_mat, nodes);
 
-        MathLib::Vector3 const normal(0,0,1.0);
-        MathLib::Vector3 const surface_normal(rot_mat * normal);
+        Eigen::Vector3d const normal({0, 0, 1.0});
+        Eigen::Vector3d const surface_normal(rot_mat * normal);
         double const scaling(1e-6);
-        MathLib::Vector3 const displacement(scaling * surface_normal);
+        Eigen::Vector3d const displacement(scaling * surface_normal);
 
         GeoLib::GEOObjects geometries;
         MeshLib::convertMeshToGeo(*sfc_mesh, geometries);

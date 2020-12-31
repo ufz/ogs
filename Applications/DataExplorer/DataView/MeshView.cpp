@@ -319,7 +319,7 @@ void MeshView::extractSurfaceMesh()
         return;
     }
 
-    MathLib::Vector3 const& dir (dlg.getNormal());
+    Eigen::Vector3d const& dir(dlg.getNormal());
     int const tolerance (dlg.getTolerance());
     std::unique_ptr<MeshLib::Mesh> sfc_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(

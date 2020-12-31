@@ -17,7 +17,8 @@
 #include <cstddef>
 #include <vector>
 
-#include "MathLib/Vector3.h"
+#include <Eigen/Eigen>
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
 
@@ -41,7 +42,7 @@ public:
 
     /// Returns the surface nodes of a mesh.
     static std::vector<MeshLib::Node*> getSurfaceNodes(
-        const MeshLib::Mesh& mesh, const MathLib::Vector3& dir, double angle);
+        const MeshLib::Mesh& mesh, Eigen::Vector3d const& dir, double angle);
 
     /**
      * Returns the 2d-element mesh representing the surface of the given mesh.
@@ -64,7 +65,7 @@ public:
      */
     static MeshLib::Mesh* getMeshSurface(
         const MeshLib::Mesh& subsfc_mesh,
-        const MathLib::Vector3& dir,
+        Eigen::Vector3d const& dir,
         double angle,
         std::string const& subsfc_node_id_prop_name = "",
         std::string const& subsfc_element_id_prop_name = "",
@@ -77,7 +78,7 @@ private:
         std::vector<MeshLib::Element*>& sfc_elements,
         std::vector<std::size_t>& element_to_bulk_element_id_map,
         std::vector<std::size_t>& element_to_bulk_face_id_map,
-        const MathLib::Vector3& dir,
+        Eigen::Vector3d const& dir,
         double angle,
         unsigned mesh_dimension);
 };

@@ -16,7 +16,6 @@
 
 #include "autocheck/autocheck.hpp"
 #include "MathLib/Point3d.h"
-#include "MathLib/Vector3.h"
 #include "GeoLib/LineSegment.h"
 
 namespace autocheck
@@ -75,7 +74,7 @@ struct SymmSegmentGeneratorXY
     std::function<MathLib::Point3d(MathLib::Point3d const&)> function;
 };
 
-GeoLib::LineSegment translate(MathLib::Vector3 const& translation,
+GeoLib::LineSegment translate(Eigen::Vector3d const& translation,
                               GeoLib::LineSegment const& line_seg);
 
 template <typename Gen = SymmSegmentGeneratorXY<
