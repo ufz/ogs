@@ -26,7 +26,7 @@ void KineticReactant::print(std::ostream& os,
         os << "-formula " << chemical_formula << "\n";
     }
 
-    os << "-m  " << (*amount)[global_id] << "\n";
+    os << "-m  " << (*molality)[global_id] << "\n";
 
     if (!parameters.empty())
     {

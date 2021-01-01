@@ -26,14 +26,14 @@ struct KineticReactant
 {
     KineticReactant(std::string name_,
                     std::string chemical_formula_,
-                    MeshLib::PropertyVector<double>* amount_,
-                    MeshLib::PropertyVector<double>* amount_avg_,
+                    MeshLib::PropertyVector<double>* molality_,
+                    MeshLib::PropertyVector<double>* mesh_prop_molality_,
                     std::vector<double>&& parameters_,
                     bool const fix_amount_)
         : name(std::move(name_)),
           chemical_formula(std::move(chemical_formula_)),
-          amount(amount_),
-          amount_avg(amount_avg_),
+          molality(molality_),
+          mesh_prop_molality(mesh_prop_molality_),
           parameters(std::move(parameters_)),
           fix_amount(fix_amount_)
     {
@@ -43,8 +43,8 @@ struct KineticReactant
 
     std::string const name;
     std::string const chemical_formula;
-    MeshLib::PropertyVector<double>* amount;
-    MeshLib::PropertyVector<double>* amount_avg;
+    MeshLib::PropertyVector<double>* molality;
+    MeshLib::PropertyVector<double>* mesh_prop_molality;
     std::vector<double> const parameters;
     bool const fix_amount;
     static const ItemType item_type = ItemType::KineticReactant;

@@ -19,8 +19,8 @@ namespace PhreeqcIOData
 void EquilibriumReactant::print(std::ostream& os,
                                 std::size_t const global_id) const
 {
-    os << name << " " << saturation_index << " "
-       << (*amount)[global_id] << "\n";
+    os << name << " " << saturation_index << " " << (*molality)[global_id]
+       << "\n";
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
