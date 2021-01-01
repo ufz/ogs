@@ -20,6 +20,7 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/Mesh.h"
@@ -47,6 +48,21 @@ std::ostream& operator<<(std::ostream& os,
     std::copy(data_blocks.begin(), data_blocks.end(),
               std::ostream_iterator<DataBlock>(os));
     return os;
+}
+
+template <typename Reactant>
+void setReactantAmount(Reactant& reactant,
+                       GlobalIndexType const& chemical_system_id,
+                       MaterialPropertyLib::Phase const& solid_phase,
+                       ParameterLib::SpatialPosition const& pos, double const t)
+{
+    auto const& solid_constituent = solid_phase.component(reactant.name);
+
+    auto const amount =
+        solid_constituent.property(MaterialPropertyLib::PropertyType::amount)
+            .template initialValue<double>(pos, t);
+
+    (*reactant.amount)[chemical_system_id] = amount;
 }
 }  // namespace
 
@@ -111,6 +127,25 @@ void PhreeqcIO::initialize()
     if (_user_punch)
     {
         _user_punch->initialize(_num_chemical_systems);
+    }
+}
+
+void PhreeqcIO::initializeChemicalSystemConcrete(
+    GlobalIndexType const& chemical_system_id,
+    MaterialPropertyLib::Medium const* medium,
+    ParameterLib::SpatialPosition const& pos, double const t)
+{
+    auto const& solid_phase = medium->phase("Solid");
+    for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
+    {
+        setReactantAmount(kinetic_reactant, chemical_system_id, solid_phase,
+                          pos, t);
+    }
+
+    for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
+    {
+        setReactantAmount(equilibrium_reactant, chemical_system_id, solid_phase,
+                          pos, t);
     }
 }
 

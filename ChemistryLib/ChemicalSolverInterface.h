@@ -12,12 +12,30 @@
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
+namespace MaterialPropertyLib
+{
+class Medium;
+}
+
+namespace ParameterLib
+{
+class SpatialPosition;
+}
+
 namespace ChemistryLib
 {
 class ChemicalSolverInterface
 {
 public:
     virtual void initialize() {}
+
+    virtual void initializeChemicalSystemConcrete(
+        GlobalIndexType const& /*chemical_system_id*/,
+        MaterialPropertyLib::Medium const* /*medium*/,
+        ParameterLib::SpatialPosition const& /*pos*/,
+        double const /*t*/)
+    {
+    }
 
     virtual void executeInitialCalculation(
         std::vector<GlobalVector> const& interpolated_process_solutions) = 0;
