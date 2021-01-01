@@ -681,4 +681,56 @@ void sortSegments(
     }
 }
 
+Eigen::Matrix3d compute2DRotationMatrixToX(Eigen::Vector3d const& v)
+{
+    Eigen::Matrix3d rot_mat = Eigen::Matrix3d::Zero();
+    const double cos_theta = v[0];
+    const double sin_theta = v[1];
+    rot_mat(0,0) = rot_mat(1,1) = cos_theta;
+    rot_mat(0,1) = sin_theta;
+    rot_mat(1,0) = -sin_theta;
+    rot_mat(2,2) = 1.0;
+    return rot_mat;
+}
+
+Eigen::Matrix3d compute3DRotationMatrixToX(Eigen::Vector3d const& v)
+{
+    // a vector on the plane
+    Eigen::Vector3d yy = Eigen::Vector3d::Zero();
+    auto const eps = std::numeric_limits<double>::epsilon();
+    if (std::abs(v[0]) > 0.0 && std::abs(v[1]) + std::abs(v[2]) < eps)
+    {
+        yy[2] = 1.0;
+    }
+    else if (std::abs(v[1]) > 0.0 && std::abs(v[0]) + std::abs(v[2]) < eps)
+    {
+        yy[0] = 1.0;
+    }
+    else if (std::abs(v[2]) > 0.0 && std::abs(v[0]) + std::abs(v[1]) < eps)
+    {
+        yy[1] = 1.0;
+    }
+    else
+    {
+        for (unsigned i = 0; i < 3; i++)
+        {
+            if (std::abs(v[i]) > 0.0)
+            {
+                yy[i] = -v[i];
+                break;
+            }
+        }
+    }
+    // z"_vec
+    Eigen::Vector3d const zz = v.cross(yy).normalized();
+    // y"_vec
+    yy = zz.cross(v).normalized();
+
+    Eigen::Matrix3d rot_mat;
+    rot_mat.row(0) = v;
+    rot_mat.row(1) = yy;
+    rot_mat.row(2) = zz;
+    return rot_mat;
+}
+
 } // end namespace GeoLib

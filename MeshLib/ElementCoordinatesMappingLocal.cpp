@@ -32,26 +32,27 @@ void rotateToLocal(const MeshLib::RotationMatrix& matR2local,
 /// get a rotation matrix to the global coordinates
 /// it computes R in x=R*x' where x is original coordinates and x' is local
 /// coordinates
-void getRotationMatrixToGlobal(const unsigned element_dimension,
-                               const unsigned global_dim,
-                               const std::vector<MathLib::Point3d>& points,
-                               MeshLib::RotationMatrix& matR)
+MeshLib::RotationMatrix getRotationMatrixToGlobal(
+    const unsigned element_dimension,
+    const unsigned global_dim,
+    const std::vector<MathLib::Point3d>& points)
 {
+    Eigen::Matrix3d matR;
     // compute R in x=R*x' where x are original coordinates and x' are local
     // coordinates
     if (element_dimension == 1)
     {
-        auto const a = Eigen::Map<Eigen::Vector3d const>(points[0].getCoords());
-        auto const b = Eigen::Map<Eigen::Vector3d const>(points[1].getCoords());
-        Eigen::Vector3d xx = b - a;
-        xx.normalize();
+        Eigen::Vector3d const xx =
+            (Eigen::Map<Eigen::Vector3d const>(points[1].getCoords()) -
+             Eigen::Map<Eigen::Vector3d const>(points[0].getCoords()))
+                .normalized();
         if (global_dim == 2)
         {
-            GeoLib::compute2DRotationMatrixToX(xx, matR);
+            matR = GeoLib::compute2DRotationMatrixToX(xx);
         }
         else
         {
-            GeoLib::compute3DRotationMatrixToX(xx, matR);
+            matR = GeoLib::compute3DRotationMatrixToX(xx);
         }
         matR.transposeInPlace();
     }
@@ -64,6 +65,7 @@ void getRotationMatrixToGlobal(const unsigned element_dimension,
         // set a transposed matrix
         matR.transposeInPlace();
     }
+    return matR;
 }
 }  // namespace detail
 
@@ -71,7 +73,7 @@ namespace MeshLib
 {
 ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     const Element& e, const unsigned global_dim)
-    : _global_dim(global_dim), _matR2global(3, 3)
+    : _global_dim(global_dim), _matR2global(Eigen::Matrix3d::Identity())
 {
     assert(e.getDimension() <= global_dim);
     _points.reserve(e.getNumberOfNodes());
@@ -82,14 +84,12 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
 
     auto const element_dim = e.getDimension();
 
-    if (global_dim == element_dim)
+    if (global_dim != element_dim)
     {
-        _matR2global.setIdentity();
-        return;
+        _matR2global =
+            detail::getRotationMatrixToGlobal(element_dim, global_dim, _points);
+        detail::rotateToLocal(_matR2global.transpose(), _points);
     }
-
-    detail::getRotationMatrixToGlobal(element_dim, global_dim, _points, _matR2global);
-    detail::rotateToLocal(_matR2global.transpose(), _points);
 }
 
 }  // namespace MeshLib
