@@ -39,7 +39,7 @@ struct KineticReactant
     {
     }
 
-    void print(std::ostream& os, std::size_t const global_id) const;
+    void print(std::ostream& os, std::size_t const chemical_system_id) const;
 
     std::string const name;
     std::string const chemical_formula;
