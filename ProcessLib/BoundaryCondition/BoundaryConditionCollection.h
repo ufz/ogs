@@ -29,7 +29,7 @@ public:
 
     void applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
                         int const process_id, GlobalMatrix& K, GlobalVector& b,
-                        GlobalMatrix* Jac);
+                        GlobalMatrix* Jac) const;
 
     std::vector<NumLib::IndexValueVector<GlobalIndexType>> const*
     getKnownSolutions(double const t, GlobalVector const& x) const
@@ -55,7 +55,7 @@ public:
     }
 
     void preTimestep(const double t, std::vector<GlobalVector*> const& x,
-                     int const process_id)
+                     int const process_id) const
     {
         for (auto const& bc_ptr : _boundary_conditions)
         {
@@ -64,7 +64,7 @@ public:
     }
 
     void postTimestep(const double t, std::vector<GlobalVector*> const& x,
-                      int const process_id)
+                      int const process_id) const
     {
         for (auto const& bc_ptr : _boundary_conditions)
         {

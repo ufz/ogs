@@ -18,7 +18,10 @@ namespace MathLib
 template <typename MATRIX, typename SPARSITY_PATTERN>
 struct SetMatrixSparsity
 {
-    void operator()(MATRIX& /*unused*/, SPARSITY_PATTERN const& /*unused*/) {}
+    void operator()(MATRIX& /*unused*/,
+                    SPARSITY_PATTERN const& /*unused*/) const
+    {
+    }
 };
 
 /// Sets the sparsity pattern of the underlying matrix.

@@ -307,10 +307,7 @@ public:
         }
     }
 
-    QuadTree<POINT> const* getFather ()
-    {
-        return _father;
-    }
+    QuadTree<POINT> const* getFather() const { return _father; }
 
     QuadTree<POINT> const* getChild (Quadrant quadrant) const
     {

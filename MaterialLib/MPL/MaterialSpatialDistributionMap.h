@@ -37,7 +37,7 @@ public:
 
     Medium* getMedium(std::size_t element_id);
     Medium const* getMedium(std::size_t element_id) const;
-    void checkElementHasMedium(std::size_t const element_id);
+    void checkElementHasMedium(std::size_t const element_id) const;
 
 private:
     std::map<int, std::shared_ptr<Medium>> const& media_;

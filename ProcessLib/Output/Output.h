@@ -81,7 +81,10 @@ public:
                                     std::vector<GlobalVector*> const& x,
                                     const int iteration);
 
-    std::vector<double> getFixedOutputTimes() { return _fixed_output_times; }
+    std::vector<double> getFixedOutputTimes() const
+    {
+        return _fixed_output_times;
+    }
 
 private:
     struct OutputFile;

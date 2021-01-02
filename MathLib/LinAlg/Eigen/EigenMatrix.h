@@ -185,7 +185,8 @@ struct SetMatrixSparsity<EigenMatrix, SPARSITY_PATTERN>
 
 /// \note This operator relies on row-major storage order of the underlying
 /// eigen matrix i.e. of the RawMatrixType.
-void operator()(EigenMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
+void operator()(EigenMatrix& matrix,
+                SPARSITY_PATTERN const& sparsity_pattern) const
 {
     static_assert(EigenMatrix::RawMatrixType::IsRowMajor,
                   "Set matrix sparsity relies on the EigenMatrix to be in "

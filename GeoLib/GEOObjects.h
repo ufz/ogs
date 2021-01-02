@@ -237,7 +237,7 @@ public:
      * \param name Original name of the list, this name might be changed within this method if necessary.
      * \return true if the name was unique, false if a new name has been generated
      */
-    bool isUniquePointVecName(std::string &name);
+    bool isUniquePointVecName(std::string &name) const;
 
     /**
      * Method mergeGeometries merges the geometries that are given by the names in the vector.

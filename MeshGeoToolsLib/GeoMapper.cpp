@@ -150,7 +150,8 @@ void GeoMapper::mapStationData(std::vector<GeoLib::Point*> const& points)
     }
 }
 
-void GeoMapper::mapPointDataToDEM(std::vector<GeoLib::Point*> const& points)
+void GeoMapper::mapPointDataToDEM(
+    std::vector<GeoLib::Point*> const& points) const
 {
     for (auto * pnt : points)
     {
