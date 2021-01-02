@@ -104,6 +104,41 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <components>
+                        <component>
+                            <name>Productc</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1e-6</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Productd</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1e-6</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Producte</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1e-6</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -287,15 +322,12 @@
         <kinetic_reactants>
             <kinetic_reactant>
                 <name>Productc</name>
-                <initial_amount>1e-6</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Productd</name>
-                <initial_amount>1e-6</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Producte</name>
-                <initial_amount>1e-6</initial_amount>
             </kinetic_reactant>
         </kinetic_reactants>
         <rates>

@@ -272,6 +272,301 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <components>
+                        <component>
+                            <name>Aeration</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>AttDetachment_Xi</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>AttDetachment_Xs</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Hydrolysis_Xs_m</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Hydrolysis_Xs_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xh_on_Sf</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xh_on_Sf</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xh_on_Sa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xh_on_Sa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xa_on_Snh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xs_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-4</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xi_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-4</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -535,6 +830,301 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <components>
+                        <component>
+                            <name>Aeration</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>AttDetachment_Xi</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>AttDetachment_Xs</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Hydrolysis_Xs_m</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Hydrolysis_Xs_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xh_on_Sf</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xh_on_Sf</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xh_on_Sa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xh_on_Sa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xa_on_Snh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xs_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-4</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xi_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-4</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -797,6 +1387,301 @@
                             <value>1e-3</value>
                         </property>
                     </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <components>
+                        <component>
+                            <name>Aeration</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>AttDetachment_Xi</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>AttDetachment_Xs</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Hydrolysis_Xs_m</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Hydrolysis_Xs_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xh_on_Sf</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xh_on_Sf</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xh_on_Sa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xh_on_Sa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xa_on_Snh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Growth_Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Aerobic_Growth_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Anoxic_Growth_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Lysis_Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xh</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xa</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xfb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xamb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xasrb</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xsob</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xs_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-4</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>Xi_im</name>
+                            <properties>
+                                <property>
+                                    <name>amount</name>
+                                    <type>Constant</type>
+                                    <value>1.0e-4</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
                 </phase>
             </phases>
             <properties>
@@ -1209,168 +2094,139 @@
             <kinetic_reactant>
                 <name>Aeration</name>
                 <chemical_formula>Do 1</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>AttDetachment_Xi</name>
                 <chemical_formula>Xi_m -1</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>AttDetachment_Xs</name>
                 <chemical_formula>Xs_m -1</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Hydrolysis_Xs_m</name>
                 <chemical_formula>Sf 1 Sin 0  Snh 0.01  Xs_m -1</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Hydrolysis_Xs_im</name>
                 <chemical_formula>Sf  1  Sin    0  Snh 0.01</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Aerobic_Growth_Xh_on_Sf</name>
                 <chemical_formula>Do -0.587301587301587  Sf -1.58730158730159  Snh -0.022380952</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Anoxic_Growth_Xh_on_Sf</name>
                 <chemical_formula>Sf  -1.58730158730159  Sno -0.205350205  Snh -0.02238095</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Aerobic_Growth_Xh_on_Sa</name>
                 <chemical_formula>Do  -0.587301587301587  Sa -1.58730158730159  Snh -0.07</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Anoxic_Growth_Xh_on_Sa</name>
                 <chemical_formula>Sa -1.58730158730159  Sno -0.205350205  Snh -0.07</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Lysis_Xh</name>
                 <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Aerobic_Growth_Xa_on_Snh</name>
                 <chemical_formula>Do -18.04166667  Sno 4.166666667  Snh -4.236666667</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Lysis_Xa</name>
                 <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Growth_Xfb</name>
                 <chemical_formula>Sf -18.86792453  Sa 17.86792453  Snh 0.496037736</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Lysis_Xfb</name>
                 <chemical_formula>Sf 0.05  Snh 0.0315</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Growth_Xamb</name>
                 <chemical_formula>Sa -31.25 Snh -0.07</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Lysis_Xamb</name>
                 <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Growth_Xasrb</name>
                 <chemical_formula>Sa -20  Sso -9.5  Sulphide 9.5  Snh   -0.07</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Lysis_Xasrb</name>
                 <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Aerobic_Growth_Xsob</name>
                 <chemical_formula>Do    -15.66666667  Sso 8.333333333       Sulphide -8.333333333   Snh -0.07</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Anoxic_Growth_Xsob</name>
                 <chemical_formula>Sno -8.380952381  Sso 8.333333333     Sulphide -8.333333333   Snh -0.07</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Lysis_Xsob</name>
                 <chemical_formula>Sf 0.05   Snh 0.0315</chemical_formula>
-                <initial_amount>1.0</initial_amount>
                 <fix_amount>true</fix_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Xh</name>
                 <chemical_formula>Do 0</chemical_formula>
-                <initial_amount>1.0e-3</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Xa</name>
                 <chemical_formula>Do 0</chemical_formula>
-                <initial_amount>1.0e-3</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Xfb</name>
                 <chemical_formula>Do 0</chemical_formula>
-                <initial_amount>1.0e-3</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Xamb</name>
                 <chemical_formula>Do 0</chemical_formula>
-                <initial_amount>1.0e-3</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Xasrb</name>
                 <chemical_formula>Do 0</chemical_formula>
-                <initial_amount>1.0e-3</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Xsob</name>
                 <chemical_formula>Do 0</chemical_formula>
-                <initial_amount>1.0e-3</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Xs_im</name>
                 <chemical_formula>Do 0</chemical_formula>
-                <initial_amount>1.0e-4</initial_amount>
             </kinetic_reactant>
             <kinetic_reactant>
                 <name>Xi_im</name>
                 <chemical_formula>Do 0</chemical_formula>
-                <initial_amount>1.0e-4</initial_amount>
             </kinetic_reactant>
         </kinetic_reactants>
         <rates>

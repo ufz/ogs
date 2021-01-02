@@ -46,6 +46,12 @@ public:
 
     void initialize() override;
 
+    void initializeChemicalSystemConcrete(
+        GlobalIndexType const& chemical_system_id,
+        MaterialPropertyLib::Medium const* medium,
+        ParameterLib::SpatialPosition const& pos,
+        double const t) override;
+
     void executeInitialCalculation(std::vector<GlobalVector> const&
                                        interpolated_process_solutions) override;
 

@@ -41,10 +41,6 @@ std::vector<KineticReactant> createKineticReactants(
             reactant_config.getConfigParameter<std::string>("chemical_formula",
                                                             "");
 
-        double const initial_amount =
-            //! \ogs_file_param{prj__chemical_system__kinetic_reactants__kinetic_reactant__initial_amount}
-            reactant_config.getConfigParameter<double>("initial_amount");
-
         auto parameters =
             //! \ogs_file_param{prj__chemical_system__kinetic_reactants__kinetic_reactant__parameters}
             reactant_config.getConfigParameter<std::vector<double>>(
@@ -72,7 +68,6 @@ std::vector<KineticReactant> createKineticReactants(
                                        std::move(chemical_formula),
                                        amount,
                                        mesh_prop_amount,
-                                       initial_amount,
                                        std::move(parameters),
                                        fix_amount);
     }

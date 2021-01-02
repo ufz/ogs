@@ -113,6 +113,17 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
         return;
     }
 
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(x.size());
+    std::generate_n(std::back_inserter(dof_tables), x.size(),
+                    [&]() { return _local_to_global_index_map.get(); });
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &ComponentTransportLocalAssemblerInterface::initializeChemicalSystem,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t);
+
     BaseLib::RunTime time_phreeqc;
     time_phreeqc.start();
 

@@ -31,12 +31,10 @@ struct EquilibriumReactant
     EquilibriumReactant(std::string name_,
                         MeshLib::PropertyVector<double>* amount_,
                         MeshLib::PropertyVector<double>* amount_avg_,
-                        double const initial_amount_,
                         double saturation_index_)
         : name(std::move(name_)),
           amount(amount_),
           amount_avg(amount_avg_),
-          initial_amount(initial_amount_),
           saturation_index(saturation_index_)
     {
     }
@@ -46,7 +44,6 @@ struct EquilibriumReactant
     std::string const name;
     MeshLib::PropertyVector<double>* amount;
     MeshLib::PropertyVector<double>* amount_avg;
-    double const initial_amount;
     double const saturation_index;
     static const ItemType item_type = ItemType::EquilibriumReactant;
 };

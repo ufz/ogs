@@ -14,6 +14,7 @@
 #include <numeric>
 #include <vector>
 
+#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "ComponentTransportProcessData.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
@@ -70,6 +71,29 @@ public:
 
     virtual void setChemicalSystemID(std::size_t const /*mesh_item_id*/) = 0;
 
+    void initializeChemicalSystem(
+        std::size_t const mesh_item_id,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+        std::vector<GlobalVector*> const& x, double const t)
+    {
+        std::vector<double> local_x_vec;
+
+        auto const n_processes = x.size();
+        for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+        {
+            auto const indices =
+                NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
+            assert(!indices.empty());
+            auto const local_solution = x[process_id]->get(indices);
+            local_x_vec.insert(std::end(local_x_vec),
+                               std::begin(local_solution),
+                               std::end(local_solution));
+        }
+        auto const local_x = MathLib::toVector(local_x_vec);
+
+        initializeChemicalSystemConcrete(local_x, t);
+    }
+
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -81,6 +105,10 @@ public:
         std::vector<GlobalVector*> const& int_pt_x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const = 0;
+
+private:
+    virtual void initializeChemicalSystemConcrete(
+        Eigen::VectorXd const& /*local_x*/, double const /*t*/) = 0;
 
 protected:
     CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
@@ -180,6 +208,30 @@ public:
                                      ? 0
                                      : chemical_system_index_map.back() + 1;
             chemical_system_index_map.push_back(_ip_data[ip].chemical_system_id);
+        }
+    }
+
+    void initializeChemicalSystemConcrete(Eigen::VectorXd const& /*local_x*/,
+                                          double const t) override
+    {
+        assert(_process_data.chemical_solver_interface);
+
+        auto const& medium =
+            _process_data.media_map->getMedium(_element.getID());
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto& ip_data = _ip_data[ip];
+            auto const& chemical_system_id = ip_data.chemical_system_id;
+
+            _process_data.chemical_solver_interface
+                ->initializeChemicalSystemConcrete(chemical_system_id, medium,
+                                                   pos, t);
         }
     }
 
