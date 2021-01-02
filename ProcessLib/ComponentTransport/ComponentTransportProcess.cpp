@@ -127,8 +127,7 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
     BaseLib::RunTime time_phreeqc;
     time_phreeqc.start();
 
-    _chemical_solver_interface->executeInitialCalculation(
-        interpolateNodalValuesToIntegrationPoints(x));
+    _chemical_solver_interface->executeInitialCalculation();
 
     extrapolateIntegrationPointValuesToNodes(
         t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
@@ -228,8 +227,7 @@ void ComponentTransportProcess::solveReactionEquation(
     BaseLib::RunTime time_phreeqc;
     time_phreeqc.start();
 
-    _chemical_solver_interface->doWaterChemistryCalculation(
-        interpolateNodalValuesToIntegrationPoints(x), dt);
+    _chemical_solver_interface->doWaterChemistryCalculation(dt);
 
     extrapolateIntegrationPointValuesToNodes(
         t, _chemical_solver_interface->getIntPtProcessSolutions(), x);

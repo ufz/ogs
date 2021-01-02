@@ -169,9 +169,7 @@ void PhreeqcKernel::reinitializeRates()
     };
 }
 
-void PhreeqcKernel::doWaterChemistryCalculation(
-    std::vector<GlobalVector> const& /*interpolated_process_solutions*/,
-    double const dt)
+void PhreeqcKernel::doWaterChemistryCalculation(double const dt)
 {
     std::vector<GlobalVector*> process_solutions;
 
@@ -325,8 +323,7 @@ void PhreeqcKernel::reset(std::size_t const chemical_system_id)
     }
 }
 
-void PhreeqcKernel::executeInitialCalculation(
-    std::vector<GlobalVector> const& /*interpolated_process_solutions*/)
+void PhreeqcKernel::executeInitialCalculation()
 {
     // TODO (Renchao): This function could be replaced with
     // PhreeqcKernel::doWaterChemistryCalculation(std::vector<GlobalVector*>&

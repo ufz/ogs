@@ -52,13 +52,10 @@ public:
         ParameterLib::SpatialPosition const& pos,
         double const t) override;
 
-    void executeInitialCalculation(std::vector<GlobalVector> const&
-                                       interpolated_process_solutions) override;
 
-    void doWaterChemistryCalculation(
-        std::vector<GlobalVector> const& interpolated_process_solutions,
-        double const dt) override;
+    void executeInitialCalculation() override;
 
+    void doWaterChemistryCalculation(double const dt) override;
     void setAqueousSolution(
         std::vector<GlobalVector> const& interpolated_process_solutions);
 

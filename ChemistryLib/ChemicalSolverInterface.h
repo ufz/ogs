@@ -37,12 +37,9 @@ public:
     {
     }
 
-    virtual void executeInitialCalculation(
-        std::vector<GlobalVector> const& interpolated_process_solutions) = 0;
+    virtual void executeInitialCalculation() = 0;
 
-    virtual void doWaterChemistryCalculation(
-        std::vector<GlobalVector> const& interpolated_process_solutions,
-        double const dt) = 0;
+    virtual void doWaterChemistryCalculation(double const dt) = 0;
 
     virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const = 0;
 
