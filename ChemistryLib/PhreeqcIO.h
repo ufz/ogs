@@ -56,8 +56,6 @@ public:
     void executeInitialCalculation() override;
 
     void doWaterChemistryCalculation(double const dt) override;
-    void setAqueousSolution(
-        std::vector<GlobalVector> const& interpolated_process_solutions);
 
     void writeInputsToFile(double const dt = 0);
 
