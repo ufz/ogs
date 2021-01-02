@@ -64,6 +64,19 @@ void setReactantAmount(Reactant& reactant,
 
     (*reactant.amount)[chemical_system_id] = amount;
 }
+
+template <typename Reactant>
+static double averageReactantAmount(
+    Reactant const& reactant,
+    std::vector<GlobalIndexType> const& chemical_system_indices)
+{
+    double const sum = std::accumulate(
+        chemical_system_indices.begin(), chemical_system_indices.end(), 0.0,
+        [&](double const s, GlobalIndexType const id) {
+            return s + (*reactant.amount)[id];
+        });
+    return sum / chemical_system_indices.size();
+}
 }  // namespace
 
 PhreeqcIO::PhreeqcIO(std::string const project_file_name,
@@ -564,19 +577,6 @@ std::vector<std::string> const PhreeqcIO::getComponentList() const
     component_names.push_back("H");
 
     return component_names;
-}
-
-template <typename Reactant>
-static double averageReactantAmount(
-    Reactant const& reactant,
-    std::vector<GlobalIndexType> const& chemical_system_indices)
-{
-    double const sum = std::accumulate(
-        chemical_system_indices.begin(), chemical_system_indices.end(), 0.0,
-        [&](double const s, GlobalIndexType const id) {
-            return s + (*reactant.amount)[id];
-        });
-    return sum / chemical_system_indices.size();
 }
 
 void PhreeqcIO::computeSecondaryVariable(
