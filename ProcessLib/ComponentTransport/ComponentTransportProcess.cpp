@@ -224,6 +224,18 @@ void ComponentTransportProcess::solveReactionEquation(
     // process.
     // TODO: move into a global loop to consider both mass balance over
     // space and localized chemical equilibrium between solutes.
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(x.size());
+    std::generate_n(std::back_inserter(dof_tables), x.size(),
+                    [&]() { return _local_to_global_index_map.get(); });
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &ComponentTransportLocalAssemblerInterface::setChemicalSystem,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
+
     BaseLib::RunTime time_phreeqc;
     time_phreeqc.start();
 

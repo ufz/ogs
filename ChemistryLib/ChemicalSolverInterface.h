@@ -30,10 +30,16 @@ public:
     virtual void initialize() {}
 
     virtual void initializeChemicalSystemConcrete(
+        std::vector<double> const& /*concentrations*/,
         GlobalIndexType const& /*chemical_system_id*/,
         MaterialPropertyLib::Medium const* /*medium*/,
-        ParameterLib::SpatialPosition const& /*pos*/,
-        double const /*t*/)
+        ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/)
+    {
+    }
+
+    virtual void setChemicalSystemConcrete(
+        std::vector<double> const& /*concentrations*/,
+        GlobalIndexType const& /*chemical_system_id*/)
     {
     }
 

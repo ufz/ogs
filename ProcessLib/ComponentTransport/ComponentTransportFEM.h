@@ -97,6 +97,29 @@ public:
         initializeChemicalSystemConcrete(local_x, t);
     }
 
+    void setChemicalSystem(
+        std::size_t const mesh_item_id,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+        std::vector<GlobalVector*> const& x, double const t, double const dt)
+    {
+        std::vector<double> local_x_vec;
+
+        auto const n_processes = x.size();
+        for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+        {
+            auto const indices =
+                NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
+            assert(!indices.empty());
+            auto const local_solution = x[process_id]->get(indices);
+            local_x_vec.insert(std::end(local_x_vec),
+                               std::begin(local_solution),
+                               std::end(local_solution));
+        }
+        auto const local_x = MathLib::toVector(local_x_vec);
+
+        setChemicalSystemConcrete(local_x, t, dt);
+    }
+
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -112,6 +135,10 @@ public:
 private:
     virtual void initializeChemicalSystemConcrete(
         Eigen::VectorXd const& /*local_x*/, double const /*t*/) = 0;
+
+    virtual void setChemicalSystemConcrete(Eigen::VectorXd const& /*local_x*/,
+                                           double const /*t*/,
+                                           double const /*dt*/) = 0;
 
 protected:
     CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
@@ -217,7 +244,7 @@ public:
         }
     }
 
-    void initializeChemicalSystemConcrete(Eigen::VectorXd const& /*local_x*/,
+    void initializeChemicalSystemConcrete(Eigen::VectorXd const& local_x,
                                           double const t) override
     {
         assert(_process_data.chemical_solver_interface);
@@ -233,11 +260,62 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
             auto const& chemical_system_id = ip_data.chemical_system_id;
 
+            auto const n_component = _transport_process_variables.size();
+            std::vector<double> C_int_pt(n_component);
+            for (unsigned component_id = 0; component_id < n_component;
+                 ++component_id)
+            {
+                auto const concentration_index =
+                    first_concentration_index +
+                    component_id * concentration_size;
+                auto const local_C =
+                    local_x.template segment<concentration_size>(
+                        concentration_index);
+
+                NumLib::shapeFunctionInterpolate(local_C, N,
+                                                 C_int_pt[component_id]);
+            }
+
             _process_data.chemical_solver_interface
-                ->initializeChemicalSystemConcrete(chemical_system_id, medium,
-                                                   pos, t);
+                ->initializeChemicalSystemConcrete(C_int_pt, chemical_system_id,
+                                                   medium, pos, t);
+        }
+    }
+
+    void setChemicalSystemConcrete(Eigen::VectorXd const& local_x,
+                                   double const /*t*/, double /*dt*/) override
+    {
+        assert(_process_data.chemical_solver_interface);
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto& ip_data = _ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& chemical_system_id = ip_data.chemical_system_id;
+
+            auto const n_component = _transport_process_variables.size();
+            std::vector<double> C_int_pt(n_component);
+            for (unsigned component_id = 0; component_id < n_component;
+                 ++component_id)
+            {
+                auto const concentration_index =
+                    first_concentration_index +
+                    component_id * concentration_size;
+                auto const local_C =
+                    local_x.template segment<concentration_size>(
+                        concentration_index);
+
+                NumLib::shapeFunctionInterpolate(local_C, N,
+                                                 C_int_pt[component_id]);
+            }
+
+            _process_data.chemical_solver_interface->setChemicalSystemConcrete(
+                C_int_pt, chemical_system_id);
         }
     }
 

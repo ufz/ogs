@@ -50,6 +50,23 @@ std::ostream& operator<<(std::ostream& os,
     return os;
 }
 
+void setAqueousSolution(std::vector<double> const& concentrations,
+                        GlobalIndexType const& chemical_system_id,
+                        AqueousSolution& aqueous_solution)
+{
+    // components
+    auto& components = aqueous_solution.components;
+    for (unsigned component_id = 0; component_id < components.size();
+         ++component_id)
+    {
+        components[component_id].amount->set(chemical_system_id,
+                                             concentrations[component_id]);
+    }
+
+    // pH
+    aqueous_solution.pH->set(chemical_system_id, concentrations.back());
+}
+
 template <typename Reactant>
 void setReactantMolality(Reactant& reactant,
                          GlobalIndexType const& chemical_system_id,
@@ -145,10 +162,15 @@ void PhreeqcIO::initialize()
 }
 
 void PhreeqcIO::initializeChemicalSystemConcrete(
+    std::vector<double> const& concentrations,
     GlobalIndexType const& chemical_system_id,
     MaterialPropertyLib::Medium const* medium,
-    ParameterLib::SpatialPosition const& pos, double const t)
+    ParameterLib::SpatialPosition const& pos,
+    double const t)
 {
+    setAqueousSolution(concentrations, chemical_system_id,
+                       *_chemical_system->aqueous_solution);
+
     auto const& solid_phase = medium->phase("Solid");
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
@@ -163,7 +185,13 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
     }
 }
 
+void PhreeqcIO::setChemicalSystemConcrete(
+    std::vector<double> const& concentrations,
+    GlobalIndexType const& chemical_system_id)
 {
+    setAqueousSolution(concentrations, chemical_system_id,
+                       *_chemical_system->aqueous_solution);
+}
 
 void PhreeqcIO::executeInitialCalculation()
 {
