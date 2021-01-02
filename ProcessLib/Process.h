@@ -105,12 +105,6 @@ public:
     {
     }
 
-    virtual std::vector<GlobalVector> interpolateNodalValuesToIntegrationPoints(
-        std::vector<GlobalVector*> const& /*nodal_values_vectors*/) const
-    {
-        return {};
-    }
-
     virtual void extrapolateIntegrationPointValuesToNodes(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*integration_point_values_vectors*/,
