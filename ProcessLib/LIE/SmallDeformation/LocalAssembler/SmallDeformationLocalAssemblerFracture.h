@@ -219,15 +219,15 @@ public:
     }
 
 private:
-    std::vector<double> const& getIntPtSigma(
-        std::vector<double>& cache, std::size_t const /*component*/) const
+    static std::vector<double> const& getIntPtSigma(
+        std::vector<double>& cache, std::size_t const /*component*/)
     {
         cache.resize(0);
         return cache;
     }
 
-    std::vector<double> const& getIntPtEpsilon(
-        std::vector<double>& cache, std::size_t const /*component*/) const
+    static std::vector<double> const& getIntPtEpsilon(
+        std::vector<double>& cache, std::size_t const /*component*/)
     {
         cache.resize(0);
 

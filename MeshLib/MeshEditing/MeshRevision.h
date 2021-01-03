@@ -69,7 +69,8 @@ private:
         const std::vector<std::size_t> &id_map) const;
 
     /// Calculates the number of unique nodes in an element (i.e. uncollapsed nodes)
-    unsigned getNumberOfUniqueNodes(MeshLib::Element const*const element) const;
+    static unsigned getNumberOfUniqueNodes(
+        MeshLib::Element const* const element);
 
     /// Resets the node IDs of the source mesh (needs to be called after everything is done).
     void resetNodeIDs();
@@ -154,22 +155,23 @@ private:
                          unsigned min_elem_dim) const;
 
     // In an element with 5 unique nodes, return the node that will be the top of the resulting pyramid
-    unsigned findPyramidTopNode(MeshLib::Element const& element,
-        std::array<std::size_t,4> const& base_node_ids) const;
+    static unsigned findPyramidTopNode(MeshLib::Element const& element,
+        std::array<std::size_t,4> const& base_node_ids);
 
     /// Lookup-table for returning the diametral node id of the given node id in a Hex
-    unsigned lutHexDiametralNode(unsigned id) const;
+    static unsigned lutHexDiametralNode(unsigned id);
 
     /// Lookup-table for returning four nodes connected to the two nodes (id1, id2) forming an edge in a Hex
-    std::array<unsigned, 4> lutHexCuttingQuadNodes(unsigned id1,
-                                                   unsigned id2) const;
+    static std::array<unsigned, 4> lutHexCuttingQuadNodes(unsigned id1,
+                                                          unsigned id2);
 
     /// When a hex is subdivided into two prisms, this returns the nodes of the hex edge that will serve as the back of one of the prisms.
-    std::pair<unsigned, unsigned> lutHexBackNodes(unsigned i, unsigned j,
-                                                  unsigned k, unsigned l) const;
+    static std::pair<unsigned, unsigned> lutHexBackNodes(unsigned i, unsigned j,
+                                                         unsigned k,
+                                                         unsigned l);
 
     /// Lookup-table for returning the third node of bottom or top triangle given the other two
-    unsigned lutPrismThirdNode(unsigned id1, unsigned id2) const;
+    static unsigned lutPrismThirdNode(unsigned id1, unsigned id2);
 
     /// The original mesh used for constructing the class
     Mesh& _mesh;

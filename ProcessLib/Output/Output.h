@@ -89,11 +89,11 @@ public:
 private:
     struct OutputFile;
 
-    void outputMesh(OutputFile const& output_file,
+    static void outputMesh(OutputFile const& output_file,
                     MeshLib::IO::PVDFile* const pvd_file,
                     MeshLib::Mesh const& mesh,
                     int const timestep,
-                    double const t) const;
+                    double const t);
 #ifdef OGS_USE_XDMF
     void outputMeshXdmf(OutputFile const& output_file,
                         MeshLib::Mesh const& mesh,

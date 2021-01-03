@@ -59,12 +59,12 @@ public:
     template <int NPoints, typename SingleUnknownMatrixType,
               typename RMatrixType, typename RPiSMatrixType,
               typename RSMatrixType>
-    void assembleRMatrices(
+    static void assembleRMatrices(
         int const idx_bhe_unknowns,
         Eigen::MatrixBase<SingleUnknownMatrixType> const& matBHE_loc_R,
         Eigen::MatrixBase<RMatrixType>& R_matrix,
         Eigen::MatrixBase<RPiSMatrixType>& R_pi_s_matrix,
-        Eigen::MatrixBase<RSMatrixType>& R_s_matrix) const
+        Eigen::MatrixBase<RSMatrixType>& R_s_matrix)
     {
         switch (idx_bhe_unknowns)
         {

@@ -213,7 +213,8 @@ std::vector<MeshLib::Node*> MeshRevision::constructNewNodesArray(const std::vect
     return new_nodes;
 }
 
-unsigned MeshRevision::getNumberOfUniqueNodes(MeshLib::Element const*const element) const
+unsigned MeshRevision::getNumberOfUniqueNodes(
+    MeshLib::Element const* const element)
 {
     unsigned const nNodes(element->getNumberOfBaseNodes());
     unsigned count(nNodes);
@@ -654,7 +655,7 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const*const org_elem,
                     // triangle edge collapsed
                     const unsigned i_offset = (i>2) ? i-3 : i+3;
                     const unsigned j_offset = (i>2) ? j-3 : j+3;
-                    const unsigned k = this->lutPrismThirdNode(i,j);
+                    const unsigned k = lutPrismThirdNode(i,j);
                     if (k == std::numeric_limits<unsigned>::max())
                     {
                         ERR("Unexpected error during prism reduction.");
@@ -806,8 +807,9 @@ MeshLib::Element* MeshRevision::constructFourNodeElement(
     return nullptr;
 }
 
-unsigned MeshRevision::findPyramidTopNode(MeshLib::Element const& element,
-    std::array<std::size_t,4> const& base_node_ids) const
+unsigned MeshRevision::findPyramidTopNode(
+    MeshLib::Element const& element,
+    std::array<std::size_t, 4> const& base_node_ids)
 {
     const std::size_t nNodes (element.getNumberOfBaseNodes());
     for (std::size_t i=0; i<nNodes; ++i)
@@ -828,13 +830,13 @@ unsigned MeshRevision::findPyramidTopNode(MeshLib::Element const& element,
     return std::numeric_limits<unsigned>::max(); // should never be reached if called correctly
 }
 
-unsigned MeshRevision::lutHexDiametralNode(unsigned id) const
+unsigned MeshRevision::lutHexDiametralNode(unsigned id)
 {
     return _hex_diametral_nodes[id];
 }
 
 std::array<unsigned, 4> MeshRevision::lutHexCuttingQuadNodes(unsigned id1,
-                                                             unsigned id2) const
+                                                             unsigned id2)
 {
     std::array<unsigned,4> nodes{};
     if      (id1==0 && id2==1) { nodes[0]=3; nodes[1]=2; nodes[2]=5; nodes[3]=4; }
@@ -868,23 +870,23 @@ std::array<unsigned, 4> MeshRevision::lutHexCuttingQuadNodes(unsigned id1,
 std::pair<unsigned, unsigned> MeshRevision::lutHexBackNodes(unsigned i,
                                                             unsigned j,
                                                             unsigned k,
-                                                            unsigned l) const
+                                                            unsigned l)
 {
     // collapsed edges are *not* connected
     std::pair<unsigned, unsigned> back(std::numeric_limits<unsigned>::max(), std::numeric_limits<unsigned>::max());
-    if      (this->lutHexDiametralNode(i) == k) { back.first = i; back.second = this->lutHexDiametralNode(l); }
-    else if (this->lutHexDiametralNode(i) == l) { back.first = i; back.second = this->lutHexDiametralNode(k); }
-    else if (this->lutHexDiametralNode(j) == k) { back.first = j; back.second = this->lutHexDiametralNode(l); }
-    else if (this->lutHexDiametralNode(j) == l) { back.first = j; back.second = this->lutHexDiametralNode(k); }
+    if      (lutHexDiametralNode(i) == k) { back.first = i; back.second = lutHexDiametralNode(l); }
+    else if (lutHexDiametralNode(i) == l) { back.first = i; back.second = lutHexDiametralNode(k); }
+    else if (lutHexDiametralNode(j) == k) { back.first = j; back.second = lutHexDiametralNode(l); }
+    else if (lutHexDiametralNode(j) == l) { back.first = j; back.second = lutHexDiametralNode(k); }
     // collapsed edges *are* connected
-    else if (i==k) { back.first = this->lutHexDiametralNode(l); back.second = j; }
-    else if (i==l) { back.first = this->lutHexDiametralNode(k); back.second = j; }
-    else if (j==k) { back.first = this->lutHexDiametralNode(l); back.second = i; }
-    else if (j==l) { back.first = this->lutHexDiametralNode(k); back.second = i; }
+    else if (i==k) { back.first = lutHexDiametralNode(l); back.second = j; }
+    else if (i==l) { back.first = lutHexDiametralNode(k); back.second = j; }
+    else if (j==k) { back.first = lutHexDiametralNode(l); back.second = i; }
+    else if (j==l) { back.first = lutHexDiametralNode(k); back.second = i; }
     return back;
 }
 
-unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2) const
+unsigned MeshRevision::lutPrismThirdNode(unsigned id1, unsigned id2)
 {
     if ((id1 == 0 && id2 == 1) || (id1 == 1 && id2 == 2))
     {

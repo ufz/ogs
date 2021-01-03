@@ -87,7 +87,8 @@ protected:
                                    std::size_t new_node_id) const;
 
     /// Calculates a data-dependent epsilon value
-    double calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high);
+    static double calcEpsilon(GeoLib::Raster const& low,
+                              GeoLib::Raster const& high);
 
     double _elevation_epsilon{0.0001};
     double _minimum_thickness{std::numeric_limits<float>::epsilon()};

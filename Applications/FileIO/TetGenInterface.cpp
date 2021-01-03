@@ -293,11 +293,11 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
     return false;
 }
 
-bool TetGenInterface::parseNodesFileHeader(std::string &line,
-                                           std::size_t &n_nodes,
-                                           std::size_t &dim,
-                                           std::size_t &n_attributes,
-                                           bool &boundary_markers) const
+bool TetGenInterface::parseNodesFileHeader(std::string& line,
+                                           std::size_t& n_nodes,
+                                           std::size_t& dim,
+                                           std::size_t& n_attributes,
+                                           bool& boundary_markers)
 {
     std::list<std::string> pnt_header = BaseLib::splitString(line, ' ');
     if (pnt_header.empty())
@@ -437,10 +437,10 @@ bool TetGenInterface::readElementsFromStream(
     return false;
 }
 
-bool TetGenInterface::parseElementsFileHeader(std::string &line,
+bool TetGenInterface::parseElementsFileHeader(std::string& line,
                                               std::size_t& n_tets,
                                               std::size_t& n_nodes_per_tet,
-                                              bool& region_attribute) const
+                                              bool& region_attribute)
 {
     std::size_t pos_beg;
     std::size_t pos_end;
@@ -574,10 +574,11 @@ bool TetGenInterface::parseElements(std::ifstream& ins,
     return true;
 }
 
-bool TetGenInterface::writeTetGenSmesh(const std::string &file_name,
-                                       const GeoLib::GEOObjects &geo_objects,
-                                       const std::string &geo_name,
-                                       const std::vector<GeoLib::Point> &attribute_points) const
+bool TetGenInterface::writeTetGenSmesh(
+    const std::string& file_name,
+    const GeoLib::GEOObjects& geo_objects,
+    const std::string& geo_name,
+    const std::vector<GeoLib::Point>& attribute_points)
 {
     std::vector<GeoLib::Point*> const*const points = geo_objects.getPointVec(geo_name);
     std::vector<GeoLib::Surface*> const*const surfaces = geo_objects.getSurfaceVec(geo_name);
@@ -793,7 +794,10 @@ void TetGenInterface::write3dElements(std::ofstream &out,
     out.seekp(after_elems_pos);
 }
 
-void TetGenInterface::writeElementToFacets(std::ofstream &out, const MeshLib::Element &element, unsigned &element_count, std::string const& matId) const
+void TetGenInterface::writeElementToFacets(std::ofstream& out,
+                                           const MeshLib::Element& element,
+                                           unsigned& element_count,
+                                           std::string const& matId)
 {
     element_count++;
     if (element.getGeomType() == MeshLib::MeshElemType::TRIANGLE)

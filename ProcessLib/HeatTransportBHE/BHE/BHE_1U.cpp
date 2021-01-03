@@ -232,7 +232,7 @@ std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
 BHE_1U::getBHEInflowDirichletBCNodesAndComponents(
     std::size_t const top_node_id,
     std::size_t const /*bottom_node_id*/,
-    int const in_component_id) const
+    int const in_component_id)
 {
     return {std::make_pair(top_node_id, in_component_id),
             std::make_pair(top_node_id, in_component_id + 1)};
@@ -243,7 +243,7 @@ std::optional<
 BHE_1U::getBHEBottomDirichletBCNodesAndComponents(
     std::size_t const bottom_node_id,
     int const in_component_id,
-    int const out_component_id) const
+    int const out_component_id)
 {
     return {{std::make_pair(bottom_node_id, in_component_id),
              std::make_pair(bottom_node_id, out_component_id)}};

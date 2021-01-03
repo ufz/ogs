@@ -29,24 +29,16 @@ public:
     }
 
     /// Change the integration order.
-    void setIntegrationOrder(unsigned /* order */)
-    {
-    }
+    static void setIntegrationOrder(unsigned /* order */) {}
 
     /// Return current integration order.
-    unsigned getIntegrationOrder() const
-    {
-        return 0;
-    }
+    static constexpr unsigned getIntegrationOrder() { return 0; }
 
     /// Return the number of sampling points.
-    unsigned getNumberOfPoints() const
-    {
-        return 1;
-    }
+    static constexpr unsigned getNumberOfPoints() { return 1; }
 
     /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
-    WeightedPoint getWeightedPoint(unsigned igp) const
+    static WeightedPoint getWeightedPoint(unsigned igp)
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -69,7 +61,7 @@ public:
     ///
     /// \param order    the number of integration points
     /// \return the number of points.
-    static unsigned getNumberOfPoints(unsigned order)
+    static constexpr unsigned getNumberOfPoints(unsigned order)
     {
         (void)order;
         return 1;

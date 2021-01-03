@@ -29,14 +29,14 @@ public:
     {
     }
 
-    int getNumberOfItemsInDisplay()
+    static int getNumberOfItemsInDisplay()
     {
         return display_simulation_id + display_state + display_solution_id +
                display_distance + display_current_time + display_time_step +
                display_pH + display_pe;
     }
 
-    int getNumberOfDroppedItems()
+    static int getNumberOfDroppedItems()
     {
         return display_simulation_id + display_state + display_solution_id +
                display_distance + display_current_time + display_time_step;

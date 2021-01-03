@@ -75,10 +75,10 @@ private:
      * the beginning of the given node ID vector
      * @return true if all element nodes are included in the vector
      */
-    bool includesAllEdgeNodeIDs(
+    static bool includesAllEdgeNodeIDs(
         const std::vector<std::size_t>& vec_node_ids,
         const MeshLib::Element& edge,
-        std::vector<std::size_t>& edge_node_distances) const;
+        std::vector<std::size_t>& edge_node_distances);
 
     /**
      * Modify node ordering of an edge so that its first node is closer to the

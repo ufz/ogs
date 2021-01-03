@@ -62,12 +62,12 @@ public:
               typename RMatrixType,
               typename RPiSMatrixType,
               typename RSMatrixType>
-    void assembleRMatrices(
+    static void assembleRMatrices(
         int const idx_bhe_unknowns,
         Eigen::MatrixBase<SingleUnknownMatrixType> const& matBHE_loc_R,
         Eigen::MatrixBase<RMatrixType>& R_matrix,
         Eigen::MatrixBase<RPiSMatrixType>& R_pi_s_matrix,
-        Eigen::MatrixBase<RSMatrixType>& R_s_matrix) const
+        Eigen::MatrixBase<RSMatrixType>& R_s_matrix)
     {
         // Here we are looping over two resistance terms
         // First PHI_fg is the resistance between pipe and grout
@@ -112,17 +112,17 @@ public:
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
         {0, 1}};
 
-    std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+    static std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
     getBHEInflowDirichletBCNodesAndComponents(std::size_t const top_node_id,
                                               std::size_t const bottom_node_id,
-                                              int const in_component_id) const;
+                                              int const in_component_id);
 
-    std::optional<
+    static std::optional<
         std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>>
     getBHEBottomDirichletBCNodesAndComponents(
         std::size_t const /*bottom_node_id*/,
         int const /*in_component_id*/,
-        int const /*out_component_id*/) const;
+        int const /*out_component_id*/);
 
 public:
     std::array<double, number_of_unknowns> crossSectionAreas() const;
@@ -139,7 +139,7 @@ private:
     std::array<double, number_of_unknowns> calcThermalResistances(
         double const Nu);
 
-    double compute_R_gs(double const chi, double const R_g);
+    static double compute_R_gs(double const chi, double const R_g);
 
 private:
     /// PHI_fg, PHI_gs;

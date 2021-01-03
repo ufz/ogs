@@ -61,7 +61,8 @@ public:
     }
 
     /// Reads the header of the shape file.
-    bool readSHPInfo(const std::string &filename, int &shapeType, int &numberOfEntities);
+    static bool readSHPInfo(const std::string& filename, int& shapeType,
+                            int& numberOfEntities);
 
     /// Reads data from the shape file.
     void readSHPFile(const std::string& filename, OGSType choice,

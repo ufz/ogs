@@ -252,7 +252,7 @@ void Output::outputMesh(OutputFile const& output_file,
                         MeshLib::IO::PVDFile* const pvd_file,
                         MeshLib::Mesh const& mesh,
                         int const timestep,
-                        double const t) const
+                        double const t)
 {
     DBUG("output to {:s}", output_file.path);
 

@@ -57,7 +57,7 @@ public:
     IndexType getNumberOfColumns() const { return _mat.cols(); }
 
     /// return a start index of the active data range
-    IndexType getRangeBegin() const  { return 0; }
+    static constexpr IndexType getRangeBegin() { return 0; }
 
     /// return an end index of the active data range
     IndexType getRangeEnd() const  { return getNumberOfRows(); }
@@ -130,7 +130,7 @@ public:
     }
 
     /// return always true, i.e. the matrix is always ready for use
-    bool isAssembled() const { return true; }
+    static constexpr bool isAssembled() { return true; }
 
     /// printout this matrix for debugging
     void write(const std::string &filename) const

@@ -102,7 +102,7 @@ BoundaryElementsAlongPolyline::~BoundaryElementsAlongPolyline()
 
 bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(
     const std::vector<std::size_t>& vec_node_ids, const MeshLib::Element& edge,
-    std::vector<std::size_t>& edge_node_distances) const
+    std::vector<std::size_t>& edge_node_distances)
 {
     unsigned j = 0;
     for (; j < edge.getNumberOfBaseNodes(); j++)

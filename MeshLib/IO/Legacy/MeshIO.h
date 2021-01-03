@@ -55,10 +55,10 @@ private:
     void writeElements(std::vector<MeshLib::Element*> const& ele_vec,
                        MeshLib::PropertyVector<int> const* const material_ids,
                        std::ostream& out) const;
-    std::size_t readMaterialID(std::istream & in) const;
+    static std::size_t readMaterialID(std::istream & in);
     MeshLib::Element* readElement(
         std::istream& in, const std::vector<MeshLib::Node*>& nodes) const;
-    std::string ElemType2StringOutput(const MeshLib::MeshElemType t) const;
+    static std::string ElemType2StringOutput(const MeshLib::MeshElemType t);
 
     const MeshLib::Mesh* _mesh{nullptr};
 
