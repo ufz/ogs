@@ -35,7 +35,6 @@ namespace MaterialPropertyLib
 enum PropertyType : int
 {
     acentric_factor,
-    amount,
     binary_interaction_coefficient,
     biot_coefficient,
     bishops_effective_stress,
@@ -58,6 +57,7 @@ enum PropertyType : int
     heat_capacity,
     /// used to compute the hydrodynamic dispersion tensor.
     longitudinal_dispersivity,
+    molality,
     molar_mass,
     mole_fraction,
     /// used to compute the hydrodynamic dispersion tensor.
@@ -182,6 +182,11 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::longitudinal_dispersivity;
     }
+    // TODO (renchao): add property "volume fraction"
+    if (boost::iequals(inString, "molality"))
+    {
+        return PropertyType::molality;
+    }
     if (boost::iequals(inString, "molar_mass"))
     {
         return PropertyType::molar_mass;
@@ -290,11 +295,6 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::viscosity;
     }
-    // TODO (renchao): replace property "amount" with volume fraction
-    if (boost::iequals(inString, "amount"))
-    {
-        return PropertyType::amount;
-    }
 
     OGS_FATAL(
         "The property name '{:s}' does not correspond to any known property",
@@ -306,7 +306,6 @@ inline PropertyType convertStringToProperty(std::string const& inString)
 
 static const std::array<std::string, PropertyType::number_of_properties>
     property_enum_to_string{{"acentric_factor",
-                             "amount",
                              "binary_interaction_coefficient",
                              "biot_coefficient",
                              "bishops_effective_stress",
@@ -327,6 +326,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "fredlund_parameters",
                              "heat_capacity",
                              "longitudinal_dispersivity",
+                             "molality",
                              "molar_mass",
                              "mole_fraction",
                              "molecular_diffusion",

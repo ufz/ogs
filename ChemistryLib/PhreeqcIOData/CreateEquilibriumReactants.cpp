@@ -42,17 +42,15 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
             equilibrium_reactant_config.getConfigParameter<double>(
                 "saturation_index");
 
-        auto amount = MeshLib::getOrCreateMeshProperty<double>(
+        auto molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
-        auto mesh_prop_amount = MeshLib::getOrCreateMeshProperty<double>(
+        auto mesh_prop_molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_amount->resize(mesh.getNumberOfElements());
+        mesh_prop_molality->resize(mesh.getNumberOfElements());
 
-        equilibrium_reactants.emplace_back(std::move(name),
-                                           amount,
-                                           mesh_prop_amount,
-                                           saturation_index);
+        equilibrium_reactants.emplace_back(
+            std::move(name), molality, mesh_prop_molality, saturation_index);
     }
 
     return equilibrium_reactants;

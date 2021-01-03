@@ -51,29 +51,30 @@ std::ostream& operator<<(std::ostream& os,
 }
 
 template <typename Reactant>
-void setReactantAmount(Reactant& reactant,
-                       GlobalIndexType const& chemical_system_id,
-                       MaterialPropertyLib::Phase const& solid_phase,
-                       ParameterLib::SpatialPosition const& pos, double const t)
+void setReactantMolality(Reactant& reactant,
+                         GlobalIndexType const& chemical_system_id,
+                         MaterialPropertyLib::Phase const& solid_phase,
+                         ParameterLib::SpatialPosition const& pos,
+                         double const t)
 {
     auto const& solid_constituent = solid_phase.component(reactant.name);
 
-    auto const amount =
-        solid_constituent.property(MaterialPropertyLib::PropertyType::amount)
+    auto const molality =
+        solid_constituent.property(MaterialPropertyLib::PropertyType::molality)
             .template initialValue<double>(pos, t);
 
-    (*reactant.amount)[chemical_system_id] = amount;
+    (*reactant.molality)[chemical_system_id] = molality;
 }
 
 template <typename Reactant>
-static double averageReactantAmount(
+static double averageReactantMolality(
     Reactant const& reactant,
     std::vector<GlobalIndexType> const& chemical_system_indices)
 {
     double const sum = std::accumulate(
         chemical_system_indices.begin(), chemical_system_indices.end(), 0.0,
         [&](double const s, GlobalIndexType const id) {
-            return s + (*reactant.amount)[id];
+            return s + (*reactant.molality)[id];
         });
     return sum / chemical_system_indices.size();
 }
@@ -151,14 +152,14 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
     auto const& solid_phase = medium->phase("Solid");
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        setReactantAmount(kinetic_reactant, chemical_system_id, solid_phase,
-                          pos, t);
+        setReactantMolality(kinetic_reactant, chemical_system_id, solid_phase,
+                            pos, t);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        setReactantAmount(equilibrium_reactant, chemical_system_id, solid_phase,
-                          pos, t);
+        setReactantMolality(equilibrium_reactant, chemical_system_id,
+                            solid_phase, pos, t);
     }
 }
 
@@ -530,7 +531,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                         equilibrium_reactants.end(), compare_by_name,
                         "Could not find equilibrium reactant '" + item_name +
                             "'.");
-                    (*equilibrium_reactant.amount)[chemical_system_id] =
+                    (*equilibrium_reactant.molality)[chemical_system_id] =
                         accepted_items[item_id];
                     break;
                 }
@@ -541,7 +542,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                         kinetic_reactants.begin(), kinetic_reactants.end(),
                         compare_by_name,
                         "Could not find kinetic reactant '" + item_name + "'.");
-                    (*kinetic_reactant.amount)[chemical_system_id] =
+                    (*kinetic_reactant.molality)[chemical_system_id] =
                         accepted_items[item_id];
                     break;
                 }
@@ -585,14 +586,15 @@ void PhreeqcIO::computeSecondaryVariable(
 {
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        (*kinetic_reactant.amount_avg)[ele_id] =
-            averageReactantAmount(kinetic_reactant, chemical_system_indices);
+        (*kinetic_reactant.mesh_prop_molality)[ele_id] =
+            averageReactantMolality(kinetic_reactant, chemical_system_indices);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        (*equilibrium_reactant.amount_avg)[ele_id] = averageReactantAmount(
-            equilibrium_reactant, chemical_system_indices);
+        (*equilibrium_reactant.mesh_prop_molality)[ele_id] =
+            averageReactantMolality(equilibrium_reactant,
+                                    chemical_system_indices);
     }
 }
 }  // namespace PhreeqcIOData

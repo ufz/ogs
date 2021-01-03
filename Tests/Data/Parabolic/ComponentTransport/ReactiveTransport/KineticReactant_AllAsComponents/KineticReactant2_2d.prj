@@ -132,7 +132,7 @@
                             <name>Synthetics_to_Productd</name>
                             <properties>
                                 <property>
-                                    <name>amount</name>
+                                    <name>molality</name>
                                     <type>Constant</type>
                                     <value>1.0</value>
                                 </property>
