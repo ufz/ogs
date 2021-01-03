@@ -194,6 +194,8 @@ public:
                 medium->property(MaterialPropertyLib::PropertyType::porosity)
                     .template initialValue<double>(
                         pos, std::numeric_limits<double>::quiet_NaN() /*t*/);
+
+            _ip_data[ip].pushBackState();
         }
     }
 
