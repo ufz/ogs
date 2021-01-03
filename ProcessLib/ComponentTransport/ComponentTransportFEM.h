@@ -45,6 +45,8 @@ struct IntegrationPointData final
         : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
     {}
 
+    void pushBackState() { porosity_prev = porosity; }
+
     NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
@@ -52,6 +54,7 @@ struct IntegrationPointData final
     GlobalIndexType chemical_system_id = 0;
 
     double porosity = std::numeric_limits<double>::quiet_NaN();
+    double porosity_prev = std::numeric_limits<double>::quiet_NaN();
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
@@ -1060,6 +1063,13 @@ public:
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
                               double const /*t*/, double const /*dt*/) override
     {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            _ip_data[ip].pushBackState();
+        }
     }
 
 private:
