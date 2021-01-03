@@ -542,6 +542,7 @@ public:
         auto const& phase = medium.phase("AqueousLiquid");
 
         MaterialPropertyLib::VariableArray vars;
+        MaterialPropertyLib::VariableArray vars_prev;
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
@@ -552,6 +553,7 @@ public:
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
             auto& porosity = ip_data.porosity;
+            auto const& porosity_prev = ip_data.porosity_prev;
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
@@ -564,12 +566,16 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            // update according to a particular porosity model
-            porosity =
-                medium.property(MaterialPropertyLib::PropertyType::porosity)
-                    .template value<double>(vars, pos, t, dt);
-            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                porosity;
+            //  porosity
+            {
+                vars_prev[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+                porosity =
+                    medium.property(MaterialPropertyLib::PropertyType::porosity)
+                        .template value<double>(vars, vars_prev, pos, t, dt);
+                vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                        porosity;
+            }
 
             // Use the fluid density model to compute the density
             // TODO: Concentration of which component as one of arguments for
@@ -650,6 +656,7 @@ public:
         auto const& b = _process_data.specific_body_force;
 
         MaterialPropertyLib::VariableArray vars;
+        MaterialPropertyLib::VariableArray vars_prev;
 
         GlobalDimMatrixType const& I(
             GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
@@ -672,6 +679,7 @@ public:
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
             auto& porosity = ip_data.porosity;
+            auto const& porosity_prev = ip_data.porosity_prev;
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
@@ -684,12 +692,16 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            // update according to a particular porosity model
-            porosity =
-                medium.property(MaterialPropertyLib::PropertyType::porosity)
-                    .template value<double>(vars, pos, t, dt);
-            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                porosity;
+            // porosity
+            {
+                vars_prev[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+                porosity =
+                    medium.property(MaterialPropertyLib::PropertyType::porosity)
+                        .template value<double>(vars, vars_prev, pos, t, dt);
+                vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                        porosity;
+            }
 
             auto const& retardation_factor =
                 component
