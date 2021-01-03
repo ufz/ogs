@@ -126,6 +126,6 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    BHE_1P_ts_10_t_600.000000.vtu BHE_1P_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    BHE_1P_ts_10_t_600.000000.vtu BHE_1P_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+    BHE_1P_newton_ts_10_t_600.000000.vtu BHE_1P_newton_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    BHE_1P_newton_ts_10_t_600.000000.vtu BHE_1P_newton_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
