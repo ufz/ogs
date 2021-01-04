@@ -47,20 +47,19 @@ public:
     void initialize() override;
 
     void initializeChemicalSystemConcrete(
+        std::vector<double> const& concentrations,
         GlobalIndexType const& chemical_system_id,
         MaterialPropertyLib::Medium const* medium,
         ParameterLib::SpatialPosition const& pos,
         double const t) override;
 
-    void executeInitialCalculation(std::vector<GlobalVector> const&
-                                       interpolated_process_solutions) override;
+    void setChemicalSystemConcrete(
+        std::vector<double> const& concentrations,
+        GlobalIndexType const& chemical_system_id) override;
 
-    void doWaterChemistryCalculation(
-        std::vector<GlobalVector> const& interpolated_process_solutions,
-        double const dt) override;
+    void executeInitialCalculation() override;
 
-    void setAqueousSolution(
-        std::vector<GlobalVector> const& interpolated_process_solutions);
+    void doWaterChemistryCalculation(double const dt) override;
 
     void writeInputsToFile(double const dt = 0);
 

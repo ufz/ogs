@@ -50,6 +50,23 @@ std::ostream& operator<<(std::ostream& os,
     return os;
 }
 
+void setAqueousSolution(std::vector<double> const& concentrations,
+                        GlobalIndexType const& chemical_system_id,
+                        AqueousSolution& aqueous_solution)
+{
+    // components
+    auto& components = aqueous_solution.components;
+    for (unsigned component_id = 0; component_id < components.size();
+         ++component_id)
+    {
+        components[component_id].amount->set(chemical_system_id,
+                                             concentrations[component_id]);
+    }
+
+    // pH
+    aqueous_solution.pH->set(chemical_system_id, concentrations.back());
+}
+
 template <typename Reactant>
 void setReactantMolality(Reactant& reactant,
                          GlobalIndexType const& chemical_system_id,
@@ -145,10 +162,15 @@ void PhreeqcIO::initialize()
 }
 
 void PhreeqcIO::initializeChemicalSystemConcrete(
+    std::vector<double> const& concentrations,
     GlobalIndexType const& chemical_system_id,
     MaterialPropertyLib::Medium const* medium,
-    ParameterLib::SpatialPosition const& pos, double const t)
+    ParameterLib::SpatialPosition const& pos,
+    double const t)
 {
+    setAqueousSolution(concentrations, chemical_system_id,
+                       *_chemical_system->aqueous_solution);
+
     auto const& solid_phase = medium->phase("Solid");
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
@@ -163,11 +185,16 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
     }
 }
 
-void PhreeqcIO::executeInitialCalculation(
-    std::vector<GlobalVector> const& interpolated_process_solutions)
+void PhreeqcIO::setChemicalSystemConcrete(
+    std::vector<double> const& concentrations,
+    GlobalIndexType const& chemical_system_id)
 {
-    setAqueousSolution(interpolated_process_solutions);
+    setAqueousSolution(concentrations, chemical_system_id,
+                       *_chemical_system->aqueous_solution);
+}
 
+void PhreeqcIO::executeInitialCalculation()
+{
     writeInputsToFile();
 
     execute();
@@ -191,12 +218,8 @@ std::vector<GlobalVector*> PhreeqcIO::getIntPtProcessSolutions() const
     return int_pt_process_solutions;
 }
 
-void PhreeqcIO::doWaterChemistryCalculation(
-    std::vector<GlobalVector> const& interpolated_process_solutions,
-    double const dt)
+void PhreeqcIO::doWaterChemistryCalculation(double const dt)
 {
-    setAqueousSolution(interpolated_process_solutions);
-
     setAqueousSolutionsPrevFromDumpFile();
 
     writeInputsToFile(dt);
@@ -204,25 +227,6 @@ void PhreeqcIO::doWaterChemistryCalculation(
     execute();
 
     readOutputsFromFile();
-}
-
-void PhreeqcIO::setAqueousSolution(
-    std::vector<GlobalVector> const& interpolated_process_solutions)
-{
-    auto& aqueous_solution = _chemical_system->aqueous_solution;
-
-    // components
-    auto& components = aqueous_solution->components;
-    for (unsigned component_id = 0; component_id < components.size();
-         ++component_id)
-    {
-        MathLib::LinAlg::copy(interpolated_process_solutions[component_id + 1],
-                              *components[component_id].amount);
-    }
-
-    // pH
-    MathLib::LinAlg::copy(interpolated_process_solutions.back(),
-                          *aqueous_solution->pH);
 }
 
 void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()

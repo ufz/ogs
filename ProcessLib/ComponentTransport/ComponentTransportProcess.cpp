@@ -127,8 +127,7 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
     BaseLib::RunTime time_phreeqc;
     time_phreeqc.start();
 
-    _chemical_solver_interface->executeInitialCalculation(
-        interpolateNodalValuesToIntegrationPoints(x));
+    _chemical_solver_interface->executeInitialCalculation();
 
     extrapolateIntegrationPointValuesToNodes(
         t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
@@ -225,87 +224,27 @@ void ComponentTransportProcess::solveReactionEquation(
     // process.
     // TODO: move into a global loop to consider both mass balance over
     // space and localized chemical equilibrium between solutes.
+    const int process_id = 0;
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(x.size());
+    std::generate_n(std::back_inserter(dof_tables), x.size(),
+                    [&]() { return _local_to_global_index_map.get(); });
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &ComponentTransportLocalAssemblerInterface::setChemicalSystem,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
+
     BaseLib::RunTime time_phreeqc;
     time_phreeqc.start();
 
-    _chemical_solver_interface->doWaterChemistryCalculation(
-        interpolateNodalValuesToIntegrationPoints(x), dt);
+    _chemical_solver_interface->doWaterChemistryCalculation(dt);
 
     extrapolateIntegrationPointValuesToNodes(
         t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
 
     INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
-}
-
-std::vector<GlobalVector>
-ComponentTransportProcess::interpolateNodalValuesToIntegrationPoints(
-    std::vector<GlobalVector*> const& nodal_values_vectors) const
-{
-    // Result is for each process a vector of integration point values for each
-    // element stored consecutively.
-    auto interpolateNodalValuesToIntegrationPoints =
-        [](std::size_t mesh_item_id,
-           LocalAssemblerInterface& local_assembler,
-           std::vector<
-               std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
-               dof_tables,
-           std::vector<GlobalVector*> const& x,
-           std::vector<std::vector<double>>& int_pt_x) {
-            for (unsigned process_id = 0; process_id < x.size(); ++process_id)
-            {
-                auto const& dof_table = dof_tables[process_id].get();
-                auto const indices =
-                    NumLib::getIndices(mesh_item_id, dof_table);
-                auto const local_x = x[process_id]->get(indices);
-
-                std::vector<double> const interpolated_values =
-                    local_assembler.interpolateNodalValuesToIntegrationPoints(
-                        local_x);
-
-                // For each element (mesh_item_id) concatenate the integration
-                // point values.
-                int_pt_x[process_id].insert(int_pt_x[process_id].end(),
-                                            interpolated_values.begin(),
-                                            interpolated_values.end());
-            }
-        };
-
-    // Same dof table for each primary variable.
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
-    dof_tables.reserve(nodal_values_vectors.size());
-    std::generate_n(std::back_inserter(dof_tables), nodal_values_vectors.size(),
-                    [&]() { return std::ref(*_local_to_global_index_map); });
-
-    std::vector<std::vector<double>> integration_point_values_vecs(
-        nodal_values_vectors.size());
-
-    GlobalExecutor::executeDereferenced(
-        interpolateNodalValuesToIntegrationPoints, _local_assemblers,
-        dof_tables, nodal_values_vectors, integration_point_values_vecs);
-
-    // Convert from std::vector<std::vector<double>> to
-    // std::vector<GlobalVector>
-    std::vector<GlobalVector> integration_point_values_vectors;
-    integration_point_values_vectors.reserve(nodal_values_vectors.size());
-    for (auto const& integration_point_values_vec :
-         integration_point_values_vecs)
-    {
-        GlobalIndexType const size = integration_point_values_vec.size();
-        // New vector of size (elements x integration_points_per_element)
-        GlobalVector integration_point_values_vector(size);
-
-        // Copy one by one.
-        for (GlobalIndexType i = 0; i < size; ++i)
-        {
-            integration_point_values_vector.set(
-                i, integration_point_values_vec[i]);
-        }
-        integration_point_values_vectors.push_back(
-            std::move(integration_point_values_vector));
-    }
-
-    return integration_point_values_vectors;
 }
 
 void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(

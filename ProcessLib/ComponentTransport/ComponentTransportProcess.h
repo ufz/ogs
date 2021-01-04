@@ -127,9 +127,6 @@ public:
     void solveReactionEquation(std::vector<GlobalVector*>& x, double const t,
                                double const dt) override;
 
-    std::vector<GlobalVector> interpolateNodalValuesToIntegrationPoints(
-        std::vector<GlobalVector*> const& nodal_values_vectors) const override;
-
     void extrapolateIntegrationPointValuesToNodes(
         const double t,
         std::vector<GlobalVector*> const& integration_point_values_vectors,

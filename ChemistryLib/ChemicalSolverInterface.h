@@ -30,19 +30,22 @@ public:
     virtual void initialize() {}
 
     virtual void initializeChemicalSystemConcrete(
+        std::vector<double> const& /*concentrations*/,
         GlobalIndexType const& /*chemical_system_id*/,
         MaterialPropertyLib::Medium const* /*medium*/,
-        ParameterLib::SpatialPosition const& /*pos*/,
-        double const /*t*/)
+        ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/)
     {
     }
 
-    virtual void executeInitialCalculation(
-        std::vector<GlobalVector> const& interpolated_process_solutions) = 0;
+    virtual void setChemicalSystemConcrete(
+        std::vector<double> const& /*concentrations*/,
+        GlobalIndexType const& /*chemical_system_id*/)
+    {
+    }
 
-    virtual void doWaterChemistryCalculation(
-        std::vector<GlobalVector> const& interpolated_process_solutions,
-        double const dt) = 0;
+    virtual void executeInitialCalculation() = 0;
+
+    virtual void doWaterChemistryCalculation(double const dt) = 0;
 
     virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const = 0;
 
