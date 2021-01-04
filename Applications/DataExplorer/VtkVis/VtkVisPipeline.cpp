@@ -37,10 +37,12 @@
 #include <vtkPointData.h>
 
 #include <QColor>
+#ifndef NDEBUG
+#include <QElapsedTimer>
+#endif  // NDEBUG
 #include <QFileInfo>
 #include <QSettings>
 #include <QString>
-#include <QTime>
 
 #include "BaseLib/Logging.h"
 
@@ -176,7 +178,7 @@ Qt::ItemFlags VtkVisPipeline::flags( const QModelIndex &index ) const
 void VtkVisPipeline::loadFromFile(QString filename)
 {
 #ifndef NDEBUG
-    QTime myTimer;
+    QElapsedTimer myTimer;
     myTimer.start();
     INFO("VTK Read: {:s}.", filename.toStdString());
 #endif
