@@ -1,5 +1,5 @@
 # C++ standard setup
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -110,6 +110,11 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
 endif()
 
 if(MSVC)
+    if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS ${ogs.minimum_version.msvc.compiler})
+        message(FATAL_ERROR "Aborting: Visual Studio compiler \
+            ${ogs.minimum_version.msvc.compiler} is required. Found version \
+            ${CMAKE_CXX_COMPILER_VERSION}.")
+    endif()
     if(${MSVC_TOOLSET_VERSION} LESS ${ogs.minimum_version.msvc.toolset})
         message(FATAL_ERROR "Aborting: Visual Studio ${ogs.minimum_version.msvc.year} \
             is required! Found Visual Studio with toolset version \
