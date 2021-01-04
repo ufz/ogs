@@ -18,6 +18,7 @@
 #include "GroupBasedParameter.h"
 #include "MeshElementParameter.h"
 #include "MeshNodeParameter.h"
+#include "RandomFieldMeshElementParameter.h"
 #include "TimeDependentHeterogeneousParameter.h"
 
 namespace ParameterLib
@@ -75,6 +76,15 @@ std::unique_ptr<ParameterBase> createParameter(
     {
         INFO("MeshNodeParameter: {:s}", name);
         return createMeshNodeParameter(name, config, mesh);
+    }
+    if (type == "RandomFieldMeshElement")
+    {
+        auto& mesh_var = *BaseLib::findElementOrError(
+            begin(meshes), end(meshes),
+            [&mesh_name](auto const& m) { return m->getName() == mesh_name; },
+            "Expected to find a mesh named " + mesh_name + ".");
+        INFO("RandomFieldMeshElement: {:s}", name);
+        return createRandomFieldMeshElementParameter(name, config, mesh_var);
     }
     if (type == "TimeDependentHeterogeneousParameter")
     {
