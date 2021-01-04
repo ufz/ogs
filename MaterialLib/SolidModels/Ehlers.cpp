@@ -46,6 +46,11 @@ namespace Solids
 {
 namespace Ehlers
 {
+template <int DisplacementDim>
+double StateVariables<DisplacementDim>::getEquivalentPlasticStrain() const
+{
+    return std::sqrt(2.0 / 3.0 * Invariants::FrobeniusNorm(eps_p.D.eval()));
+}
 
 /// Special product of \c v with itself: \f$v \odot v\f$.
 /// The tensor \c v is given in Kelvin mapping.

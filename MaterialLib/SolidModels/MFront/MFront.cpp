@@ -160,6 +160,14 @@ const char* varTypeToString(int v)
     OGS_FATAL("Unknown variable type {:d}.", v);
 }
 
+int getEquivalentPlasticStrainOffset(mgis::behaviour::Behaviour const& b)
+{
+    return mgis::behaviour::contains(b.isvs, "EquivalentPlasticStrain")
+               ? mgis::behaviour::getVariableOffset(
+                     b.isvs, "EquivalentPlasticStrain", b.hypothesis)
+               : -1;
+}
+
 template <int DisplacementDim>
 MFront<DisplacementDim>::MFront(
     mgis::behaviour::Behaviour&& behaviour,
@@ -167,6 +175,8 @@ MFront<DisplacementDim>::MFront(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system)
     : _behaviour(std::move(behaviour)),
+      equivalent_plastic_strain_offset_(
+          getEquivalentPlasticStrainOffset(_behaviour)),
       _material_properties(std::move(material_properties)),
       _local_coordinate_system(
           local_coordinate_system ? &local_coordinate_system.get() : nullptr)
@@ -243,7 +253,8 @@ template <int DisplacementDim>
 std::unique_ptr<typename MechanicsBase<DisplacementDim>::MaterialStateVariables>
 MFront<DisplacementDim>::createMaterialStateVariables() const
 {
-    return std::make_unique<MaterialStateVariables>(_behaviour);
+    return std::make_unique<MaterialStateVariables>(
+        equivalent_plastic_strain_offset_, _behaviour);
 }
 
 template <int DisplacementDim>
@@ -455,6 +466,20 @@ double MFront<DisplacementDim>::computeFreeEnergyDensity(
 {
     // TODO implement
     return std::numeric_limits<double>::quiet_NaN();
+}
+
+template <int DisplacementDim>
+double MFront<
+    DisplacementDim>::MaterialStateVariables::getEquivalentPlasticStrain() const
+{
+    if (equivalent_plastic_strain_offset_ >= 0)
+    {
+        return _behaviour_data.s1
+            .internal_state_variables[static_cast<mgis::size_type>(
+                equivalent_plastic_strain_offset_)];
+    }
+
+    return 0.0;
 }
 
 template class MFront<2>;

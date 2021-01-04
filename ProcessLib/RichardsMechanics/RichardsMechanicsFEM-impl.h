@@ -21,6 +21,7 @@
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
+#include "RichardsMechanicsFEM.h"
 
 namespace ProcessLib
 {
@@ -316,6 +317,7 @@ void RichardsMechanicsLocalAssembler<
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
         auto& eps = _ip_data[ip].eps;
+        eps.noalias() = B * u;
 
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
@@ -441,8 +443,8 @@ void RichardsMechanicsLocalAssembler<
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
             {
-
-                variables_prev[static_cast<int>(MPL::Variable::transport_porosity)] =
+                variables_prev[static_cast<int>(
+                    MPL::Variable::transport_porosity)] =
                     _ip_data[ip].transport_porosity_prev;
 
                 _ip_data[ip].transport_porosity =
@@ -468,14 +470,25 @@ void RichardsMechanicsLocalAssembler<
 
         auto const& sigma_sw = _ip_data[ip].sigma_sw;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
-        auto const sigma_total =
-            (sigma_eff + sigma_sw - alpha * p_FR * identity2).eval();
 
+        // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
-        variables[static_cast<int>(MPL::Variable::total_stress)]
-            .emplace<SymmetricTensor>(
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                    sigma_total));
+        {
+            auto const sigma_total =
+                (sigma_eff + sigma_sw - alpha * p_FR * identity2).eval();
+            variables[static_cast<int>(
+                          MaterialPropertyLib::Variable::total_stress)]
+                .emplace<SymmetricTensor>(
+                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                        sigma_total));
+        }
+        // For strain dependent permeability
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::volumetric_strain)] =
+            Invariants::trace(_ip_data[ip].eps);
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
+            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
 
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
@@ -487,7 +500,6 @@ void RichardsMechanicsLocalAssembler<
         //
         // displacement equation, displacement part
         //
-        eps.noalias() = B * u;
         variables[static_cast<int>(MPL::Variable::strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
@@ -682,6 +694,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto& eps = _ip_data[ip].eps;
+        eps.noalias() = B * u;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
@@ -787,7 +800,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
             if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
             {
-                variables_prev[static_cast<int>(MPL::Variable::transport_porosity)] =
+                variables_prev[static_cast<int>(
+                    MPL::Variable::transport_porosity)] =
                     _ip_data[ip].transport_porosity_prev;
 
                 _ip_data[ip].transport_porosity =
@@ -811,14 +825,26 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             liquid_phase.property(MPL::PropertyType::viscosity)
                 .template value<double>(variables, x_position, t, dt);
 
-        auto const sigma_total = (_ip_data[ip].sigma_eff + sigma_sw +
-                                  alpha * chi_S_L * identity2 * p_cap_ip)
-                                     .eval();
+        // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
-        variables[static_cast<int>(MPL::Variable::total_stress)]
-            .emplace<SymmetricTensor>(
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                    sigma_total));
+        {
+            auto const sigma_total = (_ip_data[ip].sigma_eff + sigma_sw +
+                                      alpha * chi_S_L * identity2 * p_cap_ip)
+                                         .eval();
+            variables[static_cast<int>(
+                          MaterialPropertyLib::Variable::total_stress)]
+                .emplace<SymmetricTensor>(
+                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                        sigma_total));
+        }
+        // For strain dependent permeability
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::volumetric_strain)] =
+            Invariants::trace(_ip_data[ip].eps);
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
+            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
+
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
@@ -828,7 +854,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // displacement equation, displacement part
         //
-        eps.noalias() = B * u;
         variables[static_cast<int>(MPL::Variable::strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
@@ -1488,14 +1513,26 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             liquid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
 
-        auto const sigma_total = (_ip_data[ip].sigma_eff + sigma_sw +
-                                  alpha * chi_S_L * identity2 * p_cap_ip)
-                                     .eval();
+        // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
-        variables[static_cast<int>(MPL::Variable::total_stress)]
-            .emplace<SymmetricTensor>(
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                    sigma_total));
+        {
+            auto const sigma_total = (_ip_data[ip].sigma_eff + sigma_sw +
+                                      alpha * chi_S_L * identity2 * p_cap_ip)
+                                         .eval();
+            variables[static_cast<int>(
+                          MaterialPropertyLib::Variable::total_stress)]
+                .emplace<SymmetricTensor>(
+                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                        sigma_total));
+        }
+        // For strain dependent permeability
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::volumetric_strain)] =
+            Invariants::trace(_ip_data[ip].eps);
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
+            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
+
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
