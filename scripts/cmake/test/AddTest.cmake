@@ -11,7 +11,7 @@
 #   EXECUTABLE_ARGS <arguments>
 #   WRAPPER <time|memcheck|callgrind|mpirun> # optional
 #   WRAPPER_ARGS <arguments> # optional
-#   TESTER <diff|vtkdiff|memcheck> # optional
+#   TESTER <diff|vtkdiff|gmldiff|memcheck> # optional
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
 #                  enable the test, e.g.
 #                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
@@ -40,6 +40,12 @@
 #         Searches for all matching files in the working directory (PATH).
 #         Matched files are then compared against files with the same name in
 #         the benchmark output directory.
+#
+#   gmldiff-tester
+#     - DIFF_DATA
+#         <gml file> <absolute tolerance> <relative tolerance>
+#         Can be given multiple times; the point coordinates in the gml files are
+#         compared using the given absolute and relative tolerances.
 
 function (AddTest)
 
@@ -142,6 +148,9 @@ function (AddTest)
     if(AddTest_TESTER STREQUAL "xdmfdiff" AND NOT TARGET xdmfdiff)
         return()
     endif()
+    if(AddTest_TESTER STREQUAL "gmldiff" AND NOT ${Python3_Interpreter_FOUND})
+        return()
+    endif()
     if(AddTest_TESTER STREQUAL "memcheck" AND NOT GREP_TOOL_PATH)
         return()
     endif()
@@ -236,7 +245,25 @@ Use six arguments version of AddTest with absolute and relative tolerances")
         else ()
             message(FATAL_ERROR "For vtkdiff tester the number of diff data arguments must be a multiple of six.")
         endif()
-    elseif(tester STREQUAL "memcheck")
+    elseif(AddTest_TESTER STREQUAL "gmldiff")
+        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
+        math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+        foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 3)
+            list(GET AddTest_DIFF_DATA "${DiffDataIndex}" GML_FILE)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOL)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
+
+            get_filename_component(FILE_EXPECTED ${GML_FILE} NAME)
+            list(APPEND TESTER_COMMAND
+                "${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/test/gmldiff.py \
+                --abs ${ABS_TOL} --rel ${REL_TOL} \
+                ${TESTER_ARGS} \
+                ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
+                ${AddTest_BINARY_PATH}/${GML_FILE}")
+        endforeach()
+    elseif(AddTest_TESTER STREQUAL "memcheck")
         set(TESTER_COMMAND "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log")
     endif()
 
