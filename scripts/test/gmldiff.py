@@ -38,7 +38,6 @@ for pointA, pointB in zip(pointsA, pointsB):
         print("Points do not have the same order!")
         exit(1)
 
-    print(pointB.getAttribute("id"))
     for dim in ["x", "y", "z"]:
         a = float(pointA.getAttribute(dim))
         b = float(pointB.getAttribute(dim))
