@@ -30,8 +30,8 @@ Medium const* MaterialSpatialDistributionMap::getMedium(
     return media_.at(material_id).get();
 }
 
-
-void MaterialSpatialDistributionMap::checkElementHasMedium(std::size_t const element_id)
+void MaterialSpatialDistributionMap::checkElementHasMedium(
+    std::size_t const element_id) const
 {
     auto const material_id =
         material_ids_ == nullptr ? 0 : (*material_ids_)[element_id];

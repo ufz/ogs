@@ -70,7 +70,7 @@ private:
     void mapStationData(std::vector<GeoLib::Point*> const& points);
 
     /// Mapping points on a raster.
-    void mapPointDataToDEM(std::vector<GeoLib::Point*> const& points);
+    void mapPointDataToDEM(std::vector<GeoLib::Point*> const& points) const;
 
     /// Mapping points on mesh.
     void mapPointDataToMeshSurface(std::vector<GeoLib::Point*> const& pnts);

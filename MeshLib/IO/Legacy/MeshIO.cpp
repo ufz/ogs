@@ -159,7 +159,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
     return nullptr;
 }
 
-std::size_t MeshIO::readMaterialID(std::istream & in) const
+std::size_t MeshIO::readMaterialID(std::istream & in)
 {
     unsigned index;
     unsigned material_id;
@@ -381,7 +381,7 @@ void MeshIO::writeElements(
     }
 }
 
-std::string MeshIO::ElemType2StringOutput(const MeshLib::MeshElemType t) const
+std::string MeshIO::ElemType2StringOutput(const MeshLib::MeshElemType t)
 {
     if (t == MeshLib::MeshElemType::LINE)
     {

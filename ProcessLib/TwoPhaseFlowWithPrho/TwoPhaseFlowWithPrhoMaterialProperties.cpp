@@ -272,7 +272,7 @@ void TwoPhaseFlowWithPrhoMaterialProperties::calculateJacobian(
 * for calculating molar fraction of light component in the liquid phase
 */
 double TwoPhaseFlowWithPrhoMaterialProperties::calculateEquilibiumRhoWetLight(
-    double const pg, double const Sw, double const rho_wet_h2) const
+    double const pg, double const Sw, double const rho_wet_h2)
 {
     double const rho_equilibrium_wet_h2 = pg * HenryConstantH2 * H2;
     return std::min(1 - Sw, rho_equilibrium_wet_h2 - rho_wet_h2);
@@ -283,7 +283,7 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculateEquilibiumRhoWetLight(
 */
 double TwoPhaseFlowWithPrhoMaterialProperties::calculateSaturation(
     double /*PL*/, double X, double Sw, double rho_wet_h2, double rho_nonwet_h2,
-    double /*T*/) const
+    double /*T*/)
 {
     return X - (Sw * rho_wet_h2 + (1 - Sw) * rho_nonwet_h2);
 }

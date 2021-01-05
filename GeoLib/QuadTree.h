@@ -307,10 +307,7 @@ public:
         }
     }
 
-    QuadTree<POINT> const* getFather ()
-    {
-        return _father;
-    }
+    QuadTree<POINT> const* getFather() const { return _father; }
 
     QuadTree<POINT> const* getChild (Quadrant quadrant) const
     {
@@ -558,7 +555,7 @@ private:
         _is_leaf = false;
     }
 
-    bool needToRefine (QuadTree<POINT>* node)
+    static bool needToRefine (QuadTree<POINT>* node)
     {
         QuadTree<POINT>* north_neighbor (node->getNorthNeighbor ());
         if (north_neighbor != nullptr)

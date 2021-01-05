@@ -81,16 +81,19 @@ public:
                                     std::vector<GlobalVector*> const& x,
                                     const int iteration);
 
-    std::vector<double> getFixedOutputTimes() { return _fixed_output_times; }
+    std::vector<double> getFixedOutputTimes() const
+    {
+        return _fixed_output_times;
+    }
 
 private:
     struct OutputFile;
 
-    void outputMesh(OutputFile const& output_file,
+    static void outputMesh(OutputFile const& output_file,
                     MeshLib::IO::PVDFile* const pvd_file,
                     MeshLib::Mesh const& mesh,
                     int const timestep,
-                    double const t) const;
+                    double const t);
 #ifdef OGS_USE_XDMF
     void outputMeshXdmf(OutputFile const& output_file,
                         MeshLib::Mesh const& mesh,

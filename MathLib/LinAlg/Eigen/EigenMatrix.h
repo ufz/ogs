@@ -57,7 +57,7 @@ public:
     IndexType getNumberOfColumns() const { return _mat.cols(); }
 
     /// return a start index of the active data range
-    IndexType getRangeBegin() const  { return 0; }
+    static constexpr IndexType getRangeBegin() { return 0; }
 
     /// return an end index of the active data range
     IndexType getRangeEnd() const  { return getNumberOfRows(); }
@@ -130,7 +130,7 @@ public:
     }
 
     /// return always true, i.e. the matrix is always ready for use
-    bool isAssembled() const { return true; }
+    static constexpr bool isAssembled() { return true; }
 
     /// printout this matrix for debugging
     void write(const std::string &filename) const
@@ -185,7 +185,8 @@ struct SetMatrixSparsity<EigenMatrix, SPARSITY_PATTERN>
 
 /// \note This operator relies on row-major storage order of the underlying
 /// eigen matrix i.e. of the RawMatrixType.
-void operator()(EigenMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
+void operator()(EigenMatrix& matrix,
+                SPARSITY_PATTERN const& sparsity_pattern) const
 {
     static_assert(EigenMatrix::RawMatrixType::IsRowMajor,
                   "Set matrix sparsity relies on the EigenMatrix to be in "

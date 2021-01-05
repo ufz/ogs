@@ -60,7 +60,7 @@ public:
 
     /// Returns the region attribute vector necessary for assigning region
     /// attributes via TetGen
-    std::vector<MeshLib::Node> getAttributePoints()
+    std::vector<MeshLib::Node> getAttributePoints() const
     {
         return _attribute_points;
     }

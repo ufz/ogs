@@ -715,7 +715,7 @@ void GocadSGridReader::applySplitInformation(
 
 void GocadSGridReader::modifyElement(MeshLib::Element* hex,
                                      MeshLib::Node const* node2sub,
-                                     MeshLib::Node* substitute_node) const
+                                     MeshLib::Node* substitute_node)
 {
     // get the node pointers of the cell
     MeshLib::Node* const* hex_nodes(hex->getNodes());

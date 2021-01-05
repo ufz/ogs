@@ -100,7 +100,8 @@ double AdsorptionReaction::getReactionRate(const double p_Ads, const double T_Ad
 }
 
 // Evaluate adsorbtion potential A
-double AdsorptionReaction::getPotential(const double p_Ads, double T_Ads, const double M_Ads) const
+double AdsorptionReaction::getPotential(const double p_Ads, double T_Ads,
+                                        const double M_Ads)
 {
     double A = MaterialLib::PhysicalConstant::IdealGasConstant * T_Ads * log(getEquilibriumVapourPressure(T_Ads)/p_Ads) / (M_Ads*1.e3); // in kJ/kg = J/g
     return A;

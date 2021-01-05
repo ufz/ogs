@@ -101,7 +101,7 @@ public:
     }
 
 private:
-    Eigen::Vector3d getOrientedSurfaceNormal(MeshLib::Element const& e)
+    Eigen::Vector3d getOrientedSurfaceNormal(MeshLib::Element const& e) const
     {
         // At the moment (2016-09-28) the surface normal is not oriented
         // according to the right hand rule

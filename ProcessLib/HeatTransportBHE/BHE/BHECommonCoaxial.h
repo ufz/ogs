@@ -49,17 +49,17 @@ public:
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
         {0, 1}};
 
-    std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+    static std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
     getBHEInflowDirichletBCNodesAndComponents(
         std::size_t const top_node_id,
         std::size_t const /*bottom_node_id*/,
-        int const in_component_id) const;
+        int const in_component_id);
 
-    std::optional<
+    static std::optional<
         std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>>
     getBHEBottomDirichletBCNodesAndComponents(std::size_t const bottom_node_id,
                                               int const in_component_id,
-                                              int const out_component_id) const;
+                                              int const out_component_id);
 
     std::array<double, number_of_unknowns> pipeHeatConductions() const;
 

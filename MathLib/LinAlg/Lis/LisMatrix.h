@@ -186,8 +186,8 @@ bool finalizeMatrixAssembly(LisMatrix &mat);
 template <typename SPARSITY_PATTERN>
 struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>
 {
-
-void operator()(LisMatrix &matrix, SPARSITY_PATTERN const& sparsity_pattern)
+void operator()(LisMatrix& matrix,
+                SPARSITY_PATTERN const& sparsity_pattern) const
 {
     auto const n_rows = matrix.getNumberOfRows();
     std::vector<LisMatrix::IndexType> row_sizes;

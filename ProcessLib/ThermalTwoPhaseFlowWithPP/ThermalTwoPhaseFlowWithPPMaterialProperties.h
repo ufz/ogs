@@ -75,12 +75,12 @@ public:
     double getThermalConductivityDrySolid(const double p, const double T) const;
     double getThermalConductivityWetSolid(const double p, const double T) const;
     /// Calculates the unsaturated heat conductivity
-    double calculateUnsatHeatConductivity(
+    static double calculateUnsatHeatConductivity(
         double const t,
         ParameterLib::SpatialPosition const& x,
         double const Sw,
         double const lambda_pm_dry,
-        double const lambda_pm_wet) const;
+        double const lambda_pm_wet);
     /// water vapor saturation pressure
     double calculateSaturatedVaporPressure(const double T) const;
     /// partial water vapor pressure in nonwetting phase
@@ -111,9 +111,9 @@ public:
                                 const double heat_capacity_dry_air,
                                 const double /*pg*/) const;
     /// Specific enthalpy of liquid water
-    double getLiquidWaterEnthalpySimple(const double temperature,
+    static double getLiquidWaterEnthalpySimple(const double temperature,
                                         const double heat_capacity_liquid_water,
-                                        const double /*pl*/) const;
+                                        const double /*pl*/);
     const MaterialLib::TwoPhaseFlowWithPP::TwoPhaseFlowWithPPMaterialProperties&
     getTwoPhaseMaterialModel() const
     {

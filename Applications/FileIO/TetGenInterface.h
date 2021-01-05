@@ -68,10 +68,11 @@ public:
      * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
      * @return returns true on success and false otherwise.
      */
-    bool writeTetGenSmesh(const std::string &file_name,
-                          const GeoLib::GEOObjects &geo_objects,
-                          const std::string &geo_name,
-                          const std::vector<GeoLib::Point> &attribute_points) const;
+    static bool writeTetGenSmesh(
+        const std::string& file_name,
+        const GeoLib::GEOObjects& geo_objects,
+        const std::string& geo_name,
+        const std::vector<GeoLib::Point>& attribute_points);
 
     /**
      * Writes the geometry of a given name to TetGen smesh-file.
@@ -121,11 +122,11 @@ private:
      * @param boundary_markers  have the nodes boundary information (output)
      * @return true, if the file header is read, false if the method detects an error
      */
-    bool parseNodesFileHeader(std::string &line,
-                              std::size_t &n_nodes,
-                              std::size_t &dim,
-                              std::size_t &n_attributes,
-                              bool &boundary_markers) const;
+    static bool parseNodesFileHeader(std::string& line,
+                                     std::size_t& n_nodes,
+                                     std::size_t& dim,
+                                     std::size_t& n_attributes,
+                                     bool& boundary_markers);
     /**
      * method parses the lines reading the nodes from TetGen nodes file
      * @param ins      the input stream (input)
@@ -162,10 +163,10 @@ private:
      * @param region_attribute  is on output true, if there
      * @return
      */
-    bool parseElementsFileHeader(std::string &line,
-                                 std::size_t &n_tets,
-                                 std::size_t &n_nodes_per_tet,
-                                 bool &region_attribute) const;
+    static bool parseElementsFileHeader(std::string& line,
+                                        std::size_t& n_tets,
+                                        std::size_t& n_nodes_per_tet,
+                                        bool& region_attribute);
     /**
      * Method parses the tetrahedras and put them in the element vector of the mesh class.
      * @param ins the input stream
@@ -206,10 +207,10 @@ private:
                          std::vector<MeshLib::Node> &attribute_points) const;
 
     /// Writes facet information from a 2D element to the stream and increments the total element count accordingly
-    void writeElementToFacets(std::ofstream &out,
-                              const MeshLib::Element &element,
-                              unsigned &element_count,
-                              std::string const& matId) const;
+    static void writeElementToFacets(std::ofstream& out,
+                                     const MeshLib::Element& element,
+                                     unsigned& element_count,
+                                     std::string const& matId);
 
     /// the value is true if the indexing is zero based, else false
     bool _zero_based_idx{false};

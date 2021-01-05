@@ -25,7 +25,7 @@ struct Dump
     {
     }
 
-    void print(std::ostream& os, std::size_t const num_chemical_systems);
+    void print(std::ostream& os, std::size_t const num_chemical_systems) const;
 
     void readDumpFile(std::istream& in, std::size_t const num_chemical_systems);
 

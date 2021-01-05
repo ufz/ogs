@@ -63,7 +63,7 @@ std::size_t Medium::numberOfPhases() const
     return phases_.size();
 }
 
-std::string Medium::description() const
+std::string Medium::description()
 {
     return "medium";
 }

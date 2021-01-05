@@ -16,7 +16,7 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-void Dump::print(std::ostream& os, std::size_t const num_chemical_systems)
+void Dump::print(std::ostream& os, std::size_t const num_chemical_systems) const
 {
     os << "DUMP" << "\n";
     os << "-file " << dump_file << "\n";

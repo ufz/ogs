@@ -47,7 +47,7 @@ public:
     IndexType size() const { return static_cast<IndexType>(_vec.size()); }
 
     /// return a start index of the active data range
-    IndexType getRangeBegin() const { return 0;}
+    static constexpr IndexType getRangeBegin() { return 0; }
 
     /// return an end index of the active data range
     IndexType getRangeEnd() const { return size(); }
