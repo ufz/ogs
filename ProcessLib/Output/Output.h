@@ -15,7 +15,7 @@
 
 #include "MeshLib/IO/VtkIO/PVDFile.h"
 #ifdef OGS_USE_XDMF
-#include "MeshLib/IO/XDMF/Xdmf3Writer.h"
+#include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
 #endif
 #include "ProcessOutput.h"
 
@@ -103,7 +103,7 @@ private:
 
 private:
 #ifdef OGS_USE_XDMF
-    std::unique_ptr<MeshLib::IO::Xdmf3Writer> _mesh_xdmf_writer;
+    std::unique_ptr<MeshLib::IO::XdmfHdfWriter> _mesh_xdmf_hdf_writer;
 #endif
     std::string const _output_directory;
     OutputType const _output_file_type;

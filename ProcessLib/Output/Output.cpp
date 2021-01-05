@@ -19,7 +19,6 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
-#include "MeshLib/IO/XDMF/transformData.h"
 #include "ProcessLib/Process.h"
 
 namespace
@@ -234,17 +233,15 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
                             double const t)
 {
     // \TODO (tm) Refactor to a dedicated VTKOutput and XdmfOutput
-    // The XdmfOutput will create on contruction the Xdmf3Writer
-    if (!_mesh_xdmf_writer)
+    // The XdmfOutput will create on construction the XdmfHdfWriter
+    if (!_mesh_xdmf_hdf_writer)
     {
         std::filesystem::path path(output_file.path);
-        _mesh_xdmf_writer =
-            std::make_unique<MeshLib::IO::Xdmf3Writer>(MeshLib::IO::Xdmf3Writer(
-                path, MeshLib::IO::transformGeometry(mesh),
-                MeshLib::IO::transformTopology(mesh),
-                MeshLib::IO::transformAttributes(mesh), timestep));
+        _mesh_xdmf_hdf_writer =
+            std::make_unique<MeshLib::IO::XdmfHdfWriter>(MeshLib::IO::XdmfHdfWriter(
+                mesh, path, timestep));
     }
-    _mesh_xdmf_writer->writeStep(timestep, t);
+    _mesh_xdmf_hdf_writer->writeStep(timestep, t);
 }
 #endif
 

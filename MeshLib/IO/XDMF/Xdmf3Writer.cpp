@@ -24,11 +24,25 @@
 #include <string>
 
 #include "InfoLib/GitInfo.h"
-#include "XdmfData.h"
-#include "writeHDF5.h"
 
 using namespace MeshLib::IO;
 using namespace std::string_literals;
+
+boost::shared_ptr<const XdmfAttributeCenter> elemTypeOGS2XDMF(
+    MeshLib::MeshItemType const elem_type)
+{
+    std::map<MeshLib::MeshItemType,
+             boost::shared_ptr<const XdmfAttributeCenter>>
+        mesh_item_type_ogs2xdmf = {
+            {MeshLib::MeshItemType::Cell, XdmfAttributeCenter::Cell()},
+            {MeshLib::MeshItemType::Edge, XdmfAttributeCenter::Edge()},
+            {MeshLib::MeshItemType::Face, XdmfAttributeCenter::Face()},
+            {MeshLib::MeshItemType::Node, XdmfAttributeCenter::Node()},
+            {MeshLib::MeshItemType::IntegrationPoint,
+             XdmfAttributeCenter::Other()}};
+
+    return mesh_item_type_ogs2xdmf.at(elem_type);
+}
 
 static std::string getTimeSection(int const step, std::string const& name)
 {
@@ -36,7 +50,7 @@ static std::string getTimeSection(int const step, std::string const& name)
 }
 
 static boost::shared_ptr<XdmfGeometry> getLightGeometry(
-    std::string const& hdf5filename, int const step, Geometry const& geometry)
+    std::string const& hdf5filename, int const step, XdmfData const& geometry)
 {
     auto xdmf_geometry = XdmfGeometry::New();
     xdmf_geometry->setType(XdmfGeometryType::XYZ());
@@ -46,14 +60,14 @@ static boost::shared_ptr<XdmfGeometry> getLightGeometry(
                                 XdmfArrayType::Float64(),
                                 geometry.starts,
                                 geometry.strides,
-                                geometry.vdims,
-                                geometry.vdims);
+                                geometry.block_dims,
+                                geometry.block_dims);
     xdmf_geometry->setHeavyDataController(geometry_controller);
     return xdmf_geometry;
 }
 
 static boost::shared_ptr<XdmfTopology> getLightTopology(
-    std::string const& hdf5filename, int const step, Topology const& topology)
+    std::string const& hdf5filename, int const step, XdmfData const& topology)
 {
     auto xdmf_topology = XdmfTopology::New();
     xdmf_topology->setType(XdmfTopologyType::Mixed());
@@ -63,28 +77,27 @@ static boost::shared_ptr<XdmfTopology> getLightTopology(
                                 XdmfArrayType::Int32(),
                                 topology.starts,
                                 topology.strides,
-                                topology.vdims,
-                                topology.vdims);
+                                topology.block_dims,
+                                topology.block_dims);
     xdmf_topology->setHeavyDataController(topology_controller);
     return xdmf_topology;
 }
 
 static boost::shared_ptr<XdmfAttribute> getLightAttribute(
-    std::string const& hdf5filename,
-    int const step,
-    AttributeMeta const& attribute)
+    std::string const& hdf5filename, int const step, XdmfData const& attribute)
 {
-    auto attribute_controller =
+    auto const attribute_controller =
         XdmfHDF5Controller::New(hdf5filename,
                                 getTimeSection(step, attribute.name),
                                 attribute.data_type,
                                 attribute.starts,
                                 attribute.strides,
-                                attribute.vdims,
-                                attribute.vdims);
+                                attribute.block_dims,
+                                attribute.block_dims);
 
-    auto xdmf_attribute = XdmfAttribute::New();
-    xdmf_attribute->setCenter(attribute.attribute_center);
+    auto const xdmf_attribute = XdmfAttribute::New();
+    auto const center = elemTypeOGS2XDMF(*(attribute.attribute_center));
+    xdmf_attribute->setCenter(center);
     xdmf_attribute->setName(attribute.name);
     xdmf_attribute->setHeavyDataController(attribute_controller);
     return xdmf_attribute;
@@ -92,32 +105,17 @@ static boost::shared_ptr<XdmfAttribute> getLightAttribute(
 
 namespace MeshLib::IO
 {
-Xdmf3Writer::Xdmf3Writer(std::filesystem::path const& filepath,
-                         Geometry const& geometry,
-                         Topology const& topology,
-                         std::vector<AttributeMeta>
-                             attributes,
-                         int const timestep)
+Xdmf3Writer::Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
+                         std::vector<XdmfData> attributes,
+                         std::filesystem::path const& filepath,
+                         int const time_step)
     : _attributes(std::move(attributes)),
-      _hdf5filepath(filepath.parent_path() /
-                    (filepath.stem().string() + ".h5"))
+      _hdf5filename(filepath.stem().string() + ".h5")
 {
-    std::filesystem::path const xdmf_filepath =
-        filepath.parent_path() / (filepath.stem().string() + ".xdmf");
-    auto const ret_hdf5 = writeHDF5Initial(geometry.flattend_values,
-                                           geometry.vldims,
-                                           topology.flattend_values,
-                                           timestep,
-                                           _hdf5filepath);
-    // If we find a library for compression we use it
-    _use_compression = ret_hdf5.second;
+    _initial_geometry = getLightGeometry(_hdf5filename, time_step, geometry);
+    _initial_topology = getLightTopology(_hdf5filename, time_step, topology);
 
-    _initial_geometry =
-        getLightGeometry(_hdf5filepath.filename().string(), timestep, geometry);
-    _initial_topology =
-        getLightTopology(_hdf5filepath.filename().string(), timestep, topology);
-
-    _writer = XdmfWriter::New(xdmf_filepath.string());
+    _writer = XdmfWriter::New(filepath.string());
     _writer->setMode(XdmfWriter::DistributedHeavyData);
 
     auto version = XdmfInformation::New();
@@ -141,19 +139,11 @@ void Xdmf3Writer::writeStep(int const time_step, double const time)
 
     for (auto const& attribute : _attributes)
     {
-        writeHDF5Step(_hdf5filepath,
-                      time_step,
-                      attribute.name,
-                      attribute.data_start,
-                      attribute.vldims,
-                      attribute.data_type,
-                      _use_compression);
-        grid->insert(
-            getLightAttribute(_hdf5filepath.filename().string(), time_step, attribute));
+        grid->insert(getLightAttribute(_hdf5filename, time_step, attribute));
     }
 
-    auto gridcollection = _root->getGridCollection(0);
-    gridcollection->insert(grid);
+    auto grid_collection = _root->getGridCollection(0);
+    grid_collection->insert(grid);
     _root->accept(_writer);
 }
 }  // namespace MeshLib::IO
