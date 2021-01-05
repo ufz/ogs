@@ -13,11 +13,32 @@
  */
 
 #include <memory>
+#include <random>
 
 #include "gtest/gtest.h"
 
 #include "GeoLib/MinimalBoundingSphere.h"
 #include "MathLib/Point3d.h"
+
+std::vector<MathLib::Point3d*>* getRandomSpherePoints(
+    MathLib::Point3d const& center, double const radius, std::size_t n_points)
+{
+    Eigen::Vector3d const c({center[0], center[1], center[2]});
+    auto* pnts = new std::vector<MathLib::Point3d*>;
+    pnts->reserve(n_points);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0, 1);
+
+    for (std::size_t k(0); k < n_points; ++k)
+    {
+        Eigen::Vector3d const random_point({dis(gen), dis(gen), dis(gen)});
+        Eigen::Vector3d const t = c + radius * random_point.normalized();
+        pnts->push_back(new MathLib::Point3d({t[0], t[1], t[2]}));
+    }
+    return pnts;
+}
 
 TEST(GeoLib, TestBoundingSphere)
 {
@@ -111,6 +132,20 @@ TEST(GeoLib, TestBoundingSphere)
     ASSERT_NEAR(0.6, center[2], std::numeric_limits<double>::epsilon());
     ASSERT_NEAR(0.9273, s.getRadius(), 0.0001);
     }
+
+    /// Calculates the bounding sphere of points on a bounding sphere
+    auto sphere_points = std::unique_ptr<std::vector<MathLib::Point3d*>>(
+        getRandomSpherePoints(s.getCenter(), s.getRadius(), 1000));
+    GeoLib::MinimalBoundingSphere t(*sphere_points);
+    for (auto p : *sphere_points)
+    {
+        delete p;
+    }
+    MathLib::Point3d center = t.getCenter();
+    ASSERT_NEAR(0.5, center[0], 1e2 * std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.5, center[1], 1e2 * std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.6, center[2], 1e2 * std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(0.9273, t.getRadius(), 0.0001);
 
     std::for_each(pnts.begin(), pnts.end(),
         std::default_delete<MathLib::Point3d>());
