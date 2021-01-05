@@ -15,7 +15,7 @@ module load git-lfs/2.7.1
 
 # Libraries
 module load boost/1.67.0-1
-module load eigen/3.3.4-1-cmake
+module load eigen/3.3.9-1-cmake
 module load vtk/8.2.0/foss2019b/serial
 module load HDF5/1.10.5-nompi
 
