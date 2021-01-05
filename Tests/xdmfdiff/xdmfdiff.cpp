@@ -170,16 +170,19 @@ std::unique_ptr<Grid> readMesh(std::string const& filename,
     auto const gridcollection = domain->getGridCollection("Collection");
     auto const ungrid = gridcollection->getUnstructuredGrid(timestep);
     auto const geometry = ungrid->getGeometry();
+    geometry->read();
     int const size_points = geometry->getSize();
     std::vector<double> points(size_points);
     geometry->getValues(0, points.data(), size_points);
 
     auto const topology = ungrid->getTopology();
+    topology->read();
     int const size_topology = topology->getSize();
     std::vector<int> topology_values(size_topology);
     topology->getValues(0, topology_values.data(), size_topology);
 
     auto const attribute = ungrid->getAttribute(attribute_name);
+    attribute->read();
     int const attribute_size = attribute->getSize();
     std::vector<double> attribute_values(attribute_size);
     attribute->getValues(0, attribute_values.data(), attribute_size);
