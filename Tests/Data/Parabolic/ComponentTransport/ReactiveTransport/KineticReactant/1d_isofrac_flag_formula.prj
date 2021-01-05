@@ -111,9 +111,14 @@
                             <name>Productd</name>
                             <properties>
                                 <property>
-                                    <name>molality</name>
+                                    <name>volume_fraction</name>
                                     <type>Constant</type>
-                                    <value>1e-6</value>
+                                    <value>0.1</value>
+                                </property>
+                                <property>
+                                    <name>molar_volume</name>
+                                    <type>Constant</type>
+                                    <value>1e2</value>
                                 </property>
                             </properties>
                         </component>

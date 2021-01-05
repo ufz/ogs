@@ -70,17 +70,48 @@ void setAqueousSolution(std::vector<double> const& concentrations,
 template <typename Reactant>
 void setReactantMolality(Reactant& reactant,
                          GlobalIndexType const& chemical_system_id,
-                         MaterialPropertyLib::Phase const& solid_phase,
+                         MaterialPropertyLib::Medium const* medium,
                          ParameterLib::SpatialPosition const& pos,
                          double const t)
 {
+    auto const& solid_phase = medium->phase("Solid");
     auto const& solid_constituent = solid_phase.component(reactant.name);
 
-    auto const molality =
-        solid_constituent.property(MaterialPropertyLib::PropertyType::molality)
-            .template initialValue<double>(pos, t);
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
 
-    (*reactant.molality)[chemical_system_id] = molality;
+    if (solid_constituent.hasProperty(
+            MaterialPropertyLib::PropertyType::molality))
+    {
+        auto const molality =
+            solid_constituent
+                .property(MaterialPropertyLib::PropertyType::molality)
+                .template initialValue<double>(pos, t);
+
+        (*reactant.molality)[chemical_system_id] = molality;
+    }
+    else
+    {
+        auto const volume_fraction =
+            solid_constituent
+                .property(MaterialPropertyLib::PropertyType::volume_fraction)
+                .template initialValue<double>(pos, t);
+
+        auto const fluid_density =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template initialValue<double>(pos, t);
+
+        auto const porosity =
+            medium->property(MaterialPropertyLib::PropertyType::porosity)
+                .template initialValue<double>(pos, t);
+
+        auto const molar_volume =
+            solid_constituent
+                .property(MaterialPropertyLib::PropertyType::molar_volume)
+                .template initialValue<double>(pos, t);
+
+        (*reactant.molality)[chemical_system_id] =
+            volume_fraction / fluid_density / porosity / molar_volume;
+    }
 }
 
 template <typename Reactant>
@@ -171,17 +202,16 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
     setAqueousSolution(concentrations, chemical_system_id,
                        *_chemical_system->aqueous_solution);
 
-    auto const& solid_phase = medium->phase("Solid");
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        setReactantMolality(kinetic_reactant, chemical_system_id, solid_phase,
-                            pos, t);
+        setReactantMolality(kinetic_reactant, chemical_system_id, medium, pos,
+                            t);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        setReactantMolality(equilibrium_reactant, chemical_system_id,
-                            solid_phase, pos, t);
+        setReactantMolality(equilibrium_reactant, chemical_system_id, medium,
+                            pos, t);
     }
 }
 

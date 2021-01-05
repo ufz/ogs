@@ -59,6 +59,7 @@ enum PropertyType : int
     longitudinal_dispersivity,
     molality,
     molar_mass,
+    molar_volume,
     mole_fraction,
     /// used to compute the hydrodynamic dispersion tensor.
     molecular_diffusion,
@@ -88,6 +89,7 @@ enum PropertyType : int
     transversal_dispersivity,
     vapor_pressure,
     viscosity,
+    volume_fraction,
     number_of_properties
 };
 
@@ -182,7 +184,6 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::longitudinal_dispersivity;
     }
-    // TODO (renchao): add property "volume fraction"
     if (boost::iequals(inString, "molality"))
     {
         return PropertyType::molality;
@@ -190,6 +191,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "molar_mass"))
     {
         return PropertyType::molar_mass;
+    }
+    if (boost::iequals(inString, "molar_volume"))
+    {
+        return PropertyType::molar_volume;
     }
     if (boost::iequals(inString, "mole_fraction"))
     {
@@ -295,6 +300,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::viscosity;
     }
+    if (boost::iequals(inString, "volume_fraction"))
+    {
+        return PropertyType::volume_fraction;
+    }
 
     OGS_FATAL(
         "The property name '{:s}' does not correspond to any known property",
@@ -328,6 +337,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "longitudinal_dispersivity",
                              "molality",
                              "molar_mass",
+                             "molar_volume",
                              "mole_fraction",
                              "molecular_diffusion",
                              "name",
@@ -353,7 +363,8 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "transport_porosity",
                              "transversal_dispersivity",
                              "vapor_pressure",
-                             "viscosity"}};
+                             "viscosity",
+                             "volume_fraction"}};
 
 /// This data type is based on a std::array. It can hold pointers to objects of
 /// class Property or its inheritors. The size of this array is determined by
