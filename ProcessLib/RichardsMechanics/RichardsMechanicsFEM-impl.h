@@ -536,7 +536,7 @@ void RichardsMechanicsLocalAssembler<
         //
         // pressure equation, pressure part.
         //
-        auto const beta_LR = 1 / rho *
+        auto const beta_LR = 1 / rho_LR *
                              liquid_phase.property(MPL::PropertyType::density)
                                  .template dValue<double>(
                                      variables, MPL::Variable::phase_pressure,
@@ -948,7 +948,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         laplace_p.noalias() +=
             dNdx_p.transpose() * k_rel * rho_Ki_over_mu * dNdx_p * w;
 
-        auto const beta_LR = 1 / rho *
+        auto const beta_LR = 1 / rho_LR *
                              liquid_phase.property(MPL::PropertyType::density)
                                  .template dValue<double>(
                                      variables, MPL::Variable::phase_pressure,
