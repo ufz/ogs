@@ -107,7 +107,7 @@ public:
     ElementType* zeroVolumeEle;
 };
 
-TYPED_TEST_CASE(NumLibFemNaturalCoordinatesMappingTest, TestTypes);
+TYPED_TEST_SUITE(NumLibFemNaturalCoordinatesMappingTest, TestTypes);
 
 TYPED_TEST(NumLibFemNaturalCoordinatesMappingTest, CheckFieldSpecification_N)
 {

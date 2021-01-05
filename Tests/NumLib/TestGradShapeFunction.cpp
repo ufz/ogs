@@ -169,7 +169,7 @@ const unsigned GradShapeFunctionTest<T>::n_sample_pt_order2;
 template <class T>
 const unsigned GradShapeFunctionTest<T>::n_sample_pt_order3;
 
-TYPED_TEST_CASE(GradShapeFunctionTest, TestTypes);
+TYPED_TEST_SUITE(GradShapeFunctionTest, TestTypes);
 
 TYPED_TEST(GradShapeFunctionTest,
            CheckGradShapeFunctionByComputingElementVolume)

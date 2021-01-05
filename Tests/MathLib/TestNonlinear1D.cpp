@@ -26,7 +26,7 @@ class MathLibRegulaFalsi : public ::testing::Test
 namespace NL = MathLib::Nonlinear;
 using RegulaFalsiTypes = ::testing::Types<NL::Unmodified, NL::Illinois, NL::Pegasus, NL::AndersonBjorck>;
 
-TYPED_TEST_CASE(MathLibRegulaFalsi, RegulaFalsiTypes);
+TYPED_TEST_SUITE(MathLibRegulaFalsi, RegulaFalsiTypes);
 
 TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
 {

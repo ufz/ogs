@@ -72,7 +72,7 @@ public:
 
 using TestCases = ::testing::Types<int>;
 
-TYPED_TEST_CASE(NumLibSerialExecutor, TestCases);
+TYPED_TEST_SUITE(NumLibSerialExecutor, TestCases);
 
 TYPED_TEST(NumLibSerialExecutor, ContainerArgument)
 {

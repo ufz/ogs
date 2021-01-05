@@ -105,7 +105,7 @@ using ShapeFunctionTestTypes =
                      ShapeTet10, ShapeQuad4, ShapeQuad8, ShapeQuad9, ShapeHex8,
                      ShapeHex20>;
 
-TYPED_TEST_CASE(ShapeFunctionTest, ShapeFunctionTestTypes);
+TYPED_TEST_SUITE(ShapeFunctionTest, ShapeFunctionTestTypes);
 
 // TypeParam is the type of the ShapeFunction.
 // Access private members via this pointer or TestFixture:: for types

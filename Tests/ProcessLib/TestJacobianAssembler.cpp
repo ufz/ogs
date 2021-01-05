@@ -602,7 +602,7 @@ using TestCases = ::testing::Types<
     LocalAssemblerMKb<MatVecXSquaredShifted, MatVecXSquaredShifted,
                       MatVecXSquaredShifted>>;
 
-TYPED_TEST_CASE(ProcessLibCentralDifferencesJacobianAssembler, TestCases);
+TYPED_TEST_SUITE(ProcessLibCentralDifferencesJacobianAssembler, TestCases);
 
 TYPED_TEST(ProcessLibCentralDifferencesJacobianAssembler, Test)
 {
