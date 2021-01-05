@@ -11,6 +11,7 @@
 
 #include <Xdmf.hpp>
 #include <XdmfDomain.hpp>
+#include <XdmfGridCollection.hpp>
 #include <XdmfReader.hpp>
 #include <XdmfUnstructuredGrid.hpp>
 #include <boost/iterator/zip_iterator.hpp>
@@ -46,6 +47,8 @@ struct Args
     std::string const xdmf_input_b;
     std::string const data_array_a;
     std::string const data_array_b;
+    unsigned int timestep_a;
+    unsigned int timestep_b;
 };
 
 auto parseCommandLine(int argc, char* argv[]) -> Args
@@ -84,6 +87,16 @@ auto parseCommandLine(int argc, char* argv[]) -> Args
         "",
         "NAME");
     cmd.add(data_array_b_arg);
+
+    TCLAP::ValueArg<unsigned int> time_a_arg(
+        "", "timestep-a", "First data time step index (positive integer)", false,
+        0, "TIMESTEP");
+    cmd.add(time_a_arg);
+
+    TCLAP::ValueArg<unsigned int> time_b_arg(
+        "", "timestep-b", "Second data time step index (positive integer)",
+        false, 0, "TIMESTEP");
+    cmd.add(time_b_arg);
 
     TCLAP::SwitchArg meshcheck_arg(
         "m", "mesh_check", "Compare mesh geometries using absolute tolerance.");
@@ -125,7 +138,8 @@ auto parseCommandLine(int argc, char* argv[]) -> Args
                 meshcheck_arg.getValue(),    abs_err_thr_arg.getValue(),
                 rel_err_thr_arg.getValue(),  xdmf_input_a_arg.getValue(),
                 xdmf_input_b_arg.getValue(), data_array_a_arg.getValue(),
-                data_array_b_arg.getValue()};
+                data_array_b_arg.getValue(), time_a_arg.getValue(),
+                time_b_arg.getValue()};
 }
 
 struct Grid
@@ -136,6 +150,7 @@ struct Grid
 };
 
 std::unique_ptr<Grid> readMesh(std::string const& filename,
+                               unsigned int timestep,
                                std::string const& attribute_name)
 {
     if (filename.empty())
@@ -152,8 +167,8 @@ std::unique_ptr<Grid> readMesh(std::string const& filename,
     auto const xreader = XdmfReader::New();
     auto const domain =
         shared_dynamic_cast<XdmfDomain>(xreader->read(filename));
-    auto const ungrid = domain->getUnstructuredGrid(0);
-
+    auto const gridcollection = domain->getGridCollection("Collection");
+    auto const ungrid = gridcollection->getUnstructuredGrid(timestep);
     auto const geometry = ungrid->getGeometry();
     int const size_points = geometry->getSize();
     std::vector<double> points(size_points);
@@ -176,11 +191,13 @@ std::unique_ptr<Grid> readMesh(std::string const& filename,
 std::tuple<std::unique_ptr<Grid>, std::unique_ptr<Grid>> readMeshes(
     std::string const& file_a_name,
     std::string const& file_b_name,
+    unsigned int const& timestep_a,
+    unsigned int const& timestep_b,
     std::string const& attribute_a_name,
     std::string const& attribute_b_name)
 {
-    return {readMesh(file_a_name, attribute_a_name),
-            readMesh(file_b_name, attribute_b_name)};
+    return {readMesh(file_a_name, timestep_a, attribute_a_name),
+            readMesh(file_b_name, timestep_b, attribute_b_name)};
 }
 
 bool compareCellTopology(std::vector<int> const& cells_a,
@@ -247,8 +264,8 @@ int main(int argc, char* argv[])
     std::cerr << std::scientific << std::setprecision(digits10);
 
     auto const [mesh_a, mesh_b] =
-        readMeshes(args.xdmf_input_a, args.xdmf_input_b, args.data_array_a,
-                   args.data_array_b);
+        readMeshes(args.xdmf_input_a, args.xdmf_input_b, args.timestep_a,
+                   args.timestep_b, args.data_array_a, args.data_array_b);
 
     if (args.xdmf_input_a == args.xdmf_input_b)
     {
