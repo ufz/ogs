@@ -197,6 +197,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size> const>(local_x.data() + pressure_index,
                                   pressure_size);
 
+    constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     MPL::VariableArray variables;
 
@@ -218,11 +219,22 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
 
+        auto const temperature =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(variables, x_position, t, dt);
+        variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
+
         _ip_data[ip].saturation_prev =
             medium->property(MPL::PropertyType::saturation)
-                .template value<double>(
-                    variables, x_position, t,
-                    std::numeric_limits<double>::quiet_NaN());
+                .template value<double>(variables, x_position, t, dt);
+
+        // Set eps_m_prev from potentially non-zero eps and sigma_sw from
+        // restart.
+        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+            t, x_position, dt, temperature);
+        auto& eps = _ip_data[ip].eps;
+        auto& sigma_sw = _ip_data[ip].sigma_sw;
+        _ip_data[ip].eps_m_prev.noalias() = eps - C_el.inverse() * sigma_sw;
     }
 }
 
