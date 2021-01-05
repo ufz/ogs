@@ -217,7 +217,7 @@ bool compareCellTopology(std::vector<int> const& cells_a,
 
     for (std::size_t i = 0; i < cells_a.size(); ++i)
     {
-        if (cells_a[0] != cells_b[0])
+        if (cells_a[i] != cells_b[i])
         {
             std::cerr << "Cell on position " << i << "\n"
                       << "in first mesh has celltype: " << cells_a[i] << "\n"
