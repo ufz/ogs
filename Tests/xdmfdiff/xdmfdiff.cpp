@@ -89,8 +89,8 @@ auto parseCommandLine(int argc, char* argv[]) -> Args
     cmd.add(data_array_b_arg);
 
     TCLAP::ValueArg<unsigned int> time_a_arg(
-        "", "timestep-a", "First data time step index (positive integer)", false,
-        0, "TIMESTEP");
+        "", "timestep-a", "First data time step index (positive integer)",
+        false, 0, "TIMESTEP");
     cmd.add(time_a_arg);
 
     TCLAP::ValueArg<unsigned int> time_b_arg(
@@ -275,8 +275,8 @@ int main(int argc, char* argv[])
         std::cout << "Will not compare meshes from same input file.\n";
         return EXIT_SUCCESS;
     }
-    if (!compareValues(
-            mesh_a->point_values, mesh_b->point_values, args.abs_err_thr))
+    if (!compareValues(mesh_a->point_values, mesh_b->point_values,
+                       args.abs_err_thr))
     {
         std::cerr << "Error in mesh points' comparison occured.\n";
         return EXIT_FAILURE;
