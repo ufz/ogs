@@ -52,4 +52,23 @@ for pointA, pointB in zip(pointsA, pointsB):
             )
             exit(1)
 
+polysA = docA.getElementsByTagName("polyline")
+polysB = docB.getElementsByTagName("polyline")
+
+if len(polysA) != len(polysB):
+    print("Mismatch of number of polylines!")
+    exit(1)
+
+for polyA, polyB in zip(polysA, polysB):
+    if int(polyA.getAttribute("id")) != int(polyB.getAttribute("id")):
+        print("Polylines do not have the same order!")
+        exit(1)
+
+    pntsA = polyA.getElementsByTagName("pnt")
+    pntsB = polyA.getElementsByTagName("pnt")
+    for pntA, pntB in zip(pntsA, pntsB):
+        if int(pntA.childNodes[0].nodeValue) != int(pntB.childNodes[0].nodeValue):
+            print(f"Polyline with id={polyA.getAttribute('id')} differ!")
+            exit(1)
+
 exit(0)
