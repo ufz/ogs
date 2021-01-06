@@ -7,6 +7,8 @@ container:
     - if: $CI_COMMIT_TAG
     - changes:
       - scripts/ci/jobs/container.yml
+    - when: manual
+      allow_failure: true
   extends:
     - .container-maker-setup
   script:
