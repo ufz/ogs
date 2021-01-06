@@ -234,7 +234,7 @@ public:
     }
 };
 
-TYPED_TEST_CASE(NumLibODEIntTyped, TestCases);
+TYPED_TEST_SUITE(NumLibODEIntTyped, TestCases);
 
 // Temporarily disabled for PETSc issue #1989
 #ifndef USE_PETSC

@@ -157,8 +157,8 @@ using TestBehaviourTypes =
     ::testing::Types<StandardElasticityBrickBehaviour<Dim>,
                      ElasticBehaviour<Dim>, MohrCoulombAbboSloanBehaviour<Dim>>;
 
-TYPED_TEST_CASE(MaterialLib_SolidModelsMFront2, TestBehaviourTypes<2>);
-TYPED_TEST_CASE(MaterialLib_SolidModelsMFront3, TestBehaviourTypes<3>);
+TYPED_TEST_SUITE(MaterialLib_SolidModelsMFront2, TestBehaviourTypes<2>);
+TYPED_TEST_SUITE(MaterialLib_SolidModelsMFront3, TestBehaviourTypes<3>);
 
 TYPED_TEST(MaterialLib_SolidModelsMFront2, IntegrateZeroDisplacement)
 {
