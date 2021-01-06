@@ -5,6 +5,10 @@ container:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: $CI_COMMIT_TAG
+    - changes:
+      - scripts/ci/jobs/container.yml
+    - when: manual
+      allow_failure: true
   extends:
     - .container-maker-setup
   script:
@@ -13,8 +17,8 @@ container:
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
-      --cmake_args ' -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON'
-      --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial --upload
+      --cmake_args ' -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON -DOGS_USE_PYTHON=ON'
+      --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest --upload
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
