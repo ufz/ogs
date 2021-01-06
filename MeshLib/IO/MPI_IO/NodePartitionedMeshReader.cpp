@@ -410,7 +410,7 @@ void NodePartitionedMeshReader::setElements(
             elem_nodes[k] = mesh_nodes[ elem_data[id_offset_elem++] ];
 
         // The element types below are defined by the MeshLib::CellType.
-        switch (static_cast<CellType const>(e_type))
+        switch (static_cast<CellType>(e_type))
         {
             case CellType::POINT1:
                 mesh_elems[i + id_offset_ghost] =
