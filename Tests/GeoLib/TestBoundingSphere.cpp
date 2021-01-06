@@ -29,7 +29,7 @@ std::vector<MathLib::Point3d*>* getRandomSpherePoints(
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(0, 1);
+    std::uniform_real_distribution<> dis(-1, 1);
 
     for (std::size_t k(0); k < n_points; ++k)
     {
