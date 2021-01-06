@@ -136,7 +136,7 @@ endif()
 find_package(LAPACK QUIET)
 
 ## geotiff ##
-find_package(LibGeoTiff)
+find_package(GEOTIFF)
 
 ## lis ##
 if(OGS_USE_LIS)
