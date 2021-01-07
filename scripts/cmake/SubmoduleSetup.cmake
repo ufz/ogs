@@ -18,9 +18,11 @@ set(REQUIRED_SUBMODULES
     ThirdParty/spdlog
     ThirdParty/tclap
     ThirdParty/tetgen
-    ThirdParty/xdmf
     ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
+if(OGS_USE_XDMF)
+    list(APPEND REQUIRED_SUBMODULES ThirdParty/xdmf)
+endif()
 if(BUILD_TESTING)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/vtkdiff)
 endif()

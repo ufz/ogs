@@ -246,9 +246,13 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/spdlog/include)
 
 # vtkdiff
-if(EXISTS ${PROJECT_SOURCE_DIR}/ThirdParty/vtkdiff/CMakeLists.txt AND BUILD_TESTING)
+if(BUILD_TESTING)
     add_subdirectory(ThirdParty/vtkdiff)
     install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
+endif()
+# xdmfdiff
+if(OGS_USE_XDMF AND BUILD_TESTING)
+    add_subdirectory(Tests/xdmfdiff)
 endif()
 
 include(scripts/cmake/CheckHeaderCompilation.cmake)

@@ -1,8 +1,3 @@
-### xdmfdiff ###
-if(OGS_USE_XDMF)
-    add_subdirectory(xdmfdiff)
-endif()
-
 ### ctest dependencies
 foreach(tool vtkdiff xdmfdiff)
     if(TARGET ${tool})
