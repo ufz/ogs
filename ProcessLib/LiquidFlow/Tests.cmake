@@ -459,6 +459,9 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI AND NOT COMPILER_IS_APPLE_CLANG
     DIFF_DATA
     square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf HydraulicFlow HydraulicFlow 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf v v 1e-7 1e-13
 )
 
 #AddTest(
