@@ -310,12 +310,19 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
                 if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(char))
                     createPropertyVectorPart<char>(is, *vec_pvmd[i], pvpmd, t,
                                                    global_offset, p);
-                if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(int))
+                else if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(int))
                     createPropertyVectorPart<int>(is, *vec_pvmd[i], pvpmd, t,
                                                   global_offset, p);
-                if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(long))
+                else if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(long))
                     createPropertyVectorPart<long>(is, *vec_pvmd[i], pvpmd, t,
                                                    global_offset, p);
+                else
+                {
+                    WARN(
+                        "Implementation for reading signed integer property "
+                        "vector '{:s}' is not available.",
+                        vec_pvmd[i]->property_name);
+                }
             }
             else
             {
@@ -323,14 +330,21 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
                     sizeof(unsigned char))
                     createPropertyVectorPart<unsigned char>(
                         is, *vec_pvmd[i], pvpmd, t, global_offset, p);
-                if (vec_pvmd[i]->data_type_size_in_bytes ==
-                    sizeof(unsigned int))
+                else if (vec_pvmd[i]->data_type_size_in_bytes ==
+                         sizeof(unsigned int))
                     createPropertyVectorPart<unsigned int>(
                         is, *vec_pvmd[i], pvpmd, t, global_offset, p);
-                if (vec_pvmd[i]->data_type_size_in_bytes ==
-                    sizeof(unsigned long))
+                else if (vec_pvmd[i]->data_type_size_in_bytes ==
+                         sizeof(unsigned long))
                     createPropertyVectorPart<unsigned long>(
                         is, *vec_pvmd[i], pvpmd, t, global_offset, p);
+                else
+                {
+                    WARN(
+                        "Implementation for reading unsigned property vector "
+                        "'{:s}' is not available.",
+                        vec_pvmd[i]->property_name);
+                }
             }
         }
         else
@@ -338,14 +352,17 @@ void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
             if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(float))
                 createPropertyVectorPart<float>(is, *vec_pvmd[i], pvpmd, t,
                                                 global_offset, p);
-            if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(double))
+            else if (vec_pvmd[i]->data_type_size_in_bytes == sizeof(double))
                 createPropertyVectorPart<double>(is, *vec_pvmd[i], pvpmd, t,
                                                  global_offset, p);
+            else
+            {
+                WARN(
+                    "Implementation for reading floating point property vector "
+                    "'{:s}' is not available.",
+                    vec_pvmd[i]->property_name);
+            }
         }
-        WARN(
-            "Implementation for reading property vector '{:s}' is not "
-            "available.",
-            vec_pvmd[i]->property_name);
         global_offset += vec_pvmd[i]->data_type_size_in_bytes *
                          vec_pvmd[i]->number_of_tuples *
                          vec_pvmd[i]->number_of_components;
