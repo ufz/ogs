@@ -458,12 +458,7 @@ AddTest(
     # See https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/3184#note_85104
     REQUIREMENTS NOT OGS_USE_MPI AND NOT COMPILER_IS_APPLE_CLANG
     DIFF_DATA
-    square_5x5_tris_32_right_boundary_ts_0_t_0.000000.xdmf square_5x5_tris_32_right_boundary_ts_0_t_0.000000.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_right_boundary_ts_1_t_1.000000.xdmf square_5x5_tris_32_right_boundary_ts_1_t_1.000000.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_left_boundary_ts_0_t_0.000000.xdmf square_5x5_tris_32_left_boundary_ts_0_t_0.000000.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_left_boundary_ts_1_t_1.000000.xdmf square_5x5_tris_32_left_boundary_ts_1_t_1.000000.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_ts_0_t_0.000000.xdmf square_5x5_tris_32_ts_0_t_0.000000.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_ts_1_t_1.000000.xdmf square_5x5_tris_32_ts_1_t_1.000000.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
 )
 
 #AddTest(

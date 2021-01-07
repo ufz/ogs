@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
+  <Domain>
+    <Information Name="OGS_VERSION" Value="6.3.3-180-g588fff1347.dirty"/>
+    <Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
+      <Grid Name="Grid">
+        <Time Value="0"/>
+        <Geometry Origin="" Type="XYZ">
+          <DataItem DataType="Float" Dimensions="25 3" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/geometry</DataItem>
+        </Geometry>
+        <Topology Dimensions="128" Type="Mixed">
+          <DataItem DataType="Int" Dimensions="128 1" Format="HDF" Precision="4">square_5x5_tris_32.h5:t_0/topology</DataItem>
+        </Topology>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HydraulicFlow" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/HydraulicFlow</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+          <DataItem DataType="Int" Dimensions="25 1" Format="HDF" Precision="4">square_5x5_tris_32.h5:t_0/MaterialIDs</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/pressure</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+          <DataItem DataType="Float" Dimensions="25 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/v</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="Grid">
+        <Time Value="0"/>
+        <xi:include xpointer="element(/1/1/2/1/2)"/>
+        <xi:include xpointer="element(/1/1/2/1/3)"/>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HydraulicFlow" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/HydraulicFlow</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+          <DataItem DataType="Int" Dimensions="25 1" Format="HDF" Precision="4">square_5x5_tris_32.h5:t_0/MaterialIDs</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/pressure</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+          <DataItem DataType="Float" Dimensions="25 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/v</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="Grid">
+        <Time Value="0"/>
+        <xi:include xpointer="element(/1/1/2/1/2)"/>
+        <xi:include xpointer="element(/1/1/2/1/3)"/>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HydraulicFlow" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/HydraulicFlow</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+          <DataItem DataType="Int" Dimensions="25 1" Format="HDF" Precision="4">square_5x5_tris_32.h5:t_0/MaterialIDs</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/pressure</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+          <DataItem DataType="Float" Dimensions="25 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_0/v</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="Grid">
+        <Time Value="1"/>
+        <xi:include xpointer="element(/1/1/2/1/2)"/>
+        <xi:include xpointer="element(/1/1/2/1/3)"/>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HydraulicFlow" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/HydraulicFlow</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+          <DataItem DataType="Int" Dimensions="25 1" Format="HDF" Precision="4">square_5x5_tris_32.h5:t_1/MaterialIDs</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/pressure</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+          <DataItem DataType="Float" Dimensions="25 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/v</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="Grid">
+        <Time Value="1"/>
+        <xi:include xpointer="element(/1/1/2/1/2)"/>
+        <xi:include xpointer="element(/1/1/2/1/3)"/>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HydraulicFlow" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/HydraulicFlow</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+          <DataItem DataType="Int" Dimensions="25 1" Format="HDF" Precision="4">square_5x5_tris_32.h5:t_1/MaterialIDs</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/pressure</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+          <DataItem DataType="Float" Dimensions="25 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/v</DataItem>
+        </Attribute>
+      </Grid>
+      <Grid Name="Grid">
+        <Time Value="1"/>
+        <xi:include xpointer="element(/1/1/2/1/2)"/>
+        <xi:include xpointer="element(/1/1/2/1/3)"/>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HydraulicFlow" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/HydraulicFlow</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+          <DataItem DataType="Int" Dimensions="25 1" Format="HDF" Precision="4">square_5x5_tris_32.h5:t_1/MaterialIDs</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+          <DataItem DataType="Float" Dimensions="25 1" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/pressure</DataItem>
+        </Attribute>
+        <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+          <DataItem DataType="Float" Dimensions="25 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:t_1/v</DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>
