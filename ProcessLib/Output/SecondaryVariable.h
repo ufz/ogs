@@ -52,22 +52,20 @@ struct SecondaryVariableFunctions final
         static_assert(
             std::is_same<
                 GlobalVector const&,
-                typename std::result_of<F1(
-                    double const, std::vector<GlobalVector*> const&,
-                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&
-                        dof_table,
-                    std::unique_ptr<GlobalVector>&)>::type>::value,
+                typename std::invoke_result<
+                    F1, double const, std::vector<GlobalVector*> const&,
+                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&,
+                    std::unique_ptr<GlobalVector>&>::type>::value,
             "The function eval_field_ does not return a const reference"
             " to a GlobalVector");
 
         static_assert(
             std::is_same<
                 GlobalVector const&,
-                typename std::result_of<F2(
-                    double const, std::vector<GlobalVector*> const& x,
-                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&
-                        dof_table,
-                    std::unique_ptr<GlobalVector>&)>::type>::value,
+                typename std::invoke_result<
+                    F2, double const, std::vector<GlobalVector*> const&,
+                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&,
+                    std::unique_ptr<GlobalVector>&>::type>::value,
             "The function eval_residuals_ does not return a const reference"
             " to a GlobalVector");
     }
@@ -82,11 +80,10 @@ struct SecondaryVariableFunctions final
         static_assert(
             std::is_same<
                 GlobalVector const&,
-                typename std::result_of<F1(
-                    double const, std::vector<GlobalVector*> const& x,
-                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&
-                        dof_table,
-                    std::unique_ptr<GlobalVector>&)>::type>::value,
+                typename std::invoke_result<
+                    F1, double const, std::vector<GlobalVector*> const&,
+                    std::vector<NumLib::LocalToGlobalIndexMap const*> const&,
+                    std::unique_ptr<GlobalVector>&>::type>::value,
             "The function eval_field_ does not return a const reference"
             " to a GlobalVector");
     }
