@@ -242,9 +242,7 @@ void NodePartitionedMeshReader::readProperties(
     }
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
-        DBUG("[{:d}] +++++++++++++", _mpi_rank);
         MeshLib::IO::writePropertyVectorMetaData(*(vec_pvmd[i]));
-        DBUG("[{:d}] +++++++++++++", _mpi_rank);
     }
     auto pos = is.tellg();
     auto offset =
