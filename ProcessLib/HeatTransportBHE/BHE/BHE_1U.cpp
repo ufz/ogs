@@ -67,7 +67,7 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::pipeHeatConductions()
     double const porosity_g = grout.porosity_g;
     double const lambda_g = grout.lambda_g;
 
-    double const velocity_norm = std::abs(_flow_velocity) * std::sqrt(2);
+    double const velocity_norm = std::abs(_flow_velocity);
 
     // Here we calculate the laplace coefficients in the governing
     // equations of BHE. These governing equations can be found in
@@ -184,7 +184,7 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
     // thermal resistance due to thermal conductivity of the pipe wall material
     // Eq. 49
     double const R_con_a =
-        std::log(_pipes.outlet.diameter / _pipes.inlet.diameter) /
+        std::log(_pipes.inlet.outsideDiameter() / _pipes.inlet.diameter) /
         (2.0 * pi * lambda_p);
 
     // the average outer diameter of the _pipes
