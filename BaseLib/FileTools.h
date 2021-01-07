@@ -44,7 +44,8 @@ getParenthesizedString(std::string const& in,
 std::string constructFormattedFileName(std::string const& format_specification,
                                        std::string const& mesh_name,
                                        int const timestep,
-                                       double const t);
+                                       double const t,
+                                       int const iteration);
 
 /**
  * \brief write value as binary into the given output stream

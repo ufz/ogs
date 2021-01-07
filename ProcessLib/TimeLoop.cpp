@@ -296,7 +296,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto const post_iteration_callback =
         [&](int iteration, std::vector<GlobalVector*> const& x) {
             output_control.doOutputNonlinearIteration(
-                process, process_id, timestep, t, x, iteration);
+                process, process_id, timestep, t, iteration, x);
         };
 
     auto const nonlinear_solver_status =
@@ -705,8 +705,10 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
             if (!process_data->timestepper->canReduceTimestepSize())
             {
                 // save unsuccessful solution
-                _output->doOutputAlways(process_data->process, process_id,
-                                        timestep_id, t, _process_solutions);
+                _output->doOutputAlways(
+                    process_data->process, process_id, timestep_id, t,
+                    process_data->nonlinear_solver_status.number_iterations,
+                    _process_solutions);
                 OGS_FATAL(timestepper_cannot_reduce_dt.data());
             }
 
@@ -902,8 +904,10 @@ void TimeLoop::outputSolutions(bool const output_initial_condition,
 
             NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
         }
-        (output_object.*output_class_member)(pcs, process_id, timestep, t,
-                                             _process_solutions);
+        (output_object.*output_class_member)(
+            pcs, process_id, timestep, t,
+            process_data->nonlinear_solver_status.number_iterations,
+            _process_solutions);
     }
 }
 
