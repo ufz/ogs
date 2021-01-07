@@ -53,10 +53,13 @@ TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
 
     auto const error = std::abs(f(rf.getResult()));
 
-    if (!std::is_same<NL::Unmodified, TypeParam>::value) {
+    if (!std::is_same_v<NL::Unmodified, TypeParam>)
+    {
         EXPECT_GT(std::numeric_limits<double>::epsilon(), old_range);
         EXPECT_GT(std::numeric_limits<double>::epsilon(), error);
-    } else {
+    }
+    else
+    {
         // The unmodified regula falsi method converges very slowly.
         EXPECT_GT(100.0*std::numeric_limits<double>::epsilon(), error);
     }

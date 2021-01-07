@@ -145,13 +145,10 @@ private:
     using NodalMatrixType = typename LAT::LocalMatrix;
     using NodalVectorType = typename LAT::LocalVector;
 
-    static_assert(
-        std::is_same<NodalMatrixType, typename LAT::LocalMatrix>::value,
-        "local matrix and data traits matrix do not coincide");
-    static_assert(
-        std::is_same<NodalVectorType, typename LAT::LocalVector>::value,
-        "local vector and data traits vector do not coincide");
-
+    static_assert(std::is_same_v<NodalMatrixType, typename LAT::LocalMatrix>,
+                  "local matrix and data traits matrix do not coincide");
+    static_assert(std::is_same_v<NodalVectorType, typename LAT::LocalVector>,
+                  "local vector and data traits vector do not coincide");
 };
 
 }  // namespace TES

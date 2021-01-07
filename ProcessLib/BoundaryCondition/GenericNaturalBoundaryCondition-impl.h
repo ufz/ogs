@@ -26,8 +26,8 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
         unsigned const global_dim, MeshLib::Mesh const& bc_mesh, Data&& data)
     : _data(std::forward<Data>(data)), _bc_mesh(bc_mesh)
 {
-    static_assert(std::is_same<typename std::decay<BoundaryConditionData>::type,
-                               typename std::decay<Data>::type>::value,
+    static_assert(std::is_same_v<typename std::decay_t<BoundaryConditionData>,
+                                 typename std::decay_t<Data>>,
                   "Type mismatch between declared and passed BC data.");
 
     // check basic data consistency

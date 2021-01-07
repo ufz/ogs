@@ -51,10 +51,9 @@ public:
     RegulaFalsi(Function const& f, double a, double b)
         : _f(f), _a(a), _b(b), _fa(f(a)), _fb(f(b))
     {
-        static_assert(
-                std::is_same<double, decltype(f(0.0))>::value,
-                "Using this class for functions that do not return double"
-                " involves a lot of casts. Hence it is disabled.");
+        static_assert(std::is_same_v<double, decltype(f(0.0))>,
+                      "Using this class for functions that do not return double"
+                      " involves a lot of casts. Hence it is disabled.");
 
         if (detail::almost_zero(_fa)) {
             _b = _a;

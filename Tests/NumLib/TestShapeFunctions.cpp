@@ -46,20 +46,20 @@ struct NaturalPointGenerator
 
     result_type intervalMap(result_type const& tuple) const
     {
-        if (std::is_same<ShapeFunction, NumLib::ShapeLine2>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeLine3>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeQuad4>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeQuad8>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeQuad9>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeHex8>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeHex20>::value)
+        if (std::is_same_v<ShapeFunction, NumLib::ShapeLine2> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeLine3> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeQuad4> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeQuad8> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeQuad9> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeHex8> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeHex20>)
         {
             return tuple;
         }
-        if (std::is_same<ShapeFunction, NumLib::ShapeTri3>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeTri6>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeTet4>::value ||
-            std::is_same<ShapeFunction, NumLib::ShapeTet10>::value)
+        if (std::is_same_v<ShapeFunction, NumLib::ShapeTri3> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeTri6> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeTet4> ||
+            std::is_same_v<ShapeFunction, NumLib::ShapeTet10>)
         {
             // Map square (x, y) \in [-1, 1]^2 to a triangle such that x,y
             // \in [0, 1], and x+y \in [0, 2/2].
