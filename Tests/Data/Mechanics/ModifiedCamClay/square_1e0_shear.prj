@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- units: kg, m, s, N -->
+<OpenGeoSysProject>
+    <mesh>square_1x1_quad_1e0.vtu</mesh>
+    <geometry>square_1x1.gml</geometry>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>ModCamClay_semiExplParaInit</behaviour>
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="YoungModulus"/>
+                    <material_property name="PoissonRatio" parameter="PoissonRatio"/>
+                    <material_property name="CriticalStateLineSlope" parameter="CriticalStateLineSlope"/>
+                    <material_property name="SwellingLineSlope" parameter="SwellingLineSlope"/>
+                    <material_property name="VirginConsolidationLineSlope" parameter="VirginConsolidationLineSlope"/>
+                    <material_property name="InitialPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                    <material_property name="InitialPorosity" parameter="InitialPorosity"/>
+                </material_properties>
+            </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0</specific_body_force>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
+                <secondary_variable internal_name="PreConsolidationPressure" output_name="PreConsolidationPressure"/>
+                <secondary_variable internal_name="VolumeRatio" output_name="VolumeRatio"/>
+                <secondary_variable internal_name="Porosity" output_name="Porosity"/>
+                <secondary_variable internal_name="PlasticVolumetricStrain" output_name="PlasticVolumetricStrain"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-15</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>1</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>100</repeat>
+                            <delta_t>0.01</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>square_1e0_shear</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>200</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+        </output>
+    </time_loop>
+    <parameters>
+        <!--Modified Cam clay parameters-->
+        <parameter>
+            <name>YoungModulus</name>
+            <type>Constant</type>
+            <value>150e9</value> <!--Pa-->
+        </parameter>
+        <parameter>
+            <name>PoissonRatio</name>
+            <type>Constant</type>
+            <value>0.3</value>
+        </parameter>
+        <parameter>
+            <name>CriticalStateLineSlope</name>
+            <type>Constant</type>
+            <value>1.5</value>
+        </parameter>
+        <parameter>
+            <name>SwellingLineSlope</name>
+            <type>Constant</type>
+            <value>6.6e-4</value>
+        </parameter>
+        <parameter>
+            <name>VirginConsolidationLineSlope</name>
+            <type>Constant</type>
+            <value>7.7e-3</value>
+        </parameter>
+        <parameter>
+            <name>InitialPreConsolidationPressure</name>
+            <type>Constant</type>
+            <value>30e6</value> <!--Pa-->
+        </parameter>
+        <parameter>
+            <name>InitialPorosity</name>
+            <type>Constant</type>
+            <value>0.44</value>
+        </parameter>
+        <!-- Initial and boundary values -->
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>dirichlet0</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>dirichletLinearNeg</name>
+            <type>Function</type>
+            <expression>-0.05*t</expression>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <!--fix bottom in-x-->
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <!--fix bottom in y-->
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <!--shear in -x-->
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichletLinearNeg</parameter>
+                </boundary_condition>
+                <!-- fix top in y to prevent tilting; compression in -y with dirichletLinearNeg -->
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>top</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>20</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>square_1e0_shear_ts_50_t_0.500000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>square_1e0_shear_ts_100_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <!--secondary field-->
+        <vtkdiff>
+            <file>square_1e0_shear_ts_50_t_0.500000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>square_1e0_shear_ts_100_t_1.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+        <!--material-specific internal variable-->
+        <vtkdiff>
+            <file>square_1e0_shear_ts_50_t_0.500000.vtu</file>
+            <field>PreConsolidationPressure</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>square_1e0_shear_ts_100_t_1.000000.vtu</file>
+            <field>PreConsolidationPressure</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>

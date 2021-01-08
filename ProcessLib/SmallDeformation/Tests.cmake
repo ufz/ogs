@@ -67,6 +67,10 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/Linear/MFront/square_1e0_orthotropic_y-xz.prj)
     OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e0_mfront.prj)
     OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e0_mfront_mod.prj)
+    OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/square_1e0_shear.prj)
+    OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/square_1e0_biax.prj)
+    OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/model_triaxtest.prj)
+
 # Linear elastic, no internal state variables, no external state variables.
 AddTest(
     NAME Mechanics_SDL_disc_with_hole_mfront
