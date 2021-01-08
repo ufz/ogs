@@ -2,7 +2,8 @@ Template for the prefix which will be prepended to the output files. Allowed
 template expressions are:
 - {:meshname}
 - {:timestep}
-- {:time}.
+- {:time}
+- {:iteration}.
 
 Default value: {:meshname}
 

@@ -2,7 +2,8 @@ Template for the suffix which will be appended to the output files. Allowed
 template expressions are:
 - {:meshname}
 - {:timestep}
-- {:time}.
+- {:time}
+- {:iteration}.
 
 Default value: _ts_{:timestep}_t_{:time}
 
