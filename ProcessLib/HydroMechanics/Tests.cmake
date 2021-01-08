@@ -447,6 +447,21 @@ AddTest(
     flow_pressure_boundary_ts_100_t_4000.000000.vtu flow_pressure_boundary_ts_100_t_4000.000000.vtu displacement displacement 1e-12 0
 )
 
+# Permeability models
+AddTest(
+    NAME HydroMechanics_Permeability_EmbeddedFracture
+    PATH HydroMechanics/EmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    cube_ts_1_t_1.000000.vtu cube_ts_1_t_1.000000.vtu pressure pressure 0 1e-14
+    cube_ts_1_t_1.000000.vtu cube_ts_1_t_1.000000.vtu velocity velocity 1e-15 0
+    cube_ts_1_t_1.000000.vtu cube_ts_1_t_1.000000.vtu displacement displacement 1e-15 0
+)
+
 ## Test as the reference of InjectionProduction1D
 AddTest(
     NAME MonolithicInjectionProduction1D
