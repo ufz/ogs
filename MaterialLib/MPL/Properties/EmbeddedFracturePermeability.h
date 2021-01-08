@@ -19,6 +19,31 @@ namespace MaterialPropertyLib
  * \brief Permeability model as proposed by Olivella&Alonso
  * \details This property must be a medium property, it
  * computes the permeability in dependence of the strain
+ *
+ *  The model was proposed
+ *  in \cite alonso2006mechanisms and it was further investigated
+ *  in \cite olivella2008gas .
+ *
+ *   The model takes the form of
+ *  \f[ \mathbf{k} = k_\text{m} \mathbf{I} + \frac{b}{a} \left( \frac{b^2}{12}
+ *      - k_\text{m} \right) \left( \mathbf{I} - \mathbf{M} \right)
+ *  \f]
+ *  with
+ *  \f[ \mathbf{M} = \vec{n} \otimes \vec{n} \f]
+ *  and
+ *  \f[ b = b_0 + \Delta b \\
+ *      \Delta b = a \langle \varepsilon_\text{n}- \varepsilon_0 \rangle
+ *  \f]
+ *   where
+ *   <table>
+ *   <tr><td>\f$ k_\text{m} \f$  <td> permeability of undisturbed material
+ *   <tr><td>\f$ b \f$  <td> fracture aperture
+ *   <tr><td>\f$ b_0 \f$  <td> initial aperture
+ *   <tr><td>\f$ a \f$  <td> mean fracture distance
+ *   <tr><td>\f$ \vec{n} \f$  <td> fracture normal vector
+ *   <tr><td>\f$ \varepsilon_n \f$  <td> strain in fracture normal direction
+ *   <tr><td>\f$ \varepsilon_0 \f$  <td> threshold strain
+ * </table>
  */
 template <int DisplacementDim>
 class EmbeddedFracturePermeability final : public Property

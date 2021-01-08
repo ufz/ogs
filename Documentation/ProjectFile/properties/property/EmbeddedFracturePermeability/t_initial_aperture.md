@@ -1,0 +1,1 @@
+The inital aperture.
