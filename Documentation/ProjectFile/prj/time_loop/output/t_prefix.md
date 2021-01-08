@@ -1,11 +1,10 @@
 Template for the prefix which will be prepended to the output files. Allowed
 template expressions are:
 - {:meshname}
-- {:process_id}
 - {:timestep}
 - {:time}.
 
-Default value: {:meshname}{:process_id}
+Default value: {:meshname}
 
 Remark: The name of the pvd-file will be constructed out of the prefix.
 
