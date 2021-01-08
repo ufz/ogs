@@ -56,7 +56,7 @@ public:
     //! Writes output for the given \c process if it should be written in the
     //! given \c timestep.
     void doOutput(Process const& process, const int process_id,
-                  int const timestep, const double t,
+                  int const timestep, const double t, int const iteration,
                   std::vector<GlobalVector*> const& x);
 
     //! Writes output for the given \c process if it has not been written yet.
@@ -64,22 +64,22 @@ public:
     //! order to make sure that its results are written.
     void doOutputLastTimestep(Process const& process, const int process_id,
                               int const timestep, const double t,
+                              int const iteration,
                               std::vector<GlobalVector*> const& x);
 
     //! Writes output for the given \c process.
     //! This method will always write.
     //! It is intended to write output in error handling routines.
     void doOutputAlways(Process const& process, const int process_id,
-                        int const timestep, const double t,
+                        int const timestep, const double t, int const iteration,
                         std::vector<GlobalVector*> const& x);
 
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
     void doOutputNonlinearIteration(Process const& process,
                                     const int process_id, int const timestep,
-                                    const double t,
-                                    std::vector<GlobalVector*> const& x,
-                                    const int iteration);
+                                    const double t, const int iteration,
+                                    std::vector<GlobalVector*> const& x);
 
     std::vector<double> getFixedOutputTimes() const
     {

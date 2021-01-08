@@ -52,7 +52,7 @@ std::unique_ptr<Output> createOutput(
     auto const prefix =
         //! \ogs_file_param{prj__time_loop__output__prefix}
         config.getConfigParameter<std::string>("prefix",
-                                               "{:meshname}{:process_id}");
+                                               "{:meshname}");
 
     auto const suffix =
         //! \ogs_file_param{prj__time_loop__output__suffix}
