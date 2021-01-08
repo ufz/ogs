@@ -75,6 +75,27 @@ Singularity ogs-6.2.2-serial.sif:...> ls /scif/apps/ogs/bin
 Singularity ogs-6.2.2-serial.sif:...> exit
 ```
 
+### Custom Python environment for the container
+
+For certain benchmarks or tutorials you may need additional Python packages. You can create a Python [virtual environment](https://virtualenv.pypa.io/en/latest/) inside the container (stored on your host) and install packages via `pip` (inside the container):
+
+```bash
+mkdir my-working-directory && cd my-working-directory
+singularity shell my-container.sif
+
+# Now in the container
+virtualenv .venv
+source .venv/bin/activate
+pip install numpy # or whatever you need
+# run ogs
+exit
+
+# Now outside the container
+# The virtualenv-directory .venv still persists
+# If you want to run something in the container with exec, source the venv before:
+singularity exec --app ogs my-container.sif bash -c 'source .venv/bin/activate && ogs ...'
+```
+
 ### Run the DataExplorer inside a Container
 
 * Get a Singularity container with the DataExplorer (has `-gui` in its name)
