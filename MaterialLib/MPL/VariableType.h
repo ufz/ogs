@@ -58,6 +58,7 @@ enum class Variable : int
     solid_grain_pressure,
     stress,
     temperature,
+    total_strain,
     total_stress,
     transport_porosity,
     volumetric_strain,
