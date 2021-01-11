@@ -22,7 +22,8 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
-static void swapNodeCoordinateAxes(MeshLib::Mesh &mesh, std::array<int, 3> const& new_axes_indices)
+static void swapNodeCoordinateAxes(MeshLib::Mesh const& mesh,
+                                   std::array<int, 3> const& new_axes_indices)
 {
     double new_coords[3] = {};
     for (MeshLib::Node* node : mesh.getNodes())

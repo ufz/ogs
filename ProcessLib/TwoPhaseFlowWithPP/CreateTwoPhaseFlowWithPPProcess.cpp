@@ -71,7 +71,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__mass_lumping}
     auto const mass_lumping = config.getConfigParameter<bool>("mass_lumping");
 
-    auto& temperature = ParameterLib::findParameter<double>(
+    auto const& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__temperature}
         "temperature", parameters, 1, &mesh);

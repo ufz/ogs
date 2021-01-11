@@ -32,7 +32,7 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
     auto node_ids_on_poly = mshNodeSearcher.getMeshNodeIDs(ply);
     MeshLib::ElementSearch es(_mesh);
     es.searchByNodeIDs(node_ids_on_poly);
-    auto& ele_ids_near_ply = es.getSearchedElementIDs();
+    auto const& ele_ids_near_ply = es.getSearchedElementIDs();
 
     // check all edges of the elements near the polyline
     for (auto ele_id : ele_ids_near_ply)

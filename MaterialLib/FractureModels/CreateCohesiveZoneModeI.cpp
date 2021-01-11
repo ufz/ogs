@@ -28,19 +28,19 @@ std::unique_ptr<FractureModelBase<DisplacementDim>> createCohesiveZoneModeI(
     config.checkConfigParameter("type", "CohesiveZoneModeI");
     DBUG("Create CohesiveZoneModeI material");
 
-    auto& Kn = ParameterLib::findParameter<double>(
+    auto const& Kn = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__CohesiveZoneModeI__normal_stiffness}
         config, "normal_stiffness", parameters, 1);
 
-    auto& Ks = ParameterLib::findParameter<double>(
+    auto const& Ks = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__CohesiveZoneModeI__shear_stiffness}
         config, "shear_stiffness", parameters, 1);
 
-    auto& Gc = ParameterLib::findParameter<double>(
+    auto const& Gc = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__CohesiveZoneModeI__fracture_toughness}
         config, "fracture_toughness", parameters, 1);
 
-    auto& t_np = ParameterLib::findParameter<double>(
+    auto const& t_np = ParameterLib::findParameter<double>(
         //! \ogs_file_param_special{material__fracture_model__CohesiveZoneModeI__peak_normal_traction}
         config, "peak_normal_traction", parameters, 1);
 

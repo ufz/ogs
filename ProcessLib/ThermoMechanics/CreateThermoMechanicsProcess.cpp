@@ -119,7 +119,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
             parameters, local_coordinate_system, config);
 
     // Reference solid density
-    auto& reference_solid_density = ParameterLib::findParameter<double>(
+    auto const& reference_solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__reference_solid_density}
         "reference_solid_density", parameters, 1, &mesh);
@@ -127,22 +127,22 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
          reference_solid_density.name);
 
     // Linear thermal expansion coefficient
-    auto& linear_thermal_expansion_coefficient = ParameterLib::findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__linear_thermal_expansion_coefficient}
-        "linear_thermal_expansion_coefficient", parameters, 1, &mesh);
+    auto const& linear_thermal_expansion_coefficient =
+        ParameterLib::findParameter<double>(
+            config,
+            //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__linear_thermal_expansion_coefficient}
+            "linear_thermal_expansion_coefficient", parameters, 1, &mesh);
     DBUG("Use '{:s}' as linear thermal expansion coefficient.",
          linear_thermal_expansion_coefficient.name);
     // Specific heat capacity
-    auto& specific_heat_capacity = ParameterLib::findParameter<double>(
+    auto const& specific_heat_capacity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__specific_heat_capacity}
         "specific_heat_capacity", parameters, 1, &mesh);
     DBUG("Use '{:s}' as specific heat capacity parameter.",
          specific_heat_capacity.name);
     // Thermal conductivity // TODO To be changed as tensor input.
-    auto& thermal_conductivity = ParameterLib::findParameter<double>(
+    auto const& thermal_conductivity = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__thermal_conductivity}
         "thermal_conductivity", parameters, 1, &mesh);

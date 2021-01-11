@@ -34,7 +34,7 @@ struct UserPunch;
 class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
-    PhreeqcIO(std::string const project_file_name,
+    PhreeqcIO(std::string const& project_file_name,
               std::string&& database,
               std::unique_ptr<ChemicalSystem>&& chemical_system,
               std::vector<ReactionRate>&& reaction_rates,

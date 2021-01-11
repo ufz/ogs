@@ -293,7 +293,7 @@ bool TetGenInterface::readNodesFromStream (std::ifstream &ins,
     return false;
 }
 
-bool TetGenInterface::parseNodesFileHeader(std::string& line,
+bool TetGenInterface::parseNodesFileHeader(std::string const& line,
                                            std::size_t& n_nodes,
                                            std::size_t& dim,
                                            std::size_t& n_attributes,

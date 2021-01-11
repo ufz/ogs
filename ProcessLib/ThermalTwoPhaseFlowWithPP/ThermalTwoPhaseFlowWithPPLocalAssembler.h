@@ -33,7 +33,7 @@ struct IntegrationPointData final
 {
     explicit IntegrationPointData(
         NodalRowVectorType const& N_, GlobalDimNodalMatrixType const& dNdx_,
-        ThermalTwoPhaseFlowWithPPMaterialProperties& material_property_,
+        ThermalTwoPhaseFlowWithPPMaterialProperties const& material_property_,
         double const& integration_weight_, NodalMatrixType const mass_operator_,
         NodalMatrixType const diffusion_operator_)
         : N(N_),

@@ -74,25 +74,25 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
     // diffusion coeff
-    auto& diff_coeff_b = ParameterLib::findParameter<double>(
+    auto const& diff_coeff_b = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__diffusion_coeff_component_b}
         "diffusion_coeff_component_b", parameters, 1, &mesh);
-    auto& diff_coeff_a = ParameterLib::findParameter<double>(
+    auto const& diff_coeff_a = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__diffusion_coeff_component_a}
         "diffusion_coeff_component_a", parameters, 1, &mesh);
 
     // Parameter for the density of the solid.
 
-    auto& density_solid = ParameterLib::findParameter<double>(
+    auto const& density_solid = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__density_solid}
         "density_solid", parameters, 1, &mesh);
     DBUG("Use '{:s}' as density_solid parameter.", density_solid.name);
 
     // Parameter for the latent heat of evaporation.
-    auto& latent_heat_evaporation = ParameterLib::findParameter<double>(
+    auto const& latent_heat_evaporation = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__latent_heat_evaporation}
         "latent_heat_evaporation", parameters, 1, &mesh);

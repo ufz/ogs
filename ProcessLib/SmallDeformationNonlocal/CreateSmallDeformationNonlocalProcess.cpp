@@ -72,7 +72,7 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
             parameters, local_coordinate_system, config);
 
     // Solid density
-    auto& solid_density = ParameterLib::findParameter<double>(
+    auto const& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION_NONLOCAL__solid_density}
         "solid_density", parameters, 1, &mesh);

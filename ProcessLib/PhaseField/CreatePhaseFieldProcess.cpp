@@ -112,42 +112,42 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         config.getConfigSubtree("phasefield_parameters");
 
     // Residual stiffness
-    auto& residual_stiffness = ParameterLib::findParameter<double>(
+    auto const& residual_stiffness = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__residual_stiffness}
         "residual_stiffness", parameters, 1);
     DBUG("Use '{:s}' as residual stiffness.", residual_stiffness.name);
 
     // Crack resistance
-    auto& crack_resistance = ParameterLib::findParameter<double>(
+    auto const& crack_resistance = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__crack_resistance}
         "crack_resistance", parameters, 1);
     DBUG("Use '{:s}' as crack resistance.", crack_resistance.name);
 
     // Crack length scale
-    auto& crack_length_scale = ParameterLib::findParameter<double>(
+    auto const& crack_length_scale = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__crack_length_scale}
         "crack_length_scale", parameters, 1);
     DBUG("Use '{:s}' as crack length scale.", crack_length_scale.name);
 
     // Kinetic coefficient
-    auto& kinetic_coefficient = ParameterLib::findParameter<double>(
+    auto const& kinetic_coefficient = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__kinetic_coefficient}
         "kinetic_coefficient", parameters, 1);
     DBUG("Use '{:s}' as kinetic coefficient.", kinetic_coefficient.name);
 
     // Solid density
-    auto& solid_density = ParameterLib::findParameter<double>(
+    auto const& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__solid_density}
         "solid_density", parameters, 1);
     DBUG("Use '{:s}' as solid density parameter.", solid_density.name);
 
     // History field
-    auto& history_field = ParameterLib::findParameter<double>(
+    auto const& history_field = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__history_field}
         "history_field", parameters, 1);

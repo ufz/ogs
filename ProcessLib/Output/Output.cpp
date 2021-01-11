@@ -302,7 +302,7 @@ void Output::doOutputAlways(Process const& process,
         return;
     }
 
-    auto output_bulk_mesh = [&](MeshLib::Mesh& mesh) {
+    auto output_bulk_mesh = [&](MeshLib::Mesh const& mesh) {
         MeshLib::IO::PVDFile* pvd_file = nullptr;
         if (_output_file_type == ProcessLib::OutputType::vtk)
         {

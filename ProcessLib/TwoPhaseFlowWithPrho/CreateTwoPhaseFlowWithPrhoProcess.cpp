@@ -68,15 +68,15 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__mass_lumping}
     auto const mass_lumping = config.getConfigParameter<bool>("mass_lumping");
     // diffusion coeff
-    auto& diff_coeff_b = ParameterLib::findParameter<double>(
+    auto const& diff_coeff_b = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__diffusion_coeff_component_b}
         "diffusion_coeff_component_b", parameters, 1, &mesh);
-    auto& diff_coeff_a = ParameterLib::findParameter<double>(
+    auto const& diff_coeff_a = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__diffusion_coeff_component_a}
         "diffusion_coeff_component_a", parameters, 1, &mesh);
-    auto& temperature = ParameterLib::findParameter<double>(
+    auto const& temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__temperature}
         "temperature", parameters, 1, &mesh);
