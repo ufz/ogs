@@ -302,14 +302,13 @@ public:
         }
     }
 
-    /// Sets the provided \c data_ptr to the newly created local assembler data.
+    /// Returns data pointer to the newly created local assembler data.
     ///
     /// \attention
     /// The index \c id is not necessarily the mesh item's id. Especially when
     /// having multiple meshes it will differ from the latter.
-    void operator()(std::size_t const id,
+    LADataIntfPtr operator()(std::size_t const id,
                     MeshLib::Element const& mesh_item,
-                    LADataIntfPtr& data_ptr,
                     ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
@@ -318,18 +317,15 @@ public:
         if (it != _builder.end())
         {
             auto const num_local_dof = _dof_table.getNumberOfElementDOF(id);
-            data_ptr = it->second(mesh_item, num_local_dof,
-                                  std::forward<ConstructorArgs>(args)...);
+            return it->second(mesh_item, num_local_dof,
+                              std::forward<ConstructorArgs>(args)...);
         }
-        else
-        {
-            OGS_FATAL(
-                "You are trying to build a local assembler for an unknown mesh "
-                "element type ({:s})."
-                " Maybe you have disabled this mesh element type in your build "
-                "configuration.",
-                type_idx.name());
-        }
+        OGS_FATAL(
+            "You are trying to build a local assembler for an unknown mesh "
+            "element type ({:s})."
+            " Maybe you have disabled this mesh element type in your build "
+            "configuration.",
+            type_idx.name());
     }
 
 private:
