@@ -257,7 +257,7 @@
         <vtkdiff>
             <file>triaxtest_output_ts_99_t_0.484319.vtu</file>
             <field>PreConsolidationPressure</field>
-            <absolute_tolerance>2e-9</absolute_tolerance>
+            <absolute_tolerance>3e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
