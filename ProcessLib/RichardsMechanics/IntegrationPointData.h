@@ -39,9 +39,11 @@ struct IntegrationPointData final
         sigma_eff.setZero(kelvin_vector_size);
         sigma_sw.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
+        eps_m.setZero(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
         eps_prev.resize(kelvin_vector_size);
+        eps_m_prev.resize(kelvin_vector_size);
         sigma_eff_prev.resize(kelvin_vector_size);
     }
 
@@ -51,6 +53,7 @@ struct IntegrationPointData final
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType sigma_sw, sigma_sw_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
@@ -81,6 +84,7 @@ struct IntegrationPointData final
     void pushBackState()
     {
         eps_prev = eps;
+        eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
         sigma_sw_prev = sigma_sw;
         saturation_prev = saturation;
@@ -107,14 +111,14 @@ struct IntegrationPointData final
 
         variable_array[static_cast<int>(MPL::Variable::stress)]
             .emplace<KV>(KV::Zero());
-        variable_array[static_cast<int>(MPL::Variable::strain)]
+        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<KV>(KV::Zero());
         variable_array[static_cast<int>(MPL::Variable::temperature)]
             .emplace<double>(temperature);
 
         variable_array_prev[static_cast<int>(MPL::Variable::stress)]
             .emplace<KV>(KV::Zero());
-        variable_array_prev[static_cast<int>(MPL::Variable::strain)]
+        variable_array_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<KV>(KV::Zero());
         variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
             .emplace<double>(temperature);
@@ -146,10 +150,10 @@ struct IntegrationPointData final
                                 MaterialPropertyLib::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 sigma_eff_prev);
-        variable_array_prev[static_cast<int>(
-                                MaterialPropertyLib::Variable::strain)]
+        variable_array_prev[static_cast<int>(MaterialPropertyLib::Variable::
+                                                 mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_prev);
+                eps_m_prev);
         variable_array_prev[static_cast<int>(
                                 MaterialPropertyLib::Variable::temperature)]
             .emplace<double>(temperature);

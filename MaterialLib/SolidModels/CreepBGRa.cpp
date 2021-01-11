@@ -42,10 +42,11 @@ CreepBGRa<DisplacementDim>::integrateStress(
     typename MechanicsBase<DisplacementDim>::MaterialStateVariables const&
     /*material_state_variables*/) const
 {
-    auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array[static_cast<int>(MPL::Variable::strain)]);
-    auto const& eps_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
-        variable_array_prev[static_cast<int>(MPL::Variable::strain)]);
+    auto const& eps_m = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]);
+    auto const& eps_m_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
+        variable_array_prev[static_cast<int>(
+            MPL::Variable::mechanical_strain)]);
     auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
         variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
     auto const T = std::get<double>(
@@ -58,7 +59,7 @@ CreepBGRa<DisplacementDim>::integrateStress(
         linear_solver;
 
     const auto C = this->getElasticTensor(t, x, T);
-    KelvinVector sigma_try = sigma_prev + C * (eps - eps_prev);
+    KelvinVector sigma_try = sigma_prev + C * (eps_m - eps_m_prev);
 
     auto const& deviatoric_matrix = Invariants::deviatoric_projection;
 

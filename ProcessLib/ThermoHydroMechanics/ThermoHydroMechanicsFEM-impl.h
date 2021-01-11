@@ -348,7 +348,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // displacement equation, displacement part
         //
         eps_m.noalias() = eps - thermal_strain;
-        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+        variables[static_cast<int>(
+                      MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
@@ -738,7 +739,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps_m = _ip_data[ip].eps_m;
         eps_m.noalias() = eps - thermal_strain;
 
-        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+        variables[static_cast<int>(
+                      MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 

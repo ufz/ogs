@@ -244,14 +244,16 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
 
         eps.noalias() = B * nodal_total_u;
 
-        variables[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+        variables[static_cast<int>(
+                      MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
 
         variables_prev[static_cast<int>(MaterialPropertyLib::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 sigma_prev);
-        variables_prev[static_cast<int>(MaterialPropertyLib::Variable::strain)]
+        variables_prev[static_cast<int>(
+                           MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_prev);
         variables_prev[static_cast<int>(
