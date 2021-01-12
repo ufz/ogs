@@ -53,7 +53,7 @@
                             <independent_variable>
                                 <variable_name>phase_pressure</variable_name>
                                 <reference_condition>0</reference_condition>
-                                <slope>1</slope>
+                                <slope>0.1</slope>
                             </independent_variable>
                         </property>
                     </properties>
