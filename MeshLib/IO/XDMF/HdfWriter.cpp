@@ -20,8 +20,8 @@
 #include "fileIO.h"
 
 template <typename... Args>
-void checkHdfStatus(const hid_t status, const std::string formatting,
-                    Args... args)
+void checkHdfStatus(const hid_t status, std::string const& formatting,
+                    Args&&... args)
 {
     if (status < 0)
     {

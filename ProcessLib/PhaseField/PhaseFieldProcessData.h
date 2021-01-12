@@ -43,7 +43,7 @@ struct PhaseFieldProcessData
     ParameterLib::Parameter<double> const& crack_length_scale;
     ParameterLib::Parameter<double> const& kinetic_coefficient;
     ParameterLib::Parameter<double> const& solid_density;
-    ParameterLib::Parameter<double>& history_field;
+    ParameterLib::Parameter<double> const& history_field;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     bool propagating_crack = false;
     bool crack_pressure = false;

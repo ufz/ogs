@@ -128,42 +128,42 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         config.getConfigSubtree("thermal_parameters");
 
     // Residual stiffness
-    auto& residual_stiffness = ParameterLib::findParameter<double>(
+    auto const& residual_stiffness = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__residual_stiffness}
         "residual_stiffness", parameters, 1, &mesh);
     DBUG("Use '{:s}' as residual stiffness.", residual_stiffness.name);
 
     // Crack resistance
-    auto& crack_resistance = ParameterLib::findParameter<double>(
+    auto const& crack_resistance = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__crack_resistance}
         "crack_resistance", parameters, 1, &mesh);
     DBUG("Use '{:s}' as crack resistance.", crack_resistance.name);
 
     // Crack length scale
-    auto& crack_length_scale = ParameterLib::findParameter<double>(
+    auto const& crack_length_scale = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__crack_length_scale}
         "crack_length_scale", parameters, 1, &mesh);
     DBUG("Use '{:s}' as crack length scale.", crack_length_scale.name);
 
     // Kinetic coefficient
-    auto& kinetic_coefficient = ParameterLib::findParameter<double>(
+    auto const& kinetic_coefficient = ParameterLib::findParameter<double>(
         phasefield_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters__kinetic_coefficient}
         "kinetic_coefficient", parameters, 1, &mesh);
     DBUG("Use '{:s}' as kinetic coefficient.", kinetic_coefficient.name);
 
     // Solid density
-    auto& solid_density = ParameterLib::findParameter<double>(
+    auto const& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__reference_solid_density}
         "solid_density", parameters, 1, &mesh);
     DBUG("Use '{:s}' as solid density parameter.", solid_density.name);
 
     // Linear thermal expansion coefficient
-    auto& linear_thermal_expansion_coefficient = ParameterLib::findParameter<
+    auto const& linear_thermal_expansion_coefficient = ParameterLib::findParameter<
         double>(
         thermal_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__linear_thermal_expansion_coefficient}
@@ -172,21 +172,22 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
          linear_thermal_expansion_coefficient.name);
 
     // Specific heat capacity
-    auto& specific_heat_capacity = ParameterLib::findParameter<double>(
+    auto const& specific_heat_capacity = ParameterLib::findParameter<double>(
         thermal_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__specific_heat_capacity}
         "specific_heat_capacity", parameters, 1, &mesh);
     DBUG("Use '{:s}' as specific heat capacity.", specific_heat_capacity.name);
 
     // Thermal conductivity
-    auto& thermal_conductivity = ParameterLib::findParameter<double>(
+    auto const& thermal_conductivity = ParameterLib::findParameter<double>(
         thermal_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__thermal_conductivity}
         "thermal_conductivity", parameters, 1, &mesh);
     DBUG("Use '{:s}' as thermal conductivity parameter.",
          thermal_conductivity.name);
     // Residual thermal conductivity
-    auto& residual_thermal_conductivity = ParameterLib::findParameter<double>(
+    auto const& residual_thermal_conductivity = ParameterLib::findParameter<
+        double>(
         thermal_parameters_config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__residual_thermal_conductivity}
         "residual_thermal_conductivity", parameters, 1, &mesh);

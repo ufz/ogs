@@ -129,7 +129,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
             parameters, local_coordinate_system, config);
 
     // reference temperature
-    auto& reference_temperature = ParameterLib::findParameter<double>(
+    auto const& reference_temperature = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__reference_temperature}
         "reference_temperature", parameters, 1, &mesh);

@@ -122,7 +122,7 @@ private:
      * @param boundary_markers  have the nodes boundary information (output)
      * @return true, if the file header is read, false if the method detects an error
      */
-    static bool parseNodesFileHeader(std::string& line,
+    static bool parseNodesFileHeader(std::string const& line,
                                      std::size_t& n_nodes,
                                      std::size_t& dim,
                                      std::size_t& n_attributes,

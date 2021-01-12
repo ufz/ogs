@@ -123,7 +123,7 @@ private:
 };
 
 template <typename TimeDisc, typename ODE, NumLib::NonlinearSolverTag NLTag>
-typename std::enable_if<std::is_same<TimeDisc, NumLib::BackwardEuler>::value,
+typename std::enable_if<std::is_same_v<TimeDisc, NumLib::BackwardEuler>,
                         Solution>::type
 run_test_case(const unsigned num_timesteps)
 {

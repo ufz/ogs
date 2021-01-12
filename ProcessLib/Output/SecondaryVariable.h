@@ -50,22 +50,22 @@ struct SecondaryVariableFunctions final
     {
         // Used to detect nasty implicit conversions.
         static_assert(
-            std::is_same<
+            std::is_same_v<
                 GlobalVector const&,
-                typename std::invoke_result<
+                typename std::invoke_result_t<
                     F1, double const, std::vector<GlobalVector*> const&,
                     std::vector<NumLib::LocalToGlobalIndexMap const*> const&,
-                    std::unique_ptr<GlobalVector>&>::type>::value,
+                    std::unique_ptr<GlobalVector>&>>,
             "The function eval_field_ does not return a const reference"
             " to a GlobalVector");
 
         static_assert(
-            std::is_same<
+            std::is_same_v<
                 GlobalVector const&,
-                typename std::invoke_result<
+                typename std::invoke_result_t<
                     F2, double const, std::vector<GlobalVector*> const&,
                     std::vector<NumLib::LocalToGlobalIndexMap const*> const&,
-                    std::unique_ptr<GlobalVector>&>::type>::value,
+                    std::unique_ptr<GlobalVector>&>>,
             "The function eval_residuals_ does not return a const reference"
             " to a GlobalVector");
     }
@@ -78,12 +78,12 @@ struct SecondaryVariableFunctions final
     {
         // Used to detect nasty implicit conversions.
         static_assert(
-            std::is_same<
+            std::is_same_v<
                 GlobalVector const&,
-                typename std::invoke_result<
+                typename std::invoke_result_t<
                     F1, double const, std::vector<GlobalVector*> const&,
                     std::vector<NumLib::LocalToGlobalIndexMap const*> const&,
-                    std::unique_ptr<GlobalVector>&>::type>::value,
+                    std::unique_ptr<GlobalVector>&>>,
             "The function eval_field_ does not return a const reference"
             " to a GlobalVector");
     }

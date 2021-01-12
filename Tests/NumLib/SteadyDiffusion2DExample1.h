@@ -74,14 +74,14 @@ template<typename IndexType>struct SteadyDiffusion2DExample1
         LocalVectorType const* _localRhs = nullptr;
     };
 
-    static
-    void initializeLocalData(const MeshLib::Element& e,
-            LocalAssemblerData*& data_ptr,
-            std::size_t const local_matrix_size,
-            SteadyDiffusion2DExample1 const& example)
+    static LocalAssemblerData* initializeLocalData(
+        const MeshLib::Element& e,
+        std::size_t const local_matrix_size,
+        SteadyDiffusion2DExample1 const& example)
     {
-        data_ptr = new LocalAssemblerData;
+        LocalAssemblerData* data_ptr = new LocalAssemblerData;
         data_ptr->init(e, local_matrix_size, example._localA, example._localRhs);
+        return data_ptr;
     }
 
     SteadyDiffusion2DExample1()

@@ -83,7 +83,7 @@ namespace ODE
  */
 class CVodeSolverImpl final
 {
-    static_assert(std::is_same<realtype, double>::value,
+    static_assert(std::is_same_v<realtype, double>,
                   "CVode's realtype is not the same as double");
 
 public:

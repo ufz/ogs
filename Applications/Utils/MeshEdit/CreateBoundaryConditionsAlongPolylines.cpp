@@ -85,8 +85,8 @@ void writeLiquidFlowPointBC(std::ostream & bc_out, std::string const& pnt_name)
 // set on, geo_name is the name the geometry can be accessed with, out_fname is
 // the base file name the gli and bc as well as the gml file will be written to.
 void writeBCsAndGeometry(GeoLib::GEOObjects& geometry_sets,
-                         std::string& geo_name, std::string const& out_fname,
-                         std::string const& bc_type, bool write_gml)
+                         std::string const& geo_name, std::string const& out_fname,
+                         std::string const& bc_type, bool const write_gml)
 {
     if (write_gml) {
         INFO("write points to '{:s}.gml'.", geo_name);

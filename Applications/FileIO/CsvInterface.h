@@ -67,8 +67,8 @@ public:
                              std::vector<T> const& vec)
     {
         static_assert(
-            std::is_same<T, std::string>::value ||
-                std::is_same<T, double>::value || std::is_same<T, int>::value,
+            std::is_same_v<T, std::string> || std::is_same_v<T, double> ||
+                std::is_same_v<T, int>,
             "CsvInterface can only write vectors of strings, doubles or ints.");
 
         if (!_data.empty())

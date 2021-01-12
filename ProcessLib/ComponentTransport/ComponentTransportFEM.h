@@ -185,7 +185,7 @@ public:
         bool is_axially_symmetric,
         unsigned const integration_order,
         ComponentTransportProcessData const& process_data,
-        std::vector<std::reference_wrapper<ProcessVariable>>
+        std::vector<std::reference_wrapper<ProcessVariable>> const&
             transport_process_variables)
         : _element(element),
           _process_data(process_data),

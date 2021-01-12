@@ -192,7 +192,7 @@ struct SerialExecutor
 
         for (std::size_t i = 0; i < c.size(); i++)
         {
-            f(i, *c[i], data[i], std::forward<Args_>(args)...);
+            data[i] = f(i, *c[i], std::forward<Args_>(args)...);
         }
     }
 };

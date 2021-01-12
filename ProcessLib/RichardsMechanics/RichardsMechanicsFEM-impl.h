@@ -21,7 +21,6 @@
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
-#include "RichardsMechanicsFEM.h"
 
 namespace ProcessLib
 {

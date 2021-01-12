@@ -21,7 +21,7 @@ TimeDependentHeterogeneousParameter::TimeDependentHeterogeneousParameter(
     std::vector<PairTimeParameterName>
         time_parameter_name_mapping)
     : Parameter<double>(std::move(name), nullptr),
-      _time_parameter_name_mapping(time_parameter_name_mapping)
+      _time_parameter_name_mapping(std::move(time_parameter_name_mapping))
 {
 }
 

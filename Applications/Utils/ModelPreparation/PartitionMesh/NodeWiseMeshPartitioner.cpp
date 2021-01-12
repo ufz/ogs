@@ -381,7 +381,7 @@ bool copyPropertyVector(
     MeshLib::Properties& partitioned_properties,
     std::vector<Partition> const& partitions,
     MeshLib::PropertyVector<T> const* const pv,
-    std::map<MeshLib::MeshItemType, std::size_t> const total_number_of_tuples)
+    std::map<MeshLib::MeshItemType, std::size_t> const& total_number_of_tuples)
 {
     if (pv == nullptr)
     {

@@ -80,8 +80,8 @@ class ExtrapolatableLocalAssemblerCollection
 public:
     //! LocalAssemblerCollection contains many LocalAssembler's.
     using LocalAssembler =
-        typename std::decay<decltype(*std::declval<LocalAssemblerCollection>()
-                                         [static_cast<std::size_t>(0)])>::type;
+        typename std::decay_t<decltype(*std::declval<LocalAssemblerCollection>()
+                                           [static_cast<std::size_t>(0)])>;
 
     static_assert(std::is_base_of<ExtrapolatableElement, LocalAssembler>::value,
                   "Local assemblers used for extrapolation must be derived "

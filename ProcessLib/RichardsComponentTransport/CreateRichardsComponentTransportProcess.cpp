@@ -86,7 +86,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         MaterialLib::Fluid::createFluidProperties(fluid_config);
 
     // Parameter for the density of the fluid.
-    auto& fluid_reference_density = ParameterLib::findParameter<double>(
+    auto const& fluid_reference_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__fluid_reference_density}
         "fluid_reference_density", parameters, 1, &mesh);

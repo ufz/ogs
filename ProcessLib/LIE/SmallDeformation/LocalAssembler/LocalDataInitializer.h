@@ -231,14 +231,13 @@ public:
 #endif
     }
 
-    /// Sets the provided \c data_ptr to the newly created local assembler data.
+    /// Returns data pointer to the newly created local assembler data.
     ///
     /// \attention
     /// The index \c id is not necessarily the mesh item's id. Especially when
     /// having multiple meshes it will differ from the latter.
-    void operator()(std::size_t const id,
+    LADataIntfPtr operator()(std::size_t const id,
                     MeshLib::Element const& mesh_item,
-                    LADataIntfPtr& data_ptr,
                     ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
@@ -289,9 +288,9 @@ public:
             }
         }
 
-        data_ptr = it->second(mesh_item, varIDs.size(), n_local_dof,
-                              dofIndex_to_localIndex,
-                              std::forward<ConstructorArgs>(args)...);
+        return it->second(mesh_item, varIDs.size(), n_local_dof,
+                          dofIndex_to_localIndex,
+                          std::forward<ConstructorArgs>(args)...);
     }
 
 private:
