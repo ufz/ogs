@@ -32,4 +32,5 @@
 #include "RelativePermeability/RelPermVanGenuchten.h"
 #include "SaturationDependentHeatConduction.h"
 #include "SaturationDependentSwelling.h"
+#include "EmbeddedFracturePermeability.h"
 #include "TransportPorosityFromMassBalance.h"

@@ -97,10 +97,15 @@ PropertyDataType StrainDependentPermeability<DisplacementDim>::value(
 
 template <int DisplacementDim>
 PropertyDataType StrainDependentPermeability<DisplacementDim>::dValue(
-    VariableArray const& /*variable_array*/, Variable const /*variable*/,
+    VariableArray const& /*variable_array*/, Variable const variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
+    if (variable == Variable::mechanical_strain)
+    {
+        return 0.;
+    }
+
     OGS_FATAL(
         "The derivative of the intrinsic permeability of "
         "StrainDependentPermeability"

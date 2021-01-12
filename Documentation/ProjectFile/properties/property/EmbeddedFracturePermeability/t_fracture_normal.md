@@ -1,0 +1,1 @@
+Optional Parameter fracture_normal. Defines the normal vector of the fracture plane via its three components. If not specified, the fracture normal vector is calculated as the direction of the third principal stress vector.
