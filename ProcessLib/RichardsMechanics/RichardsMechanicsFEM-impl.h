@@ -401,9 +401,9 @@ void RichardsMechanicsLocalAssembler<
 
         // Set volumetric strain rate for the general case without swelling.
         variables[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * u);
+            .emplace<double>(Invariants::trace(_ip_data[ip].eps));
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
+            .emplace<double>(Invariants::trace(B * (u - u_dot * dt)));
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -495,10 +495,7 @@ void RichardsMechanicsLocalAssembler<
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
         }
-        // For strain dependent permeability
-        variables[static_cast<int>(
-            MaterialPropertyLib::Variable::volumetric_strain)] =
-            Invariants::trace(_ip_data[ip].eps);
+
         variables[static_cast<int>(
             MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
@@ -760,9 +757,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Set volumetric strain rate for the general case without swelling.
         variables[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * u);
+            .emplace<double>(Invariants::trace(_ip_data[ip].eps));
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
+            .emplace<double>(Invariants::trace(B * (u - u_dot * dt)));
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -852,10 +849,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
         }
-        // For strain dependent permeability
-        variables[static_cast<int>(
-            MaterialPropertyLib::Variable::volumetric_strain)] =
-            Invariants::trace(_ip_data[ip].eps);
+
         variables[static_cast<int>(
             MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
@@ -1419,6 +1413,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto& eps = _ip_data[ip].eps;
+        eps.noalias() = B * u;
         auto& eps_m = _ip_data[ip].eps_m;
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
@@ -1459,9 +1454,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Set volumetric strain rate for the general case without swelling.
         variables[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * u);
+            .emplace<double>(Invariants::trace(_ip_data[ip].eps));
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
+            .emplace<double>(Invariants::trace(B * (u - u_dot * dt)));
 
         auto& phi = _ip_data[ip].porosity;
         {  // Porosity update
@@ -1541,10 +1536,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
         }
-        // For strain dependent permeability
-        variables[static_cast<int>(
-            MaterialPropertyLib::Variable::volumetric_strain)] =
-            Invariants::trace(_ip_data[ip].eps);
+
         variables[static_cast<int>(
             MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
@@ -1569,7 +1561,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
         _ip_data[ip].dry_density_solid = (1 - phi) * rho_SR;
 
-        eps.noalias() = B * u;
         eps_m.noalias() = eps + C_el.inverse() * sigma_sw;
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
