@@ -203,6 +203,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const& solid_phase = medium->phase("Solid");
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -233,7 +235,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             t, x_position, dt, temperature);
         auto& eps = _ip_data[ip].eps;
         auto& sigma_sw = _ip_data[ip].sigma_sw;
-        _ip_data[ip].eps_m_prev.noalias() = eps - C_el.inverse() * sigma_sw;
+
+        _ip_data[ip].eps_m_prev.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps - C_el.inverse() * sigma_sw
+                : eps;
     }
 }
 
@@ -510,7 +516,10 @@ void RichardsMechanicsLocalAssembler<
         //
         // displacement equation, displacement part
         //
-        eps_m.noalias() = eps - C_el.inverse() * sigma_sw;
+        eps_m.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps - C_el.inverse() * sigma_sw
+                : eps;
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
@@ -863,7 +872,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // displacement equation, displacement part
         //
-        eps_m.noalias() = eps + C_el.inverse() * sigma_sw;
+        eps_m.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps + C_el.inverse() * sigma_sw
+                : eps;
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
@@ -1561,7 +1573,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
         _ip_data[ip].dry_density_solid = (1 - phi) * rho_SR;
 
-        eps_m.noalias() = eps + C_el.inverse() * sigma_sw;
+        eps_m.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps + C_el.inverse() * sigma_sw
+                : eps;
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
