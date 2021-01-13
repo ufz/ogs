@@ -7,16 +7,18 @@ container:
     - if: $CI_COMMIT_TAG
     - changes:
       - scripts/ci/jobs/container.yml
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
   extends:
     - .container-maker-setup
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - if [[ "$CI_COMMIT_BRANCH" == "master" ]] ;then export DOCKER_TAG="--tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest" ; fi
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
       --cmake_args ' -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON -DOGS_USE_PYTHON=ON'
-      --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest --upload
+      $DOCKER_TAG
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
