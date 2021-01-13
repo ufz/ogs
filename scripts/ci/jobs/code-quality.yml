@@ -2,6 +2,9 @@ cppcheck:
   stage: check
   image: $CONTAINER_GCC_IMAGE
   needs: ["pre commit", meta]
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
   before_script:
     - mkdir -p build
     - cd build
