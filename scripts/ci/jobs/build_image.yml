@@ -1,12 +1,12 @@
 build container images:
   stage: preparation
   rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
     - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-      when: never
   dependencies: [meta_container]
   tags: [envinf1-shell]
   extends: .container-maker-setup
@@ -26,12 +26,12 @@ build container images:
 build xunit-to-junit image:
   stage: .pre
   rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
     - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/saxon/**/*
       - scripts/ci/jobs/build_image.yml
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-      when: never
   tags:
     - envinf1-shell
   script:
@@ -43,12 +43,12 @@ build xunit-to-junit image:
 build pre-commit image:
   stage: .pre
   rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
     - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/Dockerfile.pre-commit
       - scripts/ci/jobs/build_image.yml
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-      when: never
   tags:
     - envinf1-shell
   script:
@@ -59,12 +59,12 @@ build pre-commit image:
 build web image:
   stage: .pre
   rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
     - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/Dockerfile.web
       - scripts/ci/jobs/build_image.yml
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-      when: never
   tags:
     - envinf1-shell
   script:
