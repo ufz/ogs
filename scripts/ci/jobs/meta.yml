@@ -1,8 +1,9 @@
 meta:
   stage: .pre
   tags: [shell]
+  variables:
+    GIT_DEPTH: 1000
   script:
-    - git fetch --depth 1000
     - echo "OGS_VERSION=${CI_COMMIT_TAG:-`git describe --tags --long --dirty --always`}" >> build.env
     - cat build.env
   artifacts:
