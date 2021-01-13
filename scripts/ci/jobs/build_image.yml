@@ -1,6 +1,8 @@
 build container images:
   stage: preparation
   rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
     - if: '$CI_PROJECT_NAMESPACE == "endjunction" || $CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - ThirdParty/container-maker
@@ -24,6 +26,8 @@ build container images:
 build xunit-to-junit image:
   stage: .pre
   rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
     - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/saxon/**/*
@@ -39,6 +43,8 @@ build xunit-to-junit image:
 build pre-commit image:
   stage: .pre
   rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
     - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/Dockerfile.pre-commit
@@ -53,6 +59,8 @@ build pre-commit image:
 build web image:
   stage: .pre
   rules:
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
     - if: '$CI_PROJECT_NAMESPACE == "bilke" || $CI_PROJECT_NAMESPACE == "ogs"'
       changes:
       - scripts/docker/Dockerfile.web
