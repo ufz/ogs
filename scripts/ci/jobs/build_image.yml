@@ -5,6 +5,8 @@ build container images:
       changes:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
   dependencies: [meta_container]
   tags: [envinf1-shell]
   extends: .container-maker-setup
@@ -28,6 +30,8 @@ build xunit-to-junit image:
       changes:
       - scripts/docker/saxon/**/*
       - scripts/ci/jobs/build_image.yml
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
   tags:
     - envinf1-shell
   script:
@@ -43,6 +47,8 @@ build pre-commit image:
       changes:
       - scripts/docker/Dockerfile.pre-commit
       - scripts/ci/jobs/build_image.yml
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
   tags:
     - envinf1-shell
   script:
@@ -57,6 +63,8 @@ build web image:
       changes:
       - scripts/docker/Dockerfile.web
       - scripts/ci/jobs/build_image.yml
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      when: never
   tags:
     - envinf1-shell
   script:
