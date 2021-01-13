@@ -39,8 +39,13 @@
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Constant</type>
-                            <value> 1 </value>
+                            <type>Linear</type>
+                            <reference_value>1</reference_value>
+                            <independent_variable>
+                                <variable_name>phase_pressure</variable_name>
+                                <reference_condition>-5000</reference_condition>
+                                <slope>0.45454545454545454545e-300</slope>
+                            </independent_variable>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
@@ -82,14 +87,6 @@
             </phases>
             <properties>
                 <property>
-                    <name>relative_permeability</name>
-                    <type>RelativePermeabilityVanGenuchten</type>
-                    <residual_liquid_saturation>0.1689</residual_liquid_saturation>
-                    <residual_gas_saturation>0.05</residual_gas_saturation>
-                    <exponent>0.789029535864979</exponent>
-                    <minimum_relative_permeability_liquid>1e-12</minimum_relative_permeability_liquid>
-                </property>
-                <property>
                     <name>saturation</name>
                     <type>SaturationVanGenuchten</type>
                     <residual_liquid_saturation>0.1689</residual_liquid_saturation>
@@ -98,9 +95,17 @@
                     <p_b>3633.33</p_b>
                 </property>
                 <property>
+                    <name>relative_permeability</name>
+                    <type>RelativePermeabilityVanGenuchten</type>
+                    <residual_liquid_saturation>0.1689</residual_liquid_saturation>
+                    <residual_gas_saturation>0.05</residual_gas_saturation>
+                    <exponent>0.789029535864979</exponent>
+                    <minimum_relative_permeability_liquid>1e-12</minimum_relative_permeability_liquid>
+                </property>
+                <property>
                     <name>biot_coefficient</name>
                     <type>Constant</type>
-                    <value>0</value>
+                    <value>0.38</value>
                 </property>
                 <property>
                     <name>permeability</name>
