@@ -206,6 +206,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(element_.getID());
 
+    auto const& solid_phase = medium->phase("Solid");
+
     unsigned const n_integration_points =
         integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -236,7 +238,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             t, x_position, dt, T_ip);
         auto& eps = ip_data_[ip].eps;
         auto& sigma_sw = ip_data_[ip].sigma_sw;
-        ip_data_[ip].eps_m_prev.noalias() = eps - C_el.inverse() * sigma_sw;
+        ip_data_[ip].eps_m_prev.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps - C_el.inverse() * sigma_sw
+                : eps;
     }
 }
 
@@ -561,7 +566,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     solid_linear_thermal_expansion_coefficient) *
                 T_dot_ip * dt;
 
-        eps_m.noalias() = eps + C_el.inverse() * sigma_sw;
+        eps_m.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps + C_el.inverse() * sigma_sw
+                : eps;
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m - dthermal_strain);
@@ -1326,7 +1334,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     solid_linear_thermal_expansion_coefficient) *
                 T_dot_ip * dt;
 
-        eps_m.noalias() = eps + C_el.inverse() * sigma_sw;
+        eps_m.noalias() =
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
+                ? eps + C_el.inverse() * sigma_sw
+                : eps;
 
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
