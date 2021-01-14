@@ -1,3 +1,4 @@
+# Built for Sandy Bridge (envinf1) and newer
 container:
   stage: package
   tags: [envinf2-shell]
@@ -19,19 +20,19 @@ container:
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
-      --cmake_args ' -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON -DOGS_USE_PYTHON=ON'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON -DOGS_USE_PYTHON=ON'
       $DOCKER_TAG
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
-      --cmake_args ' -DBUILD_TESTING=OFF'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF'
       --base_image 'centos:8' --ompi 4.0.5 --mpi_benchmarks
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
-      --cmake_args ' -DBUILD_TESTING=OFF'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF'
       --gui
   artifacts:
     name: container
