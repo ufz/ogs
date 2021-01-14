@@ -102,7 +102,7 @@ public:
 
     bool canReduceTimestepSize() const override;
 
-    /// Return the number of repeated steps.
+    /// Return the number of the total repeated steps.
     int getNumberOfRepeatedSteps() const { return _n_rejected_steps; }
 
 private:
@@ -127,9 +127,11 @@ private:
     const int _max_iter;
     /// The number of nonlinear iterations.
     int _iter_times = 0;
-    /// The number of rejected steps.
+    /// The number of total rejected steps.
     int _n_rejected_steps = 0;
-    /// True, if the timestep is accepted.
+
+    bool _previous_time_step_accepted = true;
+    /// True, if the current time step is accepted.
     bool _accepted = true;
 };
 
