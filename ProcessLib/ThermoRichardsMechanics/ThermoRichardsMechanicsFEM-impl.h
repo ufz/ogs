@@ -436,9 +436,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Set volumetric strain rate for the general case without swelling.
         variables[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * u);
+            .emplace<double>(Invariants::trace(eps));
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
+            .emplace<double>(Invariants::trace(B * (u - u_dot * dt)));
 
         auto& phi = ip_data_[ip].porosity;
         {  // Porosity update
@@ -528,10 +528,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
         }
-        // For strain dependent permeability
-        variables[static_cast<int>(
-            MaterialPropertyLib::Variable::volumetric_strain)] =
-            Invariants::trace(ip_data_[ip].eps);
+
         variables[static_cast<int>(
             MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
             ip_data_[ip].material_state_variables->getEquivalentPlasticStrain();
@@ -580,7 +577,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
-            p_FR - sigma_eff.dot(identity2) / (3 * (1 - phi));
+            p_FR - Invariants::trace(sigma_eff) / (3 * (1 - phi));
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
@@ -1165,6 +1162,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
 
         auto& eps = ip_data_[ip].eps;
+        eps.noalias() = B * u;
         auto& eps_m = ip_data_[ip].eps_m;
         auto& S_L = ip_data_[ip].saturation;
         auto const S_L_prev = ip_data_[ip].saturation_prev;
@@ -1205,9 +1203,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Set volumetric strain rate for the general case without swelling.
         variables[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * u);
+            .emplace<double>(Invariants::trace(eps));
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
-            .emplace<double>(identity2.transpose() * B * (u - u_dot * dt));
+            .emplace<double>(Invariants::trace(B * (u - u_dot * dt)));
 
         auto& phi = ip_data_[ip].porosity;
         {  // Porosity update
@@ -1287,10 +1285,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
         }
-        // For strain dependent permeability
-        variables[static_cast<int>(
-            MaterialPropertyLib::Variable::volumetric_strain)] =
-            Invariants::trace(ip_data_[ip].eps);
+
         variables[static_cast<int>(
             MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
             ip_data_[ip].material_state_variables->getEquivalentPlasticStrain();
@@ -1308,7 +1303,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
-            p_FR - sigma_eff.dot(identity2) / (3 * (1 - phi));
+            p_FR - Invariants::trace(sigma_eff) / (3 * (1 - phi));
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
@@ -1331,7 +1326,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     solid_linear_thermal_expansion_coefficient) *
                 T_dot_ip * dt;
 
-        eps.noalias() = B * u;
         eps_m.noalias() = eps + C_el.inverse() * sigma_sw;
 
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
