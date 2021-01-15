@@ -98,12 +98,8 @@ if(OGS_BUILD_GUI)
         # Overrides for dependency mismatches
         bzip2/1.0.8
         zlib/1.2.11
+        qt/${ogs.minimum_version.qt}@bincrafters/stable
     )
-    if(UNIX)
-        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/${ogs.tested_version.qt.linux}@bincrafters/stable)
-    else()
-        set(CONAN_REQUIRES ${CONAN_REQUIRES} qt/${ogs.tested_version.qt.win}@bincrafters/stable)
-    endif()
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         vtk:minimal=False
         vtk:qt=True
