@@ -72,14 +72,14 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT * pnt, POINT *& ret_pnt)
     MathLib::Point3d max(
         std::array<double,3>{{(*pnt)[0]+_eps, (*pnt)[1]+_eps, (*pnt)[2]+_eps}});
     getPointsInRange(min, max, query_pnts);
-    if (! query_pnts.empty()) {
-        // check Euclidean norm
-        for (auto p : query_pnts) {
-            if (MathLib::sqrDist(*p, *pnt) <= _eps*_eps) {
-                ret_pnt = p;
-                return false;
-            }
-        }
+    auto const it = std::find_if(
+        query_pnts.begin(), query_pnts.end(), [pnt, this](auto const* p) {
+            return MathLib::sqrDist(*p, *pnt) < _eps * _eps;
+        });
+    if (it != query_pnts.end())
+    {
+        ret_pnt = *it;
+        return false;
     }
 
     // the point pnt is not yet in the OctTree
