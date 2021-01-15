@@ -53,10 +53,8 @@ target_link_libraries(DataExplorer
     ${VTK_LIBRARIES}
 )
 
-if(NOT APPLE AND OGS_USE_CONAN)
-    if(UNIX)
-        target_link_libraries(DataExplorer Qt5::X11Extras)
-    endif()
+if(UNIX AND NOT APPLE)
+    target_link_libraries(DataExplorer Qt5::X11Extras)
 endif()
 
 # Workaround for Windows conan tiff-package
