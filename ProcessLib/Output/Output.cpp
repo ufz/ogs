@@ -179,13 +179,14 @@ struct Output::OutputFile
                std::string const& prefix, std::string const& suffix,
                std::string const& mesh_name, int const timestep, double const t,
                int const iteration, int const data_mode_,
-               bool const compression_)
+               bool const compression_, std::set<std::string> outputnames)
         : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
                                  iteration)),
           path(BaseLib::joinPaths(directory, name)),
           type(type),
           data_mode(data_mode_),
-          compression(compression_)
+          compression(compression_),
+          outputnames(outputnames)
     {
     }
 
@@ -200,6 +201,8 @@ struct Output::OutputFile
 
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
+
+    std::set<std::string> outputnames;
 
     static std::string constructFilename(OutputType const type,
                                          std::string prefix, std::string suffix,
@@ -241,7 +244,9 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
     {
         std::filesystem::path path(output_file.path);
         _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-            MeshLib::IO::XdmfHdfWriter(mesh, path, timestep));
+        MeshLib::IO::XdmfHdfWriter(
+                mesh, path, timestep,
+                _output_data_specification.output_variables));
     }
     _mesh_xdmf_hdf_writer->writeStep(timestep, t);
 }
@@ -308,7 +313,8 @@ void Output::doOutputAlways(Process const& process,
             OutputFile const file(
                 _output_directory, _output_file_type, _output_file_prefix,
                 _output_file_suffix, mesh.getName(), timestep, t, iteration,
-                _output_file_data_mode, _output_file_compression);
+                _output_file_data_mode, _output_file_compression,
+                _output_data_specification.output_variables);
 
             pvd_file = findPVDFile(process, process_id, mesh.getName());
             outputMesh(file, pvd_file, mesh, timestep, t);
@@ -319,7 +325,8 @@ void Output::doOutputAlways(Process const& process,
             OutputFile const file(
                 _output_directory, _output_file_type, _output_file_prefix, "",
                 mesh.getName(), timestep, t, iteration, _output_file_data_mode,
-                _output_file_compression);
+                _output_file_compression,
+                _output_data_specification.output_variables);
 
             outputMeshXdmf(file, mesh, timestep, t);
 #else

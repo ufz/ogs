@@ -14,6 +14,7 @@
 #pragma once
 
 #include <filesystem.h>
+#include <set>
 
 #include "HdfWriter.h"
 #include "MeshLib/Mesh.h"
@@ -31,7 +32,8 @@ public:
      * @param time_step number of the step (temporal collection)
      */
     XdmfHdfWriter(MeshLib::Mesh const& mesh,
-                  std::filesystem::path const& filepath, int time_step);
+                  std::filesystem::path const& filepath, int time_step,
+                  std::set<std::string> variable_output_names);
     /**
      * \brief Write attribute data that has modified to previous time step or
      * initial

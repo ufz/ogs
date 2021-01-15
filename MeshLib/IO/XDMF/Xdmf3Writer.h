@@ -19,6 +19,7 @@
 #include "MeshLib/Mesh.h"
 #include "XdmfData.h"
 
+class XdmfAttribute;
 class XdmfGridCollection;
 class XdmfTopology;
 class XdmfGeometry;
@@ -48,7 +49,8 @@ public:
      * @param time_step number of the step (temporal collection)
      */
     Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
-                std::vector<XdmfData> attributes,
+                std::vector<XdmfData> constant_attributes,
+                std::vector<XdmfData> variable_attributes,
                 std::filesystem::path const& filepath, int time_step);
     /**
      * \brief Write attribute data that has modified to previous time step or
@@ -62,7 +64,8 @@ private:
     boost::shared_ptr<XdmfGridCollection> _gridCollection;
     boost::shared_ptr<XdmfTopology> _initial_topology;
     boost::shared_ptr<XdmfGeometry> _initial_geometry;
-    std::vector<XdmfData> const _attributes;
+    std::vector<boost::shared_ptr<XdmfAttribute>> _constant_attributes;
+    std::vector<XdmfData> const _variable_attributes;
     boost::shared_ptr<XdmfWriter> _writer;
     boost::shared_ptr<XdmfDomain> _root;
     std::string const _hdf5filename;

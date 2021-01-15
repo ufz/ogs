@@ -12,6 +12,8 @@
 #pragma once
 
 #include "XdmfHdfData.h"
+#include <set>
+#include <string>
 
 namespace MeshLib
 {
@@ -25,7 +27,9 @@ namespace MeshLib::IO
  * @param mesh OGS mesh can be mesh or partitionedMesh
  * @return vector of meta data
  */
-std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh);
+std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh,
+                                               std::set<std::string> names,
+                                               bool include);
 /**
  * \brief Copies all node points into a new vector. Contiguous data used for
  * writing.

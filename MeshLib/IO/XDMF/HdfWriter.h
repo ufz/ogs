@@ -36,7 +36,9 @@ public:
     HdfWriter(HdfData const& geometry,
               HdfData const& topology,
               std::vector<HdfData>
-                  attributes,
+                  constant_attributes,
+              std::vector<HdfData>
+                  variable_attributes,
               int const step,
               std::filesystem::path const& filepath);
 
@@ -51,7 +53,7 @@ public:
     bool writeStep(int step) const;
 
 private:
-    std::vector<HdfData> const _attributes;
+    std::vector<HdfData> const _variable_attributes;
     std::filesystem::path const _hdf5_filepath;
     bool const _has_compression;
 };

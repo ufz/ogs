@@ -12,6 +12,7 @@
 #include "transformData.h"
 
 #include <XdmfTopologyType.hpp>
+#include <algorithm>
 #include <optional>
 #include <string>
 
@@ -186,7 +187,8 @@ std::optional<AttributeMeta> transformAttribute(
     return AttributeMeta{std::move(hdf), std::move(xdmf)};
 }
 
-std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh)
+std::vector<AttributeMeta> transformAttributes(
+    MeshLib::Mesh const& mesh, std::set<std::string> names, bool include)
 {
     MeshLib::Properties const& properties = mesh.getProperties();
 
@@ -201,7 +203,14 @@ std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh)
             continue;
         }
 
+        auto found = std::find(names.begin(), names.end(), name) != names.end();
+        auto add = (include && found) || (!include && !found);
+
+        if (!add)
+            continue;
+
         auto attribute = transformAttribute(std::pair(name, property_base));
+
         if (attribute)
         {
             attributes.push_back(attribute.value());

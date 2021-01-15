@@ -148,10 +148,12 @@ namespace MeshLib::IO
 HdfWriter::HdfWriter(HdfData const& geometry,
                      HdfData const& topology,
                      std::vector<HdfData>
-                         attributes,
+                         constant_attributes,
+                     std::vector<HdfData>
+                         variable_attributes,
                      int const step,
                      std::filesystem::path const& filepath)
-    : _attributes(std::move(attributes)),
+    : _variable_attributes(std::move(variable_attributes)),
       _hdf5_filepath(filepath),
       _has_compression(checkCompression())
 {
@@ -174,6 +176,17 @@ HdfWriter::HdfWriter(HdfData const& geometry,
                      _has_compression, group_id, topology.name);
     checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.", topology.name);
 
+    for (auto const& attribute : constant_attributes)
+    {
+        status = writeDataSet(attribute.data_start, attribute.data_type,
+                              attribute.data_space, attribute.offsets,
+                              attribute.file_space, _has_compression, group_id,
+                              attribute.name);
+
+        checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.",
+                       attribute.name);
+    }
+
     H5Gclose(group_id);
     status = H5Fclose(file);
     checkHdfStatus(status, "HDF Writer could not be created!", topology.name);
@@ -185,7 +198,7 @@ bool HdfWriter::writeStep(int const step) const
     hid_t const group = createStepGroup(file, step);
 
     hid_t status = 0;
-    for (auto const& attribute : _attributes)
+    for (auto const& attribute : _variable_attributes)
     {
         status = writeDataSet(attribute.data_start, attribute.data_type,
                               attribute.data_space, attribute.offsets,
