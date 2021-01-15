@@ -21,11 +21,11 @@
 
 #include "GeoLib/GEOObjects.h"
 
-namespace MeshLib {
-
-MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
-    _aabb{sfc_mesh.getNodes().cbegin(), sfc_mesh.getNodes().cend()},
-    _n_steps({{1,1,1}})
+namespace MeshLib
+{
+MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& mesh)
+    : _aabb{mesh.getNodes().cbegin(), mesh.getNodes().cend()},
+      _n_steps({{1, 1, 1}})
 {
     auto getDimensions =
         [](MathLib::Point3d const& min, MathLib::Point3d const& max)
@@ -49,7 +49,7 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     std::array<double, 3> delta{{ max_pnt[0] - min_pnt[0],
         max_pnt[1] - min_pnt[1], max_pnt[2] - min_pnt[2] }};
 
-    const std::size_t n_eles(sfc_mesh.getNumberOfElements());
+    const std::size_t n_eles(mesh.getNumberOfElements());
     const std::size_t n_eles_per_cell(100);
 
     // *** condition: n_eles / n_cells < n_eles_per_cell
@@ -98,7 +98,7 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& sfc_mesh) :
     }
 
     _elements_in_grid_box.resize(_n_steps[0]*_n_steps[1]*_n_steps[2]);
-    sortElementsInGridCells(sfc_mesh);
+    sortElementsInGridCells(mesh);
 }
 
 MathLib::Point3d const& MeshElementGrid::getMinPoint() const
@@ -111,9 +111,10 @@ MathLib::Point3d const& MeshElementGrid::getMaxPoint() const
     return _aabb.getMaxPoint();
 }
 
-void MeshElementGrid::sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh)
+void MeshElementGrid::sortElementsInGridCells(MeshLib::Mesh const& mesh)
 {
-    for (auto const element : sfc_mesh.getElements()) {
+    for (auto const element : mesh.getElements())
+    {
         if (! sortElementInGridCells(*element)) {
             OGS_FATAL("Sorting element (id={:d}) into mesh element grid.",
                       element->getID());
