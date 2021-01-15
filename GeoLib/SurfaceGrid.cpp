@@ -201,9 +201,11 @@ SurfaceGrid::getGridCellCoordinates(MathLib::Point3d const& p) const
     return boost::optional<std::array<std::size_t, 3>>(coords);
 }
 
-bool SurfaceGrid::isPointInSurface(MathLib::Point3d const& p, double eps) const
+bool SurfaceGrid::isPointInSurface(MathLib::Point3d const& pnt,
+                                   double eps) const
 {
-    boost::optional<std::array<std::size_t,3>> optional_c(getGridCellCoordinates(p));
+    boost::optional<std::array<std::size_t, 3>> optional_c(
+        getGridCellCoordinates(pnt));
     if (!optional_c) {
         return false;
     }
@@ -214,7 +216,8 @@ bool SurfaceGrid::isPointInSurface(MathLib::Point3d const& p, double eps) const
     bool nfound(true);
     const std::size_t n_triangles(triangles.size());
     for (std::size_t k(0); k < n_triangles && nfound; k++) {
-        if (triangles[k]->containsPoint(p, eps)) {
+        if (triangles[k]->containsPoint(pnt, eps))
+        {
             nfound = false;
         }
     }

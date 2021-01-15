@@ -244,12 +244,13 @@ bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
 }
 
 bool Polygon::getNextIntersectionPointPolygonLine(
-    GeoLib::LineSegment const& seg, GeoLib::Point & intersection,
+    GeoLib::LineSegment const& seg, GeoLib::Point& intersection_pnt,
     std::size_t& seg_num) const
 {
     if (_simple_polygon_list.size() == 1) {
         for (auto seg_it(begin()+seg_num); seg_it != end(); ++seg_it) {
-            if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection)) {
+            if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection_pnt))
+            {
                 seg_num = seg_it.getSegmentNumber();
                 return true;
             }
@@ -260,7 +261,9 @@ bool Polygon::getNextIntersectionPointPolygonLine(
             for (auto seg_it(polygon->begin()); seg_it != polygon->end();
                  ++seg_it)
             {
-                if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection)) {
+                if (GeoLib::lineSegmentIntersect(*seg_it, seg,
+                                                 intersection_pnt))
+                {
                     seg_num = seg_it.getSegmentNumber();
                     return true;
                 }

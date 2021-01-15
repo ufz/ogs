@@ -415,8 +415,8 @@ std::string GEOObjects::getElementNameByID(const std::string& geometry_name,
     return name;
 }
 
-int GEOObjects::mergeGeometries (std::vector<std::string> const & geo_names,
-                                 std::string &merged_geo_name)
+int GEOObjects::mergeGeometries(std::vector<std::string> const& geo_names,
+                                std::string& merged_geo_name)
 {
     const std::size_t n_geo_names(geo_names.size());
 

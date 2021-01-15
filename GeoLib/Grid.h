@@ -404,18 +404,24 @@ std::array<std::size_t,3> Grid<POINT>::getGridCoords(T const& pnt) const
 
 template <typename POINT>
 template <typename P>
-std::array<double,6> Grid<POINT>::getPointCellBorderDistances(P const& p,
+std::array<double,6> Grid<POINT>::getPointCellBorderDistances(P const& pnt,
     std::array<std::size_t,3> const& coords) const
 {
     std::array<double,6> dists{};
-    dists[0] = std::abs(p[2]-_min_pnt[2] + coords[2]*_step_sizes[2]); // bottom
-    dists[5] = std::abs(p[2]-_min_pnt[2] + (coords[2]+1)*_step_sizes[2]); // top
+    dists[0] =
+        std::abs(pnt[2] - _min_pnt[2] + coords[2] * _step_sizes[2]);  // bottom
+    dists[5] = std::abs(pnt[2] - _min_pnt[2] +
+                        (coords[2] + 1) * _step_sizes[2]);  // top
 
-    dists[1] = std::abs(p[1]-_min_pnt[1] + coords[1]*_step_sizes[1]); // front
-    dists[3] = std::abs(p[1]-_min_pnt[1] + (coords[1]+1)*_step_sizes[1]); // back
+    dists[1] =
+        std::abs(pnt[1] - _min_pnt[1] + coords[1] * _step_sizes[1]);  // front
+    dists[3] = std::abs(pnt[1] - _min_pnt[1] +
+                        (coords[1] + 1) * _step_sizes[1]);  // back
 
-    dists[4] = std::abs(p[0]-_min_pnt[0] + coords[0]*_step_sizes[0]); // left
-    dists[2] = std::abs(p[0]-_min_pnt[0] + (coords[0]+1)*_step_sizes[0]); // right
+    dists[4] =
+        std::abs(pnt[0] - _min_pnt[0] + coords[0] * _step_sizes[0]);  // left
+    dists[2] = std::abs(pnt[0] - _min_pnt[0] +
+                        (coords[0] + 1) * _step_sizes[0]);  // right
     return dists;
 }
 
