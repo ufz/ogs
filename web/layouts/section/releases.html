@@ -25,7 +25,7 @@
       Here you can find the latest version of OpenGeoSys. But be warned: although this version was
       successfully tested by the continuous integration system it may be unstable or incomplete...
     </p>
-    <div class="bg-gray-100 py-1 px-4 rounded-lg shadow mb-12">
+    <div class="bg-red-50 py-1 px-4 rounded-lg shadow mb-12">
       <h3><i class="far fa-download"></i> Downloads</h3>
       <p>
         Downloads for the current development version of OpenGeoSys can be found on our continuous integration system:
@@ -37,8 +37,8 @@
       -->
         {{ range .Params.head_downloads }}
         <li>
-          <i class="{{ .icon }}"></i> <a href="{{ .url }}">{{ .name }}</a>{{ if .note }} <span
-            class="text-sm">({{ .note | markdownify }})</span>{{ end }}
+          <i class="{{ .icon }}"></i> <a href="{{ .url }}">{{ .name }}</a>
+          {{ if .note }} <span class="text-sm">({{ .note | markdownify }})</span>{{ end }}
         </li>
         {{ end }}
       </ul>
@@ -46,6 +46,26 @@
 
     <hr>
     {{ range first 1 .Data.Pages }}
+    {{ $vtag := (print "v" .Params.tag ) }}
+    <h1 id="latest">Current release with bug-fixes: {{ .Params.tag }}</h1>
+    <p>
+      Here you can find the last released version ({{ .Params.tag }}) of OpenGeoSys
+      <a href="https://gitlab.opengeosys.org/ogs/ogs/-/tree/{{ $vtag }}"> enhanced with bug-fixes</a>.
+      We recommend to use this version for production.
+    </p>
+    <div class="bg-green-50 py-1 px-4 rounded-lg shadow mb-12">
+      <h3><i class="far fa-download"></i> Downloads</h3>
+      <ul>
+        {{ range $.Params.head_downloads }}
+        <li>
+          <i class="{{ .icon }}"></i>
+          <a href='{{ replace .url "master" $vtag }}'>{{ replace .name "Latest" $vtag }}</a>
+          {{ if .note }} <span class="text-sm">({{ .note | markdownify }})</span>{{ end }}
+        </li>
+        {{ end }}
+      </ul>
+    </div>
+
     <h1 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: <a style="text-decoration: none;"
         href="{{ .Permalink }}">{{ .Title }}</a></h1>
 
