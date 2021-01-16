@@ -75,7 +75,7 @@ public:
     MathLib::Point3d const& getMaxPoint() const;
 
 private:
-    void sortElementsInGridCells(MeshLib::Mesh const& sfc_mesh);
+    void sortElementsInGridCells(MeshLib::Mesh const& mesh);
     bool sortElementInGridCells(MeshLib::Element const& element);
 
     GeoLib::AABB _aabb;

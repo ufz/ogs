@@ -37,7 +37,7 @@ public:
     PetrelInterface(std::list<std::string> &sfc_fnames,
                     std::list<std::string> &well_path_fnames,
                     std::string &unique_model_name,
-                    GeoLib::GEOObjects* obj);
+                    GeoLib::GEOObjects* geo_obj);
 
     PetrelInterface(PetrelInterface const& other) = delete;
     PetrelInterface(PetrelInterface&& other) = delete;
