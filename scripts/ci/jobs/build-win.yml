@@ -3,6 +3,7 @@ build win:
   rules:
     - if: '$USE_PYTHON =~ /ON$/'
     - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
     - when: manual
       allow_failure: true
   variables:

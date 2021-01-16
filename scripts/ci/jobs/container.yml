@@ -1,3 +1,4 @@
+# Built for Sandy Bridge (envinf1) and newer
 container:
   stage: package
   tags: [envinf2-shell]
@@ -7,27 +8,31 @@ container:
     - if: $CI_COMMIT_TAG
     - changes:
       - scripts/ci/jobs/container.yml
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+    - when: manual
+      allow_failure: true
   extends:
     - .container-maker-setup
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - if [[ "$CI_COMMIT_BRANCH" == "master" ]] ;then export DOCKER_TAG="--tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest" ; fi
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
-      --cmake_args ' -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON -DOGS_USE_PYTHON=ON'
-      --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest --upload
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF -DOGS_BUILD_UTILS=ON -DOGS_USE_PYTHON=ON'
+      $DOCKER_TAG
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
-      --cmake_args ' -DBUILD_TESTING=OFF'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF'
       --base_image 'centos:8' --ompi 4.0.5 --mpi_benchmarks
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --pm system --cvode --ccache
-      --cmake_args ' -DBUILD_TESTING=OFF'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF'
       --gui
   artifacts:
     name: container
