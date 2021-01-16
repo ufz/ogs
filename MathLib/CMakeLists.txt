@@ -41,7 +41,6 @@ target_link_libraries(MathLib
         ${OpenMP_CXX_LIBRARIES}
         $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
         $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
-        $<$<BOOL:${OGS_USE_MKL}>:${MKL_LIBRARIES}>
     PRIVATE
         spdlog::spdlog
 )
@@ -51,6 +50,9 @@ if(OGS_USE_PETSC)
 endif()
 if(OGS_USE_CVODE)
     target_link_libraries(MathLib PUBLIC ${CVODE_LIBRARIES})
+endif()
+if(OGS_USE_MKL)
+    target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
 endif()
 
 target_compile_definitions(MathLib
