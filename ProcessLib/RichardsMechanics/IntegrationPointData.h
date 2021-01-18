@@ -79,7 +79,7 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
-    double integration_weight;
+    double integration_weight = std::numeric_limits<double>::quiet_NaN();
 
     void pushBackState()
     {
