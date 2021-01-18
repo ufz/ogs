@@ -43,11 +43,11 @@
 */
 #pragma once
 
-#include "ThermalTwoPhaseFlowWithPPLocalAssembler.h"
-
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Property.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Function/Interpolation.h"
-
+#include "ThermalTwoPhaseFlowWithPPLocalAssembler.h"
 #include "ThermalTwoPhaseFlowWithPPProcessData.h"
 
 namespace ProcessLib
@@ -57,7 +57,7 @@ namespace ThermalTwoPhaseFlowWithPP
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 void ThermalTwoPhaseFlowWithPPLocalAssembler<
     ShapeFunction, IntegrationMethod,
-    GlobalDim>::assemble(double const t, double const /*dt*/,
+    GlobalDim>::assemble(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& /*local_xdot*/,
                          std::vector<double>& local_M_data,
@@ -164,6 +164,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         permeability.diagonal().setConstant(perm(0, 0));
     }
 
+    MaterialPropertyLib::VariableArray vars;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         double pg_int_pt = 0.;
@@ -171,9 +172,20 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         double T_int_pt = 0.0;
         NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, pg_int_pt,
                                          pc_int_pt, T_int_pt);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+            T_int_pt;
+        vars[static_cast<int>(
+            MaterialPropertyLib::Variable::capillary_pressure)] = pc_int_pt;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
+            pg_int_pt;
 
-        double const density_water =
-            two_phase_material_model.getLiquidDensity(pg_int_pt, T_int_pt);
+        auto const& medium =
+            *_process_data.media_map->getMedium(this->_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+
+        auto const density_water =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t, dt);
 
         double const Sw = two_phase_material_model.getSaturation(
             material_id, t, pos, pg_int_pt, T_int_pt, pc_int_pt);
