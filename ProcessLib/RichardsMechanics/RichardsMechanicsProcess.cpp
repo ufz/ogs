@@ -554,10 +554,8 @@ void RichardsMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
         std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
         auto const n_processes = x.size();
         dof_tables.reserve(n_processes);
-        for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-        {
-            dof_tables.push_back(&getDOFTable(process_id));
-        }
+        std::generate_n(std::back_inserter(dof_tables), n_processes,
+                        [&]() { return &getDOFTable(dof_tables.size()); });
 
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
@@ -583,10 +581,8 @@ void RichardsMechanicsProcess<DisplacementDim>::
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     auto const n_processes = x.size();
     dof_tables.reserve(n_processes);
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-    {
-        dof_tables.push_back(&getDOFTable(process_id));
-    }
+    std::generate_n(std::back_inserter(dof_tables), n_processes,
+                    [&]() { return &getDOFTable(dof_tables.size()); });
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
