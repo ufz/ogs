@@ -11,6 +11,8 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -34,7 +36,8 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "THERMAL_TWOPHASE_WITH_PP");
@@ -108,14 +111,15 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
         createThermalTwoPhaseFlowWithPPMaterialProperties(
             mat_config, materialIDs(mesh), parameters);
 
-    ThermalTwoPhaseFlowWithPPProcessData process_data{specific_body_force,
-                                                      has_gravity,
-                                                      mass_lumping,
-                                                      diff_coeff_b,
-                                                      diff_coeff_a,
-                                                      density_solid,
-                                                      latent_heat_evaporation,
-                                                      std::move(material)};
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    ThermalTwoPhaseFlowWithPPProcessData process_data{
+        std::move(media_map), specific_body_force,
+        has_gravity,          mass_lumping,
+        diff_coeff_b,         diff_coeff_a,
+        density_solid,        latent_heat_evaporation,
+        std::move(material)};
 
     return std::make_unique<ThermalTwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

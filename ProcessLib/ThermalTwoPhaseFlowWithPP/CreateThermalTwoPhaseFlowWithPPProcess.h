@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "MaterialLib/MPL/Medium.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
@@ -28,6 +29,7 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+        curves,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace ThermalTwoPhaseFlowWithPP
 }  // namespace ProcessLib

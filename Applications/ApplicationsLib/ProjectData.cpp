@@ -1101,7 +1101,7 @@ void ProjectData::parseProcesses(
                 createThermalTwoPhaseFlowWithPPProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config, _curves);
+                    process_config, _curves, _media);
         }
         else
 #endif
