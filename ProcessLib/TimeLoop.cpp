@@ -302,17 +302,19 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto const nonlinear_solver_status =
         nonlinear_solver.solve(x, x_prev, post_iteration_callback, process_id);
 
-    if (nonlinear_solver_status.error_norms_met)
+    if (!nonlinear_solver_status.error_norms_met)
     {
-        GlobalVector& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
-            ode_sys.getMatrixSpecifications(process_id));
-
-        time_disc.getXdot(*x[process_id], *x_prev[process_id], x_dot);
-
-        process.postNonLinearSolver(*x[process_id], x_dot, t, delta_t,
-                                    process_id);
-        NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
+        return nonlinear_solver_status;
     }
+
+    GlobalVector& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
+        ode_sys.getMatrixSpecifications(process_id));
+
+    time_disc.getXdot(*x[process_id], *x_prev[process_id], x_dot);
+
+    process.postNonLinearSolver(*x[process_id], x_dot, t, delta_t,
+                                process_id);
+    NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
 
     return nonlinear_solver_status;
 }
@@ -615,9 +617,15 @@ bool TimeLoop::loop()
                 solveUncoupledEquationSystems(t, dt, timesteps);
         }
 
-        postTimestepForAllProcesses(t, dt, _per_process_data,
-                                    _process_solutions,
-                                    _process_solutions_prev);
+        // Run post time step only if the last iteration was successful.
+        // Otherwise it runs the risks to get the same errors as in the last
+        // iteration, an exception thrown in assembly, for example.
+        if (nonlinear_solver_status.error_norms_met)
+        {
+            postTimestepForAllProcesses(t, dt, _per_process_data,
+                                        _process_solutions,
+                                        _process_solutions_prev);
+        }
 
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
