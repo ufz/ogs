@@ -47,10 +47,12 @@
     <hr>
     {{ range first 1 .Data.Pages }}
     {{ $vtag := (print "v" .Params.tag ) }}
-    <h1 id="latest">Current release with bug-fixes: {{ .Params.tag }}</h1>
+    <h1 id="bugfixes">Current release with bug-fixes: {{ .Params.tag }}</h1>
     <p>
       Here you can find the last released version ({{ .Params.tag }}) of OpenGeoSys
-      <a href="https://gitlab.opengeosys.org/ogs/ogs/-/tree/{{ $vtag }}"> enhanced with bug-fixes</a>.
+      <a href="https://gitlab.opengeosys.org/ogs/ogs/-/compare/{{ .Params.tag }}...{{ $vtag }}">
+        enhanced with bug-fixes
+      </a>.
       We recommend to use this version for production.
     </p>
     <div class="bg-green-50 py-1 px-4 rounded-lg shadow mb-12">
