@@ -113,6 +113,10 @@ createDirichletBoundaryConditionWithinTimeInterval(
     auto& param = ParameterLib::findParameter<double>(param_name, parameters, 1,
                                                       &bc_mesh);
 
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__time_interval}
+    config.peekConfigParameter<std::string>("time_interval");
+    auto time_interval = BaseLib::createTimeInterval(config);
+
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.
 #ifdef USE_PETSC
@@ -127,11 +131,8 @@ createDirichletBoundaryConditionWithinTimeInterval(
     }
 #endif  // USE_PETSC
 
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__time_interval}
-    config.peekConfigParameter<std::string>("time_interval");
-
     return std::make_unique<DirichletBoundaryConditionWithinTimeInterval>(
-        BaseLib::createTimeInterval(config), param, bc_mesh, dof_table_bulk,
+        std::move(time_interval), param, bc_mesh, dof_table_bulk,
         variable_id, component_id);
 }
 
