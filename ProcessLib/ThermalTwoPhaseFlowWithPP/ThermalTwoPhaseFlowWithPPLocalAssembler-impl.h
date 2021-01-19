@@ -288,8 +288,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             d_enthalpy_gas_nonwet_d_T * X_gas_nonwet;
         // Assemble M matrix
         // nonwetting
-        double const porosity = two_phase_material_model.getPorosity(
-            material_id, t, pos, pg_int_pt, T_int_pt, 0);
+        auto const porosity =
+            medium.property(MaterialPropertyLib::PropertyType::porosity)
+                .template value<double>(vars, pos, t, dt);
 
         Mgp.noalias() += porosity *
                          ((1 - Sw) * (mol_density_nonwet * d_x_gas_nonwet_d_pg +
