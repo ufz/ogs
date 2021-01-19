@@ -175,12 +175,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size, displacement_size>::Zero(pressure_size,
                                                     displacement_size);
 
-    typename ShapeMatricesTypeDisplacement::template MatrixType<
-        pressure_size, displacement_size>
-        Kpu_k = ShapeMatricesTypeDisplacement::template MatrixType<
-            pressure_size, displacement_size>::Zero(pressure_size,
-                                                    displacement_size);
-
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
         *_process_data.solid_materials[0];
 
@@ -279,9 +273,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const K = MPL::formEigenTensor<DisplacementDim>(
             medium->property(MPL::PropertyType::permeability)
                 .value(vars, x_position, t, dt));
-        auto const dkde = MPL::formEigenTensor<DisplacementDim>(
-            medium->property(MPL::PropertyType::permeability)
-                .dValue(vars, MPL::Variable::mechanical_strain, x_position, t, dt));
 
         auto const K_over_mu = K / mu;
 
@@ -330,10 +321,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         Kpu.noalias() +=
             rho_fr * alpha * N_p.transpose() * identity2.transpose() * B * w;
-
-        Kpu_k.noalias() += dNdx_p.transpose() * dkde *
-                           (dNdx_p * p - rho_fr * b) * identity2.transpose() *
-                           B * rho_fr / mu;
     }
     // displacement equation, pressure part
     local_Jac
@@ -348,7 +335,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         if constexpr (pressure_size == displacement_size)
         {
             Kpu = Kpu.colwise().sum().eval().asDiagonal();
-            Kpu_k = Kpu_k.colwise().sum().eval().asDiagonal();
         }
     }
 
@@ -362,7 +348,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     local_Jac
         .template block<pressure_size, displacement_size>(pressure_index,
                                                           displacement_index)
-        .noalias() = Kpu / dt + Kpu_k;
+        .noalias() = Kpu / dt;
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
