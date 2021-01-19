@@ -137,6 +137,13 @@
                     </properties>
                 </phase>
             </phases>
+            <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.4</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <parameters>
