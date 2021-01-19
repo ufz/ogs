@@ -658,6 +658,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const specific_storage_a_p = S_L * (phi * beta_LR + S_L * a0);
         double const specific_storage_a_S = phi - p_cap_ip * S_L * a0;
 
+        // Note: d beta_LR/d p is omitted because it is a small value.
         double const dspecific_storage_a_p_dp_cap =
             dS_L_dp_cap * (phi * beta_LR + 2 * S_L * a0);
         double const dspecific_storage_a_S_dp_cap =
@@ -712,23 +713,20 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             dNdx.transpose() * rho_LR * k_rel * rho_Ki_over_mu * b * w;
 
         //
-        // pressure equation, temperature part.
+        // pressure equation, temperature part, thermal expansion.
         //
-        // Note:  d (rho_l * beta _T)/dp * dotT
-        // Add the thermal expansion term is the point is in the fully
-        // saturated zone.
-        if (p_cap_ip <= 0.0)  // p_l>0.0
         {
-            double const fluid_volumetric_thermal_expansion_coefficient =
-                MPL::getLiquidThermalExpansivity(liquid_phase, variables,
-                                                 rho_LR, x_position, t, dt);
+            double const fluid_volumetric_thermal_expansion =
+                phi * MPL::getLiquidThermalExpansivity(
+                          liquid_phase, variables, rho_LR, x_position, t, dt);
+
             const double eff_thermal_expansion =
                 alphaB_minus_phi *
                     solid_linear_thermal_expansion_coefficient.trace() +
-                phi * fluid_volumetric_thermal_expansion_coefficient;
+                fluid_volumetric_thermal_expansion;
 
             M_pT.noalias() -=
-                N.transpose() * rho_LR * eff_thermal_expansion * N * w;
+                N.transpose() * S_L * rho_LR * eff_thermal_expansion * N * w;
         }
 
         //

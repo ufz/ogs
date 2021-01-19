@@ -55,7 +55,7 @@ namespace ThermoRichardsMechanics
  * The mass balance equation is given by
  * \f{eqnarray*}{
  * \left(S^l\beta - \phi\frac{\partial S}{\partial p_c}\right) \rho^l\dot p
- * - H(S-1)\left( \frac{\partial \rho^l}{\partial T}
+ * - S \left( \frac{\partial \rho^l}{\partial T}
  * +\rho^l(\alpha_B -S)
  * \alpha_T^s
  * \right)\dot T\\
