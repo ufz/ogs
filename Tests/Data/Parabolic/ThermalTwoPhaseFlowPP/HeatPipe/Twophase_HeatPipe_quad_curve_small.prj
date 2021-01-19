@@ -110,7 +110,6 @@
             <mass_lumping> true </mass_lumping>
             <diffusion_coeff_component_b> diff_coef_b </diffusion_coeff_component_b>
             <diffusion_coeff_component_a> diff_coef_a </diffusion_coeff_component_a>
-            <density_solid> rho_solid </density_solid>
             <latent_heat_evaporation> latent_heat_evp </latent_heat_evaporation>
         </process>
     </processes>
@@ -124,6 +123,16 @@
                             <name>density</name>
                             <type>Constant</type>
                             <value> 1.e3 </value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2650</value>
                         </property>
                     </properties>
                 </phase>
@@ -185,11 +194,6 @@
             <name>diff_coef_a</name>
             <type>Constant</type>
             <value>0.0</value>
-        </parameter>
-        <parameter>
-            <name>rho_solid</name>
-            <type>Constant</type>
-            <value>2650</value>
         </parameter>
         <parameter>
             <name>latent_heat_evp</name>
