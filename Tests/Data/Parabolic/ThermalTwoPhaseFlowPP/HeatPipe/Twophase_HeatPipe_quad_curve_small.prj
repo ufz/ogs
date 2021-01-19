@@ -114,6 +114,22 @@
             <latent_heat_evaporation> latent_heat_evp </latent_heat_evaporation>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.e3 </value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>HEN0</name>
