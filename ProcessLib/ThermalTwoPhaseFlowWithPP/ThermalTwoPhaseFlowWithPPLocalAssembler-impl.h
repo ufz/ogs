@@ -182,6 +182,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         auto const& medium =
             *_process_data.media_map->getMedium(this->_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& solid_phase = medium.phase("Solid");
 
         auto const density_water =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -235,7 +236,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             p_vapor_nonwet * water_mol_mass / IdealGasConstant / T_int_pt;
         double const density_nonwet = density_nonwet_gas + density_nonwet_vapor;
         double const density_wet = density_water;
-        double const density_solid = _process_data.density_solid(t, pos)[0];
+        auto const density_solid =
+            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t, dt);
         // Derivative of nonwet phase density in terms of T
         double const d_density_nonwet_d_T =
             _process_data.material->calculatedDensityNonwetdT (

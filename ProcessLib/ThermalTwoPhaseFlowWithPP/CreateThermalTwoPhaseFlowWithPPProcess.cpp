@@ -90,12 +90,6 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
 
     // Parameter for the density of the solid.
 
-    auto const& density_solid = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__density_solid}
-        "density_solid", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as density_solid parameter.", density_solid.name);
-
     // Parameter for the latent heat of evaporation.
     auto const& latent_heat_evaporation = ParameterLib::findParameter<double>(
         config,
@@ -114,12 +108,14 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
-    ThermalTwoPhaseFlowWithPPProcessData process_data{
-        std::move(media_map), specific_body_force,
-        has_gravity,          mass_lumping,
-        diff_coeff_b,         diff_coeff_a,
-        density_solid,        latent_heat_evaporation,
-        std::move(material)};
+    ThermalTwoPhaseFlowWithPPProcessData process_data{std::move(media_map),
+                                                      specific_body_force,
+                                                      has_gravity,
+                                                      mass_lumping,
+                                                      diff_coeff_b,
+                                                      diff_coeff_a,
+                                                      latent_heat_evaporation,
+                                                      std::move(material)};
 
     return std::make_unique<ThermalTwoPhaseFlowWithPPProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
