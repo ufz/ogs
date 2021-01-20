@@ -188,7 +188,7 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
         (2.0 * pi * lambda_p);
 
     // the average outer diameter of the _pipes
-    double const d0 = _pipes.outlet.diameter;
+    double const d0 = _pipes.inlet.outsideDiameter();
     double const D = borehole_geometry.diameter;
     // Eq. 51
     double const chi = std::log(std::sqrt(D * D + 2 * d0 * d0) / 2 / d0) /
@@ -252,8 +252,8 @@ BHE_1U::getBHEBottomDirichletBCNodesAndComponents(
 std::array<double, BHE_1U::number_of_unknowns> BHE_1U::crossSectionAreas() const
 {
     return {{_pipes.inlet.area(), _pipes.outlet.area(),
-             borehole_geometry.area() / 2 - _pipes.inlet.area(),
-             borehole_geometry.area() / 2 - _pipes.outlet.area()}};
+             borehole_geometry.area() / 2 - _pipes.inlet.outsideArea(),
+             borehole_geometry.area() / 2 - _pipes.outlet.outsideArea()}};
 }
 
 double BHE_1U::updateFlowRateAndTemperature(double const T_out,
