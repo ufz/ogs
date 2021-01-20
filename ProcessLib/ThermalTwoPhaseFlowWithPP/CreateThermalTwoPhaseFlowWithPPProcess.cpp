@@ -31,7 +31,8 @@ void checkMPLProperties(
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
 {
     std::array const required_property_medium = {
-        MaterialPropertyLib::PropertyType::porosity};
+        MaterialPropertyLib::PropertyType::porosity,
+        MaterialPropertyLib::PropertyType::permeability};
 
     std::array const required_property_solid_phase = {
         MaterialPropertyLib::PropertyType::density};

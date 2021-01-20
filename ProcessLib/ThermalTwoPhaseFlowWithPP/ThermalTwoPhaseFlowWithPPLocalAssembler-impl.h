@@ -45,6 +45,7 @@
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ThermalTwoPhaseFlowWithPPLocalAssembler.h"
@@ -149,20 +150,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         Eigen::Map<const NodalVectorType>(&local_x[0], num_nodes);
     auto const pc_nodal_values =
         Eigen::Map<const NodalVectorType>(&local_x[num_nodes], num_nodes);
-
-    const Eigen::MatrixXd& perm = two_phase_material_model.getPermeability(
-        material_id, t, pos, _element.getDimension());
-    assert(perm.rows() == _element.getDimension() || perm.rows() == 1);
-    GlobalDimMatrixType permeability = GlobalDimMatrixType::Zero(
-        _element.getDimension(), _element.getDimension());
-    if (perm.rows() == _element.getDimension())
-    {
-        permeability = perm;
-    }
-    else if (perm.rows() == 1)
-    {
-        permeability.diagonal().setConstant(perm(0, 0));
-    }
 
     MaterialPropertyLib::VariableArray vars;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -357,6 +344,11 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         double const mu_wet =
             two_phase_material_model.getLiquidViscosity(pg_int_pt, T_int_pt);
         double const lambda_wet = k_rel_wet / mu_wet;
+
+        auto const permeability =
+            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium.property(MaterialPropertyLib::PropertyType::permeability)
+                    .value(vars, pos, t, dt));
 
         GlobalDimVectorType const velocity_nonwet =
             -lambda_nonwet * permeability *

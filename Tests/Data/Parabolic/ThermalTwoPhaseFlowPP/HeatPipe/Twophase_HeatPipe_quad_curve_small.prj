@@ -143,6 +143,11 @@
                     <type>Constant</type>
                     <value>0.4</value>
                 </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1e-12</value>
+                </property>
             </properties>
         </medium>
     </media>
