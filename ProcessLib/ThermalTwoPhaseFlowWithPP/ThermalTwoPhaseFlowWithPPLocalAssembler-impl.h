@@ -154,11 +154,17 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
     MaterialPropertyLib::VariableArray vars;
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
+        auto const& ip_data = _ip_data[ip];
+        auto const& N = ip_data.N;
+        auto const& dNdx = ip_data.dNdx;
+        auto const& w = ip_data.integration_weight;
+        auto const& mass_operator = ip_data.mass_operator;
+        auto const& diffusion_operator = ip_data.diffusion_operator;
         double pg_int_pt = 0.;
         double pc_int_pt = 0.;
         double T_int_pt = 0.0;
-        NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, pg_int_pt,
-                                         pc_int_pt, T_int_pt);
+        NumLib::shapeFunctionInterpolate(local_x, N, pg_int_pt, pc_int_pt,
+                                         T_int_pt);
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
         vars[static_cast<int>(
@@ -200,10 +206,12 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         double const X_gas_nonwet =
             x_gas_nonwet /
             (x_gas_nonwet + x_vapor_nonwet * water_mol_mass / air_mol_mass);
-        double const mol_density_nonwet = pg_int_pt / IdealGasConstant / T_int_pt;
+        double const mol_density_nonwet =
+            pg_int_pt / IdealGasConstant / T_int_pt;
         double const mol_density_water = density_water / water_mol_mass;
 
-        double const d_mol_density_nonwet_d_pg = 1 / IdealGasConstant / T_int_pt;
+        double const d_mol_density_nonwet_d_pg =
+            1 / IdealGasConstant / T_int_pt;
         double const d_p_vapor_nonwet_d_T =
             _process_data.material->calculateDerivativedPgwdT(
                 pc_int_pt, T_int_pt, density_water);
@@ -228,8 +236,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 .template value<double>(vars, pos, t, dt);
         // Derivative of nonwet phase density in terms of T
         double const d_density_nonwet_d_T =
-            _process_data.material->calculatedDensityNonwetdT (
-                p_gas_nonwet, p_vapor_nonwet, pc_int_pt, T_int_pt, density_water);
+            _process_data.material->calculatedDensityNonwetdT(
+                p_gas_nonwet, p_vapor_nonwet, pc_int_pt, T_int_pt,
+                density_water);
 
         _pressure_wetting[ip] = pg_int_pt - pc_int_pt;
         // heat capacity of nonwet phase
@@ -279,31 +288,33 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t, dt);
 
-        Mgp.noalias() += porosity *
-                         ((1 - Sw) * (mol_density_nonwet * d_x_gas_nonwet_d_pg +
-                                      x_gas_nonwet * d_mol_density_nonwet_d_pg)) *
-                         _ip_data[ip].mass_operator;
+        Mgp.noalias() +=
+            porosity *
+            ((1 - Sw) * (mol_density_nonwet * d_x_gas_nonwet_d_pg +
+                         x_gas_nonwet * d_mol_density_nonwet_d_pg)) *
+            mass_operator;
         Mgpc.noalias() += porosity *
                           ((1 - Sw) * mol_density_nonwet * d_x_gas_nonwet_d_pc -
                            mol_density_nonwet * x_gas_nonwet * dSwdpc) *
-                          _ip_data[ip].mass_operator;
-        Mgt.noalias() += porosity *
-                         ((1 - Sw) * (mol_density_nonwet * d_x_gas_nonwet_d_T +
-                                      x_gas_nonwet * d_mol_density_nonwet_d_T)) *
-                         _ip_data[ip].mass_operator;
+                          mass_operator;
+        Mgt.noalias() +=
+            porosity *
+            ((1 - Sw) * (mol_density_nonwet * d_x_gas_nonwet_d_T +
+                         x_gas_nonwet * d_mol_density_nonwet_d_T)) *
+            mass_operator;
 
         Mlpc.noalias() +=
             porosity *
             ((1 - Sw) * d_p_vapor_nonwet_d_pc / IdealGasConstant / T_int_pt +
              mol_density_nonwet * x_vapor_nonwet * (-dSwdpc) +
              dSwdpc * mol_density_water) *
-            _ip_data[ip].mass_operator;
+            mass_operator;
         Mlt.noalias() +=
             porosity *
             ((1 - Sw) *
              (d_p_vapor_nonwet_d_T / IdealGasConstant / T_int_pt -
               p_vapor_nonwet / IdealGasConstant / T_int_pt / T_int_pt)) *
-            _ip_data[ip].mass_operator;
+            mass_operator;
 
         Mep.noalias() +=
             porosity *
@@ -312,20 +323,21 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
              mol_density_nonwet * (water_mol_mass - air_mol_mass) *
                  d_x_gas_nonwet_d_pg * enthalpy_nonwet -
              1) *
-            (1 - Sw) * _ip_data[ip].mass_operator;
-        Mepc.noalias() +=
-            porosity * (density_wet * internal_energy_wet -
-                        density_nonwet * internal_energy_nonwet) *
-                dSwdpc * _ip_data[ip].mass_operator +
-            porosity * ((water_mol_mass - air_mol_mass) * enthalpy_nonwet /
-                        IdealGasConstant / T_int_pt) *
-                (1 - Sw) * d_p_vapor_nonwet_d_pc * _ip_data[ip].mass_operator;
+            (1 - Sw) * mass_operator;
+        Mepc.noalias() += porosity *
+                              (density_wet * internal_energy_wet -
+                               density_nonwet * internal_energy_nonwet) *
+                              dSwdpc * mass_operator +
+                          porosity *
+                              ((water_mol_mass - air_mol_mass) *
+                               enthalpy_nonwet / IdealGasConstant / T_int_pt) *
+                              (1 - Sw) * d_p_vapor_nonwet_d_pc * mass_operator;
         Met.noalias() +=
             ((1 - porosity) * density_solid * heat_capacity_solid +
              porosity * ((1 - Sw) * (d_density_nonwet_d_T * enthalpy_nonwet +
                                      density_nonwet * d_enthalpy_nonwet_d_T) +
                          Sw * density_wet * heat_capacity_water)) *
-            _ip_data[ip].mass_operator;
+            mass_operator;
 
         // nonwet
         double const k_rel_nonwet =
@@ -351,24 +363,19 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                     .value(vars, pos, t, dt));
 
         GlobalDimVectorType const velocity_nonwet =
-            -lambda_nonwet * permeability *
-            (_ip_data[ip].dNdx * pg_nodal_values);
+            -lambda_nonwet * permeability * (dNdx * pg_nodal_values);
         GlobalDimVectorType const velocity_wet =
             -lambda_wet * permeability *
-            (_ip_data[ip].dNdx * (pg_nodal_values - pc_nodal_values));
+            (dNdx * (pg_nodal_values - pc_nodal_values));
 
-        laplace_operator.noalias() = _ip_data[ip].dNdx.transpose() *
-                                     permeability * _ip_data[ip].dNdx *
-                                     _ip_data[ip].integration_weight;
+        laplace_operator.noalias() = dNdx.transpose() * permeability * dNdx * w;
 
-        Ket.noalias() +=
-            _ip_data[ip].integration_weight * _ip_data[ip].N.transpose() *
-                (d_density_nonwet_d_T * enthalpy_nonwet +
-                 density_nonwet * d_enthalpy_nonwet_d_T) *
-                velocity_nonwet.transpose() * _ip_data[ip].dNdx +
-            _ip_data[ip].integration_weight * _ip_data[ip].N.transpose() *
-                heat_capacity_water * density_water * velocity_wet.transpose() *
-                _ip_data[ip].dNdx;
+        Ket.noalias() += w * N.transpose() *
+                             (d_density_nonwet_d_T * enthalpy_nonwet +
+                              density_nonwet * d_enthalpy_nonwet_d_T) *
+                             velocity_nonwet.transpose() * dNdx +
+                         w * N.transpose() * heat_capacity_water *
+                             density_water * velocity_wet.transpose() * dNdx;
 
         double const heat_conductivity_dry_solid =
             _process_data.material->getThermalConductivityDrySolid(pg_int_pt,
@@ -381,69 +388,70 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                 t, pos, Sw, heat_conductivity_dry_solid,
                 heat_conductivity_wet_solid);
         // Laplace
-        Kgp.noalias() +=
-            (mol_density_nonwet * x_gas_nonwet * lambda_nonwet) * laplace_operator +
-            ((1 - Sw) * porosity * diffusion_coeff_component_gas *
-             mol_density_nonwet * d_x_gas_nonwet_d_pg) *
-                _ip_data[ip].diffusion_operator;
+        Kgp.noalias() += (mol_density_nonwet * x_gas_nonwet * lambda_nonwet) *
+                             laplace_operator +
+                         ((1 - Sw) * porosity * diffusion_coeff_component_gas *
+                          mol_density_nonwet * d_x_gas_nonwet_d_pg) *
+                             diffusion_operator;
         Kgpc.noalias() += ((1 - Sw) * porosity * diffusion_coeff_component_gas *
                            mol_density_nonwet * d_x_gas_nonwet_d_pc) *
-                          _ip_data[ip].diffusion_operator;
+                          diffusion_operator;
         Kgt.noalias() += ((1 - Sw) * porosity * diffusion_coeff_component_gas *
                           mol_density_nonwet * d_x_gas_nonwet_d_T) *
-                         _ip_data[ip].diffusion_operator;
+                         diffusion_operator;
 
         Klp.noalias() += (mol_density_nonwet * x_vapor_nonwet * lambda_nonwet) *
                              laplace_operator +
                          mol_density_water * lambda_wet * laplace_operator -
                          ((1 - Sw) * porosity * diffusion_coeff_component_gas *
                           mol_density_nonwet * d_x_gas_nonwet_d_pg) *
-                             _ip_data[ip].diffusion_operator;
+                             diffusion_operator;
         Klpc.noalias() += (-mol_density_water * lambda_wet * laplace_operator) -
                           ((1 - Sw) * porosity * diffusion_coeff_component_gas *
                            mol_density_nonwet * d_x_gas_nonwet_d_pc) *
-                              _ip_data[ip].diffusion_operator;
+                              diffusion_operator;
         Klt.noalias() += -((1 - Sw) * porosity * diffusion_coeff_component_gas *
                            mol_density_nonwet * d_x_gas_nonwet_d_T) *
-                         _ip_data[ip].diffusion_operator;
+                         diffusion_operator;
 
-        Kep.noalias() +=
-            (lambda_nonwet * density_nonwet * enthalpy_nonwet +
-             lambda_wet * density_wet * enthalpy_wet) *
-                laplace_operator +
-            (1 - Sw) * porosity * diffusion_coeff_component_gas *
-                mol_density_nonwet * (air_mol_mass * enthalpy_nonwet_gas -
-                                  water_mol_mass * enthalpy_nonwet_vapor) *
-                d_x_gas_nonwet_d_pg * _ip_data[ip].diffusion_operator;
+        Kep.noalias() += (lambda_nonwet * density_nonwet * enthalpy_nonwet +
+                          lambda_wet * density_wet * enthalpy_wet) *
+                             laplace_operator +
+                         (1 - Sw) * porosity * diffusion_coeff_component_gas *
+                             mol_density_nonwet *
+                             (air_mol_mass * enthalpy_nonwet_gas -
+                              water_mol_mass * enthalpy_nonwet_vapor) *
+                             d_x_gas_nonwet_d_pg * diffusion_operator;
         Kepc.noalias() +=
             -lambda_wet * enthalpy_wet * density_wet * laplace_operator +
             (1 - Sw) * porosity * diffusion_coeff_component_gas *
-                mol_density_nonwet * (air_mol_mass * enthalpy_nonwet_gas -
-                                  water_mol_mass * enthalpy_nonwet_vapor) *
-                d_x_gas_nonwet_d_pc * _ip_data[ip].diffusion_operator;
+                mol_density_nonwet *
+                (air_mol_mass * enthalpy_nonwet_gas -
+                 water_mol_mass * enthalpy_nonwet_vapor) *
+                d_x_gas_nonwet_d_pc * diffusion_operator;
         Ket.noalias() +=
-            _ip_data[ip].dNdx.transpose() * heat_conductivity_unsaturated *
-                _ip_data[ip].dNdx * _ip_data[ip].integration_weight +
+            dNdx.transpose() * heat_conductivity_unsaturated * dNdx * w +
             (1 - Sw) * porosity * diffusion_coeff_component_gas *
-                mol_density_nonwet * (air_mol_mass * enthalpy_nonwet_gas -
-                                  water_mol_mass * enthalpy_nonwet_vapor) *
-                d_x_gas_nonwet_d_T * _ip_data[ip].diffusion_operator;
+                mol_density_nonwet *
+                (air_mol_mass * enthalpy_nonwet_gas -
+                 water_mol_mass * enthalpy_nonwet_vapor) *
+                d_x_gas_nonwet_d_T * diffusion_operator;
 
         if (_process_data.has_gravity)
         {
             auto const& b = _process_data.specific_body_force;
-            NodalVectorType gravity_operator = _ip_data[ip].dNdx.transpose() *
-                                               permeability * b *
-                                               _ip_data[ip].integration_weight;
-            Bg.noalias() +=
-                (mol_density_nonwet * x_gas_nonwet * lambda_nonwet * density_nonwet) *
-                gravity_operator;
-            Bl.noalias() +=
-                (mol_density_water * lambda_wet * density_wet +
-                 mol_density_nonwet * x_vapor_nonwet * lambda_nonwet * density_nonwet) *
-                gravity_operator;
+            NodalVectorType gravity_operator =
+                dNdx.transpose() * permeability * b * w;
+            Bg.noalias() += (mol_density_nonwet * x_gas_nonwet * lambda_nonwet *
+                             density_nonwet) *
+                            gravity_operator;
+            Bl.noalias() += (mol_density_water * lambda_wet * density_wet +
+                             mol_density_nonwet * x_vapor_nonwet *
+                                 lambda_nonwet * density_nonwet) *
+                            gravity_operator;
             Be.noalias() +=
-                (lambda_nonwet * density_nonwet * density_nonwet * enthalpy_nonwet +
+                (lambda_nonwet * density_nonwet * density_nonwet *
+                     enthalpy_nonwet +
                  lambda_wet * density_wet * density_wet * enthalpy_wet) *
                 gravity_operator;
         }  // end of has gravity
