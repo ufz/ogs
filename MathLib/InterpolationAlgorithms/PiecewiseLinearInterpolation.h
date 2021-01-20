@@ -45,8 +45,8 @@ public:
      * points are sorted
      * one can set the switch to true
      */
-    PiecewiseLinearInterpolation(std::vector<double>&& supporting_points,
-                                 std::vector<double>&& values_at_supp_pnts,
+    PiecewiseLinearInterpolation(std::vector<double> supporting_points,
+                                 std::vector<double> values_at_supp_pnts,
                                  bool supp_pnts_sorted = false);
 
     /**

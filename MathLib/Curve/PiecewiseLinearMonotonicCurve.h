@@ -24,8 +24,8 @@ public:
      * @ x x coordinates of curve points
      * @ y y coordinates of curve points
      */
-    PiecewiseLinearMonotonicCurve(std::vector<double>&& x,
-                                  std::vector<double>&& y);
+    PiecewiseLinearMonotonicCurve(std::vector<double> x,
+                                  std::vector<double> y);
 
     ~PiecewiseLinearMonotonicCurve() = default;
 

@@ -21,7 +21,7 @@
 namespace MathLib
 {
 PiecewiseLinearMonotonicCurve::PiecewiseLinearMonotonicCurve(
-    std::vector<double>&& x, std::vector<double>&& y)
+    std::vector<double> x, std::vector<double> y)
     : PiecewiseLinearInterpolation(std::move(x), std::move(y), false)
 {
     if (!isStrongMonotonic())
