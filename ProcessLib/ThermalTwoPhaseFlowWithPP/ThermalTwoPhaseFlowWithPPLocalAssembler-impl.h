@@ -165,6 +165,8 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         double T_int_pt = 0.0;
         NumLib::shapeFunctionInterpolate(local_x, N, pg_int_pt, pc_int_pt,
                                          T_int_pt);
+        double const ideal_gas_constant_times_T_int_pt =
+            IdealGasConstant * T_int_pt;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
         vars[static_cast<int>(
@@ -207,11 +209,11 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             x_gas_nonwet /
             (x_gas_nonwet + x_vapor_nonwet * water_mol_mass / air_mol_mass);
         double const mol_density_nonwet =
-            pg_int_pt / IdealGasConstant / T_int_pt;
+            pg_int_pt / ideal_gas_constant_times_T_int_pt;
         double const mol_density_water = density_water / water_mol_mass;
 
         double const d_mol_density_nonwet_d_pg =
-            1 / IdealGasConstant / T_int_pt;
+            1 / ideal_gas_constant_times_T_int_pt;
         double const d_p_vapor_nonwet_d_T =
             _process_data.material->calculateDerivativedPgwdT(
                 pc_int_pt, T_int_pt, density_water);
@@ -219,16 +221,16 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             _process_data.material->calculateDerivativedPgwdPC(
                 pc_int_pt, T_int_pt, density_water);
         double const d_mol_density_nonwet_d_T =
-            -pg_int_pt / IdealGasConstant / T_int_pt / T_int_pt;
+            -pg_int_pt / ideal_gas_constant_times_T_int_pt / T_int_pt;
         double const d_x_gas_nonwet_d_pg =
             p_vapor_nonwet / pg_int_pt / pg_int_pt;
         double const d_x_gas_nonwet_d_pc = -d_p_vapor_nonwet_d_pc / pg_int_pt;
         double const d_x_gas_nonwet_d_T = -d_p_vapor_nonwet_d_T / pg_int_pt;
 
         double const density_nonwet_gas =
-            p_gas_nonwet * air_mol_mass / IdealGasConstant / T_int_pt;
+            p_gas_nonwet * air_mol_mass / ideal_gas_constant_times_T_int_pt;
         double const density_nonwet_vapor =
-            p_vapor_nonwet * water_mol_mass / IdealGasConstant / T_int_pt;
+            p_vapor_nonwet * water_mol_mass / ideal_gas_constant_times_T_int_pt;
         double const density_nonwet = density_nonwet_gas + density_nonwet_vapor;
         double const density_wet = density_water;
         auto const density_solid =
@@ -303,18 +305,16 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                          x_gas_nonwet * d_mol_density_nonwet_d_T)) *
             mass_operator;
 
-        Mlpc.noalias() +=
-            porosity *
-            ((1 - Sw) * d_p_vapor_nonwet_d_pc / IdealGasConstant / T_int_pt +
-             mol_density_nonwet * x_vapor_nonwet * (-dSwdpc) +
-             dSwdpc * mol_density_water) *
-            mass_operator;
-        Mlt.noalias() +=
-            porosity *
-            ((1 - Sw) *
-             (d_p_vapor_nonwet_d_T / IdealGasConstant / T_int_pt -
-              p_vapor_nonwet / IdealGasConstant / T_int_pt / T_int_pt)) *
-            mass_operator;
+        Mlpc.noalias() += porosity *
+                          ((1 - Sw) * d_p_vapor_nonwet_d_pc /
+                               ideal_gas_constant_times_T_int_pt +
+                           mol_density_nonwet * x_vapor_nonwet * (-dSwdpc) +
+                           dSwdpc * mol_density_water) *
+                          mass_operator;
+        Mlt.noalias() += porosity *
+                         ((1 - Sw) / ideal_gas_constant_times_T_int_pt *
+                          (d_p_vapor_nonwet_d_T - p_vapor_nonwet / T_int_pt)) *
+                         mass_operator;
 
         Mep.noalias() +=
             porosity *
@@ -324,14 +324,15 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
                  d_x_gas_nonwet_d_pg * enthalpy_nonwet -
              1) *
             (1 - Sw) * mass_operator;
-        Mepc.noalias() += porosity *
-                              (density_wet * internal_energy_wet -
-                               density_nonwet * internal_energy_nonwet) *
-                              dSwdpc * mass_operator +
-                          porosity *
-                              ((water_mol_mass - air_mol_mass) *
-                               enthalpy_nonwet / IdealGasConstant / T_int_pt) *
-                              (1 - Sw) * d_p_vapor_nonwet_d_pc * mass_operator;
+        Mepc.noalias() +=
+            porosity *
+                (density_wet * internal_energy_wet -
+                 density_nonwet * internal_energy_nonwet) *
+                dSwdpc * mass_operator +
+            porosity *
+                ((water_mol_mass - air_mol_mass) * enthalpy_nonwet /
+                 ideal_gas_constant_times_T_int_pt) *
+                (1 - Sw) * d_p_vapor_nonwet_d_pc * mass_operator;
         Met.noalias() +=
             ((1 - porosity) * density_solid * heat_capacity_solid +
              porosity * ((1 - Sw) * (d_density_nonwet_d_T * enthalpy_nonwet +
