@@ -35,10 +35,6 @@
                         <type>Constant</type>
                         <value> 1.8e-5 </value>
                     </gas_viscosity>
-                    <specific_heat_capacity_solid>
-                        <type>Constant</type>
-                        <value> 700 </value>
-                    </specific_heat_capacity_solid>
                     <specific_heat_capacity_water>
                         <type>Constant</type>
                         <value> 4187 </value>
@@ -129,6 +125,11 @@
                 <phase>
                     <type>Solid</type>
                     <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value> 700 </value>
+                        </property>
                         <property>
                             <name>density</name>
                             <type>Constant</type>

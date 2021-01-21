@@ -35,6 +35,7 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::permeability};
 
     std::array const required_property_solid_phase = {
+        MaterialPropertyLib::PropertyType::specific_heat_capacity,
         MaterialPropertyLib::PropertyType::density};
 
     std::array const required_property_liquid_phase = {
