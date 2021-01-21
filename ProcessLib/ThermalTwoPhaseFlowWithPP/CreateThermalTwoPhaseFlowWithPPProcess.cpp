@@ -39,6 +39,7 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::density};
 
     std::array const required_property_liquid_phase = {
+        MaterialPropertyLib::PropertyType::specific_heat_capacity,
         MaterialPropertyLib::PropertyType::density};
 
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(

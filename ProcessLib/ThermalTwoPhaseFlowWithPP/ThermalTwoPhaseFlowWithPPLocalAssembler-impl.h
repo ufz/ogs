@@ -251,9 +251,11 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             _process_data.material->getSpecificHeatCapacityVapor(pg_int_pt,
                                                                  T_int_pt);
 
-        double const heat_capacity_water =
-            _process_data.material->getSpecificHeatCapacityWater(pg_int_pt,
-                                                                 T_int_pt);
+        auto const heat_capacity_water =
+            liquid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t, dt);
         auto const heat_capacity_solid =
             solid_phase
                 .property(
