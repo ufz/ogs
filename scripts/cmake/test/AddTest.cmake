@@ -256,8 +256,13 @@ Use six arguments version of AddTest with absolute and relative tolerances")
             list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
 
             get_filename_component(FILE_EXPECTED ${GML_FILE} NAME)
+            if(WIN32)
+                string(REPLACE " " "\\ " PY_EXE ${Python3_EXECUTABLE})
+            else()
+                set(PY_EXE ${Python3_EXECUTABLE})
+            endif()
             list(APPEND TESTER_COMMAND
-                "${Python3_EXECUTABLE} ${PROJECT_SOURCE_DIR}/scripts/test/gmldiff.py \
+                "${PY_EXE} ${PROJECT_SOURCE_DIR}/scripts/test/gmldiff.py \
                 --abs ${ABS_TOL} --rel ${REL_TOL} \
                 ${TESTER_ARGS} \
                 ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
