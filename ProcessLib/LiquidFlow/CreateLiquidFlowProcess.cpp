@@ -44,9 +44,12 @@ void checkMPLProperties(
     std::array<MaterialPropertyLib::PropertyType, 0> const
         required_solid_properties{};
 
+    std::array<MaterialPropertyLib::PropertyType, 0> const
+        required_gas_properties{};
+
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
         mesh, media_map, required_medium_properties, required_solid_properties,
-        required_liquid_properties);
+        required_liquid_properties, required_gas_properties);
 }
 
 std::unique_ptr<Process> createLiquidFlowProcess(

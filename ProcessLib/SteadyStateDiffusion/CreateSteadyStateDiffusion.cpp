@@ -35,7 +35,7 @@ void checkMPLProperties(
     std::array<MaterialPropertyLib::PropertyType, 0> const empty{};
 
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
-        mesh, media_map, required_medium_properties, empty, empty);
+        mesh, media_map, required_medium_properties, empty, empty, empty);
 }
 
 std::unique_ptr<Process> createSteadyStateDiffusion(

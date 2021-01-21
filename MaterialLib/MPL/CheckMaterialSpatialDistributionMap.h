@@ -18,13 +18,15 @@ namespace MaterialPropertyLib
 {
 template <typename ContainerMedium,
           typename ContainerSolid,
-          typename ContainerLiquid>
+          typename ContainerLiquid,
+          typename ContainerGas>
 void checkMaterialSpatialDistributionMap(
     MeshLib::Mesh const& mesh,
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map,
     ContainerMedium const& required_properties_medium,
     ContainerSolid const& required_properties_solid_phase,
-    ContainerLiquid const& required_properties_liquid_phase)
+    ContainerLiquid const& required_properties_liquid_phase,
+    ContainerGas const& required_properties_gas_phase)
 {
     for (auto const& element : mesh.getElements())
     {
@@ -41,6 +43,11 @@ void checkMaterialSpatialDistributionMap(
             MaterialPropertyLib::checkRequiredProperties(
                 medium.phase("AqueousLiquid"),
                 required_properties_liquid_phase);
+        }
+        if (!required_properties_gas_phase.empty())
+        {
+            MaterialPropertyLib::checkRequiredProperties(
+                medium.phase("Gas"), required_properties_gas_phase);
         }
         if (!required_properties_solid_phase.empty())
         {
