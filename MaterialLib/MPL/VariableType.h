@@ -51,9 +51,11 @@ enum class Variable : int
     enthalpy_of_evaporation,
     equivalent_plastic_strain,
     grain_compressibility,
+    liquid_phase_pressure,
     liquid_saturation,
     mechanical_strain,
     molar_mass,
+    molar_fraction,
     phase_pressure,
     porosity,
     solid_grain_pressure,
@@ -62,6 +64,7 @@ enum class Variable : int
     total_strain,
     total_stress,
     transport_porosity,
+    vapour_pressure,
     volumetric_strain,
     number_of_variables
 };

@@ -84,6 +84,7 @@ enum PropertyType : int
     /// capillary pressure saturation relationship for microstructure.
     saturation_micro,
     specific_heat_capacity,
+    specific_latent_heat,
     storage,
     swelling_stress_rate,
     thermal_conductivity,
@@ -281,6 +282,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::specific_heat_capacity;
     }
+    if (boost::iequals(inString, "specific_latent_heat"))
+    {
+        return PropertyType::specific_latent_heat;
+    }
     if (boost::iequals(inString, "storage"))
     {
         return PropertyType::storage;
@@ -390,6 +395,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "saturation",
                              "saturation_micro",
                              "specific_heat_capacity",
+                             "specific_latent_heat",
                              "storage",
                              "swelling_stress_rate",
                              "thermal_conductivity",
