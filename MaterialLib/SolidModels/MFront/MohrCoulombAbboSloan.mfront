@@ -143,7 +143,6 @@ a.setEntryName("TensionCutOffParameter");
     constexpr auto sqrt3 = Cste<real>::sqrt3;
     constexpr auto isqrt3 = Cste<real>::isqrt3;
     constexpr auto id = Stensor::Id();
-    constexpr auto id4 = Stensor4::Id();
     if (F)
     {
         const auto s = deviator(sig);
