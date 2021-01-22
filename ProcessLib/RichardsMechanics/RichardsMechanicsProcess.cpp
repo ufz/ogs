@@ -15,7 +15,6 @@
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
-#include "ProcessLib/Process.h"
 #include "ProcessLib/RichardsMechanics/CreateLocalAssemblers.h"
 #include "RichardsMechanicsFEM.h"
 #include "RichardsMechanicsProcessData.h"
