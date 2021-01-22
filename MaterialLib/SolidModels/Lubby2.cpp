@@ -25,7 +25,6 @@ namespace Lubby2
 /// Function definition can not be moved into implementation because of a
 /// MSVC compiler errors. See
 /// http://stackoverflow.com/questions/1484885/strange-vc-compile-error-c2244
-/// and https://support.microsoft.com/en-us/kb/930198
 template <int DisplacementDim>
 Eigen::Matrix<double, Lubby2<DisplacementDim>::JacobianResidualSize,
               Lubby2<DisplacementDim>::KelvinVectorSize>
