@@ -131,7 +131,6 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
     std::vector<double> vec_t = timeStepping(alg, nr_iterations, {});
 
     ASSERT_EQ(expected_vec_t.size(), vec_t.size());
-    ASSERT_EQ(0u, alg.getNumberOfRepeatedSteps());
     ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(), std::numeric_limits<double>::epsilon());
 }
 
@@ -152,7 +151,6 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
         timeStepping(alg, nr_iterations, fixed_output_times);
 
     EXPECT_EQ(expected_vec_t.size(), vec_t.size());
-    ASSERT_EQ(0u, alg.getNumberOfRepeatedSteps());
     ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
                       std::numeric_limits<double>::epsilon());
 }
