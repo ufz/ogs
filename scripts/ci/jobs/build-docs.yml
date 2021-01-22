@@ -25,6 +25,7 @@ build docs:
 check docs links:
   stage: check
   tags: [ docker ]
+  allow_failure: true
   image: $WEB_IMAGE
   dependencies: [meta_container, "build docs"]
   extends:
