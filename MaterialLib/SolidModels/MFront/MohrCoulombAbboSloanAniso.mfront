@@ -18,7 +18,8 @@
 @Description
 {
 Non-associated Mohr Coulomb model with singularity smoothing according to
-Abbo-Sloan.Anisotropy is introduced by stress-scaling according to
+Abbo et al., Int J Solids Struct 48, 2011.
+Anisotropy is introduced by stress-scaling according to
 //
 Malcom, M.A.M.(2018).Analysis of underground excavations in argillaceous hard
 soils - weak rocks. Technical University of Catalonia.
@@ -71,6 +72,8 @@ cs.setEntryName("ShearFactor");
 @LocalVariable real tan_lodeT;
 @LocalVariable real cos_3_lodeT;
 @LocalVariable real sin_3_lodeT;
+@LocalVariable real cos_6_lodeT;
+@LocalVariable real sin_6_lodeT;
 @LocalVariable real tan_3_lodeT;
 @LocalVariable real multi;
 
@@ -90,6 +93,8 @@ cs.setEntryName("ShearFactor");
     tan_lodeT = tan(lodeT);
     cos_3_lodeT = cos(3. * lodeT);
     sin_3_lodeT = sin(3. * lodeT);
+    cos_6_lodeT = cos(6. * lodeT);
+    sin_6_lodeT = sin(6. * lodeT);
     tan_3_lodeT = tan(3. * lodeT);
 
     auto Hill = Stensor4::Id();
@@ -127,13 +132,19 @@ cs.setEntryName("ShearFactor");
     {
         const auto sign = min(
             max(lode_el / max(abs(lode_el), local_zero_tolerance), -1.), 1.);
-        const auto A =
-            1. / 3. * cos_lodeT *
-            (3. + tan_lodeT * tan_3_lodeT +
-             isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_phi);
-        const auto B = 1 / (3. * cos_3_lodeT) *
-                       (sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT);
-        K = A - B * arg;
+            
+        const auto term1 = cos_lodeT - isqrt3 * sin_phi * sin_lodeT;
+        const auto term2 = sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT;
+        const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
+            
+        const auto B = ( sign * sin_6_lodeT * term1 - 
+        	6. * cos_6_lodeT * term2 ) / term3; 
+        const auto C = (- cos_3_lodeT * term1 - 3. * sign * sin_3_lodeT * term2) / term3; 
+       
+        const auto A =          
+            -isqrt3 * sin_phi * sign * sin_lodeT - B * sign * sin_3_lodeT - 
+            C * sin_3_lodeT*sin_3_lodeT + cos_lodeT;
+        K = A + B * arg + C * arg*arg;
     }
     const auto sMC =
         I1_el / 3 * sin_phi + sqrt(J2_el * K * K + a * a * sin_phi * sin_phi);
@@ -170,6 +181,8 @@ cs.setEntryName("ShearFactor");
         const auto cos_lode = cos(lode);
         const auto sin_lode = sin(lode);
         const auto cos_3_lode = cos(3. * lode);
+        const auto sin_6_lode = sin(6. * lode);
+        const auto cos_6_lode = cos(6. * lode);
         const auto sin_3_lode = arg;
         const auto tan_3_lode = tan(3. * lode);
         auto K = 0.;
@@ -183,14 +196,19 @@ cs.setEntryName("ShearFactor");
         {
             const auto sign =
                 min(max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
-            const auto A =
-                1. / 3. * cos_lodeT *
-                (3. + tan_lodeT * tan_3_lodeT +
-                 isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_phi);
-            const auto B = 1. / (3. * cos_3_lodeT) *
-                           (sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT);
-            K = A - B * sin_3_lode;
-            dK_dlode = -3. * B * cos_3_lode;
+		    const auto term1 = cos_lodeT - isqrt3 * sin_phi * sin_lodeT;
+		    const auto term2 = sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT;
+		    const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
+		        
+		    const auto B = ( sign * sin_6_lodeT * term1 - 
+		    	6. * cos_6_lodeT * term2 ) / term3; 
+		    const auto C = (- cos_3_lodeT * term1 - 3. * sign * sin_3_lodeT * term2) / term3; 
+		   
+		    const auto A =          
+		        -isqrt3 * sin_phi * sign * sin_lodeT - B * sign * sin_3_lodeT - 
+		        C * sin_3_lodeT*sin_3_lodeT + cos_lodeT;
+		    K = A + B * sin_3_lode + C * sin_3_lode*sin_3_lode;
+            dK_dlode = 3. * B * cos_3_lode + 3. * C * sin_6_lode;
         }
         auto KG = 0.0;  // move into a function to avoid code duplication
         auto dKG_dlode = 1.;
@@ -205,15 +223,20 @@ cs.setEntryName("ShearFactor");
         {
             const auto sign =
                 min(max(lode / max(fabs(lode), local_zero_tolerance), -1.), 1.);
-            const auto A =
-                1. / 3. * cos_lodeT *
-                (3. + tan_lodeT * tan_3_lodeT +
-                 isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_psi);
-            const auto B = 1. / (3. * cos_3_lodeT) *
-                           (sign * sin_lodeT + isqrt3 * sin_psi * cos_lodeT);
-            KG = A - B * sin_3_lode;
-            dKG_dlode = -3. * B * cos_3_lode;
-            dKG_ddlode = 9. * B * sin_3_lode;
+		    const auto term1 = cos_lodeT - isqrt3 * sin_psi * sin_lodeT;
+		    const auto term2 = sign * sin_lodeT + isqrt3 * sin_psi * cos_lodeT;
+		    const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
+		        
+		    const auto B = ( sign * sin_6_lodeT * term1 - 
+		    	6. * cos_6_lodeT * term2 ) / term3; 
+		    const auto C = (- cos_3_lodeT * term1 - 3. * sign * sin_3_lodeT * term2) / term3; 
+		   
+		    const auto A =          
+		        -isqrt3 * sin_psi * sign * sin_lodeT - B * sign * sin_3_lodeT - 
+		        C * sin_3_lodeT*sin_3_lodeT + cos_lodeT;
+            KG = A + B * sin_3_lode + C * sin_3_lode * sin_3_lode;
+            dKG_dlode = 3. * B * cos_3_lode + 3. * C * sin_6_lode;
+            dKG_ddlode = -9. * B * sin_3_lode + 18. * C * cos_6_lode;
         }
 
         // flow direction

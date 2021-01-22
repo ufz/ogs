@@ -14,6 +14,14 @@
 
 @Algorithm NewtonRaphson;
 @MaximumNumberOfIterations 200;
+
+@Description{
+
+Non-associated Mohr-Coulomb with C2 continuity following
+Abbo et al., Int J Solids Struct 48, 2011.
+
+}
+
 // @Algorithm LevenbergMarquardt;
 //@CompareToNumericalJacobian true;
 //@NumericallyComputedJacobianBlocks {dfeel_ddeel};
