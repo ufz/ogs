@@ -22,7 +22,7 @@ namespace MeshLib
 /**
  * \brief Manipulating and adding prism element layers to an existing 2D mesh
  */
-class MeshLayerMapper : public LayeredMeshGenerator
+class MeshLayerMapper final : public LayeredMeshGenerator
 {
 public:
     ~MeshLayerMapper() override = default;

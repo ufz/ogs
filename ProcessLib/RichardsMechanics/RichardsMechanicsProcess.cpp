@@ -551,13 +551,7 @@ void RichardsMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     if (hasMechanicalProcess(process_id))
     {
         DBUG("PostTimestep RichardsMechanicsProcess.");
-        std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-        auto const n_processes = x.size();
-        dof_tables.reserve(n_processes);
-        for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-        {
-            dof_tables.push_back(&getDOFTable(process_id));
-        }
+        auto const dof_tables = getDOFTables(x.size());
 
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
@@ -580,13 +574,7 @@ void RichardsMechanicsProcess<DisplacementDim>::
     }
 
     DBUG("Compute the secondary variables for RichardsMechanicsProcess.");
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    auto const n_processes = x.size();
-    dof_tables.reserve(n_processes);
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-    {
-        dof_tables.push_back(&getDOFTable(process_id));
-    }
+    auto const dof_tables = getDOFTables(x.size());
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
@@ -615,6 +603,18 @@ RichardsMechanicsProcess<DisplacementDim>::getDOFTable(
 
     // For the equation of pressure
     return *_local_to_global_index_map_with_base_nodes;
+}
+
+template <int DisplacementDim>
+std::vector<NumLib::LocalToGlobalIndexMap const*>
+RichardsMechanicsProcess<DisplacementDim>::getDOFTables(
+    int const number_of_processes) const
+{
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(number_of_processes);
+    std::generate_n(std::back_inserter(dof_tables), number_of_processes,
+                    [&]() { return &getDOFTable(dof_tables.size()); });
+    return dof_tables;
 }
 
 template class RichardsMechanicsProcess<2>;
