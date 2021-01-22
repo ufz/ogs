@@ -630,15 +630,17 @@ bool TimeLoop::loop()
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
              time_timestep.elapsed());
 
+        double const current_time = t;
+        // _last_step_rejected is also checked in computeTimeStepping.
+        dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
 
         if (!_last_step_rejected)
         {
             const bool output_initial_condition = false;
-            outputSolutions(output_initial_condition, timesteps, t, *_output,
-                            &Output::doOutput);
+            outputSolutions(output_initial_condition, timesteps, current_time,
+                            *_output, &Output::doOutput);
         }
 
-        dt = computeTimeStepping(prev_dt, t, accepted_steps, rejected_steps);
         if (std::abs(t - _end_time) < std::numeric_limits<double>::epsilon() ||
             t + dt > _end_time)
         {
