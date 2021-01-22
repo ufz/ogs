@@ -26,6 +26,24 @@ namespace ProcessLib
 {
 namespace ThermalTwoPhaseFlowWithPP
 {
+void checkMPLProperties(
+    MeshLib::Mesh const& mesh,
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+{
+    std::array const required_property_medium = {
+        MaterialPropertyLib::PropertyType::porosity};
+
+    std::array const required_property_solid_phase = {
+        MaterialPropertyLib::PropertyType::density};
+
+    std::array const required_property_liquid_phase = {
+        MaterialPropertyLib::PropertyType::density};
+
+    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
+        mesh, media_map, required_property_medium,
+        required_property_solid_phase, required_property_liquid_phase);
+}
+
 std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -107,6 +125,11 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    DBUG(
+        "Check the media properties of ThermalTwoPhaseFlowWithPP  process ...");
+    checkMPLProperties(mesh, *media_map);
+    DBUG("Media properties verified.");
 
     ThermalTwoPhaseFlowWithPPProcessData process_data{std::move(media_map),
                                                       specific_body_force,
