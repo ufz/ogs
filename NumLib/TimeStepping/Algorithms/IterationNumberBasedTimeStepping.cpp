@@ -57,10 +57,15 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
 {
     _iter_times = number_iterations;
 
+    if (_previous_time_step_accepted)
+    {
+        _ts_prev = _ts_current;
+    }
+
     // confirm current time and move to the next if accepted
     if (accepted())
     {
-        _ts_prev = _ts_current;
+        _previous_time_step_accepted = true;
         return std::make_tuple(true, getNextTimeStepSize());
     }
     else
@@ -83,6 +88,9 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
         _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
             TimeStep{_ts_prev.previous(), _ts_prev.previous() + dt,
                      _ts_prev.steps()};
+
+        _previous_time_step_accepted = false;
+
         return std::make_tuple(false, dt);
     }
     return {};
