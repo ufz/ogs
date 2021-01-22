@@ -8,6 +8,7 @@ set(ProcessesList
     HydroMechanics
     LiquidFlow
     LIE
+    ThermoRichardsMechanics
     PhaseField
     RichardsComponentTransport
     RichardsFlow
