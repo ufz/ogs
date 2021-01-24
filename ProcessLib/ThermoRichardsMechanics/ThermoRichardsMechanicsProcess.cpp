@@ -13,11 +13,11 @@
 #include <cassert>
 
 #include "BaseLib/Error.h"
+#include "CreateLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/RichardsMechanics/CreateLocalAssemblers.h"
 #include "ThermoRichardsMechanicsFEM.h"
 
 namespace ProcessLib
@@ -229,8 +229,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     const int mechanical_process_id = 0;
     const int deformation_variable_id = 2;
-    ProcessLib::RichardsMechanics::createLocalAssemblers<
-        DisplacementDim, ThermoRichardsMechanicsLocalAssembler>(
+    createLocalAssemblers<DisplacementDim,
+                          ThermoRichardsMechanicsLocalAssembler>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         // use displacement process variable to set shape function order
         getProcessVariables(mechanical_process_id)[deformation_variable_id]
