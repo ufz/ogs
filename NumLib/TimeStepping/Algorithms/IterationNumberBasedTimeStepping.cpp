@@ -70,7 +70,6 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
     }
     else
     {
-        ++_n_rejected_steps;
         double dt = getNextTimeStepSize();
         // In case it is the first time be rejected, re-computed dt again with
         // current dt
