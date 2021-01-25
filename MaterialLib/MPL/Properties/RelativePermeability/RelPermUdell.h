@@ -20,18 +20,18 @@ class Medium;
 class Phase;
 class Component;
 /**
- * A simple relative permeability function as used in
+ * A simple relative permeability function proposed by
+ * Kent S Udell \cite udell1985heat.
  *
- *        Kent S Udell. "Heat transfer in porous media considering phase change
- *        and capillarity-the heat pipe effect".In:International Journal of Heat
- *        and Mass Transfer 28.2 (1985), pp. 485-495
- *         Definition:
- *          \f$k_{\textrm{rel}}^{\alpha} =
- * \left(s^{\textrm{eff}}_{\alpha}\right)^{3}\f$ where
- *          - \f$k_{\textrm{rel}}^{\alpha}\f$ is relative permeability of phase
+ *  Definition:
+ *          \f[ k_{\text{rel}}^{\alpha}
+ * =\left(S^{\text{eff}}_{\alpha}\right)^{3}\f] where
+ *          - \f$k_{\text{rel}}^{\alpha}\f$ is relative permeability of phase
  * \f$\alpha\f$
- *          - \f$s^{\textrm{eff}}_{\alpha}\f$ is the effective saturation of
- * phase \f$\alpha\f$ \details This property must be a medium property, it
+ *          - \f$S^{\text{eff}}_{\alpha}\f$ is the effective saturation of
+ * phase \f$\alpha\f$
+ *
+ * \details This property must be a medium property, it
  * computes the permeability reduction due to saturation as function of
  * capillary pressure.
  */
