@@ -20,11 +20,8 @@ class Medium;
 class Phase;
 class Component;
 /**
- * A simple relative permeability function as used in
- *
- *        Kent S Udell. "Heat transfer in porous media considering phase change
- *        and capillarity-the heat pipe effect".In:International Journal of Heat
- *        and Mass Transfer 28.2 (1985), pp. 485-495
+ * A simple relative permeability function proposed by
+ * Kent S Udell \cite udell1985heat.
  *
  *  Definition:
  *          \f[ k_{\text{rel}}^{\alpha}
