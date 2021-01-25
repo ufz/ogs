@@ -10,8 +10,8 @@
 
 #pragma once
 
+#include "LocalAssemblerInterface.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/RichardsMechanics/LocalAssemblerInterface.h"
 #include "ThermoRichardsMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -145,8 +145,7 @@ public:
         const int process_id) const override;
 
 private:
-    using LocalAssemblerIF =
-        RichardsMechanics::LocalAssemblerInterface<DisplacementDim>;
+    using LocalAssemblerIF = LocalAssemblerInterface<DisplacementDim>;
 
     void constructDofTable() override;
 

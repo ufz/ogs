@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "IntegrationPointData.h"
+#include "LocalAssemblerInterface.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -24,7 +25,6 @@
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
-#include "ProcessLib/RichardsMechanics/LocalAssemblerInterface.h"
 #include "ThermoRichardsMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -44,7 +44,7 @@ struct SecondaryData
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           typename IntegrationMethod, int DisplacementDim>
 class ThermoRichardsMechanicsLocalAssembler
-    : public RichardsMechanics::LocalAssemblerInterface<DisplacementDim>
+    : public LocalAssemblerInterface<DisplacementDim>
 {
 public:
     using ShapeMatricesTypeDisplacement =
