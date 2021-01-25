@@ -358,8 +358,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         double const k_rel_wet =
             two_phase_material_model.getWetRelativePermeability(
                 t, pos, pg_int_pt, T_int_pt, Sw);
-        double const mu_wet =
-            two_phase_material_model.getLiquidViscosity(pg_int_pt, T_int_pt);
+        auto const mu_wet =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, pos, t, dt);
         double const lambda_wet = k_rel_wet / mu_wet;
 
         auto const permeability =

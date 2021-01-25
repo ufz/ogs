@@ -112,6 +112,11 @@
                     <type>AqueousLiquid</type>
                     <properties>
                         <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value> 2.938e-4 </value>
+                        </property>
+                        <property>
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
                             <value> 4187 </value>
