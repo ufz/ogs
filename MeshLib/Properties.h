@@ -86,7 +86,7 @@ public:
     /// Checks if a property vector with given type \c T, \c name, \c
     /// mesh_item_type, and \c number_of_components exists.
     template <typename T>
-    bool existsPropertyVector(std::string const& property_name,
+    bool existsPropertyVector(std::string const& name,
                               MeshItemType const mesh_item_type,
                               int const number_of_components) const;
 
