@@ -24,14 +24,15 @@ class EigenVector;
  *
  * @param A                 Coefficient matrix
  * @param b                 RHS vector
- * @param _vec_knownX_id    a vector of known solution entry IDs
- * @param _vec_knownX_x     a vector of known solutions
+ * @param vec_knownX_id    a vector of known solution entry IDs
+ * @param vec_knownX_x     a vector of known solutions
  * @param penalty_scaling value for scaling some matrix and right hand side
- * entries to enforce some conditions
+ * entries to enforce some conditions, value ignored in the current
+ * implementation
  */
 void applyKnownSolution(EigenMatrix &A, EigenVector &b, EigenVector &/*x*/,
-        const std::vector<EigenMatrix::IndexType> &_vec_knownX_id,
-        const std::vector<double> &_vec_knownX_x, double penalty_scaling = 1e+10);
+        const std::vector<EigenMatrix::IndexType> &vec_knownX_id,
+        const std::vector<double> &vec_knownX_x, double penalty_scaling = 1e+10);
 
 inline
 void applyKnownSolution(Eigen::MatrixXd const &A, Eigen::VectorXd &b, Eigen::VectorXd &/*x*/,
