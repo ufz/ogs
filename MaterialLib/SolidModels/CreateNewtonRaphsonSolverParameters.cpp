@@ -29,10 +29,30 @@ NumLib::NewtonRaphsonSolverParameters createNewtonRaphsonSolverParameters(
 
     auto const error_tolerance =
         //! \ogs_file_param{nonlinear_solver__error_tolerance}
-        config.getConfigParameter<double>("error_tolerance");
+        config.getConfigParameterOptional<double>("error_tolerance");
+    if (error_tolerance)
+    {
+        WARN(
+            "The 'error_tolerance' tag for the Newton-Raphson solver is "
+            "deprecated.\n"
+            "Use new tags 'residuum_tolerance' and 'increment_tolerance'.\n"
+            "For now we use residuum_tolerance {} and increment_tolerance 0.",
+            *error_tolerance);
+        return {maximum_iterations, *error_tolerance, 0};
+    }
 
-    DBUG("\terror_tolerance: {:g}.", error_tolerance);
+    auto const residuum_tolerance =
+        //! \ogs_file_param{nonlinear_solver__residuum_tolerance}
+        config.getConfigParameter<double>("residuum_tolerance");
 
-    return {maximum_iterations, error_tolerance};
+    DBUG("\tresiduum_tolerance: {:g}.", residuum_tolerance);
+
+    auto const increment_tolerance =
+        //! \ogs_file_param{nonlinear_solver__increment_tolerance}
+        config.getConfigParameter<double>("increment_tolerance");
+
+    DBUG("\tincrement_tolerance: {:g}.", increment_tolerance);
+
+    return {maximum_iterations, residuum_tolerance, increment_tolerance};
 }
 }  // namespace MaterialLib
