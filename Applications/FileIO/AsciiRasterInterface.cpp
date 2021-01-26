@@ -67,10 +67,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(
             }
         }
         in.close();
-        GeoLib::Raster* raster(new GeoLib::Raster(
-            std::move(header), values.data(), values.data() + values.size()));
-
-        return raster;
+        return new GeoLib::Raster(std::move(header), values.begin(),
+                                  values.end());
     }
     WARN("Raster::getRasterFromASCFile(): Could not read header of file {:s}",
          fname);
@@ -194,10 +192,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
             }
         }
         in.close();
-        GeoLib::Raster* raster(new GeoLib::Raster(
-            std::move(header), values.data(), values.data() + values.size()));
-
-        return raster;
+        return new GeoLib::Raster(std::move(header), values.begin(),
+                                  values.end());
     }
     ERR("Raster::getRasterFromASCFile() - could not read header of file {:s}",
         fname);
