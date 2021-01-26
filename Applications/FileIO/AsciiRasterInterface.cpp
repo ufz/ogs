@@ -247,20 +247,23 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
     std::ofstream out(file_name);
     out << "ncols " << nCols << "\n";
     out << "nrows " << nRows << "\n";
+    auto const default_precision = out.precision();
+    out.precision(std::numeric_limits<double>::digits10);
     out << "xllcorner " << origin[0] << "\n";
     out << "yllcorner " << origin[1] << "\n";
     out << "cellsize " <<  header.cell_size << "\n";
+    out.precision(default_precision);
     out << "NODATA_value " << header.no_data << "\n";
 
     // write data
     double const*const elevation(raster.begin());
     for (unsigned row(0); row < nRows; ++row)
     {
-        for (unsigned col(0); col < nCols; ++col)
+        for (unsigned col(0); col < nCols-1; ++col)
         {
-            out << elevation[(nRows-row-1) * nCols + col] << " ";
+            out << elevation[(nRows - row - 1) * nCols + col] << " ";
         }
-        out << "\n";
+        out << elevation[(nRows - row) * nCols - 1] << "\n";
     }
     out.close();
 }
