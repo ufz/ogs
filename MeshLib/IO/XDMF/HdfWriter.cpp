@@ -82,7 +82,8 @@ static hid_t writeDataSet(
     hid_t const section,
     std::string const& dataset_name)  // where
 {
-    DBUG("Num global nodes : {:d} ", dim_maxs[0]);
+    INFO("Num global nodes : {:d}, chunked {:d}, offsets {:d}   ", dim_maxs[0],
+         chunked_dims[0], dim_offsets[0]);
     int const dim_size = chunked_dims.size();
     hid_t const memspace =
         H5Screate_simple(dim_size, chunked_dims.data(), nullptr);
