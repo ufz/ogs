@@ -23,7 +23,6 @@ TEST(MaterialPropertyLib, RelPermBrooksCorey)
     const double ref_residual_liquid_saturation = 0.01;
     const double ref_residual_gas_saturation = 0.01;
     const double ref_k_rel_L_min = 1.e-9;
-    const double ref_k_rel_G_min = 1.e-7;
 
     std::stringstream m_beg;
     std::stringstream m_end;
@@ -41,14 +40,12 @@ TEST(MaterialPropertyLib, RelPermBrooksCorey)
     m_end << "    <type>RelPermBrooksCorey</type>\n";
     m_end << "    <residual_liquid_saturation>"
           << ref_residual_liquid_saturation
-          << "</residual_liquid_saturation>\n";
+          << "    </residual_liquid_saturation>\n";
     m_end << "    <residual_gas_saturation>" << ref_residual_gas_saturation
-          << "</residual_gas_saturation>\n";
+          << "    </residual_gas_saturation>\n";
     m_end << "    <lambda>" << ref_lambda << "</lambda>\n";
-    m_end << "    <min_relative_permeability_liquid>" << ref_k_rel_L_min
-          << "</k_rel_min_liquid>\n";
-    m_end << "    <min_relative_permeability_gas>" << ref_k_rel_G_min
-          << "</k_rel_min_gas>\n";
+    m_end << "    <min_relative_permeability>" << ref_k_rel_L_min
+          << "    </min_relative_permeability>\n";
     m_end << "  </property>\n";
     m_end << "</properties>\n";
     m_end << "</medium>\n";
@@ -63,25 +60,11 @@ TEST(MaterialPropertyLib, RelPermBrooksCorey)
         1.4540473747E-01, 4.4088351375E-01, 6.9346243084E-01, 8.8856788446E-01,
         9.6177504114E-01, 1.0000000000E+00, 1.0000000000E+00, 1.0000000000E+00};
 
-    std::array<double, 16> ref_k_rel_G = {
-        1.0000000000E+00, 1.0000000000E+00, 1.0000000000E+00, 9.7944075784E-01,
-        9.3794411438E-01, 8.1354659673E-01, 6.1592154540E-01, 2.9343532599E-01,
-        9.4837870477E-02, 1.2086349932E-02, 1.3426518034E-03, 5.1003060118E-05,
-        1.9046571241E-06, 1.0000000000E-07, 1.0000000000E-07, 1.0000000000E-07};
-
     std::array<double, 16> ref_dk_rel_L_ds_L = {
         0.0000000000E+00, 0.0000000000E+00, 0.0000000000E+00, 1.0306815668E-05,
         2.2339015126E-04, 4.8417630905E-03, 3.9231470925E-02, 2.9383627425E-01,
         9.3650508877E-01, 2.1207055092E+00, 2.9608508283E+00, 3.5542715378E+00,
         3.7677785117E+00, 3.8775510204E+00, 0.0000000000E+00, 0.0000000000E+00};
-
-    std::array<double, 16> ref_dk_rel_G_ds_L = {
-        0.0000000000E+00,  0.0000000000E+00,  -2.0408163265E+00,
-        -2.0654018726E+00, -2.0807295100E+00, -2.0524729938E+00,
-        -1.8805652791E+00, -1.3132397982E+00, -6.8017950205E-01,
-        -1.8533091175E-01, -4.4178730635E-02, -5.0791425970E-03,
-        -5.7061547092E-04, -0.0000000000E+00, 0.0000000000E+00,
-        0.0000000000E+00};
 
     for (size_t idx = 0; idx < ref_saturation.size(); idx++)
     {
@@ -100,26 +83,18 @@ TEST(MaterialPropertyLib, RelPermBrooksCorey)
             medium
                 ->property(
                     MaterialPropertyLib::PropertyType::relative_permeability)
-                .template value<Eigen::Vector2d>(variable_array, pos, time, dt);
+                .template value<double>(variable_array, pos, time, dt);
 
         auto dk_rel_ds_L =
             medium
                 ->property(
                     MaterialPropertyLib::PropertyType::relative_permeability)
-                .template dValue<Eigen::Vector2d>(
+                .template dValue<double>(
                     variable_array,
                     MaterialPropertyLib::Variable::liquid_saturation, pos, time,
                     dt);
 
-        auto k_rel_L = k_rel[0];
-        auto k_rel_G = k_rel[1];
-
-        auto dk_rel_L_ds_L = dk_rel_ds_L[0];
-        auto dk_rel_G_ds_L = dk_rel_ds_L[1];
-
-        ASSERT_NEAR(k_rel_L, ref_k_rel_L[idx], 1.0e-10);
-        ASSERT_NEAR(k_rel_G, ref_k_rel_G[idx], 1.0e-10);
-        ASSERT_NEAR(dk_rel_L_ds_L, ref_dk_rel_L_ds_L[idx], 1.0e-10);
-        ASSERT_NEAR(dk_rel_G_ds_L, ref_dk_rel_G_ds_L[idx], 1.0e-10);
+        ASSERT_NEAR(k_rel, ref_k_rel_L[idx], 1.0e-10);
+        ASSERT_NEAR(dk_rel_ds_L, ref_dk_rel_L_ds_L[idx], 1.0e-10);
     }
 }
