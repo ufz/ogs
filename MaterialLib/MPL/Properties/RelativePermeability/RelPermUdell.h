@@ -31,6 +31,10 @@ class Component;
  *          - \f$S^{\text{eff}}_{\alpha}\f$ is the effective saturation of
  * phase \f$\alpha\f$
  *
+ * This class handles the wetting (liquid) phase portion of this relative
+ * permeability property, i,e with \f$\alpha=L\f$ for the  relative permeability
+ * function.
+ *
  * \details This property must be a medium property, it
  * computes the permeability reduction due to saturation as function of
  * capillary pressure.
@@ -40,22 +44,20 @@ class RelPermUdell final : public Property
 private:
     const double residual_liquid_saturation_;
     const double residual_gas_saturation_;
-    const double min_relative_permeability_liquid_;
-    const double min_relative_permeability_gas_;
+    const double min_relative_permeability_;
 
 public:
     RelPermUdell(std::string name, const double residual_liquid_saturation,
                  const double residual_gas_saturation,
-                 const double min_relative_permeability_liquid,
-                 const double min_relative_permeability_gas);
+                 const double min_relative_permeability);
 
     void checkScale() const override
     {
         if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
-                "The property 'RelPermUdell' is implemented on the "
-                "'media' scale only.");
+                "The property 'RelativePermeabilityUdell' is implemented on "
+                "the 'media' scale only.");
         }
     }
 
@@ -63,7 +65,7 @@ public:
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;
     PropertyDataType dValue(VariableArray const& variable_array,
-                            Variable const primary_variable,
+                            Variable const variable,
                             ParameterLib::SpatialPosition const& pos,
                             double const t, double const dt) const override;
 };

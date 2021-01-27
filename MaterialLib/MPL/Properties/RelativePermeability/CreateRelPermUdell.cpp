@@ -28,27 +28,22 @@ std::unique_ptr<RelPermUdell> createRelPermUdell(
     DBUG("Create RelPermUdell medium property {:s}.", property_name);
 
     auto const residual_liquid_saturation =
-        //! \ogs_file_param{properties__property__RelPermUdell__residual_liquid_saturation}
+        //! \ogs_file_param{properties__property__RelativePermeabilityUdell__residual_liquid_saturation}
         config.getConfigParameter<double>("residual_liquid_saturation");
     auto const residual_gas_saturation =
-        //! \ogs_file_param{properties__property__RelPermUdell__residual_gas_saturation}
+        //! \ogs_file_param{properties__property__RelativePermeabilityUdell__residual_gas_saturation}
         config.getConfigParameter<double>("residual_gas_saturation");
-    auto const min_relative_permeability_liquid =
-        //! \ogs_file_param{properties__property__RelPermUdell__min_relative_permeability_liquid}
-        config.getConfigParameter<double>("min_relative_permeability_liquid");
-    auto const min_relative_permeability_gas =
-        //! \ogs_file_param{properties__property__RelPermUdell__min_relative_permeability_gas}
-        config.getConfigParameter<double>("min_relative_permeability_gas");
+    auto const min_relative_permeability =
+        //! \ogs_file_param{properties__property__RelativePermeabilityUdell__min_relative_permeability}
+        config.getConfigParameter<double>("min_relative_permeability");
 
-    if ((min_relative_permeability_liquid < 0) ||
-        (min_relative_permeability_gas < 0))
+    if (min_relative_permeability < 0)
     {
-        OGS_FATAL("Minimal relative permeabilities must be non-negative.");
+        OGS_FATAL("Minimal relative permeability must be non-negative.");
     }
 
     return std::make_unique<RelPermUdell>(
         std::move(property_name), residual_liquid_saturation,
-        residual_gas_saturation, min_relative_permeability_liquid,
-        min_relative_permeability_gas);
+        residual_gas_saturation, min_relative_permeability);
 }
 }  // namespace MaterialPropertyLib
