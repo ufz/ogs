@@ -29,7 +29,7 @@ void checkHdfStatus(const hid_t status, std::string const& formatting,
     }
 }
 
-static unsigned short int const compression_factor = 5;
+static unsigned short int const compression_factor = 1;
 
 using namespace MeshLib::IO;
 
