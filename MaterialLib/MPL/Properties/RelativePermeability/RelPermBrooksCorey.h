@@ -23,7 +23,9 @@ class Phase;
 class Component;
 /**
  * \class RelPermBrooksCorey
- * \brief Relative permeability function proposed by Brooks&Corey
+ * \brief Relative permeability function of the wetting phase proposed by
+ * Brooks&Corey.
+ *
  * \details This property must be a medium property, it
  * computes the permeability reduction due to saturation as function
  * of capillary pressure.
@@ -33,8 +35,7 @@ class RelPermBrooksCorey final : public Property
 private:
     const double residual_liquid_saturation_;
     const double residual_gas_saturation_;
-    const double min_relative_permeability_liquid_;
-    const double min_relative_permeability_gas_;
+    const double min_relative_permeability_;
     const double exponent_;
 
 public:
@@ -42,7 +43,6 @@ public:
                        const double /*residual_liquid_saturation*/,
                        const double /*residual_gas_saturation*/,
                        const double /*min_relative_permeability_liquid_*/,
-                       const double /*min_relative_permeability_gas_*/,
                        const double /*exponent*/
     );
 

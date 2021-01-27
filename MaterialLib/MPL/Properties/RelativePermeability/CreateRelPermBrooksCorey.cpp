@@ -31,12 +31,9 @@ std::unique_ptr<RelPermBrooksCorey> createRelPermBrooksCorey(
     auto const residual_gas_saturation =
         //! \ogs_file_param{properties__property__RelPermBrooksCorey__residual_gas_saturation}
         config.getConfigParameter<double>("residual_gas_saturation");
-    auto const min_relative_permeability_liquid =
-        //! \ogs_file_param{properties__property__RelPermBrooksCorey__min_relative_permeability_liquid}
-        config.getConfigParameter<double>("min_relative_permeability_liquid");
-    auto const min_relative_permeability_gas =
-        //! \ogs_file_param{properties__property__RelPermBrooksCorey__min_relative_permeability_gas}
-        config.getConfigParameter<double>("min_relative_permeability_gas");
+    auto const min_relative_permeability =
+        //! \ogs_file_param{properties__property__RelPermBrooksCorey__min_relative_permeability}
+        config.getConfigParameter<double>("min_relative_permeability");
     auto const exponent =
         //! \ogs_file_param{properties__property__RelPermBrooksCorey__lambda}
         config.getConfigParameter<double>("lambda");
@@ -45,12 +42,10 @@ std::unique_ptr<RelPermBrooksCorey> createRelPermBrooksCorey(
         OGS_FATAL("Exponent 'lambda' must be positive.");
     }
 
-    return std::make_unique<RelPermBrooksCorey>(
-        std::move(property_name),
-        residual_liquid_saturation,
-        residual_gas_saturation,
-        min_relative_permeability_liquid,
-        min_relative_permeability_gas,
-        exponent);
+    return std::make_unique<RelPermBrooksCorey>(std::move(property_name),
+                                                residual_liquid_saturation,
+                                                residual_gas_saturation,
+                                                min_relative_permeability,
+                                                exponent);
 }
 }  // namespace MaterialPropertyLib
