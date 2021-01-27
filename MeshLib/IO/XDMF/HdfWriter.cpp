@@ -107,7 +107,7 @@ static hid_t writeDataSet(
     }
 
     hid_t const dataset =
-        H5Dcreate2(section, dataset_name.c_str(), H5T_IEEE_F64BE, filespace,
+        H5Dcreate2(section, dataset_name.c_str(), data_type, filespace,
                    H5P_DEFAULT, dataset_property, H5P_DEFAULT);
 
     H5Pclose(dataset_property);
