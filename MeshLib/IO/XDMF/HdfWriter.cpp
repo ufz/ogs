@@ -138,8 +138,8 @@ static hid_t writeDataSet(
     }
 
     H5Dclose(dataset);
-    H5Pclose(io_transfer_property);
     status = H5Sclose(memspace);
+    H5Pclose(io_transfer_property);
 
     return (status >= 0 ? 1 : 0);
 }
