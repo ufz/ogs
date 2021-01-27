@@ -89,8 +89,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
     if (boost::iequals(property_type, "EmbeddedFracturePermeability"))
     {
-        return createEmbeddedFracturePermeability(geometry_dimension,
-                                                        config);
+        return createEmbeddedFracturePermeability(geometry_dimension, config);
     }
 
     if (boost::iequals(property_type,
@@ -131,6 +130,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createRelPermBrooksCorey(config);
     }
 
+    if (boost::iequals(property_type, "RelPermBrooksCoreyNonwettingPhase"))
+    {
+        return createRelPermBrooksCoreyNonwettingPhase(config);
+    }
+
     if (boost::iequals(property_type, "SaturationLiakopoulos"))
     {
         return createSaturationLiakopoulos(config);
@@ -165,6 +169,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     if (boost::iequals(property_type, "RelativePermeabilityUdell"))
     {
         return createRelPermUdell(config);
+    }
+
+    if (boost::iequals(property_type,
+                       "RelativePermeabilityUdellNonwettingPhase"))
+    {
+        return createRelPermUdellNonwettingPhase(config);
     }
 
     if (boost::iequals(property_type, "SaturationDependentHeatConduction"))
