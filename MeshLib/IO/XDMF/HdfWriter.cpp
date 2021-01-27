@@ -92,12 +92,6 @@ static hid_t writeDataSet(
 
     hid_t dataset_property = H5Pcreate(H5P_DATASET_CREATE);
 
-    if (has_compression_lib)
-    {
-        H5Pset_deflate(dataset_property, compression_factor);
-        DBUG("Compression will be used for {:s} with factor {:d}.",
-             dataset_name, compression_factor);
-    }
     hid_t status =
         H5Pset_chunk(dataset_property, dim_size, chunked_dims.data());
     if (status != 0)
@@ -105,8 +99,13 @@ static hid_t writeDataSet(
         ERR("H5Pset_layout failed for data set: {:s}.", dataset_name);
     }
 
-    // TODO (tm) Compression is not enabled!!
-    dataset_property = H5P_DEFAULT;
+    if (has_compression_lib)
+    {
+        H5Pset_deflate(dataset_property, compression_factor);
+        DBUG("Compression will be used for {:s} with factor {:d}.",
+             dataset_name, compression_factor);
+    }
+
     hid_t const dataset =
         H5Dcreate2(section, dataset_name.c_str(), H5T_IEEE_F64BE, filespace,
                    H5P_DEFAULT, dataset_property, H5P_DEFAULT);
