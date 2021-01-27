@@ -22,14 +22,14 @@ namespace MeshLib::IO
 static hid_t meshPropertyType2HdfType(MeshPropertyDataType const ogs_data_type)
 {
     std::map<MeshPropertyDataType const, hid_t> ogs_to_hdf_type = {
-        {MeshPropertyDataType::float64, H5T_IEEE_F64LE},
-        {MeshPropertyDataType::float32, H5T_IEEE_F32LE},
-        {MeshPropertyDataType::int32, H5T_STD_I32LE},
-        {MeshPropertyDataType::int64, H5T_STD_I64LE},
-        {MeshPropertyDataType::uint32, H5T_STD_U32LE},
-        {MeshPropertyDataType::uint64, H5T_STD_U64LE},
-        {MeshPropertyDataType::int8, H5T_STD_I8LE},
-        {MeshPropertyDataType::uint8, H5T_STD_U8LE}};
+        {MeshPropertyDataType::float64, H5T_NATIVE_DOUBLE},
+        {MeshPropertyDataType::float32, H5T_NATIVE_FLOAT},
+        {MeshPropertyDataType::int32, H5T_NATIVE_INT32},
+        {MeshPropertyDataType::int64, H5T_NATIVE_INT64},
+        {MeshPropertyDataType::uint32, H5T_NATIVE_UINT32},
+        {MeshPropertyDataType::uint64, H5T_NATIVE_UINT64},
+        {MeshPropertyDataType::int8, H5T_NATIVE_INT8},
+        {MeshPropertyDataType::uint8, H5T_NATIVE_UINT8}};
     try
     {
         return ogs_to_hdf_type.at(ogs_data_type);
