@@ -61,11 +61,11 @@ XdmfData::XdmfData(std::size_t size_partitioned_dim,
     DBUG(
         "XdmfData: The partition of dataset {:s} has dimension {:d} and offset "
         "{:d}.",
-        name, size_partitioned_dim, partition_info.first);
+        name, size_partitioned_dim, partition_info.local_offset);
     // TODO (tm) XdmfLib does not support 64 bit data types so far
-    assert(partition_info.second < std::numeric_limits<unsigned int>::max());
+    assert(partition_info.local_length < std::numeric_limits<unsigned int>::max());
     auto const ui_global_components =
-        static_cast<unsigned int>(partition_info.second);
+        static_cast<unsigned int>(partition_info.local_length);
     auto const ui_tuple_size = static_cast<unsigned int>(size_tuple);
 
     piece_dims = {ui_global_components, ui_tuple_size};

@@ -44,17 +44,30 @@ HdfData::HdfData(void const* data_start, std::size_t const size_partitioned_dim,
                  std::size_t const size_tuple, std::string const& name,
                  MeshPropertyDataType const mesh_property_data_type)
     : data_start(data_start),
-      data_space{size_partitioned_dim, size_tuple},
       name(name)
 {
     auto const& partition_info = getPartitionInfo(size_partitioned_dim);
     DBUG(
-        "HdfData: The partition of dataset {:s} has dimension {:d} and offset "
+        "HdfData: The partition of dataset {:s} has length {:d} and offset "
         "{:d}.",
-        name, size_partitioned_dim, partition_info.first);
-    auto const& offset_partitioned_dim = partition_info.first;
+        name, size_partitioned_dim, partition_info.local_offset);
+    auto const& offset_partitioned_dim = partition_info.local_offset;
     offsets = {offset_partitioned_dim, 0};
-    file_space = {partition_info.second, size_tuple};
+
+    std::size_t unified_length = partition_info.local_length;
+
+    data_space =
+        (size_tuple > 1)
+            ? std::vector<Hdf5DimType>{unified_length, size_tuple}
+            : std::vector<Hdf5DimType>{unified_length};
+    file_space =
+        (size_tuple > 1)
+        ? std::vector<Hdf5DimType>{partition_info.local_length * partition_info.global_number_processes, size_tuple}
+        : std::vector<Hdf5DimType>{partition_info.local_length * partition_info.global_number_processes};
+    INFO("Filespace: for dataset {:s} has length {:d} and tuple {:d}.", name,
+         file_space[0], size_tuple);
+    INFO("Dataspace: for dataset {:s} has length {:d} and tuple {:d}.", name,
+         data_space[0], size_tuple);
     data_type = meshPropertyType2HdfType(mesh_property_data_type);
 }
 }  // namespace MeshLib::IO

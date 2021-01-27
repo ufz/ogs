@@ -28,7 +28,7 @@ bool isFileManager()
     return mpi_rank == 0;
 }
 
-std::pair<std::size_t, std::size_t> getPartitionInfo(std::size_t const size)
+PartitionInfo getPartitionInfo(std::size_t const size)
 {
     MPI_Comm const mpi_comm = MPI_COMM_WORLD;
     int mpi_size;
@@ -55,6 +55,10 @@ std::pair<std::size_t, std::size_t> getPartitionInfo(std::size_t const size)
                      partition_sizes.end(),
                      back_inserter(partition_offsets));
 
-    return {partition_offsets[mpi_rank], partition_offsets.back()};
+    //chunked
+    std::size_t longest_partition = *max_element(partition_sizes.begin(), partition_sizes.end());
+    auto this_partition_offset = longest_partition*mpi_rank;
+    return {this_partition_offset, longest_partition,partition_sizes.size()};
+    //return {partition_offsets[mpi_rank], partition_offsets.back()};
 }
 }  // namespace MeshLib::IO
