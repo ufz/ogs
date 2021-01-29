@@ -24,8 +24,9 @@ public:
 
     PointGenerator point_generator = PointGenerator(
         MathLib::Point3d(std::array<double, 3>{{0.0, 0.0, 0.0}}), 1.0);
-    SymmSegmentGenerator segment_generator = SymmSegmentGenerator{point_generator,
-        std::bind(ac::reflect, point_generator.center, std::placeholders::_1)};
+    SymmSegmentGenerator segment_generator = SymmSegmentGenerator{
+        point_generator,
+        [&](auto p) { return ac::reflect(point_generator.center, p); }};
 
     ac::gtest_reporter gtest_reporter;
 };
