@@ -450,14 +450,23 @@ lam.setEntryName("EquivalentPlasticStrainMatrix");
             {
                 const auto sign = min(
                     max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
-                const auto A =
-                    1. / 3. * cos_lodeT *
-                    (3. + tan_lodeT * tan_3_lodeT +
-                     isqrt3 * sign * (tan_3_lodeT - 3. * tan_lodeT) * sin_phi);
+                const auto term1 = cos_lodeT - isqrt3 * sin_phi * sin_lodeT;
+                const auto term2 =
+                    sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT;
+                const auto term3 =
+                    18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
+
                 const auto B =
-                    1. / (3. * cos_3_lodeT) *
-                    (sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT);
-                K = A - B * sin_3_lode;
+                    (sign * sin_6_lodeT * term1 - 6. * cos_6_lodeT * term2) /
+                    term3;
+                const auto C =
+                    (-cos_3_lodeT * term1 - 3. * sign * sin_3_lodeT * term2) /
+                    term3;
+
+                const auto A = -isqrt3 * sin_phi * sign * sin_lodeT -
+                               B * sign * sin_3_lodeT -
+                               C * sin_3_lodeT * sin_3_lodeT + cos_lodeT;
+                K = A + B * sin_3_lode + C * sin_3_lode * sin_3_lode;
             }
             // yield function
             const auto rootF = max(sqrt(J2 * K * K + a * a * sin_phi * sin_phi),
