@@ -6,10 +6,8 @@ build linux frontend:
     - frontend2
   allow_failure: true
   variables:
-    BUILD_DIR: "build"
     CCACHE_DIR: "/data/ogs/.ccache"
-    CMAKE_ARGS: "-DOGS_USE_CONAN=OFF -DOGS_DISABLE_CCACHE=OFF -DOGS_CPU_ARCHITECTURE=generic"
+    CMAKE_PRESET: release
+    CMAKE_ARGS: "-DOGS_USE_CONAN=OFF -DOGS_USE_PYTHON=OFF -DOGS_CPU_ARCHITECTURE=generic"
   before_script:
     - source scripts/env/eve/cli.sh
-    - mkdir -p $BUILD_DIR
-    - cd $BUILD_DIR

@@ -7,13 +7,20 @@
   },
   "configurePresets": [
     {
-      "name": "release",
+      "name": "_ninja_release",
+      "hidden": true,
       "displayName": "Default Config (Release)",
       "description": "Default build using the Ninja generator",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "_ninja_release",
+      "cacheVariables": {
         "OGS_BUILD_UTILS": "ON",
         "OGS_USE_PYTHON": "ON"
       }
@@ -34,6 +41,14 @@
         "OGS_BUILD_CLI": "OFF",
         "OGS_BUILD_GUI": "ON",
         "OGS_USE_NETCDF": "ON"
+      }
+    },
+    {
+      "name": "ci-simplest",
+      "inherits": "_ninja_release",
+      "cacheVariables": {
+        "OGS_USE_CONAN": "OFF",
+        "OGS_DISABLE_POETRY": "ON"
       }
     }
   ]
