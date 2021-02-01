@@ -96,7 +96,7 @@ option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 if(WIN32)
-    option(OGS_BUILD_SWMM "Should the SWMM interface be built?" OFF)
+    option(OGS_BUILD_SWMM "Should the SWMM interface be built?" ON)
 endif()
 if(NOT WIN32 AND OGS_BUILD_SWMM)
     message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")

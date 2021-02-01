@@ -14,7 +14,6 @@ build gui win:
       -DOGS_BUILD_CLI=OFF
       -DOGS_BUILD_GUI=ON
       -DOGS_BUILD_UTILS=ON
-      -DOGS_BUILD_SWMM=ON
       -DOGS_USE_NETCDF=ON
       -DOGS_CI_TESTRUNNER_REPEAT=1
   parallel:
