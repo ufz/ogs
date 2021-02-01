@@ -383,11 +383,16 @@ void RichardsMechanicsLocalAssembler<
         variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L_prev;
 
+        // tangent derivative for Jacobian
         double const dS_L_dp_cap =
             medium->property(MPL::PropertyType::saturation)
                 .template dValue<double>(variables,
                                          MPL::Variable::capillary_pressure,
                                          x_position, t, dt);
+        // secant derivative from time discretization for storage
+        // use tangent, if secant is not available
+        double const DeltaS_L_Deltap_cap = (p_cap_dot_ip == 0) ? dS_L_dp_cap :
+            (S_L - S_L_prev) / (dt * p_cap_dot_ip);
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
             MPL::VariableArray vs;
@@ -550,7 +555,7 @@ void RichardsMechanicsLocalAssembler<
         double const a0 = S_L * (alpha - phi) * beta_SR;
         // Volumetric average specific storage of the solid and fluid phases.
         double const specific_storage =
-            dS_L_dp_cap * (p_cap_ip * a0 - phi) + S_L * (phi * beta_LR + a0);
+            DeltaS_L_Deltap_cap * (p_cap_ip * a0 - phi) + S_L * (phi * beta_LR + a0);
         M.template block<pressure_size, pressure_size>(pressure_index,
                                                        pressure_index)
             .noalias() += N_p.transpose() * rho_LR * specific_storage * N_p * w;
@@ -743,11 +748,16 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L_prev;
 
+        // tangent derivative for Jacobian
         double const dS_L_dp_cap =
             medium->property(MPL::PropertyType::saturation)
                 .template dValue<double>(variables,
                                          MPL::Variable::capillary_pressure,
                                          x_position, t, dt);
+        // secant derivative from time discretization for storage
+        // use tangent, if secant is not available
+        double const DeltaS_L_Deltap_cap = (p_cap_dot_ip == 0) ? dS_L_dp_cap :
+            (S_L - S_L_prev) / (dt * p_cap_dot_ip);
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
             MPL::VariableArray vs;
@@ -970,12 +980,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         storage_p_a_p.noalias() +=
             N_p.transpose() * rho_LR * specific_storage_a_p * N_p * w;
-        if (p_cap_dot_ip != 0)  // prevent division by zero.
-        {
-            storage_p_a_S.noalias() -= N_p.transpose() * rho_LR *
-                                       specific_storage_a_S * (S_L - S_L_prev) /
-                                       (dt * p_cap_dot_ip) * N_p * w;
-        }
+
+        storage_p_a_S.noalias() -= N_p.transpose() * rho_LR *
+                                       specific_storage_a_S *
+                                       DeltaS_L_Deltap_cap * N_p * w;
+
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
