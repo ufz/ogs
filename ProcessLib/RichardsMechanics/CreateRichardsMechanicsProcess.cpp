@@ -173,13 +173,18 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
 
+    auto const explicit_hm_coupling_in_unsaturated_zone =
+        //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__explicit_hm_coupling_in_unsaturated_zone}
+        config.getConfigParameter<bool>("explicit_hm_coupling_in_unsaturated_zone", false);
+
     RichardsMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
         std::move(solid_constitutive_relations),
         initial_stress,
         specific_body_force,
-        mass_lumping};
+        mass_lumping,
+        explicit_hm_coupling_in_unsaturated_zone};
 
     SecondaryVariableCollection secondary_variables;
 
