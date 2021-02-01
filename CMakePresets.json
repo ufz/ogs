@@ -25,6 +25,16 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
+    },
+    {
+      "name": "release-gui",
+      "inherits": "release",
+      "displayName": "GUI Config (Release)",
+      "cacheVariables": {
+        "OGS_BUILD_CLI": "OFF",
+        "OGS_BUILD_GUI": "ON",
+        "OGS_USE_NETCDF": "ON"
+      }
     }
   ]
 }
