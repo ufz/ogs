@@ -142,21 +142,24 @@ double compute_R_gg_2U(double const chi, double const R_gs, double const R_ar,
 /// Check if constraints regarding negative thermal resistances are violated
 /// apply correction procedure.
 /// Section (1.5.5) in FEFLOW White Papers Vol V.
-std::vector<double> thermalResistancesGroutSoil2U(double chi,
-                                                  double const R_ar_1,
-                                                  double const R_ar_2,
-                                                  double const R_g)
+std::tuple<double, double, double, double> thermalResistancesGroutSoil2U(
+    double const chi,
+    double const R_ar_1,
+    double const R_ar_2,
+    double const R_g)
 {
     double R_gs = compute_R_gs_2U(chi, R_g);
     double R_gg_1 = compute_R_gg_2U(chi, R_gs, R_ar_1, R_g);
     double R_gg_2 = compute_R_gg_2U(chi, R_gs, R_ar_2,
                                     R_g);  // Resulting thermal resistances.
+    double chi_new = chi;
 
     auto constraint = [&]() {
         return 1.0 / ((1.0 / R_gg_1) + (1.0 / (2.0 * R_gs)));
     };
 
-    std::array<double, 3> const multiplier{chi * 0.66, chi * 0.5 * 0.66, 0.0};
+    std::array<double, 3> const multiplier{chi * 2.0 / 3.0, chi * 1.0 / 3.0,
+                                           0.0};
     for (double m_chi : multiplier)
     {
         if (constraint() >= 0)
@@ -170,9 +173,10 @@ std::vector<double> thermalResistancesGroutSoil2U(double chi,
         R_gs = compute_R_gs_2U(m_chi, R_g);
         R_gg_1 = compute_R_gg_2U(m_chi, R_gs, R_ar_1, R_g);
         R_gg_2 = compute_R_gg_2U(m_chi, R_gs, R_ar_2, R_g);
+        chi_new = m_chi;
     }
 
-    return {R_gg_1, R_gg_2, R_gs};
+    return {chi_new, R_gg_1, R_gg_2, R_gs};
 }
 
 void BHE_2U::updateHeatTransferCoefficients(double const flow_rate)
@@ -222,12 +226,6 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
         (2 * pi * lambda_g) *
         (3.098 - 4.432 * std::sqrt(2) * _pipes.distance / D +
          2.364 * 2 * _pipes.distance * _pipes.distance / D / D);
-    // thermal resistance due to the grout transition.
-    double const R_con_b = chi * R_g;
-
-    // Eq. 29 and 30
-    double const R_fig = 2 * R_adv_i + 2 * R_con_a + R_con_b;
-    double const R_fog = 2 * R_adv_o + 2 * R_con_a + R_con_b;
 
     // thermal resistance due to inter-grout exchange
     double const R_ar_1 =
@@ -240,12 +238,17 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
                    d0 / d0) /
         (2.0 * pi * lambda_g);
 
-    std::vector<double> _intergrout_thermal_exchange;
-    _intergrout_thermal_exchange =
+    auto const [chi_new, R_gg_1, R_gg_2, R_gs] =
         thermalResistancesGroutSoil2U(chi, R_ar_1, R_ar_2, R_g);
 
-    return {{R_fig, R_fog, _intergrout_thermal_exchange[0],
-             _intergrout_thermal_exchange[1], _intergrout_thermal_exchange[2]}};
+    // thermal resistance due to the grout transition.
+    double const R_con_b = chi_new * R_g;
+
+    // Eq. 29 and 30
+    double const R_fig = 2 * R_adv_i + 2 * R_con_a + R_con_b;
+    double const R_fog = 2 * R_adv_o + 2 * R_con_a + R_con_b;
+
+    return {{R_fig, R_fog, R_gg_1, R_gg_2, R_gs}};
 
     // keep the following lines------------------------------------------------
     // when debugging the code, printing the R and phi values are needed--------
