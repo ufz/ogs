@@ -245,8 +245,8 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
     double const R_con_b = chi_new * R_g;
 
     // Eq. 29 and 30
-    double const R_fig = 2 * R_adv_i + 2 * R_con_a + R_con_b;
-    double const R_fog = 2 * R_adv_o + 2 * R_con_a + R_con_b;
+    double const R_fig = R_adv_i + R_con_a + R_con_b;
+    double const R_fog = R_adv_o + R_con_a + R_con_b;
 
     return {{R_fig, R_fog, R_gg_1, R_gg_2, R_gs}};
 
