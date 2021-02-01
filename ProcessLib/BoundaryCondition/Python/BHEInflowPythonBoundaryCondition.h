@@ -41,7 +41,8 @@ public:
           _bhe(bhe),
           _py_bc_object(py_bc_object)
     {
-        const auto g_idx_T_out = static_cast<int>(in_out_global_indices.second);
+        const auto g_idx_T_out =
+            static_cast<int>(_in_out_global_indices.second);
 
         // store the bc node ids to BHE network dataframe
         std::get<3>(_py_bc_object.dataframe_network).emplace_back(g_idx_T_out);

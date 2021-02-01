@@ -351,7 +351,6 @@ void Output::doOutputAlways(Process const& process,
         DBUG("Found {:d} nodes for output at mesh '{:s}'.", nodes.size(),
              mesh.getName());
 
-        MeshLib::MeshSubset mesh_subset(mesh, nodes);
         std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
             mesh_dof_tables;
         mesh_dof_tables.reserve(x.size());
@@ -359,7 +358,7 @@ void Output::doOutputAlways(Process const& process,
         {
             mesh_dof_tables.push_back(
                 process.getDOFTable(i).deriveBoundaryConstrainedMap(
-                    std::move(mesh_subset)));
+                    MeshLib::MeshSubset{mesh, nodes}));
         }
         std::vector<NumLib::LocalToGlobalIndexMap const*>
             mesh_dof_table_pointers;

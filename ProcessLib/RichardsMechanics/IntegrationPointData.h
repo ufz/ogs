@@ -12,10 +12,7 @@
 
 #include <memory>
 
-#include "MaterialLib/MPL/VariableType.h"
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
-#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 
 namespace ProcessLib
 {

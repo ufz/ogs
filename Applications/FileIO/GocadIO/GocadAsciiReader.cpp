@@ -239,7 +239,7 @@ MeshLib::Node* createNode(std::stringstream& sstr)
 bool parseNodes(std::ifstream& in,
                 std::vector<MeshLib::Node*>& nodes,
                 std::map<std::size_t, std::size_t>& node_id_map,
-                MeshLib::Properties& mesh_prop)
+                MeshLib::Properties const& mesh_prop)
 {
     NodeType t = NodeType::UNSPECIFIED;
     std::streampos pos = in.tellg();

@@ -31,22 +31,22 @@ public:
     PointGenerator point_generator1 = PointGenerator(
         MathLib::Point3d(std::array<double, 3>{{0.0, 0.0, 0.0}}), 1.0);
     SymmSegmentGenerator segment_generator1 = SymmSegmentGenerator{point_generator1,
-        std::bind(ac::reflect, point_generator1.center, std::placeholders::_1)};
+        [&](auto p){ return ac::reflect(point_generator1.center, p); }};
 
     PointGenerator point_generator2 = PointGenerator(
         MathLib::Point3d(std::array<double, 3>{{2.0, 0.0, 0.0}}), 1.0);
     SymmSegmentGenerator segment_generator2 = SymmSegmentGenerator{point_generator2,
-        std::bind(ac::reflect, point_generator2.center, std::placeholders::_1)};
+        [&](auto p){ return ac::reflect(point_generator2.center, p); }};
 
     Eigen::Vector3d const translation_vector1 = {2, 2, 0};
     PairSegmentGenerator pair_segment_generator1 = PairSegmentGenerator{
         segment_generator1,
-        std::bind(ac::translate, translation_vector1, std::placeholders::_1)};
+        [&](auto p) { return ac::translate(translation_vector1, p); }};
 
     Eigen::Vector3d const translation_vector2 = {0, 0, 0};
     PairSegmentGenerator pair_segment_generator2 = PairSegmentGenerator{
         segment_generator1,
-        std::bind(ac::translate, translation_vector2, std::placeholders::_1)};
+        [&](auto p) { return ac::translate(translation_vector2, p); }};
 
     ac::gtest_reporter gtest_reporter;
 };
