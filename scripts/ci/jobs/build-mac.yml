@@ -3,9 +3,9 @@ build mac:
   tags:
     - mac
   variables:
-    BUILD_DIR: "build-mac"
+    BUILD_DIR: "build/mac-release"
+    CMAKE_PRESET: release
     CMAKE_ARGS: >-
-      -DOGS_BUILD_UTILS=ON
-      -DOGS_USE_PYTHON=ON
       -DOGS_INSTALL_DEPENDENCIES=ON
       -DOGS_USE_XDMF=ON
+      -B $BUILD_DIR
