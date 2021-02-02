@@ -11,6 +11,7 @@
 #pragma once
 
 #include <boost/optional.hpp>
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -22,6 +23,12 @@ namespace MeshLib
 {
 class Mesh;
 }
+
+namespace MaterialPropertyLib
+{
+class Medium;
+}
+
 namespace ParameterLib
 {
 struct CoordinateSystem;
@@ -40,37 +47,34 @@ namespace ThermoMechanics
 {
 template <int DisplacementDim>
 std::unique_ptr<Process> createThermoMechanicsProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
-    unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    unsigned const integration_order, BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
-    unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    unsigned const integration_order, BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 extern template std::unique_ptr<Process> createThermoMechanicsProcess<3>(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
-    unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    unsigned const integration_order, BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace ThermoMechanics
 }  // namespace ProcessLib

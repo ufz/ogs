@@ -12,12 +12,14 @@
 
 #include <cassert>
 
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
 #include "ThermoMechanicsProcess.h"
 #include "ThermoMechanicsProcessData.h"
 
@@ -25,17 +27,31 @@ namespace ProcessLib
 {
 namespace ThermoMechanics
 {
+void checkMPLProperties(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+{
+    std::array const required_solid_properties = {
+        MaterialPropertyLib::density, MaterialPropertyLib::thermal_expansivity,
+        MaterialPropertyLib::thermal_conductivity,
+        MaterialPropertyLib::specific_heat_capacity};
+
+    for (auto const& m : media)
+    {
+        checkRequiredProperties(m.second->phase("Solid"),
+                                required_solid_properties);
+    }
+}
+
 template <int DisplacementDim>
 std::unique_ptr<Process> createThermoMechanicsProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
-    unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    unsigned const integration_order, BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "THERMO_MECHANICS");
@@ -118,37 +134,6 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
 
-    // Reference solid density
-    auto const& reference_solid_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__reference_solid_density}
-        "reference_solid_density", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as solid density parameter.",
-         reference_solid_density.name);
-
-    // Linear thermal expansion coefficient
-    auto const& linear_thermal_expansion_coefficient =
-        ParameterLib::findParameter<double>(
-            config,
-            //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__linear_thermal_expansion_coefficient}
-            "linear_thermal_expansion_coefficient", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as linear thermal expansion coefficient.",
-         linear_thermal_expansion_coefficient.name);
-    // Specific heat capacity
-    auto const& specific_heat_capacity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__specific_heat_capacity}
-        "specific_heat_capacity", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as specific heat capacity parameter.",
-         specific_heat_capacity.name);
-    // Thermal conductivity // TODO To be changed as tensor input.
-    auto const& thermal_conductivity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICS__thermal_conductivity}
-        "thermal_conductivity", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as thermal conductivity parameter.",
-         thermal_conductivity.name);
-
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
@@ -176,14 +161,17 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
         &mesh);
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+    DBUG("Check the solid properties of ThermoMechanics process ...");
+    checkMPLProperties(media);
+    DBUG("Solid properties verified.");
+
     ThermoMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
+        std::move(media_map),
         std::move(solid_constitutive_relations),
         initial_stress,
-        reference_solid_density,
-        linear_thermal_expansion_coefficient,
-        specific_heat_capacity,
-        thermal_conductivity,
         specific_body_force,
         mechanics_process_id,
         heat_conduction_process_id};
@@ -208,7 +196,8 @@ template std::unique_ptr<Process> createThermoMechanicsProcess<2>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 template std::unique_ptr<Process> createThermoMechanicsProcess<3>(
     std::string name,
@@ -219,7 +208,8 @@ template std::unique_ptr<Process> createThermoMechanicsProcess<3>(
     boost::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace ThermoMechanics
 }  // namespace ProcessLib
