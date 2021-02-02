@@ -58,8 +58,6 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
-    double solid_density;
-    double solid_density_prev;
 
     double integration_weight;
     typename ShapeMatricesType::NodalRowVectorType N;
@@ -70,7 +68,6 @@ struct IntegrationPointData final
         eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_prev = sigma;
-        solid_density_prev = solid_density;
         material_state_variables->pushBackState();
     }
 
@@ -97,7 +94,12 @@ public:
     // Types for displacement.
     // (Higher order elements = ShapeFunction).
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
+    using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
+
+    static int const KelvinVectorSize =
+        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
     using RhsVector = typename ShapeMatricesType::template VectorType<

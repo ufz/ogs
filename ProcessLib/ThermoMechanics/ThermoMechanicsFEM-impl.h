@@ -12,8 +12,11 @@
 
 #pragma once
 
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Property.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
-#include "ThermoMechanicsFEM.h"
 
 namespace ProcessLib
 {
@@ -71,9 +74,6 @@ ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         ip_data.eps_m_prev.setZero(kelvin_vector_size);
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
-        ip_data.solid_density =
-            _process_data.reference_solid_density(0, x_position)[0];
-        ip_data.solid_density_prev = ip_data.solid_density;
         ip_data.N = shape_matrices[ip].N;
         ip_data.dNdx = shape_matrices[ip].dNdx;
 
@@ -168,6 +168,9 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& solid_phase = medium->phase("Solid");
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -195,27 +198,27 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto& state = _ip_data[ip].material_state_variables;
 
+        const double T_ip = N.dot(T);  // T at integration point
         double const dT = N.dot(T_dot) * dt;
-        // calculate thermally induced strain
-        // assume isotropic thermal expansion
-        auto const alpha = _process_data.linear_thermal_expansion_coefficient(
-            t, x_position)[0];
-        double const linear_thermal_strain_increment = alpha * dT;
+
+        // Consider also anisotropic thermal expansion.
+        auto const solid_linear_thermal_expansivity_vector =
+            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
+                solid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_expansivity)
+                    .value(variables, x_position, t, dt));
+
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+            dthermal_strain =
+                solid_linear_thermal_expansivity_vector.eval() * dT;
 
         //
         // displacement equation, displacement part
         //
         eps.noalias() = B * u;
 
-        using Invariants = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>;
-
-        // assume isotropic thermal expansion
-        const double T_ip = N.dot(T);  // T at integration point
-        eps_m.noalias() =
-            eps_m_prev + eps - eps_prev -
-            linear_thermal_strain_increment * Invariants::identity2;
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
 
         variables_prev[static_cast<int>(MPL::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
@@ -260,14 +263,9 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                 .noalias() = N;
         }
 
-        // calculate real density
-        // rho_s_{n+1} * (V_{n} + dV) = rho_s_n * V_n
-        // dV = 3 * alpha * dT * V_0
-        // rho_s_{n+1} = rho_s_n / (1 + 3 * alpha * dT )
-        // see reference solid density description for details.
-        auto& rho_s = _ip_data[ip].solid_density;
-        rho_s = _ip_data[ip].solid_density_prev /
-                (1 + 3 * linear_thermal_strain_increment);
+        auto const rho_s =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
 
         auto const& b = _process_data.specific_body_force;
         local_rhs.template block<displacement_size, 1>(displacement_index, 0)
@@ -276,9 +274,12 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
         //
         // displacement equation, temperature part
-        //
-        KuT.noalias() +=
-            B.transpose() * C * alpha * Invariants::identity2 * N * w;
+        // The computation of KuT can be ignored.
+        auto const alpha_T_tensor =
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                solid_linear_thermal_expansivity_vector.eval());
+        KuT.noalias() += B.transpose() * (C * alpha_T_tensor.eval()) * N * w;
+
         if (_ip_data[ip].solid_material.getConstitutiveModel() ==
             MaterialLib::Solids::ConstitutiveModel::CreepBGRa)
         {
@@ -294,10 +295,21 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         // temperature equation, temperature part;
         //
         auto const lambda =
-            _process_data.thermal_conductivity(t, x_position)[0];
-        KTT.noalias() += dNdx.transpose() * lambda * dNdx * w;
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_conductivity)
+                .value(variables, x_position, t, dt);
 
-        auto const c = _process_data.specific_heat_capacity(t, x_position)[0];
+        GlobalDimMatrixType const thermal_conductivity =
+            MaterialPropertyLib::formEigenTensor<DisplacementDim>(lambda);
+
+        KTT.noalias() += dNdx.transpose() * thermal_conductivity * dNdx * w;
+
+        auto const c =
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(variables, x_position, t, dt);
         DTT.noalias() += N.transpose() * rho_s * c * N * w;
     }
 
@@ -376,6 +388,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     MPL::VariableArray variables_prev;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& solid_phase = medium->phase("Solid");
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -406,25 +420,27 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
         const double T_ip = N.dot(local_T);  // T at integration point
         double const dT_ip = N.dot(local_Tdot) * dt;
-        // calculate thermally induced strain
-        // assume isotropic thermal expansion
-        auto const alpha = _process_data.linear_thermal_expansion_coefficient(
-            t, x_position)[0];
-        double const linear_thermal_strain_increment = alpha * dT_ip;
+        variables[static_cast<int>(MPL::Variable::temperature)].emplace<double>(
+            T_ip);
 
         //
         // displacement equation, displacement part
         //
         eps.noalias() = B * local_u;
 
-        using Invariants = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>;
+        // Consider also anisotropic thermal expansion.
+        auto const solid_linear_thermal_expansivity_vector =
+            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
+                solid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_expansivity)
+                    .value(variables, x_position, t, dt));
 
-        // assume isotropic thermal expansion
-        eps_m.noalias() =
-            eps_m_prev + eps - eps_prev -
-            linear_thermal_strain_increment * Invariants::identity2;
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+            dthermal_strain =
+                solid_linear_thermal_expansivity_vector.eval() * dT_ip;
+
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
 
         variables_prev[static_cast<int>(MPL::Variable::stress)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
@@ -437,8 +453,6 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
-        variables[static_cast<int>(MPL::Variable::temperature)].emplace<double>(
-            T_ip);
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);
@@ -466,14 +480,9 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                 .noalias() = N;
         }
 
-        // calculate real density
-        // rho_s_{n+1} * (V_{n} + dV) = rho_s_n * V_n
-        // dV = 3 * alpha * dT * V_0
-        // rho_s_{n+1} = rho_s_n / (1 + 3 * alpha * dT )
-        // see reference solid density description for details.
-        auto& rho_s = _ip_data[ip].solid_density;
-        rho_s = _ip_data[ip].solid_density_prev /
-                (1 + 3 * linear_thermal_strain_increment);
+        auto const rho_s =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
 
         auto const& b = _process_data.specific_body_force;
         local_rhs.noalias() -=
@@ -516,6 +525,9 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
+    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& solid_phase = medium->phase("Solid");
+    MPL::VariableArray variables;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -524,27 +536,29 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
-        // calculate real density
-        // rho_s_{n+1} * (V_{n} + dV) = rho_s_n * V_n
-        // dV = 3 * alpha * dT * V_0
-        // rho_s_{n+1} = rho_s_n / (1 + 3 * alpha * dT )
-        // see reference solid density description for details.
-        auto& rho_s = _ip_data[ip].solid_density;
-        // calculate thermally induced strain
-        // assume isotropic thermal expansion
-        auto const alpha = _process_data.linear_thermal_expansion_coefficient(
-            t, x_position)[0];
+        const double T_ip = N.dot(local_T);  // T at integration point
+        variables[static_cast<int>(MPL::Variable::temperature)].emplace<double>(
+            T_ip);
 
-        double const dT_ip = N.dot(local_dT);
-        double const linear_thermal_strain_increment = alpha * dT_ip;
-        rho_s = _ip_data[ip].solid_density_prev /
-                (1 + 3 * linear_thermal_strain_increment);
-        auto const c_p = _process_data.specific_heat_capacity(t, x_position)[0];
+        auto const rho_s =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
+        auto const c_p =
+            solid_phase.property(MPL::PropertyType::specific_heat_capacity)
+                .template value<double>(variables, x_position, t, dt);
+
         mass.noalias() += N.transpose() * rho_s * c_p * N * w;
 
         auto const lambda =
-            _process_data.thermal_conductivity(t, x_position)[0];
-        laplace.noalias() += dNdx.transpose() * lambda * dNdx * w;
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_conductivity)
+                .value(variables, x_position, t, dt);
+
+        GlobalDimMatrixType const thermal_conductivity =
+            MaterialPropertyLib::formEigenTensor<DisplacementDim>(lambda);
+
+        laplace.noalias() += dNdx.transpose() * thermal_conductivity * dNdx * w;
     }
     local_Jac.noalias() += laplace + mass / dt;
 
