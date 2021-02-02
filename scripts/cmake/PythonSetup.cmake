@@ -1,4 +1,6 @@
-find_program(POETRY poetry)
+if(NOT OGS_DISABLE_POETRY)
+    find_program(POETRY poetry)
+endif()
 if(POETRY)
     configure_file(${PROJECT_SOURCE_DIR}/scripts/python/poetry.in.toml
         ${PROJECT_BINARY_DIR}/poetry.toml COPYONLY)
