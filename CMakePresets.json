@@ -44,6 +44,21 @@
       }
     },
     {
+      "name": "release-petsc",
+      "inherits": "_ninja_release",
+      "displayName": "PETSc Config (Release)",
+      "description": "PETSc build using MPI compiler (mpicc, mpic++)",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON",
+        "OGS_USE_CONAN": "OFF",
+        "OGS_USE_PETSC": "ON"
+      },
+      "environment": {
+        "CC": "mpicc",
+        "CXX": "mpic++"
+      }
+    },
+    {
       "name": "ci-simplest",
       "inherits": "_ninja_release",
       "cacheVariables": {
