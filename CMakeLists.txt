@@ -40,6 +40,12 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
 endif()
 option(OGS_USE_PYTHON "Interface with Python" ON)
 option(OGS_USE_POETRY "Enables automatic Python virtual environment handling with poetry." ON)
+if(WIN32)
+    option(OGS_BUILD_SWMM "Should the SWMM interface be built?" ON)
+endif()
+if(NOT WIN32 AND OGS_BUILD_SWMM)
+    message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
+endif()
 
 # Third-party libraries, names come from Conan package names
 set(OGS_LIBS
@@ -96,14 +102,6 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
 endif() # GCC AND GPROF_PATH
 
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
-
-if(WIN32)
-    option(OGS_BUILD_SWMM "Should the SWMM interface be built?" ON)
-endif()
-if(NOT WIN32 AND OGS_BUILD_SWMM)
-    message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
-endif()
-
 option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
