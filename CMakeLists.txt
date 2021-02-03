@@ -184,8 +184,6 @@ endif()
 option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation."
        OFF)
 
-option(OGS_USE_PYTHON "Interface with Python" ${Python3_FOUND})
-
 option(OGS_USE_MFRONT
        "Enable solid material models by MFront (https://tfel.sourceforge.net)"
        OFF)

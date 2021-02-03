@@ -28,6 +28,7 @@ build linux (no unity):
     BUILD_CTEST: "false"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
+      -DOGS_USE_PYTHON=OFF
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_MFRONT=ON
       -DOGS_USE_UNITY_BUILDS=OFF
