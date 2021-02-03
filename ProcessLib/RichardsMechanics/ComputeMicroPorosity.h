@@ -49,20 +49,30 @@ std::ostream& operator<<(std::ostream& os,
               << "sigma_sw: " << state.sigma_sw.transpose();
 }
 
+struct MicroPorosityParameters
+{
+    NumLib::NewtonRaphsonSolverParameters nonlinear_solver_parameters;
+
+    /// Coefficient \f$\bar\alpha\f$ of the micro structure mass exchange. If
+    /// this is given then the micro_saturation MPL property must be provided
+    /// too.
+    double mass_exchange_coefficient;
+};
+
 template <int DisplacementDim>
 MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&
         I_2_C_el_inverse,
     double const rho_LR_m,  // for simplification equal to rho_LR_M
-    double const mu_LR, double const alpha_bar, double const alpha_B,
-    double const phi_M, double const p_L, double const p_L_m_prev,
+    double const mu_LR,
+    MicroPorosityParameters const& micro_porosity_parameters,
+    double const alpha_B, double const phi_M, double const p_L,
+    double const p_L_m_prev,
     MaterialPropertyLib::VariableArray const& /*variables_prev*/,
     double const S_L_m_prev, double const phi_m_prev,
     ParameterLib::SpatialPosition const pos, double const t, double const dt,
     MaterialPropertyLib::Property const& saturation_micro,
-    MaterialPropertyLib::Property const& swelling_stress_rate,
-    NumLib::NewtonRaphsonSolverParameters const& nonlinear_solver_parameters)
-
+    MaterialPropertyLib::Property const& swelling_stress_rate)
 {
     namespace MPL = MaterialPropertyLib;
     static constexpr int kelvin_vector_size =
@@ -92,6 +102,9 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
         return {solution[i_phi_m], solution[i_e_sw], solution[i_p_L_m],
                 solution.template segment<kelvin_vector_size>(i_sigma_sw)};
     }
+
+    double const alpha_bar =
+        micro_porosity_parameters.mass_exchange_coefficient;
 
     auto const update_residual = [&](ResidualVectorType& residual) {
         double const delta_phi_m = solution[i_phi_m];
@@ -131,7 +144,8 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
             rho_LR_m *
                 (phi_m * delta_S_L_m - (alpha_B - phi_M) * S_L_m * delta_e_sw) +
             phi_m * S_L_m * rho_LR_m * delta_e_sw -
-            alpha_bar / mu_LR * (p_L - p_L_m) * dt;
+            micro_porosity_parameters.mass_exchange_coefficient / mu_LR *
+                (p_L - p_L_m) * dt;
     };
 
     auto const update_jacobian = [&](JacobianMatrix& jacobian) {
@@ -172,7 +186,6 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
         jacobian.template block<kelvin_vector_size, 1>(
             i_sigma_sw, i_p_L_m) = -dsigma_sw_dS_L_m * dS_L_m_dp_cap_m;
 
-
         jacobian(i_p_L_m, i_phi_m) =
             rho_LR_m * (delta_S_L_m + phi_m * delta_e_sw);
 
@@ -194,7 +207,7 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
                               decltype(update_residual),
                               decltype(update_solution)>(
             linear_solver, update_jacobian, update_residual, update_solution,
-            nonlinear_solver_parameters);
+            micro_porosity_parameters.nonlinear_solver_parameters);
 
     auto const success_iterations = newton_solver.solve(jacobian);
 

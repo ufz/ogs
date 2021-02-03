@@ -75,9 +75,6 @@ TEST(RichardsMechanics, computeMicroPorosity)
     static constexpr auto eps = 2e-14;
     constexpr int DisplacementDim = 2;
 
-    static const NumLib::NewtonRaphsonSolverParameters
-        nonlinear_solver_parameters{1000, 1e-8, 1e-15};
-
     //
     // Create properties.
     //
@@ -125,7 +122,9 @@ TEST(RichardsMechanics, computeMicroPorosity)
         I_2_C_el_inverse = identity2.transpose() * C_el.inverse();
     double const rho_LR_m = 1e3;
     double const mu_LR = 1e-3;
-    double const alpha_bar = 1e-14;
+    MicroPorosityParameters const micro_porosity_parameters{
+        NumLib::NewtonRaphsonSolverParameters{1000, 1e-8, 1e-15}, 1e-14};
+
     double const alpha_B = 1;
     double const phi_M = 0.45;
 
@@ -175,10 +174,10 @@ TEST(RichardsMechanics, computeMicroPorosity)
         auto const state_increment = computeMicroPorosity<DisplacementDim>(
             I_2_C_el_inverse,
             rho_LR_m,  // for simplification equal to rho_LR_M
-            mu_LR, alpha_bar, alpha_B, phi_M, p_L, state_prev.p_L_m,
-            MaterialPropertyLib::VariableArray{}, S_L_m_prev, state_prev.phi_m,
-            pos, t, dt, saturation_micro, swelling_stress_rate,
-            nonlinear_solver_parameters);
+            mu_LR, micro_porosity_parameters, alpha_B, phi_M, p_L,
+            state_prev.p_L_m, MaterialPropertyLib::VariableArray{}, S_L_m_prev,
+            state_prev.phi_m, pos, t, dt, saturation_micro,
+            swelling_stress_rate);
 
         // push back state
         state_prev = state;
