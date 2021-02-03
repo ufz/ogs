@@ -124,19 +124,20 @@ double compute_R_gg(double const chi, double const R_gs, double const R_ar,
 /// Check if constraints regarding negative thermal resistances are violated
 /// apply correction procedure.
 /// Section (1.5.5) in FEFLOW White Papers Vol V.
-std::pair<double, double> thermalResistancesGroutSoil(double chi,
-                                                      double const R_ar,
-                                                      double const R_g)
+std::tuple<double, double, double> thermalResistancesGroutSoil(
+    double const chi, double const R_ar, double const R_g)
 {
     double R_gs = compute_R_gs(chi, R_g);
     double R_gg =
         compute_R_gg(chi, R_gs, R_ar, R_g);  // Resulting thermal resistances.
+    double new_chi = chi;
 
     auto constraint = [&]() {
         return 1.0 / ((1.0 / R_gg) + (1.0 / (2.0 * R_gs)));
     };
 
-    std::array<double, 3> const multiplier{chi * 0.66, chi * 0.5 * 0.66, 0.0};
+    std::array<double, 3> const multiplier{chi * 2.0 / 3.0, chi * 1.0 / 3.0,
+                                           0.0};
     for (double m_chi : multiplier)
     {
         if (constraint() >= 0)
@@ -150,9 +151,10 @@ std::pair<double, double> thermalResistancesGroutSoil(double chi,
 
         R_gs = compute_R_gs(m_chi, R_g);
         R_gg = compute_R_gg(m_chi, R_gs, R_ar, R_g);
+        new_chi = m_chi;
     }
 
-    return {R_gg, R_gs};
+    return {new_chi, R_gg, R_gs};
 }
 
 void BHE_1U::updateHeatTransferCoefficients(double const flow_rate)
@@ -199,11 +201,6 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
         std::acosh((D * D + d0 * d0 - _pipes.distance * _pipes.distance) /
                    (2 * D * d0)) /
         (2 * pi * lambda_g) * (1.601 - 0.888 * _pipes.distance / D);
-    // thermal resistance due to the grout transition.
-    double const R_con_b = chi * R_g;
-    // Eq. 29 and 30
-    double const R_fig = R_adv_i1 + R_con_a + R_con_b;
-    double const R_fog = R_adv_o1 + R_con_a + R_con_b;
 
     // thermal resistance due to inter-grout exchange
     double const R_ar =
@@ -211,9 +208,14 @@ std::array<double, BHE_1U::number_of_unknowns> BHE_1U::calcThermalResistances(
                    d0) /
         (2.0 * pi * lambda_g);
 
-    double R_gg;
-    double R_gs;
-    std::tie(R_gg, R_gs) = thermalResistancesGroutSoil(chi, R_ar, R_g);
+    auto const [chi_new, R_gg, R_gs] =
+        thermalResistancesGroutSoil(chi, R_ar, R_g);
+
+    // thermal resistance due to the grout transition.
+    double const R_con_b = chi_new * R_g;
+    // Eq. 29 and 30
+    double const R_fig = R_adv_i1 + R_con_a + R_con_b;
+    double const R_fog = R_adv_o1 + R_con_a + R_con_b;
 
     return {{R_fig, R_fog, R_gg, R_gs}};
 

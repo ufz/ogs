@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>3D_2U_BHE.vtu</mesh>
-    <!-- use the following mesh for benchmark with FEFLOW model
     <mesh>3D_2U_BHE_benchmark.vtu</mesh>
-    -->
     <geometry>3D_2U_BHE.gml</geometry>
     <processes>
         <process>
@@ -20,10 +17,9 @@
                     <flow_and_temperature_control>
                         <!-- if power type boundary conditions are selected, the related
                         power value should be set with half of the presumed BHE power-->
-                        <type>TemperatureCurveFlowCurve</type>
-                        <flow_rate_curve>flow_rate</flow_rate_curve>
-                        <!-- flow rate within each U-pipe -->
-                        <temperature_curve>inflow_temperature</temperature_curve>
+                        <type>PowerCurveConstantFlow</type>
+                        <power_curve>heating_load</power_curve>
+                        <flow_rate>2.0e-4</flow_rate>
                     </flow_and_temperature_control>
                     <borehole>
                         <length>18.0</length>
@@ -153,34 +149,18 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <!-- use the following for full simulation
-                    <t_end> 186420 </t_end>
-                    -->
-                    <t_end> 600 </t_end>
+                    <t_end> 3600 </t_end>
                     <timesteps>
-                        <!-- use the following for full simulation
-                        <pair><repeat>3107</repeat><delta_t>60</delta_t></pair>
-                        -->
-                        <pair>
-                            <repeat>10</repeat>
-                            <delta_t>60</delta_t>
-                        </pair>
+                        <pair><repeat>60</repeat><delta_t>60</delta_t></pair>
                     </timesteps>
                 </time_stepping>
             </process>
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>3D_2U_BHE</prefix>
+            <prefix>3D_2U_BHE_powerBC</prefix>
             <timesteps>
-                <!-- use the following for full simulation
-                <pair><repeat> 10</repeat><each_steps> 1 </each_steps></pair>
-                <pair><repeat> 310</repeat><each_steps> 10 </each_steps></pair>
-                -->
-                <pair>
-                    <repeat> 100</repeat>
-                    <each_steps> 1 </each_steps>
-                </pair>
+                <pair><repeat> 1</repeat><each_steps> 1 </each_steps></pair>
             </timesteps>
             <variables>
                 <variable>temperature_soil</variable>
@@ -243,14 +223,9 @@
     </linear_solvers>
     <curves>
         <curve>
-            <name>flow_rate</name>
+            <name>heating_load</name>
             <coords>0  3600</coords>
-            <values>2.0e-4 2.0e-4</values>
-        </curve>
-        <curve>
-            <name>inflow_temperature</name>
-            <coords>0 60 120 180 240 300 360 420 480 540 600 1200 1800 2400 3000 3600</coords>
-            <values>22 22.2 22.4 22.6 22.8 23 23.2 23.4 23.6 23.8 24 26 28 30 32 34</values>
+            <values>-157.86 -157.86</values>
         </curve>
     </curves>
 </OpenGeoSysProject>
