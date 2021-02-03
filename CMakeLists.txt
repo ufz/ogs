@@ -38,6 +38,7 @@ endif()
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
     option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation." ON)
 endif()
+option(OGS_USE_PYTHON "Interface with Python" ON)
 option(OGS_DISABLE_POETRY "Disables automatic Python virtual environment handling with poetry." OFF)
 
 # Third-party libraries, names come from Conan package names
@@ -183,10 +184,7 @@ endif()
 option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation."
        OFF)
 
-option(OGS_USE_PYTHON "Interface with Python" OFF)
-if(OGS_USE_PYTHON AND NOT Python3_FOUND)
-    message(FATAL_ERROR "Python not found but required for OGS_USE_PYTHON=ON!")
-endif()
+option(OGS_USE_PYTHON "Interface with Python" ${Python3_FOUND})
 
 option(OGS_USE_MFRONT
        "Enable solid material models by MFront (https://tfel.sourceforge.net)"
