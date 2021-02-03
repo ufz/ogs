@@ -64,6 +64,7 @@ if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
+option(OGS_BUILD_UTILS "Should the utilities programms be built?" ON)
 
 # ---- CMake includes ----
 include(GitSetup)
@@ -94,7 +95,6 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
 endif() # GCC AND GPROF_PATH
 
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
-option(OGS_BUILD_UTILS "Should the utilities programms be built?" OFF)
 
 if(WIN32)
     option(OGS_BUILD_SWMM "Should the SWMM interface be built?" ON)

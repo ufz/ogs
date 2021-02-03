@@ -5,7 +5,7 @@ clang sanitizer:
   needs: ["pre commit"]
   variables:
     BUILD_DIR: "build-sanitizer"
-    CMAKE_ARGS: "-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON -DOGS_BUILD_UTILS=ON"
+    CMAKE_ARGS: "-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON"
     UBSAN_OPTIONS: "print_stacktrace=1"
     LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
   image:
