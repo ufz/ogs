@@ -17,7 +17,8 @@
                 <q>Q</q>
                 <nonlinear_solver>
                     <maximum_iterations>1000</maximum_iterations>
-                    <error_tolerance>1e-15</error_tolerance>
+                    <residuum_tolerance>1e-15</residuum_tolerance>
+                    <increment_tolerance>0</increment_tolerance>
                 </nonlinear_solver>
             </constitutive_relation>
             <reference_solid_density>rho_sr</reference_solid_density>
