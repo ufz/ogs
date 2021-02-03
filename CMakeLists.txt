@@ -39,7 +39,7 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
     option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation." ON)
 endif()
 option(OGS_USE_PYTHON "Interface with Python" ON)
-option(OGS_DISABLE_POETRY "Disables automatic Python virtual environment handling with poetry." OFF)
+option(OGS_USE_POETRY "Enables automatic Python virtual environment handling with poetry." ON)
 
 # Third-party libraries, names come from Conan package names
 set(OGS_LIBS

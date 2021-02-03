@@ -1,21 +1,21 @@
-if(NOT OGS_DISABLE_POETRY)
+if(OGS_USE_POETRY)
     find_program(POETRY poetry)
-endif()
-if(POETRY)
-    configure_file(${PROJECT_SOURCE_DIR}/scripts/python/poetry.in.toml
-        ${PROJECT_BINARY_DIR}/poetry.toml COPYONLY)
-    if(NOT EXISTS ${PROJECT_BINARY_DIR}/pyproject.toml)
-        configure_file(${PROJECT_SOURCE_DIR}/scripts/python/pyproject.in.toml
-            ${PROJECT_BINARY_DIR}/pyproject.toml)
-    endif()
-    if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
-        execute_process(COMMAND ${CMD_COMMAND} poetry install
-            WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
-    endif()
-    set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
-    set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
-    if(MSVC)
-        set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
+    if(POETRY)
+        configure_file(${PROJECT_SOURCE_DIR}/scripts/python/poetry.in.toml
+            ${PROJECT_BINARY_DIR}/poetry.toml COPYONLY)
+        if(NOT EXISTS ${PROJECT_BINARY_DIR}/pyproject.toml)
+            configure_file(${PROJECT_SOURCE_DIR}/scripts/python/pyproject.in.toml
+                ${PROJECT_BINARY_DIR}/pyproject.toml)
+        endif()
+        if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
+            execute_process(COMMAND ${CMD_COMMAND} poetry install
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
+        endif()
+        set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
+        set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
+        if(MSVC)
+            set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
+        endif()
     endif()
 endif()
 
