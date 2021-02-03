@@ -124,8 +124,9 @@ double compute_R_gg(double const chi, double const R_gs, double const R_ar,
 /// Check if constraints regarding negative thermal resistances are violated
 /// apply correction procedure.
 /// Section (1.5.5) in FEFLOW White Papers Vol V.
-std::tuple<double, double, double> thermalResistancesGroutSoil(
-    double const chi, double const R_ar, double const R_g)
+std::array<double, 3> thermalResistancesGroutSoil(double const chi,
+                                                  double const R_ar,
+                                                  double const R_g)
 {
     double R_gs = compute_R_gs(chi, R_g);
     double R_gg =
