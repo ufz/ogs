@@ -66,17 +66,18 @@ The comparison figures demonstrate that the OGS numerical results and FEFLOW res
 
 Figure 2: Comparison of vertical temperature distribution from scenario by adopting the fixed inflow boundary condition
 
-Figure 3 shows the the vertical distributed temperature of circulating fluid after operation for 3300 s by adopting the power boundary condition in OGS and FEFLOW models.
-A 0.18 $^{\circ}$C difference is found between the averaged vertical temperature from the two models.
+Figure 3 shows the vertical distributed temperature of circulating fluid after operation for 3300 s by adopting different power boundary conditions in OGS and FEFLOW models.
+Compared to the resutls computed from the OGS model with using a fixed power boundary condtion (illustrated as the blue and green line), A 0.18 $^{\circ}$C difference is found for the averaged vertical temperature from the FEFLOW model (illustrated as the dotted line).
 The reason to the results difference is due to the different power boundary condition type adopted in the two software.
 In FEFLOW the power boundary condtion is based on the outlet temperature calculated from the last time step (non-iterative).
 Compared to it, the default power boundary condition adopted in the OGS `Heat_Transport_BHE` process is based on the outlet temperature calculated from the current time step (with-iterative).
 Besides, by setting python bindings, the current OGS `Heat_Transport_BHE` process is capable to adopt the power boundary condition type used in the FEFLOW software.
-In this way, the computed vertical distributed circulating fluid temperature difference between the OGS and FEFLOW models is becoming much closer to each other.
+In this way, the computed vertical distributed circulating fluid temperature is updated to the black and red solid line illustrated in the figure 3.
+It shows that in this case, the difference between the OGS and FEFLOW models is becoming much closer to each other, which is about 0.037 $^{\circ}$C.
 
 {{< img src="../3D_2U_BHE_figures/vertical_temperature_distribution_powerBC.png" width="200">}}
 
-Figure 3: Comparison of vertical temperature distribution from scenario by adopting the power boundary condition
+Figure 3: Comparison of vertical temperature distribution from scenarios by adopting the power boundary conditions
 
 ## References
 
