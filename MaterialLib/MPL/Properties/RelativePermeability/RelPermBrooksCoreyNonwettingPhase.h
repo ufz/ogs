@@ -1,7 +1,8 @@
 /**
  * \file
  * \author Norbert Grunwald
- * \date   01.12.2020
+ * \date   27.06.2018
+ * \brief
  *
  * \copyright
  * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
@@ -12,6 +13,9 @@
  */
 #pragma once
 
+#include <string>
+
+#include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/Property.h"
 
 namespace MaterialPropertyLib
@@ -20,47 +24,41 @@ class Medium;
 class Phase;
 class Component;
 /**
- * A simple relative permeability function proposed by
- * Kent S Udell \cite udell1985heat.
- *
- *  Definition:
- *          \f[ k_{\text{rel}}^{\alpha}
- * =\left(S^{\text{eff}}_{\alpha}\right)^{3}\f] where
- *          - \f$k_{\text{rel}}^{\alpha}\f$ is relative permeability of phase
- * \f$\alpha\f$
- *          - \f$S^{\text{eff}}_{\alpha}\f$ is the effective saturation of
- * phase \f$\alpha\f$
- *
- * This class handles the wetting (liquid) phase portion of this relative
- * permeability property, i,e with \f$\alpha=L\f$ for the  relative permeability
- * function.
+ * \class RelPermBrooksCoreyNonwettingPhase
+ * \brief Relative permeability function of the non-wetting phase proposed by
+ * Brooks&Corey.
  *
  * \details This property must be a medium property, it
- * computes the permeability reduction due to saturation as function of
- * capillary pressure.
+ * computes the permeability reduction due to saturation as function
+ * of capillary pressure.
  */
-class RelPermUdell final : public Property
+class RelPermBrooksCoreyNonwettingPhase final : public Property
 {
 private:
     const double residual_liquid_saturation_;
     const double residual_gas_saturation_;
     const double min_relative_permeability_;
+    const double exponent_;
 
 public:
-    RelPermUdell(std::string name, const double residual_liquid_saturation,
-                 const double residual_gas_saturation,
-                 const double min_relative_permeability);
+    RelPermBrooksCoreyNonwettingPhase(std::string name,
+                                      const double residual_liquid_saturation,
+                                      const double residual_gas_saturation,
+                                      const double min_relative_permeability,
+                                      const double exponent);
 
     void checkScale() const override
     {
         if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
-                "The property 'RelativePermeabilityUdell' is implemented on "
-                "the 'media' scale only.");
+                "The property 'RelPermBrooksCoreyNonwettingPhase' is "
+                "implemented on the 'media' scale only.");
         }
     }
 
+    /// Those methods override the base class implementations and
+    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;

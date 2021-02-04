@@ -12,7 +12,7 @@
  *
  */
 
-#include "RelPermBrooksCorey.h"
+#include "RelPermBrooksCoreyNonwettingPhase.h"
 
 #include <algorithm>
 #include <cmath>
@@ -21,11 +21,12 @@
 
 namespace MaterialPropertyLib
 {
-RelPermBrooksCorey::RelPermBrooksCorey(std::string name,
-                                       const double residual_liquid_saturation,
-                                       const double residual_gas_saturation,
-                                       const double min_relative_permeability,
-                                       const double exponent)
+RelPermBrooksCoreyNonwettingPhase::RelPermBrooksCoreyNonwettingPhase(
+    std::string name,
+    const double residual_liquid_saturation,
+    const double residual_gas_saturation,
+    const double min_relative_permeability,
+    const double exponent)
     : residual_liquid_saturation_(residual_liquid_saturation),
       residual_gas_saturation_(residual_gas_saturation),
       min_relative_permeability_(min_relative_permeability),
@@ -34,14 +35,14 @@ RelPermBrooksCorey::RelPermBrooksCorey(std::string name,
     name_ = std::move(name);
 };
 
-PropertyDataType RelPermBrooksCorey::value(
+PropertyDataType RelPermBrooksCoreyNonwettingPhase::value(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
     /// here, an extra computation of saturation is forced, guaranteeing a
     /// correct value. In order to speed up the computing time, saturation could
-    /// be insertred into the primary variable array after it is computed in the
+    /// be inserted into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = std::visit(
         [&variable_array, &pos, t, dt](auto&& scale) -> double {
@@ -60,19 +61,20 @@ PropertyDataType RelPermBrooksCorey::value(
     if (s_eff >= 1.0)
     {
         // fully saturated medium
-        return 1.0;
+        return min_relative_permeability_;
     }
     if (s_eff <= 0.0)
     {
         // dry medium
-        return min_relative_permeability_;
+        return 1.0;
     }
 
-    auto const k_rel_LR = std::pow(s_eff, (2. + 3. * lambda) / lambda);
+    auto const k_rel_GR = (1. - s_eff) * (1. - s_eff) *
+                          (1. - std::pow(s_eff, (2. + lambda) / lambda));
 
-    return std::max(k_rel_LR, min_relative_permeability_);
+    return std::max(k_rel_GR, min_relative_permeability_);
 }
-PropertyDataType RelPermBrooksCorey::dValue(
+PropertyDataType RelPermBrooksCoreyNonwettingPhase::dValue(
     VariableArray const& variable_array, Variable const variable,
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
@@ -83,7 +85,7 @@ PropertyDataType RelPermBrooksCorey::dValue(
            " derivatives with respect to liquid saturation only.");
     /// here, an extra computation of saturation is forced, guaranteeing a
     /// correct value. In order to speed up the computing time, saturation could
-    /// be insertred into the primary variable array after it is computed in the
+    /// be inserted into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = std::visit(
         [&variable_array, &pos, t, dt](auto&& scale) -> double {
@@ -99,14 +101,16 @@ PropertyDataType RelPermBrooksCorey::dValue(
     auto const s_eff = (s_L - s_L_res) / (s_L_max - s_L_res);
     if ((s_eff < 0.) || (s_eff > 1.))
     {
-        return 0.;
+        return 0.0;
     }
 
+    auto const twoL_L = (2. + lambda) / lambda;
     auto const d_se_d_sL = 1. / (s_L_max - s_L_res);
-    auto const dk_rel_LRdse =
-        (3 * lambda + 2.) / lambda * std::pow(s_eff, 2. / lambda + 2.);
+    auto const dk_rel_GRdse =
+        -2. * (1 - s_eff) * (1. - std::pow(s_eff, twoL_L)) -
+        twoL_L * std::pow(s_eff, twoL_L - 1.) * (1. - s_eff) * (1. - s_eff);
 
-    return dk_rel_LRdse * d_se_d_sL;
+    return dk_rel_GRdse * d_se_d_sL;
 }
 
 }  // namespace MaterialPropertyLib

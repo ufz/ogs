@@ -31,15 +31,15 @@ class Component;
  *          - \f$S^{\text{eff}}_{\alpha}\f$ is the effective saturation of
  * phase \f$\alpha\f$
  *
- * This class handles the wetting (liquid) phase portion of this relative
- * permeability property, i,e with \f$\alpha=L\f$ for the  relative permeability
+ * This class handles the non-wetting (gas) phase portion of this relative
+ * permeability property, i,e with \f$\alpha=g\f$ for the  relative permeability
  * function.
  *
  * \details This property must be a medium property, it
  * computes the permeability reduction due to saturation as function of
  * capillary pressure.
  */
-class RelPermUdell final : public Property
+class RelPermUdellNonwettingPhase final : public Property
 {
 private:
     const double residual_liquid_saturation_;
@@ -47,17 +47,18 @@ private:
     const double min_relative_permeability_;
 
 public:
-    RelPermUdell(std::string name, const double residual_liquid_saturation,
-                 const double residual_gas_saturation,
-                 const double min_relative_permeability);
+    RelPermUdellNonwettingPhase(std::string name,
+                                const double residual_liquid_saturation,
+                                const double residual_gas_saturation,
+                                const double min_relative_permeability);
 
     void checkScale() const override
     {
         if (!std::holds_alternative<Medium*>(scale_))
         {
             OGS_FATAL(
-                "The property 'RelativePermeabilityUdell' is implemented on "
-                "the 'media' scale only.");
+                "The property 'RelativePermeabilityUdellNonwettingPhase' is "
+                "implemented on the 'media' scale only.");
         }
     }
 
@@ -65,7 +66,7 @@ public:
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;
     PropertyDataType dValue(VariableArray const& variable_array,
-                            Variable const variable,
+                            Variable const primary_variable,
                             ParameterLib::SpatialPosition const& pos,
                             double const t, double const dt) const override;
 };

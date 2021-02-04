@@ -147,12 +147,14 @@ void TwoPhaseFlowWithPPLocalAssembler<
                 .template dValue<double>(
                     variables, MPL::Variable::phase_pressure, pos, t, dt);
 
-        auto const k_rel =
+        auto const k_rel_wet =
             medium.property(MPL::PropertyType::relative_permeability)
-                .template value<Eigen::Vector2d>(variables, pos, t, dt);
-
-        auto const k_rel_wet = k_rel[0];
-        auto const k_rel_nonwet = k_rel[1];
+                .template value<double>(variables, pos, t, dt);
+        auto const k_rel_nonwet =
+            medium
+                .property(
+                    MPL::PropertyType::relative_permeability_nonwetting_phase)
+                .template value<double>(variables, pos, t, dt);
 
         auto const mu_nonwet =
             gas_phase.property(MPL::PropertyType::viscosity)

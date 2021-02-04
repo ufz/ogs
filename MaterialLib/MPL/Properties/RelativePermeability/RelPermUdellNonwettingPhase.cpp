@@ -11,7 +11,7 @@
  *
  */
 
-#include "RelPermUdell.h"
+#include "RelPermUdellNonwettingPhase.h"
 
 #include <algorithm>
 #include <cmath>
@@ -20,10 +20,11 @@
 
 namespace MaterialPropertyLib
 {
-RelPermUdell::RelPermUdell(std::string name,
-                           const double residual_liquid_saturation,
-                           const double residual_gas_saturation,
-                           const double min_relative_permeability)
+RelPermUdellNonwettingPhase::RelPermUdellNonwettingPhase(
+    std::string name,
+    const double residual_liquid_saturation,
+    const double residual_gas_saturation,
+    const double min_relative_permeability)
     : residual_liquid_saturation_(residual_liquid_saturation),
       residual_gas_saturation_(residual_gas_saturation),
       min_relative_permeability_(min_relative_permeability)
@@ -31,7 +32,7 @@ RelPermUdell::RelPermUdell(std::string name,
     name_ = std::move(name);
 }
 
-PropertyDataType RelPermUdell::value(
+PropertyDataType RelPermUdellNonwettingPhase::value(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
@@ -41,7 +42,9 @@ PropertyDataType RelPermUdell::value(
 
     if (std::isnan(S_L))
     {
-        OGS_FATAL("Liquid saturation not set in RelPermUdell::value().");
+        OGS_FATAL(
+            "In RelPermUdellNonwettingPhase::value, the liquid saturation is "
+            "NaN.");
     }
 
     auto const S_L_res = residual_liquid_saturation_;
@@ -52,24 +55,26 @@ PropertyDataType RelPermUdell::value(
     if (S_e >= 1.0)
     {
         // fully saturated medium
-        return 1.0;
+        return min_relative_permeability_;
     }
     if (S_e <= 0.0)
     {
         // dry medium
-        return min_relative_permeability_;
+        return 1.0;
     }
 
-    return std::max(min_relative_permeability_, S_e * S_e * S_e);
+    auto const S_e_g = (1. - S_e);
+
+    return std::max(min_relative_permeability_, S_e_g * S_e_g * S_e_g);
 }
-PropertyDataType RelPermUdell::dValue(
-    VariableArray const& variable_array, Variable const variable,
+PropertyDataType RelPermUdellNonwettingPhase::dValue(
+    VariableArray const& variable_array, Variable const primary_variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)variable;
-    assert((variable == Variable::liquid_saturation) &&
-           "RelPermUdell::dValue is implemented for "
+    (void)primary_variable;
+    assert((primary_variable == Variable::liquid_saturation) &&
+           "RelPermUdellNonwettingPhase::dValue is implemented for "
            " derivatives with respect to liquid saturation only.");
 
     const double S_L = std::get<double>(
@@ -86,8 +91,8 @@ PropertyDataType RelPermUdell::dValue(
 
     auto const dS_e_dS_L = 1. / (S_L_max - S_L_res);
 
-    auto const dk_rel_LR_dS_e = 3. * S_e * S_e;
-    return dk_rel_LR_dS_e * dS_e_dS_L;
+    auto const dk_rel_GR_dS_e = -3. * (1. - S_e) * (1. - S_e);
+    return dk_rel_GR_dS_e * dS_e_dS_L;
 }
 
 }  // namespace MaterialPropertyLib

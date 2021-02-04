@@ -22,19 +22,15 @@ class Phase;
 class Component;
 /**
  * \class RelPermLiakopoulos
- * \brief Relative permeability function for Liakopoulos Benchmark
+ * \brief Relative permeability function for the wetting phase
+ *        of the Liakopoulos experiment.
+ *
  * \details This property must be a medium property, it
  * computes the permeability reduction due to saturation as function
  * of capillary pressure.
  *
- * Wetting (liquid) phase relative permeability is given by the empirical
- * formula
+ * The relative permeability is given by an empirical formula
  * \f[k^{\mathrm{rel}}_{\mathrm{L}}=1 - 2.207(1 - s_L)^{1.0121}\f]
- *
- * Non-wetting (gas) phase permeability is computed using the Brooks-Corey
- * model
- * \f[k^{\mathrm{rel}}_{\mathrm{G}}=(1 -
-s_{\mathrm{e}})^2\left(1-s_{\mathrm{e}}^{\frac{\left(2+\lambda\right)}{\lambda}}\right)\f]
  *
  * with effective saturation
  * \f[s_{\mathrm{e}}=\frac{s_{\mathrm{L}}-s^{\mathrm{r}}_{\mathrm{L}}}{1 -
@@ -60,10 +56,6 @@ private:
     const double maximal_liquid_saturation_ = 1.;
     const double parameter_a_ = 2.207;
     const double parameter_b_ = 1.0121;
-    const double exponent_ = 3.;
-    const double min_relative_permeability_gas_ = 1.0e-4;
-    const double dse_dsL_ =
-        1. / (maximal_liquid_saturation_ - residual_liquid_saturation_);
 
 public:
     explicit RelPermLiakopoulos(std::string name);
