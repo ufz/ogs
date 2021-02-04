@@ -142,11 +142,10 @@ double compute_R_gg_2U(double const chi, double const R_gs, double const R_ar,
 /// Check if constraints regarding negative thermal resistances are violated
 /// apply correction procedure.
 /// Section (1.5.5) in FEFLOW White Papers Vol V.
-std::tuple<double, double, double, double> thermalResistancesGroutSoil2U(
-    double const chi,
-    double const R_ar_1,
-    double const R_ar_2,
-    double const R_g)
+std::array<double, 4> thermalResistancesGroutSoil2U(double const chi,
+                                                    double const R_ar_1,
+                                                    double const R_ar_2,
+                                                    double const R_g)
 {
     double R_gs = compute_R_gs_2U(chi, R_g);
     double R_gg_1 = compute_R_gg_2U(chi, R_gs, R_ar_1, R_g);
