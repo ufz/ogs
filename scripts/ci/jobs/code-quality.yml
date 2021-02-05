@@ -8,6 +8,7 @@ cppcheck:
   script:
     - >
       cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF
+      -DOGS_USE_PYTHON=OFF -DOGS_BUILD_UTILS=OFF
       -DOGS_USE_UNITY_BUILDS=OFF -DOGS_USE_XDMF=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
     - bash cppcheck.sh
   artifacts:

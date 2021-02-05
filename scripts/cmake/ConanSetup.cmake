@@ -3,7 +3,8 @@ if(NOT OGS_USE_CONAN)
 endif()
 string(TOLOWER ${OGS_USE_CONAN} OGS_USE_CONAN_lower)
 if(OGS_USE_CONAN_lower STREQUAL "auto" AND POETRY)
-    execute_process(COMMAND ${CMD_COMMAND} poetry add conan)
+    execute_process(COMMAND ${CMD_COMMAND} poetry add conan==${ogs.minimum_version.conan}
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
     find_program(CONAN_CMD conan HINTS ${LOCAL_VIRTUALENV_BIN_DIRS}
         REQUIRED NO_DEFAULT_PATH
     )
@@ -33,7 +34,7 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
     boost/${ogs.minimum_version.boost}@conan/stable
-    eigen/${ogs.minimum_version.eigen}@conan/stable
+    eigen/${ogs.minimum_version.eigen}
     vtk/${ogs.tested_version.vtk}@bilke/stable
     CACHE INTERNAL ""
 )

@@ -8,10 +8,9 @@ fi
 module use /global/apps/modulefiles
 
 module load foss/2019b
-module load CMake/3.15.3
+module load cmake/3.19.4-1
 module load ninja
 module load git/2.23.0
-module load git-lfs/2.7.1
 
 # Libraries
 module load boost/1.67.0-1

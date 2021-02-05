@@ -10,10 +10,10 @@ compiler warnings:
     - job: build mac
   script:
     - exit_code=0
-    - cd build-no-unity
+    - cd build/no-unity
     - "if [[ $(cat make.output | grep warning -i) ]]; then printf 'There were GCC compiler warnings:\n\n'; cat make.output | grep warning -i; exit_code=1; fi"
-    - cd ../build-win
+    - cd ../win-release
     - "if [[ $(cat make.output | grep ': warning' -i) ]]; then printf 'There were MSVC compiler warnings:\n\n'; cat make.output | grep ': warning' -i; exit_code=1; fi"
-    - cd ../build-mac
+    - cd ../mac-release
     - "if [[ $(cat make.output | grep warning -i) ]]; then printf 'There were Clang (macOS) compiler warnings:\n\n'; cat make.output | grep warning -i; exit_code=1; fi"
     - exit $exit_code
