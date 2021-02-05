@@ -17,10 +17,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <reference_solid_density>rho_sr</reference_solid_density>
-            <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
-            <specific_heat_capacity>cs</specific_heat_capacity>
-            <thermal_conductivity>lambda</thermal_conductivity>
             <specific_body_force>0 -9.81</specific_body_force>
             <process_variables>
                 <displacement>displacement</displacement>
@@ -75,6 +71,37 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2200.0</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>6e-6</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>E</name>
@@ -85,26 +112,6 @@
             <name>nu</name>
             <type>Constant</type>
             <value>.0</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>2200.0</value>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Constant</type>
-            <value>6e-6</value>
-        </parameter>
-        <parameter>
-            <name>cs</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>lambda</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>temperature_ic</name>

@@ -30,10 +30,6 @@
                     <increment_tolerance>0</increment_tolerance>
                 </nonlinear_solver>
             </constitutive_relation>
-            <reference_solid_density>rho_sr</reference_solid_density>
-            <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
-            <specific_heat_capacity>cs</specific_heat_capacity>
-            <thermal_conductivity>lambda</thermal_conductivity>
             <process_variables>
                 <displacement>displacement</displacement>
                 <temperature>temperature</temperature>
@@ -45,6 +41,66 @@
             <specific_body_force>0 -9.81</specific_body_force>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>4e-5</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>5</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2000</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0.</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+        <medium id="1">
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>4e-5</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>5</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2170</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0.</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="ThermoMechanics">
@@ -140,26 +196,6 @@
             <name>E0</name>
             <type>Constant</type>
             <value>7e9</value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>MeshElement</type>
-            <field_name>rho</field_name>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Constant</type>
-            <value>4e-5</value>
-        </parameter>
-        <parameter>
-            <name>cs</name>
-            <type>Constant</type>
-            <value>0.</value>
-        </parameter>
-        <parameter>
-            <name>lambda</name>
-            <type>Constant</type>
-            <value>5</value>
         </parameter>
         <parameter>
             <name>temperature_ic</name>

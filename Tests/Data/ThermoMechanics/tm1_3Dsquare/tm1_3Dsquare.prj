@@ -12,10 +12,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <reference_solid_density>rho</reference_solid_density>
-            <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
-            <specific_heat_capacity>c</specific_heat_capacity>
-            <thermal_conductivity>lambda</thermal_conductivity>
             <specific_body_force>0 0 -9.81</specific_body_force>
             <process_variables>
                 <temperature>temperature</temperature>
@@ -27,6 +23,37 @@
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>0.</value>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="ThermoMechanics">
@@ -89,42 +116,6 @@
             <index_values>
                 <index>0</index>
                 <value>0.2</value>
-            </index_values>
-        </parameter>
-        <parameter>
-            <name>rho</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>0</value>
-            </index_values>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>1e-3</value>
-            </index_values>
-        </parameter>
-        <parameter>
-            <name>c</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>0</value>
-            </index_values>
-        </parameter>
-        <parameter>
-            <name>lambda</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>1.0</value>
             </index_values>
         </parameter>
         <parameter>

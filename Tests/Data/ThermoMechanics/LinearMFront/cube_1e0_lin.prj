@@ -15,10 +15,6 @@
                     <material_property name="PoissonRatio" parameter="nu"/>
                 </material_properties>
             </constitutive_relation>
-            <reference_solid_density>rho_sr</reference_solid_density>
-            <linear_thermal_expansion_coefficient>alpha</linear_thermal_expansion_coefficient>
-            <specific_heat_capacity>cs</specific_heat_capacity>
-            <thermal_conductivity>lambda</thermal_conductivity>
             <process_variables>
                 <displacement>displacement</displacement>
                 <temperature>temperature</temperature>
@@ -30,6 +26,37 @@
             <specific_body_force>0 0 0</specific_body_force>
         </process>
     </processes>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>1e-5</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2200</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="SD">
@@ -77,32 +104,13 @@
         <parameter>
             <name> E              </name>
             <type>Constant</type>
-            <value>  5e9 <!-- hard rubber -->             </value>
+            <value>  5e9 <!-- hard rubber -->
+            </value>
         </parameter>
         <parameter>
             <name>  nu             </name>
             <type>Constant</type>
             <value>  2e-1              </value>
-        </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>2200</value>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Constant</type>
-            <value>1e-5</value>
-        </parameter>
-        <parameter>
-            <name>cs</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>lambda</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
         <parameter>
             <name>zero</name>
