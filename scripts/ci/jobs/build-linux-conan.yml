@@ -4,10 +4,9 @@ build linux conan:
     - .rules-master-manual
   tags: [shell, envinf1-shell]
   variables:
-    BUILD_DIR: build
+    CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
-      -DOGS_BUILD_UTILS=ON
       -DOGS_USE_CONAN=AUTO
       -DOGS_USE_MFRONT=ON
       -DOGS_USE_XDMF=ON

@@ -9,17 +9,12 @@
 
   before_script:
     - "echo \"For debugging run: docker run --rm -it -v $CI_BUILDS_DIR:/builds -w=$CI_PROJECT_DIR $CI_JOB_IMAGE\""
-    - mkdir -p $BUILD_DIR
-    - cd $BUILD_DIR
     - ([ "${CONAN_USER_HOME}" == "${CI_PROJECT_DIR}/.conan" ]) && conan remove --system-reqs '*'
     - ([[ $BUILD_CTEST_LARGE_ON_MASTER && "${CI_COMMIT_BRANCH}" == "master" && "${CMAKE_ARGS}" == *"USE_PYTHON=ON"* ]]) && export BUILD_CTEST_LARGE=true
   script:
-    - "echo \"Running: cmake .. -G Ninja $CMAKE_ARGS -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES\""
-    - >
-      cmake .. -G Ninja
-      $CMAKE_ARGS
-      -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-      -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
+    - cmake -S . --preset=$CMAKE_PRESET $CMAKE_ARGS -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
+    - build_dir=${BUILD_DIR:-build/$CMAKE_PRESET}
+    - cd $build_dir
     - $BUILD_CMD_PREFIX cmake --build . --target package > >(tee make.output)
     - if [ "$BUILD_TESTS" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
     - if [ "$BUILD_CTEST" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target ctest ; fi

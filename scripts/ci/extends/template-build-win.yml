@@ -8,14 +8,13 @@
   dependencies: [meta, meta_container]
   variables:
   script:
-    - mkdir -p $env:BUILD_DIR
-    - cd $env:BUILD_DIR
-    - $cmake_cmd = "cmake .. -G Ninja
+    - $build_directory = if ($env:BUILD_DIR) { $env:BUILD_DIR } else { "build/" + $env:CMAKE_PRESET }
+    - $cmake_cmd = "cmake -S . --preset=$env:CMAKE_PRESET
       $env:CMAKE_ARGS
-      -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE
       -DOGS_BUILD_PROCESSES=$env:BUILD_PROCESSES"
     - $cmake_cmd
     - Invoke-Expression $cmake_cmd
+    - cd $build_directory
     - cmake --build . --target package | Tee-Object -FilePath make.output
     - if($env:BUILD_TESTS -eq "true") { cmake --build . --target tests }
     - if($env:BUILD_CTEST -eq "true") { cmake --build . --target ctest }

@@ -4,10 +4,5 @@ build linux petsc:
     - envinf1-shell
   timeout: 2h
   variables:
-    BUILD_DIR: "build-petsc"
     BUILD_CTEST_LARGE_ON_MASTER: "true"
-    CMAKE_ARGS: >-
-      -DBUILD_SHARED_LIBS=ON
-      -DOGS_BUILD_UTILS=ON
-      -DOGS_USE_CONAN=OFF
-      -DOGS_USE_PETSC=ON
+    CMAKE_PRESET: release-petsc

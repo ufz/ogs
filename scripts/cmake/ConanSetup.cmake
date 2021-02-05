@@ -3,7 +3,8 @@ if(NOT OGS_USE_CONAN)
 endif()
 string(TOLOWER ${OGS_USE_CONAN} OGS_USE_CONAN_lower)
 if(OGS_USE_CONAN_lower STREQUAL "auto" AND POETRY)
-    execute_process(COMMAND ${CMD_COMMAND} poetry add conan==${ogs.minimum_version.conan})
+    execute_process(COMMAND ${CMD_COMMAND} poetry add conan==${ogs.minimum_version.conan}
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
     find_program(CONAN_CMD conan HINTS ${LOCAL_VIRTUALENV_BIN_DIRS}
         REQUIRED NO_DEFAULT_PATH
     )

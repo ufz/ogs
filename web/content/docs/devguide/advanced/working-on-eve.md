@@ -57,7 +57,7 @@ Generating Doxygen documentation:
 module load Doxygen/1.8.14
 ```
 
-You can [build with Ninja]({{< ref "build-with-ninja" >}}):
+You can build with Ninja:
 
 ```bash
 module load ninja/1.9.0

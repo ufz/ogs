@@ -15,7 +15,7 @@ weight = 1005
 
 ### Step: Build with Visual Studio
 
-Open the OGS.sln either by double-clicking it in the file browser or opening in Visual Studio via **File / Open / Project**.
+Open the OGS.sln (in the build directory) either by double-clicking it in the file browser or opening in Visual Studio via **File / Open / Project**.
 
 On the project explorer right-click on **ogs** or **ogs-gui** and choose **Set as startup project**. Then press <kbd>F5</kbd> or click the green arrow to build and start the project.
 
@@ -30,78 +30,20 @@ You can work normally in Visual Studio but remember that you have to make projec
 
 <div class='linux'>
 
-### Option: Make
+### With ninja
 
-To build with the `make` tool on the shell go to your previously created build directory and type `make`:
-
-```bash
-cd build
-make
-```
-
-To speedup the compilation process append the number of cores of your cpu to the make command. E.g. for 8 cores:
+To build with the `ninja` tool on the shell go to your previously configured build directory and type `ninja`:
 
 ```bash
-make -j 8
+cd build/release
+ninja
 ```
-
-{{< asciinema url="https://asciinema.org/a/249005" preload="1" >}}
-
-### Option: Eclipse
-
-To let CMake generate the Eclipse project files change the generator argument to the CMake run:
-
-```bash
-cmake [your configuration options] -G"Eclipse CDT4 - Unix Makefiles" ../sources
-```
-
-Or with ccmake
-
-```bash
-ccmake -G"Eclipse CDT4 - Unix Makefiles" ../sources
-```
-
-Start the Eclipse ide. From the menu choose **File / Import**. In the import dialog choose **General / Existing projects into workspace** and click **Next**. In **Select root directory** select your build directory and make sure that **Copy project into workspace** is unchecked. Click **Finish**.
 </div>
 
 <div class='mac'>
 
-### Option: Make
+See Linux-tab!
 
-To build with the `make` tool on the shell go to your previously created build directory and type `make`:
-
-```bash
-cd build
-make
-```
-
-To speedup the compilation process append the number of cores of your cpu to the make command. E.g. for 8 cores:
-
-```bash
-make -j 8
-```
-
-### Option: Xcode
-
-To let CMake generate the Xcode project files change the generator argument on the CMake run:
-
-```bash
-cmake [your configuration options] -G Xcode ../sources
-```
-
-Or with ccmake
-
-```bash
-ccmake -G Xcode ../sources
-```
-
-Then load the generated project file by either clicking the **OGS.xcodeproj** or via
-
-```bash
-open OGS.xcodeproj
-```
-
-In Xcode choose `ogs` or `ogs-gui` from the drop-down menu on the top right and then hit the Run-button.
 </div>
 
 ## Waiting

@@ -1,0 +1,166 @@
+{
+  "version": 1,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 19,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "_binary_dir",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}"
+    },
+    {
+      "name": "_release",
+      "hidden": true,
+      "inherits": "_binary_dir",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "_debug",
+      "hidden": true,
+      "inherits": "_binary_dir",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "_ninja",
+      "hidden": true,
+      "generator": "Ninja"
+    },
+    {
+      "name": "_msvc",
+      "hidden": true,
+      "generator": "Visual Studio 16 2019"
+    },
+    {
+      "name": "_gui",
+      "hidden": true,
+      "cacheVariables": {
+        "OGS_BUILD_CLI": "OFF",
+        "OGS_BUILD_GUI": "ON",
+        "OGS_USE_NETCDF": "ON"
+      }
+    },
+    {
+      "name": "_petsc",
+      "hidden": true,
+      "cacheVariables": {
+        "OGS_USE_PYTHON": "OFF",
+        "BUILD_SHARED_LIBS": "ON",
+        "OGS_USE_CONAN": "OFF",
+        "OGS_USE_PETSC": "ON"
+      },
+      "environment": {
+        "CC": "mpicc",
+        "CXX": "mpic++"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": [
+        "_ninja",
+        "_release"
+      ]
+    },
+    {
+      "name": "debug",
+      "inherits": [
+        "_ninja",
+        "_debug"
+      ]
+    },
+    {
+      "name": "release-gui",
+      "inherits": [
+        "release",
+        "_gui"
+      ]
+    },
+    {
+      "name": "debug-gui",
+      "inherits": [
+        "debug",
+        "_gui"
+      ]
+    },
+    {
+      "name": "release-petsc",
+      "inherits": [
+        "release",
+        "_petsc"
+      ]
+    },
+    {
+      "name": "debug-petsc",
+      "inherits": [
+        "debug",
+        "_petsc"
+      ]
+    },
+    {
+      "name": "msvc-release",
+      "inherits": [
+        "_msvc",
+        "_release"
+      ]
+    },
+    {
+      "name": "msvc-debug",
+      "inherits": [
+        "_msvc",
+        "_debug"
+      ]
+    },
+    {
+      "name": "msvc-release-gui",
+      "inherits": [
+        "msvc-release",
+        "_gui"
+      ]
+    },
+    {
+      "name": "msvc-debug-gui",
+      "inherits": [
+        "msvc-debug",
+        "_gui"
+      ]
+    },
+    {
+      "name": "_all",
+      "hidden": true,
+      "cacheVariables": {
+        "OGS_USE_MFRONT": "ON",
+        "OGS_USE_XDMF": "ON"
+      }
+    },
+    {
+      "name": "release-all",
+      "inherits": [
+        "release",
+        "_all"
+      ]
+    },
+    {
+      "name": "debug-all",
+      "inherits": [
+        "debug",
+        "_all"
+      ]
+    },
+    {
+      "name": "ci-simplest",
+      "inherits": "release",
+      "cacheVariables": {
+        "OGS_BUILD_UTILS": "OFF",
+        "OGS_USE_PYTHON": "OFF",
+        "OGS_USE_CONAN": "OFF",
+        "OGS_USE_POETRY": "OFF"
+      }
+    }
+  ]
+}

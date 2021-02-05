@@ -18,6 +18,7 @@ The minimum prerequisites to build OGS are:
 - CMake (build configuration tool, at least version {{< dataFile "versions.minimum_version.cmake" >}})
 - A compiler with [C++20](http://en.wikipedia.org/wiki/C%2B%2B20)-support
 - [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) **OR** install [required libraries]({{< ref "third-party-libraries.md" >}}) manually (for advanced users only!)
+- *Optional (but recommended)*: [Ninja](https://ninja-build.org) build tool
 
 <div class='note'>
 
@@ -202,12 +203,11 @@ git config --global http.proxy http://yourproxy.example.com
 
 <div class='win'>
 
-- [Download the Python 3 installer](https://www.python.org/ftp/python/3.7.2/python-3.7.2-amd64-webinstall.exe)
+- [Download the Python 3 installer](https://www.python.org/ftp/python/3.9.1/python-3.9.1-amd64.exe)
 - Install with the following options
   - Check *Add Python 3.X to PATH*
   - *Customize installation*
   - Make sure to have `pip` enabled (you may uncheck *Documentation*, *tcl/tk*, *Python test suite*)
-  - You may check *Install for all users*
   - Check *Add Python to environment variables*!
 
 </div>
@@ -267,7 +267,7 @@ Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python
 pip3 install --user conan
 ```
 
-This installed `conan` to `.local/bin` (or `C:\Users\[username]\AppData\Roaming\Python\Python37\Scripts` on Windows) in your home directory. Make sure to have this directory in your `PATH`!
+This installed `conan` to `.local/bin` (or `C:\Users\[username]\AppData\Roaming\Python\Python39\Scripts` on Windows) in your home directory. Make sure to have this directory in your `PATH`!
 
 Check on a newly opened command line if Conan was installed successfully:
 
@@ -281,3 +281,15 @@ Conan version {{< dataFile "versions.minimum_version.conan" >}}
 **Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{< ref "python-env.md" >}}) for details.
 
 </div>
+
+## Optional: Install Ninja
+
+We recommend [`ninja`](https://ninja-build.org) as a cross-platform build tool (`make`-replacement).
+
+Install Ninja with Python's pip:
+
+```bash
+pip3 install --user ninja
+```
+
+Make sure that `ninja` is in the path afterwards. See Conan install instructions above.
