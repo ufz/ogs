@@ -28,7 +28,8 @@
                 <tension_cutoff>1</tension_cutoff>
                 <nonlinear_solver>
                     <maximum_iterations>1000</maximum_iterations>
-                    <error_tolerance>1e-12</error_tolerance>
+                    <residuum_tolerance>1e-12</residuum_tolerance>
+                    <increment_tolerance>0</increment_tolerance>
                 </nonlinear_solver>
             </fracture_model>
             <fracture_properties>

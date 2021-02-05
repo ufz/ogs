@@ -40,7 +40,8 @@
                 <tangent_type>Plastic</tangent_type>
                 <nonlinear_solver>
                     <maximum_iterations>100</maximum_iterations>
-                    <error_tolerance>1e-14</error_tolerance>
+                    <residuum_tolerance>1e-14</residuum_tolerance>
+                    <increment_tolerance>0</increment_tolerance>
                 </nonlinear_solver>
             </constitutive_relation>
             -->

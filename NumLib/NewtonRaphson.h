@@ -21,7 +21,8 @@ namespace NumLib
 struct NewtonRaphsonSolverParameters
 {
     int const maximum_iterations;
-    double const error_tolerance;
+    double const residuum_tolerance;
+    double const increment_tolerance;
 };
 
 /// Newton-Raphson solver for system of equations using an Eigen linear solvers
@@ -44,8 +45,10 @@ public:
           _residual_update(residual_update),
           _solution_update(solution_update),
           _maximum_iterations(solver_parameters.maximum_iterations),
-          _tolerance_squared(solver_parameters.error_tolerance *
-                             solver_parameters.error_tolerance)
+          _residuum_tolerance_squared(solver_parameters.residuum_tolerance *
+                                      solver_parameters.residuum_tolerance),
+          _increment_tolerance_squared(solver_parameters.increment_tolerance *
+                                       solver_parameters.increment_tolerance)
     {
     }
 
@@ -64,7 +67,7 @@ public:
             _jacobian_update(jacobian);
             _residual_update(residual);
 
-            if (residual.squaredNorm() < _tolerance_squared)
+            if (residual.squaredNorm() < _residuum_tolerance_squared)
             {
                 break;  // convergence criteria fulfilled.
             }
@@ -75,6 +78,11 @@ public:
             //      (jacobian * increment + residual).norm());
 
             _solution_update(increment);
+
+            if (increment.squaredNorm() < _increment_tolerance_squared)
+            {
+                break;  // increment to small.
+            }
 
             // DBUG("Local Newton: Iteration #{:d} |dx| = {:g}, |r| = {:g}",
             //      iteration, increment.norm(), residual.norm());
@@ -99,6 +107,9 @@ private:
     ResidualUpdate _residual_update;
     SolutionUpdate _solution_update;
     const int _maximum_iterations;  ///< Maximum number of iterations.
-    const double _tolerance_squared;    ///< Error tolerance for the residual.
+    const double
+        _residuum_tolerance_squared;  ///< Error tolerance for the residuum.
+    const double
+        _increment_tolerance_squared;  ///< Error tolerance for the increment.
 };
 }  // namespace NumLib

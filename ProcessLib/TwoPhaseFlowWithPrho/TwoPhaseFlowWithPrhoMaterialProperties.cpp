@@ -205,14 +205,15 @@ bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
         // criteria available from the input file configuration. See Ehlers
         // material model implementation for the example.
         const int maximum_iterations(20);
-        const double tolerance(1.e-14);
+        const double residuum_tolerance(1.e-14);
+        const double increment_tolerance(0);
 
         auto newton_solver = NumLib::NewtonRaphson<
             decltype(linear_solver), LocalJacobianMatrix,
             decltype(update_jacobian), LocalResidualVector,
             decltype(update_residual), decltype(update_solution)>(
             linear_solver, update_jacobian, update_residual, update_solution,
-            {maximum_iterations, tolerance});
+            {maximum_iterations, residuum_tolerance, increment_tolerance});
 
         auto const success_iterations = newton_solver.solve(J_loc);
 
