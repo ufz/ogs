@@ -223,7 +223,6 @@ add_subdirectory(ThirdParty)
 include_directories(
     SYSTEM
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include
 )
 

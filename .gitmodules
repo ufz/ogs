@@ -4,9 +4,6 @@
 [submodule "vtkdiff"]
 	path = ThirdParty/vtkdiff
 	url = https://github.com/ufz/vtkdiff.git
-[submodule "ThirdParty/tclap"]
-	path = ThirdParty/tclap
-	url = https://github.com/ufz/tclap.git
 [submodule "ThirdParty/metis"]
 	path = ThirdParty/metis
 	url = https://github.com/scibuilder/metis.git

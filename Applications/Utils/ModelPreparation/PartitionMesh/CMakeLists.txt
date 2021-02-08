@@ -1,5 +1,5 @@
 add_executable(partmesh PartitionMesh.cpp Metis.cpp NodeWiseMeshPartitioner.cpp)
 set_target_properties(partmesh PROPERTIES FOLDER Utilities)
-target_link_libraries(partmesh GitInfoLib MeshLib)
+target_link_libraries(partmesh GitInfoLib MeshLib tclap)
 add_dependencies(partmesh mpmetis)
 install(TARGETS partmesh RUNTIME DESTINATION bin COMPONENT ogs_partmesh)

@@ -20,7 +20,9 @@ foreach(TOOL ${TOOLS})
                           ApplicationsFileIO
                           GitInfoLib
                           MeshLib
-                          MeshGeoToolsLib)
+                          MeshGeoToolsLib
+                          tclap
+    )
 endforeach()
 
 if(TARGET VerticalSliceFromLayers)

@@ -36,8 +36,18 @@ CPMAddPackage(
     NAME spdlog
     GITHUB_REPOSITORY gabime/spdlog
     VERSION 1.8.2
-    # DOWNLOAD_ONLY YES
 )
+
+CPMAddPackage(
+    NAME tclap
+    GITHUB_REPOSITORY ufz/tclap
+    GIT_TAG 03abc3a3327214137c6ffd5b9a6efe23f0927cc2
+    DOWNLOAD_ONLY YES
+)
+if(tclap_ADDED)
+    add_library(tclap INTERFACE IMPORTED)
+    target_include_directories(tclap INTERFACE ${tclap_SOURCE_DIR}/include)
+endif()
 
 ######################
 ### Find tools     ###
