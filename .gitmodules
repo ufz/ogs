@@ -22,9 +22,6 @@
 [submodule "ThirdParty/pybind11"]
 	path = ThirdParty/pybind11
 	url = https://github.com/pybind/pybind11.git
-[submodule "ThirdParty/googletest"]
-	path = ThirdParty/googletest
-	url = https://github.com/google/googletest.git
 [submodule "ThirdParty/exprtk"]
 	path = ThirdParty/exprtk
 	url = https://github.com/ArashPartow/exprtk.git

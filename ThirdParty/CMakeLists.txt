@@ -1,12 +1,6 @@
 add_subdirectory(spdlog)
 set(DISABLE_WARNINGS_TARGETS spdlog)
 
-if(BUILD_TESTING)
-    set(gtest_force_shared_crt ON CACHE INTERNAL "") # Use dynamic MSVC runtime
-    set(INSTALL_GTEST OFF CACHE INTERNAL "")
-    add_subdirectory(googletest)
-endif()
-
 # This is a workaround for Travis builds.
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 

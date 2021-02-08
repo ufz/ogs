@@ -12,7 +12,6 @@ set(REQUIRED_SUBMODULES
     ThirdParty/autocheck
     ThirdParty/cmake-modules
     ThirdParty/exprtk
-    ThirdParty/googletest
     ThirdParty/iphreeqc/src
     ThirdParty/json-cmake
     ThirdParty/spdlog
