@@ -4,7 +4,6 @@ endif()
 
 # This file initializes the required submodules
 set(REQUIRED_SUBMODULES
-    ThirdParty/cmake-modules
     ThirdParty/iphreeqc/src
     ThirdParty/json-cmake
 )

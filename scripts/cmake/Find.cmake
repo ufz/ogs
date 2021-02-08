@@ -1,5 +1,3 @@
-include(scripts/cmake/CPM.cmake)
-
 if(BUILD_TESTING)
     CPMAddPackage(
         NAME googletest

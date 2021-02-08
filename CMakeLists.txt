@@ -9,6 +9,7 @@ endif()
 
 project(OGS-6)
 
+include(scripts/cmake/CPM.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
 include(ParseCMakeArgs)
 if(DEFINED ENV{CI})
