@@ -1,6 +1,3 @@
-add_subdirectory(spdlog)
-set(DISABLE_WARNINGS_TARGETS spdlog)
-
 # This is a workaround for Travis builds.
 option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
 

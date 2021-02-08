@@ -12,7 +12,6 @@ set(REQUIRED_SUBMODULES
     ThirdParty/cmake-modules
     ThirdParty/iphreeqc/src
     ThirdParty/json-cmake
-    ThirdParty/spdlog
     ThirdParty/tclap
     ThirdParty/tetgen
     ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}

@@ -32,6 +32,13 @@ if(exprtk_ADDED)
     target_include_directories(exprtk INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
+CPMAddPackage(
+    NAME spdlog
+    GITHUB_REPOSITORY gabime/spdlog
+    VERSION 1.8.2
+    # DOWNLOAD_ONLY YES
+)
+
 ######################
 ### Find tools     ###
 ######################

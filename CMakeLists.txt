@@ -225,7 +225,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/spdlog/include)
+)
 
 # vtkdiff
 if(BUILD_TESTING)
