@@ -9,6 +9,7 @@ if(BUILD_TESTING)
             "INSTALL_GTEST OFF"
             "gtest_force_shared_crt ON"
     )
+
     CPMAddPackage(
         NAME autocheck
         GITHUB_REPOSITORY ufz/autocheck
@@ -18,6 +19,17 @@ if(BUILD_TESTING)
     if(autocheck_ADDED)
         add_library(autocheck INTERFACE IMPORTED)
         target_include_directories(autocheck INTERFACE ${autocheck_SOURCE_DIR}/include)
+    endif()
+
+    CPMAddPackage(
+        NAME vtkdiff
+        GITHUB_REPOSITORY ufz/vtkdiff
+        GIT_TAG 49403cee266bb8e80405a02d677dbb5f71afc61a
+        OPTIONS
+            "VTK_LIBRARIES vtkIOXML"
+    )
+    if(vtkdiff_ADDED)
+        install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
     endif()
 endif()
 

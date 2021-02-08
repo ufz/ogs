@@ -226,11 +226,6 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include
 )
 
-# vtkdiff
-if(BUILD_TESTING)
-    add_subdirectory(ThirdParty/vtkdiff)
-    install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
-endif()
 # xdmfdiff
 if(OGS_USE_XDMF AND BUILD_TESTING)
     add_subdirectory(Tests/xdmfdiff)
