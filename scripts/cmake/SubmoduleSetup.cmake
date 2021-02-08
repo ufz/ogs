@@ -3,16 +3,10 @@ if(NOT IS_GIT_REPO)
 endif()
 
 # This file initializes the required submodules
-set(OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT "" CACHE STRING
-    "User given submodules which should be checked out by CMake.")
-if(NOT OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT)
-    set(OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT "")
-endif()
 set(REQUIRED_SUBMODULES
     ThirdParty/cmake-modules
     ThirdParty/iphreeqc/src
     ThirdParty/json-cmake
-    ${OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT}
 )
 if(OGS_USE_XDMF)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/xdmf)
