@@ -7,9 +7,6 @@
 [submodule "ThirdParty/tclap"]
 	path = ThirdParty/tclap
 	url = https://github.com/ufz/tclap.git
-[submodule "ThirdParty/autocheck"]
-	path = ThirdParty/autocheck
-	url = https://github.com/ufz/autocheck.git
 [submodule "ThirdParty/metis"]
 	path = ThirdParty/metis
 	url = https://github.com/scibuilder/metis.git

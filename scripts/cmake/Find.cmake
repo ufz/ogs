@@ -9,6 +9,16 @@ if(BUILD_TESTING)
             "INSTALL_GTEST OFF"
             "gtest_force_shared_crt ON"
     )
+    CPMAddPackage(
+        NAME autocheck
+        GITHUB_REPOSITORY ufz/autocheck
+        GIT_TAG e388ecbb31c49fc2724c8d0436da313b6edca7fd
+        DOWNLOAD_ONLY YES
+    )
+    if(autocheck_ADDED)
+        add_library(autocheck INTERFACE IMPORTED)
+        target_include_directories(autocheck INTERFACE ${autocheck_SOURCE_DIR}/include)
+    endif()
 endif()
 
 ######################
