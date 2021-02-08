@@ -10,7 +10,6 @@ if(NOT OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT)
 endif()
 set(REQUIRED_SUBMODULES
     ThirdParty/cmake-modules
-    ThirdParty/exprtk
     ThirdParty/iphreeqc/src
     ThirdParty/json-cmake
     ThirdParty/spdlog

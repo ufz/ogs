@@ -21,6 +21,17 @@ if(BUILD_TESTING)
     endif()
 endif()
 
+CPMAddPackage(
+    NAME exprtk
+    GITHUB_REPOSITORY ArashPartow/exprtk
+    GIT_TAG c7c219480d9678eec7383a4a99030683c4a84d91
+    DOWNLOAD_ONLY YES
+)
+if(exprtk_ADDED)
+    add_library(exprtk INTERFACE IMPORTED)
+    target_include_directories(exprtk INTERFACE ${exprtk_SOURCE_DIR})
+endif()
+
 ######################
 ### Find tools     ###
 ######################
