@@ -5,7 +5,6 @@ endif()
 # This file initializes the required submodules
 set(REQUIRED_SUBMODULES
     ThirdParty/iphreeqc/src
-    ThirdParty/json-cmake
 )
 if(OGS_USE_XDMF)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/xdmf)
