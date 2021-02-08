@@ -24,13 +24,6 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/VtkFbxConverter/CMakeLists.txt
     add_subdirectory(VtkFbxConverter)
 endif()
 
-# tetgen
-if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tetgen/CMakeLists.txt)
-    add_subdirectory(tetgen)
-    list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
-    install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin COMPONENT ogs_extras)
-endif()
-
 if(OGS_BUILD_SWMM)
     add_subdirectory(SWMMInterface)
     list(APPEND DISABLE_WARNINGS_TARGETS SWMM SwmmInterface)

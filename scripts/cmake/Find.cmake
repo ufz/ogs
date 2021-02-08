@@ -29,7 +29,7 @@ if(BUILD_TESTING)
             "VTK_LIBRARIES vtkIOXML"
     )
     if(vtkdiff_ADDED)
-        install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
+        install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
     endif()
 endif()
 
@@ -59,6 +59,15 @@ CPMAddPackage(
 if(tclap_ADDED)
     add_library(tclap INTERFACE IMPORTED)
     target_include_directories(tclap INTERFACE ${tclap_SOURCE_DIR}/include)
+endif()
+
+CPMAddPackage(
+    NAME tetgen
+    GITHUB_REPOSITORY ufz/tetgen
+    GIT_TAG 603ba181ebfaed38eec88532720e282606009b73
+)
+if(tetgen_ADDED)
+    install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
 endif()
 
 ######################

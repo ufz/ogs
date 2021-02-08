@@ -1,6 +1,3 @@
-[submodule "ThirdParty/tetgen"]
-	path = ThirdParty/tetgen
-	url = https://github.com/ufz/tetgen.git
 [submodule "ThirdParty/metis"]
 	path = ThirdParty/metis
 	url = https://github.com/scibuilder/metis.git
