@@ -29,44 +29,6 @@ if(OGS_BUILD_SWMM)
     list(APPEND DISABLE_WARNINGS_TARGETS SWMM SwmmInterface)
 endif()
 
-if(OGS_USE_PYTHON)
-    # pybind11 uses old CMake find functionality, pass variables to use
-    # the same Python installation.
-    set(PYTHON_INCLUDE_DIR ${Python3_INCLUDE_DIRS} CACHE STRING "" FORCE)
-    set(PYTHON_LIBRARIES ${Python3_LIBRARIES} CACHE STRING "" FORCE)
-    set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE} CACHE FILEPATH "" FORCE)
-    set(PYBIND11_PYTHON_VERSION ${Python3_VERSION})
-
-    add_subdirectory(pybind11)
-
-    function(check_python_version_compatibility)
-        if(NOT EXISTS ${VTK_DIR}/VTKConfig.cmake)
-            return()
-        endif()
-
-        include(${VTK_DIR}/VTKConfig.cmake)
-        if(NOT ${VTK_WRAP_PYTHON})
-            return()
-        endif()
-
-        if(NOT EXISTS ${VTK_MODULES_DIR}/vtkPython.cmake)
-            return()
-        endif()
-
-        include(${VTK_MODULES_DIR}/vtkPython.cmake)
-        if (NOT "${vtkPython_LIBRARIES}" STREQUAL "${Python3_LIBRARIES}")
-            message(SEND_ERROR "Mismatch between VTK's and OpenGeoSys' Python "
-                "libraries: ${vtkPython_LIBRARIES} vs. ${Python3_LIBRARIES}. "
-                "This will lead to compilation or linking errors. "
-                "You can fix this error by using the same Python version for "
-                "OpenGeoSys as VTK is built with.")
-        endif()
-    endfunction()
-
-    check_python_version_compatibility()
-
-endif()
-
 if(OGS_USE_XDMF)
     find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
     set(XDMF_LIBNAME OgsXdmf CACHE INTERNAL "")
