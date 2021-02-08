@@ -9,10 +9,6 @@ set(REQUIRED_SUBMODULES
 if(OGS_USE_XDMF)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/xdmf)
 endif()
-if(OGS_BUILD_UTILS)
-    # Required by the partmesh tool, which is build with utils only.
-    list(APPEND REQUIRED_SUBMODULES ThirdParty/metis)
-endif()
 if(OGS_BUILD_SWMM)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/SwmmInterface)
 endif()

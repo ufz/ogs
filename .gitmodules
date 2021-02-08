@@ -1,6 +1,3 @@
-[submodule "ThirdParty/metis"]
-	path = ThirdParty/metis
-	url = https://github.com/scibuilder/metis.git
 [submodule "ThirdParty/SwmmInterface"]
 	path = ThirdParty/SwmmInterface
 	url = https://github.com/ufz/SwmmInterface.git

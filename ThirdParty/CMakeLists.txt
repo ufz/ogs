@@ -67,11 +67,6 @@ if(OGS_USE_PYTHON)
 
 endif()
 
-if(OGS_BUILD_UTILS)
-    include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
-    list(APPEND DISABLE_WARNINGS_TARGETS ogs_metis mpmetis)
-endif()
-
 if(OGS_USE_XDMF)
     find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
     set(XDMF_LIBNAME OgsXdmf CACHE INTERNAL "")
