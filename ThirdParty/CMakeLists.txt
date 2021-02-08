@@ -1,6 +1,3 @@
-# This is a workaround for Travis builds.
-option(OGS_USE_OPTIONAL_SUBMODULES "Option for enabling optional submodules" OFF)
-
 # iphreeqc
 if (OGS_BUILD_PROCESS_ComponentTransport
     OR OGS_BUILD_PROCESS_RichardsComponentTransport)
