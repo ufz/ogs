@@ -37,9 +37,6 @@ endif()
 
 ogs_add_library(MaterialLib ${SOURCES})
 
-include(GenerateExportHeader)
-generate_export_header(MaterialLib)
-target_include_directories(MaterialLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 if(OGS_USE_MFRONT)
     target_compile_definitions(MaterialLib PUBLIC OGS_USE_MFRONT)
 endif()
