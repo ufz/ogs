@@ -58,9 +58,19 @@
                             <value>5</value>
                         </property>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>2000</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>2000</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>283.15</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-1.2e-5</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
@@ -87,9 +97,19 @@
                             <value>5</value>
                         </property>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>2170</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>2170</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>283.15</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-1.2e-5</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>

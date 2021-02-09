@@ -30,9 +30,19 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>2038.736</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>2038.736</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>10</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-1.5e-6</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -59,9 +69,19 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>2038.736</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>2038.736</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>10</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-1.5e-6</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -88,9 +108,19 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>2038.736</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>2038.736</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>10</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-1.5e-6</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -117,9 +147,19 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>2038.736</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>2038.736</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>10</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-1.5e-6</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
