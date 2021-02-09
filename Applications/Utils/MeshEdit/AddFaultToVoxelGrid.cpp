@@ -63,8 +63,7 @@ bool paxx(Eigen::Vector3d const& v0, Eigen::Vector3d const& v1,
     double const p0 = v0.dot(a);
     double const p1 = v1.dot(a);
     double const p2 = v2.dot(a);
-    double const r = e.x() * std::abs(a.x()) + e.y() * std::abs(a.y()) +
-                     e.z() * std::abs(a.z());
+    double const r = e.dot(a.cwiseAbs());
     return std::max(-std::max({p0, p1, p2}), std::min({p0, p1, p2})) <= r;
 }
 
@@ -104,18 +103,20 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
     Eigen::Vector3d const tri_edge2(v0 - v2);
 
     // separating axes
-    std::array<Eigen::Vector3d, 9> axx;
-    axx[0] = Eigen::Vector3d({0, -tri_edge0.z(), tri_edge0.y()});
-    axx[1] = Eigen::Vector3d({0, -tri_edge1.z(), tri_edge1.y()});
-    axx[2] = Eigen::Vector3d({0, -tri_edge2.z(), tri_edge2.y()});
-    axx[3] = Eigen::Vector3d({tri_edge0.z(), 0, -tri_edge0.x()});
-    axx[4] = Eigen::Vector3d({tri_edge1.z(), 0, -tri_edge1.x()});
-    axx[5] = Eigen::Vector3d({tri_edge2.z(), 0, -tri_edge2.x()});
-    axx[6] = Eigen::Vector3d({-tri_edge0.y(), tri_edge0.x(), 0});
-    axx[7] = Eigen::Vector3d({-tri_edge1.y(), tri_edge1.x(), 0});
-    axx[8] = Eigen::Vector3d({-tri_edge2.y(), tri_edge2.x(), 0});
+    std::array<Eigen::Vector3d, 9> const axx{
+        {Eigen::Vector3d({0, -tri_edge0.z(), tri_edge0.y()}),
+         Eigen::Vector3d({0, -tri_edge1.z(), tri_edge1.y()}),
+         Eigen::Vector3d({0, -tri_edge2.z(), tri_edge2.y()}),
+         Eigen::Vector3d({tri_edge0.z(), 0, -tri_edge0.x()}),
+         Eigen::Vector3d({tri_edge1.z(), 0, -tri_edge1.x()}),
+         Eigen::Vector3d({tri_edge2.z(), 0, -tri_edge2.x()}),
+         Eigen::Vector3d({-tri_edge0.y(), tri_edge0.x(), 0}),
+         Eigen::Vector3d({-tri_edge1.y(), tri_edge1.x(), 0}),
+         Eigen::Vector3d({-tri_edge2.y(), tri_edge2.x(), 0})}};
 
-    // testing separating axes against triangle
+    // Separating axis tests to check if  there's a plane separating the
+    // projections of the AABB and the triangle according to the Separating Axis
+    // Theorem (see C. Ericson "Real Time Collision Detection" for details)
     for (auto const& a : axx)
     {
         if (!paxx(v0, v1, v2, a, e))
