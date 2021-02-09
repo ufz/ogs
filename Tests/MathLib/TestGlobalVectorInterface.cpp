@@ -20,7 +20,7 @@
 
 #if defined(USE_PETSC)
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
-#elif defined(OGS_USE_EIGEN)
+#else
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #endif
 
@@ -282,7 +282,7 @@ TEST(MPITest_Math, CheckInterface_PETScVector)
 {
     checkGlobalVectorInterfacePETSc<MathLib::PETScVector >();
 }
-#elif defined(OGS_USE_EIGEN)
+#else
 TEST(Math, CheckInterface_EigenVector)
 {
     checkGlobalVectorInterface<MathLib::EigenVector >();

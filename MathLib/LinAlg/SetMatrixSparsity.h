@@ -40,6 +40,4 @@ void setMatrixSparsity(MATRIX& matrix, SPARSITY_PATTERN const& sparsity_pattern)
 #include "Lis/LisMatrix.h"
 #endif  // USE_LIS
 
-#ifdef OGS_USE_EIGEN
 #include "Eigen/EigenMatrix.h"
-#endif  // OGS_USE_EIGEN

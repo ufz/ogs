@@ -9,10 +9,7 @@ if(CVODE_FOUND)
     append_source_files(SOURCES ODE)
 endif()
 append_source_files(SOURCES Nonlinear)
-
-if(OGS_USE_EIGEN)
-    append_source_files(SOURCES LinAlg/Eigen)
-endif()
+append_source_files(SOURCES LinAlg/Eigen)
 
 if(OGS_USE_LIS)
     append_source_files(SOURCES LinAlg/Lis)
@@ -59,7 +56,6 @@ target_compile_definitions(MathLib
     PUBLIC
     $<$<BOOL:${USE_LIS}>:USE_LIS>
     $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
-    $<$<BOOL:${OGS_USE_EIGEN}>:OGS_USE_EIGEN>
     $<$<BOOL:${CVODE_FOUND}>:CVODE_FOUND>
     PRIVATE
     $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>

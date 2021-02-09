@@ -173,7 +173,7 @@ void finalizeAssembly(PETScVector& x)
 
 
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
-#elif defined(OGS_USE_EIGEN)
+#else
 
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
