@@ -82,6 +82,46 @@ struct SecondaryData
     std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
 };
 
+/**
+ * \brief Local assembler of ThermoMechanics process.
+ *
+ *  In this assembler, the solid density can be expressed as an exponential
+ *  function of temperature, if a temperature dependent solid density is
+ *  assumed.
+ *  The theory behind this is given below.
+ *
+ *  During the temperature variation, the solid mass balance is
+ *  \f[
+ *    \rho_s^{n+1}  V^{n+1} = \rho_s^n  V^n,
+ *  \f]
+ *  with \f$\rho_s\f$ the density,  \f$V\f$, the volume, and \f$n\f$ the index
+ *  of the time step.
+ *  Under pure thermo-mechanics condition, the volume change along with
+ *  the temperature change is given by
+ *  \f[
+ *   V^{n+1} = V^{n} +  \alpha_T  dT  V^{n} = (1+\alpha_T  dT)V^{n},
+ *  \f]
+ *  where \f$\alpha_T\f$ is the volumetric thermal expansivity of the solid.
+ *  This gives
+ *  \f[ \rho_s^{n+1} +  \alpha_T  dT \rho_s^{n+1} =  \rho_s^n. \f]
+ *   Therefore, we obtain the differential expression of the
+ *   temperature dependent solid density
+ *   as
+ *   \f[
+ *        \frac{d \rho_s}{d T} = -\alpha_T \rho_s.
+ *   \f]
+ *    The solution of the above ODE, i.e the density expression, is given by
+ *   \f[
+ *        \rho_s = {\rho_0} \mathrm{exp} (- \alpha_T (T-T0)),
+ *   \f]
+ *   with reference density \f$\rho_0\f$ at a reference temperature of
+ *  \f$T_0\f$.
+ *
+ *   An MPL property with the type of **Exponential** (see
+ *   MaterialPropertyLib::Exponential) can be used for the
+ *   temperature dependent solid property.
+ */
+
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
 class ThermoMechanicsLocalAssembler
