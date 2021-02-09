@@ -26,21 +26,6 @@
 
 static std::string mat_name = "MaterialIDs";
 
-// tests if point p is located outside of given AABB
-bool testPointOutsideAABB(MathLib::Point3d const& p,
-                          MathLib::Point3d const& min_pnt,
-                          MathLib::Point3d const& max_pnt)
-{
-    for (std::size_t i = 0; i < 3; ++i)
-    {
-        if (p[i] < min_pnt[i] || p[i] > max_pnt[i])
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 // tests if a plane and an AABB are intersecting
 // (based on Christer Ericson "Real Time Collision Detection" 5.2.3)
 bool testAABBIntersectingPlane(Eigen::Vector3d const& aabb_centre,
@@ -138,7 +123,7 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
     auto const& fnodes = fault.getNodes();
     auto const& felems = fault.getElements();
     std::size_t const n_felems = fault.getNumberOfElements();
-    GeoLib::AABB fault_aabb(fnodes.cbegin(), fnodes.cend());
+    GeoLib::AABB const fault_aabb(fnodes.cbegin(), fnodes.cend());
     auto min_pnt = fault_aabb.getMinPoint();
     auto max_pnt = fault_aabb.getMaxPoint();
 
@@ -148,6 +133,9 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
         min_pnt[i] -= half_cell_size[i];
         max_pnt[i] += half_cell_size[i];
     }
+    std::array<MathLib::Point3d, 2> const fault_extent{{min_pnt, max_pnt}};
+    GeoLib::AABB const fault_aabb_ext(fault_extent.cbegin(),
+                                      fault_extent.cend());
 
     // test each voxel grid element vs each fault triangle
     Eigen::Vector3d const extent(
@@ -156,7 +144,7 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
     {
         // test if bounding box of fault is intersecting voxel
         auto const& centre_pnt = MeshLib::getCenterOfGravity(*elems[j]);
-        if (testPointOutsideAABB(centre_pnt, min_pnt, max_pnt))
+        if (!fault_aabb_ext.containsPoint(centre_pnt, 0))
         {
             continue;
         }
