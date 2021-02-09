@@ -48,9 +48,8 @@ bool testAABBIntersectingPlane(Eigen::Vector3d const& aabb_centre,
                                Eigen::Vector3d const& plane_normal,
                                double const pd)
 {
-    double const r = aabb_extent.x() * std::abs(plane_normal.x()) +
-                     aabb_extent.y() * std::abs(plane_normal.y()) +
-                     aabb_extent.z() * std::abs(plane_normal.z());
+
+    double const r = aabb_extent.dot(plane_normal.cwiseAbs());
     double const s = plane_normal.dot(aabb_centre) - pd;
     return std::abs(s) > r;
 }
@@ -105,7 +104,7 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
     Eigen::Vector3d const tri_edge2(v0 - v2);
 
     // separating axes
-    std::vector<Eigen::Vector3d> axx(9);
+    std::array<Eigen::Vector3d, 9> axx;
     axx[0] = Eigen::Vector3d({0, -tri_edge0.z(), tri_edge0.y()});
     axx[1] = Eigen::Vector3d({0, -tri_edge1.z(), tri_edge1.y()});
     axx[2] = Eigen::Vector3d({0, -tri_edge2.z(), tri_edge2.y()});
@@ -196,16 +195,15 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
 bool isVoxelGrid(MeshLib::Mesh const& mesh)
 {
     auto const& elements = mesh.getElements();
-    auto all_hex = std::find_if_not(
-        elements.cbegin(), elements.cend(), [&](auto const& e) {
-            return (e->getGeomType() == MeshLib::MeshElemType::HEXAHEDRON);
-        });
-    if (all_hex != elements.cend())
+    if (std::any_of(elements.cbegin(), elements.cend(), [&](auto const& e) {
+            return (e->getGeomType() != MeshLib::MeshElemType::HEXAHEDRON);
+        }))
     {
         ERR("Input mesh needs to be voxel grid (i.e. equally sized axis "
             "aligned hexahedra).");
         return false;
     }
+
     for (auto const& e : elements)
     {
         auto const n = e->getNodes();
@@ -224,7 +222,7 @@ bool isVoxelGrid(MeshLib::Mesh const& mesh)
 
 int main(int argc, char* argv[])
 {
-    constexpr std::size_t mat_not_set = std::numeric_limits<std::size_t>::max();
+    constexpr int mat_not_set = std::numeric_limits<int>::max();
 
     TCLAP::CmdLine cmd(
         "Marks all elements in a voxel grid (i.e. a structured hex grid, for "
@@ -236,10 +234,10 @@ int main(int argc, char* argv[])
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
-            "Copyright (c) 2012-2020, OpenGeoSys Community "
+            "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::size_t> id_arg(
+    TCLAP::ValueArg<int> id_arg(
         "m", "material", "material id for cells intersected by fault", false,
         mat_not_set, "non-negative integer");
     cmd.add(id_arg);

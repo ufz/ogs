@@ -31,7 +31,7 @@
 
 static std::string mat_name = "MaterialIDs";
 
-// returns the AABB of all layers read so far
+// returns the AABB of all mesh nodes of layers read so far
 void adjustExtent(std::pair<MathLib::Point3d, MathLib::Point3d>& extent,
                   MeshLib::Mesh const& mesh)
 {
@@ -59,9 +59,9 @@ MeshLib::Mesh* generateInitialMesh(
          static_cast<std::size_t>(std::ceil(mesh_extent[2] / res[2]))}};
     for (std::size_t i = 0; i < 3; ++i)
     {
-        double const tmp_enlarge = n_cells[i] * res[i];
-        double const offset = (tmp_enlarge - mesh_extent[i]) / 2.0;
-        mesh_extent[i] = tmp_enlarge;
+        double const ext_range = n_cells[i] * res[i];
+        double const offset = (ext_range - mesh_extent[i]) / 2.0;
+        mesh_extent[i] = ext_range;
         extent.first[i] -= offset;
         extent.second[i] += offset;
     }
@@ -70,6 +70,11 @@ MeshLib::Mesh* generateInitialMesh(
         n_cells[2], extent.first);
     auto mat_id = mesh->getProperties().createNewPropertyVector<int>(
         mat_name, MeshLib::MeshItemType::Cell);
+    if (!mat_id)
+    {
+        delete mesh;
+        return nullptr;
+    }
     mat_id->insert(mat_id->end(), mesh->getNumberOfElements(), -1);
     return mesh;
 }
@@ -85,7 +90,7 @@ void setMaterialIDs(MeshLib::Mesh& mesh,
     auto const& elems = mesh.getElements();
     std::size_t const n_elems = mesh.getNumberOfElements();
     auto mat_ids = mesh.getProperties().getPropertyVector<int>(mat_name);
-    std::vector<double> is_set(n_elems, false);
+    std::vector<bool> is_set(n_elems, false);
     for (int i = n_layers - 1; i >= 0; --i)
     {
         INFO("-> Layer {:d}", n_layers - i - 1);
@@ -104,13 +109,11 @@ void setMaterialIDs(MeshLib::Mesh& mesh,
                 {node[0] - max_edge, node[1] - max_edge, -max_val}};
             MathLib::Point3d const max_vol{
                 {node[0] + max_edge, node[1] + max_edge, max_val}};
-            auto const& elems = grid.getElementsInVolume(min_vol, max_vol);
-            if (elems.size() > 0)
-            {
-                int x = 3;
-            }
+            auto const& intersection_candidates =
+                grid.getElementsInVolume(min_vol, max_vol);
             auto const* proj_elem =
-                MeshLib::ProjectPointOnMesh::getProjectedElement(elems, node);
+                MeshLib::ProjectPointOnMesh::getProjectedElement(
+                    intersection_candidates, node);
             if (proj_elem == nullptr)
             {
                 continue;
@@ -132,8 +135,8 @@ void setMaterialIDs(MeshLib::Mesh& mesh,
                  static_cast<int>(n_layers - 1), -1);
 }
 
-// removes all elements that have not been marked as being located between two
-// layers
+// Removes all elements from mesh that have not been marked as being located
+// between two layers. If all elements remain unmarked, a nullptr is returned.
 MeshLib::Mesh* removeUnusedElements(MeshLib::Mesh const& mesh)
 {
     std::vector<std::size_t> marked_elems;
@@ -165,7 +168,7 @@ int main(int argc, char* argv[])
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
-            "Copyright (c) 2012-2020, OpenGeoSys Community "
+            "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<double> z_arg("z", "cellsize-z",
@@ -226,7 +229,7 @@ int main(int argc, char* argv[])
     std::pair<MathLib::Point3d, MathLib::Point3d> extent(
         MathLib::Point3d{{minval, minval, minval}},
         MathLib::Point3d{{maxval, maxval, maxval}});
-    for (auto layer : layer_names)
+    for (auto const& layer : layer_names)
     {
         std::unique_ptr<MeshLib::Mesh> mesh(
             MeshLib::IO::readMeshFromFile(layer));
@@ -235,6 +238,11 @@ int main(int argc, char* argv[])
     }
 
     std::unique_ptr<MeshLib::Mesh> mesh(generateInitialMesh(extent, cellsize));
+    if (mesh == nullptr)
+    {
+        ERR("Error creating mesh...");
+        return EXIT_FAILURE;
+    }
     std::array<double, 3> const half_cell_size{
         {cellsize[0] / 2.0, cellsize[1] / 2.0, cellsize[2] / 2.0}};
     setMaterialIDs(*mesh, layers, half_cell_size);
