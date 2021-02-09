@@ -20,13 +20,11 @@
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
-#ifdef OGS_USE_EIGEN
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
-#endif
 
-#if defined(OGS_USE_EIGEN) && defined(USE_LIS)
+#if defined(USE_LIS)
 #include "MathLib/LinAlg/EigenLis/EigenLisLinearSolver.h"
 #endif
 
@@ -219,7 +217,6 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
 
 } // end namespace
 
-#ifdef OGS_USE_EIGEN
 TEST(Math, CheckInterface_Eigen)
 {
     // set solver options using Boost property tree
@@ -239,9 +236,8 @@ TEST(Math, CheckInterface_Eigen)
     checkLinearSolverInterface<MathLib::EigenMatrix, MathLib::EigenVector,
                                MathLib::EigenLinearSolver, IntType>(A, conf);
 }
-#endif
 
-#if defined(OGS_USE_EIGEN) && defined(USE_LIS)
+#if defined(USE_LIS)
 TEST(Math, CheckInterface_EigenLis)
 {
     // set solver options using Boost property tree

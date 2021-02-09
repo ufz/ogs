@@ -21,7 +21,7 @@
 
 #if defined(USE_PETSC)
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
-#elif defined(OGS_USE_EIGEN)
+#else
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #endif
 
@@ -228,7 +228,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
 
     checkGlobalRectangularMatrixInterfaceMPI(A, x);
 }
-#elif defined(OGS_USE_EIGEN)
+#else
 TEST(Math, CheckInterface_EigenMatrix)
 {
     MathLib::EigenMatrix m(10);

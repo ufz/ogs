@@ -92,7 +92,7 @@ std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance(
 } // namespace MathLib
 
 
-#elif defined(OGS_USE_EIGEN)
+#else
 
 namespace MathLib
 {
@@ -153,4 +153,4 @@ std::unique_ptr<EigenVector> MatrixVectorTraits<EigenVector>::newInstance(
 }
 } // namespace MathLib
 
-#endif // defined(OGS_USE_EIGEN)
+#endif

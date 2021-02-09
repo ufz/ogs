@@ -196,7 +196,7 @@ void finalizeAssembly(PETScVector& x);
 
 
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
-#elif defined(OGS_USE_EIGEN)
+#else
 
 namespace MathLib {
 

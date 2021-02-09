@@ -36,7 +36,7 @@
 
     using GlobalLinearSolver = MathLib::PETScLinearSolver;
 
-#elif defined(OGS_USE_EIGEN)
+#else
     #include "MathLib/LinAlg/Eigen/EigenVector.h"
     #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
     #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
@@ -46,7 +46,7 @@
 
     using GlobalLinearSolver = MathLib::EigenLinearSolver;
 
-#endif    // OGS_USE_EIGEN
+#endif
 
 
 /// A type used for indexing of global vectors and matrices. It is equal to the

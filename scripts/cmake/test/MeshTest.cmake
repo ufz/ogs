@@ -11,7 +11,7 @@
 #   WRAPPER_ARGS <arguments> # optional
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
 #                  enable the test, e.g.
-#                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
+#                  OGS_USE_PETSC AND (FOO OR BAR)
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
 #                          values should be taken from envinf1 serial job
 # )

@@ -43,7 +43,7 @@ SPECIALIZE_MATRIX_VECTOR_TRAITS(PETScVector, PETScVector::IndexType);
 }
 
 
-#elif defined(OGS_USE_EIGEN)
+#else
 
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"

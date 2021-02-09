@@ -14,7 +14,7 @@
 #   TESTER <diff|vtkdiff|gmldiff|memcheck> # optional
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
 #                  enable the test, e.g.
-#                  OGS_USE_PETSC AND (OGS_USE_EIGEN OR OGS_USE_LIS)
+#                  OGS_USE_PETSC AND (FOO OR BAR)
 #   PYTHON_PACKAGES package_x=1.2.3 package_y=0.1.x # optional
 #   VIS <vtu output file(s)> # optional for documentation
 #   RUNTIME <in seconds> # optional for optimizing ctest duration

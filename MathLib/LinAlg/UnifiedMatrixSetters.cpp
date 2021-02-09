@@ -97,7 +97,7 @@ void addToMatrix(PETScMatrix& m,
 } // namespace MathLib
 
 
-#elif defined(OGS_USE_EIGEN)
+#else
 
 // Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
 
@@ -171,4 +171,4 @@ void addToMatrix(EigenMatrix& m,
 
 } // namespace MathLib
 
-#endif // OGS_USE_EIGEN
+#endif

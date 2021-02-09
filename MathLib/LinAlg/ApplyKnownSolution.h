@@ -11,10 +11,8 @@
 
 #include <vector>
 
-#ifdef OGS_USE_EIGEN
 #include "MathLib/LinAlg/Eigen/EigenTools.h"
-#endif // OGS_USE_EIGEN
 
 #ifdef USE_PETSC
 #include "MathLib/LinAlg/PETSc/PETScTools.h"
-#endif // USE_PETSC
+#endif  // USE_PETSC

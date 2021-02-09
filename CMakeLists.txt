@@ -110,7 +110,6 @@ option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 option(OGS_USE_XDMF "Add Xdmf file IO support" OFF)
 
 # Eigen
-option(OGS_USE_EIGEN "Use Eigen linear solver" ON)
 option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
 option(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN "" ON)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
@@ -188,7 +187,6 @@ option(OGS_USE_MFRONT
 # ---- Definitions ----
 if(OGS_USE_LIS)
     include_directories(SYSTEM ${LIS_INCLUDE_DIR})
-    set(OGS_USE_EIGEN ON)
 endif()
 
 if(OGS_USE_MKL)
@@ -196,32 +194,24 @@ if(OGS_USE_MKL)
 endif()
 
 # Eigen
-if(OGS_USE_EIGEN)
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
-    endif()
-
-    if(EIGEN_NO_DEBUG)
-        add_definitions(-DEIGEN_NO_DEBUG)
-    endif()
-
-    if(EIGEN_DONT_VECTORIZE)
-        add_definitions(-DEIGEN_DONT_VECTORIZE)
-    endif()
-
-    if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
-        add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
-    endif()
-
-    if(OGS_USE_EIGEN_UNSUPPORTED)
-        add_definitions(-DUSE_EIGEN_UNSUPPORTED)
-    endif()
-
-    if(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN)
-        add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
-    endif()
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
 endif()
-# End Eigen
+if(EIGEN_NO_DEBUG)
+    add_definitions(-DEIGEN_NO_DEBUG)
+endif()
+if(EIGEN_DONT_VECTORIZE)
+    add_definitions(-DEIGEN_DONT_VECTORIZE)
+endif()
+if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
+    add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
+endif()
+if(OGS_USE_EIGEN_UNSUPPORTED)
+    add_definitions(-DUSE_EIGEN_UNSUPPORTED)
+endif()
+if(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN)
+    add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
+endif()
 
 # Packaging
 include(scripts/cmake/packaging/Pack.cmake)
