@@ -557,32 +557,32 @@ AddTest(
     PrismBHE_elev.vtu
 )
 
-AddTest(
+MeshTest(
     NAME Layers2Grid_Iso_Test
     PATH MeshLib
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE Layers2Grid
-    EXECUTABLE_ARGS -i AREHS_test_layers.txt -o AREHS_test.vtu -x 500
+    EXECUTABLE_ARGS -i AREHS_test_layers.txt -o ${Data_BINARY_DIR}/MeshLib/AREHS_test_iso.vtu -x 500
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA AREHS_test_iso.vtu AREHS_test_iso.vtu 1e-16
 )
 
-AddTest(
+MeshTest(
     NAME Layers2Grid_Test
     PATH MeshLib
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE Layers2Grid
-    EXECUTABLE_ARGS -i AREHS_test_layers.txt -o AREHS_test.vtu -x 500 -y 300 -z 100
+    EXECUTABLE_ARGS -i AREHS_test_layers.txt -o ${Data_BINARY_DIR}/MeshLib/AREHS_test.vtu -x 500 -y 300 -z 100
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA AREHS_test.vtu AREHS_test.vtu 1e-16
 )
 
-AddTest(
+MeshTest(
     NAME AddFaultToVoxelGrid_Test
     PATH MeshLib
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE AddFaultToVoxelGrid
-    EXECUTABLE_ARGS -i AREHS_test.vtu -f AREHS_fault.vtu -o AREHS_test_fault.vtu
+    EXECUTABLE_ARGS -i AREHS_test.vtu -f AREHS_fault.vtu -o ${Data_BINARY_DIR}/MeshLib/AREHS_test_fault.vtu
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA AREHS_test_fault.vtu AREHS_test_fault.vtu 1e-16
 )
