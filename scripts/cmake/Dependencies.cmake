@@ -82,3 +82,16 @@ if(OGS_USE_PYTHON)
             "PYBIND11_PYTHON_VERSION ${Python3_VERSION}"
     )
 endif()
+
+if (OGS_BUILD_PROCESS_ComponentTransport
+    OR OGS_BUILD_PROCESS_RichardsComponentTransport)
+    CPMAddPackage(
+        NAME iphreeqc
+        GITHUB_REPOSITORY ufz/iphreeqc
+        GIT_TAG b1047d3eb03e7ef1b850231be35acb9c6a2cf345
+        DOWNLOAD_ONLY YES
+    )
+    if(iphreeqc_ADDED)
+        include(scripts/cmake/iphreeqc.cmake)
+    endif()
+endif()

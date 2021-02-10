@@ -8,15 +8,16 @@
  *
  */
 
+#include "PhreeqcKernel.h"
+
+#include <phreeqcpp/cxxKinetics.h>
+
 #include <cmath>
 #include <cstdlib>
 
 #include "BaseLib/Error.h"
-#include "PhreeqcKernel.h"
 #include "PhreeqcKernelData/AqueousSolution.h"
 #include "PhreeqcKernelData/ReactionRate.h"
-
-#include <iphreeqc/src/src/phreeqcpp/cxxKinetics.h>
 
 namespace ChemistryLib
 {

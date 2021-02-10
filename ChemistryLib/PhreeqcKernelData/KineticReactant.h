@@ -10,10 +10,10 @@
 
 #pragma once
 
+#include <phreeqcpp/cxxKinetics.h>
+
 #include <string>
 #include <vector>
-
-#include <iphreeqc/src/src/phreeqcpp/cxxKinetics.h>
 
 namespace ChemistryLib
 {

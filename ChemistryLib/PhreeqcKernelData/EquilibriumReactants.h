@@ -10,11 +10,11 @@
 
 #pragma once
 
+#include <phreeqcpp/PPassemblage.h>
+
 #include <set>
 #include <string>
 #include <vector>
-
-#include <iphreeqc/src/src/phreeqcpp/PPassemblage.h>
 
 namespace ChemistryLib
 {

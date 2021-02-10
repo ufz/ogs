@@ -1,10 +1,3 @@
-# iphreeqc
-if (OGS_BUILD_PROCESS_ComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport)
-    add_subdirectory(iphreeqc)
-    list(APPEND DISABLE_WARNINGS_TARGETS iphreeqc)
-endif()
-
 # MFrontGenericInterfaceSupport
 if (OGS_USE_MFRONT)
     set(enable-doxygen-doc OFF CACHE INTERNAL "")

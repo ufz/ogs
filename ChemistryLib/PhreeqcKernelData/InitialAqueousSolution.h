@@ -10,10 +10,10 @@
 
 #pragma once
 
+#include <phreeqcpp/ISolution.h>
+
 #include <map>
 #include <string>
-
-#include <iphreeqc/src/src/phreeqcpp/ISolution.h>
 
 namespace ChemistryLib
 {

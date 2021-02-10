@@ -10,14 +10,14 @@
 
 #pragma once
 
+#include <phreeqcpp/Phreeqc.h>
+
 #include <map>
 #include <vector>
 
 #include "ChemicalSolverInterface.h"
 #include "PhreeqcKernelData/EquilibriumReactants.h"
 #include "PhreeqcKernelData/KineticReactant.h"
-
-#include <iphreeqc/src/src/phreeqcpp/Phreeqc.h>
 
 class cxxSolution;
 class cxxISolution;

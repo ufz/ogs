@@ -10,7 +10,7 @@
 
 #include "CreateChemicalSolverInterface.h"
 
-#include <iphreeqc/src/src/phreeqcpp/cxxKinetics.h>
+#include <phreeqcpp/cxxKinetics.h>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/FileTools.h"
