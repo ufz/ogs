@@ -294,9 +294,9 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 24
     DIFF_DATA
-    ExpectedCreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu sigma sigma 5e-6 0
-    ExpectedCreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu epsilon epsilon 1e-15 0
-    ExpectedCreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu displacement displacement 1e-16 1e-9
+    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu sigma sigma 5e-6 0
+    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu epsilon epsilon 1e-15 0
+    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu displacement displacement 1e-16 1e-9
 )
 
 # Basic test that MFront models work for TM.
