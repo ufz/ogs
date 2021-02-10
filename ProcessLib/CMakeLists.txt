@@ -8,7 +8,7 @@ foreach(process ${ProcessesList})
     endif()
 endforeach()
 
-append_source_files(SOURCES)
+get_source_files(SOURCES)
 append_source_files(SOURCES BoundaryCondition)
 append_source_files(SOURCES SurfaceFlux)
 append_source_files(SOURCES Output)

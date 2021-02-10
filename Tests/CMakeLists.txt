@@ -15,7 +15,7 @@ if(MSVC)
     add_definitions(/D_VARIADIC_MAX=10)
 endif()
 
-append_source_files(TEST_SOURCES)
+get_source_files(TEST_SOURCES)
 append_source_files(TEST_SOURCES BaseLib)
 append_source_files(TEST_SOURCES FileIO)
 append_source_files(TEST_SOURCES GeoLib)

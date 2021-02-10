@@ -1,4 +1,4 @@
-append_source_files(SOURCES)
+get_source_files(SOURCES)
 
 ogs_add_library(ThermoHydroMechanics ${SOURCES})
 target_link_libraries(ThermoHydroMechanics
