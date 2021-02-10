@@ -45,34 +45,34 @@ void adjustExtent(std::pair<MathLib::Point3d, MathLib::Point3d>& extent,
 }
 
 // creates a voxel grid of the AABB of all layers
-MeshLib::Mesh* generateInitialMesh(
+std::unique_ptr<MeshLib::Mesh> generateInitialMesh(
     std::pair<MathLib::Point3d, MathLib::Point3d>& extent,
     std::array<double, 3> const& res)
 {
     INFO("Creating initial mesh...");
-    std::array<double, 3> mesh_extent{{extent.second[0] - extent.first[0],
+    std::array<double, 3> mesh_range{{extent.second[0] - extent.first[0],
                                        extent.second[1] - extent.first[1],
                                        extent.second[2] - extent.first[2]}};
     std::array<std::size_t, 3> const n_cells{
-        {static_cast<std::size_t>(std::ceil(mesh_extent[0] / res[0])),
-         static_cast<std::size_t>(std::ceil(mesh_extent[1] / res[1])),
-         static_cast<std::size_t>(std::ceil(mesh_extent[2] / res[2]))}};
+        {static_cast<std::size_t>(std::ceil(mesh_range[0] / res[0])),
+         static_cast<std::size_t>(std::ceil(mesh_range[1] / res[1])),
+         static_cast<std::size_t>(std::ceil(mesh_range[2] / res[2]))}};
     for (std::size_t i = 0; i < 3; ++i)
     {
         double const ext_range = n_cells[i] * res[i];
-        double const offset = (ext_range - mesh_extent[i]) / 2.0;
-        mesh_extent[i] = ext_range;
+        double const offset = (ext_range - mesh_range[i]) / 2.0;
+        mesh_range[i] = ext_range;
         extent.first[i] -= offset;
         extent.second[i] += offset;
     }
-    MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(
-        mesh_extent[0], mesh_extent[1], mesh_extent[2], n_cells[0], n_cells[1],
-        n_cells[2], extent.first);
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::MeshGenerator::generateRegularHexMesh(
+            mesh_range[0], mesh_range[1], mesh_range[2], n_cells[0], n_cells[1],
+            n_cells[2], extent.first));
     auto mat_id = mesh->getProperties().createNewPropertyVector<int>(
         mat_name, MeshLib::MeshItemType::Cell);
     if (!mat_id)
     {
-        delete mesh;
         return nullptr;
     }
     mat_id->insert(mat_id->end(), mesh->getNumberOfElements(), -1);
