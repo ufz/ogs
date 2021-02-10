@@ -39,19 +39,6 @@ bool testAABBIntersectingPlane(Eigen::Vector3d const& aabb_centre,
     return std::abs(s) > r;
 }
 
-// separating axes test for triangle vs AABB projection
-// (based on Christer Ericson "Real Time Collision Detection" 5.2.9)
-bool paxx(Eigen::Vector3d const& v0, Eigen::Vector3d const& v1,
-          Eigen::Vector3d const& v2, Eigen::Vector3d const& a,
-          Eigen::Vector3d const& e)
-{
-    double const p0 = v0.dot(a);
-    double const p1 = v1.dot(a);
-    double const p2 = v2.dot(a);
-    double const r = e.dot(a.cwiseAbs());
-    return std::max(-std::max({p0, p1, p2}), std::min({p0, p1, p2})) <= r;
-}
-
 // tests if a triangle and an AABB are intersecting
 // (based on Christer Ericson "Real Time Collision Detection" 5.2.9)
 bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
@@ -64,52 +51,54 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
     Eigen::Vector3d const v0(Eigen::Vector3d(n0.getCoords()) - c);
     Eigen::Vector3d const v1(Eigen::Vector3d(n1.getCoords()) - c);
     Eigen::Vector3d const v2(Eigen::Vector3d(n2.getCoords()) - c);
+    Eigen::Matrix3d tri;
+    tri << v0, v1, v2;
+    auto tri_nodes = tri.transpose();
 
     // Test the three axes corresponding to the face normals of AABB b
-    if (std::max({v0.x(), v1.x(), v2.x()}) < -e.x() ||
-        std::min({v0.x(), v1.x(), v2.x()}) > e.x())
+    Eigen::Vector3d const min_coeff = tri_nodes.colwise().minCoeff();
+    Eigen::Vector3d const max_coeff = tri_nodes.colwise().maxCoeff();
+    if (max_coeff.x() < -e.x() || min_coeff.x() > e.x())
     {
         return false;
     }
-    if (std::max({v0.y(), v1.y(), v2.y()}) < -e.y() ||
-        std::min({v0.y(), v1.y(), v2.y()}) > e.y())
+    if (max_coeff.y() < -e.y() || min_coeff.y() > e.y())
     {
         return false;
     }
-    if (std::max({v0.z(), v1.z(), v2.z()}) < -e.z() ||
-        std::min({v0.z(), v1.z(), v2.z()}) > e.z())
+    if (max_coeff.z() < -e.z() || min_coeff.z() > e.z())
     {
         return false;
     }
-
-    // Compute edge vectors for triangle
-    Eigen::Vector3d const tri_edge0(v1 - v0);
-    Eigen::Vector3d const tri_edge1(v2 - v1);
-    Eigen::Vector3d const tri_edge2(v0 - v2);
 
     // separating axes
+    std::array<Eigen::Vector3d, 3> tri_edge{{v1 - v0, v2 - v1, v0 - v2}};
     std::array<Eigen::Vector3d, 9> const axx{
-        {Eigen::Vector3d({0, -tri_edge0.z(), tri_edge0.y()}),
-         Eigen::Vector3d({0, -tri_edge1.z(), tri_edge1.y()}),
-         Eigen::Vector3d({0, -tri_edge2.z(), tri_edge2.y()}),
-         Eigen::Vector3d({tri_edge0.z(), 0, -tri_edge0.x()}),
-         Eigen::Vector3d({tri_edge1.z(), 0, -tri_edge1.x()}),
-         Eigen::Vector3d({tri_edge2.z(), 0, -tri_edge2.x()}),
-         Eigen::Vector3d({-tri_edge0.y(), tri_edge0.x(), 0}),
-         Eigen::Vector3d({-tri_edge1.y(), tri_edge1.x(), 0}),
-         Eigen::Vector3d({-tri_edge2.y(), tri_edge2.x(), 0})}};
+        {Eigen::Vector3d({0, -tri_edge[0].z(), tri_edge[0].y()}),
+         Eigen::Vector3d({0, -tri_edge[1].z(), tri_edge[1].y()}),
+         Eigen::Vector3d({0, -tri_edge[2].z(), tri_edge[2].y()}),
+         Eigen::Vector3d({tri_edge[0].z(), 0, -tri_edge[0].x()}),
+         Eigen::Vector3d({tri_edge[1].z(), 0, -tri_edge[1].x()}),
+         Eigen::Vector3d({tri_edge[2].z(), 0, -tri_edge[2].x()}),
+         Eigen::Vector3d({-tri_edge[0].y(), tri_edge[0].x(), 0}),
+         Eigen::Vector3d({-tri_edge[1].y(), tri_edge[1].x(), 0}),
+         Eigen::Vector3d({-tri_edge[2].y(), tri_edge[2].x(), 0})}};
 
     // Separating axis tests to check if  there's a plane separating the
     // projections of the AABB and the triangle according to the Separating Axis
     // Theorem (see C. Ericson "Real Time Collision Detection" for details)
     for (auto const& a : axx)
     {
-        if (!paxx(v0, v1, v2, a, e))
+        Eigen::Vector3d p = tri_nodes * a;
+        double const r = e.dot(a.cwiseAbs());
+        if (std::max(-p.maxCoeff(), p.minCoeff()) > r)
+        {
             return false;
+        }
     }
 
     // Test separating axis corresponding to triangle face normal
-    Eigen::Vector3d const plane_normal(tri_edge0.cross(tri_edge1));
+    Eigen::Vector3d const plane_normal(tri_edge[0].cross(tri_edge[1]));
     double const pd = plane_normal.dot(v0);
     return testAABBIntersectingPlane(c, e, plane_normal, pd);
 }
