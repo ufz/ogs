@@ -48,16 +48,14 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
                                   Eigen::Vector3d const& e)
 {
     // Translate triangle as conceptually moving AABB to origin
-    Eigen::Vector3d const v0(Eigen::Vector3d(n0.getCoords()) - c);
-    Eigen::Vector3d const v1(Eigen::Vector3d(n1.getCoords()) - c);
-    Eigen::Vector3d const v2(Eigen::Vector3d(n2.getCoords()) - c);
-    Eigen::Matrix3d tri;
-    tri << v0, v1, v2;
-    auto tri_nodes = tri.transpose();
+    Eigen::Matrix3d v;
+    v << Eigen::Vector3d(n0.getCoords()) - c,
+        Eigen::Vector3d(n1.getCoords()) - c,
+        Eigen::Vector3d(n2.getCoords()) - c;
 
     // Test the three axes corresponding to the face normals of AABB b
-    Eigen::Vector3d const min_coeff = tri_nodes.colwise().minCoeff();
-    Eigen::Vector3d const max_coeff = tri_nodes.colwise().maxCoeff();
+    Eigen::Vector3d const min_coeff = v.rowwise().minCoeff();
+    Eigen::Vector3d const max_coeff = v.rowwise().maxCoeff();
     if (max_coeff.x() < -e.x() || min_coeff.x() > e.x())
     {
         return false;
@@ -72,7 +70,8 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
     }
 
     // separating axes
-    std::array<Eigen::Vector3d, 3> tri_edge{{v1 - v0, v2 - v1, v0 - v2}};
+    std::array<Eigen::Vector3d, 3> tri_edge{
+        {v.col(1) - v.col(0), v.col(2) - v.col(1), v.col(0) - v.col(2)}};
     std::array<Eigen::Vector3d, 9> const axx{
         {Eigen::Vector3d({0, -tri_edge[0].z(), tri_edge[0].y()}),
          Eigen::Vector3d({0, -tri_edge[1].z(), tri_edge[1].y()}),
@@ -89,7 +88,7 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
     // Theorem (see C. Ericson "Real Time Collision Detection" for details)
     for (auto const& a : axx)
     {
-        Eigen::Vector3d p = tri_nodes * a;
+        Eigen::Vector3d p = v.transpose() * a;
         double const r = e.dot(a.cwiseAbs());
         if (std::max(-p.maxCoeff(), p.minCoeff()) > r)
         {
@@ -99,7 +98,7 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
 
     // Test separating axis corresponding to triangle face normal
     Eigen::Vector3d const plane_normal(tri_edge[0].cross(tri_edge[1]));
-    double const pd = plane_normal.dot(v0);
+    double const pd = plane_normal.dot(v.row(0));
     return testAABBIntersectingPlane(c, e, plane_normal, pd);
 }
 
