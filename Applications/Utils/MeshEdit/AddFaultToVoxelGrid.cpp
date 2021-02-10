@@ -54,17 +54,8 @@ bool testTriangleIntersectingAABB(MeshLib::Node const& n0,
         Eigen::Vector3d(n2.getCoords()) - c;
 
     // Test the three axes corresponding to the face normals of AABB b
-    Eigen::Vector3d const min_coeff = v.rowwise().minCoeff();
-    Eigen::Vector3d const max_coeff = v.rowwise().maxCoeff();
-    if (max_coeff.x() < -e.x() || min_coeff.x() > e.x())
-    {
-        return false;
-    }
-    if (max_coeff.y() < -e.y() || min_coeff.y() > e.y())
-    {
-        return false;
-    }
-    if (max_coeff.z() < -e.z() || min_coeff.z() > e.z())
+    if (((v.rowwise().minCoeff() - e).array() > 0).any() ||
+        ((v.rowwise().maxCoeff() + e).array() < 0).any())
     {
         return false;
     }
