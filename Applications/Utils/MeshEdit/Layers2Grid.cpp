@@ -233,6 +233,11 @@ int main(int argc, char* argv[])
     {
         std::unique_ptr<MeshLib::Mesh> mesh(
             MeshLib::IO::readMeshFromFile(layer));
+        if (mesh == nullptr)
+        {
+            ERR("Input layer '{:s}' not found. Aborting...", layer);
+            return EXIT_FAILURE;
+        }
         adjustExtent(extent, *mesh);
         layers.emplace_back(std::move(mesh));
     }
