@@ -16,7 +16,7 @@ if(BUILD_TESTING)
     )
     if(autocheck_ADDED)
         add_library(autocheck INTERFACE IMPORTED)
-        target_include_directories(autocheck INTERFACE ${autocheck_SOURCE_DIR}/include)
+        target_include_directories(autocheck SYSTEM INTERFACE ${autocheck_SOURCE_DIR}/include)
     endif()
 
     CPMAddPackage(
@@ -39,7 +39,7 @@ CPMAddPackage(
 )
 if(exprtk_ADDED)
     add_library(exprtk INTERFACE IMPORTED)
-    target_include_directories(exprtk INTERFACE ${exprtk_SOURCE_DIR})
+    target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
 CPMAddPackage(
@@ -56,7 +56,7 @@ CPMAddPackage(
 )
 if(tclap_ADDED)
     add_library(tclap INTERFACE IMPORTED)
-    target_include_directories(tclap INTERFACE ${tclap_SOURCE_DIR}/include)
+    target_include_directories(tclap SYSTEM INTERFACE ${tclap_SOURCE_DIR}/include)
 endif()
 
 CPMAddPackage(
