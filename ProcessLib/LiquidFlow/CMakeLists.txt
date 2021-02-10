@@ -1,4 +1,4 @@
-append_source_files(SOURCES)
+get_source_files(SOURCES)
 
 ogs_add_library(LiquidFlow ${SOURCES})
 target_link_libraries(LiquidFlow PUBLIC ProcessLib PRIVATE ParameterLib)

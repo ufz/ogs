@@ -1,5 +1,5 @@
 add_subdirectory(Common)
-append_source_files(SOURCES HydroMechanics)
+get_source_files(SOURCES HydroMechanics)
 append_source_files(SOURCES HydroMechanics/LocalAssembler)
 append_source_files(SOURCES SmallDeformation)
 append_source_files(SOURCES SmallDeformation/LocalAssembler)

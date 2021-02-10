@@ -1,4 +1,4 @@
-append_source_files(SOURCES)
+get_source_files(SOURCES)
 append_source_files(SOURCES BHE)
 append_source_files(SOURCES BoundaryConditions)
 append_source_files(SOURCES LocalAssemblers)
