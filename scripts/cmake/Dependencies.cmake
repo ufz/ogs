@@ -95,3 +95,14 @@ if (OGS_BUILD_PROCESS_ComponentTransport
         include(scripts/cmake/iphreeqc.cmake)
     endif()
 endif()
+
+CPMFindPackage(
+    NAME Eigen3
+    GITLAB_REPOSITORY libeigen/eigen
+    GIT_TAG ${ogs.minimum_version.eigen}
+    DOWNLOAD_ONLY YES
+)
+if(Eigen3_ADDED)
+    add_library(Eigen3::Eigen INTERFACE IMPORTED)
+    target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR})
+endif()

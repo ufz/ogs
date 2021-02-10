@@ -82,13 +82,6 @@ else()
     include(${VTK_USE_FILE})
 endif()
 
-if(OGS_USE_CONAN)
-    set(EIGEN3_INCLUDE_DIR ${CONAN_INCLUDE_DIRS_EIGEN} CACHE INTERNAL "")
-else()
-    find_package(Eigen3 ${ogs.minimum_version.eigen} REQUIRED)
-endif()
-include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
-
 if(OGS_USE_MFRONT)
     ## pthread, is a requirement of mfront ##
     set(CMAKE_THREAD_PREFER_PTHREAD ON)
