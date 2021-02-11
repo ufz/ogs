@@ -1,6 +1,3 @@
-[submodule "ThirdParty/SwmmInterface"]
-	path = ThirdParty/SwmmInterface
-	url = https://github.com/ufz/SwmmInterface.git
 [submodule "ThirdParty/container-maker"]
 	path = ThirdParty/container-maker
 	url = https://gitlab.opengeosys.org/ogs/container-maker.git

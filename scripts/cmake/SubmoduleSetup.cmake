@@ -3,9 +3,6 @@ if(NOT IS_GIT_REPO)
 endif()
 
 # This file initializes the required submodules
-if(OGS_BUILD_SWMM)
-    list(APPEND REQUIRED_SUBMODULES ThirdParty/SwmmInterface)
-endif()
 
 execute_process(
     COMMAND ${GIT_EXECUTABLE} submodule status
