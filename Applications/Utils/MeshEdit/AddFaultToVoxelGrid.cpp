@@ -233,6 +233,11 @@ int main(int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(input_name));
+    if (mesh == nullptr)
+    {
+        ERR("Input mesh not found...");
+        return EXIT_FAILURE;
+    }
     if (!isVoxelGrid(*mesh))
     {
         return EXIT_FAILURE;
@@ -246,6 +251,11 @@ int main(int argc, char* argv[])
 
     std::unique_ptr<MeshLib::Mesh> fault(
         MeshLib::IO::readMeshFromFile(fault_name));
+    if (mesh == nullptr)
+    {
+        ERR("Fault mesh not found...");
+        return EXIT_FAILURE;
+    }
     if (fault->getDimension() != 2)
     {
         ERR("Fault needs to be a 2D mesh.");
