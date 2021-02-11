@@ -126,7 +126,7 @@ endif()
 
 if(OGS_USE_XDMF)
     find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
-    
+
     CPMAddPackage(
         NAME xdmf
         VERSION 3.0.0
@@ -178,6 +178,18 @@ if(OGS_BUILD_SWMM)
         target_include_directories(SwmmInterface SYSTEM PUBLIC ${SWMMInterface_SOURCE_DIR})
         list(APPEND DISABLE_WARNINGS_TARGETS SWMM SwmmInterface)
     endif()
+endif()
+
+CPMAddPackage(
+    NAME nlohmann_json
+    VERSION 3.6.1
+    # the git repo is incredibly large, so we download the archived include directory
+    URL https://github.com/nlohmann/json/releases/download/v3.6.1/include.zip
+    URL_HASH SHA256=69cc88207ce91347ea530b227ff0776db82dcb8de6704e1a3d74f4841bc651cf
+)
+if(nlohmann_json_ADDED)
+    add_library(nlohmann_json INTERFACE IMPORTED)
+    target_include_directories(nlohmann_json INTERFACE ${nlohmann_json_SOURCE_DIR})
 endif()
 
 # Disable warnings

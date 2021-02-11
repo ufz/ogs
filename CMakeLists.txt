@@ -219,13 +219,6 @@ include(scripts/cmake/packaging/Pack.cmake)
 
 # ---- Subdirectories ----
 
-# External projects
-include_directories(
-    SYSTEM
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include
-)
-
 # xdmfdiff
 if(OGS_USE_XDMF AND BUILD_TESTING)
     add_subdirectory(Tests/xdmfdiff)
