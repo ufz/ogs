@@ -20,6 +20,20 @@ namespace MaterialPropertyLib
 {
 class Medium;
 
+/**
+ *  van Genuchten-Mualem relative permeability function for non-wetting phase
+ *  in terms of effective wetting-phase saturation \cite lenhard1987model :
+ *
+ *   \f[k_{rel}^n= (1 - S_e)^{1/2} (1 - S_e^{1/m})^{2m}\f]
+ *   with
+ *   \f[S_e=\frac{S^L-S^L_r}{S^L_{\mbox{max}}-S^L_r}\f]
+ *   where
+ *    \f{eqnarray*}{
+ *       &S^L_r&            \mbox{residual saturation of wetting phase,}\\
+ *       &S^L_{\mbox{max}}& \mbox{maximum saturation of wetting phase,}\\
+ *       &m\, \in (0, 1) &    \mbox{ exponent.}\\
+ *    \f}
+ */
 class RelPermNonWettingPhaseVanGenuchtenMualem final : public Property
 {
 public:
