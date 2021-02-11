@@ -76,7 +76,6 @@ option(OGS_BUILD_UTILS "Should the utilities programms be built?" ON)
 
 # ---- CMake includes ----
 include(GitSetup)
-include(SubmoduleSetup)
 include(Versions)
 include(PythonSetup)
 include(ProcessesSetup)
