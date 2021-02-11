@@ -124,6 +124,50 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
+if(OGS_USE_XDMF)
+    find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
+    
+    CPMAddPackage(
+        NAME xdmf
+        VERSION 3.0.0
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
+        GIT_TAG 8d5ae1e1cbf506b8ca2160745fc914e25690c8a4
+        OPTIONS "XDMF_LIBNAME OgsXdmf"
+    )
+    if(xdmf_ADDED)
+        target_include_directories(OgsXdmf PUBLIC
+            ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf
+            ${PROJECT_BINARY_DIR}/ThirdParty/xdmf
+        )
+        if(OGS_USE_CONAN AND UNIX AND APPLE)
+            find_package(Iconv REQUIRED)
+        endif()
+
+        if(MSVC AND OGS_USE_CONAN)
+            # Hack: Conan HDF5 not found on Windows
+            target_link_libraries(OgsXdmf ${CONAN_LIBS})
+        else()
+            target_link_libraries(OgsXdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
+        endif()
+        target_include_directories(OgsXdmfCore PUBLIC
+            ${PROJECT_SOURCE_DIR}/ThirdParty/xdmf/core
+            ${PROJECT_BINARY_DIR}/ThirdParty/xdmf/core
+        )
+        find_package(LibXml2 REQUIRED) # LibXml2 is a XdmfCore dependency
+        target_link_libraries(OgsXdmfCore PUBLIC LibXml2::LibXml2)
+
+        set_target_properties(OgsXdmf OgsXdmfCore PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+            LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+        )
+        if(BUILD_SHARED_LIBS)
+            install(TARGETS OgsXdmf OgsXdmfCore LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        endif()
+        list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
+    endif()
+endif()
+
 # Disable warnings
 foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
     target_compile_options(${TARGET} PRIVATE
