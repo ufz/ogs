@@ -79,11 +79,48 @@ std::unique_ptr<MeshLib::Mesh> generateInitialMesh(
     return mesh;
 }
 
+// returns the element the given node is projected on (or nullptr otherwise)
+MeshLib::Element const* getProjectedElement(
+    MeshLib::MeshElementGrid const& grid,
+    MeshLib::Node const& node,
+    double const max_edge)
+{
+    constexpr double max_val = std::numeric_limits<double>::max();
+    MathLib::Point3d const min_vol{
+        {node[0] - max_edge, node[1] - max_edge, -max_val}};
+    MathLib::Point3d const max_vol{
+        {node[0] + max_edge, node[1] + max_edge, max_val}};
+    auto const& intersection_candidates =
+        grid.getElementsInVolume(min_vol, max_vol);
+    return MeshLib::ProjectPointOnMesh::getProjectedElement(
+        intersection_candidates, node);
+}
+
+// casts vote if the given nodes belongs to lower layer, upper layer or no layer
+// at all
+void voteMatId(MeshLib::Node const& node, MeshLib::MeshElementGrid const& grid,
+               double const max_edge, std::size_t& nullptr_cnt,
+               std::size_t& upper_layer_cnt, std::size_t& lower_layer_cnt)
+{
+    auto const& proj_elem = getProjectedElement(grid, node, max_edge);
+    if (proj_elem == nullptr)
+    {
+        nullptr_cnt++;
+        return;
+    }
+    if (node[2] > MeshLib::ProjectPointOnMesh::getElevation(*proj_elem, node))
+    {
+        upper_layer_cnt++;
+        return;
+    }
+    lower_layer_cnt++;
+}
+
 // sets material IDs for all elements depending on the layers they are located
 // between
 void setMaterialIDs(MeshLib::Mesh& mesh,
                     std::vector<std::unique_ptr<MeshLib::Mesh>> const& layers,
-                    std::array<double, 3> half_cell_size)
+                    std::array<double, 3> half_cell_size, bool const dilate)
 {
     INFO("Setting material properties...");
     std::size_t const n_layers = layers.size();
@@ -103,23 +140,44 @@ void setMaterialIDs(MeshLib::Mesh& mesh,
                 continue;
             }
 
+            std::size_t nullptr_cnt(0);
+            std::size_t upper_layer_cnt(0);
+            std::size_t lower_layer_cnt(0);
+
             MeshLib::Node const node = MeshLib::getCenterOfGravity(*elems[j]);
-            constexpr double max_val = std::numeric_limits<double>::max();
-            MathLib::Point3d const min_vol{
-                {node[0] - max_edge, node[1] - max_edge, -max_val}};
-            MathLib::Point3d const max_vol{
-                {node[0] + max_edge, node[1] + max_edge, max_val}};
-            auto const& intersection_candidates =
-                grid.getElementsInVolume(min_vol, max_vol);
-            auto const* proj_elem =
-                MeshLib::ProjectPointOnMesh::getProjectedElement(
-                    intersection_candidates, node);
-            if (proj_elem == nullptr)
+            voteMatId(node, grid, max_edge, nullptr_cnt, upper_layer_cnt,
+                      lower_layer_cnt);
+            if (nullptr_cnt)
             {
+                // if no element was found at centre point, vote via corners
+                for (std::size_t k = 0; k < 8; ++k)
+                {
+                    MeshLib::Node const& n = *elems[j]->getNode(k);
+                    voteMatId(n, grid, max_edge, nullptr_cnt, upper_layer_cnt,
+                              lower_layer_cnt);
+                }
+
+                // If the "dilate"-param is set, a mat ID will be assigned if at
+                // least one node was voting for a specific layer. Without the
+                // "dilate"-param, an absolute majority is needed. In case of a
+                // tie, the lower layer will be favoured.
+                if ((upper_layer_cnt == 0 && lower_layer_cnt == 0) ||
+                    (!dilate && nullptr_cnt >= upper_layer_cnt &&
+                     nullptr_cnt >= lower_layer_cnt))
+                {
+                    continue;
+                }
+                if (upper_layer_cnt > lower_layer_cnt)
+                {
+                    (*mat_ids)[j] = n_layers - i - 1;
+                }
+                else
+                {
+                    is_set[j] = true;
+                }
                 continue;
             }
-            if (node[2] >
-                MeshLib::ProjectPointOnMesh::getElevation(*proj_elem, node))
+            if (upper_layer_cnt)
             {
                 (*mat_ids)[j] = n_layers - i - 1;
             }
@@ -171,6 +229,13 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
+    TCLAP::SwitchArg dilate_arg(
+        "d", "dilate",
+        "assign mat IDs based on single nodes instead of a majority of nodes, "
+        "which can result in a slightly increased voxel grid extent",
+        false);
+    cmd.add(dilate_arg);
+
     TCLAP::ValueArg<double> z_arg("z", "cellsize-z",
                                   "edge length of cubes in z-direction (depth)",
                                   false, 1000, "floating point number");
@@ -250,7 +315,7 @@ int main(int argc, char* argv[])
     }
     std::array<double, 3> const half_cell_size{
         {cellsize[0] / 2.0, cellsize[1] / 2.0, cellsize[2] / 2.0}};
-    setMaterialIDs(*mesh, layers, half_cell_size);
+    setMaterialIDs(*mesh, layers, half_cell_size, dilate_arg.getValue());
 
     std::unique_ptr<MeshLib::Mesh> new_mesh(removeUnusedElements(*mesh));
     if (new_mesh == nullptr)
