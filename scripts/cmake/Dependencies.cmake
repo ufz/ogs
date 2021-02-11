@@ -109,6 +109,21 @@ if(Eigen3_ADDED)
     target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR})
 endif()
 
+if(OGS_USE_MFRONT)
+    CPMAddPackage(
+        NAME MGIS
+        GITHUB_REPOSITORY ufz/MFrontGenericInterfaceSupport
+        GIT_TAG 56c5e35fb571d992714e663c6bf61ad5354ba296
+        OPTIONS
+            "enable-doxygen-doc OFF"
+            "enable-fortran-bindings OFF"
+    )
+    if(MGIS_ADDED)
+        set_target_properties(MFrontGenericInterface PROPERTIES CXX_STANDARD 11)
+        list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
+    endif()
+endif()
+
 # Disable warnings
 foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
     target_compile_options(${TARGET} PRIVATE

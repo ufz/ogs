@@ -9,9 +9,6 @@ endif()
 if(OGS_BUILD_SWMM)
     list(APPEND REQUIRED_SUBMODULES ThirdParty/SwmmInterface)
 endif()
-if (OGS_USE_MFRONT)
-    list(APPEND REQUIRED_SUBMODULES ThirdParty/MGIS)
-endif()
 
 execute_process(
     COMMAND ${GIT_EXECUTABLE} submodule status
