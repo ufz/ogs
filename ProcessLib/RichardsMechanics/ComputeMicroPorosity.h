@@ -60,7 +60,9 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
     double const S_L_m_prev, double const phi_m_prev,
     ParameterLib::SpatialPosition const pos, double const t, double const dt,
     MaterialPropertyLib::Property const& saturation_micro,
-    MaterialPropertyLib::Property const& swelling_stress_rate)
+    MaterialPropertyLib::Property const& swelling_stress_rate,
+    NumLib::NewtonRaphsonSolverParameters const& nonlinear_solver_parameters)
+
 {
     namespace MPL = MaterialPropertyLib;
     static constexpr int kelvin_vector_size =
@@ -185,9 +187,6 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
     auto const update_solution = [&](ResidualVectorType const& increment) {
         solution += increment;
     };
-
-    static const NumLib::NewtonRaphsonSolverParameters
-        nonlinear_solver_parameters{1000, 1e-8, 1e-15};
 
     auto newton_solver =
         NumLib::NewtonRaphson<decltype(linear_solver), JacobianMatrix,

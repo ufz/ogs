@@ -74,6 +74,10 @@ TEST(RichardsMechanics, computeMicroPorosity)
 {
     static constexpr auto eps = 2e-14;
     constexpr int DisplacementDim = 2;
+
+    static const NumLib::NewtonRaphsonSolverParameters
+        nonlinear_solver_parameters{1000, 1e-8, 1e-15};
+
     //
     // Create properties.
     //
@@ -173,7 +177,8 @@ TEST(RichardsMechanics, computeMicroPorosity)
             rho_LR_m,  // for simplification equal to rho_LR_M
             mu_LR, alpha_bar, alpha_B, phi_M, p_L, state_prev.p_L_m,
             MaterialPropertyLib::VariableArray{}, S_L_m_prev, state_prev.phi_m,
-            pos, t, dt, saturation_micro, swelling_stress_rate);
+            pos, t, dt, saturation_micro, swelling_stress_rate,
+            nonlinear_solver_parameters);
 
         // push back state
         state_prev = state;
