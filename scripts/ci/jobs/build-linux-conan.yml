@@ -10,3 +10,16 @@ build linux conan:
       -DOGS_USE_CONAN=AUTO
       -DOGS_USE_MFRONT=ON
       -DOGS_USE_XDMF=ON
+
+build linux native:
+  extends:
+    - .template-build-linux
+  tags: [shell, envinf]
+  variables:
+    CMAKE_PRESET: release
+    CMAKE_ARGS: >-
+      -DBUILD_SHARED_LIBS=ON
+      -DOGS_USE_CONAN=OFF
+      -DOGS_USE_POETRY=OFF
+      -DOGS_USE_MFRONT=ON
+      -DOGS_USE_XDMF=ON
