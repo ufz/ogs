@@ -66,6 +66,7 @@ CPMAddPackage(
 )
 if(tetgen_ADDED)
     install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
+    list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
 if(OGS_USE_PYTHON)
@@ -93,6 +94,7 @@ if (OGS_BUILD_PROCESS_ComponentTransport
     )
     if(iphreeqc_ADDED)
         include(scripts/cmake/iphreeqc.cmake)
+        list(APPEND DISABLE_WARNINGS_TARGETS iphreeqc)
     endif()
 endif()
 
@@ -106,3 +108,10 @@ if(Eigen3_ADDED)
     add_library(Eigen3::Eigen INTERFACE IMPORTED)
     target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR})
 endif()
+
+# Disable warnings
+foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
+    target_compile_options(${TARGET} PRIVATE
+        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
+        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
+endforeach()
