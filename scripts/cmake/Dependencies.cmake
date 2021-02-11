@@ -195,6 +195,19 @@ if(nlohmann_json_ADDED)
     target_include_directories(nlohmann_json INTERFACE ${nlohmann_json_SOURCE_DIR})
 endif()
 
+if(OGS_BUILD_GUI)
+    CPMAddPackage(
+        NAME rapidxml
+        VERSION 1.13
+        GITHUB_REPOSITORY ufz/rapidxml
+        GIT_TAG 2ae4b2888165a393dfb6382168825fddf00c27b9
+    )
+    if(rapidxml_ADDED)
+        add_library(rapidxml INTERFACE IMPORTED)
+        target_include_directories(rapidxml INTERFACE ${rapidxml_SOURCE_DIR})
+    endif()
+endif()
+
 # Disable warnings
 foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
     target_compile_options(${TARGET} PRIVATE

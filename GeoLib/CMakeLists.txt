@@ -16,6 +16,7 @@ target_link_libraries(GeoLib
     PUBLIC
         BaseLib
         MathLib
+        $<$<BOOL:${OGS_BUILD_GUI}>:rapidxml>
         $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
         $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
     PRIVATE
