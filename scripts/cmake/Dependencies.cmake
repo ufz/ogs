@@ -149,9 +149,12 @@ if(OGS_USE_XDMF)
         else()
             target_link_libraries(OgsXdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
         endif()
-        target_include_directories(OgsXdmfCore PUBLIC
-            ${xdmf_SOURCE_DIR}/core
-            ${xdmf_BINARY_DIR}/core
+        target_include_directories(OgsXdmfCore
+            PUBLIC
+                ${xdmf_SOURCE_DIR}/core
+                ${xdmf_BINARY_DIR}/core
+            PRIVATE
+                ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
         find_package(LibXml2 REQUIRED) # LibXml2 is a XdmfCore dependency
         target_link_libraries(OgsXdmfCore PUBLIC LibXml2::LibXml2)
