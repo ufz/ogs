@@ -73,10 +73,6 @@ if(MSVC)
     target_link_libraries(DataExplorer winmm)
 endif()
 
-if(VTKFBXCONVERTER_FOUND)
-    target_link_libraries(DataExplorer ${VTKFBXCONVERTER_LIBRARIES})
-endif()
-
 set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 
 # ---- Installation ----
