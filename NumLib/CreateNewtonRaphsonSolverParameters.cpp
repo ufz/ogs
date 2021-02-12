@@ -1,23 +1,20 @@
 /**
+ * \file
  * \copyright
  * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- *  \file
- *  Created on July 10, 2018, 11:32 AM
  */
 
 #include "CreateNewtonRaphsonSolverParameters.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "NewtonRaphson.h"
 
-#include "NumLib/NewtonRaphson.h"
-
-namespace MaterialLib
+namespace NumLib
 {
-NumLib::NewtonRaphsonSolverParameters createNewtonRaphsonSolverParameters(
+NewtonRaphsonSolverParameters createNewtonRaphsonSolverParameters(
     BaseLib::ConfigTree const& config)
 {
     DBUG("Create local nonlinear solver parameters.");
@@ -55,4 +52,4 @@ NumLib::NewtonRaphsonSolverParameters createNewtonRaphsonSolverParameters(
 
     return {maximum_iterations, residuum_tolerance, increment_tolerance};
 }
-}  // namespace MaterialLib
+}  // namespace NumLib

@@ -11,15 +11,11 @@
 
 #include "CreateCreepBGRa.h"
 
-#include "CreateLinearElasticIsotropic.h"
-#include "CreateNewtonRaphsonSolverParameters.h"
-
-#include "CreepBGRa.h"
-
-#include "MechanicsBase.h"
-
 #include "BaseLib/ConfigTree.h"
-
+#include "CreateLinearElasticIsotropic.h"
+#include "CreepBGRa.h"
+#include "MechanicsBase.h"
+#include "NumLib/CreateNewtonRaphsonSolverParameters.h"
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"
 
@@ -65,7 +61,7 @@ createCreepBGRa(
         //! \ogs_file_param{material__solid__constitutive_relation__CreepBGRa__nonlinear_solver}
         config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
-        createNewtonRaphsonSolverParameters(nonlinear_solver_config);
+        NumLib::createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
     return std::unique_ptr<CreepBGRa<DisplacementDim>>{
         new CreepBGRa<DisplacementDim>{elastic_data->getMaterialProperties(),

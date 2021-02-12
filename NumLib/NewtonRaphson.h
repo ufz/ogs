@@ -20,9 +20,9 @@ namespace NumLib
 
 struct NewtonRaphsonSolverParameters
 {
-    int const maximum_iterations;
-    double const residuum_tolerance;
-    double const increment_tolerance;
+    int maximum_iterations;
+    double residuum_tolerance;
+    double increment_tolerance;
 };
 
 /// Newton-Raphson solver for system of equations using an Eigen linear solvers

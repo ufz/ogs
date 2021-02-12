@@ -10,7 +10,7 @@
 #include "CreateCoulomb.h"
 
 #include "Coulomb.h"
-#include "MaterialLib/SolidModels/CreateNewtonRaphsonSolverParameters.h"
+#include "NumLib/CreateNewtonRaphsonSolverParameters.h"
 #include "ParameterLib/Utils.h"
 
 namespace MaterialLib
@@ -61,8 +61,7 @@ std::unique_ptr<FractureModelBase<DisplacementDim>> createCoulomb(
         //! \ogs_file_param{material__fracture_model__Coulomb__nonlinear_solver}
         config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
-        MaterialLib::createNewtonRaphsonSolverParameters(
-            nonlinear_solver_config);
+        NumLib::createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
     return std::make_unique<Coulomb::Coulomb<DisplacementDim>>(
         nonlinear_solver_parameters, penalty_aperture_cutoff, tension_cutoff,

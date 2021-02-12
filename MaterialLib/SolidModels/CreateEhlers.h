@@ -10,10 +10,9 @@
 
 #pragma once
 
-#include "CreateNewtonRaphsonSolverParameters.h"
-#include "ParameterLib/Utils.h"
-
 #include "Ehlers.h"
+#include "NumLib/CreateNewtonRaphsonSolverParameters.h"
+#include "ParameterLib/Utils.h"
 
 namespace MaterialLib
 {
@@ -177,7 +176,7 @@ std::unique_ptr<SolidEhlers<DisplacementDim>> createEhlers(
         //! \ogs_file_param{material__solid__constitutive_relation__Ehlers__nonlinear_solver}
         config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
-        createNewtonRaphsonSolverParameters(nonlinear_solver_config);
+        NumLib::createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
     return std::make_unique<SolidEhlers<DisplacementDim>>(
         nonlinear_solver_parameters,
