@@ -840,31 +840,31 @@ QMenu* MainWindow::createImportFilesMenu()
 {
     QMenu* importFiles = new QMenu("&Import Files", this);
     importFiles->addAction("&FEFLOW Files...",
-                           [=] { open(ImportFileType::FEFLOW); });
+                           [this] { open(ImportFileType::FEFLOW); });
     importFiles->addAction("G&MS Files...",
-                           [=] { open(ImportFileType::GMS); });
+                           [this] { open(ImportFileType::GMS); });
     importFiles->addAction("&GMSH Files...",
-                           [=] { open(ImportFileType::GMSH); });
+                           [this] { open(ImportFileType::GMSH); });
     importFiles->addAction("&Gocad TSurface...",
-                           [=] { open(ImportFileType::GOCAD_TSURF); });
+                           [this] { open(ImportFileType::GOCAD_TSURF); });
 #ifdef OGS_USE_NETCDF
     importFiles->addAction("&NetCDF Files...",
-                           [=] { open(ImportFileType::NETCDF); });
+                           [this] { open(ImportFileType::NETCDF); });
 #endif  // OGS_USE_NETCDF
     importFiles->addAction("&Petrel Files...",
-                           [=] { loadPetrelFiles(); });
+                           [this] { loadPetrelFiles(); });
     importFiles->addAction("&Raster Files...",
-                           [=] { open(ImportFileType::RASTER); });
+                           [this] { open(ImportFileType::RASTER); });
 #if defined VTKFBXCONVERTER_FOUND
     importFiles->addAction("R&aster Files as PolyData...",
-                           [=] { open(ImportFileType::POLYRASTER); });
+                           [this] { open(ImportFileType::POLYRASTER); });
 #endif
     importFiles->addAction("&Shape Files...",
-                           [=] { open(ImportFileType::SHAPE); });
+                           [this] { open(ImportFileType::SHAPE); });
     importFiles->addAction("&TetGen Files...",
-                           [=] { open(ImportFileType::TETGEN); });
+                           [this] { open(ImportFileType::TETGEN); });
     importFiles->addAction("&VTK Files...",
-                           [=] { open(ImportFileType::VTK); });
+                           [this] { open(ImportFileType::VTK); });
     return importFiles;
 }
 
