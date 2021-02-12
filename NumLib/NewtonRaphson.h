@@ -86,6 +86,12 @@ public:
 
             // DBUG("Local Newton: Iteration #{:d} |dx| = {:g}, |r| = {:g}",
             //      iteration, increment.norm(), residual.norm());
+            // fmt::print("Local Newton: Increment {}\n",
+            //      fmt::join(increment.data(),
+            //                increment.data() + increment.size(), ", "));
+            // fmt::print("Local Newton: Residuum {}\n",
+            //      fmt::join(residual.data(),
+            //                residual.data() + residual.size(), ", "));
         } while (iteration++ < _maximum_iterations);
 
         if (iteration > _maximum_iterations)
