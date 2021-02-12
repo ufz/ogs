@@ -10,10 +10,9 @@
 
 #pragma once
 
-#include "CreateNewtonRaphsonSolverParameters.h"
-#include "ParameterLib/Utils.h"
-
 #include "Lubby2.h"
+#include "NumLib/CreateNewtonRaphsonSolverParameters.h"
+#include "ParameterLib/Utils.h"
 
 namespace MaterialLib
 {
@@ -102,7 +101,7 @@ std::unique_ptr<Lubby2<DisplacementDim>> createLubby2(
         //! \ogs_file_param{material__solid__constitutive_relation__Lubby2__nonlinear_solver}
         config.getConfigSubtree("nonlinear_solver");
     auto const nonlinear_solver_parameters =
-        createNewtonRaphsonSolverParameters(nonlinear_solver_config);
+        NumLib::createNewtonRaphsonSolverParameters(nonlinear_solver_config);
 
     return std::unique_ptr<Lubby2<DisplacementDim>>{
         new Lubby2<DisplacementDim>{nonlinear_solver_parameters, mp}};
