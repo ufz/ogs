@@ -187,7 +187,7 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
             i_sigma_sw, i_p_L_m) = -dsigma_sw_dS_L_m * dS_L_m_dp_cap_m;
 
         jacobian(i_p_L_m, i_phi_m) =
-            rho_LR_m * (delta_S_L_m + phi_m * delta_e_sw);
+            rho_LR_m * (delta_S_L_m + S_L_m * delta_e_sw);
 
         jacobian(i_p_L_m, i_e_sw) = -rho_LR_m * S_L_m * (alpha_B - phi_M - phi_m);
 
