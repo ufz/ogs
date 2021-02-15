@@ -8,7 +8,7 @@ ${CPPCHECK_TOOL_PATH} \
         --inconclusive \
         -j ${CPPCHECK_PARALLEL} \
         --suppress=*:*/usr/local\* \
-        --suppress=*:*ThirdParty\* \
+        --suppress=*:*cpm\* \
         --suppress=*:*Tests\* \
         --template='{\n  "description": "{message}",\n  "severity": "info",\n    "location": {\n    "path": "{file}",\n    "lines": {\n      "begin": {line}\n    }\n  }\n},' \
         --output-file=$OUTPUT_FILE \
