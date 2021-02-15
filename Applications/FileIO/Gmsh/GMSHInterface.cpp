@@ -237,7 +237,8 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     std::size_t pnt_id_offset(_gmsh_pnts.size());
     for (auto* polygon_tree : _polygon_tree_list)
     {
-        polygon_tree->writeLineLoop(_n_lines, _n_plane_sfc, out);
+        polygon_tree->writeLineLoop(_n_lines, _n_plane_sfc, out,
+                                    _write_physical_groups);
         polygon_tree->writeSubPolygonsAsLineConstraints(_n_lines, _n_plane_sfc-1, out);
         polygon_tree->writeLineConstraints(_n_lines, _n_plane_sfc-1, out);
         polygon_tree->writeStations(pnt_id_offset, _n_plane_sfc-1, out);

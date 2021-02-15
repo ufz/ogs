@@ -307,8 +307,8 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) cons
 }
 
 void GMSHPolygonTree::writeLineLoop(std::size_t& line_offset,
-                                    std::size_t& sfc_offset,
-                                    std::ostream& out) const
+                                    std::size_t& sfc_offset, std::ostream& out,
+                                    bool const write_physical) const
 {
     const std::size_t n_pnts(_node_polygon->getNumberOfPoints());
     for (std::size_t k(1), first_pnt_id(_node_polygon->getPointID(0));
@@ -326,6 +326,17 @@ void GMSHPolygonTree::writeLineLoop(std::size_t& line_offset,
     out << line_offset+n_pnts-2 << "};\n";
     out << "Plane Surface(" << sfc_offset << ") = {" << line_offset + n_pnts - 1
         << "};\n";
+    if (write_physical)
+    {
+        out << "Physical Curve(" << sfc_offset << ") = {";
+        for (std::size_t k(0); k < n_pnts - 2; k++)
+        {
+            out << line_offset + k << ",";
+        }
+        out << line_offset + n_pnts - 2 << "};\n";
+        out << "Physical Surface(" << sfc_offset << ") = {"
+            << sfc_offset << "};\n";
+    }
     line_offset += n_pnts;
     sfc_offset++;
 }
