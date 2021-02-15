@@ -49,7 +49,7 @@ class GasPressureDependentPermeability final : public Property
 public:
     GasPressureDependentPermeability(
         std::string name, ParameterLib::Parameter<double> const& k0,
-        double const a1, double const a2, double const pthr,
+        double const a1, double const a2, double const pressure_threshold,
         double const minimum_permeability, double const maximum_permeability,
         ParameterLib::CoordinateSystem const* const local_coordinate_system);
 
@@ -75,7 +75,7 @@ private:
     double const a2_;
     /// The threshold pressure which defines the low and high gas pressure
     /// domain. Different permeability functions are defined for each domain.
-    double const pthr_;
+    double const pressure_threshold_;
     double const minimum_permeability_;
     double const maximum_permeability_;
     ParameterLib::CoordinateSystem const* const local_coordinate_system_;

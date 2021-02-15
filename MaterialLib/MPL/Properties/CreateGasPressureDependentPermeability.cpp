@@ -53,14 +53,14 @@ std::unique_ptr<Property> createGasPressureDependentPermeability(
         parameter_name, parameters, 0, nullptr);
 
     auto const a1 =
-        //! \ogs_file_param{properties__property__GasPressureDependentPermeability__b1}
+        //! \ogs_file_param{properties__property__GasPressureDependentPermeability__a1}
         config.getConfigParameter<double>("a1");
     auto const a2 =
-        //! \ogs_file_param{properties__property__GasPressureDependentPermeability__b2}
+        //! \ogs_file_param{properties__property__GasPressureDependentPermeability__a2}
         config.getConfigParameter<double>("a2");
-    auto const pthr =
-        //! \ogs_file_param{properties__property__GasPressureDependentPermeability__b3}
-        config.getConfigParameter<double>("pthr");
+    auto const pressure_threshold =
+        //! \ogs_file_param{properties__property__GasPressureDependentPermeability__pressure_threshold}
+        config.getConfigParameter<double>("pressure_threshold");
     auto const minimum_permeability =
         //! \ogs_file_param{properties__property__GasPressureDependentPermeability__minimum_permeability}
         config.getConfigParameter<double>("minimum_permeability");
@@ -80,13 +80,13 @@ std::unique_ptr<Property> createGasPressureDependentPermeability(
     if (geometry_dimension == 2)
     {
         return std::make_unique<GasPressureDependentPermeability<2>>(
-            std::move(property_name), parameter_k0, a1, a2, pthr,
+            std::move(property_name), parameter_k0, a1, a2, pressure_threshold,
             minimum_permeability, maximum_permeability,
             local_coordinate_system);
     }
 
     return std::make_unique<GasPressureDependentPermeability<3>>(
-        std::move(property_name), parameter_k0, a1, a2, pthr,
+        std::move(property_name), parameter_k0, a1, a2, pressure_threshold,
         minimum_permeability, maximum_permeability, local_coordinate_system);
 }
 }  // namespace MaterialPropertyLib

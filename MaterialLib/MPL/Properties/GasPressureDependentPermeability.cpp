@@ -26,13 +26,13 @@ template <int DisplacementDim>
 GasPressureDependentPermeability<DisplacementDim>::
     GasPressureDependentPermeability(
         std::string name, ParameterLib::Parameter<double> const& k0,
-        double const a1, double const a2, double const pthr,
+        double const a1, double const a2, double const pressure_threshold,
         double const minimum_permeability, double const maximum_permeability,
         ParameterLib::CoordinateSystem const* const local_coordinate_system)
     : k0_(k0),
       a1_(a1),
       a2_(a2),
-      pthr_(pthr),
+      pressure_threshold_(pressure_threshold),
       minimum_permeability_(minimum_permeability),
       maximum_permeability_(maximum_permeability),
       local_coordinate_system_(local_coordinate_system)
@@ -62,10 +62,10 @@ PropertyDataType GasPressureDependentPermeability<DisplacementDim>::value(
 
     auto k_data = k0_(t, pos);
 
-    double const factor =
-        (gas_pressure <= pthr_)
-            ? (1.0 + a1_ * gas_pressure)
-            : (a2_ * (gas_pressure - pthr_) + 1.0 + a1_ * pthr_);
+    double const factor = (gas_pressure <= pressure_threshold_)
+                              ? (1.0 + a1_ * gas_pressure)
+                              : (a2_ * (gas_pressure - pressure_threshold_) +
+                                 1.0 + a1_ * pressure_threshold_);
 
     for (auto& k_i : k_data)
     {
