@@ -1,6 +1,3 @@
-project(IPhreeqc CXX C)
-set(IPHREEQC_VERSION 3.5.0)
-
 set(SOURCES
     ${iphreeqc_SOURCE_DIR}/src/CSelectedOutput.cpp
     ${iphreeqc_SOURCE_DIR}/src/fwrap.cpp
