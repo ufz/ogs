@@ -27,12 +27,13 @@ TEST(MaterialPropertyLib, GasPressureDependentPermeability)
     ParameterLib::ConstantParameter<double> const k0("k0", 1.e-20);
     double const a1 = 0.125;
     double const a2 = 152.0;
-    double const pthr = 3.2;
+    double const pressure_threshold = 3.2;
     double const min_permeability = 1.e-22;
     double const max_permeability = 1.e-10;
 
     auto const k_model = MPL::GasPressureDependentPermeability<3>(
-        "k_gas", k0, a1, a2, pthr, min_permeability, max_permeability, nullptr);
+        "k_gas", k0, a1, a2, pressure_threshold, min_permeability,
+        max_permeability, nullptr);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
