@@ -1,5 +1,6 @@
 set(TOOLS
     AddElementQuality
+    AddFaultToVoxelGrid
     AddLayer
     appendLinesAlongPolyline
     checkMesh
@@ -11,6 +12,7 @@ set(TOOLS
     ExtractBoundary
     ExtractMaterials
     ExtractSurface
+    Layers2Grid
     MapGeometryToMeshSurface
     MoveMesh
     moveMeshNodes
@@ -21,6 +23,7 @@ set(TOOLS
     reviseMesh
     swapNodeCoordinateAxes
     Vtu2Grid)
+
 if(OGS_BUILD_GUI)
     add_executable(RemoveGhostData
         RemoveGhostData.cpp
@@ -31,6 +34,7 @@ if(OGS_BUILD_GUI)
     set_target_properties(RemoveGhostData PROPERTIES FOLDER Utilities)
     install(TARGETS RemoveGhostData RUNTIME DESTINATION bin COMPONENT Utilities)
 endif()
+
 foreach(TOOL ${TOOLS})
     add_executable(${TOOL} ${TOOL}.cpp)
     target_link_libraries(${TOOL} GitInfoLib MeshLib)
