@@ -32,7 +32,7 @@ PropertyDataType RelPermLiakopoulos::value(
 {
     /// here, an extra computation of saturation is forced, guaranteeing a
     /// correct value. In order to speed up the computing time, saturation could
-    /// be insertred into the primary variable array after it is computed in the
+    /// be inserted into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = std::visit(
         [&variable_array, &pos, t, dt](auto&& scale) -> double {
@@ -71,7 +71,7 @@ PropertyDataType RelPermLiakopoulos::dValue(
            " derivatives with respect to liquid saturation only.");
     /// here, an extra computation of saturation is forced, guaranteeing a
     /// correct value. In order to speed up the computing time, saturation could
-    /// be insertred into the primary variable array after it is computed in the
+    /// be inserted into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = std::visit(
         [&variable_array, &pos, t, dt](auto&& scale) -> double {

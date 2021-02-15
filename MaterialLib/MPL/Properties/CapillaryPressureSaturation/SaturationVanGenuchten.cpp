@@ -91,7 +91,7 @@ PropertyDataType SaturationVanGenuchten::dValue(
         return 0.;
     }
 
-    double const dS_eff_dp_cap = -m_ * std::pow(p_cap / p_b_, n - 1) *
+    double const dS_eff_dp_cap = -m_ * std::pow(p, n - 1) *
                                  std::pow(1 + p_to_n, -1. - m_) /
                                  (p_b_ * (1. - m_));
     return dS_eff_dp_cap * (S_L_max_ - S_L_res_);
