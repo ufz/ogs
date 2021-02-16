@@ -30,6 +30,7 @@
 #include "RelativePermeability/RelPermBrooksCorey.h"
 #include "RelativePermeability/RelPermBrooksCoreyNonwettingPhase.h"
 #include "RelativePermeability/RelPermLiakopoulos.h"
+#include "RelativePermeability/RelPermNonWettingPhaseVanGenuchtenMualem.h"
 #include "RelativePermeability/RelPermUdell.h"
 #include "RelativePermeability/RelPermUdellNonwettingPhase.h"
 #include "RelativePermeability/RelPermVanGenuchten.h"
