@@ -24,10 +24,10 @@ std::unique_ptr<ParameterBase> createRandomFieldMeshElementParameter(
     //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "RandomFieldMeshElement");
     auto const field_name =
-        //! \ogs_file_param{prj__parameters__parameter__RandomFieldMeshElement__field_name}
+        //! \ogs_file_param{prj__parameters__parameter__RandomFieldMeshElementParameter__field_name}
         config.getConfigParameter<std::string>("field_name");
     auto const range =
-        //! \ogs_file_param{prj__parameters__parameter__RandomFieldMeshElement__range}
+        //! \ogs_file_param{prj__parameters__parameter__RandomFieldMeshElementParameter__range}
         config.getConfigParameter<std::vector<double>>("range");
     if (range.size() != 2)
     {
@@ -36,7 +36,7 @@ std::unique_ptr<ParameterBase> createRandomFieldMeshElementParameter(
             range.size());
     }
     auto const seed =
-        //! \ogs_file_param{prj__parameters__parameter__RandomFieldMeshElement__seed}
+        //! \ogs_file_param{prj__parameters__parameter__RandomFieldMeshElementParameter__seed}
         config.getConfigParameter<int>("seed");
     DBUG("Generating field {:s} with range {:g} to {:g} and seed {:d}.",
          field_name, range[0], range[1], seed);
