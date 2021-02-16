@@ -80,6 +80,8 @@ public:
 
     ~GMSHInterface() override;
 
+    void writePhysicalGroups(bool flag) { _write_physical_groups = flag; }
+
 protected:
     bool write() override;
 
@@ -112,6 +114,7 @@ private:
     /// \f$x\f$-\f$y\f$-plane
     bool const _rotate = false;
     bool _keep_preprocessed_geometry = true;
+    bool _write_physical_groups = false;
 };
 } // end namespace GMSH
 } // end namespace FileIO

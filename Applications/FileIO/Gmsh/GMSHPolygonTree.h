@@ -79,7 +79,9 @@ public:
      */
     void createGMSHPoints(std::vector<GMSHPoint*> & gmsh_pnts) const;
 
-    virtual void writeLineLoop(std::size_t &line_offset, std::size_t &sfc_offset, std::ostream& out) const;
+    virtual void writeLineLoop(std::size_t& line_offset,
+                               std::size_t& sfc_offset, std::ostream& out,
+                               bool const write_physical) const;
     void writeSubPolygonsAsLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const;
     virtual void writeLineConstraints(std::size_t &line_offset, std::size_t sfc_number, std::ostream& out) const;
     void writeStations(std::size_t & pnt_id_offset, std::size_t sfc_number, std::ostream& out) const;

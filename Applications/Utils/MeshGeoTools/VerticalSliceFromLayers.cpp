@@ -224,6 +224,7 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
         geo, true, FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, res, 0,
         0, gmsh_geo, false, false);
     gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
+    gmsh_io.writePhysicalGroups(true);
     bool const success = gmsh_io.writeToFile(gmsh_geo_name);
 
     std::string const gmsh_mesh_name = output_name + ".msh";
