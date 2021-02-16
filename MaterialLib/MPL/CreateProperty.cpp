@@ -87,6 +87,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             geometry_dimension, config, parameters, local_coordinate_system);
     }
 
+    if (boost::iequals(property_type, "GasPressureDependentPermeability"))
+    {
+        return createGasPressureDependentPermeability(
+            geometry_dimension, config, parameters, local_coordinate_system);
+    }
+
     if (boost::iequals(property_type, "EmbeddedFracturePermeability"))
     {
         return createEmbeddedFracturePermeability(geometry_dimension, config);

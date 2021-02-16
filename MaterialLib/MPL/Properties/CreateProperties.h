@@ -25,6 +25,7 @@
 #include "CreateDupuitPermeability.h"
 #include "CreateEmbeddedFracturePermeability.h"
 #include "CreateExponential.h"
+#include "CreateGasPressureDependentPermeability.h"
 #include "CreateIdealGasLaw.h"
 #include "CreateKozenyCarmanModel.h"
 #include "CreateLinear.h"

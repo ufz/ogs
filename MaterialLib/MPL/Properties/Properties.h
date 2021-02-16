@@ -23,6 +23,7 @@
 #include "DupuitPermeability.h"
 #include "EmbeddedFracturePermeability.h"
 #include "Exponential.h"
+#include "GasPressureDependentPermeability.h"
 #include "IdealGasLaw.h"
 #include "Linear.h"
 #include "Parameter.h"
