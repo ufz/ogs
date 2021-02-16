@@ -954,8 +954,16 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // pressure equation, displacement part.
         //
-        Kpu.noalias() += N_p.transpose() * S_L * rho_LR * alpha *
-                         identity2.transpose() * B * w;
+        if (_process_data.explicit_hm_coupling_in_unsaturated_zone)
+        {
+            Kpu.noalias() += N_p.transpose() * chi_S_L_prev * rho_LR * alpha *
+                             identity2.transpose() * B * w;
+        }
+        else
+        {
+            Kpu.noalias() += N_p.transpose() * S_L * rho_LR * alpha *
+                             identity2.transpose() * B * w;
+        }
 
         //
         // pressure equation, pressure part.
@@ -998,11 +1006,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
              specific_storage_a_S * dS_L_dp_cap) /
             dt * N_p * w;
 
-        local_Jac
-            .template block<pressure_size, pressure_size>(pressure_index,
-                                                          pressure_index)
-            .noalias() -= N_p.transpose() * rho_LR * dS_L_dp_cap * alpha *
-                          identity2.transpose() * B * u_dot * N_p * w;
+        if (!_process_data.explicit_hm_coupling_in_unsaturated_zone)
+        {
+            local_Jac
+                .template block<pressure_size, pressure_size>(pressure_index,
+                                                              pressure_index)
+                .noalias() -= N_p.transpose() * rho_LR * dS_L_dp_cap * alpha *
+                              identity2.transpose() * B * u_dot * N_p * w;
+        }
 
         double const dk_rel_dS_l =
             medium->property(MPL::PropertyType::relative_permeability)

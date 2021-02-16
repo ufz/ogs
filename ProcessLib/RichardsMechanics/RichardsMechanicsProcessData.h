@@ -57,6 +57,10 @@ struct RichardsMechanicsProcessData
 
     bool const apply_mass_lumping;
 
+    /// If set, improves convergence of the global Newton method in unsaturated
+    /// regime.
+    bool const explicit_hm_coupling_in_unsaturated_zone;
+
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* element_porosity = nullptr;
     MeshLib::PropertyVector<double>* element_stresses = nullptr;
