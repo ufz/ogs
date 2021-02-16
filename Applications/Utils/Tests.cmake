@@ -307,18 +307,7 @@ if(SNAKEMAKE AND NOT OGS_USE_MPI)
                  -s ${CMAKE_CURRENT_SOURCE_DIR}/ExtractBoundary.smk
     )
 endif()
-if(PARSL AND NOT OGS_USE_MPI)
-    add_test(NAME parsl_ExtractBoundary
-        COMMAND ${Python3_EXECUTABLE}
-            ${CMAKE_CURRENT_SOURCE_DIR}/ExtractBoundary.py
-            ${PROJECT_BINARY_DIR}/buildinfo.yaml
-    )
-    if(SNAKEMAKE)
-        # Prevent race-condition with snakemake test
-        set_tests_properties(parsl_ExtractBoundary PROPERTIES DEPENDS snakemake_ExtractBoundary)
-    endif()
-endif()
-if(SNAKEMAKE OR PARSL)
+if(SNAKEMAKE)
     add_dependencies(ctest ExtractBoundary)
 endif()
 

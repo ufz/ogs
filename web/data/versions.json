@@ -20,7 +20,6 @@
     "qt": "5.14.2",
     "python": "3.6",
     "snakemake": "5.27.4",
-    "parsl": "1.0.0",
     "hdf5": "1.10.5"
   },
   "tested_version": {
