@@ -2,6 +2,7 @@ build linux:
   image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
   tags: [ docker ]
+  needs: [meta, meta_container]
   timeout: 2h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
@@ -21,6 +22,7 @@ build linux (no unity):
   image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
   tags: [ docker ]
+  needs: [meta, meta_container]
   timeout: 1h
   variables:
     BUILD_DIR: "build/no-unity"
@@ -39,6 +41,7 @@ build linux (no deps, no procs):
   image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
   tags: [ docker ]
+  needs: [meta, meta_container]
   timeout: 1h
   variables:
     BUILD_TESTS: "false"

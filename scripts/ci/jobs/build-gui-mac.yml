@@ -2,6 +2,7 @@ build gui mac:
   extends: .template-build-linux
   stage: build
   tags: [mac]
+  needs: [meta]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:

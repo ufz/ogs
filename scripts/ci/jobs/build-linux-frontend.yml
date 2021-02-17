@@ -4,6 +4,7 @@ build linux frontend:
     - .rules-master-manual
   tags:
     - frontend2
+  needs: [meta]
   allow_failure: true
   variables:
     CCACHE_DIR: "/data/ogs/.ccache"

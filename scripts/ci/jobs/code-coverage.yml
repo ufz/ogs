@@ -6,6 +6,7 @@ code coverage:
   needs:
     - job: "build linux: [USE_PYTHON=ON]"
       artifacts: false
+    - meta
   variables:
     CMAKE_PRESET: coverage
     TARGETS: "testrunner_coverage ctest_coverage"

@@ -3,6 +3,7 @@ build linux conan:
     - .template-build-linux
     - .rules-master-manual
   tags: [shell, envinf1-shell]
+  needs: [meta]
   variables:
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
@@ -15,6 +16,7 @@ build linux native:
   extends:
     - .template-build-linux
   tags: [shell, envinf]
+  needs: [meta]
   variables:
     CMAKE_PRESET: release
     CMAKE_ARGS: >-

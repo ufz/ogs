@@ -2,6 +2,7 @@ build gui linux:
   extends: .template-build-linux
   stage: build
   image: $CONTAINER_GCC_GUI_IMAGE
+  needs: [meta]
   tags: [ docker ]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
