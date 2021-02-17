@@ -45,7 +45,7 @@ check docs links:
   tags: [ docker ]
   allow_failure: true
   image: $WEB_IMAGE
-  dependencies: [meta_container, "build docs"]
+  dependencies: [meta, "build docs"]
   extends:
       - .rules-master-manual
   script:
