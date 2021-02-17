@@ -3,15 +3,29 @@ code coverage:
   extends:
     - .template-build-linux
   tags: [shell, envinf]
+  needs:
+    - job: "build linux: [USE_PYTHON=ON]"
+      artifacts: false
   variables:
     CMAKE_PRESET: coverage
-    TARGETS: testrunner_coverage
+    TARGETS: "testrunner_coverage ctest_coverage"
   before_script:
     # HACK to easier linking to the generated pages
-    - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/testrunner_coverage/index.html">' >> Coverage.html
+    - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/coverage_report/index.html">' >> Coverage.html
+  after_script:
+    - cd build/coverage
+    - poetry run fastcov -C testrunner_coverage.info ctest_coverage.info --lcov -o coverage.info
+    - poetry run fastcov -C testrunner_coverage.info ctest_coverage.info -o coverage.json
+    - genhtml --demangle-cpp -o coverage_report coverage.info
+    - wget https://raw.github.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
+    - poetry run python lcov_cobertura.py coverage.info --base-dir $CI_PROJECT_DIR
   artifacts:
     expose_as: 'Coverage'
     paths:
       - Coverage.html
-      - build/coverage/testrunner_coverage
+      - build/coverage/coverage_report
+      - build/coverage/coverage.json
+      - build/coverage/coverage.xml
     expire_in: 1 week
+    reports:
+      cobertura: build/coverage/coverage.xml

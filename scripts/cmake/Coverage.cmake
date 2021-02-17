@@ -37,7 +37,7 @@ setup_target_for_coverage_fastcov(
 # TODO: segfault in Vtu2Grid
 setup_target_for_coverage_fastcov(
     NAME ctest_coverage
-    EXECUTABLE ctest -E "partmesh|Vtu2Grid"
+    EXECUTABLE ctest -E "Vtu2Grid"
     DEPENDENCIES all
     FASTCOV_ARGS --include ${PROJECT_SOURCE_DIR}
     ${COVERAGE_ADDITIONAL_ARGS}
