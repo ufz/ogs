@@ -1,0 +1,17 @@
+code coverage:
+  stage: check
+  extends:
+    - .template-build-linux
+  tags: [shell, envinf]
+  variables:
+    CMAKE_PRESET: coverage
+    TARGETS: testrunner_coverage
+  before_script:
+    # HACK to easier linking to the generated pages
+    - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/testrunner_coverage/index.html">' >> Coverage.html
+  artifacts:
+    expose_as: 'Coverage'
+    paths:
+      - Coverage.html
+      - build/coverage/testrunner_coverage
+    expire_in: 1 week
