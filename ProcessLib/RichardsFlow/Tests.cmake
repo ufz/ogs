@@ -21,6 +21,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_small.prj
     TESTER vtkdiff
+    RUNTIME 7
     DIFF_DATA
     ref_t_1600.000000.vtu richards_ts_1100_t_1600.000000.vtu pressure pressure 1e-8 1e-8
     REQUIREMENTS NOT OGS_USE_MPI

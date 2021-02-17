@@ -14,8 +14,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/cube_1e0_orthotropic_zxy.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dshearz.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dshearz_rot.prj)
-    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dtopload.prj)
-    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dtoploadlc.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dtopload.prj RUNTIME 8)
+    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dtoploadlc.prj RUNTIME 8)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_xyz.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_45xy_z.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_y-xz.prj)
@@ -39,7 +39,9 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/InitialStates/non_equilibrium_initial_state.prj)
     OgsTest(PROJECTFILE Mechanics/InitialStates/soil_column_nonequilibrium_sigma_elementwise.prj)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 50)
-    set_tests_properties(ogs-Mechanics/MohrCoulombAbboSloan/slope PROPERTIES WILL_FAIL true)
+    if(TEST ogs-Mechanics/MohrCoulombAbboSloan/slope)
+        set_tests_properties(ogs-Mechanics/MohrCoulombAbboSloan/slope PROPERTIES WILL_FAIL true)
+    endif()
 endif()
 
 if (OGS_USE_PYTHON)
@@ -191,6 +193,7 @@ AddTest(
     EXECUTABLE_ARGS m1_3Dsquare.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 27
     DIFF_DATA
     m1_3Dsquare_ts_1_t_1.000000.vtu m1_3Dsquare_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -202,6 +205,7 @@ AddTest(
     EXECUTABLE_ARGS m1_3Dtopload.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 7
     DIFF_DATA
     m1_3Dtopload_ts_1_t_1.000000.vtu m1_3Dtopload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )

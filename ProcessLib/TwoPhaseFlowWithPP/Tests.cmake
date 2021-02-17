@@ -18,6 +18,7 @@ AddTest(
     EXECUTABLE_ARGS TwoPhase_Lia_quad_large.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 16
     DIFF_DATA
     h2_Liako_1198.vtu twophaseflow_ts_1198_t_1000.000000.vtu saturation saturation 1e-2 1e-3
     h2_Liako_1198.vtu twophaseflow_ts_1198_t_1000.000000.vtu capillary_pressure capillary_pressure 20 1e-2
@@ -30,6 +31,7 @@ AddTest(
     EXECUTABLE_ARGS TwoPhase_mcwt_line.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 12
     DIFF_DATA
     mcwt_1000.vtu twophaseflow_ts_519_t_1000.000000.vtu SATURATION1 saturation 1e-2 1e-4
     mcwt_1000.vtu twophaseflow_ts_519_t_1000.000000.vtu PRESSURE1 capillary_pressure 10 1e-3

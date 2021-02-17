@@ -1,6 +1,6 @@
 # LIE; HydroMechanics
 if (NOT (OGS_USE_LIS OR OGS_USE_MPI))
-    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_constK.prj)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_constK.prj RUNTIME 17)
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_const.prj RUNTIME 250)
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_cubic.prj RUNTIME 120)
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_LE_kf_const.prj RUNTIME 90)
@@ -165,6 +165,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
     DIFF_DATA
     expected_single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu pressure pressure 1e-15 1e-15
     expected_single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu pressure_interpolated pressure_interpolated 1e-15 1e-15
