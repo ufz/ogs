@@ -14,6 +14,13 @@
 #include "BaseLib/Error.h"
 #include "MaterialLib/MPL/Property.h"
 
+namespace ParameterLib
+{
+struct CoordinateSystem;
+template <typename T>
+struct Parameter;
+}  // namespace ParameterLib
+
 namespace MaterialPropertyLib
 {
 class Medium;
@@ -30,25 +37,15 @@ class Medium;
  * dry state, \f$\lambda_{\text{wet}}\f$ is the thermal conductivity of soil at
  * the fully water saturated state, and \f$S\f$ is the water saturation.
  */
+template <int GlobalDimension>
 class SoilThermalConductivitySomerton final : public Property
 {
 public:
-    SoilThermalConductivitySomerton(std::string name,
-                                    double const dry_thermal_conductivity,
-                                    double const wet_thermal_conductivity)
-        : dry_thermal_conductivity_(dry_thermal_conductivity),
-          wet_thermal_conductivity_(wet_thermal_conductivity)
-    {
-        name_ = std::move(name);
-        if (dry_thermal_conductivity_ > wet_thermal_conductivity_)
-        {
-            OGS_FATAL(
-                "In 'SoilThermalConductivitySomerton', "
-                "dry_thermal_conductivity of '{:g}' is "
-                "larger than wet_thermal_conductivity of '{:g}'.",
-                dry_thermal_conductivity_, wet_thermal_conductivity_);
-        }
-    }
+    SoilThermalConductivitySomerton(
+        std::string name,
+        ParameterLib::Parameter<double> const& dry_thermal_conductivity,
+        ParameterLib::Parameter<double> const& wet_thermal_conductivity,
+        ParameterLib::CoordinateSystem const* const local_coordinate_system);
 
     void checkScale() const override
     {
@@ -73,9 +70,14 @@ public:
 
 private:
     /// Thermal conductivity of soil at the dry state.
-    double const dry_thermal_conductivity_;
+    ParameterLib::Parameter<double> const& dry_thermal_conductivity_;
     /// Thermal conductivity of soil at the fully water saturated state.
-    double const wet_thermal_conductivity_;
+    ParameterLib::Parameter<double> const& wet_thermal_conductivity_;
+
+    ParameterLib::CoordinateSystem const* const local_coordinate_system_;
 };
+
+extern template class SoilThermalConductivitySomerton<2>;
+extern template class SoilThermalConductivitySomerton<3>;
 
 }  // namespace MaterialPropertyLib

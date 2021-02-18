@@ -11,34 +11,77 @@
 
 #include <gtest/gtest.h>
 
+#include <Eigen/Eigen>
 #include <cmath>
 #include <functional>
 #include <limits>
-#include <random>
+#include <memory>
+#include <vector>
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/ThermalConductivity/SoilThermalConductivitySomerton.h"
 #include "MaterialLib/MPL/Properties/ThermalConductivity/CreateSoilThermalConductivitySomerton.h"
-#include "TestMPL.h"
+#include "MaterialLib/MPL/Properties/ThermalConductivity/SoilThermalConductivitySomerton.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "ParameterLib/ConstantParameter.h"
+#include "ParameterLib/CoordinateSystem.h"
 #include "Tests/TestTools.h"
 
-TEST(MaterialPropertyLib, SoilThermalConductivitySomerton)
+namespace MPL = MaterialPropertyLib;
+
+std::unique_ptr<MaterialPropertyLib::Property>
+createTestSoilThermalConductivitySomertonProperty(
+    const char xml[], int const geometry_dimension,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system,
+    std::function<std::unique_ptr<MaterialPropertyLib::Property>(
+        int const geometry_dimension,
+        BaseLib::ConfigTree const& config,
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters,
+        ParameterLib::CoordinateSystem const* const local_coordinate_system)>
+        createProperty)
+{
+    auto const ptree = Tests::readXml(xml);
+    BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
+                             BaseLib::ConfigTree::onwarning);
+    auto const& sub_config = conf.getConfigSubtree("property");
+    // Parsing the property name:
+    auto const property_name =
+        sub_config.getConfigParameter<std::string>("name");
+
+    return createProperty(geometry_dimension, sub_config, parameters,
+                          local_coordinate_system);
+}
+
+TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
 {
     const char xml[] =
         "<property>"
         "   <name>thermal_conductivity</name>"
         "   <type>SoilThermalConductivitySomerton</type>"
-        "   <dry_thermal_conductivity>0.1</dry_thermal_conductivity>"
-        "   <wet_thermal_conductivity>0.3</wet_thermal_conductivity>"
+        "   <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>"
+        "   <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>"
         "</property>";
-
-    std::unique_ptr<MPL::Property> const k_T_ptr = Tests::createTestProperty(
-        xml, MPL::createSoilThermalConductivitySomerton);
-    MPL::Property const& k_T_property = *k_T_ptr;
 
     double const k_T_dry = 0.1;
     double const k_T_wet = 0.3;
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_dry",
+                                                                  k_T_dry));
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_wet",
+                                                                  k_T_wet));
+
+    const int dimemsion = 1;
+    std::unique_ptr<MPL::Property> const k_T_ptr =
+        createTestSoilThermalConductivitySomertonProperty(
+            xml, dimemsion, parameters, nullptr,
+            MPL::createSoilThermalConductivitySomerton);
+
+    MPL::Property const& k_T_property = *k_T_ptr;
+
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();

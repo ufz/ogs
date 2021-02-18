@@ -217,7 +217,8 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
 
     if (boost::iequals(property_type, "SoilThermalConductivitySomerton"))
     {
-        return createSoilThermalConductivitySomerton(config);
+        return createSoilThermalConductivitySomerton(
+            geometry_dimension, config, parameters, local_coordinate_system);
     }
 
     // If none of the above property types are found, OGS throws an error.

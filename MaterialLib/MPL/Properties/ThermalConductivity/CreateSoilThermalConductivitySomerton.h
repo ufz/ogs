@@ -12,15 +12,26 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 namespace BaseLib
 {
 class ConfigTree;
 }
 
+namespace ParameterLib
+{
+struct CoordinateSystem;
+struct ParameterBase;
+}  // namespace ParameterLib
+
 namespace MaterialPropertyLib
 {
 class Property;
+
 std::unique_ptr<Property> createSoilThermalConductivitySomerton(
-    BaseLib::ConfigTree const& config);
+    int const geometry_dimension,
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system);
 }  // namespace MaterialPropertyLib
