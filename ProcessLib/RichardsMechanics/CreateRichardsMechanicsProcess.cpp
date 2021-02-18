@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "NumLib/CreateNewtonRaphsonSolverParameters.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -169,6 +170,20 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
         &mesh);
 
+    std::optional<MicroPorosityParameters> micro_porosity_parameters;
+    if (auto const micro_porosity_config =
+            //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__micro_porosity}
+        config.getConfigSubtreeOptional("micro_porosity"))
+    {
+        micro_porosity_parameters = MicroPorosityParameters{
+            NumLib::createNewtonRaphsonSolverParameters(
+                //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__micro_porosity__nonlinear_solver}
+                micro_porosity_config->getConfigSubtree("nonlinear_solver")),
+            //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__micro_porosity__mass_exchange_coefficient}
+            micro_porosity_config->getConfigParameter<double>(
+                "mass_exchange_coefficient")};
+    }
+
     auto const mass_lumping =
         //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
@@ -183,6 +198,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         std::move(solid_constitutive_relations),
         initial_stress,
         specific_body_force,
+        micro_porosity_parameters,
         mass_lumping,
         explicit_hm_coupling_in_unsaturated_zone};
 
