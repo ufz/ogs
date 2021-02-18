@@ -1,0 +1,1 @@
+\copydoc MaterialPropertyLib::SoilThermalConductivitySomerton::wet_thermal_conductivity_
