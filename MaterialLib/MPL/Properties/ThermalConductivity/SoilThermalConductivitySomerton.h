@@ -17,6 +17,19 @@
 namespace MaterialPropertyLib
 {
 class Medium;
+/**
+ * \brief A saturation dependent thermal conductivity model for soil.
+ *
+ *  This model is proposed by Somerton, W.~H. et al. \cite somerton1974high,
+ *  which takes the form of
+ *  \f[
+ *   \lambda = \lambda_{\text{dry}} +
+ *     \sqrt{S}(\lambda_{\text{wet}}-\lambda_{\text{dry}}),
+ *  \f]
+ * where \f$\lambda_{\text{dry}}\f$ is the thermal conductivity of soil at the
+ * dry state, \f$\lambda_{\text{wet}}\f$ is the thermal conductivity of soil at
+ * the fully water saturated state, and \f$S\f$ is the water saturation.
+ */
 class SoilThermalConductivitySomerton final : public Property
 {
 public:
@@ -59,7 +72,9 @@ public:
                             double const dt) const override;
 
 private:
+    /// Thermal conductivity of soil at the dry state.
     double const dry_thermal_conductivity_;
+    /// Thermal conductivity of soil at the fully water saturated state.
     double const wet_thermal_conductivity_;
 };
 
