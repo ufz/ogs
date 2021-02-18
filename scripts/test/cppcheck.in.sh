@@ -3,7 +3,7 @@ OUTPUT_FILE=${PROJECT_BINARY_DIR}/cppcheck.json
 ${CPPCHECK_TOOL_PATH} \
         --project=${PROJECT_BINARY_DIR}/compile_commands.json \
         --language=c++ \
-        --std=c++17 \
+        --std=c++20 \
         --enable=all \
         --inconclusive \
         -j ${CPPCHECK_PARALLEL} \
