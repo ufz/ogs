@@ -20,20 +20,20 @@ namespace MathLib
 namespace KelvinVector
 {
 /// Kelvin vector dimensions for given displacement dimension.
-template <int DisplacementDim>
-struct KelvinVectorDimensions;
-
-template <>
-struct KelvinVectorDimensions<2>
+constexpr int kelvin_vector_dimensions(int const displacement_dim)
 {
-    static int const value = 4;
-};
-
-template <>
-struct KelvinVectorDimensions<3>
-{
-    static int const value = 6;
-};
+    if (displacement_dim == 2)
+    {
+        return 4;
+    }
+    else if (displacement_dim == 3)
+    {
+        return 6;
+    }
+    OGS_FATAL(
+        "Cannot convert displacement dimension {} to kelvin vector dimension.",
+        displacement_dim);
+}
 
 //
 // Kelvin vector and matrix templates for given displacement dimension.
