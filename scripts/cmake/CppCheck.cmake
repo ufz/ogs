@@ -18,7 +18,7 @@ add_custom_target(cppcheck
     COMMAND ${CPPCHECK_TOOL_PATH}
         --project=${PROJECT_BINARY_DIR}/compile_commands.json
         --language=c++
-        --std=c++17
+        --std=c++20
         --enable=all
         --inconclusive
         ${CPPCHECK_THREADS}
