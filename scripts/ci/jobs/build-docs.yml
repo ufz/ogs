@@ -58,6 +58,7 @@ deploy doxygen:
       if [ "$ON_MASTER" == "true" ]; then
           netlify deploy --prod --dir=build/docs --site=$DOXYGEN_NETLIFY_SITE_ID
       else
+          netlify unlink
           netlify link --name ogs-doxygen-${CI_COMMIT_BRANCH//./-}
           netlify deploy --prod --dir=build/docs
       fi
