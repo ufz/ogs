@@ -56,7 +56,7 @@ deploy web site:
     - cd web
     - yarn
     - hugo
-    - netlify deploy --prod --dir=public
+    - netlify deploy --prod --dir=public --site=$OGS_NETLIFY_SITE_ID
     - node_modules/.bin/hugo-algolia --toml -s
   cache:
     paths:
