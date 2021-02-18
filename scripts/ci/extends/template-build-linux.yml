@@ -1,7 +1,5 @@
 .template-build-linux:
   stage: build
-  extends:
-    - .test-artifacts
   retry:
     max: 2
     when: runner_system_failure

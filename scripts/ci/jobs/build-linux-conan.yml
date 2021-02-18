@@ -1,6 +1,7 @@
 build linux conan:
   extends:
     - .template-build-linux
+    - .test-artifacts
     - .rules-master-manual
   tags: [shell, envinf1-shell]
   needs: [meta]
@@ -15,6 +16,7 @@ build linux conan:
 build linux native:
   extends:
     - .template-build-linux
+    - .test-artifacts
   tags: [shell, envinf]
   needs: [meta]
   variables:

@@ -1,5 +1,7 @@
 build linux petsc:
-  extends: .template-build-linux
+  extends:
+    - .template-build-linux
+    - .test-artifacts
   tags:
     - envinf1-shell
   needs: [meta]

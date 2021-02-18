@@ -1,6 +1,7 @@
 build linux frontend:
   extends:
     - .template-build-linux
+    - .test-artifacts
     - .rules-master-manual
   tags:
     - frontend2

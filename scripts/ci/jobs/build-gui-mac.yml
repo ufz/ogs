@@ -1,5 +1,7 @@
 build gui mac:
-  extends: .template-build-linux
+  extends:
+    - .template-build-linux
+    - .test-artifacts
   stage: build
   tags: [mac]
   needs: [meta]

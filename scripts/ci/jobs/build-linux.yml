@@ -1,6 +1,8 @@
 build linux:
   image: $CONTAINER_GCC_IMAGE
-  extends: .template-build-linux
+  extends:
+    - .template-build-linux
+    - .test-artifacts
   tags: [ docker ]
   needs: [meta, "pre commit"]
   timeout: 2h
@@ -20,7 +22,9 @@ build linux:
 
 build linux (no unity):
   image: $CONTAINER_GCC_IMAGE
-  extends: .template-build-linux
+  extends:
+    - .template-build-linux
+    - .test-artifacts
   tags: [ docker ]
   needs: [meta, "pre commit"]
   timeout: 1h

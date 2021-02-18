@@ -1,5 +1,7 @@
 build gui linux:
-  extends: .template-build-linux
+  extends:
+    - .template-build-linux
+    - .test-artifacts
   stage: build
   image: $CONTAINER_GCC_GUI_IMAGE
   needs: [meta, "pre commit"]
