@@ -9,6 +9,7 @@ foreach(TOOL ${TOOLS})
                           GeoLib
                           GitInfoLib
                           ApplicationsFileIO
+                          tclap
                           Qt5::Core)
 endforeach()
 set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)

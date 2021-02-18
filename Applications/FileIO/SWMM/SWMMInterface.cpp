@@ -25,7 +25,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
-#include "ThirdParty/SWMMInterface/swmm5_iface.h"
+#include <swmm5_iface.h>
 
 namespace FileIO
 {

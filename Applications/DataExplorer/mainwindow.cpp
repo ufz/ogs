@@ -855,10 +855,6 @@ QMenu* MainWindow::createImportFilesMenu()
                            [this] { loadPetrelFiles(); });
     importFiles->addAction("&Raster Files...",
                            [this] { open(ImportFileType::RASTER); });
-#if defined VTKFBXCONVERTER_FOUND
-    importFiles->addAction("R&aster Files as PolyData...",
-                           [this] { open(ImportFileType::POLYRASTER); });
-#endif
     importFiles->addAction("&Shape Files...",
                            [this] { open(ImportFileType::SHAPE); });
     importFiles->addAction("&TetGen Files...",

@@ -63,9 +63,6 @@ private slots:
     /// Exports the currently selected item as a VTK file
     void exportSelectedPipelineItemAsVtk();
 
-    /// Exports the currently selected item as a Fbx file.
-    void exportSelectedPipelineItemAsFbx();
-
     /// Sends an requestRemovePipelineItem() signal to remove
     /// the currently selected item.
     void removeSelectedPipelineItem();

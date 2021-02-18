@@ -1,51 +1,6 @@
-[submodule "ThirdParty/tetgen"]
-	path = ThirdParty/tetgen
-	url = https://github.com/ufz/tetgen.git
-[submodule "vtkdiff"]
-	path = ThirdParty/vtkdiff
-	url = https://github.com/ufz/vtkdiff.git
-[submodule "ThirdParty/tclap"]
-	path = ThirdParty/tclap
-	url = https://github.com/ufz/tclap.git
-[submodule "ThirdParty/autocheck"]
-	path = ThirdParty/autocheck
-	url = https://github.com/ufz/autocheck.git
-[submodule "ThirdParty/metis"]
-	path = ThirdParty/metis
-	url = https://github.com/scibuilder/metis.git
-[submodule "ThirdParty/SwmmInterface"]
-	path = ThirdParty/SwmmInterface
-	url = https://github.com/ufz/SwmmInterface.git
-[submodule "ThirdParty/cmake-modules"]
-	path = ThirdParty/cmake-modules
-	url = https://github.com/bilke/cmake-modules.git
-[submodule "ThirdParty/pybind11"]
-	path = ThirdParty/pybind11
-	url = https://github.com/pybind/pybind11.git
-[submodule "ThirdParty/googletest"]
-	path = ThirdParty/googletest
-	url = https://github.com/google/googletest.git
-[submodule "ThirdParty/exprtk"]
-	path = ThirdParty/exprtk
-	url = https://github.com/ArashPartow/exprtk.git
-[submodule "ThirdParty/iphreeqc/src"]
-	path = ThirdParty/iphreeqc/src
-	url = https://github.com/ufz/iphreeqc.git
-[submodule "ThirdParty/MGIS"]
-	path = ThirdParty/MGIS
-	url = https://github.com/ufz/MFrontGenericInterfaceSupport.git
 [submodule "ThirdParty/container-maker"]
 	path = ThirdParty/container-maker
 	url = https://gitlab.opengeosys.org/ogs/container-maker.git
 [submodule "ThirdParty/ogs6py"]
 	path = ThirdParty/ogs6py
 	url = https://github.com/joergbuchwald/ogs6py.git
-[submodule "ThirdParty/json-cmake"]
-	path = ThirdParty/json-cmake
-	url = https://github.com/ufz/json-cmake.git
-[submodule "ThirdParty/spdlog"]
-	path = ThirdParty/spdlog
-	url = https://github.com/gabime/spdlog.git
-[submodule "ThirdParty/xdmf"]
-	path = ThirdParty/xdmf
-	url = https://gitlab.opengeosys.org/ogs/xdmflib.git

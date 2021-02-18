@@ -226,7 +226,7 @@
         <vtkdiff>
             <file>m3_3Dshearz_ts_1_t_1.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>2e-7</absolute_tolerance>
+            <absolute_tolerance>6e-6</absolute_tolerance>
             <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

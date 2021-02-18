@@ -18,7 +18,7 @@
 
 #include <QFile>
 #include <QtXml/QDomDocument>
-#include <RapidXML/rapidxml.hpp>
+#include <rapidxml.hpp>
 #include "BaseLib/Logging.h"
 
 #include "BaseLib/DateTools.h"

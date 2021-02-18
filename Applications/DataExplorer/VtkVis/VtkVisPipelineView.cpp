@@ -109,9 +109,7 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
         }
         menu.addSeparator();
         QAction* exportVtkAction = menu.addAction("Export as VTK");
-#ifdef VTKFBXCONVERTER_FOUND
-        QAction* exportFbxAction = menu.addAction("Export as Fbx");
-#endif
+
         if (!isSourceItem || vtkProps->IsRemovable())
         {
             menu.addSeparator();
@@ -123,10 +121,6 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
         connect(addFilterAction, SIGNAL(triggered()), this, SLOT(addPipelineFilterItem()));
         connect(exportVtkAction, SIGNAL(triggered()), this,
                 SLOT(exportSelectedPipelineItemAsVtk()));
-#ifdef VTKFBXCONVERTER_FOUND
-        connect(exportFbxAction, SIGNAL(triggered()), this,
-                SLOT(exportSelectedPipelineItemAsFbx()));
-#endif
 
         menu.exec(event->globalPos());
     }
@@ -139,22 +133,6 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsVtk()
     QString filename = QFileDialog::getSaveFileName(this, "Export object to vtk-file",
                                     settings.value("lastExportedFileDirectory").toString(),
                                     "VTK file (*.*)");
-    if (!filename.isEmpty())
-    {
-        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-                                         getItem(idx))->writeToFile(filename.toStdString());
-        QDir dir = QDir(filename);
-        settings.setValue("lastExportedFileDirectory", dir.absolutePath());
-    }
-}
-
-void VtkVisPipelineView::exportSelectedPipelineItemAsFbx()
-{
-    QSettings settings;
-    QModelIndex idx = this->selectionModel()->currentIndex();
-    QString filename = QFileDialog::getSaveFileName(this, "Export object to Fbx file",
-                                                    settings.value("lastExportedFileDirectory").
-                                                    toString(), "Fbx file (*.fbx)");
     if (!filename.isEmpty())
     {
         static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->

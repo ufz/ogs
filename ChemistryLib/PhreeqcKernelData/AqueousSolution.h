@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include <memory>
+#include <phreeqcpp/Solution.h>
+#include <phreeqcpp/common/phrqtype.h>
 
-#include <iphreeqc/src/src/phreeqcpp/common/phrqtype.h>
-#include <iphreeqc/src/src/phreeqcpp/Solution.h>
+#include <memory>
 
 namespace ChemistryLib
 {

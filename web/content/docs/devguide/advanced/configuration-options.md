@@ -43,8 +43,6 @@ CMake switches to enable / disable parts of OGS.
 ### Advanced options
 
 - `OGS_CXX_FLAGS` - Appends user-given compiler flags. Note that existing (CMake-given) flags are not replaced.
-- `OGS_ADDITIONAL_SUBMODULES_TO_CHECKOUT` - Specifies optional submodules which are checked out at CMake-time.
 - `OGS_PACKAGE_ADDITIONAL_BINARIES` - Package additional binaries (given as a `;`-separated list with relative paths to `CMAKE_BINARY_DIR`) into redistributables. Is used for bundling the OGS File Converter with the Data Explorer.
-- `OGS_USE_OPTIONAL_SUBMODULES` - Includes optional submodules into the build. The submodules have to be checked out before. Defaults to ON.
 - `OGS_CPU_ARCHITECTURE` - Optimizes for the given CPU architecture see [-march](https://gcc.gnu.org/onlinedocs/gcc-4.5.3/gcc/i386-and-x86_002d64-Options.html)-flag. Defaults to `native`. For redistributable binaries set to `generic` on Linux and `core2` on Mac OS.
 - `CMAKE_LIBRARY_SEARCH_PATH` - Additional library installation path, e.g. `/opt/local` or `C:/libs`

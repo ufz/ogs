@@ -2,10 +2,6 @@ if(MSVC)
     add_definitions(-DVTKGUISUPPORTQT_STATIC_DEFINE)
 endif()
 
-if(VTKFBXCONVERTER_FOUND)
-    add_definitions(-DVTKFBXCONVERTER_FOUND)
-endif()
-
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_AUTOMOC TRUE)

@@ -4,14 +4,6 @@
 #include <QSurfaceFormat>
 #include <QVTKOpenGLWidget.h>
 #include <memory>
-
-#ifdef VTKFBXCONVERTER_FOUND
-#include <fbxsdk.h>
-#include "ThirdParty/VtkFbxConverter/Common.h"
-FbxManager* lSdkManager = nullptr;
-FbxScene* lScene = nullptr;
-#endif
-
 #include <vtkSmartPointer.h>
 
 #include "InfoLib/GitInfo.h"
@@ -19,10 +11,6 @@ FbxScene* lScene = nullptr;
 
 int main(int argc, char* argv[])
 {
-#ifdef VTKFBXCONVERTER_FOUND
-    InitializeSdkObjects(lSdkManager, lScene);
-#endif
-
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat::setDefaultFormat(QVTKOpenGLWidget::defaultFormat());
 
@@ -45,9 +33,6 @@ int main(int argc, char* argv[])
     }
     w->show();
     int returncode = QApplication::exec();
-#ifdef VTKFBXCONVERTER_FOUND
-    DestroySdkObjects(lSdkManager, true);
-#endif
 
     return returncode;
 }

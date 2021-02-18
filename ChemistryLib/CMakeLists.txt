@@ -7,9 +7,6 @@ append_source_files(SOURCES Common)
 # Create the library
 ogs_add_library(ChemistryLib ${SOURCES})
 
-include(GenerateExportHeader)
-generate_export_header(ChemistryLib)
-
 target_link_libraries(ChemistryLib PUBLIC iphreeqc PRIVATE NumLib spdlog::spdlog)
 
 # See https://github.com/ufz/ogs/pull/2982#issuecomment-641086788

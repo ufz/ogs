@@ -38,6 +38,7 @@ target_link_libraries(MathLib
         ${OpenMP_CXX_LIBRARIES}
         $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
         $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
+        Eigen3::Eigen
     PRIVATE
         spdlog::spdlog
 )

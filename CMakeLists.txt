@@ -9,6 +9,7 @@ endif()
 
 project(OGS-6)
 
+include(scripts/cmake/CPM.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
 include(ParseCMakeArgs)
 if(DEFINED ENV{CI})
@@ -75,7 +76,6 @@ option(OGS_BUILD_UTILS "Should the utilities programms be built?" ON)
 
 # ---- CMake includes ----
 include(GitSetup)
-include(SubmoduleSetup)
 include(Versions)
 include(PythonSetup)
 include(ProcessesSetup)
@@ -84,6 +84,7 @@ include(Functions)
 include(ConanSetup)
 include(CompilerSetup)
 include(Find)
+include(Dependencies)
 include(CCacheSetup)
 include(CLCacheSetup)
 include(DocumentationSetup)
@@ -218,23 +219,6 @@ include(scripts/cmake/packaging/Pack.cmake)
 
 # ---- Subdirectories ----
 
-# External projects
-add_subdirectory(ThirdParty)
-include_directories(
-    SYSTEM
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/googletest/googletest/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/autocheck/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/tclap/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/json/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/exprtk
-    ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/spdlog/include)
-
-# vtkdiff
-if(BUILD_TESTING)
-    add_subdirectory(ThirdParty/vtkdiff)
-    install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin COMPONENT ogs_extras)
-endif()
 # xdmfdiff
 if(OGS_USE_XDMF AND BUILD_TESTING)
     add_subdirectory(Tests/xdmfdiff)

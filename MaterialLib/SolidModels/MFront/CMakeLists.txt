@@ -4,8 +4,6 @@ list(APPEND SOURCES MFront.cpp MFront.h)
 
 ogs_add_library(MaterialLib_SolidModels_MFront ${SOURCES})
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-                      "${PROJECT_SOURCE_DIR}/ThirdParty/MGIS")
 mfront_behaviours_check_library(
     OgsMFrontBehaviour
     BDT

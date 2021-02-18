@@ -10,7 +10,7 @@
 
 #include "PhreeqcIO.h"
 
-#include <iphreeqc/src/src/IPhreeqc.h>
+#include <IPhreeqc.h>
 
 #include <boost/algorithm/string.hpp>
 #include <cmath>

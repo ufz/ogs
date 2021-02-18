@@ -34,15 +34,6 @@
 
 #include <QMessageBox>
 
-#ifdef VTKFBXCONVERTER_FOUND
-#include <fbxsdk.h>
-#include "ThirdParty/VtkFbxConverter/Common.h"
-#include "ThirdParty/VtkFbxConverter/VtkFbxConverter.h"
-
-extern FbxManager* lSdkManager;
-extern FbxScene* lScene;
-#endif
-
 VtkVisPipelineItem::VtkVisPipelineItem(
     vtkAlgorithm* algorithm, TreeItem* parentItem,
     const QList<QVariant> data /*= QList<QVariant>()*/)
@@ -127,39 +118,6 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
 {
     if (!filename.empty())
     {
-#ifdef VTKFBXCONVERTER_FOUND
-        if (filename.substr(filename.size() - 4).find("fbx") != std::string::npos)
-        {
-            if(!dynamic_cast<vtkImageActor*>(_actor))
-            {
-                InitializeSdkObjects(lSdkManager, lScene);
-
-                VtkFbxConverter fbxConverter(static_cast<vtkActor*>(_actor), lScene);
-                fbxConverter.convert(BaseLib::extractBaseNameWithoutExtension(filename));
-                FbxNode* node = fbxConverter.getNode();
-                if(node)
-                {
-                    fbxConverter.addUserProperty("UseVertexColors", _vtkProps->GetScalarVisibility());
-                    lScene->GetRootNode()->AddChild(node);
-                    // Get the file format. Use either "FBX [6.0] binary (*.fbx)" or "FBX [6.0] ascii (*.fbx)"
-                    int fbxFormat = lSdkManager->GetIOPluginRegistry()
-                        ->FindWriterIDByDescription("FBX 6.0 binary (*.fbx)");
-                    // Embed only works in "FBX 6.0 binary (*.fbx)"
-                    const bool fbxEmbed = true;
-                    SaveScene(lSdkManager, lScene, filename.c_str(), fbxFormat, fbxEmbed);
-                    lScene->Clear();
-                }
-            }
-            else
-                QMessageBox::warning(
-                    nullptr, "Conversion to FBX not possible",
-                    "It is not possible to convert an vtkImageData based object \
-                    to FBX. If you want to convert raster data import it via ' \
-                    File / Import / Raster Files as PolyData'!");
-            return 0;
-        }
-#endif // VTKFBXCONVERTER_FOUND
-
         return callVTKWriter(this->algorithm(), filename);
     }
     return 0;
