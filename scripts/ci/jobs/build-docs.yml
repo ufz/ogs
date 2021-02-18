@@ -15,6 +15,7 @@ build docs:
   script:
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
     - cmake --build . --target doc > >(tee make-docs.output)
+    - cp ../scripts/doc/_redirects docs
   artifacts:
     expose_as: 'Doxygen'
     paths:
@@ -43,9 +44,19 @@ deploy doxygen:
   tags: [ docker ]
   image: $WEB_IMAGE
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      variables:
+        ON_MASTER: "true"
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
   dependencies: [meta_container, "build docs"]
   variables:
     GIT_STRATEGY: none
   script:
-    - netlify deploy --prod --dir=build/docs --site=$DOXYGEN_NETLIFY_SITE_ID
+  # ${CI_COMMIT_BRANCH//./-} replaces dots with hyphens
+    - |
+      if [ "$ON_MASTER" == "true" ]; then
+          netlify deploy --prod --dir=build/docs --site=$DOXYGEN_NETLIFY_SITE_ID
+      else
+          netlify link --name ogs-doxygen-${CI_COMMIT_BRANCH//./-}
+          netlify deploy --prod --dir=build/docs
+      fi
