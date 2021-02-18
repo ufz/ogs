@@ -76,8 +76,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // Initialize current time step values
         static const int kelvin_vector_size =
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value;
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
         ip_data.sigma_eff.setZero(kelvin_vector_size);
         ip_data.eps.setZero(kelvin_vector_size);
 
@@ -689,8 +688,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>::identity2;
+            MathLib::KelvinVector::kelvin_vector_dimensions(
+                DisplacementDim)>::identity2;
 
         eps.noalias() = B * u;
         vars[static_cast<int>(MPL::Variable::mechanical_strain)]
@@ -874,7 +873,7 @@ std::vector<double> HydroMechanicsLocalAssembler<
     DisplacementDim>::getEpsilon() const
 {
     auto const kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 

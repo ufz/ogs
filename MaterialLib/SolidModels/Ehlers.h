@@ -235,7 +235,7 @@ struct StateVariables
     double getEquivalentPlasticStrain() const override;
 
     static int const KelvinVectorSize =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
     using KelvinVector =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
@@ -273,7 +273,7 @@ class SolidEhlers final : public MechanicsBase<DisplacementDim>
 {
 public:
     static int const KelvinVectorSize =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     static int const JacobianResidualSize =
         2 * KelvinVectorSize + 3;  // 2 is the number of components in the
                                    // jacobian/residual, not the space

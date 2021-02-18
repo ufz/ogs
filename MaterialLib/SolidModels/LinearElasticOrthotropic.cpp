@@ -94,9 +94,8 @@ LinearElasticOrthotropic<DisplacementDim>::getElasticTensor(
     // return the top left corner block of size 4x4 for two-dimensional case or
     // the full 6x6 matrix is returned in the three-dimensional case.
     return (Q * C_ortho * Q.transpose())
-        .template topLeftCorner<
-            KelvinVectorDimensions<DisplacementDim>::value,
-            KelvinVectorDimensions<DisplacementDim>::value>();
+        .template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),
+                                kelvin_vector_dimensions(DisplacementDim)>();
 }
 
 template class LinearElasticOrthotropic<2>;

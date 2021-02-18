@@ -324,34 +324,34 @@ MFront<DisplacementDim>::integrateStress(
     auto const& eps_m_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
         variable_array_prev[static_cast<int>(
             MPL::Variable::mechanical_strain)]);
-    auto const eps_prev_MFront =
-        OGSToMFront(Q.transpose()
-                        .template topLeftCorner<
-                            KelvinVectorDimensions<DisplacementDim>::value,
-                            KelvinVectorDimensions<DisplacementDim>::value>() *
-                    eps_m_prev);
+    auto const eps_prev_MFront = OGSToMFront(
+        Q.transpose()
+            .template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),
+                                    kelvin_vector_dimensions(
+                                        DisplacementDim)>() *
+        eps_m_prev);
     std::copy_n(eps_prev_MFront.data(), KelvinVector::SizeAtCompileTime,
                 behaviour_data.s0.gradients.data());
 
     auto const& eps = std::get<MPL::SymmetricTensor<DisplacementDim>>(
         variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]);
-    auto const eps_MFront =
-        OGSToMFront(Q.transpose()
-                        .template topLeftCorner<
-                            KelvinVectorDimensions<DisplacementDim>::value,
-                            KelvinVectorDimensions<DisplacementDim>::value>() *
-                    eps);
+    auto const eps_MFront = OGSToMFront(
+        Q.transpose()
+            .template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),
+                                    kelvin_vector_dimensions(
+                                        DisplacementDim)>() *
+        eps);
     std::copy_n(eps_MFront.data(), KelvinVector::SizeAtCompileTime,
                 behaviour_data.s1.gradients.data());
 
     auto const& sigma_prev = std::get<MPL::SymmetricTensor<DisplacementDim>>(
         variable_array_prev[static_cast<int>(MPL::Variable::stress)]);
-    auto const sigma_prev_MFront =
-        OGSToMFront(Q.transpose()
-                        .template topLeftCorner<
-                            KelvinVectorDimensions<DisplacementDim>::value,
-                            KelvinVectorDimensions<DisplacementDim>::value>() *
-                    sigma_prev);
+    auto const sigma_prev_MFront = OGSToMFront(
+        Q.transpose()
+            .template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),
+                                    kelvin_vector_dimensions(
+                                        DisplacementDim)>() *
+        sigma_prev);
     std::copy_n(sigma_prev_MFront.data(), KelvinVector::SizeAtCompileTime,
                 behaviour_data.s0.thermodynamic_forces.data());
     std::copy_n(sigma_prev_MFront.data(), KelvinVector::SizeAtCompileTime,
@@ -368,10 +368,10 @@ MFront<DisplacementDim>::integrateStress(
     KelvinVector sigma;
     std::copy_n(behaviour_data.s1.thermodynamic_forces.data(),
                 KelvinVector::SizeAtCompileTime, sigma.data());
-    sigma = Q.template topLeftCorner<
-                KelvinVectorDimensions<DisplacementDim>::value,
-                KelvinVectorDimensions<DisplacementDim>::value>() *
-            MFrontToOGS(sigma);
+    sigma =
+        Q.template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),
+                                 kelvin_vector_dimensions(DisplacementDim)>() *
+        MFrontToOGS(sigma);
 
     // TODO row- vs. column-major storage order. This should only matter for
     // anisotropic materials.
@@ -382,9 +382,9 @@ MFront<DisplacementDim>::integrateStress(
     KelvinMatrix C =
         Q * MFrontToOGS(Eigen::Map<KelvinMatrix>(behaviour_data.K.data())) *
         Q.transpose()
-            .template topLeftCorner<
-                KelvinVectorDimensions<DisplacementDim>::value,
-                KelvinVectorDimensions<DisplacementDim>::value>();
+            .template topLeftCorner<kelvin_vector_dimensions(DisplacementDim),
+                                    kelvin_vector_dimensions(
+                                        DisplacementDim)>();
 
     return std::make_optional(
         std::make_tuple<typename MFront<DisplacementDim>::KelvinVector,
@@ -450,8 +450,8 @@ double MFront<DisplacementDim>::getBulkModulus(
             "argument to be valid.");
     }
     auto const& identity2 = MathLib::KelvinVector::Invariants<
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
-        identity2;
+        MathLib::KelvinVector::kelvin_vector_dimensions(
+            DisplacementDim)>::identity2;
     return 1. / 9. * identity2.transpose() * *C * identity2;
 }
 

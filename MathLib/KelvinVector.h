@@ -44,9 +44,7 @@ constexpr int kelvin_vector_dimensions(int const displacement_dim)
 /// matrix policy types like BMatrixPolicyType::KelvinVectorType.
 template <int DisplacementDim>
 using KelvinVectorType =
-    Eigen::Matrix<double,
-                  KelvinVectorDimensions<DisplacementDim>::value,
-                  1,
+    Eigen::Matrix<double, kelvin_vector_dimensions(DisplacementDim), 1,
                   Eigen::ColMajor>;
 
 /// Kelvin matrix type for given displacement dimension.
@@ -54,10 +52,8 @@ using KelvinVectorType =
 /// matrix policy types like BMatrixPolicyType::KelvinMatrixType.
 template <int DisplacementDim>
 using KelvinMatrixType =
-    Eigen::Matrix<double,
-                  KelvinVectorDimensions<DisplacementDim>::value,
-                  KelvinVectorDimensions<DisplacementDim>::value,
-                  Eigen::RowMajor>;
+    Eigen::Matrix<double, kelvin_vector_dimensions(DisplacementDim),
+                  kelvin_vector_dimensions(DisplacementDim), Eigen::RowMajor>;
 
 /// Invariants used in mechanics, based on Kelvin representation of the vectors
 /// and matrices.
@@ -216,7 +212,7 @@ KelvinVectorType<DisplacementDim> symmetricTensorToKelvinVector(
     std::vector<double> const& values)
 {
     constexpr int kelvin_vector_size =
-        KelvinVectorDimensions<DisplacementDim>::value;
+        kelvin_vector_dimensions(DisplacementDim);
 
     if (values.size() != kelvin_vector_size)
     {
@@ -229,10 +225,7 @@ KelvinVectorType<DisplacementDim> symmetricTensorToKelvinVector(
     return symmetricTensorToKelvinVector(
         Eigen::Map<typename MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim> const>(
-            values.data(),
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value,
-            1));
+            values.data(), kelvin_vector_dimensions(DisplacementDim), 1));
 }
 
 /// Rotation tensor for Kelvin mapped vectors and tensors. It is meant to be

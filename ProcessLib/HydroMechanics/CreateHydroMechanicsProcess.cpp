@@ -168,7 +168,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__initial_stress}
         config, "initial_stress", parameters,
         // Symmetric tensor size, 4 or 6, not a Kelvin vector.
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
         &mesh);
 
     HydroMechanicsProcessData<DisplacementDim> process_data{

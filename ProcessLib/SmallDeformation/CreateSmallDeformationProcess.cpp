@@ -108,7 +108,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__initial_stress}
         config, "initial_stress", parameters,
         // Symmetric tensor size, 4 or 6, not a Kelvin vector.
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
         &mesh);
 
     SmallDeformationProcessData<DisplacementDim> process_data{

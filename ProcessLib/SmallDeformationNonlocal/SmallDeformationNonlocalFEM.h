@@ -126,18 +126,19 @@ public:
             ip_data.dNdx = sm.dNdx;
 
             // Initialize current time step values
-            ip_data.sigma.setZero(MathLib::KelvinVector::KelvinVectorDimensions<
-                                  DisplacementDim>::value);
-            ip_data.eps.setZero(MathLib::KelvinVector::KelvinVectorDimensions<
-                                DisplacementDim>::value);
+            ip_data.sigma.setZero(
+                MathLib::KelvinVector::kelvin_vector_dimensions(
+                    DisplacementDim));
+            ip_data.eps.setZero(MathLib::KelvinVector::kelvin_vector_dimensions(
+                DisplacementDim));
 
             // Previous time step values are not initialized and are set later.
             ip_data.sigma_prev.resize(
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value);
+                MathLib::KelvinVector::kelvin_vector_dimensions(
+                    DisplacementDim));
             ip_data.eps_prev.resize(
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value);
+                MathLib::KelvinVector::kelvin_vector_dimensions(
+                    DisplacementDim));
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
 

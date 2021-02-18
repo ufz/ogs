@@ -49,7 +49,7 @@ MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> tangentStiffnessA(
     // functionals.
     // Only the upper left block is relevant for the global tangent.
     static int const KelvinVectorSize =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     using KelvinMatrix =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 

@@ -138,7 +138,7 @@ public:
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
 
     static int const KelvinVectorSize =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;

@@ -49,7 +49,7 @@ BMatrixType computeBMatrix(DNDX_Type const& dNdx,
                   "range [1,3].");
 
     BMatrixType B = BMatrixType::Zero(
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
         NPOINTS * DisplacementDim);
 
     switch (DisplacementDim)

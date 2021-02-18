@@ -20,7 +20,7 @@ namespace MaterialPropertyLib
 {
 template <int GlobalDim>
 constexpr int symmetric_tensor_size =
-    MathLib::KelvinVector::KelvinVectorDimensions<GlobalDim>::value;
+    MathLib::KelvinVector::kelvin_vector_dimensions(GlobalDim);
 
 template <int GlobalDim>
 using SymmetricTensor =

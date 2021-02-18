@@ -76,7 +76,7 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
 {
     namespace MPL = MaterialPropertyLib;
     static constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     // phi_m, e_sw, p_L_m, sigma_sw
     static constexpr int nls_size = 1 + 1 + 1 + kelvin_vector_size;
 

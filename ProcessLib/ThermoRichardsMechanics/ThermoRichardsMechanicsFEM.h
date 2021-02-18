@@ -67,7 +67,7 @@ public:
                              ShapeFunctionDisplacement::NPOINTS>;
 
     static int const KelvinVectorSize =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
     using SymmetricTensor = Eigen::Matrix<double, KelvinVectorSize, 1>;
