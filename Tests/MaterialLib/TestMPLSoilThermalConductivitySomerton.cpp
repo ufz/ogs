@@ -183,3 +183,160 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
             << approximated_dk_T_dS;
     }
 }
+
+TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
+{
+    const char xml[] =
+        "<property>"
+        "   <name>thermal_conductivity</name>"
+        "   <type>SoilThermalConductivitySomerton</type>"
+        "   <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>"
+        "   <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>"
+        "</property>";
+
+    std::vector<double> k_T_dry{0.1, 0.1, 0.1};
+    std::vector<double> k_T_wet{0.3, 0.3, 0.3};
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_dry",
+                                                                  k_T_dry));
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_wet",
+                                                                  k_T_wet));
+
+    const int dimemsion = 3;
+    std::unique_ptr<MPL::Property> const k_T_ptr =
+        createTestSoilThermalConductivitySomertonProperty(
+            xml, dimemsion, parameters, nullptr,
+            MPL::createSoilThermalConductivitySomerton);
+
+    MPL::Property const& k_T_property = *k_T_ptr;
+
+    MPL::VariableArray variable_array;
+    ParameterLib::SpatialPosition const pos;
+    double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
+    // For S <= 0.0
+    {
+        double const S_less_than_zero[] = {-1, 0.0};
+        for (int i = 0; i < 2; i++)
+        {
+            variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
+                S_less_than_zero[i];
+
+            auto const computed_k_T = MPL::formEigenTensor<3>(
+                k_T_property.value(variable_array, pos, t, dt));
+
+            for (std::size_t k = 0; k < k_T_dry.size(); k++)
+            {
+                ASSERT_LE(std::fabs(k_T_dry[k] - computed_k_T(k, k)), 1e-10)
+                    << "for expected thermal conductivity " << k_T_dry[k]
+                    << " and for computed thermal conductivity."
+                    << computed_k_T(k, k);
+            }
+
+            auto const computed_dk_T_dS =
+                MPL::formEigenTensor<3>(k_T_property.dValue(
+                    variable_array,
+                    MaterialPropertyLib::Variable::liquid_saturation, pos, t,
+                    dt));
+
+            for (std::size_t k = 0; k < k_T_dry.size(); k++)
+            {
+                ASSERT_LE(std::fabs(0.0 - computed_dk_T_dS(k, k)), 1e-10)
+                    << "for expected derivative of thermal conductivity with "
+                       "respect to saturation "
+                    << 0.0
+                    << " and for computed derivative of thermal conductivity "
+                       "with respect to saturation."
+                    << computed_dk_T_dS(k, k);
+            }
+        }
+    }
+    // For S > 1.0
+    {
+        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            2.0;
+
+        auto const computed_k_T = MPL::formEigenTensor<3>(
+            k_T_property.value(variable_array, pos, t, dt));
+
+        for (std::size_t k = 0; k < k_T_dry.size(); k++)
+        {
+            ASSERT_LE(std::fabs(k_T_wet[k] - computed_k_T(k, k)), 1e-10)
+                << "for expected thermal conductivity " << k_T_wet[k]
+                << " and for computed thermal conductivity."
+                << computed_k_T(k, k);
+        }
+
+        auto const computed_dk_T_dS =
+            MPL::formEigenTensor<3>(k_T_property.dValue(
+                variable_array,
+                MaterialPropertyLib::Variable::liquid_saturation, pos, t, dt));
+
+        for (std::size_t k = 0; k < k_T_dry.size(); k++)
+        {
+            ASSERT_LE(std::fabs(0.0 - computed_dk_T_dS(k, k)), 1e-10)
+                << "for expected derivative of thermal conductivity with "
+                   "respect to saturation "
+                << 0.0
+                << " and for computed derivative of thermal conductivity "
+                   "with respect to saturation."
+                << computed_dk_T_dS(k, k);
+        }
+    }
+
+    // For S in (0, 1)
+    std::vector<double> const S_L = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};
+    std::vector<double> const expected_k_T = {
+        1.632456e-01, 1.894427e-01, 2.095445e-01, 2.264911e-01,
+        2.414214e-01, 2.549193e-01, 2.673320e-01, 2.788854e-01};
+
+    double const perturbation = 1.e-6;
+    for (std::size_t i = 0; i < S_L.size(); i++)
+    {
+        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            S_L[i];
+
+        auto const k_T_i = MPL::formEigenTensor<3>(
+            k_T_property.value(variable_array, pos, t, dt));
+
+        for (std::size_t k = 0; k < k_T_dry.size(); k++)
+        {
+            ASSERT_LE(std::fabs(expected_k_T[i] - k_T_i(k, k)), 1e-7)
+                << "for expected thermal conductivity " << expected_k_T[i]
+                << " and for computed thermal conductivity." << k_T_i(k, k);
+        }
+
+        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            S_L[i] - perturbation;
+        auto const k_T_i_0 = MPL::formEigenTensor<3>(
+            k_T_property.value(variable_array, pos, t, dt));
+
+        variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
+            S_L[i] + perturbation;
+
+        auto const k_T_i_1 = MPL::formEigenTensor<3>(
+            k_T_property.value(variable_array, pos, t, dt));
+
+        auto const analytic_dk_T_dS =
+            MPL::formEigenTensor<3>(k_T_property.dValue(
+                variable_array,
+                MaterialPropertyLib::Variable::liquid_saturation, pos, t, dt));
+
+        for (std::size_t k = 0; k < k_T_dry.size(); k++)
+        {
+            auto const approximated_dk_T_dS =
+                0.5 * (k_T_i_1(k, k) - k_T_i_0(k, k)) / perturbation;
+            ASSERT_LE(std::fabs(analytic_dk_T_dS(k, k) - approximated_dk_T_dS),
+                      1e-5)
+                << "for expected derivative of thermal conductivity with "
+                   "respect to saturation "
+                << analytic_dk_T_dS(k, k)
+                << " and for computed derivative of thermal conductivity "
+                   "with respect to saturation."
+                << approximated_dk_T_dS;
+        }
+    }
+}
