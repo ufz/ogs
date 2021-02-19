@@ -995,17 +995,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .noalias() +=
             N_u_op.transpose() * phi * rho_LR * dS_L_dp_cap * b * N_p * w;
 
-        if (medium->hasProperty(MPL::PropertyType::saturation_micro))
-        {
-            // For the swelling stress with double structure model the
-            // corresponding Jacobian u-p entry would be:
-            // -B.transpose() *
-            //     dsigma_sw_dS_L_m* dS_L_m_dp_cap_m*(p_L_m - p_L_m_prev) /
-            //     p_cap_dot_ip / dt* N_p* w;
-            // but it does not improve convergence and sometimes worsen it.
-        }
-        else if (solid_phase.hasProperty(
-                     MPL::PropertyType::swelling_stress_rate))
+        // For the swelling stress with double structure model the corresponding
+        // Jacobian u-p entry would be required, but it does not improve
+        // convergence and sometimes worsens it:
+        // if (medium->hasProperty(MPL::PropertyType::saturation_micro))
+        // {
+        //     -B.transpose() *
+        //         dsigma_sw_dS_L_m* dS_L_m_dp_cap_m*(p_L_m - p_L_m_prev) /
+        //         p_cap_dot_ip / dt* N_p* w;
+        // }
+        if (!medium->hasProperty(MPL::PropertyType::saturation_micro) &&
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
             using DimMatrix = Eigen::Matrix<double, 3, 3>;
             auto const dsigma_sw_dS_L =
