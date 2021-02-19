@@ -54,6 +54,7 @@ include:
   - local: '/scripts/ci/jobs/checks.yml'
   # - template: 'Code-Quality.gitlab-ci.yml' # see !3053
   - local: '/scripts/ci/jobs/code-quality.yml'
+  - local: '/scripts/ci/jobs/code-coverage.yml'
   - local: '/scripts/ci/jobs/build-gui-linux.yml'
   - local: '/scripts/ci/jobs/build-gui-win.yml'
   - local: '/scripts/ci/jobs/build-gui-mac.yml'

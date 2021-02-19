@@ -1,5 +1,5 @@
 build container images:
-  stage: preparation
+  stage: .pre
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
       when: never
@@ -7,7 +7,6 @@ build container images:
       changes:
       - ThirdParty/container-maker
       - scripts/ci/jobs/build_image.yml
-  dependencies: [meta_container]
   tags: [envinf1-shell]
   extends: .container-maker-setup
   script:

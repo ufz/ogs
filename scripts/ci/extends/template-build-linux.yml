@@ -1,8 +1,5 @@
 .template-build-linux:
   stage: build
-  extends:
-    - .test-artifacts
-  dependencies: [meta, meta_container]
   retry:
     max: 2
     when: runner_system_failure
@@ -15,9 +12,14 @@
     - cmake -S . --preset=$CMAKE_PRESET $CMAKE_ARGS -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
     - build_dir=${BUILD_DIR:-build/$CMAKE_PRESET}
     - cd $build_dir
-    - $BUILD_CMD_PREFIX cmake --build . --target package > >(tee make.output)
-    - if [ "$BUILD_TESTS" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
-    - if [ "$BUILD_CTEST" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target ctest ; fi
-    - if [ "$BUILD_CTEST_LARGE" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target ctest-large ; fi
-    - if [ "$BUILD_CTEST" = true ] ; then cp Testing/**/Test.xml Tests/ctest.xml ; fi
-    - if [ "$BUILD_CTEST_LARGE" = true ] ; then cp Testing/**/Test.xml Tests/ctest-large.xml ; fi
+    - |
+      if [[ -z "$TARGETS" ]]; then
+          $BUILD_CMD_PREFIX cmake --build . --target package > >(tee make.output)
+          if [ "$BUILD_TESTS" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
+          if [ "$BUILD_CTEST" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target ctest ; fi
+          if [ "$BUILD_CTEST_LARGE" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target ctest-large ; fi
+          if [ "$BUILD_CTEST" = true ] ; then cp Testing/**/Test.xml Tests/ctest.xml ; fi
+          if [ "$BUILD_CTEST_LARGE" = true ] ; then cp Testing/**/Test.xml Tests/ctest-large.xml ; fi
+      else
+          $BUILD_CMD_PREFIX cmake --build . --target ${TARGETS} > >(tee make.output)
+      fi

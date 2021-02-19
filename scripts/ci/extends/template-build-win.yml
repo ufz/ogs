@@ -5,7 +5,7 @@
   extends:
     - .vs2019-environment
     - .test-artifacts
-  dependencies: [meta, meta_container]
+  dependencies: [meta]
   variables:
   script:
     - $build_directory = if ($env:BUILD_DIR) { $env:BUILD_DIR } else { "build/" + $env:CMAKE_PRESET }

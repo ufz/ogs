@@ -1,7 +1,10 @@
 build linux petsc:
-  extends: .template-build-linux
+  extends:
+    - .template-build-linux
+    - .test-artifacts
   tags:
     - envinf1-shell
+  needs: [meta]
   timeout: 2h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"

@@ -892,6 +892,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 7
     DIFF_DATA
     vdbc_ts_0_t_0.000000_expected.vtu vdbc_ts_0_t_0.000000.vtu pressure pressure 1e-5 1e-4
     vdbc_ts_1590_t_6000.000000_expected.vtu vdbc_ts_1590_t_6000.000000.vtu pressure pressure 1e-5 1e-4
@@ -1089,6 +1090,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 27
     DIFF_DATA
     TemperatureField_transportts_0_t_0.000000_expected.vtu TemperatureField_transport_ts_0_t_0.000000.vtu pressure pressure 1e-6 1e-10
     TemperatureField_transportts_73_t_6307200.000000_expected.vtu TemperatureField_transport_ts_73_t_6307200.000000.vtu pressure pressure 1e-6 1e-10

@@ -1,7 +1,10 @@
 build gui linux:
-  extends: .template-build-linux
+  extends:
+    - .template-build-linux
+    - .test-artifacts
   stage: build
   image: $CONTAINER_GCC_GUI_IMAGE
+  needs: [meta, "pre commit"]
   tags: [ docker ]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'

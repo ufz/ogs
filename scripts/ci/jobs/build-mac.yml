@@ -1,7 +1,10 @@
 build mac:
-  extends: .template-build-linux
   tags:
     - mac
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+  needs: [meta]
   variables:
     BUILD_DIR: "build/mac-release"
     CMAKE_PRESET: release

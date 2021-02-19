@@ -153,6 +153,17 @@
       ]
     },
     {
+      "name": "coverage",
+      "inherits": [
+        "debug"
+      ],
+      "cacheVariables": {
+        "OGS_COVERAGE": "ON",
+        "CODE_COVERAGE_VERBOSE": "ON",
+        "OGS_CTEST_MAX_RUNTIME": "5"
+      }
+    },
+    {
       "name": "ci-simplest",
       "inherits": "release",
       "cacheVariables": {

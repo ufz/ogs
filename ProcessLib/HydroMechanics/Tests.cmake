@@ -2,7 +2,7 @@
 
 ### With monolithic scheme
 if (NOT OGS_USE_MPI)
-    OgsTest(PROJECTFILE HydroMechanics/Linear/Confined_Compression/square_1e2.prj)
+    OgsTest(PROJECTFILE HydroMechanics/Linear/Confined_Compression/square_1e2.prj RUNTIME 9)
 endif()
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE HydroMechanics/Linear/Confined_Compression/square_1e2_linear.prj)
@@ -142,6 +142,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 18
     DIFF_DATA
     hm2_1D1bt_ts_50_t_5.000000.vtu hm2_1D1bt_ts_50_t_5.000000.vtu pressure pressure 1.0e-11 0.0
     hm2_1D1bt_ts_50_t_5.000000.vtu hm2_1D1bt_ts_50_t_5.000000.vtu displacement displacement 1.0e-11 0.0
@@ -175,6 +176,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 38
     DIFF_DATA
     hm2_1D2bt_ts_125_t_5.000000.vtu hm2_1D2bt_ts_125_t_5.000000.vtu pressure pressure 1.0e-10 0.0
     hm2_1D2bt_ts_125_t_5.000000.vtu hm2_1D2bt_ts_125_t_5.000000.vtu displacement displacement 1.0e-10 0.0
@@ -208,6 +210,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 9
     DIFF_DATA
     hm2_1Dbiot_ts_20_t_5.000000.vtu hm2_1Dbiot_ts_20_t_5.000000.vtu pressure pressure 1.0e-10 0.0
     hm2_1Dbiot_ts_20_t_5.000000.vtu hm2_1Dbiot_ts_20_t_5.000000.vtu displacement displacement 1.0e-10 0.0
@@ -241,6 +244,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 28
     DIFF_DATA
     hm2_1Dcolumn1_ts_120_t_6.000000.vtu hm2_1Dcolumn1_ts_120_t_6.000000.vtu pressure pressure 5.0e-10 0.0
     hm2_1Dcolumn1_ts_120_t_6.000000.vtu hm2_1Dcolumn1_ts_120_t_6.000000.vtu displacement displacement 1.0e-10 0.0
@@ -274,6 +278,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 9
     DIFF_DATA
     hm2_1Dcolumn2_ts_16_t_4.000000.vtu hm2_1Dcolumn2_ts_16_t_4.000000.vtu pressure pressure 1.0e-10 0.0
     hm2_1Dcolumn2_ts_16_t_4.000000.vtu hm2_1Dcolumn2_ts_16_t_4.000000.vtu displacement displacement 1.0e-10 0.0
@@ -505,6 +510,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 21
     DIFF_DATA
     output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu pressure pressure 1.0e-10 1.e-10
     output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu displacement displacement 1.0e-10 1.e-10
