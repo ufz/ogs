@@ -1,9 +1,16 @@
 build docs:
   stage: build
-  tags: [ docker ]
-  image:
-    name: $CONTAINER_GCC_IMAGE
-  dependencies: [meta, meta_container]
+  tags: [shell, envinf]
+  dependencies: [meta]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      variables:
+        ON_MASTER: "true"
+        DEPLOY: "true"
+    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
+      variables:
+        DEPLOY: "true"
+    - when: always
   retry:
     max: 2
     when: runner_system_failure
@@ -15,6 +22,17 @@ build docs:
   script:
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
     - cmake --build . --target doc > >(tee make-docs.output)
+    # ${CI_COMMIT_BRANCH//./-} replaces dots with hyphens
+    - |
+      if [ "$DEPLOY" == "true" ]; then
+        if [ "$ON_MASTER" == "true" ]; then
+            cp ../scripts/doc/_redirects docs
+            netlify deploy --prod --dir=docs --site=$DOXYGEN_NETLIFY_SITE_ID
+        else
+            netlify link --name ogs-doxygen-${CI_COMMIT_BRANCH//./-}
+            netlify deploy --prod --dir=docs
+        fi
+      fi
   artifacts:
     expose_as: 'Doxygen'
     paths:
@@ -38,15 +56,3 @@ check docs links:
       --white-listed-urls http://www.opengeosys.org/project/license,http://www.opengeosys.org,http://www.opengeosys.org\&quot,http://www.trolltech.com/products/qt/licensing.html,http://www.trolltech.com/products/qt/opensource.html
       --white-listed-files project_file_doc_qa.html,ogs_file_
       docs
-
-deploy doxygen:
-  stage: package
-  tags: [ docker ]
-  image: $WEB_IMAGE
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-  dependencies: [meta_container, "build docs"]
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - netlify deploy --prod --dir=build/docs --site=$DOXYGEN_NETLIFY_SITE_ID

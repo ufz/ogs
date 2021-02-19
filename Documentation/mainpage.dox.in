@@ -1,12 +1,33 @@
 /** \mainpage OpenGeoSys ${OGS_VERSION} source code documentation
  *
- * \section intro_sec Introduction
+ * OpenGeoSys (OGS) is a scientific open source project for the development of
+ * numerical methods for the simulation of thermo-hydro-mechanical-chemical
+ * (THMC) processes in porous and fractured media. OGS is implemented in C++, it
+ * is object-oriented with an focus on the numerical solution of coupled multi-field
+ * problems (multi-physics). Parallel versions of OGS are available relying on
+ * both MPI and OpenMP concepts.
  *
- * This page only describes the source code itself. See the following links for additional information:
+ * Application areas of OGS are currently CO2
+ * sequestration, geothermal energy, water resources management, hydrology and
+ * waste deposition. OGS is comprised of the THMC-simulator (simply referred to as
+ * *OGS*) and a visualization tool (*Data Explorer*).
  *
- * - Latest Doxygen site for current master: https://doxygen-latest.opengeosys.org
+ * OGS is developed by the OpenGeoSys Community.
+ *
+ * \section source_documentation Source code documentation
+ *
+ * You will find the Doxygen documentation for the development branch at
+ * https://doxygen.opengeosys.org.
+ *
+ * The documentation for OGS releases can be found here:
+ *
+ * - https://doxygen.opengeosys.org/v6.3.3
+ *
+ * \section useful_links Useful links
+ * - OGS home page: https://opengeosys.org/
+ * - Selected benchmarks: https://opengeosys.org/docs/benchmarks
  * - Developer guide: https://opengeosys.org/docs/devguide
- * - Data Explorer (Gui) manual: https://gitlab.opengeosys.org/ogs/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build
+ * - Data Explorer (GUI) manual: https://gitlab.opengeosys.org/ogs/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build
  * - Discussion forum: https://discourse.opengeosys.org
  *
  *
