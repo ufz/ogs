@@ -215,6 +215,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createLinearSaturationSwellingStress(config);
     }
 
+    if (boost::iequals(property_type, "SoilThermalConductivitySomerton"))
+    {
+        return createSoilThermalConductivitySomerton(
+            geometry_dimension, config, parameters, local_coordinate_system);
+    }
+
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL("The specified component property type '{:s}' was not recognized",
               property_type);

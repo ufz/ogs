@@ -45,3 +45,4 @@
 #include "RelativePermeability/CreateRelPermUdellNonwettingPhase.h"
 #include "RelativePermeability/CreateRelPermVanGenuchten.h"
 #include "SwellingStress/CreateLinearSaturationSwellingStress.h"
+#include "ThermalConductivity/CreateSoilThermalConductivitySomerton.h"

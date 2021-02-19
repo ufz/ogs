@@ -37,4 +37,5 @@
 #include "RelativePermeability/RelPermVanGenuchten.h"
 #include "SaturationDependentHeatConduction.h"
 #include "SaturationDependentSwelling.h"
+#include "ThermalConductivity/SoilThermalConductivitySomerton.h"
 #include "TransportPorosityFromMassBalance.h"
