@@ -71,7 +71,7 @@ AddTest(
     RUNTIME 17
     DIFF_DATA
     tm1_2Dbeam_ts_1_t_1.000000.vtu tm1_2Dbeam_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
-    tm1_2Dbeam_ts_1_t_1.000000.vtu tm1_2Dbeam_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+    tm1_2Dbeam_ts_1_t_1.000000.vtu tm1_2Dbeam_ts_1_t_1.000000.vtu displacement displacement 5e-11 0.0
 )
 
 AddTest(
@@ -113,7 +113,7 @@ AddTest(
     RUNTIME 17
     DIFF_DATA
     tm1_3Dgravity_ts_1_t_1.000000.vtu tm1_3Dgravity_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
-    tm1_3Dgravity_ts_1_t_1.000000.vtu tm1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
+    tm1_3Dgravity_ts_1_t_1.000000.vtu tm1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 1e-7 0.0
 )
 
 AddTest(
@@ -155,9 +155,9 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 17
     DIFF_DATA
-    tm2_1D1bt_ts_50_t_5.000000.vtu tm2_1D1bt_ts_50_t_5.000000.vtu temperature temperature 1e-10 0.0
+    tm2_1D1bt_ts_50_t_5.000000.vtu tm2_1D1bt_ts_50_t_5.000000.vtu temperature temperature 5e-8 0.0
     tm2_1D1bt_ts_50_t_5.000000.vtu tm2_1D1bt_ts_50_t_5.000000.vtu displacement displacement 1e-10 0.0
-    tm2_1D1bt_ts_100_t_10.000000.vtu tm2_1D1bt_ts_100_t_10.000000.vtu temperature temperature 1e-10 0.0
+    tm2_1D1bt_ts_100_t_10.000000.vtu tm2_1D1bt_ts_100_t_10.000000.vtu temperature temperature 3e-7 0.0
     tm2_1D1bt_ts_100_t_10.000000.vtu tm2_1D1bt_ts_100_t_10.000000.vtu displacement displacement 1e-10 0.0
 )
 
@@ -251,10 +251,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu displacement displacement 5e-10 1e-15
-    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu temperature temperature 5e-10 1e-7
-    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu sigma sigma 1e-6 0
-    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu epsilon epsilon 5e-10 1e-8
+    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu displacement displacement 2e-7 1e-15
+    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu temperature temperature 5e-4 1e-7
+    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu sigma sigma 5e-4 0
+    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 
 AddTest(
@@ -294,9 +294,9 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 24
     DIFF_DATA
-    ExpectedCreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu sigma sigma 5e-6 0
-    ExpectedCreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu epsilon epsilon 1e-15 0
-    ExpectedCreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu displacement displacement 1e-16 1e-9
+    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu sigma sigma 5e-6 0
+    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu epsilon epsilon 1e-15 0
+    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu displacement displacement 1e-16 1e-9
 )
 
 # Basic test that MFront models work for TM.

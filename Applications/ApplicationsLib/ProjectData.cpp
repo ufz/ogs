@@ -942,7 +942,7 @@ void ProjectData::parseProcesses(
                             name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
-                            process_config);
+                            process_config, _media);
                     break;
                 case 3:
                     process = ProcessLib::ThermoMechanics::
@@ -950,7 +950,7 @@ void ProjectData::parseProcesses(
                             name, *_mesh_vec[0], std::move(jacobian_assembler),
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
-                            process_config);
+                            process_config, _media);
                     break;
             }
         }
