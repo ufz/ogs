@@ -1,0 +1,1 @@
+\copydoc ProcessLib::RichardsMechanics::MicroPorosityParameters::mass_exchange_coefficient

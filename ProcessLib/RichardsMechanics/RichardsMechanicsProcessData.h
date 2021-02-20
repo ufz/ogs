@@ -10,14 +10,13 @@
 
 #pragma once
 
-#include "ParameterLib/Parameter.h"
-
+#include <Eigen/Dense>
 #include <memory>
 #include <utility>
 
-#include <Eigen/Dense>
-
+#include "ComputeMicroPorosity.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -54,6 +53,8 @@ struct RichardsMechanicsProcessData
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+
+    std::optional<MicroPorosityParameters> micro_porosity_parameters;
 
     bool const apply_mass_lumping;
 

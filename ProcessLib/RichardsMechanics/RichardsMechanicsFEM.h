@@ -189,6 +189,20 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::vector<double> getMicroSaturation() const override;
+    std::vector<double> const& getIntPtMicroSaturation(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    std::vector<double> getMicroPressure() const override;
+    std::vector<double> const& getIntPtMicroPressure(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
     std::vector<double> getPorosity() const override;
     std::vector<double> const& getIntPtPorosity(
         const double t,

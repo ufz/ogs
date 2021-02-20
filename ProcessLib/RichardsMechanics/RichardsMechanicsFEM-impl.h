@@ -13,6 +13,7 @@
 
 #include <cassert>
 
+#include "ComputeMicroPorosity.h"
 #include "IntegrationPointData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -219,6 +220,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
             p_cap_ip;
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
+        _ip_data[ip].liquid_pressure_m_prev = -p_cap_ip;
+        _ip_data[ip].liquid_pressure_m = -p_cap_ip;
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
@@ -228,6 +231,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _ip_data[ip].saturation_prev =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
+
+        if (medium->hasProperty(MPL::PropertyType::saturation_micro))
+        {
+            MPL::VariableArray vars;
+            vars[static_cast<int>(MPL::Variable::capillary_pressure)] =
+                p_cap_ip;
+            double const S_L_m =
+                medium->property(MPL::PropertyType::saturation_micro)
+                    .template value<double>(vars, x_position, t, dt);
+            _ip_data[ip].saturation_m_prev = S_L_m;
+        }
 
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
@@ -801,8 +815,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Swelling and possibly volumetric strain rate update.
         auto& sigma_sw = _ip_data[ip].sigma_sw;
+        auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
+        if (!medium->hasProperty(MPL::PropertyType::saturation_micro))
         {
-            auto const& sigma_sw_prev = _ip_data[ip].sigma_sw_prev;
 
             // If there is swelling, compute it. Update volumetric strain rate,
             // s.t. it corresponds to the mechanical part only.
@@ -828,32 +843,78 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     MPL::Variable::volumetric_strain)]) +=
                     identity2.transpose() * C_el.inverse() * sigma_sw_prev;
             }
+        }
 
-            if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
-            {
+        auto const mu =
+            liquid_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, x_position, t, dt);
+
+        // TODO (naumov) saturation_micro must be always defined together with
+        // the micro_porosity_parameters.
+        if (medium->hasProperty(MPL::PropertyType::saturation_micro))
+        {
+            double const phi_M_prev = _ip_data[ip].transport_porosity_prev;
+            double const phi_prev = _ip_data[ip].porosity_prev;
+            double const phi_m_prev = phi_prev - phi_M_prev;
+            double const p_L_m_prev = _ip_data[ip].liquid_pressure_m_prev;
+
+            auto const S_L_m_prev = _ip_data[ip].saturation_m_prev;
+
+            auto const [delta_phi_m, delta_e_sw, delta_p_L_m, delta_sigma_sw] =
+                computeMicroPorosity<DisplacementDim>(
+                    identity2.transpose() * C_el.inverse(), rho_LR, mu,
+                    *_process_data.micro_porosity_parameters, alpha, phi,
+                    -p_cap_ip, p_L_m_prev, variables_prev, S_L_m_prev,
+                    phi_m_prev, x_position, t, dt,
+                    medium->property(MPL::PropertyType::saturation_micro),
+                    solid_phase.property(
+                        MPL::PropertyType::swelling_stress_rate));
+
+            auto& phi_M = _ip_data[ip].transport_porosity;
+            phi_M = phi - (phi_m_prev + delta_phi_m);
+            variables_prev[static_cast<int>(
+                MPL::Variable::transport_porosity)] = phi_M_prev;
+            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                phi_M;
+
+            auto& p_L_m = _ip_data[ip].liquid_pressure_m;
+            p_L_m = p_L_m_prev + delta_p_L_m;
+            {  // Update micro saturation.
+                MPL::VariableArray variables_prev;
                 variables_prev[static_cast<int>(
-                    MPL::Variable::transport_porosity)] =
-                    _ip_data[ip].transport_porosity_prev;
+                    MPL::Variable::capillary_pressure)] = -p_L_m_prev;
+                MPL::VariableArray variables;
+                variables[static_cast<int>(MPL::Variable::capillary_pressure)] =
+                    -p_L_m;
 
-                _ip_data[ip].transport_porosity =
-                    solid_phase.property(MPL::PropertyType::transport_porosity)
-                        .template value<double>(variables, variables_prev,
-                                                x_position, t, dt);
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    _ip_data[ip].transport_porosity;
+                _ip_data[ip].saturation_m =
+                    medium->property(MPL::PropertyType::saturation_micro)
+                        .template value<double>(variables, x_position, t, dt);
             }
-            else
-            {
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    phi;
-            }
+            sigma_sw = sigma_sw_prev + delta_sigma_sw;
+        }
+
+        if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+        {
+            variables_prev[static_cast<int>(
+                MPL::Variable::transport_porosity)] =
+                _ip_data[ip].transport_porosity_prev;
+
+            _ip_data[ip].transport_porosity =
+                solid_phase.property(MPL::PropertyType::transport_porosity)
+                    .template value<double>(variables, variables_prev,
+                                            x_position, t, dt);
+            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                _ip_data[ip].transport_porosity;
+        }
+        else
+        {
+            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                phi;
         }
 
         double const k_rel =
             medium->property(MPL::PropertyType::relative_permeability)
-                .template value<double>(variables, x_position, t, dt);
-        auto const mu =
-            liquid_phase.property(MPL::PropertyType::viscosity)
                 .template value<double>(variables, x_position, t, dt);
 
         // Set mechanical variables for the intrinsic permeability model
@@ -934,7 +995,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .noalias() +=
             N_u_op.transpose() * phi * rho_LR * dS_L_dp_cap * b * N_p * w;
 
-        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        // For the swelling stress with double structure model the corresponding
+        // Jacobian u-p entry would be required, but it does not improve
+        // convergence and sometimes worsens it:
+        // if (medium->hasProperty(MPL::PropertyType::saturation_micro))
+        // {
+        //     -B.transpose() *
+        //         dsigma_sw_dS_L_m* dS_L_m_dp_cap_m*(p_L_m - p_L_m_prev) /
+        //         p_cap_dot_ip / dt* N_p* w;
+        // }
+        if (!medium->hasProperty(MPL::PropertyType::saturation_micro) &&
+            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
             using DimMatrix = Eigen::Matrix<double, 3, 3>;
             auto const dsigma_sw_dS_L =
@@ -1036,6 +1107,31 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx_p.transpose() * rho_LR * k_rel * rho_Ki_over_mu * b * w;
+
+        if (medium->hasProperty(MPL::PropertyType::saturation_micro))
+        {
+            double const alpha_bar = _process_data.micro_porosity_parameters
+                                         ->mass_exchange_coefficient;
+            auto const p_L_m = _ip_data[ip].liquid_pressure_m;
+            local_rhs.template segment<pressure_size>(pressure_index)
+                .noalias() -=
+                N_p.transpose() * alpha_bar / mu * (-p_cap_ip - p_L_m) * w;
+
+            local_Jac
+                .template block<pressure_size, pressure_size>(pressure_index,
+                                                              pressure_index)
+                .noalias() += N_p.transpose() * alpha_bar / mu * N_p * w;
+            if (p_cap_dot_ip != 0)
+            {
+                double const p_L_m_prev = _ip_data[ip].liquid_pressure_m_prev;
+                local_Jac
+                    .template block<pressure_size, pressure_size>(
+                        pressure_index, pressure_index)
+                    .noalias() += N_p.transpose() * alpha_bar / mu *
+                                  (p_L_m - p_L_m_prev) / (dt * p_cap_dot_ip) *
+                                  N_p * w;
+            }
+        }
     }
 
     if (_process_data.apply_mass_lumping)
@@ -1244,6 +1340,58 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 {
     return ProcessLib::getIntegrationPointScalarData(
         _ip_data, &IpData::saturation, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getMicroSaturation() const
+{
+    std::vector<double> result;
+    getIntPtMicroSaturation(0, {}, {}, result);
+    return result;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const& RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
+    getIntPtMicroSaturation(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::saturation_m, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::getMicroPressure() const
+{
+    std::vector<double> result;
+    getIntPtMicroPressure(0, {}, {}, result);
+    return result;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> const& RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
+    getIntPtMicroPressure(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IpData::liquid_pressure_m, cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

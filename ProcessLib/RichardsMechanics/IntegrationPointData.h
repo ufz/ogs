@@ -60,8 +60,12 @@ struct IntegrationPointData final
 
     typename ShapeMatricesTypePressure::GlobalDimVectorType v_darcy;
 
+    double liquid_pressure_m = std::numeric_limits<double>::quiet_NaN();
+    double liquid_pressure_m_prev = std::numeric_limits<double>::quiet_NaN();
     double saturation = std::numeric_limits<double>::quiet_NaN();
     double saturation_prev = std::numeric_limits<double>::quiet_NaN();
+    double saturation_m = std::numeric_limits<double>::quiet_NaN();
+    double saturation_m_prev = std::numeric_limits<double>::quiet_NaN();
     double porosity = std::numeric_limits<double>::quiet_NaN();
     double porosity_prev = std::numeric_limits<double>::quiet_NaN();
     double transport_porosity = std::numeric_limits<double>::quiet_NaN();
@@ -85,8 +89,10 @@ struct IntegrationPointData final
         sigma_eff_prev = sigma_eff;
         sigma_sw_prev = sigma_sw;
         saturation_prev = saturation;
+        saturation_m_prev = saturation_m;
         porosity_prev = porosity;
         transport_porosity_prev = transport_porosity;
+        liquid_pressure_m_prev = liquid_pressure_m;
         material_state_variables->pushBackState();
     }
 

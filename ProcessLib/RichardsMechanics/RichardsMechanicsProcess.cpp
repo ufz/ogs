@@ -314,6 +314,12 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable("saturation", 1,
                            &LocalAssemblerIF::getIntPtSaturation);
 
+    add_secondary_variable("micro_saturation", 1,
+                           &LocalAssemblerIF::getIntPtMicroSaturation);
+
+    add_secondary_variable("micro_pressure", 1,
+                           &LocalAssemblerIF::getIntPtMicroPressure);
+
     add_secondary_variable("porosity", 1,
                            &LocalAssemblerIF::getIntPtPorosity);
 
