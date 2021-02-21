@@ -782,8 +782,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
 
+        double const p_FR = -chi_S_L * p_cap_ip;
         variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
-            -chi_S_L * p_cap_ip;
+            p_FR;
         variables_prev[static_cast<int>(
             MPL::Variable::effective_pore_pressure)] =
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
@@ -920,9 +921,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
         {
-            auto const sigma_total = (_ip_data[ip].sigma_eff +
-                                      alpha * chi_S_L * identity2 * p_cap_ip)
-                                         .eval();
+            auto const sigma_total =
+                (_ip_data[ip].sigma_eff + alpha * p_FR * identity2).eval();
             // For stress dependent permeability.
             variables[static_cast<int>(MPL::Variable::total_stress)]
                 .emplace<SymmetricTensor>(
@@ -959,7 +959,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 displacement_index, displacement_index)
             .noalias() += B.transpose() * C * B * w;
 
-        double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
             p_FR - sigma_eff.dot(identity2) / (3 * (1 - phi));
