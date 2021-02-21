@@ -537,7 +537,7 @@ void RichardsMechanicsLocalAssembler<
         //
         eps_m.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps - C_el.inverse() * sigma_sw
+                ? eps + C_el.inverse() * sigma_sw
                 : eps;
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
