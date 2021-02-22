@@ -10,6 +10,7 @@
 #include "XdmfHdfWriter.h"
 
 #include <algorithm>
+#include <functional>
 
 #include "partition.h"
 #include "transformData.h"
@@ -26,12 +27,23 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     Geometry const& geometry = transformGeometry(mesh);
     Topology const& topology = transformTopology(mesh, geometry.hdf.offsets[0]);
 
-    bool include_names = true;
-    bool exclude_names = false;
-    std::vector<AttributeMeta> const variable_attributes =
-        transformAttributes(mesh, variable_output_names, include_names);
-    std::vector<AttributeMeta> const constant_attributes =
-        transformAttributes(mesh, variable_output_names, exclude_names);
+    std::vector<AttributeMeta> all_attributes = transformAttributes(mesh);
+
+    std::function<bool(AttributeMeta)> is_variable_attribute =
+        [variable_output_names](AttributeMeta attributeMeta) {
+            return std::find(variable_output_names.begin(),
+                             variable_output_names.end(),
+                             attributeMeta.hdf.name) !=
+                   variable_output_names.end();
+        };
+
+    std::vector<AttributeMeta> variable_attributes;
+    std::copy_if(all_attributes.begin(), all_attributes.end(),
+                 back_inserter(variable_attributes), is_variable_attribute);
+    std::vector<AttributeMeta> constant_attributes;
+    std::copy_if(all_attributes.begin(), all_attributes.end(),
+                 back_inserter(constant_attributes),
+                 std::not1(is_variable_attribute));
 
     // HDF5
     std::filesystem::path const hdf_filepath =
@@ -42,7 +54,8 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
                    std::back_inserter(hdf_data_variable_attributes),
                    [](AttributeMeta att) -> HdfData { return att.hdf; });
 
-    std::vector<HdfData> hdf_data_constant_attributes;
+    std::vector<HdfData> hdf_data_constant_attributes = {geometry.hdf,
+                                                         topology.hdf};
     std::transform(constant_attributes.begin(), constant_attributes.end(),
                    std::back_inserter(hdf_data_constant_attributes),
                    [](AttributeMeta att) -> HdfData { return att.hdf; });
@@ -50,7 +63,7 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     // geometry hdf data refers to the local data geometry and topology vector.
     // The hdf writer can write when data is out of scope.
     _hdf_writer = std::make_unique<HdfWriter>(
-        geometry.hdf, topology.hdf, std::move(hdf_data_constant_attributes),
+        std::move(hdf_data_constant_attributes),
         std::move(hdf_data_variable_attributes), time_step, hdf_filepath);
     // XDMF
     // The light data is only written by just one process

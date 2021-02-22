@@ -188,7 +188,7 @@ std::optional<AttributeMeta> transformAttribute(
 }
 
 std::vector<AttributeMeta> transformAttributes(
-    MeshLib::Mesh const& mesh, std::set<std::string> names, bool include)
+    MeshLib::Mesh const& mesh)
 {
     MeshLib::Properties const& properties = mesh.getProperties();
 
@@ -203,18 +203,14 @@ std::vector<AttributeMeta> transformAttributes(
             continue;
         }
 
-        auto found = std::find(names.begin(), names.end(), name) != names.end();
-        auto add = (include && found) || (!include && !found);
-
-        if (!add)
-            continue;
-
         auto attribute = transformAttribute(std::pair(name, property_base));
 
         if (attribute)
         {
             attributes.push_back(attribute.value());
         }
+        else
+            WARN("Could not create attribute meta of {:s}.", name);
     }
     return attributes;
 }

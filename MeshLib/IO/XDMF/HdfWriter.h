@@ -26,16 +26,12 @@ public:
      * \brief Write file with geometry and topology data. The data
      * itself is held by a structure outside of this class. The writer assumes
      * the data holder to not change during writing
-     * @param geometry contains meta data to coordinates
-     * @param topology contains meta data cells
      * @param attributes vector of attributes (each attribute is a OGS mesh
-     * property)
+     * property), contains meta data for geometry and topology
      * @param step number of the step (temporal collection)
      * @param filepath absolute or relative filepath to the hdf5 file
      */
-    HdfWriter(HdfData const& geometry,
-              HdfData const& topology,
-              std::vector<HdfData>
+    HdfWriter(std::vector<HdfData>
                   constant_attributes,
               std::vector<HdfData>
                   variable_attributes,

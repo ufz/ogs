@@ -145,9 +145,7 @@ static hid_t writeDataSet(
 }
 namespace MeshLib::IO
 {
-HdfWriter::HdfWriter(HdfData const& geometry,
-                     HdfData const& topology,
-                     std::vector<HdfData>
+HdfWriter::HdfWriter(std::vector<HdfData>
                          constant_attributes,
                      std::vector<HdfData>
                          variable_attributes,
@@ -161,24 +159,10 @@ HdfWriter::HdfWriter(HdfData const& geometry,
     std::string const& time_section = getTimeSection(step);
     hid_t const group_id = H5Gcreate2(file, time_section.c_str(), H5P_DEFAULT,
                                       H5P_DEFAULT, H5P_DEFAULT);
-    // geometry
-    hid_t status =
-        writeDataSet(geometry.data_start, geometry.data_type,
-                     geometry.data_space, geometry.offsets, geometry.file_space,
-                     _has_compression, group_id, geometry.name);
-
-    checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.", geometry.name);
-
-    // topology
-    status =
-        writeDataSet(topology.data_start, topology.data_type,
-                     topology.data_space, topology.offsets, topology.file_space,
-                     _has_compression, group_id, topology.name);
-    checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.", topology.name);
 
     for (auto const& attribute : constant_attributes)
     {
-        status = writeDataSet(attribute.data_start, attribute.data_type,
+        hid_t status = writeDataSet(attribute.data_start, attribute.data_type,
                               attribute.data_space, attribute.offsets,
                               attribute.file_space, _has_compression, group_id,
                               attribute.name);
@@ -187,9 +171,10 @@ HdfWriter::HdfWriter(HdfData const& geometry,
                        attribute.name);
     }
 
-    H5Gclose(group_id);
+    hid_t status = H5Gclose(group_id);
+    checkHdfStatus(status, "HDF Group could not be closed!");
     status = H5Fclose(file);
-    checkHdfStatus(status, "HDF Writer could not be created!", topology.name);
+    checkHdfStatus(status, "HDF File could not be closed!");
 }
 
 bool HdfWriter::writeStep(int const step) const
@@ -205,7 +190,7 @@ bool HdfWriter::writeStep(int const step) const
                               attribute.file_space, _has_compression, group,
                               attribute.name);
 
-        checkHdfStatus(status, "Not all attributes written to HDF5 file.");
+        checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.", attribute.name);
     }
 
     H5Gclose(group);
