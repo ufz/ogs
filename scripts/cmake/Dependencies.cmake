@@ -127,6 +127,28 @@ endif()
 if(OGS_USE_XDMF)
     find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
 
+    string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
+    CPMFindPackage(
+        NAME HDF5
+        GITHUB_REPOSITORY HDFGroup/hdf5
+        GIT_TAG hdf5-${HDF5_TAG}
+        VERSION ${ogs.minimum_version.hdf5}
+        OPTIONS
+            "HDF5_EXTERNALLY_CONFIGURED 1"
+            "HDF5_GENERATE_HEADERS OFF"
+            "BUILD_TESTING OFF"
+            "HDF5_BUILD_TOOLS OFF"
+            "HDF5_BUILD_EXAMPLES OFF"
+            "HDF5_BUILD_HL_LIB OFF"
+            "HDF5_BUILD_FORTRAN OFF"
+            "HDF5_BUILD_CPP_LIB OFF"
+            "HDF5_BUILD_JAVA OFF"
+    )
+    if(hdf5_ADDED)
+        target_include_directories(hdf5-static INTERFACE ${hdf5_BINARY_DIR})
+        list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
+    endif()
+
     CPMAddPackage(
         NAME xdmf
         VERSION 3.0.0
@@ -143,12 +165,7 @@ if(OGS_USE_XDMF)
             find_package(Iconv REQUIRED)
         endif()
 
-        if(MSVC AND OGS_USE_CONAN)
-            # Hack: Conan HDF5 not found on Windows
-            target_link_libraries(OgsXdmf ${CONAN_LIBS})
-        else()
-            target_link_libraries(OgsXdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
-        endif()
+        target_link_libraries(OgsXdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
         target_include_directories(OgsXdmfCore
             PUBLIC
                 ${xdmf_SOURCE_DIR}/core
@@ -157,7 +174,7 @@ if(OGS_USE_XDMF)
                 ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
         find_package(LibXml2 REQUIRED) # LibXml2 is a XdmfCore dependency
-        target_link_libraries(OgsXdmfCore PUBLIC LibXml2::LibXml2)
+        target_link_libraries(OgsXdmfCore PUBLIC LibXml2::LibXml2 hdf5-static)
 
         set_target_properties(OgsXdmf OgsXdmfCore PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}

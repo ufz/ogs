@@ -54,19 +54,10 @@ endif()
 
 if(OGS_USE_XDMF)
     list(APPEND CONAN_REQUIRES
-        hdf5/${ogs.tested_version.hdf5}
         libxml2/${ogs.tested_version.libxml2}
     )
     if(UNIX AND NOT APPLE)
         list(APPEND CONAN_OPTIONS libxml2:iconv=False)
-    endif()
-    if(MSVC)
-        # Hack: Conan HDF5 not found on Windows
-        # Use custom FindHDF5 with forced values from Conan
-        list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/scripts/cmake/conan/win-hdf5")
-    else()
-        # Hack: Suppress hdf5 compiler wrapper checks
-        set(HDF5_C_COMPILER_EXECUTABLE "OFF" CACHE INTERNAL "")
     endif()
 endif()
 
