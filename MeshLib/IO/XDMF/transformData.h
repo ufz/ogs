@@ -11,9 +11,10 @@
  */
 #pragma once
 
-#include "XdmfHdfData.h"
 #include <set>
 #include <string>
+
+#include "XdmfHdfData.h"
 
 namespace MeshLib
 {

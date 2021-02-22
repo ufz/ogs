@@ -21,7 +21,7 @@ struct PartitionInfo
     std::size_t local_offset;
     std::size_t local_length;
     std::size_t global_number_processes;
-} ;
+};
 
 PartitionInfo getPartitionInfo(std::size_t const size);
 bool isFileManager();

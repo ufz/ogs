@@ -187,14 +187,12 @@ std::optional<AttributeMeta> transformAttribute(
     return AttributeMeta{std::move(hdf), std::move(xdmf)};
 }
 
-std::vector<AttributeMeta> transformAttributes(
-    MeshLib::Mesh const& mesh)
+std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh)
 {
     MeshLib::Properties const& properties = mesh.getProperties();
 
     // \TODO (tm) use c++20 ranges
     // a = p | filter (first!=OGS_VERSION) | filter null_opt | transformAttr |
-    // optional_value
     std::vector<AttributeMeta> attributes;
     for (auto [name, property_base] : properties)
     {
@@ -203,14 +201,14 @@ std::vector<AttributeMeta> transformAttributes(
             continue;
         }
 
-        auto attribute = transformAttribute(std::pair(name, property_base));
-
-        if (attribute)
+        if (auto attribute = transformAttribute(std::pair(name, property_base)))
         {
             attributes.push_back(attribute.value());
         }
         else
+        {
             WARN("Could not create attribute meta of {:s}.", name);
+        }
     }
     return attributes;
 }
