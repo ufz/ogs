@@ -4,7 +4,7 @@ code coverage:
     - .template-build-linux
   tags: [shell, envinf]
   needs:
-    - job: "build linux: [USE_PYTHON=ON]"
+    - job: "build linux: [USE_PYTHON=OFF]"
       artifacts: false
     - meta
   variables:
