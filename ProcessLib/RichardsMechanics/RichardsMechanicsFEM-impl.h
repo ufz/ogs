@@ -543,19 +543,15 @@ void RichardsMechanicsLocalAssembler<
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(
-            variables, t, x_position, dt, temperature);
+        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
+                                                temperature);
 
         //
         // displacement equation, displacement part
         //
-        K.template block<displacement_size, displacement_size>(
-             displacement_index, displacement_index)
-            .noalias() += B.transpose() * C * B * w;
-
         double const rho = rho_SR * (1 - phi) + S_L * phi * rho_LR;
-        rhs.template segment<displacement_size>(displacement_index).noalias() +=
-            N_u_op.transpose() * rho * b * w;
+        rhs.template segment<displacement_size>(displacement_index).noalias() -=
+            (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
 
         //
         // pressure equation, pressure part.
