@@ -5,6 +5,7 @@ project = "Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.prj"
 author = "Dmitri Naumov"
 weight = 102
 
+aliases = ["/docs/benchmarks/"]
 
 [menu.docs]
 name = "Benchmarks"
