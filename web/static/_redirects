@@ -19,6 +19,3 @@ https://docs.opengeosys.org https://www.opengeosys.org/docs 301!
 https://docs.opengeosys.org/* https://www.opengeosys.org/:splat 301!
 https://tutorials.opengeosys.org https://www.opengeosys.org/categories/tutorials/ 301!
 https://benchmarks.opengeosys.org https://www.opengeosys.org/docs/benchmarks/ 301!
-
-/docs/devguide /docs/devguide/getting-started/introduction/
-/docs/benchmarks /docs/benchmarks/elliptic/elliptic-dirichlet/

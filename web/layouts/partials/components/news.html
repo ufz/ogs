@@ -2,7 +2,7 @@
   {{ template "discours-posts" (dict "page" . "category" "announcements" "count" "3") }}
 </div>
 
-<div class="relative mx-auto lg:max-w-7xl mt-8">
+<div class="hidden md:block relative md:mx-auto lg:max-w-7xl mt-8">
   {{ template "discours-posts" (dict "page" . "category" "usability" "count" "3" "heading" "Discussions") }}
 </div>
 
@@ -11,7 +11,7 @@
   <h3 class="mb-4 text-3xl">Latest Benchmarks</h3>
   <div class="py-0 lg:px-4">
     {{ template "latest-pages" . }}
-</div>
+  </div>
 </div>
 */}}
 
@@ -19,29 +19,19 @@
 {{/*
 <h2 class="mb-2 lg:mb-4 text-2xl lg:text-3xl">
   {{ if .heading }}
-{{ .heading }}
-{{ else }}
-{{ .category | humanize }}
-{{ end }}
+  {{ .heading }}
+  {{ else }}
+  {{ .category | humanize }}
+  {{ end }}
 </h2>
 */}}
-<div class="mt-2 grid lg:grid-cols-3 lg:gap-x-5 gap-4" x-data="categoryData('{{ .category }}', {{ .count }})"
+<div class="mt-2 grid md:grid-cols-3 lg:gap-x-5 md:gap-4" x-data="categoryData('{{ .category }}', {{ .count }})"
   x-init="init()">
   <template x-for="topic in topics" :key="topic.id">
-    <div class="mb-3 border-b-2 lg:border-b-o lg:shadow lg:rounded-lg p-4">
+    <div class="p-1 px-2 md:p-4 md:mb-3 md:border-b-2 lg:border-b-o lg:shadow lg:rounded-lg">
       <a x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug" class="block">
-        <template x-if="topic.tags.length > 0">
-          <div class="float-right lg:float-none">
-            <span x-text="topic.tags.slice(0, 1)" x-bind:class="{
-                'bg-indigo-100 text-indigo-800': topic.tags.slice(0, 1) == 'ogs6',
-                'bg-green-100 text-green-800': topic.tags.slice(0, 1) == 'ogs5',
-                'bg-pink-100 text-pink-800': topic.tags.slice(0, 1) == 'infrastructure' }"
-              class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium leading-5">
-            </span>
-
-          </div>
-        </template>
-        <h3 x-text="topic.title" class="text-xl font-bold leading-7 text-gray-800 mt-3">
+        <h3 x-text="topic.title"
+          class="text-l lg:text-xl font-bold leading-7 text-blue-800 underline mt-3 line-clamp-1 lg:line-clamp-2">
         </h3>
         <div class="mt-2 flex items-center">
           <div class="flex-shrink-0">
@@ -54,8 +44,18 @@
               <time datetime="2020-03-15"
                 x-text="(new Date(topic.created_at)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })">
               </time>
+              <template x-if="topic.tags.length > 0">
+                <div class="float-right lg:float-none hidden">
+                  <span x-text="topic.tags.slice(0, 1)" x-bind:class="{
+                      'bg-indigo-100 text-indigo-800': topic.tags.slice(0, 1) == 'ogs6',
+                      'bg-green-100 text-green-800': topic.tags.slice(0, 1) == 'ogs5',
+                      'bg-pink-100 text-pink-800': topic.tags.slice(0, 1) == 'infrastructure' }"
+                    class="inline-flex items-center mx-1 px-2 py-0.1 rounded-full text-sm font-medium leading-5">
+                  </span>
+                </div>
+              </template>
               <template x-if="topic.posts_count > 1">
-                <span>
+                <span class="hidden lg:inline">
                   <span class="mx-1">
                     &middot;
                   </span>

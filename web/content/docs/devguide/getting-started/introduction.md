@@ -4,6 +4,8 @@ title = "Welcome!"
 author = "Lars Bilke"
 weight = 1001
 
+aliases = ["/docs/devguide/"]
+
 [menu.docs]
 name = "Developer Guide"
 identifier = "devguide"

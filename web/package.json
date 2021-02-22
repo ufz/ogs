@@ -16,5 +16,8 @@
   },
   "peerDependencies": {
     "postcss": "^8.1.9"
+  },
+  "dependencies": {
+    "@tailwindcss/line-clamp": "^0.2.0"
   }
 }

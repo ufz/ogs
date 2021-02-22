@@ -48,21 +48,21 @@ cite::before {
   @apply border-blue-200;
   @apply border-l-2;
   @apply -ml-4;
-  @apply px-4;
+  @apply pl-4;
 }
 
 .linux {
   @apply border-yellow-200;
   @apply border-l-2;
   @apply -ml-4;
-  @apply px-4;
+  @apply pl-4;
 }
 
 .mac {
   @apply border-gray-200;
   @apply border-l-2;
   @apply -ml-4;
-  @apply px-4;
+  @apply pl-4;
 }
 
 #btn-win.active {

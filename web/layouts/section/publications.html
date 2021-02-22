@@ -3,12 +3,12 @@
   class="flex flex-wrap w-full mb-6 flex-col items-center text-center prose prose-sm lg:prose max-w-none lg:max-w-none">
   {{ .Content }}
 </div>
-<div class="flex flex-wrap -m-4">
+<div class="flex flex-wrap -m-4 p-4">
   {{ range .Site.Menus.publications }}
   <div class="xl:w-1/3 md:w-1/2 mt-2 px-4 py-2 md:p-4">
     <a href="{{ .URL }}">
       <div class="p-4 bg-gray-100 hover:bg-white rounded-lg shadow h-full">
-        <h3 class="text-xl mb-2 border-b text-gray-800">
+        <h3 class="text-xl mb-2 border-b text-blue-800">
           {{ .Name }}
           {{ $url_first_char := substr .URL 0 1 }}
           {{ if not (eq $url_first_char "/") }}

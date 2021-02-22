@@ -29,12 +29,16 @@ if(NOT IS_GIT_REPO)
 endif()
 
 if(IS_GIT_REPO)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
-        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-        OUTPUT_VARIABLE OGS_GIT_BRANCH
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
+    if(DEFINED ENV{CI_COMMIT_BRANCH})
+        set(OGS_GIT_BRANCH $ENV{CI_COMMIT_BRANCH})
+    else()
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            OUTPUT_VARIABLE OGS_GIT_BRANCH
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+    endif()
 endif()
 
 if(IS_GIT_REPO AND NOT OGS_VERSION)
