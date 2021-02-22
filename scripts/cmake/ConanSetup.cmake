@@ -33,13 +33,11 @@ set(CONAN_SYSTEM_INCLUDES ON)
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
-    boost/${ogs.minimum_version.boost}@conan/stable
     vtk/${ogs.tested_version.vtk}@bilke/stable
     CACHE INTERNAL ""
 )
 
 set(CONAN_OPTIONS
-    boost:header_only=True
     vtk:minimal=True
     vtk:ioxml=True
     vtk:iolegacy=True
@@ -122,6 +120,10 @@ endif()
 
 if(OGS_USE_NETCDF)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} netcdf-cxx/4.3.1-1@bilke/testing)
+endif()
+
+if(NOT DEFINED CONAN_REQUIRES)
+    return()
 endif()
 
 conan_check(VERSION ${ogs.minimum_version.conan})

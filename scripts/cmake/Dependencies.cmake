@@ -208,6 +208,12 @@ if(OGS_BUILD_GUI)
     endif()
 endif()
 
+CPMFindPackage(
+    NAME Boost
+    GITHUB_REPOSITORY Orphis/boost-cmake
+    VERSION ${ogs.minimum_version.boost}
+)
+
 # Disable warnings
 foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
     target_compile_options(${TARGET} PRIVATE

@@ -60,8 +60,6 @@ find_program(GMSH gmsh)
 ######################
 ### Find libraries ###
 ######################
-find_package(Boost ${ogs.minimum_version.boost} REQUIRED)
-
 set(VTK_COMPONENTS vtkIOXML vtkIOLegacy)
 if(OGS_BUILD_GUI)
     set(VTK_COMPONENTS ${VTK_COMPONENTS}
