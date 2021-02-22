@@ -16,14 +16,7 @@ if(OGS_USE_NETCDF)
 endif()
 
 if(OGS_BUILD_GUI)
-    if(Shapelib_FOUND)
-        list(APPEND TOOLS ConvertSHPToGLI)
-    endif()
-    list(APPEND TOOLS FEFLOW2OGS)
-endif()
-
-if(Shapelib_FOUND)
-    list(APPEND TOOLS Mesh2Shape)
+    list(APPEND TOOLS ConvertSHPToGLI FEFLOW2OGS Mesh2Shape)
 endif()
 
 foreach(TOOL ${TOOLS})
@@ -34,11 +27,7 @@ set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
 install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)
 
 if(TARGET ConvertSHPToGLI)
-    target_link_libraries(ConvertSHPToGLI GeoLib Qt5::Xml ${Shapelib_LIBRARIES})
-endif()
-
-if(TARGET Mesh2Shape)
-    target_link_libraries(Mesh2Shape ${Shapelib_LIBRARIES})
+    target_link_libraries(ConvertSHPToGLI GeoLib Qt5::Xml)
 endif()
 
 if(TARGET NetCdfConverter)

@@ -91,7 +91,6 @@ endif()
 
 if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
-        shapelib/1.3.0@bilke/stable
         # libgeotiff/1.4.2@bilke/stable # TODO
         # Overrides for dependency mismatches
         bzip2/1.0.8

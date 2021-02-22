@@ -214,6 +214,17 @@ CPMFindPackage(
     VERSION ${ogs.minimum_version.boost}
 )
 
+if(OGS_BUILD_GUI)
+    CPMAddPackage(
+        NAME shapelib
+        GITHUB_REPOSITORY OSGeo/shapelib
+        VERSION 1.5.0
+    )
+    if(shapelib_ADDED)
+        target_include_directories(shp INTERFACE ${shapelib_SOURCE_DIR})
+    endif()
+endif()
+
 # Disable warnings
 foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
     target_compile_options(${TARGET} PRIVATE

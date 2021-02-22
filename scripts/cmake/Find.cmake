@@ -159,13 +159,6 @@ if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
 endif()
 
-find_package(Shapelib)
-if(Shapelib_FOUND)
-    include_directories(SYSTEM ${Shapelib_INCLUDE_DIRS})
-elseif(OGS_BUILD_GUI)
-    message(FATAL_ERROR "Shapelib not found but it is required for OGS_BUILD_GUI!")
-endif()
-
 ## Sundials cvode ode-solver library
 if(OGS_USE_CVODE)
     find_package(CVODE REQUIRED)
