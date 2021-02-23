@@ -83,7 +83,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                     required! Found version ${CMAKE_CXX_COMPILER_VERSION}.")
             endif()
         endif()
-        add_compile_options(-fext-numeric-literals)
+        add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fext-numeric-literals>)
         include(GCCSanitizer)
     endif()
 
