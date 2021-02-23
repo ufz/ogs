@@ -62,10 +62,6 @@ if(OGS_USE_LIS)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} lis/1.7.9@bilke/stable)
 endif()
 
-if(OGS_USE_CVODE)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} cvode/2.8.2@bilke/stable)
-endif()
-
 if(OGS_USE_MFRONT)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} tfel/3.3.0@bilke/testing)
 endif()
