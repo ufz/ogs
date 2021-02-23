@@ -171,10 +171,10 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 80
     DIFF_DATA
-    tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu temperature temperature 1e-10 0.0
+    tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu temperature temperature 5e-08 0.0
     tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu displacement displacement 1e-11 0.0
-    tm2_1Dfixc_ts_100_t_10.000000.vtu tm2_1Dfixc_ts_100_t_10.000000.vtu temperature temperature 1e-10 0.0
-    tm2_1Dfixc_ts_100_t_10.000000.vtu tm2_1Dfixc_ts_100_t_10.000000.vtu displacement displacement 1e-11 0.0
+    tm2_1Dfixc_ts_100_t_10.000000.vtu tm2_1Dfixc_ts_100_t_10.000000.vtu temperature temperature 2e-7 0.0
+    tm2_1Dfixc_ts_100_t_10.000000.vtu tm2_1Dfixc_ts_100_t_10.000000.vtu displacement displacement 1e-10 0.0
 )
 #--
 
