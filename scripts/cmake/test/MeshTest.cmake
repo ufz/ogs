@@ -17,7 +17,7 @@
 # )
 
 function (MeshTest)
-    if(NOT BUILD_TESTING)
+    if(NOT OGS_BUILD_TESTING)
         return()
     endif()
     # parse arguments

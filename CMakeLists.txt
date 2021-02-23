@@ -73,6 +73,7 @@ if(OGS_USE_PETSC)
 endif()
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
+option(OGS_BUILD_TESTING "Should the tests be built?" ON)
 
 # ---- CMake includes ----
 include(GitSetup)
@@ -220,7 +221,7 @@ include(scripts/cmake/packaging/Pack.cmake)
 # ---- Subdirectories ----
 
 # xdmfdiff
-if(OGS_USE_XDMF AND BUILD_TESTING)
+if(OGS_USE_XDMF AND OGS_BUILD_TESTING)
     add_subdirectory(Tests/xdmfdiff)
 endif()
 
@@ -240,12 +241,12 @@ if(OGS_BUILD_PROCESS_ComponentTransport
     add_subdirectory(ChemistryLib)
 endif()
 
-if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR BUILD_TESTING)
+if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
     add_subdirectory(ParameterLib)
     add_subdirectory(MaterialLib)
     add_subdirectory(ProcessLib)
 endif()
-if(BUILD_TESTING AND NOT IS_SUBPROJECT)
+if(OGS_BUILD_TESTING AND NOT IS_SUBPROJECT)
     add_subdirectory(Tests)
 endif()
 

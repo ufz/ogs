@@ -14,6 +14,6 @@ if(OGS_BUILD_SWMM)
     add_subdirectory(SWMMConverter)
 endif()
 
-if(BUILD_TESTING)
+if(OGS_BUILD_TESTING)
     include(Tests.cmake)
 endif()

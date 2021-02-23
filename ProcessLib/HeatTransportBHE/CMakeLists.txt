@@ -13,6 +13,6 @@ target_link_libraries(HeatTransportBHE
     $<$<TARGET_EXISTS:pybind11::pybind11>:pybind11::pybind11>
 )
 
-if(BUILD_TESTING)
+if(OGS_BUILD_TESTING)
     include(Tests.cmake)
 endif()

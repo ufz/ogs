@@ -1,6 +1,6 @@
 function (OgsTest)
 
-    if(NOT OGS_BUILD_CLI OR NOT BUILD_TESTING)
+    if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING)
         return()
     endif()
     set(options DISABLED)

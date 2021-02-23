@@ -1,4 +1,4 @@
-if(BUILD_TESTING)
+if(OGS_BUILD_TESTING)
     CPMAddPackage(
         NAME googletest
         GITHUB_REPOSITORY google/googletest

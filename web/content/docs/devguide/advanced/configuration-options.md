@@ -19,7 +19,7 @@ CMake switches to enable / disable parts of OGS.
 
 - `OGS_BUILD_CLI` - Builds the simulator. *Defaults* to *ON*. If set to *OFF* all processes are also disabled.
 - `OGS_BUILD_GUI` - Builds the Data Explorer. *Defaults* to *OFF*.
-- `BUILD_TESTING` - Builds the test executables. *Defaults* to *ON*.
+- `OGS_BUILD_TESTING` - Builds the test executables. *Defaults* to *ON*.
 - `OGS_BUILD_UTILS` - Builds several utilities.
 - `OGS_NO_EXTERNAL_LIBS` - Disables all external optional dependencies.
 - `OGS_BUILD_PROCESS_X` - For enabling/disabling compilation of process `X`.

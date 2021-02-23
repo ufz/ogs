@@ -43,7 +43,7 @@ set(LOCAL_VIRTUALENV_BIN_DIRS
 )
 
 if(POETRY)
-    if(BUILD_TESTING)
+    if(OGS_BUILD_TESTING)
         list(APPEND PYTHON_PACKAGES snakemake=${ogs.minimum_version.snakemake})
     endif()
     execute_process(COMMAND ${CMD_COMMAND} poetry add ${PYTHON_PACKAGES}

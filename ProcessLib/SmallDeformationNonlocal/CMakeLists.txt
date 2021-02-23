@@ -5,6 +5,6 @@ target_link_libraries(SmallDeformationNonlocal
                       PUBLIC ProcessLib
                       PRIVATE ParameterLib)
 
-if(BUILD_TESTING)
+if(OGS_BUILD_TESTING)
     include(Tests.cmake)
 endif()
