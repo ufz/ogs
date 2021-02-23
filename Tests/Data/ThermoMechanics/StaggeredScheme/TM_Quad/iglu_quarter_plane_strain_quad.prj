@@ -35,9 +35,19 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>1.583e-6</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>1.583e-6</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>283.15</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-3.207e-05</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -64,9 +74,19 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>1.825e-6</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>1.825e-6</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>283.15</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-9e-5</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>

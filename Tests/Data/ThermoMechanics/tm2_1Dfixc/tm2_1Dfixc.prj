@@ -30,9 +30,19 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>2000.</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>2000.0</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>0.0</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-9.0e-4</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
