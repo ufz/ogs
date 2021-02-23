@@ -3,6 +3,13 @@ if(IS_SUBPROJECT)
     return()
 endif()
 
+# Put ogs installs into its own component and then only install
+# this component (avoids third-party installs from CPM).
+set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ogs)
+set(CPACK_INSTALL_CMAKE_PROJECTS
+    "${PROJECT_BINARY_DIR};${PROJECT_NAME};${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME};/"
+)
+
 option(OGS_INSTALL_DEPENDENCIES "Package dependencies.")
 include(packaging/PackagingMacros)
 include(packaging/ArchiveTestdata)
@@ -53,31 +60,6 @@ if(UNIX)
 endif()
 
 include (CPack)
-
-cpack_add_component_group(Applications
-    DISPLAY_NAME Applications
-    DESCRIPTION "OpenGeoSys applications"
-    EXPANDED
-    BOLD_TITLE
-)
-
-cpack_add_component_group(Utilities
-    DISPLAY_NAME Utilities
-    DESCRIPTION "OpenGeoSys utilities"
-    EXPANDED
-)
-
-cpack_add_component(ogs_extras
-    DISPLAY_NAME "Extra tools"
-    DESCRIPTION "Miscellaneous tools."
-    GROUP Utilities
-)
-
-cpack_add_component(ogs_docs
-    DISPLAY_NAME "Documentation"
-    DESCRIPTION "PDF documentation."
-    GROUP Utilities
-)
 
 if(OGS_USE_CONAN)
     # Install Qt platform shared libraries

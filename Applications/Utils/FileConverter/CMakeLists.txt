@@ -24,7 +24,7 @@ foreach(TOOL ${TOOLS})
     target_link_libraries(${TOOL} ApplicationsFileIO GitInfoLib MeshLib tclap)
 endforeach()
 set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
-install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)
+install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
 
 if(TARGET ConvertSHPToGLI)
     target_link_libraries(ConvertSHPToGLI GeoLib Qt5::Xml)

@@ -42,5 +42,4 @@ configure_file(XmlIO/OpenGeoSysProject.xsd
                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysProject.xsd COPYONLY)
 install(FILES XmlIO/OpenGeoSysCND.xsd XmlIO/OpenGeoSysNum.xsd
               XmlIO/OpenGeoSysProject.xsd
-        DESTINATION bin
-        COMPONENT ogs_cli)
+        DESTINATION bin)

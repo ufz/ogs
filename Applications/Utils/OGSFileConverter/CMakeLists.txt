@@ -16,4 +16,4 @@ add_autogen_include(OGSFileConverterLib)
 set_target_properties(OGSFileConverter OGSFileConverterLib
                       PROPERTIES FOLDER "Utilities")
 
-install(TARGETS OGSFileConverter RUNTIME DESTINATION bin COMPONENT Utilities)
+install(TARGETS OGSFileConverter RUNTIME DESTINATION bin)

@@ -28,5 +28,5 @@ if(OGS_BUILD_GUI)
     file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf"
         "[Paths]\nPlugins = ../${_qt_plugin_dir}\n")
     install(FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf"
-        DESTINATION bin COMPONENT ogs_gui)
+        DESTINATION bin)
 endif()

@@ -30,4 +30,4 @@ if(TARGET VerticalSliceFromLayers)
 endif()
 
 set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
-install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)
+install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)

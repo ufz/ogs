@@ -5,6 +5,6 @@ foreach(TOOL ${TOOLS})
     target_link_libraries(${TOOL} GitInfoLib MeshLib tclap)
 endforeach()
 set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
-install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)
+install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
 
 add_subdirectory(PartitionMesh)
