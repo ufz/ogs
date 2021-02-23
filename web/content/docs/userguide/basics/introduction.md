@@ -4,15 +4,15 @@ title = "Introduction"
 author = "Lars Bilke"
 weight = 1
 
+aliases = [ "/docs/userguide/",
+            "/docs/quickstart/",
+            "/docs/quickstart/basics/quickstart" ] # Redirect for Hydrology III tutorial
+
 [menu.docs]
 name = "User Guide"
 identifier = "userguide"
 weight = 1
 post = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
-
-aliases = [ "/docs/userguide/",
-            "/docs/quickstart/",
-            "/docs/quickstart/basics/quickstart" ] # Redirect for Hydrology III tutorial
 
 [menu]
   [menu.userguide]

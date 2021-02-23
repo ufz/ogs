@@ -4,6 +4,8 @@ title = "Introduction"
 author = "Lars Bilke"
 weight = 100
 
+aliases = ["/docs/tools/"]
+
 
 [menu.docs]
 name = "Tools & Workflows"
