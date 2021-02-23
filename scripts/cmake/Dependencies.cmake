@@ -124,6 +124,12 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
+CPMFindPackage(
+    NAME Boost
+    GITHUB_REPOSITORY Orphis/boost-cmake
+    VERSION ${ogs.minimum_version.boost}
+)
+
 if(OGS_USE_XDMF)
     find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
 
@@ -149,6 +155,25 @@ if(OGS_USE_XDMF)
         list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
     endif()
 
+    CPMFindPackage(
+        NAME LibXml2
+        GITHUB_REPOSITORY GNOME/libxml2
+        VERSION ${ogs.minimum_version.libxml2}
+        GIT_TAG f93ca3e140a371b26366f747a408588c631e0fd1
+        OPTIONS
+            "LIBXML2_WITH_TESTS OFF"
+            "LIBXML2_WITH_PROGRAMS OFF"
+            "LIBXML2_WITH_ICONV OFF"
+            "LIBXML2_WITH_ICU OFF"
+            "LIBXML2_WITH_LZMA OFF"
+            "LIBXML2_WITH_PYTHON OFF"
+            "LIBXML2_WITH_ZLIB OFF"
+    )
+    if(LibXml2_ADDED)
+        add_library(LibXml2::LibXml2 ALIAS LibXml2)
+        set(LIBXML2_INCLUDE_DIR ${LibXml2_SOURCE_DIR})
+    endif()
+
     CPMAddPackage(
         NAME xdmf
         VERSION 3.0.0
@@ -161,11 +186,8 @@ if(OGS_USE_XDMF)
             ${xdmf_SOURCE_DIR}
             ${xdmf_BINARY_DIR}
         )
-        if(OGS_USE_CONAN AND UNIX AND APPLE)
-            find_package(Iconv REQUIRED)
-        endif()
 
-        target_link_libraries(OgsXdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
+        target_link_libraries(OgsXdmf Boost::boost ZLIB::ZLIB)
         target_include_directories(OgsXdmfCore
             PUBLIC
                 ${xdmf_SOURCE_DIR}/core
@@ -173,8 +195,7 @@ if(OGS_USE_XDMF)
             PRIVATE
                 ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
-        find_package(LibXml2 REQUIRED) # LibXml2 is a XdmfCore dependency
-        target_link_libraries(OgsXdmfCore PUBLIC LibXml2::LibXml2 hdf5-static)
+        target_link_libraries(OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 hdf5-static)
 
         set_target_properties(OgsXdmf OgsXdmfCore PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
@@ -224,12 +245,6 @@ if(OGS_BUILD_GUI)
         target_include_directories(rapidxml INTERFACE ${rapidxml_SOURCE_DIR})
     endif()
 endif()
-
-CPMFindPackage(
-    NAME Boost
-    GITHUB_REPOSITORY Orphis/boost-cmake
-    VERSION ${ogs.minimum_version.boost}
-)
 
 if(OGS_BUILD_GUI)
     CPMAddPackage(
