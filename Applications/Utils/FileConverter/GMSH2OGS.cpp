@@ -31,10 +31,75 @@
 #include "GeoLib/AABB.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
+
+static MeshLib::Mesh createMeshFromElements(
+    MeshLib::Mesh const& mesh,
+    std::vector<MeshLib::Element*> const& selected_elements)
+{
+    // Create boundary mesh.
+    auto nodes = copyNodeVector(mesh.getNodes());
+    auto elements = copyElementVector(selected_elements, nodes);
+
+    // Cleanup unused nodes
+    removeMarkedNodes(markUnusedNodes(elements, nodes), nodes);
+
+    return {mesh.getName(), nodes, elements};
+}
+
+static void extractBoundaryMeshes(MeshLib::Mesh const& mesh,
+                                  MeshLib::ElementSearch const& ex,
+                                  std::string const& file_name)
+{
+    // Copy line element ids to process them to boundary meshes.
+    auto line_element_ids = ex.getSearchedElementIDs();
+
+    auto const material_ids = materialIDs(mesh);
+    if (material_ids == nullptr)
+    {
+        OGS_FATAL(
+            "GMSH2OGS: Expected material ids to be present in the mesh to "
+            "extract boundary meshes.");
+    }
+    auto const& elements = mesh.getElements();
+
+    while (!line_element_ids.empty())
+    {
+        // Partition in two blocks, with elements for the material id at
+        // the end, s.t. one can erase them easily.
+        int const material_id = (*material_ids)[line_element_ids.back()];
+        auto split =
+            std::partition(begin(line_element_ids), end(line_element_ids),
+                           [&material_id, &material_ids](int const id) {
+                               return (*material_ids)[id] != material_id;
+                           });
+
+        // Add elements with same material id to the mesh.
+        std::vector<MeshLib::Element*> single_material_elements;
+        single_material_elements.reserve(
+            std::distance(split, end(line_element_ids)));
+        std::transform(split, end(line_element_ids),
+                       std::back_inserter(single_material_elements),
+                       [&](int const id) { return elements[id]; });
+
+        // Remove already extracted elements.
+        line_element_ids.erase(split, end(line_element_ids));
+
+        // Create boundary mesh and save.
+        auto boundary_mesh =
+            createMeshFromElements(mesh, single_material_elements);
+
+        auto boundary_mesh_file_name = BaseLib::dropFileExtension(file_name) +
+                                       '_' + std::to_string(material_id) +
+                                       BaseLib::getFileExtension(file_name);
+
+        MeshLib::IO::writeMeshToFile(boundary_mesh, boundary_mesh_file_name);
+    }
+}
 
 int main (int argc, char* argv[])
 {
@@ -70,6 +135,10 @@ int main (int argc, char* argv[])
     TCLAP::SwitchArg valid_arg("v", "validation", "validate the mesh");
     cmd.add(valid_arg);
 
+    TCLAP::SwitchArg create_boundary_meshes_arg(
+        "b", "boundaries", "if set, boundary meshes will be generated");
+    cmd.add(create_boundary_meshes_arg);
+
     TCLAP::SwitchArg exclude_lines_arg("e", "exclude-lines",
         "if set, lines will not be written to the ogs mesh");
     cmd.add(exclude_lines_arg);
@@ -101,17 +170,29 @@ int main (int argc, char* argv[])
          mesh->getNumberOfElements());
 
     // *** remove line elements on request
-    if (exclude_lines_arg.getValue()) {
+    if (exclude_lines_arg.getValue() || create_boundary_meshes_arg.getValue())
+    {
         auto ex = MeshLib::ElementSearch(*mesh);
         ex.searchByElementType(MeshLib::MeshElemType::LINE);
-        auto m = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(), mesh->getName()+"-withoutLines");
-        if (m != nullptr) {
-            INFO("Removed {:d} lines.",
-                 mesh->getNumberOfElements() - m->getNumberOfElements());
-            std::swap(m, mesh);
-            delete m;
-        } else {
-            INFO("Mesh does not contain any lines.");
+        if (create_boundary_meshes_arg.getValue())
+        {
+            extractBoundaryMeshes(*mesh, ex, ogs_mesh_arg.getValue());
+        }
+        if (exclude_lines_arg.getValue())
+        {
+            auto m = MeshLib::removeElements(*mesh, ex.getSearchedElementIDs(),
+                                             mesh->getName() + "-withoutLines");
+            if (m != nullptr)
+            {
+                INFO("Removed {:d} lines.",
+                     mesh->getNumberOfElements() - m->getNumberOfElements());
+                std::swap(m, mesh);
+                delete m;
+            }
+            else
+            {
+                INFO("Mesh does not contain any lines.");
+            }
         }
     }
     // *** print meshinformation
