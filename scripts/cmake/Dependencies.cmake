@@ -133,7 +133,16 @@ CPMFindPackage(
 )
 
 if(OGS_USE_XDMF)
-    find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
+    # ZLIB is a HDF5 dependency
+    CPMFindPackage(
+        NAME ZLIB
+        GITHUB_REPOSITORY madler/zlib
+        VERSION 1.2.11
+        EXCLUDE_FROM_ALL YES
+    )
+    if(ZLIB_ADDED)
+        add_library(ZLIB::ZLIB ALIAS zlibstatic)
+    endif()
 
     string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
     CPMFindPackage(
