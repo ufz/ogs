@@ -218,47 +218,15 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
-    add_secondary_variable(
-        "sigma_xx", 1, &LocalAssemblerIF::getIntPtSigmaXX);
+    add_secondary_variable("sigma",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerIF::getIntPtSigma);
 
-    add_secondary_variable(
-        "sigma_yy", 1, &LocalAssemblerIF::getIntPtSigmaYY);
-
-    add_secondary_variable(
-        "sigma_zz", 1, &LocalAssemblerIF::getIntPtSigmaZZ);
-
-    add_secondary_variable(
-        "sigma_xy", 1, &LocalAssemblerIF::getIntPtSigmaXY);
-
-    if (DisplacementDim == 3)
-    {
-        add_secondary_variable(
-            "sigma_xz", 1, &LocalAssemblerIF::getIntPtSigmaXZ);
-
-        add_secondary_variable(
-            "sigma_yz", 1, &LocalAssemblerIF::getIntPtSigmaYZ);
-    }
-
-    add_secondary_variable(
-        "epsilon_xx", 1, &LocalAssemblerIF::getIntPtEpsilonXX);
-
-    add_secondary_variable(
-        "epsilon_yy", 1, &LocalAssemblerIF::getIntPtEpsilonYY);
-
-    add_secondary_variable(
-        "epsilon_zz", 1, &LocalAssemblerIF::getIntPtEpsilonZZ);
-
-    add_secondary_variable(
-        "epsilon_xy", 1, &LocalAssemblerIF::getIntPtEpsilonXY);
-
-    if (DisplacementDim == 3)
-    {
-        add_secondary_variable(
-            "epsilon_xz", 1, &LocalAssemblerIF::getIntPtEpsilonXZ);
-
-        add_secondary_variable(
-            "epsilon_yz", 1, &LocalAssemblerIF::getIntPtEpsilonYZ);
-    }
+    add_secondary_variable("epsilon",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerIF::getIntPtEpsilon);
 
     add_secondary_variable("velocity",
                            DisplacementDim,
