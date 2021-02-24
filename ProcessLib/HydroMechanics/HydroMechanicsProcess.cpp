@@ -50,7 +50,7 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            2 /*integration order*/, [this]() {
+            integration_order, [this]() {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -70,7 +70,7 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            2 /*integration order*/, [this]() {
+            integration_order, [this]() {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
