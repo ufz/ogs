@@ -150,9 +150,12 @@ if(OGS_USE_XDMF)
             "HDF5_BUILD_CPP_LIB OFF"
             "HDF5_BUILD_JAVA OFF"
     )
-    if(hdf5_ADDED)
-        target_include_directories(hdf5-static INTERFACE ${hdf5_BINARY_DIR})
+    if(HDF5_ADDED)
+        target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR})
         list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
+        set(HDF5_LIBRARIES hdf5-static)
+        set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+        set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
     endif()
 
     CPMFindPackage(
@@ -195,7 +198,7 @@ if(OGS_USE_XDMF)
             PRIVATE
                 ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
-        target_link_libraries(OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 hdf5-static)
+        target_link_libraries(OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES})
 
         set_target_properties(OgsXdmf OgsXdmfCore PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
