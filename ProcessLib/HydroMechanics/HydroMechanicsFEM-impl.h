@@ -826,6 +826,15 @@ std::size_t HydroMechanicsLocalAssembler<
 
     if (name == "sigma_ip")
     {
+        if (_process_data.initial_stress != nullptr)
+        {
+            OGS_FATAL(
+                "Setting initial conditions for stress from integration "
+                "point data and from a parameter '{:s}' is not possible "
+                "simultaneously.",
+                _process_data.initial_stress->name);
+        }
+
         return setSigma(values);
     }
     if (name == "epsilon_ip")
