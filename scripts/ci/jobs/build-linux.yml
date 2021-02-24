@@ -19,6 +19,24 @@ build linux:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
 
+linux ctest large:
+  image: $CONTAINER_GCC_IMAGE
+  extends:
+    - .template-build-linux
+  tags: [ docker, envinf2 ]
+  needs: [meta, "pre commit"]
+  rules:
+    - when: manual
+      allow_failure: true
+  timeout: 2h
+  variables:
+    TARGETS: ctest-large
+    CMAKE_PRESET: release
+    CMAKE_ARGS: >-
+      -DOGS_USE_CONAN=OFF
+      -DOGS_USE_MFRONT=ON
+      -DOGS_USE_PYTHON=ON
+      -DOGS_USE_XDMF=ON
 
 build linux (no unity):
   image: $CONTAINER_GCC_IMAGE
