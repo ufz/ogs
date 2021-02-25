@@ -76,26 +76,18 @@ inline void computeMappingMatrices(
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline typename std::enable_if<T_SHAPE_FUNC::DIM != 0>::type
-computeMappingMatrices(
+inline void computeMappingMatrices(
     const T_MESH_ELEMENT& /*ele*/,
-    const double* natural_pt,
+    [[maybe_unused]] const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
-    T_SHAPE_MATRICES& shapemat,
+    [[maybe_unused]] T_SHAPE_MATRICES& shapemat,
     FieldType<ShapeMatrixType::DNDR> /*unused*/)
 {
-    double* const dNdr = shapemat.dNdr.data();
-    T_SHAPE_FUNC::computeGradShapeFunction(natural_pt, dNdr);
-}
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline typename std::enable_if<T_SHAPE_FUNC::DIM == 0>::type
-computeMappingMatrices(
-    const T_MESH_ELEMENT& /*ele*/,
-    const double* /*natural_pt*/,
-    const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
-    T_SHAPE_MATRICES& /*shapemat*/,
-    FieldType<ShapeMatrixType::DNDR> /*unused*/)
-{
+    if constexpr (T_SHAPE_FUNC::DIM != 0)
+    {
+        double* const dNdr = shapemat.dNdr.data();
+        T_SHAPE_FUNC::computeGradShapeFunction(natural_pt, dNdr);
+    }
 }
 
 static void checkJacobianDeterminant(const double detJ,
@@ -136,45 +128,48 @@ static void checkJacobianDeterminant(const double detJ,
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline typename std::enable_if<T_SHAPE_FUNC::DIM != 0>::type
-computeMappingMatrices(
+inline void computeMappingMatrices(
     const T_MESH_ELEMENT& ele,
-    const double* natural_pt,
+    [[maybe_unused]] const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
     T_SHAPE_MATRICES& shapemat,
     FieldType<ShapeMatrixType::DNDR_J> /*unused*/)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
-        (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR>());
+    if constexpr (T_SHAPE_FUNC::DIM != 0)
+    {
+        computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+            ele,
+            natural_pt,
+            ele_local_coord,
+            shapemat,
+            FieldType<ShapeMatrixType::DNDR>());
 
-    auto const dim = T_MESH_ELEMENT::dimension;
-    auto const nnodes = T_MESH_ELEMENT::n_all_nodes;
+        auto const dim = T_MESH_ELEMENT::dimension;
+        auto const nnodes = T_MESH_ELEMENT::n_all_nodes;
 
-    //jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
-    for (auto k = decltype(nnodes){0}; k<nnodes; k++) {
-        const MathLib::Point3d& mapped_pt = ele_local_coord.getMappedCoordinates(k);
-        // outer product of dNdr and mapped_pt for a particular node
-        for (auto i_r = decltype(dim){0}; i_r<dim; i_r++) {
-            for (auto j_x = decltype(dim){0}; j_x<dim; j_x++) {
-                shapemat.J(i_r,j_x) += shapemat.dNdr(i_r,k) * mapped_pt[j_x];
+        // jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
+        for (auto k = decltype(nnodes){0}; k < nnodes; k++)
+        {
+            const MathLib::Point3d& mapped_pt =
+                ele_local_coord.getMappedCoordinates(k);
+            // outer product of dNdr and mapped_pt for a particular node
+            for (auto i_r = decltype(dim){0}; i_r < dim; i_r++)
+            {
+                for (auto j_x = decltype(dim){0}; j_x < dim; j_x++)
+                {
+                    shapemat.J(i_r, j_x) +=
+                        shapemat.dNdr(i_r, k) * mapped_pt[j_x];
+                }
             }
         }
+
+        shapemat.detJ = shapemat.J.determinant();
+        checkJacobianDeterminant(shapemat.detJ, ele);
     }
-
-    shapemat.detJ = shapemat.J.determinant();
-    checkJacobianDeterminant(shapemat.detJ, ele);
-}
-
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline typename std::enable_if<T_SHAPE_FUNC::DIM == 0>::type
-computeMappingMatrices(
-    const T_MESH_ELEMENT& /*ele*/,
-    const double* /*natural_pt*/,
-    const MeshLib::ElementCoordinatesMappingLocal& /*ele_local_coord*/,
-    T_SHAPE_MATRICES& shapemat,
-    FieldType<ShapeMatrixType::DNDR_J> /*unused*/)
-{
-    shapemat.detJ = 1.0;
+    else
+    {
+        shapemat.detJ = 1.0;
+    }
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
@@ -192,47 +187,45 @@ inline void computeMappingMatrices(
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline typename std::enable_if<T_SHAPE_FUNC::DIM != 0>::type
-computeMappingMatrices(
+inline void computeMappingMatrices(
     const T_MESH_ELEMENT& ele,
     const double* natural_pt,
     const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
     T_SHAPE_MATRICES& shapemat,
     FieldType<ShapeMatrixType::DNDX> /*unused*/)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
-        (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+        ele,
+        natural_pt,
+        ele_local_coord,
+        shapemat,
+        FieldType<ShapeMatrixType::DNDR_J>());
+    if constexpr (T_SHAPE_FUNC::DIM != 0)
+    {
+        checkJacobianDeterminant(shapemat.detJ, ele);
 
-    checkJacobianDeterminant(shapemat.detJ, ele);
+        // J^-1, dshape/dx
+        shapemat.invJ.noalias() = shapemat.J.inverse();
 
-    //J^-1, dshape/dx
-    shapemat.invJ.noalias() = shapemat.J.inverse();
-
-    auto const nnodes(shapemat.dNdr.cols());
-    auto const ele_dim(shapemat.dNdr.rows());
-    assert(shapemat.dNdr.rows()==ele.getDimension());
-    const unsigned global_dim = ele_local_coord.getGlobalDimension();
-    if (global_dim==ele_dim) {
-        shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() = shapemat.invJ * shapemat.dNdr;
-    } else {
-        auto const& matR = ele_local_coord.getRotationMatrixToGlobal(); // 3 x 3
-        auto invJ_dNdr = shapemat.invJ * shapemat.dNdr;
-        auto dshape_global = matR.topLeftCorner(3u, ele_dim) * invJ_dNdr; //3 x nnodes
-        shapemat.dNdx = dshape_global.topLeftCorner(global_dim, nnodes);;
+        auto const nnodes(shapemat.dNdr.cols());
+        auto const ele_dim(shapemat.dNdr.rows());
+        assert(shapemat.dNdr.rows() == ele.getDimension());
+        const unsigned global_dim = ele_local_coord.getGlobalDimension();
+        if (global_dim == ele_dim)
+        {
+            shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() =
+                shapemat.invJ * shapemat.dNdr;
+        }
+        else
+        {
+            auto const& matR =
+                ele_local_coord.getRotationMatrixToGlobal();  // 3 x 3
+            auto invJ_dNdr = shapemat.invJ * shapemat.dNdr;
+            auto dshape_global =
+                matR.topLeftCorner(3u, ele_dim) * invJ_dNdr;  // 3 x nnodes
+            shapemat.dNdx = dshape_global.topLeftCorner(global_dim, nnodes);
+        }
     }
-}
-
-template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
-inline typename std::enable_if<T_SHAPE_FUNC::DIM == 0>::type
-computeMappingMatrices(
-    const T_MESH_ELEMENT& ele,
-    const double* natural_pt,
-    const MeshLib::ElementCoordinatesMappingLocal& ele_local_coord,
-    T_SHAPE_MATRICES& shapemat,
-    FieldType<ShapeMatrixType::DNDX> /*unused*/)
-{
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
-        (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
