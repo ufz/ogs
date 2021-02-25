@@ -305,6 +305,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     typename ShapeMatricesType::NodalMatrixType M_TT =
         ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
                                                  temperature_size);
+    typename ShapeMatricesType::NodalMatrixType M_Tp =
+        ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
+                                                 pressure_size);
     typename ShapeMatricesType::NodalMatrixType K_TT =
         ShapeMatricesType::NodalMatrixType::Zero(temperature_size,
                                                  temperature_size);
@@ -654,11 +657,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         laplace_p.noalias() +=
             dNdx.transpose() * k_rel * rho_Ki_over_mu * dNdx * w;
 
-        auto const beta_LR = 1 / rho_LR *
-                             liquid_phase.property(MPL::PropertyType::density)
-                                 .template dValue<double>(
-                                     variables, MPL::Variable::phase_pressure,
-                                     x_position, t, dt);
+        double const drho_LR_dp =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template dValue<double>(variables,
+                                         MPL::Variable::phase_pressure,
+                                         x_position, t, dt);
+        auto const beta_LR = drho_LR_dp / rho_LR;
 
         const double alphaB_minus_phi = alpha - phi;
         double const a0 = alphaB_minus_phi * beta_SR;
@@ -790,7 +794,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 liquid_phase.property(MaterialPropertyLib::vapour_density)
                     .template value<double>(variables, x_position, t, dt);
 
-
             double const drho_wv_dT =
                 liquid_phase.property(MaterialPropertyLib::vapour_density)
                     .template dValue<double>(variables,
@@ -854,6 +857,44 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .noalias() -= f_Tv_D_Tv * dNdx.transpose() * grad_T_ip * w;
 
             laplace_p.noalias() += dNdx.transpose() * D_pv * dNdx * w;
+
+            //
+            // Latent heat term
+            //
+            if (liquid_phase.hasProperty(MPL::PropertyType::latent_heat))
+            {
+                double const factor = phi * (1 - S_L) / rho_LR;
+                // The volumetric latent heat of vaporization of liquid water
+                double const L0 =
+                    liquid_phase.property(MPL::PropertyType::latent_heat)
+                        .template value<double>(variables, x_position, t, dt) *
+                    rho_LR;
+
+                double const drho_LR_dT =
+                    liquid_phase.property(MPL::PropertyType::density)
+                        .template dValue<double>(variables,
+                                                 MPL::Variable::temperature,
+                                                 x_position, t, dt);
+
+                double const rho_wv_over_rho_L = rho_wv / rho_LR;
+                M_TT.noalias() +=
+                    factor * L0 *
+                    (drho_wv_dT - rho_wv_over_rho_L * drho_LR_dT) *
+                    N.transpose() * N * w;
+
+                M_Tp.noalias() +=
+                    (factor * L0 *
+                         (drho_wv_dp - rho_wv_over_rho_L * drho_LR_dp) +
+                     L0 * phi * rho_wv_over_rho_L * dS_L_dp_cap) *
+                    N.transpose() * N * w;
+
+                // temperature equation, temperature part
+                K_TT.noalias() +=
+                    L0 * f_Tv_D_Tv * dNdx.transpose() * dNdx * w / rho_LR;
+                // temperature equation, pressure part
+                K_Tp.noalias() +=
+                    L0 * D_pv * dNdx.transpose() * dNdx * w / rho_LR;
+            }
         }
     }
 
@@ -908,6 +949,19 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
         laplace_p * p_L + (storage_p_a_p + storage_p_a_S) * p_L_dot +
         Kpu * u_dot + M_pT * T_dot;
+
+    if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
+        liquid_phase.hasProperty(MPL::PropertyType::latent_heat))
+    {
+        // Jacobian: temperature equation, pressure part
+        local_Jac
+            .template block<temperature_size, pressure_size>(temperature_index,
+                                                             pressure_index)
+            .noalias() += M_Tp / dt;
+        // RHS: temperature part
+        local_rhs.template segment<temperature_size>(temperature_index)
+            .noalias() -= M_Tp * p_L_dot;
+    }
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
