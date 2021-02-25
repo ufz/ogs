@@ -16,10 +16,9 @@ Before compiling the developer has to choose a configuration of the software. OG
 To separate source code from generated files such as compiled libraries, executables, test outputs and IDE projects we create build-directories. They can be placed arbitrarily. You can have as many build-directories as you like for e.g. different configurations but they will all use one source code directory. A typically directory structure:
 
 - `ogs-source-code` (or simply `ogs`)
-  - `build/release`
-  - `build/debug`
-  - `build/release-petsc`
-- `build` (can also be placed outside the source tree)
+- `build` (should be placed outside the source directory)
+  - `release`
+  - `debug`
 
 ## Configure with CMake
 
@@ -49,7 +48,7 @@ In the source directory run `cmake`:
 cmake -S . --preset=release
 ```
 
-This will create a build-directory in the source tree (`build/release`) with the default CMake options and the Release configuration.
+This will create a build-directory outside the source tree (`../build/release`) with the default CMake options and the Release configuration.
 
 Additionally you can pass any CMake variable or option with `-DVARIABLE_NAME=VALUE` (note the `-D` in front!) to the CMake command. You can also overwrite the generator with the `-G` parameter or the build-directory with the `-B` parameter (to see all available options just run `cmake --help`)
 
@@ -128,9 +127,9 @@ If you cannot use CMake presets (e.g. when your CMake installation does not supp
 
 ```bash
 # in ogs source-directory
-mkdir -p build/release
-cd build/release
-cmake ../.. -G Ninja -DCMAKE_BUILD_TYPE=Release
+mkdir -p ../build/release
+cd ../build/release
+cmake ../../ogs -G Ninja -DCMAKE_BUILD_TYPE=Release
 ```
 
 ## Option: Configure with a visual tool
