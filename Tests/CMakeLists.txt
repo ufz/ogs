@@ -66,6 +66,7 @@ target_link_libraries(testrunner
         NumLib
         ParameterLib
         ProcessLib
+        Processes
         TestInfoLib
         Threads::Threads
         ${VTK_LIBRARIES}
