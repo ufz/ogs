@@ -14,7 +14,7 @@ code coverage:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/coverage_report/index.html">' >> Coverage.html
   after_script:
-    - cd build/coverage
+    - cd ../build/coverage
     - poetry run fastcov -C testrunner_coverage.info ctest_coverage.info --lcov -o coverage.info
     - poetry run fastcov -C testrunner_coverage.info ctest_coverage.info -o coverage.json
     - genhtml --demangle-cpp -o coverage_report coverage.info
