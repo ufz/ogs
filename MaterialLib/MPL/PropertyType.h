@@ -61,11 +61,14 @@ enum PropertyType : int
     molar_mass,
     molar_volume,
     mole_fraction,
-    /// used to compute the hydrodynamic dispersion tensor.
+    /// ion diffusivity in free water.
     molecular_diffusion,
     name,
     permeability,
     phase_velocity,
+    /// ion diffusivity in the porous medium with account of the effect of
+    /// tortuosity and connectivity.
+    pore_diffusion,
     porosity,
     reference_density,
     reference_temperature,
@@ -215,6 +218,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::permeability;
     }
+    if (boost::iequals(inString, "pore_diffusion"))
+    {
+        return PropertyType::pore_diffusion;
+    }
     if (boost::iequals(inString, "porosity"))
     {
         return PropertyType::porosity;
@@ -354,6 +361,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "name",
                              "permeability",
                              "phase_velocity",
+                             "pore_diffusion",
                              "porosity",
                              "reference_density",
                              "reference_temperature",
