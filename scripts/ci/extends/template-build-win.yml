@@ -10,6 +10,9 @@
   script:
     - $build_directory = if ($env:BUILD_DIR) { $env:BUILD_DIR } else { "..\build\" + $env:CMAKE_PRESET }
     - (rm -r -fo $build_directory)
+    - cmd /c if not exist $build_directory mkdir $build_directory
+    # Create symlink https://stackoverflow.com/a/34905638/80480
+    - cmd /c mklink /D build ..\build
     - $cmake_cmd = "cmake -S . --preset=$env:CMAKE_PRESET
       $env:CMAKE_ARGS
       -DOGS_BUILD_PROCESSES=$env:BUILD_PROCESSES"

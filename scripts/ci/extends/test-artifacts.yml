@@ -1,12 +1,12 @@
 .test-artifacts:
   artifacts:
     paths:
-      - ../build/*/Tests/ctest.xml
-      - ../build/*/Tests/testrunner.xml
-      - ../build/*/make.output
-      - ../build/*/*.zip
-      - ../build/*/*.tar.gz
+      - build/*/Tests/ctest.xml
+      - build/*/Tests/testrunner.xml
+      - build/*/make.output
+      - build/*/*.zip
+      - build/*/*.tar.gz
     expire_in: 1 week
     reports:
       junit:
-        - ../build/*/Tests/testrunner.xml
+        - build/*/Tests/testrunner.xml
