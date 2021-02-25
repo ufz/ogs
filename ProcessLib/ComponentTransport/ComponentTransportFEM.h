@@ -479,11 +479,11 @@ public:
                     .property(MaterialPropertyLib::PropertyType::decay_rate)
                     .template value<double>(vars, pos, t, dt);
 
-            auto const& molecular_diffusion_coefficient =
+            auto const& pore_diffusion_coefficient =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
                     component
-                        .property(MaterialPropertyLib::PropertyType::
-                                      molecular_diffusion)
+                        .property(
+                            MaterialPropertyLib::PropertyType::pore_diffusion)
                         .value(vars, pos, t, dt));
 
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -518,7 +518,7 @@ public:
             GlobalDimMatrixType const hydrodynamic_dispersion =
                 velocity_magnitude != 0.0
                     ? GlobalDimMatrixType(porosity *
-                                              molecular_diffusion_coefficient +
+                                              pore_diffusion_coefficient +
                                           solute_dispersivity_transverse *
                                               velocity_magnitude * I +
                                           (solute_dispersivity_longitudinal -
@@ -526,7 +526,7 @@ public:
                                               velocity_magnitude * velocity *
                                               velocity.transpose())
                     : GlobalDimMatrixType(porosity *
-                                              molecular_diffusion_coefficient +
+                                              pore_diffusion_coefficient +
                                           solute_dispersivity_transverse *
                                               velocity_magnitude * I);
             const double R_times_phi(retardation_factor * porosity);
@@ -807,11 +807,11 @@ public:
                     .property(MaterialPropertyLib::PropertyType::decay_rate)
                     .template value<double>(vars, pos, t, dt);
 
-            auto const& molecular_diffusion_coefficient =
+            auto const& pore_diffusion_coefficient =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
                     component
-                        .property(MaterialPropertyLib::PropertyType::
-                                      molecular_diffusion)
+                        .property(
+                            MaterialPropertyLib::PropertyType::pore_diffusion)
                         .value(vars, pos, t, dt));
 
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -833,7 +833,7 @@ public:
             GlobalDimMatrixType const hydrodynamic_dispersion =
                 velocity_magnitude != 0.0
                     ? GlobalDimMatrixType(porosity *
-                                              molecular_diffusion_coefficient +
+                                              pore_diffusion_coefficient +
                                           solute_dispersivity_transverse *
                                               velocity_magnitude * I +
                                           (solute_dispersivity_longitudinal -
@@ -841,7 +841,7 @@ public:
                                               velocity_magnitude * velocity *
                                               velocity.transpose())
                     : GlobalDimMatrixType(porosity *
-                                              molecular_diffusion_coefficient +
+                                              pore_diffusion_coefficient +
                                           solute_dispersivity_transverse *
                                               velocity_magnitude * I);
 
