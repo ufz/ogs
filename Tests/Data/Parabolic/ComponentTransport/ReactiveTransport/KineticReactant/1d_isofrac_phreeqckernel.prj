@@ -30,7 +30,7 @@
                             <name>H</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>1e-7</value>
                                 </property>
@@ -50,7 +50,7 @@
                             <name>Synthetica</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>1e-7</value>
                                 </property>
@@ -70,7 +70,7 @@
                             <name>Syntheticb</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>1e-7</value>
                                 </property>

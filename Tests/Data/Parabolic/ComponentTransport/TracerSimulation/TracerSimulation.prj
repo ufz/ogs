@@ -31,7 +31,7 @@
                             <name>Cs</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Parameter</type>
                                     <parameter_name>Dm</parameter_name>
                                 </property>

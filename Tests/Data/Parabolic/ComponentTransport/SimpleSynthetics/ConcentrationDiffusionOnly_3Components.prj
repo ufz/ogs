@@ -29,7 +29,7 @@
                             <name>Si</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>1</value>
                                 </property>
@@ -49,7 +49,7 @@
                             <name>Al</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>1</value>
                                 </property>
@@ -69,7 +69,7 @@
                             <name>Cl</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>1</value>
                                 </property>
