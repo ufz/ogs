@@ -335,6 +335,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& medium = process_data_.media_map->getMedium(element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
+    MPL::Phase const* gas_phase =
+        medium->hasPhase("Gas") ? &medium->phase("Gas") : nullptr;
+
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
@@ -734,6 +737,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // temperature equation.
         //
+        GlobalDimVectorType const grad_T_ip = dNdx * T;
         {
             auto const specific_heat_capacity_fluid =
                 liquid_phase
@@ -771,11 +775,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             // temperature equation, pressure part
             //
             K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
-                              N.transpose() * (dNdx * T).transpose() * k_rel *
+                              N.transpose() * grad_T_ip.transpose() * k_rel *
                               Ki_over_mu * dNdx * w;
             K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
-                              N.transpose() * velocity_L.dot(dNdx * T) / k_rel *
-                              dk_rel_dS_L * dS_L_dp_cap * N * w;
+                              N.transpose() * velocity_L.dot(grad_T_ip) /
+                              k_rel * dk_rel_dS_L * dS_L_dp_cap * N * w;
         }
 
         if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion))
@@ -786,26 +790,17 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 liquid_phase.property(MaterialPropertyLib::vapour_density)
                     .template value<double>(variables, x_position, t, dt);
 
-            double const drho_wv_dp =
-                liquid_phase.property(MaterialPropertyLib::vapour_density)
-                    .template dValue<double>(variables,
-                                             MPL::Variable::phase_pressure,
-                                             x_position, t, dt);
-
-            double const storage_coefficient_by_water_vapor =
-                phi * (rho_wv * dS_L_dp_cap + (1 - S_L) * drho_wv_dp);
-
-            storage_p_a_p.noalias() +=
-                N.transpose() * storage_coefficient_by_water_vapor * N * w;
 
             double const drho_wv_dT =
                 liquid_phase.property(MaterialPropertyLib::vapour_density)
                     .template dValue<double>(variables,
                                              MPL::Variable::temperature,
                                              x_position, t, dt);
-            double const vapor_expansion_factor = phi * (1 - S_L) * drho_wv_dT;
-            M_pT.noalias() += N.transpose() * vapor_expansion_factor * N * w;
-
+            double const drho_wv_dp =
+                liquid_phase.property(MaterialPropertyLib::vapour_density)
+                    .template dValue<double>(variables,
+                                             MPL::Variable::phase_pressure,
+                                             x_position, t, dt);
             auto const f_Tv =
                 liquid_phase
                     .property(
@@ -818,6 +813,37 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     .template value<double>(variables, x_position, t, dt);
 
             double const f_Tv_D_Tv = f_Tv * D_v * drho_wv_dT;
+            double const D_pv = D_v * drho_wv_dp;
+
+            if (gas_phase &&
+                gas_phase->hasProperty(MPL::PropertyType::heat_capacity))
+            {
+                // Vapour velocity
+                GlobalDimVectorType const q_v =
+                    -(f_Tv_D_Tv * grad_T_ip - D_pv * grad_p_cap) / rho_LR;
+                double const specific_heat_capacity_vapour =
+                    gas_phase
+                        ->property(MaterialPropertyLib::PropertyType::
+                                       specific_heat_capacity)
+                        .template value<double>(variables, x_position, t, dt);
+
+                M_TT.noalias() +=
+                    w *
+                    (rho_wv * specific_heat_capacity_vapour * (1 - S_L) * phi) *
+                    N.transpose() * N;
+
+                K_TT.noalias() += N.transpose() * q_v.transpose() * dNdx *
+                                  rho_wv * specific_heat_capacity_vapour * w;
+            }
+
+            double const storage_coefficient_by_water_vapor =
+                phi * (rho_wv * dS_L_dp_cap + (1 - S_L) * drho_wv_dp);
+
+            storage_p_a_p.noalias() +=
+                N.transpose() * storage_coefficient_by_water_vapor * N * w;
+
+            double const vapor_expansion_factor = phi * (1 - S_L) * drho_wv_dT;
+            M_pT.noalias() += N.transpose() * vapor_expansion_factor * N * w;
 
             local_Jac
                 .template block<pressure_size, temperature_size>(
@@ -825,9 +851,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .noalias() += dNdx.transpose() * f_Tv_D_Tv * dNdx * w;
 
             local_rhs.template segment<pressure_size>(pressure_index)
-                .noalias() -= f_Tv_D_Tv * dNdx.transpose() * (dNdx * T) * w;
+                .noalias() -= f_Tv_D_Tv * dNdx.transpose() * grad_T_ip * w;
 
-            double const D_pv = D_v * drho_wv_dp;
             laplace_p.noalias() += dNdx.transpose() * D_pv * dNdx * w;
         }
     }
