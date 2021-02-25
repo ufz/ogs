@@ -786,7 +786,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                               k_rel * dk_rel_dS_L * dS_L_dp_cap * N * w;
         }
 
-        if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion))
+        if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
+            S_L < 1.0)
         {
             variables[static_cast<int>(MPL::Variable::density)] = rho_LR;
 
