@@ -64,152 +64,116 @@ public:
     //! per node.
     using LaplaceMatrix = Matrix<Dim*NodalDOF, Dim*NodalDOF>;
 
-
-    //! Get a block \c Dim x \c Dim whose upper left corner is at \c top and \c left.
-    template<typename Mat>
-    static
-    typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<const Mat>().template block<Dim, Dim>(0u, 0u))
-    >::type
-    blockDimDim(Mat const& mat,
-                unsigned top, unsigned left, unsigned nrows, unsigned ncols)
+    //! Get a block \c Dim x \c Dim whose upper left corner is at \c top and \c
+    //! left.
+    template <typename Mat>
+    static auto blockDimDim(Mat const& mat, unsigned top, unsigned left,
+                            unsigned nrows, unsigned ncols)
     {
-        assert(nrows==Dim && ncols==Dim);
-        (void) nrows; (void) ncols;
-        return mat.template block<Dim, Dim>(top, left);
-    }
-    //! Get a block \c Dim x \c Dim whose upper left corner is at \c top and \c left.
-    template<typename Mat>
-    static
-    typename std::enable_if<NodalDOF == 0,
-        decltype(std::declval<const Mat>().block(0u, 0u, 0u, 0u))
-    >::type
-    blockDimDim(Mat const& mat,
-                unsigned top, unsigned left, unsigned nrows, unsigned ncols)
-    {
-        assert(nrows == ncols);
-        return mat.block(top, left, nrows, ncols);
-    }
-    //! Get a block \c Dim x \c Dim whose upper left corner is at \c top and \c left.
-    template<typename Mat>
-    static
-    typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<Mat>().template block<Dim, Dim>(0u, 0u))
-    >::type
-    blockDimDim(Mat& mat,
-                unsigned top, unsigned left, unsigned nrows, unsigned ncols)
-    {
-        assert(nrows==Dim && ncols==Dim);
-        (void) nrows; (void) ncols;
-        return mat.template block<Dim, Dim>(top, left);
-    }
-    //! Get a block \c Dim x \c Dim whose upper left corner is at \c top and \c left.
-    template<typename Mat>
-    static
-    typename std::enable_if<NodalDOF == 0,
-        decltype(std::declval<Mat>().block(0u, 0u, 0u, 0u))
-    >::type
-    blockDimDim(Mat& mat,
-                unsigned top, unsigned left, unsigned nrows, unsigned ncols)
-    {
-        assert(nrows == ncols);
-        return mat.block(top, left, nrows, ncols);
+        if constexpr (NodalDOF != 0)
+        {
+            assert(nrows == Dim && ncols == Dim);
+            (void)nrows;
+            (void)ncols;
+            return mat.template block<Dim, Dim>(top, left);
+        }
+        else
+        {
+            assert(nrows == ncols);
+            return mat.block(top, left, nrows, ncols);
+        }
     }
 
-    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top and \c left.
-    template<typename Mat>
-    static
-    typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<const Mat>().template block<NNodes, NNodes>(0u, 0u))
-    >::type
-    blockShpShp(Mat const& mat,
-                unsigned top, unsigned left, unsigned nrows, unsigned ncols)
+    //! Get a block \c Dim x \c Dim whose upper left corner is at \c top and \c
+    //! left.
+    template <typename Mat>
+    static auto blockDimDim(Mat& mat, unsigned top, unsigned left,
+                            unsigned nrows, unsigned ncols)
     {
-        assert(nrows==NNodes && ncols==NNodes);
-        (void) nrows; (void) ncols;
-        return mat.template block<NNodes, NNodes>(top, left);
+        if constexpr (NodalDOF != 0)
+        {
+            assert(nrows == Dim && ncols == Dim);
+            (void)nrows;
+            (void)ncols;
+            return mat.template block<Dim, Dim>(top, left);
+        }
+        else
+        {
+            assert(nrows == ncols);
+            return mat.block(top, left, nrows, ncols);
+        }
     }
-    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top and \c left.
-    template<typename Mat>
-    static
-    typename std::enable_if<NodalDOF == 0,
-        decltype(std::declval<const Mat>().block(0u, 0u, 0u, 0u))
-    >::type
-    blockShpShp(Mat const& mat,
-                unsigned top, unsigned left, unsigned nrows, unsigned ncols)
+
+    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top
+    //! and \c left.
+    template <typename Mat>
+    static auto blockShpShp(Mat const& mat, unsigned top, unsigned left,
+                            unsigned nrows, unsigned ncols)
     {
-        assert(nrows == ncols);
-        return mat.block(top, left, nrows, ncols);
+        if constexpr (NodalDOF != 0)
+        {
+            assert(nrows == NNodes && ncols == NNodes);
+            (void)nrows;
+            (void)ncols;
+            return mat.template block<NNodes, NNodes>(top, left);
+        }
+        else
+        {
+            assert(nrows == ncols);
+            return mat.block(top, left, nrows, ncols);
+        }
     }
-    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top and \c left.
-    template<typename Mat>
-    static
-    typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<Mat>().template block<NNodes, NNodes>(0u, 0u))
-    >::type
-    blockShpShp(Mat& mat,
-                unsigned top, unsigned left, unsigned nrows, unsigned ncols)
+
+    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top
+    //! and \c left.
+    template <typename Mat>
+    static auto blockShpShp(Mat& mat, unsigned top, unsigned left,
+                            unsigned nrows, unsigned ncols)
     {
-        assert(nrows==NNodes && ncols==NNodes);
-        (void) nrows; (void) ncols;
-        return mat.template block<NNodes, NNodes>(top, left);
-    }
-    //! Get a block \c NNodes x \c NNodes whose upper left corner is at \c top and \c left.
-    template<typename Mat>
-    static
-    typename std::enable_if<NodalDOF == 0,
-        decltype(std::declval<Mat>().block(0u, 0u, 0u, 0u))
-    >::type
-    blockShpShp(Mat& mat,
-                unsigned top, unsigned left, unsigned nrows, unsigned ncols)
-    {
-        assert(nrows == ncols);
-        return mat.block(top, left, nrows, ncols);
+        if constexpr (NodalDOF != 0)
+        {
+            assert(nrows == NNodes && ncols == NNodes);
+            (void)nrows;
+            (void)ncols;
+            return mat.template block<NNodes, NNodes>(top, left);
+        }
+        else
+        {
+            assert(nrows == ncols);
+            return mat.block(top, left, nrows, ncols);
+        }
     }
 
     //! Get a block \c NNodes x 1 starting at the \c top'th row.
-    template<typename Vec>
-    static
-    typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<const Vec>().template block<NNodes, 1>(0u, 0u))
-    >::type
-    blockShp(Vec const& vec, unsigned top, unsigned nrows)
+    template <typename Vec>
+    static auto blockShp(Vec const& vec, unsigned top, unsigned nrows)
     {
-        assert(nrows==NNodes);
-        (void) nrows;
-        return vec.template block<NNodes, 1>(top, 0);
+        if constexpr (NodalDOF != 0)
+        {
+            assert(nrows == NNodes);
+            (void)nrows;
+            return vec.template block<NNodes, 1>(top, 0);
+        }
+        else
+        {
+            return vec.block(top, 0, nrows, 1);
+        }
     }
+
     //! Get a block \c NNodes x 1 starting at the \c top'th row.
-    template<typename Vec>
-    static
-    typename std::enable_if<NodalDOF == 0,
-        decltype(std::declval<const Vec>().block(0u, 0u, 0u, 0u))
-    >::type
-    blockShp(Vec const& vec, unsigned top, unsigned nrows)
+    template <typename Vec>
+    static auto blockShp(Vec& vec, unsigned top, unsigned nrows)
     {
-        return vec.block(top, 0, nrows, 1);
-    }
-    //! Get a block \c NNodes x 1 starting at the \c top'th row.
-    template<typename Vec>
-    static
-    typename std::enable_if<NodalDOF != 0,
-        decltype(std::declval<Vec>().template block<NNodes, 1>(0u, 0u))
-    >::type
-    blockShp(Vec& vec, unsigned top, unsigned nrows)
-    {
-        assert(nrows==NNodes);
-        (void) nrows;
-        return vec.template block<NNodes, 1>(top, 0);
-    }
-    //! Get a block \c NNodes x 1 starting at the \c top'th row.
-    template<typename Vec>
-    static
-    typename std::enable_if<NodalDOF == 0,
-        decltype(std::declval<Vec>().block(0u, 0u, 0u, 0u))
-    >::type
-    blockShp(Vec& vec, unsigned top, unsigned nrows)
-    {
-        return vec.block(top, 0, nrows, 1);
+        if constexpr (NodalDOF != 0)
+        {
+            assert(nrows == NNodes);
+            (void)nrows;
+            return vec.template block<NNodes, 1>(top, 0);
+        }
+        else
+        {
+            return vec.block(top, 0, nrows, 1);
+        }
     }
 };
 
