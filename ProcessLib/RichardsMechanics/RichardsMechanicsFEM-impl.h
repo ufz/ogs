@@ -97,7 +97,7 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ip_data.N_p = shape_matrices_p[ip].N;
         ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
 
-        // Initial porosity. Could be read from intergration point data or mesh.
+        // Initial porosity. Could be read from integration point data or mesh.
         ip_data.porosity =
             solid_phase.property(MPL::porosity)
                 .template initialValue<double>(

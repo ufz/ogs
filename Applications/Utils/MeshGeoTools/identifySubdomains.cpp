@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Checks if the subdomain meshes are part of the bulk mesh and writes "
         "the 'bulk_node_ids' and the 'bulk_element_ids' in each of them. The "
-        "documentation is avaliable at "
+        "documentation is available at "
         "https://www.opengeosys.org/docs/tools/meshing-submeshes/"
         "identifysubdomains/.\n\n"
         "OpenGeoSys-6 software, version " +

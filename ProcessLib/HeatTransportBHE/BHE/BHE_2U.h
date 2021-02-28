@@ -29,11 +29,11 @@ namespace BHE
 /**
  * The BHE_2U class is the realization of 2U type of Borehole Heate Exchanger.
  * In this class, the pipe heat capacity, pipe heat conductiion, pipe advection
- * vectors are intialized according to the geometry of 2U type of BHE.
+ * vectors are initialized according to the geometry of 2U type of BHE.
  * For 2U type of BHE, 8 primary unknowns are assigned on the 1D BHE elements.
  * They are the temperature in inflow pipe T_i1 and T_i2, temperature in outflow
  * pipe T_o1 and T_o2, temperature of the four grout zones surrounding the
- * inflow and outflow pipe T_g1, T_g2, T_g3 and T_g4. These primary varaibles
+ * inflow and outflow pipe T_g1, T_g2, T_g3 and T_g4. These primary variables
  * are solved according to heat convection and conduction equations on the pipes
  * and also in the grout zones. The interaction of the 2U type of BHE and the
  * surrounding soil is regulated through the thermal resistance values, which

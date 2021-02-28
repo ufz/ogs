@@ -2,7 +2,7 @@
  * \file
  * \author Lars Bilke
  * \date   2014-08-12
- * \brief  VtkMappedMeshSource is a souce class to transform OGS meshes into
+ * \brief  VtkMappedMeshSource is a source class to transform OGS meshes into
  * complete vtkUnstructuredGrids. Usage: \code
  * vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
  * vtkSource->SetMesh(mesh);

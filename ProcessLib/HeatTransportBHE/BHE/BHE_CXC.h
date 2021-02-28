@@ -23,7 +23,7 @@ namespace BHE
 /**
  * The BHE_CXC class is the realization of Coaxial pipe with Centred type of the
  * Borehole Heate Exchanger. In this class, the pipe heat capacity,
- * pipe heat conduction, pipe advection vectors are intialized according to the
+ * pipe heat conduction, pipe advection vectors are initialized according to the
  * geometry of CXC type of BHE. For CXC type of BHE, 3 primary unknowns are
  * assigned on the 1D BHE elements. They are the temperature in inflow pipe
  * T_in, temperature in outflow pipe T_out, temperature of the grout zone

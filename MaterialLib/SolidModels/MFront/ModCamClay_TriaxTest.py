@@ -19,7 +19,7 @@ phi0 = 1 - 1 / v0  # Initial porosity
 pc0 = 200.0e3  # Initial pre-consolidation pressure in Pa
 pamb = 1.0e3  # Ambient pressure in Pa
 
-# Loading programm
+# Loading programme
 tMax = 1.0  # s , total time
 nTime = 200
 ltime = np.linspace(0.0, tMax, nTime)

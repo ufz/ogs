@@ -66,14 +66,14 @@ int main(int argc, char *argv[])
     TCLAP::ValueArg<std::string> output_arg(
         "o", "output",
         "Path to output polydata files (*.vtp). Specifying 'file.vtp' will "
-        "make the programm write a series of files called 'file0.vtp', "
+        "make the programme write a series of files called 'file0.vtp', "
         "'file1.vtp', etc.",
         true, "", "output file name");
     cmd.add(output_arg);
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input",
         "Path to input raster files (*.asc). Specifying 'file.asc' will make "
-        "the programm look for a series of files called 'file0.asc', "
+        "the programme look for a series of files called 'file0.asc', "
         "'file1.asc', etc.",
         true, "", "input file name");
     cmd.add(input_arg);

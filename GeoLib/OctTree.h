@@ -43,7 +43,7 @@ public:
     /// contrast a big value results into a smaller number of OctTree leaves,
     /// the memory requirements for the OctTree may be lower but the search
     /// inside a OctTree leaf may be more expensive. The value should be
-    /// choosen application dependend. [default 8]
+    /// chosen application dependent. [default 8]
     template <typename T>
     static OctTree<POINT, MAX_POINTS>* createOctTree(T ll, T ur,
         double eps = std::numeric_limits<double>::epsilon());
@@ -57,7 +57,7 @@ public:
     /// corresponding OctTree node.
     /// @param pnt the pointer to a point that should be inserted
     /// @param ret_pnt the pointer to a point in the OctTree. Three cases can
-    /// occure:
+    /// occur:
     /// (1) ret_pnt is nullptr: the given point (pnt) is outside of the OctTree
     /// domain
     /// (2) ret_pnt is equal to pnt: the point is added to the OctTree

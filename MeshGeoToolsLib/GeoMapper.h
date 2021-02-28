@@ -76,7 +76,7 @@ private:
     void mapPointDataToMeshSurface(std::vector<GeoLib::Point*> const& pnts);
 
     /// Returns the elevation at Point (x,y) based on a mesh. This uses collision detection for triangles and nearest neighbor for quads.
-    /// NOTE: This medhod only returns correct values if the node numbering of the elements is correct!
+    /// NOTE: This method only returns correct values if the node numbering of the elements is correct!
     double getMeshElevation(double x, double y, double min_val, double max_val) const;
 
     /// Returns the elevation at Point (x,y) based on a raster

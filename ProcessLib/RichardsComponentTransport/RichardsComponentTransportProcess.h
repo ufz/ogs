@@ -39,7 +39,7 @@ namespace RichardsComponentTransport
  * - \f$\phi\f$ is the porosity,
  * - \f$S\f$ is the saturation,
  * - \f$p\f$ is the pressure,
- * - \f$k_{\mathrm{rel}}\f$ is the relativ permeability (depending on \f$S\f$),
+ * - \f$k_{\mathrm{rel}}\f$ is the relative permeability (depending on \f$S\f$),
  * - \f$\kappa\f$ is the specific permeability,
  * - \f$\mu\f$ is viscosity of the fluid,
  * - \f$\rho_w\f$ is the mass density of the fluid, and

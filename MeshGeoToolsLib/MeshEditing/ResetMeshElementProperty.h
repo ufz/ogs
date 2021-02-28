@@ -54,7 +54,7 @@ void resetMeshElementProperty(MeshLib::Mesh& mesh,
     if (restrict_to_material_id != -1 && !material_ids)
     {
         OGS_FATAL(
-            "Restriction of reseting a property in a polygonal region "
+            "Restriction of resetting a property in a polygonal region "
             "requires that a MaterialIDs data array is available in the "
             "mesh.");
     }

@@ -12,7 +12,7 @@
 /// The LinearSolverLibrarySetup takes care of proper initialization and
 /// shutting down of an external linear solver library. The concrete
 /// implementation is chosen by the build system.
-/// An object of this class must be created at the begining of the scope where
+/// An object of this class must be created at the beginning of the scope where
 /// it is used. When the scope closes (or the object is destroyed explicitly)
 /// library shutting down functions are automatically called.
 /// The default implementation is empty providing polymorphic behaviour when

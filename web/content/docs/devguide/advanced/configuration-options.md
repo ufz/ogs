@@ -11,7 +11,7 @@ weight = 1033
 
 ## CMake options
 
-Some of these options are enabled by default ("*Defaults* to *ON*") otherwise they must be expicitly set to *ON*.
+Some of these options are enabled by default ("*Defaults* to *ON*") otherwise they must be explicitly set to *ON*.
 
 ### General
 

@@ -462,7 +462,7 @@ bool SwmmInterface::convertSwmmInputToGeometry(std::string const& inp_file_name,
     {
         if (lines->size() != line_names.size())
         {
-            ERR ("Lengt of line vector and line name vector do not match.");
+            ERR ("Length of line vector and line name vector do not match.");
             geo_objects.removePointVec(geo_name);
             for (auto ply : *lines)
                 delete ply;

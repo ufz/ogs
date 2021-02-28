@@ -289,7 +289,7 @@ void MeshLayerEditDialog::accept()
     if (this->_edits.isEmpty())
     {
         OGSError::box(
-            "Please specifiy the number and\n type of layers and press 'Next'");
+            "Please specify the number and\n type of layers and press 'Next'");
         return;
     }
 
@@ -315,7 +315,7 @@ void MeshLayerEditDialog::accept()
 
     if (!all_paths_set)
     {
-        OGSError::box("Please specifiy raster files for all layers.");
+        OGSError::box("Please specify raster files for all layers.");
         return;
     }
 

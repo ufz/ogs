@@ -29,7 +29,7 @@ namespace FileIO
  */
 class AsciiRasterInterface {
 public:
-    /// Reads raster file by detecting type based on extension and then calling the apropriate method
+    /// Reads raster file by detecting type based on extension and then calling the appropriate method
     static GeoLib::Raster* readRaster(std::string const& fname);
 
     /// Reads an ArcGis ASC raster file

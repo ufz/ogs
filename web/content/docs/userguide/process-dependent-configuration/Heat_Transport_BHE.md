@@ -14,7 +14,7 @@ weight = 1
 Borehole heat exchangers (BHE) are widely applied in Ground Source Heat Pump (GSHP) systems to explore geothermal energy for building heating and cooling purposes. There are more and more engineerings starting to use simulation tools for the performance evaluation and design of GSHP projects.\
 For OGS-6, it allows the users to simulate the subsurface and soil temperature evolution induced by BHE and operation performance of BHE coupled heat pump.
 
-## Mathmatical framework
+## Mathematical framework
 
 This part aims to give an explanation of the mathematical framework in configuring the Heat_Transport_BHE process provided in OpenGeoSys. The numerical method implemented in OGS-6 is the so-called double-continuum finite element method (`DC-FEM`). This approach was originally proposed by Al-Khoury et al. (2010) and extendend by Diersch et al. (2011a; 2011b). It was then implemented in OpenGeoSys by Shao et al. (2016). This modelling appraoch has the following assumptions.
 
@@ -52,7 +52,7 @@ In the configuration of `Heat_Transport_BHE` process, it is generally configured
 
 ### < borehole >
 
-The borehole < length > and < diameter > are difined here. The unit of these parameters are in $\mathrm{m}$. Here is an example of a borehole with 18 m in length and 0.13 m in diameter.
+The borehole < length > and < diameter > are defined here. The unit of these parameters are in $\mathrm{m}$. Here is an example of a borehole with 18 m in length and 0.13 m in diameter.
 
 ```bash
 <borehole>
@@ -142,7 +142,7 @@ Here is an example using `TemperatureCurveConstantFlow`.
 ```
 
 For 2U-type BHE configuration, the flow rate in < flow_and_temperature_control > indicates the flow rate within each U-pipe.
-When a fixed power or power curve is imposed on a 2U-type BHE, the given value in < flow_and_temperature_control > or in the related power curve should be speficed with half of the user's presumed entire borehole exchanger power.
+When a fixed power or power curve is imposed on a 2U-type BHE, the given value in < flow_and_temperature_control > or in the related power curve should be specified with half of the user's presumed entire borehole exchanger power.
 ### < grout >
 
 The thermal properties of the grout material is defined here.
@@ -171,7 +171,7 @@ The thermal properties of the circulating fluid is defined here. The parameters 
 * /viscosity/: dynamic viscosity of circulating media which has the unit of $\mathrm{kg·m^{-1} s^{-1}}$;
 * /specific_heat_capacity/: specific heat capacity of circulating fluid, which has the unit of $\mathrm{J·kg^{-1} K^{-1}}$;
 * /thermal_conductivity/: thermal conductivity of the circulating fluid, which has the unit of $\mathrm{W·m^{-1} K^{-1}}$;
-* /reference_temperature/: When the < flow_and_temperature_control > was not set to TemperatureCurveConstantFlow, OGS needs to have an initial outlet temperature value in the first time step to start the simulation. A reference temperature has to be defined for the calcualtion of initial inflow temperature. The unit of refenrence temperature is in $^{\circ}$C.
+* /reference_temperature/: When the < flow_and_temperature_control > was not set to TemperatureCurveConstantFlow, OGS needs to have an initial outlet temperature value in the first time step to start the simulation. A reference temperature has to be defined for the calculation of initial inflow temperature. The unit of refenrence temperature is in $^{\circ}$C.
 
 Here is an example in which the circulating fluid is water at about 15 $^{\circ}$C.
 

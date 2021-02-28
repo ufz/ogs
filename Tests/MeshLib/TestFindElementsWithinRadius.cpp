@@ -28,7 +28,7 @@ struct MeshLibFindElementWithinRadius : public ::testing::Test
     ac::gtest_reporter gtest_reporter;
 };
 
-// For zero radius only the starting element is alway returned.
+// For zero radius only the starting element is always returned.
 TEST_F(MeshLibFindElementWithinRadius, ZeroRadius)
 {
     auto mesh =

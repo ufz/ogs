@@ -186,7 +186,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
             }
 
             OGS_FATAL(
-                "Configuration errors occured. Please fix the project file.");
+                "Configuration errors occurred. Please fix the project file.");
         }
     }
 

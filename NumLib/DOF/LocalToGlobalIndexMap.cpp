@@ -164,9 +164,9 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 
     // _rows should be resized based on an element ID
     std::size_t max_elem_id = 0;
-    for (std::vector<MeshLib::Element*>const* eles : vec_var_elements)
+    for (std::vector<MeshLib::Element*>const* elements : vec_var_elements)
     {
-        for (auto e : *eles)
+        for (auto e : *elements)
         {
             max_elem_id = std::max(max_elem_id, e->getID());
         }

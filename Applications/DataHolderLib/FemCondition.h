@@ -46,7 +46,7 @@ public:
     /// Returns the name of the associated process variable
     std::string const getProcessVarName() const { return _process_var.name; }
 
-    /// Returns the numerical order of the process vairable
+    /// Returns the numerical order of the process variable
     ProcessVariable const& getProcessVar() const { return _process_var; }
 
     /// Returns the name of the parameter associated with the condition

@@ -1,1 +1,1 @@
-It is the distance between inlet and oulet pipes. In 1U-type borehole heat exchanger, there is distance between inlet and oulet pipes except at the bottom of the borehole heat exchanger. Such distance will affect the heat exchagne between inlet and outlet pipes.
+It is the distance between inlet and oulet pipes. In 1U-type borehole heat exchanger, there is distance between inlet and oulet pipes except at the bottom of the borehole heat exchanger. Such distance will affect the heat exchange between inlet and outlet pipes.

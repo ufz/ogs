@@ -256,7 +256,7 @@ public:
     void renameGeometry(std::string const& old_name,
                         std::string const& new_name);
 
-    /// Constucts a station-vector based on the points of a given geometry.
+    /// Constructs a station-vector based on the points of a given geometry.
     // @param geo_name name of the geometry
     // @param stn_name name of the new station vector
     // @param only_usused_pnts if true only points not in a line or surface are

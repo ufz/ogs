@@ -26,7 +26,7 @@ namespace MeshGeoToolsLib
 /// mesh nodes near a geometry. For this purpose it computes the average
 /// \f$\mu\f$ and the standard deviation \f$\sigma\f$ of edge length or node distance of mesh
 /// elements. The search length is set to \f$\mu-2\sigma\f$. This strategy
-/// is usefull for meshes with different sizes of elements.
+/// is useful for meshes with different sizes of elements.
 class HeuristicSearchLength : public SearchLength
 {
 public:

@@ -365,7 +365,7 @@ void DiagramScene::setDiagramBoundaries(DiagramList* list)
 }
 
 /**
- * Updates the scene at the start and everytime new data points
+ * Updates the scene at the start and every time new data points
  * are added. Specifically, objects on the scene are assigned
  * their position in the new coordinate system and are resized
  * if necessary.

@@ -94,7 +94,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.getRhs(*x_prev[process_id], rhs);
         INFO("[time] Assembly took {:g} s.", time_assembly.elapsed());
 
-        // Subract non-equilibrium initial residuum if set
+        // Subtract non-equilibrium initial residuum if set
         if (_r_neq != nullptr)
         {
             LinAlg::axpy(rhs, -1, *_r_neq);
@@ -285,7 +285,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         sys.getJacobian(J);
         INFO("[time] Assembly took {:g} s.", time_assembly.elapsed());
 
-        // Subract non-equilibrium initial residuum if set
+        // Subtract non-equilibrium initial residuum if set
         if (_r_neq != nullptr)
             LinAlg::axpy(res, -1, *_r_neq);
 

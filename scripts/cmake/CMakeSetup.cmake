@@ -25,7 +25,7 @@ list(APPEND CMAKE_PREFIX_PATH
   $ENV{CMAKE_LIBRARY_SEARCH_PATH} # Environment variable, Windows
   ${CMAKE_LIBRARY_SEARCH_PATH})   # CMake option, Windows
 
-# Load addional modules
+# Load additional modules
 include(GNUInstallDirs)
 include(ProcessorCount)
 ProcessorCount(NUM_PROCESSORS)

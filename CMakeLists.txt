@@ -72,7 +72,7 @@ if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
-option(OGS_BUILD_UTILS "Should the utilities programms be built?" ON)
+option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
 
 # ---- CMake includes ----
 include(GitSetup)

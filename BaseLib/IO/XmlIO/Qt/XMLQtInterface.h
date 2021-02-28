@@ -31,7 +31,7 @@ public:
     explicit XMLQtInterface(QString schemaFile = "");
     virtual ~XMLQtInterface() = default;
 
-    /// Reads the file. In an overriden function in the child class be sure to call
+    /// Reads the file. In an overridden function in the child class be sure to call
     /// XMLQtInterface::readFile(fileName).
     virtual int readFile(const QString &fileName);
 

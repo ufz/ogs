@@ -1,2 +1,2 @@
-The type tag is used to specify the type of the algorithm. Avaiable algorithms
+The type tag is used to specify the type of the algorithm. Available algorithms
 are 'fixed' and 'heuristic'.

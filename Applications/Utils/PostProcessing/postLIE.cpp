@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
     TCLAP::SwitchArg nooverwrite_arg(
         "",
         "no-overwrite",
-        "don't overwirte existing post processed VTU files");
+        "don't overwrite existing post processed VTU files");
     cmd.add(nooverwrite_arg);
 
     cmd.parse(argc, argv);

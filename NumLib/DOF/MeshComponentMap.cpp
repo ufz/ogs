@@ -41,7 +41,7 @@ MeshComponentMap::MeshComponentMap(
     }
 
     // Use PETSc with multi-thread
-    // get number of unknows
+    // get number of unknowns
     GlobalIndexType num_unknowns = 0;
     for (auto const& c : components)
     {

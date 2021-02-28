@@ -80,15 +80,15 @@ private:
     {
         unsigned long nodes;  ///< 0: Number of all nodes of a partition,
         unsigned long base_nodes;        ///< 1: Number of nodes for linear
-                                         ///elements of a parition,
+                                         ///elements of a partition,
         unsigned long regular_elements;  ///< 2: Number of non-ghost elements
                                          ///of a partition,
         unsigned long
             ghost_elements;  ///< 3: Number of ghost element of a partition,
         unsigned long active_base_nodes;  ///< 4: Number of active nodes for
-                                          /// linear element of a parition,
+                                          /// linear element of a partition,
         unsigned long
-            active_nodes;  ///< 5: Number of all active nodes a parition,
+            active_nodes;  ///< 5: Number of all active nodes a partition,
         unsigned long global_base_nodes;  ///< 6: Number of nodes for linear
                                           /// element of global mesh,
         unsigned long global_nodes;  ///< 7: Number of all nodes of global mesh,
@@ -207,7 +207,7 @@ private:
     }
 
     /*!
-         \brief Set mesh nodes from a tempory array containing node data read from file.
+         \brief Set mesh nodes from a temporary array containing node data read from file.
          \param node_data     Vector containing node data read from file.
          \param mesh_node     Vector of mesh nodes to be set.
          \param glb_node_ids  Global IDs of nodes of a partition.
@@ -217,7 +217,7 @@ private:
         std::vector<unsigned long> &glb_node_ids) const;
 
     /*!
-         \brief Set mesh elements from a tempory array containing node data read from file.
+         \brief Set mesh elements from a temporary array containing node data read from file.
          \param mesh_nodes        Vector of mesh nodes used to set element nodes.
          \param elem_data         Vector containing element data read from file.
          \param mesh_elems        Vector of mesh elements to be set.

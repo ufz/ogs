@@ -90,7 +90,7 @@ New features:
    test. [#1528](https://github.com/ufz/ogs/pull/1528)
 
 ### Fixes:
- - Fix LocalToGlobalIndexMap with mutliple variables and with multiple componets. [#1433](https://github.com/ufz/ogs/pull/1433) [#1440](https://github.com/ufz/ogs/pull/1440)
+ - Fix LocalToGlobalIndexMap with multiple variables and with multiple components. [#1433](https://github.com/ufz/ogs/pull/1433) [#1440](https://github.com/ufz/ogs/pull/1440)
  - Fix PropertyVector<T*> for multi-component case. [#1441](https://github.com/ufz/ogs/pull/1441)
  - Fix checking IDs of nonlinear nodes. [#1495](https://github.com/ufz/ogs/pull/1495)
  - Fix incorrect use of getNumberOfBaseNodes(). [#1515](https://github.com/ufz/ogs/pull/1515)
@@ -161,7 +161,7 @@ New feature:
    to the install and package targets instead of running after each executable
    gets build. [#1458](https://github.com/ufz/ogs/pull/1458)
  - Increase minimum clang compiler version to 3.5 in course of updating travis
-   build enviroment to Ubuntu LTS 14.04. [#1448](https://github.com/ufz/ogs/pull/1448)
+   build environment to Ubuntu LTS 14.04. [#1448](https://github.com/ufz/ogs/pull/1448)
  - Added a script that generates crosslinked Doxygen pages out of ctest input
    files [#1348](https://github.com/ufz/ogs/pull/1348)
 
@@ -207,7 +207,7 @@ New feature:
  - Added material properties for zeolite adsorption and Calcium oxide/hydroxide
    reactions. [#1178](https://github.com/ufz/ogs/pull/1178)
  - Transferred the TES process, a monolithically coupled THC model for simulating
-   thermochemical energy storag devices, from OGS5. [#1181](https://github.com/ufz/ogs/pull/1181)
+   thermochemical energy storage devices, from OGS5. [#1181](https://github.com/ufz/ogs/pull/1181)
  - Introduced a general scheme for documenting OGS6 input file settings. #978
  - Added copy constructor for the class Surface, minor improvements in GeoLib. [#1237](https://github.com/ufz/ogs/pull/1237)
  - Added classes GeoLib::LineSegment and GeoLib::Polyline::SegmentIterator. [#1139](https://github.com/ufz/ogs/pull/1139)
@@ -246,7 +246,7 @@ New feature:
  - Fixing several small issues with NetCDF import [#1169](https://github.com/ufz/ogs/pull/1169)
  - Restructure Applications related modules
     - Move DataHolderLib and FileIO under Applications [#1279](https://github.com/ufz/ogs/pull/1279)
- - Remove calling std::abort within libraries. Exeptions are thrown instead. [#1245](https://github.com/ufz/ogs/pull/1245)
+ - Remove calling std::abort within libraries. Exceptions are thrown instead. [#1245](https://github.com/ufz/ogs/pull/1245)
  - Fix finding Boost with BOOST_ROOT CMake argument [#1287](https://github.com/ufz/ogs/pull/1287)
  - Fix linking of Sundials CVODE library [#1197](https://github.com/ufz/ogs/pull/1197)
  - Fixed issue where geometry names would be missing after merging geometries [#1295](https://github.com/ufz/ogs/pull/1295)

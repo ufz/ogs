@@ -99,7 +99,7 @@ This imbalance leads to a lower outflow temperature from the BHE \#2, which is s
 Compared to the decrease of the heat extraction rate on the centre BHE \#2, the rates on the other two BHEs located at the out sides was gradually increasing.
 It indicates that the heat extraction rate is shifting from the centre BHE towards the outer BHEs over the heating season.
 
-In comparision to the one-way setup, the closed-loop network shows a slightly different behaviour.
+In comparison to the one-way setup, the closed-loop network shows a slightly different behaviour.
 The evolution of inflow refrigerant temperature and flow rate entering the BHE array is shown in Figure 5.
 With the decreasing of the working fluid temperature over the time, the system flow rate dereases gradually.
 Figure 6 depicts the thermal load shifting phenomenon with the closed-loop model.

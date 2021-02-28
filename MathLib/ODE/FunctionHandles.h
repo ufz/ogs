@@ -21,7 +21,7 @@ namespace detail
 //! \addtogroup ExternalODESolverInterface
 //! @{
 
-/*! Interface providing acces to functions computing \f$\dot y\f$ and its
+/*! Interface providing access to functions computing \f$\dot y\f$ and its
  *  Jacobian to code interfacing with external ODE solver libraries.
  *
  * \note

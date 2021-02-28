@@ -21,7 +21,7 @@ public:
     /// @remark The main purpose of class LineSegment is the use within a
     /// polyline. For this reason the memory is not managed per default. But the
     /// user has the freedom to hand over the responsibility for the mem
-    /// managment of the points to the object.
+    /// management of the points to the object.
     LineSegment(GeoLib::Point* const a, GeoLib::Point* const b,
                 bool point_mem_management_by_line_segment = false);
 

@@ -28,7 +28,7 @@
 
 namespace MathLib
 {
-/*! A class of linear solver based on PETSc rountines.
+/*! A class of linear solver based on PETSc routines.
 
  All command-line options that are not recognized by OGS are passed on to
  PETSc, i.e., they potentially affect the linear solver.

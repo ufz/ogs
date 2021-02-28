@@ -65,4 +65,4 @@ Mesh2Raster -i input.vtu -o output.asc -c 1000
 
 ## Application
 
-The resulting ASCII-rasters can be used to represent surface data in geographic information systems. In the absense of input data, a detailed raster can also be used by OpenGeoSys preprocessing tools to generate new surface meshes with different resolution or properties.
+The resulting ASCII-rasters can be used to represent surface data in geographic information systems. In the absence of input data, a detailed raster can also be used by OpenGeoSys preprocessing tools to generate new surface meshes with different resolution or properties.

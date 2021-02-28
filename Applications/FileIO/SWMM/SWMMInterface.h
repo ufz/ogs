@@ -77,7 +77,7 @@ public:
     /// Get all the object names for a given object type
     std::vector<std::string> getNames(SwmmObject obj_type) const;
 
-    /// Returns the Name for the indexed object of the given type (or an empty string if an error occured).
+    /// Returns the Name for the indexed object of the given type (or an empty string if an error occurred).
     std::string getName(SwmmObject obj_type, std::size_t idx) const;
 
     /// Returns the number of objects of the given type.
@@ -150,7 +150,7 @@ private:
     /// Reads pollutant names and parameters
     bool readPollutants(std::ifstream &in);
 
-    /// Returns the name of an array (or an empty string if errors occured)
+    /// Returns the name of an array (or an empty string if errors occurred)
     std::string getArrayName(SwmmObject obj_type, std::size_t var_idx, std::size_t n_pollutants) const;
 
     /// Reads the location of external rain gauge time series files.

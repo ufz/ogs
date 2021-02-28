@@ -38,7 +38,7 @@ TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
          pnts_list.push_back(new GeoLib::Point(rand() % box_size - half_box_size, rand() % box_size - half_box_size, rand() % box_size - half_box_size));
      }
 
-     // construct from list points a axis algined bounding box
+     // construct from list points a axis aligned bounding box
      GeoLib::AABB aabb(pnts_list.begin(), pnts_list.end());
 
      MathLib::Point3d const& min_pnt(aabb.getMinPoint());
@@ -77,7 +77,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAList)
                                 rand() % box_size - half_box_size);
      }
 
-     // construct from list points a axis algined bounding box
+     // construct from list points a axis aligned bounding box
      GeoLib::AABB aabb(pnts_list.begin(), pnts_list.end());
 
      MathLib::Point3d const& min_pnt(aabb.getMinPoint());
@@ -148,7 +148,7 @@ TEST(GeoLibAABB, RandomNumberOfPointsRandomPointInAVector)
                            rand() % box_size - half_box_size);
      }
 
-     // construct from list points a axis algined bounding box
+     // construct from list points a axis aligned bounding box
      GeoLib::AABB aabb(pnts.begin(), pnts.end());
 
      MathLib::Point3d const& min_pnt(aabb.getMinPoint());

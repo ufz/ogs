@@ -34,7 +34,7 @@ datadir = os.path.abspath(datadir)
 docauxdir = os.path.abspath(docauxdir)
 outdir = os.path.join(docauxdir, "dox", "CTestProjectFiles")
 
-# Expansions or shortcuts for the documenation can be added here in the
+# Expansions or shortcuts for the documentation can be added here in the
 # following format:
 # "prj__processes__process": "process",
 # See the expansion table in the append-xml-tags.py too.
@@ -275,7 +275,7 @@ for (dirpath, dirnames, filenames) in os.walk(datadir, topdown=False):
                 try:
                     xmlroot = ET.parse(filepath).getroot()
                 except ET.ParseError as err:
-                    print("ParseError occured in file :", filepath)
+                    print("ParseError occurred in file :", filepath)
                     print(err)
                     raise
                 print_tags(xmlroot, 0, "prj", fh, None, 0, relfilepath)

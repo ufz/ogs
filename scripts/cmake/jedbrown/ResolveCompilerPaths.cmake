@@ -78,7 +78,7 @@ macro (RESOLVE_LIBRARIES LIBS LINK_LINE)
     endif (token MATCHES "-L([^\" ]+|\"[^\"]+\")")
   endforeach (token)
   set (_lib "NOTFOUND" CACHE INTERNAL "Scratch variable" FORCE)
-  # only the LAST occurence of each library is required since there should be no circular dependencies
+  # only the LAST occurrence of each library is required since there should be no circular dependencies
   if (_libs_found)
     list (REVERSE _libs_found)
     list (REMOVE_DUPLICATES _libs_found)

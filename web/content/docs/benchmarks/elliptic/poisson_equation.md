@@ -94,7 +94,7 @@ follows:
 <python_script>sin_x_sin_y_source_term.py</python_script>
 ```
 
-In the source term descripition
+In the source term description
 
 ```xml
 <source_term>

@@ -21,7 +21,7 @@ namespace LIE
 /// Compute a normal vector of the given element
 ///
 /// Computed normal vector is oriented in the left direction of the given line
-/// element such that computeRotationMatrix() returns the indentity matrix for
+/// element such that computeRotationMatrix() returns the identity matrix for
 /// line elements parallel to a vector (1,0,0)
 void computeNormalVector(MeshLib::Element const& e, unsigned const global_dim,
                          Eigen::Vector3d& element_normal);

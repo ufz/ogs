@@ -61,7 +61,7 @@ public:
         ResidualVector residual;
         do
         {
-            // The jacobian and the residual are updated simulataniously to keep
+            // The jacobian and the residual are updated simultaneously to keep
             // consistency. The jacobian is used after the non-linear solver
             // onward.
             _jacobian_update(jacobian);

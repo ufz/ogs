@@ -89,7 +89,7 @@ AddTest(
     VIS disc_with_hole_ts_4_t_1.000000.vtu
 )
 
-# Tests that internal state variables work correcly.
+# Tests that internal state variables work correctly.
 AddTest(
     NAME Mechanics_DruckerPrager_mfront
     PATH Mechanics/Ehlers/MFront

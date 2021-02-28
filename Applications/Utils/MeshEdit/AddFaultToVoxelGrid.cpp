@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
         "instance created with Layers2Grid or Vtu2Grid) that are intersected "
         "by a triangulated 2D mesh representing a fault or some other "
         "significant structure. The material group for those intersected "
-        "elements can be explicitely specified, otherwise the largest existing "
+        "elements can be explicitly specified, otherwise the largest existing "
         "MaterialID will be increased by one.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +

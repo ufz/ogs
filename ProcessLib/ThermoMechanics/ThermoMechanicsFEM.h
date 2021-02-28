@@ -281,7 +281,7 @@ private:
      *      \f[
      *          \rho c_p \cdot{T} - \nabla (\mathbf{K} (\nabla T) = Q_T
      *      \f]
-     * where \f$ rho\f$ is the solid density, \f$ c_p\f$ is the spefific heat
+     * where \f$ rho\f$ is the solid density, \f$ c_p\f$ is the specific heat
      * capacity, \f$ \mathbf{K} \f$ is the thermal conductivity, and \f$ Q_T\f$
      * is the source/sink term.
      *

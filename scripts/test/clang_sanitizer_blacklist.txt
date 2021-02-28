@@ -17,7 +17,7 @@ fun:_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE10_S_compareEmm
 fun:_ZNSs10_S_compareEmm
 fun:*_S_compare*
 
-# When looking for a last occurence of a string in another string the algorithm
+# When looking for a last occurrence of a string in another string the algorithm
 # an integer subtraction overflow happens.
 # STL gcc-5.3: std::string::find_last_of(...) const
 fun:_ZNKSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12find_last_ofEPKcmm

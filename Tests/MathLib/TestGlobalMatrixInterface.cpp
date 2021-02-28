@@ -98,7 +98,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
 
     // Test basic assignment operator with an empty T_MATRIX._A
     T_MATRIX m_c = m;
-    // Test basic assignment operator with an initalized T_MATRIX._A
+    // Test basic assignment operator with an initialized T_MATRIX._A
     m_c = m;
 
     // Multiply by a vector

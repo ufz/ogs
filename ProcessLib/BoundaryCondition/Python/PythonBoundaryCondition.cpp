@@ -163,7 +163,7 @@ void PythonBoundaryCondition::getEssentialBCValues(
         if (dof_idx == NumLib::MeshComponentMap::nop)
         {
             OGS_FATAL(
-                "Logic error. This error should already have occured while "
+                "Logic error. This error should already have occurred while "
                 "gathering primary variables. Something nasty is going on!");
         }
 

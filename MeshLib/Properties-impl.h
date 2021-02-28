@@ -79,7 +79,7 @@ template <typename T>
 bool Properties::existsPropertyVector(std::string const& name) const
 {
     auto it(_properties.find(name));
-    // Check that a PropertyVector with the approriate name exists.
+    // Check that a PropertyVector with the appropriate name exists.
     if (it == _properties.end())
     {
         return false;

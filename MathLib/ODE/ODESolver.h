@@ -40,7 +40,7 @@ public:
     /*! Sets functions that compute \f$\dot y\f$ and
      *  the Jacobian \f$\partial \dot y/\partial y\f$.
      *
-     * If no Jacobian function shall be set, \c nullptr can be passed fo \c df.
+     * If no Jacobian function shall be set, \c nullptr can be passed for \c df.
      *
      * \remark
      * solve() cannot be directly called after this method, rather preSolve()

@@ -15,7 +15,7 @@ project = "Parabolic/T/3D_2U_BHE/3D_2U_BHE.prj"
 
 ## Model Setup
 
-The numerical model was established based on dual continuum method developed by Diersch et al. (2011). In the 3D 2U type BHE benchmark, the depth of the whole domain is 18.5 m with a square cross section of 5 m per side. The BHE bottom is situated at -18 m and its total length is 18 m. Detailed parameters for the model configuration are listed in the follwoing table.
+The numerical model was established based on dual continuum method developed by Diersch et al. (2011). In the 3D 2U type BHE benchmark, the depth of the whole domain is 18.5 m with a square cross section of 5 m per side. The BHE bottom is situated at -18 m and its total length is 18 m. Detailed parameters for the model configuration are listed in the following table.
 
 | Parameter                          | Symbol             |  Value              | Unit                        |
 | ---------------------------------- |:------------------ | -------------------:| --------------------------: |
@@ -50,7 +50,7 @@ All the other parameters adopted in the model is same as the ones used in the sc
 
 ## FEFLOW Input Files
 For the benchmark a FEFLOW model is presented.
-The mesh used in the OGS model is directly coverted from the FEFLOW model mesh, to ensure that there is no influence to the comparison results from the mesh side.
+The mesh used in the OGS model is directly converted from the FEFLOW model mesh, to ensure that there is no influence to the comparison results from the mesh side.
 Both the FEFLOW and ogs model mesh can be found in the ogs GitLab (<https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/3426>).
 
 ## FEFLOW Input Files
@@ -67,9 +67,9 @@ The comparison figures demonstrate that the OGS numerical results and FEFLOW res
 Figure 2: Comparison of vertical temperature distribution from scenario by adopting the fixed inflow boundary condition
 
 Figure 3 shows the vertical distributed temperature of circulating fluid after operation for 3300 s by adopting different power boundary conditions in OGS and FEFLOW models.
-Compared to the resutls computed from the OGS model with using a fixed power boundary condtion (illustrated as the blue and green line), A 0.18 $^{\circ}$C difference is found for the averaged vertical temperature from the FEFLOW model (illustrated as the dotted line).
+Compared to the resutls computed from the OGS model with using a fixed power boundary condition (illustrated as the blue and green line), A 0.18 $^{\circ}$C difference is found for the averaged vertical temperature from the FEFLOW model (illustrated as the dotted line).
 The reason to the results difference is due to the different power boundary condition type adopted in the two software.
-In FEFLOW the power boundary condtion is based on the outlet temperature calculated from the last time step (non-iterative).
+In FEFLOW the power boundary condition is based on the outlet temperature calculated from the last time step (non-iterative).
 Compared to it, the default power boundary condition adopted in the OGS `Heat_Transport_BHE` process is based on the outlet temperature calculated from the current time step (with-iterative).
 Besides, by setting python bindings, the current OGS `Heat_Transport_BHE` process is capable to adopt the power boundary condition type used in the FEFLOW software.
 In this way, the computed vertical distributed circulating fluid temperature is updated to the black and red solid line illustrated in the figure 3.

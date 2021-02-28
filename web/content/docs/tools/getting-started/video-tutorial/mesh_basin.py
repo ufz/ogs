@@ -32,7 +32,7 @@ gmsh.model.add("basinMesh")
 # - the first 3 arguments are the point coordinates (x, y, z)
 # - the next (optional) argument is the target mesh size (the "characteristic
 #   length") close to the point
-# - the last (optional) argument is the point tag (a stricly positive integer
+# - the last (optional) argument is the point tag (a strictly positive integer
 #   that uniquely identifies the point)
 
 # The distribution of the mesh element sizes will be obtained by interpolation
@@ -130,7 +130,7 @@ for l in range(1, 5):
 # groups are defined, Gmsh will export in output files only mesh elements that
 # belong to at least one physical group. (To force Gmsh to save all elements,
 # whether they belong to physical groups or not, set the `Mesh.SaveAll' option
-# to 1.) Physical groups are also identified by tags, i.e. stricly positive
+# to 1.) Physical groups are also identified by tags, i.e. strictly positive
 # integers, that should be unique per dimension (0D, 1D, 2D or 3D). Physical
 # groups can also be given names.
 #

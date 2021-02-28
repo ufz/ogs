@@ -45,7 +45,7 @@ struct EigenOption final
     /// Error tolerance
     double error_tolerance;
 #ifdef USE_EIGEN_UNSUPPORTED
-    /// Scaling the coefficient matrix and the RHS bector
+    /// Scaling the coefficient matrix and the RHS vector
     bool scaling;
     /// Restart value for the GMRES solver
     int restart;

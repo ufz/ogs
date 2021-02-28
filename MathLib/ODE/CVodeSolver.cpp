@@ -287,7 +287,7 @@ bool CVodeSolverImpl::solve(const double t_end)
 
     // check_error asserts that t_end == t_reached and that solving the ODE
     // went fine. Otherwise the program will be aborted. Therefore, we don't
-    // have to check manually for errors here and can always savely return true.
+    // have to check manually for errors here and can always safely return true.
     return true;
 }
 

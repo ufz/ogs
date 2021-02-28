@@ -164,7 +164,7 @@ void LocalLinearLeastSquaresExtrapolator::extrapolateElement(
     if (num_values % num_components != 0)
     {
         OGS_FATAL(
-            "The number of computed integration point values is not divisable "
+            "The number of computed integration point values is not divisible "
             "by the number of num_components. Maybe the computed property is "
             "not a {:d}-component vector for each integration point.",
             num_components);
@@ -292,7 +292,7 @@ void LocalLinearLeastSquaresExtrapolator::calculateResidualElement(
     if (num_values % num_components != 0)
     {
         OGS_FATAL(
-            "The number of computed integration point values is not divisable "
+            "The number of computed integration point values is not divisible "
             "by the number of num_components. Maybe the computed property is "
             "not a {:d}-component vector for each integration point.",
             num_components);

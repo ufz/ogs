@@ -165,7 +165,7 @@ public:
                     auto const left = comp * num_nodes;
                     auto const width = num_nodes;
                     auto const height = num_nodes;
-                    // The assignement -= takes into account the sign convention
+                    // The assignment -= takes into account the sign convention
                     // of 1st-order in time ODE systems in OpenGeoSys.
                     local_Jac.block(top, left, width, height).noalias() -=
                         N.transpose() * (dFlux[comp] * w) * N;

@@ -29,7 +29,7 @@ I will assume, that you have the sources (eg. checked out from github) and that 
 /home/user/ogs6/sources
 ```
 
-Please, create a seperate **build directory** for your favorite IDE like
+Please, create a separate **build directory** for your favorite IDE like
 
 ```bash
 /home/user/ogs6/build_gdb

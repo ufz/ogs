@@ -48,7 +48,7 @@ struct StandardElasticityBrickBehaviour
                                   "StandardElasticityBrick", hypothesis(Dim));
 
         using P = ParameterLib::ConstantParameter<double>;
-        // Parameters used by mfront model in the order of appearence in the
+        // Parameters used by mfront model in the order of appearance in the
         // .mfront file.
         static P const young_modulus("", 1e11);
         static P const poisson_ratio("", 0.3);
@@ -69,7 +69,7 @@ struct ElasticBehaviour
                                                "Elasticity", hypothesis(Dim));
 
         using P = ParameterLib::ConstantParameter<double>;
-        // Parameters used by mfront model in the order of appearence in the
+        // Parameters used by mfront model in the order of appearance in the
         // .mfront file.
         static P const young_modulus("", 1e11);
         static P const poisson_ratio("", 0.3);
@@ -91,7 +91,7 @@ struct MohrCoulombAbboSloanBehaviour
             "libOgsMFrontBehaviour", "MohrCoulombAbboSloan", hypothesis(Dim));
 
         using P = ParameterLib::ConstantParameter<double>;
-        // Parameters used by mfront model in the order of appearence in the
+        // Parameters used by mfront model in the order of appearance in the
         // .mfront file.
         static P const young_modulus("", 150e3);
         static P const poisson_ratio("", 0.3);

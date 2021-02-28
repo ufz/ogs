@@ -19,7 +19,7 @@ namespace MaterialLib
 namespace PorousMedium
 {
 /// The class implements a basic permeability model that employs a parameter
-/// (for instance a constant parameter or mesh cell dependend parameter) to fill
+/// (for instance a constant parameter or mesh cell dependent parameter) to fill
 /// the intrinsic permeability tensor.
 class Permeability
 {

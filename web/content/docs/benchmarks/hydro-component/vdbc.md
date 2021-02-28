@@ -22,4 +22,4 @@ For the setup and parameterization, see the chapter "Density dependent flow - Th
 
 ## Results
 
-{{< img src="../VDBC_num_ana_comp.png" title="UPPER PART: Analytical solution on the right boundary in dependance of time $t$ of the problem indicated with red dashed line in comparison to numerical solution indicated by blue crosses; LOWER PART: development of relative error in dependance of time $t$. Grid spacing for simulations: 0.1; widest timestep 10. The relative error is below $5 \times 10^{-5}$ for all simulation times.">}}
+{{< img src="../VDBC_num_ana_comp.png" title="UPPER PART: Analytical solution on the right boundary in dependence of time $t$ of the problem indicated with red dashed line in comparison to numerical solution indicated by blue crosses; LOWER PART: development of relative error in dependence of time $t$. Grid spacing for simulations: 0.1; widest timestep 10. The relative error is below $5 \times 10^{-5}$ for all simulation times.">}}

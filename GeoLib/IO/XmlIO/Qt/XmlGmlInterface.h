@@ -35,7 +35,7 @@ class XmlGmlInterface final : public BaseLib::IO::XMLInterface,
 public:
     explicit XmlGmlInterface(GeoLib::GEOObjects& geo_objs);
 
-    /// Reads an xml-file containing geometric object definitions into the GEOObjects used in the contructor
+    /// Reads an xml-file containing geometric object definitions into the GEOObjects used in the constructor
     int readFile(const QString& fileName) override;
 
     bool readFile(std::string const& fname) override

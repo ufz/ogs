@@ -3,7 +3,7 @@
  * \brief Definition of member functions of class PETScVector,
  *        which provides an interface to PETSc vector routines.
  *
- *   Note: the return message of PETSc routines is ommited in
+ *   Note: the return message of PETSc routines is omitted in
  *         the source code. If it is really needed, it can be activated by
  *         adding a PetscErrorCode type variable before each PETSc function
  *

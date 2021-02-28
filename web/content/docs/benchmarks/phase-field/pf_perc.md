@@ -23,7 +23,7 @@ We simulate two different fluid percolation experiments performed on rock salt s
 
 ## Results and evaluation
 
-Simulated crack pathes (phase-field) for the two cases are shown below:
+Simulated crack paths (phase-field) for the two cases are shown below:
 
 {{< img src="../VPF_ME2_case1.png" >}}
 {{< img src="../VPF_ME2_case2.png" >}}

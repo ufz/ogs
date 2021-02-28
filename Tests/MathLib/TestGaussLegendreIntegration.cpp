@@ -424,7 +424,7 @@ std::unique_ptr<FBase> getF(unsigned polynomial_order)
  * different degree over the unit cube.
  *
  * Gauss-Legendre integration should be able to exactly integrate those up to a
- * certian degree.
+ * certain degree.
  *
  * The coefficients of the tested polynomials are chosen randomly.
  *

@@ -17,7 +17,7 @@ std::string dataType2String(DataType const t)
 {
     if (t == DataType::UNDEFINED)
     {
-        return "[Undefinied Type]";
+        return "[Undefined Type]";
     }
     if (t == DataType::VSET)
     {
@@ -42,7 +42,7 @@ std::string dataType2ShortString(DataType const t)
 {
     if (t == DataType::UNDEFINED)
     {
-        return "[undefinied]";
+        return "[undefined]";
     }
     if (t == DataType::VSET)
     {

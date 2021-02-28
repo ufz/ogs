@@ -37,7 +37,7 @@ available. Here, some of the 3d benchmarks are described.
 
 ### Cylindrical domain
 
-The Poisson equation on cylindrical domain of heigth $1$ and radius
+The Poisson equation on cylindrical domain of height $1$ and radius
 $r=1$ is solved. In the following figure the geometry, partly semi-transparent,
 is sketched. Furthermore, the mesh resolution is shown in the cylindrical domain
 within the first quadrant of the coordinate system. In the second quadrant the
@@ -102,7 +102,7 @@ The input meshes are stored in the VTK file format and can be directly visualize
 
 ### Cylindrical domain - axisymmetric example
 
-The Poisson equation on cylindrical domain of heigth $1$ and radius
+The Poisson equation on cylindrical domain of height $1$ and radius
 $r=1$ is solved. The cylindrical domain is defined as axisymmetric.
 
 #### Results and evaluation
