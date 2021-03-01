@@ -30,8 +30,13 @@ public:
     /*! Constructs a new instance.
      *
      * \param linear_solver the linear solver used by this nonlinear solver.
+     * \param maxiter the maximum number of iterations used to solve the
+     *                equation.
+     * \param prefix used to set the SNES options.
      */
-    explicit PETScNonlinearSolver(GlobalLinearSolver& linear_solver);
+    PETScNonlinearSolver(GlobalLinearSolver& linear_solver,
+                         int maxiter,
+                         std::string prefix);
 
     //! Set the nonlinear equation system that will be solved.
     void setEquationSystem(System& eq, ConvergenceCriterion& conv_crit);

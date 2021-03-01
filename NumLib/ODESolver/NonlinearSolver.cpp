@@ -439,9 +439,13 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
 #ifdef USE_PETSC
     if (boost::iequals(type, "PETScSNES"))
     {
+        auto prefix =
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__prefix}
+            config.getConfigParameter<std::string>("prefix", "");
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = PETScNonlinearSolver;
-        return std::make_pair(std::make_unique<ConcreteNLS>(linear_solver),
+        return std::make_pair(std::make_unique<ConcreteNLS>(
+                                  linear_solver, max_iter, std::move(prefix)),
                               tag);
     }
 
