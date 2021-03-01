@@ -30,10 +30,15 @@ PropertyDataType Curve::value(VariableArray const& variable_array,
 }
 
 PropertyDataType Curve::dValue(VariableArray const& variable_array,
-                               Variable const /*primary_variable*/,
+                               Variable const primary_variable,
                                ParameterLib::SpatialPosition const& /*pos*/,
                                double const /*t*/, double const /*dt*/) const
 {
+    if (primary_variable != independent_variable_)
+    {
+        return 0.0;
+    }
+
     auto const x = std::get<double>(
         variable_array[static_cast<int>(independent_variable_)]);
     return curve_.getDerivative(x);
