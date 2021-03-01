@@ -218,7 +218,7 @@ AddTest(
     DIFF_DATA
     hm2_2Dmandel_ts_40_t_2.000000.vtu hm2_2Dmandel_ts_40_t_2.000000.vtu pressure pressure 1.0e-10 0.0
     hm2_2Dmandel_ts_40_t_2.000000.vtu hm2_2Dmandel_ts_40_t_2.000000.vtu displacement displacement 1.0e-10 0.0
-    hm2_2Dmandel_ts_40_t_2.000000.vtu hm2_2Dmandel_ts_40_t_2.000000.vtu sigma sigma 2.0e-9 0.0
+    hm2_2Dmandel_ts_40_t_2.000000.vtu hm2_2Dmandel_ts_40_t_2.000000.vtu sigma sigma 3.0e-9 0.0
     hm2_2Dmandel_ts_40_t_2.000000.vtu hm2_2Dmandel_ts_40_t_2.000000.vtu epsilon epsilon 1.0e-10 0.0
     hm2_2Dmandel_ts_160_t_8.000000.vtu hm2_2Dmandel_ts_160_t_8.000000.vtu pressure pressure 1.0e-10 0.0
     hm2_2Dmandel_ts_160_t_8.000000.vtu hm2_2Dmandel_ts_160_t_8.000000.vtu displacement displacement 1.0e-10 0.0
