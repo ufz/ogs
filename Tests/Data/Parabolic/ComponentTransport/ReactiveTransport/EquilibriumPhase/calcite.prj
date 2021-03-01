@@ -36,7 +36,7 @@
                             <name>C(4)</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>0</value>
                                 </property>
@@ -56,7 +56,7 @@
                             <name>Ca</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>0</value>
                                 </property>
@@ -76,7 +76,7 @@
                             <name>Mg</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>0</value>
                                 </property>
@@ -96,7 +96,7 @@
                             <name>Cl</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>0</value>
                                 </property>
@@ -116,7 +116,7 @@
                             <name>H</name>
                             <properties>
                                 <property>
-                                    <name>molecular_diffusion</name>
+                                    <name>pore_diffusion</name>
                                     <type>Constant</type>
                                     <value>0</value>
                                 </property>

@@ -41,7 +41,7 @@ void checkMPLProperties(
     std::array const required_properties_components = {
         MaterialPropertyLib::PropertyType::retardation_factor,
         MaterialPropertyLib::PropertyType::decay_rate,
-        MaterialPropertyLib::PropertyType::molecular_diffusion};
+        MaterialPropertyLib::PropertyType::pore_diffusion};
 
     for (auto const& element : mesh.getElements())
     {
