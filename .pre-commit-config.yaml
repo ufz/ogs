@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v3.4.0
     hooks:
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
@@ -10,6 +10,7 @@ repos:
     -   id: check-merge-conflict
     -   id: check-xml
     -   id: check-yaml
+        exclude: 'scripts/ci/*'
     -   id: check-toml
 -   repo: local
     hooks:

@@ -47,7 +47,7 @@ build linux (no unity):
   needs: [meta, "pre commit"]
   timeout: 1h
   variables:
-    BUILD_DIR: "build/no-unity"
+    BUILD_DIR: "../build/no-unity"
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
     CMAKE_PRESET: release

@@ -35,7 +35,7 @@ You can work normally in Visual Studio but remember that you have to make projec
 To build with the `ninja` tool on the shell go to your previously configured build directory and type `ninja`:
 
 ```bash
-cd build/release
+cd ../build/release
 ninja
 ```
 </div>

@@ -7,7 +7,7 @@ build win:
     - when: manual
       allow_failure: true
   variables:
-    BUILD_DIR: build/win-release
+    BUILD_DIR: ..\build\win-release
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1

@@ -9,7 +9,7 @@
     {
       "name": "_binary_dir",
       "hidden": true,
-      "binaryDir": "${sourceDir}/build/${presetName}"
+      "binaryDir": "${sourceParentDir}/build/${presetName}"
     },
     {
       "name": "_release",

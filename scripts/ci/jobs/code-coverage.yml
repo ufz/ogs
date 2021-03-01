@@ -11,10 +11,11 @@ code coverage:
     CMAKE_PRESET: coverage
     TARGETS: "testrunner_coverage ctest_coverage"
   before_script:
-    # HACK to easier linking to the generated pages
+    - !reference [.template-build-linux, before_script]
+    # Shortcut to the generated pages:
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/coverage_report/index.html">' >> Coverage.html
   after_script:
-    - cd build/coverage
+    - cd ../build/coverage
     - poetry run fastcov -C testrunner_coverage.info ctest_coverage.info --lcov -o coverage.info
     - poetry run fastcov -C testrunner_coverage.info ctest_coverage.info -o coverage.json
     - genhtml --demangle-cpp -o coverage_report coverage.info
