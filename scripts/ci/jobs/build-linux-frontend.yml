@@ -12,4 +12,5 @@ build linux frontend:
     CMAKE_PRESET: release
     CMAKE_ARGS: "-DOGS_USE_CONAN=OFF -DOGS_USE_PYTHON=OFF -DOGS_CPU_ARCHITECTURE=generic"
   before_script:
+    - !reference [.template-build-linux, before_script]
     - source scripts/env/eve/cli.sh
