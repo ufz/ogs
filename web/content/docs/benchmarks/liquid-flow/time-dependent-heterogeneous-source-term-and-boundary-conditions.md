@@ -51,7 +51,7 @@ defined also. Values of the parameter are piecewise linear interpolated.
 
 ## Example
 
-This simple example should demonstrate the use of the time depenendent
+This simple example should demonstrate the use of the time dependent
 heterogeneous parameter. We start with homogeneous parabolic problem:
 $$
 \begin{equation}

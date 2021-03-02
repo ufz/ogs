@@ -232,7 +232,7 @@ for k in range(runs):
 ax.set_xlabel("$p$ / MPa")
 ax.set_ylabel("$q$ / MPa")
 ax.grid()
-# legend ouside by resizing the box and puting the legend relative to that
+# legend outside by resizing the box and putting the legend relative to that
 chartBox = ax.get_position()
 ax.set_position([chartBox.x0, chartBox.y0, chartBox.width * 0.85, chartBox.height])
 ax.legend(loc="upper center", bbox_to_anchor=(1.15, 0.80))

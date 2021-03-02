@@ -111,7 +111,7 @@ public:
 
     /*!
        Add values to several entries.
-       \param e_idxs  Indicies of entries to be added
+       \param e_idxs  Indices of entries to be added
                       Note: std::size_t cannot be the type of e_idxs template
                       argument.
        \param sub_vec Entries to be added.
@@ -124,7 +124,7 @@ public:
 
     /*!
        Add values to several entries
-       \param e_idxs  Indicies of entries to be added.
+       \param e_idxs  Indices of entries to be added.
                       Note: std::size_t cannot be the type of e_idxs template
                       argument
        \param sub_vec Entries to be added
@@ -254,7 +254,7 @@ private:
     */
     mutable std::vector<PetscScalar> _entry_array;
 
-    /// Map global indices of ghost enrties to local indices
+    /// Map global indices of ghost entries to local indices
     mutable std::map<PetscInt, PetscInt> _global_ids2local_ids_ghost;
 
     /*!
@@ -279,7 +279,7 @@ private:
     */
     inline void restoreArray(PetscScalar* array) const;
 
-    /// A funtion called by constructors to configure members
+    /// A function called by constructors to configure members
     void config();
 
     friend void finalizeVectorAssembly(PETScVector& vec);

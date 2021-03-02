@@ -15,7 +15,7 @@
             <pnt>0</pnt>
             <pnt>1</pnt>
         </polyline>
-        <polyline id="1" name="infinit">
+        <polyline id="1" name="infinite">
             <pnt>2</pnt>
             <pnt>3</pnt>
         </polyline>

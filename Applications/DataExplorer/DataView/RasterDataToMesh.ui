@@ -29,7 +29,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="arrayTargetLabel">
      <property name="text">
-      <string>Crate array on</string>
+      <string>Create array on</string>
      </property>
     </widget>
    </item>

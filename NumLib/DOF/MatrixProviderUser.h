@@ -35,7 +35,7 @@ public:
  *
  * "Released" means that the caller indicates, that he currently does not need
  * that \c Vector instance, i.e, Either it is not needed anymore for the entire
- * program run, or it is temporarily not needed, but might be aquired again
+ * program run, or it is temporarily not needed, but might be acquired again
  * later on. Thereby the implementation of this interface can decide, whether
  * the storage for the specific vector can be freed or reused in the meantime.
  *

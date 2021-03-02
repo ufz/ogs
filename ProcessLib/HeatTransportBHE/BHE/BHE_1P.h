@@ -28,13 +28,13 @@ namespace BHE
 /**
  * The BHE_1P class is the realization of single-pipe type of Borehole Heate
  * Exchanger. In this class, the pipe heat capacity, pipe heat conductiion, pie
- * advection vectors are intialized according to the geometry of the single-pipe
+ * advection vectors are initialized according to the geometry of the single-pipe
  * type of BHE. For this type of BHE, 2 primary unknowns are assigned on the 1D
  * BHE elements. They are the temperature in the pipe T_p, and temperature of
- * the grout zone sorrounding the single pipe T_g. These two primary varaibles
+ * the grout zone surrounding the single pipe T_g. These two primary variables
  * are solved according to heat convection and conduction equations on the pipes
  * and also in the grout zones. The interaction of the 1P type of BHE and the
- * sorrounding soil is regulated through the thermal resistance values, which
+ * surrounding soil is regulated through the thermal resistance values, which
  * are calculated specifically during the initialization of the class.
  */
 class BHE_1P final : public BHECommon

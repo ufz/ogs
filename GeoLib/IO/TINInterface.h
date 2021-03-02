@@ -30,7 +30,7 @@ public:
     /**
      * Reads TIN file
      * @param fname    TIN file name
-     * @param pnt_vec  a point vector to which triangle vertexes are added
+     * @param pnt_vec  a point vector to which triangle vertices are added
      * @param errors   a vector of error messages
      * @return a pointer to a GeoLib::Surface object created from TIN data. nullptr is returned if it fails to read the file.
      */

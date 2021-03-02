@@ -49,7 +49,7 @@ bool EigenLisLinearSolver::solve(EigenMatrix &A_, EigenVector& b_,
     LisVector lisb(b.rows(), b.data());
     LisVector lisx(x.rows(), x.data());
 
-    LisLinearSolver lissol; // TODO not always creat Lis solver here
+    LisLinearSolver lissol; // TODO not always create Lis solver here
     lissol.setOption(_lis_option);
     bool const status = lissol.solve(lisA, lisb, lisx);
 

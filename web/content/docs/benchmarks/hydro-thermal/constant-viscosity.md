@@ -21,7 +21,7 @@ See [this PDF](../HT-Process.pdf).
 
 This is a 2d benchmark of large-scale thermal convection that tests the temperature dependent fluid density in the hydro-thermal process monolitic approach implementation. It is defined on the domain $\Omega = [0,5500]^2.$
 
-- The initial conditions for the pressure is a gradient starting from zero at the top surface to a pressure of circa 54 mega pascal at the bottom given in the data array 'initial_pressure' in the vtu file. The initial temperature is also almost a gradient from top (293 K) to bottom (443 K) of the domain, except there is a small pertubation given by adding $\sin \left( \pi \frac{y}{5500}\right) \cdot \cos \left( \pi \frac{x}{5500}\right).$ See the following images.
+- The initial conditions for the pressure is a gradient starting from zero at the top surface to a pressure of circa 54 mega pascal at the bottom given in the data array 'initial_pressure' in the vtu file. The initial temperature is also almost a gradient from top (293 K) to bottom (443 K) of the domain, except there is a small perturbation given by adding $\sin \left( \pi \frac{y}{5500}\right) \cdot \cos \left( \pi \frac{x}{5500}\right).$ See the following images.
 
 TODO 3 images
 

@@ -56,7 +56,7 @@ int main (int argc, char* argv[])
     TCLAP::SwitchArg copy_material_ids_arg(
         "", "copy-material-ids",
         "Copy the existing material distribution of the layer which is to be "
-        "extented. If the switch isn't given a new material id will be "
+        "extended. If the switch isn't given a new material id will be "
         "created.",
         false);
     cmd.add(copy_material_ids_arg);

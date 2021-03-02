@@ -169,7 +169,7 @@ public:
     /// argument instead of being created by the constructor.
     ///
     /// \attention The passed mesh_component_map is in undefined state after
-    /// this construtor.
+    /// this constructor.
     explicit LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubset>&& mesh_subsets,
         std::vector<int> const& global_component_ids,

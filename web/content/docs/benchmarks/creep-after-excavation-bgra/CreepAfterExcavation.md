@@ -73,7 +73,7 @@ The following three figures are plotted by using the results of the simulation o
 The three figures display the distribution of horizontal and vertical stresses at times of
 108 days, 409 days and 1000 days, respectively.
 
-In theses three figures,
+In these three figures,
 the left sub-figure show the time variations of horizontal and vertical stresses
  at a position just close to the top of the drift, and the
 green vertical line in it marks the time of the displayed stress field.

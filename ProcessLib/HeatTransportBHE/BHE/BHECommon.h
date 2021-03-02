@@ -1,7 +1,7 @@
 /**
  * \file
  *
- * 2014/06/04 HS inital implementation
+ * 2014/06/04 HS initial implementation
  * borehole heat exchanger abstract class
  *
  * 1) Diersch_2011_CG

@@ -70,7 +70,7 @@ public:
     /** Updates histogram using sorted \c _data vector.
      *
      * Start histogram creation with first element. Then find first element in
-     * the next histogram bin. Number of elments in the bin is the difference
+     * the next histogram bin. Number of elements in the bin is the difference
      * between these two iterators.
      * \verbatim
        [0.1, 0.2, ..., 0.7 , ..., 0.7+binWidth = 0.9,  1.0  , ..., last]

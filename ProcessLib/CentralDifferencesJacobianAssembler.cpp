@@ -39,7 +39,7 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     if (local_x_data.size() % _absolute_epsilons.size() != 0) {
         OGS_FATAL(
             "The number of specified epsilons ({:d}) and the number of local "
-            "d.o.f.s ({:d}) do not match, i.e., the latter is not divisable by "
+            "d.o.f.s ({:d}) do not match, i.e., the latter is not divisible by "
             "the former.",
             _absolute_epsilons.size(), local_x_data.size());
     }

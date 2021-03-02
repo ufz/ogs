@@ -39,14 +39,14 @@ public:
     /**
      * Constructor
      * @param mesh The mesh which is being revised. Note that node IDs in mesh
-     * are changed during computation but are resetted after the algorithms
+     * are changed during computation but are reset after the algorithms
      * implemented here are finished
      */
     explicit MeshRevision(MeshLib::Mesh& mesh);
 
     virtual ~MeshRevision() = default;
 
-    /// Returns the number of potentially collapsable nodes
+    /// Returns the number of potentially collapsible nodes
     unsigned getNumberOfCollapsableNodes(
         double eps = std::numeric_limits<double>::epsilon()) const;
 

@@ -48,7 +48,7 @@ public:
                 PropertyDataType const& property_reference_value,
                 ExponentData const& v);
     /// This method computes the value of a property \f$\alpha\f$ depending
-    /// exponentialy on the value of the given primary variable \f$\beta\f$.
+    /// exponentially on the value of the given primary variable \f$\beta\f$.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;

@@ -24,15 +24,15 @@ namespace BaseLib {
  *  Splits a string into a vector of strings. This method only works for string
  *  separation recognised by the std::stringstream iterator such as ' ' or
  * '\\t'.
- *  \param str String to be splitted
+ *  \param str String to be split
  *  \return Vector of strings
  */
 std::vector<std::string> splitString(std::string const& str);
 
 /**
  *   Splits a string into a list of strings.
- *  \param str String to be splitted
- *  \param delim Character indicating that the string should be splitted
+ *  \param str String to be split
+ *  \param delim Character indicating that the string should be split
  *  \return List of strings
  */
 std::list<std::string> splitString(const std::string &str, char delim);

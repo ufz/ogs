@@ -256,7 +256,7 @@ void OctTree<POINT, MAX_POINTS>::splitNode(POINT * pnt)
     _children[static_cast<std::int8_t>(Quadrant::SEU)]
         = new OctTree<POINT, MAX_POINTS> (p0, p1, _eps);
 
-    // add the passed point pnt to the childs at first
+    // add the passed point pnt to the children at first
     for (std::size_t k(0); k < 8; k++) {
         if (_children[k]->addPointToChild(pnt))
         {

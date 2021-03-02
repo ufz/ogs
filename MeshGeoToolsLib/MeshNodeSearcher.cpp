@@ -191,7 +191,7 @@ MeshNodeSearcher const& MeshNodeSearcher::getMeshNodeSearcher(
     {
         auto const& m = *_mesh_node_searchers[mesh_id];
         // return searcher if search length algorithm and the returned search
-        // lenght are the same, else recreate the searcher
+        // length are the same, else recreate the searcher
         if (typeid(m._search_length_algorithm) ==
                 typeid(search_length_algorithm) &&
             m._search_length_algorithm->getSearchLength() ==

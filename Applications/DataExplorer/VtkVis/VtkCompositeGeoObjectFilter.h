@@ -19,7 +19,7 @@
 
 class vtkThreshold;
 
-/// @brief Hightlights a single GeoObject
+/// @brief Highlights a single GeoObject
 class VtkCompositeGeoObjectFilter : public VtkCompositeFilter
 {
 public:

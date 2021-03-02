@@ -41,7 +41,7 @@ namespace autocheck
 template <typename T, typename Gen = generator<T>>
 struct IntervalGenerator
 {
-    /// Construtor initializing the slope and the \f$y\f$-intercept deploying
+    /// Constructor initializing the slope and the \f$y\f$-intercept deploying
     /// lower bound \f$a\f$ and upper bound \f$b\f$ of the interval.
     IntervalGenerator(T a, T b)
         : _m((b-a)/2), _n((b+a)/2)

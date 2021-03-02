@@ -16,7 +16,7 @@ author = "Jan Thiedau"
 These benchmark examples test the implementation of the
 BGRa creep law with analytical solutions presented by Vogel/Massmann.
 
-A detailed descritption can be found in the ogs Benchmark books.
+A detailed description can be found in the ogs Benchmark books.
 The following table links the ogs problem descriptions with its corresponding
 chapters in the benchmark books.
 

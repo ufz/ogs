@@ -15,7 +15,7 @@ title = "Complex kinetic reaction network"
 
 ## Overview
 
-The studied system represents a treatment wetland, which can be considered as an engineered ecosystem that mimics natural occuring microbiological processes to treat wastewater.
+The studied system represents a treatment wetland, which can be considered as an engineered ecosystem that mimics natural occurring microbiological processes to treat wastewater.
 Basically, such a system consists of a basin filled with a grained solid media (e.g. gravel or sand) and wastewater is passed through it.
 Multiple types of microbial organisms are present that can metabolize chemical pollutants (e.g. ammoni or organic molecules) present in wastewater, which drives the cycling of carbon and nutrients.
 

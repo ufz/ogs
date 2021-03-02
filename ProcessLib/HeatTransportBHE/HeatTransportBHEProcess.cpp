@@ -87,7 +87,7 @@ void HeatTransportBHEProcess::constructDofTable()
         1};  // one component for the soil temperature variable.
 
     //
-    // BHE nodes with BHE type dependend number of variables.
+    // BHE nodes with BHE type dependent number of variables.
     //
     int const n_BHEs = _process_data._vec_BHE_property.size();
     assert(n_BHEs == static_cast<int>(_bheMeshData.BHE_mat_IDs.size()));
@@ -216,7 +216,7 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
 NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     GlobalVector const& x)
 {
-    // if the process use python boundary conditon
+    // if the process use python boundary condition
     if (_process_data.py_bc_object == nullptr)
         return NumLib::IterationResult::SUCCESS;
 
@@ -384,7 +384,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
 #else
                     OGS_FATAL(
                         "The Python Boundary Condition was switched off! "
-                        "Not able to create Boundary Condtion for BHE! ");
+                        "Not able to create Boundary Condition for BHE! ");
 #endif  // OGS_USE_PYTHON
                 }
                 else

@@ -131,7 +131,7 @@ public:
     /// Returns true if the element is located at a boundary (i.e. has at least one face without neighbour)
     virtual bool isBoundaryElement() const;
 
-    /// Returns true if these two indeces form an edge and false otherwise
+    /// Returns true if these two indices form an edge and false otherwise
     virtual bool isEdge(unsigned i, unsigned j) const = 0;
 
     /**
@@ -167,7 +167,7 @@ public:
 
     /**
      * Computes the length / area / volumen of this element. This is automatically
-     * done at initalisation time but can be repeated by calling this function at any time.
+     * done at initialisation time but can be repeated by calling this function at any time.
      */
     virtual double computeVolume() = 0;
 

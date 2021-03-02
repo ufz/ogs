@@ -157,13 +157,13 @@ bool parsePropertyClass(std::ifstream& in)
 }
 
 /// Checks if the current line starts with one of the allowed keywords
-std::string propertyCheck(std::string const& strng)
+std::string propertyCheck(std::string const& string)
 {
     std::array<std::string, 7> const property_keywords = {
         {"PROPERTY_CLASSES", "PROP_LEGAL_RANGES", "NO_DATA_VALUES",
          "PROPERTY_KINDS", "PROPERTY_SUBCLASSES", "UNITS", "ESIZES"}};
 
-    std::string const str = BaseLib::splitString(strng)[0];
+    std::string const str = BaseLib::splitString(string)[0];
     auto res =
         std::find(property_keywords.begin(), property_keywords.end(), str);
     if (res != property_keywords.end())

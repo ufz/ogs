@@ -48,7 +48,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
             std::make_unique<MeshLib::IO::XdmfHdfWriter>(MeshLib::IO::XdmfHdfWriter(
                  mesh, file_path, 0));
         // \TODO Errorhandling, Change data model into static and time depended,
-        // then is is not neccessary to give time step 0 a special treatment
+        // then is is not necessary to give time step 0 a special treatment
         // here
         writer->writeStep(0, 0);
 

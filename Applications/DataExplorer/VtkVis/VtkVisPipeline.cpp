@@ -591,10 +591,10 @@ void VtkVisPipeline::highlightMeshComponent(vtkUnstructuredGridAlgorithm const*c
                 filter = VtkFilterFactory::CreateCompositeFilter(
                     "VtkCompositeNodeSelectionFilter",
                     parentItem->transformFilter());
-                std::vector<unsigned> indeces(1);
-                indeces[0] = index;
+                std::vector<unsigned> indices(1);
+                indices[0] = index;
                 static_cast<VtkCompositeNodeSelectionFilter*>(filter)
-                    ->setSelectionArray(indeces);
+                    ->setSelectionArray(indices);
             }
             VtkVisPointSetItem* item =
                 new VtkVisPointSetItem(filter, parentItem, itemData);

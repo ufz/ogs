@@ -184,7 +184,7 @@ int main (int argc, char* argv[])
         if ( ((shape_type - 3) % 10 == 0 || (shape_type - 5) % 10 == 0))
         {
             ERR("Shape file contains {:d} polylines.", number_of_elements);
-            ERR("This programm only handles only files containing points.");
+            ERR("This programme only handles only files containing points.");
             SHPClose(hSHP);
             return EXIT_SUCCESS;
         }

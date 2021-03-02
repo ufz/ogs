@@ -40,7 +40,7 @@ public:
      * \brief Write xdmf and h5 file with geometry and topology data.
      * The data itself is held by a structure outside of this class.
      * The writer assumes a constant data holder (data itself can change, memory
-     * adress is the same)
+     * address is the same)
      * @param geometry contains meta data to coordinates
      * @param topology contains meta data cells
      * @param attributes vector of attributes (each attribute is a OGS property)

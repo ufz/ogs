@@ -42,7 +42,7 @@ namespace FileIO
 namespace Legacy {
 
 /**************************************************************************
-   GeoLib- Funktion: readPoints
+   GeoLib- Function: readPoints
    Aufgabe: Lesen der GLI Points und schreiben in einen Vector
    08/2005 CC Implementation
    01/2010 TF big modifications
@@ -146,7 +146,7 @@ void readPolylinePointVector(const std::string &fname,
 /**************************************************************************
    GeoLib-Method: Read
    Task: Read polyline data from file
-   Programing:
+   Programming:
    03/2004 CC Implementation
    09/2004 OK file path for PLY files
    07/2005 CC PLY id
@@ -169,7 +169,7 @@ std::string readPolyline(std::istream &in,
     auto* ply(new GeoLib::Polyline(pnt_vec));
     std::size_t type = 2; // need an initial value
 
-    // Schleife ueber alle Phasen bzw. Komponenten
+    // Loop over all phases or components
     do {
         in >> line;
         if (line.find("$ID") != std::string::npos)
@@ -293,11 +293,11 @@ std::string readPolylines(std::istream &in, std::vector<GeoLib::Polyline*>* ply_
 /**************************************************************************
    GeoLib-Method: readSurface
    Task: Read surface data from input stream
-   Programing:
+   Programming:
    03/2004 OK Implementation
    05/2005 OK EPSILON
    09/2005 CC file_path_base
-   01/2010 TF signatur modification, reimplementation
+   01/2010 TF signature modification, reimplementation
 **************************************************************************/
 /** read a single Surface */
 std::string readSurface(std::istream& in,

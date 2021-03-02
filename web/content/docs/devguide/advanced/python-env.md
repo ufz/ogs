@@ -67,7 +67,7 @@ cmake ../ogs -DOGS_USE_CONAN=auto
 
 ### Poetry & Benchmarks
 
-You can use the argument `PYTHON_PACKAGES` on `AddTest()` to specifiy additional Python package dependencies.
+You can use the argument `PYTHON_PACKAGES` on `AddTest()` to specify additional Python package dependencies.
 
 The following example would install the latest version of `numpy` and `pandas` version 0.1.2:
 

@@ -1,1 +1,1 @@
-The inital aperture.
+The initial aperture.

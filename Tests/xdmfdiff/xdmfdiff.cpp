@@ -278,13 +278,13 @@ int main(int argc, char* argv[])
     if (!compareValues(mesh_a->point_values, mesh_b->point_values,
                        args.abs_err_thr))
     {
-        std::cerr << "Error in mesh points' comparison occured.\n";
+        std::cerr << "Error in mesh points' comparison occurred.\n";
         return EXIT_FAILURE;
     }
 
     if (!compareCellTopology(mesh_a->topology_values, mesh_b->topology_values))
     {
-        std::cerr << "Error in cells' topology comparison occured.\n";
+        std::cerr << "Error in cells' topology comparison occurred.\n";
         return EXIT_FAILURE;
     }
 
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
     {
         std::cerr << "Error in mesh attribute ( " << args.data_array_a << ") "
                   << "of first mesh and ( " << args.data_array_b << ") "
-                  << "of second mesh occured.\n";
+                  << "of second mesh occurred.\n";
         return EXIT_FAILURE;
     }
 

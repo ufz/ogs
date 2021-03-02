@@ -262,7 +262,7 @@ bool isCoplanar(const MathLib::Point3d& a, const MathLib::Point3d& b,
     const double normalisation_factor =
         (ab.squaredNorm() * ac.squaredNorm() * ad.squaredNorm());
 
-    // tolerance 1e-11 is choosen such that
+    // tolerance 1e-11 is chosen such that
     // a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-6) are considered as
     // coplanar
     // a = (0,0,0), b=(1,0,0), c=(0,1,0) and d=(1,1,1e-5) are considered as not

@@ -27,7 +27,7 @@
 #  variable is either C or CXX indicating which compiler the test should
 #  use.
 # MULTIPASS_C_SOURCE_RUNS (Name INCLUDES LIBRARIES SOURCE RUNS)
-#  DEPRECATED! This is only included for backwards compatability. Use
+#  DEPRECATED! This is only included for backwards compatibility. Use
 #  the more general MULTIPASS_SOURCE_RUNS instead.
 #  Always runs the given test, use this when you need to re-run tests
 #  because parent variables have made old cache entries stale.

@@ -212,7 +212,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         HydroMechanicsLocalAssemblerMatrixNearFracture,
         HydroMechanicsLocalAssemblerFracture>(
         mesh.getElements(), dof_table,
-        // use displacment process variable for shapefunction order
+        // use displacement process variable for shapefunction order
         getProcessVariables(
             monolithic_process_id)[1].get().getShapeFunctionOrder(),
             _local_assemblers, mesh.isAxiallySymmetric(), integration_order,

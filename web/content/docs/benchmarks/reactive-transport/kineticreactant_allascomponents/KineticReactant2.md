@@ -34,7 +34,7 @@ The initial concentration of $\text{H}^+$--ions is $1.0e\textrm{-}7~\textrm{mol 
 Respective material properties, initial and boundary conditions are listed in the tables below.
 
 **2d scenario:**
-The 2d--scenario only differs in the domain geometry and assignement of the boundary conditions.
+The 2d--scenario only differs in the domain geometry and assignment of the boundary conditions.
 The horizontal domain is 0.5 m in x and 0.5 m in y direction, and,  discretized into 10374 quadratic elemtents with an edge size of 0.0025 m.
 
 ![Domains for the 1d/2d simulation models](../KineticReactant2_domain.png)

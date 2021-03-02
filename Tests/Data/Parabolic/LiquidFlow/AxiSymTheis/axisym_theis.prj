@@ -167,7 +167,7 @@
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>theis_geo</geometrical_set>
-                    <geometry>infinit</geometry>
+                    <geometry>infinite</geometry>
                     <type>Dirichlet</type>
                     <parameter>p_dbc</parameter>
                 </boundary_condition>

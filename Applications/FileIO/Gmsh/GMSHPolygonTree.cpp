@@ -218,7 +218,7 @@ void GMSHPolygonTree::checkIntersectionsSegmentExistingPolylines(
                     // modify polyline
                     ply->insertPoint(ply_segment_number+1, pnt_id);
                 } else { // case: point exists already in geometry
-                    // check if point is not alread in polyline p
+                    // check if point is not already in polyline p
                     std::size_t const k(seg_it_p.getSegmentNumber());
                     if (p->getPointID(k) != pnt_id && p->getPointID(k+1) != pnt_id) {
                         p->insertPoint(k+1, pnt_id);

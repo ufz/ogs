@@ -49,7 +49,7 @@ Eigen::Map<Matrix> createZeroedMatrix(std::vector<double>& data,
 /*! Creates an Eigen mapped matrix having its entries stored in the given
  * \c data vector.
  *
- * This is a convienence method which makes the specification of dynamically
+ * This is a convenience method which makes the specification of dynamically
  * allocated Eigen matrices as return type easier.
  */
 inline Eigen::Map<
@@ -87,7 +87,7 @@ Eigen::Map<const Matrix> toMatrix(std::vector<double> const& data,
 
 /*! Creates an Eigen mapped matrix from the given data vector.
  *
- * This is a convienence method which makes the specification of dynamically
+ * This is a convenience method which makes the specification of dynamically
  * allocated Eigen matrices as return type easier.
  */
 inline Eigen::Map<
@@ -126,7 +126,7 @@ Eigen::Map<Matrix> toMatrix(std::vector<double>& data,
 
 /*! Creates an Eigen mapped matrix from the given data vector.
  *
- * This is a convienence method which makes the specification of dynamically
+ * This is a convenience method which makes the specification of dynamically
  * allocated Eigen matrices as return type easier.
  */
 inline Eigen::Map<
@@ -190,7 +190,7 @@ Eigen::Map<Vector> toVector(std::vector<double>& data,
 
 /*! Creates an Eigen mapped vector from the given data vector.
  *
- * This is a convienence method which makes the specification of dynamically
+ * This is a convenience method which makes the specification of dynamically
  * allocated Eigen vectors as return type easier.
  */
 inline Eigen::Map<const Eigen::VectorXd> toVector(
@@ -201,7 +201,7 @@ inline Eigen::Map<const Eigen::VectorXd> toVector(
 
 /*! Creates an Eigen mapped vector from the given data vector.
  *
- * This is a convienence method which makes the specification of dynamically
+ * This is a convenience method which makes the specification of dynamically
  * allocated Eigen vectors as return type easier.
  */
 inline Eigen::Map<Eigen::VectorXd> toVector(

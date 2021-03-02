@@ -64,8 +64,8 @@ void VtkVisPipelineView::setModel(QAbstractItemModel* model)
 {
     QTreeView::setModel(model);
 
-    // Move Visisble checkbox to the left.
-    // This is done here because at constructor time there arent any sections.
+    // Move Visible checkbox to the left.
+    // This is done here because at constructor time there aren't any sections.
     this->header()->moveSection(1, 0);
 }
 

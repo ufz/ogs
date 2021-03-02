@@ -29,7 +29,7 @@ struct JunctionProperty;
 /// @param junction_props junction properties
 /// @param fracID_to_local a mapping table from a fracture ID to a local index
 /// in frac_props
-/// @param x evaluating point coordiates
+/// @param x evaluating point coordinates
 /// @return a vector of enrichment values for displacements
 std::vector<double> uGlobalEnrichments(
     std::vector<FractureProperty*> const& frac_props,
@@ -46,7 +46,7 @@ std::vector<double> uGlobalEnrichments(
 /// @param junction_props junction properties
 /// @param fracID_to_local a mapping table from a fracture ID to a local index
 /// in frac_props
-/// @param x evaluating point coordiates
+/// @param x evaluating point coordinates
 /// @return a vector of enrichment values for fracture relative displacements
 std::vector<double> duGlobalEnrichments(
     std::size_t this_frac_id,

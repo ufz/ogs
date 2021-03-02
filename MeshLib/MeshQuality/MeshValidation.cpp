@@ -39,7 +39,7 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
         INFO("{:d} unused mesh nodes found.", ns.getSearchedNodeIDs().size());
     }
     MeshRevision rev(mesh);
-    INFO("Found {:d} potentially collapsable nodes.",
+    INFO("Found {:d} potentially collapsible nodes.",
          rev.getNumberOfCollapsableNodes());
 
     const std::vector<ElementErrorCode> codes(

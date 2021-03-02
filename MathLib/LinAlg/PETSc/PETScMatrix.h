@@ -101,7 +101,7 @@ public:
                 1.0, &j = k
               \end{cases}\f$, where \f$k \in \mbox{row\_pos}\f$
               This function must be called by all ranks.
-       \param row_pos The row indicies of the specified rows.
+       \param row_pos The row indices of the specified rows.
     */
     void setRowsColumnsZero(std::vector<PetscInt> const& row_pos);
 
@@ -168,7 +168,7 @@ public:
     /*!
         \brief          Add a dense sub-matrix to a PETSc matrix.
         \param row_pos  The global indices of the rows of the dense sub-matrix.
-        \param col_pos  The global indices of the colums of the dense
+        \param col_pos  The global indices of the columns of the dense
                         sub-matrix.
        \param sub_mat  A dense sub-matrix to be added.
     */

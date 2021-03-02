@@ -29,8 +29,8 @@ class NodePartitionedMesh : public Mesh
 {
 public:
     // Copy a global mesh for the case of the thread number is one,
-    // i.e the gobal mesh is not partitioned.
-    // \param mesh The gobal mesh
+    // i.e the global mesh is not partitioned.
+    // \param mesh The global mesh
     explicit NodePartitionedMesh(const Mesh& mesh)
         : Mesh(mesh),
           _global_node_ids(mesh.getNumberOfNodes()),

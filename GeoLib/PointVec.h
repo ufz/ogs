@@ -129,7 +129,7 @@ private:
 	/**
 	 * Inserts the instance of the Point into internal data structures
 	 * (@see TemplateVec::_data_vec, _pnt_id_map) if and only if there
-	 * does not exist a point with the same coordinates (upto
+	 * does not exist a point with the same coordinates (up to
 	 * std::numeric_limits<double>::epsilon()). In case there exists
 	 * already a point with the same coordinates the given pnt-object
 	 * will be deleted!

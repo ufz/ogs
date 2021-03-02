@@ -31,7 +31,7 @@ namespace Adsorption
 
 double DensityNunez::getAdsorbateDensity(const double T_Ads) const
 {
-    // TODO admissable T range: 273.16 K <= T_Ads <= 633.15 K
+    // TODO admissible T range: 273.16 K <= T_Ads <= 633.15 K
     const double a[] = { 1.0644e3,-8.01905,1.445348e-2,-4.19589e-6,-4.5294e-9 };
     const double b[] = { -8.039e-3,1.8698e-5,-2.3015e-8,2.3809e-11,-1.388e-14 };
     const double u = a[0] + T_Ads * (a[1] + T_Ads * (a[2] + T_Ads * (a[3] + T_Ads * a[4]) ) );
@@ -43,7 +43,7 @@ double DensityNunez::getAdsorbateDensity(const double T_Ads) const
 // Thermal expansivity model for water found in the works of Hauer
 double DensityNunez::getAlphaT(const double T_Ads) const
 {
-    // TODO admissable T range: 273.16 K <= T_Ads <= 633.15 K
+    // TODO admissible T range: 273.16 K <= T_Ads <= 633.15 K
     const double a[] = { 1.0644e3,-8.01905,1.445348e-2,-4.19589e-6,-4.5294e-9 };
     const double b[] = { -8.039e-3,1.8698e-5,-2.3015e-8,2.3809e-11,-1.388e-14 };
     const double u = a[0] + T_Ads * (a[1] + T_Ads * (a[2] + T_Ads * (a[3] + T_Ads * a[4]) ) );

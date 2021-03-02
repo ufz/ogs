@@ -34,7 +34,7 @@ So far, the parallel FEM scheme with PETSc cannot be used by the all processes
 
 In order to discretize the domain of a unit cube do
 `bin/generateStructuredMesh -o cube_1x1x1_hex_axbxc.vtu -e hex --lx 1 --ly 1 --lz 1 --nx a --ny b --nz c`
-where `a`, `b`, and `c` should be choosen according to the needs.
+where `a`, `b`, and `c` should be chosen according to the needs.
 
 |  `a`  |  `b`  |  `c`  | #cells in 10^6 | compute cores | success |
 |  ---: |  ---: |  ---: | ---: | ---: | :---: |

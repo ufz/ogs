@@ -15,7 +15,7 @@ namespace MaterialLib
 {
 namespace Fracture
 {
-/// A penalty function for negative aperture supression used as a multiplier to
+/// A penalty function for negative aperture suppression used as a multiplier to
 /// the normal fracture stiffness.
 ///
 /// The derivative is continuous at aperture = aperture0 and aperture =

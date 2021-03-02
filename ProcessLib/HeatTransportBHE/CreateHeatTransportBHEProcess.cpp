@@ -215,7 +215,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 #else
         OGS_FATAL(
             "Input files suggest the coupling of BHE with pipe network. "
-            "This means the compliling flag OGS_USE_PYTHON must be switched "
+            "This means the compiling flag OGS_USE_PYTHON must be switched "
             "on. ");
 #endif  // OGS_USE_PYTHON
     }

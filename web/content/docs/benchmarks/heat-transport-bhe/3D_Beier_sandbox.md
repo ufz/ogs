@@ -19,7 +19,7 @@ The U-type Borehole Heat Exchanger (BHE) is always utilized to extract the shall
 
 ## Model Setup
 
-The numerical model was established using dual continuum method Diersch et al. (2011), in which the BHE is represented by the line element and 3D prism stands for the sand part. The numerical geometry model can be visualized as shown in Figure 1. Thus, there are two material groups in the model distinguishing the soil part and the BHE part. The length of the whole box is 18.5 m with a square cross section of 5 m per side to avoid the impact of boundary conditions on the soil temperature. Detailed parameters for the model configuration are listed in the follwoing table.
+The numerical model was established using dual continuum method Diersch et al. (2011), in which the BHE is represented by the line element and 3D prism stands for the sand part. The numerical geometry model can be visualized as shown in Figure 1. Thus, there are two material groups in the model distinguishing the soil part and the BHE part. The length of the whole box is 18.5 m with a square cross section of 5 m per side to avoid the impact of boundary conditions on the soil temperature. Detailed parameters for the model configuration are listed in the following table.
 
 | Parameter                          | Symbol             |  Value              | Unit                        |
 | ---------------------------------- |:------------------ | -------------------:| --------------------------: |

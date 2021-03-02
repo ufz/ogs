@@ -9,7 +9,7 @@ weight = 101
     parent = "getting-started"
 +++
 
-## Frist Steps
+## First Steps
 
 This section describes a possible general pre-processing workflow using some of the tools provided by OGS.
 

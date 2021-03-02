@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     cmd.add(property_name_arg);
     TCLAP::ValueArg<int> restrict_arg(
         "r", "restrict-to-MaterialID",
-        "Restrict reseting the property to the material id", false, -1,
+        "Restrict resetting the property to the material id", false, -1,
         "MaterialID");
     cmd.add(restrict_arg);
     TCLAP::ValueArg<std::string> mesh_in(

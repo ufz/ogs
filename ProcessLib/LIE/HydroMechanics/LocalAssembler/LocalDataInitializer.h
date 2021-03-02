@@ -227,7 +227,7 @@ public:
         auto const n_local_dof = _dof_table.getNumberOfElementDOF(id);
         auto const varIDs = _dof_table.getElementVariableIDs(id);
         bool const isPressureDeactivated = (varIDs.front() != 0);
-        std::vector<int> involved_varIDs;  // including deactived elements
+        std::vector<int> involved_varIDs;  // including deactivated elements
         involved_varIDs.reserve(varIDs.size() + 1);
         if (isPressureDeactivated)
         {

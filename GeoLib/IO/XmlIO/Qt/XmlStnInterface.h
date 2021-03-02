@@ -36,7 +36,7 @@ class XmlStnInterface final : public BaseLib::IO::XMLInterface,
 public:
     explicit XmlStnInterface(GeoLib::GEOObjects& geo_objs);
 
-    /// Reads an xml-file containing station object definitions into the GEOObjects used in the contructor (requires Qt)
+    /// Reads an xml-file containing station object definitions into the GEOObjects used in the constructor (requires Qt)
     int readFile(const QString& fileName) override;
 
     bool readFile(std::string const& fname) override

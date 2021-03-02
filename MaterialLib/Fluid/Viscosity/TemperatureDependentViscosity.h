@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    const double _mu0;            ///<  Inital viscosity.
+    const double _mu0;            ///<  Initial viscosity.
     const double _temperature_c;  ///<  Reference temperature 1.
     const double _temperature_v;  ///<  Reference temperature 2.
 };

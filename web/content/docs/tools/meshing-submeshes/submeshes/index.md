@@ -20,7 +20,7 @@ simulation. There are several possibilities to define a subdomain. One
 possibility is to use a geometry via a gli- or gml-file. Since the geometry
 often doesn't match exactly on the domain mesh, one has to specify a search
 radius to find nodes, elements, or faces in the neighborhood of the geometry.
-It can be difficult to find an appropriate search readius for adaptive refined
+It can be difficult to find an appropriate search radius for adaptive refined
 domain meshes. Finally, with the geometry and a suitable search radius the
 associated domain elements and domain nodes are searched for. Since this happens
 during the simulation, this approach is not very robust.
@@ -28,7 +28,7 @@ during the simulation, this approach is not very robust.
 Another possibility, avoiding the search during the simulation and thus more
 robust, is to precompute the subdomains as meshes. These precomputed subdomains
 are now passed to the OGS-6 simulator in the same format as the bulk mesh, the
-vtu format. The subdomains additionaly contain information to identify the
+vtu format. The subdomains additionally contain information to identify the
 corresponding bulk mesh entities like nodes, elements and faces of elements.
 
 ### A simple example

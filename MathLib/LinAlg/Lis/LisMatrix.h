@@ -193,7 +193,7 @@ void operator()(LisMatrix& matrix,
     std::vector<LisMatrix::IndexType> row_sizes;
     row_sizes.reserve(n_rows);
 
-    // LIS needs 1 more entry, otherewise it starts reallocating arrays.
+    // LIS needs 1 more entry, otherwise it starts reallocating arrays.
     transform(cbegin(sparsity_pattern), cend(sparsity_pattern),
               back_inserter(row_sizes), [](auto const i) { return i + 1; });
 

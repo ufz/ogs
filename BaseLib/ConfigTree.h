@@ -30,7 +30,7 @@ class ConfigTree;
 
 /*! Check if \c conf has been read entirely and invalidate it.
  *
- * This method can savely be called on \c nullptr's.
+ * This method can safely be called on \c nullptr's.
  *
  * \see ConfigTree::checkAndInvalidate()
  */
@@ -50,7 +50,7 @@ template<typename Iterator> class Range;
  * Features. This class:
  *  * makes sure that every configuration setting in a Property Tree is read
  *    exactly once. If some settings is not read (e.g. due to a typo), a warning message
- *    is generated. The message contains a hint where it occured.
+ *    is generated. The message contains a hint where it occurred.
  *  * enforces a naming scheme of settings: letters a-z, numbers 0-9, underscore
  *  * provides some functionality to read lists of values using range-based for loops.
  *  * has rather long method names that are easily greppable from the source code. So a list

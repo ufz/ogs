@@ -42,7 +42,7 @@ namespace FileIO
 class CsvInterface : public BaseLib::IO::Writer
 {
 public:
-    /// Contructor (only needed for writing files)
+    /// Constructor (only needed for writing files)
     CsvInterface();
 
     /// Returns the number of vectors currently staged for writing.

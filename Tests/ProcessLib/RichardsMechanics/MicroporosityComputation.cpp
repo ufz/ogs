@@ -247,7 +247,7 @@ TEST(RichardsMechanics, computeMicroPorosity)
                 << "with eps = " << eps;
             EXPECT_TRUE((a.sigma_sw - b.sigma_sw).norm() / 1e9 < eps)
                 << "with eps = " << eps;
-            // Divide pressures and stresses by GPa to get approxmately
+            // Divide pressures and stresses by GPa to get approximately
             // O(1) numbers.
             return eps_equal(a.phi_m, b.phi_m) && eps_equal(a.e_sw, b.e_sw) &&
                    eps_equal(a.p_L_m / 1e9, b.p_L_m / 1e9) &&

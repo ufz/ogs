@@ -401,7 +401,7 @@ void NodePartitionedMeshReader::setElements(
     const std::vector<unsigned long> &elem_data,
     std::vector<MeshLib::Element*> &mesh_elems, const bool ghost) const
 {
-    // Number of elements, ether ghost or regular
+    // Number of elements, either ghost or regular
     unsigned long const ne =
         ghost ? _mesh_info.ghost_elements : _mesh_info.regular_elements;
     unsigned long const id_offset_ghost =

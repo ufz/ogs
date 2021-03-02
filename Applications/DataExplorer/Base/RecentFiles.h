@@ -21,7 +21,7 @@
 class QString;
 
 /**
- * The RecentFiles class provides functionality to store informations about
+ * The RecentFiles class provides functionality to store information about
  * recently used files (e.g. loaded or saved files).
  * Example Usage:
  * \code RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()), "recentFileList", "OpenGeoSys");

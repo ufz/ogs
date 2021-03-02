@@ -33,7 +33,7 @@ public:
     explicit VtkVisTabWidget(QWidget* parent = nullptr);
 
 protected slots:
-    /// Updates the property panels to show informations on the given VtkVisPipelineItem.
+    /// Updates the property panels to show information on the given VtkVisPipelineItem.
     void setActiveItem(VtkVisPipelineItem* item);
 
     void on_arrayResetPushButton_clicked();
