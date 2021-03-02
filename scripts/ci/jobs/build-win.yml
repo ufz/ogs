@@ -7,14 +7,13 @@ build win:
     - when: manual
       allow_failure: true
   variables:
-    BUILD_DIR: ..\build\win-release
+    BUILD_DIR: win-release
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_$USE_PYTHON
       -DOGS_USE_CONAN=AUTO
       -DOGS_USE_XDMF=ON
-      -B $BUILD_DIR
   parallel:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]

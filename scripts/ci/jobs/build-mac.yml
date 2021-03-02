@@ -6,9 +6,8 @@ build mac:
     - .test-artifacts
   needs: [meta]
   variables:
-    BUILD_DIR: "../build/mac-release"
+    BUILD_DIR: "mac-release"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DOGS_INSTALL_DEPENDENCIES=ON
       -DOGS_USE_XDMF=ON
-      -B $BUILD_DIR

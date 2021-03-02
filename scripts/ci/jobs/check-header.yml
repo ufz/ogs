@@ -9,6 +9,7 @@ check header:
     CMAKE_ARGS: "-DOGS_CHECK_HEADER_COMPILATION=ON -DOGS_BUILD_GUI=ON -DBUILD_SHARED_LIBS=ON"
   image: $CONTAINER_GCC_GUI_IMAGE
   script:
+    - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     - >

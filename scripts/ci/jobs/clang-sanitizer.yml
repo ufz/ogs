@@ -11,6 +11,7 @@ clang sanitizer:
   image:
     name: $CONTAINER_CLANG_IMAGE
   script:
+    - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     - >
