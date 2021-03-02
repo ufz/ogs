@@ -50,12 +50,12 @@ In this model, the quad element was adopted to compose the mesh. The initial tem
 
 | Parameter                        | Symbol       | Value               | Unit             |
 | -------------------------------- |:------------ | -------------------:| ----------------:|
-| Soil thermal conductivity        | $\lambda$    | 1.720               | $Wm^{-1}K^{-1}$  |
+| Soil thermal conductivity        | $\lambda$    | $2.0$               | $Wm^{-1}K^{-1}$  |
 | Soil heat capacity               | $\rho c$     | $2.925\times10^{6}$ | $J^{-3} mK^{-1}$ |
 | Ground thermal diffusivity       | $\alpha$     | $5.7\times10^{-7}$  | $Wm^{-1}K^{-1}$  |
-| Initial subsurface temperature   | $T_0$        | 10                  | $^{\circ}C$      |
-| Heat extraction rate of the BHE  | $q$          | 35                  | $W/m$            |
-| Diameter of the BHE              | $D$          | 0.15                | $m$              |
+| Initial subsurface temperature   | $T_0$        | $10$                | $^{\circ}C$      |
+| Heat extraction rate of the BHE  | $q$          | $35$                | $W/m$            |
+| Diameter of the BHE              | $D$          | $0.15$              | $m$              |
 
 {{< img src="../BHE_array_benchmark_figures/figure_1.png" >}}
 
@@ -65,15 +65,19 @@ Different meshes were adopted to analyse the impact of mesh density on the numer
 
 \begin{equation}
 \begin{split}
-    \Delta  = {\rm{ }}a{r_b}\ \hspace{6mm}
-    a = \left\{ \begin{array}{l}
-    4.81 \hspace{2mm} for\hspace{2mm} n=4\\
-    6.13  \hspace{2mm} for\hspace{2mm} n=6\\
-    6.16  \hspace{2mm} for\hspace{2mm} n=8
-    \end{array}\right.
-    \label{eq_4}
+    \Delta  = {\rm{ }}a{r_b},\ \hspace{6mm}
 \end{split}
 \end{equation}
+with
+\begin{equation*}
+    a = 4.81 \hspace{2mm} for\hspace{2mm} n=4,
+\end{equation*}
+\begin{equation*}
+    a = 6.13  \hspace{2mm} for\hspace{2mm} n=6,
+\end{equation*}
+\begin{equation*}
+    a = 6.16  \hspace{2mm} for\hspace{2mm} n=8.
+\end{equation*}
 
 where $r_b$ is the BHE radius. n denotes the number of surrounding nodes. n = 8 is typical for a squared grid meshes. In this study, the BHE diameter is assumed to be 0.15 m. Based on equation (4) the optimal element size should be set to approximately 0.5 m.
 
