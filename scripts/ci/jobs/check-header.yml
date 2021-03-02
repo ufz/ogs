@@ -13,7 +13,7 @@ check header:
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     - >
-      cmake .. -G Ninja
+      cmake ../../ogs -G Ninja
       $CMAKE_ARGS
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
       -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES || true
