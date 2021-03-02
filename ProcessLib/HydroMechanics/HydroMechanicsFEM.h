@@ -283,7 +283,7 @@ private:
      *
      * @param t               Time
      * @param dt              Time increment
-     * @param local_xs         Nodal values of \f$x\f$ of an element of all
+     * @param local_x         Nodal values of \f$x\f$ of an element of all
      * coupled processes.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
@@ -308,9 +308,9 @@ private:
      *
      * @param t               Time
      * @param dt              Time increment
-     * @param local_xs         Nodal values of \f$x\f$ of an element  of all
+     * @param local_x         Nodal values of \f$x\f$ of an element  of all
      * coupled processes.
-     * @param local_dot_xs      Nodal values of \f$\dot{x}\f$ of an element  of
+     * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element  of
      * all coupled processes.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson

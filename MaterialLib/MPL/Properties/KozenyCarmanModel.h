@@ -21,7 +21,7 @@ namespace MaterialPropertyLib
  * \f[
  * k = k_0 \left( \frac{1 - \phi_0}{1 - \phi} \right)^2 \left(
  * \frac{\phi}{\phi_0} \right)^3, \f] where \f$k\f$ is the permeability,
- * \fk_0\f$ is the initial permeability,
+ * \f$k_0\f$ is the initial permeability,
  * \f$\phi\f$ is the porosity, and
  * \f$\phi_0\f$ is the initial porosity.
  */
