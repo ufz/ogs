@@ -169,7 +169,7 @@ std::string readPolyline(std::istream &in,
     auto* ply(new GeoLib::Polyline(pnt_vec));
     std::size_t type = 2; // need an initial value
 
-    // Schleife ueber alle Phasen bzw. Komponenten
+    // Loop over all phases or components
     do {
         in >> line;
         if (line.find("$ID") != std::string::npos)
