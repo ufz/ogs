@@ -4,13 +4,13 @@ repos:
     hooks:
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
-        exclude: 'ThirdParty/*|Tests/Data/*|web/static/images/xsd'
+        exclude: '^ThirdParty/.*|^Tests/Data/.*|^web/static/images/xsd'
     -   id: check-added-large-files
         args: [--maxkb 1024]
     -   id: check-merge-conflict
     -   id: check-xml
     -   id: check-yaml
-        exclude: 'scripts/ci/*'
+        exclude: '^scripts/ci/.*'
     -   id: check-toml
 -   repo: local
     hooks:
@@ -37,3 +37,8 @@ repos:
     hooks:
     - id: black
       exclude: 'ThirdParty|LinearMFront/generate_ref.py'
+-   repo: https://github.com/codespell-project/codespell
+    rev: v2.0.0
+    hooks:
+    -   id: codespell
+        exclude: 'ThirdParty/.*|Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp'

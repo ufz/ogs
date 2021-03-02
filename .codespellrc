@@ -1,0 +1,4 @@
+[codespell]
+skip = ./.git,./Tests/Data,./ThirdParty,*.yml,*.bib,./web/content/imprint.md,./GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd,./Applications/FileIO/Legacy/OGSIOVer4.cpp
+ignore-words-list = Theis,nd,theis,strat
+exclude-file = .codespellexclude
