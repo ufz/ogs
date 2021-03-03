@@ -24,3 +24,5 @@ Tests/Data/Parabolic/HT/InvalidProjectFiles/*.prj
 web/.netlify
 
 CMakeUserPresets.json
+
+.snakemake
