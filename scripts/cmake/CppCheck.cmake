@@ -23,6 +23,7 @@ add_custom_target(cppcheck
         --inconclusive
         ${CPPCHECK_THREADS}
         -i ${PROJECT_BINARY_DIR}/CMakeFiles
+        -i ${PROJECT_BINARY_DIR}/_deps
         -i ${PROJECT_SOURCE_DIR}/ThirdParty
         -i ${PROJECT_SOURCE_DIR}/Applications/DataExplorer
         -i ${PROJECT_SOURCE_DIR}/Tests
