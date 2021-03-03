@@ -283,7 +283,21 @@ AddTest(
 
 # Permeability models
 AddTest(
-    NAME HydroMechanics_Permeability_EmbeddedFracture
+    NAME HydroMechanics_Permeability_EmbeddedFracture_square
+    PATH HydroMechanics/EmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    square_ts_1_t_1.000000.vtu square_ts_1_t_1.000000.vtu pressure pressure 0 1e-14
+    square_ts_1_t_1.000000.vtu square_ts_1_t_1.000000.vtu velocity velocity 1e-15 0
+    square_ts_1_t_1.000000.vtu square_ts_1_t_1.000000.vtu displacement displacement 1e-15 0
+)
+
+AddTest(
+    NAME HydroMechanics_Permeability_EmbeddedFracture_cube
     PATH HydroMechanics/EmbeddedFracturePermeability
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube.prj

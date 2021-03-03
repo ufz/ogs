@@ -72,7 +72,9 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::value(
     double const coeff = H_de * (b_f / _a) * ((b_f * b_f / 12.0) - _k);
 
     Eigen::Matrix3d I = Eigen::Matrix3d::Identity();
-    return (coeff * (I - n * n.transpose()) + _k * I).eval();
+    return (coeff * (I - n * n.transpose()) + _k * I)
+        .template topLeftCorner<DisplacementDim, DisplacementDim>()
+        .eval();
 }
 
 template <int DisplacementDim>
@@ -106,6 +108,7 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
 
     Eigen::Matrix3d const M = n * n.transpose();
     return (H_de * (b_f * b_f / 4 - _k) * (Eigen::Matrix3d::Identity() - M) * M)
+        .template topLeftCorner<DisplacementDim, DisplacementDim>()
         .eval();
 }
 
