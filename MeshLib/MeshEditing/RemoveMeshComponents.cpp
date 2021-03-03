@@ -97,6 +97,37 @@ MeshLib::Mesh* removeElements(
     return nullptr;
 }
 
+std::vector<bool> markUnusedNodes(std::vector<Element*> const& elements,
+                                  std::vector<Node*> const& nodes)
+{
+    std::vector<bool> unused_nodes(nodes.size(), true);
+    for (auto e : elements)
+    {
+        for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
+        {
+            unused_nodes[e->getNodeIndex(i)] = false;
+        }
+    }
+
+    return unused_nodes;
+}
+
+void removeMarkedNodes(std::vector<bool> const& nodes_to_delete,
+                       std::vector<Node*>& nodes)
+{
+    assert(nodes_to_delete.size() == nodes.size());
+
+    for (std::size_t i = 0; i < nodes.size(); i++)
+    {
+        if (nodes_to_delete[i])
+        {
+            delete nodes[i];
+            nodes[i] = nullptr;
+        }
+    }
+    nodes.erase(remove(begin(nodes), end(nodes), nullptr), end(nodes));
+}
+
 MeshLib::Mesh* removeNodes(const MeshLib::Mesh& mesh,
                            const std::vector<std::size_t>& del_nodes_idx,
                            const std::string& new_mesh_name)
@@ -125,27 +156,11 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh& mesh,
                     new_elems.end());
 
     // check unused nodes due to element deletion
-    std::vector<bool> node_delete_flag(new_nodes.size(), true);
-    for (auto e : new_elems)
-    {
-        for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
-        {
-            node_delete_flag[e->getNodeIndex(i)] = false;
-        }
-    }
+    std::vector<bool> const node_delete_flag =
+        markUnusedNodes(new_elems, new_nodes);
 
     // delete unused nodes
-    for (std::size_t i = 0; i < new_nodes.size(); i++)
-    {
-        if (!node_delete_flag[i])
-        {
-            continue;
-        }
-        delete new_nodes[i];
-        new_nodes[i] = nullptr;
-    }
-    new_nodes.erase(std::remove(new_nodes.begin(), new_nodes.end(), nullptr),
-                    new_nodes.end());
+    removeMarkedNodes(node_delete_flag, new_nodes);
 
     if (!new_elems.empty())
     {
