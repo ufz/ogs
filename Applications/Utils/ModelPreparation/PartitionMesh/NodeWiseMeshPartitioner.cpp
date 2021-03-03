@@ -538,7 +538,7 @@ void markDuplicateGhostCells(MeshLib::Mesh const& mesh,
     for (auto& partition : partitions)
     {
         partition.duplicate_ghost_cell.resize(partition.ghost_elements.size(),
-                                              false);
+                                              true);
 
         for (std::size_t i = 0; i < partition.ghost_elements.size(); i++)
         {
@@ -546,7 +546,7 @@ void markDuplicateGhostCells(MeshLib::Mesh const& mesh,
             if (!cell_visited[ghost_element.getID()])
             {
                 cell_visited[ghost_element.getID()] = true;
-                partition.duplicate_ghost_cell[i] = true;
+                partition.duplicate_ghost_cell[i] = false;
             }
         }
     }
