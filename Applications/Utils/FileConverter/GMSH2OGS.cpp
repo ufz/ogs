@@ -92,7 +92,7 @@ int main (int argc, char* argv[])
         return -1;
     }
 #ifndef WIN32
-    INFO("Mem for mesh: {:i} MB",
+    INFO("Mem for mesh: {} MiB",
          (mem_watch.getVirtMemUsage() - mem_without_mesh) / (1024 * 1024));
 #endif
 

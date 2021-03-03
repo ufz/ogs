@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     const unsigned long mem_with_mesh(mem_watch.getVirtMemUsage());
     if (mem_with_mesh > 0)
     {
-        INFO("Memory size: {:i} MB",
+        INFO("Memory size: {} MiB",
              (mem_with_mesh - mem_without_mesh) / (1024 * 1024));
         (void)mem_with_mesh;
     }
