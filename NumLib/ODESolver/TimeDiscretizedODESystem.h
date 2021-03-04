@@ -239,6 +239,7 @@ private:
     std::size_t _M_id = 0u;  //!< ID of the \c _M matrix.
     std::size_t _K_id = 0u;  //!< ID of the \c _K matrix.
     std::size_t _b_id = 0u;  //!< ID of the \c _b vector.
+    mutable std::vector<std::size_t> _xdot_ids;
 };
 
 //! @}
