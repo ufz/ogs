@@ -14,33 +14,26 @@ workdir: f"{config['Data_BINARY_DIR']}/{output_path}"
 elem_types = ['tri', 'quad']
 rule all:
     input:
-        expand("square_1x1_{type}_boundary_diff.out", type=elem_types)
+        expand("square_10_1x1_{type}_boundary_diff.out", type=elem_types)
 
-rule generate_meshes:
-    output:
-        "input_square_1x1_{type}.vtu"
-    shell:
-        """
-        generateStructuredMesh -e {wildcards.type} \
-            --lx 1 --ly 1 \
-            --nx 10 --ny 10 \
-            -o {output}
-        """
+include: f"{config['SOURCE_DIR']}/scripts/snakemake/modules/meshes.smk"
 
 rule extract_boundary:
     input:
-        "input_square_1x1_{type}.vtu"
+        rules.generate_square_mesh.output
     output:
-        "square_1x1_{type}_boundary.vtu"
+        "square_{size}_{lx}x{ly}_{type}_boundary.vtu"
     shell:
         "ExtractBoundary -i {input} -o {output}"
 
 rule vtkdiff:
     input:
-        "square_1x1_{type}_boundary.vtu"
+        a = rules.extract_boundary.output,
+        b = f"{config['Data_SOURCE_DIR']}/{output_path}/{rules.extract_boundary.output}"
     output:
-        "square_1x1_{type}_boundary_diff.out"
+        "square_{size}_{lx}x{ly}_{type}_boundary_diff.out"
     params:
+        check_mesh = True,
         fields = [
             # second field name can be omitted if identical
             ["bulk_node_ids", 0, 0],

@@ -7,11 +7,11 @@ __license__ = "BSD"
 import os
 from snakemake.shell import shell
 
-output_path = (
-    os.getcwd().replace("\\", "/").replace(snakemake.config["Data_BINARY_DIR"], "")
-)
 if os.path.exists(snakemake.output[0]):
     os.remove(snakemake.output[0])
+
+if snakemake.params.check_mesh:
+    shell("vtkdiff {snakemake.input.a} {snakemake.input.b} -m > {snakemake.output[0]}")
 
 for field in snakemake.params.fields:
     field_a = field[0]
@@ -24,8 +24,7 @@ for field in snakemake.params.fields:
 
     shell(
         """
-        vtkdiff {snakemake.input[0]} \
-          {snakemake.config[Data_SOURCE_DIR]}/{output_path}/{snakemake.input[0]} \
+        vtkdiff {snakemake.input.a} {snakemake.input.b} \
           -a {field_a} -b {field_b} \
           --abs {abs_tol} --rel {rel_tol} >> {snakemake.output[0]}
         """

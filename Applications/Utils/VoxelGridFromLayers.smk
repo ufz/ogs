@@ -11,8 +11,7 @@ out_dir = f"{config['Data_BINARY_DIR']}/MeshLib"
 rule all:
     input:
         f"{out_dir}/AREHS_test_diff_geometry.out",
-        f"{out_dir}/AREHS_test_fault_diff_material_ids.out",
-        f"{out_dir}/AREHS_test_fault_diff_geometry.out",
+        f"{out_dir}/AREHS_test_fault_diff.out",
         f"{out_dir}/AREHS_test_iso_diff_geometry.out"
 
 rule layers_to_grid:
@@ -41,23 +40,17 @@ rule add_fault_to_grid:
     shell:
         "AddFaultToVoxelGrid -i {input.grid} -f {input.fault} -o {output}"
 
-rule vtkdiff_material_ids:
+rule vtkdiff_fault:
     input:
-        out = rules.add_fault_to_grid.output,
-        ref = "AREHS_test_fault.vtu"
+        a = rules.add_fault_to_grid.output,
+        b = "AREHS_test_fault.vtu"
     output:
-        f"{out_dir}/AREHS_test_fault_diff_material_ids.out"
-    shell:
-        "vtkdiff -a MaterialIDs -b MaterialIDs {input.out} {input.ref} > {output}"
-
-rule vtkdiff_fault_geometry:
-    input:
-        out = rules.add_fault_to_grid.output,
-        ref = "AREHS_test_fault.vtu"
-    output:
-        f"{out_dir}/AREHS_test_fault_diff_geometry.out"
-    shell:
-        "vtkdiff -m {input.out} {input.ref} > {output}"
+        f"{out_dir}/AREHS_test_fault_diff.out"
+    params:
+        check_mesh = True,
+        fields = [["MaterialIDs", 0, 0]]
+    wrapper:
+        f"file://{config['SOURCE_DIR']}/scripts/snakemake/vtkdiff"
 
 rule layers_to_grid_iso:
     input:
