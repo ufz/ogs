@@ -186,8 +186,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material =
         *_process_data.solid_materials[0];
 
-    MPL::VariableArray variables;
-
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
@@ -348,13 +346,12 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // displacement equation, displacement part
         //
         eps_m.noalias() = eps - thermal_strain;
-        variables[static_cast<int>(
-                      MaterialPropertyLib::Variable::mechanical_strain)]
+        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
         auto C = _ip_data[ip].updateConstitutiveRelationThermal(
-            variables, t, x_position, dt, u,
+            vars, t, x_position, dt, u,
             _process_data.reference_temperature(t, x_position)[0]);
 
         local_Jac
@@ -683,7 +680,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
 
-    MPL::VariableArray variables;
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
@@ -739,13 +735,12 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps_m = _ip_data[ip].eps_m;
         eps_m.noalias() = eps - thermal_strain;
 
-        variables[static_cast<int>(
-                      MaterialPropertyLib::Variable::mechanical_strain)]
+        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
         _ip_data[ip].updateConstitutiveRelationThermal(
-            variables, t, x_position, dt, u,
+            vars, t, x_position, dt, u,
             _process_data.reference_temperature(t, x_position)[0]);
     }
 }
