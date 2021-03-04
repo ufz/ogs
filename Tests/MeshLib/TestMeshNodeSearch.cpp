@@ -79,7 +79,9 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
     EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDs(p2)[0]);
 
     GeoLib::Point p3(dx_half, 0.0, 0.0);
-    EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDs(p3).size());
+    EXPECT_EQ(2u, mesh_node_searcher.getMeshNodeIDs(p3).size());
+    EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDs(p3)[0]);
+    EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDs(p3)[1]);
 
     GeoLib::Point p4(dx_half*1.01, 0.0, 0.0);
     ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDs(p4).size());
