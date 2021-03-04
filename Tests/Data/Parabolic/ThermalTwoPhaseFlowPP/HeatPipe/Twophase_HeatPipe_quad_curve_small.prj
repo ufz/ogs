@@ -155,6 +155,12 @@
                     <type>Constant</type>
                     <value>1e-12</value>
                 </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>SoilThermalConductivitySomerton</type>
+                    <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>
+                    <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>
+                </property>
             </properties>
         </medium>
     </media>
@@ -228,6 +234,16 @@
             <name>kappa1</name>
             <type>Constant</type>
             <values>1e-12</values>
+        </parameter>
+        <parameter>
+            <name>k_T_dry</name>
+            <type>Constant</type>
+            <value>0.582</value>
+        </parameter>
+        <parameter>
+            <name>k_T_wet</name>
+            <type>Constant</type>
+            <value>1.14</value>
         </parameter>
     </parameters>
     <time_loop>
