@@ -29,7 +29,7 @@ rule generate_meshes:
 
 rule extract_boundary:
     input:
-        "input_square_1x1_{type}.vtu"
+        rules.generate_meshes.output
     output:
         "square_1x1_{type}_boundary.vtu"
     shell:
@@ -37,10 +37,12 @@ rule extract_boundary:
 
 rule vtkdiff:
     input:
-        "square_1x1_{type}_boundary.vtu"
+        a = rules.extract_boundary.output, # "square_1x1_{type}_boundary.vtu"
+        b = f"{config['Data_SOURCE_DIR']}/{output_path}/{rules.extract_boundary.output}"
     output:
         "square_1x1_{type}_boundary_diff.out"
     params:
+        check_mesh = True,
         fields = [
             # second field name can be omitted if identical
             ["bulk_node_ids", 0, 0],
