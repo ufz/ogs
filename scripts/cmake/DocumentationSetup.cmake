@@ -43,7 +43,24 @@ set(DOXYGEN_USE_MATHJAX YES)
 set(DOXYGEN_MATHJAX_RELPATH https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/)
 set(DOXYGEN_GENERATE_LATEX NO)
 set(DOXYGEN_EXTRA_PACKAGES amsmath amsfonts)
-set(DOXYGEN_PREDEFINED DOXYGEN_DOCU_ONLY)
+set(DOXYGEN_PREDEFINED
+    CVODE_FOUND
+    DOXYGEN_DOCU_ONLY
+    GEOTIFF_FOUND
+    OGS_BUILD_GUI
+    OGS_ENABLE_ELEMENT_CUBOID
+    OGS_ENABLE_ELEMENT_PRISM
+    OGS_ENABLE_ELEMENT_PYRAMID
+    OGS_ENABLE_ELEMENT_SIMPLEX
+    OGS_USE_MFRONT
+    OGS_USE_NETCDF
+    OGS_USE_PYTHON
+    OGS_USE_XDMF
+    USE_INSITU
+    USE_LIS
+    USE_MKL
+    USE_PETSC
+)
 set(DOXYGEN_ALIASES
     "per{1} = \\1<sup>-1</sup>"
     "ogs_file_param{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_param__\\1 \\\"\\1\\\""
