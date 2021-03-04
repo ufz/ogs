@@ -126,5 +126,14 @@ private:
     /// Solutions of the previous coupling iteration for the convergence
     /// criteria of the coupling iteration.
     std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
+
+    /// store the ids of the global xdot vectors in the global vector
+    /// provider for reuse, needed in postTimestepForAllProcesses
+    /// the length of the vector is the size of _per_process_data
+    std::vector<std::size_t> _xdot_vector_ids;
+
+    // store the id of the global xdot vector in the global vector provider for
+    // reuse; needed in solveOneTimeStepOneProcess
+    std::size_t _xdot_id = 0;
 };
 }  // namespace ProcessLib

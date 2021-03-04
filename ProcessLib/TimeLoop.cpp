@@ -104,10 +104,14 @@ void postTimestepForAllProcesses(
     double const t, double const dt,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<GlobalVector*> const& process_solutions,
-    std::vector<GlobalVector*> const& process_solutions_prev)
+    std::vector<GlobalVector*> const& process_solutions_prev,
+    std::vector<std::size_t>& xdot_vector_ids)
 {
     std::vector<GlobalVector*> x_dots;
     x_dots.reserve(per_process_data.size());
+    xdot_vector_ids.resize(per_process_data.size());
+
+    std::size_t cnt = 0;
     for (auto& process_data : per_process_data)
     {
         auto const process_id = process_data->process_id;
@@ -115,7 +119,8 @@ void postTimestepForAllProcesses(
         auto const& time_discretization = *process_data->time_disc;
 
         x_dots.emplace_back(&NumLib::GlobalVectorProvider::provider.getVector(
-            ode_sys.getMatrixSpecifications(process_id)));
+            ode_sys.getMatrixSpecifications(process_id), xdot_vector_ids[cnt]));
+        cnt++;
 
         time_discretization.getXdot(*process_solutions[process_id],
                                     *process_solutions_prev[process_id],
@@ -274,7 +279,8 @@ void calculateNonEquilibriumInitialResiduum(
 NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
     std::size_t const timestep, double const t, double const delta_t,
-    ProcessData const& process_data, Output& output_control)
+    ProcessData const& process_data, Output& output_control,
+    std::size_t& xdot_id)
 {
     auto& process = process_data.process;
     int const process_id = process_data.process_id;
@@ -308,7 +314,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     }
 
     GlobalVector& x_dot = NumLib::GlobalVectorProvider::provider.getVector(
-        ode_sys.getMatrixSpecifications(process_id));
+        ode_sys.getMatrixSpecifications(process_id), xdot_id);
 
     time_disc.getXdot(*x[process_id], *x_prev[process_id], x_dot);
 
@@ -622,9 +628,9 @@ bool TimeLoop::loop()
         // iteration, an exception thrown in assembly, for example.
         if (nonlinear_solver_status.error_norms_met)
         {
-            postTimestepForAllProcesses(t, dt, _per_process_data,
-                                        _process_solutions,
-                                        _process_solutions_prev);
+            postTimestepForAllProcesses(
+                t, dt, _per_process_data, _process_solutions,
+                _process_solutions_prev, _xdot_vector_ids);
         }
 
         INFO("[time] Time step #{:d} took {:g} s.", timesteps,
@@ -677,13 +683,14 @@ bool TimeLoop::loop()
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     const double t, const double dt, const std::size_t timestep_id,
     ProcessData const& process_data, std::vector<GlobalVector*>& x,
-    std::vector<GlobalVector*> const& x_prev, Output& output)
+    std::vector<GlobalVector*> const& x_prev, Output& output,
+    std::size_t& xdot_id)
 {
     BaseLib::RunTime time_timestep_process;
     time_timestep_process.start();
 
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
-        x, x_prev, timestep_id, t, dt, process_data, output);
+        x, x_prev, timestep_id, t, dt, process_data, output, xdot_id);
 
     INFO("[time] Solving process #{:d} took {:g} s in time step #{:d} ",
          process_data.process_id, time_timestep_process.elapsed(), timestep_id);
@@ -703,7 +710,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         auto const process_id = process_data->process_id;
         nonlinear_solver_status = solveMonolithicProcess(
             t, dt, timestep_id, *process_data, _process_solutions,
-            _process_solutions_prev, *_output);
+            _process_solutions_prev, *_output, _xdot_id);
 
         process_data->nonlinear_solver_status = nonlinear_solver_status;
         if (!nonlinear_solver_status.error_norms_met)
@@ -776,7 +783,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
             nonlinear_solver_status = solveOneTimeStepOneProcess(
                 _process_solutions, _process_solutions_prev, timestep_id, t, dt,
-                *process_data, *_output);
+                *process_data, *_output, _xdot_id);
             process_data->nonlinear_solver_status = nonlinear_solver_status;
 
             INFO(
