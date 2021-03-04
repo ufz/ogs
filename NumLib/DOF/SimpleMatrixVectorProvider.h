@@ -36,7 +36,6 @@ public:
     SimpleMatrixVectorProvider(SimpleMatrixVectorProvider const&) = delete;
     SimpleMatrixVectorProvider& operator=(SimpleMatrixVectorProvider const&) = delete;
 
-    GlobalVector& getVector() override;
     GlobalVector& getVector(std::size_t& id) override;
 
     GlobalVector& getVector(GlobalVector const& x) override;

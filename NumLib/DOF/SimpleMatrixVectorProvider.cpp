@@ -176,15 +176,6 @@ getVector_(std::size_t& id, Args&&... args)
     return get_<do_search>(id, _unused_vectors, _used_vectors, std::forward<Args>(args)...);
 }
 
-
-GlobalVector&
-SimpleMatrixVectorProvider::
-getVector()
-{
-    std::size_t id = 0u;
-    return *getVector_<false>(id).first;
-}
-
 GlobalVector&
 SimpleMatrixVectorProvider::
 getVector(std::size_t& id)
