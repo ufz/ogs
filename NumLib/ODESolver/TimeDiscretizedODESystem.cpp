@@ -84,9 +84,11 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     auto const dxdot_dx = _time_disc.getNewXWeight();
 
     std::vector<GlobalVector*> xdot(x_new_timestep.size());
+    _xdot_ids.resize(x_new_timestep.size());
     for (std::size_t i = 0; i < xdot.size(); i++)
     {
-        xdot[i] = &NumLib::GlobalVectorProvider::provider.getVector();
+        xdot[i] =
+            &NumLib::GlobalVectorProvider::provider.getVector(_xdot_ids[i]);
         _time_disc.getXdot(*x_new_timestep[i], *x_prev[i], *xdot[i]);
     }
 

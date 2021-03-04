@@ -148,6 +148,7 @@ private:
 
     //! ID of the vector storing xdot in intermediate computations.
     mutable std::size_t _xdot_id = 0u;
+    mutable std::vector<std::size_t> _xdot_ids;
 };
 
 /*! Time discretized first order implicit quasi-linear ODE;
