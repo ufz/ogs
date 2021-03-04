@@ -41,7 +41,7 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
     _equation_system->getRhs(*x_prev[process_id], rhs);
 
     // r_neq = A * x - rhs
-    _r_neq = &NumLib::GlobalVectorProvider::provider.getVector();
+    _r_neq = &NumLib::GlobalVectorProvider::provider.getVector(_r_neq_id);
     MathLib::LinAlg::matMult(A, *x[process_id], *_r_neq);
     MathLib::LinAlg::axpy(*_r_neq, -1.0, rhs);  // res -= rhs
 }
@@ -220,7 +220,7 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::
     }
 
     _equation_system->assemble(x, x_prev, process_id);
-    _r_neq = &NumLib::GlobalVectorProvider::provider.getVector();
+    _r_neq = &NumLib::GlobalVectorProvider::provider.getVector(_r_neq_id);
     _equation_system->getResidual(*x[process_id], *x_prev[process_id], *_r_neq);
 }
 

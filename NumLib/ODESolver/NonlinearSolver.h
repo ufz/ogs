@@ -141,6 +141,8 @@ private:
     std::size_t _minus_delta_x_id = 0u;  //!< ID of the \f$ -\Delta x\f$ vector.
     std::size_t _x_new_id =
         0u;  //!< ID of the vector storing \f$ x - (-\Delta x) \f$.
+    std::size_t _r_neq_id = 0u;  //!< ID of the non-equilibrium initial
+                                 //! residuum vector.
 
     /// Enables computation of the non-equilibrium initial residuum \f$ r_{\rm
     /// neq} \f$ before the first time step. The forces are zero if the external
@@ -214,6 +216,8 @@ private:
     std::size_t _rhs_id = 0u;    //!< ID of the right-hand side vector.
     std::size_t _x_new_id = 0u;  //!< ID of the vector storing the solution of
                                  //! the linearized equation.
+    std::size_t _r_neq_id = 0u;  //!< ID of the non-equilibrium initial
+                                 //! residuum vector.
 
     // clang-format off
     /// \copydoc NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::_compensate_non_equilibrium_initial_residuum
