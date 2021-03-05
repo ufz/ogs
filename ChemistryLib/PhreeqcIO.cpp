@@ -96,6 +96,8 @@ void setReactantMolality(Reactant& reactant,
                 .property(MaterialPropertyLib::PropertyType::volume_fraction)
                 .template initialValue<double>(pos, t);
 
+        (*reactant.volume_fraction)[chemical_system_id] = volume_fraction;
+
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template initialValue<double>(pos, t);
