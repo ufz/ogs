@@ -221,6 +221,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             geometry_dimension, config, parameters, local_coordinate_system);
     }
 
+    if (boost::iequals(property_type, "VapourDiffusionFEBEX"))
+    {
+        return createVapourDiffusionFEBEX(config);
+    }
+
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL("The specified component property type '{:s}' was not recognized",
               property_type);
