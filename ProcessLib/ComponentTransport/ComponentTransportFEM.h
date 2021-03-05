@@ -286,9 +286,17 @@ public:
     }
 
     void setChemicalSystemConcrete(Eigen::VectorXd const& local_x,
-                                   double const /*t*/, double /*dt*/) override
+                                   double const t, double dt) override
     {
         assert(_process_data.chemical_solver_interface);
+
+        auto const& medium =
+            _process_data.media_map->getMedium(_element.getID());
+
+        MaterialPropertyLib::VariableArray vars;
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
 
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -296,6 +304,7 @@ public:
         {
             auto& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
+            auto& porosity = ip_data.porosity;
             auto const& chemical_system_id = ip_data.chemical_system_id;
 
             auto const n_component = _transport_process_variables.size();
@@ -314,8 +323,11 @@ public:
                                                  C_int_pt[component_id]);
             }
 
+            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                porosity;
+
             _process_data.chemical_solver_interface->setChemicalSystemConcrete(
-                C_int_pt, chemical_system_id);
+                C_int_pt, chemical_system_id, medium, vars, pos, t, dt);
         }
     }
 

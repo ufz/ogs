@@ -55,7 +55,11 @@ public:
 
     void setChemicalSystemConcrete(
         std::vector<double> const& concentrations,
-        GlobalIndexType const& chemical_system_id) override;
+        GlobalIndexType const& chemical_system_id,
+        MaterialPropertyLib::Medium const* medium,
+        MaterialPropertyLib::VariableArray const& vars,
+        ParameterLib::SpatialPosition const& pos, double const t,
+        double const dt) override;
 
     void executeInitialCalculation() override;
 

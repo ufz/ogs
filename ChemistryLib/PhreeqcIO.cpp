@@ -117,6 +117,41 @@ void initializeReactantMolality(Reactant& reactant,
 }
 
 template <typename Reactant>
+void setReactantMolality(Reactant& reactant,
+                         GlobalIndexType const& chemical_system_id,
+                         MaterialPropertyLib::Medium const* medium,
+                         MaterialPropertyLib::VariableArray const& vars,
+                         ParameterLib::SpatialPosition const& pos,
+                         double const t, double const dt)
+{
+    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_constituent = solid_phase.component(reactant.name);
+
+    if (!solid_constituent.hasProperty(
+            MaterialPropertyLib::PropertyType::molality))
+    {
+        auto const volume_fraction =
+            (*reactant.volume_fraction)[chemical_system_id];
+
+        auto const& liquid_phase = medium->phase("AqueousLiquid");
+        auto const fluid_density =
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t, dt);
+
+        auto const porosity = std::get<double>(
+            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)]);
+
+        auto const molar_volume =
+            solid_constituent
+                .property(MaterialPropertyLib::PropertyType::molar_volume)
+                .template value<double>(vars, pos, t, dt);
+
+        (*reactant.molality)[chemical_system_id] =
+            volume_fraction / fluid_density / porosity / molar_volume;
+    }
+}
+
+template <typename Reactant>
 static double averageReactantMolality(
     Reactant const& reactant,
     std::vector<GlobalIndexType> const& chemical_system_indices)
@@ -219,10 +254,25 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
 
 void PhreeqcIO::setChemicalSystemConcrete(
     std::vector<double> const& concentrations,
-    GlobalIndexType const& chemical_system_id)
+    GlobalIndexType const& chemical_system_id,
+    MaterialPropertyLib::Medium const* medium,
+    MaterialPropertyLib::VariableArray const& vars,
+    ParameterLib::SpatialPosition const& pos, double const t, double const dt)
 {
     setAqueousSolution(concentrations, chemical_system_id,
                        *_chemical_system->aqueous_solution);
+
+    for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
+    {
+        setReactantMolality(kinetic_reactant, chemical_system_id, medium, vars,
+                            pos, t, dt);
+    }
+
+    for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
+    {
+        setReactantMolality(equilibrium_reactant, chemical_system_id, medium,
+                            vars, pos, t, dt);
+    }
 }
 
 void PhreeqcIO::executeInitialCalculation()
