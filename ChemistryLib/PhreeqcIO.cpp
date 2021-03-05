@@ -68,11 +68,11 @@ void setAqueousSolution(std::vector<double> const& concentrations,
 }
 
 template <typename Reactant>
-void setReactantMolality(Reactant& reactant,
-                         GlobalIndexType const& chemical_system_id,
-                         MaterialPropertyLib::Medium const* medium,
-                         ParameterLib::SpatialPosition const& pos,
-                         double const t)
+void initializeReactantMolality(Reactant& reactant,
+                                GlobalIndexType const& chemical_system_id,
+                                MaterialPropertyLib::Medium const* medium,
+                                ParameterLib::SpatialPosition const& pos,
+                                double const t)
 {
     auto const& solid_phase = medium->phase("Solid");
     auto const& solid_constituent = solid_phase.component(reactant.name);
@@ -206,13 +206,13 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
 
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        setReactantMolality(kinetic_reactant, chemical_system_id, medium, pos,
+        initializeReactantMolality(kinetic_reactant, chemical_system_id, medium, pos,
                             t);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        setReactantMolality(equilibrium_reactant, chemical_system_id, medium,
+        initializeReactantMolality(equilibrium_reactant, chemical_system_id, medium,
                             pos, t);
     }
 }
