@@ -60,6 +60,7 @@ std::pair<MatVec*, bool> SimpleMatrixVectorProvider::get_(
     std::map<MatVec*, std::size_t>& used_map,
     Args&&... args)
 {
+    /*
     if (id >= _next_id)
     {
         OGS_FATAL(
@@ -77,6 +78,7 @@ std::pair<MatVec*, bool> SimpleMatrixVectorProvider::get_(
             return {::detail::transfer(unused_map, used_map, it), false};
         }
     }
+    */
 
     // not searched or not found, so create a new one
     id = _next_id++;
@@ -156,7 +158,7 @@ void SimpleMatrixVectorProvider::releaseMatrix(GlobalMatrix const& A)
     }
     else
     {
-        ::detail::transfer(_used_matrices, _unused_matrices, it);
+        delete it->first;
     }
 }
 
@@ -221,7 +223,7 @@ void SimpleMatrixVectorProvider::releaseVector(GlobalVector const& x)
     }
     else
     {
-        ::detail::transfer(_used_vectors, _unused_vectors, it);
+        delete it->first;
     }
 }
 
@@ -242,6 +244,7 @@ SimpleMatrixVectorProvider::~SimpleMatrixVectorProvider()
             _used_vectors.size());
     }
 
+    /*
     for (auto& id_ptr : _unused_matrices)
     {
         delete id_ptr.second;
@@ -261,6 +264,7 @@ SimpleMatrixVectorProvider::~SimpleMatrixVectorProvider()
     {
         delete ptr_id.first;
     }
+    */
 }
 
 }  // namespace NumLib
