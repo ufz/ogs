@@ -14,6 +14,7 @@
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
@@ -242,17 +243,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
 
-        // Consider anisotropic thermal expansion.
-        // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
-        // component.
-        Eigen::Matrix<double, 3,
-                      3> const solid_linear_thermal_expansion_coefficient =
-            MaterialPropertyLib::formEigenTensor<3>(
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_expansivity)
-                    .value(vars, x_position, t, dt));
-
         auto const porosity =
             solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
@@ -317,14 +307,23 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // TODO (Wenqing) : Change dT to time step wise increment
         double const delta_T(T_int_pt - T0);
+        // Consider also anisotropic thermal expansion.
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim> const solid_linear_thermal_expansion_coefficient =
+            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
+                solid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_expansivity)
+                    .value(vars, x_position, t, dt));
+
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             thermal_strain =
-                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    solid_linear_thermal_expansion_coefficient) *
-                delta_T;
+                solid_linear_thermal_expansion_coefficient * delta_T;
 
-        double const rho_s = solid_density * (1 -
-                solid_linear_thermal_expansion_coefficient.trace() * delta_T);
+        double const rho_s =
+            solid_density *
+            (1 - Invariants::trace(solid_linear_thermal_expansion_coefficient) *
+                     delta_T);
 
         auto const K_pT_thermal_osmosis =
             (solid_phase.hasProperty(
@@ -390,7 +389,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         auto const beta =
             porosity * fluid_volumetric_thermal_expansion_coefficient +
-            (alpha - porosity) * solid_linear_thermal_expansion_coefficient.trace();
+            (alpha - porosity) *
+                Invariants::trace(solid_linear_thermal_expansion_coefficient);
         storage_T.noalias() += N_T.transpose() * beta * N_T * w;
 
         //
@@ -460,7 +460,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
             MTu.noalias() +=
                 (-T_int_pt *
-                 solid_linear_thermal_expansion_coefficient.trace() /
+                 Invariants::trace(solid_linear_thermal_expansion_coefficient) /
                  solid_skeleton_compressibility) *
                 N_T.transpose() * identity2.transpose() * B * w;
 
@@ -712,11 +712,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             N_T.dot(p);  // N_T = N_p
 
-        // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
-        // component.
-        Eigen::Matrix<double, 3,
-                      3> const solid_linear_thermal_expansion_coefficient =
-            MaterialPropertyLib::formEigenTensor<3>(
+        // Consider also anisotropic thermal expansion.
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim> const solid_linear_thermal_expansion_coefficient =
+            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
                 solid_phase
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_expansivity)
@@ -725,9 +724,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const delta_T(T_int_pt - T0);
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             thermal_strain =
-                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    solid_linear_thermal_expansion_coefficient) *
-                delta_T;
+                solid_linear_thermal_expansion_coefficient * delta_T;
 
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
