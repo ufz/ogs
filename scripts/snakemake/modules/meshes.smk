@@ -1,6 +1,6 @@
 rule generate_square_mesh:
     output:
-        "square_{size}_{lx}x{ly}_{type}.vtu"
+        "{mesh_name_prefix,\w+}_{size,\d+}_{lx,\d+}x{ly,\d+}_{type}.vtu"
     shell:
         """
         generateStructuredMesh -e {wildcards.type} \

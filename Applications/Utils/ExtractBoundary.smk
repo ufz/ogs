@@ -22,7 +22,7 @@ rule extract_boundary:
     input:
         rules.generate_square_mesh.output
     output:
-        "square_{size}_{lx}x{ly}_{type}_boundary.vtu"
+        "{mesh_name_prefix}_{size}_{lx}x{ly}_{type}_boundary.vtu"
     shell:
         "ExtractBoundary -i {input} -o {output}"
 
@@ -31,7 +31,7 @@ rule vtkdiff:
         a = rules.extract_boundary.output,
         b = f"{config['Data_SOURCE_DIR']}/{output_path}/{rules.extract_boundary.output}"
     output:
-        "square_{size}_{lx}x{ly}_{type}_boundary_diff.out"
+        "{mesh_name_prefix}_{size}_{lx}x{ly}_{type}_boundary_diff.out"
     params:
         check_mesh = True,
         fields = [

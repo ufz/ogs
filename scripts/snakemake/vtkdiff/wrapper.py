@@ -26,6 +26,6 @@ for field in snakemake.params.fields:
         """
         vtkdiff {snakemake.input.a} {snakemake.input.b} \
           -a {field_a} -b {field_b} \
-          --abs {abs_tol} --rel {rel_tol} >> {snakemake.output[0]}
+          --abs {abs_tol} --rel {rel_tol} 2>&1 | tee -a {snakemake.output[0]}
         """
     )

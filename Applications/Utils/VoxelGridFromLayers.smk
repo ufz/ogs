@@ -29,7 +29,7 @@ rule vtkdiff_grid_geometry:
     output:
         f"{out_dir}/AREHS_test_diff_geometry.out"
     shell:
-        "vtkdiff -m {input.out} {input.ref} > {output}"
+        "vtkdiff -m {input.out} {input.ref} 2>&1 | tee {output}"
 
 rule add_fault_to_grid:
     input:
@@ -67,4 +67,4 @@ rule vtkdiff_grid_iso_geometry:
     output:
         f"{out_dir}/AREHS_test_iso_diff_geometry.out"
     shell:
-        "vtkdiff -m {input.out} {input.ref} > {output}"
+        "vtkdiff -m {input.out} {input.ref} 2>&1 | tee {output}"
