@@ -23,8 +23,9 @@ std::unique_ptr<Property> createWaterVapourDensity(
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "WaterVapourDensity");
 
-    // Second access for storage.
-    //! \ogs_file_param{properties__property__name}
+    // Here ogs_file_param is used just to create a documentation entry for this
+    // property without any input parameter.
+    //! \ogs_file_param{properties__property__WaterVapourDensity}
     auto property_name = config.peekConfigParameter<std::string>("name");
 
     return std::make_unique<WaterVapourDensity>(std::move(property_name));
