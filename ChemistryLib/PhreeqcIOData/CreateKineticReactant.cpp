@@ -54,6 +54,9 @@ std::vector<KineticReactant> createKineticReactants(
         auto molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
+        auto volume_fraction = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, "phi_" + name, MeshLib::MeshItemType::IntegrationPoint, 1);
+
         auto mesh_prop_molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_molality->resize(mesh.getNumberOfElements());
@@ -68,6 +71,7 @@ std::vector<KineticReactant> createKineticReactants(
         kinetic_reactants.emplace_back(std::move(name),
                                        std::move(chemical_formula),
                                        molality,
+                                       volume_fraction,
                                        mesh_prop_molality,
                                        std::move(parameters),
                                        fix_amount);
