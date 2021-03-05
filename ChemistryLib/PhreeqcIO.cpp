@@ -127,28 +127,30 @@ void setReactantMolality(Reactant& reactant,
     auto const& solid_phase = medium->phase("Solid");
     auto const& solid_constituent = solid_phase.component(reactant.name);
 
-    if (!solid_constituent.hasProperty(
+    if (solid_constituent.hasProperty(
             MaterialPropertyLib::PropertyType::molality))
     {
-        auto const volume_fraction =
-            (*reactant.volume_fraction)[chemical_system_id];
-
-        auto const& liquid_phase = medium->phase("AqueousLiquid");
-        auto const fluid_density =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, pos, t, dt);
-
-        auto const porosity = std::get<double>(
-            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)]);
-
-        auto const molar_volume =
-            solid_constituent
-                .property(MaterialPropertyLib::PropertyType::molar_volume)
-                .template value<double>(vars, pos, t, dt);
-
-        (*reactant.molality)[chemical_system_id] =
-            volume_fraction / fluid_density / porosity / molar_volume;
+        return;
     }
+
+    auto const volume_fraction =
+        (*reactant.volume_fraction)[chemical_system_id];
+
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const fluid_density =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(vars, pos, t, dt);
+
+    auto const porosity = std::get<double>(
+        vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)]);
+
+    auto const molar_volume =
+        solid_constituent
+            .property(MaterialPropertyLib::PropertyType::molar_volume)
+            .template value<double>(vars, pos, t, dt);
+
+    (*reactant.molality)[chemical_system_id] =
+        volume_fraction / fluid_density / porosity / molar_volume;
 }
 
 template <typename Reactant>
