@@ -17,6 +17,29 @@ namespace MaterialPropertyLib
 {
 class Phase;
 
+/**
+ * \brief FEBEX type Vapour diffusion
+ *
+ *  The model was presented in \cite Rutquist2007TaskA1.
+ *
+ *  The vapour diffusion can be described by
+ *   \cite moldrup1997modeling, \cite moldrup2000predicting,
+ *  \cite chau2005simulation
+ *  \f[
+ * 	D_v=2.16\cdot 10^{-5} \left(\frac{T}{273.15}\right)^{1.8}
+ * 	D_{vr},
+ *  \f]
+ *  where \f$D_{vr}\f$ is the the relative diffusion coefficient,
+ *  and \f$T\f$ is the temperature.
+ *
+ *  In the FEBEX type, \f$D_{vr}\f$ takes the form of \cite Rutquist2007TaskA1
+ *   \f[
+ *     D_{vr}=\tau \phi (1 - S ),
+ *   \f]
+ *    with \f$\phi\f$, the porosity, \f$S\f$, the water saturation,
+ *    and  \f$\tau\f$ the tortuosity.
+ *
+ */
 class VapourDiffusionFEBEX final : public Property
 {
 public:
