@@ -17,6 +17,30 @@ namespace MaterialPropertyLib
 {
 class Phase;
 
+/**
+ * \brief The Penman-Millington-Quirk (PMQ) Vapour diffusion model.
+ *
+ * The model was presented in \cite chau2005simulation
+ *
+ *  The vapour diffusion can be described by
+ *   \cite moldrup1997modeling, \cite moldrup2000predicting,
+ *  \cite chau2005simulation
+ *  \f[
+ * 	D_v=2.16\cdot 10^{-5} \left(\frac{T}{273.15}\right)^{1.8}
+ * 	D_{vr},
+ *  \f]
+ *  where \f$D_{vr}\f$ is the the relative diffusion coefficient,
+ *  and \f$T\f$ is the temperature.
+ *
+ *  In the PMQ type, \f$D_{vr}\f$ takes the form of \cite chau2005simulation
+ *   \f[
+ *     D_{vr}=0.66 \phi (1 - S_L )^2,
+ *   \f]
+ *    with \f$\phi\f$, the porosity, \f$S_L\f$, the water saturation, \f$0.66\f$
+ *     the tortuosity constant.
+ *
+ */
+
 class VapourDiffusionPMQ final : public Property
 {
 public:
