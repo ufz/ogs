@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>square_1x1_quad_1e2.vtu</mesh>
     <geometry>square_1x1.gml</geometry>
@@ -49,26 +49,26 @@
                             <type>Constant</type>
                             <value>1</value>
                         </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.8</value>
-                        </property>
-                        <property>
-                            <!-- (alpha - porosity) / K_SR -->
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>0.2e-100</value>
-                        </property>
-                        <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>1e-12</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.8</value>
+                </property>
+                <property>
+                    <!-- (alpha - porosity) / K_SR -->
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value>0.2e-100</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1e-12</value>
+                </property>
                 <property>
                     <name>saturation</name>
                     <type>Constant</type>

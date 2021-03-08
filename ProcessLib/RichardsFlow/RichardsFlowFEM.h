@@ -159,7 +159,6 @@ public:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
-        auto const& solid_phase = medium.phase("Solid");
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             medium
@@ -180,11 +179,11 @@ public:
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                    solid_phase.property(MaterialPropertyLib::permeability)
+                    medium.property(MaterialPropertyLib::permeability)
                         .value(vars, pos, t, dt));
 
             auto const porosity =
-                solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+                medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
 
             double const Sw =
@@ -209,7 +208,7 @@ public:
                         vars, MaterialPropertyLib::Variable::phase_pressure,
                         pos, t, dt);
             auto const storage =
-                solid_phase.property(MaterialPropertyLib::PropertyType::storage)
+                medium.property(MaterialPropertyLib::PropertyType::storage)
                     .template value<double>(vars, pos, t, dt);
             double const mass_mat_coeff =
                 storage * Sw + porosity * Sw * drhow_dp - porosity * dSw_dpc;
@@ -295,7 +294,6 @@ public:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
-        auto const& solid_phase = medium.phase("Solid");
 
         MaterialPropertyLib::VariableArray vars;
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -333,7 +331,7 @@ public:
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                    solid_phase.property(MaterialPropertyLib::permeability)
+                    medium.property(MaterialPropertyLib::permeability)
                         .value(vars, pos, t, dt));
 
             double const k_rel =

@@ -576,6 +576,7 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
     MaterialPropertyLib::VariableArray vars;
 
     auto const& identity2 = Invariants::identity2;
