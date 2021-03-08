@@ -50,7 +50,7 @@ set(METIS_SOURCES
    )
 add_executable(mpmetis ${METIS_SOURCES})
 target_link_libraries(mpmetis ogs_metis)
-install(TARGETS mpmetis RUNTIME DESTINATION bin COMPONENT ogs_partmesh)
+install(TARGETS mpmetis RUNTIME DESTINATION bin)
 
 # Disable warnings
 if(MSVC)

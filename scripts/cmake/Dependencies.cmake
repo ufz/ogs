@@ -1,4 +1,4 @@
-if(BUILD_TESTING)
+if(OGS_BUILD_TESTING)
     CPMAddPackage(
         NAME googletest
         GITHUB_REPOSITORY google/googletest
@@ -6,6 +6,7 @@ if(BUILD_TESTING)
         OPTIONS
             "INSTALL_GTEST OFF"
             "gtest_force_shared_crt ON"
+        EXCLUDE_FROM_ALL YES
     )
 
     CPMAddPackage(
@@ -113,10 +114,11 @@ if(OGS_USE_MFRONT)
     CPMAddPackage(
         NAME MGIS
         GITHUB_REPOSITORY ufz/MFrontGenericInterfaceSupport
-        GIT_TAG 56c5e35fb571d992714e663c6bf61ad5354ba296
+        GIT_TAG 04e7d1bfad83fdc36a5fedb9c3d2e3b0d4b7fccf
         OPTIONS
             "enable-doxygen-doc OFF"
             "enable-fortran-bindings OFF"
+        EXCLUDE_FROM_ALL YES
     )
     if(MGIS_ADDED)
         set_target_properties(MFrontGenericInterface PROPERTIES CXX_STANDARD 11)
@@ -124,8 +126,68 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
+CPMFindPackage(
+    NAME Boost
+    GITHUB_REPOSITORY Orphis/boost-cmake
+    VERSION ${ogs.minimum_version.boost}
+)
+
 if(OGS_USE_XDMF)
-    find_package(ZLIB REQUIRED) # ZLIB is a HDF5 dependency
+    # ZLIB is a HDF5 dependency
+    CPMFindPackage(
+        NAME ZLIB
+        GITHUB_REPOSITORY madler/zlib
+        VERSION 1.2.11
+        EXCLUDE_FROM_ALL YES
+    )
+    if(ZLIB_ADDED)
+        add_library(ZLIB::ZLIB ALIAS zlibstatic)
+    endif()
+
+    string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
+    CPMFindPackage(
+        NAME HDF5
+        GITHUB_REPOSITORY HDFGroup/hdf5
+        GIT_TAG hdf5-${HDF5_TAG}
+        VERSION ${ogs.minimum_version.hdf5}
+        OPTIONS
+            "HDF5_EXTERNALLY_CONFIGURED 1"
+            "HDF5_GENERATE_HEADERS OFF"
+            "HDF5_BUILD_TOOLS OFF"
+            "HDF5_BUILD_EXAMPLES OFF"
+            "HDF5_BUILD_HL_LIB OFF"
+            "HDF5_BUILD_FORTRAN OFF"
+            "HDF5_BUILD_CPP_LIB OFF"
+            "HDF5_BUILD_JAVA OFF"
+        EXCLUDE_FROM_ALL YES
+    )
+    if(HDF5_ADDED)
+        target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR})
+        list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
+        set(HDF5_LIBRARIES hdf5-static)
+        set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+        set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+    endif()
+
+    CPMFindPackage(
+        NAME LibXml2
+        GITHUB_REPOSITORY GNOME/libxml2
+        VERSION ${ogs.minimum_version.libxml2}
+        GIT_TAG f93ca3e140a371b26366f747a408588c631e0fd1
+        OPTIONS
+            "LIBXML2_WITH_TESTS OFF"
+            "LIBXML2_WITH_PROGRAMS OFF"
+            "LIBXML2_WITH_ICONV OFF"
+            "LIBXML2_WITH_ICU OFF"
+            "LIBXML2_WITH_LZMA OFF"
+            "LIBXML2_WITH_PYTHON OFF"
+            "LIBXML2_WITH_ZLIB OFF"
+        EXCLUDE_FROM_ALL YES
+    )
+    if(LibXml2_ADDED)
+        add_library(LibXml2::LibXml2 ALIAS LibXml2)
+        set(LIBXML2_INCLUDE_DIR ${LibXml2_SOURCE_DIR})
+    endif()
 
     CPMAddPackage(
         NAME xdmf
@@ -139,16 +201,8 @@ if(OGS_USE_XDMF)
             ${xdmf_SOURCE_DIR}
             ${xdmf_BINARY_DIR}
         )
-        if(OGS_USE_CONAN AND UNIX AND APPLE)
-            find_package(Iconv REQUIRED)
-        endif()
 
-        if(MSVC AND OGS_USE_CONAN)
-            # Hack: Conan HDF5 not found on Windows
-            target_link_libraries(OgsXdmf ${CONAN_LIBS})
-        else()
-            target_link_libraries(OgsXdmf Boost::boost ${Iconv_LIBRARIES} ZLIB::ZLIB)
-        endif()
+        target_link_libraries(OgsXdmf Boost::boost ZLIB::ZLIB)
         target_include_directories(OgsXdmfCore
             PUBLIC
                 ${xdmf_SOURCE_DIR}/core
@@ -156,8 +210,7 @@ if(OGS_USE_XDMF)
             PRIVATE
                 ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
-        find_package(LibXml2 REQUIRED) # LibXml2 is a XdmfCore dependency
-        target_link_libraries(OgsXdmfCore PUBLIC LibXml2::LibXml2)
+        target_link_libraries(OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES})
 
         set_target_properties(OgsXdmf OgsXdmfCore PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
@@ -201,10 +254,45 @@ if(OGS_BUILD_GUI)
         VERSION 1.13
         GITHUB_REPOSITORY ufz/rapidxml
         GIT_TAG 2ae4b2888165a393dfb6382168825fddf00c27b9
+        EXCLUDE_FROM_ALL YES
     )
     if(rapidxml_ADDED)
         add_library(rapidxml INTERFACE IMPORTED)
         target_include_directories(rapidxml INTERFACE ${rapidxml_SOURCE_DIR})
+    endif()
+endif()
+
+if(OGS_BUILD_GUI)
+    CPMAddPackage(
+        NAME shapelib
+        GITHUB_REPOSITORY OSGeo/shapelib
+        VERSION 1.5.0
+        EXCLUDE_FROM_ALL YES
+    )
+    if(shapelib_ADDED)
+        target_include_directories(shp INTERFACE ${shapelib_SOURCE_DIR})
+    endif()
+endif()
+
+if(OGS_USE_CVODE)
+    CPMAddPackage(
+        NAME CVODE
+        GITHUB_REPOSITORY ufz/cvode
+        VERSION 2.8.2
+        GIT_TAG 42d786bff4f950045d2de941677ecd4432cec855
+        OPTIONS "EXAMPLES_ENABLE OFF"
+        EXCLUDE_FROM_ALL YES
+    )
+    if(CVODE_ADDED)
+        add_library(CVODE::CVODE INTERFACE IMPORTED)
+        target_include_directories(CVODE::CVODE INTERFACE
+            ${CVODE_SOURCE_DIR}/include
+            ${CVODE_BINARY_DIR}/include
+        )
+        target_link_libraries(CVODE::CVODE INTERFACE
+            sundials_cvode_static
+            sundials_nvecserial_static
+        )
     endif()
 endif()
 
@@ -214,3 +302,8 @@ foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
         $<$<CXX_COMPILER_ID:MSVC>:/W0>)
 endforeach()
+
+# Hack: Disable tests from dependencies
+configure_file(${PROJECT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.in.cmake
+    ${PROJECT_BINARY_DIR}/CTestCustom.cmake @ONLY
+)

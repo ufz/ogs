@@ -76,7 +76,7 @@ endif()
 set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 
 # ---- Installation ----
-install(TARGETS DataExplorer RUNTIME DESTINATION bin COMPONENT ogs_gui)
+install(TARGETS DataExplorer RUNTIME DESTINATION bin)
 
 cpack_add_component(ogs_gui
     DISPLAY_NAME "OGS Data Explorer"

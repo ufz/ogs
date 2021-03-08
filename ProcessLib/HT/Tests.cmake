@@ -449,7 +449,7 @@ AddTest(
     VIS ThermalConvection_ts_1_t_0.000000.vtu
 )
 
-if(NOT OGS_USE_MPI AND BUILD_TESTING AND Python3_FOUND)
+if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND Python3_FOUND)
     add_custom_target(generate_invalid_project_files_ht
         ${Python3_EXECUTABLE}
         ${PROJECT_SOURCE_DIR}/ThirdParty/ogs6py/generateInvalidMediaForHT.py

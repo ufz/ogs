@@ -73,7 +73,7 @@ add_test(NAME ogs_no_args COMMAND ogs)
 set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
 
 # ---- Installation ----
-install(TARGETS ogs RUNTIME DESTINATION bin COMPONENT ogs_cli)
+install(TARGETS ogs RUNTIME DESTINATION bin)
 
 set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs"
                               "OGS Simulator")

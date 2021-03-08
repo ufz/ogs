@@ -33,43 +33,22 @@ set(CONAN_SYSTEM_INCLUDES ON)
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
 set(CONAN_REQUIRES
-    boost/${ogs.minimum_version.boost}@conan/stable
     vtk/${ogs.tested_version.vtk}@bilke/stable
     CACHE INTERNAL ""
 )
 
 set(CONAN_OPTIONS
-    boost:header_only=True
     vtk:minimal=True
     vtk:ioxml=True
     vtk:iolegacy=True
     CACHE INTERNAL ""
 )
-
 if((UNIX AND NOT APPLE) AND BUILD_SHARED_LIBS)
     set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:fPIC=True)
 endif()
 
 if(OGS_USE_MPI)
     set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:mpi_minimal=True)
-endif()
-
-if(OGS_USE_XDMF)
-    list(APPEND CONAN_REQUIRES
-        hdf5/${ogs.tested_version.hdf5}
-        libxml2/${ogs.tested_version.libxml2}
-    )
-    if(UNIX AND NOT APPLE)
-        list(APPEND CONAN_OPTIONS libxml2:iconv=False)
-    endif()
-    if(MSVC)
-        # Hack: Conan HDF5 not found on Windows
-        # Use custom FindHDF5 with forced values from Conan
-        list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/scripts/cmake/conan/win-hdf5")
-    else()
-        # Hack: Suppress hdf5 compiler wrapper checks
-        set(HDF5_C_COMPILER_EXECUTABLE "OFF" CACHE INTERNAL "")
-    endif()
 endif()
 
 if(OGS_USE_PETSC)
@@ -83,17 +62,12 @@ if(OGS_USE_LIS)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} lis/1.7.9@bilke/stable)
 endif()
 
-if(OGS_USE_CVODE)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} cvode/2.8.2@bilke/stable)
-endif()
-
 if(OGS_USE_MFRONT)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} tfel/3.3.0@bilke/testing)
 endif()
 
 if(OGS_BUILD_GUI)
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
-        shapelib/1.3.0@bilke/stable
         # libgeotiff/1.4.2@bilke/stable # TODO
         # Overrides for dependency mismatches
         bzip2/1.0.8
@@ -122,6 +96,10 @@ endif()
 
 if(OGS_USE_NETCDF)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} netcdf-cxx/4.3.1-1@bilke/testing)
+endif()
+
+if(NOT DEFINED CONAN_REQUIRES)
+    return()
 endif()
 
 conan_check(VERSION ${ogs.minimum_version.conan})

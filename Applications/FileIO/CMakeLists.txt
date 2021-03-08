@@ -2,7 +2,7 @@ get_source_files(SOURCES)
 append_source_files(SOURCES Gmsh)
 append_source_files(SOURCES Legacy)
 
-if(NOT Shapelib_FOUND)
+if(NOT OGS_BUILD_GUI)
     list(REMOVE_ITEM SOURCES SHPInterface.h SHPInterface.cpp)
 endif()
 
@@ -29,7 +29,7 @@ target_link_libraries(ApplicationsFileIO
                              MathLib
                              # Needed for the XmlPrjInterface, which links the DE/Base/OGSError.h.
                              $<$<BOOL:${OGS_BUILD_GUI}>:QtBase>
-                             $<$<BOOL:${Shapelib_FOUND}>:${Shapelib_LIBRARIES}>
+                             $<$<TARGET_EXISTS:shp>:shp>
                              $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
                       PRIVATE MeshLib GitInfoLib std::filesystem spdlog::spdlog
 )
@@ -42,5 +42,4 @@ configure_file(XmlIO/OpenGeoSysProject.xsd
                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/OpenGeoSysProject.xsd COPYONLY)
 install(FILES XmlIO/OpenGeoSysCND.xsd XmlIO/OpenGeoSysNum.xsd
               XmlIO/OpenGeoSysProject.xsd
-        DESTINATION bin
-        COMPONENT ogs_cli)
+        DESTINATION bin)

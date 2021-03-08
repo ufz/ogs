@@ -32,7 +32,7 @@ if(OGS_BUILD_GUI)
         PRIVATE ${PROJECT_SOURCE_DIR}/ThirdParty/paraview)
     target_link_libraries(RemoveGhostData GitInfoLib MeshLib tclap)
     set_target_properties(RemoveGhostData PROPERTIES FOLDER Utilities)
-    install(TARGETS RemoveGhostData RUNTIME DESTINATION bin COMPONENT Utilities)
+    install(TARGETS RemoveGhostData RUNTIME DESTINATION bin)
 endif()
 
 foreach(TOOL ${TOOLS})
@@ -40,7 +40,7 @@ foreach(TOOL ${TOOLS})
     target_link_libraries(${TOOL} GitInfoLib MeshLib tclap)
 endforeach()
 set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
-install(TARGETS ${TOOLS} RUNTIME DESTINATION bin COMPONENT Utilities)
+install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
 
 target_link_libraries(appendLinesAlongPolyline MeshGeoToolsLib
                       ApplicationsFileIO)

@@ -7,7 +7,7 @@ append_source_files(SOURCES SmallDeformation/LocalAssembler)
 ogs_add_library(LIE ${SOURCES})
 target_link_libraries(LIE PUBLIC ProcessLib LIECommon PRIVATE ParameterLib)
 
-if(BUILD_TESTING)
+if(OGS_BUILD_TESTING)
     include(HydroMechanics/Tests.cmake)
     include(SmallDeformation/Tests.cmake)
 endif()

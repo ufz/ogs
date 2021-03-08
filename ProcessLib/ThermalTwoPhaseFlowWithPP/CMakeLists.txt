@@ -9,6 +9,6 @@ target_link_libraries(ThermalTwoPhaseFlowWithPP
                       PUBLIC ProcessLib
                       PRIVATE ParameterLib)
 
-if(BUILD_TESTING)
+if(OGS_BUILD_TESTING)
     include(Tests.cmake)
 endif()
