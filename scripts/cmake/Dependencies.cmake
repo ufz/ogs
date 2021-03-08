@@ -118,7 +118,6 @@ if(OGS_USE_MFRONT)
         OPTIONS
             "enable-doxygen-doc OFF"
             "enable-fortran-bindings OFF"
-            "BUILD_TESTING OFF"
         EXCLUDE_FROM_ALL YES
     )
     if(MGIS_ADDED)
@@ -154,7 +153,6 @@ if(OGS_USE_XDMF)
         OPTIONS
             "HDF5_EXTERNALLY_CONFIGURED 1"
             "HDF5_GENERATE_HEADERS OFF"
-            "BUILD_TESTING OFF"
             "HDF5_BUILD_TOOLS OFF"
             "HDF5_BUILD_EXAMPLES OFF"
             "HDF5_BUILD_HL_LIB OFF"
@@ -304,3 +302,8 @@ foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
         $<$<CXX_COMPILER_ID:MSVC>:/W0>)
 endforeach()
+
+# Hack: Disable tests from dependencies
+configure_file(${PROJECT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.in.cmake
+    ${PROJECT_BINARY_DIR}/CTestCustom.cmake @ONLY
+)
