@@ -606,7 +606,8 @@ Grid<POINT>::getPointsInEpsilonEnvironment(P const& pnt, double eps) const
     std::vector<std::size_t> pnts;
     for (auto vec : vec_pnts) {
         for (auto const p : *vec) {
-            if (MathLib::sqrDist(*p, pnt) < sqr_eps) {
+            if (MathLib::sqrDist(*p, pnt) <= sqr_eps)
+            {
                 pnts.push_back(p->getID());
             }
         }
