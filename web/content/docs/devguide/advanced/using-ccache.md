@@ -30,6 +30,12 @@ sloppiness = pch_defines,time_macros
 
 See the [ccache docs](https://ccache.samba.org/manual.html#_configuration_settings) for other available options.
 
+To disable caching with ccache:
+
+```bash
+cmake . -DOGS_DISABLE_CCACHE=ON
+```
+
 ### ccache and Clang
 
 Set the option `run_second_cpp = true` or `export CCACHE_CPP2=true` to suppress lots of [false positive compiler warnings](http://peter.eisentraut.org/blog/2014/12/01/ccache-and-clang-part-3/).
