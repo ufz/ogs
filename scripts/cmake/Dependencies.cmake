@@ -6,6 +6,7 @@ if(OGS_BUILD_TESTING)
         OPTIONS
             "INSTALL_GTEST OFF"
             "gtest_force_shared_crt ON"
+        EXCLUDE_FROM_ALL YES
     )
 
     CPMAddPackage(
@@ -117,6 +118,7 @@ if(OGS_USE_MFRONT)
         OPTIONS
             "enable-doxygen-doc OFF"
             "enable-fortran-bindings OFF"
+        EXCLUDE_FROM_ALL YES
     )
     if(MGIS_ADDED)
         set_target_properties(MFrontGenericInterface PROPERTIES CXX_STANDARD 11)
@@ -149,6 +151,7 @@ if(OGS_USE_XDMF)
             "HDF5_BUILD_FORTRAN OFF"
             "HDF5_BUILD_CPP_LIB OFF"
             "HDF5_BUILD_JAVA OFF"
+        EXCLUDE_FROM_ALL YES
     )
     if(HDF5_ADDED)
         target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR})
@@ -171,6 +174,7 @@ if(OGS_USE_XDMF)
             "LIBXML2_WITH_LZMA OFF"
             "LIBXML2_WITH_PYTHON OFF"
             "LIBXML2_WITH_ZLIB OFF"
+        EXCLUDE_FROM_ALL YES
     )
     if(LibXml2_ADDED)
         add_library(LibXml2::LibXml2 ALIAS LibXml2)
@@ -242,6 +246,7 @@ if(OGS_BUILD_GUI)
         VERSION 1.13
         GITHUB_REPOSITORY ufz/rapidxml
         GIT_TAG 2ae4b2888165a393dfb6382168825fddf00c27b9
+        EXCLUDE_FROM_ALL YES
     )
     if(rapidxml_ADDED)
         add_library(rapidxml INTERFACE IMPORTED)
@@ -254,6 +259,7 @@ if(OGS_BUILD_GUI)
         NAME shapelib
         GITHUB_REPOSITORY OSGeo/shapelib
         VERSION 1.5.0
+        EXCLUDE_FROM_ALL YES
     )
     if(shapelib_ADDED)
         target_include_directories(shp INTERFACE ${shapelib_SOURCE_DIR})
@@ -267,6 +273,7 @@ if(OGS_USE_CVODE)
         VERSION 2.8.2
         GIT_TAG 42d786bff4f950045d2de941677ecd4432cec855
         OPTIONS "EXAMPLES_ENABLE OFF"
+        EXCLUDE_FROM_ALL YES
     )
     if(CVODE_ADDED)
         add_library(CVODE::CVODE INTERFACE IMPORTED)
