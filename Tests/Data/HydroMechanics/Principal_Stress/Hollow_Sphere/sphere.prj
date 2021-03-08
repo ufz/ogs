@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">sphere.vtu</mesh>
@@ -96,24 +96,24 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>8.96e3</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>0</value>
                         </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.0</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>
@@ -251,8 +251,7 @@
             <components>1</components>
             <order>2</order>
             <initial_condition>pressure0</initial_condition>
-            <boundary_conditions>
-            </boundary_conditions>
+            <boundary_conditions/>
         </process_variable>
     </process_variables>
     <nonlinear_solvers>

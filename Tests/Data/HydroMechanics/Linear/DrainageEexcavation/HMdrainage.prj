@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>drainage_quad.vtu</mesh>
     <geometry>drainage_geo.gml</geometry>
@@ -47,24 +47,24 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.35</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Parameter</type>
                             <parameter_name>load-solid</parameter_name>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
                         </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.35</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>

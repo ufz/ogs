@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>hm1_3Dcube.vtu</mesh>
     <geometry>hm1_3Dcube.gml</geometry>
@@ -48,17 +48,7 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0</value>
-                        </property>
-                        <property>
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
                             <type>Constant</type>
                             <value>1</value>
                         </property>
@@ -66,6 +56,16 @@
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>

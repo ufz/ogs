@@ -229,14 +229,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
-        auto const alpha = solid.property(MPL::PropertyType::biot_coefficient)
+        auto const alpha = medium->property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
 
         auto const rho_sr =
             solid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
         auto const porosity =
-            solid.property(MPL::PropertyType::porosity)
+            medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
         auto const mu = gas.property(MPL::PropertyType::viscosity)
@@ -391,7 +391,6 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& gas = medium->phase("Gas");
-    auto const& solid = medium->phase("Solid");
     MPL::VariableArray vars;
 
     // TODO (naumov) Temporary value not used by current material models. Need
@@ -410,7 +409,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const p_int_pt = _ip_data[ip].N_p.dot(p);
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = p_int_pt;
 
-        auto const alpha = solid.property(MPL::PropertyType::biot_coefficient)
+        auto const alpha = medium->property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
 
         // Set mechanical variables for the intrinsic permeability model
@@ -503,7 +502,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     x_position.setElementID(_element.getID());
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& solid = medium->phase("Solid");
     auto const& gas = medium->phase("Gas");
     MPL::VariableArray vars;
 
@@ -531,7 +529,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const K_S = solid_material.getBulkModulus(t, x_position);
 
         auto const alpha_b =
-            solid.property(MPL::PropertyType::biot_coefficient)
+            medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
 
         // Set mechanical variables for the intrinsic permeability model
@@ -556,7 +554,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::permeability)
                 .value(vars, x_position, t, dt));
         auto const porosity =
-            solid.property(MPL::PropertyType::porosity)
+            medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
         auto const mu = gas.property(MPL::PropertyType::viscosity)
@@ -676,13 +674,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(p);
 
-        auto const alpha = solid.property(MPL::PropertyType::biot_coefficient)
+        auto const alpha = medium->property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
         auto const rho_sr =
             solid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
         auto const porosity =
-            solid.property(MPL::PropertyType::porosity)
+            medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
         auto const rho_fr =
@@ -918,7 +916,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _integration_method.getNumberOfPoints();
 
     auto const& medium = _process_data.media_map->getMedium(elem_id);
-    auto const& solid = medium->phase("Solid");
     MPL::VariableArray vars;
 
     SymmetricTensor k_sum = SymmetricTensor::Zero(KelvinVectorSize);
@@ -934,7 +931,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& eps = _ip_data[ip].eps;
         sigma_eff_sum += _ip_data[ip].sigma_eff;
 
-        auto const alpha = solid.property(MPL::PropertyType::biot_coefficient)
+        auto const alpha = medium->property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
         double const p_int_pt = _ip_data[ip].N_p.dot(p);
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = p_int_pt;
