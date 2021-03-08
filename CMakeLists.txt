@@ -51,14 +51,8 @@ endif()
 # Third-party libraries, names come from Conan package names
 set(OGS_LIBS
     vtk
-    boost
-    eigen
     qt
-    shapelib
-    libgeotiff
     petsc
-    lis
-    cvode
     tfel
     CACHE INTERNAL "")
 foreach(LIB ${OGS_LIBS})
