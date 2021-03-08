@@ -54,9 +54,6 @@ public:
 class VectorProvider
 {
 public:
-    //! Get an uninitialized vector.
-    virtual GlobalVector& getVector() = 0;
-
     //! Get an uninitialized vector with the given \c id.
     virtual GlobalVector& getVector(std::size_t& id) = 0;
 
