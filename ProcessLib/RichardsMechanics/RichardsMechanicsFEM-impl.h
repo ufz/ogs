@@ -252,7 +252,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         _ip_data[ip].eps_m_prev.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps - C_el.inverse() * sigma_sw
+                ? eps + C_el.inverse() * sigma_sw
                 : eps;
     }
 }
