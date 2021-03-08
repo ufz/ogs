@@ -36,7 +36,7 @@ singularity pull singularity pull docker://registry.opengeosys.org/ogs/ogs/ogs/g
 singularity shell gcc_master.sif
 [Now inside the container]
 mkdir build; cd build
-cmake ../ogs -DCMAKE_BUILD_TYPE=Release
+cmake ../ogs -DCMAKE_BUILD_TYPE=Release -DOGS_DISABLE_CCACHE=ON
 make
 ./bin/ogs
 ```
