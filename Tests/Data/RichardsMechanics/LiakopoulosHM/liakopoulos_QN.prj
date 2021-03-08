@@ -89,25 +89,25 @@
                             <type>Constant</type>
                             <value>1e12</value>
                         </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.2975</value>
-                        </property>
-                        <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>4.5e-13</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.2975</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>4.5e-13</value>
+                </property>
                 <property>
                     <name>saturation</name>
                     <type>SaturationLiakopoulos</type>

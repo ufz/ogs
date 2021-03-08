@@ -66,7 +66,6 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             e.getID());
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& solid_phase = medium->phase("Solid");
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -99,17 +98,17 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Initial porosity. Could be read from integration point data or mesh.
         ip_data.porosity =
-            solid_phase.property(MPL::porosity)
+            medium->property(MPL::porosity)
                 .template initialValue<double>(
                     x_position,
                     std::numeric_limits<
                         double>::quiet_NaN() /* t independent */);
 
         ip_data.transport_porosity = ip_data.porosity;
-        if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+        if (medium->hasProperty(MPL::PropertyType::transport_porosity))
         {
             ip_data.transport_porosity =
-                solid_phase.property(MPL::transport_porosity)
+                medium->property(MPL::transport_porosity)
                     .template initialValue<double>(
                         x_position,
                         std::numeric_limits<
@@ -370,7 +369,7 @@ void RichardsMechanicsLocalAssembler<
         variables[static_cast<int>(MPL::Variable::temperature)] = temperature;
 
         auto const alpha =
-            solid_phase.property(MPL::PropertyType::biot_coefficient)
+            medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature);
@@ -430,7 +429,7 @@ void RichardsMechanicsLocalAssembler<
         {  // Porosity update
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            phi = solid_phase.property(MPL::PropertyType::porosity)
+            phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
@@ -474,14 +473,14 @@ void RichardsMechanicsLocalAssembler<
                     identity2.transpose() * C_el.inverse() * sigma_sw_prev;
             }
 
-            if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+            if (medium->hasProperty(MPL::PropertyType::transport_porosity))
             {
                 variables_prev[static_cast<int>(
                     MPL::Variable::transport_porosity)] =
                     _ip_data[ip].transport_porosity_prev;
 
                 _ip_data[ip].transport_porosity =
-                    solid_phase.property(MPL::PropertyType::transport_porosity)
+                    medium->property(MPL::PropertyType::transport_porosity)
                         .template value<double>(variables, variables_prev,
                                                 x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
@@ -522,7 +521,7 @@ void RichardsMechanicsLocalAssembler<
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
 
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
-            solid_phase.property(MPL::PropertyType::permeability)
+            medium->property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
 
         GlobalDimMatrixType const rho_K_over_mu =
@@ -738,7 +737,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
         auto const alpha =
-            solid_phase.property(MPL::PropertyType::biot_coefficient)
+            medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
@@ -799,7 +798,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            phi = solid_phase.property(MPL::PropertyType::porosity)
+            phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
@@ -894,14 +893,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             sigma_sw = sigma_sw_prev + delta_sigma_sw;
         }
 
-        if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+        if (medium->hasProperty(MPL::PropertyType::transport_porosity))
         {
             variables_prev[static_cast<int>(
                 MPL::Variable::transport_porosity)] =
                 _ip_data[ip].transport_porosity_prev;
 
             _ip_data[ip].transport_porosity =
-                solid_phase.property(MPL::PropertyType::transport_porosity)
+                medium->property(MPL::PropertyType::transport_porosity)
                     .template value<double>(variables, variables_prev,
                                             x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::transport_porosity)] =
@@ -934,7 +933,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
 
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
-            solid_phase.property(MPL::PropertyType::permeability)
+            medium->property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
 
         GlobalDimMatrixType const rho_Ki_over_mu = K_intrinsic * rho_LR / mu;
@@ -1612,7 +1611,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const chi_S_L_prev = chi(S_L_prev);
 
         auto const alpha =
-            solid_phase.property(MPL::PropertyType::biot_coefficient)
+            medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
@@ -1640,7 +1639,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         {  // Porosity update
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            phi = solid_phase.property(MPL::PropertyType::porosity)
+            phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
@@ -1676,14 +1675,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     identity2.transpose() * C_el.inverse() * sigma_sw_prev;
             }
 
-            if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+            if (medium->hasProperty(MPL::PropertyType::transport_porosity))
             {
                 variables_prev[static_cast<int>(
                     MPL::Variable::transport_porosity)] =
                     _ip_data[ip].transport_porosity_prev;
 
                 _ip_data[ip].transport_porosity =
-                    solid_phase.property(MPL::PropertyType::transport_porosity)
+                    medium->property(MPL::PropertyType::transport_porosity)
                         .template value<double>(variables, variables_prev,
                                                 x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
@@ -1720,7 +1719,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
 
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
-            solid_phase.property(MPL::PropertyType::permeability)
+            medium->property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
 
         double const k_rel =

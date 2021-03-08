@@ -35,11 +35,12 @@ void checkMPLProperties(
         MaterialPropertyLib::reference_temperature,
         MaterialPropertyLib::bishops_effective_stress,
         MaterialPropertyLib::relative_permeability,
-        MaterialPropertyLib::saturation};
+        MaterialPropertyLib::saturation,
+        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient
+    };
     std::array const required_liquid_properties = {
         MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
     std::array const required_solid_properties = {
-        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
         MaterialPropertyLib::density};
 
     for (auto const& m : media)
