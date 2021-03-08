@@ -372,10 +372,6 @@ void RichardsMechanicsLocalAssembler<
         auto const alpha =
             solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
-        auto const rho_SR =
-            solid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t, dt);
-
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature);
 
@@ -545,6 +541,13 @@ void RichardsMechanicsLocalAssembler<
 
         _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
                                                 temperature);
+
+        // p_SR
+        variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
+            p_FR - sigma_eff.dot(identity2) / (3 * (1 - phi));
+        auto const rho_SR =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
 
         //
         // displacement equation, displacement part
