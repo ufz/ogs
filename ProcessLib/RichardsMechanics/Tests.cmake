@@ -19,6 +19,8 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/bishops_effective_stress_saturation_cutoff.prj)
     OgsTest(PROJECTFILE RichardsMechanics/alternative_mass_balance_anzInterval_10.prj)
     OgsTest(PROJECTFILE RichardsMechanics/rotated_consolidation.prj)
+    OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos.prj RUNTIME 17)
+    OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_QN.prj RUNTIME 50)
 endif()
 
 
@@ -60,24 +62,3 @@ if(TEST ogs-RichardsMechanics_square_1e2_confined_compression_restart-time)
     set_tests_properties(ogs-RichardsMechanics_square_1e2_confined_compression_restart-time PROPERTIES
         DEPENDS ogs-RichardsMechanics_square_1e2_confined_compression-time-vtkdiff)
 endif()
-
-AddTest(
-    NAME RichardsMechanics_liakopoulosHM
-    PATH RichardsMechanics/LiakopoulosHM
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS liakopoulos.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
-    DIFF_DATA
-    liakopoulos_t_300.vtu liakopoulos_t_300.vtu sigma sigma 1e-9 1e-12
-    liakopoulos_t_300.vtu liakopoulos_t_300.vtu displacement displacement 1e-10 1e-12
-    liakopoulos_t_300.vtu liakopoulos_t_300.vtu saturation saturation 1e-10 1e-12
-    liakopoulos_t_600.vtu liakopoulos_t_600.vtu sigma sigma 1e-9 1e-12
-    liakopoulos_t_600.vtu liakopoulos_t_600.vtu displacement displacement 1e-10 1e-12
-    liakopoulos_t_600.vtu liakopoulos_t_600.vtu saturation saturation 1e-10 1e-12
-    liakopoulos_t_7200.vtu liakopoulos_t_7200.vtu sigma sigma 1e-9 1e-12
-    liakopoulos_t_7200.vtu liakopoulos_t_7200.vtu displacement displacement 1e-10 1e-12
-    liakopoulos_t_7200.vtu liakopoulos_t_7200.vtu saturation saturation 1e-10 1e-12
-)

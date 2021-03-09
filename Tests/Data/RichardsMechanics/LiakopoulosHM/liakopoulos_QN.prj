@@ -12,6 +12,26 @@
             <name>RM</name>
             <type>RICHARDS_MECHANICS</type>
             <integration_order>3</integration_order>
+            <jacobian_assembler>
+                <!--
+                <type>CompareJacobians</type>
+                <jacobian_assembler>
+                    <type>Analytical</type>
+                </jacobian_assembler>
+                <reference_jacobian_assembler>
+                    <type>CentralDifferences</type>
+                    <component_magnitudes>1</component_magnitudes>
+                    <relative_epsilons>1e-8</relative_epsilons>
+                </reference_jacobian_assembler>
+                <abs_tol>1e-5</abs_tol>
+                <rel_tol>1e-7</rel_tol>
+                <fail_on_error>false</fail_on_error>
+                <log_file>/tmp/test.py</log_file>
+                -->
+                <type>CentralDifferences</type>
+                <component_magnitudes>1</component_magnitudes>
+                <relative_epsilons>1e-8</relative_epsilons>
+            </jacobian_assembler>
             <dimension>2</dimension>
             <mass_lumping>true</mass_lumping>
             <constitutive_relation>
@@ -162,7 +182,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>{:meshname}</prefix>
+            <prefix>{:meshname}_QN</prefix>
             <suffix>_t_{:gtime}</suffix>
             <timesteps>
                 <pair>
@@ -427,55 +447,55 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>HydraulicFlow</field>
             <absolute_tolerance>2e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>1e-11</absolute_tolerance>
+            <absolute_tolerance>8e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>epsilon</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
+            <absolute_tolerance>5e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>pressure_interpolated</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
+            <absolute_tolerance>5e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>saturation</field>
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>1e-9</absolute_tolerance>
+            <absolute_tolerance>2e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>liakopoulos_t_.*.vtu</regex>
+            <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>velocity</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

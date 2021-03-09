@@ -252,7 +252,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         _ip_data[ip].eps_m_prev.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps - C_el.inverse() * sigma_sw
+                ? eps + C_el.inverse() * sigma_sw
                 : eps;
     }
 }
@@ -372,10 +372,6 @@ void RichardsMechanicsLocalAssembler<
         auto const alpha =
             solid_phase.property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
-        auto const rho_SR =
-            solid_phase.property(MPL::PropertyType::density)
-                .template value<double>(variables, x_position, t, dt);
-
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature);
 
@@ -537,25 +533,28 @@ void RichardsMechanicsLocalAssembler<
         //
         eps_m.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps - C_el.inverse() * sigma_sw
+                ? eps + C_el.inverse() * sigma_sw
                 : eps;
         variables[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        auto C = _ip_data[ip].updateConstitutiveRelation(
-            variables, t, x_position, dt, temperature);
+        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
+                                                temperature);
+
+        // p_SR
+        variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
+            p_FR - sigma_eff.dot(identity2) / (3 * (1 - phi));
+        auto const rho_SR =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
 
         //
         // displacement equation, displacement part
         //
-        K.template block<displacement_size, displacement_size>(
-             displacement_index, displacement_index)
-            .noalias() += B.transpose() * C * B * w;
-
         double const rho = rho_SR * (1 - phi) + S_L * phi * rho_LR;
-        rhs.template segment<displacement_size>(displacement_index).noalias() +=
-            N_u_op.transpose() * rho * b * w;
+        rhs.template segment<displacement_size>(displacement_index).noalias() -=
+            (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
 
         //
         // pressure equation, pressure part.
@@ -782,8 +781,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const chi_S_L = chi(S_L);
         double const chi_S_L_prev = chi(S_L_prev);
 
+        double const p_FR = -chi_S_L * p_cap_ip;
         variables[static_cast<int>(MPL::Variable::effective_pore_pressure)] =
-            -chi_S_L * p_cap_ip;
+            p_FR;
         variables_prev[static_cast<int>(
             MPL::Variable::effective_pore_pressure)] =
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
@@ -920,9 +920,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
         {
-            auto const sigma_total = (_ip_data[ip].sigma_eff +
-                                      alpha * chi_S_L * identity2 * p_cap_ip)
-                                         .eval();
+            auto const sigma_total =
+                (_ip_data[ip].sigma_eff + alpha * p_FR * identity2).eval();
             // For stress dependent permeability.
             variables[static_cast<int>(MPL::Variable::total_stress)]
                 .emplace<SymmetricTensor>(
@@ -959,7 +958,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 displacement_index, displacement_index)
             .noalias() += B.transpose() * C * B * w;
 
-        double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
             p_FR - sigma_eff.dot(identity2) / (3 * (1 - phi));
