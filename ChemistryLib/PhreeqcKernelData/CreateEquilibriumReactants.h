@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
 #include <memory>
+#include <optional>
 
 #include "EquilibriumReactants.h"
 

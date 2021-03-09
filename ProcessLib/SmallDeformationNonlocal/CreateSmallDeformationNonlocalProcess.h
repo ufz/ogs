@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace BaseLib

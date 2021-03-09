@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
-#include "BaseLib/Logging.h"
-
 #include <Eigen/Dense>
+#include <optional>
+
+#include "BaseLib/Logging.h"
 
 namespace NumLib
 {

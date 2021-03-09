@@ -8,10 +8,11 @@
  *
  */
 
-#include <boost/optional/optional.hpp>
+#include "CreateKineticReactant.h"
+
+#include <optional>
 
 #include "BaseLib/ConfigTree.h"
-#include "CreateKineticReactant.h"
 #include "KineticReactant.h"
 #include "MeshLib/Mesh.h"
 

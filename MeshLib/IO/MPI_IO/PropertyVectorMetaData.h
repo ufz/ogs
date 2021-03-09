@@ -10,8 +10,8 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
-#include <boost/optional.hpp>
 
 namespace MeshLib
 {

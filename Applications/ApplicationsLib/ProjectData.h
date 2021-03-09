@@ -12,16 +12,15 @@
 
 #pragma once
 
-#include <boost/optional/optional.hpp>
 #include <map>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "BaseLib/ConfigTree.h"
+#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-
-#include "ChemistryLib/ChemicalSolverInterface.h"
 #include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"

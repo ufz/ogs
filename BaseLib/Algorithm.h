@@ -11,8 +11,8 @@
 #pragma once
 
 #include <algorithm>
-#include <boost/optional.hpp>
 #include <cassert>
+#include <optional>
 #include <string>
 #include <typeindex>
 #include <typeinfo>

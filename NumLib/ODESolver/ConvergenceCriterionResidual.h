@@ -10,7 +10,8 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
+
 #include "ConvergenceCriterion.h"
 #include "MathLib/LinAlg/LinAlgEnums.h"
 

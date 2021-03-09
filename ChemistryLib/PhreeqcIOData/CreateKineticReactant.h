@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
+#include <optional>
 #include <vector>
 
 namespace BaseLib

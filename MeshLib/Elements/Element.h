@@ -15,14 +15,12 @@
 #pragma once
 
 #include <limits>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include "MathLib/Point3d.h"
-
-#include "MeshLib/MeshEnums.h"
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/ElementErrorCode.h"
-
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEnums.h"
 
 namespace MeshLib {
 

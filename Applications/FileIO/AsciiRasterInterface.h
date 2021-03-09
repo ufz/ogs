@@ -14,9 +14,9 @@
 #pragma once
 
 #include <fstream>
-#include <vector>
+#include <optional>
 #include <string>
-#include <boost/optional.hpp>
+#include <vector>
 
 #include "GeoLib/Raster.h"
 

@@ -10,19 +10,17 @@
 
 #pragma once
 
+#include <Eigen/Dense>
 #include <map>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include <Eigen/Dense>
-#include <boost/optional.hpp>
-
 #include "BaseLib/Error.h"
+#include "CoordinateSystem.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
-
-#include "CoordinateSystem.h"
 #include "SpatialPosition.h"
 
 namespace BaseLib

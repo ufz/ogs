@@ -11,9 +11,10 @@
  */
 #pragma once
 
-#include <boost/optional/optional.hpp>
 #include <map>
 #include <memory>
+#include <optional>
+
 #include "PropertyType.h"
 
 namespace BaseLib

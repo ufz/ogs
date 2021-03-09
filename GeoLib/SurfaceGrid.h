@@ -14,9 +14,8 @@
 
 #include <array>
 #include <limits>
+#include <optional>
 #include <vector>
-
-#include <boost/optional.hpp>
 
 #include "AABB.h"
 #include "Point.h"

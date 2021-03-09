@@ -8,10 +8,11 @@
  *
  */
 
-#include <boost/optional/optional.hpp>
+#include "CreateEquilibriumReactants.h"
+
+#include <optional>
 
 #include "BaseLib/ConfigTree.h"
-#include "CreateEquilibriumReactants.h"
 #include "EquilibriumReactant.h"
 #include "MeshLib/Mesh.h"
 
