@@ -13,19 +13,19 @@ We aim for a consistent and readable coding style. You do not need to worry abou
 
 ## C++
 
-Use [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html). Can be added to be automatically run on save in your editor / IDE:
+Use [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html). It can be added to be automatically run on save in your editor / IDE:
 
 - [Vim](https://github.com/rhysd/vim-clang-format)
 - [Visual Studio](https://devblogs.microsoft.com/cppblog/clangformat-support-in-visual-studio-2017-15-7-preview-1/)
 - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format)
 
-Current style is defined in [.clang-format](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.clang-format).
+The current style is defined in [.clang-format](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.clang-format).
 
 A pre-commit hook for git checking the code formatting can be found [here](https://gitlab.opengeosys.org/ogs/ogs-utils/-/tree/master/dev/code-formatting/clang-format-pre-commit-hook).
 
 ## Python
 
-Use [`black`](https://black.readthedocs.io/en/stable/). Can be added to be automatically run on save in your editor / IDE:
+Use [`black`](https://black.readthedocs.io/en/stable/). It can be added to be automatically run on save in your editor / IDE:
 
 - [Vim](https://black.readthedocs.io/en/stable/editor_integration.html#vim)
 - [PyCharm](https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-idea)
@@ -36,3 +36,26 @@ Use [`black`](https://black.readthedocs.io/en/stable/). Can be added to be autom
 ```bash
 pre-commit run black --all-files
 ```
+
+## CMake
+
+Use [cmake-format](https://cmake-format.readthedocs.io/en/latest/cmake-format.html). It can be added to be automatically run on save in your editor / IDE:
+
+- [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=cheshirekow.cmake-format)
+
+The current style is defined in [.cmake-format.yaml](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.cmake-format.yaml).
+
+On installation make sure to install with the yaml option:
+
+```
+pip install cmakelang[YAML]
+```
+
+## Build targets
+
+You can run `clang-format` and `cmake-format` on the OGS code base by building the following targets:
+
+| Language | Shows formatting | Applies formatting |
+| -------- | ---------------- | ------------------ |
+| C++      | `clang-format`   | `fix-clang-format` |
+| CMake    | `cmake-format`   | `fix-cmake-format` |
