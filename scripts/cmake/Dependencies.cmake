@@ -270,7 +270,7 @@ if(OGS_BUILD_GUI)
         EXCLUDE_FROM_ALL YES
     )
     if(shapelib_ADDED)
-        target_include_directories(shp INTERFACE ${shapelib_SOURCE_DIR})
+        target_include_directories(shp INTERFACE $<BUILD_INTERFACE:${shapelib_SOURCE_DIR}>)
     endif()
 endif()
 
