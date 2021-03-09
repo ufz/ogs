@@ -76,7 +76,7 @@ public:
 
         auto linear_solver = createLinearSolver();
         auto conv_crit = std::make_unique<NumLib::ConvergenceCriterionDeltaX>(
-            _tol, boost::none, MathLib::VecNormType::NORM2);
+            _tol, std::nullopt, MathLib::VecNormType::NORM2);
         auto nonlinear_solver =
             std::make_unique<NLSolver>(*linear_solver, _maxiter);
 

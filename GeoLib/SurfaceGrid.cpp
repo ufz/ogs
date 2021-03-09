@@ -209,7 +209,7 @@ bool SurfaceGrid::isPointInSurface(MathLib::Point3d const& pnt,
     if (!optional_c) {
         return false;
     }
-    std::array<std::size_t,3> c(optional_c.get());
+    std::array<std::size_t, 3> c(optional_c.value());
 
     std::size_t const grid_cell_idx(c[0]+c[1]*_n_steps[0]+c[2]*_n_steps[0]*_n_steps[1]);
     std::vector<Triangle const*> const& triangles(_triangles_in_grid_box[grid_cell_idx]);

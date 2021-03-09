@@ -89,10 +89,10 @@ public:
 
     void clear()
     {
-        _node_id = boost::none;
-        _element_id = boost::none;
-        _integration_point = boost::none;
-        _coordinates = boost::none;
+        _node_id = std::nullopt;
+        _element_id = std::nullopt;
+        _integration_point = std::nullopt;
+        _coordinates = std::nullopt;
     }
 
 private:

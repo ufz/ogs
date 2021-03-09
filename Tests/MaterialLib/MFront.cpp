@@ -56,7 +56,7 @@ struct StandardElasticityBrickBehaviour
             &young_modulus, &poisson_ratio};
 
         auto result = std::make_unique<MFront::MFront<Dim>>(
-            std::move(behaviour), std::move(parameters), boost::none);
+            std::move(behaviour), std::move(parameters), std::nullopt);
         return result;
     }
 };
@@ -77,7 +77,7 @@ struct ElasticBehaviour
             &young_modulus, &poisson_ratio};
 
         auto result = std::make_unique<MFront::MFront<Dim>>(
-            std::move(behaviour), std::move(parameters), boost::none);
+            std::move(behaviour), std::move(parameters), std::nullopt);
         return result;
     }
 };
@@ -110,7 +110,7 @@ struct MohrCoulombAbboSloanBehaviour
             &tension_cut_off_parameter};
 
         auto result = std::make_unique<MFront::MFront<Dim>>(
-            std::move(behaviour), std::move(parameters), boost::none);
+            std::move(behaviour), std::move(parameters), std::nullopt);
         return result;
     }
 };

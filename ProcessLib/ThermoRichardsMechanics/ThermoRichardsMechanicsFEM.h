@@ -117,7 +117,7 @@ public:
             if (process_data_.initial_stress != nullptr)
             {
                 ParameterLib::SpatialPosition const x_position{
-                    boost::none, element_.getID(), ip,
+                    std::nullopt, element_.getID(), ip,
                     MathLib::Point3d(NumLib::interpolateCoordinates<
                                      ShapeFunctionDisplacement,
                                      ShapeMatricesTypeDisplacement>(

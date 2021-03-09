@@ -286,7 +286,7 @@ std::optional<std::vector<GeoLib::Raster const*>> readRasters(
 {
     if (!allRastersExist(raster_paths))
     {
-        return boost::none;
+        return std::nullopt;
     }
 
     std::vector<GeoLib::Raster const*> rasters;
@@ -295,6 +295,6 @@ std::optional<std::vector<GeoLib::Raster const*>> readRasters(
                    std::back_inserter(rasters), [](auto const& path) {
                        return FileIO::AsciiRasterInterface::readRaster(path);
                    });
-    return boost::make_optional(rasters);
+    return std::make_optional(rasters);
 }
 } // end namespace FileIO

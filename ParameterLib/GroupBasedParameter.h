@@ -63,7 +63,7 @@ struct GroupBasedParameter final : public Parameter<T>
     {
         auto const item_id = getMeshItemID(pos, type<MeshItemType>());
         assert(item_id);
-        int const index = _property_index[item_id.get()];
+        int const index = _property_index[item_id.value()];
         auto const& values = _vec_values[index];
         if (values.empty())
         {

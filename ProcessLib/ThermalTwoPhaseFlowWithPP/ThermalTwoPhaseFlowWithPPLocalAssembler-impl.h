@@ -143,7 +143,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
     auto const& two_phase_material_model =
         _process_data.material->getTwoPhaseMaterialModel();
     const int material_id =
-        two_phase_material_model.getMaterialID(pos.getElementID().get());
+        two_phase_material_model.getMaterialID(pos.getElementID().value());
 
     auto const num_nodes = ShapeFunction::NPOINTS;
     auto const pg_nodal_values =

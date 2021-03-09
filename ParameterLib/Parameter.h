@@ -174,7 +174,7 @@ struct Parameter : public ParameterBase
         for (int i = 0; i < n_nodes; ++i)
         {
             x_position.setAll(
-                nodes[i]->getID(), element.getID(), boost::none, *nodes[i]);
+                nodes[i]->getID(), element.getID(), std::nullopt, *nodes[i]);
             auto const& values = this->operator()(t, x_position);
             auto const row_values =
                 Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> const>(

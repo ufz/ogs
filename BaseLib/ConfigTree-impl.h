@@ -79,7 +79,7 @@ std::optional<T> ConfigTree::getConfigParameterOptionalImpl(
         return p->getValue<T>();
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 template <typename T>
@@ -103,13 +103,13 @@ std::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
                   "' not convertible to a vector of the desired type."
                   " Could not convert token no. " +
                   std::to_string(result.size() + 1) + ".");
-            return boost::none;
+            return std::nullopt;
         }
 
-        return boost::make_optional(result);
+        return std::make_optional(result);
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 template<typename T>
@@ -225,7 +225,7 @@ std::optional<T> ConfigTree::getConfigAttributeOptional(
         if (auto a = attrs->get_child_optional(attr)) {
             ++ct.count; // count only if attribute has been found
             if (auto v = a->get_value_optional<T>()) {
-                return v;
+                return std::make_optional(*v);
             }
             error("Value for XML attribute '" + attr + "' `" +
                   shortString(a->data()) +
@@ -233,7 +233,7 @@ std::optional<T> ConfigTree::getConfigAttributeOptional(
         }
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 template<typename T>

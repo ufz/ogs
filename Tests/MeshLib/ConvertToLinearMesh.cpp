@@ -214,7 +214,7 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
     {
         auto const result =
             inversePermutationIdentityTest(permutation, inverse_permutation);
-        ASSERT_TRUE(result == boost::none)
+        ASSERT_TRUE(result == std::nullopt)
             << "Quadratic mesh nodes permutation test failed: " << *result;
     }
 
@@ -253,7 +253,7 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
             auto const& element_b =
                 *permuted_nodes_quadratic_mesh.getElement(i);
             auto const elements_are_equal = equal(element_a, element_b);
-            ASSERT_TRUE(elements_are_equal == boost::none)
+            ASSERT_TRUE(elements_are_equal == std::nullopt)
                 << *elements_are_equal << " For the element " << i << ".";
         }
     }
@@ -285,7 +285,7 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
             auto const& element_a = *linear_mesh->getElement(i);
             auto const& element_b = *converted_mesh->getElement(i);
             auto const elements_are_equal = equal(element_a, element_b);
-            ASSERT_TRUE(elements_are_equal == boost::none)
+            ASSERT_TRUE(elements_are_equal == std::nullopt)
                 << *elements_are_equal << " For the element " << i << ".";
         }
     }
@@ -320,7 +320,7 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshBackToLinear)
         auto const& converted_mesh_element = *converted_mesh->getElement(i);
         auto const elements_are_equal =
             equal(linear_mesh_element, converted_mesh_element);
-        ASSERT_TRUE(elements_are_equal == boost::none)
+        ASSERT_TRUE(elements_are_equal == std::nullopt)
             << *elements_are_equal << " For the element " << i << ".";
     }
 }

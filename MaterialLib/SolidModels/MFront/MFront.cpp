@@ -179,7 +179,7 @@ MFront<DisplacementDim>::MFront(
           getEquivalentPlasticStrainOffset(_behaviour)),
       _material_properties(std::move(material_properties)),
       _local_coordinate_system(
-          local_coordinate_system ? &local_coordinate_system.get() : nullptr)
+          local_coordinate_system ? &local_coordinate_system.value() : nullptr)
 {
     auto const hypothesis = behaviour.hypothesis;
 

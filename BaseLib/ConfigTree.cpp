@@ -165,7 +165,7 @@ std::optional<ConfigTree> ConfigTree::getConfigSubtreeOptional(
         return ConfigTree(*subtree, *this, root);
     }
     markVisited(root, Attr::TAG, true);
-    return boost::none;
+    return std::nullopt;
 }
 
 Range<ConfigTree::SubtreeIterator>
