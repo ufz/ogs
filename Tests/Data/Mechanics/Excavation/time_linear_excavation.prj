@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>A2.vtu</mesh>
+        <mesh>A2_0.vtu</mesh> <!-- bottom tunnel -->
+        <mesh>A2_1.vtu</mesh> <!-- tunnel end -->
+        <mesh>A2_2.vtu</mesh> <!-- tunnel ridge -->
+        <mesh>A2_3.vtu</mesh> <!-- left tunnel -->
+        <mesh>A2_4.vtu</mesh> <!-- left rock -->
+        <mesh>A2_5.vtu</mesh> <!-- top -->
+        <mesh>A2_6.vtu</mesh> <!-- right -->
+        <mesh>A2_7.vtu</mesh> <!-- bottom rock -->
+    </meshes>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation id="0">
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+            </constitutive_relation>
+            <constitutive_relation id="1">
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+            </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0</specific_body_force>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+            </secondary_variables>
+            <initial_stress>sigma0</initial_stress>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-10</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>8</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>2</repeat>
+                            <delta_t>0.5</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>35</repeat>
+                            <delta_t>0.2</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>time_linear_excavation_A2</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>40</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>sigma0</name>
+            <type>Constant</type>
+            <values>-7.6e6 -9.6e6 -4.9e6 0</values>
+        </parameter>
+        <parameter>
+            <name>E</name>
+            <type>Constant</type>
+            <value>4000e6</value>
+        </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <value>.35</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>1200</value>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>load_top</name>
+            <type>Constant</type>
+            <values>-9.6e6</values>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <!-- back-filling half of the tunnel -->
+            <name>excavation_curve</name>
+            <coords>1 2 8</coords>
+            <values>2.5 2 1.25</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <deactivated_subdomains>
+                <deactivated_subdomain>
+                    <time_interval>
+                        <start>0.51 </start>
+                        <end> 1.0 </end>
+                    </time_interval>
+                    <material_ids>0</material_ids>
+                </deactivated_subdomain>
+                <deactivated_subdomain>
+                    <time_curve>excavation_curve</time_curve>
+                    <line_segment>
+                        <start>0 0 0</start>
+                        <end>2.5 0 0</end>
+                    </line_segment>
+                    <material_ids>0</material_ids>
+                </deactivated_subdomain>
+            </deactivated_subdomains>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>A2_0</mesh> <!-- bottom tunnel -->
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>A2_7</mesh> <!-- bottom rock -->
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>A2_3</mesh> <!-- left tunnel -->
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>A2_4</mesh> <!-- left rock -->
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>A2_6</mesh> <!-- right -->
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>A2_5</mesh> <!-- top -->
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>load_top</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>10</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>BiCGSTAB</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-14</error_tolerance>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>time_linear_excavation_A2_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>3e-13</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>time_linear_excavation_A2_ts_.*_t_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>3e-13</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>time_linear_excavation_A2_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>2e-5</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
