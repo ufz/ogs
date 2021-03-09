@@ -4,6 +4,7 @@
 #
 # Creates application test runs. Order of arguments can be arbitrary.
 #
+# ~~~
 # AddTest(
 #   NAME <name of the the test>
 #   PATH <working directory> # relative to SourceDir/Tests/Data
@@ -22,9 +23,11 @@
 #   WORKING_DIRECTORY # optional, specify the working directory of the test
 #   DISABLED # optional, disables the test
 # )
+# ~~~
 #
 # Conditional arguments:
 #
+# ~~~
 #   diff-tester
 #     - DIFF_DATA <list of files to diff>
 #         the given file is compared to a file with the same name from Tests/Data
@@ -46,6 +49,7 @@
 #         <gml file> <absolute tolerance> <relative tolerance>
 #         Can be given multiple times; the point coordinates in the gml files are
 #         compared using the given absolute and relative tolerances.
+# ~~~
 
 function (AddTest)
 
