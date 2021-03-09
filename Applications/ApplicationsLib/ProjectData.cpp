@@ -209,8 +209,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
     return meshes;
 }
 
-boost::optional<ParameterLib::CoordinateSystem> parseLocalCoordinateSystem(
-    boost::optional<BaseLib::ConfigTree> const& config,
+std::optional<ParameterLib::CoordinateSystem> parseLocalCoordinateSystem(
+    std::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     if (!config)
@@ -436,7 +436,7 @@ std::vector<std::string> ProjectData::parseParameters(
 }
 
 void ProjectData::parseMedia(
-    boost::optional<BaseLib::ConfigTree> const& media_config)
+    std::optional<BaseLib::ConfigTree> const& media_config)
 {
     if (!media_config)
     {
@@ -516,7 +516,7 @@ void ProjectData::parseMedia(
 
 std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
 ProjectData::parseChemicalSolverInterface(
-    boost::optional<BaseLib::ConfigTree> const& config,
+    std::optional<BaseLib::ConfigTree> const& config,
     std::string const& output_directory)
 {
     if (!config)
@@ -1123,8 +1123,7 @@ void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
     }
 }
 
-void ProjectData::parseCurves(
-    boost::optional<BaseLib::ConfigTree> const& config)
+void ProjectData::parseCurves(std::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
     {

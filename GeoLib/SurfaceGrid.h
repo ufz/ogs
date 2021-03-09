@@ -36,8 +36,8 @@ public:
 private:
     void sortTrianglesInGridCells(GeoLib::Surface const* const sfc);
     bool sortTriangleInGridCells(GeoLib::Triangle const*const triangle);
-    boost::optional<std::array<std::size_t,3>>
-        getGridCellCoordinates(MathLib::Point3d const& p) const;
+    std::optional<std::array<std::size_t, 3>> getGridCellCoordinates(
+        MathLib::Point3d const& p) const;
     std::array<double,3> _step_sizes{};
     std::array<double,3> _inverse_step_sizes{};
     std::array<std::size_t,3> _n_steps;

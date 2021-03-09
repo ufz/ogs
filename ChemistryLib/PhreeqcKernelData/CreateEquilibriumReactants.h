@@ -30,7 +30,7 @@ namespace ChemistryLib
 namespace PhreeqcKernelData
 {
 std::unique_ptr<EquilibriumReactants> createEquilibriumReactants(
-    boost::optional<BaseLib::ConfigTree> const& config,
+    std::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
 }
 }  // namespace ChemistryLib

@@ -282,7 +282,7 @@ static bool allRastersExist(std::vector<std::string> const& raster_paths)
     return true;
 }
 
-boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
+std::optional<std::vector<GeoLib::Raster const*>> readRasters(
     std::vector<std::string> const& raster_paths)
 {
     if (!allRastersExist(raster_paths))

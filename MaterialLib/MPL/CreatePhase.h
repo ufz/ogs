@@ -49,7 +49,7 @@ namespace MaterialPropertyLib
 /// weighted by mole fraction.
 std::vector<std::unique_ptr<Phase>> createPhases(
     int const geometry_dimension,
-    boost::optional<BaseLib::ConfigTree> const& config,
+    std::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
     std::map<std::string,

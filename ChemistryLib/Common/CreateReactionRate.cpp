@@ -18,7 +18,7 @@ namespace ChemistryLib
 {
 template <typename ReactionRate>
 std::vector<ReactionRate> createReactionRates(
-    boost::optional<BaseLib::ConfigTree> const& config)
+    std::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
     {
@@ -56,9 +56,9 @@ std::vector<ReactionRate> createReactionRates(
 
 template std::vector<PhreeqcIOData::ReactionRate>
 createReactionRates<PhreeqcIOData::ReactionRate>(
-    boost::optional<BaseLib::ConfigTree> const& config);
+    std::optional<BaseLib::ConfigTree> const& config);
 
 template std::vector<PhreeqcKernelData::ReactionRate>
 createReactionRates<PhreeqcKernelData::ReactionRate>(
-    boost::optional<BaseLib::ConfigTree> const& config);
+    std::optional<BaseLib::ConfigTree> const& config);
 }  // namespace ChemistryLib

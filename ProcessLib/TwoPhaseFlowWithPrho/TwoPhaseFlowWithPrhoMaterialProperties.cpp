@@ -33,7 +33,7 @@ namespace ProcessLib
 namespace TwoPhaseFlowWithPrho
 {
 TwoPhaseFlowWithPrhoMaterialProperties::TwoPhaseFlowWithPrhoMaterialProperties(
-    boost::optional<MeshLib::PropertyVector<int> const&> const material_ids,
+    std::optional<MeshLib::PropertyVector<int> const&> const material_ids,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>
         liquid_density,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>

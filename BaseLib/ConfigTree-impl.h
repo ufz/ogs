@@ -62,7 +62,7 @@ getConfigParameter(std::string const& param, T const& default_value) const
 }
 
 template <typename T>
-boost::optional<T> ConfigTree::getConfigParameterOptional(
+std::optional<T> ConfigTree::getConfigParameterOptional(
     std::string const& param) const
 {
     checkUnique(param);
@@ -71,7 +71,7 @@ boost::optional<T> ConfigTree::getConfigParameterOptional(
 }
 
 template <typename T>
-boost::optional<T> ConfigTree::getConfigParameterOptionalImpl(
+std::optional<T> ConfigTree::getConfigParameterOptionalImpl(
     std::string const& param, T* /*unused*/) const
 {
     if (auto p = getConfigSubtreeOptional(param))
@@ -83,7 +83,7 @@ boost::optional<T> ConfigTree::getConfigParameterOptionalImpl(
 }
 
 template <typename T>
-boost::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
+std::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
     std::string const& param, std::vector<T>* /*unused*/) const
 {
     if (auto p = getConfigSubtreeOptional(param))
@@ -214,10 +214,9 @@ T ConfigTree::getConfigAttribute(std::string const& attr,
     return default_value;
 }
 
-template<typename T>
-boost::optional<T>
-ConfigTree::
-getConfigAttributeOptional(std::string const& attr) const
+template <typename T>
+std::optional<T> ConfigTree::getConfigAttributeOptional(
+    std::string const& attr) const
 {
     checkUniqueAttr(attr);
     auto& ct = markVisited<T>(attr, Attr::ATTR, true);

@@ -54,7 +54,7 @@ public:
 
     /// Returns true and the iteration number if succeeded, otherwise false and
     /// an undefined value for the number of iterations.
-    boost::optional<int> solve(JacobianMatrix& jacobian) const
+    std::optional<int> solve(JacobianMatrix& jacobian) const
     {
         int iteration = 0;
         ResidualVector increment;

@@ -94,7 +94,7 @@ private:
         BaseLib::ConfigTree const& parameters_config);
 
     /// Parses media configuration and saves them in an object.
-    void parseMedia(boost::optional<BaseLib::ConfigTree> const& media_config);
+    void parseMedia(std::optional<BaseLib::ConfigTree> const& media_config);
 
     /// Parses the processes configuration and creates new processes for each
     /// process entry passing the corresponding subtree to the process
@@ -113,11 +113,11 @@ private:
 
     void parseNonlinearSolvers(BaseLib::ConfigTree const& config);
 
-    void parseCurves(boost::optional<BaseLib::ConfigTree> const& config);
+    void parseCurves(std::optional<BaseLib::ConfigTree> const& config);
 
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
     parseChemicalSolverInterface(
-        boost::optional<BaseLib::ConfigTree> const& config,
+        std::optional<BaseLib::ConfigTree> const& config,
         const std::string& output_directory);
 
     std::vector<std::unique_ptr<MeshLib::Mesh>> _mesh_vec;
@@ -127,7 +127,7 @@ private:
     /// Buffer for each parameter config passed to the process.
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> _parameters;
 
-    boost::optional<ParameterLib::CoordinateSystem> _local_coordinate_system;
+    std::optional<ParameterLib::CoordinateSystem> _local_coordinate_system;
 
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> _media;
 

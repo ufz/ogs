@@ -124,7 +124,7 @@ protected:
     }
 
 protected:
-    boost::optional<CoordinateSystem> _coordinate_system;
+    std::optional<CoordinateSystem> _coordinate_system;
 
     /// A mesh on which the parameter is defined. Some parameters might be
     /// mesh-independent.
@@ -204,7 +204,7 @@ std::unique_ptr<ParameterBase> createParameter(
 //! to the given mesh.
 //! \returns nothing if the parameter can be used on the given mesh, or an error
 //! string otherwise.
-boost::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
-                                                 MeshLib::Mesh const& mesh);
+std::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
+                                               MeshLib::Mesh const& mesh);
 
 }  // namespace ParameterLib

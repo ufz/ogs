@@ -34,7 +34,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order, BaseLib::ConfigTree const& config,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
@@ -182,7 +182,7 @@ template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
@@ -194,7 +194,7 @@ template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,

@@ -73,7 +73,7 @@ std::variant<std::vector<std::size_t>, std::string> compareNodes(
 // Two elements are equal if their corresponding node coordinates are equal up
 // to a (shift) permutation.
 // Returns a string in case of error containing a descriptive message.
-boost::optional<std::string> equal(Element const& a, Element const& b)
+std::optional<std::string> equal(Element const& a, Element const& b)
 {
     if (typeid(a) != typeid(b))  // => (a.nodes.size == b.nodes.size)
     {
@@ -126,7 +126,7 @@ std::vector<std::size_t> generateRandomPermutationVector(std::size_t const size)
 
 // Test the inverse permutation for being the inverse: p^-1(p(.)) = Id.
 // In case of failure an error message is returned.
-boost::optional<std::string> inversePermutationIdentityTest(
+std::optional<std::string> inversePermutationIdentityTest(
     std::vector<std::size_t> const& permutation,
     std::vector<std::size_t> const& inverse_permutation)
 {

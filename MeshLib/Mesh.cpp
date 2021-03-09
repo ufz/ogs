@@ -215,7 +215,8 @@ void Mesh::setElementNeighbors()
 
         for (auto neighbor = neighbors.begin(); neighbor != neighbors_new_end; ++neighbor)
         {
-            boost::optional<unsigned> const opposite_face_id = element->addNeighbor(*neighbor);
+            std::optional<unsigned> const opposite_face_id =
+                element->addNeighbor(*neighbor);
             if (opposite_face_id)
             {
                 (*neighbor)->setNeighbor(element, *opposite_face_id);

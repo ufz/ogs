@@ -83,7 +83,7 @@ private:
         std::vector<MeshLib::Node*>& face_set_nodes,
         std::vector<MeshLib::Element*>& face_set_elements) const;
 
-    boost::optional<Gocad::Property const&> getProperty(
+    std::optional<Gocad::Property const&> getProperty(
         std::string const& name) const;
     void addGocadPropertiesToMesh(MeshLib::Mesh& mesh) const;
 

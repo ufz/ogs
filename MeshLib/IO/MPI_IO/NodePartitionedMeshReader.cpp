@@ -227,7 +227,7 @@ void NodePartitionedMeshReader::readProperties(
     }
     std::size_t number_of_properties = 0;
     is.read(reinterpret_cast<char*>(&number_of_properties), sizeof(std::size_t));
-    std::vector<boost::optional<MeshLib::IO::PropertyVectorMetaData>> vec_pvmd(
+    std::vector<std::optional<MeshLib::IO::PropertyVectorMetaData>> vec_pvmd(
         number_of_properties);
     for (std::size_t i(0); i < number_of_properties; ++i)
     {
@@ -250,7 +250,7 @@ void NodePartitionedMeshReader::readProperties(
         static_cast<long>(_mpi_rank *
                           sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
     is.seekg(offset);
-    boost::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
+    std::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
         MeshLib::IO::readPropertyVectorPartitionMetaData(is));
     bool pvpmd_read_ok = static_cast<bool>(pvpmd);
     bool all_pvpmd_read_ok;
@@ -284,7 +284,7 @@ void NodePartitionedMeshReader::readProperties(
 }
 
 void NodePartitionedMeshReader::readDomainSpecificPartOfPropertyVectors(
-    std::vector<boost::optional<MeshLib::IO::PropertyVectorMetaData>> const&
+    std::vector<std::optional<MeshLib::IO::PropertyVectorMetaData>> const&
         vec_pvmd,
     MeshLib::IO::PropertyVectorPartitionMetaData const& pvpmd,
     MeshLib::MeshItemType t,

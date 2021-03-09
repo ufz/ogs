@@ -270,7 +270,7 @@ bool containsIf(Container const& container, Predicate&& predicate)
 }
 
 template <typename Container>
-boost::optional<typename Container::value_type> findFirstNotEqualElement(
+std::optional<typename Container::value_type> findFirstNotEqualElement(
     Container const& container, typename Container::value_type const& element)
 {
     auto const it =

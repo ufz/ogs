@@ -308,8 +308,8 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    template<typename T> boost::optional<T>
-    getConfigParameterOptional(std::string const& param) const;
+    template <typename T>
+    std::optional<T> getConfigParameterOptional(std::string const& param) const;
 
     /*! Fetches all parameters with name \c param from the current level of the tree.
      *
@@ -347,7 +347,7 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    boost::optional<ConfigTree> getConfigParameterOptional(
+    std::optional<ConfigTree> getConfigParameterOptional(
         std::string const& root) const;
 
     /*! Fetches all parameters with name \c param from the current level of the tree.
@@ -398,8 +398,8 @@ public:
      *
      * \pre \c attr must not have been read before from the current parameter.
      */
-    template<typename T> boost::optional<T>
-    getConfigAttributeOptional(std::string const& attr) const;
+    template <typename T>
+    std::optional<T> getConfigAttributeOptional(std::string const& attr) const;
 
     //!\}
 
@@ -454,8 +454,8 @@ public:
      *
      * \pre \c root must not have been read before from this ConfigTree.
      */
-    boost::optional<ConfigTree>
-    getConfigSubtreeOptional(std::string const& root) const;
+    std::optional<ConfigTree> getConfigSubtreeOptional(
+        std::string const& root) const;
 
     /*! Get all subtrees that have a root \c root from the current level of the tree.
      *
@@ -520,12 +520,12 @@ public:
 private:
     //! Default implementation of reading a value of type T.
     template <typename T>
-    boost::optional<T> getConfigParameterOptionalImpl(std::string const& param,
-                                                      T* /*unused*/) const;
+    std::optional<T> getConfigParameterOptionalImpl(std::string const& param,
+                                                    T* /*unused*/) const;
 
     //! Implementation of reading a vector of values of type T.
     template <typename T>
-    boost::optional<std::vector<T>> getConfigParameterOptionalImpl(
+    std::optional<std::vector<T>> getConfigParameterOptionalImpl(
         std::string const& param, std::vector<T>* /*unused*/) const;
 
     struct CountType

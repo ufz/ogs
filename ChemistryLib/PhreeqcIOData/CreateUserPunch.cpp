@@ -19,8 +19,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::unique_ptr<UserPunch> createUserPunch(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh)
+    std::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh const& mesh)
 {
     if (!config)
     {

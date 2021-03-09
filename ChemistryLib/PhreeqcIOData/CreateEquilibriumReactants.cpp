@@ -20,7 +20,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<EquilibriumReactant> createEquilibriumReactants(
-    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
+    std::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
 {
     if (!config)
     {

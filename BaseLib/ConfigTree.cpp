@@ -120,9 +120,8 @@ getConfigParameter(std::string const& root) const
     return ct;
 }
 
-boost::optional<ConfigTree>
-ConfigTree::
-getConfigParameterOptional(std::string const& root) const
+std::optional<ConfigTree> ConfigTree::getConfigParameterOptional(
+    std::string const& root) const
 {
     auto ct = getConfigSubtreeOptional(root);
     if (ct && ct->hasChildren())
@@ -156,9 +155,8 @@ getConfigSubtree(std::string const& root) const
     error("Key <" + root + "> has not been found.");
 }
 
-boost::optional<ConfigTree>
-ConfigTree::
-getConfigSubtreeOptional(std::string const& root) const
+std::optional<ConfigTree> ConfigTree::getConfigSubtreeOptional(
+    std::string const& root) const
 {
     checkUnique(root);
 

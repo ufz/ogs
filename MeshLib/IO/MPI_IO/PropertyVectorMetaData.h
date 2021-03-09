@@ -78,14 +78,14 @@ inline void writePropertyVectorMetaData(PropertyVectorMetaData const& pvmd)
         pvmd.number_of_tuples);
 }
 
-inline boost::optional<PropertyVectorMetaData> readPropertyVectorMetaData(
+inline std::optional<PropertyVectorMetaData> readPropertyVectorMetaData(
     std::istream& is)
 {
     // read the size of the name of the PropertyVector
     std::string::size_type s = 0;
     if (!is.read(reinterpret_cast<char*>(&s), sizeof(std::string::size_type)))
     {
-        return boost::optional<PropertyVectorMetaData>();
+        return std::optional<PropertyVectorMetaData>();
     }
 
     PropertyVectorMetaData pvmd;
@@ -110,7 +110,7 @@ inline boost::optional<PropertyVectorMetaData> readPropertyVectorMetaData(
     if(!is.read(reinterpret_cast<char*>(&pvmd.number_of_tuples),
             sizeof(unsigned long)))
         return boost::none;
-    return boost::optional<PropertyVectorMetaData>(pvmd);
+    return std::optional<PropertyVectorMetaData>(pvmd);
 }
 
 struct PropertyVectorPartitionMetaData
@@ -132,20 +132,20 @@ inline void writePropertyVectorPartitionMetaData(
              sizeof(unsigned long));
 }
 
-inline boost::optional<PropertyVectorPartitionMetaData>
+inline std::optional<PropertyVectorPartitionMetaData>
 readPropertyVectorPartitionMetaData(std::istream& is)
 {
     PropertyVectorPartitionMetaData pvpmd;
     if (!is.read(reinterpret_cast<char*>(&pvpmd.offset), sizeof(unsigned long)))
     {
-        return boost::optional<PropertyVectorPartitionMetaData>();
+        return std::optional<PropertyVectorPartitionMetaData>();
     }
     if (!is.read(reinterpret_cast<char*>(&pvpmd.number_of_tuples),
                  sizeof(unsigned long)))
     {
-        return boost::optional<PropertyVectorPartitionMetaData>();
+        return std::optional<PropertyVectorPartitionMetaData>();
     }
-    return boost::optional<PropertyVectorPartitionMetaData>(pvpmd);
+    return std::optional<PropertyVectorPartitionMetaData>(pvpmd);
 }
 }  // namespace IO
 }  // namespace MeshLib

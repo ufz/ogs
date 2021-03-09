@@ -140,19 +140,19 @@ void SurfaceGrid::sortTrianglesInGridCells(Surface const*const sfc)
 bool SurfaceGrid::sortTriangleInGridCells(Triangle const*const triangle)
 {
     // compute grid coordinates for each triangle point
-    boost::optional<std::array<std::size_t, 3> const> c_p0(
+    std::optional<std::array<std::size_t, 3> const> c_p0(
         getGridCellCoordinates(*(triangle->getPoint(0))));
     if (!c_p0)
     {
         return false;
     }
-    boost::optional<std::array<std::size_t, 3> const> c_p1(
+    std::optional<std::array<std::size_t, 3> const> c_p1(
         getGridCellCoordinates(*(triangle->getPoint(1))));
     if (!c_p1)
     {
         return false;
     }
-    boost::optional<std::array<std::size_t, 3> const> c_p2(
+    std::optional<std::array<std::size_t, 3> const> c_p2(
         getGridCellCoordinates(*(triangle->getPoint(2))));
     if (!c_p2)
     {
@@ -181,8 +181,8 @@ bool SurfaceGrid::sortTriangleInGridCells(Triangle const*const triangle)
     return true;
 }
 
-boost::optional<std::array<std::size_t, 3>>
-SurfaceGrid::getGridCellCoordinates(MathLib::Point3d const& p) const
+std::optional<std::array<std::size_t, 3>> SurfaceGrid::getGridCellCoordinates(
+    MathLib::Point3d const& p) const
 {
     std::array<std::size_t, 3> coords{{
         static_cast<std::size_t>((p[0]-_min_pnt[0]) * _inverse_step_sizes[0]),
@@ -196,15 +196,15 @@ SurfaceGrid::getGridCellCoordinates(MathLib::Point3d const& p) const
             "({:d},{:d},{:d})",
             coords[0], coords[1], coords[2], _n_steps[0], _n_steps[1],
             _n_steps[2]);
-        return boost::optional<std::array<std::size_t, 3>>();
+        return std::optional<std::array<std::size_t, 3>>();
     }
-    return boost::optional<std::array<std::size_t, 3>>(coords);
+    return std::optional<std::array<std::size_t, 3>>(coords);
 }
 
 bool SurfaceGrid::isPointInSurface(MathLib::Point3d const& pnt,
                                    double eps) const
 {
-    boost::optional<std::array<std::size_t, 3>> optional_c(
+    std::optional<std::array<std::size_t, 3>> optional_c(
         getGridCellCoordinates(pnt));
     if (!optional_c) {
         return false;

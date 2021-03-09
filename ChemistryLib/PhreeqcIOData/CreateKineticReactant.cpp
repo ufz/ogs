@@ -20,7 +20,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<KineticReactant> createKineticReactants(
-    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
+    std::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
 {
     if (!config)
     {

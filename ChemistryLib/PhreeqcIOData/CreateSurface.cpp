@@ -18,7 +18,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<SurfaceSite> createSurface(
-    boost::optional<BaseLib::ConfigTree> const& config)
+    std::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
     {

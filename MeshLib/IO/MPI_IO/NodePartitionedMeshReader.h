@@ -174,7 +174,7 @@ private:
                               MeshLib::Properties& p) const;
 
     void readDomainSpecificPartOfPropertyVectors(
-        std::vector<boost::optional<MeshLib::IO::PropertyVectorMetaData>> const&
+        std::vector<std::optional<MeshLib::IO::PropertyVectorMetaData>> const&
             vec_pvmd,
         MeshLib::IO::PropertyVectorPartitionMetaData const& pvpmd,
         MeshLib::MeshItemType t,

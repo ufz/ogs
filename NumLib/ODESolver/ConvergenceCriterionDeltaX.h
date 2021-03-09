@@ -25,8 +25,8 @@ namespace NumLib
 class ConvergenceCriterionDeltaX final : public ConvergenceCriterion
 {
 public:
-    ConvergenceCriterionDeltaX(boost::optional<double>&& absolute_tolerance,
-                               boost::optional<double>&& relative_tolerance,
+    ConvergenceCriterionDeltaX(std::optional<double>&& absolute_tolerance,
+                               std::optional<double>&& relative_tolerance,
                                const MathLib::VecNormType norm_type);
 
     bool hasDeltaXCheck() const override { return true; }
@@ -38,8 +38,8 @@ public:
 
     void reset() override { this->_satisfied = true; }
 private:
-    const boost::optional<double> _abstol;
-    const boost::optional<double> _reltol;
+    const std::optional<double> _abstol;
+    const std::optional<double> _reltol;
 };
 
 std::unique_ptr<ConvergenceCriterionDeltaX> createConvergenceCriterionDeltaX(
