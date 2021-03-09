@@ -2,6 +2,7 @@
 # MeshTest
 # -------
 #
+# ~~~
 # MeshTest(
 #   NAME <name of the the test>
 #   PATH <working directory> # relative to SourceDir/Tests/Data
@@ -15,6 +16,7 @@
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
 #                          values should be taken from envinf1 serial job
 # )
+# ~~~
 
 function (MeshTest)
     if(NOT OGS_BUILD_TESTING)
