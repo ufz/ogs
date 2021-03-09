@@ -313,10 +313,19 @@ configure_file(${PROJECT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.in.cmake
     ${PROJECT_BINARY_DIR}/CTestCustom.cmake @ONLY
 )
 
-CPMAddPackage(
-  NAME Format.cmake
-  VERSION 1.7.0
-  GITHUB_REPOSITORY TheLartians/Format.cmake
-  OPTIONS
-    "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/conan/conan.cmake|scripts/cmake/vector-of-bool/.*"
-)
+find_program(CLANG_FORMAT_PROGRAM clang-format)
+find_program(CMAKE_FORMAT_PROGRAM cmake-format)
+
+if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
+    if(NOT CMAKE_FORMAT_PROGRAM)
+        set(skip_cmake "FORMAT_SKIP_CMAKE YES")
+    endif()
+    CPMAddPackage(
+      NAME Format.cmake
+      VERSION 1.7.0
+      GITHUB_REPOSITORY TheLartians/Format.cmake
+      OPTIONS
+        ${skip_cmake}
+        "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/conan/conan.cmake|scripts/cmake/vector-of-bool/.*"
+    )
+endif()
