@@ -198,7 +198,7 @@ void GocadSGridReader::addGocadPropertiesToMesh(MeshLib::Mesh& mesh) const
     std::vector<std::string> const& prop_names(getPropertyNames());
     for (auto const& name : prop_names)
     {
-        std::optional<Gocad::Property const&> prop(getProperty(name));
+        auto prop = getProperty(name);
         if (!prop)
         {
             continue;
@@ -730,7 +730,7 @@ void GocadSGridReader::modifyElement(MeshLib::Element* hex,
     }
 }
 
-std::optional<Gocad::Property const&> GocadSGridReader::getProperty(
+Gocad::Property const* GocadSGridReader::getProperty(
     std::string const& name) const
 {
     auto const it(std::find_if(_property_meta_data_vecs.begin(),
@@ -740,9 +740,9 @@ std::optional<Gocad::Property const&> GocadSGridReader::getProperty(
                                }));
     if (it == _property_meta_data_vecs.end())
     {
-        return std::optional<Gocad::Property const&>();
+        return nullptr;
     }
-    return std::optional<Gocad::Property const&>(*it);
+    return &*it;
 }
 
 std::vector<std::string> GocadSGridReader::getPropertyNames() const

@@ -32,8 +32,7 @@ namespace TwoPhaseFlowWithPrho
 std::unique_ptr<TwoPhaseFlowWithPrhoMaterialProperties>
 createTwoPhaseFlowPrhoMaterialProperties(
     BaseLib::ConfigTree const& config,
-    std::optional<MeshLib::PropertyVector<int> const&>
-        material_ids,
+    MeshLib::PropertyVector<int> const* const material_ids,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
     DBUG("Reading material properties of two-phase flow process.");
