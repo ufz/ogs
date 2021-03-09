@@ -455,7 +455,7 @@
         <vtkdiff>
             <regex>liakopoulos_QN_t_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>8e-9</absolute_tolerance>
+            <absolute_tolerance>2e-8</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
