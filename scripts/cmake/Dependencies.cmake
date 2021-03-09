@@ -263,14 +263,19 @@ if(OGS_BUILD_GUI)
 endif()
 
 if(OGS_BUILD_GUI)
-    CPMAddPackage(
-        NAME shapelib
-        GITHUB_REPOSITORY OSGeo/shapelib
-        VERSION 1.5.0
-        EXCLUDE_FROM_ALL YES
-    )
-    if(shapelib_ADDED)
-        target_include_directories(shp INTERFACE $<BUILD_INTERFACE:${shapelib_SOURCE_DIR}>)
+    find_package(Shapelib QUIET)
+    if(Shapelib_FOUND)
+        add_library(shp INTERFACE IMPORTED)
+        target_include_directories(shp INTERFACE ${Shapelib_INCLUDE_DIRS})
+        target_link_libraries(shp INTERFACE ${Shapelib_LIBRARIES})
+    else()
+        CPMAddPackage(
+            NAME Shapelib
+            GITHUB_REPOSITORY OSGeo/shapelib
+            VERSION 1.5.0
+            EXCLUDE_FROM_ALL YES
+        )
+        target_include_directories(shp INTERFACE $<BUILD_INTERFACE:${Shapelib_SOURCE_DIR}>)
     endif()
 endif()
 
