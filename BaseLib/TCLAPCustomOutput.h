@@ -34,62 +34,62 @@ public:
     /**
      * Prints the usage to stdout.  Can be overridden to
      * produce alternative behavior.
-     * \param _cmd - The CmdLine object the output is generated for.
+     * \param cmd_ - The CmdLine object the output is generated for.
      */
-    virtual void usage(TCLAP::CmdLineInterface& _cmd);
+    virtual void usage(TCLAP::CmdLineInterface& cmd_);
 
     /**
      * Prints (to stderr) an error message, short usage
      * Can be overridden to produce alternative behavior.
-     * \param _cmd - The CmdLine object the output is generated for.
+     * \param cmd_ - The CmdLine object the output is generated for.
      * \param e - The ArgException that caused the failure.
      */
-    virtual void failure(TCLAP::CmdLineInterface& _cmd, TCLAP::ArgException& e);
+    virtual void failure(TCLAP::CmdLineInterface& cmd_, TCLAP::ArgException& e);
 
 protected:
     /**
      * Writes a brief usage message with short args.
-     * \param _cmd - The CmdLine object the output is generated for.
+     * \param cmd_ - The CmdLine object the output is generated for.
      * \param os - The stream to write the message to.
      */
-    void _shortUsage(TCLAP::CmdLineInterface& _cmd, std::ostream& os) const;
+    void shortUsage_(TCLAP::CmdLineInterface& cmd_, std::ostream& os) const;
 
     /**
      * Writes a longer usage message with long and short args,
      * provides descriptions and prints message.
-     * \param _cmd - The CmdLine object the output is generated for.
+     * \param cmd_ - The CmdLine object the output is generated for.
      * \param os - The stream to write the message to.
      */
-    void _longUsage(TCLAP::CmdLineInterface& _cmd, std::ostream& os) const;
+    void longUsage_(TCLAP::CmdLineInterface& cmd_, std::ostream& os) const;
 };
 
-inline void TCLAPCustomOutput::usage(TCLAP::CmdLineInterface& _cmd )
+inline void TCLAPCustomOutput::usage(TCLAP::CmdLineInterface& cmd_ )
 {
     std::cout << std::endl << "USAGE: " << std::endl << std::endl;
 
-    _shortUsage( _cmd, std::cout );
+    shortUsage_( cmd_, std::cout );
 
     std::cout << std::endl << std::endl << "Where: " << std::endl << std::endl;
 
-    _longUsage( _cmd, std::cout );
+    longUsage_( cmd_, std::cout );
 
     std::cout << std::endl;
 
 }
 
-inline void TCLAPCustomOutput::failure( TCLAP::CmdLineInterface& _cmd,
+inline void TCLAPCustomOutput::failure( TCLAP::CmdLineInterface& cmd_,
         TCLAP::ArgException& e )
 {
-    std::string progName = _cmd.getProgramName();
+    std::string progName = cmd_.getProgramName();
 
     std::cerr << "PARSE ERROR: " << e.argId() << std::endl
               << "             " << e.error() << std::endl << std::endl;
 
-    if ( _cmd.hasHelpAndVersion() )
+    if ( cmd_.hasHelpAndVersion() )
         {
             std::cerr << "Brief USAGE: " << std::endl;
 
-            _shortUsage( _cmd, std::cerr );
+            shortUsage_( cmd_, std::cerr );
 
             std::cerr << std::endl << "For complete USAGE and HELP type: "
                       << std::endl << "   " << progName << " --help"
@@ -97,19 +97,19 @@ inline void TCLAPCustomOutput::failure( TCLAP::CmdLineInterface& _cmd,
         }
         else
         {
-            usage(_cmd);
+            usage(cmd_);
         }
 
     throw TCLAP::ExitException(1);
 }
 
 inline void
-TCLAPCustomOutput::_shortUsage( TCLAP::CmdLineInterface& _cmd,
+TCLAPCustomOutput::shortUsage_( TCLAP::CmdLineInterface& cmd_,
                         std::ostream& os ) const
 {
-    std::list<TCLAP::Arg*> argList = _cmd.getArgList();
-    std::string progName = _cmd.getProgramName();
-    TCLAP::XorHandler xorHandler = _cmd.getXorHandler();
+    std::list<TCLAP::Arg*> argList = cmd_.getArgList();
+    std::string progName = cmd_.getProgramName();
+    TCLAP::XorHandler xorHandler = cmd_.getXorHandler();
     std::vector< std::vector<TCLAP::Arg*> > xorList = xorHandler.getXorList();
 
     std::string s = progName + " ";
@@ -148,12 +148,12 @@ TCLAPCustomOutput::_shortUsage( TCLAP::CmdLineInterface& _cmd,
 }
 
 inline void
-TCLAPCustomOutput::_longUsage( TCLAP::CmdLineInterface& _cmd,
+TCLAPCustomOutput::longUsage_( TCLAP::CmdLineInterface& cmd_,
                        std::ostream& os ) const
 {
-    std::list<TCLAP::Arg*> argList = _cmd.getArgList();
-    std::string message = _cmd.getMessage();
-    TCLAP::XorHandler xorHandler = _cmd.getXorHandler();
+    std::list<TCLAP::Arg*> argList = cmd_.getArgList();
+    std::string message = cmd_.getMessage();
+    TCLAP::XorHandler xorHandler = cmd_.getXorHandler();
     std::vector< std::vector<TCLAP::Arg*> > xorList = xorHandler.getXorList();
 
     // first the xor

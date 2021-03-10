@@ -49,7 +49,7 @@ public:
     template <typename InputIterator>
     Histogram(InputIterator first, InputIterator last, const int nr_bins = 16,
               const bool computeHistogram = true )
-        : _data(first, last), _nr_bins(nr_bins), _dirty(true)
+        : data_(first, last), nr_bins_(nr_bins), dirty_(true)
     {
         init(computeHistogram);
     }
@@ -62,12 +62,12 @@ public:
      */
     explicit Histogram(std::vector<T> data, const unsigned int nr_bins = 16,
                        const bool computeHistogram = true)
-        : _data(std::move(data)), _nr_bins(nr_bins), _dirty(true)
+        : data_(std::move(data)), nr_bins_(nr_bins), dirty_(true)
     {
         init(computeHistogram);
     }
 
-    /** Updates histogram using sorted \c _data vector.
+    /** Updates histogram using sorted \c data_ vector.
      *
      * Start histogram creation with first element. Then find first element in
      * the next histogram bin. Number of elements in the bin is the difference
@@ -79,47 +79,47 @@ public:
      */
     void update()
     {
-        if (!_dirty)
+        if (!dirty_)
         {
             return;
         }
 
-        _bin_width = (_max - _min) / _nr_bins;
+        bin_width_ = (max_ - min_) / nr_bins_;
 
-        auto it = _data.begin();
-        for (unsigned int bin = 0; bin < _nr_bins; bin++)
+        auto it = data_.begin();
+        for (unsigned int bin = 0; bin < nr_bins_; bin++)
         {
-            auto itEnd = std::upper_bound(it, _data.end(),
-                                          _min + (bin + 1) * _bin_width);
-            _histogram[bin] = std::distance(it, itEnd);
+            auto itEnd = std::upper_bound(it, data_.end(),
+                                          min_ + (bin + 1) * bin_width_);
+            histogram_[bin] = std::distance(it, itEnd);
             it = itEnd;
         }
-        _dirty = false;
+        dirty_ = false;
     }
 
-    void setMinimum(const T& minimum) { _min = minimum; _dirty = true; }
-    void setMaximum(const T& maximum) { _max = maximum; _dirty = true; }
+    void setMinimum(const T& minimum) { min_ = minimum; dirty_ = true; }
+    void setMaximum(const T& maximum) { max_ = maximum; dirty_ = true; }
 
-    const Data& getSortedData() const { return _data; }
-    const std::vector<std::size_t>& getBinCounts() const { return _histogram; }
-    const unsigned int& getNumberOfBins() const { return _nr_bins; }
-    const T& getMinimum() const { return _min; }
-    const T& getMaximum() const { return _max; }
-    const T& getBinWidth() const { return _bin_width; }
+    const Data& getSortedData() const { return data_; }
+    const std::vector<std::size_t>& getBinCounts() const { return histogram_; }
+    const unsigned int& getNumberOfBins() const { return nr_bins_; }
+    const T& getMinimum() const { return min_; }
+    const T& getMaximum() const { return max_; }
+    const T& getBinWidth() const { return bin_width_; }
 
     void
     prettyPrint(std::ostream& os, const unsigned int line_width = 16) const
     {
         const std::size_t count_max =
-                *std::max_element(_histogram.begin(), _histogram.end());
-        for (unsigned int bin = 0; bin < _nr_bins; ++bin)
+                *std::max_element(histogram_.begin(), histogram_.end());
+        for (unsigned int bin = 0; bin < nr_bins_; ++bin)
         {
-            os << "[" << _min + bin * _bin_width << ", " << _min +
-                    (bin + 1) * _bin_width << ")\t";
-            os << _histogram[bin] << "\t";
+            os << "[" << min_ + bin * bin_width_ << ", " << min_ +
+                    (bin + 1) * bin_width_ << ")\t";
+            os << histogram_[bin] << "\t";
 
             const int n_stars =
-                    std::ceil(line_width * ((double)_histogram[bin] / count_max));
+                    std::ceil(line_width * ((double)histogram_[bin] / count_max));
             for (int star = 0; star < n_stars; star++)
             {
                 os << "*";
@@ -162,27 +162,27 @@ protected:
      */
     void init(const bool computeHistogram = true)
     {
-        std::sort(_data.begin(), _data.end());
-        _histogram.resize(_nr_bins);
-        _min = _data.front();
-        _max = _data.back();
-        _bin_width = (_max - _min) / _nr_bins;
+        std::sort(data_.begin(), data_.end());
+        histogram_.resize(nr_bins_);
+        min_ = data_.front();
+        max_ = data_.back();
+        bin_width_ = (max_ - min_) / nr_bins_;
 
-        _dirty = true;
+        dirty_ = true;
         if (computeHistogram)
         {
             update();
         }
     }
 
-    Data _data;
-    const unsigned int _nr_bins;
-    std::vector<std::size_t> _histogram;
-    T _min, _max; ///< Minimum and maximum input data values.
-    T _bin_width;
+    Data data_;
+    const unsigned int nr_bins_;
+    std::vector<std::size_t> histogram_;
+    T min_, max_; ///< Minimum and maximum input data values.
+    T bin_width_;
 
 private:
-    bool _dirty; ///< When set \c update() will recompute histogram.
+    bool dirty_; ///< When set \c update() will recompute histogram.
 };
 
 /** Writes histogram to output stream.

@@ -21,7 +21,7 @@ GradualSubdivision::GradualSubdivision(const double L,
                                        const double dL0,
                                        const double max_dL,
                                        const double multiplier)
-    : _length(L), _dL0(dL0), _max_dL(max_dL), _multiplier(multiplier)
+    : length_(L), dL0_(dL0), max_dL_(max_dL), multiplier_(multiplier)
 {
     // Check if accumulated subdivisions can ever sum up to length.
     // Cf. geometric series formula.
@@ -43,20 +43,20 @@ std::vector<double> GradualSubdivision::operator()() const
     unsigned i = 0;
     do {
         vec_x.push_back(x);
-        x += std::min(_max_dL,
-                      _dL0 * std::pow(_multiplier, static_cast<double>(i)));
+        x += std::min(max_dL_,
+                      dL0_ * std::pow(multiplier_, static_cast<double>(i)));
         i++;
-    } while (x < _length);
+    } while (x < length_);
 
-    if (vec_x.back() < _length) {
+    if (vec_x.back() < length_) {
         double last_dx = vec_x[vec_x.size() - 1] - vec_x[vec_x.size() - 2];
-        if (_length - vec_x.back() < last_dx)
+        if (length_ - vec_x.back() < last_dx)
         {
-            vec_x[vec_x.size() - 1] = _length;
+            vec_x[vec_x.size() - 1] = length_;
         }
         else
         {
-            vec_x.push_back(_length);
+            vec_x.push_back(length_);
         }
     }
     return vec_x;
@@ -64,36 +64,36 @@ std::vector<double> GradualSubdivision::operator()() const
 
 GradualSubdivisionFixedNum::GradualSubdivisionFixedNum(
     const double L, const std::size_t num_subdivisions, const double multiplier)
-    : _length{L}, _num_subdivisions{num_subdivisions}, _multiplier{multiplier}
+    : length_{L}, num_subdivisions_{num_subdivisions}, multiplier_{multiplier}
 {
 }
 
 std::vector<double> GradualSubdivisionFixedNum::operator()() const
 {
     std::vector<double> subdivisions;
-    subdivisions.reserve(_num_subdivisions + 1);
+    subdivisions.reserve(num_subdivisions_ + 1);
     subdivisions.push_back(0.0);
-    auto const q = _multiplier;
+    auto const q = multiplier_;
 
     if (q == 1.0) {
-        double const dx = _length / _num_subdivisions;
+        double const dx = length_ / num_subdivisions_;
 
-        for (std::size_t i = 1; i < _num_subdivisions; ++i) {
+        for (std::size_t i = 1; i < num_subdivisions_; ++i) {
             subdivisions.push_back(dx * i);
         }
     } else {
         // compute initial subdivision size
         auto const a =
-            _length * (q - 1.0) / (std::pow(q, _num_subdivisions) - 1.0);
+            length_ * (q - 1.0) / (std::pow(q, num_subdivisions_) - 1.0);
 
         double qi = q;  // q^i
-        for (std::size_t i = 1; i < _num_subdivisions; ++i) {
+        for (std::size_t i = 1; i < num_subdivisions_; ++i) {
             subdivisions.push_back(a * (qi - 1.0) / (q - 1.0));
             qi *= q;
         }
     }
 
-    subdivisions.push_back(_length);
+    subdivisions.push_back(length_);
 
     return subdivisions;
 }
