@@ -19,7 +19,6 @@
 #include <string>
 #include <vector>
 
-#include "BaseLib/Counter.h"
 #include "BaseLib/Error.h"
 
 #include "MeshEnums.h"
@@ -38,7 +37,7 @@ namespace MeshLib
 /**
  * A basic mesh.
  */
-class Mesh : BaseLib::Counter<Mesh>
+class Mesh
 {
     /* friend functions: */
     friend void removeMeshNodes(MeshLib::Mesh &mesh, const std::vector<std::size_t> &nodes);

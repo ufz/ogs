@@ -28,6 +28,9 @@
 #include "Elements/Pyramid.h"
 #include "Elements/Prism.h"
 
+/// Mesh counter used to uniquely identify meshes by id.
+static std::size_t global_mesh_counter = 0;
+
 namespace MeshLib
 {
 Mesh::Mesh(std::string name,
@@ -37,7 +40,7 @@ Mesh::Mesh(std::string name,
                elements,
            Properties const& properties,
            const std::size_t n_base_nodes)
-    : _id(_counter_value - 1),
+    : _id(global_mesh_counter++),
       _mesh_dimension(0),
       _edge_length(std::numeric_limits<double>::max(), 0),
       _node_distance(std::numeric_limits<double>::max(), 0),
@@ -66,11 +69,14 @@ Mesh::Mesh(std::string name,
     this->calcEdgeLengthRange();
 }
 
-Mesh::Mesh(const Mesh &mesh)
-    : _id(_counter_value-1), _mesh_dimension(mesh.getDimension()),
+Mesh::Mesh(const Mesh& mesh)
+    : _id(global_mesh_counter++),
+      _mesh_dimension(mesh.getDimension()),
       _edge_length(mesh._edge_length.first, mesh._edge_length.second),
       _node_distance(mesh._node_distance.first, mesh._node_distance.second),
-      _name(mesh.getName()), _nodes(mesh.getNumberOfNodes()), _elements(mesh.getNumberOfElements()),
+      _name(mesh.getName()),
+      _nodes(mesh.getNumberOfNodes()),
+      _elements(mesh.getNumberOfElements()),
       _n_base_nodes(mesh.getNumberOfBaseNodes()),
       _properties(mesh._properties)
 {
