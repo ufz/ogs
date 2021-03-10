@@ -11,6 +11,7 @@
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cmath>
 #include <limits>
 
@@ -48,10 +49,10 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
 
     // The derivative of the water vapour with respect of temperature
     {
-        std::vector<double> Ts = {273.0, 293.0, 393.0, 420.0, 500.0};
-        std::vector<double> D_v_expected = {1.294719e-06, 1.470431e-06,
-                                            2.494534e-06, 2.811458e-06,
-                                            3.847945e-06};
+        std::array const Ts = {273.0, 293.0, 393.0, 420.0, 500.0};
+        std::array const D_v_expected = {1.294719e-06, 1.470431e-06,
+                                         2.494534e-06, 2.811458e-06,
+                                         3.847945e-06};
 
         for (std::size_t i = 0; i < Ts.size(); ++i)
         {
@@ -93,9 +94,9 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
     }
     // The derivative of the water vapour with respect of saturation
     {
-        std::vector<double> S = {-1.0, 0.0, 0.2,  0.33, 0.45,
-                                 0.52, 0.6, 0.85, 1.0,  1.1};
-        std::vector<double> D_v_expected = {
+        std::array const S = {-1.0, 0.0, 0.2,  0.33, 0.45,
+                              0.52, 0.6, 0.85, 1.0,  1.1};
+        std::array const D_v_expected = {
             2.886883e-06, 2.886883e-06, 2.309507e-06, 1.934212e-06,
             1.587786e-06, 1.385704e-06, 1.154753e-06, 4.330325e-07,
             0.000000e+00, 0.000000e+00};
