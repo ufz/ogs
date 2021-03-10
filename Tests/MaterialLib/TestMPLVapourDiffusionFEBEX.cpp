@@ -12,16 +12,10 @@
 #include <gtest/gtest.h>
 
 #include <cmath>
-#include <functional>
 #include <limits>
-#include <random>
 
-#include "BaseLib/ConfigTree.h"
-#include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Properties/VapourDiffusion/CreateVapourDiffusionFEBEX.h"
-#include "MaterialLib/MPL/Properties/VapourDiffusion/VapourDiffusionFEBEX.h"
 #include "TestMPL.h"
-#include "Tests/TestTools.h"
 
 TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
 {
