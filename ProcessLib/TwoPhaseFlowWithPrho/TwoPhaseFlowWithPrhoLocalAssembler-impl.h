@@ -82,7 +82,7 @@ void TwoPhaseFlowWithPrhoLocalAssembler<
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
     const int material_id =
-        _process_data._material->getMaterialID(pos.getElementID().get());
+        _process_data._material->getMaterialID(pos.getElementID().value());
 
     const Eigen::MatrixXd& perm = _process_data._material->getPermeability(
         material_id, t, pos, _element.getDimension());

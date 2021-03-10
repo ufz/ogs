@@ -20,7 +20,7 @@ namespace MeshGeoToolsLib
 std::unique_ptr<MeshGeoToolsLib::SearchLength> createSearchLengthAlgorithm(
     BaseLib::ConfigTree const& external_config, MeshLib::Mesh const& mesh)
 {
-    boost::optional<BaseLib::ConfigTree> config =
+    std::optional<BaseLib::ConfigTree> config =
         //! \ogs_file_param{prj__search_length_algorithm}
         external_config.getConfigSubtreeOptional("search_length_algorithm");
 

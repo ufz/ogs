@@ -45,16 +45,16 @@ void Element::setNeighbor(Element* neighbor, unsigned const face_id)
     this->_neighbors[face_id] = neighbor;
 }
 
-boost::optional<unsigned> Element::addNeighbor(Element* e)
+std::optional<unsigned> Element::addNeighbor(Element* e)
 {
     if (e == this || e == nullptr || e->getDimension() != this->getDimension())
     {
-        return boost::optional<unsigned>();
+        return std::optional<unsigned>();
     }
 
     if (areNeighbors(this, e))
     {
-        return boost::optional<unsigned>();
+        return std::optional<unsigned>();
     }
 
     Node* face_nodes[3];
@@ -74,13 +74,13 @@ boost::optional<unsigned> Element::addNeighbor(Element* e)
                 if ((++count)>=dim)
                 {
                     _neighbors[ this->identifyFace(face_nodes) ] = e;
-                    return boost::optional<unsigned>(e->identifyFace(face_nodes));
+                    return std::optional<unsigned>(e->identifyFace(face_nodes));
                 }
             }
         }
     }
 
-    return boost::optional<unsigned>();
+    return std::optional<unsigned>();
 }
 
 const Element* Element::getNeighbor(unsigned i) const

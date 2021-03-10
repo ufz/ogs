@@ -17,5 +17,5 @@ namespace ProcessLib
 class AbstractJacobianAssembler;
 
 std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
-    boost::optional<BaseLib::ConfigTree> const& config);
+    std::optional<BaseLib::ConfigTree> const& config);
 }  // ProcessLib

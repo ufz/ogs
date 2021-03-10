@@ -35,7 +35,7 @@ template <int DisplacementDim>
 std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
 createConstitutiveRelation(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
@@ -91,7 +91,7 @@ std::map<int,
          std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
 createConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
@@ -135,14 +135,14 @@ createConstitutiveRelations(
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<2>>>
 createConstitutiveRelations<2>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     BaseLib::ConfigTree const& config);
 
 template std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<3>>>
 createConstitutiveRelations<3>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     BaseLib::ConfigTree const& config);
 }  // namespace Solids

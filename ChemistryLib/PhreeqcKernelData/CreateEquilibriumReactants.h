@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
 #include <memory>
+#include <optional>
 
 #include "EquilibriumReactants.h"
 
@@ -30,7 +30,7 @@ namespace ChemistryLib
 namespace PhreeqcKernelData
 {
 std::unique_ptr<EquilibriumReactants> createEquilibriumReactants(
-    boost::optional<BaseLib::ConfigTree> const& config,
+    std::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
 }
 }  // namespace ChemistryLib

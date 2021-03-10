@@ -8,10 +8,11 @@
  *
  */
 
-#include <boost/optional/optional.hpp>
+#include "CreateEquilibriumReactants.h"
+
+#include <optional>
 
 #include "BaseLib/ConfigTree.h"
-#include "CreateEquilibriumReactants.h"
 #include "EquilibriumReactant.h"
 #include "MeshLib/Mesh.h"
 
@@ -20,7 +21,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<EquilibriumReactant> createEquilibriumReactants(
-    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
+    std::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
 {
     if (!config)
     {

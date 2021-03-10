@@ -10,7 +10,8 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
+
 #include "ConvergenceCriterion.h"
 #include "MathLib/LinAlg/LinAlgEnums.h"
 
@@ -25,8 +26,8 @@ namespace NumLib
 class ConvergenceCriterionResidual final : public ConvergenceCriterion
 {
 public:
-    ConvergenceCriterionResidual(boost::optional<double>&& absolute_tolerance,
-                                 boost::optional<double>&& relative_tolerance,
+    ConvergenceCriterionResidual(std::optional<double>&& absolute_tolerance,
+                                 std::optional<double>&& relative_tolerance,
                                  const MathLib::VecNormType norm_type);
 
     bool hasDeltaXCheck() const override { return true; }
@@ -39,8 +40,8 @@ public:
     void checkResidual(const GlobalVector& residual) override;
 
 private:
-    const boost::optional<double> _abstol;
-    const boost::optional<double> _reltol;
+    const std::optional<double> _abstol;
+    const std::optional<double> _reltol;
     double _residual_norm_0;
 };
 

@@ -62,7 +62,7 @@ getConfigParameter(std::string const& param, T const& default_value) const
 }
 
 template <typename T>
-boost::optional<T> ConfigTree::getConfigParameterOptional(
+std::optional<T> ConfigTree::getConfigParameterOptional(
     std::string const& param) const
 {
     checkUnique(param);
@@ -71,7 +71,7 @@ boost::optional<T> ConfigTree::getConfigParameterOptional(
 }
 
 template <typename T>
-boost::optional<T> ConfigTree::getConfigParameterOptionalImpl(
+std::optional<T> ConfigTree::getConfigParameterOptionalImpl(
     std::string const& param, T* /*unused*/) const
 {
     if (auto p = getConfigSubtreeOptional(param))
@@ -79,11 +79,11 @@ boost::optional<T> ConfigTree::getConfigParameterOptionalImpl(
         return p->getValue<T>();
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 template <typename T>
-boost::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
+std::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
     std::string const& param, std::vector<T>* /*unused*/) const
 {
     if (auto p = getConfigSubtreeOptional(param))
@@ -103,13 +103,13 @@ boost::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
                   "' not convertible to a vector of the desired type."
                   " Could not convert token no. " +
                   std::to_string(result.size() + 1) + ".");
-            return boost::none;
+            return std::nullopt;
         }
 
-        return boost::make_optional(result);
+        return std::make_optional(result);
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 template<typename T>
@@ -214,10 +214,9 @@ T ConfigTree::getConfigAttribute(std::string const& attr,
     return default_value;
 }
 
-template<typename T>
-boost::optional<T>
-ConfigTree::
-getConfigAttributeOptional(std::string const& attr) const
+template <typename T>
+std::optional<T> ConfigTree::getConfigAttributeOptional(
+    std::string const& attr) const
 {
     checkUniqueAttr(attr);
     auto& ct = markVisited<T>(attr, Attr::ATTR, true);
@@ -226,7 +225,7 @@ getConfigAttributeOptional(std::string const& attr) const
         if (auto a = attrs->get_child_optional(attr)) {
             ++ct.count; // count only if attribute has been found
             if (auto v = a->get_value_optional<T>()) {
-                return v;
+                return std::make_optional(*v);
             }
             error("Value for XML attribute '" + attr + "' `" +
                   shortString(a->data()) +
@@ -234,7 +233,7 @@ getConfigAttributeOptional(std::string const& attr) const
         }
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 template<typename T>

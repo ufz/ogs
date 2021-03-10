@@ -8,11 +8,12 @@
  *
  */
 
-#include <boost/optional/optional.hpp>
+#include "CreateKineticReactant.h"
+
+#include <optional>
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
-#include "CreateKineticReactant.h"
 #include "KineticReactant.h"
 #include "MeshLib/Mesh.h"
 
@@ -21,8 +22,7 @@ namespace ChemistryLib
 namespace PhreeqcKernelData
 {
 std::unique_ptr<Kinetics> createKineticReactants(
-    boost::optional<BaseLib::ConfigTree> const& config,
-    MeshLib::Mesh const& mesh)
+    std::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh const& mesh)
 {
     if (!config)
     {

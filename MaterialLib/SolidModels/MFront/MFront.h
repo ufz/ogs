@@ -74,7 +74,7 @@ public:
     MFront(mgis::behaviour::Behaviour&& behaviour,
            std::vector<ParameterLib::Parameter<double> const*>&&
                material_properties,
-           boost::optional<ParameterLib::CoordinateSystem> const&
+           std::optional<ParameterLib::CoordinateSystem> const&
                local_coordinate_system);
 
     std::unique_ptr<

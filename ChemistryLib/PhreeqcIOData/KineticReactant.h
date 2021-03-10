@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <boost/optional/optional.hpp>
 #include <iosfwd>
+#include <optional>
 #include <string>
 #include <vector>
 

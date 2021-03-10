@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
 #include <memory>
+#include <optional>
 
 namespace BaseLib
 {
@@ -30,7 +30,7 @@ namespace PhreeqcIOData
 struct UserPunch;
 
 std::unique_ptr<UserPunch> createUserPunch(
-    boost::optional<BaseLib::ConfigTree> const& config,
+    std::optional<BaseLib::ConfigTree> const& config,
     MeshLib::Mesh const& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

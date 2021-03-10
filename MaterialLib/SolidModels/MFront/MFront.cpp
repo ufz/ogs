@@ -172,14 +172,14 @@ template <int DisplacementDim>
 MFront<DisplacementDim>::MFront(
     mgis::behaviour::Behaviour&& behaviour,
     std::vector<ParameterLib::Parameter<double> const*>&& material_properties,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system)
     : _behaviour(std::move(behaviour)),
       equivalent_plastic_strain_offset_(
           getEquivalentPlasticStrainOffset(_behaviour)),
       _material_properties(std::move(material_properties)),
       _local_coordinate_system(
-          local_coordinate_system ? &local_coordinate_system.get() : nullptr)
+          local_coordinate_system ? &local_coordinate_system.value() : nullptr)
 {
     auto const hypothesis = behaviour.hypothesis;
 

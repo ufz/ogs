@@ -63,7 +63,7 @@ struct GroupBasedParameter final : public Parameter<T>
     {
         auto const item_id = getMeshItemID(pos, type<MeshItemType>());
         assert(item_id);
-        int const index = _property_index[item_id.get()];
+        int const index = _property_index[item_id.value()];
         auto const& values = _vec_values[index];
         if (values.empty())
         {
@@ -84,14 +84,14 @@ private:
     {
     };
 
-    static boost::optional<std::size_t> getMeshItemID(
+    static std::optional<std::size_t> getMeshItemID(
         SpatialPosition const& pos,
         type<MeshLib::MeshItemType::Cell> /*unused*/)
     {
         return pos.getElementID();
     }
 
-    static boost::optional<std::size_t> getMeshItemID(
+    static std::optional<std::size_t> getMeshItemID(
         SpatialPosition const& pos,
         type<MeshLib::MeshItemType::Node> /*unused*/)
     {

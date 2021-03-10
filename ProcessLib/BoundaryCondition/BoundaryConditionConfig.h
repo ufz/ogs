@@ -19,7 +19,7 @@ struct BoundaryConditionConfig final
 {
     BoundaryConditionConfig(BaseLib::ConfigTree&& config_,
                             MeshLib::Mesh const& mesh_,
-                            boost::optional<int> const component_id_)
+                            std::optional<int> const component_id_)
         : config(std::move(config_)),
           boundary_mesh(mesh_),
           component_id(component_id_)
@@ -30,7 +30,7 @@ struct BoundaryConditionConfig final
 
     BaseLib::ConfigTree config;
     MeshLib::Mesh const& boundary_mesh;
-    boost::optional<int> const component_id;
+    std::optional<int> const component_id;
 };
 
 }  // namespace ProcessLib

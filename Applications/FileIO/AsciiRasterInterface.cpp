@@ -13,12 +13,11 @@
 
 #include "AsciiRasterInterface.h"
 
-#include <boost/optional.hpp>
-#include "BaseLib/Logging.h"
+#include <optional>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
-
 #include "GeoLib/Raster.h"
 
 namespace FileIO
@@ -282,12 +281,12 @@ static bool allRastersExist(std::vector<std::string> const& raster_paths)
     return true;
 }
 
-boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
+std::optional<std::vector<GeoLib::Raster const*>> readRasters(
     std::vector<std::string> const& raster_paths)
 {
     if (!allRastersExist(raster_paths))
     {
-        return boost::none;
+        return std::nullopt;
     }
 
     std::vector<GeoLib::Raster const*> rasters;
@@ -296,6 +295,6 @@ boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
                    std::back_inserter(rasters), [](auto const& path) {
                        return FileIO::AsciiRasterInterface::readRaster(path);
                    });
-    return boost::make_optional(rasters);
+    return std::make_optional(rasters);
 }
 } // end namespace FileIO

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
+#include <optional>
 #include <vector>
 
 namespace BaseLib
@@ -22,5 +22,5 @@ namespace ChemistryLib
 {
 template <typename ReactionRate>
 std::vector<ReactionRate> createReactionRates(
-    boost::optional<BaseLib::ConfigTree> const& config);
+    std::optional<BaseLib::ConfigTree> const& config);
 }  // namespace ChemistryLib

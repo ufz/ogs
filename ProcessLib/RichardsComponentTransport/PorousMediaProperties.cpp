@@ -17,7 +17,7 @@ namespace RichardsComponentTransport
 int PorousMediaProperties::getMaterialID(
     ParameterLib::SpatialPosition const& pos) const
 {
-    int const element_id = pos.getElementID().get();
+    int const element_id = pos.getElementID().value();
     return _material_ids[element_id];
 }
 

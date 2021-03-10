@@ -17,8 +17,8 @@
 namespace NumLib
 {
 ConvergenceCriterionResidual::ConvergenceCriterionResidual(
-    boost::optional<double>&& absolute_tolerance,
-    boost::optional<double>&& relative_tolerance,
+    std::optional<double>&& absolute_tolerance,
+    std::optional<double>&& relative_tolerance,
     const MathLib::VecNormType norm_type)
     : ConvergenceCriterion(norm_type),
       _abstol(std::move(absolute_tolerance)),

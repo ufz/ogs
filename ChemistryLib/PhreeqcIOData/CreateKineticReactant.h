@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/optional/optional_fwd.hpp>
+#include <optional>
 #include <vector>
 
 namespace BaseLib
@@ -33,6 +33,6 @@ namespace PhreeqcIOData
 struct KineticReactant;
 
 std::vector<KineticReactant> createKineticReactants(
-    boost::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh);
+    std::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

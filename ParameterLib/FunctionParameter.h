@@ -120,7 +120,7 @@ struct FunctionParameter final : public Parameter<T>
                 "FunctionParameter: The spatial position has to be set by "
                 "coordinates.");
         }
-        auto const coords = pos.getCoordinates().get();
+        auto const coords = pos.getCoordinates().value();
         x = coords[0];
         y = coords[1];
         z = coords[2];

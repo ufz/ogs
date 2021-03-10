@@ -11,8 +11,8 @@
 #pragma once
 
 #include <algorithm>
-#include <boost/optional.hpp>
 #include <cassert>
+#include <optional>
 #include <string>
 #include <typeindex>
 #include <typeinfo>
@@ -270,7 +270,7 @@ bool containsIf(Container const& container, Predicate&& predicate)
 }
 
 template <typename Container>
-boost::optional<typename Container::value_type> findFirstNotEqualElement(
+std::optional<typename Container::value_type> findFirstNotEqualElement(
     Container const& container, typename Container::value_type const& element)
 {
     auto const it =
@@ -278,7 +278,7 @@ boost::optional<typename Container::value_type> findFirstNotEqualElement(
                          [&element](typename Container::value_type const& e) {
                              return e == element;
                          });
-    return it == container.end() ? boost::none : boost::make_optional(*it);
+    return it == container.end() ? std::nullopt : std::make_optional(*it);
 }
 
 /// Returns the index of first element in container or, if the element is not

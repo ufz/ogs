@@ -10,19 +10,17 @@
 
 #pragma once
 
+#include <Eigen/Dense>
 #include <map>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include <Eigen/Dense>
-#include <boost/optional.hpp>
-
 #include "BaseLib/Error.h"
+#include "CoordinateSystem.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
-
-#include "CoordinateSystem.h"
 #include "SpatialPosition.h"
 
 namespace BaseLib
@@ -124,7 +122,7 @@ protected:
     }
 
 protected:
-    boost::optional<CoordinateSystem> _coordinate_system;
+    std::optional<CoordinateSystem> _coordinate_system;
 
     /// A mesh on which the parameter is defined. Some parameters might be
     /// mesh-independent.
@@ -176,7 +174,7 @@ struct Parameter : public ParameterBase
         for (int i = 0; i < n_nodes; ++i)
         {
             x_position.setAll(
-                nodes[i]->getID(), element.getID(), boost::none, *nodes[i]);
+                nodes[i]->getID(), element.getID(), std::nullopt, *nodes[i]);
             auto const& values = this->operator()(t, x_position);
             auto const row_values =
                 Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, 1> const>(
@@ -204,7 +202,7 @@ std::unique_ptr<ParameterBase> createParameter(
 //! to the given mesh.
 //! \returns nothing if the parameter can be used on the given mesh, or an error
 //! string otherwise.
-boost::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
-                                                 MeshLib::Mesh const& mesh);
+std::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
+                                               MeshLib::Mesh const& mesh);
 
 }  // namespace ParameterLib

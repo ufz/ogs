@@ -8,7 +8,7 @@
  *
  */
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 #include "BaseLib/ConfigTree.h"
 #include "Surface.h"
@@ -18,7 +18,7 @@ namespace ChemistryLib
 namespace PhreeqcIOData
 {
 std::vector<SurfaceSite> createSurface(
-    boost::optional<BaseLib::ConfigTree> const& config)
+    std::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
     {

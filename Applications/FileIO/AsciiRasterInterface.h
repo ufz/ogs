@@ -14,9 +14,9 @@
 #pragma once
 
 #include <fstream>
-#include <vector>
+#include <optional>
 #include <string>
-#include <boost/optional.hpp>
+#include <vector>
 
 #include "GeoLib/Raster.h"
 
@@ -53,6 +53,6 @@ private:
 
 /// Reads a vector of rasters given by file names. On error nothing is returned,
 /// otherwise the returned vector contains pointers to the read rasters.
-boost::optional<std::vector<GeoLib::Raster const*>> readRasters(
+std::optional<std::vector<GeoLib::Raster const*>> readRasters(
     std::vector<std::string> const& raster_paths);
 } // end namespace FileIO

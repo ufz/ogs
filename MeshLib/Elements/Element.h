@@ -15,14 +15,12 @@
 #pragma once
 
 #include <limits>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include "MathLib/Point3d.h"
-
-#include "MeshLib/MeshEnums.h"
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/ElementErrorCode.h"
-
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEnums.h"
 
 namespace MeshLib {
 
@@ -42,7 +40,7 @@ public:
      * neighbour-list and the face id of the neighbour connected to this element
      * is returned. Otherwise the maximum value of the value type is returned.
      */
-    boost::optional<unsigned> addNeighbor(Element* e);
+    std::optional<unsigned> addNeighbor(Element* e);
 
     /// Returns the length, area or volume of a 1D, 2D or 3D element
     double getContent() const { return _content; }

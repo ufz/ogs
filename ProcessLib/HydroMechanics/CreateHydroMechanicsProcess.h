@@ -10,9 +10,10 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
 #include <map>
 #include <memory>
+#include <optional>
+#include <string>
 #include <vector>
 
 namespace BaseLib
@@ -50,7 +51,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
@@ -62,7 +63,7 @@ extern template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
@@ -74,7 +75,7 @@ extern template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    boost::optional<ParameterLib::CoordinateSystem> const&
+    std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
