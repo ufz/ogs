@@ -53,29 +53,26 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
                                             2.494534e-06, 2.811458e-06,
                                             3.847945e-06};
 
-        int counter = 0;
-        for (auto const T_i : Ts)
+        for (std::size_t i = 0; i < Ts.size(); ++i)
         {
             variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = T_i;
+                MaterialPropertyLib::Variable::temperature)] = Ts[i];
 
             const double D_v =
                 property.template value<double>(variable_array, pos, t, dt);
 
-            ASSERT_LE(std::fabs(D_v_expected[counter] - D_v), 1e-10)
-                << "for expected water vapour diffusion "
-                << D_v_expected[counter]
+            ASSERT_LE(std::fabs(D_v_expected[i] - D_v), 1e-10)
+                << "for expected water vapour diffusion " << D_v_expected[i]
                 << " and for computed water vapour diffusion " << D_v;
-            counter++;
 
             const double dT = 1.0e-4;
             variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = T_i - dT;
+                MaterialPropertyLib::Variable::temperature)] = Ts[i] - dT;
             const double D_v0 =
                 property.template value<double>(variable_array, pos, t, dt);
 
             variable_array[static_cast<int>(
-                MaterialPropertyLib::Variable::temperature)] = T_i + dT;
+                MaterialPropertyLib::Variable::temperature)] = Ts[i] + dT;
             const double D_v1 =
                 property.template value<double>(variable_array, pos, t, dt);
 
@@ -102,22 +99,20 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
             2.886883e-06, 2.886883e-06, 2.309507e-06, 1.934212e-06,
             1.587786e-06, 1.385704e-06, 1.154753e-06, 4.330325e-07,
             0.000000e+00, 0.000000e+00};
-        int counter = 0;
-        for (const auto S_L_i : S)
+        for (std::size_t i = 0; i < S.size(); ++i)
         {
             variable_array[static_cast<int>(
                 MaterialPropertyLib::Variable::temperature)] = T;
 
+            double const S_L_i = S[i];
             variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
                 S_L_i;
             const double D_v =
                 property.template value<double>(variable_array, pos, t, dt);
 
-            ASSERT_LE(std::fabs(D_v_expected[counter] - D_v), 1e-10)
-                << "for expected water vapour diffusion "
-                << D_v_expected[counter]
+            ASSERT_LE(std::fabs(D_v_expected[i] - D_v), 1e-10)
+                << "for expected water vapour diffusion " << D_v_expected[i]
                 << " and for computed water vapour diffusion " << D_v;
-            counter++;
 
             double const analytic_dDv_dS = property.template dValue<double>(
                 variable_array, MPL::Variable::liquid_saturation, pos, t, dt);
