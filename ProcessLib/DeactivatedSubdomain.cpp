@@ -55,11 +55,9 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     config.peekConfigParameter<std::string>("time_interval");
     auto time_interval = BaseLib::createTimeInterval(config);
 
-    std::vector<int> deactivated_subdomain_material_ids;
-    deactivated_subdomain_material_ids =
+    auto deactivated_subdomain_material_ids =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__material_ids}
-        config.getConfigParameter<std::vector<int>>("material_ids",
-                                                    std::vector<int>{});
+        config.getConfigParameter("material_ids", std::vector<int>{});
 
     if (deactivated_subdomain_material_ids.empty())
     {
