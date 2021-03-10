@@ -20,7 +20,7 @@
 
 TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
 {
-    const char xml[] =
+    char const xml[] =
         "<property>"
         "   <name>vapour_diffusion</name>"
         "   <type>VapourDiffusionFEBEX</type>"
@@ -32,9 +32,9 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
             xml, MaterialPropertyLib::createVapourDiffusionFEBEX);
     MaterialPropertyLib::Property const& property = *property_ptr;
 
-    const double T = 290.0;
-    const double S = 0.5;
-    const double phi = 0.15;
+    double const T = 290.0;
+    double const S = 0.5;
+    double const phi = 0.15;
 
     MaterialPropertyLib::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
@@ -59,27 +59,27 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
             variable_array[static_cast<int>(
                 MaterialPropertyLib::Variable::temperature)] = Ts[i];
 
-            const double D_v =
+            double const D_v =
                 property.template value<double>(variable_array, pos, t, dt);
 
             ASSERT_LE(std::fabs(D_v_expected[i] - D_v), 1e-10)
                 << "for expected water vapour diffusion " << D_v_expected[i]
                 << " and for computed water vapour diffusion " << D_v;
 
-            const double dT = 1.0e-4;
+            double const dT = 1.0e-4;
             variable_array[static_cast<int>(
                 MaterialPropertyLib::Variable::temperature)] = Ts[i] - dT;
-            const double D_v0 =
+            double const D_v0 =
                 property.template value<double>(variable_array, pos, t, dt);
 
             variable_array[static_cast<int>(
                 MaterialPropertyLib::Variable::temperature)] = Ts[i] + dT;
-            const double D_v1 =
+            double const D_v1 =
                 property.template value<double>(variable_array, pos, t, dt);
 
-            const double approximated_dDv_dT = 0.5 * (D_v1 - D_v0) / dT;
+            double const approximated_dDv_dT = 0.5 * (D_v1 - D_v0) / dT;
 
-            const double analytic_dDv_dT = property.template dValue<double>(
+            double const analytic_dDv_dT = property.template dValue<double>(
                 variable_array, MaterialPropertyLib::Variable::temperature, pos,
                 t, dt);
 
@@ -108,7 +108,7 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
             double const S_L_i = S[i];
             variable_array[static_cast<int>(MPL::Variable::liquid_saturation)] =
                 S_L_i;
-            const double D_v =
+            double const D_v =
                 property.template value<double>(variable_array, pos, t, dt);
 
             ASSERT_LE(std::fabs(D_v_expected[i] - D_v), 1e-10)
