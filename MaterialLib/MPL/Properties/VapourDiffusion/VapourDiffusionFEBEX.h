@@ -26,8 +26,8 @@ class Phase;
  *   \cite moldrup1997modeling, \cite moldrup2000predicting,
  *  \cite chau2005simulation
  *  \f[
- * 	D_v=2.16\cdot 10^{-5} \left(\frac{T}{273.15}\right)^{1.8}
- * 	D_{vr},
+ *     D_v=2.16\cdot 10^{-5} \left(\frac{T}{273.15}\right)^{1.8}
+ *     D_{vr},
  *  \f]
  *  where \f$D_{vr}\f$ is the the relative diffusion coefficient,
  *  and \f$T\f$ is the temperature.
