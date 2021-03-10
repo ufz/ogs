@@ -66,9 +66,14 @@ std::vector<std::size_t> copyIdsIf(InputIterator first,
 }
 
 static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
-    MeshLib::Mesh const& mesh, int const material_id,
-    MeshLib::PropertyVector<int> const& material_ids)
+    MeshLib::Mesh const& mesh, int const material_id)
 {
+    // An element is active if its material id matches the selected material id.
+    auto is_active = [material_id, material_ids = *materialIDs(mesh)](
+                         MeshLib::Element const* const e) {
+        return material_id == material_ids[e->getID()];
+    };
+
     auto deactivated_bulk_node_ids = copyIdsIf(
         begin(mesh.getNodes()), end(mesh.getNodes()),
         [&](MeshLib::Node* const n) {
@@ -78,8 +83,7 @@ static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
             if (std::find_if(connected_elements.begin(),
                              connected_elements.end(),
                              [&](auto const* const connected_elem) -> bool {
-                                 return material_id !=
-                                        material_ids[connected_elem->getID()];
+                                 return is_active(connected_elem);
                              }) != connected_elements.end())
             {
                 return false;
@@ -91,7 +95,7 @@ static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
     std::vector<MeshLib::Element*> deactivated_elements;
     for (auto const& element : elements)
     {
-        if (material_id != material_ids[element->getID()])
+        if (is_active(element))
         {
             continue;
         }
@@ -173,7 +177,7 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     for (int const id : deactivated_subdomain_material_ids)
     {
         deactivated_subdomain_meshes.push_back(
-            createDeactivatedSubdomainMesh(mesh, id, *material_ids));
+            createDeactivatedSubdomainMesh(mesh, id));
     }
 
     return std::make_unique<DeactivatedSubdomain const>(
