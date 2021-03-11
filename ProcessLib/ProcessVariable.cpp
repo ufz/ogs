@@ -261,7 +261,7 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                     DirichletBoundaryConditionWithinTimeInterval>(
                     std::move(time_interval), parameter,
                     *(deactivated_subdomain_mesh->mesh),
-                    deactivated_subdomain_mesh->inactive_nodes, dof_table,
+                    deactivated_subdomain_mesh->inner_nodes, dof_table,
                     variable_id, component_id);
 
 #ifdef USE_PETSC
