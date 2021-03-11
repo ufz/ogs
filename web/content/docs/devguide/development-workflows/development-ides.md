@@ -3,6 +3,7 @@ date = "2018-02-26T11:00:13+01:00"
 title = "Development IDEs"
 author = "Marc Walther"
 weight = 1013
+draft = true # This page is outdated
 
 [menu]
   [menu.devguide]

@@ -54,4 +54,4 @@ So now the build process is running... This can take some time because maybe the
 
 Congratulations you have finished the **Getting Started**-section!
 
-Have a look at the other sections of this guide. Maybe check out [Development Workflows]({{< ref "branching-model" >}}) if you are interested in actively contributing to the project. The [Configuration Options]({{< ref "configuration-options" >}})-page shows you all available build customizations. Go ahead!
+Have a look at the other sections of this guide. Check out [Development Workflows]({{< ref "/docs/devguide/development-workflows/introduction.md" >}}) if you are interested in actively contributing to the project. The [Configuration Options]({{< ref "configuration-options" >}})-page shows you all available build customizations. Go ahead!
