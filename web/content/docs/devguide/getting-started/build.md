@@ -48,7 +48,7 @@ See Linux-tab!
 
 ## Waiting
 
-So now the build process is running... This can take some time because maybe there are external libraries which get automatically downloaded and compiled. This step is only done once per build directory, so subsequent builds will be much faster. See [this]({{< ref "third-party-libraries" >}}) for more.
+So now the build process is running... This can take some time because maybe there are external libraries which get automatically downloaded and compiled. This step is only done once per build directory, so subsequent builds will be much faster. See [this]({{< ref "cpm.md" >}}) for more.
 
 ## Finished
 

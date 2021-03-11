@@ -17,8 +17,8 @@ The minimum prerequisites to build OGS are:
 - Git (version control tool, at least version {{< dataFile "versions.minimum_version.git" >}})
 - CMake (build configuration tool, at least version {{< dataFile "versions.minimum_version.cmake" >}})
 - A compiler with [C++20](http://en.wikipedia.org/wiki/C%2B%2B20)-support
-- [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) **OR** install [required libraries]({{< ref "third-party-libraries.md" >}}) manually (for advanced users only!)
 - *Optional (but recommended)*: [Ninja](https://ninja-build.org) build tool
+- *Optional*: [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) for some optional dependencies.
 
 <div class='note'>
 
@@ -257,9 +257,26 @@ brew install cmake
 
 </div>
 
-## Step: Install Conan package manager
+## Optional: Install Ninja
 
-The [Conan package manager](https://www.conan.io) helps to install all required libraries in a convenient way on every platform. If you prefer you can also [install libraries manually]({{< ref "third-party-libraries.md" >}}) instead.
+We recommend [`ninja`](https://ninja-build.org) as a cross-platform build tool (`make`-replacement).
+
+Install Ninja with Python's pip:
+
+```bash
+pip3 install --user ninja
+```
+
+Make sure that `ninja` is in the path afterwards. See Conan install instructions above.
+
+## Optional: Install Conan package manager
+
+You only need Conan if you intend to build with one of the following settings **and** do not want to install their dependencies manually:
+
+- `OGS_USE_PETSC` – For parallel processing, requires PETSc
+- `OGS_USE_MFRONT` – MFront material models, requires tfel
+- `OGS_BUILD_GUI` – Builds the Data Explorer, requires Qt
+- `OGS_USE_NETCDF` – NetCDF IO, requires netcdf-cxx
 
 Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
 
@@ -281,15 +298,3 @@ Conan version {{< dataFile "versions.minimum_version.conan" >}}
 **Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{< ref "python-env.md" >}}) for details.
 
 </div>
-
-## Optional: Install Ninja
-
-We recommend [`ninja`](https://ninja-build.org) as a cross-platform build tool (`make`-replacement).
-
-Install Ninja with Python's pip:
-
-```bash
-pip3 install --user ninja
-```
-
-Make sure that `ninja` is in the path afterwards. See Conan install instructions above.
