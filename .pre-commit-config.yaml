@@ -42,3 +42,11 @@ repos:
     hooks:
     -   id: codespell
         exclude: 'ThirdParty/.*|Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp'
+-   repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.13
+    hooks:
+    # - id: cmake-format
+    #   additional_dependencies: ["cmakelang[YAML]"]
+    - id: cmake-lint
+      additional_dependencies: ["cmakelang[YAML]"]
+      exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake'
