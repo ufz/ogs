@@ -244,12 +244,12 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(vars, x_position, t, dt);
 
         auto const porosity =
-            solid_phase.property(MaterialPropertyLib::PropertyType::porosity)
+            medium->property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
         auto const alpha =
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+            medium
+                ->property(MaterialPropertyLib::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
 
         auto const solid_skeleton_compressibility = 1 / solid_material.getBulkModulus(t, x_position);
@@ -276,8 +276,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-                solid_phase
-                    .property(MaterialPropertyLib::PropertyType::permeability)
+                medium
+                    ->property(MaterialPropertyLib::PropertyType::permeability)
                     .value(vars, x_position, t, dt));
 
         auto const fluid_density =
@@ -601,8 +601,8 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
                 .template value<double>(vars, x_position, t, dt);
 
         auto const alpha =
-            solid_phase
-                .property(MaterialPropertyLib::PropertyType::biot_coefficient)
+            medium
+                ->property(MaterialPropertyLib::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
 
         // Set mechanical variables for the intrinsic permeability model
@@ -625,8 +625,8 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
 
         GlobalDimMatrixType K_over_mu =
             MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-                solid_phase
-                    .property(MaterialPropertyLib::PropertyType::permeability)
+                medium
+                    ->property(MaterialPropertyLib::PropertyType::permeability)
                     .value(vars, x_position, t, dt)) /
             viscosity;
 

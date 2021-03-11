@@ -46,28 +46,23 @@
                         </property>
                     </properties>
                 </phase>
-                <phase>
-                    <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value> 0.0 </value>
-                        </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.38</value>
-                        </property>
-                        <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>4.46e-13</value>
-                        </property>
-                    </properties>
-                </phase>
             </phases>
             <properties>
+                <property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value> 0.0 </value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.38</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>4.46e-13</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>

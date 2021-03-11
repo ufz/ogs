@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>quad_with_half_hole_q.vtu</mesh>
@@ -98,24 +98,24 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>0.15</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>2.65e+3</value>
-                        </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>0.6</value>
                         </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.15</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0.6</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>

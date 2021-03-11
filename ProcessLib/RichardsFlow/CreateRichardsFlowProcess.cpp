@@ -31,16 +31,17 @@ void checkMPLProperties(
     std::array const required_medium_properties = {
         MaterialPropertyLib::PropertyType::reference_temperature,
         MaterialPropertyLib::PropertyType::saturation,
+        MaterialPropertyLib::PropertyType::porosity,
+        MaterialPropertyLib::PropertyType::storage,
+        MaterialPropertyLib::PropertyType::permeability,
         MaterialPropertyLib::PropertyType::relative_permeability};
 
     std::array const required_liquid_properties = {
         MaterialPropertyLib::PropertyType::viscosity,
         MaterialPropertyLib::PropertyType::density};
 
-    std::array const required_solid_properties = {
-        MaterialPropertyLib::PropertyType::porosity,
-        MaterialPropertyLib::PropertyType::storage,
-        MaterialPropertyLib::PropertyType::permeability};
+    std::array<MaterialPropertyLib::PropertyType, 0> const
+        required_solid_properties{};
 
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
         mesh, media_map, required_medium_properties, required_solid_properties,

@@ -64,11 +64,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>storage</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
-                        </property>
-                        <property>
                             <name>bulk_modulus</name>
                             <type>Constant</type>
                             <value>1.0e10</value>
@@ -93,24 +88,26 @@
                             <type>Constant</type>
                             <value>0.0e-5</value>
                         </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
-                        </property>
-                        <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>1.e-11</value>
-                        </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>Constant</type>
-                            <value>1.0</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
+            <properties>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0.0</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-11</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>1.0</value>
+                </property>
+            </properties>
         </medium>
     </media>
     <time_loop>
