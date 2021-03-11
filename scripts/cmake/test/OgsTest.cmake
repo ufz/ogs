@@ -1,3 +1,4 @@
+# cmake-lint: disable=C0103
 function (OgsTest)
 
     if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING)

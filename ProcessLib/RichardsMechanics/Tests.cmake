@@ -23,8 +23,6 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_QN.prj RUNTIME 50)
 endif()
 
-
-
 AddTest(
     NAME RichardsMechanics_square_1e2_confined_compression_restart
     PATH RichardsMechanics

@@ -26,7 +26,7 @@ else()
     endif()
 endif()
 
-set(README_PLATFORM_INSTRUCTIONS
+set(_README_PLATFORM_INSTRUCTIONS
     "When running the Data Explorer make sure to set the LD_LIBRARY_PATH path to the bin-folder. E.g.: LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./ ./DataExplorer"
     CACHE INTERNAL ""
 )

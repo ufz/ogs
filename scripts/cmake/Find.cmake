@@ -89,6 +89,7 @@ if(OGS_USE_MFRONT)
         add_definitions(-DHAVE_PTHREADS)
     endif()
     if(OGS_USE_CONAN)
+        # cmake-lint: disable=C0103
         set(TFELHOME ${CONAN_TFEL_ROOT} CACHE INTERNAL "")
     endif()
 endif()

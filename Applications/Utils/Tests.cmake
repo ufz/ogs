@@ -484,13 +484,12 @@ if(TARGET VerticalSliceFromLayers AND GMSH)
 
 endif()
 
-
 if(TARGET GMSH2OGS AND SNAKEMAKE AND NOT OGS_USE_MPI)
     add_test(NAME snakemake_GMSH2OGS_ExtractBoundary
         COMMAND ${SNAKEMAKE} --cores all
         --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
         -s ${CMAKE_CURRENT_SOURCE_DIR}/GMSH2OGS_ExtractBoundary.smk
-        )
+    )
     add_dependencies(ctest GMSH2OGS)
 endif()
 

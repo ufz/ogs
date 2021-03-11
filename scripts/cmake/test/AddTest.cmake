@@ -50,7 +50,7 @@
 #         Can be given multiple times; the point coordinates in the gml files are
 #         compared using the given absolute and relative tolerances.
 # ~~~
-
+# cmake-lint: disable=C0103
 function (AddTest)
 
     # parse arguments
@@ -58,7 +58,6 @@ function (AddTest)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER TESTER ABSTOL RELTOL RUNTIME DEPENDS WORKING_DIRECTORY)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS PYTHON_PACKAGES VIS)
     cmake_parse_arguments(AddTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
 
     set(AddTest_SOURCE_PATH "${Data_SOURCE_DIR}/${AddTest_PATH}")
     set(AddTest_BINARY_PATH "${Data_BINARY_DIR}/${AddTest_PATH}")

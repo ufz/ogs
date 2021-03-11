@@ -154,7 +154,7 @@ if(OGS_USE_NETCDF)
     if(NOT OGS_USE_CONAN)
         target_include_directories(VtkVis SYSTEM
                                    PUBLIC ${NETCDF_INCLUDES_C}
-                                   PUBLIC ${NETCDF_INCLUDES_CXX})
+                                          ${NETCDF_INCLUDES_CXX})
     endif()
 endif()
 

@@ -1,12 +1,12 @@
 # Returns the current subdirectory in the sources directory.
-macro(GET_CURRENT_SOURCE_SUBDIRECTORY CURRENT_SOURCE_SUBDIRECTORY)
+macro(GET_CURRENT_SOURCE_SUBDIRECTORY current_source_subdirectory)
     string(REGEX REPLACE ".*/([^/]*)" "\\1" REGEX_RESULT "${CMAKE_CURRENT_SOURCE_DIR}" )
-    set(${CURRENT_SOURCE_SUBDIRECTORY} ${REGEX_RESULT})
+    set(${current_source_subdirectory} ${REGEX_RESULT})
 endmacro()
 
-# Returns a list of source files (*.h and *.cpp) in SOURCE_FILES and creates a Visual
+# Returns a list of source files (*.h and *.cpp) in source_files and creates a Visual
 # Studio folder. A (relative) subdirectory can be passed as second parameter (optional).
-macro(GET_SOURCE_FILES SOURCE_FILES)
+macro(GET_SOURCE_FILES source_files)
     if(${ARGC} EQUAL 2)
         set(DIR "${ARGV1}")
     else()
@@ -18,8 +18,8 @@ macro(GET_SOURCE_FILES SOURCE_FILES)
     file(GLOB GET_SOURCE_FILES_TEMPLATES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${DIR}/*.tpp)
     file(GLOB GET_SOURCE_FILES_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS ${DIR}/*.cpp)
 
-    set(${SOURCE_FILES} ${GET_SOURCE_FILES_HEADERS} ${GET_SOURCE_FILES_TEMPLATES} ${GET_SOURCE_FILES_SOURCES})
-    list(LENGTH ${SOURCE_FILES} NUM_FILES)
+    set(${source_files} ${GET_SOURCE_FILES_HEADERS} ${GET_SOURCE_FILES_TEMPLATES} ${GET_SOURCE_FILES_SOURCES})
+    list(LENGTH ${source_files} NUM_FILES)
     if(${NUM_FILES} EQUAL 0)
         message(FATAL_ERROR "No source files found in ${DIR}")
     endif()
@@ -40,9 +40,9 @@ macro(GET_SOURCE_FILES SOURCE_FILES)
 
 endmacro()
 
-# Appends a list of source files (*.h and *.cpp) to SOURCE_FILES and creates a Visual
+# Appends a list of source files (*.h and *.cpp) to source_files and creates a Visual
 # Studio folder. A (relative) subdirectory can be passed as second parameter (optional).
-macro(APPEND_SOURCE_FILES SOURCE_FILES)
+macro(APPEND_SOURCE_FILES source_files)
     if(${ARGC} EQUAL 2)
         set(DIR "${ARGV1}")
     else()
@@ -50,7 +50,7 @@ macro(APPEND_SOURCE_FILES SOURCE_FILES)
     endif()
 
     GET_SOURCE_FILES(TMP_SOURCES "${DIR}")
-    set(${SOURCE_FILES} ${${SOURCE_FILES}} ${TMP_SOURCES})
+    set(${source_files} ${${source_files}} ${TMP_SOURCES})
 endmacro()
 
 # Creates one ctest for each googletest found in source files passed as arguments
@@ -79,6 +79,7 @@ function(add_autogen_include target)
     endif()
 endfunction()
 
+# Replacement for add_library() for ogs targets
 function(ogs_add_library targetName)
     add_library(${targetName} ${ARGN})
     target_compile_options(${targetName} PRIVATE
@@ -104,6 +105,7 @@ function(ogs_add_library targetName)
     endif()
 endfunction()
 
+# Parses current directory into a list
 function(current_dir_as_list baseDir outList)
     file(RELATIVE_PATH REL_DIR ${PROJECT_SOURCE_DIR}/${baseDir} ${CMAKE_CURRENT_LIST_DIR})
     string(REPLACE "/" ";" DIR_LIST ${REL_DIR})

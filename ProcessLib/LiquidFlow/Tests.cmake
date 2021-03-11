@@ -27,7 +27,6 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/DrainageExcavation/drainage_LiquidFlow.prj)
 endif()
 
-
 AddTest(
     NAME LiquidFlow_GravityDriven
     PATH Parabolic/LiquidFlow/GravityDriven
