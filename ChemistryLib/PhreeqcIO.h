@@ -63,8 +63,6 @@ public:
 
     void setAqueousSolutionsPrevFromDumpFile() override;
 
-    void executeInitialCalculation() override;
-
     void executeSpeciationCalculation(double const dt) override;
 
     void writeInputsToFile(double const dt = 0);

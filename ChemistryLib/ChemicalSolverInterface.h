@@ -50,8 +50,6 @@ public:
 
     virtual void setAqueousSolutionsPrevFromDumpFile() {}
 
-    virtual void executeInitialCalculation() = 0;
-
     virtual void executeSpeciationCalculation(double const dt) = 0;
 
     virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const = 0;

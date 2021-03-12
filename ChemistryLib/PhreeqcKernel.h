@@ -41,8 +41,6 @@ public:
                   std::unique_ptr<Kinetics>&& kinetic_reactants,
                   std::vector<ReactionRate>&& reaction_rates);
 
-    void executeInitialCalculation() override;
-
     void executeSpeciationCalculation(double const dt) override;
 
     void setAqueousSolutions(

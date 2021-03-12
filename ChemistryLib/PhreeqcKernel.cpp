@@ -324,20 +324,6 @@ void PhreeqcKernel::reset(std::size_t const chemical_system_id)
     }
 }
 
-void PhreeqcKernel::executeInitialCalculation()
-{
-    // TODO (Renchao): This function could be replaced with
-    // PhreeqcKernel::executeSpeciationCalculation(std::vector<GlobalVector*>&
-    // process_solutions, double const dt).
-    std::vector<GlobalVector*> process_solutions;
-
-    setAqueousSolutions(process_solutions);
-
-    setTimeStepSize(0);
-
-    execute(process_solutions);
-}
-
 void PhreeqcKernel::updateNodalProcessSolutions(
     std::vector<GlobalVector*> const& process_solutions,
     std::size_t const node_id)

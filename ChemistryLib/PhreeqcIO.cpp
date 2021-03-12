@@ -275,9 +275,9 @@ void PhreeqcIO::setChemicalSystemConcrete(
     }
 }
 
-void PhreeqcIO::executeInitialCalculation()
+void PhreeqcIO::executeSpeciationCalculation(double const dt)
 {
-    writeInputsToFile();
+    writeInputsToFile(dt);
 
     execute();
 
@@ -298,15 +298,6 @@ std::vector<GlobalVector*> PhreeqcIO::getIntPtProcessSolutions() const
     int_pt_process_solutions.push_back(aqueous_solution->pH.get());
 
     return int_pt_process_solutions;
-}
-
-void PhreeqcIO::executeSpeciationCalculation(double const dt)
-{
-    writeInputsToFile(dt);
-
-    execute();
-
-    readOutputsFromFile();
 }
 
 void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
