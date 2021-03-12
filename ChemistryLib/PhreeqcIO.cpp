@@ -279,7 +279,7 @@ void PhreeqcIO::executeSpeciationCalculation(double const dt)
 {
     writeInputsToFile(dt);
 
-    execute();
+    callPhreeqc();
 
     readOutputsFromFile();
 }
@@ -446,7 +446,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
     return os;
 }
 
-void PhreeqcIO::execute()
+void PhreeqcIO::callPhreeqc()
 {
     INFO("Phreeqc: Executing chemical calculation.");
     if (RunFile(phreeqc_instance_id, _phreeqc_input_file.c_str()) != IPQ_OK)

@@ -46,7 +46,7 @@ public:
     void setAqueousSolutions(
         std::vector<GlobalVector*> const& process_solutions);
 
-    void execute(std::vector<GlobalVector*>& process_solutions);
+    void callPhreeqc(std::vector<GlobalVector*>& process_solutions);
 
     std::vector<GlobalVector*> getIntPtProcessSolutions() const override
     {

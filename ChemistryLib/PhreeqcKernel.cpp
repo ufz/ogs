@@ -178,7 +178,7 @@ void PhreeqcKernel::executeSpeciationCalculation(double const dt)
 
     setTimeStepSize(dt);
 
-    execute(process_solutions);
+    callPhreeqc(process_solutions);
 }
 
 void PhreeqcKernel::setAqueousSolutions(
@@ -254,7 +254,7 @@ void PhreeqcKernel::setTimeStepSize(double const dt)
     }
 }
 
-void PhreeqcKernel::execute(std::vector<GlobalVector*>& process_solutions)
+void PhreeqcKernel::callPhreeqc(std::vector<GlobalVector*>& process_solutions)
 {
     std::size_t const num_chemical_systems = process_solutions[0]->size();
     for (std::size_t chemical_system_id = 0;

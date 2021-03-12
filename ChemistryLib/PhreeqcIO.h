@@ -83,7 +83,7 @@ public:
 private:
     void writeInputsToFile(double const dt);
 
-    void execute();
+    void callPhreeqc();
 
     void readOutputsFromFile();
 
