@@ -134,7 +134,7 @@ if(OGS_USE_XDMF)
     endif()
 
     if(OGS_USE_MPI)
-        set(hdf5_options "HDF5_ENABLE_PARALLEL ON")
+        set(_hdf5_options "HDF5_ENABLE_PARALLEL ON")
     endif()
 
     string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
@@ -152,7 +152,7 @@ if(OGS_USE_XDMF)
             "HDF5_BUILD_FORTRAN OFF"
             "HDF5_BUILD_CPP_LIB OFF"
             "HDF5_BUILD_JAVA OFF"
-            ${hdf5_options}
+            ${_hdf5_options}
         EXCLUDE_FROM_ALL YES
     )
     if(HDF5_ADDED)
