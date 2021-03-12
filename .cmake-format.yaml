@@ -6,7 +6,8 @@ format:
 lint:
   disabled_codes:
   - "C0301"
-  - "C0113"
+  - "C0301"    # Line to long.
+  - "C0113"    # Missing COMMAND for optional dependencies.
 
 parse:
   additional_commands:
