@@ -170,7 +170,7 @@ void PhreeqcKernel::reinitializeRates()
     };
 }
 
-void PhreeqcKernel::doWaterChemistryCalculation(double const dt)
+void PhreeqcKernel::executeSpeciationCalculation(double const dt)
 {
     std::vector<GlobalVector*> process_solutions;
 
@@ -178,7 +178,7 @@ void PhreeqcKernel::doWaterChemistryCalculation(double const dt)
 
     setTimeStepSize(dt);
 
-    execute(process_solutions);
+    callPhreeqc(process_solutions);
 }
 
 void PhreeqcKernel::setAqueousSolutions(
@@ -254,7 +254,7 @@ void PhreeqcKernel::setTimeStepSize(double const dt)
     }
 }
 
-void PhreeqcKernel::execute(std::vector<GlobalVector*>& process_solutions)
+void PhreeqcKernel::callPhreeqc(std::vector<GlobalVector*>& process_solutions)
 {
     std::size_t const num_chemical_systems = process_solutions[0]->size();
     for (std::size_t chemical_system_id = 0;
@@ -322,20 +322,6 @@ void PhreeqcKernel::reset(std::size_t const chemical_system_id)
     {
         Rxn_kinetics_map[chemical_system_id].Get_steps().clear();
     }
-}
-
-void PhreeqcKernel::executeInitialCalculation()
-{
-    // TODO (Renchao): This function could be replaced with
-    // PhreeqcKernel::doWaterChemistryCalculation(std::vector<GlobalVector*>&
-    // process_solutions, double const dt).
-    std::vector<GlobalVector*> process_solutions;
-
-    setAqueousSolutions(process_solutions);
-
-    setTimeStepSize(0);
-
-    execute(process_solutions);
 }
 
 void PhreeqcKernel::updateNodalProcessSolutions(

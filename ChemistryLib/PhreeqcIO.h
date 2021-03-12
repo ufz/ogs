@@ -55,17 +55,15 @@ public:
 
     void setChemicalSystemConcrete(
         std::vector<double> const& concentrations,
-        GlobalIndexType const& chemical_system_id) override;
+        GlobalIndexType const& chemical_system_id,
+        MaterialPropertyLib::Medium const* medium,
+        MaterialPropertyLib::VariableArray const& vars,
+        ParameterLib::SpatialPosition const& pos, double const t,
+        double const dt) override;
 
-    void executeInitialCalculation() override;
+    void setAqueousSolutionsPrevFromDumpFile() override;
 
-    void doWaterChemistryCalculation(double const dt) override;
-
-    void writeInputsToFile(double const dt = 0);
-
-    void execute();
-
-    void readOutputsFromFile();
+    void executeSpeciationCalculation(double const dt) override;
 
     std::vector<GlobalVector*> getIntPtProcessSolutions() const override;
 
@@ -83,13 +81,17 @@ public:
     std::string const _phreeqc_input_file;
 
 private:
+    void writeInputsToFile(double const dt);
+
+    void callPhreeqc();
+
+    void readOutputsFromFile();
+
     PhreeqcIO& operator<<(double const dt)
     {
         _dt = dt;
         return *this;
     }
-
-    void setAqueousSolutionsPrevFromDumpFile();
 
     std::string const _database;
     std::unique_ptr<ChemicalSystem> _chemical_system;

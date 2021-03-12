@@ -39,11 +39,13 @@ void ChemicalSystem::initialize(std::size_t const num_chemical_systems)
     for (auto& kinetic_reactant : kinetic_reactants)
     {
         kinetic_reactant.molality->resize(num_chemical_systems);
+        kinetic_reactant.volume_fraction->resize(num_chemical_systems);
     }
 
     for (auto& equilibrium_reactant : equilibrium_reactants)
     {
         equilibrium_reactant.molality->resize(num_chemical_systems);
+        equilibrium_reactant.volume_fraction->resize(num_chemical_systems);
     }
 }
 }  // namespace PhreeqcIOData

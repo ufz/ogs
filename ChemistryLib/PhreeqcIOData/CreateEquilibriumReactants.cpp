@@ -46,12 +46,15 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
         auto molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
+        auto volume_fraction = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, "phi_" + name, MeshLib::MeshItemType::IntegrationPoint, 1);
+
         auto mesh_prop_molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_molality->resize(mesh.getNumberOfElements());
 
         equilibrium_reactants.emplace_back(
-            std::move(name), molality, mesh_prop_molality, saturation_index);
+            std::move(name), molality, volume_fraction, mesh_prop_molality, saturation_index);
     }
 
     return equilibrium_reactants;
