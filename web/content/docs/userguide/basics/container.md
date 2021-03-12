@@ -1,5 +1,5 @@
 +++
-date = "2018-11-14T15:00:13+01`:00"
+date = "2018-11-14T15:00:13+01:00"
 title = "Running OGS in a container"
 author = "Lars Bilke"
 weight = 10
@@ -8,6 +8,14 @@ weight = 10
   [menu.userguide]
     parent = "basics"
 +++
+
+<div class='note'>
+
+### Important note
+
+This page describes how to **run** OGS with the help of a Linux container (for **users**). To **build** OGS with the help of a container go to the [developer guide]({{< ref "singularity.md" >}}) (for **developers**).
+
+</div>
 
 ## With Singularity
 
