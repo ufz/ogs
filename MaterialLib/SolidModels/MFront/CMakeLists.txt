@@ -38,3 +38,5 @@ target_link_libraries(MaterialLib_SolidModels_MFront
                       PUBLIC MFrontGenericInterface)
 target_compile_definitions(MaterialLib_SolidModels_MFront
                            PRIVATE OGS_USE_MFRONT)
+
+install(TARGETS MFrontGenericInterface OgsMFrontBehaviour)
