@@ -99,7 +99,7 @@ endif()
 
 # cmake-format: off
 # Add make-target tests which runs the testrunner
-if(IS_CI AND NOT OGS_COVERAGE)
+if(DEFINED ENV{CI} AND NOT OGS_COVERAGE)
     set(OGS_CI_TESTRUNNER_REPEAT 3 CACHE STRING
         "The number of testrunner repeats for the tests target")
     set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}

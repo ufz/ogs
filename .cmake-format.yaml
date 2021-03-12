@@ -3,6 +3,11 @@ format:
   max_subgroups_hwrap: 3
   dangle_parens: true
   command_case: "unchanged"
+lint:
+  disabled_codes:
+  - "C0301"
+  - "C0301"    # Line to long.
+  - "C0113"    # Missing COMMAND for optional dependencies.
 
 parse:
   additional_commands:

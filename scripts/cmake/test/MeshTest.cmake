@@ -17,7 +17,7 @@
 #                          values should be taken from envinf1 serial job
 # )
 # ~~~
-
+# cmake-lint: disable=C0103,R0912,R0915
 function (MeshTest)
     if(NOT OGS_BUILD_TESTING)
         return()
@@ -27,7 +27,6 @@ function (MeshTest)
     set(oneValueArgs EXECUTABLE PATH NAME WRAPPER RUNTIME WORKING_DIRECTORY)
     set(multiValueArgs EXECUTABLE_ARGS DATA DIFF_DATA WRAPPER_ARGS REQUIREMENTS)
     cmake_parse_arguments(MeshTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
 
     set(MeshTest_SOURCE_PATH "${Data_SOURCE_DIR}/${MeshTest_PATH}")
     set(MeshTest_BINARY_PATH "${Data_BINARY_DIR}/${MeshTest_PATH}")

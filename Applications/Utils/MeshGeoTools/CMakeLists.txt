@@ -14,14 +14,10 @@ if(OGS_BUILD_GUI)
     list(APPEND TOOLS VerticalSliceFromLayers)
 endif()
 
-foreach(TOOL ${TOOLS})
-    add_executable(${TOOL} ${TOOL}.cpp)
-    target_link_libraries(${TOOL}
-                          ApplicationsFileIO
-                          GitInfoLib
-                          MeshLib
-                          MeshGeoToolsLib
-                          tclap
+foreach(tool ${TOOLS})
+    add_executable(${tool} ${tool}.cpp)
+    target_link_libraries(
+        ${tool} ApplicationsFileIO GitInfoLib MeshLib MeshGeoToolsLib tclap
     )
 endforeach()
 

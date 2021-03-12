@@ -60,7 +60,6 @@ AddTest(
     VIS IsothermalFluidFlow_ts_1_t_1.000000.vtu
 )
 
-
 AddTest(
     NAME HT_SimpleSynthetics_PressureParabolicTemperatureParabolic
     PATH Parabolic/HT/SimpleSynthetics
@@ -275,7 +274,6 @@ AddTest(
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravityStaggered_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
     VIS IsothermalFluidFlowWithGravityStaggered_ts_1_t_1.000000.vtu
 )
-
 
 AddTest(
     NAME HT_SimpleSynthetics_PressureParabolicTemperatureParabolicStaggered

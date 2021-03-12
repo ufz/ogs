@@ -3,7 +3,7 @@ if(NOT OGS_USE_CONAN)
 endif()
 string(TOLOWER ${OGS_USE_CONAN} OGS_USE_CONAN_lower)
 if(OGS_USE_CONAN_lower STREQUAL "auto" AND POETRY)
-    execute_process(COMMAND ${CMD_COMMAND} poetry add conan==${ogs.minimum_version.conan}
+    execute_process(COMMAND ${_CMD_COMMAND} poetry add conan==${ogs.minimum_version.conan}
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
     find_program(CONAN_CMD conan HINTS ${LOCAL_VIRTUALENV_BIN_DIRS}
         REQUIRED NO_DEFAULT_PATH
@@ -129,7 +129,7 @@ file(TIMESTAMP ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt file_timestamp 
 string(TIMESTAMP timestamp "%Y.%m.%d")
 
 # Run conan install update only once a day
-if("${file_timestamp}" VERSION_LESS ${timestamp} OR IS_CI)
+if("${file_timestamp}" VERSION_LESS ${timestamp} OR DEFINED ENV{CI})
     file(WRITE ${PROJECT_BINARY_DIR}/conan_install_timestamp.txt "${timestamp}\n")
     set(CONAN_UPDATE UPDATE)
     set(CONAN_COMMAND ${CONAN_CMD} CACHE INTERNAL "") # Speed up conan_add_remote

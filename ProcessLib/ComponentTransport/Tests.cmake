@@ -883,7 +883,6 @@ AddTest(
     VIS out_ogs5_H_ts_1_t_10000000.000000.vtu
 )
 
-
 AddTest(
     NAME 1D_ComponentTransport_VariableDependentBoundary
     PATH Parabolic/ComponentTransport/VariableNeumannBoundary

@@ -49,18 +49,12 @@ if(NOT WIN32 AND OGS_BUILD_SWMM)
 endif()
 
 # Third-party libraries, names come from Conan package names
-set(OGS_LIBS
-    vtk
-    qt
-    petsc
-    tfel
-    CACHE INTERNAL "")
-foreach(LIB ${OGS_LIBS})
-    set(OGS_LIB_${LIB}
+foreach(lib vtk qt petsc tfel)
+    set(OGS_LIB_${lib}
         "Default"
         CACHE STRING "Which ${LIB} library should be used?")
-    set_property(CACHE OGS_LIB_${LIB} PROPERTY STRINGS "Default" "System")
-endforeach(LIB)
+    set_property(CACHE OGS_LIB_${lib} PROPERTY STRINGS "Default" "System")
+endforeach()
 
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
@@ -84,7 +78,7 @@ include(CCacheSetup)
 include(CLCacheSetup)
 include(DocumentationSetup)
 include(test/Test)
-if(OGS_COVERAGE AND NOT IS_SUBPROJECT)
+if(OGS_COVERAGE AND NOT _IS_SUBPROJECT)
     include(Coverage)
 endif()
 include(CppCheck)
@@ -168,10 +162,10 @@ option(OGS_ENABLE_ELEMENT_CUBOID
 option(OGS_ENABLE_ELEMENT_PRISM "Build FEM elements for prisms." ON)
 option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
 if(NOT OGS_MAX_ELEMENT_DIM MATCHES "^[0-3]$")
-  message(FATAL_ERROR "OGS_MAX_ELEMENT_DIM must be an integer between 0 and 3.")
+    message(FATAL_ERROR "OGS_MAX_ELEMENT_DIM must be an integer between 0 and 3.")
 endif()
 if(NOT OGS_MAX_ELEMENT_ORDER MATCHES "^[0-9]$")
-  message(FATAL_ERROR "OGS_MAX_ELEMENT_ORDER must be an integer.")
+    message(FATAL_ERROR "OGS_MAX_ELEMENT_ORDER must be an integer.")
 endif()
 
 option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation."
@@ -240,7 +234,7 @@ if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
     add_subdirectory(MaterialLib)
     add_subdirectory(ProcessLib)
 endif()
-if(OGS_BUILD_TESTING AND NOT IS_SUBPROJECT)
+if(OGS_BUILD_TESTING AND NOT _IS_SUBPROJECT)
     add_subdirectory(Tests)
 endif()
 

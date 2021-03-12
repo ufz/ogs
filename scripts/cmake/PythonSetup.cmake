@@ -1,3 +1,4 @@
+# cmake-lint: disable=C0103
 if(OGS_USE_POETRY)
     find_program(POETRY poetry)
     if(POETRY)
@@ -8,7 +9,7 @@ if(OGS_USE_POETRY)
                 ${PROJECT_BINARY_DIR}/pyproject.toml)
         endif()
         if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
-            execute_process(COMMAND ${CMD_COMMAND} poetry install
+            execute_process(COMMAND ${_CMD_COMMAND} poetry install
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
         endif()
         set(Python3_ROOT_DIR ${PROJECT_BINARY_DIR}/.venv)
@@ -46,6 +47,6 @@ if(POETRY)
     if(OGS_BUILD_TESTING)
         list(APPEND PYTHON_PACKAGES snakemake=${ogs.minimum_version.snakemake})
     endif()
-    execute_process(COMMAND ${CMD_COMMAND} poetry add ${PYTHON_PACKAGES}
+    execute_process(COMMAND ${_CMD_COMMAND} poetry add ${PYTHON_PACKAGES}
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 endif()

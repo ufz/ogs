@@ -6,9 +6,9 @@ add_definitions(-DUSE_GKREGEX)
 set(GKLIB_PATH "${METIS_PATH}/GKlib" CACHE PATH "path to GKlib")
 
 if(SHARED)
-	set(METIS_LIBRARY_TYPE SHARED)
+    set(METIS_LIBRARY_TYPE SHARED)
 else()
-	set(METIS_LIBRARY_TYPE STATIC)
+    set(METIS_LIBRARY_TYPE STATIC)
 endif(SHARED)
 
 include(${GKLIB_PATH}/GKlibSystem.cmake)
@@ -31,10 +31,10 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(UNIX)
-  target_link_libraries(ogs_metis m)
+    target_link_libraries(ogs_metis m)
 elseif(MSVC)
-  include(GenerateExportHeader)
-  generate_export_header(ogs_metis)
+    include(GenerateExportHeader)
+    generate_export_header(ogs_metis)
 endif()
 
 ## Compile mpmetis
@@ -43,11 +43,11 @@ add_definitions(-DSVNINFO="")
 include_directories(${METIS_PATH}/libmetis)
 include_directories(${METIS_PATH}/programs)
 set(METIS_SOURCES
-   ${METIS_PATH}/programs/mpmetis.c
-   ${METIS_PATH}/programs/cmdline_mpmetis.c
-   ${METIS_PATH}/programs/io.c
-   ${METIS_PATH}/programs/stat.c
-   )
+    ${METIS_PATH}/programs/mpmetis.c
+    ${METIS_PATH}/programs/cmdline_mpmetis.c
+    ${METIS_PATH}/programs/io.c
+    ${METIS_PATH}/programs/stat.c
+)
 add_executable(mpmetis ${METIS_SOURCES})
 target_link_libraries(mpmetis ogs_metis)
 install(TARGETS mpmetis RUNTIME DESTINATION bin)

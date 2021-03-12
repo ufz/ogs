@@ -1,9 +1,9 @@
 # Run vtk.js converter
 if(VIS_FILES AND VTKJS_CONVERTER)
     execute_process(COMMAND cmake -E make_directory ${VTKJS_OUTPUT_PATH})
-    foreach(FILE ${VIS_FILES})
+    foreach(file ${VIS_FILES})
         execute_process(
-            COMMAND ${VTKJS_CONVERTER} -e -i ${BINARY_PATH}/${FILE} -o ${VTKJS_OUTPUT_PATH}
+            COMMAND ${VTKJS_CONVERTER} -e -i ${BINARY_PATH}/${file} -o ${VTKJS_OUTPUT_PATH}
         )
     endforeach()
 endif()
@@ -16,30 +16,31 @@ else()
     set(TERMINAL_CMD bash -c)
 endif()
 set(TEST_FAILED FALSE)
-foreach(CMD ${TESTER_COMMAND})
+foreach(cmd ${TESTER_COMMAND})
     if(GLOB_MODE)
-        separate_arguments(CMD)
-        list(GET CMD 0 GLOB)
-        list(GET CMD 1 NAME_A)
-        list(GET CMD 2 NAME_B)
-        list(GET CMD 3 ABS_TOL)
-        list(GET CMD 4 REL_TOL)
+        # cmake-lint: disable=E1120
+        separate_arguments(cmd)
+        list(GET cmd 0 GLOB)
+        list(GET cmd 1 NAME_A)
+        list(GET cmd 2 NAME_B)
+        list(GET cmd 3 ABS_TOL)
+        list(GET cmd 4 REL_TOL)
         file(GLOB FILES RELATIVE ${SOURCE_PATH} ${GLOB})
-        list(LENGTH FILES length)
-        message(STATUS "Glob expression '${GLOB}' (${NAME_A}) found ${length} files.")
-        if(${length} EQUAL 0)
+        list(LENGTH FILES LENGTH)
+        message(STATUS "Glob expression '${GLOB}' (${NAME_A}) found ${LENGTH} files.")
+        if(${LENGTH} EQUAL 0)
             message(FATAL_ERROR "DIFF_DATA glob expression '${GLOB}' "
                 "did not match any files!")
         endif()
-        foreach(FILE ${FILES})
+        foreach(file ${FILES})
             if("$ENV{HOSTNAME}" MATCHES "frontend.*")
-                string(REPLACE "gpfs1" "../.." FILE ${FILE})
+                string(REPLACE "gpfs1" "../.." file ${file})
             endif()
             if("$ENV{HOSTNAME}" MATCHES "frontend.*")
-                string(REPLACE "gpfs0" "../.." FILE ${FILE})
+                string(REPLACE "gpfs0" "../.." file ${file})
             endif()
             execute_process(
-                COMMAND ${SELECTED_DIFF_TOOL_PATH} ${SOURCE_PATH}/${FILE} ${BINARY_PATH}/${FILE} -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}
+                COMMAND ${SELECTED_DIFF_TOOL_PATH} ${SOURCE_PATH}/${file} ${BINARY_PATH}/${file} -a ${NAME_A} -b ${NAME_B} --abs ${ABS_TOL} --rel ${REL_TOL}
                 WORKING_DIRECTORY ${SOURCE_PATH}
                 RESULT_VARIABLE EXIT_CODE
                 OUTPUT_VARIABLE OUTPUT
@@ -53,7 +54,7 @@ foreach(CMD ${TESTER_COMMAND})
         endforeach()
     else()
         execute_process(
-            COMMAND ${TERMINAL_CMD} "${CMD}"
+            COMMAND ${TERMINAL_CMD} "${cmd}"
             WORKING_DIRECTORY ${SOURCE_PATH}
             RESULT_VARIABLE EXIT_CODE
             OUTPUT_VARIABLE OUTPUT

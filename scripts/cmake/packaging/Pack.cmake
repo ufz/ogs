@@ -1,4 +1,4 @@
-if(IS_SUBPROJECT)
+if(_IS_SUBPROJECT)
     include (CPack)
     return()
 endif()
@@ -75,7 +75,6 @@ if(OGS_USE_PYTHON)
         install(FILES ${Python_LIBRARIES} DESTINATION bin)
     endif()
 endif()
-
 
 configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
 install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)

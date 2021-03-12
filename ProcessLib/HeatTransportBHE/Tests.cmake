@@ -1,7 +1,6 @@
 AddTest(
     NAME HeatTransportBHE_1U_3D_beier_sandbox
     PATH Parabolic/T/3D_Beier_sandbox
-    RUNTIME 15
     EXECUTABLE ogs
     EXECUTABLE_ARGS beier_sandbox.prj
     WRAPPER time

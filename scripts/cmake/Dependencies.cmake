@@ -302,8 +302,8 @@ if(OGS_USE_CVODE)
 endif()
 
 # Disable warnings
-foreach(TARGET ${DISABLE_WARNINGS_TARGETS})
-    target_compile_options(${TARGET} PRIVATE
+foreach(target ${DISABLE_WARNINGS_TARGETS})
+    target_compile_options(${target} PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
         $<$<CXX_COMPILER_ID:MSVC>:/W0>)
 endforeach()
@@ -318,14 +318,14 @@ find_program(CMAKE_FORMAT_PROGRAM cmake-format)
 
 if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
     if(NOT CMAKE_FORMAT_PROGRAM)
-        set(skip_cmake "FORMAT_SKIP_CMAKE YES")
+        set(_skip_cmake "FORMAT_SKIP_CMAKE YES")
     endif()
     CPMAddPackage(
       NAME Format.cmake
       VERSION 1.7.0
       GITHUB_REPOSITORY TheLartians/Format.cmake
       OPTIONS
-        ${skip_cmake}
+        ${_skip_cmake}
         "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/conan/conan.cmake|scripts/cmake/vector-of-bool/.*"
     )
 endif()

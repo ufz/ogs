@@ -8,7 +8,7 @@ append_coverage_compiler_flags()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Og")
 
 if(NOT FASTCOV_PATH)
-    execute_process(COMMAND ${CMD_COMMAND} poetry add fastcov==1.10
+    execute_process(COMMAND ${_CMD_COMMAND} poetry add fastcov==1.10
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     )
     find_program(FASTCOV_PATH NAMES fastcov
