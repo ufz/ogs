@@ -19,7 +19,7 @@ container:
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
-      --pm system --cvode --ccache
+      --pm system --cvode --ccache --mfront
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF'
       $DOCKER_TAG
     - >
