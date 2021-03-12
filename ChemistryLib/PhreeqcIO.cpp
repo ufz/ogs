@@ -302,8 +302,6 @@ std::vector<GlobalVector*> PhreeqcIO::getIntPtProcessSolutions() const
 
 void PhreeqcIO::doWaterChemistryCalculation(double const dt)
 {
-    setAqueousSolutionsPrevFromDumpFile();
-
     writeInputsToFile(dt);
 
     execute();

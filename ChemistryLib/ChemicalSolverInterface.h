@@ -48,6 +48,8 @@ public:
     {
     }
 
+    virtual void setAqueousSolutionsPrevFromDumpFile() {}
+
     virtual void executeInitialCalculation() = 0;
 
     virtual void doWaterChemistryCalculation(double const dt) = 0;

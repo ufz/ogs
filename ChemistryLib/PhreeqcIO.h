@@ -61,6 +61,8 @@ public:
         ParameterLib::SpatialPosition const& pos, double const t,
         double const dt) override;
 
+    void setAqueousSolutionsPrevFromDumpFile() override;
+
     void executeInitialCalculation() override;
 
     void doWaterChemistryCalculation(double const dt) override;
@@ -92,8 +94,6 @@ private:
         _dt = dt;
         return *this;
     }
-
-    void setAqueousSolutionsPrevFromDumpFile();
 
     std::string const _database;
     std::unique_ptr<ChemicalSystem> _chemical_system;

@@ -239,6 +239,8 @@ void ComponentTransportProcess::solveReactionEquation(
     BaseLib::RunTime time_phreeqc;
     time_phreeqc.start();
 
+    _chemical_solver_interface->setAqueousSolutionsPrevFromDumpFile();
+
     _chemical_solver_interface->doWaterChemistryCalculation(dt);
 
     extrapolateIntegrationPointValuesToNodes(
