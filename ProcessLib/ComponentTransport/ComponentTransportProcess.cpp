@@ -241,7 +241,7 @@ void ComponentTransportProcess::solveReactionEquation(
 
     _chemical_solver_interface->setAqueousSolutionsPrevFromDumpFile();
 
-    _chemical_solver_interface->doWaterChemistryCalculation(dt);
+    _chemical_solver_interface->executeSpeciationCalculation(dt);
 
     extrapolateIntegrationPointValuesToNodes(
         t, _chemical_solver_interface->getIntPtProcessSolutions(), x);

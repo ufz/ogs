@@ -43,7 +43,7 @@ public:
 
     void executeInitialCalculation() override;
 
-    void doWaterChemistryCalculation(double const dt) override;
+    void executeSpeciationCalculation(double const dt) override;
 
     void setAqueousSolutions(
         std::vector<GlobalVector*> const& process_solutions);

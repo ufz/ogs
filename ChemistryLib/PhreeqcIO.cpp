@@ -300,7 +300,7 @@ std::vector<GlobalVector*> PhreeqcIO::getIntPtProcessSolutions() const
     return int_pt_process_solutions;
 }
 
-void PhreeqcIO::doWaterChemistryCalculation(double const dt)
+void PhreeqcIO::executeSpeciationCalculation(double const dt)
 {
     writeInputsToFile(dt);
 

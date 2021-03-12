@@ -65,7 +65,7 @@ public:
 
     void executeInitialCalculation() override;
 
-    void doWaterChemistryCalculation(double const dt) override;
+    void executeSpeciationCalculation(double const dt) override;
 
     void writeInputsToFile(double const dt = 0);
 
