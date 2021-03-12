@@ -65,12 +65,6 @@ public:
 
     void executeSpeciationCalculation(double const dt) override;
 
-    void writeInputsToFile(double const dt = 0);
-
-    void execute();
-
-    void readOutputsFromFile();
-
     std::vector<GlobalVector*> getIntPtProcessSolutions() const override;
 
     friend std::ostream& operator<<(std::ostream& os,
@@ -87,6 +81,12 @@ public:
     std::string const _phreeqc_input_file;
 
 private:
+    void writeInputsToFile(double const dt = 0);
+
+    void execute();
+
+    void readOutputsFromFile();
+
     PhreeqcIO& operator<<(double const dt)
     {
         _dt = dt;
