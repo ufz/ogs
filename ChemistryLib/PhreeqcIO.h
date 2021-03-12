@@ -81,7 +81,7 @@ public:
     std::string const _phreeqc_input_file;
 
 private:
-    void writeInputsToFile(double const dt = 0);
+    void writeInputsToFile(double const dt);
 
     void execute();
 
