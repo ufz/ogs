@@ -12,10 +12,5 @@ module load cmake/3.19.4-1
 module load ninja
 module load git/2.23.0
 
-# Libraries
-module load boost/1.67.0-1
-module load vtk/8.2.0/foss2019b/serial
-module load HDF5/1.10.5-nompi
-
 # Tools
 module load ccache/3.3.3

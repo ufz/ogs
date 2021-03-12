@@ -19,17 +19,6 @@ if(OGS_BUILD_TESTING)
         add_library(autocheck INTERFACE IMPORTED)
         target_include_directories(autocheck SYSTEM INTERFACE ${autocheck_SOURCE_DIR}/include)
     endif()
-
-    CPMAddPackage(
-        NAME vtkdiff
-        GITHUB_REPOSITORY ufz/vtkdiff
-        GIT_TAG 49403cee266bb8e80405a02d677dbb5f71afc61a
-        OPTIONS
-            "VTK_LIBRARIES vtkIOXML"
-    )
-    if(vtkdiff_ADDED)
-        install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
-    endif()
 endif()
 
 CPMAddPackage(
@@ -144,6 +133,10 @@ if(OGS_USE_XDMF)
         add_library(ZLIB::ZLIB ALIAS zlibstatic)
     endif()
 
+    if(OGS_USE_MPI)
+        set(hdf5_options "HDF5_ENABLE_PARALLEL ON")
+    endif()
+
     string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
     CPMFindPackage(
         NAME HDF5
@@ -159,6 +152,7 @@ if(OGS_USE_XDMF)
             "HDF5_BUILD_FORTRAN OFF"
             "HDF5_BUILD_CPP_LIB OFF"
             "HDF5_BUILD_JAVA OFF"
+            ${hdf5_options}
         EXCLUDE_FROM_ALL YES
     )
     if(HDF5_ADDED)
@@ -298,6 +292,71 @@ if(OGS_USE_CVODE)
             sundials_cvode_static
             sundials_nvecserial_static
         )
+    endif()
+endif()
+
+### VTK ###
+set(VTK_COMPONENTS vtkIOXML vtkIOLegacy)
+if(OGS_BUILD_GUI)
+    list(APPEND VTK_COMPONENTS
+        vtkIOExport vtkImagingCore
+        vtkInteractionStyle vtkInteractionWidgets
+        vtkGUISupportQt vtkRenderingOpenGL2 vtkRenderingContextOpenGL2
+        vtkFiltersTexture vtkRenderingAnnotation vtkRenderingCore
+    )
+    if(OGS_BUILD_UTILS)
+        list(APPEND VTK_COMPONENTS vtkFiltersParallel)
+    endif()
+endif()
+if(OGS_USE_MPI)
+    list(APPEND VTK_COMPONENTS vtkIOParallelXML vtkParallelMPI)
+endif()
+# TODO:
+# if(OGS_INSITU)
+#     find_package(ParaView REQUIRED)
+# end()
+find_package(VTK ${ogs.minimum_version.vtk} QUIET COMPONENTS ${VTK_COMPONENTS})
+
+if(VTK_FOUND)
+    include(${VTK_USE_FILE})
+else()
+    list(APPEND VTK_OPTIONS
+        "BUILD_SHARED_LIBS OFF"
+        "BUILD_TESTING OFF"
+        "VTK_BUILD_EXAMPLES OFF"
+        "VTK_BUILD_TESTING OFF"
+        "VTK_ENABLE_WRAPPING OFF"
+        "VTK_Group_Rendering OFF"
+        "VTK_Group_StandAlone OFF"
+        "VTK_USE_64BIT_IDS ON"
+    )
+    foreach(comp ${VTK_COMPONENTS})
+        list(APPEND VTK_OPTIONS "Module_${comp} ON")
+    endforeach()
+
+    CPMAddPackage(
+        NAME VTK
+        GITHUB_REPOSITORY kitware/vtk
+        VERSION ${ogs.minimum_version.vtk}
+        OPTIONS ${VTK_OPTIONS}
+        EXCLUDE_FROM_ALL YES
+        GIT_SUBMODULES "" # Disable submodules
+    )
+    include(${VTK_BINARY_DIR}/VTKConfig.cmake)
+endif()
+### end VTK ###
+
+if(OGS_BUILD_TESTING)
+    CPMAddPackage(
+        NAME vtkdiff
+        GITHUB_REPOSITORY ufz/vtkdiff
+        GIT_TAG 49403cee266bb8e80405a02d677dbb5f71afc61a
+    )
+    if(vtkdiff_ADDED)
+        if(VTK_ADDED)
+            target_include_directories(vtkdiff PRIVATE ${VTK_INCLUDE_DIRS})
+        endif()
+        install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
     endif()
 endif()
 

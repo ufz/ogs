@@ -60,25 +60,6 @@ find_program(GMSH gmsh)
 ######################
 ### Find libraries ###
 ######################
-set(VTK_COMPONENTS vtkIOXML vtkIOLegacy)
-if(OGS_BUILD_GUI)
-    set(VTK_COMPONENTS ${VTK_COMPONENTS}
-        vtkIOExport vtkImagingCore
-        vtkInteractionStyle vtkInteractionWidgets
-        vtkGUISupportQt vtkRenderingOpenGL2 vtkRenderingContextOpenGL2
-        vtkFiltersTexture vtkRenderingAnnotation vtkRenderingCore vtkFiltersParallel
-    )
-endif()
-if(OGS_USE_MPI)
-    set(VTK_COMPONENTS ${VTK_COMPONENTS} vtkIOParallelXML vtkParallelMPI)
-endif()
-if(OGS_INSITU)
-    find_package(ParaView REQUIRED)
-else()
-    find_package(VTK ${ogs.minimum_version.vtk} REQUIRED COMPONENTS ${VTK_COMPONENTS})
-    include(${VTK_USE_FILE})
-endif()
-
 if(OGS_USE_MFRONT)
     ## pthread, is a requirement of mfront ##
     set(CMAKE_THREAD_PREFER_PTHREAD ON)

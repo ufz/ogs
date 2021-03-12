@@ -32,25 +32,6 @@ set(CONAN_SYSTEM_INCLUDES ON)
 
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 
-set(CONAN_REQUIRES
-    vtk/${ogs.tested_version.vtk}@bilke/stable
-    CACHE INTERNAL ""
-)
-
-set(CONAN_OPTIONS
-    vtk:minimal=True
-    vtk:ioxml=True
-    vtk:iolegacy=True
-    CACHE INTERNAL ""
-)
-if((UNIX AND NOT APPLE) AND BUILD_SHARED_LIBS)
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:fPIC=True)
-endif()
-
-if(OGS_USE_MPI)
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} vtk:mpi_minimal=True)
-endif()
-
 if(OGS_USE_PETSC)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} petsc/${ogs.minimum_version.petsc}@bilke/testing)
     if(OGS_CONAN_USE_SYSTEM_OPENMPI)
@@ -75,8 +56,6 @@ if(OGS_BUILD_GUI)
         qt/${ogs.minimum_version.qt}@bincrafters/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
-        vtk:minimal=False
-        vtk:qt=True
         qt:qtxmlpatterns=True
         qt:openssl=False
         qt:with_libalsa=False
