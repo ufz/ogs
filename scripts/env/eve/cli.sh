@@ -7,10 +7,9 @@ fi
 
 module use /global/apps/modulefiles
 
-module load foss/2019b
+module load foss/2020b
 module load cmake/3.19.4-1
-module load ninja
-module load git/2.23.0
+module load Ninja/1.10.1
 
 # Tools
 module load ccache/3.3.3
