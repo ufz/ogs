@@ -3,8 +3,9 @@ cmake_policy(SET CMP0009 NEW)
 # Moves an *.md file from the src directory to DocAux directory in the build
 # tree augmenting it with basic extra information, such as the list of child
 # pages and the page title.
-function(documentationProjectFilePutIntoPlace p)
-    file(RELATIVE_PATH relative_path ${DocumentationProjectFileInputDir} ${p})
+function(documentationProjectFilePutIntoPlace dir)
+    # cmake-lint: disable=R0912,R0915
+    file(RELATIVE_PATH relative_path ${DOCUMENTATION_PROJECTFILE_INPUTDIR} ${dir})
     get_filename_component(dir_name ${relative_path} DIRECTORY)
 
     get_filename_component(otagname ${relative_path} NAME_WE)
@@ -12,13 +13,13 @@ function(documentationProjectFilePutIntoPlace p)
         # if the file name starts with an underscore, then this files is
         # the "table of contents of the current directory
 
-        file(MAKE_DIRECTORY "${DocumentationProjectFileBuildDir}/${dir_name}")
+        file(MAKE_DIRECTORY "${DOCUMENTATION_PROJECTFILE_BUILDDIR}/${dir_name}")
 
         set(postfix "# Child parameters, attributes and cases\n\n")
 
         # gather other parameter files
         # the loop below will effects a page hierarchy to be built
-        file(GLOB param_files ${DocumentationProjectFileInputDir}/${dir_name}/*)
+        file(GLOB param_files ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/${dir_name}/*)
         set(subpagelist "")
         foreach(pf ${param_files})
             # ignore hidden files
@@ -110,31 +111,30 @@ function(documentationProjectFilePutIntoPlace p)
     endif()
 
     # read, augment, write file content
-    file(READ ${p} content)
+    file(READ ${dir} content)
     set(content "/*! \\page ${pagenameprefix}${tagpath} ${pagetitle}\n${content}\n\n${postfix}\n")
     if (NOT doc_use_external_tools)
         set(ending "\n*/\n")
     else()
         set(ending "") # external tools shall finish the file
     endif()
-    string(REGEX REPLACE .md$ .dox output_file "${DocumentationProjectFileBuildDir}/${relative_path}")
+    string(REGEX REPLACE .md$ .dox output_file "${DOCUMENTATION_PROJECTFILE_BUILDDIR}/${relative_path}")
     file(WRITE "${output_file}" "${content}${ending}")
 endfunction()
 
-
-set(DocumentationProjectFileBuildDir ${PROJECT_BINARY_DIR}/DocAux/dox/ProjectFile)
-set(DocumentationProjectFileInputDir ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile)
+set(DOCUMENTATION_PROJECTFILE_BUILDDIR ${PROJECT_BINARY_DIR}/DocAux/dox/ProjectFile)
+set(DOCUMENTATION_PROJECTFILE_INPUTDIR ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile)
 
 # remove old output
-if (IS_DIRECTORY ${DocumentationProjectFileBuildDir})
-    file(REMOVE_RECURSE ${DocumentationProjectFileBuildDir})
+if (IS_DIRECTORY ${DOCUMENTATION_PROJECTFILE_BUILDDIR})
+    file(REMOVE_RECURSE ${DOCUMENTATION_PROJECTFILE_BUILDDIR})
 endif()
 
 # traverse input file hierarchy
 file(GLOB_RECURSE input_paths FOLLOW_SYMLINKS
-    ${DocumentationProjectFileInputDir}/c_* ${DocumentationProjectFileInputDir}/i_*)
+    ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/c_* ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/i_*)
 
-foreach(p ${input_paths})
-    message("directory index file ${p}")
-    documentationProjectFilePutIntoPlace(${p})
+foreach(path ${input_paths})
+    message("directory index file ${path}")
+    documentationProjectFilePutIntoPlace(${path})
 endforeach()

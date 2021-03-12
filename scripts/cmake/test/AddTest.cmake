@@ -50,7 +50,7 @@
 #         Can be given multiple times; the point coordinates in the gml files are
 #         compared using the given absolute and relative tolerances.
 # ~~~
-# cmake-lint: disable=C0103
+# cmake-lint: disable=C0103,R0911,R0912,R0915
 function (AddTest)
 
     # parse arguments

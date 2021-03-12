@@ -13,35 +13,35 @@ add_custom_target(check-header
 )
 
 # Checks header for standalone compilation
-function(_check_header_compilation TARGET)
-
-    if(NOT TARGET ${TARGET})
+function(_check_header_compilation target)
+    # cmake-lint: disable=R0915
+    if(NOT TARGET ${target})
         return()
     endif()
 
-    get_target_property(SOURCE_FILES ${TARGET} SOURCES)
-    get_target_property(SOURCE_DIR ${TARGET} SOURCE_DIR)
+    get_target_property(SOURCE_FILES ${target} SOURCES)
+    get_target_property(SOURCE_DIR ${target} SOURCE_DIR)
 
     get_directory_property(DEFS DIRECTORY ${SOURCE_DIR} COMPILE_DEFINITIONS)
-    foreach(DEF ${DEFS})
-        if(${DEF} MATCHES ".*[0-9]\\(.*")
+    foreach(def ${DEFS})
+        if(${def} MATCHES ".*[0-9]\\(.*")
             continue()
         endif()
-        list(APPEND DEFS_CLEANED "-D${DEF}")
+        list(APPEND DEFS_CLEANED "-D${def}")
     endforeach()
 
-    get_target_property(INCLUDE_DIRS ${TARGET} INCLUDE_DIRECTORIES)
-    get_target_property(LINK_LIBS ${TARGET} LINK_LIBRARIES)
-    foreach(LIB ${LINK_LIBS})
+    get_target_property(INCLUDE_DIRS ${target} INCLUDE_DIRECTORIES)
+    get_target_property(LINK_LIBS ${target} LINK_LIBRARIES)
+    foreach(lib ${LINK_LIBS})
         # Ignore non-existing targets or interface libs
-        if(NOT TARGET ${LIB})
+        if(NOT TARGET ${lib})
             continue()
         endif()
-        get_target_property(LIB_TYPE ${LIB} TYPE)
+        get_target_property(LIB_TYPE ${lib} TYPE)
         if(LIB_TYPE STREQUAL "INTERFACE_LIBRARY")
             continue()
         endif()
-        get_target_property(TARGET_INCLUDE_DIRS ${LIB} INCLUDE_DIRECTORIES)
+        get_target_property(TARGET_INCLUDE_DIRS ${lib} INCLUDE_DIRECTORIES)
         if(TARGET_INCLUDE_DIRS)
             list(APPEND INCLUDE_DIRS ${TARGET_INCLUDE_DIRS})
         endif()
@@ -52,6 +52,7 @@ function(_check_header_compilation TARGET)
     message(STATUS "Checking header compilation for ${DIRECTORY} ...")
     include(CheckCXXSourceCompiles)
 
+    # cmake-lint: disable=C0103
     set(CMAKE_REQUIRED_INCLUDES ${INCLUDE_DIRS} ${SOURCE_DIR})
     # HACK, maybe add Gui Widgets Xml XmlPatterns as well
     if(OGS_BUILD_GUI)
@@ -63,38 +64,38 @@ function(_check_header_compilation TARGET)
     endif()
     set(CMAKE_REQUIRED_DEFINITIONS ${DEFS_CLEANED})
 
-    foreach(FILE ${SOURCE_FILES})
+    foreach(file ${SOURCE_FILES})
 
-        if(NOT "${FILE}" MATCHES ".*\\.h") # Check only header files
+        if(NOT "${file}" MATCHES ".*\\.h") # Check only header files
             continue()
         endif()
-        if("${FILE}" MATCHES ".*-impl\\.h") # Ignore *-impl.h files
+        if("${file}" MATCHES ".*-impl\\.h") # Ignore *-impl.h files
             continue()
         endif()
-        if("${FILE}" MATCHES ".*Dialog\\.h") # Ignore Qt Dialog files
+        if("${file}" MATCHES ".*Dialog\\.h") # Ignore Qt Dialog files
             continue()
         endif()
-        if("${FILE}" MATCHES ".*Widget\\.h") # Ignore Qt Widget files
+        if("${file}" MATCHES ".*Widget\\.h") # Ignore Qt Widget files
             continue()
         endif()
-        if("${FILE}" MATCHES ".*Window\\.h") # Ignore Qt Window files
+        if("${file}" MATCHES ".*Window\\.h") # Ignore Qt Window files
             continue()
         endif()
 
-        string(REPLACE "${PROJECT_SOURCE_DIR}/" "" TEST_NAME ${FILE})
+        string(REPLACE "${PROJECT_SOURCE_DIR}/" "" TEST_NAME ${file})
         string(REPLACE "." "_" TEST_NAME ${TEST_NAME})
         string(REPLACE "/" "_" TEST_NAME ${TEST_NAME})
         check_cxx_source_compiles(
             "
-            #include \"${FILE}\"
+            #include \"${file}\"
             int main() { return 0; }
             "
             ${TEST_NAME}_COMPILES
         )
 
         if(NOT ${TEST_NAME}_COMPILES)
-            set(HEADER_COMPILE_ERROR TRUE CACHE INTERNAL "")
-            message(STATUS "  Compilation failed for ${FILE}")
+            set(_HEADER_COMPILE_ERROR TRUE CACHE INTERNAL "")
+            message(STATUS "  Compilation failed for ${file}")
         endif()
         unset(${TEST_NAME}_COMPILES CACHE)
 
@@ -102,11 +103,12 @@ function(_check_header_compilation TARGET)
     endforeach()
 endfunction()
 
+# Check header compilation in
 function(check_header_compilation)
     if(NOT OGS_CHECK_HEADER_COMPILATION)
         return()
     endif()
-    set(HEADER_COMPILE_ERROR FALSE CACHE INTERNAL "")
+    set(_HEADER_COMPILE_ERROR FALSE CACHE INTERNAL "")
 
     _check_header_compilation(BaseLib)
     _check_header_compilation(ChemistryLib)
@@ -132,7 +134,7 @@ function(check_header_compilation)
         _check_header_compilation(VtkVis)
     endif()
 
-    if(HEADER_COMPILE_ERROR)
+    if(_HEADER_COMPILE_ERROR)
         message(FATAL_ERROR "... header compilation check failed, see CMakeFiles/CMakeError.log for details!")
     endif()
 endfunction()

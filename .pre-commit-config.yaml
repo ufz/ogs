@@ -45,8 +45,9 @@ repos:
 -   repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: v0.6.13
     hooks:
-    # - id: cmake-format
-    #   additional_dependencies: ["cmakelang[YAML]"]
+    - id: cmake-format
+      additional_dependencies: ["cmakelang[YAML]"]
+      exclude: '.*' # Disabled for now
     - id: cmake-lint
       additional_dependencies: ["cmakelang[YAML]"]
-      exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake'
+      exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake'

@@ -17,7 +17,7 @@
 #                          values should be taken from envinf1 serial job
 # )
 # ~~~
-# cmake-lint: disable=C0103
+# cmake-lint: disable=C0103,R0912,R0915
 function (MeshTest)
     if(NOT OGS_BUILD_TESTING)
         return()

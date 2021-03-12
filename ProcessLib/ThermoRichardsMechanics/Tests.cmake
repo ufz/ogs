@@ -42,7 +42,6 @@ AddTest(
     expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu epsilon epsilon 1e-16 0
 )
 
-
 AddTest(
     NAME ThermoRichardsMechanics_HeatTransportInStationaryFlow
     PATH ThermoRichardsMechanics/HeatTransportInStationaryFlow

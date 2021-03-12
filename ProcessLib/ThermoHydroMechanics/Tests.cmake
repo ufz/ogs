@@ -205,7 +205,7 @@ AddTest(
     NAME ThermoHydroMechanics_thermo_osmosis_filtration_effects_CylindricalCavity
     PATH ThermoHydroMechanics/Linear/CylindricalCavity
     RUNTIME 600
-	EXECUTABLE ogs
+    EXECUTABLE ogs
     EXECUTABLE_ARGS CylindricalCavity.prj
     WRAPPER time
     TESTER vtkdiff

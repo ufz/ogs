@@ -1,6 +1,6 @@
 # A list of processes to be build. Also used in the ProcessLib to select
 # processes to be build.
-set(processes_list
+set(_processes_list
     ComponentTransport
     HT
     HeatConduction
@@ -25,7 +25,7 @@ set(processes_list
     TwoPhaseFlowWithPrho)
 
 # Add a cmake option for each process.
-foreach(process ${processes_list})
+foreach(process ${_processes_list})
     option(OGS_BUILD_PROCESS_${process} "Build the ${process} process." ON)
 endforeach()
 
