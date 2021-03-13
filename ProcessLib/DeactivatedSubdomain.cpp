@@ -90,11 +90,12 @@ static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
                  back_inserter(deactivated_elements),
                  [&](auto const e) { return is_active(e); });
 
-    auto bc_mesh = MeshLib::createMeshFromElementSelection(
+    // Subdomain mesh consisting of deactivated elements.
+    auto sub_mesh = MeshLib::createMeshFromElementSelection(
         "deactivate_subdomain_" + std::to_string(material_id),
         MeshLib::cloneElements(deactivated_elements));
 
-    auto const& new_mesh_properties = bc_mesh->getProperties();
+    auto const& new_mesh_properties = sub_mesh->getProperties();
     if (!new_mesh_properties.template existsPropertyVector<std::size_t>(
             "bulk_node_ids"))
     {
@@ -107,7 +108,7 @@ static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
             "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
 
     std::vector<MeshLib::Node*> deactivated_nodes;
-    auto const& nodes_in_bc_mesh = bc_mesh->getNodes();
+    auto const& nodes_in_sub_mesh = sub_mesh->getNodes();
     for (std::size_t i = 0; i < bulk_node_ids_map.size(); i++)
     {
         auto const found_iterator =
@@ -119,12 +120,12 @@ static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
             continue;
         }
         deactivated_nodes.push_back(
-            const_cast<MeshLib::Node*>(nodes_in_bc_mesh[i]));
+            const_cast<MeshLib::Node*>(nodes_in_sub_mesh[i]));
 
         deactivated_bulk_node_ids.erase(found_iterator);
     }
     return std::make_unique<DeactivetedSubdomainMesh>(
-        std::move(bc_mesh), std::move(deactivated_nodes));
+        std::move(sub_mesh), std::move(deactivated_nodes));
 }
 
 std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
