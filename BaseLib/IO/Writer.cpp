@@ -65,10 +65,5 @@ int Writer::writeToFile(std::filesystem::path const& file_path)
     }
     return 0;
 }
-
-void Writer::setPrecision(unsigned int precision)
-{
-    out.precision(precision);
-}
 }  // namespace IO
 }  // namespace BaseLib

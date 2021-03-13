@@ -311,7 +311,6 @@ bool BoostXmlGmlInterface::write()
     addSurfacesToPropertyTree(geometry_set);
 
     boost::property_tree::xml_writer_settings<std::string> settings('\t', 1);
-    setPrecision(std::numeric_limits<double>::digits10);
     write_xml(out, pt, settings);
     return true;
 }

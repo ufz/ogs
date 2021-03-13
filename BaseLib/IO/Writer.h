@@ -23,8 +23,7 @@ namespace BaseLib
 namespace IO
 {
 /// @brief Base class which enables writing an object to string, stringstream
-/// or file. Also formatting (precision, scientific notation of decimal values)
-/// can be set.
+/// or file.
 ///
 /// When subclassing you only need to implement void write() in which you have
 /// to write to out.
@@ -39,9 +38,6 @@ public:
 
     /// @brief Writes the object to the given file.
     int writeToFile(std::filesystem::path const& file_path);
-
-    /// @brief Sets the decimal precision.
-    void setPrecision(unsigned int precision);
 
 protected:
     /// @brief Writes the object to the internal stream.
