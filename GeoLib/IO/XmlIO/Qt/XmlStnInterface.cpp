@@ -236,7 +236,7 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
 
 bool XmlStnInterface::write()
 {
-    if (this->_exportName.empty())
+    if (export_name.empty())
     {
         ERR("XmlStnInterface::write(): No station list specified.");
         return false;
@@ -250,7 +250,8 @@ bool XmlStnInterface::write()
     root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
     root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
 
-    const std::vector<GeoLib::Point*>* stations (_geo_objs.getStationVec(_exportName));
+    const std::vector<GeoLib::Point*>* stations(
+        _geo_objs.getStationVec(export_name));
     bool const is_borehole = static_cast<GeoLib::Station*>((*stations)[0])->type() ==
                        GeoLib::Station::StationType::BOREHOLE;
 
@@ -260,7 +261,8 @@ bool XmlStnInterface::write()
 
     QDomElement listNameTag = doc.createElement("name");
     stationListTag.appendChild(listNameTag);
-    QDomText stationListNameText = doc.createTextNode(QString::fromStdString(_exportName));
+    QDomText stationListNameText =
+        doc.createTextNode(QString::fromStdString(export_name));
     listNameTag.appendChild(stationListNameText);
     QString listType = is_borehole ? "boreholes" : "stations";
     QDomElement stationsTag = doc.createElement(listType);

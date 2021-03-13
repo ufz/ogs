@@ -31,11 +31,10 @@ public:
     XMLInterface();
     ~XMLInterface() override = default;
 
-    void setNameForExport(std::string const& name) { _exportName = name; }
     virtual bool readFile(std::string const& fname) = 0;
 
-protected:
-    std::string _exportName;
+public:
+    std::string export_name = {};
 };
 
 }  // namespace IO

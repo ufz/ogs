@@ -375,7 +375,7 @@ bool XmlPrjInterface::write()
     {
         // write gml file
         GeoLib::IO::XmlGmlInterface gml(geo_objects);
-        gml.setNameForExport(name);
+        gml.export_name = name;
         if (gml.writeToFile(std::string(path + name + ".gml")))
         {
             // write entry in project file
@@ -397,7 +397,7 @@ bool XmlPrjInterface::write()
     {
         // write station file
         GeoLib::IO::XmlStnInterface stn(geo_objects);
-        stn.setNameForExport(name);
+        stn.export_name = name;
 
         if (stn.writeToFile(path + name + ".stn"))
         {

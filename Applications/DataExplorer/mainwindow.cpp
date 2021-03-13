@@ -917,14 +917,14 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
     }
 #endif
     GeoLib::IO::XmlGmlInterface xml(_project.getGEOObjects());
-    xml.setNameForExport(gliName.toStdString());
+    xml.export_name = gliName.toStdString();
     xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
     GeoLib::IO::XmlStnInterface xml(_project.getGEOObjects());
-    xml.setNameForExport(listName.toStdString());
+    xml.export_name = listName.toStdString();
     xml.writeToFile(fileName.toStdString());
 }
 

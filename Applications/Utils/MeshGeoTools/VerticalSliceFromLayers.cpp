@@ -197,7 +197,7 @@ void consolidateGeometry(GeoLib::GEOObjects& geo,
 {
     std::string const filename(output_name + ".gml");
     GeoLib::IO::XmlGmlInterface xml(geo);
-    xml.setNameForExport(merged_geo_name);
+    xml.export_name = merged_geo_name;
     xml.writeToFile(filename);
 
     geo.removePolylineVec(merged_geo_name);

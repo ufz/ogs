@@ -319,7 +319,7 @@ void XmlGmlInterface::readSurfaces(
 }
 bool XmlGmlInterface::write()
 {
-    if (this->_exportName.empty())
+    if (export_name.empty())
     {
         ERR("XmlGmlInterface::write(): No geometry specified.");
         return false;
@@ -337,14 +337,15 @@ bool XmlGmlInterface::write()
 
     QDomElement geoNameTag = doc.createElement("name");
     root.appendChild(geoNameTag);
-    QDomText geoNameText = doc.createTextNode(QString::fromStdString(_exportName));
+    QDomText geoNameText =
+        doc.createTextNode(QString::fromStdString(export_name));
     geoNameTag.appendChild(geoNameText);
 
     // POINTS
     QDomElement pointsListTag = doc.createElement("points");
     root.appendChild(pointsListTag);
 
-    const GeoLib::PointVec* pnt_vec (_geo_objs.getPointVecObj(_exportName));
+    const GeoLib::PointVec* pnt_vec(_geo_objs.getPointVecObj(export_name));
     if (pnt_vec)
     {
         const std::vector<GeoLib::Point*>* points (pnt_vec->getVector());
@@ -392,7 +393,8 @@ bool XmlGmlInterface::write()
     }
 
     // POLYLINES
-    const GeoLib::PolylineVec* ply_vec (_geo_objs.getPolylineVecObj(_exportName));
+    const GeoLib::PolylineVec* ply_vec(
+        _geo_objs.getPolylineVecObj(export_name));
     if (ply_vec)
     {
         const std::vector<GeoLib::Polyline*>* polylines (ply_vec->getVector());
@@ -441,7 +443,7 @@ bool XmlGmlInterface::write()
     }
 
     // SURFACES
-    const GeoLib::SurfaceVec* sfc_vec (_geo_objs.getSurfaceVecObj(_exportName));
+    const GeoLib::SurfaceVec* sfc_vec(_geo_objs.getSurfaceVecObj(export_name));
     if (sfc_vec)
     {
         const std::vector<GeoLib::Surface*>* surfaces (sfc_vec->getVector());

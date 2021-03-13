@@ -113,7 +113,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
         {
             std::string const geo_name =
                 BaseLib::extractBaseName(input_string.toStdString());
-            xml.setNameForExport(geo_name);
+            xml.export_name = geo_name;
             xml.writeToFile(output_str);
             geo_objects.removeSurfaceVec(geo_name);
             geo_objects.removePolylineVec(geo_name);
