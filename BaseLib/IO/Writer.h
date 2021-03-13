@@ -22,13 +22,12 @@ namespace BaseLib
 {
 namespace IO
 {
-
 /// @brief Base class which enables writing an object to string, stringstream
 /// or file. Also formatting (precision, scientific notation of decimal values)
 /// can be set.
 ///
 /// When subclassing you only need to implement void write() in which you have
-/// to write to _out.
+/// to write to out.
 class Writer
 {
 public:
@@ -51,10 +50,7 @@ protected:
     virtual bool write() = 0;
 
     /// @brief The stream to write to.
-    std::stringstream _out;
-
-private:
-
+    std::ostringstream out;
 };
 
 } // namespace IO

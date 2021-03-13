@@ -270,12 +270,12 @@ bool CsvInterface::write()
 
     if (_writeCsvHeader)
     {
-        _out << _vec_names[0];
+        out << _vec_names[0];
         for (std::size_t i = 1; i < n_vecs; ++i)
         {
-            _out << "\t" << _vec_names[i];
+            out << "\t" << _vec_names[i];
         }
-        _out << "\n";
+        out << "\n";
     }
 
     for (std::size_t j = 0; j < vec_size; ++j)
@@ -283,10 +283,10 @@ bool CsvInterface::write()
         writeValue(0, j);
         for (std::size_t i = 1; i < n_vecs; ++i)
         {
-            _out << "\t";
+            out << "\t";
             writeValue(i, j);
         }
-        _out << "\n";
+        out << "\n";
     }
     return true;
 }
@@ -312,16 +312,16 @@ void CsvInterface::writeValue(std::size_t vec_idx, std::size_t in_vec_idx)
 {
     if (_data[vec_idx].type() == typeid(std::vector<std::string>))
     {
-        _out << std::any_cast<std::vector<std::string>>(
+        out << std::any_cast<std::vector<std::string>>(
             _data[vec_idx])[in_vec_idx];
     }
     else if (_data[vec_idx].type() == typeid(std::vector<double>))
     {
-        _out << std::any_cast<std::vector<double>>(_data[vec_idx])[in_vec_idx];
+        out << std::any_cast<std::vector<double>>(_data[vec_idx])[in_vec_idx];
     }
     else if (_data[vec_idx].type() == typeid(std::vector<int>))
     {
-        _out << std::any_cast<std::vector<int>>(_data[vec_idx])[in_vec_idx];
+        out << std::any_cast<std::vector<int>>(_data[vec_idx])[in_vec_idx];
     }
 }
 

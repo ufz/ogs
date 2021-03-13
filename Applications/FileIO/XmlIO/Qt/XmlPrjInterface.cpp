@@ -343,10 +343,10 @@ bool XmlPrjInterface::write()
     QFileInfo fi(QString::fromStdString(_filename));
     std::string path((fi.absolutePath()).toStdString() + "/");
 
-    _out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";  // xml
-                                                                  // definition
-    _out << "<?xml-stylesheet type=\"text/xsl\" "
-            "href=\"OpenGeoSysProject.xsl\"?>\n\n";  // stylefile definition
+    out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";  // xml
+                                                                 // definition
+    out << "<?xml-stylesheet type=\"text/xsl\" "
+           "href=\"OpenGeoSysProject.xsl\"?>\n\n";  // stylefile definition
 
     QDomDocument doc("OGS-PROJECT-DOM");
     QDomElement root = doc.createElement("OpenGeoSysProject");
@@ -421,7 +421,7 @@ bool XmlPrjInterface::write()
     }
 
     std::string xml = doc.toString().toStdString();
-    _out << xml;
+    out << xml;
     return true;
 }
 

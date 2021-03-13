@@ -87,10 +87,11 @@ GMSHInterface::~GMSHInterface()
 
 bool GMSHInterface::write()
 {
-    _out << "// GMSH input file created by OpenGeoSys " << GitInfoLib::GitInfo::ogs_version;
-    _out << "\n\n";
+    out << "// GMSH input file created by OpenGeoSys "
+        << GitInfoLib::GitInfo::ogs_version;
+    out << "\n\n";
 
-    return writeGMSHInputFile(_out) <= 0;
+    return writeGMSHInputFile(out) <= 0;
 }
 
 int GMSHInterface::writeGMSHInputFile(std::ostream& out)
