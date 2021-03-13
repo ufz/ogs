@@ -48,7 +48,8 @@ std::vector<double> GradualSubdivision::operator()() const
         i++;
     } while (x < length_);
 
-    if (vec_x.back() < length_) {
+    if (vec_x.back() < length_)
+    {
         double last_dx = vec_x[vec_x.size() - 1] - vec_x[vec_x.size() - 2];
         if (length_ - vec_x.back() < last_dx)
         {
@@ -78,7 +79,8 @@ std::vector<double> GradualSubdivisionFixedNum::operator()() const
     if (q == 1.0) {
         double const dx = length_ / num_subdivisions_;
 
-        for (std::size_t i = 1; i < num_subdivisions_; ++i) {
+        for (std::size_t i = 1; i < num_subdivisions_; ++i)
+        {
             subdivisions.push_back(dx * i);
         }
     } else {
@@ -87,7 +89,8 @@ std::vector<double> GradualSubdivisionFixedNum::operator()() const
             length_ * (q - 1.0) / (std::pow(q, num_subdivisions_) - 1.0);
 
         double qi = q;  // q^i
-        for (std::size_t i = 1; i < num_subdivisions_; ++i) {
+        for (std::size_t i = 1; i < num_subdivisions_; ++i)
+        {
             subdivisions.push_back(a * (qi - 1.0) / (q - 1.0));
             qi *= q;
         }

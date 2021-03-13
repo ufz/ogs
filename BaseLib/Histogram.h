@@ -48,7 +48,7 @@ public:
      */
     template <typename InputIterator>
     Histogram(InputIterator first, InputIterator last, const int nr_bins = 16,
-              const bool computeHistogram = true )
+              const bool computeHistogram = true)
         : data_(first, last), nr_bins_(nr_bins), dirty_(true)
     {
         init(computeHistogram);
@@ -97,8 +97,16 @@ public:
         dirty_ = false;
     }
 
-    void setMinimum(const T& minimum) { min_ = minimum; dirty_ = true; }
-    void setMaximum(const T& maximum) { max_ = maximum; dirty_ = true; }
+    void setMinimum(const T& minimum)
+    {
+        min_ = minimum;
+        dirty_ = true;
+    }
+    void setMaximum(const T& maximum)
+    {
+        max_ = maximum;
+        dirty_ = true;
+    }
 
     const Data& getSortedData() const { return data_; }
     const std::vector<std::size_t>& getBinCounts() const { return histogram_; }
@@ -111,15 +119,15 @@ public:
     prettyPrint(std::ostream& os, const unsigned int line_width = 16) const
     {
         const std::size_t count_max =
-                *std::max_element(histogram_.begin(), histogram_.end());
+            *std::max_element(histogram_.begin(), histogram_.end());
         for (unsigned int bin = 0; bin < nr_bins_; ++bin)
         {
-            os << "[" << min_ + bin * bin_width_ << ", " << min_ +
-                    (bin + 1) * bin_width_ << ")\t";
+            os << "[" << min_ + bin * bin_width_ << ", "
+               << min_ + (bin + 1) * bin_width_ << ")\t";
             os << histogram_[bin] << "\t";
 
             const int n_stars =
-                    std::ceil(line_width * ((double)histogram_[bin] / count_max));
+                std::ceil(line_width * ((double)histogram_[bin] / count_max));
             for (int star = 0; star < n_stars; star++)
             {
                 os << "*";
@@ -178,11 +186,11 @@ protected:
     Data data_;
     const unsigned int nr_bins_;
     std::vector<std::size_t> histogram_;
-    T min_, max_; ///< Minimum and maximum input data values.
+    T min_, max_;  ///< Minimum and maximum input data values.
     T bin_width_;
 
 private:
-    bool dirty_; ///< When set \c update() will recompute histogram.
+    bool dirty_;  ///< When set \c update() will recompute histogram.
 };
 
 /** Writes histogram to output stream.

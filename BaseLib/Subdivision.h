@@ -39,14 +39,16 @@ public:
      * @param n_subdivision   the number of subdivision
      */
     UniformSubdivision(double length, std::size_t n_subdivision)
-    : length_(length), n_subdivision_(n_subdivision) {}
+        : length_(length), n_subdivision_(n_subdivision)
+    {
+    }
 
     /// Returns a vector of subdivided points
     std::vector<double> operator()() const override
     {
         std::vector<double> x;
-        x.reserve(n_subdivision_+1);
-        const double dL = length_/static_cast<double>(n_subdivision_);
+        x.reserve(n_subdivision_ + 1);
+        const double dL = length_ / static_cast<double>(n_subdivision_);
         for (std::size_t i = 0; i < n_subdivision_ + 1; i++)
         {
             x.push_back(i * dL);

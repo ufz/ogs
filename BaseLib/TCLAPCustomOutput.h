@@ -63,49 +63,49 @@ protected:
     void longUsage_(TCLAP::CmdLineInterface& cmd_, std::ostream& os) const;
 };
 
-inline void TCLAPCustomOutput::usage(TCLAP::CmdLineInterface& cmd_ )
+inline void TCLAPCustomOutput::usage(TCLAP::CmdLineInterface& cmd_)
 {
     std::cout << std::endl << "USAGE: " << std::endl << std::endl;
 
-    shortUsage_( cmd_, std::cout );
+    shortUsage_(cmd_, std::cout);
 
     std::cout << std::endl << std::endl << "Where: " << std::endl << std::endl;
 
-    longUsage_( cmd_, std::cout );
+    longUsage_(cmd_, std::cout);
 
     std::cout << std::endl;
 
 }
 
-inline void TCLAPCustomOutput::failure( TCLAP::CmdLineInterface& cmd_,
-        TCLAP::ArgException& e )
+inline void TCLAPCustomOutput::failure(TCLAP::CmdLineInterface& cmd_,
+                                       TCLAP::ArgException& e)
 {
     std::string progName = cmd_.getProgramName();
 
     std::cerr << "PARSE ERROR: " << e.argId() << std::endl
               << "             " << e.error() << std::endl << std::endl;
 
-    if ( cmd_.hasHelpAndVersion() )
-        {
-            std::cerr << "Brief USAGE: " << std::endl;
+    if (cmd_.hasHelpAndVersion())
+    {
+        std::cerr << "Brief USAGE: " << std::endl;
 
-            shortUsage_( cmd_, std::cerr );
+        shortUsage_(cmd_, std::cerr);
 
-            std::cerr << std::endl << "For complete USAGE and HELP type: "
-                      << std::endl << "   " << progName << " --help"
-                      << std::endl << std::endl;
-        }
-        else
-        {
-            usage(cmd_);
-        }
+        std::cerr << std::endl
+                  << "For complete USAGE and HELP type: " << std::endl
+                  << "   " << progName << " --help" << std::endl
+                  << std::endl;
+    }
+    else
+    {
+        usage(cmd_);
+    }
 
     throw TCLAP::ExitException(1);
 }
 
-inline void
-TCLAPCustomOutput::shortUsage_( TCLAP::CmdLineInterface& cmd_,
-                        std::ostream& os ) const
+inline void TCLAPCustomOutput::shortUsage_(TCLAP::CmdLineInterface& cmd_,
+                                           std::ostream& os) const
 {
     std::list<TCLAP::Arg*> argList = cmd_.getArgList();
     std::string progName = cmd_.getProgramName();
@@ -147,9 +147,8 @@ TCLAPCustomOutput::shortUsage_( TCLAP::CmdLineInterface& cmd_,
     spacePrint( os, s, 75, 3, secondLineOffset );
 }
 
-inline void
-TCLAPCustomOutput::longUsage_( TCLAP::CmdLineInterface& cmd_,
-                       std::ostream& os ) const
+inline void TCLAPCustomOutput::longUsage_(TCLAP::CmdLineInterface& cmd_,
+                                          std::ostream& os) const
 {
     std::list<TCLAP::Arg*> argList = cmd_.getArgList();
     std::string message = cmd_.getMessage();

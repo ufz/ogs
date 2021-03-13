@@ -121,7 +121,8 @@ public:
         ConfigTree operator*() {
             // if this iterator has been incremented since the last dereference,
             // tell the parent_ instance that a subtree now has been parsed.
-            if (has_incremented_) {
+            if (has_incremented_)
+            {
                 has_incremented_ = false;
                 parent_.markVisited(tagname_, Attr::TAG, false);
             }
@@ -195,11 +196,13 @@ public:
         ValueType operator*() {
             // if this iterator has been incremented since the last dereference,
             // tell the parent_ instance that a setting now has been parsed.
-            if (has_incremented_) {
+            if (has_incremented_)
+            {
                 has_incremented_ = false;
                 parent_.markVisited<ValueType>(tagname_, Attr::TAG, false);
             }
-            return ConfigTree(it_->second, parent_, tagname_).getValue<ValueType>();
+            return ConfigTree(it_->second, parent_, tagname_)
+                .getValue<ValueType>();
         }
 
         bool operator==(ValueIterator<ValueType> const& other) const {
@@ -253,7 +256,8 @@ public:
 
     /*! This constructor is deleted in order to prevent the user from passing
      * temporary instances of \c PTree.
-     * Doing so would lead to a dangling reference \c tree_ and to program crash.
+     * Doing so would lead to a dangling reference \c tree_ and to program
+     * crash.
      */
     explicit ConfigTree(PTree&&, std::string const&,
                         Callback const&, Callback const&) = delete;
@@ -626,8 +630,8 @@ private:
     //! Indicates if the plain data contained in this tree has already been read.
     mutable bool have_read_data_ = false;
 
-    Callback onerror_;   //!< Custom error callback.
-    Callback onwarning_; //!< Custom warning callback.
+    Callback onerror_;    //!< Custom error callback.
+    Callback onwarning_;  //!< Custom warning callback.
 
     //! Character separating two path components.
     static const char pathseparator;

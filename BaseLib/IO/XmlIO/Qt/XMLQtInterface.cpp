@@ -57,9 +57,10 @@ int XMLQtInterface::readFile(const QString &fileName)
 int XMLQtInterface::isValid() const
 {
     QXmlSchema schema;
-    if(schemaFile_.length() > 0)
+    if (schemaFile_.length() > 0)
     {
-        auto path = QDir(QCoreApplication::applicationDirPath()).filePath(schemaFile_);
+        auto path =
+            QDir(QCoreApplication::applicationDirPath()).filePath(schemaFile_);
         auto url = QUrl::fromLocalFile(path);
         schema.load(url);
     }
@@ -97,7 +98,8 @@ int XMLQtInterface::isValid() const
 bool XMLQtInterface::checkHash() const
 {
     QString md5FileName(fileName_ + ".md5");
-    QByteArray fileHash = QCryptographicHash::hash(fileData_, QCryptographicHash::Md5);
+    QByteArray fileHash =
+        QCryptographicHash::hash(fileData_, QCryptographicHash::Md5);
 
     QFile file(md5FileName);
     if (file.open(QIODevice::ReadOnly))

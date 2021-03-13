@@ -48,7 +48,7 @@ unsigned MemWatch::updateMemUsage ()
 
         in >> pages;
         vmem_size_ = static_cast<unsigned long>(pages) *
-            static_cast<unsigned long>(getpagesize());
+                     static_cast<unsigned long>(getpagesize());
         in.close ();
 #endif
 

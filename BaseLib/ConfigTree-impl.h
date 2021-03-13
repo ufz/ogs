@@ -26,7 +26,7 @@ public:
     {}
 
     Iterator begin() const { return begin_; }
-    Iterator end()   const { return end_; }
+    Iterator end() const { return end_; }
     std::size_t size() const { return std::distance(begin_, end_); }
     bool empty() const { return size() == 0; }
 
@@ -176,13 +176,15 @@ T
 ConfigTree::
 getValue() const
 {
-    if (have_read_data_) {
+    if (have_read_data_)
+    {
         error("The data of this subtree has already been read.");
     }
 
     have_read_data_ = true;
 
-    if (auto v = tree_->get_value_optional<T>()) {
+    if (auto v = tree_->get_value_optional<T>())
+    {
         return *v;
     }
     error("Value `" + shortString(tree_->data()) +
@@ -221,7 +223,8 @@ std::optional<T> ConfigTree::getConfigAttributeOptional(
     checkUniqueAttr(attr);
     auto& ct = markVisited<T>(attr, Attr::ATTR, true);
 
-    if (auto attrs = tree_->get_child_optional("<xmlattr>")) {
+    if (auto attrs = tree_->get_child_optional("<xmlattr>"))
+    {
         if (auto a = attrs->get_child_optional(attr)) {
             ++ct.count; // count only if attribute has been found
             if (auto v = a->get_value_optional<T>()) {

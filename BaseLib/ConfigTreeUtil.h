@@ -35,17 +35,17 @@ public:
 
     /*! Access the contained ConfigTree.
      *
-     * The non-const version of this method has not been implemented in order to prevent invalidating
-     * the \c ctree_ when it is passed around. In order to check and invalidate \c ctree_ use the provided
-     * member function.
+     * The non-const version of this method has not been implemented in order to
+     * prevent invalidating the \c ctree_ when it is passed around. In order to
+     * check and invalidate \c ctree_ use the provided member function.
      */
     ConfigTree const& operator*() const;
 
     /*! Access the contained ConfigTree.
      *
-     * The non-const version of this method has not been implemented in order to prevent invalidating
-     * the \c ctree_ when it is passed around. In order to check and invalidate \c ctree_ use the provided
-     * member function.
+     * The non-const version of this method has not been implemented in order to
+     * prevent invalidating the \c ctree_ when it is passed around. In order to
+     * check and invalidate \c ctree_ use the provided member function.
      */
     ConfigTree const* operator->() const;
 
@@ -58,8 +58,9 @@ public:
     void checkAndInvalidate();
 
 private:
-    ConfigTree::PTree const ptree_; //!< <tt>boost::property_tree</tt> that underlies \c ctree_
-    ConfigTree              ctree_; //!< ConfigTree depending on \c ptree_
+    ConfigTree::PTree const
+        ptree_;  //!< <tt>boost::property_tree</tt> that underlies \c ctree_
+    ConfigTree ctree_;  //!< ConfigTree depending on \c ptree_
 };
 
 /*! Create a ConfigTree from an XML file.
