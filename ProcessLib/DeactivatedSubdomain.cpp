@@ -80,28 +80,15 @@ static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
             const auto& connected_elements = n->getElements();
 
             // Check whether this node is in an activated element.
-            if (std::find_if(connected_elements.begin(),
-                             connected_elements.end(),
-                             [&](auto const* const connected_elem) -> bool {
-                                 return is_active(connected_elem);
-                             }) != connected_elements.end())
-            {
-                return false;
-            }
-            return true;
+            return std::all_of(begin(connected_elements),
+                               end(connected_elements), is_active);
         });
 
     auto const& elements = mesh.getElements();
     std::vector<MeshLib::Element*> deactivated_elements;
-    for (auto const& element : elements)
-    {
-        if (is_active(element))
-        {
-            continue;
-        }
-
-        deactivated_elements.push_back(const_cast<MeshLib::Element*>(element));
-    }
+    std::copy_if(begin(elements), end(elements),
+                 back_inserter(deactivated_elements),
+                 [&](auto const e) { return is_active(e); });
 
     auto bc_mesh = MeshLib::createMeshFromElementSelection(
         "deactivate_subdomain_" + std::to_string(material_id),
