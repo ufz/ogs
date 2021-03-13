@@ -25,15 +25,10 @@ namespace IO
 /**
  * \brief Base class for writing any information to and from XML files.
  */
-class XMLInterface : public BaseLib::IO::Writer
+struct XMLInterface : public BaseLib::IO::Writer
 {
-public:
-    XMLInterface();
-    ~XMLInterface() override = default;
-
     virtual bool readFile(std::string const& fname) = 0;
 
-public:
     std::string export_name = {};
 };
 
