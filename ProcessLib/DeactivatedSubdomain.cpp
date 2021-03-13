@@ -83,23 +83,6 @@ static std::vector<MeshLib::Node*> extractInnerNodes(
     return inner_nodes;
 }
 
-template <typename InputIterator, typename UnaryPredicate>
-std::vector<std::size_t> copyIdsIf(InputIterator first,
-                                   InputIterator last,
-                                   UnaryPredicate p)
-{
-    std::vector<std::size_t> ids;
-    while (first != last)
-    {
-        if (p(*first))
-        {
-            ids.push_back((*first)->getID());
-        }
-        ++first;
-    }
-    return ids;
-}
-
 static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
     MeshLib::Mesh const& mesh, int const material_id)
 {
@@ -108,16 +91,6 @@ static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
                          MeshLib::Element const* const e) {
         return material_id == material_ids[e->getID()];
     };
-
-    auto deactivated_bulk_node_ids = copyIdsIf(
-        begin(mesh.getNodes()), end(mesh.getNodes()),
-        [&](MeshLib::Node* const n) {
-            const auto& connected_elements = n->getElements();
-
-            // Check whether this node is in an activated element.
-            return std::all_of(begin(connected_elements),
-                               end(connected_elements), is_active);
-        });
 
     auto const& elements = mesh.getElements();
     std::vector<MeshLib::Element*> deactivated_elements;
