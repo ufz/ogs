@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>square_1x1_quad8_1e0.vtu</mesh>
     <geometry>square_1x1.gml</geometry>
@@ -62,24 +62,7 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>0.5</value>
-                        </property>
-                        <property>
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>1</value>
-                        </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>PorosityFromMassBalance</type>
-                            <initial_porosity>phi0</initial_porosity>
-                            <minimal_porosity>0</minimal_porosity>
-                            <maximal_porosity>1</maximal_porosity>
-                        </property>
-                        <property>
-                            <name>permeability</name>
                             <type>Constant</type>
                             <value>1</value>
                         </property>
@@ -95,6 +78,23 @@
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0.5</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>PorosityFromMassBalance</type>
+                    <initial_porosity>phi0</initial_porosity>
+                    <minimal_porosity>0</minimal_porosity>
+                    <maximal_porosity>1</maximal_porosity>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
                 <property>
                     <name>reference_temperature</name>
                     <type>Constant</type>

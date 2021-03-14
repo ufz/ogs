@@ -18,19 +18,11 @@ namespace MaterialPropertyLib
 {
 void PorosityFromMassBalance::checkScale() const
 {
-    if (!std::holds_alternative<Phase*>(scale_))
+    if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
             "The property 'PorosityFromMassBalance' is "
-            "implemented on the 'phase' scales only.");
-    }
-    auto const phase = std::get<Phase*>(scale_);
-    if (phase->name != "Solid")
-    {
-        OGS_FATAL(
-            "The property 'PorosityFromMassBalance' must be given in the "
-            "'Solid' phase, not in '{:s}' phase.",
-            phase->name);
+            "implemented on the 'medium' scales only.");
     }
 }
 
@@ -53,7 +45,7 @@ PropertyDataType PorosityFromMassBalance::value(
     double const beta_SR = std::get<double>(
         variable_array[static_cast<int>(Variable::grain_compressibility)]);
     auto const alpha_b =
-        std::get<Phase*>(scale_)
+        std::get<Medium*>(scale_)
             ->property(PropertyType::biot_coefficient)
             .template value<double>(variable_array, pos, t, dt);
 

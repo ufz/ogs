@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>square_1x1_quad_1e0.vtu</mesh>
     <geometry>square_1x1.gml</geometry>
@@ -57,27 +57,27 @@
                             <type>Constant</type>
                             <value>2.6e3</value>
                         </property>
-                        <property>
-                            <name>biot_coefficient</name>
-                            <type>Constant</type>
-                            <value>0.72222222222222222222</value>
-                        </property>
-                        <property>
-                            <name>porosity</name>
-                            <type>PorosityFromMassBalance</type>
-                            <initial_porosity>phi0</initial_porosity>
-                            <minimal_porosity>0</minimal_porosity>
-                            <maximal_porosity>1</maximal_porosity>
-                        </property>
-                        <property>
-                            <name>permeability</name>
-                            <type>Constant</type>
-                            <value>1e-12</value>
-                        </property>
                     </properties>
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0.72222222222222222222</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>PorosityFromMassBalance</type>
+                    <initial_porosity>phi0</initial_porosity>
+                    <minimal_porosity>0</minimal_porosity>
+                    <maximal_porosity>1</maximal_porosity>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1e-12</value>
+                </property>
                 <property>
                     <name>saturation</name>
                     <type>SaturationVanGenuchten</type>

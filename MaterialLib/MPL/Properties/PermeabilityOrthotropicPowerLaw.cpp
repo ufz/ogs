@@ -37,20 +37,11 @@ PermeabilityOrthotropicPowerLaw<DisplacementDim>::
 template <int DisplacementDim>
 void PermeabilityOrthotropicPowerLaw<DisplacementDim>::checkScale() const
 {
-    if (!std::holds_alternative<Phase*>(scale_))
+    if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
             "The property 'PermeabilityOrthotropicPowerLaw' is "
-            "implemented on the 'phase' scales only.");
-    }
-
-    auto const phase = std::get<Phase*>(scale_);
-    if (phase->name != "Solid")
-    {
-        OGS_FATAL(
-            "The property 'PermeabilityOrthotropicPowerLaw' must be given in "
-            "the 'Solid' phase, not in '{:s}' phase.",
-            phase->name);
+            "implemented on the 'medium' scales only.");
     }
 }
 template <int DisplacementDim>
@@ -64,13 +55,13 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::value(
     // TODO (naumov) The phi0 must be evaluated once upon
     // creation/initialization and be stored in a local state.
     // For now assume porosity's initial value does not change with time.
-    auto const phase = std::get<Phase*>(scale_);
+    auto const medium = std::get<Medium*>(scale_);
     auto const phi_0 =
-        phase->hasProperty(PropertyType::transport_porosity)
-            ? phase->property(PropertyType::transport_porosity)
+        medium->hasProperty(PropertyType::transport_porosity)
+            ? medium->property(PropertyType::transport_porosity)
                   .template initialValue<double>(
                       pos, std::numeric_limits<double>::quiet_NaN())
-            : phase->property(PropertyType::porosity)
+            : medium->property(PropertyType::porosity)
                   .template initialValue<double>(
                       pos, std::numeric_limits<double>::quiet_NaN());
 
