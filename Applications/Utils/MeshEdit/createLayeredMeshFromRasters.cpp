@@ -112,7 +112,7 @@ int main (int argc, char* argv[])
     std::reverse(raster_paths.begin(), raster_paths.end());
 
     MeshLib::MeshLayerMapper mapper;
-    if (auto rasters = FileIO::readRasters(raster_paths))
+    if (auto const rasters = FileIO::readRasters(raster_paths))
     {
         if (!mapper.createLayers(*sfc_mesh, *rasters, min_thickness))
         {

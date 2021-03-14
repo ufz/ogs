@@ -51,7 +51,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
     // header information
     GeoLib::RasterHeader header;
     if (readASCHeader(in, header)) {
-        auto* values = new double[header.n_cols * header.n_rows];
+        std::vector<double> values(header.n_cols * header.n_rows);
         std::string s;
         // read the data into the double-array
         for (std::size_t j(0); j < header.n_rows; ++j) {
@@ -64,8 +64,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
         }
         in.close();
         GeoLib::Raster* raster(new GeoLib::Raster(
-            std::move(header), values, values + header.n_cols * header.n_rows));
-        delete [] values;
+            std::move(header), values.data(), values.data() + values.size()));
+
         return raster;
     }
     WARN("Raster::getRasterFromASCFile(): Could not read header of file {:s}",
@@ -172,7 +172,7 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
     if (readSurferHeader(in, header, min, max))
     {
         const double no_data_val (min-1);
-        auto* values = new double[header.n_cols * header.n_rows];
+        std::vector<double> values(header.n_cols * header.n_rows);
         std::string s;
         // read the data into the double-array
         for (std::size_t j(0); j < header.n_rows; ++j)
@@ -188,8 +188,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
         }
         in.close();
         GeoLib::Raster* raster(new GeoLib::Raster(
-            std::move(header), values, values + header.n_cols * header.n_rows));
-        delete [] values;
+            std::move(header), values.data(), values.data() + values.size()));
+
         return raster;
     }
     ERR("Raster::getRasterFromASCFile() - could not read header of file {:s}",
@@ -247,20 +247,23 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
     std::ofstream out(file_name);
     out << "ncols " << nCols << "\n";
     out << "nrows " << nRows << "\n";
+    auto const default_precision = out.precision();
+    out.precision(std::numeric_limits<double>::digits10);
     out << "xllcorner " << origin[0] << "\n";
     out << "yllcorner " << origin[1] << "\n";
     out << "cellsize " <<  header.cell_size << "\n";
+    out.precision(default_precision);
     out << "NODATA_value " << header.no_data << "\n";
 
     // write data
     double const*const elevation(raster.begin());
     for (unsigned row(0); row < nRows; ++row)
     {
-        for (unsigned col(0); col < nCols; ++col)
+        for (unsigned col(0); col < nCols-1; ++col)
         {
-            out << elevation[(nRows-row-1) * nCols + col] << " ";
+            out << elevation[(nRows - row - 1) * nCols + col] << " ";
         }
-        out << "\n";
+        out << elevation[(nRows - row) * nCols - 1] << "\n";
     }
     out.close();
 }
