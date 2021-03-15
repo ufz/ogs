@@ -40,10 +40,11 @@ public:
      * \param array_name     mesh property name, defaults to "Colour" if not
      *                       given.
      */
-    static MeshLib::Mesh* convert(GeoLib::Raster const& raster,
-                                  MeshElemType elem_type,
-                                  UseIntensityAs intensity_type,
-                                  std::string const& array_name = "Colour");
+    static std::unique_ptr<MeshLib::Mesh> convert(
+        GeoLib::Raster const& raster,
+        MeshElemType elem_type,
+        UseIntensityAs intensity_type,
+        std::string const& array_name = "Colour");
 
     /**
      * Converts a vtkImageData into a mesh.
@@ -56,12 +57,13 @@ public:
      * \param array_name     mesh property name, defaults to "Colour" if not
      *                       given.
      */
-    static MeshLib::Mesh* convert(vtkImageData* img,
-                                  const double origin[3],
-                                  const double scalingFactor,
-                                  MeshElemType elem_type,
-                                  UseIntensityAs intensity_type,
-                                  std::string const& array_name = "Colour");
+    static std::unique_ptr<MeshLib::Mesh> convert(
+        vtkImageData* img,
+        const double origin[3],
+        const double scalingFactor,
+        MeshElemType elem_type,
+        UseIntensityAs intensity_type,
+        std::string const& array_name = "Colour");
 
     /**
      * Converts double array with raster values into a mesh.
@@ -73,7 +75,8 @@ public:
      * \param array_name     mesh property name, defaults to "Colour" if not
      *                       given.
      */
-    static MeshLib::Mesh* convert(const double*const img,
+    static std::unique_ptr<MeshLib::Mesh> convert(
+        const double* const img,
         GeoLib::RasterHeader const& header,
         MeshElemType elem_type,
         UseIntensityAs intensity_type,

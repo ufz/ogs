@@ -567,9 +567,9 @@ static bool convert(NcFile const& dataset, NcVar const& var,
             MeshLib::UseIntensityAs::DATAVECTOR;
         if (output == OutputType::MULTIMESH)
         {
-            mesh.reset(MeshLib::RasterToMesh::convert(
-                data_vec.data(), header, elem_type, useIntensity,
-                var.getName()));
+            mesh = MeshLib::RasterToMesh::convert(data_vec.data(), header,
+                                                  elem_type, useIntensity,
+                                                  var.getName());
             std::string const output_file_name(
                 BaseLib::dropFileExtension(output_name) +
                 getIterationString(i, time_bounds.second) + ".vtu");
@@ -582,9 +582,9 @@ static bool convert(NcFile const& dataset, NcVar const& var,
             if (time_bounds.first != time_bounds.second)
                 array_name.append(getIterationString(i, time_bounds.second));
             if (i == time_bounds.first)  // create persistent mesh
-                mesh.reset(MeshLib::RasterToMesh::convert(
-                    data_vec.data(), header, elem_type, useIntensity,
-                    array_name));
+                mesh = MeshLib::RasterToMesh::convert(data_vec.data(), header,
+                                                      elem_type, useIntensity,
+                                                      array_name);
             else  // copy array to mesh
             {
                 std::unique_ptr<MeshLib::Mesh> const temp(

@@ -28,8 +28,7 @@
 
 namespace MeshLib
 {
-
-MeshLib::Mesh* RasterToMesh::convert(
+std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     GeoLib::Raster const& raster,
     MeshElemType elem_type,
     UseIntensityAs intensity_type,
@@ -38,7 +37,7 @@ MeshLib::Mesh* RasterToMesh::convert(
     return convert(raster.begin(), raster.getHeader(), elem_type, intensity_type, array_name);
 }
 
-MeshLib::Mesh* RasterToMesh::convert(
+std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     vtkImageData* img,
     const double origin[3],
     const double scalingFactor,
@@ -107,11 +106,10 @@ MeshLib::Mesh* RasterToMesh::convert(
         }
     }
 
-    MeshLib::Mesh* mesh = convert(pix.data(), header, elem_type, intensity_type, array_name);
-    return mesh;
+    return convert(pix.data(), header, elem_type, intensity_type, array_name);
 }
 
-MeshLib::Mesh* RasterToMesh::convert(
+std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     double const*const img,
     GeoLib::RasterHeader const& header,
     MeshElemType elem_type,
@@ -141,7 +139,7 @@ MeshLib::Mesh* RasterToMesh::convert(
         return nullptr;
     }
 
-    std::unique_ptr<MeshLib::Mesh> mesh (nullptr);
+    std::unique_ptr<MeshLib::Mesh> mesh;
     if (elem_type == MeshElemType::TRIANGLE)
     {
         mesh.reset(
@@ -181,7 +179,7 @@ MeshLib::Mesh* RasterToMesh::convert(
                                                            "RasterDataMesh"));
     }
 
-    MeshLib::Mesh* new_mesh(nullptr);
+    std::unique_ptr<MeshLib::Mesh> new_mesh;
     std::vector<std::size_t> elements_to_remove;
     if (intensity_type == UseIntensityAs::ELEVATION)
     {
@@ -243,11 +241,12 @@ MeshLib::Mesh* RasterToMesh::convert(
     }
     if (!elements_to_remove.empty())
     {
-        new_mesh = MeshLib::removeElements(*mesh, elements_to_remove, mesh->getName());
+        new_mesh.reset(MeshLib::removeElements(
+            *mesh, elements_to_remove, mesh->getName()));
     }
     else
     {
-        new_mesh = mesh.release();
+        new_mesh = std::move(mesh);
     }
 
     if (intensity_type == UseIntensityAs::NONE)

@@ -27,7 +27,9 @@ TEST(NodeSearch, UnusedNodes)
     GeoLib::RasterHeader header = {
         4, 3, 1, MathLib::Point3d(std::array<double, 3>{{0, 0, 0}}), 1, -9999};
     GeoLib::Raster const raster(std::move(header), pix.begin(), pix.end());
-    MeshLib::Mesh* mesh (MeshLib::RasterToMesh::convert(raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION));
+    auto mesh =
+        MeshLib::RasterToMesh::convert(raster, MeshLib::MeshElemType::TRIANGLE,
+                                       MeshLib::UseIntensityAs::ELEVATION);
     MeshLib::NodeSearch ns(*mesh);
     ns.searchUnused();
     std::vector<std::size_t> u_nodes = ns.getSearchedNodeIDs();
@@ -42,8 +44,6 @@ TEST(NodeSearch, UnusedNodes)
     u_nodes = ns2.getSearchedNodeIDs();
     ASSERT_EQ(1, u_nodes.size());
     ASSERT_EQ(nodes.back()->getID(), u_nodes[0]);
-
-    delete mesh;
 }
 
 
