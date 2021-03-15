@@ -24,7 +24,7 @@ namespace ProcessLib
 const std::string DeactivatedSubdomain::zero_parameter_name =
     "zero_for_element_deactivation_approach";
 
-DeactivetedSubdomainMesh::DeactivetedSubdomainMesh(
+DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
     std::unique_ptr<MeshLib::Mesh> deactivated_subdomain_mesh_,
     std::vector<MeshLib::Node*>&& inner_nodes_)
     : mesh(std::move(deactivated_subdomain_mesh_)),
@@ -35,7 +35,7 @@ DeactivetedSubdomainMesh::DeactivetedSubdomainMesh(
 DeactivatedSubdomain::DeactivatedSubdomain(
     std::unique_ptr<BaseLib::TimeInterval> time_interval_,
     std::vector<int>&& materialIDs_,
-    std::vector<std::unique_ptr<DeactivetedSubdomainMesh>>&&
+    std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
         deactivated_subdomain_meshes_)
     : time_interval(std::move(time_interval_)),
       materialIDs(std::move(materialIDs_)),
@@ -83,7 +83,7 @@ static std::vector<MeshLib::Node*> extractInnerNodes(
     return inner_nodes;
 }
 
-static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
+static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
     MeshLib::Mesh const& mesh, int const material_id)
 {
     // An element is active if its material id matches the selected material id.
@@ -104,7 +104,7 @@ static std::unique_ptr<DeactivetedSubdomainMesh> createDeactivatedSubdomainMesh(
         MeshLib::cloneElements(deactivated_elements));
 
     auto inner_nodes = extractInnerNodes(mesh, *sub_mesh, is_active);
-    return std::make_unique<DeactivetedSubdomainMesh>(
+    return std::make_unique<DeactivatedSubdomainMesh>(
         std::move(sub_mesh), std::move(inner_nodes));
 }
 
@@ -137,7 +137,7 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
             "The program terminates now.");
     }
 
-    std::vector<std::unique_ptr<DeactivetedSubdomainMesh>>
+    std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>
         deactivated_subdomain_meshes;
     deactivated_subdomain_meshes.reserve(
         deactivated_subdomain_material_ids.size());
