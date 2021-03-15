@@ -60,6 +60,9 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
 private:
+    void config(NumLib::LocalToGlobalIndexMap const& dof_table_bulk);
+
+private:
     ParameterLib::Parameter<double> const& _parameter;
 
     MeshLib::Mesh const& _bc_mesh;
@@ -71,8 +74,6 @@ private:
     int const _component_id;
 
     std::unique_ptr<BaseLib::TimeInterval const> _time_interval;
-
-    void config(NumLib::LocalToGlobalIndexMap const& dof_table_bulk);
 };
 
 std::unique_ptr<DirichletBoundaryConditionWithinTimeInterval>
