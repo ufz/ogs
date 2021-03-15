@@ -9,59 +9,12 @@
 
 #pragma once
 
-#include <Eigen/Eigen>
 #include <cstddef>
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 namespace MathLib
 {
 template <typename T, std::size_t DIM> class TemplatePoint;
 using Point3d = MathLib::TemplatePoint<double, 3>;
-
-/**
- * standard inner product in R^N
- * \param v0 array of type T representing the vector
- * \param v1 array of type T representing the vector
- * */
-template<typename T, int N> inline
-T scalarProduct(T const * const v0, T const * const v1)
-{
-    T res (v0[0] * v1[0]);
-
-#pragma omp parallel for reduction (+:res)
-    for (int k = 1; k < N; k++)
-    {
-        res += v0[k] * v1[k];
-    }
-    return res;
-}
-
-template <> inline
-double scalarProduct<double,3>(double const * const v0, double const * const v1)
-{
-    double res (v0[0] * v1[0]);
-    for (std::size_t k(1); k < 3; k++)
-    {
-        res += v0[k] * v1[k];
-    }
-    return res;
-}
-
-template <typename T>
-inline T scalarProduct(T const* const v0, T const* const v1, int const n)
-{
-    T res (v0[0] * v1[0]);
-
-#pragma omp parallel for reduction (+:res)
-    for (int k = 1; k < n; k++)
-    {
-        res += v0[k] * v1[k];
-    }
-    return res;
-}
 
 /**
  * calcProjPntToLineAndDists computes the orthogonal projection

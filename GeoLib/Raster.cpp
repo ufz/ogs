@@ -90,7 +90,9 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
     // weights for bilinear interpolation
     double const xShift = std::abs((xPos - xIdx) - 0.5);
     double const yShift = std::abs((yPos - yIdx) - 0.5);
-    std::array<double,4> weight = {{ (1-xShift)*(1-yShift), xShift*(1-yShift), xShift*yShift, (1-xShift)*yShift }};
+    Eigen::Vector4d weight = {(1 - xShift) * (1 - yShift),
+                              xShift * (1 - yShift), xShift * yShift,
+                              (1 - xShift) * yShift};
 
     // neighbors to include in interpolation
     int const xShiftIdx = (xPos - xIdx >= 0.5) ? 1 : -1;
@@ -99,7 +101,7 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
     std::array<int,4> const y_nb = {{ 0, 0, yShiftIdx, yShiftIdx }};
 
     // get pixel values
-    std::array<double,4>  pix_val{};
+    Eigen::Vector4d  pix_val{};
     unsigned no_data_count (0);
     for (unsigned j=0; j<4; ++j)
     {
@@ -135,12 +137,11 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
             return _header.no_data;
         }
 
-        const double norm = 1.0 / (weight[0]+weight[1]+weight[2]+weight[3]);
-        std::for_each(weight.begin(), weight.end(), [&norm](double &val){val*=norm;});
+        weight /= weight.sum();
     }
 
     // new value
-    return MathLib::scalarProduct<double,4>(weight.data(), pix_val.data());
+    return weight.dot(pix_val);
     }
 
 bool Raster::isPntOnRaster(MathLib::Point3d const& pnt) const
