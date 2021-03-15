@@ -309,8 +309,8 @@ void RichardsMechanicsLocalAssembler<
         local_rhs_data, displacement_size + pressure_size);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
-        identity2;
+        MathLib::KelvinVector::kelvin_vector_dimensions(
+            DisplacementDim)>::identity2;
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
@@ -651,8 +651,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         local_rhs_data, displacement_size + pressure_size);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
-        identity2;
+        MathLib::KelvinVector::kelvin_vector_dimensions(
+            DisplacementDim)>::identity2;
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
@@ -1188,7 +1188,7 @@ std::vector<double> RichardsMechanicsLocalAssembler<
     DisplacementDim>::getSigma() const
 {
     constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
         [this](std::vector<double>& values) {
@@ -1218,7 +1218,7 @@ std::vector<double> RichardsMechanicsLocalAssembler<
     DisplacementDim>::getSwellingStress() const
 {
     constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
         [this](std::vector<double>& values) {
@@ -1238,7 +1238,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     auto const n_integration_points = _ip_data.size();
 
     cache.clear();
@@ -1263,7 +1263,7 @@ std::vector<double> RichardsMechanicsLocalAssembler<
     DisplacementDim>::getEpsilon() const
 {
     constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
         [this](std::vector<double>& values) {
@@ -1536,8 +1536,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         local_x_dot.template segment<displacement_size>(displacement_index);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>::
-        identity2;
+        MathLib::KelvinVector::kelvin_vector_dimensions(
+            DisplacementDim)>::identity2;
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");

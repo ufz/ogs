@@ -164,7 +164,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
         //! \ogs_file_param_special{prj__processes__process__THERMO_RICHARDS_MECHANICS__initial_stress}
         config, "initial_stress", parameters,
         // Symmetric tensor size, 4 or 6, not a Kelvin vector.
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value,
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
         &mesh);
 
     bool mass_lumping = false;

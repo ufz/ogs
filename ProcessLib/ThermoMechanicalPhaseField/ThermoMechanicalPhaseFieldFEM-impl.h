@@ -204,8 +204,7 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
             d_ip * d_ip * lambda + (1 - d_ip) * (1 - d_ip) * lambda_res;
 
         using Invariants = MathLib::KelvinVector::Invariants<
-            MathLib::KelvinVector::KelvinVectorDimensions<
-                DisplacementDim>::value>;
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim)>;
 
         double const eps_m_trace = Invariants::trace(eps_m);
         if (eps_m_trace >= 0)

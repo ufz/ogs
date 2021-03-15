@@ -28,7 +28,7 @@ std::vector<double> const& getIntegrationPointKelvinVectorData(
     MemberType member, std::vector<double>& cache)
 {
     constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     auto const n_integration_points = ip_data.size();
 
     cache.clear();
@@ -54,7 +54,7 @@ std::vector<double> getIntegrationPointKelvinVectorData(
     MemberType member)
 {
     constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     auto const n_integration_points = ip_data.size();
 
     std::vector<double> ip_kelvin_vector_values;
@@ -81,7 +81,7 @@ std::size_t setIntegrationPointKelvinVectorData(
     MemberType member)
 {
     constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     auto const n_integration_points = ip_data.size();
 
     auto kelvin_vector_values =

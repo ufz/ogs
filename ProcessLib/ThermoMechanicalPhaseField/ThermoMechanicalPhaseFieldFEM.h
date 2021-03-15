@@ -69,7 +69,7 @@ struct IntegrationPointData final
     }
 
     using Invariants = MathLib::KelvinVector::Invariants<
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value>;
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim)>;
 
     template <typename DisplacementVectorType>
     void updateConstitutiveRelation(double const t,
@@ -201,8 +201,8 @@ public:
                 shape_matrices[ip].integralMeasure * shape_matrices[ip].detJ;
 
             static const int kelvin_vector_size =
-                MathLib::KelvinVector::KelvinVectorDimensions<
-                    DisplacementDim>::value;
+                MathLib::KelvinVector::kelvin_vector_dimensions(
+                    DisplacementDim);
             ip_data.eps.setZero(kelvin_vector_size);
             ip_data.eps_prev.resize(kelvin_vector_size);
             ip_data.eps_m.setZero(kelvin_vector_size);

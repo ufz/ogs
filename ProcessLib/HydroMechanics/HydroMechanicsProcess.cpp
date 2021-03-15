@@ -267,7 +267,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     _process_data.permeability = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "permeability",
         MeshLib::MeshItemType::Cell,
-        MathLib::KelvinVector::KelvinVectorDimensions<DisplacementDim>::value);
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim));
 
     // Set initial conditions for integration point data.
     for (auto const& ip_writer : _integration_point_writer)
