@@ -82,7 +82,7 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     std::vector<XdmfData> xdmf_variable_attributes;
     std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),
                  back_inserter(xdmf_variable_attributes),
-                 std::not1(is_variable_xdmf_attribute));
+                is_variable_xdmf_attribute);
 
     std::vector<XdmfData> xdmf_constant_attributes;
     std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),

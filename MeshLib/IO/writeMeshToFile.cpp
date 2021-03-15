@@ -46,13 +46,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     if (file_path.extension().string() == ".xdmf")
     {
         auto writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-
         MeshLib::IO::XdmfHdfWriter(mesh, file_path, 0, names));
-        // \TODO Errorhandling, Change data model into static and time depended,
-        // then is is not necessary to give time step 0 a special treatment
-        // here
-        writer->writeStep(0, 0);
-
         return 0;
     }
 #endif
