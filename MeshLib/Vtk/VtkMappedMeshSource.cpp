@@ -79,8 +79,8 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     // Points
     this->Points->Reset();
 
-    VtkMeshNodalCoordinatesTemplate<double>* nodeCoords =
-        VtkMeshNodalCoordinatesTemplate<double>::New();
+    vtkSmartPointer<VtkMeshNodalCoordinatesTemplate<double>> nodeCoords =
+        vtkSmartPointer<VtkMeshNodalCoordinatesTemplate<double>>::New();
     nodeCoords->SetNodes(_mesh->getNodes());
     this->Points->SetData(nodeCoords);
     output->SetPoints(this->Points.GetPointer());
