@@ -115,11 +115,16 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
+string(REPLACE "." "_" BOOST_VERSION_UNDESCORE ${ogs.minimum_version.boost})
 CPMFindPackage(
     NAME Boost
-    GITHUB_REPOSITORY Orphis/boost-cmake
     VERSION ${ogs.minimum_version.boost}
+    URL https://dl.bintray.com/boostorg/release/${ogs.minimum_version.boost}/source/boost_${BOOST_VERSION_UNDESCORE}.tar.gz
 )
+if(Boost_ADDED)
+    add_library(Boost::boost INTERFACE IMPORTED)
+    target_include_directories(Boost::boost INTERFACE "${Boost_SOURCE_DIR}")
+endif()
 
 if(OGS_USE_XDMF)
     # ZLIB is a HDF5 dependency
