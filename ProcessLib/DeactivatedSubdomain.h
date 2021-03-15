@@ -35,14 +35,14 @@ class Node;
 
 namespace ProcessLib
 {
-struct DeactivetedSubdomainMesh
+struct DeactivatedSubdomainMesh
 {
-    DeactivetedSubdomainMesh(
+    DeactivatedSubdomainMesh(
         std::unique_ptr<MeshLib::Mesh> deactivated_subdomain_mesh_,
-        std::vector<MeshLib::Node*>&& inactive_nodes_);
+        std::vector<MeshLib::Node*>&& inner_nodes_);
 
     std::unique_ptr<MeshLib::Mesh> const mesh;
-    std::vector<MeshLib::Node*> const inactive_nodes;
+    std::vector<MeshLib::Node*> const inner_nodes;
 };
 
 struct DeactivatedSubdomain
@@ -50,7 +50,7 @@ struct DeactivatedSubdomain
     DeactivatedSubdomain(
         std::unique_ptr<BaseLib::TimeInterval> time_interval_,
         std::vector<int>&& materialIDs_,
-        std::vector<std::unique_ptr<DeactivetedSubdomainMesh>>&&
+        std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
             deactivated_subdomain_meshes_);
 
     bool includesTimeOf(double const t) const;
@@ -60,7 +60,7 @@ struct DeactivatedSubdomain
     /// The material IDs of the deactivated the subdomains
     std::vector<int> const materialIDs;
 
-    std::vector<std::unique_ptr<DeactivetedSubdomainMesh>> const
+    std::vector<std::unique_ptr<DeactivatedSubdomainMesh>> const
         deactivated_subdomain_meshes;
 
     static const std::string zero_parameter_name;
