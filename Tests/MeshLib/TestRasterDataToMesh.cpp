@@ -49,8 +49,8 @@ TEST_F(RasterDataToMeshTest, readRasterValuesToNodes)
 
     std::string const compare_path =
         TestInfoLib::TestInfo::data_path + "/MeshLib/RasterDataToMesh-Nodes.vtu";
-    std::unique_ptr<MeshLib::Mesh> compare = std::make_unique<MeshLib::Mesh>(
-        *MeshLib::IO::VtuInterface::readVTUFile(compare_path));
+    std::unique_ptr<MeshLib::Mesh> compare{
+        MeshLib::IO::VtuInterface::readVTUFile(compare_path)};
 
     auto new_vec = _mesh->getProperties().getPropertyVector<double>(vec_name);
     auto org_vec =
@@ -69,8 +69,8 @@ TEST_F(RasterDataToMeshTest, readRasterValuesToElements)
 
     std::string const compare_path = TestInfoLib::TestInfo::data_path +
                                      "/MeshLib/RasterDataToMesh-Elements.vtu";
-    std::unique_ptr<MeshLib::Mesh> compare = std::make_unique<MeshLib::Mesh>(
-        *MeshLib::IO::VtuInterface::readVTUFile(compare_path));
+    std::unique_ptr<MeshLib::Mesh> compare{
+        MeshLib::IO::VtuInterface::readVTUFile(compare_path)};
 
     auto new_vec = _mesh->getProperties().getPropertyVector<double>(vec_name);
     auto org_vec =
