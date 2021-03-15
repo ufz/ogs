@@ -295,15 +295,15 @@ std::size_t CsvInterface::getVectorSize(std::size_t idx) const
 {
     if (_data[idx].type() == typeid(std::vector<std::string>))
     {
-        return boost::any_cast<std::vector<std::string>>(_data[idx]).size();
+        return std::any_cast<std::vector<std::string>>(_data[idx]).size();
     }
     if (_data[idx].type() == typeid(std::vector<double>))
     {
-        return boost::any_cast<std::vector<double>>(_data[idx]).size();
+        return std::any_cast<std::vector<double>>(_data[idx]).size();
     }
     if (_data[idx].type() == typeid(std::vector<int>))
     {
-        return boost::any_cast<std::vector<int>>(_data[idx]).size();
+        return std::any_cast<std::vector<int>>(_data[idx]).size();
     }
     return 0;
 }
@@ -312,17 +312,16 @@ void CsvInterface::writeValue(std::size_t vec_idx, std::size_t in_vec_idx)
 {
     if (_data[vec_idx].type() == typeid(std::vector<std::string>))
     {
-        _out << boost::any_cast<std::vector<std::string>>(
+        _out << std::any_cast<std::vector<std::string>>(
             _data[vec_idx])[in_vec_idx];
     }
     else if (_data[vec_idx].type() == typeid(std::vector<double>))
     {
-        _out << boost::any_cast<std::vector<double>>(
-            _data[vec_idx])[in_vec_idx];
+        _out << std::any_cast<std::vector<double>>(_data[vec_idx])[in_vec_idx];
     }
     else if (_data[vec_idx].type() == typeid(std::vector<int>))
     {
-        _out << boost::any_cast<std::vector<int>>(_data[vec_idx])[in_vec_idx];
+        _out << std::any_cast<std::vector<int>>(_data[vec_idx])[in_vec_idx];
     }
 }
 
