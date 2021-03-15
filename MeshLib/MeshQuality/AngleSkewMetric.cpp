@@ -70,9 +70,9 @@ double checkTetrahedron(Element const& elem)
     std::array<double, 4> max;
     for (auto face_number = 0; face_number < 4; ++face_number)
     {
-        auto const& face = *elem.getFace(face_number);
-        std::array const nodes = {*face.getNode(0), *face.getNode(1),
-                                  *face.getNode(2)};
+        std::unique_ptr<Element const> face{elem.getFace(face_number)};
+        std::array const nodes = {*face->getNode(0), *face->getNode(1),
+                                  *face->getNode(2)};
         std::tie(min[face_number], max[face_number]) = getMinMaxAngle(nodes);
     }
 
@@ -89,9 +89,9 @@ double checkHexahedron(Element const& elem)
     std::array<double, 6> max;
     for (auto face_number = 0; face_number < 6; ++face_number)
     {
-        auto const& face = *elem.getFace(face_number);
-        std::array const nodes = {*face.getNode(0), *face.getNode(1),
-                                  *face.getNode(2), *face.getNode(3)};
+        std::unique_ptr<Element const> face{elem.getFace(face_number)};
+        std::array const nodes = {*face->getNode(0), *face->getNode(1),
+                                  *face->getNode(2), *face->getNode(3)};
         std::tie(min[face_number], max[face_number]) = getMinMaxAngle(nodes);
     }
 
@@ -105,15 +105,15 @@ double checkHexahedron(Element const& elem)
 double checkPrism(Element const& elem)
 {
     // face 0: triangle (0,1,2)
-    auto const& f0 = *elem.getFace(0);
-    std::array const nodes_f0 = {*f0.getNode(0), *f0.getNode(1),
-                                 *f0.getNode(2)};
+    std::unique_ptr<Element const> f0{elem.getFace(0)};
+    std::array const nodes_f0 = {*f0->getNode(0), *f0->getNode(1),
+                                 *f0->getNode(2)};
     auto const& [min_angle_tri0, max_angle_tri0] = getMinMaxAngle(nodes_f0);
 
     // face 4: triangle (3,4,5)
-    auto const& f4 = *elem.getFace(4);
-    std::array const nodes_f4 = {*f4.getNode(0), *f4.getNode(1),
-                                 *f4.getNode(2)};
+    std::unique_ptr<Element const> f4{elem.getFace(4)};
+    std::array const nodes_f4 = {*f4->getNode(0), *f4->getNode(1),
+                                 *f4->getNode(2)};
     auto const& [min_angle_tri1, max_angle_tri1] = getMinMaxAngle(nodes_f4);
 
     auto const min_angle_tri = std::min(min_angle_tri0, min_angle_tri1);
@@ -127,9 +127,9 @@ double checkPrism(Element const& elem)
     std::array<double, 3> max;
     for (int i = 1; i < 4; ++i)
     {
-        auto const& f = *elem.getFace(i);
-        std::array const nodes = {*f.getNode(0), *f.getNode(1), *f.getNode(2),
-                                  *f.getNode(3)};
+        std::unique_ptr<Element const> f{elem.getFace(i)};
+        std::array const nodes = {*f->getNode(0), *f->getNode(1),
+                                  *f->getNode(2), *f->getNode(3)};
         std::tie(min[i - 1], max[i - 1]) = getMinMaxAngle(nodes);
     }
 
