@@ -118,6 +118,26 @@ DataType datasetFound(std::ifstream& in)
     }
     return DataType::UNDEFINED;
 }
+/// Checks if current line is a designated keyword for a GoCAD data set
+void checkLineEndings(std::string const& file_name)
+{
+    #ifndef _WIN32
+    std::ifstream in(file_name);
+    if (in.is_open())
+    {
+        std::string line;
+        std::getline(in, line);
+        if (line.back() == '\r')
+        {
+            OGS_FATAL(
+                "Error in input file: {:s}. The line endings are in windows "
+                "format. To read this file under UNIX, transform the input "
+                "file to unix style line endings (e.g. dos2unix).",
+                file_name);
+        }
+    }
+    #endif _WIN32
+}
 
 /// Parses the HEADER section (everything except the name is ignored right now)
 bool parseHeader(std::ifstream& in, std::string& mesh_name)
@@ -610,6 +630,8 @@ bool readFile(std::string const& file_name,
             file_name);
         return false;
     }
+
+    checkLineEndings(file_name);
 
     DataType type;
     while ((type = datasetFound(in)) != DataType::UNDEFINED)
