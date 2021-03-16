@@ -13,9 +13,7 @@
 
 #pragma once
 
-#include <boost/any.hpp>
-#include "BaseLib/Logging.h"
-
+#include <any>
 #include <array>
 #include <fstream>
 #include <iterator>
@@ -25,9 +23,9 @@
 #include <typeinfo>
 #include <vector>
 
-
-#include "BaseLib/StringTools.h"
 #include "BaseLib/IO/Writer.h"
+#include "BaseLib/Logging.h"
+#include "BaseLib/StringTools.h"
 
 namespace GeoLib
 {
@@ -253,7 +251,7 @@ private:
 
     bool _writeCsvHeader{true};
     std::vector<std::string> _vec_names;
-    std::vector<boost::any> _data;
+    std::vector<std::any> _data;
 };
 
 }  // namespace FileIO
