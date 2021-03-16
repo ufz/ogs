@@ -1,4 +1,4 @@
-### ctest dependencies
+# ctest dependencies
 foreach(tool vtkdiff xdmfdiff)
     if(TARGET ${tool})
         list(APPEND test_dependencies ${tool})
@@ -7,7 +7,7 @@ endforeach()
 add_dependencies(ctest ${test_dependencies})
 add_dependencies(ctest-large ${test_dependencies})
 
-### testrunner ###
+# testrunner ###
 
 # VS2012 doesn't support correctly the tuples yet See
 # http://code.google.com/p/googletest/issues/detail?id=412
@@ -26,7 +26,9 @@ append_source_files(TEST_SOURCES MeshLib)
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
 append_source_files(TEST_SOURCES_NUMLIB NumLib)
 # Disable Unity build for NumLib tests
-set_source_files_properties(${TEST_SOURCES_NUMLIB} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON)
+set_source_files_properties(
+    ${TEST_SOURCES_NUMLIB} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+)
 # Keep order of source files, otherwise PETSc non-MPI tests fail
 set(TEST_SOURCES ${TEST_SOURCES} ${TEST_SOURCES_NUMLIB})
 append_source_files(TEST_SOURCES ParameterLib)
@@ -54,26 +56,26 @@ endif()
 add_executable(testrunner ${TEST_SOURCES})
 set_target_properties(testrunner PROPERTIES FOLDER Testing)
 
-target_link_libraries(testrunner
-    PRIVATE
-        ApplicationsFileIO
-        autocheck
-        gtest
-        MeshGeoToolsLib
-        MaterialLib
-        MathLib
-        MeshLib
-        NumLib
-        ParameterLib
-        ProcessLib
-        Processes
-        TestInfoLib
-        Threads::Threads
-        ${VTK_LIBRARIES}
-        $<$<TARGET_EXISTS:LIE>:LIE>
-        $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
-        $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
-        $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+target_link_libraries(
+    testrunner
+    PRIVATE ApplicationsFileIO
+            autocheck
+            gtest
+            MeshGeoToolsLib
+            MaterialLib
+            MathLib
+            MeshLib
+            NumLib
+            ParameterLib
+            ProcessLib
+            Processes
+            TestInfoLib
+            Threads::Threads
+            ${VTK_LIBRARIES}
+            $<$<TARGET_EXISTS:LIE>:LIE>
+            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+            $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
+            $<$<TARGET_EXISTS:InSituLib>:InSituLib>
 )
 
 if(OGS_USE_PETSC)
@@ -82,15 +84,15 @@ endif()
 
 if(OGS_BUILD_GUI)
     target_compile_definitions(testrunner PUBLIC OGS_BUILD_GUI)
-    target_link_libraries(testrunner
-        PRIVATE
-            GitInfoLib
-            Qt5::Core
-            Qt5::Gui
-            Qt5::Xml
-            Qt5::Network
-            VtkVis
-            QtDataView
+    target_link_libraries(
+        testrunner
+        PRIVATE GitInfoLib
+                Qt5::Core
+                Qt5::Gui
+                Qt5::Xml
+                Qt5::Network
+                VtkVis
+                QtDataView
     )
     if(GEOTIFF_FOUND)
         target_link_libraries(testrunner PRIVATE ${GEOTIFF_LIBRARIES})
