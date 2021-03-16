@@ -298,9 +298,7 @@ void addProcessDataToMesh(
 }
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
-                bool const compress_output, int const data_mode,
-                OutputType const file_type, int const time_step,
-                double const time)
+                bool const compress_output, int const data_mode)
 {
     // Write output file
     DBUG("Writing output to '{:s}'.", file_name);
