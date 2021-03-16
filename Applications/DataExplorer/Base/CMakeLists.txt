@@ -8,7 +8,8 @@ set(SOURCES
     ColorPickerPushButton.cpp
     TreeModelIterator.cpp
     CheckboxDelegate.cpp
-    QValueTooltipSlider.cpp)
+    QValueTooltipSlider.cpp
+)
 
 # Header files
 set(HEADERS
@@ -22,7 +23,8 @@ set(HEADERS
     TreeModel.h
     ColorPickerPushButton.h
     CheckboxDelegate.h
-    QValueTooltipSlider.h)
+    QValueTooltipSlider.h
+)
 
 # Put moc files in a project folder
 source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")

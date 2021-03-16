@@ -42,7 +42,8 @@ set(SOURCES
     StationTabWidget.cpp
     StationTreeModel.cpp
     StationTreeView.cpp
-    SurfaceExtractionDialog.cpp)
+    SurfaceExtractionDialog.cpp
+)
 
 set(HEADERS
     AddLayerToMeshDialog.h
@@ -93,31 +94,38 @@ set(HEADERS
     StationTabWidget.h
     StationTreeModel.h
     StationTreeView.h
-    SurfaceExtractionDialog.h)
+    SurfaceExtractionDialog.h
+)
 
 # Visual Studio folder
 source_group("Dialog Header Files" REGULAR_EXPRESSION "[.]*Dialog.h")
 source_group("Dialog Source Files" REGULAR_EXPRESSION "[.]*Dialog.cpp")
-source_group("Data Model Header Files" REGULAR_EXPRESSION
-             "[.]*Item.h|[.]*Model.h|[.]*View.h")
-source_group("Data Model Source Files" REGULAR_EXPRESSION
-             "[.]*Item.cpp|[.]*Model.cpp|[.]*View.cpp")
+source_group(
+    "Data Model Header Files"
+    REGULAR_EXPRESSION "[.]*Item.h|[.]*Model.h|[.]*View.h"
+)
+source_group(
+    "Data Model Source Files"
+    REGULAR_EXPRESSION "[.]*Item.cpp|[.]*Model.cpp|[.]*View.cpp"
+)
 file(GLOB UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
-include_directories(${SOURCE_DIR_REL}/Applications/FileIO
-                    ${SOURCE_DIR_REL}/BaseLib
-                    ${SOURCE_DIR_REL}/MathLib
-                    ${SOURCE_DIR_REL}/GeoLib
-                    ${SOURCE_DIR_REL}/MeshGeoToolsLib
-                    ${SOURCE_DIR_REL}/MeshLib
-                    ${GUI_SOURCE_DIR_REL}/Base
-                    ${GUI_SOURCE_DIR_REL}/VtkVis
-                    ${CMAKE_CURRENT_SOURCE_DIR}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
-                    ${CMAKE_CURRENT_SOURCE_DIR}/StratView)
+include_directories(
+    ${SOURCE_DIR_REL}/Applications/FileIO
+    ${SOURCE_DIR_REL}/BaseLib
+    ${SOURCE_DIR_REL}/MathLib
+    ${SOURCE_DIR_REL}/GeoLib
+    ${SOURCE_DIR_REL}/MeshGeoToolsLib
+    ${SOURCE_DIR_REL}/MeshLib
+    ${GUI_SOURCE_DIR_REL}/Base
+    ${GUI_SOURCE_DIR_REL}/VtkVis
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
+    ${CMAKE_CURRENT_SOURCE_DIR}/StratView
+)
 
 if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
@@ -125,21 +133,19 @@ endif() # GEOTIFF_FOUND
 
 ogs_add_library(QtDataView STATIC ${SOURCES} ${HEADERS} ${UIS})
 
-target_link_libraries(QtDataView
-                      PUBLIC GeoLib
-                             MeshGeoToolsLib
-                             MeshLib
-                             QtBase
-                             VtkVis
-                      PRIVATE BaseLib
-                              MathLib
-                              ApplicationsFileIO
-                              QtDiagramView
-                              QtStratView
-                              DataHolderLib
-                              spdlog::spdlog
-                              Qt5::Core
-                              Qt5::Gui)
+target_link_libraries(
+    QtDataView
+    PUBLIC GeoLib MeshGeoToolsLib MeshLib QtBase VtkVis
+    PRIVATE BaseLib
+            MathLib
+            ApplicationsFileIO
+            QtDiagramView
+            QtStratView
+            DataHolderLib
+            spdlog::spdlog
+            Qt5::Core
+            Qt5::Gui
+)
 
 if(GEOTIFF_FOUND)
     target_compile_definitions(QtDataView PRIVATE GEOTIFF_FOUND)

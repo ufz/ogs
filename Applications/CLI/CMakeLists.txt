@@ -32,40 +32,41 @@ if(OGS_USE_PYTHON)
     # provides the minimal set of parameters to ensure that the code using
     # pybind11 compiles, but it does not pass these extra compiler flags (i.e.
     # this is up to you). TODO: Enable further compiler/linker flags.
-    target_link_libraries(ogs_embedded_python
-        PUBLIC pybind11::embed
+    target_link_libraries(
+        ogs_embedded_python PUBLIC pybind11::embed
         PRIVATE ProcessLibBoundaryConditionPythonModule
                 ProcessLibSourceTermPythonModule
     )
-    target_compile_definitions(ogs_embedded_python
+    target_compile_definitions(
+        ogs_embedded_python
         PUBLIC OGS_USE_PYTHON
-        # Add macro definition, because static libs make special handling
-        # necessary s.t. the embedded OpenGeoSys Python module won't be removed
-        # by the linker.
-        $<$<BOOL:${BUILD_SHARED_LIBS}>:PRIVATE OGS_BUILD_SHARED_LIBS>
+               # Add macro definition, because static libs make special handling
+               # necessary s.t. the embedded OpenGeoSys Python module won't be
+               # removed by the linker.
+               $<$<BOOL:${BUILD_SHARED_LIBS}>:PRIVATE
+               OGS_BUILD_SHARED_LIBS>
     )
 endif()
 
 add_executable(ogs ogs.cpp)
 
-target_link_libraries(ogs
-    PRIVATE
-        ApplicationsLib
-        BaseLib
-        CMakeInfoLib
-        GitInfoLib
-        MeshLib
-        ProcessLib
-        $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
-        $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
-        $<$<TARGET_EXISTS:InSituLib>:InSituLib>
-        tclap
+target_link_libraries(
+    ogs
+    PRIVATE ApplicationsLib
+            BaseLib
+            CMakeInfoLib
+            GitInfoLib
+            MeshLib
+            ProcessLib
+            $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
+            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+            $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+            tclap
 )
 
-target_compile_definitions(ogs
-    PRIVATE
-    $<$<BOOL:${USE_INSITU}>:USE_INSITU>
-    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
+target_compile_definitions(
+    ogs PRIVATE $<$<BOOL:${USE_INSITU}>:USE_INSITU>
+                $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
 )
 
 # ---- Tests ----
@@ -76,11 +77,11 @@ set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
 install(TARGETS ogs RUNTIME DESTINATION bin)
 
 set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "ogs"
-                              "OGS Simulator")
-cpack_add_component(ogs_cli
-                    DISPLAY_NAME
-                    "OGS THMC Simulator"
-                    DESCRIPTION
-                    "The command line interface for OpenGeoSys."
-                    GROUP
-                    Applications)
+                              "OGS Simulator"
+)
+cpack_add_component(
+    ogs_cli
+    DISPLAY_NAME "OGS THMC Simulator"
+    DESCRIPTION "The command line interface for OpenGeoSys."
+    GROUP Applications
+)
