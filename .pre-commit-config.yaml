@@ -10,7 +10,7 @@ repos:
     -   id: check-merge-conflict
     -   id: check-xml
     -   id: check-yaml
-        exclude: '^scripts/ci/.*'
+        exclude: '^scripts/ci/.*|.cmake-format.yaml'
     -   id: check-toml
 -   repo: local
     hooks:

@@ -3,6 +3,7 @@ format:
   max_subgroups_hwrap: 3
   dangle_parens: true
   command_case: "unchanged"
+  line_width: 80
 lint:
   disabled_codes:
   - "C0301"
@@ -10,6 +11,10 @@ lint:
   - "C0113"    # Missing COMMAND for optional dependencies.
 
 parse:
+  vartags:
+  - !!python/tuple
+    - set_property
+    - - cmdline
   additional_commands:
     addtest:
       pargs:
