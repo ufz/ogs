@@ -26,12 +26,6 @@ repos:
         language: system
         files: '.*\.cpp'
         stages: [commit, manual]
-    -   id: cmake-format
-        name: Format CMake files
-        entry: scripts/hooks/pre-commit-cmake-format.sh
-        language: system
-        files: 'CMakeLists.txt'
-        stages: [commit, manual]
 -   repo: https://github.com/ambv/black
     rev: stable
     hooks:
@@ -47,7 +41,7 @@ repos:
     hooks:
     - id: cmake-format
       additional_dependencies: ["cmakelang[YAML]"]
-      exclude: '.*' # Disabled for now
+      exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|Tests.cmake'
     - id: cmake-lint
       additional_dependencies: ["cmakelang[YAML]"]
       exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake'

@@ -1,5 +1,11 @@
-message( STATUS "The METIS package is copyrighted by the Regents of the University of Minnesota." )
-message( STATUS "Please read the license of the METIS package carefully before you use the METIS." )
+message(
+    STATUS
+        "The METIS package is copyrighted by the Regents of the University of Minnesota."
+)
+message(
+    STATUS
+        "Please read the license of the METIS package carefully before you use the METIS."
+)
 
 set(METIS_PATH ${metis_SOURCE_DIR})
 add_definitions(-DUSE_GKREGEX)
@@ -15,9 +21,8 @@ include(${GKLIB_PATH}/GKlibSystem.cmake)
 include_directories(${GKLIB_PATH})
 include_directories(${METIS_PATH}/include)
 
-# From ${METIS_PATH}/libmetis/CMakeLists.txt
-# Removed linking to conan
-# Add this directory for internal users.
+# From ${METIS_PATH}/libmetis/CMakeLists.txt Removed linking to conan Add this
+# directory for internal users.
 include_directories(BEFORE ${METIS_PATH}/libmetis)
 # Find sources.
 file(GLOB metis_sources ${METIS_PATH}/libmetis/*.c)
@@ -37,16 +42,14 @@ elseif(MSVC)
     generate_export_header(ogs_metis)
 endif()
 
-## Compile mpmetis
+# Compile mpmetis
 add_compile_definitions(IDXTYPEWIDTH=64)
 add_definitions(-DSVNINFO="")
 include_directories(${METIS_PATH}/libmetis)
 include_directories(${METIS_PATH}/programs)
 set(METIS_SOURCES
-    ${METIS_PATH}/programs/mpmetis.c
-    ${METIS_PATH}/programs/cmdline_mpmetis.c
-    ${METIS_PATH}/programs/io.c
-    ${METIS_PATH}/programs/stat.c
+    ${METIS_PATH}/programs/mpmetis.c ${METIS_PATH}/programs/cmdline_mpmetis.c
+    ${METIS_PATH}/programs/io.c ${METIS_PATH}/programs/stat.c
 )
 add_executable(mpmetis ${METIS_SOURCES})
 target_link_libraries(mpmetis ogs_metis)

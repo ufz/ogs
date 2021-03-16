@@ -11,10 +11,11 @@ set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
 set(CPACK_NSIS_CONTACT "info@opengeosys.org")
 set(CPACK_NSIS_MODIFY_PATH OFF)
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
-set(CPACK_NSIS_HELP_LINK "http://docs.opengeosys.org/assets/files/Documentation/User_Manual.pdf")
+set(CPACK_NSIS_HELP_LINK
+    "http://docs.opengeosys.org/assets/files/Documentation/User_Manual.pdf"
+)
 set(CPACK_NSIS_MENU_LINKS
-    "bin" "Executables folder"
-    "http://www.opengeosys.org" "Website"
+    "bin" "Executables folder" "http://www.opengeosys.org" "Website"
     "https://github.com/ufz/ogs" "Source code on GitHub"
 )
 
@@ -26,7 +27,7 @@ endif()
 if(OGS_BUILD_GUI)
     install_qt5_plugin("Qt5::QWindowsIntegrationPlugin" QT_PLUGINS)
     file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf"
-        "[Paths]\nPlugins = ../${_qt_plugin_dir}\n")
-    install(FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf"
-        DESTINATION bin)
+         "[Paths]\nPlugins = ../${_qt_plugin_dir}\n"
+    )
+    install(FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf" DESTINATION bin)
 endif()

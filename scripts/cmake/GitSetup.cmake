@@ -1,4 +1,4 @@
-### Git detection ###
+# Git detection
 find_package(Git REQUIRED)
 
 # cmake-lint: disable=W0106
@@ -10,19 +10,27 @@ elseif(DEFINED OGS_VERSION)
 endif()
 
 if(NOT _IS_GIT_REPO)
-    execute_process(COMMAND ${GIT_EXECUTABLE} status
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} status
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE _IS_GIT_REPO
-        OUTPUT_QUIET)
+        OUTPUT_QUIET
+    )
     if(_IS_GIT_REPO GREATER 0)
         set(_IS_GIT_REPO FALSE CACHE INTERNAL "")
         if(DEFINED OGS_VERSION)
-            message(WARNING "Using user-provided OGS_VERSION; Submodule setup is skipped!")
+            message(
+                WARNING
+                    "Using user-provided OGS_VERSION; Submodule setup is skipped!"
+            )
         else()
-            message(FATAL_ERROR "No git repository found at ${PROJECT_SOURCE_DIR}! "
-                "Please use git to obtain the source code! See "
-                "https://www.opengeosys.org/docs/devguide/getting-started/get-the-source-code/"
-                " OR manually set the OGS_VERSION variable.")
+            message(
+                FATAL_ERROR
+                    "No git repository found at ${PROJECT_SOURCE_DIR}! "
+                    "Please use git to obtain the source code! See "
+                    "https://www.opengeosys.org/docs/devguide/getting-started/get-the-source-code/"
+                    " OR manually set the OGS_VERSION variable."
+            )
         endif()
     else()
         set(_IS_GIT_REPO TRUE CACHE INTERNAL "")
@@ -72,19 +80,26 @@ if(_IS_GIT_REPO AND NOT OGS_VERSION)
 
         set(OGS_VERSION ${DESCRIBE_TAG})
         if(DESCRIBE_COMMIT_COUNT GREATER 0)
-            set(OGS_VERSION "${OGS_VERSION}-${DESCRIBE_COMMIT_COUNT}-${DESCRIBE_COMMIT_NAME}")
+            set(OGS_VERSION
+                "${OGS_VERSION}-${DESCRIBE_COMMIT_COUNT}-${DESCRIBE_COMMIT_NAME}"
+            )
         endif()
 
         if(DESCRIBE_DIRTY)
             set(OGS_VERSION "${OGS_VERSION}.dirty")
             if(DEFINED ENV{CI})
                 string(TIMESTAMP DESCRIBE_DIRTY_TIMESTAMP "%Y%m%d%H%M%S" UTC)
-                set(OGS_VERSION "${OGS_VERSION}.dirty.${DESCRIBE_DIRTY_TIMESTAMP}")
+                set(OGS_VERSION
+                    "${OGS_VERSION}.dirty.${DESCRIBE_DIRTY_TIMESTAMP}"
+                )
             endif()
         endif()
         message(STATUS "OGS VERSION: ${OGS_VERSION} (reported by git)")
     else()
-        message(WARNING "Git repository contains no tags! Please run: git fetch --tags")
+        message(
+            WARNING
+                "Git repository contains no tags! Please run: git fetch --tags"
+        )
     endif()
 
     # Get git commit

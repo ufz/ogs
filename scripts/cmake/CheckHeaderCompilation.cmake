@@ -2,12 +2,15 @@
 get_directory_property(INCLUDE_DIRS INCLUDE_DIRECTORIES)
 set(CMAKE_REQUIRED_FLAGS "-c")
 
-add_custom_target(check-header
+add_custom_target(
+    check-header
     COMMAND ${CMAKE_COMMAND} -E remove -f CMakeFiles/CMakeError.log
     COMMAND ${CMAKE_COMMAND} . -DOGS_CHECK_HEADER_COMPILATION=ON
     COMMAND ${CMAKE_COMMAND} . -DOGS_CHECK_HEADER_COMPILATION=OFF || true
-    COMMAND if [ -f CMakeFiles/CMakeError.log ]\; then cat CMakeFiles/CMakeError.log\; return 1\; else return 0\; fi\;
-    WORKING_DIRECTOY ${PROJECT_BINARY_DIR}
+    COMMAND
+        if [ -f CMakeFiles/CMakeError.log ]\; then cat
+        CMakeFiles/CMakeError.log\; return 1\; else return 0\; fi\;
+        WORKING_DIRECTOY ${PROJECT_BINARY_DIR}
     COMMENT "Checking header files"
     USES_TERMINAL
 )
@@ -56,10 +59,9 @@ function(_check_header_compilation target)
     set(CMAKE_REQUIRED_INCLUDES ${INCLUDE_DIRS} ${SOURCE_DIR})
     # HACK, maybe add Gui Widgets Xml XmlPatterns as well
     if(OGS_BUILD_GUI)
-        set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES}
-            ${Qt5Core_INCLUDE_DIRS}
-            ${Qt5Gui_INCLUDE_DIRS}
-            ${Qt5Widgets_INCLUDE_DIRS}
+        set(CMAKE_REQUIRED_INCLUDES
+            ${CMAKE_REQUIRED_INCLUDES} ${Qt5Core_INCLUDE_DIRS}
+            ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
         )
     endif()
     set(CMAKE_REQUIRED_DEFINITIONS ${DEFS_CLEANED})
@@ -135,6 +137,9 @@ function(check_header_compilation)
     endif()
 
     if(_HEADER_COMPILE_ERROR)
-        message(FATAL_ERROR "... header compilation check failed, see CMakeFiles/CMakeError.log for details!")
+        message(
+            FATAL_ERROR
+                "... header compilation check failed, see CMakeFiles/CMakeError.log for details!"
+        )
     endif()
 endfunction()

@@ -7,7 +7,8 @@ set_target_properties(GeoLib PROPERTIES UNITY_BUILD_BATCH_SIZE 40)
 set_target_properties(MaterialLib PROPERTIES UNITY_BUILD_BATCH_SIZE 20)
 set_target_properties(MathLib PROPERTIES UNITY_BUILD_BATCH_SIZE 10)
 set_target_properties(MeshLib PROPERTIES UNITY_BUILD_BATCH_SIZE 20)
-# set_target_properties(ProcessLib PROPERTIES UNITY_BUILD_BATCH_SIZE 80) # breaks!
+# set_target_properties(ProcessLib PROPERTIES UNITY_BUILD_BATCH_SIZE 80) #
+# breaks!
 
 if(TARGET testrunner)
     set_target_properties(testrunner PROPERTIES UNITY_BUILD ON)

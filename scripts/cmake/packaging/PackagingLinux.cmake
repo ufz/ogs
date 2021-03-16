@@ -2,7 +2,8 @@ set(CPACK_GENERATOR TGZ)
 
 if(MODULE_CMD)
     message(STATUS "Found module cmd -> writing module file.")
-    execute_process(COMMAND ${MODULE_CMD} bash --terse list
+    execute_process(
+        COMMAND ${MODULE_CMD} bash --terse list
         ERROR_VARIABLE MODULE_LIST_OUTPUT
     )
     string(REPLACE "\n" ";" MODULE_LIST_OUTPUT ${MODULE_LIST_OUTPUT})
@@ -11,18 +12,22 @@ if(MODULE_CMD)
             set(MODULE_LOAD_STRING "${MODULE_LOAD_STRING}load(\"${line}\")\n")
         endif()
     endforeach()
-    configure_file(${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/module.in
+    configure_file(
+        ${PROJECT_SOURCE_DIR}/scripts/cmake/packaging/module.in
         ${PROJECT_BINARY_DIR}/module.lua
     )
     if(OGS_MODULEFILE)
         get_filename_component(MODULE_DIR ${OGS_MODULEFILE} DIRECTORY)
         get_filename_component(MODULE_NAME ${OGS_MODULEFILE} NAME)
         install(FILES ${PROJECT_BINARY_DIR}/module.lua DESTINATION ${MODULE_DIR}
-            RENAME ${MODULE_NAME}.lua)
+                RENAME ${MODULE_NAME}.lua
+        )
     endif()
 else()
     if("${HOSTNAME}" MATCHES "frontend.*")
-        message(FATAL_ERROR "MODULE_CMD not found but required on eve frontends!")
+        message(
+            FATAL_ERROR "MODULE_CMD not found but required on eve frontends!"
+        )
     endif()
 endif()
 

@@ -1,5 +1,7 @@
 option(OGS_ADDRESS_SANITIZER OFF "Use GCCs AddressSanitizer")
-option(OGS_UNDEFINED_BEHAVIOR_SANITIZER OFF "Use GCCs UndefinedBehaviorSanitizer")
+option(OGS_UNDEFINED_BEHAVIOR_SANITIZER OFF
+       "Use GCCs UndefinedBehaviorSanitizer"
+)
 
 if(OGS_ADDRESS_SANITIZER)
     set(SANITIZE_FLAG_VALUE "address")
@@ -7,7 +9,9 @@ if(OGS_ADDRESS_SANITIZER)
 endif()
 
 if(OGS_UNDEFINED_BEHAVIOR_SANITIZER)
-    set(SANITIZE_FLAG_VALUE "${SANITIZE_FLAG_VALUE},undefined,unreachable,integer-divide-by-zero,vla-bound,bounds,null")
+    set(SANITIZE_FLAG_VALUE
+        "${SANITIZE_FLAG_VALUE},undefined,unreachable,integer-divide-by-zero,vla-bound,bounds,null"
+    )
 endif()
 
 if(DEFINED SANITIZE_FLAG_VALUE)

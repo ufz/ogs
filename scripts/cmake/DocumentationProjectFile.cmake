@@ -5,47 +5,52 @@ cmake_policy(SET CMP0009 NEW)
 # pages and the page title.
 function(documentationProjectFilePutIntoPlace dir)
     # cmake-lint: disable=R0912,R0915
-    file(RELATIVE_PATH relative_path ${DOCUMENTATION_PROJECTFILE_INPUTDIR} ${dir})
+    file(RELATIVE_PATH relative_path ${DOCUMENTATION_PROJECTFILE_INPUTDIR}
+         ${dir}
+    )
     get_filename_component(dir_name ${relative_path} DIRECTORY)
 
     get_filename_component(otagname ${relative_path} NAME_WE)
-    if (otagname MATCHES ^[ic]_)
-        # if the file name starts with an underscore, then this files is
-        # the "table of contents of the current directory
+    if(otagname MATCHES ^[ic]_)
+        # if the file name starts with an underscore, then this files is the
+        # "table of contents of the current directory
 
         file(MAKE_DIRECTORY "${DOCUMENTATION_PROJECTFILE_BUILDDIR}/${dir_name}")
 
         set(postfix "# Child parameters, attributes and cases\n\n")
 
-        # gather other parameter files
-        # the loop below will effects a page hierarchy to be built
-        file(GLOB param_files ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/${dir_name}/*)
+        # gather other parameter files the loop below will effects a page
+        # hierarchy to be built
+        file(GLOB param_files
+             ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/${dir_name}/*
+        )
         set(subpagelist "")
         foreach(pf ${param_files})
             # ignore hidden files
-            if (pf MATCHES /[.][^/]+)
+            if(pf MATCHES /[.][^/]+)
                 continue()
             endif()
 
             get_filename_component(rel_pf ${pf} NAME_WE)
 
-            # if the file name matches ^[ic]_, then this
-            # is the "table of contents" file already processed outside
-            # of this loop
-            if (NOT rel_pf MATCHES ^[ic]_)
+            # if the file name matches ^[ic]_, then this is the "table of
+            # contents" file already processed outside of this loop
+            if(NOT rel_pf MATCHES ^[ic]_)
                 if(IS_DIRECTORY ${pf})
                     set(pf_tagname ${rel_pf})
                 else()
-                    if (NOT "${rel_pf}" MATCHES ^._)
+                    if(NOT "${rel_pf}" MATCHES ^._)
                         message(SEND_ERROR "Path `${rel_pf}' has a wrong name."
-                            " Full path is `${pf}'.")
+                                           " Full path is `${pf}'."
+                        )
                         continue()
                     endif()
 
                     string(SUBSTRING "${rel_pf}" 2 -1 pf_tagname)
                 endif()
 
-                if ("${dir_name}" STREQUAL "") # toplevel dir must be treated slightly different
+                # toplevel dir must be treated slightly different
+                if("${dir_name}" STREQUAL "")
                     set(pf_tagpath "${pf_tagname}")
                 else()
                     set(pf_tagpath "${dir_name}/${pf_tagname}")
@@ -53,22 +58,25 @@ function(documentationProjectFilePutIntoPlace dir)
                 endif()
                 message("  t.o.c. entry ${pf_tagpath}")
 
-                if (rel_pf MATCHES ^a_)
+                if(rel_pf MATCHES ^a_)
                     set(pagenameprefix "ogs_file_attr__")
                 else()
                     set(pagenameprefix "ogs_file_param__")
                 endif()
 
                 list(FIND subpagelist "${pagenameprefix}${pf_tagpath}" idx)
-                if (NOT idx EQUAL -1)
-                    message(SEND_ERROR "The subpagelist already contains"
-                        " ${pagenameprefix}${pf_tagpath}. Maybe there are"
-                        " duplicate documentation files.")
+                if(NOT idx EQUAL -1)
+                    message(
+                        SEND_ERROR
+                            "The subpagelist already contains"
+                            " ${pagenameprefix}${pf_tagpath}. Maybe there are"
+                            " duplicate documentation files."
+                    )
                 else()
                     list(APPEND subpagelist "${pagenameprefix}${pf_tagpath}")
                 endif()
 
-                if (NOT IS_DIRECTORY "${pf}")
+                if(NOT IS_DIRECTORY "${pf}")
                     documentationProjectFilePutIntoPlace("${pf}")
                 endif()
             endif()
@@ -83,10 +91,10 @@ function(documentationProjectFilePutIntoPlace dir)
     endif()
 
     string(SUBSTRING ${otagname} 2 -1 tagname)
-    if (dir_name STREQUAL "") # toplevel dir must be treated slightly different
+    if(dir_name STREQUAL "") # toplevel dir must be treated slightly different
         set(tagpath "${tagname}")
     else()
-        if (otagname MATCHES ^[ic]_) # treat "table of contents" file special
+        if(otagname MATCHES ^[ic]_) # treat "table of contents" file special
             string(REPLACE "/" "__" tagpath "${dir_name}")
         else()
             string(REPLACE "/" "__" tagpath "${dir_name}/${tagname}")
@@ -95,7 +103,7 @@ function(documentationProjectFilePutIntoPlace dir)
     message("  child param  ${tagpath}")
 
     set(pagenameprefix "ogs_file_param__")
-    if (otagname MATCHES ^i_ AND dir_name STREQUAL "")
+    if(otagname MATCHES ^i_ AND dir_name STREQUAL "")
         set(pagetitle "OGS Input File Parameters")
     elseif(otagname MATCHES ^c_)
         set(pagetitle "[case]&emsp;${tagname}")
@@ -105,34 +113,48 @@ function(documentationProjectFilePutIntoPlace dir)
         set(pagetitle "[attr]&emsp;${tagname}")
         set(pagenameprefix "ogs_file_attr__")
     else()
-        message(SEND_ERROR "Tag name ${otagname} does not match in any case."
-            " Maybe there is a file with a wrong name in the documentation"
-            " directory.")
+        message(
+            SEND_ERROR
+                "Tag name ${otagname} does not match in any case."
+                " Maybe there is a file with a wrong name in the documentation"
+                " directory."
+        )
     endif()
 
     # read, augment, write file content
     file(READ ${dir} content)
-    set(content "/*! \\page ${pagenameprefix}${tagpath} ${pagetitle}\n${content}\n\n${postfix}\n")
-    if (NOT doc_use_external_tools)
+    set(content
+        "/*! \\page ${pagenameprefix}${tagpath} ${pagetitle}\n${content}\n\n${postfix}\n"
+    )
+    if(NOT doc_use_external_tools)
         set(ending "\n*/\n")
     else()
         set(ending "") # external tools shall finish the file
     endif()
-    string(REGEX REPLACE .md$ .dox output_file "${DOCUMENTATION_PROJECTFILE_BUILDDIR}/${relative_path}")
+    string(REGEX
+           REPLACE .md$ .dox output_file
+                   "${DOCUMENTATION_PROJECTFILE_BUILDDIR}/${relative_path}"
+    )
     file(WRITE "${output_file}" "${content}${ending}")
 endfunction()
 
-set(DOCUMENTATION_PROJECTFILE_BUILDDIR ${PROJECT_BINARY_DIR}/DocAux/dox/ProjectFile)
-set(DOCUMENTATION_PROJECTFILE_INPUTDIR ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile)
+set(DOCUMENTATION_PROJECTFILE_BUILDDIR
+    ${PROJECT_BINARY_DIR}/DocAux/dox/ProjectFile
+)
+set(DOCUMENTATION_PROJECTFILE_INPUTDIR
+    ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile
+)
 
 # remove old output
-if (IS_DIRECTORY ${DOCUMENTATION_PROJECTFILE_BUILDDIR})
+if(IS_DIRECTORY ${DOCUMENTATION_PROJECTFILE_BUILDDIR})
     file(REMOVE_RECURSE ${DOCUMENTATION_PROJECTFILE_BUILDDIR})
 endif()
 
 # traverse input file hierarchy
 file(GLOB_RECURSE input_paths FOLLOW_SYMLINKS
-    ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/c_* ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/i_*)
+     ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/c_*
+     ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/i_*
+)
 
 foreach(path ${input_paths})
     message("directory index file ${path}")

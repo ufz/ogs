@@ -1,8 +1,6 @@
 # Source files
-set(SOURCES
-    mainwindow.cpp
-    mainwindow.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/Img/icons.qrc
+set(SOURCES mainwindow.cpp mainwindow.h
+            ${CMAKE_CURRENT_SOURCE_DIR}/Img/icons.qrc
 )
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../..)
@@ -23,15 +21,10 @@ source_group("UI Files" FILES ${UIS})
 set(APP_ICON ${SOURCE_DIR_REL}/scripts/packaging/ogs-de-icon.icns)
 
 # Create the executable
-add_executable(DataExplorer
-    main.cpp
-    ${SOURCES}
-    ${UIS}
-    ${APP_ICON}
-    exe-icon.rc
-)
+add_executable(DataExplorer main.cpp ${SOURCES} ${UIS} ${APP_ICON} exe-icon.rc)
 
-target_link_libraries(DataExplorer
+target_link_libraries(
+    DataExplorer
     BaseLib
     GeoLib
     GitInfoLib
@@ -64,12 +57,14 @@ if(OGS_USE_CONAN AND WIN32)
 endif()
 
 if(GEOTIFF_FOUND)
-    target_link_libraries(DataExplorer ${GEOTIFF_LIBRARIES} )
+    target_link_libraries(DataExplorer ${GEOTIFF_LIBRARIES})
 endif()
 
 if(MSVC)
     # Set linker flags
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:MSVCRT /IGNORE:4099")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG
+        "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:MSVCRT /IGNORE:4099"
+    )
     target_link_libraries(DataExplorer winmm)
 endif()
 
@@ -78,11 +73,15 @@ set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")
 # ---- Installation ----
 install(TARGETS DataExplorer RUNTIME DESTINATION bin)
 
-cpack_add_component(ogs_gui
+cpack_add_component(
+    ogs_gui
     DISPLAY_NAME "OGS Data Explorer"
     DESCRIPTION "The graphical user interface for OpenGeoSys."
     GROUP Applications
 )
-set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "DataExplorer" "OGS Data Explorer" PARENT_SCOPE)
-set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "bin/DataExplorer.exe" "Data Explorer" PARENT_SCOPE)
-
+set(CPACK_PACKAGE_EXECUTABLES ${CPACK_PACKAGE_EXECUTABLES} "DataExplorer"
+                              "OGS Data Explorer" PARENT_SCOPE
+)
+set(CPACK_NSIS_MENU_LINKS ${CPACK_NSIS_MENU_LINKS} "bin/DataExplorer.exe"
+                          "Data Explorer" PARENT_SCOPE
+)
