@@ -17,6 +17,22 @@ namespace MaterialPropertyLib
 {
 class Phase;
 
+/**
+ * \brief An empirical function for the latent heat of vaporization
+ *      of liquid water, which is given by \cite saito2006numerical p.786f
+ *  \f[
+ *     L_w(T)=2.501 \cdot 10^6 - 2369.2  (T - 273.15),\,\text{[J/kg]}.
+ *  \f]
+ *
+ *  A quite simular formula is present on page 81 of \cite bittelli2015soil.
+ *
+ *  The linear expressions of the latent heat of vaporization of liquid water
+ *  can be found in some very early references, which are mentioned in
+ *  \cite harrison1965fundamental (page 79).
+ *
+ *  The function is used in the energy balance equation for partially saturated
+ *  zone in porous media \cite de1958simultaneous.
+ */
 class WaterVapourLatentHeat final : public Property
 {
 public:
