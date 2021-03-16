@@ -55,6 +55,7 @@ enum PropertyType : int
     evaporation_enthalpy,
     fredlund_parameters,
     heat_capacity,
+    latent_heat,
     /// used to compute the hydrodynamic dispersion tensor.
     longitudinal_dispersivity,
     molality,
@@ -187,6 +188,10 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     if (boost::iequals(inString, "heat_capacity"))
     {
         return PropertyType::heat_capacity;
+    }
+    if (boost::iequals(inString, "latent_heat"))
+    {
+        return PropertyType::latent_heat;
     }
     if (boost::iequals(inString, "longitudinal_dispersivity"))
     {
@@ -362,6 +367,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "evaporation_enthalpy",
                              "fredlund_parameters",
                              "heat_capacity",
+                             "latent_heat",
                              "longitudinal_dispersivity",
                              "molality",
                              "molar_mass",
