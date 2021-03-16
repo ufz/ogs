@@ -427,8 +427,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                          x_position, t, dt);
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
-        double const DeltaS_L_Deltap_cap = (p_cap_dot_ip == 0) ? dS_L_dp_cap :
-            (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+        double const DeltaS_L_Deltap_cap =
+            (p_cap_dot_ip == 0) ? dS_L_dp_cap
+                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
             MPL::VariableArray vs;
@@ -670,8 +671,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             N.transpose() * rho_LR * specific_storage_a_p * N * w;
 
         storage_p_a_S.noalias() -= N.transpose() * rho_LR *
-                                       specific_storage_a_S * DeltaS_L_Deltap_cap *
-                                       N * w;
+                                   specific_storage_a_S * DeltaS_L_Deltap_cap *
+                                   N * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
