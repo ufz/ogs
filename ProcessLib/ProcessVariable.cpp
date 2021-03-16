@@ -279,12 +279,6 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 
 void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
-    if (_deactivated_subdomains.empty())
-    {
-        _ids_of_active_elements.clear();
-        return;
-    }
-
     auto found_a_set =
         std::find_if(_deactivated_subdomains.begin(),
                      _deactivated_subdomains.end(),
