@@ -85,19 +85,18 @@ set(SOURCES
 )
 
 # compile Var.c as c++
-SET_SOURCE_FILES_PROPERTIES(${iphreeqc_SOURCE_DIR}/src/Var.c PROPERTIES LANGUAGE CXX)
+SET_SOURCE_FILES_PROPERTIES(
+    ${iphreeqc_SOURCE_DIR}/src/Var.c PROPERTIES LANGUAGE CXX
+)
 
 add_library(iphreeqc STATIC ${SOURCES})
-target_include_directories(iphreeqc
-    PUBLIC
-        ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/common
-        ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/PhreeqcKeywords
-        ${iphreeqc_SOURCE_DIR}/src/phreeqcpp
-        ${iphreeqc_SOURCE_DIR}/src
+target_include_directories(
+    iphreeqc
+    PUBLIC ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/common
+           ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/PhreeqcKeywords
+           ${iphreeqc_SOURCE_DIR}/src/phreeqcpp ${iphreeqc_SOURCE_DIR}/src
 )
-target_compile_definitions(iphreeqc
-    PUBLIC LDBLE=double
-)
+target_compile_definitions(iphreeqc PUBLIC LDBLE=double)
 # Exclude iphreeqc target from clang-tidy tests because it handles the above
 # mentioned 'src/src/Var.c' file as c, not c++.
 set_target_properties(iphreeqc PROPERTIES CXX_CLANG_TIDY "")

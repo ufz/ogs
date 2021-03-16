@@ -3,9 +3,7 @@ if(OGS_BUILD_TESTING)
         NAME googletest
         GITHUB_REPOSITORY google/googletest
         GIT_TAG 389cb68b87193358358ae87cc56d257fd0d80189
-        OPTIONS
-            "INSTALL_GTEST OFF"
-            "gtest_force_shared_crt ON"
+        OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt ON"
         EXCLUDE_FROM_ALL YES
     )
 
@@ -17,7 +15,9 @@ if(OGS_BUILD_TESTING)
     )
     if(autocheck_ADDED)
         add_library(autocheck INTERFACE IMPORTED)
-        target_include_directories(autocheck SYSTEM INTERFACE ${autocheck_SOURCE_DIR}/include)
+        target_include_directories(
+            autocheck SYSTEM INTERFACE ${autocheck_SOURCE_DIR}/include
+        )
     endif()
 endif()
 
@@ -32,11 +32,7 @@ if(exprtk_ADDED)
     target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
-CPMAddPackage(
-    NAME spdlog
-    GITHUB_REPOSITORY gabime/spdlog
-    VERSION 1.8.2
-)
+CPMAddPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.2)
 
 CPMAddPackage(
     NAME tclap
@@ -46,12 +42,13 @@ CPMAddPackage(
 )
 if(tclap_ADDED)
     add_library(tclap INTERFACE IMPORTED)
-    target_include_directories(tclap SYSTEM INTERFACE ${tclap_SOURCE_DIR}/include)
+    target_include_directories(
+        tclap SYSTEM INTERFACE ${tclap_SOURCE_DIR}/include
+    )
 endif()
 
 CPMAddPackage(
-    NAME tetgen
-    GITHUB_REPOSITORY ufz/tetgen
+    NAME tetgen GITHUB_REPOSITORY ufz/tetgen
     GIT_TAG 603ba181ebfaed38eec88532720e282606009b73
 )
 if(tetgen_ADDED)
@@ -64,18 +61,18 @@ if(OGS_USE_PYTHON)
         NAME pybind11
         GITHUB_REPOSITORY pybind/pybind11
         GIT_TAG f1abf5d9159b805674197f6bc443592e631c9130
-        # pybind11 uses old CMake find functionality, pass variables to use
-        # the same Python installation.
-        OPTIONS
-            "PYTHON_INCLUDE_DIR ${Python3_INCLUDE_DIRS}"
-            "PYTHON_LIBRARIES ${Python3_LIBRARIES}"
-            "PYTHON_EXECUTABLE ${Python3_EXECUTABLE}"
-            "PYBIND11_PYTHON_VERSION ${Python3_VERSION}"
+        # pybind11 uses old CMake find functionality, pass variables to use the
+        # same Python installation.
+        OPTIONS "PYTHON_INCLUDE_DIR ${Python3_INCLUDE_DIRS}"
+                "PYTHON_LIBRARIES ${Python3_LIBRARIES}"
+                "PYTHON_EXECUTABLE ${Python3_EXECUTABLE}"
+                "PYBIND11_PYTHON_VERSION ${Python3_VERSION}"
     )
 endif()
 
-if (OGS_BUILD_PROCESS_ComponentTransport
-    OR OGS_BUILD_PROCESS_RichardsComponentTransport)
+if(OGS_BUILD_PROCESS_ComponentTransport
+   OR OGS_BUILD_PROCESS_RichardsComponentTransport
+)
     CPMAddPackage(
         NAME iphreeqc
         GITHUB_REPOSITORY ufz/iphreeqc
@@ -96,7 +93,9 @@ CPMFindPackage(
 )
 if(Eigen3_ADDED)
     add_library(Eigen3::Eigen INTERFACE IMPORTED)
-    target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR})
+    target_include_directories(
+        Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR}
+    )
 endif()
 
 if(OGS_USE_MFRONT)
@@ -104,9 +103,7 @@ if(OGS_USE_MFRONT)
         NAME MGIS
         GITHUB_REPOSITORY ufz/MFrontGenericInterfaceSupport
         GIT_TAG 04e7d1bfad83fdc36a5fedb9c3d2e3b0d4b7fccf
-        OPTIONS
-            "enable-doxygen-doc OFF"
-            "enable-fortran-bindings OFF"
+        OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
         EXCLUDE_FROM_ALL YES
     )
     if(MGIS_ADDED)
@@ -148,16 +145,15 @@ if(OGS_USE_XDMF)
         GITHUB_REPOSITORY HDFGroup/hdf5
         GIT_TAG hdf5-${HDF5_TAG}
         VERSION ${ogs.minimum_version.hdf5}
-        OPTIONS
-            "HDF5_EXTERNALLY_CONFIGURED 1"
-            "HDF5_GENERATE_HEADERS OFF"
-            "HDF5_BUILD_TOOLS OFF"
-            "HDF5_BUILD_EXAMPLES OFF"
-            "HDF5_BUILD_HL_LIB OFF"
-            "HDF5_BUILD_FORTRAN OFF"
-            "HDF5_BUILD_CPP_LIB OFF"
-            "HDF5_BUILD_JAVA OFF"
-            ${_hdf5_options}
+        OPTIONS "HDF5_EXTERNALLY_CONFIGURED 1"
+                "HDF5_GENERATE_HEADERS OFF"
+                "HDF5_BUILD_TOOLS OFF"
+                "HDF5_BUILD_EXAMPLES OFF"
+                "HDF5_BUILD_HL_LIB OFF"
+                "HDF5_BUILD_FORTRAN OFF"
+                "HDF5_BUILD_CPP_LIB OFF"
+                "HDF5_BUILD_JAVA OFF"
+                ${_hdf5_options}
         EXCLUDE_FROM_ALL YES
     )
     if(HDF5_ADDED)
@@ -173,14 +169,13 @@ if(OGS_USE_XDMF)
         GITHUB_REPOSITORY GNOME/libxml2
         VERSION ${ogs.minimum_version.libxml2}
         GIT_TAG f93ca3e140a371b26366f747a408588c631e0fd1
-        OPTIONS
-            "LIBXML2_WITH_TESTS OFF"
-            "LIBXML2_WITH_PROGRAMS OFF"
-            "LIBXML2_WITH_ICONV OFF"
-            "LIBXML2_WITH_ICU OFF"
-            "LIBXML2_WITH_LZMA OFF"
-            "LIBXML2_WITH_PYTHON OFF"
-            "LIBXML2_WITH_ZLIB OFF"
+        OPTIONS "LIBXML2_WITH_TESTS OFF"
+                "LIBXML2_WITH_PROGRAMS OFF"
+                "LIBXML2_WITH_ICONV OFF"
+                "LIBXML2_WITH_ICU OFF"
+                "LIBXML2_WITH_LZMA OFF"
+                "LIBXML2_WITH_PYTHON OFF"
+                "LIBXML2_WITH_ZLIB OFF"
         EXCLUDE_FROM_ALL YES
     )
     if(LibXml2_ADDED)
@@ -196,28 +191,32 @@ if(OGS_USE_XDMF)
         OPTIONS "XDMF_LIBNAME OgsXdmf"
     )
     if(xdmf_ADDED)
-        target_include_directories(OgsXdmf PUBLIC
-            ${xdmf_SOURCE_DIR}
-            ${xdmf_BINARY_DIR}
+        target_include_directories(
+            OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
         )
 
         target_link_libraries(OgsXdmf Boost::boost ZLIB::ZLIB)
-        target_include_directories(OgsXdmfCore
-            PUBLIC
-                ${xdmf_SOURCE_DIR}/core
-                ${xdmf_BINARY_DIR}/core
-            PRIVATE
-                ${xdmf_SOURCE_DIR}/CMake/VersionSuite
+        target_include_directories(
+            OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
+            PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
-        target_link_libraries(OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES})
+        target_link_libraries(
+            OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
+        )
 
-        set_target_properties(OgsXdmf OgsXdmfCore PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
-            LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+        set_target_properties(
+            OgsXdmf OgsXdmfCore
+            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+                       LIBRARY_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+                       ARCHIVE_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
         )
         if(BUILD_SHARED_LIBS)
-            install(TARGETS OgsXdmf OgsXdmfCore LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+            install(TARGETS OgsXdmf OgsXdmfCore
+                    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            )
         endif()
         list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
     endif()
@@ -225,12 +224,13 @@ endif()
 
 if(OGS_BUILD_SWMM)
     CPMAddPackage(
-        NAME SWMMInterface
-        GITHUB_REPOSITORY ufz/SwmmInterface
+        NAME SWMMInterface GITHUB_REPOSITORY ufz/SwmmInterface
         GIT_TAG 141e05ae1f419918799d7bf9178ebcd97feb1ed3
     )
     if(SWMMInterface_ADDED)
-        target_include_directories(SwmmInterface SYSTEM PUBLIC ${SWMMInterface_SOURCE_DIR})
+        target_include_directories(
+            SwmmInterface SYSTEM PUBLIC ${SWMMInterface_SOURCE_DIR}
+        )
         list(APPEND DISABLE_WARNINGS_TARGETS SWMM SwmmInterface)
     endif()
 endif()
@@ -238,13 +238,17 @@ endif()
 CPMAddPackage(
     NAME nlohmann_json
     VERSION 3.6.1
-    # the git repo is incredibly large, so we download the archived include directory
+    # the git repo is incredibly large, so we download the archived include
+    # directory
     URL https://github.com/nlohmann/json/releases/download/v3.6.1/include.zip
-    URL_HASH SHA256=69cc88207ce91347ea530b227ff0776db82dcb8de6704e1a3d74f4841bc651cf
+    URL_HASH
+        SHA256=69cc88207ce91347ea530b227ff0776db82dcb8de6704e1a3d74f4841bc651cf
 )
 if(nlohmann_json_ADDED)
     add_library(nlohmann_json INTERFACE IMPORTED)
-    target_include_directories(nlohmann_json INTERFACE ${nlohmann_json_SOURCE_DIR})
+    target_include_directories(
+        nlohmann_json INTERFACE ${nlohmann_json_SOURCE_DIR}
+    )
 endif()
 
 if(OGS_BUILD_GUI)
@@ -274,7 +278,9 @@ if(OGS_BUILD_GUI)
             VERSION 1.5.0
             EXCLUDE_FROM_ALL YES
         )
-        target_include_directories(shp INTERFACE $<BUILD_INTERFACE:${Shapelib_SOURCE_DIR}>)
+        target_include_directories(
+            shp INTERFACE $<BUILD_INTERFACE:${Shapelib_SOURCE_DIR}>
+        )
     endif()
 endif()
 
@@ -289,25 +295,33 @@ if(OGS_USE_CVODE)
     )
     if(CVODE_ADDED)
         add_library(CVODE::CVODE INTERFACE IMPORTED)
-        target_include_directories(CVODE::CVODE INTERFACE
-            ${CVODE_SOURCE_DIR}/include
-            ${CVODE_BINARY_DIR}/include
+        target_include_directories(
+            CVODE::CVODE INTERFACE ${CVODE_SOURCE_DIR}/include
+                                   ${CVODE_BINARY_DIR}/include
         )
-        target_link_libraries(CVODE::CVODE INTERFACE
-            sundials_cvode_static
-            sundials_nvecserial_static
+        target_link_libraries(
+            CVODE::CVODE INTERFACE sundials_cvode_static
+                                   sundials_nvecserial_static
         )
     endif()
 endif()
 
-### VTK ###
+# VTK ###
 set(VTK_COMPONENTS vtkIOXML vtkIOLegacy)
 if(OGS_BUILD_GUI)
-    list(APPEND VTK_COMPONENTS
-        vtkIOExport vtkImagingCore
-        vtkInteractionStyle vtkInteractionWidgets
-        vtkGUISupportQt vtkRenderingOpenGL2 vtkRenderingContextOpenGL2
-        vtkFiltersTexture vtkRenderingAnnotation vtkRenderingCore
+    list(
+        APPEND
+        VTK_COMPONENTS
+        vtkIOExport
+        vtkImagingCore
+        vtkInteractionStyle
+        vtkInteractionWidgets
+        vtkGUISupportQt
+        vtkRenderingOpenGL2
+        vtkRenderingContextOpenGL2
+        vtkFiltersTexture
+        vtkRenderingAnnotation
+        vtkRenderingCore
     )
     if(OGS_BUILD_UTILS)
         list(APPEND VTK_COMPONENTS vtkFiltersParallel)
@@ -316,16 +330,15 @@ endif()
 if(OGS_USE_MPI)
     list(APPEND VTK_COMPONENTS vtkIOParallelXML vtkParallelMPI)
 endif()
-# TODO:
-# if(OGS_INSITU)
-#     find_package(ParaView REQUIRED)
-# end()
+# TODO: if(OGS_INSITU) find_package(ParaView REQUIRED) end()
 find_package(VTK ${ogs.minimum_version.vtk} QUIET COMPONENTS ${VTK_COMPONENTS})
 
 if(VTK_FOUND)
     include(${VTK_USE_FILE})
 else()
-    list(APPEND VTK_OPTIONS
+    list(
+        APPEND
+        VTK_OPTIONS
         "BUILD_SHARED_LIBS OFF"
         "BUILD_TESTING OFF"
         "VTK_BUILD_EXAMPLES OFF"
@@ -344,17 +357,15 @@ else()
         GITHUB_REPOSITORY kitware/vtk
         VERSION ${ogs.minimum_version.vtk}
         OPTIONS ${VTK_OPTIONS}
-        EXCLUDE_FROM_ALL YES
-        GIT_SUBMODULES "" # Disable submodules
+        EXCLUDE_FROM_ALL YES GIT_SUBMODULES "" # Disable submodules
     )
     include(${VTK_BINARY_DIR}/VTKConfig.cmake)
 endif()
-### end VTK ###
+# end VTK ###
 
 if(OGS_BUILD_TESTING)
     CPMAddPackage(
-        NAME vtkdiff
-        GITHUB_REPOSITORY ufz/vtkdiff
+        NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
         GIT_TAG 49403cee266bb8e80405a02d677dbb5f71afc61a
     )
     if(vtkdiff_ADDED)
@@ -367,13 +378,17 @@ endif()
 
 # Disable warnings
 foreach(target ${DISABLE_WARNINGS_TARGETS})
-    target_compile_options(${target} PRIVATE
-        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
-        $<$<CXX_COMPILER_ID:MSVC>:/W0>)
+    target_compile_options(
+        ${target}
+        PRIVATE
+            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:-w>
+            $<$<CXX_COMPILER_ID:MSVC>:/W0>
+    )
 endforeach()
 
 # Hack: Disable tests from dependencies
-configure_file(${PROJECT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.in.cmake
+configure_file(
+    ${PROJECT_SOURCE_DIR}/scripts/cmake/test/CTestCustom.in.cmake
     ${PROJECT_BINARY_DIR}/CTestCustom.cmake @ONLY
 )
 
@@ -385,11 +400,11 @@ if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
         set(_skip_cmake "FORMAT_SKIP_CMAKE YES")
     endif()
     CPMAddPackage(
-      NAME Format.cmake
-      VERSION 1.7.0
-      GITHUB_REPOSITORY TheLartians/Format.cmake
-      OPTIONS
-        ${_skip_cmake}
-        "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/conan/conan.cmake|scripts/cmake/vector-of-bool/.*"
+        NAME Format.cmake
+        VERSION 1.7.0
+        GITHUB_REPOSITORY TheLartians/Format.cmake
+        OPTIONS
+            ${_skip_cmake}
+            "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/conan/conan.cmake|scripts/cmake/vector-of-bool/.*"
     )
 endif()

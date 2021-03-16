@@ -22,21 +22,25 @@ set(_processes_list
     ThermoMechanicalPhaseField
     ThermoMechanics
     TwoPhaseFlowWithPP
-    TwoPhaseFlowWithPrho)
+    TwoPhaseFlowWithPrho
+)
 
 # Add a cmake option for each process.
 foreach(process ${_processes_list})
     option(OGS_BUILD_PROCESS_${process} "Build the ${process} process." ON)
 endforeach()
 
-set(OGS_BUILD_PROCESSES
-    ""
-    CACHE STRING "Semicolon-separated list of processes to build")
+set(OGS_BUILD_PROCESSES ""
+    CACHE STRING "Semicolon-separated list of processes to build"
+)
 if(NOT OGS_BUILD_CLI)
     set(OGS_BUILD_PROCESSES OFF "" CACHE STRING "" FORCE)
-    message(STATUS "ATTENTION: OGS_BUILD_CLI=OFF -> OGS_BUILD_PROCESSES is set to OFF too.\n"
-        "   If cli is switched on again, remember to switch processes back to on \n"
-        "   too with -DOGS_BUILD_PROCESSES=\"\"!")
+    message(
+        STATUS
+            "ATTENTION: OGS_BUILD_CLI=OFF -> OGS_BUILD_PROCESSES is set to OFF too.\n"
+            "   If cli is switched on again, remember to switch processes back to on \n"
+            "   too with -DOGS_BUILD_PROCESSES=\"\"!"
+    )
 endif()
 if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
     if(${OGS_BUILD_PROCESSES})

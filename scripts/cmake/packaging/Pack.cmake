@@ -1,10 +1,10 @@
 if(_IS_SUBPROJECT)
-    include (CPack)
+    include(CPack)
     return()
 endif()
 
-# Put ogs installs into its own component and then only install
-# this component (avoids third-party installs from CPM).
+# Put ogs installs into its own component and then only install this component
+# (avoids third-party installs from CPM).
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ogs)
 set(CPACK_INSTALL_CMAKE_PROJECTS
     "${PROJECT_BINARY_DIR};${PROJECT_NAME};${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME};/"
@@ -14,7 +14,7 @@ option(OGS_INSTALL_DEPENDENCIES "Package dependencies.")
 include(packaging/PackagingMacros)
 include(packaging/ArchiveTestdata)
 
-#### Packaging setup ####
+# Packaging setup
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OGS-6 THM/C Simulator")
 set(CPACK_PACKAGE_VENDOR "OpenGeoSys Community (http://www.opengeosys.org)")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "OGS-${OGS_VERSION}")
@@ -42,28 +42,31 @@ if(APPLE)
     string(REGEX MATCH "(^[0-9]*)" TMP ${CMAKE_SYSTEM_VERSION})
     math(EXPR OSX_VERSION_MINOR "${CMAKE_MATCH_1} - 4")
     set(CPACK_PACKAGE_FILE_NAME
-        "ogs-${OGS_VERSION}-OSX-10.${OSX_VERSION_MINOR}-${SUFFIX}")
+        "ogs-${OGS_VERSION}-OSX-10.${OSX_VERSION_MINOR}-${SUFFIX}"
+    )
     set(CPACK_SOURCE_PACKAGE_FILE_NAME ${CPACK_PACKAGE_FILE_NAME})
 else()
     set(CPACK_PACKAGE_FILE_NAME "ogs-${OGS_VERSION}-${CMAKE_SYSTEM}-${SUFFIX}")
 endif()
 
-if (WIN32)
-    include (packaging/PackagingWin)
+if(WIN32)
+    include(packaging/PackagingWin)
 endif()
 if(UNIX)
     if(APPLE)
-        include (packaging/PackagingMac)
+        include(packaging/PackagingMac)
     else()
-        include (packaging/PackagingLinux)
+        include(packaging/PackagingLinux)
     endif()
 endif()
 
-include (CPack)
+include(CPack)
 
 if(OGS_USE_CONAN)
     # Install Qt platform shared libraries
-    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/platforms DESTINATION bin OPTIONAL)
+    install(DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/platforms
+            DESTINATION bin OPTIONAL
+    )
 endif()
 
 if(OGS_USE_PYTHON)
@@ -79,16 +82,21 @@ endif()
 configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
 install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)
 
-install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt DESTINATION ${CMAKE_INSTALL_INFODIR})
+install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt
+        DESTINATION ${CMAKE_INSTALL_INFODIR}
+)
 if(EXISTS ${PROJECT_BINARY_DIR}/cmake-args)
-    install(FILES ${PROJECT_BINARY_DIR}/cmake-args DESTINATION ${CMAKE_INSTALL_INFODIR})
+    install(FILES ${PROJECT_BINARY_DIR}/cmake-args
+            DESTINATION ${CMAKE_INSTALL_INFODIR}
+    )
 endif()
 
 # Install dependencies via GET_RUNTIME_DEPENDENCIES. Available since CMake 3.16.
 if(${CMAKE_VERSION} VERSION_LESS 3.16 OR NOT OGS_INSTALL_DEPENDENCIES)
     return()
 endif()
-install(CODE [[
+install(
+    CODE [[
   include(GNUInstallDirs)
   if(WIN32)
     set(INSTALL_DIR ${CMAKE_INSTALL_FULL_BINDIR})
@@ -109,4 +117,5 @@ install(CODE [[
   if("${_u_length}" GREATER 0)
     message(WARNING "Unresolved dependencies detected!\n${_u_deps}")
   endif()
-]])
+]]
+)

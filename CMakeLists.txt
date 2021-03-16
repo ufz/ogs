@@ -21,26 +21,32 @@ include(CTest)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_SHARED_LIBS "Create shared libraries?" OFF)
 option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
-set(CMAKE_LIBRARY_SEARCH_PATH
-    ""
+set(CMAKE_LIBRARY_SEARCH_PATH ""
     CACHE PATH
-          "Additional library installation path, e.g. /opt/local or C:/libs")
+          "Additional library installation path, e.g. /opt/local or C:/libs"
+)
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, \
-    defaults to native (*nix) / blend (MSVC).")
+    defaults to native (*nix) / blend (MSVC)."
+)
 option(OGS_ENABLE_AVX2 "Enable the use of AVX2 instructions" OFF)
 option(OGS_USE_CONAN "Should Conan package manager be used?" ON)
 set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
-    never or list of libs to build")
+    never or list of libs to build"
+)
 if(WIN32)
     option(OGS_DISABLE_CLCACHE "Disables clcache compiler cache." OFF)
 else()
     option(OGS_DISABLE_CCACHE "Disables ccache compiler cache." OFF)
 endif()
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
-    option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation." ON)
+    option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation."
+           ON
+    )
 endif()
 option(OGS_USE_PYTHON "Interface with Python" ON)
-option(OGS_USE_POETRY "Enables automatic Python virtual environment handling with poetry." ON)
+option(OGS_USE_POETRY
+       "Enables automatic Python virtual environment handling with poetry." ON
+)
 if(WIN32)
     option(OGS_BUILD_SWMM "Should the SWMM interface be built?" ON)
 endif()
@@ -50,9 +56,9 @@ endif()
 
 # Third-party libraries, names come from Conan package names
 foreach(lib vtk qt petsc tfel)
-    set(OGS_LIB_${lib}
-        "Default"
-        CACHE STRING "Which ${LIB} library should be used?")
+    set(OGS_LIB_${lib} "Default" CACHE STRING
+                                       "Which ${LIB} library should be used?"
+    )
     set_property(CACHE OGS_LIB_${lib} PROPERTY STRINGS "Default" "System")
 endforeach()
 
@@ -88,7 +94,8 @@ include(CppCheck)
 # Profiling
 if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
     option(OGS_PROFILE
-           "Enables compiling with flags set for profiling with gprof." OFF)
+           "Enables compiling with flags set for profiling with gprof." OFF
+    )
 endif() # GCC AND GPROF_PATH
 
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
@@ -111,22 +118,26 @@ option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 # to take a look at https://github.com/ufz/ogs/issues/1881.
 option(EIGEN_DONT_VECTORIZE "Disables explicit vectorization when defined." ON)
 
-set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
-    "Default"
-    CACHE STRING "Use dynamically allocated shape matrices")
-set_property(CACHE OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
-             PROPERTY STRINGS "Default" "ON" "OFF")
+set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Default"
+    CACHE STRING "Use dynamically allocated shape matrices"
+)
+set_property(
+    CACHE OGS_EIGEN_DYNAMIC_SHAPE_MATRICES PROPERTY STRINGS "Default" "ON"
+                                                    "OFF"
+)
 
 if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES STREQUAL "Default")
-    if(CMAKE_BUILD_TYPE STREQUAL "Release"
-       OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL
+                                              "RelWithDebInfo"
+    )
         set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL OFF)
     else()
         set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL ON)
     endif()
 else()
     set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL
-        ${OGS_EIGEN_DYNAMIC_SHAPE_MATRICES})
+        ${OGS_EIGEN_DYNAMIC_SHAPE_MATRICES}
+    )
 endif()
 # Eigen End
 
@@ -149,31 +160,37 @@ endif()
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 
 # Options controlling which FEM elements will be compiled
-set(OGS_MAX_ELEMENT_DIM
-    3
-    CACHE STRING "Maximum dimension of FEM elements to be built.")
-set(OGS_MAX_ELEMENT_ORDER
-    2
-    CACHE STRING "Maximum order of FEM elements to be built.")
+set(OGS_MAX_ELEMENT_DIM 3
+    CACHE STRING "Maximum dimension of FEM elements to be built."
+)
+set(OGS_MAX_ELEMENT_ORDER 2 CACHE STRING
+                                  "Maximum order of FEM elements to be built."
+)
 option(OGS_ENABLE_ELEMENT_SIMPLEX
-       "Build FEM elements for simplices (triangles, tetrahedra)." ON)
+       "Build FEM elements for simplices (triangles, tetrahedra)." ON
+)
 option(OGS_ENABLE_ELEMENT_CUBOID
-       "Build FEM elements for cuboids (quads, hexahedra)." ON)
+       "Build FEM elements for cuboids (quads, hexahedra)." ON
+)
 option(OGS_ENABLE_ELEMENT_PRISM "Build FEM elements for prisms." ON)
 option(OGS_ENABLE_ELEMENT_PYRAMID "Build FEM elements for pyramids." ON)
 if(NOT OGS_MAX_ELEMENT_DIM MATCHES "^[0-3]$")
-    message(FATAL_ERROR "OGS_MAX_ELEMENT_DIM must be an integer between 0 and 3.")
+    message(
+        FATAL_ERROR "OGS_MAX_ELEMENT_DIM must be an integer between 0 and 3."
+    )
 endif()
 if(NOT OGS_MAX_ELEMENT_ORDER MATCHES "^[0-9]$")
     message(FATAL_ERROR "OGS_MAX_ELEMENT_ORDER must be an integer.")
 endif()
 
 option(OGS_CHECK_HEADER_COMPILATION "Check header for standalone compilation."
-       OFF)
+       OFF
+)
 
 option(OGS_USE_MFRONT
        "Enable solid material models by MFront (https://tfel.sourceforge.net)"
-       OFF)
+       OFF
+)
 # ---- Definitions ----
 if(OGS_USE_LIS)
     include_directories(SYSTEM ${LIS_INCLUDE_DIR})
@@ -225,7 +242,8 @@ add_subdirectory(MeshGeoToolsLib)
 add_subdirectory(NumLib)
 
 if(OGS_BUILD_PROCESS_ComponentTransport
-   OR OGS_BUILD_PROCESS_RichardsComponentTransport)
+   OR OGS_BUILD_PROCESS_RichardsComponentTransport
+)
     add_subdirectory(ChemistryLib)
 endif()
 

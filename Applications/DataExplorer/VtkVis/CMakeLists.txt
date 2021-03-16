@@ -46,7 +46,8 @@ set(SOURCES
     VtkVisPipelineItem.cpp
     VtkVisPipelineView.cpp
     VtkVisPointSetItem.cpp
-    VtkVisTabWidget.cpp)
+    VtkVisTabWidget.cpp
+)
 
 set(HEADERS
     MeshFromRasterDialog.h
@@ -96,11 +97,12 @@ set(HEADERS
     VtkVisPipelineItem.h
     VtkVisPipelineView.h
     VtkVisPointSetItem.h
-    VtkVisTabWidget.h)
+    VtkVisTabWidget.h
+)
 
-set(UIS
-    MeshFromRaster.ui VisPrefs.ui VisualizationWidgetBase.ui
-    VtkAddFilterDialogBase.ui VtkVisTabWidgetBase.ui)
+set(UIS MeshFromRaster.ui VisPrefs.ui VisualizationWidgetBase.ui
+        VtkAddFilterDialogBase.ui VtkVisTabWidgetBase.ui
+)
 
 if(OGS_USE_NETCDF)
     set(SOURCES ${SOURCES} NetCdfConfigureDialog.h NetCdfConfigureDialog.cpp)
@@ -117,16 +119,18 @@ source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                    ${CMAKE_CURRENT_BINARY_DIR}
-                    ${SOURCE_DIR_REL}/Applications/FileIO
-                    ${SOURCE_DIR_REL}/BaseLib
-                    ${SOURCE_DIR_REL}/GeoLib
-                    ${SOURCE_DIR_REL}/MathLib
-                    ${SOURCE_DIR_REL}/MeshLib
-                    ${GUI_SOURCE_DIR_REL}/Base
-                    ${GUI_SOURCE_DIR_REL}/DataView
-                    ${GUI_SOURCE_DIR_REL}/VtkModules/Qt)
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${SOURCE_DIR_REL}/Applications/FileIO
+    ${SOURCE_DIR_REL}/BaseLib
+    ${SOURCE_DIR_REL}/GeoLib
+    ${SOURCE_DIR_REL}/MathLib
+    ${SOURCE_DIR_REL}/MeshLib
+    ${GUI_SOURCE_DIR_REL}/Base
+    ${GUI_SOURCE_DIR_REL}/DataView
+    ${GUI_SOURCE_DIR_REL}/VtkModules/Qt
+)
 
 ogs_add_library(VtkVis STATIC ${SOURCES} ${HEADERS} ${UIS})
 
@@ -137,24 +141,23 @@ if(GEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
 
 target_link_libraries(
-    VtkVis
-    PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase
-    PRIVATE MathLib ApplicationsFileIO Qt5::Gui spdlog::spdlog)
+    VtkVis PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase
+    PRIVATE MathLib ApplicationsFileIO Qt5::Gui spdlog::spdlog
+)
 
 if(OGS_USE_NETCDF)
-    target_link_libraries(VtkVis
-                          PUBLIC ${NETCDF_LIBRARIES_CXX}
-                                 ${NETCDF_LIBRARIES_C}
-                                 ${HDF5_HL_LIBRARIES}
-                                 ${HDF5_LIBRARIES})
+    target_link_libraries(
+        VtkVis PUBLIC ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
+                      ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES}
+    )
     if(OGS_USE_CONAN AND MSVC)
         target_link_libraries(VtkVis PUBLIC ${CONAN_LIBS})
     endif()
     # Workaround for system installed VTK (tested on arch)
     if(NOT OGS_USE_CONAN)
-        target_include_directories(VtkVis SYSTEM
-                                   PUBLIC ${NETCDF_INCLUDES_C}
-                                          ${NETCDF_INCLUDES_CXX})
+        target_include_directories(
+            VtkVis SYSTEM PUBLIC ${NETCDF_INCLUDES_C} ${NETCDF_INCLUDES_CXX}
+        )
     endif()
 endif()
 

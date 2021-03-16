@@ -1,11 +1,12 @@
-######################
-### Find tools     ###
-######################
+# ##############################################################################
+# Find tools
+# ##############################################################################
 
 string(REPLACE ".windows.1" "" GIT_VERSION_STRING ${GIT_VERSION_STRING})
 if(${GIT_VERSION_STRING} VERSION_LESS ${ogs.minimum_version.git})
     message(FATAL_ERROR "Git version ${ogs.minimum_version.git} is required. \
-        Found version ${GIT_VERSION_STRING}.")
+        Found version ${GIT_VERSION_STRING}."
+    )
 endif()
 
 find_package(Doxygen OPTIONAL_COMPONENTS dot)
@@ -16,21 +17,9 @@ find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
 find_program(CPPCHECK_TOOL_PATH cppcheck)
 
 # Find bash itself ...
-find_program(BASH_TOOL_PATH bash
-    HINTS ${GITHUB_BIN_DIR} DOC "The bash executable")
-
-# Dumpbin is a windows dependency analaysis tool required for packaging.
-# Variable has to be named gp_cmd to override the outdated find routines
-# of the GetPrerequisites CMake-module.
-if(WIN32)
-    include(MSVCPaths)
-    find_program(gp_cmd dumpbin DOC "Windows dependency analysis tool"
-        PATHS ${MSVC_INSTALL_PATHS} PATH_SUFFIXES VC/bin)
-    if(gp_cmd)
-        get_filename_component(dir ${gp_cmd} PATH)
-        set(ENV{PATH} "${dir}/../../../Common7/IDE;$ENV{PATH}")
-    endif()
-endif()
+find_program(
+    BASH_TOOL_PATH bash HINTS ${GITHUB_BIN_DIR} DOC "The bash executable"
+)
 
 find_program(CURL_TOOL_PATH curl DOC "The curl-tool")
 
@@ -43,8 +32,10 @@ else()
 endif()
 
 # Tools for web
-find_program(VTKJS_CONVERTER vtkDataConverter
-    PATHS ${PROJECT_SOURCE_DIR}/web/node_modules/.bin)
+find_program(
+    VTKJS_CONVERTER vtkDataConverter
+    PATHS ${PROJECT_SOURCE_DIR}/web/node_modules/.bin
+)
 find_program(HUGO hugo)
 find_program(NPM npm)
 find_program(YARN yarn)
@@ -57,11 +48,11 @@ find_program(SNAKEMAKE snakemake HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
 
 find_program(GMSH gmsh)
 
-######################
-### Find libraries ###
-######################
+# ##############################################################################
+# Find libraries
+# ##############################################################################
 if(OGS_USE_MFRONT)
-    ## pthread, is a requirement of mfront ##
+    # pthread, is a requirement of mfront ##
     set(CMAKE_THREAD_PREFER_PTHREAD ON)
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
@@ -84,10 +75,12 @@ find_package(OpenMP)
 if(OPENMP_FOUND)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS
+        "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}"
+    )
 endif()
 
-## Qt5 library ##
+# Qt5 library ##
 if(OGS_BUILD_GUI)
     set(QT_MODULES Gui Widgets Xml XmlPatterns)
     if(UNIX AND NOT APPLE)
@@ -107,23 +100,24 @@ endif()
 # lapack
 find_package(LAPACK QUIET)
 
-## geotiff ##
+# geotiff ##
 find_package(GEOTIFF)
 
-## lis ##
+# lis ##
 if(OGS_USE_LIS)
-    find_package( LIS REQUIRED )
+    find_package(LIS REQUIRED)
 endif()
 
 if(OGS_USE_MKL)
-    find_package( MKL REQUIRED )
+    find_package(MKL REQUIRED)
 endif()
 
 if(OGS_USE_PETSC)
     message(STATUS "Configuring for PETSc")
 
     option(FORCE_PETSC_EXECUTABLE_RUNS
-        "Force CMake to accept a given PETSc configuration" ON)
+           "Force CMake to accept a given PETSc configuration" ON
+    )
 
     # Force CMake to accept a given PETSc configuration in case the failure of
     # MPI tests. This may cause the compilation broken.
@@ -136,11 +130,13 @@ if(OGS_USE_PETSC)
     include_directories(SYSTEM ${PETSC_INCLUDES})
 endif()
 
-## Check MPI package
+# Check MPI package
 if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
 endif()
 
 find_package(Filesystem REQUIRED COMPONENTS Final Experimental)
-configure_file(${PROJECT_SOURCE_DIR}/BaseLib/filesystem.h.in
-               ${PROJECT_BINARY_DIR}/BaseLib/filesystem.h)
+configure_file(
+    ${PROJECT_SOURCE_DIR}/BaseLib/filesystem.h.in
+    ${PROJECT_BINARY_DIR}/BaseLib/filesystem.h
+)

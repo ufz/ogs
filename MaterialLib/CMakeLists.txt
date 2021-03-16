@@ -29,8 +29,9 @@ append_source_files(SOURCES PorousMedium/Porosity)
 append_source_files(SOURCES PorousMedium/Storage)
 append_source_files(SOURCES PorousMedium/Permeability)
 append_source_files(SOURCES PorousMedium/UnsaturatedProperty/CapillaryPressure)
-append_source_files(SOURCES
-                    PorousMedium/UnsaturatedProperty/RelativePermeability)
+append_source_files(
+    SOURCES PorousMedium/UnsaturatedProperty/RelativePermeability
+)
 append_source_files(SOURCES TwoPhaseModels)
 
 if(OGS_USE_MFRONT)
@@ -42,12 +43,9 @@ ogs_add_library(MaterialLib ${SOURCES})
 if(OGS_USE_MFRONT)
     target_compile_definitions(MaterialLib PUBLIC OGS_USE_MFRONT)
 endif()
-target_link_libraries(MaterialLib
+target_link_libraries(
+    MaterialLib
     PUBLIC
         $<$<TARGET_EXISTS:MaterialLib_SolidModels_MFront>:MaterialLib_SolidModels_MFront>
-    PRIVATE
-        MathLib
-        MeshLib
-        ParameterLib
-        spdlog::spdlog
+    PRIVATE MathLib MeshLib ParameterLib spdlog::spdlog
 )

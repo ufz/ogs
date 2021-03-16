@@ -22,24 +22,22 @@ endif()
 
 # Create the library
 ogs_add_library(MathLib ${SOURCES})
-target_include_directories(MathLib
-    PUBLIC
-        ${CMAKE_CURRENT_BINARY_DIR}
-        $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_INCLUDE_DIRS}>
+target_include_directories(
+    MathLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+                   $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_INCLUDE_DIRS}>
 )
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
-target_link_libraries(MathLib
-    PUBLIC
-        BaseLib
-        ${OpenMP_CXX_LIBRARIES}
-        $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
-        $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
-        $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
-        Eigen3::Eigen
-    PRIVATE
-        spdlog::spdlog
+target_link_libraries(
+    MathLib
+    PUBLIC BaseLib
+           ${OpenMP_CXX_LIBRARIES}
+           $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
+           $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
+           $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
+           Eigen3::Eigen
+    PRIVATE spdlog::spdlog
 )
 
 if(OGS_USE_PETSC)
@@ -49,11 +47,9 @@ if(OGS_USE_MKL)
     target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
 endif()
 
-target_compile_definitions(MathLib
-    PUBLIC
-    $<$<BOOL:${USE_LIS}>:USE_LIS>
-    $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
-    $<$<BOOL:${OGS_USE_CVODE}>:CVODE_FOUND>
-    PRIVATE
-    $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>
+target_compile_definitions(
+    MathLib
+    PUBLIC $<$<BOOL:${USE_LIS}>:USE_LIS> $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
+           $<$<BOOL:${OGS_USE_CVODE}>:CVODE_FOUND>
+    PRIVATE $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>
 )

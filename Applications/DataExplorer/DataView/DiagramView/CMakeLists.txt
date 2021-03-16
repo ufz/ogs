@@ -5,7 +5,8 @@ set(SOURCES
     DiagramScene.cpp
     DiagramView.cpp
     QArrow.cpp
-    QGraphicsGrid.cpp)
+    QGraphicsGrid.cpp
+)
 
 set(HEADERS
     DiagramList.h
@@ -15,29 +16,26 @@ set(HEADERS
     DiagramScene.h
     DetailWindow.h
     DiagramPrefsDialog.h
-    DiagramView.h)
+    DiagramView.h
+)
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-include_directories(${SOURCE_DIR_REL}/BaseLib
-                    ${SOURCE_DIR_REL}/GeoLib
-                    ${SOURCE_DIR_REL}/MathLib
-                    ${CMAKE_CURRENT_SOURCE_DIR}
-                    ${GUI_SOURCE_DIR_REL}/Base
-                    ${GUI_SOURCE_DIR_REL}/DataView)
+include_directories(
+    ${SOURCE_DIR_REL}/BaseLib ${SOURCE_DIR_REL}/GeoLib
+    ${SOURCE_DIR_REL}/MathLib ${CMAKE_CURRENT_SOURCE_DIR}
+    ${GUI_SOURCE_DIR_REL}/Base ${GUI_SOURCE_DIR_REL}/DataView
+)
 
 file(GLOB_RECURSE UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
 ogs_add_library(QtDiagramView ${SOURCES} ${HEADERS} ${UIS})
 
-target_link_libraries(QtDiagramView
-                      PRIVATE BaseLib
-                              GeoLib
-                              QtBase
-                              DataHolderLib
-                              Qt5::Gui
-                              spdlog::spdlog)
+target_link_libraries(
+    QtDiagramView PRIVATE BaseLib GeoLib QtBase DataHolderLib Qt5::Gui
+                          spdlog::spdlog
+)
 
 add_autogen_include(QtDiagramView)
 

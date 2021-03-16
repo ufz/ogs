@@ -1,4 +1,4 @@
-file (STRINGS "@PROJECT_BINARY_DIR@/CTestTestfile.cmake" LINES)
+file(STRINGS "@PROJECT_BINARY_DIR@/CTestTestfile.cmake" LINES)
 
 # overwrite the file....
 file(WRITE "@PROJECT_BINARY_DIR@/CTestTestfile.cmake" "")
