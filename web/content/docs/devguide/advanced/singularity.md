@@ -9,6 +9,14 @@ weight = 1036
     parent = "advanced"
 +++
 
+<div class='note'>
+
+### Important note
+
+This page describes how to **build** OGS with the help of a Linux container (for **developers**). To **run** OGS with the help of a container go to the [user guide]({{< ref "container.md" >}}) (for **developers**).
+
+</div>
+
 ## Introduction
 
 [Singularity](https://www.sylabs.io) is a Linux container runtime similar to Docker. Key advantages over Docker are

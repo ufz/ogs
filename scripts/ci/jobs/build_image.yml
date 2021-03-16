@@ -12,13 +12,16 @@ build container images:
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - poetry run ogscm compiler.py ogs.py --build --ogs off
-      --pm system --cvode --cppcheck --docs --gcovr --tfel --ccache
+      --pm system --cvode --cppcheck --docs --gcovr --mfront --ccache
+      --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_IMAGE --upload
     - poetry run ogscm compiler.py ogs.py --build --ogs off
       --pm system --cvode --cppcheck --docs --gcovr --gui --ccache
+      --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
     - poetry run ogscm compiler.py ogs.py --build --ogs off
       --compiler clang --compiler_version 9 --ccache
+      --version_file ../../web/data/versions.json
       --tag $CONTAINER_CLANG_IMAGE --upload
 
 ### global project images ###
