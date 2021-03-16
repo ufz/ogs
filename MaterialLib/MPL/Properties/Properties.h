@@ -23,6 +23,7 @@
 #include "Density/WaterVapourDensity.h"
 #include "DupuitPermeability.h"
 #include "EmbeddedFracturePermeability.h"
+#include "Enthalpy/WaterVapourLatentHeat.h"
 #include "Exponential.h"
 #include "GasPressureDependentPermeability.h"
 #include "IdealGasLaw.h"
