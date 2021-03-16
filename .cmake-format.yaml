@@ -16,6 +16,9 @@ parse:
     - set_property
     - - cmdline
   additional_commands:
+    ogs_add_library:
+      pargs:
+        nargs: 2+
     addtest:
       pargs:
         nargs: '*'
