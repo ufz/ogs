@@ -34,7 +34,13 @@ The following explanation is taken from an [in-depth article](https://www.atlass
 The workflow is summarized in the following image from the [GitHub blog](https://github.com/blog/2042-git-2-5-including-multiple-worktrees-and-triangular-workflows):
 ![Git workflow](https://cloud.githubusercontent.com/assets/1319791/8943755/5dcdcae4-354a-11e5-9f82-915914fad4f7.png)
 
-You always **fetch** changes from official repository (called **upstream**), develop on your **local** repository and **push** changes to your server-side repository (called **origin**).
+<div class='note'>
+
+### Important naming conventions
+
+You always **fetch** changes from the official repository (called `upstream`), develop on your **local** repository and **push** changes to your personal server-side repository (called `origin`).
+
+</div>
 
 First thing to do when you start working on your local repository is to create a topic branch (based on the current master branch of the official repository) specific to a well defined feature or bugfix you are about to implement. **Never** work on the **master**-branch (it is reserved for the official version)! See also [this tutorial](https://www.atlassian.com/git/tutorials/using-branches) on branching.
 
@@ -65,11 +71,11 @@ This creates a new folder `ogs` in your current working directory with the OGS s
 
 <div class='note'>
 
-The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which are smaller than 100 Kbyte. Larger files (e.g. benchmark files, images, PDFs) are fetched on-demand only. This happens automatically and [is a replacement for the previous Git LFS tracked files](https://github.com/ufz/ogs/issues/2961). Requires **git 2.22**!
+The `--filter=blob:limit=100k`-parameter instructs git to only fetch files which are smaller than 100 Kbyte. Larger files (e.g. benchmark files, images, PDFs) are fetched on-demand only. This happens automatically and [is a replacement for the previous Git LFS tracked files](https://github.com/ufz/ogs/issues/2961). Requires at least **git 2.22**!
 
 </div>
 
-Create a second remote called `upstream` that points at the main OGS repository and fetch from it:
+Create a second remote called `upstream` that points at the official OGS repository and fetch from it:
 
 ```bash
 git remote add upstream https://gitlab.opengeosys.org/ogs/ogs.git
@@ -111,28 +117,42 @@ git fetch upstream
 Create a branch `feature-name` off of upstream `master`-branch to work on a new feature, and check out the branch:
 
 ```bash
-git checkout -b feature-name upstream/master
+git checkout upstream/master # Switch to newest master
+git checkout -b feature-name # Create and checkout a new branch
+
 ```
 
-This automatically sets up your local `new-feature`-branch to track the upstream `master`-branch. This means that if more commits are added to `master` upstream, you can merge those commits into your `feature`-branch by typing
+----
+
+To keep up to date with the developments in the official repository it is recommended to rebase your feature-branch regularly (at least weekly). To see what has been updated, load a new set of changes with
 
 ```bash
-git pull
+git fetch --all -p
 ```
 
-or rebase your branch on top of the new master by typing
+Then rebase your `feature`-branch on to the newest master branch in the official repository with
 
 ```bash
-git pull --rebase
+git rebase ufz/master feature-name
 ```
+
+This can potentially lead to conflicts, which have to be resolved.
+
+----
 
 Now after you implemented the feature and committed your work you can push the new commits to the `feature-name`-branch on your GitLab fork:
 
 ```bash
-git push
+git push -u origin feature-name  # -u is required only first time to set up the remote-tracking.
 ```
 
 If your work is done submit a [merge request](https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new).
 
-This workflow is summarized with this picture:
+----
+
+Again this triangular workflow is summarized with this picture:
 ![Workflow visualization](https://cloud.githubusercontent.com/assets/1319791/8943755/5dcdcae4-354a-11e5-9f82-915914fad4f7.png)
+
+> […] the Forking Workflow requires two remotes—one for the official repository, and one for the developer’s personal server-side repository. While you can call these remotes anything you want, a common convention is to use origin as the remote for your forked repository […] and upstream for the official repository.
+>
+> <cite><a href="https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow">www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow</a> </cite>
