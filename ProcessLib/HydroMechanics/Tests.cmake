@@ -296,23 +296,6 @@ AddTest(
     cube_ts_1_t_1.000000.vtu cube_ts_1_t_1.000000.vtu displacement displacement 1e-15 0
 )
 
-## Test as the reference of InjectionProduction1D
-AddTest(
-    NAME MonolithicInjectionProduction1D
-    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D/RerefenceSolutionByMonolithicScheme
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS InjectionProduction1DMono.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu displacement displacement 1e-11 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu pressure pressure 1e-11 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu velocity velocity 1e-11 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu epsilon epsilon 1e-11 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu sigma sigma 5e-8 1e-11
-)
-
 AddTest(
     NAME FailureIndexDependentPermeability
     PATH HydroMechanics/FailureIndexDependentPermeability
@@ -344,6 +327,22 @@ AddTest(
     output_curve_ts_2_t_400.000000.vtu  output_curve_ts_2_t_400.000000.vtu permeability permeability 1.0e-6 1.e-9
 )
 
+AddTest(
+    NAME MonolithicInjectionProduction1D
+    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS InjectionProduction1DMono.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu displacement displacement 1e-14 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu pressure pressure 1e-7 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu velocity velocity 1e-19 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu epsilon epsilon 1e-14 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_Mono_ts_1_t_86400.000000.vtu sigma sigma 1e-7 0
+)
+
 ### With staggered scheme
 AddTest(
     NAME StaggeredInjectionProduction1D
@@ -354,13 +353,11 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu displacement displacement 1e-11 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu pressure pressure 1e-11 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu velocity velocity 1e-11 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu epsilon epsilon 1e-11 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu sigma sigma 5e-7 1e-11
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu HydraulicFlow HydraulicFlow 1e-11 0
-    InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu NodalForces NodalForces 3e-7 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu displacement displacement 1e-13 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu pressure pressure 1e-6 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu velocity velocity 1e-18 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu epsilon epsilon 1e-13 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu sigma sigma 1e-6 0
 )
 
 AddTest(
