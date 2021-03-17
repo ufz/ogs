@@ -15,20 +15,20 @@
 #include <cmath>
 #include <limits>
 
-#include "MaterialLib/MPL/Properties/Enthalpy/CreateWaterVapourLatentHeat.h"
+#include "MaterialLib/MPL/Properties/Enthalpy/CreateLinearWaterVapourLatentHeat.h"
 #include "TestMPL.h"
 
-TEST(MaterialPropertyLib, WaterVapourLatentHeat)
+TEST(MaterialPropertyLib, LinearWaterVapourLatentHeat)
 {
     char const xml[] =
         "<property>"
         "   <name>latent_heat</name>"
-        "   <type>WaterVapourLatentHeat</type>"
+        "   <type>LinearWaterVapourLatentHeat</type>"
         "</property>";
 
     std::unique_ptr<MaterialPropertyLib::Property> const property_ptr =
         Tests::createTestProperty(
-            xml, MaterialPropertyLib::createWaterVapourLatentHeat);
+            xml, MaterialPropertyLib::createLinearWaterVapourLatentHeat);
     MaterialPropertyLib::Property const& property = *property_ptr;
 
     MaterialPropertyLib::VariableArray variable_array;

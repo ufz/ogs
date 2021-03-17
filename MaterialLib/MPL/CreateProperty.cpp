@@ -231,9 +231,9 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createVapourDiffusionFEBEX(config);
     }
 
-    if (boost::iequals(property_type, "WaterVapourLatentHeat"))
+    if (boost::iequals(property_type, "LinearWaterVapourLatentHeat"))
     {
-        return createWaterVapourLatentHeat(config);
+        return createLinearWaterVapourLatentHeat(config);
     }
 
     // If none of the above property types are found, OGS throws an error.

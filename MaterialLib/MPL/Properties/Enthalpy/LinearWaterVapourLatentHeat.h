@@ -33,10 +33,10 @@ class Phase;
  *  The function is used in the energy balance equation for partially saturated
  *  zone in porous media \cite de1958simultaneous.
  */
-class WaterVapourLatentHeat final : public Property
+class LinearWaterVapourLatentHeat final : public Property
 {
 public:
-    explicit WaterVapourLatentHeat(std::string name)
+    explicit LinearWaterVapourLatentHeat(std::string name)
     {
         name_ = std::move(name);
     }
@@ -46,7 +46,7 @@ public:
         if (!std::holds_alternative<Phase*>(scale_))
         {
             OGS_FATAL(
-                "The property 'WaterVapourLatentHeat' is "
+                "The property 'LinearWaterVapourLatentHeat' is "
                 "implemented on the 'phase' scale only.");
         }
     }

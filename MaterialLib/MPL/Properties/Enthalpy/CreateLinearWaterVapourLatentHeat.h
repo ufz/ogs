@@ -21,6 +21,6 @@ class ConfigTree;
 namespace MaterialPropertyLib
 {
 class Property;
-std::unique_ptr<Property> createWaterVapourLatentHeat(
+std::unique_ptr<Property> createLinearWaterVapourLatentHeat(
     BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib

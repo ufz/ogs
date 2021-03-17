@@ -9,7 +9,7 @@
  * Created on March 16, 2021, 10:03 AM
  */
 
-#include "WaterVapourLatentHeat.h"
+#include "LinearWaterVapourLatentHeat.h"
 
 #include <cmath>
 
@@ -19,7 +19,7 @@
 
 namespace MaterialPropertyLib
 {
-PropertyDataType WaterVapourLatentHeat::value(
+PropertyDataType LinearWaterVapourLatentHeat::value(
     const VariableArray& variable_array,
     const ParameterLib::SpatialPosition& /*pos*/, const double /*t*/,
     const double /*dt*/) const
@@ -31,7 +31,7 @@ PropertyDataType WaterVapourLatentHeat::value(
            2369.2 * (T - MaterialLib::PhysicalConstant::CelsiusZeroInKelvin);
 }
 
-PropertyDataType WaterVapourLatentHeat::dValue(
+PropertyDataType LinearWaterVapourLatentHeat::dValue(
     VariableArray const& /*variable_array*/, Variable const primary_variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
@@ -42,7 +42,7 @@ PropertyDataType WaterVapourLatentHeat::dValue(
     }
 
     OGS_FATAL(
-        "WaterVapourLatentHeat::dValue is implemented for "
+        "LinearWaterVapourLatentHeat::dValue is implemented for "
         "the derivative with respect to temperature only.");
 }
 
