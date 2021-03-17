@@ -25,3 +25,10 @@
     - if($env:BUILD_TESTS -eq "true") { cmake --build . --target tests }
     - if($env:BUILD_CTEST -eq "true") { cmake --build . --target ctest }
     - if($env:BUILD_CTEST -eq "true") { cp Testing/**/Test.xml Tests/ctest.xml }
+    - |
+      if($env:CHECK_WARNINGS -eq "true" -and (cat make.output | Select-String -Pattern ': warning') )
+      {
+          Write-Output 'There were compiler warnings:\n'
+          cat make.output | Select-String -Pattern ': warning'
+          exit 1
+      }

@@ -8,6 +8,7 @@ build win:
       allow_failure: true
   variables:
     BUILD_DIR: win-release
+    CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1

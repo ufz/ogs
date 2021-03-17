@@ -50,6 +50,7 @@ build linux (no unity):
     BUILD_DIR: "no-unity"
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
+    CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DOGS_USE_PYTHON=OFF
