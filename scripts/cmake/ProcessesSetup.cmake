@@ -45,11 +45,11 @@ endif()
 if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
     if(${OGS_BUILD_PROCESSES})
         foreach(process ${OGS_BUILD_PROCESSES})
-            if(NOT "${process}" IN_LIST processes_list)
+            if(NOT "${process}" IN_LIST _processes_list)
                 message(
                     FATAL_ERROR
                         "${process} given in OGS_BUILD_PROCESSES is "
-                        "not a valid process name! Valid names are ${processes_list}"
+                        "not a valid process name! Valid names are ${_processes_list}"
                 )
             endif()
         endforeach()
@@ -57,7 +57,7 @@ if(NOT "${OGS_BUILD_PROCESSES}" STREQUAL "")
     else()
         message(STATUS "All processes disabled.")
     endif()
-    foreach(process ${processes_list})
+    foreach(process ${_processes_list})
         if("${process}" IN_LIST OGS_BUILD_PROCESSES)
             set(OGS_BUILD_PROCESS_${process} ON CACHE BOOL "" FORCE)
             message(STATUS "  ${process}")
