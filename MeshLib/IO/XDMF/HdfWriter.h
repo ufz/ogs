@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "HdfData.h"
+#include <hdf5.h>
 
 namespace MeshLib::IO
 {
@@ -47,10 +48,12 @@ public:
      * @return true = success, false = error
      */
     bool writeStep(int step) const;
+    ~HdfWriter();
 
 private:
     std::vector<HdfData> const _variable_attributes;
     std::filesystem::path const _hdf5_filepath;
     bool const _has_compression;
+    hid_t file;
 };
 }  // namespace MeshLib::IO

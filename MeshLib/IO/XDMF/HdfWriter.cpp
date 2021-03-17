@@ -156,7 +156,7 @@ HdfWriter::HdfWriter(std::vector<HdfData>
       _hdf5_filepath(filepath),
       _has_compression(checkCompression())
 {
-    hid_t const file = createFile(filepath);
+    file = createFile(filepath);
     std::string const& time_section = getTimeSection(step);
     hid_t const group_id = H5Gcreate2(file, time_section.c_str(), H5P_DEFAULT,
                                       H5P_DEFAULT, H5P_DEFAULT);
@@ -173,14 +173,17 @@ HdfWriter::HdfWriter(std::vector<HdfData>
     }
 
     hid_t status = H5Gclose(group_id);
-    checkHdfStatus(status, "HDF Group could not be closed!");
-    status = H5Fclose(file);
-    checkHdfStatus(status, "HDF File could not be closed!");
+
+    checkHdfStatus(status, "HDF group could not be created!");
+}
+
+HdfWriter::~HdfWriter()
+{
+        H5Fclose(file);
 }
 
 bool HdfWriter::writeStep(int const step) const
 {
-    hid_t const file = openHDF5File(_hdf5_filepath);
     hid_t const group = createStepGroup(file, step);
 
     hid_t status = 0;
@@ -195,7 +198,6 @@ bool HdfWriter::writeStep(int const step) const
     }
 
     H5Gclose(group);
-    status = H5Fclose(file);
     return (status >= 0);
 }
 }  // namespace MeshLib::IO
