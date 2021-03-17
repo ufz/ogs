@@ -9,14 +9,11 @@
 
 #pragma once
 
+#include <QDialog>
 #include <netcdf>
 
-#include <QDialog>
+#include "MeshLib/Mesh.h"
 #include "ui_NetCdfConfigure.h"
-
-namespace MeshLib {
-    class Mesh;
-}
 
 class VtkGeoImageSource;
 
@@ -36,7 +33,7 @@ public:
     explicit NetCdfConfigureDialog(const std::string& fileName,
                                    QDialog* parent = nullptr);
     ~NetCdfConfigureDialog() override;
-    MeshLib::Mesh* getMesh() { return _currentMesh; };
+    MeshLib::Mesh* getMesh() { return _currentMesh.get(); };
     std::string getName();
     VtkGeoImageSource* getRaster() { return _currentRaster; };
 
@@ -68,7 +65,7 @@ private:
 
     netCDF::NcFile _currentFile;
     netCDF::NcVar _currentVar;
-    MeshLib::Mesh* _currentMesh;
+    std::unique_ptr<MeshLib::Mesh> _currentMesh;
     VtkGeoImageSource* _currentRaster;
     std::string _currentPath;
 };
