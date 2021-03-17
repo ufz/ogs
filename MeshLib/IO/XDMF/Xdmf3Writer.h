@@ -59,6 +59,7 @@ public:
      * @param time time value of the current time_step
      */
     void writeStep(int time_step, double time);
+    ~Xdmf3Writer();
 
 private:
     boost::shared_ptr<XdmfGridCollection> _gridCollection;

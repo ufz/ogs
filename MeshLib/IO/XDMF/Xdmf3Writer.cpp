@@ -135,6 +135,12 @@ Xdmf3Writer::Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
     _root = XdmfDomain::New();
     _root->insert(version);
     _root->insert(grid_collection);
+
+}
+
+Xdmf3Writer::~Xdmf3Writer()
+{
+    _root->accept(_writer);
 }
 
 void Xdmf3Writer::writeStep(int const time_step, double const time)
@@ -157,6 +163,6 @@ void Xdmf3Writer::writeStep(int const time_step, double const time)
 
     auto grid_collection = _root->getGridCollection(0);
     grid_collection->insert(grid);
-    _root->accept(_writer);
+
 }
 }  // namespace MeshLib::IO

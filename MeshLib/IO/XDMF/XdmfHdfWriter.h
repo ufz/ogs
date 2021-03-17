@@ -44,7 +44,8 @@ public:
     void writeStep(int time_step, double time) const;
 
 private:
-    std::unique_ptr<HdfWriter> _hdf_writer;
+    // hdf_writer must be destructed before xdmf_writer
     std::unique_ptr<Xdmf3Writer> _xdmf_writer;
+    std::unique_ptr<HdfWriter> _hdf_writer;
 };
 }  // namespace MeshLib::IO
