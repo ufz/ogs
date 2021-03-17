@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    xml.setNameForExport(geo_name);
+    xml.export_name = geo_name;
     xml.writeToFile(geo_output_arg.getValue());
 
     return EXIT_SUCCESS;

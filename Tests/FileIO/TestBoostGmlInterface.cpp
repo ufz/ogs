@@ -29,7 +29,7 @@ TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
         (fs::temp_directory_path() /= BaseLib::randomString(32) + ".gml").string();
 
     GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
-    xml.setNameForExport(geo_name);
+    xml.export_name = geo_name;
     int result = xml.writeToFile(test_data_file);
     EXPECT_EQ(result, 1);
 

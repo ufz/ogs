@@ -76,7 +76,6 @@ bool createSurface(GeoLib::Polyline const& ply,
     FileIO::GMSH::GMSHInterface gmsh_io(
         geo, false, FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, 0.0,
         0.0, 0, geo_names, false, false);
-    gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
 
     // write to random file in temp directory
     auto geo_file = fs::temp_directory_path() /= BaseLib::randomString(32);

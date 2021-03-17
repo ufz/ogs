@@ -197,7 +197,7 @@ void consolidateGeometry(GeoLib::GEOObjects& geo,
 {
     std::string const filename(output_name + ".gml");
     GeoLib::IO::XmlGmlInterface xml(geo);
-    xml.setNameForExport(merged_geo_name);
+    xml.export_name = merged_geo_name;
     xml.writeToFile(filename);
 
     geo.removePolylineVec(merged_geo_name);
@@ -223,7 +223,6 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
     FileIO::GMSH::GMSHInterface gmsh_io(
         geo, true, FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, res, 0,
         0, gmsh_geo, false, false);
-    gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
     gmsh_io.writePhysicalGroups(true);
     bool const success = gmsh_io.writeToFile(gmsh_geo_name);
 

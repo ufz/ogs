@@ -495,7 +495,6 @@ void MainWindow::save()
             FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, point_density,
             station_density, max_pnts_per_leaf, selected_geometries, false,
             false);
-        gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
         bool const success = gmsh_io.writeToFile(fileName.toStdString());
 
         if (!success)
@@ -917,14 +916,14 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
     }
 #endif
     GeoLib::IO::XmlGmlInterface xml(_project.getGEOObjects());
-    xml.setNameForExport(gliName.toStdString());
+    xml.export_name = gliName.toStdString();
     xml.writeToFile(fileName.toStdString());
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
     GeoLib::IO::XmlStnInterface xml(_project.getGEOObjects());
-    xml.setNameForExport(listName.toStdString());
+    xml.export_name = listName.toStdString();
     xml.writeToFile(fileName.toStdString());
 }
 
@@ -1062,14 +1061,12 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                     _project.getGEOObjects(), true,
                     FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
                     param2, param3, param1, selectedGeometries, false, false);
-                gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
                 gmsh_io.writeToFile(fileName.toStdString());
             } else { // homogeneous meshing selected
                 FileIO::GMSH::GMSHInterface gmsh_io(
                     _project.getGEOObjects(), true,
                     FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
                     param4, param3, param1, selectedGeometries, false, false);
-                gmsh_io.setPrecision(std::numeric_limits<double>::digits10);
                 gmsh_io.writeToFile(fileName.toStdString());
             }
 

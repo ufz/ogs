@@ -319,31 +319,31 @@ bool MeshIO::write()
         return false;
     }
 
-    _out << "#FEM_MSH\n"
+    out << "#FEM_MSH\n"
         << "$PCS_TYPE\n"
         << "  NO_PCS\n"
         << "$NODES\n"
         << "  ";
     const std::size_t n_nodes(_mesh->getNumberOfNodes());
-    _out << n_nodes << "\n";
+    out << n_nodes << "\n";
     for (std::size_t i(0); i < n_nodes; ++i) {
-        _out << i << " " << *(_mesh->getNode(i)) << "\n";
+        out << i << " " << *(_mesh->getNode(i)) << "\n";
     }
 
-    _out << "$ELEMENTS\n"
+    out << "$ELEMENTS\n"
         << "  ";
 
     if (!_mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
-        writeElements(_mesh->getElements(), nullptr, _out);
+        writeElements(_mesh->getElements(), nullptr, out);
     }
     else
     {
         writeElements(
             _mesh->getElements(),
-            _mesh->getProperties().getPropertyVector<int>("MaterialIDs"), _out);
+            _mesh->getProperties().getPropertyVector<int>("MaterialIDs"), out);
     }
-    _out << "#STOP\n";
+    out << "#STOP\n";
 
     return true;
 }

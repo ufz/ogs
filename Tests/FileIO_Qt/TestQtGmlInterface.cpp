@@ -29,7 +29,7 @@ TEST_F(TestGmlInterface, QtXmlGmlWriterReaderTest)
         (fs::temp_directory_path() /= BaseLib::randomString(32)).string();
 
     GeoLib::IO::XmlGmlInterface xml(geo_objects);
-    xml.setNameForExport(geo_name);
+    xml.export_name = geo_name;
     int result = xml.writeToFile(test_data_file);
     EXPECT_EQ(result, 1);
 

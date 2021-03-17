@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     }
 
     // write new file
-    xml.setNameForExport(geo_name);
+    xml.export_name = geo_name;
     xml.writeToFile(output_arg.getValue());
     INFO ("...done.");
 

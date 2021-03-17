@@ -343,10 +343,10 @@ bool XmlPrjInterface::write()
     QFileInfo fi(QString::fromStdString(_filename));
     std::string path((fi.absolutePath()).toStdString() + "/");
 
-    _out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";  // xml
-                                                                  // definition
-    _out << "<?xml-stylesheet type=\"text/xsl\" "
-            "href=\"OpenGeoSysProject.xsl\"?>\n\n";  // stylefile definition
+    out << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";  // xml
+                                                                 // definition
+    out << "<?xml-stylesheet type=\"text/xsl\" "
+           "href=\"OpenGeoSysProject.xsl\"?>\n\n";  // stylefile definition
 
     QDomDocument doc("OGS-PROJECT-DOM");
     QDomElement root = doc.createElement("OpenGeoSysProject");
@@ -375,7 +375,7 @@ bool XmlPrjInterface::write()
     {
         // write gml file
         GeoLib::IO::XmlGmlInterface gml(geo_objects);
-        gml.setNameForExport(name);
+        gml.export_name = name;
         if (gml.writeToFile(std::string(path + name + ".gml")))
         {
             // write entry in project file
@@ -397,7 +397,7 @@ bool XmlPrjInterface::write()
     {
         // write station file
         GeoLib::IO::XmlStnInterface stn(geo_objects);
-        stn.setNameForExport(name);
+        stn.export_name = name;
 
         if (stn.writeToFile(path + name + ".stn"))
         {
@@ -421,7 +421,7 @@ bool XmlPrjInterface::write()
     }
 
     std::string xml = doc.toString().toStdString();
-    _out << xml;
+    out << xml;
     return true;
 }
 
