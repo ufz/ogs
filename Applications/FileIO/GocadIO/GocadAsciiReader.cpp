@@ -121,7 +121,7 @@ DataType datasetFound(std::ifstream& in)
 /// Checks if current line is a designated keyword for a GoCAD data set
 void checkLineEndings(std::string const& file_name)
 {
-    #ifndef _WIN32
+#ifndef _WIN32
     std::ifstream in(file_name);
     if (in.is_open())
     {
@@ -136,7 +136,7 @@ void checkLineEndings(std::string const& file_name)
                 file_name);
         }
     }
-    #endif _WIN32
+#endif
 }
 
 /// Parses the HEADER section (everything except the name is ignored right now)

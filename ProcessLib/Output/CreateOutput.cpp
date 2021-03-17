@@ -40,7 +40,7 @@ std::unique_ptr<Output> createOutput(
 
             return type;
         }
-        catch (std::out_of_range& e)
+        catch (std::out_of_range&)
         {
             OGS_FATAL("No supported file type provided. Read `{:s}' from <output><type> \
                 in prj File. Supported: VTK, XDMF.",
