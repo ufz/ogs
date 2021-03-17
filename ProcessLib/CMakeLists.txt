@@ -31,7 +31,6 @@ target_link_libraries(
         MeshGeoToolsLib
         MeshLib
         NumLib
-        $<$<OR:$<BOOL:${OGS_BUILD_PROCESS_ComponentTransport}>,$<BOOL:${OGS_BUILD_PROCESS_RichardsComponentTransport}>>:ChemistryLib>
         $<$<TARGET_EXISTS:ProcessLibBoundaryConditionPython>:ProcessLibBoundaryConditionPython>
         $<$<TARGET_EXISTS:ProcessLibSourceTermPython>:ProcessLibSourceTermPython>
         nlohmann_json
