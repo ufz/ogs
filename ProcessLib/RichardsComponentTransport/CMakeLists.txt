@@ -2,7 +2,8 @@ get_source_files(SOURCES)
 
 ogs_add_library(RichardsComponentTransport ${SOURCES})
 target_link_libraries(
-    RichardsComponentTransport PUBLIC ProcessLib PRIVATE ParameterLib
+    RichardsComponentTransport PUBLIC ProcessLib ChemistryLib
+    PRIVATE ParameterLib
 )
 
 if(OGS_BUILD_TESTING)
