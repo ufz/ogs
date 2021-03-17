@@ -30,6 +30,7 @@ struct HdfData
     std::vector<Hdf5DimType> data_space;
     std::vector<Hdf5DimType> offsets;
     std::vector<Hdf5DimType> file_space;
+    std::vector<Hdf5DimType> chunk_space;
     std::string const name;
     int64_t data_type;
 };

@@ -19,6 +19,7 @@ bool isFileManager()
 
 PartitionInfo getPartitionInfo(std::size_t const size)
 {
-    return {0, size, 1};
+        // local_offset, local_length, longest_local_length, global_number_process
+    return {0, size, size, size};
 }
 }  // namespace MeshLib::IO

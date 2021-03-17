@@ -57,10 +57,12 @@ PartitionInfo getPartitionInfo(std::size_t const size)
                      partition_sizes.end(),
                      back_inserter(partition_offsets));
 
-    //chunked
-    std::size_t longest_partition = *max_element(partition_sizes.begin(), partition_sizes.end());
-    auto this_partition_offset = longest_partition*mpi_rank;
-    return {this_partition_offset, longest_partition,partition_sizes.size()};
-    //return {partition_offsets[mpi_rank], partition_offsets.back()};
+    // chunked
+    std::size_t longest_partition =
+        *max_element(partition_sizes.begin(), partition_sizes.end());
+
+    // local_offset, local_length, longest_local_length, global_length
+    return {partition_offsets[mpi_rank], size, longest_partition,
+            partition_offsets.back()};
 }
 }  // namespace MeshLib::IO

@@ -43,31 +43,34 @@ static hid_t meshPropertyType2HdfType(MeshPropertyDataType const ogs_data_type)
 HdfData::HdfData(void const* data_start, std::size_t const size_partitioned_dim,
                  std::size_t const size_tuple, std::string const& name,
                  MeshPropertyDataType const mesh_property_data_type)
-    : data_start(data_start),
-      name(name)
+    : data_start(data_start), name(name)
 {
     auto const& partition_info = getPartitionInfo(size_partitioned_dim);
-    DBUG(
-        "HdfData: The partition of dataset {:s} has length {:d} and offset "
-        "{:d}.",
-        name, size_partitioned_dim, partition_info.local_offset);
     auto const& offset_partitioned_dim = partition_info.local_offset;
     offsets = {offset_partitioned_dim, 0};
 
     std::size_t unified_length = partition_info.local_length;
 
-    data_space =
+    chunk_space =
         (size_tuple > 1)
-            ? std::vector<Hdf5DimType>{unified_length, size_tuple}
-            : std::vector<Hdf5DimType>{unified_length};
+            ? std::vector<Hdf5DimType>{partition_info.longest_local_length,
+                                       size_tuple}
+            : std::vector<Hdf5DimType>{partition_info.longest_local_length};
+
+    data_space = (size_tuple > 1)
+                     ? std::vector<Hdf5DimType>{unified_length, size_tuple}
+                     : std::vector<Hdf5DimType>{unified_length};
     file_space =
         (size_tuple > 1)
-        ? std::vector<Hdf5DimType>{partition_info.local_length * partition_info.global_number_processes, size_tuple}
-        : std::vector<Hdf5DimType>{partition_info.local_length * partition_info.global_number_processes};
-    INFO("Filespace: for dataset {:s} has length {:d} and tuple {:d}.", name,
-         file_space[0], size_tuple);
-    INFO("Dataspace: for dataset {:s} has length {:d} and tuple {:d}.", name,
-         data_space[0], size_tuple);
+            ? std::vector<Hdf5DimType>{partition_info.global_length, size_tuple}
+            : std::vector<Hdf5DimType>{partition_info.global_length};
+
+    INFO(
+        "Size {:d} x {:d} \t Offset "
+        "{:d} \t Global chunk {:d} \t  Global length {:d} \t Dataset {:s} ",
+        partition_info.local_length, size_tuple,
+        partition_info.local_offset, partition_info.longest_local_length,
+        partition_info.global_length, name );
     data_type = meshPropertyType2HdfType(mesh_property_data_type);
 }
 }  // namespace MeshLib::IO

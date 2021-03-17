@@ -73,27 +73,28 @@ static hid_t createStepGroup(hid_t const& file, int const step)
                       H5P_DEFAULT);
 }
 
-static hid_t writeDataSet(
-    void const* nodes_data,  // what
-    hid_t const data_type,
-    std::vector<Hdf5DimType> const& chunked_dims,  // how ...
-    std::vector<Hdf5DimType> const& dim_offsets,
-    std::vector<Hdf5DimType> const& dim_maxs, bool has_compression_lib,
-    hid_t const section,
-    std::string const& dataset_name)  // where
+static hid_t writeDataSet(void const* nodes_data,  // what
+                          hid_t const data_type,
+                          std::vector<Hdf5DimType> const& data_dims,  // how ...
+                          std::vector<Hdf5DimType> const& dim_offsets,
+                          std::vector<Hdf5DimType> const& dim_maxs,
+                          [[maybe_unused]] std::vector<Hdf5DimType> const& chunk_dim,
+                          bool has_compression_lib,
+                          hid_t const section,
+                          std::string const& dataset_name)  // where
 {
     INFO("Num global nodes : {:d}, chunked {:d}, offsets {:d}   ", dim_maxs[0],
-         chunked_dims[0], dim_offsets[0]);
-    int const dim_size = chunked_dims.size();
+         data_dims[0], dim_offsets[0]);
+    int const dim_size = data_dims.size();
     hid_t const memspace =
-        H5Screate_simple(dim_size, chunked_dims.data(), nullptr);
+        H5Screate_simple(dim_size, data_dims.data(), nullptr);
     hid_t const filespace =
         H5Screate_simple(dim_size, dim_maxs.data(), nullptr);
 
     hid_t dataset_property = H5Pcreate(H5P_DATASET_CREATE);
 
-    hid_t status =
-        H5Pset_chunk(dataset_property, dim_size, chunked_dims.data());
+
+    hid_t status = H5Pset_chunk(dataset_property, dim_size, dim_maxs.data());
     if (status != 0)
     {
         ERR("H5Pset_layout failed for data set: {:s}.", dataset_name);
@@ -117,13 +118,13 @@ static hid_t writeDataSet(
 
     std::vector<hsize_t> const stride(dim_size, 1);
     std::vector<hsize_t> const count(dim_size, 1);
-    std::vector<hsize_t> const block = chunked_dims;
+    std::vector<hsize_t> const block = data_dims;
 
     DBUG("Offset in dataset '{:s}' is: {:d}.", dataset_name, dim_offsets[0]);
 
-    status = H5Sselect_hyperslab(dataset_filespace, H5S_SELECT_SET,
+status = H5Sselect_hyperslab(dataset_filespace, H5S_SELECT_SET,
                                  dim_offsets.data(), stride.data(),
-                                 count.data(), block.data());
+                                count.data(), block.data());
     if (status != 0)
     {
         ERR("H5Sselect_hyperslab failed in dataset '{:s}'.", dataset_name);
@@ -163,9 +164,9 @@ HdfWriter::HdfWriter(std::vector<HdfData>
     for (auto const& attribute : constant_attributes)
     {
         hid_t status = writeDataSet(attribute.data_start, attribute.data_type,
-                              attribute.data_space, attribute.offsets,
-                              attribute.file_space, _has_compression, group_id,
-                              attribute.name);
+                                    attribute.data_space, attribute.offsets,
+                                    attribute.file_space,  attribute.chunk_space,_has_compression,
+                                    group_id, attribute.name);
 
         checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.",
                        attribute.name);
@@ -187,8 +188,8 @@ bool HdfWriter::writeStep(int const step) const
     {
         status = writeDataSet(attribute.data_start, attribute.data_type,
                               attribute.data_space, attribute.offsets,
-                              attribute.file_space, _has_compression, group,
-                              attribute.name);
+                              attribute.file_space, attribute.chunk_space,
+                              _has_compression, group, attribute.name);
 
         checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.", attribute.name);
     }
