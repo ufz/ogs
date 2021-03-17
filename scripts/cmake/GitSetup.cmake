@@ -18,19 +18,20 @@ if(NOT _IS_GIT_REPO)
     )
     if(_IS_GIT_REPO GREATER 0)
         set(_IS_GIT_REPO FALSE CACHE INTERNAL "")
-        if(DEFINED OGS_VERSION)
-            message(
-                WARNING
-                    "Using user-provided OGS_VERSION; Submodule setup is skipped!"
-            )
-        else()
-            message(
-                FATAL_ERROR
-                    "No git repository found at ${PROJECT_SOURCE_DIR}! "
-                    "Please use git to obtain the source code! See "
-                    "https://www.opengeosys.org/docs/devguide/getting-started/get-the-source-code/"
-                    " OR manually set the OGS_VERSION variable."
-            )
+        if(NOT DEFINED OGS_VERSION)
+            if(DEFINED $ENV{CI})
+                message(
+                    FATAL_ERROR
+                        "No git repository found at ${PROJECT_SOURCE_DIR}! "
+                        "Please use git to obtain the source code OR manually set the OGS_VERSION variable."
+                )
+            else()
+                set(OGS_VERSION "NO_VERSION")
+                message(
+                    WARNING "No git repository found at ${PROJECT_SOURCE_DIR}! "
+                            "OGS_VERSION is set to NO_VERSION !"
+                )
+            endif()
         endif()
     else()
         set(_IS_GIT_REPO TRUE CACHE INTERNAL "")

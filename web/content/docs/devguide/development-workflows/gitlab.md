@@ -2,11 +2,11 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Set Up GitLab"
 author = "Lars Bilke"
-weight = 1002
+weight = 1012
 
 [menu]
   [menu.devguide]
-    parent = "getting-started"
+    parent = "development-workflows"
 +++
 
 ## Introduction

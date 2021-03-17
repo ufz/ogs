@@ -27,7 +27,7 @@ Per default when Conan is enabled it will try to fetch prebuilt binaries from th
 - `missing` - Default, only builds packages which are not available as a prebuilt binary for the current configuration
 - `all` - Builds all packages locally
 - `never` - Builds no package locally
-- `[a list of libraries to build]`, e.g. `"Eigen3;Boost"`. For names see [ConanSetup.cmake](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/scripts/cmake/ConanSetup.cmake). Make sure to set this back to 'never' after the libs have been built. Otherwise it would rebuild the libs on the next CMake run.
+- `[a list of libraries to build]`, e.g. `"petsc;tfel"`. For names see [ConanSetup.cmake](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/scripts/cmake/ConanSetup.cmake). Make sure to set this back to 'never' after the libs have been built. Otherwise it would rebuild the libs on the next CMake run.
 
 ### Conan environment
 

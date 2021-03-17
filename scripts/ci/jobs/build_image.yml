@@ -16,11 +16,11 @@ build container images:
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_IMAGE --upload
     - poetry run ogscm compiler.py ogs.py --build --ogs off
-      --pm system --cvode --cppcheck --docs --gcovr --gui --ccache
+      --cvode --cppcheck --docs --gcovr --gui --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_GCC_GUI_IMAGE --upload
     - poetry run ogscm compiler.py ogs.py --build --ogs off
-      --compiler clang --compiler_version 9 --ccache
+      --pm conan --compiler clang --compiler_version 9 --ccache
       --version_file ../../web/data/versions.json
       --tag $CONTAINER_CLANG_IMAGE --upload
 

@@ -48,10 +48,10 @@ See Linux-tab!
 
 ## Waiting
 
-So now the build process is running... This can take some time because maybe there are external libraries which get automatically downloaded and compiled. This step is only done once per build directory, so subsequent builds will be much faster. See [this]({{< ref "third-party-libraries" >}}) for more.
+So now the build process is running... This can take some time because maybe there are external libraries which get automatically downloaded and compiled. This step is only done once per build directory, so subsequent builds will be much faster. See [this]({{< ref "cpm.md" >}}) for more.
 
 ## Finished
 
 Congratulations you have finished the **Getting Started**-section!
 
-Have a look at the other sections of this guide. Maybe check out [Development Workflows]({{< ref "branching-model" >}}) if you are interested in actively contributing to the project. The [Configuration Options]({{< ref "configuration-options" >}})-page shows you all available build customizations. Go ahead!
+Have a look at the other sections of this guide. Check out [Development Workflows]({{< ref "/docs/devguide/development-workflows/introduction.md" >}}) if you are interested in actively contributing to the project. The [Configuration Options]({{< ref "configuration-options" >}})-page shows you all available build customizations. Go ahead!
