@@ -327,12 +327,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
     typename ShapeMatricesTypeDisplacement::template MatrixType<
-        displacement_size, pressure_size>
-        Kup = ShapeMatricesTypeDisplacement::template MatrixType<
-            displacement_size, pressure_size>::Zero(displacement_size,
-                                                    pressure_size);
-
-    typename ShapeMatricesTypeDisplacement::template MatrixType<
         pressure_size, displacement_size>
         Kpu = ShapeMatricesTypeDisplacement::template MatrixType<
             pressure_size, displacement_size>::Zero(pressure_size,
@@ -427,8 +421,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                          x_position, t, dt);
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
-        double const DeltaS_L_Deltap_cap = (p_cap_dot_ip == 0) ? dS_L_dp_cap :
-            (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+        double const DeltaS_L_Deltap_cap =
+            (p_cap_dot_ip == 0) ? dS_L_dp_cap
+                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
 
         auto const chi = [medium, x_position, t, dt](double const S_L) {
             MPL::VariableArray vs;
@@ -520,37 +515,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             }
         }
 
-        double const k_rel =
-            medium->property(MPL::PropertyType::relative_permeability)
-                .template value<double>(variables, x_position, t, dt);
-        auto const mu =
-            liquid_phase.property(MPL::PropertyType::viscosity)
-                .template value<double>(variables, x_position, t, dt);
-
-        // Set mechanical variables for the intrinsic permeability model
-        // For stress dependent permeability.
-        {
-            auto const sigma_total = (ip_data_[ip].sigma_eff +
-                                      alpha * chi_S_L * identity2 * p_cap_ip)
-                                         .eval();
-            // For stress dependent permeability.
-            variables[static_cast<int>(MPL::Variable::total_stress)]
-                .emplace<SymmetricTensor>(
-                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                        sigma_total));
-        }
-
-        variables[static_cast<int>(
-            MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
-            ip_data_[ip].material_state_variables->getEquivalentPlasticStrain();
-
-        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
-            medium->property(MPL::PropertyType::permeability)
-                .value(variables, x_position, t, dt));
-
-        GlobalDimMatrixType const Ki_over_mu = K_intrinsic / mu;
-        GlobalDimMatrixType const rho_Ki_over_mu = rho_LR * Ki_over_mu;
-
         //
         // displacement equation, displacement part
         //
@@ -593,15 +557,17 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
 
         double const rho = rho_SR * (1 - phi) + S_L * phi * rho_LR;
+
+        auto const sigma_total =
+            (sigma_eff + alpha * chi_S_L * identity2 * p_cap_ip).eval();
+
         local_rhs.template segment<displacement_size>(displacement_index)
             .noalias() -=
-            (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
+            (B.transpose() * sigma_total - N_u_op.transpose() * rho * b) * w;
 
         //
         // displacement equation, pressure part
         //
-        Kup.noalias() += B.transpose() * alpha * chi_S_L * identity2 * N * w;
-
         auto const dchi_dS_L =
             medium->property(MPL::PropertyType::bishops_effective_stress)
                 .template dValue<double>(variables,
@@ -637,6 +603,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .noalias() +=
                 B.transpose() * dsigma_sw_dS_L * dS_L_dp_cap * N * w;
         }
+
         //
         // pressure equation, displacement part.
         //
@@ -646,6 +613,33 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // pressure equation, pressure part.
         //
+        double const k_rel =
+            medium->property(MPL::PropertyType::relative_permeability)
+                .template value<double>(variables, x_position, t, dt);
+        auto const mu =
+            liquid_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, x_position, t, dt);
+
+        // Set mechanical variables for the intrinsic permeability model
+        // For stress dependent permeability.
+
+        // For stress dependent permeability.
+        variables[static_cast<int>(MPL::Variable::total_stress)]
+            .emplace<SymmetricTensor>(
+                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                    sigma_total));
+
+        variables[static_cast<int>(
+            MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
+            ip_data_[ip].material_state_variables->getEquivalentPlasticStrain();
+
+        auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
+            medium->property(MPL::PropertyType::permeability)
+                .value(variables, x_position, t, dt));
+
+        GlobalDimMatrixType const Ki_over_mu = K_intrinsic / mu;
+        GlobalDimMatrixType const rho_Ki_over_mu = rho_LR * Ki_over_mu;
+
         laplace_p.noalias() +=
             dNdx.transpose() * k_rel * rho_Ki_over_mu * dNdx * w;
 
@@ -670,8 +664,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             N.transpose() * rho_LR * specific_storage_a_p * N * w;
 
         storage_p_a_S.noalias() -= N.transpose() * rho_LR *
-                                       specific_storage_a_S * DeltaS_L_Deltap_cap *
-                                       N * w;
+                                   specific_storage_a_S * DeltaS_L_Deltap_cap *
+                                   N * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
@@ -836,10 +830,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
         laplace_p * p_L + (storage_p_a_p + storage_p_a_S) * p_L_dot +
         Kpu * u_dot + M_pT * T_dot;
-
-    // displacement equation
-    local_rhs.template segment<displacement_size>(displacement_index)
-        .noalias() += Kup * p_L;
 }
 
 template <int Components, typename StoreValuesFunction>
