@@ -46,65 +46,6 @@ AddTest(
     expected_cube_1e3_ts_1_t_5.000000.vtu cube_1e3_ts_1_t_5.000000.vtu displacement displacement 1e-15 1e-15
     expected_cube_1e3_ts_1_t_5.000000.vtu cube_1e3_ts_1_t_5.000000.vtu pressure pressure 1e-15 1e-15
 )
-AddTest(
-    NAME HydroMechanics_hm1_1Dbeam
-    PATH HydroMechanics/Verification
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS hm1_1Dbeam.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    hm1_1Dbeam_ts_1_t_1.000000.vtu hm1_1Dbeam_ts_1_t_1.000000.vtu pressure pressure 2.0e-9 0.0
-    hm1_1Dbeam_ts_1_t_1.000000.vtu hm1_1Dbeam_ts_1_t_1.000000.vtu displacement displacement 1.0e-9 0.0
-    hm1_1Dbeam_ts_1_t_1.000000.vtu hm1_1Dbeam_ts_1_t_1.000000.vtu sigma sigma 5.0e-8 0.0
-    hm1_1Dbeam_ts_1_t_1.000000.vtu hm1_1Dbeam_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-9 0.0
-)
-
-AddTest(
-    NAME HydroMechanics_hm1_2Dsquare
-    PATH HydroMechanics/Verification
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS hm1_2Dsquare.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu pressure pressure 2.0e-9 0.0
-    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu displacement displacement 1.0e-9 0.0
-    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu sigma sigma 5.0e-8 0.0
-    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-9 0.0
-)
-
-AddTest(
-    NAME HydroMechanics_hm1_3Dcube
-    PATH HydroMechanics/Verification
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS hm1_3Dcube.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    hm1_3Dcube_ts_1_t_1.000000.vtu hm1_3Dcube_ts_1_t_1.000000.vtu pressure pressure 2.0e-8 0.0
-    hm1_3Dcube_ts_1_t_1.000000.vtu hm1_3Dcube_ts_1_t_1.000000.vtu displacement displacement 1.0e-8 0.0
-    hm1_3Dcube_ts_1_t_1.000000.vtu hm1_3Dcube_ts_1_t_1.000000.vtu sigma sigma 5.0e-7 0.0
-    hm1_3Dcube_ts_1_t_1.000000.vtu hm1_3Dcube_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-8 0.0
-)
-
-AddTest(
-    NAME HydroMechanics_hm1_3Dgravity
-    PATH HydroMechanics/Verification
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS hm1_3Dgravity.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu pressure pressure 1.0e-9 0.0
-    hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 1.0e-10 0.0
-    hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu sigma sigma 2.0e-8 0.0
-    hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-9 0.0
-)
 
 AddTest(
     NAME HydroMechanics_hm2_1D1bt
@@ -420,4 +361,64 @@ AddTest(
     InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu sigma sigma 5e-7 1e-11
     InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu HydraulicFlow HydraulicFlow 1e-11 0
     InjectionProduction1D_Mono_ts_100_t_8640000.000000.vtu InjectionProduction1D_ts_100_t_8640000.000000.vtu NodalForces NodalForces 3e-7 0
+)
+
+AddTest(
+    NAME HydroMechanics_hm1_1Dbeam
+    PATH HydroMechanics/Verification
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS hm1_1Dbeam.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    hm1_1Dbeam_ts_1_t_1.000000.vtu hm1_1Dbeam_ts_1_t_1.000000.vtu pressure pressure 1.0e-6 0.0
+    hm1_1Dbeam_ts_1_t_1.000000.vtu hm1_1Dbeam_ts_1_t_1.000000.vtu displacement displacement 1.0e-16 0.0
+    hm1_1Dbeam_ts_1_t_1.000000.vtu hm1_1Dbeam_ts_1_t_1.000000.vtu sigma sigma 1.0e-6 0.0
+    hm1_1Dbeam_ts_1_t_1.000000.vtu hm1_1Dbeam_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-16 0.0
+)
+
+AddTest(
+    NAME HydroMechanics_hm1_2Dsquare
+    PATH HydroMechanics/Verification
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS hm1_2Dsquare.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu pressure pressure 1.0e-6 0.0
+    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu displacement displacement 1.0e-16 0.0
+    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu sigma sigma 1.0e-6 0.0
+    hm1_2Dsquare_ts_1_t_1.000000.vtu hm1_2Dsquare_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-16 0.0
+)
+
+AddTest(
+    NAME HydroMechanics_hm1_3Dcube
+    PATH HydroMechanics/Verification
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS hm1_3Dcube.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    hm1_3Dcube_ts_1_t_1.000000.vtu hm1_3Dcube_ts_1_t_1.000000.vtu pressure pressure 1.0e-5 0.0
+    hm1_3Dcube_ts_1_t_1.000000.vtu hm1_3Dcube_ts_1_t_1.000000.vtu displacement displacement 1.0e-15 0.0
+    hm1_3Dcube_ts_1_t_1.000000.vtu hm1_3Dcube_ts_1_t_1.000000.vtu sigma sigma 1.0e-5 0.0
+    hm1_3Dcube_ts_1_t_1.000000.vtu hm1_3Dcube_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-15 0.0
+)
+
+AddTest(
+    NAME HydroMechanics_hm1_3Dgravity
+    PATH HydroMechanics/Verification
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS hm1_3Dgravity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu pressure pressure 1.0e-6 0.0
+    hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 1.0e-15 0.0
+    hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu sigma sigma 1.0e-6 0.0
+    hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-15 0.0
 )
