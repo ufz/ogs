@@ -65,6 +65,10 @@ struct IntegrationPointData final
         material_state_variables;
     double integration_weight;
 
+    // TODO disable in monolithic scheme to save memory
+    double coupling_pressure = std::numeric_limits<double>::quiet_NaN(); /**<
+    needed for staggered scheme to store value from last coupling iteration */
+
     void pushBackState()
     {
         eps_prev = eps;

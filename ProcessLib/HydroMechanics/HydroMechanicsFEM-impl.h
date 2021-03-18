@@ -471,8 +471,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     pos.setElementID(this->_element.getID());
 
     auto const p = local_x.template segment<pressure_size>(pressure_index);
-    auto const u =
-        local_x.template segment<displacement_size>(displacement_index);
 
     auto const p_dot =
         local_xdot.template segment<pressure_size>(pressure_index);
@@ -487,6 +485,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                                          pressure_size);
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
+
+    typename ShapeMatricesTypePressure::NodalMatrixType coupling =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
@@ -515,9 +517,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
-
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
         auto const& N_p = _ip_data[ip].N_p;
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
@@ -569,6 +568,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_over_mu = K / mu;
 
+        // optimal coupling parameter for fixed-stress split [Wheeler]
+        auto const beta_FS = 0.5 * alpha_b * alpha_b / K_S;
+
         laplace.noalias() +=
             rho_fr * dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
@@ -577,6 +579,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             ((alpha_b - porosity) * (1.0 - alpha_b) / K_S + porosity * beta_p);
 
         auto const& b = _process_data.specific_body_force;
+
+        // bodyforce-driven Darcy flow
         local_rhs.noalias() +=
             dNdx_p.transpose() * rho_fr * rho_fr * K_over_mu * b * w;
 
@@ -588,25 +592,22 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                       (dNdx_p * p - 2.0 * rho_fr * b) * N_p * w;
 
         auto& eps = _ip_data[ip].eps;
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
-        auto const B =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
-
-        eps.noalias() = B * u;
         auto& eps_prev = _ip_data[ip].eps_prev;
-        const double dv_dt =
+        const double eps_v_dot =
             (Invariants::trace(eps) - Invariants::trace(eps_prev)) / dt;
-        local_rhs.noalias() -= rho_fr * alpha_b * dv_dt * N_p * w;
-    }
-    local_Jac.noalias() = laplace + storage / dt + add_p_derivative;
 
-    local_rhs.noalias() -= laplace * p + storage * p_dot;
+        const double p_c = _ip_data[ip].coupling_pressure;
+
+        // pressure-dependent part of fixed-stress coupling
+        coupling.noalias() += rho_fr * N_p.transpose() * N_p * w * beta_FS / dt;
+
+        // constant part of fixed-stress coupling
+        local_rhs.noalias() -=
+            (alpha_b * eps_v_dot - beta_FS * p_c / dt) * rho_fr * N_p * w;
+    }
+    local_Jac.noalias() = laplace + storage / dt + add_p_derivative + coupling;
+
+    local_rhs.noalias() -= laplace * p + storage * p_dot + coupling * p;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -743,11 +744,63 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, IntegrationMethod,
                                   DisplacementDim>::
-    setInitialConditionsConcrete(std::vector<double> const& /*local_x*/,
+    setInitialConditionsConcrete(std::vector<double> const& local_x,
                                  double const /*t*/,
-                                 bool const /*use_monolithic_scheme*/,
-                                 int const /*process_id*/)
+                                 bool const use_monolithic_scheme,
+                                 int const process_id)
 {
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+
+    if (use_monolithic_scheme || process_id == 0)
+    {
+        auto p =
+            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+                pressure_size> const>(local_x.data(), pressure_size);
+
+        for (int ip = 0; ip < n_integration_points; ip++)
+        {
+            auto const& N_p = _ip_data[ip].N_p;
+            _ip_data[ip].coupling_pressure = N_p.dot(p);
+        }
+    }
+
+    if (use_monolithic_scheme || process_id == 1)
+    {
+        ParameterLib::SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
+
+        const int displacement_offset =
+            use_monolithic_scheme ? displacement_index : 0;
+
+        auto u = Eigen::Map<typename ShapeMatricesTypeDisplacement::
+                                template VectorType<displacement_size> const>(
+            local_x.data() + displacement_offset, displacement_size);
+
+        MPL::VariableArray vars;
+
+        for (int ip = 0; ip < n_integration_points; ip++)
+        {
+            x_position.setIntegrationPoint(ip);
+            auto const& N_u = _ip_data[ip].N_u;
+            auto const& dNdx_u = _ip_data[ip].dNdx_u;
+
+            auto const x_coord =
+                NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u);
+            auto const B = LinearBMatrix::computeBMatrix<
+                DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
+                typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
+                                                     _is_axially_symmetric);
+
+            auto& eps = _ip_data[ip].eps;
+            eps.noalias() = B * u;
+            vars[static_cast<int>(MPL::Variable::mechanical_strain)]
+                .emplace<
+                    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                    eps);
+        }
+    }
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -759,50 +812,70 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                 std::vector<double> const& /*local_xdot*/,
                                 double const t, double const dt,
                                 bool const use_monolithic_scheme,
-                                int const /*process_id*/)
+                                int const process_id)
 {
-    const int displacement_offset =
-        use_monolithic_scheme ? displacement_index : 0;
-
-    auto u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_offset,
-                                      displacement_size);
-    MPL::VariableArray vars;
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
-
-    auto const T_ref =
-        medium->property(MPL::PropertyType::reference_temperature)
-            .template value<double>(MPL::VariableArray(), x_position, t, dt);
-
     int const n_integration_points = _integration_method.getNumberOfPoints();
-    for (int ip = 0; ip < n_integration_points; ip++)
+
+    if (use_monolithic_scheme || process_id == 0)
     {
-        x_position.setIntegrationPoint(ip);
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto p =
+            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+                pressure_size> const>(local_x.data(), pressure_size);
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
-        auto const B =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+        for (int ip = 0; ip < n_integration_points; ip++)
+        {
+            auto const& N_p = _ip_data[ip].N_p;
+            _ip_data[ip].coupling_pressure = N_p.dot(p);
+        }
+    }
 
-        auto& eps = _ip_data[ip].eps;
-        eps.noalias() = B * u;
-        vars[static_cast<int>(MPL::Variable::mechanical_strain)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
+    if (use_monolithic_scheme || process_id == 1)
+    {
+        ParameterLib::SpatialPosition x_position;
+        x_position.setElementID(_element.getID());
 
-        _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt, u,
-                                                T_ref);
+        auto const& medium =
+            _process_data.media_map->getMedium(_element.getID());
+
+        auto const T_ref =
+            medium->property(MPL::PropertyType::reference_temperature)
+                .template value<double>(MPL::VariableArray(), x_position, t,
+                                        dt);
+
+        const int displacement_offset =
+            use_monolithic_scheme ? displacement_index : 0;
+
+        auto u = Eigen::Map<typename ShapeMatricesTypeDisplacement::
+                                template VectorType<displacement_size> const>(
+            local_x.data() + displacement_offset, displacement_size);
+
+        MPL::VariableArray vars;
+
+        for (int ip = 0; ip < n_integration_points; ip++)
+        {
+            x_position.setIntegrationPoint(ip);
+            auto const& N_u = _ip_data[ip].N_u;
+            auto const& dNdx_u = _ip_data[ip].dNdx_u;
+
+            auto const x_coord =
+                NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u);
+            auto const B = LinearBMatrix::computeBMatrix<
+                DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
+                typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
+                                                     _is_axially_symmetric);
+
+            auto& eps = _ip_data[ip].eps;
+            eps.noalias() = B * u;
+            vars[static_cast<int>(MPL::Variable::mechanical_strain)]
+                .emplace<
+                    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                    eps);
+
+            _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt, u,
+                                                    T_ref);
+        }
     }
 }
 

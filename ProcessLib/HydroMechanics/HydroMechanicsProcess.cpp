@@ -237,7 +237,7 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     //
     ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
         LocalAssemblerIF>(_process_data.solid_materials,
-                                 add_secondary_variable);
+                          add_secondary_variable);
 
     _process_data.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
@@ -321,9 +321,9 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     }
 
     // Initialize local assemblers after all variables have been set.
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerIF::initialize, _local_assemblers,
-        *_local_to_global_index_map);
+    GlobalExecutor::executeMemberOnDereferenced(&LocalAssemblerIF::initialize,
+                                                _local_assemblers,
+                                                *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -485,11 +485,6 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalVector const& x, GlobalVector const& xdot, const double t,
     double const dt, const int process_id)
 {
-    if (!hasMechanicalProcess(process_id))
-    {
-        return;
-    }
-
     DBUG("PostNonLinearSolver HydroMechanicsProcess.");
     // Calculate strain, stress or other internal variables of mechanics.
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
