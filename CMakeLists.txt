@@ -226,6 +226,15 @@ endif()
 
 include(UnityBuildSettings)
 
+if(POETRY)
+    file(STRINGS ${PROJECT_BINARY_DIR}/.python_packages OGS_PYTHON_PACKAGES)
+    list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
+    execute_process(
+        COMMAND ${_CMD_COMMAND} poetry add ${OGS_PYTHON_PACKAGES}
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
+endif()
+
 file(WRITE ${PROJECT_BINARY_DIR}/disabled-tests.log "${DISABLED_TESTS_LOG}")
 unset(DISABLED_TESTS_LOG CACHE) # Don't write to CMakeCache.txt
 

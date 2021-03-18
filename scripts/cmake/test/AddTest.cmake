@@ -435,16 +435,11 @@ Use six arguments version of AddTest with absolute and relative tolerances"
 
     if(AddTest_PYTHON_PACKAGES)
         if(POETRY)
-            file(WRITE ${PROJECT_BINARY_DIR}/tmp_poetry_add.bat
-                 "poetry add ${AddTest_PYTHON_PACKAGES}"
+            string(REPLACE ";" "\n" PYTHON_PACKAGES
+                           "${AddTest_PYTHON_PACKAGES}"
             )
-            if(WIN32)
-                set(EXEC_CMD tmp_poetry_add.bat)
-            else()
-                set(EXEC_CMD ${BASH_TOOL_PATH} tmp_poetry_add.bat)
-            endif()
-            execute_process(
-                COMMAND ${EXEC_CMD} WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            file(APPEND ${PROJECT_BINARY_DIR}/.python_packages
+                 ${PYTHON_PACKAGES}
             )
         else()
             message(
