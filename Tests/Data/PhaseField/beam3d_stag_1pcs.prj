@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>beam3d.vtu</mesh>
-    <geometry>beam3d.gml</geometry>
+    <meshes>
+        <mesh>beam3d.vtu</mesh>
+        <mesh>beam3d_geometry_bottom.vtu</mesh>
+        <mesh>beam3d_geometry_top.vtu</mesh>
+        <mesh>beam3d_geometry_left.vtu</mesh>
+        <mesh>beam3d_geometry_right.vtu</mesh>
+        <mesh>beam3d_geometry_front.vtu</mesh>
+        <mesh>beam3d_geometry_back.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>PhaseField</name>
@@ -214,15 +221,13 @@
             <initial_condition>phasefield_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>beam3d_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>beam3d_geometry_left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>beam3d_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>beam3d_geometry_right</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
@@ -236,43 +241,37 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>beam3d_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
+                    <mesh>beam3d_geometry_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>beam3d_geometry</geometrical_set>
-                    <geometry>top</geometry>
+                    <mesh>beam3d_geometry_top</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>beam3d_geometry</geometrical_set>
-                    <geometry>back</geometry>
+                    <mesh>beam3d_geometry_back</mesh>
                     <type>Dirichlet</type>
                     <component>2</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>beam3d_geometry</geometrical_set>
-                    <geometry>front</geometry>
+                    <mesh>beam3d_geometry_front</mesh>
                     <type>Dirichlet</type>
                     <component>2</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>beam3d_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>beam3d_geometry_left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet2</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>beam3d_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>beam3d_geometry_right</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet1</parameter>
