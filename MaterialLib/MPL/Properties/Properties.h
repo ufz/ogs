@@ -20,6 +20,7 @@
 #include "ClausiusClapeyron.h"
 #include "Constant.h"
 #include "Curve.h"
+#include "Density/WaterVapourDensity.h"
 #include "DupuitPermeability.h"
 #include "EmbeddedFracturePermeability.h"
 #include "Exponential.h"

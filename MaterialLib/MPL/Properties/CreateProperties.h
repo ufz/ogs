@@ -37,6 +37,7 @@
 #include "CreateSaturationDependentSwelling.h"
 #include "CreateStrainDependentPermeability.h"
 #include "CreateTransportPorosityFromMassBalance.h"
+#include "Density/CreateWaterVapourDensity.h"
 #include "RelativePermeability/CreateRelPermBrooksCorey.h"
 #include "RelativePermeability/CreateRelPermBrooksCoreyNonwettingPhase.h"
 #include "RelativePermeability/CreateRelPermLiakopoulos.h"

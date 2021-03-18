@@ -221,6 +221,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
             geometry_dimension, config, parameters, local_coordinate_system);
     }
 
+    if (boost::iequals(property_type, "WaterVapourDensity"))
+    {
+        return createWaterVapourDensity(config);
+    }
+
     if (boost::iequals(property_type, "VapourDiffusionFEBEX"))
     {
         return createVapourDiffusionFEBEX(config);
