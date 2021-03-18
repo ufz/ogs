@@ -29,3 +29,7 @@
       else
           $BUILD_CMD_PREFIX cmake --build . --target ${TARGETS} > >(tee make.output)
       fi
+    - |
+      if [[ "$CHECK_WARNINGS" = true ]] ; then
+          if [[ $(cat make.output | grep warning -i) ]]; then printf 'There were compiler warnings:\n\n'; cat make.output | grep warning -i; exit 1; fi
+      fi

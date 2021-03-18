@@ -377,6 +377,9 @@ if(OGS_BUILD_TESTING)
 endif()
 
 # Disable warnings
+if(WIN32 AND VTK_ADDED)
+    list(APPEND DISABLE_WARNINGS_TARGETS vtksys)
+endif()
 foreach(target ${DISABLE_WARNINGS_TARGETS})
     target_compile_options(
         ${target}

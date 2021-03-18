@@ -14,6 +14,8 @@
 #include <cmath>
 #include <limits>
 #include <type_traits>
+#include <utility>
+
 #include "BaseLib/Error.h"
 
 namespace MathLib
@@ -48,7 +50,7 @@ class RegulaFalsi
 public:
     //! Initializes finding a root of the \c Function \c f in the interval
     //! [\c a, \c b].
-    RegulaFalsi(Function const& f, double a, double b)
+    RegulaFalsi(Function&& f, double a, double b)
         : _f(f), _a(a), _b(b), _fa(f(a)), _fb(f(b))
     {
         static_assert(std::is_same_v<double, decltype(f(0.0))>,
@@ -114,7 +116,7 @@ public:
     double getRange() const { return std::abs(_a - _b); }
 
 private:
-    Function const& _f;
+    Function _f;
     double _a, _b, _fa, _fb;
 };
 
@@ -124,11 +126,12 @@ private:
  *
  * \see https://en.wikipedia.org/wiki/False_position_method#Improvements_in_regula_falsi
  */
-template<typename SubType, typename Function>
-RegulaFalsi<SubType, Function>
-makeRegulaFalsi(Function const& f, double const a, double const b)
+template <typename SubType, typename Function>
+RegulaFalsi<SubType, Function> makeRegulaFalsi(Function&& f,
+                                               double const a,
+                                               double const b)
 {
-    return RegulaFalsi<SubType, Function>(f, a, b);
+    return RegulaFalsi<SubType, Function>(std::forward<Function>(f), a, b);
 }
 
 
