@@ -24,6 +24,7 @@
 #include "DupuitPermeability.h"
 #include "EffectiveThermalConductivityPorosityMixing.h"
 #include "EmbeddedFracturePermeability.h"
+#include "Enthalpy/GeneralWaterVapourLatentHeat.h"
 #include "Enthalpy/LinearWaterVapourLatentHeat.h"
 #include "Exponential.h"
 #include "GasPressureDependentPermeability.h"
