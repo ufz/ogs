@@ -5,7 +5,7 @@ description = "CMake auto-generated"
 authors = [""]
 
 [tool.poetry.dependencies]
-python = "^@ogs.minimum_version.python@"
+python = ">=@ogs.minimum_version.python@"
 
 [tool.poetry.dev-dependencies]
 
