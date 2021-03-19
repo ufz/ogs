@@ -75,13 +75,4 @@ private:
 
     std::unique_ptr<BaseLib::TimeInterval const> _time_interval;
 };
-
-std::unique_ptr<DirichletBoundaryConditionWithinTimeInterval>
-createDirichletBoundaryConditionWithinTimeInterval(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
-    int const component_id,
-    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&
-        parameters);
-
 }  // namespace ProcessLib
