@@ -22,7 +22,7 @@ std::unique_ptr<Property> createVapourDiffusionFEBEX(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "VapourDiffusionFEBEX");
-    DBUG("Create VapourDiffusionFEBEX medium property");
+    DBUG("Create VapourDiffusionFEBEX phase property");
 
     // Second access for storage.
     //! \ogs_file_param{properties__property__name}
