@@ -31,6 +31,6 @@ TimeInterval createTimeInterval(ConfigTree const& config)
         //! \ogs_file_param{prj__time_loop__processes__process__time_interval__end}
         time_interval_config.getConfigParameter<double>("end");
 
-    return TimeInterval(start_time, end_time);
+    return {start_time, end_time};
 }
 }  // namespace BaseLib

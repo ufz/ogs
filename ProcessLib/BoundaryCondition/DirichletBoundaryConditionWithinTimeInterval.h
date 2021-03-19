@@ -21,7 +21,7 @@
 namespace BaseLib
 {
 class ConfigTree;
-class TimeInterval;
+struct TimeInterval;
 }
 
 namespace MeshLib
