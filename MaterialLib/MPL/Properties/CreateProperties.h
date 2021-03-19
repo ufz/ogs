@@ -38,6 +38,7 @@
 #include "CreateStrainDependentPermeability.h"
 #include "CreateTransportPorosityFromMassBalance.h"
 #include "Density/CreateWaterVapourDensity.h"
+#include "Enthalpy/CreateLinearWaterVapourLatentHeat.h"
 #include "RelativePermeability/CreateRelPermBrooksCorey.h"
 #include "RelativePermeability/CreateRelPermBrooksCoreyNonwettingPhase.h"
 #include "RelativePermeability/CreateRelPermLiakopoulos.h"
