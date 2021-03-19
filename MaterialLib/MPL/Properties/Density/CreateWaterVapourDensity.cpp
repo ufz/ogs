@@ -22,6 +22,7 @@ std::unique_ptr<Property> createWaterVapourDensity(
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "WaterVapourDensity");
+    DBUG("Create WaterVapourDensity phase property");
 
     // Here ogs_file_param is used just to create a documentation entry for this
     // property without any input parameter.
