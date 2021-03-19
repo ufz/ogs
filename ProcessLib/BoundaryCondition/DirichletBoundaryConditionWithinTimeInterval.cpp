@@ -30,7 +30,6 @@ DirichletBoundaryConditionWithinTimeInterval::
         int const variable_id, int const component_id)
     : _parameter(parameter),
       _bc_mesh(bc_mesh),
-      _nodes_in_bc_mesh(bc_mesh.getNodes()),
       _variable_id(variable_id),
       _component_id(component_id),
       _time_interval(std::move(time_interval))
@@ -59,7 +58,7 @@ void DirichletBoundaryConditionWithinTimeInterval::getEssentialBCValues(
 {
     if (_time_interval->contains(t))
     {
-        getEssentialBCValuesLocal(_parameter, _bc_mesh, _nodes_in_bc_mesh,
+        getEssentialBCValuesLocal(_parameter, _bc_mesh, _bc_mesh.getNodes(),
                                   *_dof_table_boundary, _variable_id,
                                   _component_id, t, x, bc_values);
         return;

@@ -58,8 +58,6 @@ private:
     ParameterLib::Parameter<double> const& _parameter;
 
     MeshLib::Mesh const& _bc_mesh;
-    /// Some nodes in _bc_mesh
-    std::vector<MeshLib::Node*> const& _nodes_in_bc_mesh;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap const> _dof_table_boundary;
     int const _variable_id;
