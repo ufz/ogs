@@ -32,14 +32,18 @@ struct Parameter;
 
 namespace ProcessLib
 {
+struct DeactivatedSubdomainMesh;
+}
+
+namespace ProcessLib
+{
 class DeactivatedSubdomainDirichlet final : public BoundaryCondition
 {
 public:
     DeactivatedSubdomainDirichlet(
         BaseLib::TimeInterval const& time_interval,
         ParameterLib::Parameter<double> const& parameter,
-        MeshLib::Mesh const& bc_mesh,
-        std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
+        DeactivatedSubdomainMesh const& subdomain,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id);
 
@@ -53,9 +57,7 @@ private:
 private:
     ParameterLib::Parameter<double> const& _parameter;
 
-    MeshLib::Mesh const& _bc_mesh;
-    /// Some nodes in _bc_mesh
-    std::vector<MeshLib::Node*> const& _nodes_in_bc_mesh;
+    DeactivatedSubdomainMesh const& _subdomain;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap const> _dof_table_boundary;
     int const _variable_id;
