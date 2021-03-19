@@ -5,12 +5,9 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * File:   DirichletBoundaryConditionWithinTimeInterval.cpp
- *
- * Created on November 26, 2018, 4:59 PM
  */
-#include "DirichletBoundaryConditionWithinTimeInterval.h"
+
+#include "DeactivatedSubdomainDirichlet.h"
 
 #include "BaseLib/TimeInterval.h"
 #include "DirichletBoundaryCondition.h"
@@ -21,16 +18,16 @@
 
 namespace ProcessLib
 {
-DirichletBoundaryConditionWithinTimeInterval::
-    DirichletBoundaryConditionWithinTimeInterval(
-        std::unique_ptr<BaseLib::TimeInterval> time_interval,
-        ParameterLib::Parameter<double> const& parameter,
-        MeshLib::Mesh const& bc_mesh,
-        NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
-        int const variable_id, int const component_id)
+DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
+    std::unique_ptr<BaseLib::TimeInterval> time_interval,
+    ParameterLib::Parameter<double> const& parameter,
+    MeshLib::Mesh const& bc_mesh,
+    std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
+    int const component_id)
     : _parameter(parameter),
       _bc_mesh(bc_mesh),
-      _nodes_in_bc_mesh(bc_mesh.getNodes()),
+      _nodes_in_bc_mesh(nodes_in_bc_mesh),
       _variable_id(variable_id),
       _component_id(component_id),
       _time_interval(std::move(time_interval))
@@ -38,7 +35,7 @@ DirichletBoundaryConditionWithinTimeInterval::
     config(dof_table_bulk);
 }
 
-void DirichletBoundaryConditionWithinTimeInterval::config(
+void DeactivatedSubdomainDirichlet::config(
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk)
 {
     checkParametersOfDirichletBoundaryCondition(_bc_mesh, dof_table_bulk,
@@ -53,7 +50,7 @@ void DirichletBoundaryConditionWithinTimeInterval::config(
         _variable_id, {_component_id}, std::move(bc_mesh_subset)));
 }
 
-void DirichletBoundaryConditionWithinTimeInterval::getEssentialBCValues(
+void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {

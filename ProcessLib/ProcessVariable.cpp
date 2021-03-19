@@ -12,9 +12,9 @@
 
 #include <algorithm>
 #include <utility>
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/TimeInterval.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
@@ -22,7 +22,7 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
-#include "ProcessLib/BoundaryCondition/DirichletBoundaryConditionWithinTimeInterval.h"
+#include "ProcessLib/BoundaryCondition/DeactivatedSubdomainDirichlet.h"
 #include "ProcessLib/SourceTerms/CreateSourceTerm.h"
 #include "ProcessLib/SourceTerms/SourceTerm.h"
 
@@ -257,8 +257,7 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                     std::make_unique<BaseLib::TimeInterval>(
                         *deactivated_subdomain->time_interval);
 
-                auto bc = std::make_unique<
-                    DirichletBoundaryConditionWithinTimeInterval>(
+                auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
                     std::move(time_interval), parameter,
                     *(deactivated_subdomain_mesh->mesh),
                     deactivated_subdomain_mesh->inner_nodes, dof_table,
