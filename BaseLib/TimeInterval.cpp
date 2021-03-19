@@ -14,12 +14,11 @@
 
 #include "TimeInterval.h"
 
-#include "BaseLib/ConfigTree.h"
+#include "ConfigTree.h"
 
 namespace BaseLib
 {
-std::unique_ptr<TimeInterval> createTimeInterval(
-    BaseLib::ConfigTree const& config)
+TimeInterval createTimeInterval(ConfigTree const& config)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_interval}
     auto const& time_interval_config = config.getConfigSubtree("time_interval");
@@ -32,6 +31,6 @@ std::unique_ptr<TimeInterval> createTimeInterval(
         //! \ogs_file_param{prj__time_loop__processes__process__time_interval__end}
         time_interval_config.getConfigParameter<double>("end");
 
-    return std::make_unique<BaseLib::TimeInterval>(start_time, end_time);
+    return TimeInterval(start_time, end_time);
 }
 }  // namespace BaseLib

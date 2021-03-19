@@ -33,11 +33,11 @@ DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
 }
 
 DeactivatedSubdomain::DeactivatedSubdomain(
-    std::unique_ptr<BaseLib::TimeInterval> time_interval_,
+    BaseLib::TimeInterval const& time_interval_,
     std::vector<int>&& materialIDs_,
     std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
         deactivated_subdomain_meshes_)
-    : time_interval(std::move(time_interval_)),
+    : time_interval(time_interval_),
       materialIDs(std::move(materialIDs_)),
       deactivated_subdomain_meshes(std::move(deactivated_subdomain_meshes_))
 {
@@ -45,7 +45,7 @@ DeactivatedSubdomain::DeactivatedSubdomain(
 
 bool DeactivatedSubdomain::includesTimeOf(double const t) const
 {
-    return time_interval->contains(t);
+    return time_interval.contains(t);
 }
 
 template <typename IsActive>
@@ -149,7 +149,7 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     }
 
     return std::make_unique<DeactivatedSubdomain const>(
-        std::move(time_interval),
+        time_interval,
         std::move(deactivated_subdomain_material_ids),
         std::move(deactivated_subdomain_meshes));
 }

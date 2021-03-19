@@ -17,9 +17,6 @@
 #include <string>
 #include <vector>
 
-// TimeInterval cannot be forwardly declared because that
-// std::unique_ptr<BaseLib::TimeInterval> type member requires its full
-// definition (see https://stackoverflow.com/a/6089065).
 #include "BaseLib/TimeInterval.h"
 
 namespace BaseLib
@@ -48,14 +45,14 @@ struct DeactivatedSubdomainMesh
 struct DeactivatedSubdomain
 {
     DeactivatedSubdomain(
-        std::unique_ptr<BaseLib::TimeInterval> time_interval_,
+        BaseLib::TimeInterval const& time_interval_,
         std::vector<int>&& materialIDs_,
         std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
             deactivated_subdomain_meshes_);
 
     bool includesTimeOf(double const t) const;
 
-    std::unique_ptr<BaseLib::TimeInterval const> const time_interval;
+    BaseLib::TimeInterval const time_interval;
 
     /// The material IDs of the deactivated the subdomains
     std::vector<int> const materialIDs;

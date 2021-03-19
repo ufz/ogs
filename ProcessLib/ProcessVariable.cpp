@@ -252,13 +252,8 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                  dof_table.getNumberOfVariableComponents(variable_id);
                  component_id++)
             {
-                // Copy the time interval.
-                std::unique_ptr<BaseLib::TimeInterval> time_interval =
-                    std::make_unique<BaseLib::TimeInterval>(
-                        *deactivated_subdomain->time_interval);
-
                 auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
-                    std::move(time_interval), parameter,
+                    deactivated_subdomain->time_interval, parameter,
                     *(deactivated_subdomain_mesh->mesh),
                     deactivated_subdomain_mesh->inner_nodes, dof_table,
                     variable_id, component_id);

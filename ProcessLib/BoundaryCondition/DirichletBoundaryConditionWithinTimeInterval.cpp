@@ -12,7 +12,6 @@
  */
 #include "DirichletBoundaryConditionWithinTimeInterval.h"
 
-#include "BaseLib/TimeInterval.h"
 #include "DirichletBoundaryCondition.h"
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -23,7 +22,7 @@ namespace ProcessLib
 {
 DirichletBoundaryConditionWithinTimeInterval::
     DirichletBoundaryConditionWithinTimeInterval(
-        std::unique_ptr<BaseLib::TimeInterval> time_interval,
+        BaseLib::TimeInterval time_interval,
         ParameterLib::Parameter<double> const& parameter,
         MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
@@ -56,7 +55,7 @@ void DirichletBoundaryConditionWithinTimeInterval::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    if (_time_interval->contains(t))
+    if (_time_interval.contains(t))
     {
         getEssentialBCValuesLocal(_parameter, _bc_mesh, _bc_mesh.getNodes(),
                                   *_dof_table_boundary, _variable_id,

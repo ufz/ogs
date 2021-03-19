@@ -19,7 +19,7 @@
 namespace ProcessLib
 {
 DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
-    std::unique_ptr<BaseLib::TimeInterval> time_interval,
+    BaseLib::TimeInterval const& time_interval,
     ParameterLib::Parameter<double> const& parameter,
     MeshLib::Mesh const& bc_mesh,
     std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
@@ -30,7 +30,7 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
       _nodes_in_bc_mesh(nodes_in_bc_mesh),
       _variable_id(variable_id),
       _component_id(component_id),
-      _time_interval(std::move(time_interval))
+      _time_interval(time_interval)
 {
     config(dof_table_bulk);
 }
@@ -54,7 +54,7 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    if (_time_interval->contains(t))
+    if (_time_interval.contains(t))
     {
         getEssentialBCValuesLocal(_parameter, _bc_mesh, _nodes_in_bc_mesh,
                                   *_dof_table_boundary, _variable_id,

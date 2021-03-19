@@ -11,12 +11,12 @@
 #include <memory>
 #include <vector>
 
+#include "BaseLib/TimeInterval.h"
 #include "BoundaryCondition.h"
 
 namespace BaseLib
 {
 class ConfigTree;
-class TimeInterval;
 }  // namespace BaseLib
 
 namespace MeshLib
@@ -36,7 +36,7 @@ class DeactivatedSubdomainDirichlet final : public BoundaryCondition
 {
 public:
     DeactivatedSubdomainDirichlet(
-        std::unique_ptr<BaseLib::TimeInterval> time_interval,
+        BaseLib::TimeInterval const& time_interval,
         ParameterLib::Parameter<double> const& parameter,
         MeshLib::Mesh const& bc_mesh,
         std::vector<MeshLib::Node*> const& nodes_in_bc_mesh,
@@ -61,6 +61,6 @@ private:
     int const _variable_id;
     int const _component_id;
 
-    std::unique_ptr<BaseLib::TimeInterval const> _time_interval;
+    BaseLib::TimeInterval const _time_interval;
 };
 }  // namespace ProcessLib
