@@ -10,26 +10,24 @@
 
 #pragma once
 
+#include <QString>
+#include <QtXml/QDomNode>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <QString>
-#include <QtXml/QDomNode>
-
-#include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
-#include "BaseLib/IO/XmlIO/XMLInterface.h"
-
 #include "Applications/DataHolderLib/BoundaryCondition.h"
 #include "Applications/DataHolderLib/Project.h"
 #include "Applications/DataHolderLib/SourceTerm.h"
+#include "BaseLib/IO/Writer.h"
+#include "BaseLib/IO/XmlIO/Qt/XMLQtInterface.h"
 
 namespace FileIO
 {
 /**
  * Data Explorer XML interface for project files
  */
-class XmlPrjInterface final : public BaseLib::IO::XMLInterface,
+class XmlPrjInterface final : public BaseLib::IO::Writer,
                               public BaseLib::IO::XMLQtInterface
 {
 public:
@@ -41,7 +39,7 @@ public:
     int readFile(const QString& fileName) override;
 
     /// Reads an xml-file containing a project.
-    bool readFile(std::string const& fname) override
+    bool readFile(std::string const& fname)
     {
         return readFile(QString(fname.c_str())) != 0;
     }
