@@ -41,8 +41,9 @@ protected:
     /// If no hash file exists, the xml-file is validated and a hash file is written if the xml-file was valid.
     bool checkHash() const;
 
-    /// Caches the actual file contents when reading.
-    QByteArray _fileData;
+    /// Read access to the content of the read file. Must be used after readFile
+    /// has been called.
+    QByteArray const& getContent() const;
 
 private:
     /// Check if the given xml-file is valid considering the schema-file used in
@@ -52,7 +53,11 @@ private:
 private:
     /// The actual file name when reading.
     QString _fileName;
+
     QString _schemaFile;
+
+    /// Caches the actual file contents when reading.
+    QByteArray _fileData;
 };
 
 } // end namespace IO

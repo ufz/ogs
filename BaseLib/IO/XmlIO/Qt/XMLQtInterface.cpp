@@ -129,5 +129,10 @@ bool XMLQtInterface::checkHash() const
     }
     return true;
 }
+
+QByteArray const& XMLQtInterface::getContent() const
+{
+    return _fileData;
+}
 }  // namespace IO
 }  // namespace BaseLib

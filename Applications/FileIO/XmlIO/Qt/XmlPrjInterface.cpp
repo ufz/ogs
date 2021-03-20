@@ -54,7 +54,7 @@ int XmlPrjInterface::readFile(const QString& fileName)
     QDomNode param_root = QDomNode();
     QDomNode pvar_root = QDomNode();
     QDomDocument doc("OGS-PROJECT-DOM");
-    doc.setContent(_fileData);
+    doc.setContent(getContent());
     QDomElement docElement = doc.documentElement();  // OpenGeoSysProject
     if (docElement.nodeName().compare("OpenGeoSysProject"))
     {

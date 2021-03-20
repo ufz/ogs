@@ -44,7 +44,7 @@ int XmlStnInterface::readFile(const QString &fileName)
     }
 
     QDomDocument doc("OGS-STN-DOM");
-    doc.setContent(_fileData);
+    doc.setContent(getContent());
     QDomElement docElement = doc.documentElement(); //root element, used for identifying file-type
     if (docElement.nodeName().compare("OpenGeoSysSTN"))
     {
