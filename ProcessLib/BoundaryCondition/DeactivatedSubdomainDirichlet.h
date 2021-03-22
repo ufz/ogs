@@ -5,10 +5,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
- * File:   DirichletBoundaryConditionWithinTimeInterval.h
- *
- * Created on November 26, 2018, 4:59 PM
  */
 #pragma once
 
@@ -21,8 +17,7 @@
 namespace BaseLib
 {
 class ConfigTree;
-struct TimeInterval;
-}
+}  // namespace BaseLib
 
 namespace MeshLib
 {
@@ -37,14 +32,18 @@ struct Parameter;
 
 namespace ProcessLib
 {
-class DirichletBoundaryConditionWithinTimeInterval final
-    : public BoundaryCondition
+struct DeactivatedSubdomainMesh;
+}
+
+namespace ProcessLib
+{
+class DeactivatedSubdomainDirichlet final : public BoundaryCondition
 {
 public:
-    DirichletBoundaryConditionWithinTimeInterval(
-        BaseLib::TimeInterval time_interval,
+    DeactivatedSubdomainDirichlet(
+        BaseLib::TimeInterval const& time_interval,
         ParameterLib::Parameter<double> const& parameter,
-        MeshLib::Mesh const& bc_mesh,
+        DeactivatedSubdomainMesh const& subdomain,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id);
 
@@ -58,7 +57,7 @@ private:
 private:
     ParameterLib::Parameter<double> const& _parameter;
 
-    MeshLib::Mesh const& _bc_mesh;
+    DeactivatedSubdomainMesh const& _subdomain;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap const> _dof_table_boundary;
     int const _variable_id;

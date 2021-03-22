@@ -12,9 +12,9 @@
 
 #include <algorithm>
 #include <utility>
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/TimeInterval.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
@@ -22,7 +22,7 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
-#include "ProcessLib/BoundaryCondition/DirichletBoundaryConditionWithinTimeInterval.h"
+#include "ProcessLib/BoundaryCondition/DeactivatedSubdomainDirichlet.h"
 #include "ProcessLib/SourceTerms/CreateSourceTerm.h"
 #include "ProcessLib/SourceTerms/SourceTerm.h"
 
@@ -252,17 +252,10 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                  dof_table.getNumberOfVariableComponents(variable_id);
                  component_id++)
             {
-                // Copy the time interval.
-                std::unique_ptr<BaseLib::TimeInterval> time_interval =
-                    std::make_unique<BaseLib::TimeInterval>(
-                        *deactivated_subdomain->time_interval);
-
-                auto bc = std::make_unique<
-                    DirichletBoundaryConditionWithinTimeInterval>(
-                    std::move(time_interval), parameter,
-                    *(deactivated_subdomain_mesh->mesh),
-                    deactivated_subdomain_mesh->inner_nodes, dof_table,
-                    variable_id, component_id);
+                auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
+                    deactivated_subdomain->time_interval, parameter,
+                    *deactivated_subdomain_mesh, dof_table, variable_id,
+                    component_id);
 
 #ifdef USE_PETSC
                 // TODO: make it work under PETSc too.
@@ -279,12 +272,6 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 
 void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
-    if (_deactivated_subdomains.empty())
-    {
-        _ids_of_active_elements.clear();
-        return;
-    }
-
     auto found_a_set =
         std::find_if(_deactivated_subdomains.begin(),
                      _deactivated_subdomains.end(),

@@ -10,9 +10,11 @@
 
 #include "CreateBoundaryCondition.h"
 
+#include "BaseLib/TimeInterval.h"
 #include "BoundaryCondition.h"
 #include "BoundaryConditionConfig.h"
 #include "ConstraintDirichletBoundaryCondition.h"
+#include "CreateDirichletBoundaryConditionWithinTimeInterval.h"
 #include "DirichletBoundaryCondition.h"
 #include "DirichletBoundaryConditionWithinTimeInterval.h"
 #include "HCNonAdvectiveFreeComponentFlowBoundaryCondition.h"
@@ -23,8 +25,6 @@
 #include "RobinBoundaryCondition.h"
 #include "SolutionDependentDirichletBoundaryCondition.h"
 #include "VariableDependentNeumannBoundaryCondition.h"
-
-#include "BaseLib/TimeInterval.h"
 
 #ifdef OGS_USE_PYTHON
 #include "Python/PythonBoundaryCondition.h"

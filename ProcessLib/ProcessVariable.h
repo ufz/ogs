@@ -67,7 +67,7 @@ public:
 
     void updateDeactivatedSubdomains(double const time);
 
-    std::vector<std::size_t>& getActiveElementIDs() const
+    std::vector<std::size_t> const& getActiveElementIDs() const
     {
         return _ids_of_active_elements;
     }
