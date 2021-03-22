@@ -298,9 +298,11 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 
     for (std::size_t i = 0; i < number_of_elements; i++)
     {
+        auto const& element_center = getCenterOfGravity(*_mesh.getElement(i));
         if (std::binary_search(deactivated_materialIDs.begin(),
                                deactivated_materialIDs.end(),
-                               (*material_ids)[i]))
+                               (*material_ids)[i]) &&
+            (*found_a_set)->isDeactivated(element_center, time))
         {
             continue;
         }
