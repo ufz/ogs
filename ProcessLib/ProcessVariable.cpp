@@ -92,7 +92,10 @@ ProcessVariable::ProcessVariable(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
       _name(config.getConfigParameter<std::string>("name")),
       _mesh(mesh),
@@ -100,7 +103,8 @@ ProcessVariable::ProcessVariable(
       _n_components(config.getConfigParameter<int>("components")),
       //! \ogs_file_param{prj__process_variables__process_variable__order}
       _shapefunction_order(config.getConfigParameter<unsigned>("order")),
-      _deactivated_subdomains(createDeactivatedSubdomains(config, mesh)),
+      _deactivated_subdomains(
+          createDeactivatedSubdomains(config, mesh, curves)),
       _initial_condition(ParameterLib::findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),

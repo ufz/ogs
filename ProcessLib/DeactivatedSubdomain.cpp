@@ -110,7 +110,10 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
 }
 
 std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
+    BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval}
     auto const& time_interval_config = config.getConfigSubtree("time_interval");
@@ -165,8 +168,12 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
 }
 
 std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-createDeactivatedSubdomains(BaseLib::ConfigTree const& config,
-                            MeshLib::Mesh const& mesh)
+createDeactivatedSubdomains(
+    BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& mesh,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
     std::vector<std::unique_ptr<DeactivatedSubdomain const>>
         deactivated_subdomains;
@@ -183,7 +190,7 @@ createDeactivatedSubdomains(BaseLib::ConfigTree const& config,
             subdomains_config->getConfigSubtreeList("deactivated_subdomain"))
         {
             deactivated_subdomains.emplace_back(
-                createDeactivatedSubdomain(subdomain_config, mesh));
+                createDeactivatedSubdomain(subdomain_config, mesh, curves));
         }
     }
     return deactivated_subdomains;

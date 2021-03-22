@@ -64,7 +64,11 @@ struct DeactivatedSubdomain
 };
 
 std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-createDeactivatedSubdomains(BaseLib::ConfigTree const& config,
-                            MeshLib::Mesh const& mesh);
+createDeactivatedSubdomains(
+    BaseLib::ConfigTree const& config,
+    MeshLib::Mesh const& mesh,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 
 }  // namespace ProcessLib
