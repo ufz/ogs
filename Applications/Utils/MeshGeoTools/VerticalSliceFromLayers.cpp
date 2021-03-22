@@ -198,7 +198,7 @@ void consolidateGeometry(GeoLib::GEOObjects& geo,
     std::string const filename(output_name + ".gml");
     GeoLib::IO::XmlGmlInterface xml(geo);
     xml.export_name = merged_geo_name;
-    xml.writeToFile(filename);
+    BaseLib::IO::writeStringToFile(xml.writeToString(), filename);
 
     geo.removePolylineVec(merged_geo_name);
     geo.removePointVec(merged_geo_name);
@@ -224,7 +224,8 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
         geo, true, FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, res, 0,
         0, gmsh_geo, false, false);
     gmsh_io.writePhysicalGroups(true);
-    bool const success = gmsh_io.writeToFile(gmsh_geo_name);
+    bool const success =
+        BaseLib::IO::writeStringToFile(gmsh_io.writeToString(), gmsh_geo_name);
 
     std::string const gmsh_mesh_name = output_name + ".msh";
     std::string gmsh_command = "gmsh -2 -algo meshadapt " + gmsh_geo_name;

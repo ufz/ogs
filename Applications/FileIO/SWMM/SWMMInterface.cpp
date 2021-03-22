@@ -1321,7 +1321,7 @@ bool SwmmInterface::writeCsvForTimestep(std::string const& file_name, SwmmObject
         ERR ("No data to write");
         return false;
     }
-    csv.writeToFile(file_name);
+    BaseLib::IO::writeStringToFile(csv.writeToString(), file_name);
     return true;
 }
 
@@ -1343,7 +1343,7 @@ bool SwmmInterface::writeCsvForObject(std::string const& file_name, SwmmObject o
         ERR ("No data to write");
         return false;
     }
-    csv.writeToFile(file_name);
+    BaseLib::IO::writeStringToFile(csv.writeToString(), file_name);
     return true;
 }
 

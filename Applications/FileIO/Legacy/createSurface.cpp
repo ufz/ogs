@@ -81,7 +81,7 @@ bool createSurface(GeoLib::Polyline const& ply,
     auto geo_file = fs::temp_directory_path() /= BaseLib::randomString(32);
     auto msh_file = fs::temp_directory_path() /= BaseLib::randomString(32);
 
-    gmsh_io.writeToFile(geo_file);
+    BaseLib::IO::writeStringToFile(gmsh_io.writeToString(), geo_file);
     // Using GMSH's vtk output here so we don't have to deal with GMSH and it's
     // various file format versions here
     std::string gmsh_command =

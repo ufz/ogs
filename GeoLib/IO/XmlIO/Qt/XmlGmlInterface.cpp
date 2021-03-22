@@ -71,7 +71,7 @@ int XmlGmlInterface::readFile(const QString &fileName)
     }
 
     QDomDocument doc("OGS-GLI-DOM");
-    doc.setContent(_fileData);
+    doc.setContent(getContent());
     QDomElement docElement = doc.documentElement(); //OpenGeoSysGLI
     if (docElement.nodeName().compare("OpenGeoSysGLI"))
     {

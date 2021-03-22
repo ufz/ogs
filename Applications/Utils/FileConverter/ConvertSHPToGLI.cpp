@@ -93,11 +93,11 @@ void convertPoints (DBFHandle dbf_handle,
     if (station) {
         GeoLib::IO::XmlStnInterface xml (geo_objs);
         xml.export_name = points_group_name;
-        xml.writeToFile(out_fname);
+        BaseLib::IO::writeStringToFile(xml.writeToString(), out_fname);
     } else {
         GeoLib::IO::XmlGmlInterface xml (geo_objs);
         xml.export_name = points_group_name;
-        xml.writeToFile(out_fname);
+        BaseLib::IO::writeStringToFile(xml.writeToString(), out_fname);
     }
 }
 

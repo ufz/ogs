@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
 
     // write new file
     xml.export_name = geo_name;
-    xml.writeToFile(output_arg.getValue());
+    BaseLib::IO::writeStringToFile(xml.writeToString(), output_arg.getValue());
     INFO ("...done.");
 
     return EXIT_SUCCESS;

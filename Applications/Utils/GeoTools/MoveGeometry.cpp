@@ -93,7 +93,8 @@ int main(int argc, char *argv[])
     }
 
     xml.export_name = geo_name;
-    xml.writeToFile(geo_output_arg.getValue());
+    BaseLib::IO::writeStringToFile(xml.writeToString(),
+                                   geo_output_arg.getValue());
 
     return EXIT_SUCCESS;
 }

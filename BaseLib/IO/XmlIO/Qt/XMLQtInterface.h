@@ -36,21 +36,28 @@ public:
     virtual int readFile(const QString &fileName);
 
 protected:
-    /// Check if the given xml-file is valid considering the schema-file used in the constructor
-    int isValid() const;
-
     /// Checks if a hash for the given data file exists to skip the time-consuming validation part.
     /// If a hash file exists _and_ the hash of the data file is the same as the content of the hash file the validation is skipped
     /// If no hash file exists, the xml-file is validated and a hash file is written if the xml-file was valid.
     bool checkHash() const;
 
+    /// Read access to the content of the read file. Must be used after readFile
+    /// has been called.
+    QByteArray const& getContent() const;
+
+private:
+    /// Check if the given xml-file is valid considering the schema-file used in
+    /// the constructor
+    int isValid() const;
+
+private:
+    /// The actual file name when reading.
+    QString _fileName;
+
     QString _schemaFile;
 
     /// Caches the actual file contents when reading.
     QByteArray _fileData;
-
-    /// The actual file name when reading.
-    QString _fileName;
 };
 
 } // end namespace IO

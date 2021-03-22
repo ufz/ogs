@@ -54,7 +54,7 @@ int XmlPrjInterface::readFile(const QString& fileName)
     QDomNode param_root = QDomNode();
     QDomNode pvar_root = QDomNode();
     QDomDocument doc("OGS-PROJECT-DOM");
-    doc.setContent(_fileData);
+    doc.setContent(getContent());
     QDomElement docElement = doc.documentElement();  // OpenGeoSysProject
     if (docElement.nodeName().compare("OpenGeoSysProject"))
     {
@@ -334,7 +334,7 @@ T* XmlPrjInterface::parseCondition(
 int XmlPrjInterface::writeToFile(const std::string& filename)
 {
     _filename = filename;
-    return BaseLib::IO::Writer::writeToFile(filename);
+    return BaseLib::IO::writeStringToFile(writeToString(), filename);
 }
 
 bool XmlPrjInterface::write()
@@ -376,7 +376,8 @@ bool XmlPrjInterface::write()
         // write gml file
         GeoLib::IO::XmlGmlInterface gml(geo_objects);
         gml.export_name = name;
-        if (gml.writeToFile(std::string(path + name + ".gml")))
+        if (BaseLib::IO::writeStringToFile(gml.writeToString(),
+                                           std::string(path + name + ".gml")))
         {
             // write entry in project file
             QDomElement geo_tag = doc.createElement("geometry");
@@ -399,7 +400,8 @@ bool XmlPrjInterface::write()
         GeoLib::IO::XmlStnInterface stn(geo_objects);
         stn.export_name = name;
 
-        if (stn.writeToFile(path + name + ".stn"))
+        if (BaseLib::IO::writeStringToFile(stn.writeToString(),
+                                           path + name + ".stn"))
         {
             // write entry in project file
             QDomElement stn_tag = doc.createElement("stations");

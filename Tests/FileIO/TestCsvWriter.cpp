@@ -48,7 +48,7 @@ TEST(CsvWriter, WriteReadTest)
     ASSERT_EQ(3, csv.getNArrays());
     csv.addIndexVectorForWriting(str_vec.size());
     ASSERT_EQ(4, csv.getNArrays());
-    int result = csv.writeToFile(test_file);
+    int result = BaseLib::IO::writeStringToFile(csv.writeToString(), test_file);
     ASSERT_EQ(1, result);
 
     std::vector<std::string> str_result;
