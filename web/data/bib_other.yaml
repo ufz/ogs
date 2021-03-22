@@ -158,6 +158,42 @@ entries:
             last: Tchelepi
         -   first: R
             last: Juanes
+    kimtchjua2009:
+        type: article
+        title: 'Stability, Accuracy and Efficiency of Sequential Methods
+            for Coupled Flow and Geomechanics'
+        journal: SPE International
+        volume: '16'
+        number: 02
+        pages: 249--262
+        year: '2009'
+        note: ''
+        doi: https://doi.org/10.2118/119084-PA
+        url: https://onepetro.org/SJ/article-abstract/16/02/249/204235
+        author:
+        -   first: J.
+            last: Kim
+        -   first: H.A.
+            last: Tchelepi
+        -   first: R
+            last: Juanes
+    mikwhe2013:
+        type: article
+        title: 'Convergence of iterative coupling for coupled flow
+            and geomechanics'
+        journal: Computational Geosciences
+        volume: '17'
+        number: 03
+        pages: 455--461
+        year: '2013'
+        note: ''
+        doi: https://doi.org/10.1007/s10596-012-9318-y
+        url: https://link.springer.com/content/pdf/10.1007/s10596-012-9318-y.pdf
+        author:
+        -   first: A.
+            last: Mikelic
+        -   first: M.F.
+            last: Wheeler
     biretal:2008:
         type: techreport
         title: '{DECOVALEX-THMC} {P}roject, {T}ask {D}: {L}ong-term permeability/porosity
