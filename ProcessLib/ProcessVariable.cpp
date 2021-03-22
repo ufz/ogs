@@ -285,12 +285,6 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
         return;
     }
 
-    // Already initialized.
-    if (!_ids_of_active_elements.empty())
-    {
-        return;
-    }
-
     auto const& deactivated_materialIDs = (*found_a_set)->materialIDs;
 
     auto const* const material_ids = MeshLib::materialIDs(_mesh);
