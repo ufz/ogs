@@ -26,7 +26,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     {
         MeshLib::IO::Legacy::MeshIO meshIO;
         meshIO.setMesh(&mesh);
-        meshIO.writeToFile(file_path);
+        BaseLib::IO::writeStringToFile(meshIO.writeToString(), file_path);
         return 0;
     }
     if (file_path.extension().string() == ".vtu")

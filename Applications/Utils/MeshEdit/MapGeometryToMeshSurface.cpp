@@ -82,7 +82,8 @@ int main (int argc, char* argv[])
     {
         GeoLib::IO::BoostXmlGmlInterface xml_io(geometries);
         xml_io.export_name = geo_name;
-        xml_io.writeToFile(output_geometry_fname.getValue());
+        BaseLib::IO::writeStringToFile(xml_io.writeToString(),
+                                       output_geometry_fname.getValue());
     }
     return EXIT_SUCCESS;
 }

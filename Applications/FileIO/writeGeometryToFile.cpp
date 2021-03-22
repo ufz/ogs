@@ -26,7 +26,7 @@ void writeGeometryToFile(std::string const& geo_name,
     if (extension == ".gml" || extension == ".GML") {
         GeoLib::IO::BoostXmlGmlInterface xml(geo_objs);
         xml.export_name = geo_name;
-        xml.writeToFile(fname);
+        BaseLib::IO::writeStringToFile(xml.writeToString(), fname);
     } else if (extension == "gli" || extension == "GLI") {
         FileIO::Legacy::writeGLIFileV4(fname, geo_name, geo_objs);
     } else {

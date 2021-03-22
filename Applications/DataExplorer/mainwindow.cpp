@@ -478,7 +478,8 @@ void MainWindow::save()
     if (fi.suffix().toLower() == "prj")
     {
         XmlPrjInterface xml(_project);
-        xml.writeToFile(fileName.toStdString());
+        BaseLib::IO::writeStringToFile(xml.writeToString(),
+                                       fileName.toStdString());
     }
     else if (fi.suffix().toLower() == "geo")
     {
@@ -495,7 +496,8 @@ void MainWindow::save()
             FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, point_density,
             station_density, max_pnts_per_leaf, selected_geometries, false,
             false);
-        bool const success = gmsh_io.writeToFile(fileName.toStdString());
+        bool const success = BaseLib::IO::writeStringToFile(
+            gmsh_io.writeToString(), fileName.toStdString());
 
         if (!success)
         {
@@ -917,14 +919,14 @@ void MainWindow::writeGeometryToFile(QString gliName, QString fileName)
 #endif
     GeoLib::IO::XmlGmlInterface xml(_project.getGEOObjects());
     xml.export_name = gliName.toStdString();
-    xml.writeToFile(fileName.toStdString());
+    BaseLib::IO::writeStringToFile(xml.writeToString(), fileName.toStdString());
 }
 
 void MainWindow::writeStationListToFile(QString listName, QString fileName)
 {
     GeoLib::IO::XmlStnInterface xml(_project.getGEOObjects());
     xml.export_name = listName.toStdString();
-    xml.writeToFile(fileName.toStdString());
+    BaseLib::IO::writeStringToFile(xml.writeToString(), fileName.toStdString());
 }
 
 void MainWindow::mapGeometry(const std::string &geo_name)
@@ -1061,13 +1063,15 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
                     _project.getGEOObjects(), true,
                     FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
                     param2, param3, param1, selectedGeometries, false, false);
-                gmsh_io.writeToFile(fileName.toStdString());
+                BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
+                                               fileName.toStdString());
             } else { // homogeneous meshing selected
                 FileIO::GMSH::GMSHInterface gmsh_io(
                     _project.getGEOObjects(), true,
                     FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
                     param4, param3, param1, selectedGeometries, false, false);
-                gmsh_io.writeToFile(fileName.toStdString());
+                BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
+                                               fileName.toStdString());
             }
 
             if (system(nullptr) != 0)  // command processor available

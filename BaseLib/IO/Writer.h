@@ -36,9 +36,6 @@ public:
     /// @brief Writes the object to a string.
     std::string writeToString();
 
-    /// @brief Writes the object to the given file.
-    int writeToFile(std::filesystem::path const& file_path);
-
 protected:
     /// @brief Writes the object to the internal stream.
     /// This method must be implemented by a subclass.

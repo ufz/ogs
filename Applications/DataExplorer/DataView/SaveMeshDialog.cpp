@@ -87,7 +87,8 @@ void SaveMeshDialog::accept()
     {
         MeshLib::IO::Legacy::MeshIO meshIO;
         meshIO.setMesh(&_mesh);
-        meshIO.writeToFile(file_name.toStdString());
+        BaseLib::IO::writeStringToFile(meshIO.writeToString(),
+                                       file_name.toStdString());
     }
     LastSavedFileDirectory::setDir(file_name);
 

@@ -43,11 +43,6 @@ std::string Writer::writeToString()
     return std::string("");
 }
 
-int Writer::writeToFile(std::filesystem::path const& file_path)
-{
-    return writeStringToFile(writeToString(), file_path);
-}
-
 int writeStringToFile(std::string content,
                       std::filesystem::path const& file_path)
 {

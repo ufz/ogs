@@ -32,7 +32,7 @@ int writeGeoOutput(std::string input_file, std::string output_file)
 
     GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
     xml.export_name = BaseLib::extractBaseNameWithoutExtension(input_file);
-    xml.writeToFile(output_file);
+    BaseLib::IO::writeStringToFile(xml.writeToString(), output_file);
     return 0;
 }
 

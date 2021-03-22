@@ -114,7 +114,7 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
             std::string const geo_name =
                 BaseLib::extractBaseName(input_string.toStdString());
             xml.export_name = geo_name;
-            xml.writeToFile(output_str);
+            BaseLib::IO::writeStringToFile(xml.writeToString(), output_str);
             geo_objects.removeSurfaceVec(geo_name);
             geo_objects.removePolylineVec(geo_name);
             geo_objects.removePointVec(geo_name);
@@ -156,7 +156,7 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
         }
         MeshLib::IO::Legacy::MeshIO meshIO;
         meshIO.setMesh(mesh);
-        meshIO.writeToFile(output_str);
+        BaseLib::IO::writeStringToFile(meshIO.writeToString(), output_str);
         delete mesh;
     }
     OGSError::box("File conversion finished");

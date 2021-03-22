@@ -47,7 +47,7 @@ int main (int argc, char* argv[])
 
     MeshLib::IO::Legacy::MeshIO meshIO;
     meshIO.setMesh(mesh);
-    meshIO.writeToFile(mesh_out.getValue());
+    BaseLib::IO::writeStringToFile(meshIO.writeToString(), mesh_out.getValue());
 
     return EXIT_SUCCESS;
 }

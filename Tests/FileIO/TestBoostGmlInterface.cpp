@@ -30,7 +30,8 @@ TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
 
     GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
     xml.export_name = geo_name;
-    int result = xml.writeToFile(test_data_file);
+    int result =
+        BaseLib::IO::writeStringToFile(xml.writeToString(), test_data_file);
     EXPECT_EQ(result, 1);
 
     // remove the written data from the data structures
