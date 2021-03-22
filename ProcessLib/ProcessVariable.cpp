@@ -253,6 +253,7 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                  component_id++)
             {
                 auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
+                    &_ids_of_active_elements,
                     deactivated_subdomain->time_interval, parameter,
                     *deactivated_subdomain_mesh, dof_table, variable_id,
                     component_id);
