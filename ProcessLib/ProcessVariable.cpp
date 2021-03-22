@@ -272,6 +272,8 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 
 void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
+    _ids_of_active_elements.clear();
+
     auto found_a_set =
         std::find_if(_deactivated_subdomains.begin(),
                      _deactivated_subdomains.end(),
@@ -281,14 +283,12 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 
     if (found_a_set == _deactivated_subdomains.end())
     {
-        _ids_of_active_elements.clear();
         return;
     }
 
     auto const& deactivated_materialIDs = (*found_a_set)->materialIDs;
 
     auto const* const material_ids = MeshLib::materialIDs(_mesh);
-    _ids_of_active_elements.clear();
     auto const number_of_elements = _mesh.getNumberOfElements();
 
     for (std::size_t i = 0; i < number_of_elements; i++)
