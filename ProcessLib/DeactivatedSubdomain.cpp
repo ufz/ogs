@@ -109,24 +109,71 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
         std::move(sub_mesh), std::move(inner_nodes));
 }
 
+static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
+    std::optional<BaseLib::ConfigTree> const& time_interval_config,
+    std::optional<std::string> const& curve_name,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
+{
+    // Check for the error case first: only one of the configs must be used.
+    if (time_interval_config && curve_name)
+    {
+        OGS_FATAL(
+            "In the deactivate subdomain either a time interval or a curve "
+            "must be given, not both.");
+    }
+
+    // Parse time interval and return a curve
+    if (time_interval_config)
+    {
+        DBUG("Constructing time interval");
+        auto const start_time =
+            //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval__start}
+            time_interval_config->getConfigParameter<double>("start");
+
+        auto const end_time =
+            //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval__end}
+            time_interval_config->getConfigParameter<double>("end");
+
+        // Using very large value for the curve's value, s.t. for any time from
+        // start to end the whole subdomain is deactivated at once.
+        return {{start_time, end_time},
+                {std::numeric_limits<double>::max(),
+                 std::numeric_limits<double>::max()},
+                false};
+    }
+
+    // Try to find the curve.
+    if (curve_name)
+    {
+        DBUG("Using curve '{:s}'", *curve_name);
+        return *BaseLib::getOrError(curves, *curve_name,
+                                    "Could not find curve.");
+    }
+
+    // If we got so far, there is an error: one of the configs must be
+    // available.
+    OGS_FATAL(
+        "In the deactivate subdomain neither a time interval nor a curve are "
+        "given. One of them must be specified.");
+}
+
 std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval}
-    auto const& time_interval_config = config.getConfigSubtree("time_interval");
+    auto const& time_interval_config =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval}
+        config.getConfigSubtreeOptional("time_interval");
 
-    auto const start_time =
-        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval__start}
-        time_interval_config.getConfigParameter<double>("start");
-
-    auto const end_time =
-        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval__end}
-        time_interval_config.getConfigParameter<double>("end");
-    MathLib::PiecewiseLinearInterpolation time_interval{
-        {start_time, end_time}, {1, 1}, false};
+    auto const& curve_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_curve}
+        config.getConfigParameterOptional<std::string>("time_curve");
+    auto const time_interval =
+        parseTimeIntervalOrCurve(time_interval_config, curve_name, curves);
 
     auto deactivated_subdomain_material_ids =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__material_ids}
