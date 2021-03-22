@@ -135,7 +135,7 @@ __________
 
 ## NetBeans
 
-<https://netbeans.org/downloads>
+<https://netbeans.apache.org/download/index.html>
 
 ![NetBeans screenshot](../netbeans.png)
 

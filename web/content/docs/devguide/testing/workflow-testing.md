@@ -50,4 +50,4 @@ We started on implementing modular rule definitions and tool wrapper in [`script
 - [Snakemake Documentation](https://snakemake.readthedocs.io)
 - [Short tutorial](https://snakemake.readthedocs.io/en/stable/tutorial/short.html)
 - [Software Carpentry Workshop](https://carpentries-incubator.github.io/workflows-snakemake/index.html)
-- [HPC Carpentry Workshop with Snakemake](http://www.hpc-carpentry.org/hpc-python/11-snakemake-intro/index.html)
+- [HPC Carpentry Workshop with Snakemake](http://www.hpc-carpentry.org/hpc-python/)
