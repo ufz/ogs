@@ -558,3 +558,13 @@ AddTest(
     DIFF_DATA
     PrismBHE_elev.vtu
 )
+
+AddTest(
+    NAME ReviseMesh_Test
+    PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE reviseMesh.exe
+    EXECUTABLE_ARGS -i basin_mesh.vtu -o ${Data_BINARY_DIR}/MeshLib/basin_mesh_fixed.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA basin_mesh_fixed.vtu basin_mesh_fixed.vtu 1e-16
+)
