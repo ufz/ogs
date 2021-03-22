@@ -33,11 +33,11 @@ DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
 }
 
 DeactivatedSubdomain::DeactivatedSubdomain(
-    BaseLib::TimeInterval const& time_interval_,
+    MathLib::PiecewiseLinearInterpolation time_interval_,
     std::vector<int>&& materialIDs_,
     std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
         deactivated_subdomain_meshes_)
-    : time_interval(time_interval_),
+    : time_interval(std::move(time_interval_)),
       materialIDs(std::move(materialIDs_)),
       deactivated_subdomain_meshes(std::move(deactivated_subdomain_meshes_))
 {
@@ -45,7 +45,8 @@ DeactivatedSubdomain::DeactivatedSubdomain(
 
 bool DeactivatedSubdomain::includesTimeOf(double const t) const
 {
-    return time_interval.contains(t);
+    return time_interval.getSupportMin() <= t &&
+           t <= time_interval.getSupportMax();
 }
 
 template <typename IsActive>
@@ -112,8 +113,17 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval}
-    config.peekConfigParameter<std::string>("time_interval");
-    auto time_interval = BaseLib::createTimeInterval(config);
+    auto const& time_interval_config = config.getConfigSubtree("time_interval");
+
+    auto const start_time =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval__start}
+        time_interval_config.getConfigParameter<double>("start");
+
+    auto const end_time =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval__end}
+        time_interval_config.getConfigParameter<double>("end");
+    MathLib::PiecewiseLinearInterpolation time_interval{
+        {start_time, end_time}, {1, 1}, false};
 
     auto deactivated_subdomain_material_ids =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__material_ids}
@@ -149,7 +159,7 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     }
 
     return std::make_unique<DeactivatedSubdomain const>(
-        time_interval,
+        std::move(time_interval),
         std::move(deactivated_subdomain_material_ids),
         std::move(deactivated_subdomain_meshes));
 }

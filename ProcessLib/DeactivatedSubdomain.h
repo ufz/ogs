@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "BaseLib/TimeInterval.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace BaseLib
 {
@@ -45,14 +45,14 @@ struct DeactivatedSubdomainMesh
 struct DeactivatedSubdomain
 {
     DeactivatedSubdomain(
-        BaseLib::TimeInterval const& time_interval_,
+        MathLib::PiecewiseLinearInterpolation time_interval_,
         std::vector<int>&& materialIDs_,
         std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
             deactivated_subdomain_meshes_);
 
     bool includesTimeOf(double const t) const;
 
-    BaseLib::TimeInterval const time_interval;
+    MathLib::PiecewiseLinearInterpolation const time_interval;
 
     /// The material IDs of the deactivated the subdomains
     std::vector<int> const materialIDs;

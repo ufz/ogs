@@ -6,10 +6,8 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  */
-
 #include "DeactivatedSubdomainDirichlet.h"
 
-#include "BaseLib/TimeInterval.h"
 #include "DirichletBoundaryCondition.h"
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -21,7 +19,7 @@ namespace ProcessLib
 {
 DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
     std::vector<std::size_t> const* const active_element_ids,
-    BaseLib::TimeInterval const& time_interval,
+    MathLib::PiecewiseLinearInterpolation time_interval,
     ParameterLib::Parameter<double> const& parameter,
     DeactivatedSubdomainMesh const& subdomain,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
@@ -75,7 +73,12 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
                      return std::all_of(begin(connected_elements),
                                         end(connected_elements), is_inactive);
                  });
-    if (_time_interval.contains(t))
+
+    auto time_interval_contains = [&](double const t) {
+        return _time_interval.getSupportMin() <= t &&
+               t <= _time_interval.getSupportMax();
+    };
+    if (time_interval_contains(t))
     {
         getEssentialBCValuesLocal(_parameter, *_subdomain.mesh,
                                   inactive_nodes_in_bc_mesh, *_dof_table_boundary,
