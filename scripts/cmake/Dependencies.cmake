@@ -421,3 +421,17 @@ cpm_licenses_create_disclaimer_target(
     write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses.txt"
     "${CPM_PACKAGES}"
 )
+
+# ccache
+if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_CCACHE)
+    set(CCACHE_OPTIONS "CCACHE_SLOPPINESS=pch_defines,time_macros")
+    if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang|AppleClang")
+        list(APPEND CCACHE_OPTIONS "CCACHE_CPP2=true")
+    endif()
+    CPMAddPackage(
+        NAME Ccache.cmake
+        GITHUB_REPOSITORY TheLartians/Ccache.cmake
+        VERSION 1.2.2
+        OPTIONS "USE_CCACHE ON"
+    )
+endif()
