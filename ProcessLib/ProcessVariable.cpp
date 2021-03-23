@@ -22,6 +22,7 @@
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/DeactivatedSubdomainDirichlet.h"
+#include "ProcessLib/CreateDeactivatedSubdomain.h"
 #include "ProcessLib/SourceTerms/CreateSourceTerm.h"
 #include "ProcessLib/SourceTerms/SourceTerm.h"
 

@@ -12,17 +12,11 @@
  */
 #pragma once
 
-#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-
-namespace BaseLib
-{
-class ConfigTree;
-}  // namespace BaseLib
 
 namespace MeshLib
 {
@@ -62,13 +56,4 @@ struct DeactivatedSubdomain
 
     static const std::string zero_parameter_name;
 };
-
-std::vector<std::unique_ptr<DeactivatedSubdomain const>>
-createDeactivatedSubdomains(
-    BaseLib::ConfigTree const& config,
-    MeshLib::Mesh const& mesh,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
-
 }  // namespace ProcessLib
