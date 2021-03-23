@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Point3d.h"
 
 namespace MeshLib
 {
@@ -48,6 +49,12 @@ struct DeactivatedSubdomain
             deactivated_subdomain_meshes_);
 
     bool includesTimeOf(double const t) const;
+
+    /// \returns true if the point is in the deactivated part of the subdomain.
+    /// The domain is split into two parts by a plane defined as a normal plane
+    /// of the line segment and the position on the line segment, where the
+    /// latter is defined by the time curve.
+    bool isDeactivated(MathLib::Point3d const& point, double const time) const;
 
     MathLib::PiecewiseLinearInterpolation const time_interval;
 
