@@ -22,25 +22,25 @@ namespace BaseLib
 ConfigTreeTopLevel::ConfigTreeTopLevel(const std::string& filepath,
                                        const bool be_ruthless,
                                        ConfigTree::PTree&& ptree)
-    : _ptree(std::move(ptree)),
-      _ctree(_ptree, filepath, ConfigTree::onerror,
+    : ptree_(std::move(ptree)),
+      ctree_(ptree_, filepath, ConfigTree::onerror,
              be_ruthless ? ConfigTree::onerror : ConfigTree::onwarning)
 {
 }
 
 ConfigTree const& ConfigTreeTopLevel::operator*() const
 {
-    return _ctree;
+    return ctree_;
 }
 
 ConfigTree const* ConfigTreeTopLevel::operator->() const
 {
-    return &_ctree;
+    return &ctree_;
 }
 
 void ConfigTreeTopLevel::checkAndInvalidate()
 {
-    ::BaseLib::checkAndInvalidate(_ctree);
+    ::BaseLib::checkAndInvalidate(ctree_);
 }
 
 // Adapted from

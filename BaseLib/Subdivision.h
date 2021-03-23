@@ -39,15 +39,17 @@ public:
      * @param n_subdivision   the number of subdivision
      */
     UniformSubdivision(double length, std::size_t n_subdivision)
-    : _length(length), _n_subdivision(n_subdivision) {}
+        : length_(length), n_subdivision_(n_subdivision)
+    {
+    }
 
     /// Returns a vector of subdivided points
     std::vector<double> operator()() const override
     {
         std::vector<double> x;
-        x.reserve(_n_subdivision+1);
-        const double dL = _length/static_cast<double>(_n_subdivision);
-        for (std::size_t i = 0; i < _n_subdivision + 1; i++)
+        x.reserve(n_subdivision_ + 1);
+        const double dL = length_ / static_cast<double>(n_subdivision_);
+        for (std::size_t i = 0; i < n_subdivision_ + 1; i++)
         {
             x.push_back(i * dL);
         }
@@ -55,12 +57,12 @@ public:
     }
 
 private:
-    const double _length;
-    const std::size_t _n_subdivision;
+    const double length_;
+    const std::size_t n_subdivision_;
 };
 
 /**
- * Gradual subdivision operator with a constant _multiplier
+ * Gradual subdivision operator with a constant multiplier_
  */
 class GradualSubdivision : public ISubdivision
 {
@@ -82,14 +84,14 @@ public:
     std::vector<double> operator()() const override;
 
 private:
-    const double _length;
-    const double _dL0;
-    const double _max_dL;
-    const double _multiplier;
+    const double length_;
+    const double dL0_;
+    const double max_dL_;
+    const double multiplier_;
 };
 
 /**
- * Gradual subdivision operator with a constant _multiplier.
+ * Gradual subdivision operator with a constant multiplier_.
  *
  * In this class the number of subdivisions is known a priori.
  */
@@ -110,9 +112,9 @@ public:
     std::vector<double> operator()() const override;
 
 private:
-    const double _length;
-    const std::size_t _num_subdivisions;
-    const double _multiplier;
+    const double length_;
+    const std::size_t num_subdivisions_;
+    const double multiplier_;
 };
 
 }  // namespace BaseLib

@@ -22,17 +22,17 @@ class Range
 {
 public:
     explicit Range(Iterator begin, Iterator end)
-        : _begin(std::move(begin)), _end(std::move(end))
+        : begin_(std::move(begin)), end_(std::move(end))
     {}
 
-    Iterator begin() const { return _begin; }
-    Iterator end()   const { return _end; }
-    std::size_t size() const { return std::distance(_begin, _end); }
+    Iterator begin() const { return begin_; }
+    Iterator end() const { return end_; }
+    std::size_t size() const { return std::distance(begin_, end_); }
     bool empty() const { return size() == 0; }
 
 private:
-    Iterator _begin;
-    Iterator _end;
+    Iterator begin_;
+    Iterator end_;
 };
 
 template<typename T>
@@ -120,7 +120,7 @@ getConfigParameterList(std::string const& param) const
     checkUnique(param);
     markVisited<T>(param, Attr::TAG, true);
 
-    auto p = _tree->equal_range(param);
+    auto p = tree_->equal_range(param);
     return Range<ValueIterator<T> >(
                 ValueIterator<T>(p.first,  param, *this),
                 ValueIterator<T>(p.second, param, *this));
@@ -133,7 +133,7 @@ peekConfigParameter(std::string const& param) const
 {
     checkKeyname(param);
 
-    if (auto p = _tree->get_child_optional(param))
+    if (auto p = tree_->get_child_optional(param))
     {
         try
         {
@@ -176,16 +176,18 @@ T
 ConfigTree::
 getValue() const
 {
-    if (_have_read_data) {
+    if (have_read_data_)
+    {
         error("The data of this subtree has already been read.");
     }
 
-    _have_read_data = true;
+    have_read_data_ = true;
 
-    if (auto v = _tree->get_value_optional<T>()) {
+    if (auto v = tree_->get_value_optional<T>())
+    {
         return *v;
     }
-    error("Value `" + shortString(_tree->data()) +
+    error("Value `" + shortString(tree_->data()) +
           "' is not convertible to the desired type.");
 }
 
@@ -221,7 +223,8 @@ std::optional<T> ConfigTree::getConfigAttributeOptional(
     checkUniqueAttr(attr);
     auto& ct = markVisited<T>(attr, Attr::ATTR, true);
 
-    if (auto attrs = _tree->get_child_optional("<xmlattr>")) {
+    if (auto attrs = tree_->get_child_optional("<xmlattr>"))
+    {
         if (auto a = attrs->get_child_optional(attr)) {
             ++ct.count; // count only if attribute has been found
             if (auto v = a->get_value_optional<T>()) {
@@ -244,7 +247,7 @@ markVisited(std::string const& key, Attr const is_attr,
 {
     auto const type = std::type_index(typeid(T));
 
-    auto p = _visited_params.emplace(std::make_pair(is_attr, key),
+    auto p = visited_params_.emplace(std::make_pair(is_attr, key),
                                      CountType{peek_only ? 0 : 1, type});
 
     if (!p.second) { // no insertion happened

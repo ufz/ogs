@@ -23,7 +23,7 @@ public:
 
 private:
     unsigned updateMemUsage ();
-    unsigned long _vmem_size = 0;
+    unsigned long vmem_size_ = 0;
 };
 
 }  // namespace BaseLib

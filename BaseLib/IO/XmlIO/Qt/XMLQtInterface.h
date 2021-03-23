@@ -52,12 +52,12 @@ private:
 
 private:
     /// The actual file name when reading.
-    QString _fileName;
+    QString fileName_;
 
-    QString _schemaFile;
+    QString schemaFile_;
 
     /// Caches the actual file contents when reading.
-    QByteArray _fileData;
+    QByteArray fileData_;
 };
 
 } // end namespace IO

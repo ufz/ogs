@@ -109,40 +109,41 @@ public:
 
         explicit SubtreeIterator(Iterator const& it, std::string const& root,
                                  ConfigTree const& parent)
-            : _it(it), _tagname(root), _parent(parent)
+            : it_(it), tagname_(root), parent_(parent)
         {}
 
         SubtreeIterator& operator++() {
-            ++_it;
-            _has_incremented = true;
+            ++it_;
+            has_incremented_ = true;
             return *this;
         }
 
         ConfigTree operator*() {
             // if this iterator has been incremented since the last dereference,
-            // tell the _parent instance that a subtree now has been parsed.
-            if (_has_incremented) {
-                _has_incremented = false;
-                _parent.markVisited(_tagname, Attr::TAG, false);
+            // tell the parent_ instance that a subtree now has been parsed.
+            if (has_incremented_)
+            {
+                has_incremented_ = false;
+                parent_.markVisited(tagname_, Attr::TAG, false);
             }
-            return ConfigTree(_it->second, _parent, _tagname);
+            return ConfigTree(it_->second, parent_, tagname_);
         }
 
         bool operator==(SubtreeIterator const& other) const {
-            return _it == other._it;
+            return it_ == other.it_;
         }
 
         bool operator!=(SubtreeIterator const& other) const {
-            return _it != other._it;
+            return it_ != other.it_;
         }
 
     private:
-        bool _has_incremented = true;
-        Iterator _it;
+        bool has_incremented_ = true;
+        Iterator it_;
 
     protected:
-        std::string const _tagname;
-        ConfigTree const& _parent;
+        std::string const tagname_;
+        ConfigTree const& parent_;
     };
 
     /*! A wrapper around a Boost Iterator for iterating over ranges of parameters.
@@ -160,7 +161,7 @@ public:
             auto st = SubtreeIterator::operator*();
             if (st.hasChildren())
             {
-                _parent.error("The requested parameter <" + _tagname +
+                parent_.error("The requested parameter <" + tagname_ +
                               "> has child elements.");
             }
             return st;
@@ -183,38 +184,40 @@ public:
 
         explicit ValueIterator(Iterator const& it, std::string const& root,
                                ConfigTree const& parent)
-            : _it(it), _tagname(root), _parent(parent)
+            : it_(it), tagname_(root), parent_(parent)
         {}
 
         ValueIterator<ValueType>& operator++() {
-            ++_it;
-            _has_incremented = true;
+            ++it_;
+            has_incremented_ = true;
             return *this;
         }
 
         ValueType operator*() {
             // if this iterator has been incremented since the last dereference,
-            // tell the _parent instance that a setting now has been parsed.
-            if (_has_incremented) {
-                _has_incremented = false;
-                _parent.markVisited<ValueType>(_tagname, Attr::TAG, false);
+            // tell the parent_ instance that a setting now has been parsed.
+            if (has_incremented_)
+            {
+                has_incremented_ = false;
+                parent_.markVisited<ValueType>(tagname_, Attr::TAG, false);
             }
-            return ConfigTree(_it->second, _parent, _tagname).getValue<ValueType>();
+            return ConfigTree(it_->second, parent_, tagname_)
+                .getValue<ValueType>();
         }
 
         bool operator==(ValueIterator<ValueType> const& other) const {
-            return _it == other._it;
+            return it_ == other.it_;
         }
 
         bool operator!=(ValueIterator<ValueType> const& other) const {
-            return _it != other._it;
+            return it_ != other.it_;
         }
 
     private:
-        bool _has_incremented = true;
-        Iterator _it;
-        std::string const _tagname;
-        ConfigTree const& _parent;
+        bool has_incremented_ = true;
+        Iterator it_;
+        std::string const tagname_;
+        ConfigTree const& parent_;
     };
 
     //! The tree being wrapped by this class.
@@ -253,7 +256,8 @@ public:
 
     /*! This constructor is deleted in order to prevent the user from passing
      * temporary instances of \c PTree.
-     * Doing so would lead to a dangling reference \c _tree and to program crash.
+     * Doing so would lead to a dangling reference \c tree_ and to program
+     * crash.
      */
     explicit ConfigTree(PTree&&, std::string const&,
                         Callback const&, Callback const&) = delete;
@@ -273,7 +277,7 @@ public:
     ConfigTree& operator=(ConfigTree&& other);
 
     //! Used to get the project file name.
-    std::string const& getProjectFileName() const { return _filename; }
+    std::string const& getProjectFileName() const { return filename_; }
 
     /*! \name Methods for directly accessing parameter values
      *
@@ -603,13 +607,13 @@ private:
     static std::string shortString(std::string const& s);
 
     //! The wrapped tree.
-    boost::property_tree::ptree const* _tree;
+    boost::property_tree::ptree const* tree_;
 
     //! A path printed in error/warning messages.
-    std::string _path;
+    std::string path_;
 
     //! The path of the file from which this tree has been read.
-    std::string _filename;
+    std::string filename_;
 
     //! A pair (is attribute, tag/attribute name).
     using KeyType = std::pair<Attr, std::string>;
@@ -621,13 +625,13 @@ private:
     //! Therefore it has to be mutable in order to be able to read from
     //! constant instances, e.g., those passed as constant references to
     //! temporaries.
-    mutable std::map<KeyType, CountType> _visited_params;
+    mutable std::map<KeyType, CountType> visited_params_;
 
     //! Indicates if the plain data contained in this tree has already been read.
-    mutable bool _have_read_data = false;
+    mutable bool have_read_data_ = false;
 
-    Callback _onerror;   //!< Custom error callback.
-    Callback _onwarning; //!< Custom warning callback.
+    Callback onerror_;    //!< Custom error callback.
+    Callback onwarning_;  //!< Custom warning callback.
 
     //! Character separating two path components.
     static const char pathseparator;

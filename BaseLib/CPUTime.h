@@ -24,18 +24,16 @@ class CPUTime
 {
     public:
         /// Start the timer.
-        void start()
-        {
-            _start_time = clock();
-        }
+        void start() { start_time_ = clock(); }
 
         /// Get the elapsed time after started.
         double elapsed() const
         {
-            return (clock() - _start_time)/static_cast<double>(CLOCKS_PER_SEC);
+            return (clock() - start_time_) /
+                   static_cast<double>(CLOCKS_PER_SEC);
         }
     private:
-        double _start_time = 0.;
+        double start_time_ = 0.;
 };
 
 } // end namespace BaseLib

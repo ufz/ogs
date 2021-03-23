@@ -30,12 +30,12 @@ namespace BaseLib
 namespace IO
 {
 XMLQtInterface::XMLQtInterface(QString schemaFile)
-    : _schemaFile(std::move(schemaFile))
+    : schemaFile_(std::move(schemaFile))
 {}
 
 int XMLQtInterface::readFile(const QString &fileName)
 {
-    _fileName = fileName;
+    fileName_ = fileName;
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -43,7 +43,7 @@ int XMLQtInterface::readFile(const QString &fileName)
             fileName.toStdString());
         return 0;
     }
-    _fileData = file.readAll();
+    fileData_ = file.readAll();
     file.close();
 
     if (!checkHash())
@@ -57,16 +57,17 @@ int XMLQtInterface::readFile(const QString &fileName)
 int XMLQtInterface::isValid() const
 {
     QXmlSchema schema;
-    if(_schemaFile.length() > 0)
+    if (schemaFile_.length() > 0)
     {
-        auto path = QDir(QCoreApplication::applicationDirPath()).filePath(_schemaFile);
+        auto path =
+            QDir(QCoreApplication::applicationDirPath()).filePath(schemaFile_);
         auto url = QUrl::fromLocalFile(path);
         schema.load(url);
     }
     if ( schema.isValid() )
     {
         QXmlSchemaValidator validator( schema );
-        if (validator.validate(_fileData))
+        if (validator.validate(fileData_))
         {
             return 1;
         }
@@ -74,14 +75,14 @@ int XMLQtInterface::isValid() const
         INFO(
             "XMLQtInterface::isValid(): XML file {:s} is invalid (in reference "
             "to schema {:s}).",
-            _fileName.toStdString(), _schemaFile.toStdString());
+            fileName_.toStdString(), schemaFile_.toStdString());
     }
     else
     {
         // The following validator (without constructor arguments) automatically
         // searches for the xsd given in the xml file.
         QXmlSchemaValidator validator;
-        if (validator.validate(_fileData))
+        if (validator.validate(fileData_))
         {
             return 1;
         }
@@ -89,15 +90,16 @@ int XMLQtInterface::isValid() const
         INFO(
             "XMLQtInterface::isValid(): XML file {:s} is invalid (in reference "
             "to its schema).",
-            _fileName.toStdString());
+            fileName_.toStdString());
     }
     return 0;
 }
 
 bool XMLQtInterface::checkHash() const
 {
-    QString md5FileName(_fileName + ".md5");
-    QByteArray fileHash = QCryptographicHash::hash(_fileData, QCryptographicHash::Md5);
+    QString md5FileName(fileName_ + ".md5");
+    QByteArray fileHash =
+        QCryptographicHash::hash(fileData_, QCryptographicHash::Md5);
 
     QFile file(md5FileName);
     if (file.open(QIODevice::ReadOnly))
@@ -132,7 +134,7 @@ bool XMLQtInterface::checkHash() const
 
 QByteArray const& XMLQtInterface::getContent() const
 {
-    return _fileData;
+    return fileData_;
 }
 }  // namespace IO
 }  // namespace BaseLib
