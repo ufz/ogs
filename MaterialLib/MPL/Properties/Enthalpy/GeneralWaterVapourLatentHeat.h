@@ -18,6 +18,48 @@ namespace MaterialPropertyLib
 {
 class Phase;
 
+/**
+ * \brief A general latent heat model of vaporisation of water.
+ *
+ *  The model uses an equation for a general expression of the latent heat of
+ *  vaporisation of water in the vicinity of and far away from the critical
+ *  temperature, which was presented by Torquato and Stell in
+ *  \cite torquato1982equation.
+ *
+ *  Denoting the critical temperature as \f$T_c\f$, and introducing a
+ *  dimensionless variable \f$\tau=(T_c-T)/T_c\f$ associated with temperature
+ *  \f$T\f$, the equation is given by
+ *
+ *  \f[
+ *    L(\tau) = a_1 \tau^{\beta}+a_2 \tau^{\beta+\Delta}
+ *              +a_4 \tau^{1-\alpha+\beta}
+ *             +\sum_{n=1}^{M}(b_n \tau^n),\,\text{[kJ/kg]},
+ *  \f]
+ *   where the parameters of \f$b_n\f$ are obtained by the least square method
+ *   by fitting the equation with the experiment data.
+ *
+ *   In this model, the parameter set of \f$M=5\f$ is taken for a high accuracy.
+ *   All parameters are given below:
+ *  <ul>
+ *    <li> \f$\alpha=1/8,\,\beta=1/3,\, \Delta=0.79-\beta\f$,
+ *    <li> \f$a_1=1989.41582,\, a_2=11178.45586, a_4=26923.68994\f$,
+ *    <li> \f$b_n:=\{-28989.28947, -19797.03646, 28403.32283,
+ *                                  -30382.306422, 15210.380\}\f$.
+ *  </ul>
+ *
+ *  The critical temperature is 373.92 \f$^{\circ}\f$C.
+ *
+ *  A comparison of this model with the model of
+ *  MaterialPropertyLib::LinearWaterVapourLatentHeat
+ *  is given in the following figure.
+ *
+ *  \image{inline} html general_latent_heat_water_vapour.png ""
+ *
+ *  Based on the comparison, a conclusion can be drawn such that
+ *  the linear model can be applied for the applications with temperature
+ *  below 400 K.
+ *
+ */
 class GeneralWaterVapourLatentHeat final : public Property
 {
 public:
