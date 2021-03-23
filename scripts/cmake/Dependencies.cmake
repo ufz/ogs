@@ -1,3 +1,5 @@
+set(CMAKE_FOLDER ThirdParty)
+
 if(OGS_BUILD_TESTING)
     CPMAddPackage(
         NAME googletest
@@ -435,3 +437,10 @@ if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_CCACHE)
         OPTIONS "USE_CCACHE ON"
     )
 endif()
+
+CPMAddPackage(
+    NAME GroupSourcesByFolder.cmake
+    GITHUB_REPOSITORY TheLartians/GroupSourcesByFolder.cmake VERSION 1.0
+)
+
+unset(CMAKE_FOLDER)

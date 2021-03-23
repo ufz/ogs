@@ -1,7 +1,6 @@
 if(OGS_BUILD_PROCESS_LIE)
     add_executable(postLIE postLIE.cpp)
     target_link_libraries(postLIE GitInfoLib LIECommon tclap)
-    set_target_properties(postLIE PROPERTIES FOLDER Utilities)
     install(TARGETS postLIE RUNTIME DESTINATION bin)
 endif()
 
@@ -17,6 +16,5 @@ if(OGS_BUILD_GUI)
         QtDataView
         tclap
     )
-    set_target_properties(Raster2PointCloud PROPERTIES FOLDER Utilities)
     install(TARGETS Raster2PointCloud RUNTIME DESTINATION bin)
 endif()

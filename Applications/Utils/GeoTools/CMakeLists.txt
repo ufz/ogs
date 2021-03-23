@@ -9,5 +9,4 @@ foreach(tool ${TOOLS})
         ${tool} GeoLib GitInfoLib ApplicationsFileIO tclap Qt5::Core
     )
 endforeach()
-set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
 install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)

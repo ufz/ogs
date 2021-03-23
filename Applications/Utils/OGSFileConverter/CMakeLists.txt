@@ -18,8 +18,4 @@ target_link_libraries(
 
 add_autogen_include(OGSFileConverterLib)
 
-set_target_properties(
-    OGSFileConverter OGSFileConverterLib PROPERTIES FOLDER "Utilities"
-)
-
 install(TARGETS OGSFileConverter RUNTIME DESTINATION bin)

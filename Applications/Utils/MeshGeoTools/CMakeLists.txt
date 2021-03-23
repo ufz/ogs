@@ -25,5 +25,4 @@ if(TARGET VerticalSliceFromLayers)
     target_link_libraries(VerticalSliceFromLayers Qt5::Xml Qt5::XmlPatterns)
 endif()
 
-set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
 install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
