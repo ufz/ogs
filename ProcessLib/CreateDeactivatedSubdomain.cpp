@@ -177,9 +177,33 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     auto const time_interval =
         parseTimeIntervalOrCurve(time_interval_config, curve_name, curves);
 
-    auto const line_segment =
+    auto const line_segment_config =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__line_segment}
-        parseLineSegment(config.getConfigSubtree("line_segment"));
+        config.getConfigSubtreeOptional("line_segment");
+
+    if (time_interval_config && line_segment_config)
+    {
+        OGS_FATAL(
+            "When using time interval for subdomain deactivation a line "
+            "segment must not be specified.");
+    }
+
+    if (curve_name && !line_segment_config)
+    {
+        OGS_FATAL(
+            "When using curve for subdomain deactivation a line segment must "
+            "be specified.");
+    }
+
+    // If time interval was specified then a dummy line segment is used
+    // *internally* because the whole selected material ids subdomain will be
+    // deactivated.
+    std::pair line_segment{Eigen::Vector3d{0, 0, 0}, Eigen::Vector3d{1, 1, 1}};
+
+    if (curve_name)
+    {
+        line_segment = parseLineSegment(*line_segment_config);
+    }
 
     auto deactivated_subdomain_material_ids =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__material_ids}
