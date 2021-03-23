@@ -38,6 +38,25 @@ struct DeactivatedSubdomainMesh
     std::vector<MeshLib::Node*> const inner_nodes;
 };
 
+/// Time depend subdomain deactivation.
+///
+/// Subdomain deactivation is space and time dependent.
+/// The spatial extent of deactivated elements is defined through a set of
+/// material ids.
+/// Additionally a line segment separates through its normal plane and position
+/// on the line segment an active and inactive part.
+///
+/// The subdomain can be deactivated at once using a time interval.
+/// For fine grained control a time curve can be specified.
+/// It maps current time to position on the line segment.
+/// Elements, which center points lie left of this position are deactivated.
+///
+/// \internal
+/// The deactivated elements are excluded from the assembly, pre and post call,
+/// secondary variables computation and the like. To keep the size of the global
+/// linear equation system artificial Dirichlet boundary conditions are applied
+/// on the interior of the deactivated subdomain. The nodes on the border
+/// between the active and inactive elements are not affected.
 struct DeactivatedSubdomain
 {
     DeactivatedSubdomain(
