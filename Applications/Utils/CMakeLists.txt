@@ -1,3 +1,4 @@
+set(CMAKE_FOLDER "Utilities")
 add_subdirectory(FileConverter)
 add_subdirectory(GeoTools)
 add_subdirectory(MeshGeoTools)
@@ -17,3 +18,5 @@ endif()
 if(OGS_BUILD_TESTING)
     include(Tests.cmake)
 endif()
+
+unset(CMAKE_FOLDER)

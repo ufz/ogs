@@ -35,7 +35,6 @@ if(OGS_BUILD_GUI)
         RemoveGhostData PRIVATE ${PROJECT_SOURCE_DIR}/ThirdParty/paraview
     )
     target_link_libraries(RemoveGhostData GitInfoLib MeshLib tclap)
-    set_target_properties(RemoveGhostData PROPERTIES FOLDER Utilities)
     install(TARGETS RemoveGhostData RUNTIME DESTINATION bin)
 endif()
 
@@ -43,7 +42,6 @@ foreach(tool ${TOOLS})
     add_executable(${tool} ${tool}.cpp)
     target_link_libraries(${tool} GitInfoLib MeshLib tclap)
 endforeach()
-set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
 install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
 
 target_link_libraries(

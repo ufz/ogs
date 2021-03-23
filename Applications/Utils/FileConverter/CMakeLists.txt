@@ -26,7 +26,6 @@ foreach(tool ${TOOLS})
         ${tool} ApplicationsFileIO GitInfoLib MeshLib MeshGeoToolsLib tclap
     )
 endforeach()
-set_target_properties(${TOOLS} PROPERTIES FOLDER Utilities)
 install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
 
 if(TARGET ConvertSHPToGLI)

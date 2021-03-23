@@ -7,7 +7,6 @@ CPMAddPackage(
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/MetisSetup.cmake)
 
 add_executable(partmesh PartitionMesh.cpp Metis.cpp NodeWiseMeshPartitioner.cpp)
-set_target_properties(partmesh PROPERTIES FOLDER Utilities)
 target_link_libraries(partmesh GitInfoLib MeshLib tclap)
 add_dependencies(partmesh mpmetis)
 install(TARGETS partmesh RUNTIME DESTINATION bin)

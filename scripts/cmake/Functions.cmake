@@ -1,11 +1,3 @@
-# Returns the current subdirectory in the sources directory.
-macro(GET_CURRENT_SOURCE_SUBDIRECTORY current_source_subdirectory)
-    string(REGEX REPLACE ".*/([^/]*)" "\\1" REGEX_RESULT
-                         "${CMAKE_CURRENT_SOURCE_DIR}"
-    )
-    set(${current_source_subdirectory} ${REGEX_RESULT})
-endmacro()
-
 # Returns a list of source files (*.h and *.cpp) in source_files and creates a
 # Visual Studio folder. A (relative) subdirectory can be passed as second
 # parameter (optional).
@@ -35,22 +27,6 @@ macro(GET_SOURCE_FILES source_files)
     if(${NUM_FILES} EQUAL 0)
         message(FATAL_ERROR "No source files found in ${DIR}")
     endif()
-
-    # Adapt DIR var to backslash syntax of SOURCE_GROUP cmd
-    if(${ARGC} EQUAL 2)
-        string(REPLACE "/" "\\\\" DIR ${DIR})
-        set(DIR "\\${DIR}")
-    else()
-        set(DIR "")
-    endif()
-
-    GET_CURRENT_SOURCE_SUBDIRECTORY(DIRECTORY)
-    source_group(
-        "${DIRECTORY}${DIR}"
-        FILES ${GET_SOURCE_FILES_HEADERS} ${GET_SOURCE_FILES_SOURCES}
-              ${GET_SOURCE_FILES_TEMPLATES}
-    )
-
 endmacro()
 
 # Appends a list of source files (*.h and *.cpp) to source_files and creates a
@@ -107,7 +83,13 @@ endfunction()
 
 # Replacement for add_library() for ogs targets
 function(ogs_add_library targetName)
-    add_library(${targetName} ${ARGN})
+    foreach(file ${ARGN})
+        # cmake-lint: disable=E1126
+        file(REAL_PATH ${file} file_path)
+        list(APPEND files ${file_path})
+    endforeach()
+
+    add_library(${targetName} ${files})
     target_compile_options(
         ${targetName}
         PRIVATE # OR does not work with cotire
@@ -140,6 +122,7 @@ function(ogs_add_library targetName)
             ${targetName} PROPERTIES UNITY_BUILD ${OGS_USE_UNITY_BUILDS}
         )
     endif()
+    GroupSourcesByFolder(${targetName})
 endfunction()
 
 # Parses current directory into a list

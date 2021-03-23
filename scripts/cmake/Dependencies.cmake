@@ -1,3 +1,5 @@
+set(CMAKE_FOLDER ThirdParty)
+
 if(OGS_BUILD_TESTING)
     CPMAddPackage(
         NAME googletest
@@ -411,3 +413,34 @@ if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
             "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/conan/conan.cmake|scripts/cmake/vector-of-bool/.*"
     )
 endif()
+
+# Third-party licenses
+CPMAddPackage(
+    NAME CPMLicenses.cmake GITHUB_REPOSITORY cpm-cmake/CPMLicenses.cmake
+    VERSION 0.0.5
+)
+cpm_licenses_create_disclaimer_target(
+    write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses.txt"
+    "${CPM_PACKAGES}"
+)
+
+# ccache
+if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_CCACHE)
+    set(CCACHE_OPTIONS "CCACHE_SLOPPINESS=pch_defines,time_macros")
+    if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang|AppleClang")
+        list(APPEND CCACHE_OPTIONS "CCACHE_CPP2=true")
+    endif()
+    CPMAddPackage(
+        NAME Ccache.cmake
+        GITHUB_REPOSITORY TheLartians/Ccache.cmake
+        VERSION 1.2.2
+        OPTIONS "USE_CCACHE ON"
+    )
+endif()
+
+CPMAddPackage(
+    NAME GroupSourcesByFolder.cmake
+    GITHUB_REPOSITORY TheLartians/GroupSourcesByFolder.cmake VERSION 1.0
+)
+
+unset(CMAKE_FOLDER)
