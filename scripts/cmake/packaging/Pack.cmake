@@ -82,14 +82,12 @@ endif()
 configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
 install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)
 
-install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt
-        DESTINATION ${CMAKE_INSTALL_INFODIR}
+install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt TYPE INFO)
+install(FILES ${PROJECT_BINARY_DIR}/cmake_args TYPE INFO OPTIONAL)
+install(
+    CODE "execute_process(COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} -t write-licenses)"
 )
-if(EXISTS ${PROJECT_BINARY_DIR}/cmake-args)
-    install(FILES ${PROJECT_BINARY_DIR}/cmake-args
-            DESTINATION ${CMAKE_INSTALL_INFODIR}
-    )
-endif()
+install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses.txt TYPE INFO)
 
 # Install dependencies via GET_RUNTIME_DEPENDENCIES. Available since CMake 3.16.
 if(${CMAKE_VERSION} VERSION_LESS 3.16 OR NOT OGS_INSTALL_DEPENDENCIES)

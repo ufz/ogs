@@ -411,3 +411,13 @@ if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
             "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/conan/conan.cmake|scripts/cmake/vector-of-bool/.*"
     )
 endif()
+
+# Third-party licenses
+CPMAddPackage(
+    NAME CPMLicenses.cmake GITHUB_REPOSITORY cpm-cmake/CPMLicenses.cmake
+    VERSION 0.0.5
+)
+cpm_licenses_create_disclaimer_target(
+    write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses.txt"
+    "${CPM_PACKAGES}"
+)
