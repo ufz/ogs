@@ -8,6 +8,8 @@
  */
 #include "CreateDeactivatedSubdomain.h"
 
+#include <Eigen/Dense>
+
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "DeactivatedSubdomain.h"
@@ -128,6 +130,37 @@ static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
         "given. One of them must be specified.");
 }
 
+/// Returns a line segment represented by its begin and end points.
+static std::pair<Eigen::Vector3d, Eigen::Vector3d> parseLineSegment(
+    BaseLib::ConfigTree const& config)
+{
+    DBUG("Constructing line segment");
+    auto const start =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__line_segment__start}
+        config.getConfigParameter<std::vector<double>>("start");
+    if (start.size() != 3)
+    {
+        OGS_FATAL(
+            "For construction of a line segment the start point must be a "
+            "3D point. Got a vector of size {}.",
+            start.size());
+    }
+
+    auto const end =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__line_segment__end}
+        config.getConfigParameter<std::vector<double>>("end");
+
+    if (end.size() != 3)
+    {
+        OGS_FATAL(
+            "For construction of a line segment the end point must be a "
+            "3D point. Got a vector of size {}.",
+            end.size());
+    }
+    return {Eigen::Vector3d{start[0], start[1], start[2]},
+            Eigen::Vector3d{end[0], end[1], end[2]}};
+}
+
 std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
     std::map<std::string,
@@ -143,6 +176,10 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
         config.getConfigParameterOptional<std::string>("time_curve");
     auto const time_interval =
         parseTimeIntervalOrCurve(time_interval_config, curve_name, curves);
+
+    auto const line_segment =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__line_segment}
+        parseLineSegment(config.getConfigSubtree("line_segment"));
 
     auto deactivated_subdomain_material_ids =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__material_ids}
@@ -179,6 +216,7 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
 
     return std::make_unique<DeactivatedSubdomain const>(
         std::move(time_interval),
+        line_segment,
         std::move(deactivated_subdomain_material_ids),
         std::move(deactivated_subdomain_meshes));
 }

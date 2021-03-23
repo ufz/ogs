@@ -12,6 +12,7 @@
  */
 #pragma once
 
+#include <Eigen/Dense>
 #include <memory>
 #include <string>
 #include <vector>
@@ -40,6 +41,8 @@ struct DeactivatedSubdomain
 {
     DeactivatedSubdomain(
         MathLib::PiecewiseLinearInterpolation time_interval_,
+        std::pair<Eigen::Vector3d, Eigen::Vector3d>
+            line_segment,
         std::vector<int>&& materialIDs_,
         std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
             deactivated_subdomain_meshes_);
@@ -47,6 +50,10 @@ struct DeactivatedSubdomain
     bool includesTimeOf(double const t) const;
 
     MathLib::PiecewiseLinearInterpolation const time_interval;
+
+    /// Line segment along which excavation progresses. Represented by start and
+    /// end points.
+    std::pair<Eigen::Vector3d, Eigen::Vector3d> line_segment;
 
     /// The material IDs of the deactivated the subdomains
     std::vector<int> const materialIDs;

@@ -32,10 +32,13 @@ DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
 
 DeactivatedSubdomain::DeactivatedSubdomain(
     MathLib::PiecewiseLinearInterpolation time_interval_,
+    std::pair<Eigen::Vector3d, Eigen::Vector3d>
+        line_segment,
     std::vector<int>&& materialIDs_,
     std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
         deactivated_subdomain_meshes_)
     : time_interval(std::move(time_interval_)),
+      line_segment(line_segment),
       materialIDs(std::move(materialIDs_)),
       deactivated_subdomain_meshes(std::move(deactivated_subdomain_meshes_))
 {
