@@ -40,6 +40,12 @@ Phase const& Medium::phase(std::string const& name) const
             return phase->name == name;
         },
         "Could not find phase name '" + name + "'.");
+
+bool Medium::hasPhase(std::string const& phase_name) const
+{
+    return std::any_of(
+        begin(phases_), end(phases_),
+        [&phase_name](auto const& phase) { return phase->name == phase_name; });
 }
 
 Property const& Medium::property(PropertyType const& p) const
@@ -66,5 +72,20 @@ std::size_t Medium::numberOfPhases() const
 std::string Medium::description()
 {
     return "medium";
+}
+
+Phase const& fluidPhase(Medium const& medium)
+{
+    if (medium.hasPhase("Gas"))
+    {
+        return medium.phase("Gas");
+    }
+    if (medium.hasPhase("AqueousLiquid"))
+    {
+        return medium.phase("AqueousLiquid");
+    }
+    OGS_FATAL(
+        "Neither Gas nor AqueousLiquid phase is available for the medium, but "
+        "a fluid phase was requested.");
 }
 }  // namespace MaterialPropertyLib
