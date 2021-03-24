@@ -22,7 +22,7 @@ build docs:
   script:
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
     - cmake --build . --target doc > >(tee make-docs.output)
-    # ${CI_COMMIT_BRANCH//./-} replaces dots with hyphens
+    - cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'
     - |
       if [ "$DEPLOY" == "true" ]; then
         if [ "$ON_MASTER" == "true" ]; then
