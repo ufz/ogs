@@ -186,7 +186,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& b = _process_data.specific_body_force;
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& solid = medium->phase("Solid");
-    auto const& gas = medium->phase("Gas");
+    auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
 
     auto const T_ref =
@@ -238,13 +238,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
-        auto const mu = gas.property(MPL::PropertyType::viscosity)
+        auto const mu = fluid.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
         auto const rho_fr =
-            gas.property(MPL::PropertyType::density)
+            fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
         auto const beta_p =
-            gas.property(MPL::PropertyType::density)
+            fluid.property(MPL::PropertyType::density)
                 .template dValue<double>(vars, MPL::Variable::phase_pressure,
                                          x_position, t, dt) /
             rho_fr;
@@ -389,7 +389,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     x_position.setElementID(_element.getID());
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& gas = medium->phase("Gas");
+    auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
 
     // TODO (naumov) Temporary value not used by current material models. Need
@@ -433,10 +433,10 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             medium->property(MPL::PropertyType::permeability)
                 .value(vars, x_position, t, dt));
 
-        auto const mu = gas.property(MPL::PropertyType::viscosity)
+        auto const mu = fluid.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
         auto const rho_fr =
-            gas.property(MPL::PropertyType::density)
+            fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
 
         auto const K_over_mu = K / mu;
@@ -503,7 +503,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     x_position.setElementID(_element.getID());
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& gas = medium->phase("Gas");
+    auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
 
     vars[static_cast<int>(MPL::Variable::temperature)] =
@@ -555,13 +555,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
-        auto const mu = gas.property(MPL::PropertyType::viscosity)
+        auto const mu = fluid.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
         auto const rho_fr =
-            gas.property(MPL::PropertyType::density)
+            fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
         auto const beta_p =
-            gas.property(MPL::PropertyType::density)
+            fluid.property(MPL::PropertyType::density)
                 .template dValue<double>(vars, MPL::Variable::phase_pressure,
                                          x_position, t, dt) /
             rho_fr;
@@ -638,7 +638,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& medium = _process_data.media_map->getMedium(_element.getID());
     auto const& solid = medium->phase("Solid");
-    auto const& gas = medium->phase("Gas");
+    auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
 
     auto const T_ref =
@@ -684,7 +684,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(vars, x_position, t, dt);
 
         auto const rho_fr =
-            gas.property(MPL::PropertyType::density)
+            fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
 
         auto const& b = _process_data.specific_body_force;

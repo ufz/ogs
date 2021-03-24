@@ -147,7 +147,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MaterialPropertyLib::permeability,
         MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient
     };
-    std::array const requiredGasProperties = {
+    std::array const requiredFluidProperties = {
         MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
     std::array const requiredSolidProperties = {
         MaterialPropertyLib::density};
@@ -158,7 +158,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         media_map->checkElementHasMedium(element_id);
         auto const& medium = *media_map->getMedium(element_id);
         checkRequiredProperties(medium, requiredMediumProperties);
-        checkRequiredProperties(medium.phase("Gas"), requiredGasProperties);
+        checkRequiredProperties(fluidPhase(medium), requiredFluidProperties);
         checkRequiredProperties(medium.phase("Solid"), requiredSolidProperties);
     }
     DBUG("Media properties verified.");
