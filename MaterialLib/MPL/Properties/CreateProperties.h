@@ -49,3 +49,4 @@
 #include "SwellingStress/CreateLinearSaturationSwellingStress.h"
 #include "ThermalConductivity/CreateSoilThermalConductivitySomerton.h"
 #include "VapourDiffusion/CreateVapourDiffusionFEBEX.h"
+#include "VapourDiffusion/CreateVapourDiffusionPMQ.h"

@@ -231,6 +231,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createVapourDiffusionFEBEX(config);
     }
 
+    if (boost::iequals(property_type, "VapourDiffusionPMQ"))
+    {
+        return createVapourDiffusionPMQ(config);
+    }
+
     if (boost::iequals(property_type, "LinearWaterVapourLatentHeat"))
     {
         return createLinearWaterVapourLatentHeat(config);

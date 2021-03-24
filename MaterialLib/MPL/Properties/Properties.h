@@ -42,3 +42,4 @@
 #include "ThermalConductivity/SoilThermalConductivitySomerton.h"
 #include "TransportPorosityFromMassBalance.h"
 #include "VapourDiffusion/VapourDiffusionFEBEX.h"
+#include "VapourDiffusion/VapourDiffusionPMQ.h"
