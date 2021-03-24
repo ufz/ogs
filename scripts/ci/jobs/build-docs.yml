@@ -22,7 +22,8 @@ build docs:
   script:
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
     - cmake --build . --target doc > >(tee make-docs.output)
-    # ${CI_COMMIT_BRANCH//./-} replaces dots with hyphens
+    - cat DoxygenWarnings.log|grep -v 'too many nodes'
+    - echo "doxygen_warnings `cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'|wc -l|xargs`" > metrics.txt
     - |
       if [ "$DEPLOY" == "true" ]; then
         if [ "$ON_MASTER" == "true" ]; then
@@ -39,6 +40,8 @@ build docs:
       - Doxygen.html
       - build/docs
     expire_in: 1 week
+    reports:
+      metrics: build/metrics.txt
 
 check docs links:
   stage: check
