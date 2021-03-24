@@ -69,10 +69,9 @@ int main(int argc, char *argv[])
 
     // revise the mesh
     INFO("Simplifying the mesh...");
-    std::unique_ptr<MeshLib::Mesh> new_mesh(nullptr);
     MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*org_mesh));
     unsigned int minDim = (minDim_arg.isSet() ? minDim_arg.getValue() : org_mesh->getDimension());
-    new_mesh.reset(
+    std::unique_ptr<MeshLib::Mesh> new_mesh(
         rev.simplifyMesh("revised_mesh", eps_arg.getValue(), minDim));
 
     // write into a file

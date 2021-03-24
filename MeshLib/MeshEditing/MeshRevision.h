@@ -20,7 +20,6 @@
 #include <vector>
 
 #include "MeshLib/Properties.h"
-#include "MeshLib/Properties.h"
 
 // forward declaration
 namespace MeshLib
@@ -86,20 +85,15 @@ private:
     /// everything is done).
     void resetNodeIDs();
 
+    /**
+     * Copies all scalar arrays according to the restructured Node- and
+     * Element-vectors after the mesh revision process (i.e. collapsed nodes,
+     * split elements, etc.)
+     */
     MeshLib::Properties copyProperties(
         MeshLib::Properties const& props,
         std::vector<std::size_t> const& node_ids,
         std::vector<std::size_t> const& elem_ids);
-
-    template <typename T>
-    void fillNodeProperty(std::vector<T>& new_prop,
-                          std::vector<T> const& old_prop,
-                          std::vector<size_t> node_ids);
-
-    template <typename T>
-    void fillElemProperty(std::vector<T>& new_prop,
-                          std::vector<T> const& old_prop,
-                          std::vector<size_t> elem_ids);
 
     /// Subdivides an element if it has a face that is not coplanar
     /// @param element the element that will be subdivided

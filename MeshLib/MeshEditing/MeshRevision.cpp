@@ -54,11 +54,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
         return nullptr;
     }
 
-    // original data
     std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
-    MeshLib::Properties const& properties(_mesh.getProperties());
-
-    // data structures for the new mesh
     auto const node_ids = collapseNodeIndices(eps);
     std::vector<MeshLib::Node*> new_nodes =
         this->constructNewNodesArray(node_ids);
@@ -234,6 +230,35 @@ void MeshRevision::resetNodeIDs()
     }
 }
 
+template <typename T>
+void fillNodeProperty(std::vector<T>& new_prop,
+                      std::vector<T> const& old_prop,
+                      std::vector<size_t>
+                          node_ids)
+{
+    std::size_t const n_nodes = node_ids.size();
+    for (std::size_t i = 0; i < n_nodes; ++i)
+    {
+        if (node_ids[i] != i)
+        {
+            continue;
+        }
+        new_prop.push_back(old_prop[i]);
+    }
+}
+
+template <typename T>
+void fillElemProperty(std::vector<T>& new_prop,
+                      std::vector<T> const& old_prop,
+                      std::vector<size_t>
+                          elem_ids)
+{
+    for (auto i : elem_ids)
+    {
+        new_prop.push_back(old_prop[i]);
+    }
+}
+
 MeshLib::Properties MeshRevision::copyProperties(
     MeshLib::Properties const& props,
     std::vector<std::size_t> const& node_ids,
@@ -299,33 +324,6 @@ MeshLib::Properties MeshRevision::copyProperties(
         WARN("PropertyVector {:s} not being converted.", name);
     }
     return new_properties;
-}
-
-template <typename T>
-void MeshRevision::fillNodeProperty(std::vector<T>& new_prop,
-                                    std::vector<T> const& old_prop,
-                                    std::vector<size_t> node_ids)
-{
-    std::size_t const n_nodes = node_ids.size();
-    for (std::size_t i = 0; i < n_nodes; ++i)
-    {
-        if (node_ids[i] != i)
-        {
-            continue;
-        }
-        new_prop.push_back(old_prop[i]);
-    }
-}
-
-template <typename T>
-void MeshRevision::fillElemProperty(std::vector<T>& new_prop,
-                                    std::vector<T> const& old_prop,
-                                    std::vector<size_t> elem_ids)
-{
-    for (auto i : elem_ids)
-    {
-        new_prop.push_back(old_prop[i]);
-    }
 }
 
 std::size_t MeshRevision::subdivideElement(
