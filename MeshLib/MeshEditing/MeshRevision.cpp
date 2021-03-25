@@ -101,7 +101,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
         }
     }
 
-    auto const props = _mesh.getProperties();
+    auto const& props = _mesh.getProperties();
     MeshLib::Properties const new_properties =
         copyProperties(props, node_ids, element_ids);
 
@@ -253,10 +253,9 @@ void fillElemProperty(std::vector<T>& new_prop,
                       std::vector<size_t>
                           elem_ids)
 {
-    for (auto i : elem_ids)
-    {
-        new_prop.push_back(old_prop[i]);
-    }
+    std::transform(elem_ids.cbegin(), elem_ids.cend(),
+                   std::back_inserter(new_prop),
+                   [&](std::size_t const i) { return old_prop[i]; });
 }
 
 MeshLib::Properties MeshRevision::copyProperties(
