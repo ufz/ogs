@@ -15,21 +15,22 @@
 #include <cmath>
 #include <limits>
 
-#include "MaterialLib/MPL/Properties/Enthalpy/CreateGeneralWaterVapourLatentHeat.h"
+#include "MaterialLib/MPL/Properties/Enthalpy/CreateWaterVapourLatentHeatWithCriticalTemperature.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "TestMPL.h"
 
-TEST(MaterialPropertyLib, GeneralWaterVapourLatentHeat)
+TEST(MaterialPropertyLib, WaterVapourLatentHeatWithCriticalTemperature)
 {
     char const xml[] =
         "<property>"
         "   <name>latent_heat</name>"
-        "   <type>GeneralWaterVapourLatentHeat</type>"
+        "   <type>WaterVapourLatentHeatWithCriticalTemperature</type>"
         "</property>";
 
     std::unique_ptr<MaterialPropertyLib::Property> const property_ptr =
         Tests::createTestProperty(
-            xml, MaterialPropertyLib::createGeneralWaterVapourLatentHeat);
+            xml, MaterialPropertyLib::
+                     createWaterVapourLatentHeatWithCriticalTemperature);
     MaterialPropertyLib::Property const& property = *property_ptr;
 
     MaterialPropertyLib::VariableArray variable_array;

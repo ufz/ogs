@@ -247,9 +247,10 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createLinearWaterVapourLatentHeat(config);
     }
 
-    if (boost::iequals(property_type, "GeneralWaterVapourLatentHeat"))
+    if (boost::iequals(property_type,
+                       "WaterVapourLatentHeatWithCriticalTemperature"))
     {
-        return createGeneralWaterVapourLatentHeat(config);
+        return createWaterVapourLatentHeatWithCriticalTemperature(config);
     }
 
     // If none of the above property types are found, OGS throws an error.

@@ -9,7 +9,7 @@
  * Created on March 19, 2021, 11:49 AM
  */
 
-#include "GeneralWaterVapourLatentHeat.h"
+#include "WaterVapourLatentHeatWithCriticalTemperature.h"
 
 #include <algorithm>
 #include <array>
@@ -28,7 +28,7 @@ static std::array<double, 3> constexpr a_exp = {0.3333333333333333, 0.79,
 static std::array<double, 5> constexpr b = {
     -28989.28947, -19797.03646, 28403.32283, -30382.306422, 15210.380};
 
-PropertyDataType GeneralWaterVapourLatentHeat::value(
+PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::value(
     const VariableArray& variable_array,
     const ParameterLib::SpatialPosition& /*pos*/, const double /*t*/,
     const double /*dt*/) const
@@ -60,7 +60,7 @@ PropertyDataType GeneralWaterVapourLatentHeat::value(
     return 1000.0 * L_w;
 }
 
-PropertyDataType GeneralWaterVapourLatentHeat::dValue(
+PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
@@ -97,7 +97,8 @@ PropertyDataType GeneralWaterVapourLatentHeat::dValue(
     }
 
     OGS_FATAL(
-        "GeneralWaterVapourLatentHeat::dValue is implemented for "
+        "WaterVapourLatentHeatWithCriticalTemperature::dValue is implemented "
+        "for "
         "the derivative with respect to temperature only.");
 }
 

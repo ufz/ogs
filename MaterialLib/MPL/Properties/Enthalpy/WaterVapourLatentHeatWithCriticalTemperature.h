@@ -19,7 +19,8 @@ namespace MaterialPropertyLib
 class Phase;
 
 /**
- * \brief A general latent heat model of vaporisation of water.
+ * \brief A latent heat model of vaporisation of water considering the critical
+ *  temperature.
  *
  *  The model uses an equation for a general expression of the latent heat of
  *  vaporisation of water in the vicinity of and far away from the critical
@@ -53,17 +54,13 @@ class Phase;
  *  MaterialPropertyLib::LinearWaterVapourLatentHeat
  *  is given in the following figure.
  *
- *  \image{inline} html general_latent_heat_water_vapour.png ""
- *
- *  Based on the comparison, a conclusion can be drawn such that
- *  the linear model can be applied for the applications with temperature
- *  below 400 K.
+ *  \image{inline} html latent_heat_water_vapour_with_critical_T.png ""
  *
  */
-class GeneralWaterVapourLatentHeat final : public Property
+class WaterVapourLatentHeatWithCriticalTemperature final : public Property
 {
 public:
-    explicit GeneralWaterVapourLatentHeat(std::string name)
+    explicit WaterVapourLatentHeatWithCriticalTemperature(std::string name)
     {
         name_ = std::move(name);
     }
@@ -73,7 +70,8 @@ public:
         if (!std::holds_alternative<Phase*>(scale_))
         {
             OGS_FATAL(
-                "The property 'GeneralWaterVapourLatentHeat' is "
+                "The property 'WaterVapourLatentHeatWithCriticalTemperature' "
+                "is "
                 "implemented on the 'phase' scale only.");
         }
     }
