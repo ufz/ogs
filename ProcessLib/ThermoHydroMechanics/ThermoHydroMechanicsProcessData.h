@@ -45,6 +45,11 @@ struct ThermoHydroMechanicsProcessData
         int,
         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
+
+    /// Optional, initial stress field. A symmetric tensor, short vector
+    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
+    ParameterLib::Parameter<double> const* const initial_stress;
+
     ParameterLib::Parameter<double> const& reference_temperature;
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.
