@@ -84,8 +84,7 @@ endfunction()
 # Replacement for add_library() for ogs targets
 function(ogs_add_library targetName)
     foreach(file ${ARGN})
-        # cmake-lint: disable=E1126
-        file(REAL_PATH ${file} file_path)
+        get_filename_component(file_path ${file} REALPATH)
         list(APPEND files ${file_path})
     endforeach()
 
