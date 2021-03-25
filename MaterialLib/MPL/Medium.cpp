@@ -32,14 +32,16 @@ Phase const& Medium::phase(std::size_t const index) const
     return *phases_[index];
 }
 
-Phase const& Medium::phase(std::string const& name) const
+Phase const& Medium::phase(std::string const& phase_name) const
 {
     return *BaseLib::findElementOrError(
         phases_.begin(), phases_.end(),
-        [&name](std::unique_ptr<MaterialPropertyLib::Phase> const& phase) {
-            return phase->name == name;
+        [&phase_name](
+            std::unique_ptr<MaterialPropertyLib::Phase> const& phase) {
+            return phase->name == phase_name;
         },
-        "Could not find phase name '" + name + "'.");
+        "Could not find phase name '" + phase_name + "'.");
+}
 
 bool Medium::hasPhase(std::string const& phase_name) const
 {
