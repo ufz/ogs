@@ -85,7 +85,7 @@
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>5e-14</value>
+                    <value>493.5e-16</value>
                 </property>
             </properties>
         </medium>
