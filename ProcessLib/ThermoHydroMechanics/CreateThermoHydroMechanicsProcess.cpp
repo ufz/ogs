@@ -158,10 +158,19 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
+    // Initial stress conditions
+    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
+        //! \ogs_file_param_special{prj__processes__process__THERMO_HYDRO_MECHANICS__initial_stress}
+        config, "initial_stress", parameters,
+        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
+        &mesh);
+
     ThermoHydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
         std::move(solid_constitutive_relations),
+        initial_stress,
         reference_temperature,
         specific_body_force};
 
