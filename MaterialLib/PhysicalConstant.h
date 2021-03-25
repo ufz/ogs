@@ -19,7 +19,7 @@ namespace MaterialLib
 namespace PhysicalConstant
 {
 /// Zero degrees Celsius in Kelvin
-const double CelsiusZeroInKelvin = 273.15;
+constexpr double CelsiusZeroInKelvin = 273.15;
 
 /**
   Ideal gas constant in SI standard units (J \per{mol} \per{K})
@@ -28,7 +28,7 @@ const double CelsiusZeroInKelvin = 273.15;
   - Date visited:         2015-04-17
   - Standard uncertainty: 0.000 0075 J mol^-1 K^-1
 */
-const double IdealGasConstant = 8.3144621;
+constexpr double IdealGasConstant = 8.3144621;
 
 /**
  * Molar masses of certain elements and chemical compounds
@@ -45,7 +45,7 @@ namespace MolarMass
  * 15.999 77] g/mol
  * and the molar mass of H is in the range [1.007 84, 1.008 11] g/mol
  */
-const double Water = 0.018016;  ///< kg \per{mol}
+constexpr double Water = 0.018016;  ///< kg \per{mol}
 
 /**
  * Nitrogen N<sub>2</sub>.
@@ -56,7 +56,7 @@ const double Water = 0.018016;  ///< kg \per{mol}
  * According to the IUPAC report the molar mass of N is in the range [14.006 43,
  * 14.007 28] g/mol
  */
-const double N2 = 0.028013;  ///< kg \per{mol}
+constexpr double N2 = 0.028013;  ///< kg \per{mol}
 
 /**
  * Oxygen O<sub>2</sub>.
@@ -67,21 +67,21 @@ const double N2 = 0.028013;  ///< kg \per{mol}
  * According to the IUPAC report the molar mass of O is in the range [15.999 03,
  * 15.999 77] g/mol
  */
-const double O2 = 0.032;  ///< kg \per{mol}
+constexpr double O2 = 0.032;  ///< kg \per{mol}
 
 /**
  * Air.
  *
  * - Source: http://www.engineeringtoolbox.com/molecular-mass-air-d_679.html
  */
-const double Air = 0.02897;  ///< kg \per{mol}
+constexpr double Air = 0.02897;  ///< kg \per{mol}
 
 /**
  * Hydrogen.
  *
  * - Source: https://pubchem.ncbi.nlm.nih.gov/compound/Hydrogen
  */
-const double H2 = 0.002016;  ///< kg \per{mol}
+constexpr double H2 = 0.002016;  ///< kg \per{mol}
 }  // namespace MolarMass
 
 /**
@@ -92,7 +92,7 @@ const double H2 = 0.002016;  ///< kg \per{mol}
 namespace SpecificGasConstant
 {
 /// Specific gas constant for water vapour.
-const double WaterVapour = IdealGasConstant / MolarMass::Water;  // = 461.504;
+constexpr double WaterVapour = IdealGasConstant / MolarMass::Water;  // = 461.504;
 }  // namespace SpecificGasConstant
 /**
 * Henry's law constant
@@ -105,7 +105,7 @@ namespace HenryConstant
 * De Nevers N. Physical and chemical equilibrium for chemical engineers[M].
 * John Wiley & Sons, 2012.
 */
-double const HenryConstantH2 = 7.65e-6;  /// mol/Pa./m3
+constexpr double HenryConstantH2 = 7.65e-6;  /// mol/Pa./m3
 }  // namespace HenryConstant
 }  // namespace PhysicalConstant
 }  // namespace MaterialLib
