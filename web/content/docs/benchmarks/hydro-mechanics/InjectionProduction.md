@@ -60,7 +60,7 @@ All parameters are concluded in the following tables.
 </tr>
 <tr class="odd">
 <td align="left">Permeability</td>
-<td align="left">$50\cdot 10^{-15}$</td>
+<td align="left">$493.5\cdot 10^{-16}$</td>
 <td align="left">m$^2$</td>
 </tr>
 <tr class="even">
@@ -176,7 +176,7 @@ All parameters are concluded in the following tables.
 The gravity related terms are neglected in both: the Darcy velocity and the momentum balance equation.
 
 Note that 100 time steps were used for the following results, whereas the provided input file is set to 1 time step (1 day = 86400 s).
-Kim plots his results over nondimensional time, referring to the time at which the produced fluid volume equals the domain volume (1500 days).
+Kim plots his results over nondimensional time, referring to the time at which the produced fluid volume equals the pore volume of the domain (450 days).
 
 {{< img src="../InjectionProduction_results.png" >}}
 _Pressure at observation point (marked by circle) versus time (t=0...100 days) and spatial pressure distribution at t=100 days_
