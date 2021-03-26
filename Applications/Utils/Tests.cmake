@@ -570,7 +570,7 @@ MeshTest(
 )
 
 AddTest(
-    NAME ReviseMesh_Test
+    NAME ReviseMesh_Test_Arrays
     PATH MeshLib/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE reviseMesh
@@ -581,3 +581,8 @@ AddTest(
     basin_mesh.vtu basin_mesh_fixed.vtu head head 0 0
     basin_mesh.vtu basin_mesh_fixed.vtu MaterialIDs MaterialIDs 0 0
 )
+# Execute tests in order to prevent race condition
+if(TEST reviseMesh-ReviseMesh_Test_Arrays)
+    set_tests_properties(reviseMesh-ReviseMesh_Test_Arrays
+        PROPERTIES DEPENDS reviseMesh-ReviseMesh_Test)
+endif()
