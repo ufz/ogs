@@ -32,10 +32,12 @@ struct DeactivatedSubdomainMesh
 {
     DeactivatedSubdomainMesh(
         std::unique_ptr<MeshLib::Mesh> deactivated_subdomain_mesh_,
-        std::vector<MeshLib::Node*>&& inner_nodes_);
+        std::vector<MeshLib::Node*>&& inner_nodes_,
+        std::vector<MeshLib::Node*>&& outer_nodes_);
 
     std::unique_ptr<MeshLib::Mesh> const mesh;
     std::vector<MeshLib::Node*> const inner_nodes;
+    std::vector<MeshLib::Node*> const outer_nodes;
 };
 
 /// Time depend subdomain deactivation.

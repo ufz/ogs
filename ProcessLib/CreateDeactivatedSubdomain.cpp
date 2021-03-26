@@ -21,10 +21,10 @@
 namespace ProcessLib
 {
 template <typename IsActive>
-static std::vector<MeshLib::Node*> extractInnerNodes(
-    MeshLib::Mesh const& mesh,
-    MeshLib::Mesh const& sub_mesh,
-    IsActive is_active)
+static std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
+extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
+                          MeshLib::Mesh const& sub_mesh,
+                          IsActive is_active)
 {
     auto* const bulk_node_ids =
         sub_mesh.getProperties().template getPropertyVector<std::size_t>(
@@ -38,21 +38,25 @@ static std::vector<MeshLib::Node*> extractInnerNodes(
 
     std::vector<MeshLib::Node*> inner_nodes;
     // Reserve for more than needed, but not much, because almost all nodes will
-    // be found and copied.
+    // be the inner nodes.
     inner_nodes.reserve(sub_mesh.getNumberOfNodes());
-    std::copy_if(begin(sub_mesh.getNodes()), end(sub_mesh.getNodes()),
-                 back_inserter(inner_nodes), [&](MeshLib::Node* const n) {
-                     auto const bulk_node =
-                         mesh.getNode((*bulk_node_ids)[n->getID()]);
-                     const auto& connected_elements = bulk_node->getElements();
 
-                     // Check whether this node is connected to an active
-                     // element.
-                     return std::all_of(begin(connected_elements),
-                                        end(connected_elements), is_active);
-                 });
+    std::vector<MeshLib::Node*> outer_nodes;
 
-    return inner_nodes;
+    std::partition_copy(
+        begin(sub_mesh.getNodes()), end(sub_mesh.getNodes()),
+        back_inserter(inner_nodes), back_inserter(outer_nodes),
+        [&](MeshLib::Node* const n) {
+            auto const bulk_node = mesh.getNode((*bulk_node_ids)[n->getID()]);
+            const auto& connected_elements = bulk_node->getElements();
+
+            // Check whether this node is connected only to an active
+            // elements. Then it is an inner node, and outer otherwise.
+            return std::all_of(begin(connected_elements),
+                               end(connected_elements), is_active);
+        });
+
+    return {std::move(inner_nodes), std::move(outer_nodes)};
 }
 
 static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
@@ -75,9 +79,10 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
         "deactivate_subdomain_" + std::to_string(material_id),
         MeshLib::cloneElements(deactivated_elements));
 
-    auto inner_nodes = extractInnerNodes(mesh, *sub_mesh, is_active);
-    return std::make_unique<DeactivatedSubdomainMesh>(std::move(sub_mesh),
-                                                      std::move(inner_nodes));
+    auto [inner_nodes, outer_nodes] =
+        extractInnerAndOuterNodes(mesh, *sub_mesh, is_active);
+    return std::make_unique<DeactivatedSubdomainMesh>(
+        std::move(sub_mesh), std::move(inner_nodes), std::move(outer_nodes));
 }
 
 static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(

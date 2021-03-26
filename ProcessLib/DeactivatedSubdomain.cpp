@@ -24,9 +24,11 @@ const std::string DeactivatedSubdomain::zero_parameter_name =
 
 DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
     std::unique_ptr<MeshLib::Mesh> deactivated_subdomain_mesh_,
-    std::vector<MeshLib::Node*>&& inner_nodes_)
+    std::vector<MeshLib::Node*>&& inner_nodes_,
+    std::vector<MeshLib::Node*>&& outer_nodes_)
     : mesh(std::move(deactivated_subdomain_mesh_)),
-      inner_nodes(std::move(inner_nodes_))
+      inner_nodes(std::move(inner_nodes_)),
+      outer_nodes(std::move(outer_nodes_))
 {
 }
 
