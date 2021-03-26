@@ -36,7 +36,10 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
 
 /// creates a vector of sampling points based on the specified resolution
@@ -268,6 +271,78 @@ MeshLib::Mesh* removeLineElements(MeshLib::Mesh const& mesh)
     return MeshLib::removeElements(mesh, line_idx, "mesh");
 }
 
+void writeBoundary(MeshLib::Mesh const& mesh,
+                   std::vector<std::size_t> const& idx_array,
+                   std::string const& file_name)
+{
+    std::unique_ptr<MeshLib::Mesh> const boundary(
+        MeshLib::removeElements(mesh, idx_array, "mesh"));
+    if (boundary == nullptr)
+    {
+        ERR("Error extracting boundary '{:s}'", file_name);
+        return;
+    }
+    MeshLib::IO::VtuInterface vtu(boundary.get());
+    vtu.writeToFile(file_name + ".vtu");
+}
+
+void extractBoundaries(MeshLib::Mesh const& mesh,
+                       std::string const& output_name,
+                       MathLib::Point3d const& pnt_start)
+{
+    double const eps = mesh.getMinEdgeLength() / 100.0;
+    std::unique_ptr<MeshLib::Mesh> boundary_mesh(
+        MeshLib::BoundaryExtraction::getBoundaryElementsAsMesh(
+            mesh, "bulk_node_ids", "bulk_element_ids", "bulk_face_ids"));
+
+    auto const& elems = boundary_mesh->getElements();
+    std::vector<std::size_t> left_bound_idx, right_bound_idx, top_bound_idx,
+        bottom_bound_idx;
+    Eigen::Vector2d const anchor(pnt_start[0], pnt_start[1]);
+    for (auto e : elems)
+    {
+        Eigen::Vector2d const n1((*e->getNode(0))[0], (*e->getNode(0))[1]);
+        Eigen::Vector2d const n2((*e->getNode(1))[0], (*e->getNode(1))[1]);
+        Eigen::Vector2d const dist1(n1 - anchor);
+        Eigen::Vector2d const dist2(n2 - anchor);
+        std::size_t const id = e->getID();
+        // elements located at left or right side
+        if ((dist1 - dist2).squaredNorm() < eps)
+        {
+            top_bound_idx.push_back(id);
+            bottom_bound_idx.push_back(id);
+
+            if (dist1.squaredNorm() < eps)
+            {
+                right_bound_idx.push_back(id);
+            }
+            else
+            {
+                left_bound_idx.push_back(id);
+            }
+            continue;
+        }
+        // elements located at top or bottom
+        if (dist2.squaredNorm() < dist1.squaredNorm() )
+        {
+            top_bound_idx.push_back(id);
+            left_bound_idx.push_back(id);
+            right_bound_idx.push_back(id);
+        }
+        else
+        {
+            bottom_bound_idx.push_back(id);
+            left_bound_idx.push_back(id);
+            right_bound_idx.push_back(id);
+        }
+    }
+
+    writeBoundary(*boundary_mesh, left_bound_idx, output_name + "_left");
+    writeBoundary(*boundary_mesh, right_bound_idx, output_name + "_right");
+    writeBoundary(*boundary_mesh, top_bound_idx, output_name + "_top");
+    writeBoundary(*boundary_mesh, bottom_bound_idx, output_name + "_bottom");
+}
+
 int main(int argc, char* argv[])
 {
     QCoreApplication a(argc, argv);
@@ -286,6 +361,8 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::SwitchArg test_arg("t", "testdata", "keep test data", false);
     cmd.add(test_arg);
+    TCLAP::SwitchArg bound_arg("b", "bounds", "save mesh boundaries", false);
+    cmd.add(bound_arg);
     TCLAP::ValueArg<double> res_arg(
         "r", "resolution",
         "desired edge length of triangles in the resulting slice.", true, 0,
@@ -375,7 +452,17 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    MeshLib::IO::VtuInterface vtu(new_mesh.get());
+    // collapse all nodes that might have been created due to gmsh physically
+    // separating layers
+    MeshLib::MeshRevision rev(*new_mesh);
+    std::unique_ptr<MeshLib::Mesh> revised_mesh(
+        rev.simplifyMesh("RevisedMesh", new_mesh->getMinEdgeLength() / 100.0));
+
+    if (bound_arg.getValue())
+    {
+        extractBoundaries(*revised_mesh, output_name, pnt_start);
+    }
+    MeshLib::IO::VtuInterface vtu(revised_mesh.get());
     vtu.writeToFile(output_name + ".vtu");
     return EXIT_SUCCESS;
 }
