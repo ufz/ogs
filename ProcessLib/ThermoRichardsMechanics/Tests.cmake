@@ -74,6 +74,24 @@ AddTest(
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu sigma sigma 200.0 200.0
 )
 
+AddTest(
+    NAME ThermoRichardsMechanics_TaskCDECOVALEX2023
+    PATH ThermoRichardsMechanics/TaskCDECOVALEX2023
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Decovalex-0.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu sigma sigma 1e-9 1e-8
+    Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu displacement displacement 1e-10 1e-12
+    Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu saturation saturation 1e-10 1e-12
+    Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu temperature temperature 1e-10 1e-12
+    Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu velocity velocity 1e-10 1e-12
+    Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu liquid_density liquid_density 1e-10 1e-11
+)
+
 #PETSc
 AddTest(
     NAME ParallelFEM_ThermoRichardsMechanics_3D_ThermoElastic_Stress_Analysis
