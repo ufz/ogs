@@ -578,8 +578,8 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
-    basin_mesh.vtu basin_mesh_fixed.vtu head head 0 0
-    basin_mesh.vtu basin_mesh_fixed.vtu MaterialIDs MaterialIDs 0 0
+    basin_mesh_fixed.vtu basin_mesh_fixed.vtu head head 0 0
+    basin_mesh_fixed.vtu basin_mesh_fixed.vtu MaterialIDs MaterialIDs 0 0
 )
 # Execute tests in order to prevent race condition
 if(TEST reviseMesh-ReviseMesh_Test_Arrays)
