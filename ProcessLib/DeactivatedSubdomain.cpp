@@ -16,6 +16,7 @@
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
 {
@@ -38,11 +39,13 @@ DeactivatedSubdomain::DeactivatedSubdomain(
         line_segment,
     std::vector<int>&& materialIDs_,
     std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
-        deactivated_subdomain_meshes_)
+        deactivated_subdomain_meshes_,
+    ParameterLib::Parameter<double> const* const boundary_value_parameter)
     : time_interval(std::move(time_interval_)),
       line_segment(line_segment),
       materialIDs(std::move(materialIDs_)),
-      deactivated_subdomain_meshes(std::move(deactivated_subdomain_meshes_))
+      deactivated_subdomain_meshes(std::move(deactivated_subdomain_meshes_)),
+      boundary_value_parameter(boundary_value_parameter)
 {
 }
 

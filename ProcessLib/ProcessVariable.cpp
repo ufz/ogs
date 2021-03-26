@@ -105,7 +105,7 @@ ProcessVariable::ProcessVariable(
       //! \ogs_file_param{prj__process_variables__process_variable__order}
       _shapefunction_order(config.getConfigParameter<unsigned>("order")),
       _deactivated_subdomains(
-          createDeactivatedSubdomains(config, mesh, curves)),
+          createDeactivatedSubdomains(config, mesh, parameters, curves)),
       _initial_condition(ParameterLib::findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),

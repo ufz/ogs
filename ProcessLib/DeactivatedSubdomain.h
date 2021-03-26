@@ -26,6 +26,12 @@ class Mesh;
 class Node;
 }  // namespace MeshLib
 
+namespace ParameterLib
+{
+template <typename T>
+struct Parameter;
+}
+
 namespace ProcessLib
 {
 struct DeactivatedSubdomainMesh
@@ -67,7 +73,8 @@ struct DeactivatedSubdomain
             line_segment,
         std::vector<int>&& materialIDs_,
         std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
-            deactivated_subdomain_meshes_);
+            deactivated_subdomain_meshes_,
+        ParameterLib::Parameter<double> const* boundary_value_parameter);
 
     bool includesTimeOf(double const t) const;
 
@@ -88,6 +95,10 @@ struct DeactivatedSubdomain
 
     std::vector<std::unique_ptr<DeactivatedSubdomainMesh>> const
         deactivated_subdomain_meshes;
+
+    /// A pararameter for the optional Dirichlet boundary condition applied on
+    /// the surface of the deactivated subdomain/excavation.
+    ParameterLib::Parameter<double> const* const boundary_value_parameter;
 
     static const std::string zero_parameter_name;
 };
