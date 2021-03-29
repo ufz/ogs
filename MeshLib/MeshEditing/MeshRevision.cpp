@@ -47,7 +47,8 @@ unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
 }
 
 MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
-                                          double eps, unsigned min_elem_dim)
+                                          double eps,
+                                          unsigned min_elem_dim) const
 {
     if (this->_mesh.getNumberOfElements() == 0)
     {

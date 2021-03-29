@@ -68,7 +68,7 @@ public:
      *                      mesh to contain 2D elements)
      */
     MeshLib::Mesh* simplifyMesh(const std::string& new_mesh_name, double eps,
-                                unsigned min_elem_dim = 1);
+                                unsigned min_elem_dim = 1) const;
 
 private:
     /// Constructs a new node vector for the resulting mesh by removing all
