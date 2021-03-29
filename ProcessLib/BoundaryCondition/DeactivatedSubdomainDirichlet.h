@@ -44,6 +44,7 @@ public:
         std::vector<std::size_t> const* active_element_ids,
         MathLib::PiecewiseLinearInterpolation time_interval,
         ParameterLib::Parameter<double> const& parameter,
+        bool const set_outer_nodes_dirichlet_values,
         DeactivatedSubdomainMesh const& subdomain,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, int const component_id);
@@ -66,5 +67,7 @@ private:
 
     MathLib::PiecewiseLinearInterpolation const _time_interval;
     std::vector<std::size_t> const* _active_element_ids = nullptr;
+
+    bool const _set_outer_nodes_dirichlet_values;
 };
 }  // namespace ProcessLib
