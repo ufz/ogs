@@ -558,3 +558,31 @@ AddTest(
     DIFF_DATA
     PrismBHE_elev.vtu
 )
+
+MeshTest(
+    NAME ReviseMesh_Test
+    PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE reviseMesh
+    EXECUTABLE_ARGS -i basin_mesh.vtu -o ${Data_BINARY_DIR}/MeshLib/basin_mesh_fixed.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA basin_mesh_fixed.vtu basin_mesh_fixed.vtu 1e-16
+)
+
+AddTest(
+    NAME ReviseMesh_Test_Arrays
+    PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    EXECUTABLE reviseMesh
+    EXECUTABLE_ARGS -i basin_mesh.vtu -o ${Data_BINARY_DIR}/MeshLib/basin_mesh_fixed.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    basin_mesh_fixed.vtu basin_mesh_fixed.vtu head head 0 0
+    basin_mesh_fixed.vtu basin_mesh_fixed.vtu MaterialIDs MaterialIDs 0 0
+)
+# Execute tests in order to prevent race condition
+if(TEST reviseMesh-ReviseMesh_Test_Arrays)
+    set_tests_properties(reviseMesh-ReviseMesh_Test_Arrays
+        PROPERTIES DEPENDS reviseMesh-ReviseMesh_Test)
+endif()

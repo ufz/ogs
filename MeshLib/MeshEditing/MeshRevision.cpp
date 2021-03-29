@@ -54,23 +54,12 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
         return nullptr;
     }
 
-    // original data
     std::vector<MeshLib::Element*> const& elements(this->_mesh.getElements());
-    MeshLib::Properties const& properties(_mesh.getProperties());
-
-    // data structures for the new mesh
+    auto const node_ids = collapseNodeIndices(eps);
     std::vector<MeshLib::Node*> new_nodes =
-        this->constructNewNodesArray(this->collapseNodeIndices(eps));
+        this->constructNewNodesArray(node_ids);
     std::vector<MeshLib::Element*> new_elements;
-    MeshLib::Properties new_properties;
-    PropertyVector<int>* new_material_vec = nullptr;
-    PropertyVector<int> const* material_vec = nullptr;
-    if (properties.existsPropertyVector<int>("MaterialIDs"))
-    {
-        material_vec = properties.getPropertyVector<int>("MaterialIDs");
-        new_material_vec = new_properties.createNewPropertyVector<int>(
-            "MaterialIDs", MeshItemType::Cell, 1);
-    }
+    std::vector<std::size_t> element_ids;
 
     for (std::size_t k(0); k < elements.size(); ++k)
     {
@@ -91,21 +80,12 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
                     BaseLib::cleanupVectorElements(new_nodes, new_elements);
                     return nullptr;
                 }
-                if (material_vec)
-                {
-                    new_material_vec->insert(new_material_vec->end(),
-                                             n_new_elements,
-                                             (*material_vec)[k]);
-                }
+                element_ids.insert(element_ids.end(), n_new_elements, k);
             }
             else
             {
                 new_elements.push_back(MeshLib::copyElement(elem, new_nodes));
-                // copy material values
-                if (material_vec)
-                {
-                    new_material_vec->push_back((*material_vec)[k]);
-                }
+                element_ids.push_back(k);
             }
         }
         else if (n_unique_nodes < elem->getNumberOfBaseNodes() &&
@@ -113,18 +93,17 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
         {
             std::size_t const n_new_elements(reduceElement(
                 elem, n_unique_nodes, new_nodes, new_elements, min_elem_dim));
-            if (!material_vec)
-            {
-                continue;
-            }
-            new_material_vec->insert(new_material_vec->end(), n_new_elements,
-                                     (*material_vec)[k]);
+            element_ids.insert(element_ids.end(), n_new_elements, k);
         }
         else
         {
             ERR("Something is wrong, more unique nodes than actual nodes");
         }
     }
+
+    auto const& props = _mesh.getProperties();
+    MeshLib::Properties const new_properties =
+        copyProperties(props, node_ids, element_ids);
 
     this->resetNodeIDs();
     if (!new_elements.empty())
@@ -249,6 +228,101 @@ void MeshRevision::resetNodeIDs()
     {
         nodes[i]->setID(i);
     }
+}
+
+template <typename T>
+void fillNodeProperty(std::vector<T>& new_prop,
+                      std::vector<T> const& old_prop,
+                      std::vector<size_t>
+                          node_ids)
+{
+    std::size_t const n_nodes = node_ids.size();
+    for (std::size_t i = 0; i < n_nodes; ++i)
+    {
+        if (node_ids[i] != i)
+        {
+            continue;
+        }
+        new_prop.push_back(old_prop[i]);
+    }
+}
+
+template <typename T>
+void fillElemProperty(std::vector<T>& new_prop,
+                      std::vector<T> const& old_prop,
+                      std::vector<size_t>
+                          elem_ids)
+{
+    std::transform(elem_ids.cbegin(), elem_ids.cend(),
+                   std::back_inserter(new_prop),
+                   [&](std::size_t const i) { return old_prop[i]; });
+}
+
+MeshLib::Properties MeshRevision::copyProperties(
+    MeshLib::Properties const& props,
+    std::vector<std::size_t> const& node_ids,
+    std::vector<std::size_t> const& elem_ids)
+{
+    auto const prop_names = props.getPropertyVectorNames();
+    MeshLib::Properties new_properties;
+
+    for (auto name : prop_names)
+    {
+        if (props.existsPropertyVector<int>(name, MeshItemType::Node, 1))
+        {
+            auto p = props.getPropertyVector<int>(name, MeshItemType::Node, 1);
+            auto new_node_vec = new_properties.createNewPropertyVector<int>(
+                name, MeshItemType::Node, 1);
+            fillNodeProperty(*new_node_vec, *p, node_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<float>(name, MeshItemType::Node, 1))
+        {
+            auto p =
+                props.getPropertyVector<float>(name, MeshItemType::Node, 1);
+            auto new_node_vec = new_properties.createNewPropertyVector<float>(
+                name, MeshItemType::Node, 1);
+            fillNodeProperty(*new_node_vec, *p, node_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<double>(name, MeshItemType::Node, 1))
+        {
+            auto p =
+                props.getPropertyVector<double>(name, MeshItemType::Node, 1);
+            auto new_node_vec = new_properties.createNewPropertyVector<double>(
+                name, MeshItemType::Node, 1);
+            fillNodeProperty(*new_node_vec, *p, node_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<int>(name, MeshItemType::Cell, 1))
+        {
+            auto p = props.getPropertyVector<int>(name, MeshItemType::Cell, 1);
+            auto new_cell_vec = new_properties.createNewPropertyVector<int>(
+                name, MeshItemType::Cell, 1);
+            fillElemProperty(*new_cell_vec, *p, elem_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<float>(name, MeshItemType::Cell, 1))
+        {
+            auto p =
+                props.getPropertyVector<float>(name, MeshItemType::Cell, 1);
+            auto new_cell_vec = new_properties.createNewPropertyVector<float>(
+                name, MeshItemType::Cell, 1);
+            fillElemProperty(*new_cell_vec, *p, elem_ids);
+            continue;
+        }
+        if (props.existsPropertyVector<double>(name, MeshItemType::Cell, 1))
+        {
+            auto p =
+                props.getPropertyVector<double>(name, MeshItemType::Cell, 1);
+            auto new_cell_vec = new_properties.createNewPropertyVector<double>(
+                name, MeshItemType::Cell, 1);
+            fillElemProperty(*new_cell_vec, *p, elem_ids);
+            continue;
+        }
+        WARN("PropertyVector {:s} not being converted.", name);
+    }
+    return new_properties;
 }
 
 std::size_t MeshRevision::subdivideElement(

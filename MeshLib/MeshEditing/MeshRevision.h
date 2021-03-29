@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+#include "MeshLib/Properties.h"
+
 // forward declaration
 namespace MeshLib
 {
@@ -82,6 +84,16 @@ private:
     /// Resets the node IDs of the source mesh (needs to be called after
     /// everything is done).
     void resetNodeIDs();
+
+    /**
+     * Copies all scalar arrays according to the restructured Node- and
+     * Element-vectors after the mesh revision process (i.e. collapsed nodes,
+     * split elements, etc.)
+     */
+    MeshLib::Properties copyProperties(
+        MeshLib::Properties const& props,
+        std::vector<std::size_t> const& node_ids,
+        std::vector<std::size_t> const& elem_ids);
 
     /// Subdivides an element if it has a face that is not coplanar
     /// @param element the element that will be subdivided

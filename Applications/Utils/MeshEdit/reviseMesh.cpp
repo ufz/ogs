@@ -28,25 +28,33 @@
 int main(int argc, char *argv[])
 {
     TCLAP::CmdLine cmd(
-        "Mesh revision tool.\n\n"
+        "Revises meshes by collapsing duplicate nodes, (optionally) removing "
+        "elements of lower dimension than the mesh itself, and subdividing "
+        "geometrically broken mesh elements.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file","input mesh file",true,"","string");
-    cmd.add( input_arg );
-    TCLAP::ValueArg<std::string> output_arg("o", "output-mesh-file","output mesh file",true,"","string");
-    cmd.add( output_arg );
-    TCLAP::SwitchArg simplify_arg("s","simplify","simplify the mesh (removing duplicated nodes)");
-    cmd.add( simplify_arg );
-    TCLAP::ValueArg<double> eps_arg("e", "eps","Minimum distance for nodes not to be collapsed",
-                                    false, std::numeric_limits<double>::epsilon(),"float");
-    cmd.add( eps_arg );
-    TCLAP::ValueArg<unsigned> minDim_arg("d", "min-ele-dim","Minimum dimension of elements to be inserted into new mesh",
-                                    false, 1, "unsigned");
-    cmd.add( minDim_arg );
+    TCLAP::ValueArg<unsigned> minDim_arg(
+        "d", "min-ele-dim",
+        "Minimum dimension of elements to be inserted into new mesh", false, 1,
+        "unsigned");
+    cmd.add(minDim_arg);
+
+    TCLAP::ValueArg<double> eps_arg(
+        "e", "eps", "Minimum distance for nodes not to be collapsed", false,
+        std::numeric_limits<double>::epsilon(), "float");
+    cmd.add(eps_arg);
+
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output-mesh-file", "output mesh file", true, "", "string");
+    cmd.add(output_arg);
+
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input-mesh-file", "input mesh file", true, "", "string");
+    cmd.add(input_arg);
     cmd.parse( argc, argv );
 
     // read a mesh file
@@ -60,14 +68,11 @@ int main(int argc, char *argv[])
          org_mesh->getNumberOfElements());
 
     // revise the mesh
-    std::unique_ptr<MeshLib::Mesh> new_mesh;
-    if (simplify_arg.getValue()) {
-        INFO("Simplifying the mesh...");
-        MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*org_mesh));
-        unsigned int minDim = (minDim_arg.isSet() ? minDim_arg.getValue() : org_mesh->getDimension());
-        new_mesh.reset(
-            rev.simplifyMesh("revised_mesh", eps_arg.getValue(), minDim));
-    }
+    INFO("Simplifying the mesh...");
+    MeshLib::MeshRevision rev(const_cast<MeshLib::Mesh&>(*org_mesh));
+    unsigned int minDim = (minDim_arg.isSet() ? minDim_arg.getValue() : org_mesh->getDimension());
+    std::unique_ptr<MeshLib::Mesh> new_mesh(
+        rev.simplifyMesh("revised_mesh", eps_arg.getValue(), minDim));
 
     // write into a file
     if (new_mesh) {
