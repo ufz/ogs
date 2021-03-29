@@ -89,7 +89,7 @@ private:
     MeshLib::Properties copyProperties(
         MeshLib::Properties const& props,
         std::vector<std::size_t> const& node_ids,
-        std::vector<std::size_t> const& elem_ids);
+        std::vector<std::size_t> const& elem_ids) const;
 
     /// Subdivides an element if it has a face that is not coplanar
     /// @param element the element that will be subdivided
