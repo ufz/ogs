@@ -81,10 +81,6 @@ private:
     static unsigned getNumberOfUniqueNodes(
         MeshLib::Element const* const element);
 
-    /// Resets the node IDs of the source mesh (needs to be called after
-    /// everything is done).
-    void resetNodeIDs();
-
     /**
      * Copies all scalar arrays according to the restructured Node- and
      * Element-vectors after the mesh revision process (i.e. collapsed nodes,
