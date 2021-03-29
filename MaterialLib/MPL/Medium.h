@@ -38,6 +38,10 @@ public:
     Phase const& phase(std::size_t index) const;
     /// A get-function for a particular phase by phase name.
     Phase const& phase(std::string const& phase_name) const;
+
+    /// A query for a named phase.
+    bool hasPhase(std::string const& phase_name) const;
+
     /// A get-function for a property. The argument refers to the name of the
     /// property.
     Property const& property(PropertyType const& p) const;
@@ -106,5 +110,8 @@ void checkRequiredProperties(Medium const& medium,
         }
     }
 }
+
+/// Returns a gas or aqueous liquid phase of the given medium.
+Phase const& fluidPhase(Medium const& medium);
 
 }  // namespace MaterialPropertyLib
