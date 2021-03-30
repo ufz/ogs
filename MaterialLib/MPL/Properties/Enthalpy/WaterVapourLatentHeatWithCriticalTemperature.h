@@ -85,12 +85,6 @@ public:
                             Variable const primary_variable,
                             ParameterLib::SpatialPosition const& pos,
                             double const t, double const dt) const override;
-
-private:
-    /// Critical temperature.
-    static double constexpr T_c_ =
-        373.92 + MaterialLib::PhysicalConstant::CelsiusZeroInKelvin;
-    ;
 };
 
 }  // namespace MaterialPropertyLib

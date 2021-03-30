@@ -11,22 +11,25 @@
 
 #include "WaterVapourLatentHeatWithCriticalTemperature.h"
 
-#include <algorithm>
 #include <array>
 #include <cmath>
+#include <numeric>
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/VariableType.h"
 
 namespace MaterialPropertyLib
 {
-static std::array<double, 3> constexpr a = {1989.41582, 11178.45586,
-                                            26923.68994};
-static std::array<double, 3> constexpr a_exp = {0.3333333333333333, 0.79,
-                                                1.2083333333333333};
-
-static std::array<double, 5> constexpr b = {
-    -28989.28947, -19797.03646, 28403.32283, -30382.306422, 15210.380};
+/// Critical temperature.
+constexpr double T_c =
+    373.92 + MaterialLib::PhysicalConstant::CelsiusZeroInKelvin;
+constexpr double alpha = 1. / 8.;
+constexpr double beta = 1. / 3.;
+constexpr double Delta = 0.79 - beta;
+// Coefficients a_1, a_2, a_4, b_1, ... b_5
+constexpr std::array c = {1989.41582,    11178.45586,  26923.68994,
+                          -28989.28947,  -19797.03646, 28403.32283,
+                          -30382.306422, 15210.380};
 
 PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::value(
     const VariableArray& variable_array,
@@ -36,28 +39,25 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::value(
     const double T = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
 
-    if (T >= T_c_)
+    if (T >= T_c)
     {
         return 0.0;
     }
 
-    double const tau = (T_c_ - T) / T_c_;
-    double L_w = 0.0;
-    for (std::size_t i = 0; i < a.size(); i++)
-    {
-        L_w += a[i] * std::pow(tau, a_exp[i]);
-    }
+    double const tau = (T_c - T) / T_c;
 
-    double tau_to_power_i = tau;
+    std::array v = {std::pow(tau, beta),
+                    std::pow(tau, beta + Delta),
+                    std::pow(tau, 1 - alpha + beta),
+                    tau,
+                    tau * tau,
+                    tau * tau * tau,
+                    tau * tau * tau * tau,
+                    tau * tau * tau * tau * tau};
 
-    std::for_each(b.begin(), b.end(), [&](double const b_i) {
-        L_w += b_i * tau_to_power_i;  // b_i * tau^i
-        tau_to_power_i *= tau;
-    });
-
-    // The formula gives the value in kJ/kg, and the value is return in
-    // the unit of J/kg.
-    return 1000.0 * L_w;
+    // The formula gives the value in kJ/kg, and the return value is in the
+    // units of J/kg.
+    return 1000.0 * std::transform_reduce(begin(c), end(c), begin(v), 0.);
 }
 
 PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::dValue(
@@ -65,41 +65,46 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    if (primary_variable == Variable::temperature)
+    if (primary_variable != Variable::temperature)
     {
-        const double T = std::get<double>(
-            variable_array[static_cast<int>(Variable::temperature)]);
+        OGS_FATAL(
+            "WaterVapourLatentHeatWithCriticalTemperature::dValue is "
+            "implemented "
+            "for "
+            "the derivative with respect to temperature only.");
+    }
+    const double T = std::get<double>(
+        variable_array[static_cast<int>(Variable::temperature)]);
 
-        if (T >= T_c_)
-        {
-            return 0.0;
-        }
-
-        double const tau = (T_c_ - T) / T_c_;
-        double dL_w_dtau = 0.0;
-        for (std::size_t i = 0; i < a.size(); i++)
-        {
-            dL_w_dtau += a[i] * a_exp[i] * std::pow(tau, a_exp[i] - 1.0);
-        }
-
-        double tau_to_power_i = 1.0;
-        int exponent_index = 0;
-        std::for_each(b.begin(), b.end(), [&](double const b_i) {
-            dL_w_dtau +=
-                (exponent_index + 1) * b_i * tau_to_power_i;  // b_i * dau^i/dT
-            tau_to_power_i *= tau;
-            exponent_index++;
-        });
-
-        // The formula gives the value in kJ/kg/K, and the value is return in
-        // the unit of J/kg/K.
-        return -1000.0 * dL_w_dtau / T_c_;
+    if (T >= T_c)
+    {
+        return 0.0;
     }
 
-    OGS_FATAL(
-        "WaterVapourLatentHeatWithCriticalTemperature::dValue is implemented "
-        "for "
-        "the derivative with respect to temperature only.");
+    double const tau = (T_c - T) / T_c;
+
+    constexpr std::array dc = {c[0] * beta,
+                               c[1] * (beta + Delta),
+                               c[2] * (1 - alpha + beta),
+                               c[3],
+                               c[4] * 2,
+                               c[5] * 3,
+                               c[6] * 4,
+                               c[7] * 5};
+
+    std::array v = {std::pow(tau, beta - 1),
+                    std::pow(tau, beta + Delta - 1),
+                    std::pow(tau, -alpha + beta),
+                    1.,
+                    tau,
+                    tau * tau,
+                    tau * tau * tau,
+                    tau * tau * tau * tau};
+
+    // The formula gives the value in kJ/kg/K, and the value is return in
+    // the unit of J/kg/K.
+    return -1000.0 * std::transform_reduce(begin(dc), end(dc), begin(v), 0.) /
+           T_c;
 }
 
 }  // namespace MaterialPropertyLib
