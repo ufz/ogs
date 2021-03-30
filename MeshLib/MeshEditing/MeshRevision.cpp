@@ -47,7 +47,8 @@ unsigned MeshRevision::getNumberOfCollapsableNodes(double eps) const
 }
 
 MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
-                                          double eps, unsigned min_elem_dim)
+                                          double eps,
+                                          unsigned min_elem_dim) const
 {
     if (this->_mesh.getNumberOfElements() == 0)
     {
@@ -76,7 +77,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
                 if (n_new_elements == 0)
                 {
                     ERR("Element {:d} has unknown element type.", k);
-                    this->resetNodeIDs();
+                    _mesh.resetNodeIDs();
                     BaseLib::cleanupVectorElements(new_nodes, new_elements);
                     return nullptr;
                 }
@@ -105,7 +106,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
     MeshLib::Properties const new_properties =
         copyProperties(props, node_ids, element_ids);
 
-    this->resetNodeIDs();
+    _mesh.resetNodeIDs();
     if (!new_elements.empty())
     {
         return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements,
@@ -220,16 +221,6 @@ unsigned MeshRevision::getNumberOfUniqueNodes(
     return count;
 }
 
-void MeshRevision::resetNodeIDs()
-{
-    const std::size_t nNodes(this->_mesh.getNumberOfNodes());
-    const std::vector<MeshLib::Node*>& nodes(_mesh.getNodes());
-    for (std::size_t i = 0; i < nNodes; ++i)
-    {
-        nodes[i]->setID(i);
-    }
-}
-
 template <typename T>
 void fillNodeProperty(std::vector<T>& new_prop,
                       std::vector<T> const& old_prop,
@@ -261,7 +252,7 @@ void fillElemProperty(std::vector<T>& new_prop,
 MeshLib::Properties MeshRevision::copyProperties(
     MeshLib::Properties const& props,
     std::vector<std::size_t> const& node_ids,
-    std::vector<std::size_t> const& elem_ids)
+    std::vector<std::size_t> const& elem_ids) const
 {
     auto const prop_names = props.getPropertyVectorNames();
     MeshLib::Properties new_properties;
