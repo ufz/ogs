@@ -79,7 +79,7 @@ if($ENV{CI_COMMIT_BRANCH} MATCHES "master|^v[0-9]\.[0-9]\.[0-9]")
     set(DOXYGEN_SERVER_BASED_SEARCH YES)
     set(DOXYGEN_EXTERNAL_SEARCH YES)
     set(DOXYGEN_SEARCHENGINE_URL
-        "http://doxysearch.opengeosys.org/$ENV{CI_COMMIT_BRANCH}/doxysearch.cgi"
+        "https://doxysearch.opengeosys.org/$ENV{CI_COMMIT_BRANCH}/doxysearch.cgi"
     )
     message(STATUS "Doxygen search server: ${DOXYGEN_SEARCHENGINE_URL}")
 endif()
