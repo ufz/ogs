@@ -33,7 +33,7 @@ build docs:
             netlify link --name ogs-doxygen-${CI_COMMIT_BRANCH//./-}
             netlify deploy --prod --dir=docs
         fi
-        sshpass -p $DOXYSEARCH_PW rsync -az doxysearch.db webdev@doxysearch.opengeosys.org:/var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
+        sshpass -p $DOXYSEARCH_PW rsync -az searchdata.xml webdev@doxysearch.opengeosys.org:/var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
         sshpass -p $DOXYSEARCH_PW ssh webdev@doxysearch.opengeosys.org doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
       fi
   artifacts:
