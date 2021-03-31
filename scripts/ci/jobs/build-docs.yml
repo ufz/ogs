@@ -1,6 +1,6 @@
 build docs:
   stage: build
-  tags: [shell, envinf]
+  tags: [envinf2-shell]
   dependencies: [meta]
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -20,7 +20,7 @@ build docs:
     - mkdir -p build
     - cd build
   script:
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_BUILD_PROCESSES=GroundwaterFlow
+    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_USE_POETRY=OFF -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
     - cmake --build . --target doc > >(tee make-docs.output)
     - cat DoxygenWarnings.log|grep -v 'too many nodes'
     - echo "doxygen_warnings `cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'|wc -l|xargs`" > metrics.txt
@@ -33,6 +33,8 @@ build docs:
             netlify link --name ogs-doxygen-${CI_COMMIT_BRANCH//./-}
             netlify deploy --prod --dir=docs
         fi
+        sshpass -p $DOXYSEARCH_PW rsync -az doxysearch.db webdev@doxysearch.opengeosys.org:/var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
+        sshpass -p $DOXYSEARCH_PW ssh webdev@doxysearch.opengeosys.org doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
       fi
   artifacts:
     expose_as: 'Doxygen'
