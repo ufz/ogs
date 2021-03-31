@@ -262,14 +262,15 @@ createDeactivatedSubdomains(
     {
         INFO("There are subdomains being deactivated.");
 
-        for (
-            auto subdomain_config :
-            //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain}
-            subdomains_config->getConfigSubtreeList("deactivated_subdomain"))
-        {
-            deactivated_subdomains.emplace_back(
-                createDeactivatedSubdomain(subdomain_config, mesh, curves));
-        }
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain}
+        auto const deactivated_subdomain_configs =
+            subdomains_config->getConfigSubtreeList("deactivated_subdomain");
+        std::transform(
+            begin(deactivated_subdomain_configs),
+            end(deactivated_subdomain_configs),
+            back_inserter(deactivated_subdomains), [&](auto const& config) {
+                return createDeactivatedSubdomain(config, mesh, curves);
+            });
     }
     return deactivated_subdomains;
 }
