@@ -28,7 +28,7 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
       _subdomain(subdomain),
       _variable_id(variable_id),
       _component_id(component_id),
-      _time_interval(time_interval),
+      _time_interval(std::move(time_interval)),
       _active_element_ids(active_element_ids)
 {
     config(dof_table_bulk);

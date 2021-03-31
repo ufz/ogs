@@ -119,6 +119,8 @@ static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
     if (curve_name)
     {
         DBUG("Using curve '{:s}'", *curve_name);
+        // Return a copy of the curve because the time interval in the other
+        // branch returns a temporary.
         return *BaseLib::getOrError(curves, *curve_name,
                                     "Could not find curve.");
     }
@@ -174,7 +176,7 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     auto const& curve_name =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_curve}
         config.getConfigParameterOptional<std::string>("time_curve");
-    auto const time_interval =
+    auto time_interval =
         parseTimeIntervalOrCurve(time_interval_config, curve_name, curves);
 
     auto const line_segment_config =
