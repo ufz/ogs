@@ -45,6 +45,7 @@ deploy web site:
   image: $WEB_IMAGE
   needs: ["pre commit"]
   rules:
+    - if: $CI_COMMIT_TAG
     - if: '$CI_COMMIT_BRANCH == "master"'
       changes:
         - web/**/*

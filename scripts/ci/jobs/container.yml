@@ -20,19 +20,19 @@ container:
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache --mfront
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
       $DOCKER_TAG
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
       --base_image 'centos:8' --ompi 4.0.5 --mpi_benchmarks
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DBUILD_TESTING=OFF'
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
       --gui
   artifacts:
     name: container

@@ -3,7 +3,7 @@ build docs:
   tags: [envinf2-shell]
   dependencies: [meta]
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG
       variables:
         ON_MASTER: "true"
         DEPLOY: "true"
