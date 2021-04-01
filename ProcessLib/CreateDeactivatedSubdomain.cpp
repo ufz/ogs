@@ -234,11 +234,12 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     deactivated_subdomain_meshes.reserve(
         deactivated_subdomain_material_ids.size());
 
-    for (int const id : deactivated_subdomain_material_ids)
-    {
-        deactivated_subdomain_meshes.push_back(
-            createDeactivatedSubdomainMesh(mesh, id));
-    }
+    std::transform(begin(deactivated_subdomain_material_ids),
+                   end(deactivated_subdomain_material_ids),
+                   back_inserter(deactivated_subdomain_meshes),
+                   [&](std::size_t const id) {
+                       return createDeactivatedSubdomainMesh(mesh, id);
+                   });
 
     return std::make_unique<DeactivatedSubdomain const>(
         std::move(time_interval),
