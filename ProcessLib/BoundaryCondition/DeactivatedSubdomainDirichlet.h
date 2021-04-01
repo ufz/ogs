@@ -11,8 +11,8 @@
 #include <memory>
 #include <vector>
 
-#include "BaseLib/TimeInterval.h"
 #include "BoundaryCondition.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace BaseLib
 {
@@ -41,7 +41,8 @@ class DeactivatedSubdomainDirichlet final : public BoundaryCondition
 {
 public:
     DeactivatedSubdomainDirichlet(
-        BaseLib::TimeInterval const& time_interval,
+        std::vector<std::size_t> const* active_element_ids,
+        MathLib::PiecewiseLinearInterpolation time_interval,
         ParameterLib::Parameter<double> const& parameter,
         DeactivatedSubdomainMesh const& subdomain,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
@@ -63,6 +64,7 @@ private:
     int const _variable_id;
     int const _component_id;
 
-    BaseLib::TimeInterval const _time_interval;
+    MathLib::PiecewiseLinearInterpolation const _time_interval;
+    std::vector<std::size_t> const* _active_element_ids = nullptr;
 };
 }  // namespace ProcessLib

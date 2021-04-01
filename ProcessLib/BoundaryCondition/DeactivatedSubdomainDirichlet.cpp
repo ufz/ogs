@@ -6,10 +6,8 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  */
-
 #include "DeactivatedSubdomainDirichlet.h"
 
-#include "BaseLib/TimeInterval.h"
 #include "DirichletBoundaryCondition.h"
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -20,7 +18,8 @@
 namespace ProcessLib
 {
 DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
-    BaseLib::TimeInterval const& time_interval,
+    std::vector<std::size_t> const* const active_element_ids,
+    MathLib::PiecewiseLinearInterpolation time_interval,
     ParameterLib::Parameter<double> const& parameter,
     DeactivatedSubdomainMesh const& subdomain,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
@@ -29,7 +28,8 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
       _subdomain(subdomain),
       _variable_id(variable_id),
       _component_id(component_id),
-      _time_interval(time_interval)
+      _time_interval(std::move(time_interval)),
+      _active_element_ids(active_element_ids)
 {
     config(dof_table_bulk);
 }
@@ -53,10 +53,35 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     const double t, GlobalVector const& x,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    if (_time_interval.contains(t))
+    auto const& bulk_element_ids =
+        *_subdomain.mesh->getProperties()
+             .template getPropertyVector<std::size_t>(
+                 "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
+
+    auto is_inactive = [&](MeshLib::Element const* const e) {
+        return none_of(
+            begin(*_active_element_ids), end(*_active_element_ids),
+            [&](auto const id) { return id == bulk_element_ids[e->getID()]; });
+    };
+
+    std::vector<MeshLib::Node*> inactive_nodes_in_bc_mesh;
+    std::copy_if(begin(_subdomain.inner_nodes), end(_subdomain.inner_nodes),
+                 back_inserter(inactive_nodes_in_bc_mesh),
+                 [&](MeshLib::Node* const n) {
+                     const auto& connected_elements = n->getElements();
+
+                     return std::all_of(begin(connected_elements),
+                                        end(connected_elements), is_inactive);
+                 });
+
+    auto time_interval_contains = [&](double const t) {
+        return _time_interval.getSupportMin() <= t &&
+               t <= _time_interval.getSupportMax();
+    };
+    if (time_interval_contains(t))
     {
         getEssentialBCValuesLocal(_parameter, *_subdomain.mesh,
-                                  _subdomain.inner_nodes, *_dof_table_boundary,
+                                  inactive_nodes_in_bc_mesh, *_dof_table_boundary,
                                   _variable_id, _component_id, t, x, bc_values);
         return;
     }

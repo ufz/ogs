@@ -15,7 +15,6 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
-#include "BaseLib/TimeInterval.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -23,6 +22,7 @@
 #include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
 #include "ProcessLib/BoundaryCondition/DeactivatedSubdomainDirichlet.h"
+#include "ProcessLib/CreateDeactivatedSubdomain.h"
 #include "ProcessLib/SourceTerms/CreateSourceTerm.h"
 #include "ProcessLib/SourceTerms/SourceTerm.h"
 
@@ -93,7 +93,10 @@ ProcessVariable::ProcessVariable(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
       _name(config.getConfigParameter<std::string>("name")),
       _mesh(mesh),
@@ -101,7 +104,8 @@ ProcessVariable::ProcessVariable(
       _n_components(config.getConfigParameter<int>("components")),
       //! \ogs_file_param{prj__process_variables__process_variable__order}
       _shapefunction_order(config.getConfigParameter<unsigned>("order")),
-      _deactivated_subdomains(createDeactivatedSubdomains(config, mesh)),
+      _deactivated_subdomains(
+          createDeactivatedSubdomains(config, mesh, curves)),
       _initial_condition(ParameterLib::findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
@@ -253,6 +257,7 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
                  component_id++)
             {
                 auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
+                    &_ids_of_active_elements,
                     deactivated_subdomain->time_interval, parameter,
                     *deactivated_subdomain_mesh, dof_table, variable_id,
                     component_id);
@@ -272,6 +277,8 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 
 void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
+    _ids_of_active_elements.clear();
+
     auto found_a_set =
         std::find_if(_deactivated_subdomains.begin(),
                      _deactivated_subdomains.end(),
@@ -281,27 +288,21 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 
     if (found_a_set == _deactivated_subdomains.end())
     {
-        _ids_of_active_elements.clear();
-        return;
-    }
-
-    // Already initialized.
-    if (!_ids_of_active_elements.empty())
-    {
         return;
     }
 
     auto const& deactivated_materialIDs = (*found_a_set)->materialIDs;
 
     auto const* const material_ids = MeshLib::materialIDs(_mesh);
-    _ids_of_active_elements.clear();
     auto const number_of_elements = _mesh.getNumberOfElements();
 
     for (std::size_t i = 0; i < number_of_elements; i++)
     {
+        auto const& element_center = getCenterOfGravity(*_mesh.getElement(i));
         if (std::binary_search(deactivated_materialIDs.begin(),
                                deactivated_materialIDs.end(),
-                               (*material_ids)[i]))
+                               (*material_ids)[i]) &&
+            (*found_a_set)->isDeactivated(element_center, time))
         {
             continue;
         }

@@ -50,7 +50,10 @@ public:
         BaseLib::ConfigTree const& config, MeshLib::Mesh& mesh,
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-            parameters);
+            parameters,
+        std::map<std::string,
+                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+            curves);
 
     ProcessVariable(ProcessVariable&& other);
 

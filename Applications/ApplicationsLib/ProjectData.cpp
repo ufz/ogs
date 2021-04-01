@@ -385,7 +385,7 @@ void ProjectData::parseProcessVariables(
             "Expected to find a mesh named " + mesh_name + ".");
 
         auto pv = ProcessLib::ProcessVariable{var_config, mesh, _mesh_vec,
-                                              _parameters};
+                                              _parameters, _curves};
         if (!names.insert(pv.getName()).second)
         {
             OGS_FATAL("A process variable with name `{:s}' already exists.",
