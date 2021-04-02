@@ -121,7 +121,7 @@ std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(
         //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneousParameter__time_series__pair__time}
         auto time = p.getConfigParameter<double>("time");
         auto parameter_name =
-        //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneousParameter__time_series__pair__parameter_name}
+            //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneousParameter__time_series__pair__parameter_name}
             p.getConfigParameter<std::string>("parameter_name");
         time_series.emplace_back(time, parameter_name);
     }

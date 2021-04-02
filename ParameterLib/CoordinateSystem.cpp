@@ -17,7 +17,7 @@
 namespace ParameterLib
 {
 static double const tolerance = 1.e-15;
-static const char*const error_info =
+static const char* const error_info =
     "The determinant of the coordinate system transformation matrix is "
     "'{:g}', which is not sufficiently close to unity with the tolerance of "
     "'{:g}'. Please adjust the accuracy of the local system bases";
