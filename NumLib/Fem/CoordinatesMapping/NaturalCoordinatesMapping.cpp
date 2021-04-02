@@ -16,9 +16,7 @@
 #endif  // NDEBUG
 
 #include "BaseLib/Error.h"
-
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
-#include "MeshLib/Elements/TemplateElement.h"
 #include "MeshLib/Elements/HexRule20.h"
 #include "MeshLib/Elements/HexRule8.h"
 #include "MeshLib/Elements/LineRule2.h"
@@ -31,38 +29,38 @@
 #include "MeshLib/Elements/QuadRule4.h"
 #include "MeshLib/Elements/QuadRule8.h"
 #include "MeshLib/Elements/QuadRule9.h"
+#include "MeshLib/Elements/TemplateElement.h"
 #include "MeshLib/Elements/TetRule10.h"
 #include "MeshLib/Elements/TetRule4.h"
 #include "MeshLib/Elements/TriRule3.h"
 #include "MeshLib/Elements/TriRule6.h"
-
-#include "NumLib/Fem/ShapeFunction/ShapePoint1.h"
+#include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
+#include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine3.h"
-#include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
-#include "NumLib/Fem/ShapeFunction/ShapeTri6.h"
+#include "NumLib/Fem/ShapeFunction/ShapePoint1.h"
+#include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
+#include "NumLib/Fem/ShapeFunction/ShapePrism6.h"
+#include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
+#include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad8.h"
 #include "NumLib/Fem/ShapeFunction/ShapeQuad9.h"
-#include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
-#include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
-#include "NumLib/Fem/ShapeFunction/ShapeTet4.h"
 #include "NumLib/Fem/ShapeFunction/ShapeTet10.h"
-#include "NumLib/Fem/ShapeFunction/ShapePrism6.h"
-#include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
-#include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
-#include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTet4.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTri6.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-
 #include "ShapeMatrices.h"
 
 namespace NumLib
 {
-
 namespace detail
 {
-
-template <ShapeMatrixType FIELD_TYPE> struct FieldType {};
+template <ShapeMatrixType FIELD_TYPE>
+struct FieldType
+{
+};
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
 inline void computeMappingMatrices(
@@ -107,8 +105,9 @@ static void checkJacobianDeterminant(const double detJ,
         std::cerr << element << "\n";
 #endif  // NDEBUG
         OGS_FATAL(
-                "Please check whether the node numbering of the element is correct,"
-                "or additional elements (like boundary elements) are still present in the mesh.");
+            "Please check whether the node numbering of the element is correct,"
+            "or additional elements (like boundary elements) are still present "
+            "in the mesh.");
     }
 
     if (detJ == 0)
@@ -180,10 +179,18 @@ inline void computeMappingMatrices(
     T_SHAPE_MATRICES& shapemat,
     FieldType<ShapeMatrixType::N_J> /*unused*/)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
-        (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::N>());
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
-        (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDR_J>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+        ele,
+        natural_pt,
+        ele_local_coord,
+        shapemat,
+        FieldType<ShapeMatrixType::N>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+        ele,
+        natural_pt,
+        ele_local_coord,
+        shapemat,
+        FieldType<ShapeMatrixType::DNDR_J>());
 }
 
 template <class T_MESH_ELEMENT, class T_SHAPE_FUNC, class T_SHAPE_MATRICES>
@@ -236,10 +243,18 @@ inline void computeMappingMatrices(
     T_SHAPE_MATRICES& shapemat,
     FieldType<ShapeMatrixType::ALL> /*unused*/)
 {
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
-        (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::N>());
-    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>
-        (ele, natural_pt, ele_local_coord, shapemat, FieldType<ShapeMatrixType::DNDX>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+        ele,
+        natural_pt,
+        ele_local_coord,
+        shapemat,
+        FieldType<ShapeMatrixType::N>());
+    computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+        ele,
+        natural_pt,
+        ele_local_coord,
+        shapemat,
+        FieldType<ShapeMatrixType::DNDX>());
 }
 
 template <class T_MESH_ELEMENT,
@@ -251,17 +266,16 @@ void naturalCoordinatesMappingComputeShapeMatrices(const T_MESH_ELEMENT& ele,
                                                    T_SHAPE_MATRICES& shapemat,
                                                    const unsigned global_dim)
 {
-    const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele, global_dim);
+    const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(ele,
+                                                                  global_dim);
 
-    detail::computeMappingMatrices<
-        T_MESH_ELEMENT,
-        T_SHAPE_FUNC,
-        T_SHAPE_MATRICES>
-            (ele,
-             natural_pt,
-             ele_local_coord,
-             shapemat,
-             detail::FieldType<T_SHAPE_MATRIX_TYPE>());
+    detail::
+        computeMappingMatrices<T_MESH_ELEMENT, T_SHAPE_FUNC, T_SHAPE_MATRICES>(
+            ele,
+            natural_pt,
+            ele_local_coord,
+            shapemat,
+            detail::FieldType<T_SHAPE_MATRIX_TYPE>());
 }
 
 #define OGS_INSTANTIATE_NATURAL_COORDINATES_MAPPING_PART(        \

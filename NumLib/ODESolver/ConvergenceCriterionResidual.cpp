@@ -9,9 +9,9 @@
  */
 
 #include "ConvergenceCriterionResidual.h"
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Logging.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
 namespace NumLib

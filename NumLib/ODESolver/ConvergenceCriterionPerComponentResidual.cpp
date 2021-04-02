@@ -9,9 +9,9 @@
  */
 
 #include "ConvergenceCriterionPerComponentResidual.h"
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Logging.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
@@ -40,7 +40,6 @@ ConvergenceCriterionPerComponentResidual::
     }
 }
 
-
 void ConvergenceCriterionPerComponentResidual::checkDeltaX(
     const GlobalVector& minus_delta_x, GlobalVector const& x)
 {
@@ -67,7 +66,6 @@ void ConvergenceCriterionPerComponentResidual::checkDeltaX(
     }
 }
 
-
 void ConvergenceCriterionPerComponentResidual::checkResidual(
     const GlobalVector& residual)
 {
@@ -85,14 +83,17 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
          ++global_component)
     {
         // TODO short cut if tol <= 0.0
-        auto norm_res = norm(residual, global_component, _norm_type,
-                             *_dof_table, *_mesh);
+        auto norm_res =
+            norm(residual, global_component, _norm_type, *_dof_table, *_mesh);
 
-        if (_is_first_iteration) {
+        if (_is_first_iteration)
+        {
             INFO("Convergence criterion, component {:d}: |r0|={:.4e}",
                  global_component, norm_res);
             _residual_norms_0[global_component] = norm_res;
-        } else {
+        }
+        else
+        {
             auto const norm_res0 = _residual_norms_0[global_component];
             INFO(
                 "Convergence criterion, component {:d}: |r|={:.4e}, "
@@ -151,9 +152,12 @@ createConvergenceCriterionPerComponentResidual(
             "At least one of absolute or relative tolerance has to be "
             "specified.");
     }
-    if (!abstols) {
+    if (!abstols)
+    {
         abstols = std::vector<double>(reltols->size());
-    } else if (!reltols) {
+    }
+    else if (!reltols)
+    {
         reltols = std::vector<double>(abstols->size());
     }
 

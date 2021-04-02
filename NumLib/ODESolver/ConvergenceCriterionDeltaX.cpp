@@ -9,9 +9,9 @@
  */
 
 #include "ConvergenceCriterionDeltaX.h"
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Logging.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
 namespace NumLib
@@ -46,10 +46,12 @@ void ConvergenceCriterionDeltaX::checkDeltaX(const GlobalVector& minus_delta_x,
     bool satisfied_abs = false;
     bool satisfied_rel = false;
 
-    if (_abstol) {
+    if (_abstol)
+    {
         satisfied_abs = error_dx < *_abstol;
     }
-    if (_reltol) {
+    if (_reltol)
+    {
         satisfied_rel = checkRelativeTolerance(*_reltol, error_dx, norm_x);
     }
 

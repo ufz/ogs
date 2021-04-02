@@ -47,7 +47,6 @@
 
 namespace NumLib
 {
-
 const unsigned ShapeHex20::DIM;
 const unsigned ShapeHex20::NPOINTS;
 const unsigned ShapeHex8::DIM;
