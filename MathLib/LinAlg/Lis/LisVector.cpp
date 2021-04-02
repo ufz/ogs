@@ -12,9 +12,10 @@
  *
  */
 
+#include "LisVector.h"
+
 #include <cassert>
 
-#include "LisVector.h"
 #include "LisCheck.h"
 
 namespace MathLib
@@ -59,4 +60,4 @@ void LisVector::write(const std::string& filename) const
     lis_output_vector(_vec, LIS_FMT_PLAIN, const_cast<char*>(filename));
 }
 
-}  // MathLib
+}  // namespace MathLib

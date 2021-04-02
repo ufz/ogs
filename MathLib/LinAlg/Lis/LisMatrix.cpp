@@ -17,16 +17,17 @@
 #include <cmath>
 #include <cstdlib>
 
-
 #include "BaseLib/Error.h"
-#include "LisVector.h"
 #include "LisCheck.h"
+#include "LisVector.h"
 
 namespace MathLib
 {
-
 LisMatrix::LisMatrix(std::size_t n_rows, MatrixType mat_type)
-    : _n_rows(n_rows), _mat_type(mat_type), _is_assembled(false), _use_external_arrays(false)
+    : _n_rows(n_rows),
+      _mat_type(mat_type),
+      _is_assembled(false),
+      _use_external_arrays(false)
 {
     int ierr = lis_matrix_create(0, &_AA);
     checkLisError(ierr);
@@ -37,8 +38,8 @@ LisMatrix::LisMatrix(std::size_t n_rows, MatrixType mat_type)
     checkLisError(ierr);
 }
 
-LisMatrix::LisMatrix(std::size_t n_rows, int nnz, IndexType *row_ptr,
-                     IndexType *col_idx, double *data)
+LisMatrix::LisMatrix(std::size_t n_rows, int nnz, IndexType* row_ptr,
+                     IndexType* col_idx, double* data)
     : _n_rows(n_rows),
       _mat_type(MatrixType::CRS),
       _is_assembled(false),
@@ -74,8 +75,8 @@ LisMatrix::~LisMatrix()
 
 void LisMatrix::setZero()
 {
-    // A matrix has to be destroyed and created again because Lis doesn't provide a
-    // function to set matrix entries to zero
+    // A matrix has to be destroyed and created again because Lis doesn't
+    // provide a function to set matrix entries to zero
     int ierr = lis_matrix_destroy(_AA);
     checkLisError(ierr);
     ierr = lis_matrix_create(0, &_AA);
@@ -90,9 +91,10 @@ void LisMatrix::setZero()
 
 int LisMatrix::setValue(IndexType rowId, IndexType colId, double v)
 {
-    if (v == 0.0) return 0;
+    if (v == 0.0)
+        return 0;
     lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, _AA);
-    if (rowId==colId)
+    if (rowId == colId)
         lis_vector_set_value(LIS_INS_VALUE, rowId, v, _diag);
     _is_assembled = false;
     return 0;
@@ -100,15 +102,16 @@ int LisMatrix::setValue(IndexType rowId, IndexType colId, double v)
 
 int LisMatrix::add(IndexType rowId, IndexType colId, double v)
 {
-    if (v == 0.0) return 0;
+    if (v == 0.0)
+        return 0;
     lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, _AA);
-    if (rowId==colId)
+    if (rowId == colId)
         lis_vector_set_value(LIS_ADD_VALUE, rowId, v, _diag);
     _is_assembled = false;
     return 0;
 }
 
-void LisMatrix::write(const std::string &filename) const
+void LisMatrix::write(const std::string& filename) const
 {
     if (!_is_assembled)
     {
@@ -117,12 +120,14 @@ void LisMatrix::write(const std::string &filename) const
     lis_output_matrix(_AA, LIS_FMT_MM, const_cast<char*>(filename.c_str()));
 }
 
-bool finalizeMatrixAssembly(LisMatrix &mat)
+bool finalizeMatrixAssembly(LisMatrix& mat)
 {
-    LIS_MATRIX &A = mat.getRawMatrix();
+    LIS_MATRIX& A = mat.getRawMatrix();
 
-    if (!mat.isAssembled()) {
-        int ierr = lis_matrix_set_type(A, static_cast<int>(mat.getMatrixType()));
+    if (!mat.isAssembled())
+    {
+        int ierr =
+            lis_matrix_set_type(A, static_cast<int>(mat.getMatrixType()));
         checkLisError(ierr);
         ierr = lis_matrix_assemble(A);
         checkLisError(ierr);
@@ -131,5 +136,4 @@ bool finalizeMatrixAssembly(LisMatrix &mat)
     return true;
 }
 
-
-} //MathLib
+}  // namespace MathLib

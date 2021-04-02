@@ -155,4 +155,4 @@ bool finalizeMatrixAssembly(PETScMatrix& mat, const MatAssemblyType asm_type)
     return true;
 }
 
-}  // end of namespace
+}  // namespace MathLib

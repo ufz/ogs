@@ -15,12 +15,13 @@
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
 #ifdef USE_PETSC
 
-#include "MathLib/LinAlg/PETSc/PETScVector.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
 
-namespace MathLib { namespace LinAlg
+namespace MathLib
 {
-
+namespace LinAlg
+{
 // Vector
 
 void setLocalAccessibleVector(PETScVector const& x)
@@ -35,7 +36,8 @@ void set(PETScVector& x, double const a)
 
 void copy(PETScVector const& x, PETScVector& y)
 {
-    if (!y.getRawVector()) y.shallowCopy(x);
+    if (!y.getRawVector())
+        y.shallowCopy(x);
     VecCopy(x.getRawVector(), y.getRawVector());
 }
 
@@ -67,16 +69,16 @@ void axpby(PETScVector& y, double const a, double const b, PETScVector const& x)
 
 // Explicit specialization
 // Computes w = x/y componentwise.
-template<>
-void componentwiseDivide(PETScVector& w,
-                         PETScVector const& x, PETScVector const& y)
+template <>
+void componentwiseDivide(PETScVector& w, PETScVector const& x,
+                         PETScVector const& y)
 {
     VecPointwiseDivide(w.getRawVector(), x.getRawVector(), y.getRawVector());
 }
 
 // Explicit specialization
 // Computes the Manhattan norm of x
-template<>
+template <>
 double norm1(PETScVector const& x)
 {
     PetscScalar norm = 0.;
@@ -86,7 +88,7 @@ double norm1(PETScVector const& x)
 
 // Explicit specialization
 // Computes the Euclidean norm of x
-template<>
+template <>
 double norm2(PETScVector const& x)
 {
     PetscScalar norm = 0.;
@@ -96,14 +98,13 @@ double norm2(PETScVector const& x)
 
 // Explicit specialization
 // Computes the Maximum norm of x
-template<>
+template <>
 double normMax(PETScVector const& x)
 {
     PetscScalar norm = 0.;
     VecNorm(x.getRawVector(), NORM_INFINITY, &norm);
     return norm;
 }
-
 
 // Matrix
 
@@ -123,8 +124,7 @@ void aypx(PETScMatrix& Y, double const a, PETScMatrix const& X)
 {
     // TODO check sizes
     // TODO sparsity pattern, currently they are assumed to be different (slow)
-    MatAYPX(Y.getRawMatrix(), a, X.getRawMatrix(),
-            DIFFERENT_NONZERO_PATTERN);
+    MatAYPX(Y.getRawMatrix(), a, X.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
 }
 
 // Y = a*X + Y
@@ -132,10 +132,8 @@ void axpy(PETScMatrix& Y, double const a, PETScMatrix const& X)
 {
     // TODO check sizes
     // TODO sparsity pattern, currently they are assumed to be different (slow)
-    MatAXPY(Y.getRawMatrix(), a, X.getRawMatrix(),
-            DIFFERENT_NONZERO_PATTERN);
+    MatAXPY(Y.getRawMatrix(), a, X.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
 }
-
 
 // Matrix and Vector
 
@@ -144,18 +142,21 @@ void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y)
 {
     // TODO check sizes
     assert(&x != &y);
-    if (!y.getRawVector()) y.shallowCopy(x);
+    if (!y.getRawVector())
+        y.shallowCopy(x);
     MatMult(A.getRawMatrix(), x.getRawVector(), y.getRawVector());
 }
 
 // v3 = A*v1 + v2
 void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
-                       PETScVector const& v2, PETScVector& v3)
+                PETScVector const& v2, PETScVector& v3)
 {
     // TODO check sizes
     assert(&v1 != &v3);
-    if (!v3.getRawVector()) v3.shallowCopy(v1);
-    MatMultAdd(A.getRawMatrix(), v1.getRawVector(), v2.getRawVector(), v3.getRawVector());
+    if (!v3.getRawVector())
+        v3.shallowCopy(v1);
+    MatMultAdd(A.getRawMatrix(), v1.getRawVector(), v2.getRawVector(),
+               v3.getRawVector());
 }
 
 void finalizeAssembly(PETScMatrix& A)
@@ -168,24 +169,23 @@ void finalizeAssembly(PETScVector& x)
     x.finalizeAssembly();
 }
 
-}} // namespaces
+}  // namespace LinAlg
+}  // namespace MathLib
 
-
-
-// Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
+// Sparse global EigenMatrix/EigenVector
+// //////////////////////////////////////////
 #else
 
-#include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
 
-namespace MathLib { namespace LinAlg
+namespace MathLib
 {
-
+namespace LinAlg
+{
 // Vector
 
-void setLocalAccessibleVector(EigenVector const& /*x*/)
-{
-}
+void setLocalAccessibleVector(EigenVector const& /*x*/) {}
 
 void set(EigenVector& x, double const a)
 {
@@ -225,17 +225,17 @@ void axpby(EigenVector& y, double const a, double const b, EigenVector const& x)
 
 // Explicit specialization
 // Computes w = x/y componentwise.
-template<>
-void componentwiseDivide(EigenVector& w,
-                         EigenVector const& x, EigenVector const& y)
+template <>
+void componentwiseDivide(EigenVector& w, EigenVector const& x,
+                         EigenVector const& y)
 {
     w.getRawVector().noalias() =
-            x.getRawVector().cwiseQuotient(y.getRawVector());
+        x.getRawVector().cwiseQuotient(y.getRawVector());
 }
 
 // Explicit specialization
 // Computes the Manhattan norm of x
-template<>
+template <>
 double norm1(EigenVector const& x)
 {
     return x.getRawVector().lpNorm<1>();
@@ -243,7 +243,7 @@ double norm1(EigenVector const& x)
 
 // Explicit specialization
 // Euclidean norm
-template<>
+template <>
 double norm2(EigenVector const& x)
 {
     return x.getRawVector().norm();
@@ -251,12 +251,11 @@ double norm2(EigenVector const& x)
 
 // Explicit specialization
 // Computes the Maximum norm of x
-template<>
+template <>
 double normMax(EigenVector const& x)
 {
     return x.getRawVector().lpNorm<Eigen::Infinity>();
 }
-
 
 // Matrix
 
@@ -276,16 +275,15 @@ void scale(EigenMatrix& A, double const a)
 void aypx(EigenMatrix& Y, double const a, EigenMatrix const& X)
 {
     // TODO: does that break anything?
-    Y.getRawMatrix() = a*Y.getRawMatrix() + X.getRawMatrix();
+    Y.getRawMatrix() = a * Y.getRawMatrix() + X.getRawMatrix();
 }
 
 // Y = a*X + Y
 void axpy(EigenMatrix& Y, double const a, EigenMatrix const& X)
 {
     // TODO: does that break anything?
-    Y.getRawMatrix() = a*X.getRawMatrix() + Y.getRawMatrix();
+    Y.getRawMatrix() = a * X.getRawMatrix() + Y.getRawMatrix();
 }
-
 
 // Matrix and Vector
 
@@ -297,11 +295,13 @@ void matMult(EigenMatrix const& A, EigenVector const& x, EigenVector& y)
 }
 
 // v3 = A*v1 + v2
-void matMultAdd(EigenMatrix const& A, EigenVector const& v1, EigenVector const& v2, EigenVector& v3)
+void matMultAdd(EigenMatrix const& A, EigenVector const& v1,
+                EigenVector const& v2, EigenVector& v3)
 {
     assert(&v1 != &v3);
     // TODO: does that break anything?
-    v3.getRawVector() = v2.getRawVector() + A.getRawMatrix()*v1.getRawVector();
+    v3.getRawVector() =
+        v2.getRawVector() + A.getRawMatrix() * v1.getRawVector();
 }
 
 void finalizeAssembly(EigenMatrix& x)
@@ -311,8 +311,8 @@ void finalizeAssembly(EigenMatrix& x)
 
 void finalizeAssembly(EigenVector& /*x*/) {}
 
-} // namespace LinAlg
+}  // namespace LinAlg
 
-} // namespace MathLib
+}  // namespace MathLib
 
 #endif

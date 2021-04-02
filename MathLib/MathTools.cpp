@@ -16,7 +16,6 @@
 
 namespace MathLib
 {
-
 double calcProjPntToLineAndDists(Point3d const& pp, Point3d const& pa,
                                  Point3d const& pb, double& lambda, double& d0)
 {

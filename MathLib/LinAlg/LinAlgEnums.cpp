@@ -14,19 +14,22 @@
 
 namespace MathLib
 {
-
 std::string convertVecNormTypeToString(VecNormType normType)
 {
     switch (normType)
     {
-    case VecNormType::NORM1: return "NORM1";
-    case VecNormType::NORM2: return "NORM2";
-    case VecNormType::INFINITY_N: return "INFINITY_N";
-    default: return "INVALID";
+        case VecNormType::NORM1:
+            return "NORM1";
+        case VecNormType::NORM2:
+            return "NORM2";
+        case VecNormType::INFINITY_N:
+            return "INFINITY_N";
+        default:
+            return "INVALID";
     }
 }
 
-VecNormType convertStringToVecNormType(const std::string &str)
+VecNormType convertStringToVecNormType(const std::string& str)
 {
     if (str == "NORM1")
     {
@@ -43,4 +46,4 @@ VecNormType convertStringToVecNormType(const std::string &str)
     return VecNormType::INVALID;
 }
 
-} // end namespace MathLib
+}  // end namespace MathLib

@@ -9,11 +9,11 @@
  */
 
 #include "EigenOption.h"
+
 #include "BaseLib/Error.h"
 
 namespace MathLib
 {
-
 EigenOption::EigenOption()
 {
     solver_type = SolverType::SparseLU;
@@ -26,7 +26,8 @@ EigenOption::EigenOption()
 #endif
 }
 
-EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_name)
+EigenOption::SolverType EigenOption::getSolverType(
+    const std::string& solver_name)
 {
     if (solver_name == "CG")
     {
@@ -52,7 +53,8 @@ EigenOption::SolverType EigenOption::getSolverType(const std::string &solver_nam
     OGS_FATAL("Unknown Eigen solver type `{:s}'", solver_name);
 }
 
-EigenOption::PreconType EigenOption::getPreconType(const std::string &precon_name)
+EigenOption::PreconType EigenOption::getPreconType(
+    const std::string& precon_name)
 {
     if (precon_name == "NONE")
     {
@@ -72,7 +74,8 @@ EigenOption::PreconType EigenOption::getPreconType(const std::string &precon_nam
 
 std::string EigenOption::getSolverName(SolverType const solver_type)
 {
-    switch (solver_type) {
+    switch (solver_type)
+    {
         case SolverType::CG:
             return "CG";
         case SolverType::BiCGSTAB:
@@ -89,7 +92,8 @@ std::string EigenOption::getSolverName(SolverType const solver_type)
 
 std::string EigenOption::getPreconName(PreconType const precon_type)
 {
-    switch (precon_type) {
+    switch (precon_type)
+    {
         case PreconType::NONE:
             return "NONE";
         case PreconType::DIAGONAL:

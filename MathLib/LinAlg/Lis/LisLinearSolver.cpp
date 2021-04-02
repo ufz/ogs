@@ -16,25 +16,21 @@
 #include <omp.h>
 #endif
 
-#include "LisLinearSolver.h"
-
 #include "BaseLib/Logging.h"
-
 #include "LisCheck.h"
+#include "LisLinearSolver.h"
 #include "LisMatrix.h"
 #include "LisVector.h"
 
 namespace MathLib
 {
-
-LisLinearSolver::LisLinearSolver(
-                    const std::string /*solver_name*/,
-                    const BaseLib::ConfigTree* const option)
-: _lis_option(option)
+LisLinearSolver::LisLinearSolver(const std::string /*solver_name*/,
+                                 const BaseLib::ConfigTree* const option)
+    : _lis_option(option)
 {
 }
 
-bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
+bool LisLinearSolver::solve(LisMatrix& A, LisVector& b, LisVector& x)
 {
     finalizeMatrixAssembly(A);
 
@@ -47,8 +43,8 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
     if (!checkLisError(ierr))
         return false;
 
-    lis_solver_set_option(
-        const_cast<char*>(_lis_option._option_string.c_str()), solver);
+    lis_solver_set_option(const_cast<char*>(_lis_option._option_string.c_str()),
+                          solver);
 #ifdef _OPENMP
     INFO("-> number of threads: {:i}", (int)omp_get_max_threads());
 #endif
@@ -69,7 +65,8 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
 
     // solve
     INFO("-> solve");
-    ierr = lis_solve(A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver);
+    ierr =
+        lis_solve(A.getRawMatrix(), b.getRawVector(), x.getRawVector(), solver);
     if (!checkLisError(ierr))
         return false;
 
@@ -97,8 +94,8 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
     }
     {
         double time, itime, ptime, p_ctime, p_itime;
-        ierr = lis_solver_get_timeex(solver, &time, &itime,
-                                     &ptime, &p_ctime, &p_itime);
+        ierr = lis_solver_get_timeex(solver, &time, &itime, &ptime, &p_ctime,
+                                     &p_itime);
         if (!checkLisError(ierr))
             return false;
         INFO("-> time total           (s): {:g}", time);
@@ -117,4 +114,4 @@ bool LisLinearSolver::solve(LisMatrix &A, LisVector &b, LisVector &x)
     return linear_solver_status == LIS_SUCCESS;
 }
 
-} //MathLib
+}  // namespace MathLib

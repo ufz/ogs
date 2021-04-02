@@ -19,12 +19,13 @@ template <>
 double const GaussLegendreTet<1>::W[1] = {1. / 6.};
 
 const std::array<std::array<double, 3>, GaussLegendreTet<2>::NPoints>
-GaussLegendreTet<2>::X = {{ {{1./4., 1./4., 1./4.}},
-                            {{1./6., 1./6., 1./6.}},
-                            {{1./2., 1./6., 1./6.}},
-                            {{1./6., 1./2., 1./6.}},
-                            {{1./6., 1./6., 1./2.}} }};
-double const GaussLegendreTet<2>::W[5] = {-2./15., 0.075, 0.075, 0.075, 0.075};
+    GaussLegendreTet<2>::X = {{{{1. / 4., 1. / 4., 1. / 4.}},
+                               {{1. / 6., 1. / 6., 1. / 6.}},
+                               {{1. / 2., 1. / 6., 1. / 6.}},
+                               {{1. / 6., 1. / 2., 1. / 6.}},
+                               {{1. / 6., 1. / 6., 1. / 2.}}}};
+double const GaussLegendreTet<2>::W[5] = {-2. / 15., 0.075, 0.075, 0.075,
+                                          0.075};
 
 static std::array<std::array<double, 3>, GaussLegendreTet<3>::NPoints>
 initGLTet3X()

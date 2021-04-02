@@ -12,5 +12,5 @@
 
 namespace MathLib
 {
-extern const Point3d ORIGIN{ {{0.0, 0.0, 0.0}} };
+extern const Point3d ORIGIN{{{0.0, 0.0, 0.0}}};
 }
