@@ -132,7 +132,7 @@ include_directories(
     ${GUI_SOURCE_DIR_REL}/VtkModules/Qt
 )
 
-ogs_add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS})
+ogs_add_library(VtkVis STATIC ${SOURCES} ${HEADERS} ${UIS})
 
 if(GEOTIFF_FOUND)
     target_compile_definitions(VtkVis PRIVATE GEOTIFF_FOUND)

@@ -131,7 +131,7 @@ if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
 endif() # GEOTIFF_FOUND
 
-ogs_add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS})
+ogs_add_library(QtDataView STATIC ${SOURCES} ${HEADERS} ${UIS})
 
 target_link_libraries(
     QtDataView
