@@ -14,18 +14,16 @@
 
 #include "XmlStnInterface.h"
 
-#include <limits>
-
 #include <QFile>
 #include <QtXml/QDomDocument>
+#include <limits>
 #include <rapidxml.hpp>
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
-
-#include "GeoLib/StationBorehole.h"
+#include "BaseLib/Logging.h"
 #include "GeoLib/GEOObjects.h"
+#include "GeoLib/StationBorehole.h"
 
 namespace GeoLib
 {
@@ -36,7 +34,7 @@ XmlStnInterface::XmlStnInterface(GeoLib::GEOObjects& geo_objs)
 {
 }
 
-int XmlStnInterface::readFile(const QString &fileName)
+int XmlStnInterface::readFile(const QString& fileName)
 {
     if (XMLQtInterface::readFile(fileName) == 0)
     {
@@ -45,7 +43,8 @@ int XmlStnInterface::readFile(const QString &fileName)
 
     QDomDocument doc("OGS-STN-DOM");
     doc.setContent(getContent());
-    QDomElement docElement = doc.documentElement(); //root element, used for identifying file-type
+    QDomElement docElement =
+        doc.documentElement();  // root element, used for identifying file-type
     if (docElement.nodeName().compare("OpenGeoSysSTN"))
     {
         ERR("XmlStnInterface::readFile(): Unexpected XML root.");
@@ -70,7 +69,8 @@ int XmlStnInterface::readFile(const QString &fileName)
             }
             else if (station_type.compare("stations") == 0)
             {
-                readStations(station_node, stations.get(), fileName.toStdString());
+                readStations(station_node, stations.get(),
+                             fileName.toStdString());
             }
             else if (station_type.compare("boreholes") == 0)
             {
@@ -88,9 +88,9 @@ int XmlStnInterface::readFile(const QString &fileName)
     return 1;
 }
 
-void XmlStnInterface::readStations( const QDomNode &stationsRoot,
-                                    std::vector<GeoLib::Point*>* stations,
-                                    const std::string &station_file_name )
+void XmlStnInterface::readStations(const QDomNode& stationsRoot,
+                                   std::vector<GeoLib::Point*>* stations,
+                                   const std::string& station_file_name)
 {
     QDomElement station = stationsRoot.firstChildElement();
     while (!station.isNull())
@@ -105,12 +105,12 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
             double stationValue(0.0);
 
             QDomNodeList stationFeatures = station.childNodes();
-            for(int i = 0; i < stationFeatures.count(); i++)
+            for (int i = 0; i < stationFeatures.count(); i++)
             {
                 // check for general station features
-                const QDomNode feature_node (stationFeatures.at(i));
-                const QString feature_name (feature_node.nodeName());
-                const QString element_text (feature_node.toElement().text());
+                const QDomNode feature_node(stationFeatures.at(i));
+                const QString feature_name(feature_node.nodeName());
+                const QString element_text(feature_node.toElement().text());
                 if (feature_name.compare("name") == 0)
                 {
                     stationName = element_text.toStdString();
@@ -118,9 +118,9 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
                 if (feature_name.compare("sensordata") == 0)
                 {
                     sensor_data_file_name = element_text.toStdString();
-                /* add other station features here */
+                    /* add other station features here */
 
-                // check for general borehole features
+                    // check for general borehole features
                 }
                 else if (feature_name.compare("value") == 0)
                 {
@@ -137,14 +137,17 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
                 /* add other borehole features here */
             }
 
-            double zVal = (station.hasAttribute("z")) ? station.attribute("z").toDouble() : 0.0;
+            double zVal = (station.hasAttribute("z"))
+                              ? station.attribute("z").toDouble()
+                              : 0.0;
 
             if (station.nodeName().compare("station") == 0)
             {
-                GeoLib::Station* s = new GeoLib::Station(station.attribute("x").toDouble(),
-                                                         station.attribute("y").toDouble(),
-                                                         zVal,
-                                                         stationName);
+                GeoLib::Station* s =
+                    new GeoLib::Station(station.attribute("x").toDouble(),
+                                        station.attribute("y").toDouble(),
+                                        zVal,
+                                        stationName);
                 s->setStationValue(stationValue);
                 if (!sensor_data_file_name.empty())
                 {
@@ -155,7 +158,8 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
             }
             else if (station.nodeName().compare("borehole") == 0)
             {
-                GeoLib::StationBorehole* s = GeoLib::StationBorehole::createStation(
+                GeoLib::StationBorehole* s =
+                    GeoLib::StationBorehole::createStation(
                         stationName,
                         station.attribute("x").toDouble(),
                         station.attribute("y").toDouble(),
@@ -177,16 +181,19 @@ void XmlStnInterface::readStations( const QDomNode &stationsRoot,
         }
         else
         {
-            WARN("XmlStnInterface::readStations(): Attribute missing in <station> tag.");
+            WARN(
+                "XmlStnInterface::readStations(): Attribute missing in "
+                "<station> tag.");
         }
         station = station.nextSiblingElement();
     }
 }
 
-void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
-                                        GeoLib::StationBorehole* borehole )
+void XmlStnInterface::readStratigraphy(const QDomNode& stratRoot,
+                                       GeoLib::StationBorehole* borehole)
 {
-    //borehole->addSoilLayer((*borehole)[0], (*borehole)[1], (*borehole)[2], "");
+    // borehole->addSoilLayer((*borehole)[0], (*borehole)[1], (*borehole)[2],
+    // "");
     double depth_check((*borehole)[2]);
     QDomElement horizon = stratRoot.firstChildElement();
     while (!horizon.isNull())
@@ -207,7 +214,7 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
             }
             /* add other horizon features here */
 
-            double depth (horizon.attribute("z").toDouble());
+            double depth(horizon.attribute("z").toDouble());
             if (std::abs(depth - depth_check) >
                 std::numeric_limits<double>::
                     epsilon())  // skip soil-layer if its thickness is zero
@@ -228,7 +235,9 @@ void XmlStnInterface::readStratigraphy( const QDomNode &stratRoot,
         }
         else
         {
-            WARN("XmlStnInterface::readStratigraphy(): Attribute missing in <horizon> tag.");
+            WARN(
+                "XmlStnInterface::readStratigraphy(): Attribute missing in "
+                "<horizon> tag.");
         }
         horizon = horizon.nextSiblingElement();
     }
@@ -249,13 +258,14 @@ bool XmlStnInterface::write()
 
     QDomDocument doc("OGS-STN-DOM");
     QDomElement root = doc.createElement("OpenGeoSysSTN");
-    root.setAttribute( "xmlns:ogs", "http://www.opengeosys.org" );
-    root.setAttribute( "xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance" );
+    root.setAttribute("xmlns:ogs", "http://www.opengeosys.org");
+    root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
     const std::vector<GeoLib::Point*>* stations(
         _geo_objs.getStationVec(export_name));
-    bool const is_borehole = static_cast<GeoLib::Station*>((*stations)[0])->type() ==
-                       GeoLib::Station::StationType::BOREHOLE;
+    bool const is_borehole =
+        static_cast<GeoLib::Station*>((*stations)[0])->type() ==
+        GeoLib::Station::StationType::BOREHOLE;
 
     doc.appendChild(root);
     QDomElement stationListTag = doc.createElement("stationlist");
@@ -271,12 +281,13 @@ bool XmlStnInterface::write()
     stationListTag.appendChild(stationsTag);
 
     bool useStationValue(false);
-    double sValue = static_cast<GeoLib::Station*>((*stations)[0])->getStationValue();
+    double sValue =
+        static_cast<GeoLib::Station*>((*stations)[0])->getStationValue();
     std::size_t nStations(stations->size());
     for (std::size_t i = 1; i < nStations; i++)
     {
-        if ((static_cast<GeoLib::Station*>((*stations)[i])->getStationValue() - sValue) <
-            std::numeric_limits<double>::epsilon())
+        if ((static_cast<GeoLib::Station*>((*stations)[i])->getStationValue() -
+             sValue) < std::numeric_limits<double>::epsilon())
         {
             useStationValue = true;
             break;
@@ -285,29 +296,33 @@ bool XmlStnInterface::write()
 
     for (std::size_t i = 0; i < nStations; i++)
     {
-        QString stationType =  is_borehole ? "borehole" : "station";
+        QString stationType = is_borehole ? "borehole" : "station";
         QDomElement stationTag = doc.createElement(stationType);
-        stationTag.setAttribute( "id", QString::number(i) );
-        stationTag.setAttribute( "x",  QString::number((*(*stations)[i])[0], 'f',
-            std::numeric_limits<double>::digits10));
-        stationTag.setAttribute( "y",  QString::number((*(*stations)[i])[1], 'f',
-            std::numeric_limits<double>::digits10));
-        stationTag.setAttribute( "z",  QString::number((*(*stations)[i])[2], 'f',
-            std::numeric_limits<double>::digits10));
+        stationTag.setAttribute("id", QString::number(i));
+        stationTag.setAttribute(
+            "x", QString::number((*(*stations)[i])[0], 'f',
+                                 std::numeric_limits<double>::digits10));
+        stationTag.setAttribute(
+            "y", QString::number((*(*stations)[i])[1], 'f',
+                                 std::numeric_limits<double>::digits10));
+        stationTag.setAttribute(
+            "z", QString::number((*(*stations)[i])[2], 'f',
+                                 std::numeric_limits<double>::digits10));
         stationsTag.appendChild(stationTag);
 
         QDomElement stationNameTag = doc.createElement("name");
         stationTag.appendChild(stationNameTag);
-        QDomText stationNameText =
-                doc.createTextNode(QString::fromStdString(static_cast<GeoLib::Station*>((*stations)[i])->getName()));
+        QDomText stationNameText = doc.createTextNode(QString::fromStdString(
+            static_cast<GeoLib::Station*>((*stations)[i])->getName()));
         stationNameTag.appendChild(stationNameText);
 
         if (useStationValue)
         {
             QDomElement stationValueTag = doc.createElement("value");
             stationTag.appendChild(stationValueTag);
-            QDomText stationValueText =
-                    doc.createTextNode(QString::number(static_cast<GeoLib::Station*>((*stations)[i])->getStationValue()));
+            QDomText stationValueText = doc.createTextNode(
+                QString::number(static_cast<GeoLib::Station*>((*stations)[i])
+                                    ->getStationValue()));
             stationValueTag.appendChild(stationValueText);
         }
 
@@ -324,21 +339,21 @@ bool XmlStnInterface::write()
     return true;
 }
 
-void XmlStnInterface::writeBoreholeData(QDomDocument &doc,
-                                        QDomElement &boreholeTag,
+void XmlStnInterface::writeBoreholeData(QDomDocument& doc,
+                                        QDomElement& boreholeTag,
                                         GeoLib::StationBorehole* borehole) const
 {
     QDomElement stationDepthTag = doc.createElement("bdepth");
     boreholeTag.appendChild(stationDepthTag);
-    QDomText stationDepthText = doc.createTextNode(QString::number(borehole->getDepth(), 'f'));
+    QDomText stationDepthText =
+        doc.createTextNode(QString::number(borehole->getDepth(), 'f'));
     stationDepthTag.appendChild(stationDepthText);
     if (std::abs(borehole->getDate()) > 0)
     {
         QDomElement stationDateTag = doc.createElement("bdate");
         boreholeTag.appendChild(stationDateTag);
-        QDomText stationDateText =
-                doc.createTextNode(QString::fromStdString(BaseLib::date2string(borehole->
-                                                                               getDate())));
+        QDomText stationDateText = doc.createTextNode(
+            QString::fromStdString(BaseLib::date2string(borehole->getDate())));
         stationDateTag.appendChild(stationDateText);
     }
 
@@ -351,18 +366,23 @@ void XmlStnInterface::writeBoreholeData(QDomDocument &doc,
         QDomElement stratTag = doc.createElement("strat");
         boreholeTag.appendChild(stratTag);
 
-        for (std::size_t j = 1; j < nHorizons; j++) /// the first entry in the profile vector is just the position of the borehole
+        for (std::size_t j = 1; j < nHorizons;
+             j++)  /// the first entry in the profile vector is just the
+                   /// position of the borehole
         {
             QDomElement horizonTag = doc.createElement("horizon");
-            horizonTag.setAttribute( "id", QString::number(j) );
-            horizonTag.setAttribute( "x",  QString::number((*profile[j])[0], 'f') );
-            horizonTag.setAttribute( "y",  QString::number((*profile[j])[1], 'f') );
-            horizonTag.setAttribute( "z",  QString::number((*profile[j])[2], 'f') );
+            horizonTag.setAttribute("id", QString::number(j));
+            horizonTag.setAttribute("x",
+                                    QString::number((*profile[j])[0], 'f'));
+            horizonTag.setAttribute("y",
+                                    QString::number((*profile[j])[1], 'f'));
+            horizonTag.setAttribute("z",
+                                    QString::number((*profile[j])[2], 'f'));
             stratTag.appendChild(horizonTag);
             QDomElement horizonNameTag = doc.createElement("name");
             horizonTag.appendChild(horizonNameTag);
             QDomText horizonNameText =
-                    doc.createTextNode(QString::fromStdString(soilNames[j]));
+                doc.createTextNode(QString::fromStdString(soilNames[j]));
             horizonNameTag.appendChild(horizonNameText);
         }
     }

@@ -17,13 +17,15 @@ LineSegment::LineSegment(Point* const a, Point* const b,
       _b(b),
       _point_mem_management_by_line_segment(
           point_mem_management_by_line_segment)
-{}
+{
+}
 
 LineSegment::LineSegment(LineSegment const& line_segment)
     : _a(new Point(line_segment.getBeginPoint())),
       _b(new Point(line_segment.getEndPoint())),
       _point_mem_management_by_line_segment(true)
-{}
+{
+}
 
 LineSegment::LineSegment(LineSegment&& line_segment)
     : _a(line_segment._a),
@@ -38,7 +40,8 @@ LineSegment::LineSegment(LineSegment&& line_segment)
 
 LineSegment::~LineSegment()
 {
-    if (_point_mem_management_by_line_segment) {
+    if (_point_mem_management_by_line_segment)
+    {
         delete _b;
         delete _a;
     }
@@ -65,7 +68,7 @@ Point const& LineSegment::getBeginPoint() const
     return *_a;
 }
 
-Point & LineSegment::getBeginPoint()
+Point& LineSegment::getBeginPoint()
 {
     return *_a;
 }
@@ -75,12 +78,12 @@ Point const& LineSegment::getEndPoint() const
     return *_b;
 }
 
-Point & LineSegment::getEndPoint()
+Point& LineSegment::getEndPoint()
 {
     return *_b;
 }
 
-std::ostream& operator<< (std::ostream& os, LineSegment const& s)
+std::ostream& operator<<(std::ostream& os, LineSegment const& s)
 {
     os << "{(" << s.getBeginPoint() << "), (" << s.getEndPoint() << ")}";
     return os;
@@ -98,8 +101,8 @@ bool operator==(LineSegment const& s0, LineSegment const& s1)
 {
     double const tol(std::numeric_limits<double>::epsilon());
     return (MathLib::sqrDist(s0.getBeginPoint(), s1.getBeginPoint()) < tol &&
-         MathLib::sqrDist(s0.getEndPoint(), s1.getEndPoint()) < tol) ||
-        (MathLib::sqrDist(s0.getBeginPoint(), s1.getEndPoint()) < tol &&
-         MathLib::sqrDist(s0.getEndPoint(), s1.getBeginPoint()) < tol);
+            MathLib::sqrDist(s0.getEndPoint(), s1.getEndPoint()) < tol) ||
+           (MathLib::sqrDist(s0.getBeginPoint(), s1.getEndPoint()) < tol &&
+            MathLib::sqrDist(s0.getEndPoint(), s1.getBeginPoint()) < tol);
 }
 }  // namespace GeoLib

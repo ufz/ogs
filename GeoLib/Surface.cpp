@@ -7,18 +7,17 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <list>
-
 #include "Surface.h"
+
+#include <list>
 
 // GeoLib
 #include "AABB.h"
-#include "Polygon.h"
-#include "SurfaceGrid.h"
 #include "AnalyticalGeometry.h"
-
-#include "Triangle.h"
+#include "Polygon.h"
 #include "Polyline.h"
+#include "SurfaceGrid.h"
+#include "Triangle.h"
 
 namespace GeoLib
 {

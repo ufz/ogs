@@ -9,7 +9,8 @@
 
 #include "PolygonWithSegmentMarker.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 PolygonWithSegmentMarker::PolygonWithSegmentMarker(
     GeoLib::Polyline const& polyline)
     : GeoLib::Polygon(polyline, true),
@@ -29,7 +30,8 @@ bool PolygonWithSegmentMarker::isSegmentMarked(std::size_t seg_num) const
 
 bool PolygonWithSegmentMarker::addPoint(std::size_t pnt_id)
 {
-    if (Polyline::addPoint(pnt_id)) {
+    if (Polyline::addPoint(pnt_id))
+    {
         _marker.push_back(false);
         return true;
     }
@@ -38,8 +40,9 @@ bool PolygonWithSegmentMarker::addPoint(std::size_t pnt_id)
 
 bool PolygonWithSegmentMarker::insertPoint(std::size_t pos, std::size_t pnt_id)
 {
-    if (Polyline::insertPoint(pos, pnt_id)) {
-        _marker.insert(_marker.begin()+pos, _marker[pos]);
+    if (Polyline::insertPoint(pos, pnt_id))
+    {
+        _marker.insert(_marker.begin() + pos, _marker[pos]);
         return true;
     }
     return false;

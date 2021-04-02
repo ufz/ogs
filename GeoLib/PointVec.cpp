@@ -12,12 +12,11 @@
  *
  */
 
+#include "PointVec.h"
+
 #include <numeric>
 
 #include "BaseLib/Logging.h"
-
-#include "PointVec.h"
-
 #include "MathLib/MathTools.h"
 
 namespace GeoLib

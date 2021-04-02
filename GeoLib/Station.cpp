@@ -18,7 +18,6 @@
 #include <utility>
 
 #include "BaseLib/Logging.h"
-
 #include "BaseLib/StringTools.h"
 
 namespace GeoLib
@@ -26,25 +25,28 @@ namespace GeoLib
 Station::Station(double x, double y, double z, std::string name)
     : Point(x, y, z), _name(std::move(name))
 
-{}
+{
+}
 
 Station::Station(Point* coords, std::string name)
     : Point(*coords), _name(std::move(name))
-{}
+{
+}
 
 Station::Station(Station const& src)
     : Point(src),
       _name(src._name),
       _type(src._type),
       _station_value(src._station_value)
-{}
+{
+}
 
 Station::~Station()
 {
     delete this->_sensor_data;
 }
 
-Station* Station::createStation(const std::string & line)
+Station* Station::createStation(const std::string& line)
 {
     Station* station = new Station();
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
@@ -53,8 +55,10 @@ Station* Station::createStation(const std::string & line)
     {
         auto it = fields.begin();
         station->_name = *it;
-        (*station)[0] = std::strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
-        (*station)[1] = std::strtod((BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
+        (*station)[0] = std::strtod(
+            (BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
+        (*station)[1] = std::strtod(
+            (BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
         if (++it != fields.end())
         {
             (*station)[2] = std::strtod(
