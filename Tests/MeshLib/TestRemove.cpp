@@ -13,16 +13,14 @@
 
 #include <memory>
 
-#include "gtest/gtest.h"
-
 #include "MathLib/MathTools.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
 TEST(MeshLib, RemoveNodes)
 {

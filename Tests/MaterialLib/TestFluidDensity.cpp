@@ -15,10 +15,9 @@
 
 #include <memory>
 
-#include "Tests/TestTools.h"
-
 #include "MaterialLib/Fluid/Density/CreateFluidDensityModel.h"
 #include "MaterialLib/PhysicalConstant.h"
+#include "Tests/TestTools.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;

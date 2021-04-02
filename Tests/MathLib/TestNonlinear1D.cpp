@@ -8,14 +8,16 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <limits>
 #include <type_traits>
+
 #include "BaseLib/Logging.h"
 #include "MathLib/Nonlinear/Root1D.h"
 
 double f(double x)
 {
-    return x*x-1;
+    return x * x - 1;
 }
 
 template <typename T>
@@ -24,7 +26,8 @@ class MathLibRegulaFalsi : public ::testing::Test
 };
 
 namespace NL = MathLib::Nonlinear;
-using RegulaFalsiTypes = ::testing::Types<NL::Unmodified, NL::Illinois, NL::Pegasus, NL::AndersonBjorck>;
+using RegulaFalsiTypes = ::testing::Types<NL::Unmodified, NL::Illinois,
+                                          NL::Pegasus, NL::AndersonBjorck>;
 
 TYPED_TEST_SUITE(MathLibRegulaFalsi, RegulaFalsiTypes);
 
@@ -35,7 +38,7 @@ TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
 
     DBUG(" 0 -- x ~ {:23.16g}, range = {:23.16g}", rf.getResult(), old_range);
 
-    for (unsigned n=0; n<10; ++n)
+    for (unsigned n = 0; n < 10; ++n)
     {
         rf.step(1);
         double range = rf.getRange();
@@ -61,6 +64,6 @@ TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
     else
     {
         // The unmodified regula falsi method converges very slowly.
-        EXPECT_GT(100.0*std::numeric_limits<double>::epsilon(), error);
+        EXPECT_GT(100.0 * std::numeric_limits<double>::epsilon(), error);
     }
 }

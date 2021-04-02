@@ -16,11 +16,9 @@
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
-
-#include "Tests/TestTools.h"
-
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CapillaryPressureSaturation.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"
+#include "Tests/TestTools.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::PorousMedium;

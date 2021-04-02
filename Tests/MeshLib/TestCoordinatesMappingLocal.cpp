@@ -9,29 +9,24 @@
 
 #include <gtest/gtest.h>
 
-#include <limits>
-#include <algorithm>
-#include <vector>
-#include <cmath>
-#include <memory>
-
 #include <Eigen/Eigen>
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <memory>
+#include <vector>
 
 #include "GeoLib/AnalyticalGeometry.h"
-
 #include "MeshLib/CoordinateSystem.h"
-#include "MeshLib/Node.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Quad.h"
-#include "MeshLib/ElementCoordinatesMappingLocal.h"
-
+#include "MeshLib/Node.h"
 #include "Tests/TestTools.h"
-
 
 namespace
 {
-
 namespace TestLine2
 {
 using ElementType = MeshLib::Line;
@@ -44,34 +39,35 @@ std::unique_ptr<MeshLib::Line> createLine(std::array<double, 3> const& a,
     nodes[0] = new MeshLib::Node(a);
     nodes[1] = new MeshLib::Node(b);
     return std::make_unique<MeshLib::Line>(nodes);
-    }
+}
 
-    std::unique_ptr<MeshLib::Line> createY()
-    {
-        return createLine({{0.0, -1.0, 0.0}}, {{0.0,  1.0, 0.0}});
-    }
+std::unique_ptr<MeshLib::Line> createY()
+{
+    return createLine({{0.0, -1.0, 0.0}}, {{0.0, 1.0, 0.0}});
+}
 
-    std::unique_ptr<MeshLib::Line> createZ()
-    {
-        return createLine({{0.0, 0.0, -1.0}}, {{0.0, 0.0,  1.0}});
-    }
+std::unique_ptr<MeshLib::Line> createZ()
+{
+    return createLine({{0.0, 0.0, -1.0}}, {{0.0, 0.0, 1.0}});
+}
 
-    std::unique_ptr<MeshLib::Line> createXY()
-    {
-        // 45degree inclined
-        return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(2), 2./sqrt(2), 0.0}});
-    }
+std::unique_ptr<MeshLib::Line> createXY()
+{
+    // 45degree inclined
+    return createLine({{0.0, 0.0, 0.0}}, {{2. / sqrt(2), 2. / sqrt(2), 0.0}});
+}
 
-    std::unique_ptr<MeshLib::Line> createXYZ()
-    {
-        return createLine({{0.0, 0.0, 0.0}}, {{2./sqrt(3), 2./sqrt(3), 2./sqrt(3)}});
-    }
+std::unique_ptr<MeshLib::Line> createXYZ()
+{
+    return createLine({{0.0, 0.0, 0.0}},
+                      {{2. / sqrt(3), 2. / sqrt(3), 2. / sqrt(3)}});
+}
 
-    }  // namespace TestLine2
+}  // namespace TestLine2
 
 namespace TestQuad4
 {
-    // Element information
+// Element information
 using ElementType = MeshLib::Quad;
 const unsigned e_nnodes = ElementType::n_all_nodes;
 
@@ -86,39 +82,36 @@ std::unique_ptr<MeshLib::Quad> createQuad(std::array<double, 3> const& a,
     nodes[2] = new MeshLib::Node(c);
     nodes[3] = new MeshLib::Node(d);
     return std::make_unique<MeshLib::Quad>(nodes);
-    }
+}
 
-    // 2.5D case: inclined
-    std::unique_ptr<MeshLib::Quad> createXYZ()
-    {
-        // rotate 45 degree around x axis
-        return createQuad(
-            {{ 1.0,  0.7071067811865475,  0.7071067811865475}},
-            {{-1.0,  0.7071067811865475,  0.7071067811865475}},
-            {{-1.0, -0.7071067811865475, -0.7071067811865475}},
-            {{ 1.0, -0.7071067811865475, -0.7071067811865475}});
-    }
+// 2.5D case: inclined
+std::unique_ptr<MeshLib::Quad> createXYZ()
+{
+    // rotate 45 degree around x axis
+    return createQuad({{1.0, 0.7071067811865475, 0.7071067811865475}},
+                      {{-1.0, 0.7071067811865475, 0.7071067811865475}},
+                      {{-1.0, -0.7071067811865475, -0.7071067811865475}},
+                      {{1.0, -0.7071067811865475, -0.7071067811865475}});
+}
 
-    // 2.5D case: inclined
-    std::unique_ptr<MeshLib::Quad> createXZ()
-    {
-        return createQuad(
-            {{ 1.0, 0.0,  1.0}},
-            {{-1.0, 0.0,  1.0}},
-            {{-1.0, 0.0, -1.0}},
-            {{ 1.0, 0.0, -1.0}});
-    }
+// 2.5D case: inclined
+std::unique_ptr<MeshLib::Quad> createXZ()
+{
+    return createQuad({{1.0, 0.0, 1.0}},
+                      {{-1.0, 0.0, 1.0}},
+                      {{-1.0, 0.0, -1.0}},
+                      {{1.0, 0.0, -1.0}});
+}
 
-    // 2.5D case: inclined
-    std::unique_ptr<MeshLib::Quad> createYZ()
-    {
-        return createQuad(
-            {{0.0,  1.0,  1.0}},
-            {{0.0, -1.0,  1.0}},
-            {{0.0, -1.0, -1.0}},
-            {{0.0,  1.0, -1.0}});
-    }
-    }  // namespace TestQuad4
+// 2.5D case: inclined
+std::unique_ptr<MeshLib::Quad> createYZ()
+{
+    return createQuad({{0.0, 1.0, 1.0}},
+                      {{0.0, -1.0, 1.0}},
+                      {{0.0, -1.0, -1.0}},
+                      {{0.0, 1.0, -1.0}});
+}
+}  // namespace TestQuad4
 
 #if 0
 // keep this function for debugging
@@ -143,14 +136,16 @@ void debugOutput(MeshLib::Element *ele, MeshLib::ElementCoordinatesMappingLocal 
 #endif
 
 // check if using the rotation matrix results in the original coordinates
-#define CHECK_COORDS(ele, mapping)\
-    for (unsigned ii=0; ii<(ele)->getNumberOfNodes(); ii++) {\
-        MathLib::Point3d global(matR*(mapping).getMappedCoordinates(ii));\
-        const double eps(std::numeric_limits<double>::epsilon());\
-        ASSERT_ARRAY_NEAR(&(*(ele)->getNode(ii))[0], global.getCoords(), 3u, eps);\
+#define CHECK_COORDS(ele, mapping)                                           \
+    for (unsigned ii = 0; ii < (ele)->getNumberOfNodes(); ii++)              \
+    {                                                                        \
+        MathLib::Point3d global(matR*(mapping).getMappedCoordinates(ii));    \
+        const double eps(std::numeric_limits<double>::epsilon());            \
+        ASSERT_ARRAY_NEAR(&(*(ele)->getNode(ii))[0], global.getCoords(), 3u, \
+                          eps);                                              \
     }
 
-} //namespace
+}  // namespace
 
 TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
 {
@@ -159,14 +154,12 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineY)
         *ele, MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Y)
                   .getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
-    //debugOutput(ele, mapping);
+    // debugOutput(ele, mapping);
 
-    double exp_R[3*3] = {0, -1, 0,
-                         1,  0, 0,
-                         0,  0, 1};
+    double exp_R[3 * 3] = {0, -1, 0, 1, 0, 0, 0, 0, 1};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
-    CHECK_COORDS(ele,mapping);
+    CHECK_COORDS(ele, mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
     {
@@ -182,12 +175,12 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineZ)
         MeshLib::CoordinateSystem(MeshLib::CoordinateSystemType::Z)
             .getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
-    //debugOutput(ele, mapping);
+    // debugOutput(ele, mapping);
 
-    double exp_R[3*3] = {0, 0, -1, 0, 1, 0, 1, 0, 0};
+    double exp_R[3 * 3] = {0, 0, -1, 0, 1, 0, 1, 0, 0};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
-    CHECK_COORDS(ele,mapping);
+    CHECK_COORDS(ele, mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
     {
@@ -201,14 +194,20 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXY)
     MeshLib::ElementCoordinatesMappingLocal mapping(
         *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
-    //debugOutput(ele, mapping);
+    // debugOutput(ele, mapping);
 
-    double exp_R[3*3] = {0.70710678118654757, -0.70710678118654757, 0,
-                         0.70710678118654757,  0.70710678118654757, 0,
-                         0,                    0,                   1};
+    double exp_R[3 * 3] = {0.70710678118654757,
+                           -0.70710678118654757,
+                           0,
+                           0.70710678118654757,
+                           0.70710678118654757,
+                           0,
+                           0,
+                           0,
+                           1};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
-    CHECK_COORDS(ele,mapping);
+    CHECK_COORDS(ele, mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
     {
@@ -222,14 +221,15 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimLineXYZ)
     MeshLib::ElementCoordinatesMappingLocal mapping(
         *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
-    //debugOutput(ele, mapping);
+    // debugOutput(ele, mapping);
 
-    double exp_R[3*3] = {0.57735026918962584, -0.81649658092772626,  0,
-                         0.57735026918962584,  0.40824829046386313, -0.70710678118654757,
-                         0.57735026918962584,  0.40824829046386313,  0.70710678118654757};
+    double exp_R[3 * 3] = {
+        0.57735026918962584, -0.81649658092772626, 0,
+        0.57735026918962584, 0.40824829046386313,  -0.70710678118654757,
+        0.57735026918962584, 0.40824829046386313,  0.70710678118654757};
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
-    CHECK_COORDS(ele,mapping);
+    CHECK_COORDS(ele, mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
     {
@@ -243,16 +243,14 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXZ)
     MeshLib::ElementCoordinatesMappingLocal mapping(
         *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
-    //debugOutput(ele, mapping);
+    // debugOutput(ele, mapping);
 
     // results when using GeoLib::ComputeRotationMatrixToXY()
-    double exp_R[3*3] = {  1, 0,  0,
-                           0, 0, -1,
-                           0, 1,  0};
+    double exp_R[3 * 3] = {1, 0, 0, 0, 0, -1, 0, 1, 0};
 
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
-    CHECK_COORDS(ele,mapping);
+    CHECK_COORDS(ele, mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
     {
@@ -266,16 +264,14 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadYZ)
     MeshLib::ElementCoordinatesMappingLocal mapping(
         *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
-    //debugOutput(ele, mapping);
+    // debugOutput(ele, mapping);
 
     // results when using GeoLib::ComputeRotationMatrixToXY()
-    double exp_R[3*3] = { 0, 0, 1,
-                          0, 1, 0,
-                         -1, 0, 0};
+    double exp_R[3 * 3] = {0, 0, 1, 0, 1, 0, -1, 0, 0};
 
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
-    CHECK_COORDS(ele,mapping);
+    CHECK_COORDS(ele, mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
     {
@@ -289,20 +285,25 @@ TEST(MeshLib, CoordinatesMappingLocalLowerDimQuadXYZ)
     MeshLib::ElementCoordinatesMappingLocal mapping(
         *ele, MeshLib::CoordinateSystem(*ele).getDimension());
     auto matR(mapping.getRotationMatrixToGlobal());
-    //debugOutput(ele, mapping);
+    // debugOutput(ele, mapping);
 
     // results when using GeoLib::ComputeRotationMatrixToXY()
-    double exp_R[3*3] = {  1, 0, 0,
-                           0, 0.70710678118654757, -0.70710678118654757,
-                           0, 0.70710678118654757,  0.70710678118654757};
+    double exp_R[3 * 3] = {1,
+                           0,
+                           0,
+                           0,
+                           0.70710678118654757,
+                           -0.70710678118654757,
+                           0,
+                           0.70710678118654757,
+                           0.70710678118654757};
 
     const double eps(std::numeric_limits<double>::epsilon());
     ASSERT_ARRAY_NEAR(exp_R, matR.data(), matR.size(), eps);
-    CHECK_COORDS(ele,mapping);
+    CHECK_COORDS(ele, mapping);
 
     for (std::size_t n = 0; n < ele->getNumberOfNodes(); ++n)
     {
         delete ele->getNode(n);
     }
 }
-

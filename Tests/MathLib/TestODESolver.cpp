@@ -8,13 +8,13 @@
  */
 
 #include <gtest/gtest.h>
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Logging.h"
 #include "MathLib/ODE/ODESolverBuilder.h"
 
-namespace TestODESolver {
-
+namespace TestODESolver
+{
 const double abs_tol = 1e-8;
 const double rel_tol = 1e-8;
 
@@ -81,8 +81,7 @@ std::unique_ptr<MathLib::ODE::ODESolver<NumEquations>> make_ode_solver(
     // any external ODE solver lib.
     if (!any_ode_solver_libs_available())
     {
-        ERR(
-            "I cannot create any ODE solver. This test therefore might be "
+        ERR("I cannot create any ODE solver. This test therefore might be "
             "skipped.");
         return nullptr;
     }
@@ -184,8 +183,7 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
     ExtraData data;
     auto f_lambda = [&](double t,
                         MathLib::ODE::MappedConstVector<1> const& y,
-                        MathLib::ODE::MappedVector<1>& ydot)
-    {
+                        MathLib::ODE::MappedVector<1>& ydot) {
         return f_extra(t, y, ydot, data);
     };
 
@@ -318,4 +316,4 @@ TEST(MathLibCVodeTest, ExponentialWithJacobianNewton)
     }
 }
 
-} // end namespace
+}  // namespace TestODESolver

@@ -10,18 +10,16 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
-
 #include <memory>
 
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
 using namespace MeshLib;
 
@@ -31,7 +29,8 @@ public:
     MeshLibMeshNodeSearchInSimpleQuadMesh()
         : _quad_mesh(MeshGenerator::generateRegularQuadMesh(
               _geometric_size, _number_of_subdivisions_per_direction))
-    {}
+    {
+    }
 
     ~MeshLibMeshNodeSearchInSimpleQuadMesh() override { delete _quad_mesh; }
 
@@ -47,7 +46,8 @@ public:
     MeshLibMeshNodeSearchInSimpleHexMesh()
         : _hex_mesh(MeshGenerator::generateRegularHexMesh(
               _geometric_size, _number_of_subdivisions_per_direction))
-    {}
+    {
+    }
 
     ~MeshLibMeshNodeSearchInSimpleHexMesh() override { delete _hex_mesh; }
 
@@ -60,21 +60,22 @@ protected:
 TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
 {
     double _dx = _geometric_size / _number_of_subdivisions_per_direction;
-    double dx_half = _dx*0.5;
+    double dx_half = _dx * 0.5;
 
     ASSERT_TRUE(_quad_mesh != nullptr);
 
     // 2 perform search and compare results with expected vals
     auto search_length =
         std::make_unique<MeshGeoToolsLib::SearchLength>(dx_half);
-    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_quad_mesh,
-        std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
+    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(
+        *_quad_mesh, std::move(search_length),
+        MeshGeoToolsLib::SearchAllNodes::Yes);
 
     GeoLib::Point p1(0.0, 0.0, 0.0);
     EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDs(p1).size());
     EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDs(p1)[0]);
 
-    GeoLib::Point p2(dx_half*0.99, 0.0, 0.0);
+    GeoLib::Point p2(dx_half * 0.99, 0.0, 0.0);
     EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDs(p2).size());
     EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDs(p2)[0]);
 
@@ -83,7 +84,7 @@ TEST_F(MeshLibMeshNodeSearchInSimpleQuadMesh, PointSearchEpsHalfEdge)
     EXPECT_EQ(0u, mesh_node_searcher.getMeshNodeIDs(p3)[0]);
     EXPECT_EQ(1u, mesh_node_searcher.getMeshNodeIDs(p3)[1]);
 
-    GeoLib::Point p4(dx_half*1.01, 0.0, 0.0);
+    GeoLib::Point p4(dx_half * 1.01, 0.0, 0.0);
     ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDs(p4).size());
     ASSERT_EQ(1u, mesh_node_searcher.getMeshNodeIDs(p4)[0]);
 }
@@ -301,12 +302,14 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
     pnts.push_back(new GeoLib::Point(0.0, _geometric_size, 0.0));
     pnts.push_back(new GeoLib::Point(0.0, 0.0, _geometric_size));
     pnts.push_back(new GeoLib::Point(_geometric_size, 0.0, _geometric_size));
-    pnts.push_back(new GeoLib::Point(_geometric_size, _geometric_size, _geometric_size));
+    pnts.push_back(
+        new GeoLib::Point(_geometric_size, _geometric_size, _geometric_size));
     pnts.push_back(new GeoLib::Point(0.0, _geometric_size, _geometric_size));
 
     auto search_length = std::make_unique<MeshGeoToolsLib::SearchLength>();
-    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(*_hex_mesh,
-        std::move(search_length), MeshGeoToolsLib::SearchAllNodes::Yes);
+    MeshGeoToolsLib::MeshNodeSearcher mesh_node_searcher(
+        *_hex_mesh, std::move(search_length),
+        MeshGeoToolsLib::SearchAllNodes::Yes);
 
     const std::size_t n_nodes_1d = _number_of_subdivisions_per_direction + 1;
     const std::size_t n_nodes_2d = n_nodes_1d * n_nodes_1d;
@@ -347,8 +350,9 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
     std::vector<std::size_t> const& found_ids_sfc_f(
         mesh_node_searcher.getMeshNodeIDs(sfc_front));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_f.size());
-    std::size_t cnt=0;
-    for (std::size_t k(0); k<n_nodes_1d; k++) {
+    std::size_t cnt = 0;
+    for (std::size_t k(0); k < n_nodes_1d; k++)
+    {
         for (std::size_t i(0); i < n_nodes_1d; i++)
         {
             ASSERT_EQ(k * n_nodes_2d + i, found_ids_sfc_f[cnt++]);
@@ -364,9 +368,10 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
         mesh_node_searcher.getMeshNodeIDs(sfc_back));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_back.size());
     cnt = 0;
-    const std::size_t y_offset = n_nodes_1d*(n_nodes_1d-1);
-    for (std::size_t k(0); k<n_nodes_1d; k++) {
-        const std::size_t z_offset = n_nodes_2d*k;
+    const std::size_t y_offset = n_nodes_1d * (n_nodes_1d - 1);
+    for (std::size_t k(0); k < n_nodes_1d; k++)
+    {
+        const std::size_t z_offset = n_nodes_2d * k;
         for (std::size_t i(0); i < n_nodes_1d; i++)
         {
             ASSERT_EQ(z_offset + y_offset + i, found_ids_sfc_back[cnt++]);
@@ -382,8 +387,9 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
         mesh_node_searcher.getMeshNodeIDs(sfc_left));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_left.size());
     cnt = 0;
-    for (std::size_t k(0); k<n_nodes_1d; k++) {
-        const std::size_t z_offset = n_nodes_2d*k;
+    for (std::size_t k(0); k < n_nodes_1d; k++)
+    {
+        const std::size_t z_offset = n_nodes_2d * k;
         for (std::size_t j(0); j < n_nodes_1d; j++)
         {
             ASSERT_EQ(z_offset + j * n_nodes_1d, found_ids_sfc_left[cnt++]);
@@ -399,8 +405,9 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
         mesh_node_searcher.getMeshNodeIDs(sfc_right));
     ASSERT_EQ(n_nodes_2d, found_ids_sfc_right.size());
     cnt = 0;
-    for (std::size_t k(0); k<n_nodes_1d; k++) {
-        const std::size_t z_offset = n_nodes_2d*k;
+    for (std::size_t k(0); k < n_nodes_1d; k++)
+    {
+        const std::size_t z_offset = n_nodes_2d * k;
         for (std::size_t j(0); j < n_nodes_1d; j++)
         {
             ASSERT_EQ(z_offset + (j + 1) * n_nodes_1d - 1,
@@ -408,7 +415,6 @@ TEST_F(MeshLibMeshNodeSearchInSimpleHexMesh, SurfaceSearch)
         }
     }
 
-
-    std::for_each(pnts.begin(), pnts.end(), [](GeoLib::Point* pnt) { delete pnt; });
+    std::for_each(pnts.begin(), pnts.end(),
+                  [](GeoLib::Point* pnt) { delete pnt; });
 }
-

@@ -11,30 +11,29 @@
 #include <cstdio>
 #include <memory>
 
-#include "gtest/gtest.h"
-
-#include "InfoLib/TestInfo.h"
-
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/TestInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "gtest/gtest.h"
 
 #ifdef OGS_BUILD_GUI
+#include <vtkImageData.h>
+
 #include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
 #include "Applications/DataExplorer/VtkVis/VtkRaster.h"
-
-#include <vtkImageData.h>
 #endif
 
 class RasterToMeshTest : public ::testing::Test
 {
 public:
     RasterToMeshTest()
-        : _file_name(TestInfoLib::TestInfo::data_path + "/MeshLib/testraster_selke.asc")
+        : _file_name(TestInfoLib::TestInfo::data_path +
+                     "/MeshLib/testraster_selke.asc")
     {
         _raster.reset(FileIO::AsciiRasterInterface::readRaster(_file_name));
     }

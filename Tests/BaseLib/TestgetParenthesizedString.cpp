@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <array>
 #include <cstring>
@@ -14,8 +16,6 @@
 #include <limits>
 #include <random>
 #include <string>
-
-#include <gtest/gtest.h>
 
 #include "BaseLib/FileTools.h"
 
@@ -51,16 +51,18 @@ TEST(BaseLib, getParenthesizedString)
 {
     {  // {} return empty string
         std::string const test_string = "{}";
-        ASSERT_TRUE(std::get<0>(
-            BaseLib::getParenthesizedString(test_string, '{', '}', 0)).empty());
+        ASSERT_TRUE(std::get<0>(BaseLib::getParenthesizedString(test_string,
+                                                                '{', '}', 0))
+                        .empty());
     }
 
     {  // a{}b return empty string
         std::string const pre = generate_random_alphanumeric_string(20);
         std::string const post = generate_random_alphanumeric_string(20);
         std::string const test_string = pre + "{}" + post;
-        ASSERT_TRUE(std::get<0>(
-            BaseLib::getParenthesizedString(test_string, '{', '}', 0)).empty());
+        ASSERT_TRUE(std::get<0>(BaseLib::getParenthesizedString(test_string,
+                                                                '{', '}', 0))
+                        .empty());
     }
 
     // }a{
@@ -68,8 +70,9 @@ TEST(BaseLib, getParenthesizedString)
     {
         std::string const random = generate_random_alphanumeric_string(20);
         std::string const test_string = "}" + random + "{";
-        ASSERT_TRUE(std::get<0>(
-            BaseLib::getParenthesizedString(test_string, '{', '}', 0)).empty());
+        ASSERT_TRUE(std::get<0>(BaseLib::getParenthesizedString(test_string,
+                                                                '{', '}', 0))
+                        .empty());
     }
 
     // {a}
@@ -80,8 +83,9 @@ TEST(BaseLib, getParenthesizedString)
         ASSERT_EQ(expected,
                   std::get<0>(BaseLib::getParenthesizedString(test_string, '{',
                                                               '}', 0)));
-        ASSERT_TRUE(std::get<0>(
-            BaseLib::getParenthesizedString(test_string, '{', '}', 1)).empty());
+        ASSERT_TRUE(std::get<0>(BaseLib::getParenthesizedString(test_string,
+                                                                '{', '}', 1))
+                        .empty());
     }
 
     // a{b}
@@ -108,10 +112,10 @@ TEST(BaseLib, getParenthesizedString)
         ASSERT_EQ(expected,
                   std::get<0>(BaseLib::getParenthesizedString(test_string, '{',
                                                               '}', 0)));
-        ASSERT_TRUE(std::get<0>(
-            BaseLib::getParenthesizedString(
-                test_string, '{', '}', pre.length() + expected.length() + 2))
-                .empty());
+        ASSERT_TRUE(std::get<0>(BaseLib::getParenthesizedString(
+                                    test_string, '{', '}',
+                                    pre.length() + expected.length() + 2))
+                        .empty());
     }
 
     // a{b{c}"

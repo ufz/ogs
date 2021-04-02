@@ -7,36 +7,39 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
 #include <array>
 #include <ctime>
 #include <functional>
 #include <memory>
 #include <random>
 
-#include "Tests/GeoLib/AutoCheckGenerators.h"
-
-#include "MathLib/Point3d.h"
 #include "GeoLib/AnalyticalGeometry.h"
+#include "MathLib/Point3d.h"
+#include "Tests/GeoLib/AutoCheckGenerators.h"
+#include "gtest/gtest.h"
 
 namespace ac = autocheck;
 
 class LineSegmentIntersect2dTest : public testing::Test
 {
 public:
-    using PointGenerator = ac::RandomCirclePointGeneratorXY<ac::generator<double>>;
+    using PointGenerator =
+        ac::RandomCirclePointGeneratorXY<ac::generator<double>>;
     using SymmSegmentGenerator = ac::SymmSegmentGeneratorXY<PointGenerator>;
-    using PairSegmentGenerator = ac::PairSegmentGeneratorXY<SymmSegmentGenerator>;
+    using PairSegmentGenerator =
+        ac::PairSegmentGeneratorXY<SymmSegmentGenerator>;
 
     PointGenerator point_generator1 = PointGenerator(
         MathLib::Point3d(std::array<double, 3>{{0.0, 0.0, 0.0}}), 1.0);
-    SymmSegmentGenerator segment_generator1 = SymmSegmentGenerator{point_generator1,
-        [&](auto p){ return ac::reflect(point_generator1.center, p); }};
+    SymmSegmentGenerator segment_generator1 = SymmSegmentGenerator{
+        point_generator1,
+        [&](auto p) { return ac::reflect(point_generator1.center, p); }};
 
     PointGenerator point_generator2 = PointGenerator(
         MathLib::Point3d(std::array<double, 3>{{2.0, 0.0, 0.0}}), 1.0);
-    SymmSegmentGenerator segment_generator2 = SymmSegmentGenerator{point_generator2,
-        [&](auto p){ return ac::reflect(point_generator2.center, p); }};
+    SymmSegmentGenerator segment_generator2 = SymmSegmentGenerator{
+        point_generator2,
+        [&](auto p) { return ac::reflect(point_generator2.center, p); }};
 
     Eigen::Vector3d const translation_vector1 = {2, 2, 0};
     PairSegmentGenerator pair_segment_generator1 = PairSegmentGenerator{
@@ -57,8 +60,7 @@ public:
 TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
 {
     auto intersect = [](GeoLib::LineSegment const& s0,
-                        GeoLib::LineSegment const& s1)
-    {
+                        GeoLib::LineSegment const& s1) {
         auto ipnts = GeoLib::lineSegmentIntersect2d(s0, s1);
         if (ipnts.size() == 1)
         {
@@ -82,8 +84,7 @@ TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
 TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationNonIntersecting)
 {
     auto intersect = [](GeoLib::LineSegment const& s0,
-                        GeoLib::LineSegment const& s1)
-    {
+                        GeoLib::LineSegment const& s1) {
         auto ipnts = GeoLib::lineSegmentIntersect2d(s0, s1);
         return ipnts.empty();
     };
@@ -99,37 +100,33 @@ TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationNonIntersecting)
 // line segment is created by translating the first line segment.
 TEST_F(LineSegmentIntersect2dTest, ParallelNonIntersectingSegmentOrientation)
 {
-    auto intersect = [](
-        std::pair<GeoLib::LineSegment const&, GeoLib::LineSegment const&> const&
-            segment_pair)
-    {
-        auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
-                                                    segment_pair.second);
-        return ipnts.empty();
-    };
+    auto intersect =
+        [](std::pair<GeoLib::LineSegment const&,
+                     GeoLib::LineSegment const&> const& segment_pair) {
+            auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
+                                                        segment_pair.second);
+            return ipnts.empty();
+        };
 
     // generate non-intersecting segments
     ac::check<std::pair<GeoLib::LineSegment, GeoLib::LineSegment>>(
-        intersect, 1000,
-        ac::make_arbitrary(pair_segment_generator1),
+        intersect, 1000, ac::make_arbitrary(pair_segment_generator1),
         gtest_reporter);
 }
 
 // Test the intersection of parallel, interfering line segments.
 TEST_F(LineSegmentIntersect2dTest, ParallelIntersectingSegmentOrientation)
 {
-    auto intersect = [](
-        std::pair<GeoLib::LineSegment const&, GeoLib::LineSegment const&> const&
-            segment_pair)
-    {
-        auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
-                                                    segment_pair.second);
-        return ipnts.size() == 2;
-    };
+    auto intersect =
+        [](std::pair<GeoLib::LineSegment const&,
+                     GeoLib::LineSegment const&> const& segment_pair) {
+            auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
+                                                        segment_pair.second);
+            return ipnts.size() == 2;
+        };
 
     // generate non-intersecting segments
     ac::check<std::pair<GeoLib::LineSegment, GeoLib::LineSegment>>(
-        intersect, 1000,
-        ac::make_arbitrary(pair_segment_generator2),
+        intersect, 1000, ac::make_arbitrary(pair_segment_generator2),
         gtest_reporter);
 }

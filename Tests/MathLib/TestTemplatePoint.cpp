@@ -11,26 +11,25 @@
 
 #include <array>
 
-#include "gtest/gtest.h"
-
 #include "MathLib/TemplatePoint.h"
+#include "gtest/gtest.h"
 
 using namespace MathLib;
 
 TEST(MathLib, TemplatePointConstructors)
 {
     // *** test default constructors for different DIM values
-    TemplatePoint<double,3> p0;
+    TemplatePoint<double, 3> p0;
     // test coordinates of default constructed point
     ASSERT_EQ(0.0, p0[0]);
     ASSERT_EQ(0.0, p0[1]);
     ASSERT_EQ(0.0, p0[2]);
 
-    TemplatePoint<double,2> p1;
+    TemplatePoint<double, 2> p1;
     ASSERT_EQ(0.0, p1[0]);
     ASSERT_EQ(0.0, p1[1]);
 
-    TemplatePoint<double,5> p2;
+    TemplatePoint<double, 5> p2;
     ASSERT_EQ(0.0, p2[0]);
     ASSERT_EQ(0.0, p2[1]);
     ASSERT_EQ(0.0, p2[2]);
@@ -38,14 +37,14 @@ TEST(MathLib, TemplatePointConstructors)
     ASSERT_EQ(0.0, p2[4]);
 
     // *** test copy constructor
-    TemplatePoint<double,3> p0_copy(p0);
+    TemplatePoint<double, 3> p0_copy(p0);
     // test equality of coordinates
     ASSERT_EQ(p0[0], p0_copy[0]);
     ASSERT_EQ(p0[1], p0_copy[1]);
     ASSERT_EQ(p0[2], p0_copy[2]);
 
     // *** test constructor taking std::array
-    std::array<double,3> array = {{0, 1, 2}};
+    std::array<double, 3> array = {{0, 1, 2}};
     TemplatePoint<double> p3(array);
     ASSERT_EQ(0.0, p3[0]);
     ASSERT_EQ(1.0, p3[1]);
@@ -54,7 +53,7 @@ TEST(MathLib, TemplatePointConstructors)
 
 TEST(MathLib, TemplatePointOperators)
 {
-    TemplatePoint<double,3> p;
+    TemplatePoint<double, 3> p;
     // access operator
     p[0] = 1.0;
     p[1] = 3.0;
@@ -63,4 +62,3 @@ TEST(MathLib, TemplatePointOperators)
     ASSERT_EQ(3.0, p[1]);
     ASSERT_EQ(5.0, p[2]);
 }
-

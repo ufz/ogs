@@ -8,15 +8,15 @@
  */
 
 #include <ctime>
-#include "gtest/gtest.h"
 
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "gtest/gtest.h"
 
 class MeshLibLineMesh : public ::testing::Test
 {
-    public:
+public:
     MeshLibLineMesh()
     {
         mesh = MeshLib::MeshGenerator::generateLineMesh(extent, mesh_size);
@@ -37,7 +37,7 @@ TEST_F(MeshLibLineMesh, Construction)
     ASSERT_EQ(mesh_size, mesh->getNumberOfElements());
 
     // There are mesh_size+1 nodes in the mesh.
-    ASSERT_EQ(mesh_size+1, mesh->getNumberOfNodes());
+    ASSERT_EQ(mesh_size + 1, mesh->getNumberOfNodes());
 
     // All elements have maximum two neighbors.
     std::vector<MeshLib::Element*> const& elements = mesh->getElements();
@@ -46,24 +46,25 @@ TEST_F(MeshLibLineMesh, Construction)
         ASSERT_EQ(2u, e->getNumberOfNeighbors());
     }
 
-    ASSERT_NEAR(extent/mesh_size, mesh->getMinEdgeLength(),std::numeric_limits<double>::epsilon());
-    ASSERT_NEAR(extent/mesh_size, mesh->getMaxEdgeLength(),std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(extent / mesh_size, mesh->getMinEdgeLength(),
+                std::numeric_limits<double>::epsilon());
+    ASSERT_NEAR(extent / mesh_size, mesh->getMaxEdgeLength(),
+                std::numeric_limits<double>::epsilon());
 }
 
 TEST_F(MeshLibLineMesh, ElementNeigbors)
 {
-    auto count_neighbors = [](MeshLib::Element const* const e)
+    auto count_neighbors = [](MeshLib::Element const* const e) {
+        unsigned count = 0;
+        for (int i = 0; i < 2; i++)
         {
-            unsigned count = 0;
-            for (int i = 0; i < 2; i++)
+            if (e->getNeighbor(i) != nullptr)
             {
-                if (e->getNeighbor(i) != nullptr)
-                {
-                    count++;
-                }
+                count++;
             }
-            return count;
-        };
+        }
+        return count;
+    };
 
     std::vector<MeshLib::Element*> const& elements = mesh->getElements();
 
@@ -72,13 +73,13 @@ TEST_F(MeshLibLineMesh, ElementNeigbors)
     ASSERT_EQ(1u, count_neighbors(elements.front()));
     ASSERT_EQ(1u, count_neighbors(elements.back()));
     ASSERT_TRUE(areNeighbors(elements.front(), elements[1]));
-    ASSERT_TRUE(areNeighbors(elements.back(), elements[elements.size()-2]));
+    ASSERT_TRUE(areNeighbors(elements.back(), elements[elements.size() - 2]));
 
     for (std::size_t i = 1; i < elements.size() - 1; ++i)
     {
         ASSERT_EQ(2u, count_neighbors(elements[i]));
-        ASSERT_TRUE(areNeighbors(elements[i], elements[i-1]));
-        ASSERT_TRUE(areNeighbors(elements[i], elements[i+1]));
+        ASSERT_TRUE(areNeighbors(elements[i], elements[i - 1]));
+        ASSERT_TRUE(areNeighbors(elements[i], elements[i + 1]));
     }
 }
 
@@ -91,7 +92,7 @@ TEST_F(MeshLibLineMesh, ElementToNodeConnectivity)
         // An element consists of two nodes n and n+1
         ASSERT_EQ(2u, elements[i]->getNumberOfBaseNodes());
         ASSERT_EQ(i, elements[i]->getNode(0)->getID());
-        ASSERT_EQ(i+1, elements[i]->getNode(1)->getID());
+        ASSERT_EQ(i + 1, elements[i]->getNode(1)->getID());
     }
 }
 
@@ -111,7 +112,7 @@ TEST_F(MeshLibLineMesh, NodeToElementConnectivity)
     for (std::size_t i = 1; i < nodes.size() - 1; ++i)
     {
         ASSERT_EQ(2u, nodes[i]->getNumberOfElements());
-        ASSERT_EQ(elements[i-1], nodes[i]->getElement(0));
+        ASSERT_EQ(elements[i - 1], nodes[i]->getElement(0));
         ASSERT_EQ(elements[i], nodes[i]->getElement(1));
     }
 }

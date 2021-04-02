@@ -8,7 +8,6 @@
  */
 
 #include <gtest/gtest.h>
-#include "BaseLib/Logging.h"
 
 #include <boost/property_tree/xml_parser.hpp>
 #include <numeric>
@@ -16,15 +15,14 @@
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
-#include "Tests/TestTools.h"
-
+#include "BaseLib/Logging.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
-
 #include "ParameterLib/CurveScaledParameter.h"
 #include "ParameterLib/GroupBasedParameter.h"
+#include "Tests/TestTools.h"
 
 using namespace ParameterLib;
 

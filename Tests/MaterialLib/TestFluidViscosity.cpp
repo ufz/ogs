@@ -13,13 +13,12 @@
 
 #include <gtest/gtest.h>
 
-#include <memory>
 #include <cmath>
-
-#include "Tests/TestTools.h"
+#include <memory>
 
 #include "MaterialLib/Fluid/Viscosity/CreateViscosityModel.h"
 #include "MaterialLib/PhysicalConstant.h"
+#include "Tests/TestTools.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;
@@ -65,7 +64,7 @@ TEST(Material, checkTemperatureDependentViscosity)
     const double mu_expected = 1.e-3 * std::exp(-(vars[0] - 293) / 368);
     ASSERT_NEAR(mu_expected, mu->getValue(vars), 1.e-10);
     const double dmu_dT_expected =
-        -1.e-3/368 * std::exp(-(vars[0] - 293) / 368);
+        -1.e-3 / 368 * std::exp(-(vars[0] - 293) / 368);
     ASSERT_NEAR(
         dmu_dT_expected,
         mu->getdValue(vars, MaterialLib::Fluid::PropertyVariableType::T),

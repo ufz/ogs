@@ -8,31 +8,32 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 #include <string>
 
-#include <gtest/gtest.h>
-
+#include "Applications/FileIO/FEFLOW/FEFLOWMeshInterface.h"
 #include "InfoLib/TestInfo.h"
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
 
-#include "Applications/FileIO/FEFLOW/FEFLOWMeshInterface.h"
-
 TEST(FileIO, TestFEFLOWMeshInterface)
 {
-    std::string const file_name (TestInfoLib::TestInfo::data_path + "/FileIO/small_cube_hex.fem");
+    std::string const file_name(TestInfoLib::TestInfo::data_path +
+                                "/FileIO/small_cube_hex.fem");
 
     FileIO::FEFLOWMeshInterface feflowIO;
-    std::unique_ptr<MeshLib::Mesh const> mesh(feflowIO.readFEFLOWFile(file_name));
+    std::unique_ptr<MeshLib::Mesh const> mesh(
+        feflowIO.readFEFLOWFile(file_name));
 
     ASSERT_TRUE(static_cast<bool>(mesh));
 
     ASSERT_EQ(144u, mesh->getNumberOfNodes());
     ASSERT_EQ(75u, mesh->getNumberOfElements());
-    auto opt_material_ids(mesh->getProperties().getPropertyVector<int>("MaterialIDs"));
+    auto opt_material_ids(
+        mesh->getProperties().getPropertyVector<int>("MaterialIDs"));
     ASSERT_TRUE(static_cast<bool>(opt_material_ids));
     ASSERT_EQ(75u, opt_material_ids->size());
 
@@ -42,22 +43,20 @@ TEST(FileIO, TestFEFLOWMeshInterface)
     ASSERT_EQ(0, (*opt_material_ids)[6]);
 }
 
-
 TEST(FileIO, TestFEFLOWReadHexMesh)
 {
     std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/hex.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
-    std::unique_ptr<MeshLib::Mesh const> mesh(
-        feflowIO.readFEFLOWFile(fname));
+    std::unique_ptr<MeshLib::Mesh const> mesh(feflowIO.readFEFLOWFile(fname));
 
-   EXPECT_EQ(12, mesh->getNumberOfNodes());
-   EXPECT_EQ(2, mesh->getNumberOfElements());
-   for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
-   {
-       EXPECT_EQ(MeshLib::MeshElemType::HEXAHEDRON,
-                 mesh->getElement(k)->getGeomType());
-   }
+    EXPECT_EQ(12, mesh->getNumberOfNodes());
+    EXPECT_EQ(2, mesh->getNumberOfElements());
+    for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
+    {
+        EXPECT_EQ(MeshLib::MeshElemType::HEXAHEDRON,
+                  mesh->getElement(k)->getGeomType());
+    }
 }
 
 TEST(FileIO, TestFEFLOWReadPrismMesh)
@@ -65,16 +64,15 @@ TEST(FileIO, TestFEFLOWReadPrismMesh)
     std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/prism.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
-    std::unique_ptr<MeshLib::Mesh const> mesh(
-        feflowIO.readFEFLOWFile(fname));
+    std::unique_ptr<MeshLib::Mesh const> mesh(feflowIO.readFEFLOWFile(fname));
 
-   EXPECT_EQ(12, mesh->getNumberOfNodes());
-   EXPECT_EQ(4, mesh->getNumberOfElements());
-   for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
-   {
-       EXPECT_EQ(MeshLib::MeshElemType::PRISM,
-                 mesh->getElement(k)->getGeomType());
-   }
+    EXPECT_EQ(12, mesh->getNumberOfNodes());
+    EXPECT_EQ(4, mesh->getNumberOfElements());
+    for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
+    {
+        EXPECT_EQ(MeshLib::MeshElemType::PRISM,
+                  mesh->getElement(k)->getGeomType());
+    }
 }
 
 TEST(FileIO, TestFEFLOWReadHexPrismMesh)
@@ -82,18 +80,17 @@ TEST(FileIO, TestFEFLOWReadHexPrismMesh)
     std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/hex_prism.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
-    std::unique_ptr<MeshLib::Mesh const> mesh(
-        feflowIO.readFEFLOWFile(fname));
+    std::unique_ptr<MeshLib::Mesh const> mesh(feflowIO.readFEFLOWFile(fname));
 
-   EXPECT_EQ(12, mesh->getNumberOfNodes());
-   EXPECT_EQ(3, mesh->getNumberOfElements());
-   for (std::size_t k(0); k < 2; ++k)
-   {
-       EXPECT_EQ(MeshLib::MeshElemType::PRISM,
-                 mesh->getElement(k)->getGeomType());
-   }
-   EXPECT_EQ(MeshLib::MeshElemType::HEXAHEDRON,
-             mesh->getElement(2)->getGeomType());
+    EXPECT_EQ(12, mesh->getNumberOfNodes());
+    EXPECT_EQ(3, mesh->getNumberOfElements());
+    for (std::size_t k(0); k < 2; ++k)
+    {
+        EXPECT_EQ(MeshLib::MeshElemType::PRISM,
+                  mesh->getElement(k)->getGeomType());
+    }
+    EXPECT_EQ(MeshLib::MeshElemType::HEXAHEDRON,
+              mesh->getElement(2)->getGeomType());
 }
 
 TEST(FileIO, TestFEFLOWReadTetMesh)
@@ -101,16 +98,15 @@ TEST(FileIO, TestFEFLOWReadTetMesh)
     std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/tet.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
-    std::unique_ptr<MeshLib::Mesh const> mesh(
-        feflowIO.readFEFLOWFile(fname));
+    std::unique_ptr<MeshLib::Mesh const> mesh(feflowIO.readFEFLOWFile(fname));
 
-   EXPECT_EQ(13, mesh->getNumberOfNodes());
-   EXPECT_EQ(22, mesh->getNumberOfElements());
-   for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
-   {
-       EXPECT_EQ(MeshLib::MeshElemType::TETRAHEDRON,
-                 mesh->getElement(k)->getGeomType());
-   }
+    EXPECT_EQ(13, mesh->getNumberOfNodes());
+    EXPECT_EQ(22, mesh->getNumberOfElements());
+    for (std::size_t k(0); k < mesh->getNumberOfElements(); ++k)
+    {
+        EXPECT_EQ(MeshLib::MeshElemType::TETRAHEDRON,
+                  mesh->getElement(k)->getGeomType());
+    }
 }
 
 TEST(FileIO, TestFEFLOWReadPrismTetMesh)
@@ -118,19 +114,18 @@ TEST(FileIO, TestFEFLOWReadPrismTetMesh)
     std::string const fname(TestInfoLib::TestInfo::data_path +
                             "/FileIO/FEFLOW/prism_tet.fem");
     FileIO::FEFLOWMeshInterface feflowIO;
-    std::unique_ptr<MeshLib::Mesh const> mesh(
-        feflowIO.readFEFLOWFile(fname));
+    std::unique_ptr<MeshLib::Mesh const> mesh(feflowIO.readFEFLOWFile(fname));
 
-   EXPECT_EQ(16, mesh->getNumberOfNodes());
-   EXPECT_EQ(20, mesh->getNumberOfElements());
-   for (std::size_t k(0); k < 4; ++k)
-   {
-       EXPECT_EQ(MeshLib::MeshElemType::PRISM,
-                 mesh->getElement(k)->getGeomType());
-   }
-   for (std::size_t k(4); k < mesh->getNumberOfElements(); ++k)
-   {
-       EXPECT_EQ(MeshLib::MeshElemType::TETRAHEDRON,
-                 mesh->getElement(k)->getGeomType());
-   }
+    EXPECT_EQ(16, mesh->getNumberOfNodes());
+    EXPECT_EQ(20, mesh->getNumberOfElements());
+    for (std::size_t k(0); k < 4; ++k)
+    {
+        EXPECT_EQ(MeshLib::MeshElemType::PRISM,
+                  mesh->getElement(k)->getGeomType());
+    }
+    for (std::size_t k(4); k < mesh->getNumberOfElements(); ++k)
+    {
+        EXPECT_EQ(MeshLib::MeshElemType::TETRAHEDRON,
+                  mesh->getElement(k)->getGeomType());
+    }
 }

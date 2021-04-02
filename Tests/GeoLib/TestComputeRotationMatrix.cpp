@@ -9,9 +9,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
-
 #include "GeoLib/AnalyticalGeometry.h"
+#include "gtest/gtest.h"
 
 auto test3equal = [](double a, double b, double c,
                      Eigen::Vector3d const& result) {
@@ -25,15 +24,15 @@ TEST(GeoLib, ComputeRotationMatrixToXYnegative)
     Eigen::Vector3d const n({0.0, -1.0, 0.0});
     Eigen::Matrix3d const rot_mat = GeoLib::computeRotationMatrixToXY(n);
 
-    EXPECT_EQ(1.0, rot_mat(0,0));
-    EXPECT_EQ(0.0, rot_mat(0,1));
-    EXPECT_EQ(0.0, rot_mat(0,2));
-    EXPECT_EQ(0.0, rot_mat(1,0));
-    EXPECT_EQ(0.0, rot_mat(1,1));
-    EXPECT_EQ(1.0, rot_mat(1,2));
-    EXPECT_EQ(0.0, rot_mat(2,0));
-    EXPECT_EQ(-1.0, rot_mat(2,1));
-    EXPECT_EQ(0.0, rot_mat(2,2));
+    EXPECT_EQ(1.0, rot_mat(0, 0));
+    EXPECT_EQ(0.0, rot_mat(0, 1));
+    EXPECT_EQ(0.0, rot_mat(0, 2));
+    EXPECT_EQ(0.0, rot_mat(1, 0));
+    EXPECT_EQ(0.0, rot_mat(1, 1));
+    EXPECT_EQ(1.0, rot_mat(1, 2));
+    EXPECT_EQ(0.0, rot_mat(2, 0));
+    EXPECT_EQ(-1.0, rot_mat(2, 1));
+    EXPECT_EQ(0.0, rot_mat(2, 2));
 
     Eigen::Vector3d const x({0.0, 1.0, 0.0});
     test3equal(0, 0, -1, rot_mat * x);
@@ -50,15 +49,15 @@ TEST(GeoLib, ComputeRotationMatrixToXYpositive)
     Eigen::Vector3d const n{0.0, 1.0, 0.0};
     Eigen::Matrix3d const rot_mat = GeoLib::computeRotationMatrixToXY(n);
 
-    EXPECT_EQ(1.0, rot_mat(0,0));
-    EXPECT_EQ(0.0, rot_mat(0,1));
-    EXPECT_EQ(0.0, rot_mat(0,2));
-    EXPECT_EQ(0.0, rot_mat(1,0));
-    EXPECT_EQ(0.0, rot_mat(1,1));
-    EXPECT_EQ(-1.0, rot_mat(1,2));
-    EXPECT_EQ(0.0, rot_mat(2,0));
-    EXPECT_EQ(1.0, rot_mat(2,1));
-    EXPECT_EQ(0.0, rot_mat(2,2));
+    EXPECT_EQ(1.0, rot_mat(0, 0));
+    EXPECT_EQ(0.0, rot_mat(0, 1));
+    EXPECT_EQ(0.0, rot_mat(0, 2));
+    EXPECT_EQ(0.0, rot_mat(1, 0));
+    EXPECT_EQ(0.0, rot_mat(1, 1));
+    EXPECT_EQ(-1.0, rot_mat(1, 2));
+    EXPECT_EQ(0.0, rot_mat(2, 0));
+    EXPECT_EQ(1.0, rot_mat(2, 1));
+    EXPECT_EQ(0.0, rot_mat(2, 2));
 
     Eigen::Vector3d const x(0.0, 1.0, 0.0);
     test3equal(0, 0, 1, rot_mat * x);
@@ -69,4 +68,3 @@ TEST(GeoLib, ComputeRotationMatrixToXYpositive)
     Eigen::Vector3d const x1(10.0, 0.0, 10.0);
     test3equal(10, -10, 0, rot_mat * x1);
 }
-

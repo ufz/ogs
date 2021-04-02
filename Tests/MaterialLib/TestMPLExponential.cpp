@@ -61,7 +61,7 @@ TEST_F(MaterialPropertyLibExponentialProperty, TestNumericalDerivatives)
         return p->template value<double>(variable_array, pos, time, dt);
     };
 
-    auto f = [&](double const T){
+    auto f = [&](double const T) {
         MPL::VariableArray variable_array;
         variable_array[static_cast<int>(MPL::Variable::temperature)] = T;
         double const v =
@@ -85,8 +85,7 @@ TEST_F(MaterialPropertyLibExponentialProperty, TestNumericalDerivatives)
 
     // Limit values to avoid +-inf.
     auto gen = ac::IntervalGenerator(-100., 100.);
-    ac::check<double>(
-        f, 10000, ac::make_arbitrary(gen), gtest_reporter);
+    ac::check<double>(f, 10000, ac::make_arbitrary(gen), gtest_reporter);
 }
 
 TEST(MaterialPropertyLib, Exponential)
@@ -97,7 +96,8 @@ TEST(MaterialPropertyLib, Exponential)
     double const factor = 1 / 75.0;
     MPL::ExponentData const exp_data{MPL::Variable::temperature,
                                      reference_condition, factor};
-    MPL::Property const& p = MPL::Exponential{"exponential", y_offset, y_ref, exp_data};
+    MPL::Property const& p =
+        MPL::Exponential{"exponential", y_offset, y_ref, exp_data};
 
     double const T = 20.;
     MPL::VariableArray variable_array;

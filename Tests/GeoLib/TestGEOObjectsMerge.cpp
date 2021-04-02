@@ -10,14 +10,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <map>
 #include <string>
 #include <vector>
 
-#include <gtest/gtest.h>
-
 #include "CreateTestPoints.h"
-
 #include "GeoLib/GEOObjects.h"
 
 TEST(GeoLib, GEOObjectsMergePoints)
@@ -223,4 +222,3 @@ TEST(GeoLib, GEOObjectsMergePolylinesWithNames)
     ASSERT_TRUE(ply_vec_objs->getElementByName("Polyline1FromGeometry1") !=
                 nullptr);
 }
-

@@ -8,7 +8,9 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <limits>
+
 #include "BaseLib/Logging.h"
 
 #ifdef USE_PETSC
@@ -22,9 +24,9 @@
 #else
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #endif
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/NumericsConfig.h"
-#include "NumLib/DOF/DOFTableUtil.h"
 #include "Tests/VectorUtils.h"
 
 static std::vector<MeshLib::MeshSubset> createMeshSubsets(
@@ -106,7 +108,8 @@ void do_test(unsigned const num_components,
         auto const total_norm = MathLib::LinAlg::norm(*x, norm_type);
 
         double compwise_total_norm = 0.0;
-        for (unsigned comp = 0; comp < num_components; ++comp) {
+        for (unsigned comp = 0; comp < num_components; ++comp)
+        {
             compwise_total_norm = accumulate_cb(
                 compwise_total_norm,
                 NumLib::norm(*x, comp, norm_type, dtd.dof_table, *dtd.mesh));
@@ -127,12 +130,14 @@ TEST(MPITest_NumLib, ComponentNormSingleComponent)
     auto const tolerance = 800 * std::numeric_limits<double>::epsilon();
 
     using VNT = MathLib::VecNormType;
-    for (auto norm_type : {VNT::NORM1, VNT::NORM2, VNT::INFINITY_N}) {
+    for (auto norm_type : {VNT::NORM1, VNT::NORM2, VNT::INFINITY_N})
+    {
         DBUG("norm type: {:s}.",
              MathLib::convertVecNormTypeToString(norm_type));
-        do_test(num_components, norm_type, tolerance,
-                [](double /*n_total*/, double n) { return n; },
-                [](double n_total) { return n_total; });
+        do_test(
+            num_components, norm_type, tolerance,
+            [](double /*n_total*/, double n) { return n; },
+            [](double n_total) { return n_total; });
     }
 }
 
@@ -147,9 +152,10 @@ TEST(MPITest_NumLib, ComponentNormMultiComponent1)
     auto const tolerance =
         num_components * 1700 * std::numeric_limits<double>::epsilon();
 
-    do_test(num_components, norm_type, tolerance,
-            [](double n_total, double n) { return n_total + n; },
-            [](double n_total) { return n_total; });
+    do_test(
+        num_components, norm_type, tolerance,
+        [](double n_total, double n) { return n_total + n; },
+        [](double n_total) { return n_total; });
 }
 
 #ifndef USE_PETSC
@@ -163,9 +169,10 @@ TEST(MPITest_NumLib, ComponentNormMultiComponent2)
     auto const tolerance =
         num_components * 40 * std::numeric_limits<double>::epsilon();
 
-    do_test(num_components, norm_type, tolerance,
-            [](double n_total, double n) { return n_total + n*n; },
-            [](double n_total) { return std::sqrt(n_total); });
+    do_test(
+        num_components, norm_type, tolerance,
+        [](double n_total, double n) { return n_total + n * n; },
+        [](double n_total) { return std::sqrt(n_total); });
 }
 
 #ifndef USE_PETSC
@@ -179,7 +186,8 @@ TEST(MPITest_NumLib, ComponentNormMultiComponentInfinity)
     auto const tolerance =
         num_components * 1 * std::numeric_limits<double>::epsilon();
 
-    do_test(num_components, norm_type, tolerance,
-            [](double n_total, double n) { return std::max(n_total, n); },
-            [](double n_total) { return n_total; });
+    do_test(
+        num_components, norm_type, tolerance,
+        [](double n_total, double n) { return std::max(n_total, n); },
+        [](double n_total) { return n_total; });
 }

@@ -11,33 +11,32 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
-
 #include <memory>
 
+#include "GeoLib/Raster.h"
 #include "MathLib/Point3d.h"
-
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-#include "MeshLib/Elements/Element.h"
+#include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
-#include "GeoLib/Raster.h"
-
-void
-detectHoles(MeshLib::Mesh const& mesh,
-    std::vector<std::size_t> erase_elems,
-    std::size_t const expected_n_holes)
+void detectHoles(MeshLib::Mesh const& mesh,
+                 std::vector<std::size_t>
+                     erase_elems,
+                 std::size_t const expected_n_holes)
 {
-    std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh.getNodes());
-    std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh.getElements(),nodes);
+    std::vector<MeshLib::Node*> nodes =
+        MeshLib::copyNodeVector(mesh.getNodes());
+    std::vector<MeshLib::Element*> elems =
+        MeshLib::copyElementVector(mesh.getElements(), nodes);
     for (auto pos : erase_elems)
     {
         delete elems[pos];
-        elems.erase(elems.begin()+pos);
+        elems.erase(elems.begin() + pos);
     }
     MeshLib::Mesh mesh2("mesh2", nodes, elems);
     ASSERT_EQ(expected_n_holes, MeshLib::MeshValidation::detectHoles(mesh2));
@@ -45,13 +44,16 @@ detectHoles(MeshLib::Mesh const& mesh,
 
 TEST(MeshValidation, DetectHolesTri)
 {
-    std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
+    std::array<double, 12> pix = {
+        {0, 0.1, 0.2, 0.1, 0, 0, 0.1, 0, 0, 0, -0.1, 0}};
     GeoLib::Raster const raster(
         {4, 3, 1, MathLib::Point3d(std::array<double, 3>{{0, 0, 0}}), 1, -9999},
         pix.begin(),
         pix.end());
-    std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::RasterToMesh::convert(
-        raster, MeshLib::MeshElemType::TRIANGLE, MeshLib::UseIntensityAs::ELEVATION));
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::RasterToMesh::convert(raster,
+                                       MeshLib::MeshElemType::TRIANGLE,
+                                       MeshLib::UseIntensityAs::ELEVATION));
     ASSERT_EQ(0, MeshLib::MeshValidation::detectHoles(*mesh));
 
     detectHoles(*mesh, {12}, 1);
@@ -70,7 +72,3 @@ TEST(MeshValidation, DetectHolesHex)
     detectHoles(*mesh, {28, 27}, 1);
     detectHoles(*mesh, {29, 27}, 1);
 }
-
-
-
-

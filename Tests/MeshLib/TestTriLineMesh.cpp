@@ -7,18 +7,17 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
-
+#include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/Elements/Tri.h"
-#include "MeshLib/Elements/Line.h"
+#include "gtest/gtest.h"
 
 /// Creates a mesh consisiting of two triangles sharing a line element on their
 /// common edge.
 class MeshLibTriLineMesh : public ::testing::Test
 {
-    public:
+public:
     MeshLibTriLineMesh()
     {
         nodes.push_back(new MeshLib::Node(0, 0, 0));
@@ -59,18 +58,14 @@ class MeshLibTriLineMesh : public ::testing::Test
     std::vector<MeshLib::Node*> nodes;
     std::vector<MeshLib::Element*> elements;
 
-    public:
+public:
     // Helper functions to access elements and nodes.
 
-
-    bool
-    isConnectedToNode(std::size_t const n, std::size_t const e) const
+    bool isConnectedToNode(std::size_t const n, std::size_t const e) const
     {
-        return std::find(
-            nodes[n]->getElements().cbegin(),
-            nodes[n]->getElements().cend(),
-            elements[e])
-                != nodes[n]->getElements().cend();
+        return std::find(nodes[n]->getElements().cbegin(),
+                         nodes[n]->getElements().cend(),
+                         elements[e]) != nodes[n]->getElements().cend();
     }
 };
 

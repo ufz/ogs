@@ -11,7 +11,6 @@
 
 namespace autocheck
 {
-
 // reflect point p on the point c in x-y plane
 MathLib::Point3d reflect(MathLib::Point3d const& c, MathLib::Point3d const& p)
 {

@@ -11,8 +11,8 @@
 
 #include <gtest/gtest.h>
 
-#include "MathLib/Point3d.h"
 #include "MathLib/GeometricBasics.h"
+#include "MathLib/Point3d.h"
 
 TEST(MathLib, IsPointInTriangle)
 {
@@ -83,4 +83,3 @@ TEST(MathLib, IsPointInTriangle)
     EXPECT_FALSE(MathLib::gaussPointInTriangle(q, a, b, c));
     EXPECT_FALSE(MathLib::barycentricPointInTriangle(q, a, b, c));
 }
-

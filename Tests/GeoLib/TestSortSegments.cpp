@@ -8,18 +8,20 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <numeric>
-#include "Tests/GeoLib/AutoCheckGenerators.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/LineSegment.h"
+#include "Tests/GeoLib/AutoCheckGenerators.h"
 
 namespace ac = autocheck;
 
 class GeoLibSortLineSegments : public testing::Test
 {
 public:
-    using PointGenerator = ac::RandomCirclePointGeneratorXY<ac::generator<double>>;
+    using PointGenerator =
+        ac::RandomCirclePointGeneratorXY<ac::generator<double>>;
     using SymmSegmentGenerator = ac::SymmSegmentGeneratorXY<PointGenerator>;
 
     PointGenerator point_generator = PointGenerator(
@@ -39,8 +41,7 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
     auto partitionSegment = [](GeoLib::LineSegment const& s0,
                                std::vector<std::size_t> const& sub_seg_ids,
                                double const dt,
-                               std::vector<GeoLib::LineSegment>& sub_segments)
-    {
+                               std::vector<GeoLib::LineSegment>& sub_segments) {
         for (auto sub_seg_id : sub_seg_ids)
         {
             double t(dt * sub_seg_id);
@@ -58,35 +59,34 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
         }
     };
 
-    auto checkSortedSubSegments = [](
-        GeoLib::LineSegment const& s0,
-        std::vector<GeoLib::LineSegment> const& sub_segments)
-    {
-        double eps(std::numeric_limits<double>::epsilon());
-        if (MathLib::sqrDist(s0.getBeginPoint(),
-                             sub_segments.front().getBeginPoint()) >= eps)
-        {
-            return false;
-        }
-        if (MathLib::sqrDist(s0.getEndPoint(),
-                             sub_segments.back().getEndPoint()) >= eps)
-        {
-            return false;
-        }
-        for (std::size_t k(0); k < sub_segments.size() - 1; ++k)
-        {
-            if (MathLib::sqrDist(sub_segments[k].getEndPoint(),
-                                 sub_segments[k + 1].getBeginPoint()) >= eps)
+    auto checkSortedSubSegments =
+        [](GeoLib::LineSegment const& s0,
+           std::vector<GeoLib::LineSegment> const& sub_segments) {
+            double eps(std::numeric_limits<double>::epsilon());
+            if (MathLib::sqrDist(s0.getBeginPoint(),
+                                 sub_segments.front().getBeginPoint()) >= eps)
             {
                 return false;
             }
-        }
-        return true;
-    };
+            if (MathLib::sqrDist(s0.getEndPoint(),
+                                 sub_segments.back().getEndPoint()) >= eps)
+            {
+                return false;
+            }
+            for (std::size_t k(0); k < sub_segments.size() - 1; ++k)
+            {
+                if (MathLib::sqrDist(sub_segments[k].getEndPoint(),
+                                     sub_segments[k + 1].getBeginPoint()) >=
+                    eps)
+                {
+                    return false;
+                }
+            }
+            return true;
+        };
 
     auto testSortSegments = [partitionSegment, checkSortedSubSegments](
-        GeoLib::LineSegment const& s0)
-    {
+                                GeoLib::LineSegment const& s0) {
         std::size_t const n_sub_segments(4);
         double const dt(1.0 / static_cast<double>(n_sub_segments));
         std::vector<std::size_t> sub_seg_ids(n_sub_segments);
@@ -104,8 +104,7 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
         return true;
     };
 
-    ac::check<GeoLib::LineSegment>(
-        testSortSegments, 100,
-        ac::make_arbitrary(segment_generator),
-        gtest_reporter);
+    ac::check<GeoLib::LineSegment>(testSortSegments, 100,
+                                   ac::make_arbitrary(segment_generator),
+                                   gtest_reporter);
 }

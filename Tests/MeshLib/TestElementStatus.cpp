@@ -13,21 +13,20 @@
 
 #include <memory>
 
-#include "gtest/gtest.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/Elements/Element.h"
 #include "MeshLib/ElementStatus.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-
+#include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
 TEST(MeshLib, ElementStatus)
 {
-    const unsigned width (100);
-    const unsigned elements_per_side (20);
+    const unsigned width(100);
+    const unsigned elements_per_side(20);
     auto const mesh = std::unique_ptr<MeshLib::Mesh>{
-        MeshLib::MeshGenerator::generateRegularQuadMesh(width, elements_per_side)};
+        MeshLib::MeshGenerator::generateRegularQuadMesh(width,
+                                                        elements_per_side)};
 
     auto* const material_id_properties =
         mesh->getProperties().createNewPropertyVector<int>(
@@ -35,9 +34,9 @@ TEST(MeshLib, ElementStatus)
     ASSERT_NE(nullptr, material_id_properties);
     material_id_properties->resize(mesh->getNumberOfElements());
 
-    const std::vector<MeshLib::Element*> elements (mesh->getElements());
+    const std::vector<MeshLib::Element*> elements(mesh->getElements());
 
-    for (unsigned i=0; i<elements_per_side; ++i)
+    for (unsigned i = 0; i < elements_per_side; ++i)
     {
         for (unsigned j = 0; j < elements_per_side; ++j)
         {
@@ -49,29 +48,31 @@ TEST(MeshLib, ElementStatus)
     {
         // all elements and nodes active
         MeshLib::ElementStatus status(mesh.get());
-        ASSERT_EQ (elements.size(), status.getNumberOfActiveElements());
-        ASSERT_EQ (mesh->getNumberOfNodes(), status.getNumberOfActiveNodes());
+        ASSERT_EQ(elements.size(), status.getNumberOfActiveElements());
+        ASSERT_EQ(mesh->getNumberOfNodes(), status.getNumberOfActiveNodes());
     }
 
     {
         // set material 1 to false
         std::vector<int> inactiveMat{1};
         MeshLib::ElementStatus status(mesh.get(), inactiveMat);
-        ASSERT_EQ (elements.size()-elements_per_side, status.getNumberOfActiveElements());
+        ASSERT_EQ(elements.size() - elements_per_side,
+                  status.getNumberOfActiveElements());
     }
 
     {
         // set material 0 and 1 to false
         std::vector<int> inactiveMat{0, 1};
         MeshLib::ElementStatus status(mesh.get(), inactiveMat);
-        ASSERT_EQ (elements.size()-(2*elements_per_side), status.getNumberOfActiveElements());
+        ASSERT_EQ(elements.size() - (2 * elements_per_side),
+                  status.getNumberOfActiveElements());
 
         // active elements
-        auto &active_elements (status.getActiveElements());
-        ASSERT_EQ (active_elements.size(), status.getNumberOfActiveElements());
+        auto& active_elements(status.getActiveElements());
+        ASSERT_EQ(active_elements.size(), status.getNumberOfActiveElements());
 
         // active nodes
-        auto& active_nodes (status.getActiveNodes());
-        ASSERT_EQ (active_nodes.size(), status.getNumberOfActiveNodes());
+        auto& active_nodes(status.getActiveNodes());
+        ASSERT_EQ(active_nodes.size(), status.getNumberOfActiveNodes());
     }
 }

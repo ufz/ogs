@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
     QCoreApplication app(argc, argv, false);
 #endif
 
-    ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(
-                argc, argv);
+    ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(argc,
+                                                                          argv);
 
     BaseLib::setConsoleLogLevel(logLevel);
     spdlog::set_pattern("%^%l:%$ %v");
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     try
     {
         // start google test
-        testing::InitGoogleTest ( &argc, argv );
+        testing::InitGoogleTest(&argc, argv);
         return RUN_ALL_TESTS();
     }
     catch (char* e)

@@ -16,12 +16,10 @@
 #include <cmath>
 #include <memory>
 
-#include "Tests/TestTools.h"
-
 #include "BaseLib/ConfigTree.h"
-
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/Fluid/FluidProperties/FluidProperties.h"
+#include "Tests/TestTools.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;
@@ -64,7 +62,7 @@ TEST(MaterialFluidProperties, checkPrimaryVariableDependentFluidProperties)
                 fluid_model->getValue(FluidPropertyType::Viscosity, vars),
                 1.e-10);
     const double dmu_dT_expected =
-        -1.e-3/368 * std::exp(-(vars[0] - 293) / 368);
+        -1.e-3 / 368 * std::exp(-(vars[0] - 293) / 368);
     ASSERT_NEAR(
         dmu_dT_expected,
         fluid_model->getdValue(FluidPropertyType::Viscosity, vars,
@@ -117,7 +115,8 @@ TEST(MaterialFluidProperties, checkFluidPropertiesWithDensityDependentModels_T)
     const double perturbation = 1.e-6;
     vars[0] += perturbation;
     const double rho1 = fluid_model->getValue(FluidPropertyType::Density, vars);
-    const double mu1 = fluid_model->getValue(FluidPropertyType::Viscosity, vars);
+    const double mu1 =
+        fluid_model->getValue(FluidPropertyType::Viscosity, vars);
 
     ASSERT_NEAR((rho1 - rho) / perturbation, drho_dT, 1.e-7);
     ASSERT_NEAR((mu1 - mu) / perturbation, dmu_dT, 1.e-10);
@@ -156,7 +155,8 @@ TEST(MaterialFluidProperties, checkFluidPropertiesWithDensityDependentModels_dp)
     const double perturbation = 1.e-6;
     vars[1] += perturbation;
     const double rho1 = fluid_model->getValue(FluidPropertyType::Density, vars);
-    const double mu1 = fluid_model->getValue(FluidPropertyType::Viscosity, vars);
+    const double mu1 =
+        fluid_model->getValue(FluidPropertyType::Viscosity, vars);
 
     // Only check d()/drho * drho/dp (FluidPropertiesWithDensityDependentModels)
     // The other functionalities of fluid property models are checked in other

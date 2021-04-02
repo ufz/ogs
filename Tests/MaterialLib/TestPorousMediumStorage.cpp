@@ -13,11 +13,10 @@
 
 #include <memory>
 
-#include "Tests/TestTools.h"
 #include "BaseLib/ConfigTree.h"
-
 #include "MaterialLib/PorousMedium/Storage/ConstantStorage.h"
 #include "MaterialLib/PorousMedium/Storage/createStorageModel.h"
+#include "Tests/TestTools.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::PorousMedium;
@@ -43,4 +42,3 @@ TEST(Material, checkConstantStorage)
     const double var = 0;
     ASSERT_EQ(1.e-4, eta->getValue(var));
 }
-

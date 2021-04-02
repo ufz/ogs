@@ -26,20 +26,18 @@
 #endif
 
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
-
 #include "NumLib/NumericsConfig.h"
 
 using namespace MathLib::LinAlg;
 
 namespace
 {
-
 template <class T_MATRIX>
-void checkGlobalMatrixInterface(T_MATRIX &m)
+void checkGlobalMatrixInterface(T_MATRIX& m)
 {
     ASSERT_EQ(10u, m.getNumberOfRows());
     ASSERT_EQ(10u, m.getNumberOfColumns());
-    ASSERT_EQ(0u,  m.getRangeBegin());
+    ASSERT_EQ(0u, m.getRangeBegin());
     ASSERT_EQ(10u, m.getRangeEnd());
 
     m.setValue(0, 0, 1.0);
@@ -56,9 +54,9 @@ void checkGlobalMatrixInterface(T_MATRIX &m)
     ASSERT_TRUE(finalizeMatrixAssembly(m));
 }
 
-#ifdef USE_PETSC // or MPI
+#ifdef USE_PETSC  // or MPI
 template <class T_MATRIX, class T_VECTOR>
-void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
+void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 {
     int msize;
     MPI_Comm_size(PETSC_COMM_WORLD, &msize);
@@ -66,16 +64,18 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
 
     ASSERT_EQ(3u, msize);
-    ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getNumberOfLocalRows());
+    ASSERT_EQ(m.getRangeEnd() - m.getRangeBegin(), m.getNumberOfLocalRows());
 
     int gathered_rows;
     int local_rows = m.getNumberOfLocalRows();
-    MPI_Allreduce(&local_rows, &gathered_rows, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
+    MPI_Allreduce(&local_rows, &gathered_rows, 1, MPI_INT, MPI_SUM,
+                  PETSC_COMM_WORLD);
     ASSERT_EQ(m.getNumberOfRows(), gathered_rows);
 
     int gathered_cols;
     int local_cols = m.getNumberOfLocalColumns();
-    MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
+    MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM,
+                  PETSC_COMM_WORLD);
     ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
@@ -108,37 +108,39 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     T_VECTOR y(v, deep_copy);
     matMult(m_c, v, y);
 
-    ASSERT_EQ(sqrt(3*(3*3 + 7*7)), norm2(y));
+    ASSERT_EQ(sqrt(3 * (3 * 3 + 7 * 7)), norm2(y));
 
     // set a value
     m_c.set(2 * mrank, 2 * mrank, 5.0);
     MathLib::finalizeMatrixAssembly(m);
     // add a value
-    m_c.add(2 * mrank+1, 2 * mrank+1, 5.0);
+    m_c.add(2 * mrank + 1, 2 * mrank + 1, 5.0);
     MathLib::finalizeMatrixAssembly(m_c);
 
     matMult(m_c, v, y);
 
-    ASSERT_EQ(sqrt((3*7*7 + 3*12*12)), norm2(y));
+    ASSERT_EQ(sqrt((3 * 7 * 7 + 3 * 12 * 12)), norm2(y));
 }
 
 // Rectanglular matrix
 template <class T_MATRIX, class T_VECTOR>
-void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
+void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 {
     int mrank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
 
-    ASSERT_EQ(m.getRangeEnd()-m.getRangeBegin(), m.getNumberOfLocalRows());
+    ASSERT_EQ(m.getRangeEnd() - m.getRangeBegin(), m.getNumberOfLocalRows());
 
     int gathered_rows;
     int local_rows = m.getNumberOfLocalRows();
-    MPI_Allreduce(&local_rows, &gathered_rows, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
+    MPI_Allreduce(&local_rows, &gathered_rows, 1, MPI_INT, MPI_SUM,
+                  PETSC_COMM_WORLD);
     ASSERT_EQ(m.getNumberOfRows(), gathered_rows);
 
     int gathered_cols;
     int local_cols = m.getNumberOfLocalColumns();
-    MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM, PETSC_COMM_WORLD);
+    MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM,
+                  PETSC_COMM_WORLD);
     ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
@@ -167,12 +169,12 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX &m, T_VECTOR &v)
     T_VECTOR y(m.getNumberOfRows());
     matMult(m, v, y);
 
-    ASSERT_NEAR(6.*sqrt(6.), norm2(y), 1.e-10);
+    ASSERT_NEAR(6. * sqrt(6.), norm2(y), 1.e-10);
 }
 
-#endif // end of: ifdef USE_PETSC // or MPI
+#endif  // end of: ifdef USE_PETSC // or MPI
 
-} // end namespace
+}  // end namespace
 
 #if defined(USE_PETSC)
 TEST(MPITest_Math, CheckInterface_PETScMatrix_Local_Size)

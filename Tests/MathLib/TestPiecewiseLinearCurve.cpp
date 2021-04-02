@@ -13,13 +13,11 @@
 #include <cmath>
 #include <limits>
 
-#include "gtest/gtest.h"
-#include "Tests/TestTools.h"
-
 #include "BaseLib/ConfigTree.h"
-
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MathLib/Curve/PiecewiseLinearMonotonicCurve.h"
+#include "Tests/TestTools.h"
+#include "gtest/gtest.h"
 
 template <typename CurveType>
 std::unique_ptr<CurveType> createPiecewiseLinearCurve(const char xml[])

@@ -7,10 +7,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <string>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include "BaseLib/IO/readStringListFromFile.h"
 #include "InfoLib/TestInfo.h"

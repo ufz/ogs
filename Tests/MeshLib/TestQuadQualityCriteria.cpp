@@ -11,13 +11,12 @@
 #include <numeric>
 #include <random>
 
-#include "gtest/gtest.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/ElementQualityInterface.h"
+#include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
 class QuadElementQuality : public ::testing::Test
 {

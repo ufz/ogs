@@ -7,7 +7,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "MeshLib/MeshEditing/ConvertToLinearMesh.h"
+
 #include <gtest/gtest.h>
+
 #include <algorithm>
 #include <numeric>
 #include <random>
@@ -15,7 +18,6 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/ConvertToLinearMesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/Node.h"

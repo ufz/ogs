@@ -26,7 +26,8 @@ TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
 {
     // Writer test
     std::string test_data_file =
-        (fs::temp_directory_path() /= BaseLib::randomString(32) + ".gml").string();
+        (fs::temp_directory_path() /= BaseLib::randomString(32) + ".gml")
+            .string();
 
     GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
     xml.export_name = geo_name;

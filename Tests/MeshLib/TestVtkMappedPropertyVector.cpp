@@ -11,18 +11,17 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#include <numeric>
-
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
 #include <vtkNew.h>
-#include <vtkUnstructuredGrid.h>
 #include <vtkUnsignedIntArray.h>
+#include <vtkUnstructuredGrid.h>
 
-#include "gtest/gtest.h"
+#include <numeric>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "gtest/gtest.h"
 
 // Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
 TEST(MeshLibMappedPropertyVector, Double)
@@ -30,10 +29,11 @@ TEST(MeshLibMappedPropertyVector, Double)
     const std::size_t mesh_size = 5;
     const double length = 1.0;
 
-    MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
+    MeshLib::Mesh* mesh =
+        MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
     ASSERT_TRUE(mesh != nullptr);
-    const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
+    const std::size_t number_of_tuples(mesh_size * mesh_size * mesh_size);
 
     std::string const prop_name("TestProperty");
     auto* const double_properties =
@@ -45,7 +45,7 @@ TEST(MeshLibMappedPropertyVector, Double)
     vtkNew<vtkDoubleArray> dataArray;
     dataArray->SetNumberOfComponents(1);
     dataArray->SetArray(double_properties->data(),
-        static_cast<vtkIdType>(double_properties->size()), 1);
+                        static_cast<vtkIdType>(double_properties->size()), 1);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
     ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);
@@ -64,10 +64,11 @@ TEST(MeshLibMappedPropertyVector, Int)
     const std::size_t mesh_size = 5;
     const double length = 1.0;
 
-    MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
+    MeshLib::Mesh* mesh =
+        MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
     ASSERT_TRUE(mesh != nullptr);
-    const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
+    const std::size_t number_of_tuples(mesh_size * mesh_size * mesh_size);
 
     std::string const prop_name("TestProperty");
     auto* const properties = mesh->getProperties().createNewPropertyVector<int>(
@@ -78,7 +79,7 @@ TEST(MeshLibMappedPropertyVector, Int)
     vtkNew<vtkIntArray> dataArray;
     dataArray->SetNumberOfComponents(1);
     dataArray->SetArray(properties->data(),
-        static_cast<vtkIdType>(properties->size()), 1);
+                        static_cast<vtkIdType>(properties->size()), 1);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
     ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);
@@ -86,7 +87,8 @@ TEST(MeshLibMappedPropertyVector, Int)
     ASSERT_EQ(dataArray->GetValue(0), -5);
     double* range = dataArray->GetRange(0);
     ASSERT_EQ(-5.0, range[0]);
-    ASSERT_EQ(-5.0 + static_cast<double>(mesh->getNumberOfElements()) - 1.0, range[1]);
+    ASSERT_EQ(-5.0 + static_cast<double>(mesh->getNumberOfElements()) - 1.0,
+              range[1]);
 
     delete mesh;
 }
@@ -97,10 +99,11 @@ TEST(MeshLibMappedPropertyVector, Unsigned)
     const std::size_t mesh_size = 5;
     const double length = 1.0;
 
-    MeshLib::Mesh* mesh = MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
+    MeshLib::Mesh* mesh =
+        MeshLib::MeshGenerator::generateRegularHexMesh(length, mesh_size);
 
     ASSERT_TRUE(mesh != nullptr);
-    const std::size_t number_of_tuples(mesh_size*mesh_size*mesh_size);
+    const std::size_t number_of_tuples(mesh_size * mesh_size * mesh_size);
 
     std::string const prop_name("TestProperty");
     auto* const properties =
@@ -112,7 +115,7 @@ TEST(MeshLibMappedPropertyVector, Unsigned)
     vtkNew<vtkUnsignedIntArray> dataArray;
     dataArray->SetNumberOfComponents(1);
     dataArray->SetArray(properties->data(),
-        static_cast<vtkIdType>(properties->size()), 1);
+                        static_cast<vtkIdType>(properties->size()), 1);
 
     ASSERT_EQ(dataArray->GetNumberOfComponents(), 1);
     ASSERT_EQ(dataArray->GetNumberOfTuples(), number_of_tuples);

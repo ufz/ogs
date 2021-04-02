@@ -36,14 +36,15 @@ using namespace FeTestData;
 
 namespace
 {
-
 // test cases
-template <class TestFeType_, template <typename, unsigned> class ShapeMatrixPolicy_>
+template <class TestFeType_,
+          template <typename, unsigned> class ShapeMatrixPolicy_>
 struct TestCase
 {
     using TestFeType = TestFeType_;
     static const unsigned GlobalDim = TestFeType::global_dim;
-    using ShapeMatrixTypes = ShapeMatrixPolicy_<typename TestFeType::ShapeFunction, GlobalDim>;
+    using ShapeMatrixTypes =
+        ShapeMatrixPolicy_<typename TestFeType::ShapeFunction, GlobalDim>;
     template <typename X>
     using ShapeMatrixPolicy = ShapeMatrixPolicy_<X, GlobalDim>;
     using ShapeFunction = typename TestFeType::ShapeFunction;
@@ -74,68 +75,68 @@ using TestTypes =
 template <class T>
 class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
 {
- public:
-     using ShapeMatrixTypes = typename T::ShapeMatrixTypes;
-     using ShapeFunction = typename T::ShapeFunction;
-     using TestFeType = typename T::TestFeType;
-     // Matrix types
-     using NodalMatrix = typename ShapeMatrixTypes::NodalMatrixType;
-     using NodalVector = typename ShapeMatrixTypes::NodalVectorType;
-     using DimNodalMatrix = typename ShapeMatrixTypes::DimNodalMatrixType;
-     using DimMatrix = typename ShapeMatrixTypes::DimMatrixType;
-     using GlobalDimMatrixType = typename ShapeMatrixTypes::GlobalDimMatrixType;
+public:
+    using ShapeMatrixTypes = typename T::ShapeMatrixTypes;
+    using ShapeFunction = typename T::ShapeFunction;
+    using TestFeType = typename T::TestFeType;
+    // Matrix types
+    using NodalMatrix = typename ShapeMatrixTypes::NodalMatrixType;
+    using NodalVector = typename ShapeMatrixTypes::NodalVectorType;
+    using DimNodalMatrix = typename ShapeMatrixTypes::DimNodalMatrixType;
+    using DimMatrix = typename ShapeMatrixTypes::DimMatrixType;
+    using GlobalDimMatrixType = typename ShapeMatrixTypes::GlobalDimMatrixType;
 
-     // Finite element type
-     template <typename X>
-     using ShapeMatrixPolicy = typename T::template ShapeMatrixPolicy<X>;
-     using FeType =
-         typename TestFeType::template FeType<ShapeMatrixPolicy>::type;
+    // Finite element type
+    template <typename X>
+    using ShapeMatrixPolicy = typename T::template ShapeMatrixPolicy<X>;
+    using FeType =
+        typename TestFeType::template FeType<ShapeMatrixPolicy>::type;
 
-     // Shape matrix data type
-     using ShapeMatricesType = typename ShapeMatrixTypes::ShapeMatrices;
-     using MeshElementType = typename TestFeType::MeshElementType;
+    // Shape matrix data type
+    using ShapeMatricesType = typename ShapeMatrixTypes::ShapeMatrices;
+    using MeshElementType = typename TestFeType::MeshElementType;
 
-     static const unsigned dim = TestFeType::dim;
-     static const unsigned e_nnodes = TestFeType::e_nnodes;
-     static const unsigned n_sample_pt_order2 = TestFeType::n_sample_pt_order2;
-     static const unsigned n_sample_pt_order3 = TestFeType::n_sample_pt_order3;
+    static const unsigned dim = TestFeType::dim;
+    static const unsigned e_nnodes = TestFeType::e_nnodes;
+    static const unsigned n_sample_pt_order2 = TestFeType::n_sample_pt_order2;
+    static const unsigned n_sample_pt_order3 = TestFeType::n_sample_pt_order3;
 
-     using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
-         MeshElementType>::IntegrationMethod;
+    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
+        MeshElementType>::IntegrationMethod;
 
- public:
-     NumLibFemIsoTest()
-         : D(dim, dim),
-           expectedM(e_nnodes, e_nnodes),
-           expectedK(e_nnodes, e_nnodes),
-           integration_method(2)
-     {
-         // create a mesh element used for testing
-         mesh_element = this->createMeshElement();
+public:
+    NumLibFemIsoTest()
+        : D(dim, dim),
+          expectedM(e_nnodes, e_nnodes),
+          expectedK(e_nnodes, e_nnodes),
+          integration_method(2)
+    {
+        // create a mesh element used for testing
+        mesh_element = this->createMeshElement();
 
-         // set a conductivity tensor
-         setIdentityMatrix(dim, D);
-         D *= conductivity;
-         MeshLib::ElementCoordinatesMappingLocal ele_local_coord(
-             *mesh_element,
-             MeshLib::CoordinateSystem(*mesh_element).getDimension());
-         auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
-             TestFeType::dim, TestFeType::global_dim);
-         globalD.noalias() = R.transpose() * (D * R);
+        // set a conductivity tensor
+        setIdentityMatrix(dim, D);
+        D *= conductivity;
+        MeshLib::ElementCoordinatesMappingLocal ele_local_coord(
+            *mesh_element,
+            MeshLib::CoordinateSystem(*mesh_element).getDimension());
+        auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
+            TestFeType::dim, TestFeType::global_dim);
+        globalD.noalias() = R.transpose() * (D * R);
 
-         // set expected matrices
-         this->setExpectedMassMatrix(expectedM);
-         this->setExpectedLaplaceMatrix(conductivity, expectedK);
+        // set expected matrices
+        this->setExpectedMassMatrix(expectedM);
+        this->setExpectedLaplaceMatrix(conductivity, expectedK);
 
-         // for destructor
-         vec_eles.push_back(mesh_element);
-         for (auto e : vec_eles)
-         {
-             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
-             {
-                 vec_nodes.push_back(e->getNode(i));
-             }
-         }
+        // for destructor
+        vec_eles.push_back(mesh_element);
+        for (auto e : vec_eles)
+        {
+            for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
+            {
+                vec_nodes.push_back(e->getNode(i));
+            }
+        }
     }
 
     ~NumLibFemIsoTest() override
@@ -150,7 +151,6 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
         }
     }
 
-
     static const double conductivity;
     static const double eps;
     DimMatrix D;
@@ -163,15 +163,16 @@ class NumLibFemIsoTest : public ::testing::Test, public T::TestFeType
     std::vector<const MeshElementType*> vec_eles;
     MeshElementType* mesh_element;
 
- public:
+public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-}; // NumLibFemIsoTest
+};  // NumLibFemIsoTest
 
 template <class T>
 const double NumLibFemIsoTest<T>::conductivity = 1e-11;
 
 template <class T>
-const double NumLibFemIsoTest<T>::eps = 2*std::numeric_limits<double>::epsilon();
+const double NumLibFemIsoTest<T>::eps = 2 *
+                                        std::numeric_limits<double>::epsilon();
 
 template <class T>
 const unsigned NumLibFemIsoTest<T>::dim;
@@ -202,12 +203,15 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassMatrix)
 
     // evaluate a mass matrix M = int{ N^T D N }dA_e
     NodalMatrix M = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
-    for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
+    for (std::size_t i = 0; i < this->integration_method.getNumberOfPoints();
+         i++)
+    {
         auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        M.noalias() += shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
+        M.noalias() +=
+            shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
     }
-    //std::cout << "M=\n" << M;
+    // std::cout << "M=\n" << M;
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
 }
 
@@ -226,12 +230,15 @@ TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
 
     // evaluate a Laplace matrix K = int{ dNdx^T D dNdx }dA_e
     NodalMatrix K = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
-    for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
+    for (std::size_t i = 0; i < this->integration_method.getNumberOfPoints();
+         i++)
+    {
         auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        K.noalias() += shape.dNdx.transpose() * this->globalD * shape.dNdx * shape.detJ * wp.getWeight();
+        K.noalias() += shape.dNdx.transpose() * this->globalD * shape.dNdx *
+                       shape.detJ * wp.getWeight();
     }
-    //std::cout << "K=\n" << K << std::endl;
+    // std::cout << "K=\n" << K << std::endl;
     ASSERT_ARRAY_NEAR(this->expectedK.data(), K.data(), K.size(), this->eps);
 }
 
@@ -250,11 +257,15 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
     // evaluate both mass and laplace matrices at once
     NodalMatrix M = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
     NodalMatrix K = NodalMatrix::Zero(this->e_nnodes, this->e_nnodes);
-    for (std::size_t i=0; i < this->integration_method.getNumberOfPoints(); i++) {
+    for (std::size_t i = 0; i < this->integration_method.getNumberOfPoints();
+         i++)
+    {
         auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        M.noalias() += shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
-        K.noalias() += shape.dNdx.transpose() * (this->globalD * shape.dNdx) * shape.detJ * wp.getWeight();
+        M.noalias() +=
+            shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
+        K.noalias() += shape.dNdx.transpose() * (this->globalD * shape.dNdx) *
+                       shape.detJ * wp.getWeight();
     }
 
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
@@ -307,4 +318,3 @@ TYPED_TEST(NumLibFemIsoTest, CheckGaussLegendreIntegrationLevel)
     ASSERT_ARRAY_NEAR(this->expectedM.data(), M.data(), M.size(), this->eps);
 }
 #endif
-

@@ -8,23 +8,23 @@
  *
  */
 
-#include <memory>
-
-#include "gtest/gtest.h"
-
 #include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkPNGReader.h>
 #include <vtkSmartPointer.h>
 
+#include <memory>
+
 #include "Applications/DataExplorer/VtkVis/VtkRaster.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
-#include "InfoLib/TestInfo.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/TestInfo.h"
+#include "gtest/gtest.h"
 
 TEST(TestVtkRaster, TestPNGReader)
 {
-    std::string name = TestInfoLib::TestInfo::data_path + "/FileIO/testraster.png";
+    std::string name =
+        TestInfoLib::TestInfo::data_path + "/FileIO/testraster.png";
     double x0;
     double y0;
     double delta;
@@ -51,8 +51,8 @@ TEST(TestVtkRaster, TestPNGReader)
 
 TEST(TestVtkRaster, TestASCReader)
 {
-    std::string name =
-        TestInfoLib::TestInfo::data_path + "/MeshGeoToolsLib/Hamburg/00-raster.asc";
+    std::string name = TestInfoLib::TestInfo::data_path +
+                       "/MeshGeoToolsLib/Hamburg/00-raster.asc";
     double x0;
     double y0;
     double delta;
@@ -60,7 +60,8 @@ TEST(TestVtkRaster, TestASCReader)
     img->Update();
     EXPECT_TRUE(img != nullptr);
     EXPECT_TRUE(img->GetOutput() != nullptr);
-    std::unique_ptr<GeoLib::Raster> raster(FileIO::AsciiRasterInterface::getRasterFromASCFile(name));
+    std::unique_ptr<GeoLib::Raster> raster(
+        FileIO::AsciiRasterInterface::getRasterFromASCFile(name));
     EXPECT_EQ(298, raster->getHeader().n_cols);
     EXPECT_EQ(205, raster->getHeader().n_rows);
     EXPECT_NEAR(25, raster->getHeader().cell_size,

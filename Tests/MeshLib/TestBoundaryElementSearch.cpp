@@ -7,14 +7,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
-
 #include <memory>
 #include <numeric>
 
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
-
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -24,6 +21,7 @@
 #include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
 using namespace MeshLib;
 
@@ -33,7 +31,8 @@ public:
     MeshLibBoundaryElementSearchInSimpleQuadMesh()
         : _quad_mesh(MeshGenerator::generateRegularQuadMesh(
               _geometric_size, _number_of_subdivisions_per_direction))
-    {}
+    {
+    }
 
     ~MeshLibBoundaryElementSearchInSimpleQuadMesh() override
     {

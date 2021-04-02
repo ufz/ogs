@@ -12,20 +12,19 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 #include <random>
 
-#include <gtest/gtest.h>
-
-#include "MathLib/GeometricBasics.h"
 #include "GeoLib/Point.h"
+#include "MathLib/GeometricBasics.h"
 
-void testAllPossibilities(
-    GeoLib::Point const& a,
-    GeoLib::Point const& b,
-    GeoLib::Point const& c,
-    GeoLib::Point const& d,
-    bool expected)
+void testAllPossibilities(GeoLib::Point const& a,
+                          GeoLib::Point const& b,
+                          GeoLib::Point const& c,
+                          GeoLib::Point const& d,
+                          bool expected)
 {
     ASSERT_EQ(expected, MathLib::isCoplanar(a, b, c, d));
     ASSERT_EQ(expected, MathLib::isCoplanar(a, b, d, c));
@@ -59,14 +58,14 @@ void testAllPossibilities(
 TEST(GeoLib, TestPointsOnAPlane)
 {
     // 2d case
-    GeoLib::Point a(0,0,0);
-    GeoLib::Point b(1,0,0);
-    GeoLib::Point c(0,1,0);
-    GeoLib::Point d(1,1,0);
+    GeoLib::Point a(0, 0, 0);
+    GeoLib::Point b(1, 0, 0);
+    GeoLib::Point c(0, 1, 0);
+    GeoLib::Point d(1, 1, 0);
     testAllPossibilities(a, b, c, d, true);
 
     // disturbe z coordinate of point d
-    d[2] = 1e6*std::numeric_limits<double>::epsilon();
+    d[2] = 1e6 * std::numeric_limits<double>::epsilon();
     testAllPossibilities(a, b, c, d, true);
 
     // disturbe z coordinate of point d
@@ -99,17 +98,18 @@ TEST(GeoLib, TestPointsOnAPlane)
     // a,b,c with random coordinates,
     std::uniform_real_distribution<double> distri(-1e10, 1e10);
     std::default_random_engine re;
-    for (std::size_t k(0); k<1000; k++) {
+    for (std::size_t k(0); k < 1000; k++)
+    {
         a = GeoLib::Point(distri(re), distri(re), distri(re));
         b = GeoLib::Point(distri(re), distri(re), distri(re));
         c = GeoLib::Point(distri(re), distri(re), distri(re));
         // d such that it is in the plane
-        d = GeoLib::Point(b[0]+c[0]-a[0], b[1]+c[1]-a[1], b[2]+c[2]-a[2]);
+        d = GeoLib::Point(
+            b[0] + c[0] - a[0], b[1] + c[1] - a[1], b[2] + c[2] - a[2]);
         testAllPossibilities(a, b, c, d, true);
         // d such that it is not in the plane
         d[2] = std::numeric_limits<double>::epsilon() +
-            (1 + std::numeric_limits<double>::epsilon())*(b[2]+c[2]);
+               (1 + std::numeric_limits<double>::epsilon()) * (b[2] + c[2]);
         testAllPossibilities(a, b, c, d, false);
     }
 }
-

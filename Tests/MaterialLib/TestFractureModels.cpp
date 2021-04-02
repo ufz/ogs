@@ -373,7 +373,8 @@ TEST(MaterialLib_Fracture, Coulomb3D_negative_t1t2)
     Eigen::Vector3d const sigma0(-3.46e6 / std::sqrt(2), -3.46e6 / std::sqrt(2),
                                  -2e6);
     Eigen::Vector3d const sigma_prev = sigma0;
-    Eigen::Vector3d const w(-1.08e-5/std::sqrt(2), -1.08e-5/std::sqrt(2), -0.25e-5);
+    Eigen::Vector3d const w(-1.08e-5 / std::sqrt(2), -1.08e-5 / std::sqrt(2),
+                            -0.25e-5);
 
     // Result vectors, not initialized.
     Eigen::Vector3d sigma;
@@ -422,7 +423,8 @@ TEST(MaterialLib_Fracture, Coulomb3D_negative_t1_positive_t2)
     Eigen::Vector3d const sigma0(-3.46e6 / std::sqrt(2), 3.46e6 / std::sqrt(2),
                                  -2e6);
     Eigen::Vector3d const sigma_prev = sigma0;
-    Eigen::Vector3d const w(-1.08e-5/std::sqrt(2), 1.08e-5/std::sqrt(2), -0.25e-5);
+    Eigen::Vector3d const w(-1.08e-5 / std::sqrt(2), 1.08e-5 / std::sqrt(2),
+                            -0.25e-5);
 
     // Result vectors, not initialized.
     Eigen::Vector3d sigma;
@@ -447,4 +449,3 @@ TEST(MaterialLib_Fracture, Coulomb3D_negative_t1_positive_t2)
     EXPECT_NEAR(0, state->getShearYieldFunctionValue(),
                 1e-9);  // same as newton tolerance
 }
-

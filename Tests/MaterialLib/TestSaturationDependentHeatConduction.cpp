@@ -28,8 +28,7 @@ TEST(MaterialPropertyLib, SaturationDependentHeatConduction)
     double const k_wet = 1.5;
 
     auto const k_model_eff = MPL::SaturationDependentHeatConduction(
-            "thermal_conductivity", k_dry, k_wet);
-
+        "thermal_conductivity", k_dry, k_wet);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();

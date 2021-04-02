@@ -11,13 +11,12 @@
 #include <numeric>
 #include <random>
 
-#include "gtest/gtest.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/ElementQualityInterface.h"
+#include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
 class PrismElementQuality : public ::testing::Test
 {
@@ -105,6 +104,6 @@ TEST_F(PrismElementQuality, EquiAngleSkew)
     for (auto const element_quality : element_quality_vector)
     {
         ASSERT_NEAR(expected_value, element_quality,
-                    2*std::numeric_limits<double>::epsilon());
+                    2 * std::numeric_limits<double>::epsilon());
     }
 }

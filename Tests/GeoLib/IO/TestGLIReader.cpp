@@ -25,7 +25,8 @@ class OGSIOVer4InterfaceTest : public ::testing::Test
 public:
     OGSIOVer4InterfaceTest()
         : _test_path(fs::temp_directory_path() /= BaseLib::randomString(32)),
-          _gli_fname(_test_path), _surface_fname(_test_path)
+          _gli_fname(_test_path),
+          _surface_fname(_test_path)
     {
         fs::create_directory(_test_path);
         std::ofstream gli_out(_gli_fname /= "test.gli");
@@ -51,7 +52,7 @@ protected:
 
 TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)
 {
-    std::ofstream tin_out (_surface_fname);
+    std::ofstream tin_out(_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 1.0 1.0\n";
     tin_out.close();
@@ -60,19 +61,21 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN)
     GeoLib::GEOObjects geometries;
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
-    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries, geometry_name,
-                                  errors, "dummy_for_gmsh_path");
+    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries,
+                                  geometry_name, errors, "dummy_for_gmsh_path");
 
-    std::vector<GeoLib::Surface*> const*
-        sfcs(geometries.getSurfaceVec(geometry_name));
+    std::vector<GeoLib::Surface*> const* sfcs(
+        geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
-    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
+    ASSERT_EQ(
+        2u,
+        (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
 {
-    std::ofstream tin_out (_surface_fname);
+    std::ofstream tin_out(_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0 10\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
     tin_out.close();
@@ -81,19 +84,21 @@ TEST_F(OGSIOVer4InterfaceTest, StillCorrectTINWihtAdditionalValueAtEndOfLine)
     GeoLib::GEOObjects geometries;
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
-    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries, geometry_name,
-                                  errors, "dummy_for_gmsh_path");
+    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries,
+                                  geometry_name, errors, "dummy_for_gmsh_path");
 
-    std::vector<GeoLib::Surface*> const*
-        sfcs(geometries.getSurfaceVec(geometry_name));
+    std::vector<GeoLib::Surface*> const* sfcs(
+        geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
-    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
+    ASSERT_EQ(
+        2u,
+        (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
 }
 
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_ZeroAreaTri)
 {
-    std::ofstream tin_out (_surface_fname);
+    std::ofstream tin_out(_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 0.0\n";
     tin_out.close();
 
@@ -101,18 +106,17 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_ZeroAreaTri)
     GeoLib::GEOObjects geometries;
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
-    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries, geometry_name,
-                                  errors, "dummy_for_gmsh_path");
+    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries,
+                                  geometry_name, errors, "dummy_for_gmsh_path");
 
-    std::vector<GeoLib::Surface*> const*
-        sfcs(geometries.getSurfaceVec(geometry_name));
+    std::vector<GeoLib::Surface*> const* sfcs(
+        geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs == nullptr);
 }
 
-
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_LineDoesNotStartWithID)
 {
-    std::ofstream tin_out (_surface_fname);
+    std::ofstream tin_out(_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
     tin_out << "a\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
@@ -122,18 +126,17 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_LineDoesNotStartWithID)
     GeoLib::GEOObjects geometries;
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
-    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries, geometry_name,
-                                  errors, "dummy_for_gmsh_path");
+    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries,
+                                  geometry_name, errors, "dummy_for_gmsh_path");
 
-    std::vector<GeoLib::Surface*> const*
-        sfcs(geometries.getSurfaceVec(geometry_name));
+    std::vector<GeoLib::Surface*> const* sfcs(
+        geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs == nullptr);
 }
 
-
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_PointIsMissing)
 {
-    std::ofstream tin_out (_surface_fname);
+    std::ofstream tin_out(_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0\n";
     tin_out.close();
@@ -142,17 +145,17 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_PointIsMissing)
     GeoLib::GEOObjects geometries;
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
-    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries, geometry_name,
-                                  errors, "dummy_for_gmsh_path");
+    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries,
+                                  geometry_name, errors, "dummy_for_gmsh_path");
 
-    std::vector<GeoLib::Surface*> const*
-        sfcs(geometries.getSurfaceVec(geometry_name));
+    std::vector<GeoLib::Surface*> const* sfcs(
+        geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs == nullptr);
 }
 
 TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_CoordOfPointIsMissing)
 {
-    std::ofstream tin_out (_surface_fname);
+    std::ofstream tin_out(_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0\n";
     tin_out.close();
@@ -161,17 +164,17 @@ TEST_F(OGSIOVer4InterfaceTest, InvalidTIN_CoordOfPointIsMissing)
     GeoLib::GEOObjects geometries;
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
-    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries, geometry_name,
-                                  errors, "dummy_for_gmsh_path");
+    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries,
+                                  geometry_name, errors, "dummy_for_gmsh_path");
 
-    std::vector<GeoLib::Surface*> const*
-        sfcs(geometries.getSurfaceVec(geometry_name));
+    std::vector<GeoLib::Surface*> const* sfcs(
+        geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs == nullptr);
 }
 
 TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
 {
-    std::ofstream tin_out (_surface_fname);
+    std::ofstream tin_out(_surface_fname);
     tin_out << "0 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0 10\n";
     tin_out << "1 0.0 0.0 0.0 1.0 0.0.0 0.0 0.0 1.0\n\n\n";
     tin_out.close();
@@ -180,12 +183,14 @@ TEST_F(OGSIOVer4InterfaceTest, SimpleTIN_AdditionalEmptyLinesAtEnd)
     GeoLib::GEOObjects geometries;
     std::vector<std::string> errors;
     std::string geometry_name("TestGeometry");
-    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries, geometry_name,
-                                  errors, "dummy_for_gmsh_path");
+    FileIO::Legacy::readGLIFileV4(_gli_fname.string(), geometries,
+                                  geometry_name, errors, "dummy_for_gmsh_path");
 
-    std::vector<GeoLib::Surface*> const*
-        sfcs(geometries.getSurfaceVec(geometry_name));
+    std::vector<GeoLib::Surface*> const* sfcs(
+        geometries.getSurfaceVec(geometry_name));
     ASSERT_TRUE(sfcs != nullptr);
     ASSERT_EQ(1u, geometries.getSurfaceVec(geometry_name)->size());
-    ASSERT_EQ(2u, (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
+    ASSERT_EQ(
+        2u,
+        (*geometries.getSurfaceVec(geometry_name))[0]->getNumberOfTriangles());
 }

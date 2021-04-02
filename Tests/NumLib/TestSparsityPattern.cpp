@@ -13,11 +13,9 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
-
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/NumericsConfig.h"
-
 
 #ifndef USE_PETSC
 TEST(NumLib_SparsityPattern, SingleComponentLinearMesh)
@@ -30,9 +28,8 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
     MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
     std::vector<MeshLib::MeshSubset> components{nodesSubset};
-    NumLib::LocalToGlobalIndexMap dof_map(
-                      std::move(components),
-                      NumLib::ComponentOrder::BY_COMPONENT);
+    NumLib::LocalToGlobalIndexMap dof_map(std::move(components),
+                                          NumLib::ComponentOrder::BY_COMPONENT);
 
     GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
@@ -42,7 +39,6 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
     EXPECT_EQ(3u, sp[2]);
     EXPECT_EQ(2u, sp[3]);
 }
-
 
 #ifndef USE_PETSC
 TEST(NumLib_SparsityPattern, SingleComponentQuadraticMesh)
@@ -57,9 +53,8 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
     MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
     std::vector<MeshLib::MeshSubset> components{nodesSubset};
-    NumLib::LocalToGlobalIndexMap dof_map(
-                      std::move(components),
-                      NumLib::ComponentOrder::BY_COMPONENT);
+    NumLib::LocalToGlobalIndexMap dof_map(std::move(components),
+                                          NumLib::ComponentOrder::BY_COMPONENT);
 
     GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
@@ -73,7 +68,6 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
     EXPECT_EQ(3u, sp[6]);
 }
 
-
 #ifndef USE_PETSC
 TEST(NumLib_SparsityPattern, MultipleComponentsLinearMesh)
 #else
@@ -85,22 +79,20 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearMesh)
     MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
 
     std::vector<MeshLib::MeshSubset> components{nodesSubset, nodesSubset};
-    NumLib::LocalToGlobalIndexMap dof_map(
-                      std::move(components),
-                      NumLib::ComponentOrder::BY_COMPONENT);
+    NumLib::LocalToGlobalIndexMap dof_map(std::move(components),
+                                          NumLib::ComponentOrder::BY_COMPONENT);
 
     GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
     ASSERT_EQ(8u, sp.size());
-    for (int i=0; i<2; i++)
+    for (int i = 0; i < 2; i++)
     {
-        EXPECT_EQ(4u, sp[i*mesh->getNumberOfNodes() + 0]);
-        EXPECT_EQ(6u, sp[i*mesh->getNumberOfNodes() + 1]);
-        EXPECT_EQ(6u, sp[i*mesh->getNumberOfNodes() + 2]);
-        EXPECT_EQ(4u, sp[i*mesh->getNumberOfNodes() + 3]);
+        EXPECT_EQ(4u, sp[i * mesh->getNumberOfNodes() + 0]);
+        EXPECT_EQ(6u, sp[i * mesh->getNumberOfNodes() + 1]);
+        EXPECT_EQ(6u, sp[i * mesh->getNumberOfNodes() + 2]);
+        EXPECT_EQ(4u, sp[i * mesh->getNumberOfNodes() + 3]);
     }
 }
-
 
 #ifndef USE_PETSC
 TEST(NumLib_SparsityPattern, MultipleComponentsLinearQuadraticMesh)
@@ -120,9 +112,8 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
 
     std::vector<MeshLib::MeshSubset> components{*baseNodesSubset,
                                                 *allNodesSubset};
-    NumLib::LocalToGlobalIndexMap dof_map(
-                      std::move(components),
-                      NumLib::ComponentOrder::BY_COMPONENT);
+    NumLib::LocalToGlobalIndexMap dof_map(std::move(components),
+                                          NumLib::ComponentOrder::BY_COMPONENT);
 
     GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
@@ -141,4 +132,3 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
     EXPECT_EQ(5u, sp[9]);
     EXPECT_EQ(5u, sp[10]);
 }
-

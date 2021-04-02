@@ -13,11 +13,10 @@
 
 #include <memory>
 
-#include "gtest/gtest.h"
-
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/SimplePolygonTree.h"
+#include "gtest/gtest.h"
 
 /**
  *       2
@@ -36,21 +35,20 @@
  *           P3: 4,5,6,4
  */
 
-
 class CreatePolygonTreesTest : public testing::Test
 {
 public:
     CreatePolygonTreesTest()
     {
         // create points and construct polygon
-        _pnts.push_back(new GeoLib::Point(0.0,-1.0,0.0));
-        _pnts.push_back(new GeoLib::Point(1.0,0.0,0.0));
-        _pnts.push_back(new GeoLib::Point(0.0,1.0,0.0));
-        _pnts.push_back(new GeoLib::Point(-1.0,0.0,0.0));
+        _pnts.push_back(new GeoLib::Point(0.0, -1.0, 0.0));
+        _pnts.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
+        _pnts.push_back(new GeoLib::Point(0.0, 1.0, 0.0));
+        _pnts.push_back(new GeoLib::Point(-1.0, 0.0, 0.0));
 
-        _pnts.push_back(new GeoLib::Point(-0.9,0.0,0.0));
-        _pnts.push_back(new GeoLib::Point(0.75,-0.1,0.0));
-        _pnts.push_back(new GeoLib::Point(-0.75,-0.1,0.0));
+        _pnts.push_back(new GeoLib::Point(-0.9, 0.0, 0.0));
+        _pnts.push_back(new GeoLib::Point(0.75, -0.1, 0.0));
+        _pnts.push_back(new GeoLib::Point(-0.75, -0.1, 0.0));
 
         // create closed polylines
         GeoLib::Polyline ply0(_pnts);
@@ -117,7 +115,8 @@ TEST_F(CreatePolygonTreesTest, P0AndP1)
 
     createPolygonTrees(pt_list);
     ASSERT_EQ(2u, pt_list.size());
-    std::for_each(pt_list.begin(), pt_list.end(), std::default_delete<GeoLib::SimplePolygonTree>());
+    std::for_each(pt_list.begin(), pt_list.end(),
+                  std::default_delete<GeoLib::SimplePolygonTree>());
 }
 
 TEST_F(CreatePolygonTreesTest, P0AndP1AndP2)
@@ -142,7 +141,8 @@ TEST_F(CreatePolygonTreesTest, P0AndP1AndP2)
     createPolygonTrees(pt_list);
     ASSERT_EQ(1u, pt_list.size());
     ASSERT_EQ(2u, (*(pt_list.begin()))->getNumberOfChildren());
-    std::for_each(pt_list.begin(), pt_list.end(), std::default_delete<GeoLib::SimplePolygonTree>());
+    std::for_each(pt_list.begin(), pt_list.end(),
+                  std::default_delete<GeoLib::SimplePolygonTree>());
 }
 
 TEST_F(CreatePolygonTreesTest, P0AndP1AndP2AndP3)
@@ -171,6 +171,6 @@ TEST_F(CreatePolygonTreesTest, P0AndP1AndP2AndP3)
     createPolygonTrees(pt_list);
     ASSERT_EQ(1u, pt_list.size());
     ASSERT_EQ(2u, (*(pt_list.begin()))->getNumberOfChildren());
-    std::for_each(pt_list.begin(), pt_list.end(), std::default_delete<GeoLib::SimplePolygonTree>());
+    std::for_each(pt_list.begin(), pt_list.end(),
+                  std::default_delete<GeoLib::SimplePolygonTree>());
 }
-

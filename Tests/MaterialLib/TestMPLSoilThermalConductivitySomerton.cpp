@@ -134,8 +134,9 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
         ASSERT_LE(std::fabs(0.0 - computed_dk_T_dS), 1e-10)
             << "for expected derivative of thermal conductivity with "
                "respect to saturation "
-            << 0.0 << " and for computed derivative of thermal conductivity "
-                      "with respect to saturation."
+            << 0.0
+            << " and for computed derivative of thermal conductivity "
+               "with respect to saturation."
             << computed_dk_T_dS;
     }
 

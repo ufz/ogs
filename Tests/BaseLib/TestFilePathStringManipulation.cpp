@@ -11,9 +11,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
-
 #include "BaseLib/FileTools.h"
+#include "gtest/gtest.h"
 
 #ifdef WIN32
 TEST(BaseLib, CopyPathToFileNameWin)
@@ -33,8 +32,7 @@ TEST(BaseLib, CopyPathToFileNameWin)
 TEST(BaseLib, CopyPathToFileNameUnix)
 {
     ASSERT_EQ("extend/file", BaseLib::copyPathToFileName("file", "extend"));
-    ASSERT_EQ("path/file",
-              BaseLib::copyPathToFileName("path/file", "extend"));
+    ASSERT_EQ("path/file", BaseLib::copyPathToFileName("path/file", "extend"));
     ASSERT_EQ("extend/file", BaseLib::copyPathToFileName("file", "extend/"));
     ASSERT_EQ("path/file", BaseLib::copyPathToFileName("path/file", "extend/"));
 

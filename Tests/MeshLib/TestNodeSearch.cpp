@@ -7,23 +7,22 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
-
 #include <memory>
 
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
-#include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
-
 #include "GeoLib/Raster.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/MeshGenerators/RasterToMesh.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshLib/Node.h"
+#include "gtest/gtest.h"
 
 TEST(NodeSearch, UnusedNodes)
 {
-    std::array<double, 12> pix = {{0,0.1,0.2,0.1,0,0,0.1,0,0,0,-0.1,0}};
+    std::array<double, 12> pix = {
+        {0, 0.1, 0.2, 0.1, 0, 0, 0.1, 0, 0, 0, -0.1, 0}};
     GeoLib::RasterHeader header = {
         4, 3, 1, MathLib::Point3d(std::array<double, 3>{{0, 0, 0}}), 1, -9999};
     GeoLib::Raster const raster(std::move(header), pix.begin(), pix.end());
@@ -35,9 +34,11 @@ TEST(NodeSearch, UnusedNodes)
     std::vector<std::size_t> u_nodes = ns.getSearchedNodeIDs();
     ASSERT_EQ(0, u_nodes.size());
 
-    std::vector<MeshLib::Node*> nodes = MeshLib::copyNodeVector(mesh->getNodes());
-    nodes.push_back(new MeshLib::Node(-1,-1,-1));
-    std::vector<MeshLib::Element*> elems = MeshLib::copyElementVector(mesh->getElements(),nodes);
+    std::vector<MeshLib::Node*> nodes =
+        MeshLib::copyNodeVector(mesh->getNodes());
+    nodes.push_back(new MeshLib::Node(-1, -1, -1));
+    std::vector<MeshLib::Element*> elems =
+        MeshLib::copyElementVector(mesh->getElements(), nodes);
     MeshLib::Mesh mesh2("mesh2", nodes, elems);
     MeshLib::NodeSearch ns2(mesh2);
     ns2.searchUnused();
@@ -46,10 +47,10 @@ TEST(NodeSearch, UnusedNodes)
     ASSERT_EQ(nodes.back()->getID(), u_nodes[0]);
 }
 
-
 TEST(NodeSearch, BoundaryNodes1D)
 {
-    std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::MeshGenerator::generateLineMesh(5, 1.0));
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::MeshGenerator::generateLineMesh(5, 1.0));
     MeshLib::NodeSearch ns(*mesh);
     ns.searchBoundaryNodes();
     std::vector<std::size_t> searched_nodes = ns.getSearchedNodeIDs();
@@ -60,18 +61,19 @@ TEST(NodeSearch, BoundaryNodes1D)
 
 TEST(NodeSearch, BoundaryNodes2D)
 {
-    std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::MeshGenerator::generateRegularQuadMesh(5, 5, 1.0, 1.0));
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::MeshGenerator::generateRegularQuadMesh(5, 5, 1.0, 1.0));
     MeshLib::NodeSearch ns(*mesh);
     ns.searchBoundaryNodes();
     std::vector<std::size_t> searched_nodes = ns.getSearchedNodeIDs();
     ASSERT_EQ(20, searched_nodes.size());
     for (auto nodeid : searched_nodes)
     {
-        auto &node = *mesh->getNode(nodeid);
+        auto& node = *mesh->getNode(nodeid);
         bool isOnBnd = false;
-        for (unsigned i=0; i<mesh->getDimension(); i++)
+        for (unsigned i = 0; i < mesh->getDimension(); i++)
         {
-            if (node[i]==0.0 || node[i]==5.0)
+            if (node[i] == 0.0 || node[i] == 5.0)
             {
                 isOnBnd = true;
                 break;
@@ -84,18 +86,19 @@ TEST(NodeSearch, BoundaryNodes2D)
 
 TEST(NodeSearch, BoundaryNodes3D)
 {
-    std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::MeshGenerator::generateRegularHexMesh(5, 5, 5, 1.0, 1.0, 1.0));
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::MeshGenerator::generateRegularHexMesh(5, 5, 5, 1.0, 1.0, 1.0));
     MeshLib::NodeSearch ns(*mesh);
     ns.searchBoundaryNodes();
     std::vector<std::size_t> searched_nodes = ns.getSearchedNodeIDs();
     ASSERT_EQ(152u, searched_nodes.size());
     for (auto nodeid : searched_nodes)
     {
-        auto &node = *mesh->getNode(nodeid);
+        auto& node = *mesh->getNode(nodeid);
         bool isOnBnd = false;
-        for (unsigned i=0; i<mesh->getDimension(); i++)
+        for (unsigned i = 0; i < mesh->getDimension(); i++)
         {
-            if (node[i]==0.0 || node[i]==5.0)
+            if (node[i] == 0.0 || node[i] == 5.0)
             {
                 isOnBnd = true;
                 break;

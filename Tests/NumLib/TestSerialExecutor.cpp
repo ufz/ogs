@@ -10,9 +10,10 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <vector>
 #include <functional>
 #include <numeric>
+#include <vector>
+
 #include "NumLib/Assembler/SerialExecutor.h"
 
 template <typename ContainerElement_>
@@ -23,7 +24,7 @@ public:
     using Container = std::vector<ContainerElement>;
     using PtrContainer = std::vector<ContainerElement*>;
 
-    template<typename Callback>
+    template <typename Callback>
     void test(Callback const& cb)
     {
         Container reference(size);
@@ -43,28 +44,26 @@ public:
         ASSERT_TRUE(referenceIsZero(reference));
     }
 
-    static void subtractFromReferenceStatic(
-            ContainerElement const value, std::size_t const index,
-            Container& reference)
+    static void subtractFromReferenceStatic(ContainerElement const value,
+                                            std::size_t const index,
+                                            Container& reference)
     {
         reference[index] -= value;
     }
 
-    void subtractFromReference(
-            ContainerElement const value, std::size_t const index,
-            Container& reference) const
+    void subtractFromReference(ContainerElement const value,
+                               std::size_t const index,
+                               Container& reference) const
     {
         reference[index] -= value;
     }
 
-    static bool
-    referenceIsZero(Container const& reference)
+    static bool referenceIsZero(Container const& reference)
     {
         return std::all_of(reference.begin(), reference.end(),
-            [](ContainerElement const reference_value)
-            {
-                return reference_value == 0;
-            });
+                           [](ContainerElement const reference_value) {
+                               return reference_value == 0;
+                           });
     }
 
     static std::size_t const size = 100;
@@ -76,28 +75,22 @@ TYPED_TEST_SUITE(NumLibSerialExecutor, TestCases);
 
 TYPED_TEST(NumLibSerialExecutor, ContainerArgument)
 {
-    using Elem         = typename TestFixture::ContainerElement;
-    using Container    = typename TestFixture::Container;
+    using Elem = typename TestFixture::ContainerElement;
+    using Container = typename TestFixture::Container;
     using PtrContainer = typename TestFixture::PtrContainer;
 
-    TestFixture::test(
-        [](PtrContainer const& ctnr, Container& ref) {
-            auto cb_static =
-                [](Elem const value, std::size_t const index, Container& ref_inner) {
-                    TestFixture::subtractFromReferenceStatic(value, index, ref_inner);
-                };
+    TestFixture::test([](PtrContainer const& ctnr, Container& ref) {
+        auto cb_static = [](Elem const value, std::size_t const index,
+                            Container& ref_inner) {
+            TestFixture::subtractFromReferenceStatic(value, index, ref_inner);
+        };
 
-            NumLib::SerialExecutor::executeDereferenced(
-                cb_static, ctnr, ref);
-        }
-    );
+        NumLib::SerialExecutor::executeDereferenced(cb_static, ctnr, ref);
+    });
 
-    TestFixture::test(
-        [this](PtrContainer const& ctnr, Container& ref) {
-            NumLib::SerialExecutor::executeMemberDereferenced(
-                *static_cast<TestFixture*>(this), &TestFixture::subtractFromReference,
-                ctnr, ref
-            );
-        }
-    );
+    TestFixture::test([this](PtrContainer const& ctnr, Container& ref) {
+        NumLib::SerialExecutor::executeMemberDereferenced(
+            *static_cast<TestFixture*>(this),
+            &TestFixture::subtractFromReference, ctnr, ref);
+    });
 }

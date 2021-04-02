@@ -9,13 +9,13 @@
  *
  */
 #include <gtest/gtest.h>
-#include <sstream>
 
-#include "TestMPL.h"
-#include "Tests/TestTools.h"
+#include <sstream>
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Properties/RelativePermeability/RelPermBrooksCorey.h"
+#include "TestMPL.h"
+#include "Tests/TestTools.h"
 
 TEST(MaterialPropertyLib, RelPermBrooksCorey)
 {
