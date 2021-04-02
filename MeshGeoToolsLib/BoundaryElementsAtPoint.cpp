@@ -11,12 +11,11 @@
 
 #include "GeoLib/Point.h"
 #include "MathLib/Point3d.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/Elements/Point.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/Node.h"
-
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 
 namespace MeshGeoToolsLib
 {
@@ -77,8 +76,7 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
     std::array<MeshLib::Node*, 1> const nodes = {
         {const_cast<MeshLib::Node*>(_mesh.getNode(nearest_node_id))}};
 
-    _boundary_elements.push_back(
-        new MeshLib::Point{nodes, nearest_node_id});
+    _boundary_elements.push_back(new MeshLib::Point{nodes, nearest_node_id});
 }
 
 BoundaryElementsAtPoint::~BoundaryElementsAtPoint()

@@ -39,4 +39,3 @@ MeshNodesOnPoint::MeshNodesOnPoint(MeshLib::Mesh const& mesh,
 }
 
 }  // end namespace MeshGeoToolsLib
-

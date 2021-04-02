@@ -11,7 +11,6 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
 #include "MeshGeoToolsLib/HeuristicSearchLength.h"
 #include "MeshGeoToolsLib/SearchLength.h"
 

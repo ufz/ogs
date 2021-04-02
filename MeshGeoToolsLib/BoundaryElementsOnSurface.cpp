@@ -10,12 +10,10 @@
 #include "BoundaryElementsOnSurface.h"
 
 #include "GeoLib/Surface.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
-
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
 
 namespace MeshGeoToolsLib
 {
@@ -28,10 +26,11 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(
     auto node_ids_on_sfc = mshNodeSearcher.getMeshNodeIDs(sfc);
     MeshLib::ElementSearch es(_mesh);
     es.searchByNodeIDs(node_ids_on_sfc);
-    auto &ele_ids_near_sfc = es.getSearchedElementIDs();
+    auto& ele_ids_near_sfc = es.getSearchedElementIDs();
 
     // get a list of faces made of the nodes
-    for (auto ele_id : ele_ids_near_sfc) {
+    for (auto ele_id : ele_ids_near_sfc)
+    {
         auto* e = _mesh.getElement(ele_id);
         // skip internal elements
         if (!e->isBoundaryElement())
@@ -39,11 +38,13 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(
             continue;
         }
         // find faces on surface
-        for (unsigned i=0; i<e->getNumberOfFaces(); i++) {
+        for (unsigned i = 0; i < e->getNumberOfFaces(); i++)
+        {
             auto* face = e->getFace(i);
             // check
             std::size_t cnt_match = 0;
-            for (std::size_t j=0; j<face->getNumberOfBaseNodes(); j++) {
+            for (std::size_t j = 0; j < face->getNumberOfBaseNodes(); j++)
+            {
                 if (std::find(node_ids_on_sfc.begin(), node_ids_on_sfc.end(),
                               face->getNodeIndex(j)) != node_ids_on_sfc.end())
                 {
@@ -55,9 +56,10 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(
                 }
             }
             // update the list
-            if (cnt_match==face->getNumberOfBaseNodes())
+            if (cnt_match == face->getNumberOfBaseNodes())
             {
-                _boundary_elements.push_back(const_cast<MeshLib::Element*>(face));
+                _boundary_elements.push_back(
+                    const_cast<MeshLib::Element*>(face));
             }
             else
             {
@@ -75,5 +77,4 @@ BoundaryElementsOnSurface::~BoundaryElementsOnSurface()
     }
 }
 
-} // end namespace MeshGeoToolsLib
-
+}  // end namespace MeshGeoToolsLib

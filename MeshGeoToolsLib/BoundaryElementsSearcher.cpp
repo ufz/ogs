@@ -12,24 +12,22 @@
 #include "GeoLib/GeoObject.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
+#include "MeshGeoToolsLib/BoundaryElementsAlongPolyline.h"
+#include "MeshGeoToolsLib/BoundaryElementsAtPoint.h"
+#include "MeshGeoToolsLib/BoundaryElementsOnSurface.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Point.h"
-
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-#include "MeshGeoToolsLib/BoundaryElementsAtPoint.h"
-#include "MeshGeoToolsLib/BoundaryElementsAlongPolyline.h"
-#include "MeshGeoToolsLib/BoundaryElementsOnSurface.h"
-
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 namespace MeshGeoToolsLib
 {
 BoundaryElementsSearcher::BoundaryElementsSearcher(
     MeshLib::Mesh const& mesh, MeshNodeSearcher const& mshNodeSearcher)
     : _mesh(mesh), _mshNodeSearcher(mshNodeSearcher)
-{}
+{
+}
 
 BoundaryElementsSearcher::~BoundaryElementsSearcher()
 {
@@ -120,5 +118,4 @@ BoundaryElementsSearcher::getBoundaryElements(GeoLib::GeoObject const& geoObj,
     }
 }
 
-} // end namespace MeshGeoToolsLib
-
+}  // end namespace MeshGeoToolsLib
