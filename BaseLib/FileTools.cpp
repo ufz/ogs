@@ -12,14 +12,14 @@
  *
  */
 
-#include <unordered_map>
-#include <typeindex>
-
 #include "FileTools.h"
-#include "Error.h"
-#include "filesystem.h"
 
 #include <boost/algorithm/string.hpp>
+#include <typeindex>
+#include <unordered_map>
+
+#include "Error.h"
+#include "filesystem.h"
 
 namespace
 {
@@ -35,7 +35,7 @@ namespace BaseLib
 /**
  * Returns true if given file exists.
  */
-bool IsFileExisting(const std::string &strFilename)
+bool IsFileExisting(const std::string& strFilename)
 {
     return fs::exists(fs::path(strFilename));
 }
@@ -88,7 +88,7 @@ bool substituteKeyword(std::string& result, std::string& parenthesized_string,
 
     std::unordered_map<std::type_index, char> type_specification;
     type_specification[std::type_index(typeid(int))] = 'd';
-    type_specification[std::type_index(typeid(double))] = 'f'; // default
+    type_specification[std::type_index(typeid(double))] = 'f';  // default
     type_specification[std::type_index(typeid(std::string))] = 's';
 
     auto const& b = precision_specification.back();
@@ -145,7 +145,7 @@ double swapEndianness(double const& v)
     {
         double v;
         char c[sizeof(double)];
-    } a {}, b {};
+    } a{}, b{};
 
     a.v = v;
     for (unsigned short i = 0; i < sizeof(double) / 2; i++)
@@ -178,7 +178,7 @@ std::string extractBaseNameWithoutExtension(std::string const& pathname)
     return dropFileExtension(basename);
 }
 
-std::string getFileExtension(const std::string &path)
+std::string getFileExtension(const std::string& path)
 {
     return fs::path(path).extension().string();
 }
@@ -188,11 +188,11 @@ bool hasFileExtension(std::string const& extension, std::string const& filename)
     return boost::iequals(extension, getFileExtension(filename));
 }
 
-std::string copyPathToFileName(const std::string &file_name,
-                               const std::string &source)
+std::string copyPathToFileName(const std::string& file_name,
+                               const std::string& source)
 {
     auto filePath = fs::path(file_name);
-    if(filePath.has_parent_path())
+    if (filePath.has_parent_path())
     {
         return filePath.string();
     }
@@ -244,4 +244,4 @@ void removeFiles(std::vector<std::string> const& files)
         removeFile(file);
     }
 }
-} // end namespace BaseLib
+}  // end namespace BaseLib

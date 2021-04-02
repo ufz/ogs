@@ -23,7 +23,6 @@ namespace BaseLib
 {
 namespace IO
 {
-
 Writer::Writer()
 {
     out.precision(std::numeric_limits<double>::digits10);

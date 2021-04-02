@@ -31,9 +31,10 @@ namespace IO
 {
 XMLQtInterface::XMLQtInterface(QString schemaFile)
     : schemaFile_(std::move(schemaFile))
-{}
+{
+}
 
-int XMLQtInterface::readFile(const QString &fileName)
+int XMLQtInterface::readFile(const QString& fileName)
 {
     fileName_ = fileName;
     QFile file(fileName);
@@ -64,9 +65,9 @@ int XMLQtInterface::isValid() const
         auto url = QUrl::fromLocalFile(path);
         schema.load(url);
     }
-    if ( schema.isValid() )
+    if (schema.isValid())
     {
-        QXmlSchemaValidator validator( schema );
+        QXmlSchemaValidator validator(schema);
         if (validator.validate(fileData_))
         {
             return 1;
@@ -119,7 +120,7 @@ bool XMLQtInterface::checkHash() const
     }
 
     QFile fileMD5(md5FileName);
-    if(fileMD5.open(QIODevice::WriteOnly))
+    if (fileMD5.open(QIODevice::WriteOnly))
     {
         fileMD5.write(fileHash);
         fileMD5.close();

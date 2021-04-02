@@ -10,10 +10,10 @@
 
 #include "Subdivision.h"
 
+#include <BaseLib/Error.h>
+
 #include <algorithm>
 #include <cmath>
-
-#include <BaseLib/Error.h>
 
 namespace BaseLib
 {
@@ -25,7 +25,8 @@ GradualSubdivision::GradualSubdivision(const double L,
 {
     // Check if accumulated subdivisions can ever sum up to length.
     // Cf. geometric series formula.
-    if (multiplier < 1.0 && dL0 / (1.0 - multiplier) < L) {
+    if (multiplier < 1.0 && dL0 / (1.0 - multiplier) < L)
+    {
         OGS_FATAL(
             "Using dL0={:g} and multiplier={:g} the generated subdivisions can "
             "not sum up to a total length of {:g}.",
@@ -41,7 +42,8 @@ std::vector<double> GradualSubdivision::operator()() const
 
     double x = 0;
     unsigned i = 0;
-    do {
+    do
+    {
         vec_x.push_back(x);
         x += std::min(max_dL_,
                       dL0_ * std::pow(multiplier_, static_cast<double>(i)));
@@ -76,14 +78,17 @@ std::vector<double> GradualSubdivisionFixedNum::operator()() const
     subdivisions.push_back(0.0);
     auto const q = multiplier_;
 
-    if (q == 1.0) {
+    if (q == 1.0)
+    {
         double const dx = length_ / num_subdivisions_;
 
         for (std::size_t i = 1; i < num_subdivisions_; ++i)
         {
             subdivisions.push_back(dx * i);
         }
-    } else {
+    }
+    else
+    {
         // compute initial subdivision size
         auto const a =
             length_ * (q - 1.0) / (std::pow(q, num_subdivisions_) - 1.0);
