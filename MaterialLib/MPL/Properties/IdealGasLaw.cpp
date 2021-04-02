@@ -14,6 +14,7 @@
  */
 
 #include "MaterialLib/MPL/Properties/IdealGasLaw.h"
+
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/PhysicalConstant.h"
 

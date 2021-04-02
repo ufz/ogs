@@ -13,9 +13,8 @@
 #include "CreateViscosityModel.h"
 
 #include "BaseLib/Error.h"
-
-#include "MaterialLib/Fluid/ConstantFluidProperty.h"
 #include "LinearPressureDependentViscosity.h"
+#include "MaterialLib/Fluid/ConstantFluidProperty.h"
 #include "TemperatureDependentViscosity.h"
 #include "VogelsLiquidDynamicViscosity.h"
 #include "WaterViscosityIAPWS.h"

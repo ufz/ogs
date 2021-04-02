@@ -9,9 +9,8 @@
 
 #include "CreateCohesiveZoneModeI.h"
 
-#include "ParameterLib/Utils.h"
-
 #include "CohesiveZoneModeI.h"
+#include "ParameterLib/Utils.h"
 
 namespace MaterialLib
 {

@@ -19,10 +19,8 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-
 #include "NonWettingPhaseBrooksCoreyOilGas.h"
 #include "NonWettingPhaseVanGenuchten.h"
 #include "RelativePermeability.h"
@@ -193,8 +191,8 @@ std::unique_ptr<RelativePermeability> createRelativePermeabilityModel(
         //! \ogs_file_param{material__porous_medium__relative_permeability__Curve__curve}
         auto const& curve_config = config.getConfigSubtree("curve");
 
-        auto curve = MathLib::createPiecewiseLinearCurve<MathLib
-                              ::PiecewiseLinearInterpolation>(curve_config);
+        auto curve = MathLib::createPiecewiseLinearCurve<
+            MathLib ::PiecewiseLinearInterpolation>(curve_config);
         return std::make_unique<RelativePermeabilityCurve>(std::move(curve));
     }
 

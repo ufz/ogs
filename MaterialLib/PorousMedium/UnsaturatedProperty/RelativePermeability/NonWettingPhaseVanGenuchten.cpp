@@ -25,8 +25,8 @@ double NonWettingPhaseVanGenuchten::getValue(const double saturation_w) const
                                 _saturation_r + _minor_offset,
                                 _saturation_max - _minor_offset);
     const double Se = (S - _saturation_r) / (_saturation_max - _saturation_r);
-    const double krel = std::cbrt(1.0 - Se) *
-                        std::pow(1.0 - std::pow(Se, 1.0 / _m), 2.0 * _m);
+    const double krel =
+        std::cbrt(1.0 - Se) * std::pow(1.0 - std::pow(Se, 1.0 / _m), 2.0 * _m);
     return std::max(_krel_min, krel);
 }
 

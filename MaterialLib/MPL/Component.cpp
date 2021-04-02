@@ -11,14 +11,13 @@
  */
 
 #include "Component.h"
+
 #include "Components/Components.h"
 #include "Properties/Properties.h"
 
 namespace MaterialPropertyLib
 {
-Component::Component()
-{
-}
+Component::Component() {}
 
 Component::Component(std::string const& component_name,
                      std::unique_ptr<PropertyArray>&& properties)

@@ -12,7 +12,6 @@
 
 #include "BaseLib/Algorithm.h"
 #include "MeshLib/Mesh.h"
-
 #include "Permeability/createPermeabilityModel.h"
 #include "Porosity/createPorosityModel.h"
 #include "Storage/createStorageModel.h"
@@ -43,7 +42,7 @@ PorousMediaProperties createPorousMediaProperties(
          //! \ogs_file_param{material__porous_medium__porous_medium}
          porous_medium_configs.getConfigSubtreeList("porous_medium"))
     {
-         //! \ogs_file_attr{material__porous_medium__porous_medium__id}
+        //! \ogs_file_attr{material__porous_medium__porous_medium__id}
         auto const id = porous_medium_config.getConfigAttribute<int>("id");
         mat_ids.push_back(id);
 

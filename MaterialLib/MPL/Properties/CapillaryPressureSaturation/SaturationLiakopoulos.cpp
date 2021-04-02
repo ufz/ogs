@@ -14,11 +14,11 @@
 
 #include "SaturationLiakopoulos.h"
 
-#include "MaterialLib/MPL/Medium.h"
-#include "MathLib/MathTools.h"
-
 #include <algorithm>
 #include <cmath>
+
+#include "MaterialLib/MPL/Medium.h"
+#include "MathLib/MathTools.h"
 
 namespace MaterialPropertyLib
 {

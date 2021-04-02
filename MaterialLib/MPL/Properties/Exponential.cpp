@@ -8,10 +8,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "MaterialLib/MPL/Properties/Exponential.h"
+
 #include <boost/math/special_functions/pow.hpp>
 #include <cmath>
-
-#include "MaterialLib/MPL/Properties/Exponential.h"
 
 namespace MaterialPropertyLib
 {

@@ -7,11 +7,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
-
-#include "BaseLib/StringTools.h"
-
 #include "Reaction.h"
 
+#include "BaseLib/StringTools.h"
 #include "Density100MPa.h"
 #include "DensityConst.h"
 #include "DensityCook.h"
@@ -20,18 +18,13 @@
 #include "DensityLegacy.h"
 #include "DensityMette.h"
 #include "DensityNunez.h"
-
 #include "ReactionCaOH2.h"
 #include "ReactionInert.h"
 #include "ReactionSinusoidal.h"
 
-
 namespace Adsorption
 {
-
-std::unique_ptr<Reaction>
-Reaction::
-newInstance(BaseLib::ConfigTree const& conf)
+std::unique_ptr<Reaction> Reaction::newInstance(BaseLib::ConfigTree const& conf)
 {
     //! \ogs_file_param{material__adsorption__reaction__type}
     auto const type = conf.getConfigParameter<std::string>("type");
@@ -86,4 +79,4 @@ newInstance(BaseLib::ConfigTree const& conf)
     return nullptr;
 }
 
-} // namespace Adsorption
+}  // namespace Adsorption

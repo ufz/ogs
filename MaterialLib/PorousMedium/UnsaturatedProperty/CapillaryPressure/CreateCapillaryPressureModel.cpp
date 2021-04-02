@@ -14,13 +14,11 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
-#include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
-#include "MathLib/Curve/PiecewiseLinearMonotonicCurve.h"
-
 #include "BrooksCoreyCapillaryPressureSaturation.h"
 #include "CapillaryPressureSaturation.h"
 #include "CapillaryPressureSaturationCurve.h"
+#include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
+#include "MathLib/Curve/PiecewiseLinearMonotonicCurve.h"
 #include "VanGenuchtenCapillaryPressureSaturation.h"
 
 namespace MaterialLib

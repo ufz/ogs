@@ -9,9 +9,8 @@
 
 #include "CreateLinearElasticIsotropic.h"
 
-#include "ParameterLib/Utils.h"
-
 #include "LinearElasticIsotropic.h"
+#include "ParameterLib/Utils.h"
 
 namespace MaterialLib
 {
@@ -43,8 +42,8 @@ createLinearElasticIsotropic(
         //! \ogs_file_param{material__fracture_model__LinearElasticIsotropic__tension_cutoff}
         config.getConfigParameter<bool>("tension_cutoff");
 
-    typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{
-        Kn, Ks};
+    typename LinearElasticIsotropic<DisplacementDim>::MaterialProperties mp{Kn,
+                                                                            Ks};
 
     return std::make_unique<LinearElasticIsotropic<DisplacementDim>>(
         penalty_aperture_cutoff, tension_cutoff, mp);

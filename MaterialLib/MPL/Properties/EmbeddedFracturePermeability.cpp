@@ -17,15 +17,14 @@
 namespace MaterialPropertyLib
 {
 template <int DisplacementDim>
-EmbeddedFracturePermeability<DisplacementDim>::
-    EmbeddedFracturePermeability(
-        std::string name,
-        Eigen::Matrix<double, 3, 1> const fracture_normal,
-        bool const fracture_normal_is_constant,
-        double const intrinsic_permeability,
-        double const initial_aperture,
-        double const mean_fracture_distance,
-        double const threshold_strain)
+EmbeddedFracturePermeability<DisplacementDim>::EmbeddedFracturePermeability(
+    std::string name,
+    Eigen::Matrix<double, 3, 1> const fracture_normal,
+    bool const fracture_normal_is_constant,
+    double const intrinsic_permeability,
+    double const initial_aperture,
+    double const mean_fracture_distance,
+    double const threshold_strain)
     : _n(fracture_normal),
       _n_const(fracture_normal_is_constant),
       _k(intrinsic_permeability),

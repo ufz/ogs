@@ -9,6 +9,7 @@
  *              http://www.opengeosys.org/project/license
  */
 #include "CreateMaterialSpatialDistributionMap.h"
+
 #include "MaterialSpatialDistributionMap.h"
 #include "MeshLib/Mesh.h"
 

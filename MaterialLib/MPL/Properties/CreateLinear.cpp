@@ -15,8 +15,7 @@
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<Linear> createLinear(
-    BaseLib::ConfigTree const& config)
+std::unique_ptr<Linear> createLinear(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Linear");
@@ -31,10 +30,9 @@ std::unique_ptr<Linear> createLinear(
         config.getConfigParameter<double>("reference_value");
 
     std::vector<MaterialPropertyLib::IndependentVariable> ivs;
-    for (
-        auto const& independent_variable_config :
-        //! \ogs_file_param{properties__property__Linear__independent_variable}
-        config.getConfigSubtreeList("independent_variable"))
+    for (auto const& independent_variable_config :
+         //! \ogs_file_param{properties__property__Linear__independent_variable}
+         config.getConfigSubtreeList("independent_variable"))
     {
         auto const& variable_name =
             //! \ogs_file_param{properties__property__Linear__independent_variable__variable_name}

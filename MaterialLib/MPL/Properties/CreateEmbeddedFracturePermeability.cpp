@@ -9,8 +9,8 @@
  */
 
 #include "BaseLib/ConfigTree.h"
-#include "ParameterLib/Parameter.h"
 #include "EmbeddedFracturePermeability.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib
 {
@@ -52,7 +52,7 @@ std::unique_ptr<Property> createEmbeddedFracturePermeability(
     bool n_const = false;
     Eigen::Matrix<double, 3, 1> n;
     if (auto const n_ptr =
-        //! \ogs_file_param{properties__property__EmbeddedFracturePermeability__fracture_normal}
+            //! \ogs_file_param{properties__property__EmbeddedFracturePermeability__fracture_normal}
         config.getConfigParameterOptional<std::vector<double>>(
             "fracture_normal"))
     {
@@ -69,8 +69,9 @@ std::unique_ptr<Property> createEmbeddedFracturePermeability(
     }
     else
     {
-        DBUG("No constant fracture normal was given. By default it will be "
-             "determined as the third principal stress vector.");
+        DBUG(
+            "No constant fracture normal was given. By default it will be "
+            "determined as the third principal stress vector.");
     }
 
     if (geometry_dimension == 2)

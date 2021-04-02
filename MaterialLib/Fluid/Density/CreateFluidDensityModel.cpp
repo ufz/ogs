@@ -9,20 +9,18 @@
                http://www.opengeosys.org/project/license
 */
 
-#include <array>
-
 #include "CreateFluidDensityModel.h"
 
-#include "BaseLib/Error.h"
+#include <array>
 
+#include "BaseLib/Error.h"
 #include "IdealGasLaw.h"
 #include "LinearConcentrationAndPressureDependentDensity.h"
 #include "LinearConcentrationDependentDensity.h"
 #include "LinearTemperatureDependentDensity.h"
 #include "LiquidDensity.h"
-#include "WaterDensityIAPWSIF97Region1.h"
-
 #include "MaterialLib/Fluid/ConstantFluidProperty.h"
+#include "WaterDensityIAPWSIF97Region1.h"
 
 namespace MaterialLib
 {

@@ -8,9 +8,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <numeric>
-
 #include "MaterialLib/MPL/Properties/Linear.h"
+
+#include <numeric>
 
 namespace MaterialPropertyLib
 {

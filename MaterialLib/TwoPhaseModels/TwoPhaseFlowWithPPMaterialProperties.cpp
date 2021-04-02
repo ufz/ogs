@@ -11,8 +11,8 @@
 
 #include <boost/math/special_functions/pow.hpp>
 #include <utility>
-#include "BaseLib/Logging.h"
 
+#include "BaseLib/Logging.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"

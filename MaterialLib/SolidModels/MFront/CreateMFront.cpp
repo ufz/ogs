@@ -10,9 +10,8 @@
 #include "CreateMFront.h"
 
 #include "BaseLib/FileTools.h"
-#include "ParameterLib/Utils.h"
-
 #include "MFront.h"
+#include "ParameterLib/Utils.h"
 namespace
 {
 /// Prints info about MFront variables.

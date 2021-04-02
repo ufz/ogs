@@ -74,7 +74,7 @@ PropertyDataType SaturationDependentSwelling::value(
 
     if (S_L < S_min_)
     {
-        return delta_sigma_sw;   // still being zero.
+        return delta_sigma_sw;  // still being zero.
     }
 
     double const S_eff = std::clamp((S_L - S_min_) / (S_max_ - S_min_), 0., 1.);
@@ -124,7 +124,7 @@ PropertyDataType SaturationDependentSwelling::dValue(
 
     if (S_L < S_min_)
     {
-        return delta_sigma_sw;   // still being zero.
+        return delta_sigma_sw;  // still being zero.
     }
 
     double const S_eff = std::clamp((S_L - S_min_) / (S_max_ - S_min_), 0., 1.);

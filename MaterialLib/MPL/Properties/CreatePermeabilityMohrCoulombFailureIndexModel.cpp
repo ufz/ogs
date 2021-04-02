@@ -48,8 +48,7 @@ std::unique_ptr<Property> createPermeabilityMohrCoulombFailureIndexModel(
 
     std::string const& parameter_name =
         //! \ogs_file_param{properties__property__PermeabilityMohrCoulombFailureIndexModel__initial_permeability}
-        config.getConfigParameter<std::string>(
-            "initial_permeability");
+        config.getConfigParameter<std::string>("initial_permeability");
     auto const& parameter_k0 = ParameterLib::findParameter<double>(
         parameter_name, parameters, 0, nullptr);
 

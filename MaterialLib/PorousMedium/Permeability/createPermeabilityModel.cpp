@@ -15,7 +15,6 @@
 #include <cassert>
 
 #include "BaseLib/ConfigTree.h"
-
 #include "BaseLib/Error.h"
 #include "MaterialLib/PorousMedium/Permeability/DupuitPermeability.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -54,8 +53,8 @@ std::unique_ptr<Permeability> createPermeabilityModel(
                 dimension);
         }
 
-        return std::make_unique<Permeability>(
-            permeability_parameter, dimension);
+        return std::make_unique<Permeability>(permeability_parameter,
+                                              dimension);
     }
 
     if (type == "Dupuit")

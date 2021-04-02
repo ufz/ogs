@@ -11,10 +11,10 @@
  */
 
 #include "Phase.h"
-#include "BaseLib/Algorithm.h"
-#include "Properties/Properties.h"
 
+#include "BaseLib/Algorithm.h"
 #include "Component.h"
+#include "Properties/Properties.h"
 
 namespace MaterialPropertyLib
 {

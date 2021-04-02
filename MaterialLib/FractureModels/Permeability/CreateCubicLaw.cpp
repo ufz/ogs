@@ -10,7 +10,6 @@
 #include "CreateCubicLaw.h"
 
 #include "BaseLib/ConfigTree.h"
-
 #include "CubicLaw.h"
 
 namespace MaterialLib::Fracture::Permeability

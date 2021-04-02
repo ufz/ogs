@@ -8,9 +8,9 @@
  */
 
 #include "CreateConstantPermeability.h"
+
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
 #include "ConstantPermeability.h"
 
 namespace MaterialLib::Fracture::Permeability

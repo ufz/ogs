@@ -8,10 +8,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "KozenyCarmanModel.h"
+
 #include <algorithm>
 #include <cmath>
-
-#include "KozenyCarmanModel.h"
 
 namespace MaterialPropertyLib
 {

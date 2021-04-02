@@ -9,9 +9,8 @@
 
 #include "CreateTwoPhaseFlowMaterialProperties.h"
 
-#include "BaseLib/Logging.h"
-
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/Logging.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
@@ -22,7 +21,6 @@
 #include "MeshLib/PropertyVector.h"
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/SpatialPosition.h"
-
 #include "TwoPhaseFlowWithPPMaterialProperties.h"
 
 namespace MaterialLib

@@ -8,8 +8,8 @@
  */
 
 #include "CohesiveZoneModeI.h"
-#include "LogPenalty.h"
 
+#include "LogPenalty.h"
 #include "MathLib/MathTools.h"
 
 namespace MaterialLib
@@ -57,7 +57,7 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
 
     auto& state =
         static_cast<StateVariables<DisplacementDim>&>(material_state_variables);
-    //reset damage in each iteration
+    // reset damage in each iteration
     state.setInitialConditions();
 
     auto const mp = evaluatedMaterialProperties(t, x);
@@ -108,7 +108,7 @@ void CohesiveZoneModeI<DisplacementDim>::computeConstitutiveRelation(
         state.damage =
             computeDamage(state.damage_prev, w_n_effective, mp.w_np, mp.w_nf);
         degradation = ((1 - state.damage) * mp.w_np) /
-                                   (mp.w_np + state.damage * (mp.w_nf - mp.w_np));
+                      (mp.w_np + state.damage * (mp.w_nf - mp.w_np));
     }
 
     // Degrade stiffness tensor in tension.

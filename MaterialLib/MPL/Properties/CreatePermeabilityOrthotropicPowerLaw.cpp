@@ -33,7 +33,7 @@ std::unique_ptr<Property> createPermeabilityOrthotropicPowerLaw(
             "intrinsic_permeabilities");
 
     if (!((intrinsic_permeabilities.size() == 3) ||
-        (intrinsic_permeabilities.size() == 2)))
+          (intrinsic_permeabilities.size() == 2)))
     {
         OGS_FATAL(
             "The number of intrinsic permeabilities must be two or three, but "

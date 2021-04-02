@@ -16,8 +16,8 @@
 
 #include "BaseLib/Error.h"
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/VariableType.h"
 #include "MaterialLib/MPL/Utils/CheckVanGenuchtenExponentRange.h"
+#include "MaterialLib/MPL/VariableType.h"
 
 namespace MaterialPropertyLib
 {
