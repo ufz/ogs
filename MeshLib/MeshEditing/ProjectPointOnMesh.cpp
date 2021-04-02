@@ -10,7 +10,6 @@
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "MathLib/Point3d.h"
-
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
@@ -19,7 +18,6 @@ namespace MeshLib
 {
 namespace ProjectPointOnMesh
 {
-
 MeshLib::Element const* getProjectedElement(
     std::vector<const MeshLib::Element*> const& elements,
     MeshLib::Node const& node)

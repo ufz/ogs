@@ -14,8 +14,8 @@
 
 #include "DuplicateMeshComponents.h"
 
-#include "MeshLib/Mesh.h"
 #include "MeshLib/Elements/Elements.h"
+#include "MeshLib/Mesh.h"
 
 namespace MeshLib
 {
@@ -74,10 +74,9 @@ MeshLib::Element* copyElement(MeshLib::Element const* const element,
     return new E(new_nodes);
 }
 
-MeshLib::Element* copyElement(
-    MeshLib::Element const* const element,
-    const std::vector<MeshLib::Node*>& nodes,
-    std::vector<std::size_t> const* const id_map)
+MeshLib::Element* copyElement(MeshLib::Element const* const element,
+                              const std::vector<MeshLib::Node*>& nodes,
+                              std::vector<std::size_t> const* const id_map)
 {
     switch (element->getCellType())
     {

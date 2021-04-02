@@ -10,12 +10,12 @@
 
 #include "CellRule.h"
 
-#include "MeshLib/Node.h"
 #include "Element.h"
 #include "FaceRule.h"
+#include "MeshLib/Node.h"
 
-namespace MeshLib {
-
+namespace MeshLib
+{
 bool CellRule::testElementNodeOrder(const Element* e)
 {
     Eigen::Vector3d const cc =
@@ -24,10 +24,10 @@ bool CellRule::testElementNodeOrder(const Element* e)
     for (unsigned j = 0; j < nFaces; ++j)
     {
         MeshLib::Element const* const face(e->getFace(j));
-        // Node 1 is checked below because that way all nodes are used for the test
-        // at some point, while for node 0 at least one node in every element
-        // type would be used for checking twice and one wouldn't be checked at
-        // all. (based on the definition of the _face_nodes variable)
+        // Node 1 is checked below because that way all nodes are used for the
+        // test at some point, while for node 0 at least one node in every
+        // element type would be used for checking twice and one wouldn't be
+        // checked at all. (based on the definition of the _face_nodes variable)
         auto const x =
             Eigen::Map<Eigen::Vector3d const>(face->getNode(1)->getCoords());
         Eigen::Vector3d const cx = x - cc;

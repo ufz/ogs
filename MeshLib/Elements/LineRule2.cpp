@@ -13,11 +13,10 @@
 #include "MathLib/MathTools.h"
 #include "MeshLib/Node.h"
 
-namespace MeshLib {
-
-const unsigned LineRule2::edge_nodes[1][2] =
+namespace MeshLib
 {
-    {0, 1} // Edge 0
+const unsigned LineRule2::edge_nodes[1][2] = {
+    {0, 1}  // Edge 0
 };
 
 double LineRule2::computeVolume(Node const* const* _nodes)
@@ -55,4 +54,4 @@ ElementErrorCode LineRule2::validate(const Element* e)
     return error_code;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

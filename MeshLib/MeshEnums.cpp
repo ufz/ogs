@@ -16,7 +16,8 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 
-namespace MeshLib {
+namespace MeshLib
+{
 std::string MeshElemType2String(const MeshElemType t)
 {
     if (t == MeshElemType::POINT)
@@ -91,7 +92,7 @@ std::string MeshElemType2StringShort(const MeshElemType t)
     return "none";
 }
 
-MeshElemType String2MeshElemType(const std::string &s)
+MeshElemType String2MeshElemType(const std::string& s)
 {
     if (boost::iequals(s, "point"))
     {
@@ -155,8 +156,8 @@ std::vector<std::string> getMeshElemTypeStringsShort()
 
 std::string CellType2String(const CellType t)
 {
-#define RETURN_CELL_TYPE_STR(t, type)\
-    if ((t) == CellType::type)\
+#define RETURN_CELL_TYPE_STR(t, type) \
+    if ((t) == CellType::type)        \
         return #type;
 
     RETURN_CELL_TYPE_STR(t, POINT1);

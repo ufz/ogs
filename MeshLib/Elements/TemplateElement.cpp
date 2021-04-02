@@ -11,8 +11,8 @@
 #include "TemplateElement.h"
 
 #include "MeshLib/Elements/Hex.h"
-#include "MeshLib/Elements/Point.h"
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Elements/Point.h"
 #include "MeshLib/Elements/Prism.h"
 #include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Quad.h"
@@ -30,7 +30,7 @@ const unsigned MeshLib::TemplateElement<ELEMENT_RULE>::n_base_nodes;
 
 template <class ELEMENT_RULE>
 const unsigned MeshLib::TemplateElement<ELEMENT_RULE>::dimension;
-#endif // WIN32
+#endif  // WIN32
 
 template class MeshLib::TemplateElement<MeshLib::HexRule20>;
 template class MeshLib::TemplateElement<MeshLib::HexRule8>;

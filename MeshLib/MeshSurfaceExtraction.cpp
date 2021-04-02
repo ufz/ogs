@@ -15,9 +15,9 @@
 #include "MeshSurfaceExtraction.h"
 
 #include <boost/math/constants/constants.hpp>
-#include "BaseLib/Logging.h"
 #include <memory>
 
+#include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Point.h"
 #include "MeshLib/Elements/Quad.h"

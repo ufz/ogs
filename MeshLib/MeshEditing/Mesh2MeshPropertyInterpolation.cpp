@@ -12,31 +12,31 @@
  *
  */
 
-#include <vector>
-#include <fstream>
-
 #include "Mesh2MeshPropertyInterpolation.h"
 
-#include "BaseLib/Logging.h"
+#include <fstream>
+#include <vector>
 
+#include "BaseLib/Logging.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/Grid.h"
-
-#include "MeshLib/MeshEnums.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEnums.h"
+#include "MeshLib/Node.h"
 
-namespace MeshLib {
-
+namespace MeshLib
+{
 Mesh2MeshPropertyInterpolation::Mesh2MeshPropertyInterpolation(
     Mesh const& src_mesh, std::string const& property_name)
     : _src_mesh(src_mesh), _property_name(property_name)
-{}
+{
+}
 
 bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
 {
-    if (_src_mesh.getDimension() != dest_mesh.getDimension()) {
+    if (_src_mesh.getDimension() != dest_mesh.getDimension())
+    {
         ERR("MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() "
             "dimension of source (dim = {:d}) and destination (dim = {:d}) "
             "mesh does not match.",
@@ -44,7 +44,8 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
         return false;
     }
 
-    if (_src_mesh.getDimension() != 2) {
+    if (_src_mesh.getDimension() != 2)
+    {
         WARN(
             "MeshLib::Mesh2MeshPropertyInterpolation::setPropertiesForMesh() "
             "implemented only for 2D case at the moment.");
@@ -147,8 +148,9 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
     }
 }
 
-void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodeProperties(
-    std::vector<double> &interpolated_properties) const
+void Mesh2MeshPropertyInterpolation::
+    interpolateElementPropertiesToNodeProperties(
+        std::vector<double>& interpolated_properties) const
 {
     // fetch the source of property values
     if (!_src_mesh.getProperties().existsPropertyVector<double>(_property_name))
@@ -175,4 +177,4 @@ void Mesh2MeshPropertyInterpolation::interpolateElementPropertiesToNodePropertie
     }
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

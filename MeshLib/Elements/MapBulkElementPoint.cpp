@@ -8,9 +8,9 @@
  *
  */
 
-#include <array>
-
 #include "MapBulkElementPoint.h"
+
+#include <array>
 
 namespace MeshLib
 {
@@ -37,17 +37,20 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& /*quad*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint1D const& wp)
 {
-    switch (face_id) {
-    case 0:
-        return MathLib::Point3d{std::array<double, 3>{{wp[0], 0.0, 0.0}}};
-    case 1:
-        return MathLib::Point3d{std::array<double, 3>{{1.0, wp[0], 0.0}}};
-    case 2:
-        return MathLib::Point3d{std::array<double, 3>{{1.0 - wp[0], 1.0, 0.0}}};
-    case 3:
-        return MathLib::Point3d{std::array<double, 3>{{0.0, 1.0 - wp[0], 0.0}}};
-    default:
-        OGS_FATAL("Invalid face id '{:d}' for the quad.", face_id);
+    switch (face_id)
+    {
+        case 0:
+            return MathLib::Point3d{std::array<double, 3>{{wp[0], 0.0, 0.0}}};
+        case 1:
+            return MathLib::Point3d{std::array<double, 3>{{1.0, wp[0], 0.0}}};
+        case 2:
+            return MathLib::Point3d{
+                std::array<double, 3>{{1.0 - wp[0], 1.0, 0.0}}};
+        case 3:
+            return MathLib::Point3d{
+                std::array<double, 3>{{0.0, 1.0 - wp[0], 0.0}}};
+        default:
+            OGS_FATAL("Invalid face id '{:d}' for the quad.", face_id);
     }
 }
 
@@ -89,16 +92,15 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Prism const& /*prism*/,
                 std::array<double, 3>{{wp[1], wp[0], -1.0}}};
         case 1:
             return MathLib::Point3d{
-                std::array<double, 3>{{wp[0]/2.0 + 0.5, 0.0, wp[1]}}};
+                std::array<double, 3>{{wp[0] / 2.0 + 0.5, 0.0, wp[1]}}};
         case 2:
-            return MathLib::Point3d{
-                std::array<double, 3>{{0.5 - wp[0]/2.0, 0.5 + wp[0]/2.0, wp[1]}}};
+            return MathLib::Point3d{std::array<double, 3>{
+                {0.5 - wp[0] / 2.0, 0.5 + wp[0] / 2.0, wp[1]}}};
         case 3:
             return MathLib::Point3d{
-                std::array<double, 3>{{0, -wp[0]/2.0 + 0.5, wp[1]}}};
+                std::array<double, 3>{{0, -wp[0] / 2.0 + 0.5, wp[1]}}};
         case 4:
-            return MathLib::Point3d{
-                std::array<double, 3>{{wp[0], wp[1], 1.0}}};
+            return MathLib::Point3d{std::array<double, 3>{{wp[0], wp[1], 1.0}}};
         default:
             OGS_FATAL("Invalid face id '{:d}' for the prism.", face_id);
     }
@@ -120,8 +122,8 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Pyramid const& /*pyramid*/,
             return MathLib::Point3d{
                 std::array<double, 3>{{1 - 2 * wp[0], 1.0, 2 * wp[1] - 1}}};
         case 3:
-            return MathLib::Point3d{std::array<double, 3>{
-                {-1.0, 2 * wp[1] - 1, 2 * wp[0] - 1}}};
+            return MathLib::Point3d{
+                std::array<double, 3>{{-1.0, 2 * wp[1] - 1, 2 * wp[0] - 1}}};
         case 4:
             return MathLib::Point3d{
                 std::array<double, 3>{{-wp[0], wp[1], -1.0}}};
@@ -144,8 +146,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Tet const& /*tet*/,
             return MathLib::Point3d{
                 std::array<double, 3>{{1 - wp[0] - wp[1], wp[0], wp[1]}}};
         case 3:
-            return MathLib::Point3d{
-                std::array<double, 3>{{0, wp[1], wp[0]}}};
+            return MathLib::Point3d{std::array<double, 3>{{0, wp[1], wp[0]}}};
         default:
             OGS_FATAL("Invalid face id '{:d}' for the tetrahedron.", face_id);
     }

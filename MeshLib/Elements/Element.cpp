@@ -15,15 +15,13 @@
 #include "Element.h"
 
 #include "BaseLib/Logging.h"
-
+#include "Line.h"
 #include "MathLib/GeometricBasics.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/Node.h"
 
-#include "Line.h"
-
-namespace MeshLib {
-
+namespace MeshLib
+{
 Element::Element(std::size_t id)
     : _nodes(nullptr), _id(id), _content(-1.0), _neighbors(nullptr)
 {
@@ -31,8 +29,8 @@ Element::Element(std::size_t id)
 
 Element::~Element()
 {
-    delete [] this->_nodes;
-    delete [] this->_neighbors;
+    delete[] this->_nodes;
+    delete[] this->_neighbors;
 }
 
 void Element::setNeighbor(Element* neighbor, unsigned const face_id)
@@ -58,11 +56,11 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
     }
 
     Node* face_nodes[3];
-    const unsigned nNodes (this->getNumberOfBaseNodes());
-    const unsigned eNodes (e->getNumberOfBaseNodes());
+    const unsigned nNodes(this->getNumberOfBaseNodes());
+    const unsigned eNodes(e->getNumberOfBaseNodes());
     const Node* const* e_nodes = e->getNodes();
     unsigned count(0);
-    const unsigned dim (this->getDimension());
+    const unsigned dim(this->getDimension());
     for (unsigned i(0); i < nNodes; i++)
     {
         for (unsigned j(0); j < eNodes; j++)
@@ -70,10 +68,11 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
             if (_nodes[i] == e_nodes[j])
             {
                 face_nodes[count] = _nodes[i];
-                // increment shared nodes counter and check if enough nodes are similar to be sure e is a neighbour of this
-                if ((++count)>=dim)
+                // increment shared nodes counter and check if enough nodes are
+                // similar to be sure e is a neighbour of this
+                if ((++count) >= dim)
                 {
-                    _neighbors[ this->identifyFace(face_nodes) ] = e;
+                    _neighbors[this->identifyFace(face_nodes)] = e;
                     return std::optional<unsigned>(e->identifyFace(face_nodes));
                 }
             }
@@ -99,7 +98,7 @@ const Element* Element::getNeighbor(unsigned i) const
 
 unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
 {
-    const unsigned nNodes (this->getNumberOfNodes());
+    const unsigned nNodes(this->getNumberOfNodes());
     for (unsigned i(0); i < nNodes; i++)
     {
         if (node == _nodes[i])
@@ -151,21 +150,22 @@ std::size_t Element::getNodeIndex(unsigned i) const
 
 bool Element::isBoundaryElement() const
 {
-    return std::any_of(_neighbors, _neighbors + this->getNumberOfNeighbors(),
-        [](MeshLib::Element const*const e){ return e == nullptr; });
+    return std::any_of(
+        _neighbors, _neighbors + this->getNumberOfNeighbors(),
+        [](MeshLib::Element const* const e) { return e == nullptr; });
 }
 
 #ifndef NDEBUG
 std::ostream& operator<<(std::ostream& os, Element const& e)
 {
-    os << "Element #" << e._id << " @ " << &e << " with " << e.getNumberOfNeighbors()
-       << " neighbours\n";
+    os << "Element #" << e._id << " @ " << &e << " with "
+       << e.getNumberOfNeighbors() << " neighbours\n";
 
     unsigned const nnodes = e.getNumberOfNodes();
     MeshLib::Node* const* const nodes = e.getNodes();
     os << "MeshElemType: "
-        << static_cast<std::underlying_type<MeshElemType>::type>(e.getGeomType())
-        << " with " << nnodes << " nodes: { ";
+       << static_cast<std::underlying_type<MeshElemType>::type>(e.getGeomType())
+       << " with " << nnodes << " nodes: { ";
     for (unsigned n = 0; n < nnodes; ++n)
     {
         os << nodes[n]->getID() << " @ " << nodes[n] << "  ";
@@ -246,7 +246,8 @@ std::pair<double, double> computeSqrEdgeLengthRange(Element const& element)
 
 bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
 {
-    for(std::size_t i(0); i<e.getNumberOfBaseNodes(); ++i) {
+    for (std::size_t i(0); i < e.getNumberOfBaseNodes(); ++i)
+    {
         if (MathLib::sqrDist2d(p, *e.getNode(i)) <
             std::numeric_limits<double>::epsilon())
         {

@@ -10,11 +10,11 @@
 
 #include "RemoveMeshComponents.h"
 
+#include "DuplicateMeshComponents.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
-#include "DuplicateMeshComponents.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
@@ -174,4 +174,3 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh& mesh,
     return nullptr;
 }
 }  // end namespace MeshLib
-

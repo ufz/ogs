@@ -19,17 +19,15 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Elements.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/MeshEditing/FlipElements.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
-
 /** Extrudes point, line, triangle or quad elements to its higher dimensional
  * versions, i.e. line, quad, prism, hexahedron.
  *
@@ -42,8 +40,9 @@ namespace MeshLib
  *
  * @return extruded element (point -> line, line -> quad, tri -> prism, quad ->
  * hexahedron)
-*/
-MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes,
+ */
+MeshLib::Element* extrudeElement(
+    std::vector<MeshLib::Node*> const& subsfc_nodes,
     MeshLib::Element const& sfc_elem,
     MeshLib::PropertyVector<std::size_t> const& sfc_to_subsfc_id_map,
     std::map<std::size_t, std::size_t> const& subsfc_sfc_id_map)
@@ -58,12 +57,12 @@ MeshLib::Element* extrudeElement(std::vector<MeshLib::Node*> const& subsfc_nodes
         new MeshLib::Node*[2 * nElemNodes]
     };
 
-    for (unsigned j=0; j<nElemNodes; ++j)
+    for (unsigned j = 0; j < nElemNodes; ++j)
     {
         std::size_t const subsfc_id(
             sfc_to_subsfc_id_map[sfc_elem.getNode(j)->getID()]);
         new_nodes[j] = subsfc_nodes[subsfc_id];
-        std::size_t new_idx = (nElemNodes==2) ? (3-j) : (nElemNodes+j);
+        std::size_t new_idx = (nElemNodes == 2) ? (3 - j) : (nElemNodes + j);
         new_nodes[new_idx] = subsfc_nodes[subsfc_sfc_id_map.at(subsfc_id)];
     }
 
@@ -91,7 +90,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     double const flag = on_top ? -1.0 : 1.0;
     Eigen::Vector3d const dir({0, 0, flag});
     double const angle(90);
-    std::unique_ptr<MeshLib::Mesh> sfc_mesh (nullptr);
+    std::unique_ptr<MeshLib::Mesh> sfc_mesh(nullptr);
 
     std::string const prop_name("bulk_node_ids");
 
@@ -210,4 +209,4 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     return new_mesh;
 }
 
-} // namespace MeshLib
+}  // namespace MeshLib

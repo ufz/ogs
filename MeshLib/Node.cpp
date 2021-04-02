@@ -13,13 +13,14 @@
  */
 
 #include "MeshLib/Node.h"
+
 #include "Elements/Element.h"
 
-namespace MeshLib {
-
+namespace MeshLib
+{
 Node::Node(const double coords[3], std::size_t id)
     : MathLib::Point3dWithID(
-        std::array<double,3>{{coords[0], coords[1], coords[2]}}, id)
+          std::array<double, 3>{{coords[0], coords[1], coords[2]}}, id)
 {
 }
 
@@ -29,14 +30,11 @@ Node::Node(std::array<double, 3> const& coords, std::size_t id)
 }
 
 Node::Node(double x, double y, double z, std::size_t id)
-    : MathLib::Point3dWithID(std::array<double,3>({{x, y, z}}), id)
+    : MathLib::Point3dWithID(std::array<double, 3>({{x, y, z}}), id)
 {
 }
 
-Node::Node(const Node &node)
-    : MathLib::Point3dWithID(node._x, node.getID())
-{
-}
+Node::Node(const Node& node) : MathLib::Point3dWithID(node._x, node.getID()) {}
 
 void Node::updateCoordinates(double x, double y, double z)
 {
@@ -44,7 +42,7 @@ void Node::updateCoordinates(double x, double y, double z)
     _x[1] = y;
     _x[2] = z;
 
-    const std::size_t nElements (this->_elements.size());
+    const std::size_t nElements(this->_elements.size());
     for (std::size_t i = 0; i < nElements; i++)
     {
         _elements[i]->computeVolume();

@@ -22,11 +22,9 @@
 #include <memory>
 #include <sstream>
 
-#include "BaseLib/Logging.h"
-
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
-
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/Node.h"
@@ -36,14 +34,15 @@ namespace MeshLib
 {
 namespace IO
 {
-namespace Legacy {
+namespace Legacy
+{
 MeshIO::MeshIO() = default;
 
 MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 {
     INFO("Reading OGS legacy mesh ... ");
 
-    std::ifstream in (file_name.c_str(),std::ios::in);
+    std::ifstream in(file_name.c_str(), std::ios::in);
     if (!in.is_open())
     {
         WARN("MeshIO::loadMeshFromFile() - Could not open file {:s}.",
@@ -58,7 +57,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
     std::vector<MeshLib::Element*> elements;
     std::vector<std::size_t> materials;
 
-    if(line_string.find("#FEM_MSH") != std::string::npos) // OGS mesh file
+    if (line_string.find("#FEM_MSH") != std::string::npos)  // OGS mesh file
     {
         while (!in.eof())
         {
@@ -104,17 +103,18 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
                     getline(in, line_string);
                     std::stringstream ss(line_string);
                     materials.push_back(readMaterialID(ss));
-                    MeshLib::Element *elem(readElement(ss,nodes));
-                    if (elem == nullptr) {
+                    MeshLib::Element* elem(readElement(ss, nodes));
+                    if (elem == nullptr)
+                    {
                         ERR("Reading mesh element {:d} from file '{:s}' "
                             "failed.",
                             i, file_name);
                         // clean up the elements vector
                         std::for_each(elements.begin(), elements.end(),
-                            std::default_delete<MeshLib::Element>());
+                                      std::default_delete<MeshLib::Element>());
                         // clean up the nodes vector
                         std::for_each(nodes.begin(), nodes.end(),
-                            std::default_delete<MeshLib::Node>());
+                                      std::default_delete<MeshLib::Node>());
                         return nullptr;
                     }
                     elements.push_back(elem);
@@ -124,7 +124,8 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 
         if (elements.empty())
         {
-            ERR ("MeshIO::loadMeshFromFile() - File did not contain element information.");
+            ERR("MeshIO::loadMeshFromFile() - File did not contain element "
+                "information.");
             for (auto& node : nodes)
             {
                 delete node;
@@ -132,8 +133,9 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
             return nullptr;
         }
 
-        MeshLib::Mesh* mesh (new MeshLib::Mesh(BaseLib::extractBaseNameWithoutExtension(
-                                                       file_name), nodes, elements));
+        MeshLib::Mesh* mesh(new MeshLib::Mesh(
+            BaseLib::extractBaseNameWithoutExtension(file_name), nodes,
+            elements));
 
         auto* const material_ids =
             mesh->getProperties().createNewPropertyVector<int>(
@@ -159,7 +161,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
     return nullptr;
 }
 
-std::size_t MeshIO::readMaterialID(std::istream & in)
+std::size_t MeshIO::readMaterialID(std::istream& in)
 {
     unsigned index;
     unsigned material_id;
@@ -170,13 +172,14 @@ std::size_t MeshIO::readMaterialID(std::istream & in)
     return material_id;
 }
 
-MeshLib::Element* MeshIO::readElement(std::istream& in,
-    const std::vector<MeshLib::Node*> &nodes) const
+MeshLib::Element* MeshIO::readElement(
+    std::istream& in, const std::vector<MeshLib::Node*>& nodes) const
 {
     std::string elem_type_str;
-    MeshLib::MeshElemType elem_type (MeshLib::MeshElemType::INVALID);
+    MeshLib::MeshElemType elem_type(MeshLib::MeshElemType::INVALID);
 
-    do {
+    do
+    {
         if (!(in >> elem_type_str))
         {
             return nullptr;
@@ -187,134 +190,142 @@ MeshLib::Element* MeshIO::readElement(std::istream& in,
     auto* idx = new unsigned[8];
     MeshLib::Element* elem;
 
-    switch(elem_type)
+    switch (elem_type)
     {
-    case MeshLib::MeshElemType::LINE: {
-        for (int i = 0; i < 2; ++i)
+        case MeshLib::MeshElemType::LINE:
         {
-            if (!(in >> idx[i]))
+            for (int i = 0; i < 2; ++i)
             {
-                return nullptr;
+                if (!(in >> idx[i]))
+                {
+                    return nullptr;
+                }
             }
-        }
-        // edge_nodes array will be deleted from Line object
-        auto** edge_nodes = new MeshLib::Node*[2];
-        for (unsigned k(0); k < 2; ++k)
-        {
-            edge_nodes[k] = nodes[idx[k]];
-        }
-        elem = new MeshLib::Line(edge_nodes);
-        break;
-    }
-    case MeshLib::MeshElemType::TRIANGLE: {
-        for (int i = 0; i < 3; ++i)
-        {
-            if (!(in >> idx[i]))
+            // edge_nodes array will be deleted from Line object
+            auto** edge_nodes = new MeshLib::Node*[2];
+            for (unsigned k(0); k < 2; ++k)
             {
-                return nullptr;
+                edge_nodes[k] = nodes[idx[k]];
             }
+            elem = new MeshLib::Line(edge_nodes);
+            break;
         }
-        auto** tri_nodes = new MeshLib::Node*[3];
-        for (unsigned k(0); k < 3; ++k)
+        case MeshLib::MeshElemType::TRIANGLE:
         {
-            tri_nodes[k] = nodes[idx[k]];
-        }
-        elem = new MeshLib::Tri(tri_nodes);
-        break;
-    }
-    case MeshLib::MeshElemType::QUAD: {
-        for (int i = 0; i < 4; ++i)
-        {
-            if (!(in >> idx[i]))
+            for (int i = 0; i < 3; ++i)
             {
-                return nullptr;
+                if (!(in >> idx[i]))
+                {
+                    return nullptr;
+                }
             }
-        }
-        auto** quad_nodes = new MeshLib::Node*[4];
-        for (unsigned k(0); k < 4; ++k)
-        {
-            quad_nodes[k] = nodes[idx[k]];
-        }
-        elem = new MeshLib::Quad(quad_nodes);
-        break;
-    }
-    case MeshLib::MeshElemType::TETRAHEDRON: {
-        for (int i = 0; i < 4; ++i)
-        {
-            if (!(in >> idx[i]))
+            auto** tri_nodes = new MeshLib::Node*[3];
+            for (unsigned k(0); k < 3; ++k)
             {
-                return nullptr;
+                tri_nodes[k] = nodes[idx[k]];
             }
+            elem = new MeshLib::Tri(tri_nodes);
+            break;
         }
-        auto** tet_nodes = new MeshLib::Node*[4];
-        for (unsigned k(0); k < 4; ++k)
+        case MeshLib::MeshElemType::QUAD:
         {
-            tet_nodes[k] = nodes[idx[k]];
-        }
-        elem = new MeshLib::Tet(tet_nodes);
-        break;
-    }
-    case MeshLib::MeshElemType::HEXAHEDRON: {
-        for (int i = 0; i < 8; ++i)
-        {
-            if (!(in >> idx[i]))
+            for (int i = 0; i < 4; ++i)
             {
-                return nullptr;
+                if (!(in >> idx[i]))
+                {
+                    return nullptr;
+                }
             }
-        }
-        auto** hex_nodes = new MeshLib::Node*[8];
-        for (unsigned k(0); k < 8; ++k)
-        {
-            hex_nodes[k] = nodes[idx[k]];
-        }
-        elem = new MeshLib::Hex(hex_nodes);
-        break;
-    }
-    case MeshLib::MeshElemType::PYRAMID: {
-        for (int i = 0; i < 5; ++i)
-        {
-            if (!(in >> idx[i]))
+            auto** quad_nodes = new MeshLib::Node*[4];
+            for (unsigned k(0); k < 4; ++k)
             {
-                return nullptr;
+                quad_nodes[k] = nodes[idx[k]];
             }
+            elem = new MeshLib::Quad(quad_nodes);
+            break;
         }
-        auto** pyramid_nodes = new MeshLib::Node*[5];
-        for (unsigned k(0); k < 5; ++k)
+        case MeshLib::MeshElemType::TETRAHEDRON:
         {
-            pyramid_nodes[k] = nodes[idx[k]];
-        }
-        elem = new MeshLib::Pyramid(pyramid_nodes);
-        break;
-    }
-    case MeshLib::MeshElemType::PRISM: {
-        for (int i = 0; i < 6; ++i)
-        {
-            if (!(in >> idx[i]))
+            for (int i = 0; i < 4; ++i)
             {
-                return nullptr;
+                if (!(in >> idx[i]))
+                {
+                    return nullptr;
+                }
             }
+            auto** tet_nodes = new MeshLib::Node*[4];
+            for (unsigned k(0); k < 4; ++k)
+            {
+                tet_nodes[k] = nodes[idx[k]];
+            }
+            elem = new MeshLib::Tet(tet_nodes);
+            break;
         }
-        auto** prism_nodes = new MeshLib::Node*[6];
-        for (unsigned k(0); k < 6; ++k)
+        case MeshLib::MeshElemType::HEXAHEDRON:
         {
-            prism_nodes[k] = nodes[idx[k]];
+            for (int i = 0; i < 8; ++i)
+            {
+                if (!(in >> idx[i]))
+                {
+                    return nullptr;
+                }
+            }
+            auto** hex_nodes = new MeshLib::Node*[8];
+            for (unsigned k(0); k < 8; ++k)
+            {
+                hex_nodes[k] = nodes[idx[k]];
+            }
+            elem = new MeshLib::Hex(hex_nodes);
+            break;
         }
-        elem = new MeshLib::Prism(prism_nodes);
-        break;
-    }
-    default:
-        elem = nullptr;
-        break;
+        case MeshLib::MeshElemType::PYRAMID:
+        {
+            for (int i = 0; i < 5; ++i)
+            {
+                if (!(in >> idx[i]))
+                {
+                    return nullptr;
+                }
+            }
+            auto** pyramid_nodes = new MeshLib::Node*[5];
+            for (unsigned k(0); k < 5; ++k)
+            {
+                pyramid_nodes[k] = nodes[idx[k]];
+            }
+            elem = new MeshLib::Pyramid(pyramid_nodes);
+            break;
+        }
+        case MeshLib::MeshElemType::PRISM:
+        {
+            for (int i = 0; i < 6; ++i)
+            {
+                if (!(in >> idx[i]))
+                {
+                    return nullptr;
+                }
+            }
+            auto** prism_nodes = new MeshLib::Node*[6];
+            for (unsigned k(0); k < 6; ++k)
+            {
+                prism_nodes[k] = nodes[idx[k]];
+            }
+            elem = new MeshLib::Prism(prism_nodes);
+            break;
+        }
+        default:
+            elem = nullptr;
+            break;
     }
 
-    delete [] idx;
+    delete[] idx;
 
     return elem;
 }
 
 bool MeshIO::write()
 {
-    if(!_mesh) {
+    if (!_mesh)
+    {
         WARN("MeshIO::write(): Cannot write: no mesh object specified.");
         return false;
     }
@@ -326,7 +337,8 @@ bool MeshIO::write()
         << "  ";
     const std::size_t n_nodes(_mesh->getNumberOfNodes());
     out << n_nodes << "\n";
-    for (std::size_t i(0); i < n_nodes; ++i) {
+    for (std::size_t i(0); i < n_nodes; ++i)
+    {
         out << i << " " << *(_mesh->getNode(i)) << "\n";
     }
 
@@ -358,10 +370,11 @@ void MeshIO::writeElements(
     MeshLib::PropertyVector<int> const* const material_ids,
     std::ostream& out) const
 {
-    const std::size_t ele_vector_size (ele_vec.size());
+    const std::size_t ele_vector_size(ele_vec.size());
 
     out << ele_vector_size << "\n";
-    for (std::size_t i(0); i < ele_vector_size; ++i) {
+    for (std::size_t i(0); i < ele_vector_size; ++i)
+    {
         out << i << " ";
         if (!material_ids)
         {
@@ -372,7 +385,7 @@ void MeshIO::writeElements(
             out << (*material_ids)[i] << " ";
         }
         out << this->ElemType2StringOutput(ele_vec[i]->getGeomType()) << " ";
-        unsigned nElemNodes (ele_vec[i]->getNumberOfBaseNodes());
+        unsigned nElemNodes(ele_vec[i]->getNumberOfBaseNodes());
         for (std::size_t j = 0; j < nElemNodes; ++j)
         {
             out << ele_vec[i]->getNode(j)->getID() << " ";
@@ -414,6 +427,6 @@ std::string MeshIO::ElemType2StringOutput(const MeshLib::MeshElemType t)
     return "none";
 }
 
-} // end namespace Legacy
-} // end namespace IO
+}  // end namespace Legacy
+}  // end namespace IO
 }  // namespace MeshLib

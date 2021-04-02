@@ -17,22 +17,20 @@
 #include <algorithm>
 
 #include "BaseLib/Logging.h"
-
 #include "GeoLib/Raster.h"
-
 #include "MathLib/MathTools.h"
-
-#include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Hex.h"
-#include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Prism.h"
+#include "MeshLib/Elements/Pyramid.h"
+#include "MeshLib/Elements/Tet.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Properties.h"
 
 namespace MeshLib
 {
-
-MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector, std::string const& mesh_name)
+MeshLib::Mesh* MeshLayerMapper::createStaticLayers(
+    MeshLib::Mesh const& mesh, std::vector<float> const& layer_thickness_vector,
+    std::string const& mesh_name)
 {
     std::vector<float> thickness;
     for (std::size_t i = 0; i < layer_thickness_vector.size(); ++i)
@@ -51,18 +49,22 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
     const std::size_t nLayers(thickness.size());
     if (nLayers < 1 || mesh.getDimension() != 2)
     {
-        ERR("MeshLayerMapper::createStaticLayers(): A 2D mesh with nLayers > 0 is required as input.");
+        ERR("MeshLayerMapper::createStaticLayers(): A 2D mesh with nLayers > 0 "
+            "is required as input.");
         return nullptr;
     }
 
     const std::size_t nNodes = mesh.getNumberOfNodes();
     // count number of 2d elements in the original mesh
-    const std::size_t nElems (std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
-            [](MeshLib::Element const* elem) { return (elem->getDimension() == 2);}));
+    const std::size_t nElems(
+        std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
+                      [](MeshLib::Element const* elem) {
+                          return (elem->getDimension() == 2);
+                      }));
 
-    const std::size_t nOrgElems (mesh.getNumberOfElements());
-    const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
-    const std::vector<MeshLib::Element*> &elems = mesh.getElements();
+    const std::size_t nOrgElems(mesh.getNumberOfElements());
+    const std::vector<MeshLib::Node*>& nodes = mesh.getNodes();
+    const std::vector<MeshLib::Element*>& elems = mesh.getElements();
     std::vector<MeshLib::Node*> new_nodes(nNodes + (nLayers * nNodes));
     std::vector<MeshLib::Element*> new_elems;
     new_elems.reserve(nElems * nLayers);
@@ -76,32 +78,37 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
     }
 
     materials->reserve(nElems * nLayers);
-    double z_offset (0.0);
+    double z_offset(0.0);
 
     for (unsigned layer_id = 0; layer_id <= nLayers; ++layer_id)
     {
         // add nodes for new layer
-        unsigned node_offset (nNodes * layer_id);
+        unsigned node_offset(nNodes * layer_id);
         if (layer_id > 0)
         {
             z_offset += thickness[layer_id - 1];
         }
 
-        std::transform(nodes.cbegin(), nodes.cend(), new_nodes.begin() + node_offset,
-            [&z_offset](MeshLib::Node* node){ return new MeshLib::Node((*node)[0], (*node)[1], (*node)[2]-z_offset); });
+        std::transform(nodes.cbegin(), nodes.cend(),
+                       new_nodes.begin() + node_offset,
+                       [&z_offset](MeshLib::Node* node) {
+                           return new MeshLib::Node((*node)[0], (*node)[1],
+                                                    (*node)[2] - z_offset);
+                       });
 
-        // starting with 2nd layer create prism or hex elements connecting the last layer with the current one
+        // starting with 2nd layer create prism or hex elements connecting the
+        // last layer with the current one
         if (layer_id == 0)
         {
             continue;
         }
 
         node_offset -= nNodes;
-        const unsigned mat_id (nLayers - layer_id);
+        const unsigned mat_id(nLayers - layer_id);
 
         for (unsigned i = 0; i < nOrgElems; ++i)
         {
-            const MeshLib::Element* sfc_elem( elems[i] );
+            const MeshLib::Element* sfc_elem(elems[i]);
             if (sfc_elem->getDimension() < 2)
             {  // ignore line-elements
                 continue;
@@ -110,11 +117,12 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(MeshLib::Mesh const& mesh, st
             const unsigned nElemNodes(sfc_elem->getNumberOfBaseNodes());
             auto** e_nodes = new MeshLib::Node*[2 * nElemNodes];
 
-            for (unsigned j=0; j<nElemNodes; ++j)
+            for (unsigned j = 0; j < nElemNodes; ++j)
             {
-                const unsigned node_id = sfc_elem->getNode(j)->getID() + node_offset;
-                e_nodes[j] = new_nodes[node_id+nNodes];
-                e_nodes[j+nElemNodes] = new_nodes[node_id];
+                const unsigned node_id =
+                    sfc_elem->getNode(j)->getID() + node_offset;
+                e_nodes[j] = new_nodes[node_id + nNodes];
+                e_nodes[j + nElemNodes] = new_nodes[node_id];
             }
             if (sfc_elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
             {
@@ -145,7 +153,8 @@ bool MeshLayerMapper::createRasterLayers(
     const std::size_t nLayers(rasters.size());
     if (nLayers < 2 || mesh.getDimension() != 2)
     {
-        ERR("MeshLayerMapper::createRasterLayers(): A 2D mesh and at least two rasters required as input.");
+        ERR("MeshLayerMapper::createRasterLayers(): A 2D mesh and at least two "
+            "rasters required as input.");
         return false;
     }
 
@@ -166,11 +175,13 @@ bool MeshLayerMapper::createRasterLayers(
     _nodes.reserve(nLayers * nNodes);
 
     // number of triangles in the original mesh
-    std::size_t const nElems (std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
-        [](MeshLib::Element const* elem)
-            { return (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE);}));
-    _elements.reserve(nElems * (nLayers-1));
-    _materials.reserve(nElems *  (nLayers-1));
+    std::size_t const nElems(std::count_if(
+        mesh.getElements().begin(), mesh.getElements().end(),
+        [](MeshLib::Element const* elem) {
+            return (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE);
+        }));
+    _elements.reserve(nElems * (nLayers - 1));
+    _materials.reserve(nElems * (nLayers - 1));
 
     // add bottom layer
     std::vector<MeshLib::Node*> const& nodes = bottom->getNodes();
@@ -186,13 +197,14 @@ bool MeshLayerMapper::createRasterLayers(
     return true;
 }
 
-void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned layer_id, GeoLib::Raster const& raster)
+void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh& dem_mesh,
+                                     unsigned layer_id,
+                                     GeoLib::Raster const& raster)
 {
-    const unsigned pyramid_base[3][4] =
-    {
-        {1, 3, 4, 2}, // Point 4 missing
-        {2, 4, 3, 0}, // Point 5 missing
-        {0, 3, 4, 1}, // Point 6 missing
+    const unsigned pyramid_base[3][4] = {
+        {1, 3, 4, 2},  // Point 4 missing
+        {2, 4, 3, 0},  // Point 5 missing
+        {0, 3, 4, 1},  // Point 6 missing
     };
 
     std::size_t const nNodes = dem_mesh.getNumberOfNodes();
@@ -208,11 +220,11 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
     }
 
     std::vector<MeshLib::Element*> const& elems = dem_mesh.getElements();
-    std::size_t const nElems (dem_mesh.getNumberOfElements());
+    std::size_t const nElems(dem_mesh.getNumberOfElements());
 
-    for (std::size_t i=0; i<nElems; ++i)
+    for (std::size_t i = 0; i < nElems; ++i)
     {
-        MeshLib::Element* elem (elems[i]);
+        MeshLib::Element* elem(elems[i]);
         if (elem->getGeomType() != MeshLib::MeshElemType::TRIANGLE)
         {
             continue;
@@ -220,10 +232,14 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
         unsigned node_counter(3);
         unsigned missing_idx(0);
         std::array<MeshLib::Node*, 6> new_elem_nodes{};
-        for (unsigned j=0; j<3; ++j)
+        for (unsigned j = 0; j < 3; ++j)
         {
-            new_elem_nodes[j] = _nodes[_nodes[last_layer_node_offset + elem->getNodeIndex(j)]->getID()];
-            new_elem_nodes[node_counter] = (_nodes[last_layer_node_offset + elem->getNodeIndex(j) + nNodes]);
+            new_elem_nodes[j] =
+                _nodes[_nodes[last_layer_node_offset + elem->getNodeIndex(j)]
+                           ->getID()];
+            new_elem_nodes[node_counter] =
+                (_nodes[last_layer_node_offset + elem->getNodeIndex(j) +
+                        nNodes]);
             if (new_elem_nodes[j]->getID() !=
                 new_elem_nodes[node_counter]->getID())
             {
@@ -237,32 +253,34 @@ void MeshLayerMapper::addLayerToMesh(const MeshLib::Mesh &dem_mesh, unsigned lay
 
         switch (node_counter)
         {
-        case 6:
-            _elements.push_back(new MeshLib::Prism(new_elem_nodes));
-            _materials.push_back(layer_id);
-            break;
-        case 5:
-        {
-            std::array<MeshLib::Node*, 5> pyramid_nodes;
-            pyramid_nodes[0] = new_elem_nodes[pyramid_base[missing_idx][0]];
-            pyramid_nodes[1] = new_elem_nodes[pyramid_base[missing_idx][1]];
-            pyramid_nodes[2] = new_elem_nodes[pyramid_base[missing_idx][2]];
-            pyramid_nodes[3] = new_elem_nodes[pyramid_base[missing_idx][3]];
-            pyramid_nodes[4] = new_elem_nodes[missing_idx];
-            _elements.push_back(new MeshLib::Pyramid(pyramid_nodes));
-            _materials.push_back(layer_id);
-            break;
-        }
-        case 4:
-        {
-            std::array<MeshLib::Node*, 4> tet_nodes;
-            std::copy(new_elem_nodes.begin(), new_elem_nodes.begin() + node_counter, tet_nodes.begin());
-            _elements.push_back(new MeshLib::Tet(tet_nodes));
-            _materials.push_back(layer_id);
-            break;
-        }
-        default:
-            continue;
+            case 6:
+                _elements.push_back(new MeshLib::Prism(new_elem_nodes));
+                _materials.push_back(layer_id);
+                break;
+            case 5:
+            {
+                std::array<MeshLib::Node*, 5> pyramid_nodes;
+                pyramid_nodes[0] = new_elem_nodes[pyramid_base[missing_idx][0]];
+                pyramid_nodes[1] = new_elem_nodes[pyramid_base[missing_idx][1]];
+                pyramid_nodes[2] = new_elem_nodes[pyramid_base[missing_idx][2]];
+                pyramid_nodes[3] = new_elem_nodes[pyramid_base[missing_idx][3]];
+                pyramid_nodes[4] = new_elem_nodes[missing_idx];
+                _elements.push_back(new MeshLib::Pyramid(pyramid_nodes));
+                _materials.push_back(layer_id);
+                break;
+            }
+            case 4:
+            {
+                std::array<MeshLib::Node*, 4> tet_nodes;
+                std::copy(new_elem_nodes.begin(),
+                          new_elem_nodes.begin() + node_counter,
+                          tet_nodes.begin());
+                _elements.push_back(new MeshLib::Tet(tet_nodes));
+                _materials.push_back(layer_id);
+                break;
+            }
+            default:
+                continue;
         }
     }
 }
@@ -272,23 +290,24 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh const& mesh,
                                    double const nodata_replacement,
                                    bool const ignore_nodata)
 {
-
     if (mesh.getDimension() != 2)
     {
         ERR("MshLayerMapper::layerMapping() - requires 2D mesh");
         return false;
     }
 
-    GeoLib::RasterHeader const& header (raster.getHeader());
+    GeoLib::RasterHeader const& header(raster.getHeader());
     const double x0(header.origin[0]);
     const double y0(header.origin[1]);
     const double delta(header.cell_size);
 
-    const std::pair<double, double> xDim(x0, x0 + header.n_cols * delta); // extension in x-dimension
-    const std::pair<double, double> yDim(y0, y0 + header.n_rows * delta); // extension in y-dimension
+    const std::pair<double, double> xDim(
+        x0, x0 + header.n_cols * delta);  // extension in x-dimension
+    const std::pair<double, double> yDim(
+        y0, y0 + header.n_rows * delta);  // extension in y-dimension
 
-    const std::size_t nNodes (mesh.getNumberOfNodes());
-    const std::vector<MeshLib::Node*> &nodes = mesh.getNodes();
+    const std::size_t nNodes(mesh.getNumberOfNodes());
+    const std::vector<MeshLib::Node*>& nodes = mesh.getNodes();
     for (unsigned i = 0; i < nNodes; ++i)
     {
         if (!ignore_nodata && !raster.isPntOnRaster(*nodes[i]))
@@ -299,7 +318,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh const& mesh,
             continue;
         }
 
-        double elevation (raster.getValueAtPoint(*nodes[i]));
+        double elevation(raster.getValueAtPoint(*nodes[i]));
         constexpr double eps = std::numeric_limits<double>::epsilon();
         if (std::abs(elevation - header.no_data) < eps)
         {
@@ -328,7 +347,7 @@ bool MeshLayerMapper::mapToStaticValue(MeshLib::Mesh const& mesh,
         return false;
     }
 
-    std::vector<MeshLib::Node*> const& nodes (mesh.getNodes());
+    std::vector<MeshLib::Node*> const& nodes(mesh.getNodes());
     for (MeshLib::Node* node : nodes)
     {
         node->updateCoordinates((*node)[0], (*node)[1], value);
@@ -336,4 +355,4 @@ bool MeshLayerMapper::mapToStaticValue(MeshLib::Mesh const& mesh,
     return true;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

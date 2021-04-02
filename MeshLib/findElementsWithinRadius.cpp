@@ -14,12 +14,12 @@
 #include <unordered_set>
 #include <vector>
 
-#include "MathLib/MathTools.h"
-
 #include "Elements/Element.h"
+#include "MathLib/MathTools.h"
 #include "Node.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
 std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
                                                   double const radius_squared)
 {

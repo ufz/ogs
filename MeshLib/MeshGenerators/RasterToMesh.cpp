@@ -10,21 +10,20 @@
 
 #include "RasterToMesh.h"
 
-#include "BaseLib/Logging.h"
+#include <vtkCell.h>
+#include <vtkCellData.h>
+#include <vtkDataArray.h>
+#include <vtkImageData.h>
+#include <vtkPointData.h>
+#include <vtkSmartPointer.h>
 
+#include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
-
-#include <vtkImageData.h>
-#include <vtkDataArray.h>
-#include <vtkCell.h>
-#include <vtkCellData.h>
-#include <vtkSmartPointer.h>
-#include <vtkPointData.h>
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
@@ -34,7 +33,11 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     UseIntensityAs intensity_type,
     std::string const& array_name)
 {
-    return convert(raster.begin(), raster.getHeader(), elem_type, intensity_type, array_name);
+    return convert(raster.begin(),
+                   raster.getHeader(),
+                   elem_type,
+                   intensity_type,
+                   array_name);
 }
 
 std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
@@ -55,10 +58,12 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     }
 
     int* dims = img->GetDimensions();
-    if (((elem_type == MeshElemType::TRIANGLE) || (elem_type == MeshElemType::QUAD)) &&
+    if (((elem_type == MeshElemType::TRIANGLE) ||
+         (elem_type == MeshElemType::QUAD)) &&
         dims[2] != 1)
     {
-        ERR("Triangle or Quad elements cannot be used to construct meshes from 3D rasters.");
+        ERR("Triangle or Quad elements cannot be used to construct meshes from "
+            "3D rasters.");
         return nullptr;
     }
 
@@ -67,7 +72,8 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     int nTuple = pixelData->GetNumberOfComponents();
     if (nTuple < 1 || nTuple > 4)
     {
-        ERR("VtkMeshConverter::convertImgToMesh(): Unsupported pixel composition!");
+        ERR("VtkMeshConverter::convertImgToMesh(): Unsupported pixel "
+            "composition!");
         return nullptr;
     }
 
@@ -84,14 +90,16 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     std::vector<double> pix(header.n_cols * header.n_rows * header.n_depth, 0);
     for (std::size_t k = 0; k < header.n_depth; k++)
     {
-        std::size_t const layer_idx = (k*header.n_rows*header.n_cols);
+        std::size_t const layer_idx = (k * header.n_rows * header.n_cols);
         for (std::size_t i = 0; i < header.n_rows; i++)
         {
             std::size_t const idx = i * header.n_cols + layer_idx;
             for (std::size_t j = 0; j < header.n_cols; j++)
             {
                 double* colour = pixelData->GetTuple(idx + j);
-                bool const visible = (nTuple == 2 || nTuple == 4) ? (colour[nTuple - 1] != 0) : true;
+                bool const visible = (nTuple == 2 || nTuple == 4)
+                                         ? (colour[nTuple - 1] != 0)
+                                         : true;
                 if (!visible)
                 {
                     pix[idx + j] = header.no_data;
@@ -110,7 +118,7 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
 }
 
 std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
-    double const*const img,
+    double const* const img,
     GeoLib::RasterHeader const& header,
     MeshElemType elem_type,
     UseIntensityAs intensity_type,
@@ -125,15 +133,18 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
         return nullptr;
     }
 
-    if (((elem_type == MeshElemType::TRIANGLE) || (elem_type == MeshElemType::QUAD)) &&
+    if (((elem_type == MeshElemType::TRIANGLE) ||
+         (elem_type == MeshElemType::QUAD)) &&
         header.n_depth != 1)
     {
-        ERR("Triangle or Quad elements cannot be used to construct meshes from 3D rasters.");
+        ERR("Triangle or Quad elements cannot be used to construct meshes from "
+            "3D rasters.");
         return nullptr;
     }
 
     if (intensity_type == UseIntensityAs::ELEVATION &&
-        ((elem_type == MeshElemType::PRISM) || (elem_type == MeshElemType::HEXAHEDRON)))
+        ((elem_type == MeshElemType::PRISM) ||
+         (elem_type == MeshElemType::HEXAHEDRON)))
     {
         ERR("Elevation mapping can only be performed for 2D meshes.");
         return nullptr;
@@ -186,11 +197,12 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
         std::vector<MeshLib::Node*> const& nodes(mesh->getNodes());
         std::vector<MeshLib::Element*> const& elems(mesh->getElements());
         std::size_t const n_nodes(elems[0]->getNumberOfNodes());
-        bool const double_idx = (elem_type == MeshElemType::TRIANGLE) || (elem_type == MeshElemType::PRISM);
+        bool const double_idx = (elem_type == MeshElemType::TRIANGLE) ||
+                                (elem_type == MeshElemType::PRISM);
         std::size_t const m = (double_idx) ? 2 : 1;
         for (std::size_t k = 0; k < header.n_depth; k++)
         {
-            std::size_t const layer_idx = (k*header.n_rows*header.n_cols);
+            std::size_t const layer_idx = (k * header.n_rows * header.n_cols);
             for (std::size_t i = 0; i < header.n_cols; i++)
             {
                 std::size_t const idx(i * header.n_rows + layer_idx);
@@ -208,7 +220,8 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
                     }
                     for (std::size_t n = 0; n < n_nodes; ++n)
                     {
-                        (*(nodes[elems[m * (idx + j)]->getNodeIndex(n)]))[2] = val;
+                        (*(nodes[elems[m * (idx + j)]->getNodeIndex(n)]))[2] =
+                            val;
                         if (double_idx)
                         {
                             (*(nodes[elems[m * (idx + j) + 1]->getNodeIndex(
@@ -221,14 +234,15 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     }
     else
     {
-        MeshLib::Properties &properties = mesh->getProperties();
+        MeshLib::Properties& properties = mesh->getProperties();
         MeshLib::ElementSearch ex(*mesh);
         if (array_name == "MaterialIDs")
         {
             auto* const prop_vec = properties.createNewPropertyVector<int>(
                 array_name, MeshLib::MeshItemType::Cell, 1);
             fillPropertyVector<int>(*prop_vec, img, header, elem_type);
-            ex.searchByPropertyValue<int>(array_name, static_cast<int>(header.no_data));
+            ex.searchByPropertyValue<int>(array_name,
+                                          static_cast<int>(header.no_data));
         }
         else
         {
@@ -257,4 +271,4 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
     return new_mesh;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

@@ -14,28 +14,28 @@
 
 #include "MeshValidation.h"
 
-#include <numeric>
 #include <algorithm>
+#include <numeric>
 #include <stack>
 
 #include "BaseLib/Logging.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Node.h"
 
-namespace MeshLib {
-
-MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
+namespace MeshLib
 {
-    INFO ("Mesh Quality Control:");
-    INFO ("Looking for unused nodes...");
+MeshValidation::MeshValidation(MeshLib::Mesh& mesh)
+{
+    INFO("Mesh Quality Control:");
+    INFO("Looking for unused nodes...");
     NodeSearch ns(mesh);
     ns.searchUnused();
-    if (!ns.getSearchedNodeIDs().empty()) {
+    if (!ns.getSearchedNodeIDs().empty())
+    {
         INFO("{:d} unused mesh nodes found.", ns.getSearchedNodeIDs().size());
     }
     MeshRevision rev(mesh);
@@ -53,19 +53,20 @@ MeshValidation::MeshValidation(MeshLib::Mesh &mesh)
     }
 }
 
-std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib::Mesh &mesh, double min_volume)
+std::vector<ElementErrorCode> MeshValidation::testElementGeometry(
+    const MeshLib::Mesh& mesh, double min_volume)
 {
-    INFO ("Testing mesh element geometry:");
+    INFO("Testing mesh element geometry:");
     const auto nErrorCodes(
         static_cast<std::size_t>(ElementErrorFlag::MaxValue));
     unsigned error_count[nErrorCodes];
     std::fill_n(error_count, 4, 0);
-    const std::size_t nElements (mesh.getNumberOfElements());
-    const std::vector<MeshLib::Element*> &elements (mesh.getElements());
+    const std::size_t nElements(mesh.getNumberOfElements());
+    const std::vector<MeshLib::Element*>& elements(mesh.getElements());
     std::vector<ElementErrorCode> error_code_vector;
     error_code_vector.reserve(nElements);
 
-    for (std::size_t i=0; i<nElements; ++i)
+    for (std::size_t i = 0; i < nElements; ++i)
     {
         const ElementErrorCode e = elements[i]->validate();
         error_code_vector.push_back(e);
@@ -75,14 +76,17 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
         }
 
         // increment error statistics
-        const std::bitset< static_cast<std::size_t>(ElementErrorFlag::MaxValue) > flags (static_cast< std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)> >(e));
+        const std::bitset<static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
+            flags(static_cast<std::bitset<static_cast<std::size_t>(
+                      ElementErrorFlag::MaxValue)>>(e));
         for (unsigned j = 0; j < nErrorCodes; ++j)
         {
             error_count[j] += flags[j];
         }
     }
 
-    // if a larger volume threshold is given, evaluate elements again to add them even if they are formally okay
+    // if a larger volume threshold is given, evaluate elements again to add
+    // them even if they are formally okay
     if (min_volume > std::numeric_limits<double>::epsilon())
     {
         for (std::size_t i = 0; i < nElements; ++i)
@@ -99,8 +103,9 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
         std::accumulate(error_count, error_count + nErrorCodes, 0.0)));
     if (error_sum != 0)
     {
-        ElementErrorFlag flags[nErrorCodes] = { ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
-                                                ElementErrorFlag::NonConvex,  ElementErrorFlag::NodeOrder };
+        ElementErrorFlag flags[nErrorCodes] = {
+            ElementErrorFlag::ZeroVolume, ElementErrorFlag::NonCoplanar,
+            ElementErrorFlag::NonConvex, ElementErrorFlag::NodeOrder};
         for (std::size_t i = 0; i < nErrorCodes; ++i)
         {
             if (error_count[i])
@@ -113,13 +118,14 @@ std::vector<ElementErrorCode> MeshValidation::testElementGeometry(const MeshLib:
     }
     else
     {
-        INFO ("No errors found.");
+        INFO("No errors found.");
     }
     return error_code_vector;
 }
 
 std::array<std::string, static_cast<std::size_t>(ElementErrorFlag::MaxValue)>
-MeshValidation::ElementErrorCodeOutput(const std::vector<ElementErrorCode> &error_codes)
+MeshValidation::ElementErrorCodeOutput(
+    const std::vector<ElementErrorCode>& error_codes)
 {
     const auto nErrorFlags(
         static_cast<std::size_t>(ElementErrorFlag::MaxValue));
@@ -188,19 +194,21 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
     return (--current_surface_id);
 }
 
-void MeshValidation::trackSurface(MeshLib::Element const* element, std::vector<unsigned> &sfc_idx, unsigned const current_index)
+void MeshValidation::trackSurface(MeshLib::Element const* element,
+                                  std::vector<unsigned>& sfc_idx,
+                                  unsigned const current_index)
 {
     std::stack<MeshLib::Element const*> elem_stack;
     elem_stack.push(element);
     while (!elem_stack.empty())
     {
-        MeshLib::Element const*const elem = elem_stack.top();
+        MeshLib::Element const* const elem = elem_stack.top();
         elem_stack.pop();
         sfc_idx[elem->getID()] = current_index;
-        std::size_t const n_neighbors (elem->getNumberOfNeighbors());
-        for (std::size_t i=0; i<n_neighbors; ++i)
+        std::size_t const n_neighbors(elem->getNumberOfNeighbors());
+        for (std::size_t i = 0; i < n_neighbors; ++i)
         {
-            MeshLib::Element const* neighbor (elem->getNeighbor(i));
+            MeshLib::Element const* neighbor(elem->getNeighbor(i));
             if (neighbor != nullptr && sfc_idx[neighbor->getID()] ==
                                            std::numeric_limits<unsigned>::max())
             {
@@ -210,4 +218,4 @@ void MeshValidation::trackSurface(MeshLib::Element const* element, std::vector<u
     }
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

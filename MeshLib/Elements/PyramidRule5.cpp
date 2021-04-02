@@ -11,41 +11,37 @@
 #include "PyramidRule5.h"
 
 #include "BaseLib/Logging.h"
-
 #include "MathLib/GeometricBasics.h"
-
 #include "MeshLib/Node.h"
 #include "Quad.h"
 #include "Tri.h"
 
-namespace MeshLib {
-
-const unsigned PyramidRule5::face_nodes[5][4] =
+namespace MeshLib
 {
-    {0, 1, 4, 99}, // Face 0
-    {1, 2, 4, 99}, // Face 1
-    {2, 3, 4, 99}, // Face 2
-    {3, 0, 4, 99}, // Face 3
-    {0, 3, 2,  1}  // Face 4
+const unsigned PyramidRule5::face_nodes[5][4] = {
+    {0, 1, 4, 99},  // Face 0
+    {1, 2, 4, 99},  // Face 1
+    {2, 3, 4, 99},  // Face 2
+    {3, 0, 4, 99},  // Face 3
+    {0, 3, 2, 1}    // Face 4
 };
 
-const unsigned PyramidRule5::edge_nodes[8][2] =
-{
-    {0, 1}, // Edge 0
-    {1, 2}, // Edge 1
-    {2, 3}, // Edge 2
-    {0, 3}, // Edge 3
-    {0, 4}, // Edge 4
-    {1, 4}, // Edge 5
-    {2, 4}, // Edge 6
-    {3, 4}  // Edge 7
+const unsigned PyramidRule5::edge_nodes[8][2] = {
+    {0, 1},  // Edge 0
+    {1, 2},  // Edge 1
+    {2, 3},  // Edge 2
+    {0, 3},  // Edge 3
+    {0, 4},  // Edge 4
+    {1, 4},  // Edge 5
+    {2, 4},  // Edge 6
+    {3, 4}   // Edge 7
 };
 
-const unsigned PyramidRule5::n_face_nodes[5] = { 3, 3, 3, 3, 4 };
+const unsigned PyramidRule5::n_face_nodes[5] = {3, 3, 3, 3, 4};
 
 const Element* PyramidRule5::getFace(const Element* e, unsigned i)
 {
-    if (i<e->getNumberOfFaces())
+    if (i < e->getNumberOfFaces())
     {
         unsigned nFaceNodes(PyramidRule5::n_face_nodes[i]);
         auto** nodes = new Node*[nFaceNodes];
@@ -67,8 +63,10 @@ const Element* PyramidRule5::getFace(const Element* e, unsigned i)
 
 double PyramidRule5::computeVolume(Node const* const* _nodes)
 {
-    return MathLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4])
-         + MathLib::calcTetrahedronVolume(*_nodes[2], *_nodes[3], *_nodes[0], *_nodes[4]);
+    return MathLib::calcTetrahedronVolume(
+               *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[4]) +
+           MathLib::calcTetrahedronVolume(
+               *_nodes[2], *_nodes[3], *_nodes[0], *_nodes[4]);
 }
 
 bool PyramidRule5::isPntInElement(Node const* const* nodes,
@@ -83,7 +81,7 @@ bool PyramidRule5::isPntInElement(Node const* const* nodes,
 
 unsigned PyramidRule5::identifyFace(Node const* const* _nodes, Node* nodes[3])
 {
-    for (unsigned i=0; i<5; i++)
+    for (unsigned i = 0; i < 5; i++)
     {
         unsigned flag(0);
         for (unsigned j = 0; j < 4; j++)
@@ -125,4 +123,4 @@ ElementErrorCode PyramidRule5::validate(const Element* e)
     return error_code;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib
