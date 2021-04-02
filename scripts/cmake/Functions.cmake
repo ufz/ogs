@@ -83,12 +83,20 @@ endfunction()
 
 # Replacement for add_library() for ogs targets
 function(ogs_add_library targetName)
-    foreach(file ${ARGN})
+    set(options STATIC SHARED)
+    cmake_parse_arguments(ogs_add_library "${options}" "" "" ${ARGN})
+
+    foreach(file ${ogs_add_library_UNPARSED_ARGUMENTS})
         get_filename_component(file_path ${file} REALPATH)
         list(APPEND files ${file_path})
     endforeach()
 
-    add_library(${targetName} ${files})
+    if(ogs_add_library_STATIC)
+        set(TYPE STATIC)
+    elseif(ogs_add_library_SHARED)
+        set(TYPE SHARED)
+    endif()
+    add_library(${targetName} ${TYPE} ${files})
     target_compile_options(
         ${targetName}
         PRIVATE # OR does not work with cotire
