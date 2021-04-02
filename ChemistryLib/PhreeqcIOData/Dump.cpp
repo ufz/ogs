@@ -8,9 +8,9 @@
  *
  */
 
-#include <iostream>
-
 #include "Dump.h"
+
+#include <iostream>
 
 namespace ChemistryLib
 {
@@ -18,11 +18,14 @@ namespace PhreeqcIOData
 {
 void Dump::print(std::ostream& os, std::size_t const num_chemical_systems) const
 {
-    os << "DUMP" << "\n";
+    os << "DUMP"
+       << "\n";
     os << "-file " << dump_file << "\n";
-    os << "-append false" << "\n";
+    os << "-append false"
+       << "\n";
     os << "-solution 1-" << num_chemical_systems << "\n";
-    os << "END" << "\n";
+    os << "END"
+       << "\n";
 }
 
 void Dump::readDumpFile(std::istream& in,

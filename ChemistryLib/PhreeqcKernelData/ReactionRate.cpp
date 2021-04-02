@@ -14,8 +14,8 @@ namespace ChemistryLib
 {
 namespace PhreeqcKernelData
 {
-ReactionRate::ReactionRate(std::string kinetic_reactant_,
-                           std::vector<std::string> statements)
+ReactionRate::ReactionRate(
+    std::string kinetic_reactant_, std::vector<std::string> statements)
     : kinetic_reactant(std::move(kinetic_reactant_))
 {
     int line_number = 1;

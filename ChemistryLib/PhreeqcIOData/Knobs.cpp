@@ -8,9 +8,9 @@
  *
  */
 
-#include <ostream>
-
 #include "Knobs.h"
+
+#include <ostream>
 
 namespace ChemistryLib
 {
@@ -18,7 +18,8 @@ namespace PhreeqcIOData
 {
 std::ostream& operator<<(std::ostream& os, Knobs const& knobs)
 {
-    os << "KNOBS" << "\n";
+    os << "KNOBS"
+       << "\n";
     os << "-iterations " << knobs.max_iterations << "\n";
     os << "-convergence_tolerance " << knobs.relative_convergence_tolerance
        << "\n";

@@ -243,14 +243,14 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
 
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        initializeReactantMolality(kinetic_reactant, chemical_system_id, medium, pos,
-                            t);
+        initializeReactantMolality(kinetic_reactant, chemical_system_id, medium,
+                                   pos, t);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        initializeReactantMolality(equilibrium_reactant, chemical_system_id, medium,
-                            pos, t);
+        initializeReactantMolality(equilibrium_reactant, chemical_system_id,
+                                   medium, pos, t);
     }
 }
 

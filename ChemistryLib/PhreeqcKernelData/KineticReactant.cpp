@@ -8,9 +8,9 @@
  *
  */
 
-#include <algorithm>
-
 #include "KineticReactant.h"
+
+#include <algorithm>
 
 namespace ChemistryLib
 {

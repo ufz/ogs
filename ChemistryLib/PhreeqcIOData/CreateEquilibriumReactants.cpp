@@ -53,8 +53,11 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
             mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
         mesh_prop_molality->resize(mesh.getNumberOfElements());
 
-        equilibrium_reactants.emplace_back(
-            std::move(name), molality, volume_fraction, mesh_prop_molality, saturation_index);
+        equilibrium_reactants.emplace_back(std::move(name),
+                                           molality,
+                                           volume_fraction,
+                                           mesh_prop_molality,
+                                           saturation_index);
     }
 
     return equilibrium_reactants;
