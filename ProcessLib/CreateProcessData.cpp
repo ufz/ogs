@@ -9,14 +9,12 @@
  */
 
 #include "BaseLib/Algorithm.h"
-
 #include "NumLib/ODESolver/TimeDiscretizationBuilder.h"
 #ifdef USE_PETSC
 #include "NumLib/ODESolver/PETScNonlinearSolver.h"
 #endif  // USE_PETSC
-#include "NumLib/TimeStepping/CreateTimeStepper.h"
-
 #include "CreateProcessData.h"
+#include "NumLib/TimeStepping/CreateTimeStepper.h"
 
 namespace ProcessLib
 {

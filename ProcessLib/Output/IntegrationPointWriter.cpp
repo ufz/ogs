@@ -8,11 +8,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "IntegrationPointWriter.h"
+
 #include <nlohmann/json.hpp>
 
 #include "MeshLib/Mesh.h"
-
-#include "IntegrationPointWriter.h"
 
 using nlohmann::json;
 

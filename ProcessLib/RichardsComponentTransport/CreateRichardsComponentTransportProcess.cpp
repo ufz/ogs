@@ -10,13 +10,12 @@
 
 #include "CreateRichardsComponentTransportProcess.h"
 
+#include "CreatePorousMediaProperties.h"
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
-#include "CreatePorousMediaProperties.h"
 #include "RichardsComponentTransportProcess.h"
 #include "RichardsComponentTransportProcessData.h"
 
@@ -55,11 +54,10 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     {
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
-            {
-            //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__concentration}
-            "concentration",
-            //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__pressure}
-            "pressure"});
+            {//! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__concentration}
+             "concentration",
+             //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__pressure}
+             "pressure"});
         process_variables.push_back(std::move(per_process_variables));
     }
     else  // staggered scheme.

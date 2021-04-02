@@ -269,8 +269,8 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
     fegetenv(&fe_env);
     fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
                            // exceptions.
-#endif  //_WIN32
-#endif  //__APPLE__
+#endif                     //_WIN32
+#endif                     //__APPLE__
 
     switch (file_type)
     {
@@ -285,8 +285,7 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
         case OutputType::xdmf:
         {
 #ifdef OGS_USE_XDMF
-            MeshLib::IO::XdmfHdfWriter writer(
-                mesh, file_name, time_step);
+            MeshLib::IO::XdmfHdfWriter writer(mesh, file_name, time_step);
             writer.writeStep(time_step, time);
 #else
             // silence compiler warnings

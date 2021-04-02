@@ -112,7 +112,7 @@ void HeatTransportBHEProcess::constructDofTable()
             // Here the number of components equals to the
             // number of unknowns on the BHE
             number_of_unknowns,
-            [& ms = _mesh_subset_BHE_nodes.back()]() { return *ms; });
+            [&ms = _mesh_subset_BHE_nodes.back()]() { return *ms; });
 
         vec_n_components.push_back(number_of_unknowns);
         vec_var_elements.push_back(&bhe_elements);
@@ -335,12 +335,12 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             }
         }
 
-        auto get_global_index =
-            [&](std::size_t const node_id, int const component) {
-                return _local_to_global_index_map->getGlobalIndex(
-                    {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
-                    variable_id, component);
-            };
+        auto get_global_index = [&](std::size_t const node_id,
+                                    int const component) {
+            return _local_to_global_index_map->getGlobalIndex(
+                {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
+                variable_id, component);
+        };
 
         auto get_global_bhe_bc_indices =
             [&](std::array<
@@ -413,11 +413,11 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     bcs.addBoundaryCondition(
                         createBHEBottomDirichletBoundaryCondition(
                             get_global_bhe_bc_indices(
-                                {{{bc_bottom_node_id, in_out_component_id.first},
+                                {{{bc_bottom_node_id,
+                                   in_out_component_id.first},
                                   {bc_bottom_node_id,
                                    in_out_component_id.second}}})));
                 }
-
             }
         };
         visit(createBCs, _process_data._vec_BHE_property[bhe_i]);

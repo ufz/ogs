@@ -14,7 +14,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
 #include "ParameterLib/Parameter.h"

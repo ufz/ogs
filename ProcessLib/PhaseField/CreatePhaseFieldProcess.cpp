@@ -15,11 +15,10 @@
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
-#include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/Utils/ProcessUtils.h"
-
 #include "PhaseFieldProcess.h"
 #include "PhaseFieldProcessData.h"
+#include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
 {

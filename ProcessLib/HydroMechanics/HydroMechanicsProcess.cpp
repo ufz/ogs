@@ -228,9 +228,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerIF::getIntPtEpsilon);
 
-    add_secondary_variable("velocity",
-                           DisplacementDim,
-                           &LocalAssemblerIF::getIntPtDarcyVelocity);
+    add_secondary_variable(
+        "velocity", DisplacementDim, &LocalAssemblerIF::getIntPtDarcyVelocity);
 
     //
     // enable output of internal variables defined by material models

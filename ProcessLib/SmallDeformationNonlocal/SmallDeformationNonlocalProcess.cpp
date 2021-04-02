@@ -10,8 +10,8 @@
 
 #include "SmallDeformationNonlocalProcess.h"
 
-#include <nlohmann/json.hpp>
 #include <iostream>
+#include <nlohmann/json.hpp>
 
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 

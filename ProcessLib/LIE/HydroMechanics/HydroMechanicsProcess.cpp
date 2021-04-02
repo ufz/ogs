@@ -10,25 +10,22 @@
 
 #include "HydroMechanicsProcess.h"
 
+#include "LocalAssembler/CreateLocalAssemblers.h"
+#include "LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"
+#include "LocalAssembler/HydroMechanicsLocalAssemblerMatrix.h"
+#include "LocalAssembler/HydroMechanicsLocalAssemblerMatrixNearFracture.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/ElementStatus.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Properties.h"
-
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-
 #include "ParameterLib/MeshElementParameter.h"
 #include "ProcessLib/LIE/Common/BranchProperty.h"
 #include "ProcessLib/LIE/Common/JunctionProperty.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
-
-#include "LocalAssembler/CreateLocalAssemblers.h"
-#include "LocalAssembler/HydroMechanicsLocalAssemblerFracture.h"
-#include "LocalAssembler/HydroMechanicsLocalAssemblerMatrix.h"
-#include "LocalAssembler/HydroMechanicsLocalAssemblerMatrixNearFracture.h"
 
 namespace ProcessLib
 {
@@ -213,10 +210,11 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         HydroMechanicsLocalAssemblerFracture>(
         mesh.getElements(), dof_table,
         // use displacement process variable for shapefunction order
-        getProcessVariables(
-            monolithic_process_id)[1].get().getShapeFunctionOrder(),
-            _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-            _process_data);
+        getProcessVariables(monolithic_process_id)[1]
+            .get()
+            .getShapeFunctionOrder(),
+        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
+        _process_data);
 
     auto mesh_prop_sigma_xx = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_xx",
@@ -512,8 +510,8 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
         _mesh, pv_g.getName(), MeshLib::MeshItemType::Node, num_comp);
     for (int component_id = 0; component_id < num_comp; ++component_id)
     {
-        auto const& mesh_subset = dof_table.getMeshSubset(
-            g_variable_id, component_id);
+        auto const& mesh_subset =
+            dof_table.getMeshSubset(g_variable_id, component_id);
         auto const mesh_id = mesh_subset.getMeshID();
         for (auto const* node : mesh_subset.getNodes())
         {
@@ -604,7 +602,7 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
 
     // Call global assembler for each local assembly item.
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*_local_to_global_index_map)};
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,

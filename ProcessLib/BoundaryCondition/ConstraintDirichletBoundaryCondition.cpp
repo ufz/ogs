@@ -12,8 +12,8 @@
 
 #include <algorithm>
 #include <vector>
-#include "BaseLib/Logging.h"
 
+#include "BaseLib/Logging.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"  // for getUniqueNodes
 #include "MeshLib/Node.h"
 #include "ParameterLib/Utils.h"
@@ -78,15 +78,15 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
             "bulk_node_ids", MeshLib::MeshItemType::Node, 1);
     auto const& bulk_nodes = bulk_mesh.getNodes();
 
-    auto get_bulk_element_face_id =
-        [&](auto const bulk_element_id, MeshLib::Element const* bc_elem) {
-            auto const* bulk_elem = _bulk_mesh.getElement(bulk_element_id);
-            std::array<MeshLib::Node*, 3> nodes{
-                {bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(0)->getID()]],
-                 bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(1)->getID()]],
-                 bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(2)->getID()]]}};
-            return bulk_elem->identifyFace(nodes.data());
-        };
+    auto get_bulk_element_face_id = [&](auto const bulk_element_id,
+                                        MeshLib::Element const* bc_elem) {
+        auto const* bulk_elem = _bulk_mesh.getElement(bulk_element_id);
+        std::array<MeshLib::Node*, 3> nodes{
+            {bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(0)->getID()]],
+             bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(1)->getID()]],
+             bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(2)->getID()]]}};
+        return bulk_elem->identifyFace(nodes.data());
+    };
 
     _bulk_ids.reserve(bc_elements.size());
     std::transform(begin(bc_elements), end(bc_elements),
@@ -210,7 +210,7 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
         else
         {
             bc_values.ids.emplace_back(current_id);
-            bc_values.values.emplace_back(sum/cnt);
+            bc_values.values.emplace_back(sum / cnt);
             cnt = 1;
             sum = tmp_bc_value.second;
             current_id = tmp_bc_value.first;
@@ -236,7 +236,7 @@ createConstraintDirichletBoundaryCondition(
     config.checkConfigParameter("type", "ConstraintDirichlet");
 
     auto const constraint_type =
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_type}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_type}
         config.getConfigParameter<std::string>("constraint_type");
     if (constraint_type != "Flux")
     {
@@ -247,7 +247,7 @@ createConstraintDirichletBoundaryCondition(
     // Todo (TF) Open question: How to specify which getFlux function should be
     // used for the constraint calculation?
     auto const constraining_process_variable =
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraining_process_variable}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraining_process_variable}
         config.getConfigParameter<std::string>("constraining_process_variable");
 
     if (!constraining_process.isMonolithicSchemeUsed())
@@ -259,11 +259,11 @@ createConstraintDirichletBoundaryCondition(
     const int process_id = 0;
     auto process_variables =
         constraining_process.getProcessVariables(process_id);
-    auto constraining_pv =
-        std::find_if(process_variables.cbegin(), process_variables.cend(),
-                     [&constraining_process_variable](ProcessVariable const& pv) {
-                         return pv.getName() == constraining_process_variable;
-                     });
+    auto constraining_pv = std::find_if(
+        process_variables.cbegin(), process_variables.cend(),
+        [&constraining_process_variable](ProcessVariable const& pv) {
+            return pv.getName() == constraining_process_variable;
+        });
     if (constraining_pv == std::end(process_variables))
     {
         auto const& constraining_process_variable_name =
@@ -277,11 +277,11 @@ createConstraintDirichletBoundaryCondition(
     }
 
     auto const constraint_threshold =
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_threshold}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_threshold}
         config.getConfigParameter<double>("constraint_threshold");
 
     auto const constraint_direction_string =
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_direction}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__constraint_direction}
         config.getConfigParameter<std::string>("constraint_direction");
     if (constraint_direction_string != "greater" &&
         constraint_direction_string != "lower")
@@ -292,7 +292,6 @@ createConstraintDirichletBoundaryCondition(
             constraint_direction_string);
     }
     bool const lower = constraint_direction_string == "lower";
-
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichletBoundaryCondition__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");

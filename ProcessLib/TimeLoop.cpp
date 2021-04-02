@@ -242,7 +242,7 @@ setInitialConditions(
                                  process_id);
 
         auto& time_disc = *process_data->time_disc;
-        time_disc.setInitialState(t0);     // push IC
+        time_disc.setInitialState(t0);  // push IC
     }
 
     return {process_solutions, process_solutions_prev};
@@ -318,8 +318,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
 
     time_disc.getXdot(*x[process_id], *x_prev[process_id], x_dot);
 
-    process.postNonLinearSolver(*x[process_id], x_dot, t, delta_t,
-                                process_id);
+    process.postNonLinearSolver(*x[process_id], x_dot, t, delta_t, process_id);
     NumLib::GlobalVectorProvider::provider.releaseVector(x_dot);
 
     return nonlinear_solver_status;

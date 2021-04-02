@@ -9,6 +9,7 @@
  */
 
 #include "BHEBottomDirichletBoundaryCondition.h"
+
 #include "BaseLib/Error.h"
 
 namespace ProcessLib::HeatTransportBHE

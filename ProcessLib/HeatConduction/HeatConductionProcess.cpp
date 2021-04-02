@@ -13,8 +13,8 @@
 #include <cassert>
 
 #include "NumLib/DOF/DOFTableUtil.h"
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
+#include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
 namespace ProcessLib
 {

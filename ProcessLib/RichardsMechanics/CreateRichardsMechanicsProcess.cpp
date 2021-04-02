@@ -36,12 +36,11 @@ void checkMPLProperties(
         MaterialPropertyLib::bishops_effective_stress,
         MaterialPropertyLib::relative_permeability,
         MaterialPropertyLib::saturation,
-        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient
-    };
+        MaterialPropertyLib::porosity,
+        MaterialPropertyLib::biot_coefficient};
     std::array const required_liquid_properties = {
         MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
-    std::array const required_solid_properties = {
-        MaterialPropertyLib::density};
+    std::array const required_solid_properties = {MaterialPropertyLib::density};
 
     for (auto const& m : media)
     {
@@ -191,7 +190,8 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
 
     auto const explicit_hm_coupling_in_unsaturated_zone =
         //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__explicit_hm_coupling_in_unsaturated_zone}
-        config.getConfigParameter<bool>("explicit_hm_coupling_in_unsaturated_zone", false);
+        config.getConfigParameter<bool>(
+            "explicit_hm_coupling_in_unsaturated_zone", false);
 
     RichardsMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),

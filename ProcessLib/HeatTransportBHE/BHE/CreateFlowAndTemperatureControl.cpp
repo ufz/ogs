@@ -8,12 +8,12 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "CreateFlowAndTemperatureControl.h"
+
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-
 #include "BuildingPowerCurves.h"
-#include "CreateFlowAndTemperatureControl.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "RefrigerantProperties.h"
 
 namespace ProcessLib

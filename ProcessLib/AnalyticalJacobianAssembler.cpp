@@ -9,6 +9,7 @@
  */
 
 #include "AnalyticalJacobianAssembler.h"
+
 #include "CoupledSolutionsForStaggeredScheme.h"
 #include "LocalAssemblerInterface.h"
 

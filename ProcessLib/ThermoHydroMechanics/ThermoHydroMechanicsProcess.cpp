@@ -16,7 +16,6 @@
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ThermoHydroMechanics/CreateLocalAssemblers.h"
-
 #include "ThermoHydroMechanicsFEM.h"
 #include "ThermoHydroMechanicsProcessData.h"
 

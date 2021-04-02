@@ -11,8 +11,6 @@
 #include "CreateSteadyStateDiffusion.h"
 
 #include "BaseLib/FileTools.h"
-#include "SteadyStateDiffusion.h"
-#include "SteadyStateDiffusionData.h"
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
@@ -20,6 +18,8 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
+#include "SteadyStateDiffusion.h"
+#include "SteadyStateDiffusionData.h"
 
 namespace ProcessLib
 {

@@ -8,18 +8,16 @@
  *
  */
 
+#include "TESReactionAdaptor.h"
+
 #include <cassert>
-
-
-#include "MathLib/Nonlinear/Root1D.h"
-#include "MathLib/ODE/ODESolverBuilder.h"
 
 #include "MaterialLib/Adsorption/Adsorption.h"
 #include "MaterialLib/Adsorption/ReactionInert.h"
 #include "MaterialLib/Adsorption/ReactionSinusoidal.h"
-
+#include "MathLib/Nonlinear/Root1D.h"
+#include "MathLib/ODE/ODESolverBuilder.h"
 #include "TESLocalAssemblerInner.h"
-#include "TESReactionAdaptor.h"
 
 namespace ProcessLib
 {
@@ -54,8 +52,7 @@ TESFEMReactionAdaptorAdsorption::TESFEMReactionAdaptorAdsorption(
     TESLocalAssemblerData const& data)
     // caution fragile: this relies in this constructor b eing called __after__
     // data.solid_density has been properly set up!
-    : _bounds_violation(data.solid_density.size(), false),
-      _d(data)
+    : _bounds_violation(data.solid_density.size(), false), _d(data)
 {
     assert(dynamic_cast<Adsorption::AdsorptionReaction const*>(
                data.ap.react_sys.get()) != nullptr &&
@@ -104,8 +101,7 @@ TESFEMReactionAdaptorAdsorption::initReaction_slowDownUndershootStrategy(
         const double delta_pV = pV_eq - _d.p_V;
         const double delta_rhoV =
             delta_pV * _d.ap.M_react /
-            MaterialLib::PhysicalConstant::IdealGasConstant / _d.T *
-            _d.ap.poro;
+            MaterialLib::PhysicalConstant::IdealGasConstant / _d.T * _d.ap.poro;
         const double delta_rhoSR = delta_rhoV / (_d.ap.poro - 1.0);
         double react_rate_R2 = delta_rhoSR / _d.ap.delta_t;
 

@@ -9,7 +9,9 @@
  */
 
 #include "TwoPhaseFlowWithPrhoMaterialProperties.h"
+
 #include <utility>
+
 #include "BaseLib/Logging.h"
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
@@ -25,9 +27,9 @@
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/SpatialPosition.h"
 
-using MaterialLib::PhysicalConstant::MolarMass::H2;
 using MaterialLib::PhysicalConstant::IdealGasConstant;
 using MaterialLib::PhysicalConstant::HenryConstant::HenryConstantH2;
+using MaterialLib::PhysicalConstant::MolarMass::H2;
 namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPrho
@@ -270,8 +272,8 @@ void TwoPhaseFlowWithPrhoMaterialProperties::calculateJacobian(
 }
 
 /** Complementary condition 1
-* for calculating molar fraction of light component in the liquid phase
-*/
+ * for calculating molar fraction of light component in the liquid phase
+ */
 double TwoPhaseFlowWithPrhoMaterialProperties::calculateEquilibiumRhoWetLight(
     double const pg, double const Sw, double const rho_wet_h2)
 {
@@ -280,8 +282,8 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculateEquilibiumRhoWetLight(
 }
 
 /** Complementary condition 2
-* for calculating the saturation
-*/
+ * for calculating the saturation
+ */
 double TwoPhaseFlowWithPrhoMaterialProperties::calculateSaturation(
     double /*PL*/, double X, double Sw, double rho_wet_h2, double rho_nonwet_h2,
     double /*T*/)
@@ -290,8 +292,8 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculateSaturation(
 }
 
 /**
-* Calculate the derivatives using the analytical way
-*/
+ * Calculate the derivatives using the analytical way
+ */
 double TwoPhaseFlowWithPrhoMaterialProperties::calculatedSwdP(
     double pl, double S, double rho_wet_h2, double const T,
     int current_material_id) const
@@ -316,8 +318,8 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedSwdP(
     return alpha / (beta - alpha * dPC_dSw);
 }
 /**
-* Calculate the derivatives using the analytical way
-*/
+ * Calculate the derivatives using the analytical way
+ */
 double TwoPhaseFlowWithPrhoMaterialProperties::calculatedSwdX(
     double const pl, const double /*X*/, const double S,
     const double rho_wet_h2, double const T, int current_material_id) const
@@ -342,8 +344,8 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedSwdX(
     return -1 / (beta - alpha * dPC_dSw);
 }
 /**
-* Calculate the derivatives using the analytical way
-*/
+ * Calculate the derivatives using the analytical way
+ */
 double TwoPhaseFlowWithPrhoMaterialProperties::calculatedXmdX(
     double pl, double Sw, double rho_wet_h2, double dSwdX,
     int current_material_id) const
@@ -362,8 +364,8 @@ double TwoPhaseFlowWithPrhoMaterialProperties::calculatedXmdX(
     return HenryConstantH2 * H2 * dPC_dSw * dSwdX;
 }
 /**
-* Calculate the derivatives using the analytical way
-*/
+ * Calculate the derivatives using the analytical way
+ */
 double TwoPhaseFlowWithPrhoMaterialProperties::calculatedXmdP(
     double pl, double Sw, double rho_wet_h2, double dSwdP,
     int current_material_id) const

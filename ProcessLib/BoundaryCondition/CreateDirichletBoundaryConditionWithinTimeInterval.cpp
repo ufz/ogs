@@ -16,7 +16,6 @@
 
 namespace ProcessLib
 {
-
 std::unique_ptr<BoundaryCondition>
 createDirichletBoundaryConditionWithinTimeInterval(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
@@ -57,7 +56,7 @@ createDirichletBoundaryConditionWithinTimeInterval(
 #endif  // USE_PETSC
 
     return std::make_unique<DirichletBoundaryConditionWithinTimeInterval>(
-        std::move(time_interval), param, bc_mesh, dof_table_bulk,
-        variable_id, component_id);
+        std::move(time_interval), param, bc_mesh, dof_table_bulk, variable_id,
+        component_id);
 }
 }  // namespace ProcessLib

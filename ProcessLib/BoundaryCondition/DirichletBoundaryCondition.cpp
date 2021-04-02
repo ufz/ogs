@@ -12,11 +12,10 @@
 
 #include <algorithm>
 #include <vector>
-#include "BaseLib/Logging.h"
-
-#include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Logging.h"
+#include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
 #include "ParameterLib/Parameter.h"

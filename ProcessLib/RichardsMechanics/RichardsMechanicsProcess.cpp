@@ -307,9 +307,8 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerIF::getIntPtEpsilon);
 
-    add_secondary_variable("velocity",
-                           DisplacementDim,
-                           &LocalAssemblerIF::getIntPtDarcyVelocity);
+    add_secondary_variable(
+        "velocity", DisplacementDim, &LocalAssemblerIF::getIntPtDarcyVelocity);
 
     add_secondary_variable("saturation", 1,
                            &LocalAssemblerIF::getIntPtSaturation);
@@ -320,8 +319,7 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable("micro_pressure", 1,
                            &LocalAssemblerIF::getIntPtMicroPressure);
 
-    add_secondary_variable("porosity", 1,
-                           &LocalAssemblerIF::getIntPtPorosity);
+    add_secondary_variable("porosity", 1, &LocalAssemblerIF::getIntPtPorosity);
 
     add_secondary_variable("transport_porosity", 1,
                            &LocalAssemblerIF::getIntPtTransportPorosity);
@@ -334,7 +332,7 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     //
     ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
         LocalAssemblerIF>(_process_data.solid_materials,
-                                 add_secondary_variable);
+                          add_secondary_variable);
 
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
@@ -406,11 +404,10 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         }
     }
 
-
     // Initialize local assemblers after all variables have been set.
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerIF::initialize, _local_assemblers,
-        *_local_to_global_index_map);
+    GlobalExecutor::executeMemberOnDereferenced(&LocalAssemblerIF::initialize,
+                                                _local_assemblers,
+                                                *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>

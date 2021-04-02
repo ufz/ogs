@@ -13,9 +13,7 @@
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
-
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-
 #include "ProcessLib/LIE/Common/BranchProperty.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
 #include "ProcessLib/LIE/SmallDeformation/LocalAssembler/CreateLocalAssemblers.h"

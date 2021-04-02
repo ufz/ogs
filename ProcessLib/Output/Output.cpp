@@ -240,9 +240,8 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
     if (!_mesh_xdmf_hdf_writer)
     {
         std::filesystem::path path(output_file.path);
-        _mesh_xdmf_hdf_writer =
-            std::make_unique<MeshLib::IO::XdmfHdfWriter>(MeshLib::IO::XdmfHdfWriter(
-                mesh, path, timestep));
+        _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
+            MeshLib::IO::XdmfHdfWriter(mesh, path, timestep));
     }
     _mesh_xdmf_hdf_writer->writeStep(timestep, t);
 }
@@ -317,10 +316,10 @@ void Output::doOutputAlways(Process const& process,
         else if (_output_file_type == ProcessLib::OutputType::xdmf)
         {
 #ifdef OGS_USE_XDMF
-            OutputFile const file(_output_directory, _output_file_type,
-                                  _output_file_prefix, "", mesh.getName(),
-                                  timestep, t, iteration, _output_file_data_mode,
-                                  _output_file_compression);
+            OutputFile const file(
+                _output_directory, _output_file_type, _output_file_prefix, "",
+                mesh.getName(), timestep, t, iteration, _output_file_data_mode,
+                _output_file_compression);
 
             outputMeshXdmf(file, mesh, timestep, t);
 #else

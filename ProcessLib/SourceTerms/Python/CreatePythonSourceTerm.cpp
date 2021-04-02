@@ -32,7 +32,7 @@ std::unique_ptr<SourceTerm> createPythonSourceTerm(
     config.checkConfigParameter("type", "Python");
 
     auto const source_term_object =
-    //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__Python__source_term_object}
+        //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__Python__source_term_object}
         config.getConfigParameter<std::string>("source_term_object");
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__Python__flush_stdout}
     auto const flush_stdout = config.getConfigParameter("flush_stdout", false);

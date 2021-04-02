@@ -11,14 +11,13 @@
 #include "CreateComponentTransportProcess.h"
 
 #include "ChemistryLib/ChemicalSolverInterface.h"
+#include "ComponentTransportProcess.h"
+#include "ComponentTransportProcessData.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
-#include "ComponentTransportProcess.h"
-#include "ComponentTransportProcessData.h"
 
 namespace ProcessLib
 {

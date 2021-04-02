@@ -67,7 +67,8 @@ void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
     std::vector<double>& /*local_Jac_data*/)
 {
     OGS_FATAL(
-        "The assembleWithJacobianForStaggeredScheme() function is not implemented in"
+        "The assembleWithJacobianForStaggeredScheme() function is not "
+        "implemented in"
         " the local assembler.");
 }
 

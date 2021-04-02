@@ -17,7 +17,6 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
 #include "ThermoMechanicalPhaseFieldProcess.h"
 #include "ThermoMechanicalPhaseFieldProcessData.h"
 
@@ -163,11 +162,11 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     DBUG("Use '{:s}' as solid density parameter.", solid_density.name);
 
     // Linear thermal expansion coefficient
-    auto const& linear_thermal_expansion_coefficient = ParameterLib::findParameter<
-        double>(
-        thermal_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__linear_thermal_expansion_coefficient}
-        "linear_thermal_expansion_coefficient", parameters, 1, &mesh);
+    auto const& linear_thermal_expansion_coefficient =
+        ParameterLib::findParameter<double>(
+            thermal_parameters_config,
+            //! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__thermal_parameters__linear_thermal_expansion_coefficient}
+            "linear_thermal_expansion_coefficient", parameters, 1, &mesh);
     DBUG("Use '{:s}' as linear thermal expansion coefficient.",
          linear_thermal_expansion_coefficient.name);
 

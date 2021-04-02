@@ -38,12 +38,12 @@ public:
     }
 
     std::tuple<bool, bool, std::vector<double>, std::vector<double>>
-    tespySolver(
-        double t,
-        std::vector<double> const& Tin_val,
-        std::vector<double> const& Tout_val) const override
+    tespySolver(double t,
+                std::vector<double> const& Tin_val,
+                std::vector<double> const& Tout_val) const override
     {
-        using Ret = std::tuple<bool, bool, std::vector<double>, std::vector<double>>;
+        using Ret =
+            std::tuple<bool, bool, std::vector<double>, std::vector<double>>;
         PYBIND11_OVERLOAD(Ret,
                           BHEInflowPythonBoundaryConditionPythonSideInterface,
                           tespySolver, t, Tin_val, Tout_val);
@@ -64,8 +64,7 @@ void bheInflowpythonBindBoundaryCondition(pybind11::module& m)
              &BHEInflowPythonBoundaryConditionPythonSideInterface::
                  initializeDataContainer);
     pybc.def("tespySolver",
-             &BHEInflowPythonBoundaryConditionPythonSideInterface::
-                 tespySolver);
+             &BHEInflowPythonBoundaryConditionPythonSideInterface::tespySolver);
 }
 
 }  // namespace ProcessLib

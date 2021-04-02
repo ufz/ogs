@@ -64,7 +64,6 @@ std::unique_ptr<SourceTerm> createSourceTerm(
     MeshLib::MeshSubset source_term_mesh_subset(source_term_mesh,
                                                 source_term_nodes);
 
-
     if (type == "Nodal")
     {
         std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_source_term(

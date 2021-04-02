@@ -9,6 +9,7 @@
  */
 
 #include "CreateTESProcess.h"
+
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "TESProcess.h"
@@ -36,13 +37,12 @@ std::unique_ptr<Process> createTESProcess(
 
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
-        {
-        //! \ogs_file_param_special{prj__processes__process__TES__process_variables__fluid_pressure}
-        "fluid_pressure",
-        //! \ogs_file_param_special{prj__processes__process__TES__process_variables__temperature}
-        "temperature",
-        //! \ogs_file_param_special{prj__processes__process__TES__process_variables__vapour_mass_fraction}
-        "vapour_mass_fraction"});
+        {//! \ogs_file_param_special{prj__processes__process__TES__process_variables__fluid_pressure}
+         "fluid_pressure",
+         //! \ogs_file_param_special{prj__processes__process__TES__process_variables__temperature}
+         "temperature",
+         //! \ogs_file_param_special{prj__processes__process__TES__process_variables__vapour_mass_fraction}
+         "vapour_mass_fraction"});
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
     process_variables.push_back(std::move(per_process_variables));

@@ -8,15 +8,15 @@
  *
  */
 
-#include "ThermoMechanicalPhaseFieldFEM.h"
 #include "ThermoMechanicalPhaseFieldProcess.h"
-#include "ThermoMechanicalPhaseFieldProcessData.h"
 
 #include <cassert>
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
+#include "ThermoMechanicalPhaseFieldFEM.h"
+#include "ThermoMechanicalPhaseFieldProcessData.h"
 
 namespace ProcessLib
 {
