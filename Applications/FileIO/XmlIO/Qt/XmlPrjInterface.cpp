@@ -10,25 +10,20 @@
 
 #include "XmlPrjInterface.h"
 
-#include <iostream>
-#include <vector>
-
 #include <QFile>
 #include <QFileInfo>
 #include <QtXml/QDomDocument>
-#include "BaseLib/Logging.h"
+#include <iostream>
+#include <vector>
 
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "Applications/DataHolderLib/FemCondition.h"
-
 #include "BaseLib/FileTools.h"
 #include "BaseLib/IO/Writer.h"
-
+#include "BaseLib/Logging.h"
 #include "GeoLib/GEOObjects.h"
-
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"

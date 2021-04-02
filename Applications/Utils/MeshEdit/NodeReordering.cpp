@@ -9,12 +9,12 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <array>
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
+#include <array>
 #include <memory>
 #include <vector>
-
-#include <tclap/CmdLine.h>
 
 #include "BaseLib/Algorithm.h"
 #include "InfoLib/GitInfo.h"
@@ -24,7 +24,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 
-/// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with Data Explorer 6.
+/// Re-ordering mesh elements to correct Data Explorer 5 meshes to work with
+/// Data Explorer 6.
 void reorderNodes(std::vector<MeshLib::Element*>& elements)
 {
     std::size_t n_corrected_elements = 0;
@@ -80,7 +81,8 @@ void reorderNodes(std::vector<MeshLib::Element*>& elements)
     INFO("Corrected {:d} elements.", n_corrected_elements);
 }
 
-/// Re-ordering prism elements to correct OGS6 meshes with and without InSitu-Lib
+/// Re-ordering prism elements to correct OGS6 meshes with and without
+/// InSitu-Lib
 void reorderNodes2(std::vector<MeshLib::Element*>& elements)
 {
     std::size_t const nElements(elements.size());
@@ -105,7 +107,7 @@ void reorderNodes2(std::vector<MeshLib::Element*>& elements)
     }
 }
 
-void reorderNonlinearNodes(MeshLib::Mesh &mesh)
+void reorderNonlinearNodes(MeshLib::Mesh& mesh)
 {
     std::vector<MeshLib::Node*> base_nodes;
     std::vector<MeshLib::Node*> nonlinear_nodes;
@@ -137,12 +139,13 @@ void reorderNonlinearNodes(MeshLib::Mesh &mesh)
     allnodes.clear();
 
     allnodes.insert(allnodes.end(), base_nodes.begin(), base_nodes.end());
-    allnodes.insert(allnodes.end(), nonlinear_nodes.begin(), nonlinear_nodes.end());
+    allnodes.insert(allnodes.end(), nonlinear_nodes.begin(),
+                    nonlinear_nodes.end());
 
     mesh.resetNodeIDs();
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Reorders mesh nodes in elements to make old or incorrectly ordered "
@@ -188,11 +191,13 @@ int main (int argc, char* argv[])
     INFO("Reordering nodes... ");
     if (!method_arg.isSet() || method_arg.getValue() == 1)
     {
-        reorderNodes(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+        reorderNodes(
+            const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
     }
     else if (method_arg.getValue() == 2)
     {
-        reorderNodes2(const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
+        reorderNodes2(
+            const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()));
     }
     else if (method_arg.getValue() == 3)
     {
@@ -205,6 +210,3 @@ int main (int argc, char* argv[])
 
     return EXIT_SUCCESS;
 }
-
-
-

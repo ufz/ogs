@@ -8,30 +8,28 @@
  */
 
 // STL
+#include <tclap/CmdLine.h>
+
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <tclap/CmdLine.h>
-
 // BaseLib
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
+#include "InfoLib/GitInfo.h"
 
 // GeoLib
-#include "GeoLib/Point.h"
-#include "GeoLib/Surface.h"
-#include "GeoLib/PointVec.h"
 #include "GeoLib/IO/TINInterface.h"
-
+#include "GeoLib/Point.h"
+#include "GeoLib/PointVec.h"
+#include "GeoLib/Surface.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib
 #include "MeshLib/Mesh.h"
 #include "MeshLib/convertMeshToGeo.h"
 
-
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Converts TIN file into VTU file.\n\n"
@@ -41,13 +39,13 @@ int main (int argc, char* argv[])
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> inArg("i", "input-tin-file",
-                                         "the name of the file containing the input TIN", true,
-                                         "", "string");
+    TCLAP::ValueArg<std::string> inArg(
+        "i", "input-tin-file", "the name of the file containing the input TIN",
+        true, "", "string");
     cmd.add(inArg);
-    TCLAP::ValueArg<std::string> outArg("o", "output-vtu-file",
-                                          "the name of the file the mesh will be written to", true,
-                                          "", "string");
+    TCLAP::ValueArg<std::string> outArg(
+        "o", "output-vtu-file",
+        "the name of the file the mesh will be written to", true, "", "string");
     cmd.add(outArg);
     cmd.parse(argc, argv);
 
@@ -65,7 +63,9 @@ int main (int argc, char* argv[])
          sfc->getNumberOfTriangles());
 
     INFO("converting to mesh data");
-    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(*sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName), std::numeric_limits<double>::epsilon()));
+    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::convertSurfaceToMesh(
+        *sfc, BaseLib::extractBaseNameWithoutExtension(tinFileName),
+        std::numeric_limits<double>::epsilon()));
     INFO("Mesh created: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
          mesh->getNumberOfElements());
 

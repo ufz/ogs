@@ -8,12 +8,12 @@
  *
  */
 
-#include <algorithm>
-#include <memory>
-#include <cmath>
-#include <numeric>
-
 #include <tclap/CmdLine.h>
+
+#include <algorithm>
+#include <cmath>
+#include <memory>
+#include <numeric>
 
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -49,15 +49,11 @@ int main(int argc, char* argv[])
         "property name as string");
     cmd.add(property_arg);
 
-    TCLAP::ValueArg<std::string> mesh_arg("m",
-                                          "mesh",
-                                          "the mesh is read from this file",
-                                          true,
-                                          "",
-                                          "file name");
+    TCLAP::ValueArg<std::string> mesh_arg(
+        "m", "mesh", "the mesh is read from this file", true, "", "file name");
     cmd.add(mesh_arg);
 
-    std::vector<std::string> allowed_units{ "mm/a", "mm/month", "m/s" };
+    std::vector<std::string> allowed_units{"mm/a", "mm/month", "m/s"};
     TCLAP::ValuesConstraint<std::string> allowed_units_constraints{
         allowed_units};
     TCLAP::ValueArg<std::string> unit_arg("u",

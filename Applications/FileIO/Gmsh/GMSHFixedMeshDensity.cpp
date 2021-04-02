@@ -14,13 +14,13 @@ namespace FileIO
 {
 namespace GMSH
 {
-
-GMSHFixedMeshDensity::GMSHFixedMeshDensity(double mesh_density) :
-    _mesh_density(mesh_density)
+GMSHFixedMeshDensity::GMSHFixedMeshDensity(double mesh_density)
+    : _mesh_density(mesh_density)
 {
 }
 
-void GMSHFixedMeshDensity::initialize(std::vector<GeoLib::Point const*> const& vec)
+void GMSHFixedMeshDensity::initialize(
+    std::vector<GeoLib::Point const*> const& vec)
 {
     // to avoid a warning here:
     (void)(vec);
@@ -39,4 +39,4 @@ double GMSHFixedMeshDensity::getMeshDensityAtStation(
 }
 
 }  // namespace GMSH
-} // end namespace FileIO
+}  // end namespace FileIO

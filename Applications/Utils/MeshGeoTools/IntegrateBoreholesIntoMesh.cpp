@@ -78,7 +78,8 @@ int main(int argc, char* argv[])
         "via line elements. Each borehole (i.e. all points at a given "
         "(x,y)-location but at different depths) is assigned a unique material "
         "ID. Vertical limits of boreholes can be specified via Material IDs "
-        "and/or elevation. Point not matching any mesh nodes or located outside "
+        "and/or elevation. Point not matching any mesh nodes or located "
+        "outside "
         "the mesh are ignored.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +

@@ -33,4 +33,3 @@ bool operator<=(GocadNode const& n0, GocadNode const& n1)
 
 }  // end namespace Gocad
 }  // end namespace FileIO
-

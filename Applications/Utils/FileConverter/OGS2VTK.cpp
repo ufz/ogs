@@ -11,17 +11,17 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <string>
-#include <memory>
-
 #include <tclap/CmdLine.h>
+
+#include <memory>
+#include <string>
 
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Converts OGS mesh into VTK mesh.\n\n"

@@ -13,38 +13,39 @@
  */
 
 // STL
+#include <tclap/CmdLine.h>
+
 #include <fstream>
 #include <vector>
-
-#include <tclap/CmdLine.h>
 
 // ShapeLib
 #include <shapefil.h>
 
-#include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Station.h"
+#include "InfoLib/GitInfo.h"
 
-void convertPoints (DBFHandle dbf_handle,
-                    std::string const& out_fname,
-                    std::size_t x_id,
-                    std::size_t y_id,
-                    std::size_t z_id,
-                    std::vector<std::size_t> const& name_component_ids,
-                    std::string& points_group_name,
-                    bool station)
+void convertPoints(DBFHandle dbf_handle,
+                   std::string const& out_fname,
+                   std::size_t x_id,
+                   std::size_t y_id,
+                   std::size_t z_id,
+                   std::vector<std::size_t> const& name_component_ids,
+                   std::string& points_group_name,
+                   bool station)
 {
-    int n_records (DBFGetRecordCount (dbf_handle));
+    int n_records(DBFGetRecordCount(dbf_handle));
     INFO("Reading {:d} records.", n_records);
 
     auto points = std::make_unique<std::vector<GeoLib::Point*>>();
-    points->reserve (n_records);
+    points->reserve(n_records);
 
     std::string name;
-    for (int k = 0; k < n_records; k++) {
+    for (int k = 0; k < n_records; k++)
+    {
         double x(DBFReadDoubleAttribute(dbf_handle, k, x_id));
         double y(DBFReadDoubleAttribute(dbf_handle, k, y_id));
         double z(0.0);
@@ -54,7 +55,8 @@ void convertPoints (DBFHandle dbf_handle,
         }
 
         name.clear();
-        if (!name_component_ids.empty()) {
+        if (!name_component_ids.empty())
+        {
             for (unsigned long name_component_id : name_component_ids)
             {
                 if (name_component_id !=
@@ -71,10 +73,13 @@ void convertPoints (DBFHandle dbf_handle,
             name = std::to_string(k);
         }
 
-        if (station) {
+        if (station)
+        {
             GeoLib::Station* pnt(GeoLib::Station::createStation(name, x, y, z));
             points->push_back(pnt);
-        } else {
+        }
+        else
+        {
             GeoLib::Point* pnt(new GeoLib::Point(x, y, z));
             points->push_back(pnt);
         }
@@ -90,18 +95,22 @@ void convertPoints (DBFHandle dbf_handle,
         geo_objs.addPointVec(std::move(points), points_group_name);
     }
 
-    if (station) {
-        GeoLib::IO::XmlStnInterface xml (geo_objs);
+    if (station)
+    {
+        GeoLib::IO::XmlStnInterface xml(geo_objs);
         xml.export_name = points_group_name;
         BaseLib::IO::writeStringToFile(xml.writeToString(), out_fname);
-    } else {
-        GeoLib::IO::XmlGmlInterface xml (geo_objs);
+    }
+    else
+    {
+        GeoLib::IO::XmlGmlInterface xml(geo_objs);
         xml.export_name = points_group_name;
         BaseLib::IO::writeStringToFile(xml.writeToString(), out_fname);
     }
 }
 
-void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_fields)
+void printFieldInformationTable(DBFHandle const& dbf_handle,
+                                std::size_t n_fields)
 {
     char* field_name(new char[256]);
     int width(0);
@@ -111,7 +120,8 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
     out << "************************************************" << std::endl;
     out << "field idx | name of field | data type of field " << std::endl;
     out << "------------------------------------------------" << std::endl;
-    for (std::size_t field_idx(0); field_idx < n_fields; field_idx++) {
+    for (std::size_t field_idx(0); field_idx < n_fields; field_idx++)
+    {
         DBFGetFieldInfo(dbf_handle, field_idx, field_name, &width, &n_decimals);
         if (field_idx < 10)
         {
@@ -129,19 +139,20 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
         out << field_name_str << " |";
 
         char native_field_type(DBFGetNativeFieldType(dbf_handle, field_idx));
-        switch (native_field_type) {
-        case 'C':
-            out << "             string" << std::endl;
-            break;
-        case 'F':
-            out << "              float" << std::endl;
-            break;
-        case 'N':
-            out << "            numeric" << std::endl;
-            break;
-        default:
-            out << "      n_decimal " << n_decimals << std::endl;
-            break;
+        switch (native_field_type)
+        {
+            case 'C':
+                out << "             string" << std::endl;
+                break;
+            case 'F':
+                out << "              float" << std::endl;
+                break;
+            case 'N':
+                out << "            numeric" << std::endl;
+                break;
+            default:
+                out << "      n_decimal " << n_decimals << std::endl;
+                break;
         }
     }
     delete[] field_name;
@@ -149,7 +160,7 @@ void printFieldInformationTable(DBFHandle const& dbf_handle, std::size_t n_field
     INFO("{:s}", out.str());
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Converts points contained in shape file\n\n"
@@ -165,23 +176,24 @@ int main (int argc, char* argv[])
                                                true,
                                                "",
                                                "shape file");
-    cmd.add( shapefile_arg );
+    cmd.add(shapefile_arg);
 
     cmd.parse(argc, argv);
 
-    std::string fname (shapefile_arg.getValue());
+    std::string fname(shapefile_arg.getValue());
 
     int shape_type;
     int number_of_elements;
 
-    SHPHandle hSHP = SHPOpen(fname.c_str(),"rb");
-    if (hSHP) {
+    SHPHandle hSHP = SHPOpen(fname.c_str(), "rb");
+    if (hSHP)
+    {
         SHPGetInfo(hSHP, &number_of_elements, &shape_type,
                    nullptr /*padfMinBound*/, nullptr /*padfMinBound*/);
 
         if ((shape_type - 1) % 10 == 0)
             INFO("Shape file contains {:d} points.", number_of_elements);
-        if ( ((shape_type - 3) % 10 == 0 || (shape_type - 5) % 10 == 0))
+        if (((shape_type - 3) % 10 == 0 || (shape_type - 5) % 10 == 0))
         {
             ERR("Shape file contains {:d} polylines.", number_of_elements);
             ERR("This programme only handles only files containing points.");
@@ -189,12 +201,14 @@ int main (int argc, char* argv[])
             return EXIT_SUCCESS;
         }
         SHPClose(hSHP);
-    } else {
+    }
+    else
+    {
         ERR("Could not open shapefile {:s}.", fname);
     }
 
-    DBFHandle dbf_handle = DBFOpen(fname.c_str(),"rb");
-    if(dbf_handle)
+    DBFHandle dbf_handle = DBFOpen(fname.c_str(), "rb");
+    if (dbf_handle)
     {
         std::size_t n_fields(DBFGetFieldCount(dbf_handle));
         printFieldInformationTable(dbf_handle, n_fields);
@@ -202,11 +216,17 @@ int main (int argc, char* argv[])
         std::size_t x_id;
         std::size_t y_id;
         std::size_t z_id;
-        INFO("Please give the field idx that should be used for reading the x coordinate: ");
+        INFO(
+            "Please give the field idx that should be used for reading the x "
+            "coordinate: ");
         std::cin >> x_id;
-        INFO("Please give the field idx that should be used for reading the y coordinate: ");
+        INFO(
+            "Please give the field idx that should be used for reading the y "
+            "coordinate: ");
         std::cin >> y_id;
-        INFO("Please give the field idx that should be used for reading the z coordinate: ");
+        INFO(
+            "Please give the field idx that should be used for reading the z "
+            "coordinate: ");
         std::cin >> z_id;
 
         if (z_id > n_fields)
@@ -218,12 +238,15 @@ int main (int argc, char* argv[])
         INFO("Please give the number of fields that should be added to name: ");
         std::cin >> n_name_components;
 
-        std::vector<std::size_t> name_component_ids (n_name_components,
-                                                std::numeric_limits<std::size_t>::max());
-        if (n_name_components != 0) {
+        std::vector<std::size_t> name_component_ids(
+            n_name_components, std::numeric_limits<std::size_t>::max());
+        if (n_name_components != 0)
+        {
             for (std::size_t j(0); j < n_name_components; j++)
             {
-                INFO("- please give the field idx that should be used for reading the name: ");
+                INFO(
+                    "- please give the field idx that should be used for "
+                    "reading the name: ");
                 std::cin >> name_component_ids[j];
             }
         }
@@ -235,9 +258,11 @@ int main (int argc, char* argv[])
             }
         }
 
-        std::size_t station (0);
+        std::size_t station(0);
 
-        INFO("Should I read the information as GeoLib::Station (0) or as GeoLib::Point (1)? Please give the number: ");
+        INFO(
+            "Should I read the information as GeoLib::Station (0) or as "
+            "GeoLib::Point (1)? Please give the number: ");
         std::cin >> station;
 
         std::string fname_base(fname);
@@ -259,9 +284,11 @@ int main (int argc, char* argv[])
                       name_component_ids,
                       fname_base,
                       station == 0);
-        DBFClose (dbf_handle);
+        DBFClose(dbf_handle);
         INFO("\tok.");
-    } else {
+    }
+    else
+    {
         ERR("Could not open the database file.");
     }
 

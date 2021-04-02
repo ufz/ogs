@@ -9,18 +9,18 @@
  *
  */
 
-#include <algorithm>
-#include <memory>
-#include <cmath>
-#include <numeric>
-
 #include <tclap/CmdLine.h>
 
+#include <algorithm>
+#include <cmath>
+#include <memory>
+#include <numeric>
+
 #include "Applications/FileIO/AsciiRasterInterface.h"
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/quicksort.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -83,12 +83,8 @@ int main(int argc, char* argv[])
         "property name as string");
     cmd.add(property_arg);
 
-    TCLAP::ValueArg<std::string> mesh_arg("m",
-                                          "mesh",
-                                          "the mesh is read from this file",
-                                          true,
-                                          "",
-                                          "file name");
+    TCLAP::ValueArg<std::string> mesh_arg(
+        "m", "mesh", "the mesh is read from this file", true, "", "file name");
     cmd.add(mesh_arg);
 
     cmd.parse(argc, argv);

@@ -8,20 +8,16 @@
 
 #include "FEFLOWGeoInterface.h"
 
-#include <cctype>
-#include <memory>
-
-#include <boost/algorithm/string/trim.hpp>
-
 #include <QDomElement>
 #include <QString>
 #include <QtXml/QDomDocument>
-
-#include "BaseLib/Logging.h"
+#include <boost/algorithm/string/trim.hpp>
+#include <cctype>
+#include <memory>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
-
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"

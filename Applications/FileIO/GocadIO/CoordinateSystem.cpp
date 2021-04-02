@@ -19,7 +19,6 @@ namespace FileIO
 {
 namespace Gocad
 {
-
 std::string parseName(std::string const& str)
 {
     std::string name;
@@ -27,7 +26,7 @@ std::string parseName(std::string const& str)
     if (start != std::string::npos)
     {
         std::size_t const end = str.find_last_of('\"');
-        name = str.substr(start+1, end-start-1);
+        name = str.substr(start + 1, end - start - 1);
     }
     else
     {
@@ -53,7 +52,7 @@ bool CoordinateSystem::parse(std::istream& in)
     projection = "";
     datum = "";
 
-    while ( std::getline(in, line))
+    while (std::getline(in, line))
     {
         tok.assign(line);
         it = tok.begin();
@@ -105,7 +104,7 @@ bool CoordinateSystem::parse(std::istream& in)
                  line);
         }
     }
-    ERR ("Error: Unexpected end of file.");
+    ERR("Error: Unexpected end of file.");
     return false;
 }
 

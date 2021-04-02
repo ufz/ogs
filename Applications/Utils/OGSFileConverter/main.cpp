@@ -7,14 +7,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "OGSFileConverter.h"
-
-#include <clocale>
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
 #include <QApplication>
+#include <clocale>
 
+#include "InfoLib/GitInfo.h"
+#include "OGSFileConverter.h"
 
 int main(int argc, char* argv[])
 {
@@ -30,11 +29,11 @@ int main(int argc, char* argv[])
                                                "the path to the gmsh binary",
                                                false, "", "path as string");
     cmd.add(gmsh_path_arg);
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
     QApplication app(argc, argv);
-    setlocale(LC_NUMERIC,"C");
+    setlocale(LC_NUMERIC, "C");
     auto* fc = new OGSFileConverter(gmsh_path_arg.getValue());
-    fc->setWindowTitle( fc->windowTitle() );
+    fc->setWindowTitle(fc->windowTitle());
     fc->show();
     int returncode = QApplication::exec();
     delete fc;

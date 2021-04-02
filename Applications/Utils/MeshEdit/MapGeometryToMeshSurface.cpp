@@ -8,20 +8,20 @@
  *              See accompanying file LICENSE.txt or
  */
 
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Maps geometric objects to the surface of a given mesh."
@@ -34,22 +34,24 @@ int main (int argc, char* argv[])
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> mesh_in("m", "mesh-file",
-        "the name of the file containing the mesh", true,
-        "", "file name");
+    TCLAP::ValueArg<std::string> mesh_in(
+        "m", "mesh-file", "the name of the file containing the mesh", true, "",
+        "file name");
     cmd.add(mesh_in);
-    TCLAP::ValueArg<std::string> input_geometry_fname("i", "input-geometry",
-        "the name of the file containing the input geometry", true,
-        "", "file name");
+    TCLAP::ValueArg<std::string> input_geometry_fname(
+        "i", "input-geometry",
+        "the name of the file containing the input geometry", true, "",
+        "file name");
     cmd.add(input_geometry_fname);
     TCLAP::SwitchArg additional_insert_mapping(
         "a", "additional-insert-mapping",
         "Advanced mapping algorithm will be applied, i.e. a new geometry will "
         "be created and possibly new points will be inserted.");
     cmd.add(additional_insert_mapping);
-    TCLAP::ValueArg<std::string> output_geometry_fname("o", "output-geometry",
-        "the name of the file containing the input geometry", true,
-        "", "file name");
+    TCLAP::ValueArg<std::string> output_geometry_fname(
+        "o", "output-geometry",
+        "the name of the file containing the input geometry", true, "",
+        "file name");
     cmd.add(output_geometry_fname);
     cmd.parse(argc, argv);
 
@@ -57,10 +59,13 @@ int main (int argc, char* argv[])
     GeoLib::GEOObjects geometries;
     {
         GeoLib::IO::BoostXmlGmlInterface xml_io(geometries);
-        if (xml_io.readFile(input_geometry_fname.getValue())) {
+        if (xml_io.readFile(input_geometry_fname.getValue()))
+        {
             INFO("Read geometry from file '{:s}'.",
                  input_geometry_fname.getValue());
-        } else {
+        }
+        else
+        {
             return EXIT_FAILURE;
         }
     }
@@ -73,9 +78,12 @@ int main (int argc, char* argv[])
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
 
-    if (additional_insert_mapping.getValue()) {
+    if (additional_insert_mapping.getValue())
+    {
         geo_mapper.advancedMapOnMesh(*mesh);
-    } else {
+    }
+    else
+    {
         geo_mapper.mapOnMesh(mesh.get());
     }
 

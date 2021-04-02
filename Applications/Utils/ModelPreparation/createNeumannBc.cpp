@@ -7,8 +7,9 @@
  *
  */
 
-#include <fstream>
 #include <tclap/CmdLine.h>
+
+#include <fstream>
 
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
@@ -124,7 +125,7 @@ int main(int argc, char* argv[])
         "",
         "output file name");
     cmd.add(result_file);
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     // read surface mesh
     std::unique_ptr<MeshLib::Mesh> surface_mesh(

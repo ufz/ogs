@@ -29,20 +29,18 @@
 #endif
 
 // BaseLib
-#include "BaseLib/ConfigTreeUtil.h"
-#include "BaseLib/DateTools.h"
-#include "BaseLib/FileTools.h"
-#include "BaseLib/RunTime.h"
-
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "Applications/ApplicationsLib/ProjectData.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
+#include "BaseLib/ConfigTreeUtil.h"
+#include "BaseLib/DateTools.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
 #include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
-#include "ProcessLib/TimeLoop.h"
-
 #include "NumLib/NumericsConfig.h"
+#include "ProcessLib/TimeLoop.h"
 
 #ifdef OGS_USE_PYTHON
 #include "ogs_embedded_python.h"
@@ -60,8 +58,7 @@ int main(int argc, char* argv[])
         "http://www.opengeosys.org/project/license\n"
         "version: " +
             GitInfoLib::GitInfo::ogs_version + "\n" +
-        "CMake arguments: " +
-            CMakeInfoLib::CMakeInfo::cmake_args,
+            "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args,
         ' ',
         GitInfoLib::GitInfo::ogs_version);
 
@@ -174,7 +171,7 @@ int main(int argc, char* argv[])
             controller->Initialize(&argc, &argv, 1);
             vtkMPIController::SetGlobalController(controller);
 
-            {   // Can be called only after MPI_INIT.
+            {  // Can be called only after MPI_INIT.
                 int mpi_rank;
                 MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
                 spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
@@ -205,7 +202,7 @@ int main(int argc, char* argv[])
                         project_config->getConfigSubtree("test_definition"),
                         reference_path_arg.getValue(),
                         outdir_arg.getValue());
-                if( test_definition->numberOfTests() == 0)
+                if (test_definition->numberOfTests() == 0)
                 {
                     OGS_FATAL(
                         "No tests were constructed from the test definitions, "

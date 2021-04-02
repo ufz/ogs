@@ -109,7 +109,8 @@ int main(int argc, char* argv[])
             // centre of the pixel is located within a mesh element
             if (element != nullptr)
             {
-                out << MeshLib::ProjectPointOnMesh::getElevation(*element, node) << " ";
+                out << MeshLib::ProjectPointOnMesh::getElevation(*element, node)
+                    << " ";
             }
             else
             {

@@ -20,7 +20,7 @@
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/MeshQuality/ElementQualityInterface.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Add element quality as a mesh property.\n\n"

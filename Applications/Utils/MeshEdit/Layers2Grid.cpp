@@ -51,8 +51,8 @@ std::unique_ptr<MeshLib::Mesh> generateInitialMesh(
 {
     INFO("Creating initial mesh...");
     std::array<double, 3> mesh_range{{extent.second[0] - extent.first[0],
-                                       extent.second[1] - extent.first[1],
-                                       extent.second[2] - extent.first[2]}};
+                                      extent.second[1] - extent.first[1],
+                                      extent.second[2] - extent.first[2]}};
     std::array<std::size_t, 3> const n_cells{
         {static_cast<std::size_t>(std::ceil(mesh_range[0] / res[0])),
          static_cast<std::size_t>(std::ceil(mesh_range[1] / res[1])),

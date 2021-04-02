@@ -7,26 +7,23 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <array>
 #include <string>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
-#include "BaseLib/StringTools.h"
+#include "BaseLib/FileTools.h"
 #include "BaseLib/MemWatch.h"
 #include "BaseLib/RunTime.h"
-#include "BaseLib/FileTools.h"
-
+#include "BaseLib/StringTools.h"
 #include "GeoLib/AABB.h"
-
-#include "MeshLib/Node.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
-
-#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/Node.h"
 
 int main(int argc, char* argv[])
 {

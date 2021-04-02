@@ -38,7 +38,8 @@ OGSFileConverter::OGSFileConverter(std::string const& gmsh_path,
 
 OGSFileConverter::~OGSFileConverter() = default;
 
-void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &output) const
+void OGSFileConverter::convertGML2GLI(const QStringList& input,
+                                      const QString& output) const
 {
     if (input.empty())
     {
@@ -51,7 +52,9 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
     for (const auto& input_string : input)
     {
         const QFileInfo fi(input_string);
-        const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".gli").toStdString();
+        const std::string output_str =
+            QString(output + "/" + fi.completeBaseName() + ".gli")
+                .toStdString();
 
         if (fileExists(output_str))
         {
@@ -82,7 +85,8 @@ void OGSFileConverter::convertGML2GLI(const QStringList &input, const QString &o
     OGSError::box("File conversion finished");
 }
 
-void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &output) const
+void OGSFileConverter::convertGLI2GML(const QStringList& input,
+                                      const QString& output) const
 {
     if (input.empty())
     {
@@ -95,7 +99,9 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
     for (const auto& input_string : input)
     {
         const QFileInfo fi(input_string);
-        const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".gml").toStdString();
+        const std::string output_str =
+            QString(output + "/" + fi.completeBaseName() + ".gml")
+                .toStdString();
 
         if (fileExists(output_str))
         {
@@ -130,7 +136,8 @@ void OGSFileConverter::convertGLI2GML(const QStringList &input, const QString &o
     OGSError::box("File conversion finished");
 }
 
-void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &output) const
+void OGSFileConverter::convertVTU2MSH(const QStringList& input,
+                                      const QString& output) const
 {
     if (input.empty())
     {
@@ -140,7 +147,9 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
     for (const auto& input_string : input)
     {
         const QFileInfo fi(input_string);
-        const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".msh").toStdString();
+        const std::string output_str =
+            QString(output + "/" + fi.completeBaseName() + ".msh")
+                .toStdString();
 
         if (fileExists(output_str))
         {
@@ -162,7 +171,8 @@ void OGSFileConverter::convertVTU2MSH(const QStringList &input, const QString &o
     OGSError::box("File conversion finished");
 }
 
-void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &output) const
+void OGSFileConverter::convertMSH2VTU(const QStringList& input,
+                                      const QString& output) const
 {
     if (input.empty())
     {
@@ -172,7 +182,9 @@ void OGSFileConverter::convertMSH2VTU(const QStringList &input, const QString &o
     for (const auto& input_string : input)
     {
         const QFileInfo fi(input_string);
-        const std::string output_str = QString(output + "/" + fi.completeBaseName() + ".vtu").toStdString();
+        const std::string output_str =
+            QString(output + "/" + fi.completeBaseName() + ".vtu")
+                .toStdString();
 
         if (fileExists(output_str))
         {
@@ -235,12 +247,13 @@ void OGSFileConverter::on_closeDialogButton_pressed()
     this->close();
 }
 
-bool OGSFileConverter::fileExists(const std::string &file_name) const
+bool OGSFileConverter::fileExists(const std::string& file_name) const
 {
     std::ifstream const file(file_name.c_str());
     if (file)
     {
-        QString const name = QString::fromStdString(BaseLib::extractBaseName(file_name));
+        QString const name =
+            QString::fromStdString(BaseLib::extractBaseName(file_name));
         return !OGSError::question(
             "The file '" + name +
                 "' already exists.\n Do you want to overwrite it?",

@@ -7,20 +7,18 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <array>
 #include <memory>
 #include <string>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/Logging.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 static void swapNodeCoordinateAxes(MeshLib::Mesh const& mesh,
                                    std::array<int, 3> const& new_axes_indices)
@@ -39,17 +37,19 @@ static void swapNodeCoordinateAxes(MeshLib::Mesh const& mesh,
     }
 }
 
-static bool parseNewOrder(std::string const& str_order, std::array<int, 3> &new_axes_indices)
+static bool parseNewOrder(std::string const& str_order,
+                          std::array<int, 3>& new_axes_indices)
 {
-    if (str_order.length()!=3)
+    if (str_order.length() != 3)
     {
-        ERR("Invalid argument for the new order. The argument should contain three characters.");
+        ERR("Invalid argument for the new order. The argument should contain "
+            "three characters.");
         return false;
     }
 
     new_axes_indices.fill(-1);
 
-    for (int i=0; i<3; i++)
+    for (int i = 0; i < 3; i++)
     {
         if (str_order[i] == 'x')
         {
@@ -76,7 +76,8 @@ static bool parseNewOrder(std::string const& str_order, std::array<int, 3> &new_
     {
         if (isAxisSet[new_axes_indice])
         {
-            ERR("Invalid argument for the new order. The argument contains some character used more than once.");
+            ERR("Invalid argument for the new order. The argument contains "
+                "some character used more than once.");
             return false;
         }
         isAxisSet[new_axes_indice] = true;
@@ -85,7 +86,7 @@ static bool parseNewOrder(std::string const& str_order, std::array<int, 3> &new_
     return true;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Swap node coordinate values.\n\n"
@@ -95,17 +96,19 @@ int main(int argc, char *argv[])
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file","input mesh file",true,"","string");
-    cmd.add( input_arg );
-    TCLAP::ValueArg<std::string> output_arg("o", "output-mesh-file","output mesh file",true,"","string");
-    cmd.add( output_arg );
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input-mesh-file", "input mesh file", true, "", "string");
+    cmd.add(input_arg);
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output-mesh-file", "output mesh file", true, "", "string");
+    cmd.add(output_arg);
     TCLAP::ValueArg<std::string> new_order_arg(
         "n", "new-order",
         "the new order of swapped coordinate values "
         "(e.g. 'xzy' for converting XYZ values to XZY values)",
         true, "", "string");
-    cmd.add( new_order_arg );
-    cmd.parse( argc, argv );
+    cmd.add(new_order_arg);
+    cmd.parse(argc, argv);
 
     const std::string str_order = new_order_arg.getValue();
     std::array<int, 3> new_order = {{}};
@@ -123,7 +126,9 @@ int main(int argc, char *argv[])
 
     if (mesh->getDimension() == 3)
     {
-        WARN("Swapping coordinate values of 3D elements can result in incorrect node-ordering.");
+        WARN(
+            "Swapping coordinate values of 3D elements can result in incorrect "
+            "node-ordering.");
     }
 
     INFO("Exchange node coordinates from xyz to {:s}",

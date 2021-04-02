@@ -21,7 +21,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 
-/// Returns the value for the given parameter name (i.e. for "x = 3" it returns "3")
+/// Returns the value for the given parameter name (i.e. for "x = 3" it returns
+/// "3")
 std::string getValue(std::string const& line,
                      std::string const& val_name,
                      bool is_string)
@@ -111,7 +112,8 @@ std::vector<std::string> getVariables(std::string const& line)
 {
     std::string const var_str("VARIABLES");
     std::size_t start(line.find(var_str));
-    std::string all_vars = line.substr(start + var_str.length(), std::string::npos);
+    std::string all_vars =
+        line.substr(start + var_str.length(), std::string::npos);
     start = all_vars.find("=");
     all_vars = all_vars.substr(start + 1, std::string::npos);
     BaseLib::trim(all_vars);
@@ -185,7 +187,8 @@ void writeTecPlotSection(std::ofstream& out,
     {
         std::size_t const delim_pos(file_name.find_last_of("."));
         std::string const base_name(file_name.substr(0, delim_pos + 1));
-        std::string const extension(file_name.substr(delim_pos, std::string::npos));
+        std::string const extension(
+            file_name.substr(delim_pos, std::string::npos));
 
         val_count = 0;
         val_total = 0;
@@ -219,7 +222,8 @@ int writeDataToMesh(std::string const& file_name,
     }
 
     GeoLib::Point origin(0, 0, 0);
-    GeoLib::RasterHeader header{dims.first, dims.second, 1, origin,     cellsize,    -9999};
+    GeoLib::RasterHeader header{dims.first, dims.second, 1,
+                                origin,     cellsize,    -9999};
 
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::RasterToMesh::convert(scalars[0].data(),
@@ -238,7 +242,8 @@ int writeDataToMesh(std::string const& file_name,
             return -5;
         }
         prop->reserve(scalars[i].size());
-        std::copy(scalars[i].cbegin(), scalars[i].cend(), std::back_inserter(*prop));
+        std::copy(scalars[i].cbegin(), scalars[i].cend(),
+                  std::back_inserter(*prop));
     }
 
     std::size_t const delim_pos(file_name.find_last_of("."));
@@ -282,7 +287,8 @@ int splitFile(std::ifstream& in, std::string const& file_name)
             {
                 return -3;
             }
-            writeTecPlotSection(out, file_name, write_count, val_count, val_total);
+            writeTecPlotSection(out, file_name, write_count, val_count,
+                                val_total);
             out << line << "\n";
             continue;
         }
@@ -292,7 +298,8 @@ int splitFile(std::ifstream& in, std::string const& file_name)
             {
                 return -3;
             }
-            writeTecPlotSection(out, file_name, write_count, val_count, val_total);
+            writeTecPlotSection(out, file_name, write_count, val_count,
+                                val_total);
             out << line << "\n";
             continue;
         }
@@ -302,7 +309,8 @@ int splitFile(std::ifstream& in, std::string const& file_name)
             {
                 return -3;
             }
-            writeTecPlotSection(out, file_name, write_count, val_count, val_total);
+            writeTecPlotSection(out, file_name, write_count, val_count,
+                                val_total);
             out << line << "\n";
             name = getName(line);
             std::pair<std::size_t, std::size_t> dims = getDimensions(line);
@@ -324,7 +332,8 @@ int splitFile(std::ifstream& in, std::string const& file_name)
     return 0;
 }
 
-/// Converts a TecPlot file into one or more OGS-meshes (one mesh per section/zone)
+/// Converts a TecPlot file into one or more OGS-meshes (one mesh per
+/// section/zone)
 int convertFile(std::ifstream& in, std::string const& file_name)
 {
     std::string line;
@@ -354,7 +363,8 @@ int convertFile(std::ifstream& in, std::string const& file_name)
             }
             if (val_count != 0)
             {
-                writeDataToMesh(file_name, write_count, var_names, scalars, dims);
+                writeDataToMesh(file_name, write_count, var_names, scalars,
+                                dims);
                 resetDataStructures(var_names.size(), scalars, val_count);
             }
             continue;
@@ -367,7 +377,8 @@ int convertFile(std::ifstream& in, std::string const& file_name)
                 {
                     return -3;
                 }
-                writeDataToMesh(file_name, write_count, var_names, scalars, dims);
+                writeDataToMesh(file_name, write_count, var_names, scalars,
+                                dims);
             }
             var_names.clear();
             var_names = getVariables(line);
@@ -382,7 +393,8 @@ int convertFile(std::ifstream& in, std::string const& file_name)
                 {
                     return -3;
                 }
-                writeDataToMesh(file_name, write_count, var_names, scalars, dims);
+                writeDataToMesh(file_name, write_count, var_names, scalars,
+                                dims);
                 resetDataStructures(var_names.size(), scalars, val_count);
             }
             name = getName(line);
@@ -450,10 +462,10 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::SwitchArg split_arg("s", "split",
-        "split time steps into separate files");
+                               "split time steps into separate files");
     cmd.add(split_arg);
     TCLAP::SwitchArg convert_arg("c", "convert",
-        "convert TecPlot data into OGS meshes");
+                                 "convert TecPlot data into OGS meshes");
     cmd.add(convert_arg);
     TCLAP::ValueArg<std::string> output_arg(
         "o", "output-file", "output mesh file", false, "", "string");
@@ -488,8 +500,8 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    std::string const filename = (output_arg.isSet()) ?
-        output_arg.getValue() : input_arg.getValue();
+    std::string const filename =
+        (output_arg.isSet()) ? output_arg.getValue() : input_arg.getValue();
     int return_val(0);
     if (split_arg.getValue())
     {

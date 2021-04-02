@@ -14,13 +14,13 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
-#include "GeoLib/GEOObjects.h"
-#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
-
 #include <QCoreApplication>
 
-int main(int argc, char *argv[])
+#include "GeoLib/GEOObjects.h"
+#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "InfoLib/GitInfo.h"
+
+int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
 
@@ -32,22 +32,22 @@ int main(int argc, char *argv[])
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<double> z_arg
-        ("z", "z", "displacement in z direction", false, 0.0, "z-displacement");
+    TCLAP::ValueArg<double> z_arg("z", "z", "displacement in z direction",
+                                  false, 0.0, "z-displacement");
     cmd.add(z_arg);
-    TCLAP::ValueArg<double> y_arg
-        ("y", "y", "displacement in y direction", false, 0.0, "y-displacement");
+    TCLAP::ValueArg<double> y_arg("y", "y", "displacement in y direction",
+                                  false, 0.0, "y-displacement");
     cmd.add(y_arg);
-    TCLAP::ValueArg<double> x_arg
-        ("x", "x", "displacement in x direction", false, 0.0, "x-displacement");
+    TCLAP::ValueArg<double> x_arg("x", "x", "displacement in x direction",
+                                  false, 0.0, "x-displacement");
     cmd.add(x_arg);
-    TCLAP::ValueArg<std::string> geo_output_arg
-        ("o","output", "output geometry file (*.gml)", true, "", "output file");
+    TCLAP::ValueArg<std::string> geo_output_arg(
+        "o", "output", "output geometry file (*.gml)", true, "", "output file");
     cmd.add(geo_output_arg);
-    TCLAP::ValueArg<std::string> geo_input_arg
-        ("i","input", "input geometry file (*.gml)", true, "", "input file");
+    TCLAP::ValueArg<std::string> geo_input_arg(
+        "i", "input", "input geometry file (*.gml)", true, "", "input file");
     cmd.add(geo_input_arg);
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     GeoLib::GEOObjects geo_objects;
     GeoLib::IO::XmlGmlInterface xml(geo_objects);

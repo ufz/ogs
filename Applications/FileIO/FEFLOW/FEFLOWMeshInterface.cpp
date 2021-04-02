@@ -8,20 +8,16 @@
 
 #include "FEFLOWMeshInterface.h"
 
+#include <boost/algorithm/string/trim.hpp>
 #include <cctype>
 #include <memory>
 
-#include <boost/algorithm/string/trim.hpp>
-
-#include "BaseLib/Logging.h"
-
-#include "BaseLib/FileTools.h"
-#include "BaseLib/StringTools.h"
-
 #include "Applications/FileIO/FEFLOW/FEFLOWGeoInterface.h"
+#include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
+#include "BaseLib/StringTools.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
-
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -86,10 +82,9 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             vec_nodes.resize(fem_dim.n_nodes);
             std::size_t count = 0;
             double dummy_coords[3] = {};
-            std::generate(vec_nodes.begin(), vec_nodes.end(), [&]()
-                          {
-                              return new MeshLib::Node(dummy_coords, count++);
-                          });
+            std::generate(vec_nodes.begin(), vec_nodes.end(), [&]() {
+                return new MeshLib::Node(dummy_coords, count++);
+            });
             line_stream.clear();
         }
         //....................................................................
@@ -134,10 +129,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
                     "type with the number of node = {:d} and dim = {:d}",
                     fem_dim.n_nodes_of_element, fem_class.dimension);
                 std::for_each(vec_nodes.begin(), vec_nodes.end(),
-                              [](MeshLib::Node* nod)
-                              {
-                                  delete nod;
-                              });
+                              [](MeshLib::Node* nod) { delete nod; });
                 vec_nodes.clear();
                 return nullptr;
             }
@@ -171,8 +163,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             for (std::size_t i = 0; i < fem_dim.n_elements; i++)
             {
                 std::getline(in, line_string);
-                vec_elements.push_back(
-                    readElement(line_string, vec_nodes));
+                vec_elements.push_back(readElement(line_string, vec_nodes));
             }
         }
         //....................................................................
@@ -219,8 +210,8 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         // SUPERMESH
         else if (line_string == "SUPERMESH")
         {
-            FileIO::FEFLOWGeoInterface::readSuperMesh(
-                in, fem_class.dimension, points, lines);
+            FileIO::FEFLOWGeoInterface::readSuperMesh(in, fem_class.dimension,
+                                                      points, lines);
         }
         //....................................................................
     }
@@ -614,8 +605,7 @@ MeshLib::Element* FEFLOWMeshInterface::readElement(
 void FEFLOWMeshInterface::readELEMENTALSETS(
     std::ifstream& in, std::vector<std::vector<std::size_t>>& vec_elementsets)
 {
-    auto compressSpaces = [](std::string const& str)
-    {
+    auto compressSpaces = [](std::string const& str) {
         std::stringstream ss(str);
         std::string new_str;
         std::string word;
@@ -716,7 +706,7 @@ void FEFLOWMeshInterface::setMaterialIDs(
     std::vector<MeshLib::Element*> const& vec_elements,
     std::vector<int>& material_ids)
 {
-    assert(material_ids.size()==vec_elements.size());
+    assert(material_ids.size() == vec_elements.size());
     if (!vec_elementsets.empty())
     {
         for (std::size_t matid = 0; matid < vec_elementsets.size(); ++matid)

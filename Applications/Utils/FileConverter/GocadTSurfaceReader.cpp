@@ -9,10 +9,10 @@
 
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "Applications/FileIO/GocadIO/GocadAsciiReader.h"
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/Mesh.h"
 
 std::string getDelim(std::string const& str)
 {
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
         return 2;
     }
 
-    std::string const file_name (input_arg.getValue());
+    std::string const file_name(input_arg.getValue());
 
     FileIO::Gocad::DataType t(FileIO::Gocad::DataType::ALL);
     if (export_lines_arg.isSet())

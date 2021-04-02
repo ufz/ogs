@@ -16,11 +16,14 @@
 
 #include "BaseLib/Logging.h"
 
-namespace DataHolderLib {
-
-Color createColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+namespace DataHolderLib
 {
-    return Color{{r,g,b,a}};
+Color createColor(unsigned char r,
+                  unsigned char g,
+                  unsigned char b,
+                  unsigned char a)
+{
+    return Color{{r, g, b, a}};
 }
 
 Color getRandomColor()

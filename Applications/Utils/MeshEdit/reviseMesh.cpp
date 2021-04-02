@@ -7,25 +7,23 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <array>
 #include <memory>
 #include <string>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
-#include "BaseLib/StringTools.h"
 #include "BaseLib/FileTools.h"
-
-#include "MeshLib/Node.h"
+#include "BaseLib/StringTools.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/MeshRevision.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/MeshRevision.h"
+#include "MeshLib/Node.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Revises meshes by collapsing duplicate nodes, (optionally) removing "
@@ -55,7 +53,7 @@ int main(int argc, char *argv[])
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input-mesh-file", "input mesh file", true, "", "string");
     cmd.add(input_arg);
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     // read a mesh file
     std::unique_ptr<MeshLib::Mesh> org_mesh(
@@ -70,12 +68,14 @@ int main(int argc, char *argv[])
     // revise the mesh
     INFO("Simplifying the mesh...");
     MeshLib::MeshRevision const rev(const_cast<MeshLib::Mesh&>(*org_mesh));
-    unsigned int minDim = (minDim_arg.isSet() ? minDim_arg.getValue() : org_mesh->getDimension());
+    unsigned int minDim =
+        (minDim_arg.isSet() ? minDim_arg.getValue() : org_mesh->getDimension());
     std::unique_ptr<MeshLib::Mesh> new_mesh(
         rev.simplifyMesh("revised_mesh", eps_arg.getValue(), minDim));
 
     // write into a file
-    if (new_mesh) {
+    if (new_mesh)
+    {
         INFO("Revised mesh: {:d} nodes, {:d} elements.",
              new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
         MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());

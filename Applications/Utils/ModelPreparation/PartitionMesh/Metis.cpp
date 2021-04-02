@@ -63,7 +63,6 @@ std::vector<std::size_t> readMetisData(const std::string& file_name_base,
 
     std::vector<std::size_t> partition_ids(number_of_nodes);
 
-
     std::size_t counter = 0;
     while (!npart_in.eof())
     {

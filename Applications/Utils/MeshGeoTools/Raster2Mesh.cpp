@@ -13,16 +13,15 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
-
+#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Converts an ASCII raster file (*.asc) into a 2D triangle- or "
@@ -59,17 +58,15 @@ int main(int argc, char *argv[])
         "e", "elem-type", "The element type used in the resulting OGS mesh.",
         true, "", &allowed_elem_vals);
     cmd.add(arg_elem_type);
-    TCLAP::ValueArg<std::string> output_arg(
-        "o", "output",
-        "Name of the output mesh (*.vtu)",
-        true, "", "output file name");
+    TCLAP::ValueArg<std::string> output_arg("o", "output",
+                                            "Name of the output mesh (*.vtu)",
+                                            true, "", "output file name");
     cmd.add(output_arg);
-    TCLAP::ValueArg<std::string> input_arg(
-        "i", "input",
-        "Name of the input raster (*.asc)",
-        true, "", "input file name");
+    TCLAP::ValueArg<std::string> input_arg("i", "input",
+                                           "Name of the input raster (*.asc)",
+                                           true, "", "input file name");
     cmd.add(input_arg);
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     std::string const input_name = input_arg.getValue().c_str();
     std::string const output_name = output_arg.getValue().c_str();
@@ -89,7 +86,8 @@ int main(int argc, char *argv[])
         intensity_type = MeshLib::UseIntensityAs::DATAVECTOR;
 
     std::string array_name = "Values";
-    if (intensity_type == MeshLib::UseIntensityAs::DATAVECTOR && array_name_arg.isSet())
+    if (intensity_type == MeshLib::UseIntensityAs::DATAVECTOR &&
+        array_name_arg.isSet())
         array_name = array_name_arg.getValue().c_str();
     else if (intensity_type == MeshLib::UseIntensityAs::MATERIALS)
         array_name = "MaterialIDs";

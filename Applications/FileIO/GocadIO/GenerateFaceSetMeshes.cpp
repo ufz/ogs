@@ -8,6 +8,7 @@
  */
 
 #include "GenerateFaceSetMeshes.h"
+
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
@@ -15,7 +16,6 @@ namespace FileIO
 {
 namespace Gocad
 {
-
 void generateFaceSets(GocadSGridReader const& reader, std::string const& path)
 {
     for (std::size_t l(0); l < 128; l++)
