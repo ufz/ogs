@@ -20,7 +20,8 @@
 #include <vtkPointData.h>
 #include <vtkSphereSource.h>
 
-VtkCompositePointToGlyphFilter::VtkCompositePointToGlyphFilter( vtkAlgorithm* inputAlgorithm )
+VtkCompositePointToGlyphFilter::VtkCompositePointToGlyphFilter(
+    vtkAlgorithm* inputAlgorithm)
     : VtkCompositeFilter(inputAlgorithm), _glyphSource(nullptr)
 {
     this->init();
@@ -37,13 +38,16 @@ void VtkCompositePointToGlyphFilter::init()
     this->_outputDataObjectType = VTK_POLY_DATA;
 
     std::size_t nPoints = static_cast<vtkDataSetAlgorithm*>(_inputAlgorithm)
-                        ->GetOutput()->GetPointData()->GetNumberOfTuples();
-    int phi (10 - static_cast<std::size_t>(nPoints / 2000.0));
-    int theta (phi);
+                              ->GetOutput()
+                              ->GetPointData()
+                              ->GetNumberOfTuples();
+    int phi(10 - static_cast<std::size_t>(nPoints / 2000.0));
+    int theta(phi);
     if (phi < 4)
     {
         phi = 4;
-        theta = 4; // for theta 3 would be possible, too, but 4 looks much better
+        theta =
+            4;  // for theta 3 would be possible, too, but 4 looks much better
     }
 
     double default_radius(GetInitialRadius());
@@ -57,9 +61,14 @@ void VtkCompositePointToGlyphFilter::init()
     (*_algorithmUserProperties)["ThetaResolution"] = theta;
 
     vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
-    glyphFilter->ScalingOn();   // KR important to scale glyphs with double precision (e.g. 0.1 of their size for small datasets)
-    //glyphFilter->SetScaleModeToScaleByScalar();  // KR can easily obscure view when scalar values have large differences (this is also the default scaling method)
-    glyphFilter->SetScaleModeToDataScalingOff(); // KR scaling is possible but scalar values are ignored
+    glyphFilter
+        ->ScalingOn();  // KR important to scale glyphs with double precision
+                        // (e.g. 0.1 of their size for small datasets)
+    // glyphFilter->SetScaleModeToScaleByScalar();  // KR can easily obscure
+    // view when scalar values have large differences (this is also the default
+    // scaling method)
+    glyphFilter->SetScaleModeToDataScalingOff();  // KR scaling is possible but
+                                                  // scalar values are ignored
     glyphFilter->SetScaleFactor(1.0);
     glyphFilter->SetSourceConnection(_glyphSource->GetOutputPort());
     glyphFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
@@ -72,7 +81,8 @@ void VtkCompositePointToGlyphFilter::init()
     _outputAlgorithm = glyphFilter;
 }
 
-void VtkCompositePointToGlyphFilter::SetUserProperty( QString name, QVariant value )
+void VtkCompositePointToGlyphFilter::SetUserProperty(QString name,
+                                                     QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
@@ -94,7 +104,8 @@ void VtkCompositePointToGlyphFilter::SetUserProperty( QString name, QVariant val
     }
     else if (name.compare("ScaleFactor") == 0)
     {
-        static_cast<vtkGlyph3D*>(_outputAlgorithm)->SetScaleFactor(value.toDouble());
+        static_cast<vtkGlyph3D*>(_outputAlgorithm)
+            ->SetScaleFactor(value.toDouble());
     }
     else if (name.compare("ColorMode") == 0)
     {
@@ -102,7 +113,8 @@ void VtkCompositePointToGlyphFilter::SetUserProperty( QString name, QVariant val
     }
     else if (name.compare("VectorMode") == 0)
     {
-        static_cast<vtkGlyph3D*>(_outputAlgorithm)->SetVectorMode(value.toInt());
+        static_cast<vtkGlyph3D*>(_outputAlgorithm)
+            ->SetVectorMode(value.toInt());
     }
     else if (name.compare("Orient") == 0)
     {

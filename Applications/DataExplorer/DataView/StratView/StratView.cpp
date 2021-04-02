@@ -12,17 +12,20 @@
  *
  */
 
-#include "Station.h"
 #include "StratView.h"
+
 #include <math.h>
+
+#include "Station.h"
 
 StratView::~StratView()
 {
     delete _scene;
 }
 
-void StratView::setStation(GeoLib::StationBorehole* station,
-                           std::map<std::string, DataHolderLib::Color>* stratColors)
+void StratView::setStation(
+    GeoLib::StationBorehole* station,
+    std::map<std::string, DataHolderLib::Color>* stratColors)
 {
     _scene = new StratScene(station, stratColors);
     setScene(_scene);
@@ -39,7 +42,7 @@ void StratView::initialize()
 
 void StratView::resizeEvent(QResizeEvent* event)
 {
-    Q_UNUSED (event)
+    Q_UNUSED(event)
     update();
 }
 

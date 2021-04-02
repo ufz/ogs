@@ -15,11 +15,11 @@
 // ** INCLUDES **
 #include "VtkAlgorithmPropertyLineEdit.h"
 
-#include "VtkAlgorithmProperties.h"
-
 #include <QDoubleValidator>
 #include <QIntValidator>
 #include <utility>
+
+#include "VtkAlgorithmProperties.h"
 
 VtkAlgorithmPropertyLineEdit::VtkAlgorithmPropertyLineEdit(
     const QString& contents,
@@ -32,18 +32,18 @@ VtkAlgorithmPropertyLineEdit::VtkAlgorithmPropertyLineEdit(
       _algProps(algProps),
       _type(type)
 {
-    switch(_type)
+    switch (_type)
     {
-    case QVariant::Double:
-        this->setValidator(new QDoubleValidator(this));
-        break;
+        case QVariant::Double:
+            this->setValidator(new QDoubleValidator(this));
+            break;
 
-    case QVariant::Int:
-        this->setValidator(new QIntValidator(this));
-        break;
+        case QVariant::Int:
+            this->setValidator(new QIntValidator(this));
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     connect(this, SIGNAL(editingFinished()), this, SLOT(setNewValue()));

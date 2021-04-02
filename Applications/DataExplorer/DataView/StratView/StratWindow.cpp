@@ -12,15 +12,18 @@
  *
  */
 
-#include "Station.h"
 #include "StratWindow.h"
 
-StratWindow::StratWindow(GeoLib::StationBorehole* station,
-                         std::map<std::string, DataHolderLib::Color>* stratColors,
-                         QWidget* parent) : QWidget(parent)
+#include "Station.h"
+
+StratWindow::StratWindow(
+    GeoLib::StationBorehole* station,
+    std::map<std::string, DataHolderLib::Color>* stratColors,
+    QWidget* parent)
+    : QWidget(parent)
 {
     setupUi(this);
-    stationView->setRenderHints( QPainter::Antialiasing );
+    stationView->setRenderHints(QPainter::Antialiasing);
     stationView->setStation(station, stratColors);
     resizeWindow();
 }
@@ -33,6 +36,7 @@ void StratWindow::on_closeButton_clicked()
 void StratWindow::resizeWindow()
 {
     int width = (stationView->getWidth() > 800) ? 800 : stationView->getWidth();
-    int height = (stationView->getHeight() > 600) ? 600 : stationView->getHeight();
+    int height =
+        (stationView->getHeight() > 600) ? 600 : stationView->getHeight();
     resize(width, height);
 }

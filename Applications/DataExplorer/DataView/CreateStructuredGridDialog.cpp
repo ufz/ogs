@@ -18,12 +18,11 @@
 
 #include "GeoLib/Point.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-
-#include "StrictDoubleValidator.h"
 #include "OGSError.h"
+#include "StrictDoubleValidator.h"
 
-
-CreateStructuredGridDialog::CreateStructuredGridDialog(QDialog* parent) : QDialog(parent)
+CreateStructuredGridDialog::CreateStructuredGridDialog(QDialog* parent)
+    : QDialog(parent)
 {
     setupUi(this);
     setValidators();
@@ -32,25 +31,25 @@ CreateStructuredGridDialog::CreateStructuredGridDialog(QDialog* parent) : QDialo
 void CreateStructuredGridDialog::setValidators()
 {
     auto* origin_x_validator = new StrictDoubleValidator(this);
-    this->xOriginEdit->setValidator (origin_x_validator);
+    this->xOriginEdit->setValidator(origin_x_validator);
     auto* origin_y_validator = new StrictDoubleValidator(this);
-    this->yOriginEdit->setValidator (origin_y_validator);
+    this->yOriginEdit->setValidator(origin_y_validator);
     auto* origin_z_validator = new StrictDoubleValidator(this);
-    this->zOriginEdit->setValidator (origin_z_validator);
+    this->zOriginEdit->setValidator(origin_z_validator);
 
     auto* x_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
-    this->xLengthEdit->setValidator (x_length_validator);
+    this->xLengthEdit->setValidator(x_length_validator);
     auto* y_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
-    this->yLengthEdit->setValidator (y_length_validator);
+    this->yLengthEdit->setValidator(y_length_validator);
     auto* z_length_validator = new StrictDoubleValidator(0, 10000000, 10, this);
-    this->zLengthEdit->setValidator (z_length_validator);
+    this->zLengthEdit->setValidator(z_length_validator);
 
     auto* x_n_elem_validator = new QIntValidator(1, 10000000, this);
-    this->xElemEdit->setValidator (x_n_elem_validator);
+    this->xElemEdit->setValidator(x_n_elem_validator);
     auto* y_n_elem_validator = new QIntValidator(1, 10000000, this);
-    this->yElemEdit->setValidator (y_n_elem_validator);
+    this->yElemEdit->setValidator(y_n_elem_validator);
     auto* z_n_elem_validator = new QIntValidator(1, 10000000, this);
-    this->zElemEdit->setValidator (z_n_elem_validator);
+    this->zElemEdit->setValidator(z_n_elem_validator);
 }
 
 void CreateStructuredGridDialog::on_lineButton_toggled() const
@@ -105,10 +104,12 @@ void CreateStructuredGridDialog::on_elemExtentButton_toggled()
 
 bool CreateStructuredGridDialog::inputIsEmpty() const
 {
-    QString const type_str = (this->meshExtentButton->isChecked()) ? "mesh" : "element";
+    QString const type_str =
+        (this->meshExtentButton->isChecked()) ? "mesh" : "element";
     if (this->xLengthEdit->text().isEmpty())
     {
-        OGSError::box("Please specify " + type_str + "\nextent in x-direction.");
+        OGSError::box("Please specify " + type_str +
+                      "\nextent in x-direction.");
         return true;
     }
     if (this->xElemEdit->text().isEmpty())
@@ -133,7 +134,8 @@ bool CreateStructuredGridDialog::inputIsEmpty() const
     {
         if (this->yLengthEdit->text().isEmpty())
         {
-            OGSError::box("Please specify " + type_str + "\nextent in y-direction.");
+            OGSError::box("Please specify " + type_str +
+                          "\nextent in y-direction.");
             return true;
         }
         if (this->yElemEdit->text().isEmpty())
@@ -147,7 +149,8 @@ bool CreateStructuredGridDialog::inputIsEmpty() const
     {
         if (this->zLengthEdit->text().isEmpty())
         {
-            OGSError::box("Please specify " + type_str + "\nextent in z-direction.");
+            OGSError::box("Please specify " + type_str +
+                          "\nextent in z-direction.");
             return true;
         }
         if (this->zElemEdit->text().isEmpty())
@@ -185,14 +188,15 @@ void CreateStructuredGridDialog::accept()
     GeoLib::Point const origin(this->xOriginEdit->text().toDouble(),
                                this->yOriginEdit->text().toDouble(),
                                this->zOriginEdit->text().toDouble());
-    std::string const name (this->meshNameEdit->text().toStdString());
-    MeshLib::Mesh* mesh (nullptr);
+    std::string const name(this->meshNameEdit->text().toStdString());
+    MeshLib::Mesh* mesh(nullptr);
     if (this->lineButton->isChecked())
     {
         if (this->meshExtentButton->isChecked())
         {
             mesh = MeshLib::MeshGenerator::generateLineMesh(
-                this->xLengthEdit->text().toDouble(), this->xElemEdit->text().toInt(), origin, name);
+                this->xLengthEdit->text().toDouble(),
+                this->xElemEdit->text().toInt(), origin, name);
         }
         else
         {
@@ -206,9 +210,10 @@ void CreateStructuredGridDialog::accept()
         if (this->meshExtentButton->isChecked())
         {
             mesh = MeshLib::MeshGenerator::generateRegularTriMesh(
-                this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
-                this->xElemEdit->text().toInt(), this->yElemEdit->text().toInt(),
-                origin, name);
+                this->xLengthEdit->text().toDouble(),
+                this->yLengthEdit->text().toDouble(),
+                this->xElemEdit->text().toInt(),
+                this->yElemEdit->text().toInt(), origin, name);
         }
         else
         {
@@ -224,9 +229,10 @@ void CreateStructuredGridDialog::accept()
         if (this->meshExtentButton->isChecked())
         {
             mesh = MeshLib::MeshGenerator::generateRegularQuadMesh(
-                this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
-                this->xElemEdit->text().toInt(), this->yElemEdit->text().toInt(),
-                origin, name);
+                this->xLengthEdit->text().toDouble(),
+                this->yLengthEdit->text().toDouble(),
+                this->xElemEdit->text().toInt(),
+                this->yElemEdit->text().toInt(), origin, name);
         }
         else
         {
@@ -242,10 +248,12 @@ void CreateStructuredGridDialog::accept()
         if (this->meshExtentButton->isChecked())
         {
             mesh = MeshLib::MeshGenerator::generateRegularPrismMesh(
-                this->xLengthEdit->text().toDouble(), this->yLengthEdit->text().toDouble(),
-                this->zLengthEdit->text().toDouble(), this->xElemEdit->text().toInt(),
-                this->yElemEdit->text().toInt(), this->zElemEdit->text().toInt(),
-                origin, name);
+                this->xLengthEdit->text().toDouble(),
+                this->yLengthEdit->text().toDouble(),
+                this->zLengthEdit->text().toDouble(),
+                this->xElemEdit->text().toInt(),
+                this->yElemEdit->text().toInt(),
+                this->zElemEdit->text().toInt(), origin, name);
         }
         else
         {
@@ -295,4 +303,3 @@ void CreateStructuredGridDialog::accept()
     emit meshAdded(mesh);
     this->done(QDialog::Accepted);
 }
-

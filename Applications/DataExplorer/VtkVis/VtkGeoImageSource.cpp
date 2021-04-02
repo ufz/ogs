@@ -16,16 +16,16 @@
 #include "VtkGeoImageSource.h"
 
 //#include "OGSRaster.h"
-#include "VtkRaster.h"
-
 #include <vtkFloatArray.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkImageData.h>
 #include <vtkImageImport.h>
 #include <vtkImageShiftScale.h>
+#include <vtkIntArray.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-#include <vtkIntArray.h>
+
+#include "VtkRaster.h"
 
 vtkStandardNewMacro(VtkGeoImageSource);
 
@@ -37,19 +37,21 @@ vtkStandardNewMacro(VtkGeoImageSource);
 // This is not always the case.
 template <class IT>
 void vtkSimpleImageFilterExampleExecute(vtkImageData* input,
-                                        vtkImageData* output,
-                                        IT* inPtr, IT* outPtr)
+                                        vtkImageData* output, IT* inPtr,
+                                        IT* outPtr)
 {
     int dims[3];
     input->GetDimensions(dims);
     if (input->GetScalarType() != output->GetScalarType())
     {
-        vtkGenericWarningMacro(<< "Execute: input ScalarType, " << input->GetScalarType()
-                               << ", must match out ScalarType " << output->GetScalarType());
+        vtkGenericWarningMacro(
+            << "Execute: input ScalarType, " << input->GetScalarType()
+            << ", must match out ScalarType " << output->GetScalarType());
         return;
     }
     // HACK LB Multiply by number of scalar components due to RGBA values ?????
-    int size = dims[0] * dims[1] * dims[2] * input->GetNumberOfScalarComponents();
+    int size =
+        dims[0] * dims[1] * dims[2] * input->GetNumberOfScalarComponents();
 
     for (int i = 0; i < size; i++)
     {
@@ -72,9 +74,9 @@ void VtkGeoImageSource::PrintSelf(ostream& os, vtkIndent indent)
     this->Superclass::PrintSelf(os, indent);
 }
 
-bool VtkGeoImageSource::readImage(const QString &filename)
+bool VtkGeoImageSource::readImage(const QString& filename)
 {
-    vtkImageAlgorithm* img (VtkRaster::loadImage(filename.toStdString()));
+    vtkImageAlgorithm* img(VtkRaster::loadImage(filename.toStdString()));
     if (img == nullptr)
     {
         return false;
@@ -83,7 +85,7 @@ bool VtkGeoImageSource::readImage(const QString &filename)
     return true;
 }
 
-void VtkGeoImageSource::setImage(vtkImageAlgorithm* image, const QString &name)
+void VtkGeoImageSource::setImage(vtkImageAlgorithm* image, const QString& name)
 {
     this->_imageSource = image;
     this->SetInputConnection(_imageSource->GetOutputPort());
@@ -100,19 +102,19 @@ void VtkGeoImageSource::SimpleExecute(vtkImageData* input, vtkImageData* output)
     vtkDebugMacro(<< "Executing VtkGeoImageSource");
     void* inPtr = input->GetScalarPointer();
     void* outPtr = output->GetScalarPointer();
-    switch(output->GetScalarType())
+    switch (output->GetScalarType())
     {
         // This is simply a #define for a big case list.
         // It handles all data types that VTK supports.
         vtkTemplateMacro(vtkSimpleImageFilterExampleExecute(
-                                 input, output, (VTK_TT*)(inPtr), (VTK_TT*)(outPtr)));
-    default:
-        vtkGenericWarningMacro("Execute: Unknown input ScalarType");
-        return;
+            input, output, (VTK_TT*)(inPtr), (VTK_TT*)(outPtr)));
+        default:
+            vtkGenericWarningMacro("Execute: Unknown input ScalarType");
+            return;
     }
 }
 
-void VtkGeoImageSource::SetUserProperty( QString name, QVariant value )
+void VtkGeoImageSource::SetUserProperty(QString name, QVariant value)
 {
     Q_UNUSED(name);
     Q_UNUSED(value);

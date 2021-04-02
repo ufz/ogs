@@ -14,7 +14,8 @@
 
 #include "ModelTreeItem.h"
 
-ModelTreeItem::ModelTreeItem(const QList<QVariant> &data, TreeItem* parent, BaseItem* item)
+ModelTreeItem::ModelTreeItem(const QList<QVariant>& data, TreeItem* parent,
+                             BaseItem* item)
     : TreeItem(data, parent), _item(item), _stn(nullptr)
 {
 }
@@ -27,4 +28,3 @@ BaseItem* ModelTreeItem::getItem() const
     }
     return nullptr;
 }
-

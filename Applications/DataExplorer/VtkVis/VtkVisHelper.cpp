@@ -23,23 +23,23 @@
 
 #include <QImage>
 
-vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage &img)
+vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage& img)
 {
     std::size_t imgWidth = img.width();
     std::size_t imgHeight = img.height();
-    vtkSmartPointer<vtkUnsignedCharArray> data = vtkSmartPointer<vtkUnsignedCharArray>::New();
+    vtkSmartPointer<vtkUnsignedCharArray> data =
+        vtkSmartPointer<vtkUnsignedCharArray>::New();
     data->SetNumberOfComponents(3);
-    data->SetNumberOfTuples( imgWidth * imgHeight );
+    data->SetNumberOfTuples(imgWidth * imgHeight);
 
     for (std::size_t j = 0; j < imgHeight; j++)
     {
         for (std::size_t i = 0; i < imgWidth; i++)
         {
-            QRgb pix = img.pixel(i,j);
-            const float color[3] = { static_cast<float>(qRed(pix)),
-                                     static_cast<float>(qGreen(pix)),
-                                     static_cast<float>(qBlue(pix))
-                                   };
+            QRgb pix = img.pixel(i, j);
+            const float color[3] = {static_cast<float>(qRed(pix)),
+                                    static_cast<float>(qGreen(pix)),
+                                    static_cast<float>(qBlue(pix))};
             data->SetTuple(j * imgWidth + i, color);
         }
     }
@@ -53,15 +53,15 @@ vtkImageData* VtkVisHelper::QImageToVtkImageData(QImage &img)
     return imgData;
 }
 
-vtkTexture* VtkVisHelper::QImageToVtkTexture(QImage &img)
+vtkTexture* VtkVisHelper::QImageToVtkTexture(QImage& img)
 {
     vtkSmartPointer<vtkImageData> imgData = QImageToVtkImageData(img);
 
     vtkTexture* texture = vtkTexture::New();
     texture->InterpolateOff();
     texture->RepeatOff();
-    //texture->EdgeClampOff();
-    //texture->SetBlendingMode(0);
+    // texture->EdgeClampOff();
+    // texture->SetBlendingMode(0);
     texture->SetInputData(imgData);
 
     return texture;

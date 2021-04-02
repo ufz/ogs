@@ -15,10 +15,6 @@
 // ** VTK INCLUDES **
 #include "VtkColorByHeightFilter.h"
 
-#include "BaseLib/Logging.h"
-
-#include "VtkColorLookupTable.h"
-
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
 #include <vtkInformation.h>
@@ -30,6 +26,9 @@
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
+#include "BaseLib/Logging.h"
+#include "VtkColorLookupTable.h"
+
 vtkStandardNewMacro(VtkColorByHeightFilter);
 
 VtkColorByHeightFilter::VtkColorByHeightFilter()
@@ -39,15 +38,16 @@ VtkColorByHeightFilter::VtkColorByHeightFilter()
 
 VtkColorByHeightFilter::~VtkColorByHeightFilter() = default;
 
-void VtkColorByHeightFilter::PrintSelf( ostream& os, vtkIndent indent )
+void VtkColorByHeightFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-    this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os, indent);
 
     double range[2];
     ColorLookupTable->GetTableRange(range);
     os << indent << "== VtkColorByHeightFilter ==" << endl;
     os << indent << "Range: " << range[0] << "-" << range[1] << endl;
-    os << indent << "Interpolation Type:" << static_cast<int>(ColorLookupTable->getInterpolationType()) << endl;
+    os << indent << "Interpolation Type:"
+       << static_cast<int>(ColorLookupTable->getInterpolationType()) << endl;
 }
 
 vtkMTimeType VtkColorByHeightFilter::GetMTime()
@@ -65,9 +65,11 @@ int VtkColorByHeightFilter::RequestData(vtkInformation* /*request*/,
                                         vtkInformationVector* outputVector)
 {
     vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
-    vtkPolyData* input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkPolyData* input =
+        vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-    vtkSmartPointer<vtkDoubleArray> colors = vtkSmartPointer<vtkDoubleArray>::New();
+    vtkSmartPointer<vtkDoubleArray> colors =
+        vtkSmartPointer<vtkDoubleArray>::New();
     colors->SetNumberOfComponents(1);
     std::size_t nPoints = input->GetNumberOfPoints();
     colors->SetNumberOfValues(nPoints);
@@ -77,12 +79,13 @@ int VtkColorByHeightFilter::RequestData(vtkInformation* /*request*/,
     for (std::size_t i = 0; i < nPoints; i++)
     {
         double p[3];
-        input->GetPoint(i,p);
+        input->GetPoint(i, p);
         colors->SetValue(i, p[2]);
     }
 
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
-    vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkPolyData* output =
+        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
     output->CopyStructure(input);
     output->GetPointData()->PassData(input->GetPointData());
     output->GetCellData()->PassData(input->GetCellData());
@@ -110,6 +113,6 @@ void VtkColorByHeightFilter::SetTableRange(double min, double max)
 void VtkColorByHeightFilter::SetTableRangeScaling(double scale)
 {
     this->_tableRangeScaling = scale;
-    this->ColorLookupTable->SetTableRange(
-            this->_tableRange[0] * scale, this->_tableRange[1] * scale);
+    this->ColorLookupTable->SetTableRange(this->_tableRange[0] * scale,
+                                          this->_tableRange[1] * scale);
 }

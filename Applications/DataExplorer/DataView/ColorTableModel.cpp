@@ -14,8 +14,9 @@
 
 #include "ColorTableModel.h"
 
-ColorTableModel::ColorTableModel( const std::map<std::string, DataHolderLib::Color*> &colorLookupTable,
-                                  QObject* parent /*= 0*/ )
+ColorTableModel::ColorTableModel(
+    const std::map<std::string, DataHolderLib::Color*>& colorLookupTable,
+    QObject* parent /*= 0*/)
 {
     Q_UNUSED(parent)
 
@@ -24,15 +25,16 @@ ColorTableModel::ColorTableModel( const std::map<std::string, DataHolderLib::Col
 
 ColorTableModel::~ColorTableModel() = default;
 
-int ColorTableModel::columnCount( const QModelIndex& parent /*= QModelIndex()*/ ) const
+int ColorTableModel::columnCount(
+    const QModelIndex& parent /*= QModelIndex()*/) const
 {
     Q_UNUSED(parent)
 
     return 2;
 }
 
-QVariant ColorTableModel::headerData( int section, Qt::Orientation orientation,
-                                      int role /*= Qt::DisplayRole*/ ) const
+QVariant ColorTableModel::headerData(int section, Qt::Orientation orientation,
+                                     int role /*= Qt::DisplayRole*/) const
 {
     if (role != Qt::DisplayRole)
     {
@@ -43,9 +45,12 @@ QVariant ColorTableModel::headerData( int section, Qt::Orientation orientation,
     {
         switch (section)
         {
-        case 0: return "Name";
-        case 1: return "Colour";
-        default: return QVariant();
+            case 0:
+                return "Name";
+            case 1:
+                return "Colour";
+            default:
+                return QVariant();
         }
     }
     else
@@ -54,7 +59,7 @@ QVariant ColorTableModel::headerData( int section, Qt::Orientation orientation,
     }
 }
 
-QVariant ColorTableModel::data( const QModelIndex& index, int role ) const
+QVariant ColorTableModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
     {
@@ -72,18 +77,19 @@ QVariant ColorTableModel::data( const QModelIndex& index, int role ) const
 
         switch (index.column())
         {
-        case 0:
-            return pair.first;
-        case 1:
-            return pair.second;
-        default:
-            return QVariant();
+            case 0:
+                return pair.first;
+            case 1:
+                return pair.second;
+            default:
+                return QVariant();
         }
     }
     return QVariant();
 }
 
-bool ColorTableModel::buildTable(const std::map<std::string, DataHolderLib::Color*> &colorLookupTable)
+bool ColorTableModel::buildTable(
+    const std::map<std::string, DataHolderLib::Color*>& colorLookupTable)
 {
     int count = 0;
     beginInsertRows(QModelIndex(), 0, colorLookupTable.size() - 1);
@@ -110,4 +116,3 @@ bool ColorTableModel::buildTable(const std::map<std::string, DataHolderLib::Colo
     endInsertRows();
     return true;
 }
-

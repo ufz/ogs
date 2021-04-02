@@ -14,6 +14,13 @@
 
 #include "VtkVisTabWidget.h"
 
+#include <vtkActor.h>
+#include <vtkImageChangeInformation.h>
+#include <vtkProperty.h>
+#include <vtkTransform.h>
+#include <vtkTransformFilter.h>
+
+#include "BaseLib/Logging.h"
 #include "VtkAlgorithmPropertyCheckbox.h"
 #include "VtkAlgorithmPropertyLineEdit.h"
 #include "VtkAlgorithmPropertyVectorEdit.h"
@@ -21,14 +28,6 @@
 #include "VtkCompositeColorByHeightFilter.h"
 #include "VtkVisImageItem.h"
 #include "VtkVisPipelineItem.h"
-
-#include "BaseLib/Logging.h"
-
-#include <vtkActor.h>
-#include <vtkImageChangeInformation.h>
-#include <vtkProperty.h>
-#include <vtkTransform.h>
-#include <vtkTransformFilter.h>
 
 VtkVisTabWidget::VtkVisTabWidget(QWidget* parent /*= 0*/) : QWidget(parent)
 {
@@ -40,25 +39,27 @@ VtkVisTabWidget::VtkVisTabWidget(QWidget* parent /*= 0*/) : QWidget(parent)
     this->transY->setValidator(new QDoubleValidator(this));
     this->transZ->setValidator(new QDoubleValidator(this));
 
-    connect(this->vtkVisPipelineView, SIGNAL(requestViewUpdate()),
-            this, SIGNAL(requestViewUpdate()));
+    connect(this->vtkVisPipelineView, SIGNAL(requestViewUpdate()), this,
+            SIGNAL(requestViewUpdate()));
 
     connect(this->vtkVisPipelineView, SIGNAL(itemSelected(VtkVisPipelineItem*)),
             this, SLOT(setActiveItem(VtkVisPipelineItem*)));
 
-    connect(this->activeScalarComboBox, SIGNAL(currentIndexChanged(const QString &)),
-            this, SLOT(SetActiveAttributeOnItem(const QString &)));
+    connect(this->activeScalarComboBox,
+            SIGNAL(currentIndexChanged(const QString&)), this,
+            SLOT(SetActiveAttributeOnItem(const QString&)));
 }
 
 void VtkVisTabWidget::on_arrayResetPushButton_clicked()
 {
     VtkAlgorithmProperties* props = _item->getVtkProperties();
-    const QString selected_array_name = this->activeScalarComboBox->currentText();
+    const QString selected_array_name =
+        this->activeScalarComboBox->currentText();
     props->RemoveLookupTable(selected_array_name);
     _item->SetActiveAttribute(selected_array_name);
 }
 
-void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
+void VtkVisTabWidget::setActiveItem(VtkVisPipelineItem* item)
 {
     if (item)
     {
@@ -67,10 +68,11 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
 
         auto* transform_filter =
             dynamic_cast<vtkTransformFilter*>(_item->transformFilter());
-        if (transform_filter) // if data set
+        if (transform_filter)  // if data set
         {
             actorPropertiesGroupBox->setEnabled(true);
-            vtkProperty* vtkProps = static_cast<vtkActor*>(_item->actor())->GetProperty();
+            vtkProperty* vtkProps =
+                static_cast<vtkActor*>(_item->actor())->GetProperty();
             diffuseColorPickerButton->setColor(vtkProps->GetDiffuseColor());
             visibleEdgesCheckBox->setChecked(vtkProps->GetEdgeVisibility());
             edgeColorPickerButton->setColor(vtkProps->GetEdgeColor());
@@ -86,7 +88,8 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
                 double trans[3];
                 transform->GetPosition(trans);
 
-                //switch signals off for just filling in text-boxes after clicking on an item
+                // switch signals off for just filling in text-boxes after
+                // clicking on an item
                 this->scaleZ->blockSignals(true);
                 this->transX->blockSignals(true);
                 this->transY->blockSignals(true);
@@ -99,7 +102,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
                 this->transX->blockSignals(false);
                 this->transY->blockSignals(false);
                 this->transZ->blockSignals(false);
-                //switch signals back on
+                // switch signals back on
             }
             this->buildScalarArrayComboBox(_item);
 
@@ -118,7 +121,7 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
                 }
             }
         }
-        else // if image
+        else  // if image
         {
             const VtkVisImageItem* img = static_cast<VtkVisImageItem*>(_item);
             actorPropertiesGroupBox->setEnabled(false);
@@ -149,44 +152,52 @@ void VtkVisTabWidget::setActiveItem( VtkVisPipelineItem* item )
     }
 }
 
-void VtkVisTabWidget::on_diffuseColorPickerButton_colorPicked( QColor color )
+void VtkVisTabWidget::on_diffuseColorPickerButton_colorPicked(QColor color)
 {
-    static_cast<vtkActor*>(_item->actor())->GetProperty()->SetDiffuseColor(
-            color.redF(), color.greenF(), color.blueF());
+    static_cast<vtkActor*>(_item->actor())
+        ->GetProperty()
+        ->SetDiffuseColor(color.redF(), color.greenF(), color.blueF());
 
     emit requestViewUpdate();
 }
 
-void VtkVisTabWidget::on_visibleEdgesCheckBox_stateChanged( int state )
+void VtkVisTabWidget::on_visibleEdgesCheckBox_stateChanged(int state)
 {
     if (state == Qt::Checked)
     {
-        static_cast<vtkActor*>(_item->actor())->GetProperty()->SetEdgeVisibility(1);
+        static_cast<vtkActor*>(_item->actor())
+            ->GetProperty()
+            ->SetEdgeVisibility(1);
         edgeColorPickerButton->setEnabled(true);
     }
     else
     {
-        static_cast<vtkActor*>(_item->actor())->GetProperty()->SetEdgeVisibility(0);
+        static_cast<vtkActor*>(_item->actor())
+            ->GetProperty()
+            ->SetEdgeVisibility(0);
         edgeColorPickerButton->setEnabled(false);
     }
 
     emit requestViewUpdate();
 }
 
-void VtkVisTabWidget::on_edgeColorPickerButton_colorPicked( QColor color )
+void VtkVisTabWidget::on_edgeColorPickerButton_colorPicked(QColor color)
 {
-    static_cast<vtkActor*>(_item->actor())->GetProperty()->SetEdgeColor(
-            color.redF(), color.greenF(), color.blueF());
+    static_cast<vtkActor*>(_item->actor())
+        ->GetProperty()
+        ->SetEdgeColor(color.redF(), color.greenF(), color.blueF());
     emit requestViewUpdate();
 }
 
-void VtkVisTabWidget::on_opacitySlider_sliderMoved( int value )
+void VtkVisTabWidget::on_opacitySlider_sliderMoved(int value)
 {
-    static_cast<vtkActor*>(_item->actor())->GetProperty()->SetOpacity(value / 100.0);
+    static_cast<vtkActor*>(_item->actor())
+        ->GetProperty()
+        ->SetOpacity(value / 100.0);
     emit requestViewUpdate();
 }
 
-void VtkVisTabWidget::on_scaleZ_textChanged(const QString &text)
+void VtkVisTabWidget::on_scaleZ_textChanged(const QString& text)
 {
     bool ok = true;
     double scale = text.toDouble(&ok);
@@ -281,45 +292,41 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
             VtkAlgorithmPropertyCheckbox* checkbox;
             switch (value.type())
             {
-            case QVariant::Double:
-                lineEdit =
-                        new VtkAlgorithmPropertyLineEdit(QString::number(
-                                                                 value.toDouble()),
-                                                         key, QVariant::Double,
-                                                         algProps);
-                connect(lineEdit, SIGNAL(editingFinished()), this,
-                        SIGNAL(requestViewUpdate()));
-                layout->addRow(key, lineEdit);
-                break;
+                case QVariant::Double:
+                    lineEdit = new VtkAlgorithmPropertyLineEdit(
+                        QString::number(value.toDouble()), key,
+                        QVariant::Double, algProps);
+                    connect(lineEdit, SIGNAL(editingFinished()), this,
+                            SIGNAL(requestViewUpdate()));
+                    layout->addRow(key, lineEdit);
+                    break;
 
-            case QVariant::Int:
-                lineEdit =
-                        new VtkAlgorithmPropertyLineEdit(QString::number(
-                                                                 value.toInt()),
-                                                         key, QVariant::Int,
-                                                         algProps);
-                connect(lineEdit, SIGNAL(editingFinished()), this,
-                        SIGNAL(requestViewUpdate()));
-                layout->addRow(key, lineEdit);
-                break;
+                case QVariant::Int:
+                    lineEdit = new VtkAlgorithmPropertyLineEdit(
+                        QString::number(value.toInt()), key, QVariant::Int,
+                        algProps);
+                    connect(lineEdit, SIGNAL(editingFinished()), this,
+                            SIGNAL(requestViewUpdate()));
+                    layout->addRow(key, lineEdit);
+                    break;
 
-            case QVariant::Bool:
-                checkbox = new VtkAlgorithmPropertyCheckbox(
-                        value.toBool(), key, algProps);
-                connect(checkbox, SIGNAL(stateChanged(int)), this,
-                        SIGNAL(requestViewUpdate()));
-                layout->addRow(key, checkbox);
-                break;
+                case QVariant::Bool:
+                    checkbox = new VtkAlgorithmPropertyCheckbox(value.toBool(),
+                                                                key, algProps);
+                    connect(checkbox, SIGNAL(stateChanged(int)), this,
+                            SIGNAL(requestViewUpdate()));
+                    layout->addRow(key, checkbox);
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
             }
         }
     }
 
     if (propVecMap)
     {
-        QMapIterator<QString, QList<QVariant> > i(*propVecMap);
+        QMapIterator<QString, QList<QVariant>> i(*propVecMap);
         while (i.hasNext())
         {
             i.next();
@@ -330,7 +337,7 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
             {
                 QList<QString> valuesAsString;
                 foreach (QVariant variant, values)
-                valuesAsString.push_back(variant.toString());
+                    valuesAsString.push_back(variant.toString());
 
                 VtkAlgorithmPropertyVectorEdit* vectorEdit =
                     new VtkAlgorithmPropertyVectorEdit(
@@ -346,7 +353,7 @@ void VtkVisTabWidget::buildProportiesDialog(VtkVisPipelineItem* item)
 void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
 {
     QStringList dataSetAttributesList = item->getScalarArrayNames();
-    dataSetAttributesList.push_back("Solid Color"); // all scalars switched off
+    dataSetAttributesList.push_back("Solid Color");  // all scalars switched off
     this->activeScalarComboBox->blockSignals(true);
     this->activeScalarComboBox->clear();
     this->activeScalarComboBox->insertItems(0, dataSetAttributesList);
@@ -364,7 +371,7 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
              it != dataSetAttributesList.end();
              ++it)
         {
-            if (active_array_name.compare((*it).right((*it).length()-2))==0)
+            if (active_array_name.compare((*it).right((*it).length() - 2)) == 0)
             {
                 this->activeScalarComboBox->setCurrentIndex(idx);
                 break;
@@ -375,9 +382,8 @@ void VtkVisTabWidget::buildScalarArrayComboBox(VtkVisPipelineItem* item)
     }
 }
 
-void VtkVisTabWidget::SetActiveAttributeOnItem( const QString &name )
+void VtkVisTabWidget::SetActiveAttributeOnItem(const QString& name)
 {
     _item->SetActiveAttribute(name);
     emit requestViewUpdate();
 }
-

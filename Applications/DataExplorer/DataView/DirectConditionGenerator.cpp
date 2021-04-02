@@ -12,22 +12,19 @@
  *
  */
 
-#include <fstream>
-#include <memory>
-
-#include "BaseLib/Logging.h"
-
 #include "DirectConditionGenerator.h"
 
-#include "Applications/FileIO/AsciiRasterInterface.h"
+#include <cmath>
+#include <fstream>
+#include <limits>
+#include <memory>
 
-#include "Raster.h"
-#include "MeshSurfaceExtraction.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "BaseLib/Logging.h"
 #include "Mesh.h"
 #include "MeshLib/Node.h"
-
-#include <cmath>
-#include <limits>
+#include "MeshSurfaceExtraction.h"
+#include "Raster.h"
 
 const std::vector<std::pair<std::size_t, double>>&
 DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
@@ -67,9 +64,12 @@ DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,
     return _direct_values;
 }
 
-const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::directWithSurfaceIntegration(MeshLib::Mesh &mesh, const std::string &filename, double scaling)
+const std::vector<std::pair<std::size_t, double>>&
+DirectConditionGenerator::directWithSurfaceIntegration(
+    MeshLib::Mesh& mesh, const std::string& filename, double scaling)
 {
-    if (!_direct_values.empty()) {
+    if (!_direct_values.empty())
+    {
         ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration()"
             "- Data vector contains outdated values...");
         return _direct_values;
@@ -77,7 +77,8 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
 
     std::unique_ptr<GeoLib::Raster> raster(
         FileIO::AsciiRasterInterface::readRaster(filename));
-    if (!raster) {
+    if (!raster)
+    {
         ERR("Error in DirectConditionGenerator::directWithSurfaceIntegration()"
             "- could not load raster file.");
         return _direct_values;
@@ -87,12 +88,12 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     double const angle(90);
     std::string const prop_name("bulk_node_ids");
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
-        MeshLib::MeshSurfaceExtraction::getMeshSurface(
-            mesh, dir, angle, prop_name));
+        MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, dir, angle,
+                                                       prop_name));
 
     std::vector<double> node_area_vec =
         MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(*surface_mesh);
-    const std::vector<MeshLib::Node*> &surface_nodes(surface_mesh->getNodes());
+    const std::vector<MeshLib::Node*>& surface_nodes(surface_mesh->getNodes());
     const std::size_t nNodes(surface_mesh->getNumberOfNodes());
     const double no_data(raster->getHeader().no_data);
 
@@ -119,10 +120,9 @@ const std::vector< std::pair<std::size_t,double> >& DirectConditionGenerator::di
     return _direct_values;
 }
 
-
-int DirectConditionGenerator::writeToFile(const std::string &name) const
+int DirectConditionGenerator::writeToFile(const std::string& name) const
 {
-    std::ofstream out( name.c_str(), std::ios::out );
+    std::ofstream out(name.c_str(), std::ios::out);
 
     if (out)
     {

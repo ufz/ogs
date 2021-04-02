@@ -19,8 +19,7 @@
 #include <QString>
 #include <QToolTip>
 
-QValueTooltipSlider::QValueTooltipSlider(QWidget* parent)
-    : QSlider(parent)
+QValueTooltipSlider::QValueTooltipSlider(QWidget* parent) : QSlider(parent)
 {
     connect(this, SIGNAL(sliderMoved(int)), this, SLOT(setTooltipValue(int)));
 }

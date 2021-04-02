@@ -14,9 +14,9 @@
 
 #include "LinearEditDialog.h"
 
-LinearEditDialog::LinearEditDialog(const GeoLib::Polyline &line,
-                                   const std::vector<std::size_t> &dis_nodes,
-                                   const std::vector<double> &dis_values,
+LinearEditDialog::LinearEditDialog(const GeoLib::Polyline& line,
+                                   const std::vector<std::size_t>& dis_nodes,
+                                   const std::vector<double>& dis_values,
                                    QDialog* parent)
     : QDialog(parent), _line(line)
 {
@@ -24,8 +24,8 @@ LinearEditDialog::LinearEditDialog(const GeoLib::Polyline &line,
     setupDialog(dis_nodes, dis_values);
 }
 
-void LinearEditDialog::setupDialog(const std::vector<std::size_t> &dis_nodes,
-                                   const std::vector<double> &dis_values)
+void LinearEditDialog::setupDialog(const std::vector<std::size_t>& dis_nodes,
+                                   const std::vector<double>& dis_values)
 {
     std::size_t nPoints(_line.getNumberOfPoints());
     this->tableWidget->setRowCount(nPoints);
@@ -34,13 +34,13 @@ void LinearEditDialog::setupDialog(const std::vector<std::size_t> &dis_nodes,
     for (std::size_t i = 0; i < nPoints; i++)
     {
         indexlist.push_back(QString::number(i));
-        QTableWidgetItem *newItem = new QTableWidgetItem("");
+        QTableWidgetItem* newItem = new QTableWidgetItem("");
         tableWidget->setItem(i, 0, newItem);
     }
     QStringList vHeaders(indexlist);
     tableWidget->setVerticalHeaderLabels(vHeaders);
 
-    std::size_t nValues (dis_values.size());
+    std::size_t nValues(dis_values.size());
     for (std::size_t i = 0; i < nValues; i++)
     {
         tableWidget->item(static_cast<int>(dis_nodes[i]), 0)
@@ -52,7 +52,7 @@ LinearEditDialog::~LinearEditDialog() = default;
 
 void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
 {
-    if (index > 0) //elevation
+    if (index > 0)  // elevation
     {
         std::size_t nRows = tableWidget->rowCount();
         for (std::size_t i = 0; i < nRows; i++)
@@ -65,12 +65,12 @@ void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
 
 void LinearEditDialog::accept()
 {
-    std::vector< std::pair<std::size_t,double> > linear_values;
+    std::vector<std::pair<std::size_t, double>> linear_values;
 
     std::size_t nRows = tableWidget->rowCount();
     for (std::size_t i = 0; i < nRows; i++)
     {
-        QString row_text (tableWidget->item(i,0)->text());
+        QString row_text(tableWidget->item(i, 0)->text());
         if (row_text.length() > 0)
         {
             linear_values.emplace_back(i, row_text.toDouble());

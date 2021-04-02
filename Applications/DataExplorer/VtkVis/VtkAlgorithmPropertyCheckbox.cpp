@@ -13,9 +13,9 @@
  */
 
 // ** INCLUDES **
-#include <utility>
-
 #include "VtkAlgorithmPropertyCheckbox.h"
+
+#include <utility>
 
 #include "VtkAlgorithmProperties.h"
 
@@ -32,7 +32,7 @@ VtkAlgorithmPropertyCheckbox::VtkAlgorithmPropertyCheckbox(
 
 VtkAlgorithmPropertyCheckbox::~VtkAlgorithmPropertyCheckbox() = default;
 
-void VtkAlgorithmPropertyCheckbox::setNewValue( int state )
+void VtkAlgorithmPropertyCheckbox::setNewValue(int state)
 {
     auto boolState = static_cast<bool>(state);
     _algProps->SetUserProperty(_name, QVariant(boolState));

@@ -19,7 +19,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkTubeFilter.h>
 
-VtkCompositeLineToTubeFilter::VtkCompositeLineToTubeFilter( vtkAlgorithm* inputAlgorithm )
+VtkCompositeLineToTubeFilter::VtkCompositeLineToTubeFilter(
+    vtkAlgorithm* inputAlgorithm)
     : VtkCompositeFilter(inputAlgorithm)
 {
     this->init();
@@ -33,7 +34,8 @@ void VtkCompositeLineToTubeFilter::init()
     this->_outputDataObjectType = VTK_POLY_DATA;
 
     // collapse coincident points
-    vtkSmartPointer<vtkCleanPolyData> mergePoints = vtkSmartPointer<vtkCleanPolyData>::New();
+    vtkSmartPointer<vtkCleanPolyData> mergePoints =
+        vtkSmartPointer<vtkCleanPolyData>::New();
     mergePoints->SetInputConnection(0, _inputAlgorithm->GetOutputPort(0));
     mergePoints->SetTolerance(0.0);
     mergePoints->ConvertLinesToPointsOn();
@@ -43,10 +45,12 @@ void VtkCompositeLineToTubeFilter::init()
     vtkTubeFilter* tubes = vtkTubeFilter::New();
     tubes->SetInputConnection(0, mergePoints->GetOutputPort(0));
 
-    //tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"StationValue");
-    //tubes->SetVaryRadiusToVaryRadiusByScalar(); // KR radius changes with scalar
+    // tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"StationValue");
+    // tubes->SetVaryRadiusToVaryRadiusByScalar(); // KR radius changes with
+    // scalar
 
-    tubes->SetInputArrayToProcess(1,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS,"Stratigraphies");
+    tubes->SetInputArrayToProcess(
+        1, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, "Stratigraphies");
     tubes->SetRadius(default_radius);
     tubes->SetNumberOfSides(default_number_of_sides);
     tubes->SetCapping(1);
@@ -58,17 +62,19 @@ void VtkCompositeLineToTubeFilter::init()
     _outputAlgorithm = tubes;
 }
 
-void VtkCompositeLineToTubeFilter::SetUserProperty( QString name, QVariant value )
+void VtkCompositeLineToTubeFilter::SetUserProperty(QString name, QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
     if (name.compare("Radius") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetRadius(value.toDouble());
+        static_cast<vtkTubeFilter*>(_outputAlgorithm)
+            ->SetRadius(value.toDouble());
     }
     else if (name.compare("NumberOfSides") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
+        static_cast<vtkTubeFilter*>(_outputAlgorithm)
+            ->SetNumberOfSides(value.toInt());
     }
     else if (name.compare("Capping") == 0)
     {

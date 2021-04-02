@@ -1,13 +1,13 @@
-#include "mainwindow.h"
+#include <QVTKOpenGLWidget.h>
+#include <vtkSmartPointer.h>
 
 #include <QApplication>
 #include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
 #include <memory>
-#include <vtkSmartPointer.h>
 
 #include "InfoLib/GitInfo.h"
 #include "VtkVis/VtkConsoleOutputWindow.h"
+#include "mainwindow.h"
 
 int main(int argc, char* argv[])
 {
@@ -19,16 +19,17 @@ int main(int argc, char* argv[])
 
     QApplication a(argc, argv);
     QApplication::setApplicationName("OpenGeoSys - Data Explorer");
-    QApplication::setApplicationVersion(QString::fromStdString(
-        GitInfoLib::GitInfo::ogs_version));
+    QApplication::setApplicationVersion(
+        QString::fromStdString(GitInfoLib::GitInfo::ogs_version));
     QApplication::setOrganizationName("OpenGeoSys Community");
     QApplication::setOrganizationDomain("opengeosys.org");
-    setlocale(LC_NUMERIC,"C");
+    setlocale(LC_NUMERIC, "C");
     QLocale::setDefault(QLocale::German);
     auto w = std::make_unique<MainWindow>();
-    w->setWindowTitle( w->windowTitle() + " - " +
-        QString::fromStdString(GitInfoLib::GitInfo::ogs_version));
-    if (QCoreApplication::arguments().size()>1) {
+    w->setWindowTitle(w->windowTitle() + " - " +
+                      QString::fromStdString(GitInfoLib::GitInfo::ogs_version));
+    if (QCoreApplication::arguments().size() > 1)
+    {
         w->loadFileOnStartUp(QCoreApplication::arguments().at(1));
     }
     w->show();

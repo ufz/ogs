@@ -13,15 +13,18 @@
  */
 
 #include "SelectMeshDialog.h"
-#include "GeoObject.h"
 
+#include <QComboBox>
 #include <QDialogButtonBox>
 #include <QLabel>
-#include <QComboBox>
 #include <QVBoxLayout>
 
-SelectMeshDialog::SelectMeshDialog(const GeoLib::GeoObject* geo_object, const std::list<std::string> &msh_names, QDialog* parent) :
-    QDialog(parent), _geo_object(geo_object)
+#include "GeoObject.h"
+
+SelectMeshDialog::SelectMeshDialog(const GeoLib::GeoObject* geo_object,
+                                   const std::list<std::string>& msh_names,
+                                   QDialog* parent)
+    : QDialog(parent), _geo_object(geo_object)
 {
     setupDialog(msh_names);
     show();
@@ -35,13 +38,12 @@ SelectMeshDialog::~SelectMeshDialog()
     delete _txt_label;
 }
 
-void SelectMeshDialog::setupDialog(const std::list<std::string> &msh_names)
+void SelectMeshDialog::setupDialog(const std::list<std::string>& msh_names)
 {
     _layout = new QVBoxLayout(this);
     QString dialog_text("Select Mesh");
     _txt_label = new QLabel(this);
     _txt_label->setText(dialog_text);
-
 
     _msh_names = new QComboBox();
     for (const auto& msh_name : msh_names)
@@ -50,19 +52,22 @@ void SelectMeshDialog::setupDialog(const std::list<std::string> &msh_names)
     }
 
     setWindowTitle("Select Mesh...");
-    _layout->addWidget( _txt_label );
-    _layout->addWidget( _msh_names );
-    _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    _layout->addWidget(_txt_label);
+    _layout->addWidget(_msh_names);
+    _buttonBox =
+        new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    _layout->addWidget( _buttonBox );
+    _layout->addWidget(_buttonBox);
 
     setLayout(_layout);
 }
 
 void SelectMeshDialog::accept()
 {
-    //emit requestNameChange(_parent_name, GeoLib::convertGeoType(_object_type_name), _id, _new_name->text().toStdString());
+    // emit requestNameChange(_parent_name,
+    // GeoLib::convertGeoType(_object_type_name), _id,
+    // _new_name->text().toStdString());
     this->done(QDialog::Accepted);
 }
 

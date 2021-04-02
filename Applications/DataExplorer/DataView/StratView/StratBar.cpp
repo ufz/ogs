@@ -13,12 +13,13 @@
  */
 
 #include "StratBar.h"
+
 #include <QPainter>
 
 StratBar::StratBar(GeoLib::StationBorehole* station,
                    std::map<std::string, DataHolderLib::Color>* stratColors,
-                   QGraphicsItem* parent) :
-    QGraphicsItem(parent), _station(station)
+                   QGraphicsItem* parent)
+    : QGraphicsItem(parent), _station(station)
 {
     if (stratColors)
     {
@@ -31,10 +32,12 @@ QRectF StratBar::boundingRect() const
     return QRectF(0, 0, BARWIDTH + 10, totalLogHeight());
 }
 
-void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void StratBar::paint(QPainter* painter,
+                     const QStyleOptionGraphicsItem* option,
+                     QWidget* widget)
 {
-    Q_UNUSED (option)
-    Q_UNUSED (widget)
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
 
     double top = 0;
     double height = 0;
@@ -42,9 +45,9 @@ void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
     QPen pen(Qt::black, 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     pen.setCosmetic(true);
     painter->setPen(pen);
-    //painter->drawRect(_bar);
+    // painter->drawRect(_bar);
 
-    //pen.setWidth(1);
+    // pen.setWidth(1);
     std::vector<GeoLib::Point*> profile = _station->getProfile();
     std::vector<std::string> soilNames = _station->getSoilNames();
     std::size_t nLayers = profile.size();
@@ -56,7 +59,8 @@ void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
         top += height;
         height = logHeight(((*(profile[i - 1]))[2] - (*(profile[i]))[2]));
         QRectF layer(0, top, BARWIDTH, height);
-        DataHolderLib::Color const& c (DataHolderLib::getColor(soilNames[i], _stratColors));
+        DataHolderLib::Color const& c(
+            DataHolderLib::getColor(soilNames[i], _stratColors));
         QBrush brush(QColor(static_cast<int>(c[0]),
                             static_cast<int>(c[1]),
                             static_cast<int>(c[2]),
@@ -69,7 +73,8 @@ void StratBar::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
                           static_cast<int>(layer.bottom()),
                           BARWIDTH + 5,
                           static_cast<int>(layer.bottom()));
-        //painter->drawText(BARWIDTH+10, layer.bottom(), QString::number((*(profile[i]))[2]));
+        // painter->drawText(BARWIDTH+10, layer.bottom(),
+        // QString::number((*(profile[i]))[2]));
     }
 }
 

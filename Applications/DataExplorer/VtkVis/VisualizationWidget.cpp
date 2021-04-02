@@ -13,12 +13,7 @@
  */
 
 // ** INCLUDES **
-#include <cmath>
-
-#include "Point.h"
 #include "VisualizationWidget.h"
-#include "VtkCustomInteractorStyle.h"
-#include "VtkPickCallback.h"
 
 #include <vtkAxesActor.h>
 #include <vtkCamera.h>
@@ -31,11 +26,9 @@
 #include <vtkNew.h>
 #include <vtkOrientationMarkerWidget.h>
 #include <vtkPNGWriter.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
+#include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkWindowToImageFilter.h>
 
@@ -46,6 +39,11 @@
 #include <QLineEdit>
 #include <QSettings>
 #include <QString>
+#include <cmath>
+
+#include "Point.h"
+#include "VtkCustomInteractorStyle.h"
+#include "VtkPickCallback.h"
 
 VisualizationWidget::VisualizationWidget(QWidget* parent /*= 0*/)
     : QWidget(parent)
@@ -64,16 +62,18 @@ VisualizationWidget::VisualizationWidget(QWidget* parent /*= 0*/)
     _interactorStyle->SetDefaultRenderer(ren);
 
     _vtkPickCallback = VtkPickCallback::New();
-    vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
+    vtkSmartPointer<vtkCellPicker> picker =
+        vtkSmartPointer<vtkCellPicker>::New();
     picker->AddObserver(vtkCommand::EndPickEvent, _vtkPickCallback);
     renderWindow->GetInteractor()->SetPicker(picker);
 
     QSettings settings;
 
-    ren->SetBackground(0.0,0.0,0.0);
+    ren->SetBackground(0.0, 0.0, 0.0);
 
     // Create an orientation marker using vtkAxesActor
-    vtkSmartPointer<vtkAxesActor> axesActor = vtkSmartPointer<vtkAxesActor>::New();
+    vtkSmartPointer<vtkAxesActor> axesActor =
+        vtkSmartPointer<vtkAxesActor>::New();
     _markerWidget = vtkOrientationMarkerWidget::New();
     _markerWidget->SetOrientationMarker(axesActor);
     _markerWidget->SetInteractor(renderWindow->GetInteractor());
@@ -83,11 +83,11 @@ VisualizationWidget::VisualizationWidget(QWidget* parent /*= 0*/)
     _isShowAllOnLoad = settings.value("resetViewOnLoad", true).toBool();
 
     // Set alternate cursor shapes
-    connect(_interactorStyle, SIGNAL(cursorChanged(Qt::CursorShape)),
-            this, SLOT(setCursorShape(Qt::CursorShape)));
+    connect(_interactorStyle, SIGNAL(cursorChanged(Qt::CursorShape)), this,
+            SLOT(setCursorShape(Qt::CursorShape)));
 
-    connect((QObject*)_interactorStyle, SIGNAL(requestViewUpdate()),
-            this, SLOT(updateView()));
+    connect((QObject*)_interactorStyle, SIGNAL(requestViewUpdate()), this,
+            SLOT(updateView()));
 }
 
 VisualizationWidget::~VisualizationWidget()
@@ -122,7 +122,8 @@ void VisualizationWidget::showAll(int x, int y, int z)
     double* fp = cam->GetFocalPoint();
     double* p = cam->GetPosition();
     double dist = std::sqrt(vtkMath::Distance2BetweenPoints(p, fp));
-    cam->SetPosition(fp[0]+(x*dist), fp[1]+(y*dist), fp[2]+(z*dist));
+    cam->SetPosition(fp[0] + (x * dist), fp[1] + (y * dist),
+                     fp[2] + (z * dist));
 
     if (x != 0 || y != 0)
     {
@@ -147,20 +148,22 @@ void VisualizationWidget::updateViewOnLoad()
     }
 }
 
-void VisualizationWidget::on_zoomToolButton_toggled( bool checked )
+void VisualizationWidget::on_zoomToolButton_toggled(bool checked)
 {
     if (checked)
     {
         vtkSmartPointer<vtkInteractorStyleRubberBandZoom> interactorStyle =
-                vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
-        vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(interactorStyle);
+            vtkSmartPointer<vtkInteractorStyleRubberBandZoom>::New();
+        vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(
+            interactorStyle);
         QCursor cursor;
         cursor.setShape(Qt::CrossCursor);
         vtkWidget->setCursor(cursor);
     }
     else
     {
-        vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(_interactorStyle);
+        vtkWidget->GetRenderWindow()->GetInteractor()->SetInteractorStyle(
+            _interactorStyle);
         QCursor cursor;
         cursor.setShape(Qt::ArrowCursor);
         vtkWidget->setCursor(cursor);
@@ -172,7 +175,8 @@ void VisualizationWidget::on_highlightToolButton_toggled(bool checked)
     _interactorStyle->setHighlightActor(checked);
 }
 
-void VisualizationWidget::on_orthogonalProjectionToolButton_toggled( bool checked )
+void VisualizationWidget::on_orthogonalProjectionToolButton_toggled(
+    bool checked)
 {
     _vtkRender->GetActiveCamera()->SetParallelProjection(checked);
     this->updateView();
@@ -181,17 +185,16 @@ void VisualizationWidget::on_orthogonalProjectionToolButton_toggled( bool checke
 void VisualizationWidget::on_screenshotPushButton_pressed()
 {
     QSettings settings;
-    QString filename = QFileDialog::getSaveFileName(this, tr("Save screenshot"),
-                                                    settings.value(
-                                                            "lastScreenshotDir").toString(),
-                                                    "PNG file (*.png)");
+    QString filename = QFileDialog::getSaveFileName(
+        this, tr("Save screenshot"),
+        settings.value("lastScreenshotDir").toString(), "PNG file (*.png)");
     if (filename.count() > 4)
     {
         bool ok;
-        int magnification = QInputDialog::getInt(this, tr("Screenshot magnification"),
-                                                 tr(
-                                                         "Enter a magnification factor for the resulting image."),
-                                                 2, 1, 10, 1, &ok);
+        int magnification = QInputDialog::getInt(
+            this, tr("Screenshot magnification"),
+            tr("Enter a magnification factor for the resulting image."), 2, 1,
+            10, 1, &ok);
         if (ok)
         {
             QDir dir(filename);

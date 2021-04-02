@@ -15,12 +15,11 @@
 // ** INCLUDES **
 #include "VtkAlgorithmProperties.h"
 
-#include "BaseLib/Logging.h"
-
 #include <vtkProperty.h>
 #include <vtkTexture.h>
 
 #include "Applications/DataHolderLib/ColorLookupTable.h"
+#include "BaseLib/Logging.h"
 #include "VtkColorLookupTable.h"
 #include "XmlIO/Qt/XmlLutReader.h"
 
@@ -28,10 +27,10 @@ VtkAlgorithmProperties::VtkAlgorithmProperties(QObject* parent /*= nullptr*/)
     : QObject(parent)
 {
     _property = vtkProperty::New();
-    _texture  = nullptr;
+    _texture = nullptr;
     _scalarVisibility = true;
     _algorithmUserProperties = new QMap<QString, QVariant>;
-    _algorithmUserVectorProperties = new QMap<QString, QList<QVariant> >;
+    _algorithmUserVectorProperties = new QMap<QString, QList<QVariant>>;
     _activeAttributeName = "";
     _removable = true;
 }
@@ -52,7 +51,8 @@ VtkAlgorithmProperties::~VtkAlgorithmProperties()
     delete _algorithmUserVectorProperties;
 }
 
-vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(const QString& array_name)
+vtkLookupTable* VtkAlgorithmProperties::GetLookupTable(
+    const QString& array_name)
 {
     auto it = _lut.find(array_name);
     if (it != _lut.end())
@@ -73,19 +73,21 @@ void VtkAlgorithmProperties::RemoveLookupTable(const QString& array_name)
     }
 }
 
-void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, vtkLookupTable* lut)
+void VtkAlgorithmProperties::SetLookUpTable(const QString& array_name,
+                                            vtkLookupTable* lut)
 {
     lut->Build();
 
     if (array_name.length() > 0)
     {
         this->RemoveLookupTable(array_name);
-        _lut.insert( std::pair<QString, vtkLookupTable*>(array_name, lut) );
+        _lut.insert(std::pair<QString, vtkLookupTable*>(array_name, lut));
         _activeAttributeName = array_name;
     }
 }
 
-void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, const QString &filename)
+void VtkAlgorithmProperties::SetLookUpTable(const QString& array_name,
+                                            const QString& filename)
 {
     DataHolderLib::ColorLookupTable lut;
     if (FileIO::XmlLutReader::readFromFile(filename, lut))
@@ -95,7 +97,7 @@ void VtkAlgorithmProperties::SetLookUpTable(const QString &array_name, const QSt
         SetLookUpTable(array_name, colorLookupTable);
     }
     else
-        ERR ("Error reading color look-up table.");
+        ERR("Error reading color look-up table.");
 }
 
 void VtkAlgorithmProperties::SetScalarVisibility(bool on)
@@ -115,7 +117,8 @@ QVariant VtkAlgorithmProperties::GetUserProperty(QString name) const
     return QVariant();
 }
 
-QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(QString name) const
+QList<QVariant> VtkAlgorithmProperties::GetUserVectorProperty(
+    QString name) const
 {
     if (this->_algorithmUserVectorProperties->contains(name))
     {

@@ -20,9 +20,12 @@ SurfaceExtractionDialog::SurfaceExtractionDialog(QDialog* parent)
     : QDialog(parent)
 {
     setupUi(this);
-    this->xNormalEdit->setValidator(new QDoubleValidator(-1, 1, 3, xNormalEdit));
-    this->yNormalEdit->setValidator(new QDoubleValidator(-1, 1, 3, yNormalEdit));
-    this->zNormalEdit->setValidator(new QDoubleValidator(-1, 1, 3, zNormalEdit));
+    this->xNormalEdit->setValidator(
+        new QDoubleValidator(-1, 1, 3, xNormalEdit));
+    this->yNormalEdit->setValidator(
+        new QDoubleValidator(-1, 1, 3, yNormalEdit));
+    this->zNormalEdit->setValidator(
+        new QDoubleValidator(-1, 1, 3, zNormalEdit));
 }
 
 void SurfaceExtractionDialog::accept()
@@ -34,4 +37,3 @@ void SurfaceExtractionDialog::accept()
 
     this->done(QDialog::Accepted);
 }
-

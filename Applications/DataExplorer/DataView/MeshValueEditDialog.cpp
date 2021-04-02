@@ -13,9 +13,9 @@
  */
 
 #include "MeshValueEditDialog.h"
+
 #include "MeshEditing/ElementValueModification.h"
 #include "OGSError.h"
-
 
 MeshValueEditDialog::MeshValueEditDialog(MeshLib::Mesh* mesh, QDialog* parent)
     : QDialog(parent), _mesh(mesh)
@@ -41,15 +41,19 @@ void MeshValueEditDialog::accept()
             OGSError::box("Please input which material you want to replace.");
             return;
         }
-        unsigned old_value = static_cast<unsigned>(this->edit_old_value->text().toInt());
+        unsigned old_value =
+            static_cast<unsigned>(this->edit_old_value->text().toInt());
         if (this->edit_new_value->text().isEmpty())
         {
-            OGSError::box("Please input the new material to replace group " + this->edit_old_value->text() + ".");
+            OGSError::box("Please input the new material to replace group " +
+                          this->edit_old_value->text() + ".");
             return;
         }
-        unsigned new_value = static_cast<unsigned>(this->edit_new_value->text().toInt());
+        unsigned new_value =
+            static_cast<unsigned>(this->edit_new_value->text().toInt());
         bool do_not_replace = this->replaceCheckBox->isChecked();
-        bool result = MeshLib::ElementValueModification::replace(*_mesh, old_value, new_value, !do_not_replace);
+        bool result = MeshLib::ElementValueModification::replace(
+            *_mesh, old_value, new_value, !do_not_replace);
         if (!result && do_not_replace)
         {
             OGSError::box("The new material group already exists.");
@@ -72,5 +76,3 @@ void MeshValueEditDialog::on_replaceButton_toggled(bool isSelected)
     this->edit_new_value->setEnabled(isSelected);
     this->replaceCheckBox->setEnabled(isSelected);
 }
-
-

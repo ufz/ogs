@@ -13,26 +13,27 @@
  */
 
 // ** INCLUDES **
-#include "FileTools.h"
-#include "VtkAlgorithmProperties.h"
 #include "VtkVisPipelineItem.h"
-#include "VtkCompositeFilter.h"
 
-#include "QVtkDataSetMapper.h"
 #include <vtkActor.h>
 #include <vtkAlgorithm.h>
+#include <vtkCellData.h>
 #include <vtkDataSetMapper.h>
+#include <vtkGenericDataObjectWriter.h>
+#include <vtkImageActor.h>
+#include <vtkPointData.h>
 #include <vtkPointSet.h>
 #include <vtkProperty.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 #include <vtkTextureMapToPlane.h>
-#include <vtkGenericDataObjectWriter.h>
-#include <vtkCellData.h>
-#include <vtkPointData.h>
-#include <vtkImageActor.h>
 
 #include <QMessageBox>
+
+#include "FileTools.h"
+#include "QVtkDataSetMapper.h"
+#include "VtkAlgorithmProperties.h"
+#include "VtkCompositeFilter.h"
 
 VtkVisPipelineItem::VtkVisPipelineItem(
     vtkAlgorithm* algorithm, TreeItem* parentItem,
@@ -71,7 +72,7 @@ VtkVisPipelineItem::~VtkVisPipelineItem()
     delete _compositeFilter;
 }
 
-VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
+VtkVisPipelineItem* VtkVisPipelineItem::child(int row) const
 {
     TreeItem* treeItem = TreeItem::child(row);
     if (treeItem)
@@ -82,7 +83,7 @@ VtkVisPipelineItem* VtkVisPipelineItem::child( int row ) const
     return nullptr;
 }
 
-QVariant VtkVisPipelineItem::data( int column ) const
+QVariant VtkVisPipelineItem::data(int column) const
 {
     if (column == 1)
     {
@@ -92,7 +93,7 @@ QVariant VtkVisPipelineItem::data( int column ) const
     return TreeItem::data(column);
 }
 
-bool VtkVisPipelineItem::setData( int column, const QVariant &value )
+bool VtkVisPipelineItem::setData(int column, const QVariant& value)
 {
     if (column == 1)
     {
@@ -107,14 +108,14 @@ bool VtkVisPipelineItem::isVisible() const
     return static_cast<bool>(_actor->GetVisibility());
 }
 
-void VtkVisPipelineItem::setVisible( bool visible )
+void VtkVisPipelineItem::setVisible(bool visible)
 {
     _actor->SetVisibility(static_cast<int>(visible));
     _actor->Modified();
     _renderer->Render();
 }
 
-int VtkVisPipelineItem::writeToFile(const std::string &filename) const
+int VtkVisPipelineItem::writeToFile(const std::string& filename) const
 {
     if (!filename.empty())
     {
@@ -123,7 +124,8 @@ int VtkVisPipelineItem::writeToFile(const std::string &filename) const
     return 0;
 }
 
-int VtkVisPipelineItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
+int VtkVisPipelineItem::callVTKWriter(vtkAlgorithm* algorithm,
+                                      const std::string& filename) const
 {
     // needs to be implemented in derived classes!
     (void)algorithm;
@@ -176,24 +178,31 @@ void VtkVisPipelineItem::setBackfaceCullingOnChildren(bool enable) const
 QStringList VtkVisPipelineItem::getScalarArrayNames() const
 {
     this->algorithm()->Update();
-    vtkDataSet* dataSet = vtkDataSet::SafeDownCast(this->algorithm()->GetOutputDataObject(0));
+    vtkDataSet* dataSet =
+        vtkDataSet::SafeDownCast(this->algorithm()->GetOutputDataObject(0));
     QStringList dataSetAttributesList;
     if (dataSet)
     {
         vtkPointData* pointData = dataSet->GetPointData();
-        //std::cout << "  #point data arrays: " << pointData->GetNumberOfArrays() << std::endl;
+        // std::cout << "  #point data arrays: " <<
+        // pointData->GetNumberOfArrays() << std::endl;
         for (int i = 0; i < pointData->GetNumberOfArrays(); i++)
         {
-            // std::cout << "    Name: " << pointData->GetArrayName(i) << std::endl;
-            dataSetAttributesList.push_back(QString("P-") + pointData->GetArrayName(i));
+            // std::cout << "    Name: " << pointData->GetArrayName(i) <<
+            // std::endl;
+            dataSetAttributesList.push_back(QString("P-") +
+                                            pointData->GetArrayName(i));
         }
 
         vtkCellData* cellData = dataSet->GetCellData();
-        //std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays() << std::endl;
+        // std::cout << "  #cell data arrays: " << cellData->GetNumberOfArrays()
+        // << std::endl;
         for (int i = 0; i < cellData->GetNumberOfArrays(); i++)
         {
-            // std::cout << "    Name: " << cellData->GetArrayName(i) << std::endl;
-            dataSetAttributesList.push_back(QString("C-") + cellData->GetArrayName(i));
+            // std::cout << "    Name: " << cellData->GetArrayName(i) <<
+            // std::endl;
+            dataSetAttributesList.push_back(QString("C-") +
+                                            cellData->GetArrayName(i));
         }
     }
     return dataSetAttributesList;

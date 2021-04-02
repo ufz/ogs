@@ -14,10 +14,11 @@
  */
 
 #include "ColorTableView.h"
+
 #include <QHeaderView>
 #include <QPainter>
 
-ColorTableView::ColorTableView( QWidget* parent /*= 0*/ ) : QTableView(parent)
+ColorTableView::ColorTableView(QWidget* parent /*= 0*/) : QTableView(parent)
 {
     this->verticalHeader()->hide();
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -26,8 +27,8 @@ ColorTableView::ColorTableView( QWidget* parent /*= 0*/ ) : QTableView(parent)
 }
 
 void ColorTableViewDelegate::paint(QPainter* painter,
-                                   const QStyleOptionViewItem &option,
-                                   const QModelIndex &index) const
+                                   const QStyleOptionViewItem& option,
+                                   const QModelIndex& index) const
 {
     QColor val;
     if (index.column() == 1)
@@ -45,8 +46,8 @@ void ColorTableViewDelegate::paint(QPainter* painter,
     }
 }
 
-QSize ColorTableViewDelegate::sizeHint( const QStyleOptionViewItem &option,
-                                        const QModelIndex &index ) const
+QSize ColorTableViewDelegate::sizeHint(const QStyleOptionViewItem& option,
+                                       const QModelIndex& index) const
 {
     QSize s = QItemDelegate::sizeHint(option, index);
     if (s.isValid())

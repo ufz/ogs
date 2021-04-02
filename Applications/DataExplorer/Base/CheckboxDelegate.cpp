@@ -14,6 +14,7 @@
 
 // ** INCLUDES **
 #include "CheckboxDelegate.h"
+
 #include <QApplication>
 #include <QCheckBox>
 #include <QEvent>
@@ -21,15 +22,13 @@
 #include <QPainter>
 #include <QStyleOptionButton>
 
-CheckboxDelegate::CheckboxDelegate(QObject* parent)
-    : QItemDelegate(parent)
-{
-}
+CheckboxDelegate::CheckboxDelegate(QObject* parent) : QItemDelegate(parent) {}
 
-void CheckboxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
+void CheckboxDelegate::paint(QPainter* painter,
+                             const QStyleOptionViewItem& option,
                              const QModelIndex& index) const
 {
-    if(index.isValid())
+    if (index.isValid())
     {
         bool checked = index.model()->data(index, Qt::DisplayRole).toBool();
 
@@ -56,7 +55,8 @@ void CheckboxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& opti
 }
 
 bool CheckboxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model,
-                                   const QStyleOptionViewItem &option, const QModelIndex &index)
+                                   const QStyleOptionViewItem& option,
+                                   const QModelIndex& index)
 {
     Q_UNUSED(option);
 
@@ -91,8 +91,8 @@ bool CheckboxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model,
     return model->setData(index, !checked, Qt::EditRole);
 }
 
-QSize CheckboxDelegate::sizeHint(const QStyleOptionViewItem & option,
-                                 const QModelIndex & index) const
+QSize CheckboxDelegate::sizeHint(const QStyleOptionViewItem& option,
+                                 const QModelIndex& index) const
 {
     Q_UNUSED(index);
 
@@ -100,14 +100,16 @@ QSize CheckboxDelegate::sizeHint(const QStyleOptionViewItem & option,
     return QSize(rect.width(), rect.height());
 }
 
-QRect CheckboxDelegate::checkboxRect(const QStyleOptionViewItem& viewItemStyleOptions) const
+QRect CheckboxDelegate::checkboxRect(
+    const QStyleOptionViewItem& viewItemStyleOptions) const
 {
     QStyleOptionButton styleOptionButton;
     QRect rect = QApplication::style()->subElementRect(
-            QStyle::SE_CheckBoxIndicator, &styleOptionButton);
+        QStyle::SE_CheckBoxIndicator, &styleOptionButton);
     QPoint point(viewItemStyleOptions.rect.x() +
-                 viewItemStyleOptions.rect.width() / 2 - rect.width() / 2,
-                 viewItemStyleOptions.rect.y() + viewItemStyleOptions.rect.height() / 2 -
-                 rect.height() / 2);
+                     viewItemStyleOptions.rect.width() / 2 - rect.width() / 2,
+                 viewItemStyleOptions.rect.y() +
+                     viewItemStyleOptions.rect.height() / 2 -
+                     rect.height() / 2);
     return QRect(point, rect.size());
 }

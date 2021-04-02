@@ -48,13 +48,13 @@
 #include "Applications/FileIO/TetGenInterface.h"
 #include "Applications/FileIO/XmlIO/Qt/XmlPrjInterface.h"
 #include "Applications/Utils/OGSFileConverter/OGSFileConverter.h"
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Histogram.h"
 #include "GeoLib/DuplicateGeometry.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshGeoToolsLib/GeoMapper.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
@@ -81,16 +81,15 @@
 #ifdef OGS_USE_NETCDF
 #include "NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
-#include "SHPImportDialog.h"
-#include "SetNameDialog.h"
-#include "VtkAddFilterDialog.h"
-
 #include "GeoTreeModel.h"
 #include "LastSavedFileDirectory.h"
 #include "OGSError.h"
 #include "RecentFiles.h"
+#include "SHPImportDialog.h"
+#include "SetNameDialog.h"
 #include "StationTreeModel.h"
 #include "TreeModelIterator.h"
+#include "VtkAddFilterDialog.h"
 #include "VtkBGImageSource.h"
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
@@ -121,71 +120,113 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
         std::make_unique<VtkVisPipeline>(visualizationWidget->renderer());
 
     // station model connects
-    connect(stationTabWidget->treeView, SIGNAL(openStationListFile(int)),
-            this, SLOT(open(int)));
-    connect(stationTabWidget->treeView, SIGNAL(stationListExportRequested(std::string, std::string)),
-            this, SLOT(exportBoreholesToGMS(std::string, std::string))); // export Stationlist to GMS
-    connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)), _geo_model.get(),
-            SLOT(removeStationVec(std::string))); // update model when stations are removed
-    connect(stationTabWidget->treeView, SIGNAL(stationListSaved(QString, QString)), this,
-            SLOT(writeStationListToFile(QString, QString))); // save Stationlist to File
-    connect(_geo_model.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
-            this, SLOT(updateDataViews())); // update data view when stations are removed
-    connect(stationTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, std::size_t)),
+    connect(stationTabWidget->treeView, SIGNAL(openStationListFile(int)), this,
+            SLOT(open(int)));
+    connect(stationTabWidget->treeView,
+            SIGNAL(stationListExportRequested(std::string, std::string)), this,
+            SLOT(exportBoreholesToGMS(
+                std::string, std::string)));  // export Stationlist to GMS
+    connect(stationTabWidget->treeView, SIGNAL(stationListRemoved(std::string)),
+            _geo_model.get(),
+            SLOT(removeStationVec(
+                std::string)));  // update model when stations are removed
+    connect(stationTabWidget->treeView,
+            SIGNAL(stationListSaved(QString, QString)), this,
+            SLOT(writeStationListToFile(QString,
+                                        QString)));  // save Stationlist to File
+    connect(
+        _geo_model.get(),
+        SIGNAL(stationVectorRemoved(StationTreeModel*, std::string)), this,
+        SLOT(updateDataViews()));  // update data view when stations are removed
+    connect(stationTabWidget->treeView,
+            SIGNAL(requestNameChangeDialog(const std::string&, std::size_t)),
             this, SLOT(showStationNameDialog(const std::string&, std::size_t)));
-    connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex &)),
-            this, SLOT(showDiagramPrefsDialog(QModelIndex &))); // connect treeview to diagramview
+    connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex&)),
+            this,
+            SLOT(showDiagramPrefsDialog(
+                QModelIndex&)));  // connect treeview to diagramview
 
     // geo model connects
-    connect(geoTabWidget->treeView, SIGNAL(openGeometryFile(int)),
-        this, SLOT(open(int)));
-    connect(geoTabWidget->treeView, SIGNAL(listRemoved(std::string, GeoLib::GEOTYPE)),
-            _geo_model.get(), SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
-    connect(geoTabWidget->treeView, SIGNAL(geometryMappingRequested(const std::string&)),
-            this, SLOT(mapGeometry(const std::string&)));
-    connect(geoTabWidget->treeView, SIGNAL(saveToFileRequested(QString, QString)),
-            this, SLOT(writeGeometryToFile(QString, QString))); // save geometry to file
-    connect(geoTabWidget->treeView, SIGNAL(requestPointToStationConversion(std::string const&)), this,
-            SLOT(convertPointsToStations( std::string const&)));
-    connect(geoTabWidget->treeView, SIGNAL(requestLineEditDialog(const std::string &)),
-            this, SLOT(showLineEditDialog(const std::string &))); // open line edit dialog
-    connect(geoTabWidget->treeView, SIGNAL(requestNameChangeDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)),
-            this, SLOT(showGeoNameDialog(const std::string&, const GeoLib::GEOTYPE, std::size_t)));
-    connect(_geo_model.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+    connect(geoTabWidget->treeView, SIGNAL(openGeometryFile(int)), this,
+            SLOT(open(int)));
+    connect(geoTabWidget->treeView,
+            SIGNAL(listRemoved(std::string, GeoLib::GEOTYPE)), _geo_model.get(),
+            SLOT(removeGeometry(std::string, GeoLib::GEOTYPE)));
+    connect(geoTabWidget->treeView,
+            SIGNAL(geometryMappingRequested(const std::string&)), this,
+            SLOT(mapGeometry(const std::string&)));
+    connect(
+        geoTabWidget->treeView, SIGNAL(saveToFileRequested(QString, QString)),
+        this,
+        SLOT(writeGeometryToFile(QString, QString)));  // save geometry to file
+    connect(geoTabWidget->treeView,
+            SIGNAL(requestPointToStationConversion(std::string const&)), this,
+            SLOT(convertPointsToStations(std::string const&)));
+    connect(
+        geoTabWidget->treeView,
+        SIGNAL(requestLineEditDialog(const std::string&)), this,
+        SLOT(showLineEditDialog(const std::string&)));  // open line edit dialog
+    connect(geoTabWidget->treeView,
+            SIGNAL(requestNameChangeDialog(const std::string&,
+                                           const GeoLib::GEOTYPE, std::size_t)),
+            this,
+            SLOT(showGeoNameDialog(const std::string&, const GeoLib::GEOTYPE,
+                                   std::size_t)));
+    connect(_geo_model.get(),
+            SIGNAL(geoDataAdded(GeoTreeModel*, std::string, GeoLib::GEOTYPE)),
             this, SLOT(updateDataViews()));
-    connect(_geo_model.get(), SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
+    connect(_geo_model.get(),
+            SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GeoLib::GEOTYPE)),
             this, SLOT(updateDataViews()));
-    connect(geoTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
-            _vtkVisPipeline.get(), SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
+    connect(geoTabWidget->treeView,
+            SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
+            _vtkVisPipeline.get(),
+            SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
     connect(geoTabWidget->treeView, SIGNAL(removeGeoItemSelection()),
             _vtkVisPipeline.get(), SLOT(removeHighlightedGeoObject()));
-    connect(stationTabWidget->treeView, SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
-            _vtkVisPipeline.get(), SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
+    connect(stationTabWidget->treeView,
+            SIGNAL(geoItemSelected(const vtkPolyDataAlgorithm*, int)),
+            _vtkVisPipeline.get(),
+            SLOT(highlightGeoObject(const vtkPolyDataAlgorithm*, int)));
     connect(stationTabWidget->treeView, SIGNAL(removeGeoItemSelection()),
             _vtkVisPipeline.get(), SLOT(removeHighlightedGeoObject()));
 
     // Setup connections for mesh models to GUI
-    connect(meshTabWidget->treeView, SIGNAL(openMeshFile(int)),
-        this, SLOT(open(int)));
-    connect(meshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
-            _meshModel.get(), SLOT(removeMesh(const QModelIndex &)));
-    connect(meshTabWidget->treeView, SIGNAL(requestMeshRemoval(const QModelIndex &)),
-            _elementModel.get(), SLOT(clearView()));
+    connect(meshTabWidget->treeView, SIGNAL(openMeshFile(int)), this,
+            SLOT(open(int)));
     connect(meshTabWidget->treeView,
+            SIGNAL(requestMeshRemoval(const QModelIndex&)), _meshModel.get(),
+            SLOT(removeMesh(const QModelIndex&)));
+    connect(meshTabWidget->treeView,
+            SIGNAL(requestMeshRemoval(const QModelIndex&)), _elementModel.get(),
+            SLOT(clearView()));
+    connect(
+        meshTabWidget->treeView,
         SIGNAL(qualityCheckRequested(MeshLib::VtkMappedMeshSource*)),
-            this,
-            SLOT(showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource*)));
-    connect(meshTabWidget->treeView, SIGNAL(requestMeshToGeometryConversion(const MeshLib::Mesh*)),
-            this, SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
-    connect(meshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-            _vtkVisPipeline.get(), SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
+        this,
+        SLOT(showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource*)));
+    connect(meshTabWidget->treeView,
+            SIGNAL(requestMeshToGeometryConversion(const MeshLib::Mesh*)), this,
+            SLOT(convertMeshToGeometry(const MeshLib::Mesh*)));
+    connect(meshTabWidget->treeView,
+            SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const* const,
+                                   unsigned, bool)),
+            _vtkVisPipeline.get(),
+            SLOT(highlightMeshComponent(
+                vtkUnstructuredGridAlgorithm const* const, unsigned, bool)));
     connect(meshTabWidget->treeView, SIGNAL(meshSelected(MeshLib::Mesh const&)),
             this->_elementModel.get(), SLOT(setMesh(MeshLib::Mesh const&)));
     connect(meshTabWidget->treeView, SIGNAL(meshSelected(MeshLib::Mesh const&)),
             meshTabWidget->elementView, SLOT(updateView()));
-    connect(meshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-            this->_elementModel.get(), SLOT(setElement(vtkUnstructuredGridAlgorithm const*const, unsigned)));
-    connect(meshTabWidget->treeView, SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
+    connect(
+        meshTabWidget->treeView,
+        SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const* const,
+                               unsigned, bool)),
+        this->_elementModel.get(),
+        SLOT(setElement(vtkUnstructuredGridAlgorithm const* const, unsigned)));
+    connect(meshTabWidget->treeView,
+            SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const* const,
+                                   unsigned, bool)),
             meshTabWidget->elementView, SLOT(updateView()));
     connect(meshTabWidget->treeView,
             SIGNAL(elementSelected(vtkUnstructuredGridAlgorithm const* const,
@@ -199,8 +240,12 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
                                 unsigned, bool)),
             reinterpret_cast<QObject*>(visualizationWidget->interactorStyle()),
             SLOT(removeHighlightActor()));
-    connect(meshTabWidget->elementView, SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)),
-            _vtkVisPipeline.get(), SLOT(highlightMeshComponent(vtkUnstructuredGridAlgorithm const*const, unsigned, bool)));
+    connect(meshTabWidget->elementView,
+            SIGNAL(nodeSelected(vtkUnstructuredGridAlgorithm const* const,
+                                unsigned, bool)),
+            _vtkVisPipeline.get(),
+            SLOT(highlightMeshComponent(
+                vtkUnstructuredGridAlgorithm const* const, unsigned, bool)));
     connect(meshTabWidget->elementView, SIGNAL(removeSelectedMeshComponent()),
             _vtkVisPipeline.get(), SLOT(removeHighlightedMeshComponent()));
 
@@ -230,31 +275,43 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
             modellingTabWidget->conditionView, SLOT(updateView()));
 
     // VisPipeline Connects
-    connect(_geo_model.get(), SIGNAL(geoDataAdded(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
-            _vtkVisPipeline.get(), SLOT(addPipelineItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
-    connect(_geo_model.get(), SIGNAL(geoDataRemoved(GeoTreeModel *, std::string, GeoLib::GEOTYPE)),
-            _vtkVisPipeline.get(), SLOT(removeSourceItem(GeoTreeModel *, std::string, GeoLib::GEOTYPE)));
+    connect(_geo_model.get(),
+            SIGNAL(geoDataAdded(GeoTreeModel*, std::string, GeoLib::GEOTYPE)),
+            _vtkVisPipeline.get(),
+            SLOT(addPipelineItem(GeoTreeModel*, std::string, GeoLib::GEOTYPE)));
+    connect(
+        _geo_model.get(),
+        SIGNAL(geoDataRemoved(GeoTreeModel*, std::string, GeoLib::GEOTYPE)),
+        _vtkVisPipeline.get(),
+        SLOT(removeSourceItem(GeoTreeModel*, std::string, GeoLib::GEOTYPE)));
 
-    connect(_geo_model.get(), SIGNAL(stationVectorAdded(StationTreeModel *, std::string)),
-            _vtkVisPipeline.get(), SLOT(addPipelineItem(StationTreeModel *, std::string)));
-    connect(_geo_model.get(), SIGNAL(stationVectorRemoved(StationTreeModel *, std::string)),
-            _vtkVisPipeline.get(), SLOT(removeSourceItem(StationTreeModel *, std::string)));
+    connect(_geo_model.get(),
+            SIGNAL(stationVectorAdded(StationTreeModel*, std::string)),
+            _vtkVisPipeline.get(),
+            SLOT(addPipelineItem(StationTreeModel*, std::string)));
+    connect(_geo_model.get(),
+            SIGNAL(stationVectorRemoved(StationTreeModel*, std::string)),
+            _vtkVisPipeline.get(),
+            SLOT(removeSourceItem(StationTreeModel*, std::string)));
 
-    connect(_meshModel.get(), SIGNAL(meshAdded(MeshModel *, QModelIndex)),
-            _vtkVisPipeline.get(), SLOT(addPipelineItem(MeshModel *,QModelIndex)));
-    connect(_meshModel.get(), SIGNAL(meshRemoved(MeshModel *, QModelIndex)),
-            _vtkVisPipeline.get(), SLOT(removeSourceItem(MeshModel *, QModelIndex)));
+    connect(_meshModel.get(), SIGNAL(meshAdded(MeshModel*, QModelIndex)),
+            _vtkVisPipeline.get(),
+            SLOT(addPipelineItem(MeshModel*, QModelIndex)));
+    connect(_meshModel.get(), SIGNAL(meshRemoved(MeshModel*, QModelIndex)),
+            _vtkVisPipeline.get(),
+            SLOT(removeSourceItem(MeshModel*, QModelIndex)));
 
     connect(_vtkVisPipeline.get(), SIGNAL(vtkVisPipelineChanged()),
             visualizationWidget->vtkWidget, SLOT(update()));
     connect(_vtkVisPipeline.get(), SIGNAL(vtkVisPipelineChanged()),
             vtkVisTabWidget->vtkVisPipelineView, SLOT(expandAll()));
     connect(_vtkVisPipeline.get(), SIGNAL(itemSelected(const QModelIndex&)),
-            vtkVisTabWidget->vtkVisPipelineView, SLOT(selectItem(const QModelIndex&)));
-
+            vtkVisTabWidget->vtkVisPipelineView,
+            SLOT(selectItem(const QModelIndex&)));
 
     vtkVisTabWidget->vtkVisPipelineView->setModel(_vtkVisPipeline.get());
-    connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(requestRemovePipelineItem(QModelIndex)),
+    connect(vtkVisTabWidget->vtkVisPipelineView,
+            SIGNAL(requestRemovePipelineItem(QModelIndex)),
             _vtkVisPipeline.get(), SLOT(removePipelineItem(QModelIndex)));
     connect(vtkVisTabWidget->vtkVisPipelineView,
             SIGNAL(requestAddPipelineFilterItem(QModelIndex)), this,
@@ -296,8 +353,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
             this->_vtkVisPipeline.get(),
             SLOT(removeHighlightedMeshComponent()));
 
-    connect(vtkVisTabWidget->vtkVisPipelineView, SIGNAL(meshAdded(MeshLib::Mesh*)),
-            _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
+    connect(vtkVisTabWidget->vtkVisPipelineView,
+            SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(),
+            SLOT(addMesh(MeshLib::Mesh*)));
 
     // Stack the data dock widgets together
     tabifyDockWidget(geoDock, mshDock);
@@ -315,11 +373,12 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
     }
 
     // Setup import files menu
-    QMenu* import_files_menu = createImportFilesMenu(); //owned by MainWindow
+    QMenu* import_files_menu = createImportFilesMenu();  // owned by MainWindow
     menu_File->insertMenu(action_Exit, import_files_menu);
 
     // Setup recent files menu
-    RecentFiles* recentFiles = new RecentFiles(this, SLOT(openRecentFile()), "recentFileList");
+    RecentFiles* recentFiles =
+        new RecentFiles(this, SLOT(openRecentFile()), "recentFileList");
     connect(this, SIGNAL(fileUsed(QString)), recentFiles,
             SLOT(setCurrentFile(QString)));
     menu_File->insertMenu(action_Exit, recentFiles->menu());
@@ -436,17 +495,18 @@ void MainWindow::open(int file_type)
 {
     QSettings settings;
     auto t = static_cast<ImportFileType::type>(file_type);
-    QString type_str = QString::fromStdString((ImportFileType::convertImportFileTypeToString(t)));
-    QString fileName = QFileDialog::getOpenFileName(this, "Select " + type_str + " file to import",
-                                                    settings.value("lastOpenedFileDirectory").toString(),
-                                                    QString::fromStdString(ImportFileType::getFileSuffixString(t)));
+    QString type_str = QString::fromStdString(
+        (ImportFileType::convertImportFileTypeToString(t)));
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Select " + type_str + " file to import",
+        settings.value("lastOpenedFileDirectory").toString(),
+        QString::fromStdString(ImportFileType::getFileSuffixString(t)));
     if (!fileName.isEmpty())
     {
         loadFile(t, fileName);
         QDir dir = QDir(fileName);
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
     }
-
 }
 
 void MainWindow::openRecentFile()
@@ -506,14 +566,15 @@ void MainWindow::save()
     }
 }
 
-void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
+void MainWindow::loadFile(ImportFileType::type t, const QString& fileName)
 {
     QFile file(fileName);
     if (!file.exists())
     {
-        QMessageBox::warning(this, tr("Application"), tr(
-                                     "Cannot read file %1:\n%2.").arg(fileName).arg(
-                                     file.errorString()));
+        QMessageBox::warning(this, tr("Application"),
+                             tr("Cannot read file %1:\n%2.")
+                                 .arg(fileName)
+                                 .arg(file.errorString()));
         return;
     }
 
@@ -521,9 +582,11 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     QFileInfo fi(fileName);
     QSettings settings;
     QDir dir = QDir(fileName);
-    std::string base = fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
+    std::string base =
+        fi.absoluteDir().absoluteFilePath(fi.completeBaseName()).toStdString();
 
-    if (t == ImportFileType::OGS || t == ImportFileType::OGS_GEO || t == ImportFileType::OGS_STN || t == ImportFileType::OGS_MSH)
+    if (t == ImportFileType::OGS || t == ImportFileType::OGS_GEO ||
+        t == ImportFileType::OGS_STN || t == ImportFileType::OGS_MSH)
     {
         if (fi.suffix().toLower() == "gli")
         {
@@ -617,7 +680,7 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     }
     else if (t == ImportFileType::FEFLOW)
     {
-        if (fi.suffix().toLower() == "fem") // FEFLOW model files
+        if (fi.suffix().toLower() == "fem")  // FEFLOW model files
         {
             FileIO::FEFLOWMeshInterface feflowMeshIO;
             std::unique_ptr<MeshLib::Mesh> mesh(
@@ -631,14 +694,14 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
                 OGSError::box("Failed to load a FEFLOW mesh.");
             }
             FileIO::FEFLOWGeoInterface feflowGeoIO;
-            feflowGeoIO.readFEFLOWFile(fileName.toStdString(), _project.getGEOObjects());
+            feflowGeoIO.readFEFLOWFile(fileName.toStdString(),
+                                       _project.getGEOObjects());
         }
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
-
     }
     else if (t == ImportFileType::GMS)
     {
-        if (fi.suffix().toLower() == "txt") // GMS borehole files
+        if (fi.suffix().toLower() == "txt")  // GMS borehole files
         {
             auto boreholes = std::make_unique<std::vector<GeoLib::Point*>>();
             std::string name = fi.baseName().toStdString();
@@ -646,17 +709,19 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
             if (GMSInterface::readBoreholesFromGMS(boreholes.get(),
                                                    fileName.toStdString()))
             {
-                _project.getGEOObjects().addStationVec(std::move(boreholes), name);
+                _project.getGEOObjects().addStationVec(std::move(boreholes),
+                                                       name);
             }
             else
             {
                 OGSError::box("Error reading GMS file.");
             }
         }
-        else if (fi.suffix().toLower() == "3dm") // GMS mesh files
+        else if (fi.suffix().toLower() == "3dm")  // GMS mesh files
         {
             std::string name = fileName.toStdString();
-            std::unique_ptr<MeshLib::Mesh> mesh(GMSInterface::readGMS3DMMesh(name));
+            std::unique_ptr<MeshLib::Mesh> mesh(
+                GMSInterface::readGMS3DMMesh(name));
             if (mesh)
             {
                 _meshModel->addMesh(std::move(mesh));
@@ -670,10 +735,11 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     }
     else if (t == ImportFileType::GMSH)
     {
-        std::string msh_name (fileName.toStdString());
-        if (FileIO::GMSH::isGMSHMeshFile (msh_name))
+        std::string msh_name(fileName.toStdString());
+        if (FileIO::GMSH::isGMSHMeshFile(msh_name))
         {
-            std::unique_ptr<MeshLib::Mesh> mesh(FileIO::GMSH::readGMSHMesh(msh_name));
+            std::unique_ptr<MeshLib::Mesh> mesh(
+                FileIO::GMSH::readGMSHMesh(msh_name));
             if (mesh)
             {
                 _meshModel->addMesh(std::move(mesh));
@@ -706,9 +772,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
     }
 #ifdef OGS_USE_NETCDF
-    else if (t == ImportFileType::NETCDF)    // CH  01.2012
+    else if (t == ImportFileType::NETCDF)  // CH  01.2012
     {
-
         NetCdfConfigureDialog dlg(fileName.toStdString());
         dlg.exec();
         if (dlg.getMesh())
@@ -743,7 +808,8 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
         vtkImageAlgorithm* img = VtkRaster::loadImage(fileName.toStdString());
         VtkBGImageSource* bg = VtkBGImageSource::New();
         double* origin = img->GetOutput()->GetOrigin();
-        bg->SetRaster(img, origin[0], origin[1], img->GetOutput()->GetSpacing()[0]);
+        bg->SetRaster(img, origin[0], origin[1],
+                      img->GetOutput()->GetSpacing()[0]);
         bg->SetName(fileName);
         _vtkVisPipeline->addPipelineItem(bg);
         settings.setValue("lastOpenedRasterFileDirectory", dir.absolutePath());
@@ -759,14 +825,19 @@ void MainWindow::loadFile(ImportFileType::type t, const QString &fileName)
     }
     else if (t == ImportFileType::TETGEN)
     {
-        if (fi.suffix().toLower().compare("poly") == 0 || fi.suffix().toLower().compare("smesh") == 0)
+        if (fi.suffix().toLower().compare("poly") == 0 ||
+            fi.suffix().toLower().compare("smesh") == 0)
         {
             FileIO::TetGenInterface tetgen;
-            tetgen.readTetGenGeometry(fileName.toStdString(), _project.getGEOObjects());
+            tetgen.readTetGenGeometry(fileName.toStdString(),
+                                      _project.getGEOObjects());
         }
-        else {
-            settings.setValue("lastOpenedTetgenFileDirectory", QFileInfo(fileName).absolutePath());
-            QString element_fname(fi.path() + "/" + fi.completeBaseName() + ".ele");
+        else
+        {
+            settings.setValue("lastOpenedTetgenFileDirectory",
+                              QFileInfo(fileName).absolutePath());
+            QString element_fname(fi.path() + "/" + fi.completeBaseName() +
+                                  ".ele");
 
             if (!fileName.isEmpty())
             {
@@ -826,13 +897,20 @@ void MainWindow::showLicense()
 
 void MainWindow::about()
 {
-    QString about("<a href='https://www.opengeosys.org'>www.opengeosys.org</a><br /><br />");
-    about.append(QString("Version: %1<br />")
-        .arg(QString::fromStdString(GitInfoLib::GitInfo::ogs_version)));
+    QString about(
+        "<a href='https://www.opengeosys.org'>www.opengeosys.org</a><br /><br "
+        "/>");
+    about.append(
+        QString("Version: %1<br />")
+            .arg(QString::fromStdString(GitInfoLib::GitInfo::ogs_version)));
 
-    about.append(QString("Git commit: <a href='https://github.com/ufz/ogs/commit/%1'>%1</a><br />")
-        .arg(QString::fromStdString(GitInfoLib::GitInfo::git_version_sha1_short)));
-    about.append(QString("Built date: %1<br />").arg(QDate::currentDate().toString(Qt::ISODate)));
+    about.append(
+        QString("Git commit: <a "
+                "href='https://github.com/ufz/ogs/commit/%1'>%1</a><br />")
+            .arg(QString::fromStdString(
+                GitInfoLib::GitInfo::git_version_sha1_short)));
+    about.append(QString("Built date: %1<br />")
+                     .arg(QDate::currentDate().toString(Qt::ISODate)));
 
     QMessageBox::about(this, "About OpenGeoSys 6", about);
 }
@@ -852,8 +930,7 @@ QMenu* MainWindow::createImportFilesMenu()
     importFiles->addAction("&NetCDF Files...",
                            [this] { open(ImportFileType::NETCDF); });
 #endif  // OGS_USE_NETCDF
-    importFiles->addAction("&Petrel Files...",
-                           [this] { loadPetrelFiles(); });
+    importFiles->addAction("&Petrel Files...", [this] { loadPetrelFiles(); });
     importFiles->addAction("&Raster Files...",
                            [this] { open(ImportFileType::RASTER); });
     importFiles->addAction("&Shape Files...",
@@ -869,9 +946,10 @@ void MainWindow::loadPetrelFiles()
 {
     QSettings settings;
     QStringList sfc_file_names = QFileDialog::getOpenFileNames(
-            this, "Select surface data file(s) to import", "", "Petrel files (*)");
+        this, "Select surface data file(s) to import", "", "Petrel files (*)");
     QStringList well_path_file_names = QFileDialog::getOpenFileNames(
-            this, "Select well path data file(s) to import", "", "Petrel files (*)");
+        this, "Select well path data file(s) to import", "",
+        "Petrel files (*)");
     if (!sfc_file_names.empty() || !well_path_file_names.empty())
     {
         QStringList::const_iterator it = sfc_file_names.begin();
@@ -892,8 +970,8 @@ void MainWindow::loadPetrelFiles()
 
         std::string unique_str(*(sfc_files.begin()));
 
-        PetrelInterface(sfc_files, well_path_files, unique_str, &_project.getGEOObjects());
-
+        PetrelInterface(sfc_files, well_path_files, unique_str,
+                        &_project.getGEOObjects());
 
         QDir dir = QDir(sfc_file_names.at(0));
         settings.setValue("lastOpenedFileDirectory", dir.absolutePath());
@@ -929,7 +1007,7 @@ void MainWindow::writeStationListToFile(QString listName, QString fileName)
     BaseLib::IO::writeStringToFile(xml.writeToString(), fileName.toStdString());
 }
 
-void MainWindow::mapGeometry(const std::string &geo_name)
+void MainWindow::mapGeometry(const std::string& geo_name)
 {
     GeoOnMeshMappingDialog dlg(this->_project.getMeshObjects());
     if (dlg.exec() != QDialog::Accepted)
@@ -937,17 +1015,19 @@ void MainWindow::mapGeometry(const std::string &geo_name)
         return;
     }
 
-    int choice (dlg.getDataSetChoice());
+    int choice(dlg.getDataSetChoice());
 
     QString file_name("");
-    if (choice<2) // load something from a file
+    if (choice < 2)  // load something from a file
     {
-        QString file_type[2] = {"OpenGeoSys mesh files (*.vtu *.msh)", "Raster files(*.asc *.grd)" };
+        QString file_type[2] = {"OpenGeoSys mesh files (*.vtu *.msh)",
+                                "Raster files(*.asc *.grd)"};
         QSettings settings;
-        file_name = QFileDialog::getOpenFileName( this,
-                                                  "Select file for mapping",
-                                                  settings.value("lastOpenedFileDirectory").toString(),
-                                                  file_type[choice]);
+        file_name = QFileDialog::getOpenFileName(
+            this,
+            "Select file for mapping",
+            settings.value("lastOpenedFileDirectory").toString(),
+            file_type[choice]);
         if (file_name.isEmpty())
         {
             return;
@@ -958,12 +1038,13 @@ void MainWindow::mapGeometry(const std::string &geo_name)
 
     MeshGeoToolsLib::GeoMapper geo_mapper(_project.getGEOObjects(), geo_name);
     QFileInfo fi(file_name);
-    if (choice == 1) // load raster from file
+    if (choice == 1)  // load raster from file
     {
         if (fi.suffix().toLower() == "asc" || fi.suffix().toLower() == "grd")
         {
-            std::unique_ptr<GeoLib::Raster> raster (
-                FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name.toStdString()));
+            std::unique_ptr<GeoLib::Raster> raster(
+                FileIO::AsciiRasterInterface::getRasterFromASCFile(
+                    file_name.toStdString()));
             if (raster)
             {
                 geo_mapper.mapOnDEM(std::move(raster));
@@ -981,11 +1062,10 @@ void MainWindow::mapGeometry(const std::string &geo_name)
         return;
     }
 
-    MeshLib::Mesh* mesh (nullptr);
-    if (choice == 0) // load mesh from file
+    MeshLib::Mesh* mesh(nullptr);
+    if (choice == 0)  // load mesh from file
     {
-        if (fi.suffix().toLower() == "vtu" ||
-            fi.suffix().toLower() == "vtk" ||
+        if (fi.suffix().toLower() == "vtu" || fi.suffix().toLower() == "vtk" ||
             fi.suffix().toLower() == "msh")
         {
             mesh = MeshLib::IO::readMeshFromFile(file_name.toStdString());
@@ -1013,7 +1093,8 @@ void MainWindow::mapGeometry(const std::string &geo_name)
         GeoLib::DuplicateGeometry dup(_project.getGEOObjects(), geo_name,
                                       new_geo_name);
         new_geo_name = dup.getFinalizedOutputName();
-        MeshGeoToolsLib::GeoMapper mapper(_project.getGEOObjects(), new_geo_name);
+        MeshGeoToolsLib::GeoMapper mapper(_project.getGEOObjects(),
+                                          new_geo_name);
         mapper.advancedMapOnMesh(*mesh);
         _geo_model->updateGeometry(new_geo_name);
     }
@@ -1028,15 +1109,17 @@ void MainWindow::convertMeshToGeometry(const MeshLib::Mesh* mesh)
     MeshLib::convertMeshToGeo(*mesh, _project.getGEOObjects());
 }
 
-void MainWindow::exportBoreholesToGMS(std::string listName, std::string fileName)
+void MainWindow::exportBoreholesToGMS(std::string listName,
+                                      std::string fileName)
 {
-    const std::vector<GeoLib::Point*>* stations(_project.getGEOObjects().getStationVec(listName));
+    const std::vector<GeoLib::Point*>* stations(
+        _project.getGEOObjects().getStationVec(listName));
     GMSInterface::writeBoreholesToGMS(stations, fileName);
 }
 
-void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
-                          unsigned param1, double param2, double param3, double param4,
-                          bool delete_geo_file)
+void MainWindow::callGMSH(std::vector<std::string>& selectedGeometries,
+                          unsigned param1, double param2, double param3,
+                          double param4, bool delete_geo_file)
 {
     if (!selectedGeometries.empty())
     {
@@ -1047,9 +1130,10 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
         if (!delete_geo_file)
         {
-            fileName = QFileDialog::getSaveFileName(this, "Save GMSH-file as",
-                                                    LastSavedFileDirectory::getDir() + "tmp_gmsh.geo",
-                                                    "GMSH geometry files (*.geo)");
+            fileName = QFileDialog::getSaveFileName(
+                this, "Save GMSH-file as",
+                LastSavedFileDirectory::getDir() + "tmp_gmsh.geo",
+                "GMSH geometry files (*.geo)");
         }
         else
         {
@@ -1058,14 +1142,17 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
 
         if (!fileName.isEmpty())
         {
-            if (param4 == -1) { // adaptive meshing selected
+            if (param4 == -1)
+            {  // adaptive meshing selected
                 FileIO::GMSH::GMSHInterface gmsh_io(
                     _project.getGEOObjects(), true,
                     FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
                     param2, param3, param1, selectedGeometries, false, false);
                 BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
                                                fileName.toStdString());
-            } else { // homogeneous meshing selected
+            }
+            else
+            {  // homogeneous meshing selected
                 FileIO::GMSH::GMSHInterface gmsh_io(
                     _project.getGEOObjects(), true,
                     FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
@@ -1077,7 +1164,9 @@ void MainWindow::callGMSH(std::vector<std::string> & selectedGeometries,
             if (system(nullptr) != 0)  // command processor available
             {
                 QSettings settings;
-                std::string gmsh_path = settings.value("DataExplorerGmshPath").toString().toStdString();
+                std::string gmsh_path = settings.value("DataExplorerGmshPath")
+                                            .toString()
+                                            .toStdString();
 
                 if (!gmsh_path.empty())
                 {
@@ -1144,13 +1233,14 @@ void MainWindow::showFileConverter()
     dlg->raise();
 }
 
-void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
+void MainWindow::showDiagramPrefsDialog(QModelIndex& index)
 {
     QString listName;
     GeoLib::Station* stn =
         _geo_model->getStationModel()->stationFromIndex(index, listName);
 
-    if ((stn->type() == GeoLib::Station::StationType::STATION) && stn->getSensorData())
+    if ((stn->type() == GeoLib::Station::StationType::STATION) &&
+        stn->getSensorData())
     {
         auto* prefs(new DiagramPrefsDialog(stn));
         prefs->setAttribute(Qt::WA_DeleteOnClose);
@@ -1165,9 +1255,10 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex &index)
 void MainWindow::showDiagramPrefsDialog()
 {
     QSettings settings;
-    QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-                                                     settings.value("lastOpenedFileDirectory").toString(),
-                                                     "Text files (*.txt);;All files (* *.*)");
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Select data file to open",
+        settings.value("lastOpenedFileDirectory").toString(),
+        "Text files (*.txt);;All files (* *.*)");
     if (!fileName.isEmpty())
     {
         QDir dir = QDir(fileName);
@@ -1178,23 +1269,32 @@ void MainWindow::showDiagramPrefsDialog()
     }
 }
 
-void MainWindow::showGeoNameDialog(const std::string &geometry_name, const GeoLib::GEOTYPE object_type, std::size_t id)
+void MainWindow::showGeoNameDialog(const std::string& geometry_name,
+                                   const GeoLib::GEOTYPE object_type,
+                                   std::size_t id)
 {
-    std::string old_name = _project.getGEOObjects().getElementNameByID(geometry_name, object_type, id);
-    SetNameDialog dlg(GeoLib::convertGeoTypeToString(object_type), id, old_name);
+    std::string old_name = _project.getGEOObjects().getElementNameByID(
+        geometry_name, object_type, id);
+    SetNameDialog dlg(GeoLib::convertGeoTypeToString(object_type), id,
+                      old_name);
     if (dlg.exec() != QDialog::Accepted)
     {
         return;
     }
 
-    _geo_model->addNameForElement(geometry_name, object_type, id, dlg.getNewName());
-    static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())->setNameForItem(geometry_name, object_type,
-        id, _project.getGEOObjects().getElementNameByID(geometry_name, object_type, id));
+    _geo_model->addNameForElement(geometry_name, object_type, id,
+                                  dlg.getNewName());
+    static_cast<GeoTreeModel*>(this->geoTabWidget->treeView->model())
+        ->setNameForItem(geometry_name, object_type, id,
+                         _project.getGEOObjects().getElementNameByID(
+                             geometry_name, object_type, id));
 }
 
-void MainWindow::showStationNameDialog(const std::string& stn_vec_name, std::size_t id)
+void MainWindow::showStationNameDialog(const std::string& stn_vec_name,
+                                       std::size_t id)
 {
-    std::vector<GeoLib::Point*> const* stations = _project.getGEOObjects().getStationVec(stn_vec_name);
+    std::vector<GeoLib::Point*> const* stations =
+        _project.getGEOObjects().getStationVec(stn_vec_name);
     auto* const stn = static_cast<GeoLib::Station*>((*stations)[id]);
     SetNameDialog dlg("Station", id, stn->getName());
     if (dlg.exec() != QDialog::Accepted)
@@ -1203,22 +1303,23 @@ void MainWindow::showStationNameDialog(const std::string& stn_vec_name, std::siz
     }
 
     stn->setName(dlg.getNewName());
-    static_cast<StationTreeModel*>(this->stationTabWidget->treeView->model())->setNameForItem(stn_vec_name, id, stn->getName());
+    static_cast<StationTreeModel*>(this->stationTabWidget->treeView->model())
+        ->setNameForItem(stn_vec_name, id, stn->getName());
 }
 
 void MainWindow::showCreateStructuredGridDialog()
 {
     CreateStructuredGridDialog dlg;
-    connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)),
-            _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
+    connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(),
+            SLOT(addMesh(MeshLib::Mesh*)));
     dlg.exec();
 }
 
 void MainWindow::showMeshElementRemovalDialog()
 {
     MeshElementRemovalDialog dlg(this->_project);
-    connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)),
-            _meshModel.get(), SLOT(addMesh(MeshLib::Mesh*)));
+    connect(&dlg, SIGNAL(meshAdded(MeshLib::Mesh*)), _meshModel.get(),
+            SLOT(addMesh(MeshLib::Mesh*)));
     dlg.exec();
 }
 
@@ -1238,24 +1339,30 @@ void MainWindow::convertPointsToStations(std::string const& geo_name)
     }
 }
 
-void MainWindow::showLineEditDialog(const std::string &geoName)
+void MainWindow::showLineEditDialog(const std::string& geoName)
 {
     LineEditDialog lineEdit(
         *(_project.getGEOObjects().getPolylineVecObj(geoName)));
-    connect(&lineEdit, SIGNAL(connectPolylines(const std::string&,
-                                               std::vector<std::size_t>, double,
-                                               std::string, bool, bool)),
-            _geo_model.get(), SLOT(connectPolylineSegments(
-                             const std::string&, std::vector<std::size_t>,
-                             double, std::string, bool, bool)));
+    connect(
+        &lineEdit,
+        SIGNAL(connectPolylines(const std::string&, std::vector<std::size_t>,
+                                double, std::string, bool, bool)),
+        _geo_model.get(),
+        SLOT(connectPolylineSegments(const std::string&,
+                                     std::vector<std::size_t>, double,
+                                     std::string, bool, bool)));
     lineEdit.exec();
 }
 
 void MainWindow::showGMSHPrefsDialog()
 {
     GMSHPrefsDialog dlg(_project.getGEOObjects());
-    connect(&dlg, SIGNAL(requestMeshing(std::vector<std::string> &, unsigned, double, double, double, bool)),
-            this, SLOT(callGMSH(std::vector<std::string> &, unsigned, double, double, double, bool)));
+    connect(&dlg,
+            SIGNAL(requestMeshing(std::vector<std::string>&, unsigned, double,
+                                  double, double, bool)),
+            this,
+            SLOT(callGMSH(std::vector<std::string>&, unsigned, double, double,
+                          double, bool)));
     dlg.exec();
 }
 
@@ -1266,7 +1373,7 @@ void MainWindow::showMergeGeometriesDialog()
     {
         return;
     }
-    std::string name (dlg.getGeometryName());
+    std::string name(dlg.getGeometryName());
     if (_project.getGEOObjects().mergeGeometries(dlg.getSelectedGeometries(),
                                                  name) < 0)
     {
@@ -1274,7 +1381,8 @@ void MainWindow::showMergeGeometriesDialog()
     }
 }
 
-void MainWindow::showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource* mshSource)
+void MainWindow::showMeshQualitySelectionDialog(
+    MeshLib::VtkMappedMeshSource* mshSource)
 {
     if (mshSource == nullptr)
     {
@@ -1286,9 +1394,11 @@ void MainWindow::showMeshQualitySelectionDialog(MeshLib::VtkMappedMeshSource* ms
     {
         return;
     }
-    MeshLib::MeshQualityType const type (dlg.getSelectedMetric());
-    MeshLib::ElementQualityInterface quality_interface(*mshSource->GetMesh(), type);
-    _vtkVisPipeline->showMeshElementQuality(mshSource, type, quality_interface.getQualityVector());
+    MeshLib::MeshQualityType const type(dlg.getSelectedMetric());
+    MeshLib::ElementQualityInterface quality_interface(*mshSource->GetMesh(),
+                                                       type);
+    _vtkVisPipeline->showMeshElementQuality(
+        mshSource, type, quality_interface.getQualityVector());
 
     if (dlg.getHistogram())
     {
@@ -1307,9 +1417,7 @@ void MainWindow::showDataExplorerSettingsDialog()
     dlg.exec();
 }
 
-void MainWindow::FEMTestStart()
-{
-}
+void MainWindow::FEMTestStart() {}
 
 void MainWindow::ShowWindow()
 {
@@ -1321,11 +1429,12 @@ void MainWindow::HideWindow()
     this->hide();
 }
 
-void MainWindow::loadFileOnStartUp(const QString &fileName)
+void MainWindow::loadFileOnStartUp(const QString& fileName)
 {
     QString ext = QFileInfo(fileName).suffix();
-    if (ext=="msh" || ext=="vtu" || ext=="gli" || ext=="gml") {
-        this->loadFile(ImportFileType::OGS,fileName);
+    if (ext == "msh" || ext == "vtu" || ext == "gli" || ext == "gml")
+    {
+        this->loadFile(ImportFileType::OGS, fileName);
     }
 }
 
@@ -1344,14 +1453,15 @@ void MainWindow::on_actionExportVTK_triggered(bool checked /*= false*/)
         QDir const dir = QDir(filename);
         settings.setValue("lastExportedFileDirectory", dir.absolutePath());
 
-        std::string const basename = QFileInfo(filename).path().toStdString() + "/" +
-                                     QFileInfo(filename).baseName().toStdString();
+        std::string const basename =
+            QFileInfo(filename).path().toStdString() + "/" +
+            QFileInfo(filename).baseName().toStdString();
         TreeModelIterator it(_vtkVisPipeline.get());
         ++it;
         while (*it)
         {
             std::string const name = basename + std::to_string(++count) + "-" +
-                (*it)->data(0).toString().toStdString();
+                                     (*it)->data(0).toString().toStdString();
             static_cast<VtkVisPipelineItem*>(*it)->writeToFile(name);
             ++it;
         }
@@ -1362,9 +1472,10 @@ void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
 {
     Q_UNUSED(checked)
     QSettings settings;
-    QString fileName = QFileDialog::getSaveFileName(this, "Save scene to VRML file",
-                                                    settings.value("lastExportedFileDirectory").toString(),
-                                                    "VRML files (*.wrl);;");
+    QString fileName = QFileDialog::getSaveFileName(
+        this, "Save scene to VRML file",
+        settings.value("lastExportedFileDirectory").toString(),
+        "VRML files (*.wrl);;");
     if (!fileName.isEmpty())
     {
         QDir dir = QDir(fileName);
@@ -1373,7 +1484,7 @@ void MainWindow::on_actionExportVRML2_triggered(bool checked /*= false*/)
         vtkVRMLExporter* exporter = vtkVRMLExporter::New();
         exporter->SetFileName(fileName.toStdString().c_str());
         exporter->SetRenderWindow(
-                visualizationWidget->vtkWidget->GetRenderWindow());
+            visualizationWidget->vtkWidget->GetRenderWindow());
         exporter->Write();
         exporter->Delete();
     }
@@ -1383,9 +1494,9 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
 {
     Q_UNUSED(checked)
     QSettings settings;
-    QString fileName = QFileDialog::getSaveFileName(this, "Save scene to Wavefront OBJ files",
-                                                    settings.value("lastExportedFileDirectory").toString(),
-                                                    ";;");
+    QString fileName = QFileDialog::getSaveFileName(
+        this, "Save scene to Wavefront OBJ files",
+        settings.value("lastExportedFileDirectory").toString(), ";;");
     if (!fileName.isEmpty())
     {
         QDir dir = QDir(fileName);
@@ -1394,7 +1505,7 @@ void MainWindow::on_actionExportObj_triggered(bool checked /*= false*/)
         vtkOBJExporter* exporter = vtkOBJExporter::New();
         exporter->SetFilePrefix(fileName.toStdString().c_str());
         exporter->SetRenderWindow(
-                visualizationWidget->vtkWidget->GetRenderWindow());
+            visualizationWidget->vtkWidget->GetRenderWindow());
         exporter->Write();
         exporter->Delete();
     }
@@ -1416,13 +1527,13 @@ void MainWindow::createPresentationMenu()
     else
     {
         int count = 0;
-        const int currentScreen = QApplication::desktop()->screenNumber(
-                visualizationWidget);
+        const int currentScreen =
+            QApplication::desktop()->screenNumber(visualizationWidget);
         foreach (QRect screenGeo, _screenGeometries)
         {
             Q_UNUSED(screenGeo);
-            QAction* action = new QAction(
-                    QString("On screen %1").arg(count), menu);
+            QAction* action =
+                new QAction(QString("On screen %1").arg(count), menu);
             connect(action, SIGNAL(triggered()), this,
                     SLOT(startPresentationMode()));
             if (count == currentScreen)
@@ -1441,14 +1552,14 @@ void MainWindow::startPresentationMode()
     _windowState = this->saveState();
 
     // Get the screen number from the QAction which sent the signal
-    QString actionText = static_cast<QAction*> (QObject::sender())->text();
+    QString actionText = static_cast<QAction*>(QObject::sender())->text();
     int screen = actionText.split(" ").back().toInt();
 
     // Move the widget to the screen and maximize it
     // Real fullscreen hides the menu
     _vtkWidget->setParent(nullptr, Qt::Window);
-    _vtkWidget->move(QPoint(_screenGeometries[screen].x(),
-                            _screenGeometries[screen].y()));
+    _vtkWidget->move(
+        QPoint(_screenGeometries[screen].x(), _screenGeometries[screen].y()));
     //_vtkWidget->showFullScreen();
     _vtkWidget->showMaximized();
 

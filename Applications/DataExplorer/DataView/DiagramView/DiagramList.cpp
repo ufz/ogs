@@ -13,16 +13,16 @@
  */
 
 #include "DiagramList.h"
-#include "GetDateTime.h"
 
-#include "BaseLib/Logging.h"
-
-#include "DateTools.h"
-#include "StringTools.h"
-#include "SensorData.h"
 #include <QFile>
 #include <QTextStream>
 #include <limits>
+
+#include "BaseLib/Logging.h"
+#include "DateTools.h"
+#include "GetDateTime.h"
+#include "SensorData.h"
+#include "StringTools.h"
 
 DiagramList::DiagramList() : _xLabel(""), _yLabel(""), _xUnit(""), _yUnit("") {}
 
@@ -82,7 +82,7 @@ float DiagramList::calcMaxYValue()
     return max;
 }
 
-bool DiagramList::getPath(QPainterPath &path, float scaleX, float scaleY)
+bool DiagramList::getPath(QPainterPath& path, float scaleX, float scaleY)
 {
     QPointF p;
     if (getPoint(p, 0))
@@ -102,7 +102,7 @@ bool DiagramList::getPath(QPainterPath &path, float scaleX, float scaleY)
     return false;
 }
 
-bool DiagramList::getPoint(QPointF &p, std::size_t i)
+bool DiagramList::getPoint(QPointF& p, std::size_t i)
 {
     if (i < _coords.size())
     {
@@ -154,10 +154,10 @@ bool DiagramList::getPoint(QPointF &p, std::size_t i)
     return 1;
    }*/
 
-int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
+int DiagramList::readList(const QString& path, std::vector<DiagramList*>& lists)
 {
     QFile file(path);
-    QTextStream in( &file );
+    QTextStream in(&file);
 
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -176,16 +176,17 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
         {
             auto* l = new DiagramList;
             l->setName(fields.takeFirst());
-            //value = strtod(BaseLib::replaceStringreplaceString(",", ".", fields.takeFirst().toStdString()).c_str(),0);
-            //l->setStartDate(startDate);
-            //l->addNextPoint(0,value);
+            // value = strtod(BaseLib::replaceStringreplaceString(",", ".",
+            // fields.takeFirst().toStdString()).c_str(),0);
+            // l->setStartDate(startDate);
+            // l->addNextPoint(0,value);
             lists.push_back(l);
         }
 
         bool first_loop(true);
         QDateTime startDate;
         QDateTime currentDate;
-        unsigned line_count (1);
+        unsigned line_count(1);
 
         while (!in.atEnd())
         {
@@ -215,7 +216,7 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
                                    ",", ".", fields.takeFirst().toStdString())
                                    .c_str(),
                                nullptr));
-                    lists[i]->addNextPoint(numberOfSecs,value);
+                    lists[i]->addNextPoint(numberOfSecs, value);
                 }
             }
             else
@@ -244,16 +245,18 @@ int DiagramList::readList(const QString &path, std::vector<DiagramList*> &lists)
     return nLists;
 }
 
-int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lists)
+int DiagramList::readList(const SensorData* data,
+                          std::vector<DiagramList*>& lists)
 {
-    std::vector<SensorDataType> const& time_series_names (data->getTimeSeriesNames());
+    std::vector<SensorDataType> const& time_series_names(
+        data->getTimeSeriesNames());
     int nLists(time_series_names.size());
 
     std::vector<std::size_t> time_steps;
-    if (data->getStepSize()>0)
+    if (data->getStepSize() > 0)
     {
-        const std::size_t start    = data->getStartTime();
-        const std::size_t end      = data->getEndTime();
+        const std::size_t start = data->getStartTime();
+        const std::size_t end = data->getEndTime();
         const std::size_t stepsize = data->getStepSize();
         for (std::size_t i = start; i <= end; i += stepsize)
         {
@@ -265,23 +268,25 @@ int DiagramList::readList(const SensorData* data, std::vector<DiagramList*> &lis
         time_steps = data->getTimeSteps();
     }
 
-    bool is_date (false);
+    bool is_date(false);
 
     if (!(BaseLib::int2date(time_steps[0])).empty())
     {
         is_date = true;
     }
 
-    std::size_t nValues (time_steps.size());
+    std::size_t nValues(time_steps.size());
 
     for (int i = 0; i < nLists; i++)
     {
         auto* l = new DiagramList;
-        l->setName(QString::fromStdString(SensorData::convertSensorDataType2String(time_series_names[i])));
+        l->setName(QString::fromStdString(
+            SensorData::convertSensorDataType2String(time_series_names[i])));
         l->setXLabel("Time");
         lists.push_back(l);
 
-        const std::vector<float> *time_series = data->getTimeSeries(time_series_names[i]);
+        const std::vector<float>* time_series =
+            data->getTimeSeries(time_series_names[i]);
 
         if (is_date)
         {
@@ -389,5 +394,3 @@ void DiagramList::update()
     _minY = calcMinYValue();
     _maxY = calcMaxYValue();
 }
-
-

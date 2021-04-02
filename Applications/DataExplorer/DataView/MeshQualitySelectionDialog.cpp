@@ -13,11 +13,12 @@
  */
 
 #include "MeshQualitySelectionDialog.h"
-#include "OGSError.h"
 
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QSettings>
+
+#include "OGSError.h"
 
 /// Constructor
 MeshQualitySelectionDialog::MeshQualitySelectionDialog(QDialog* parent)
@@ -29,7 +30,8 @@ MeshQualitySelectionDialog::MeshQualitySelectionDialog(QDialog* parent)
 
 MeshQualitySelectionDialog::~MeshQualitySelectionDialog() = default;
 
-void MeshQualitySelectionDialog::on_histogramCheckBox_toggled(bool is_checked) const
+void MeshQualitySelectionDialog::on_histogramCheckBox_toggled(
+    bool is_checked) const
 {
     histogramPathEdit->setEnabled(is_checked);
     histogramPathButton->setEnabled(is_checked);
@@ -39,9 +41,9 @@ void MeshQualitySelectionDialog::on_histogramPathButton_pressed()
 {
     QSettings settings;
     QFileInfo fi(settings.value("lastOpenedFileDirectory").toString());
-    QString file_name = QFileDialog::getSaveFileName(this, "Save histogram as",
-        fi.baseName(),
-        "Text files (*.txt);;All files (* *.*)");
+    QString file_name =
+        QFileDialog::getSaveFileName(this, "Save histogram as", fi.baseName(),
+                                     "Text files (*.txt);;All files (* *.*)");
     this->histogramPathEdit->setText(file_name);
 }
 

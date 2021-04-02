@@ -15,8 +15,6 @@
 // ** INCLUDES **
 #include "VtkCompositeImageToCylindersFilter.h"
 
-#include "VtkImageDataToLinePolyDataFilter.h"
-
 #include <vtkLookupTable.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
@@ -28,8 +26,10 @@
 #include <QVariant>
 #include <QVector>
 
+#include "VtkImageDataToLinePolyDataFilter.h"
+
 VtkCompositeImageToCylindersFilter::VtkCompositeImageToCylindersFilter(
-        vtkAlgorithm* inputAlgorithm )
+    vtkAlgorithm* inputAlgorithm)
     : VtkCompositeFilter(inputAlgorithm), _lineFilter(nullptr)
 {
     this->init();
@@ -48,7 +48,10 @@ void VtkCompositeImageToCylindersFilter::init()
 
     double range[2];
     // The data is always on points
-    vtkDataSet::SafeDownCast(_lineFilter->GetOutputDataObject(0))->GetPointData()->GetScalars()->GetRange(range);
+    vtkDataSet::SafeDownCast(_lineFilter->GetOutputDataObject(0))
+        ->GetPointData()
+        ->GetScalars()
+        ->GetRange(range);
 
     vtkLookupTable* colormap = vtkLookupTable::New();
     colormap->SetTableRange(range[0], range[1]);
@@ -79,7 +82,8 @@ void VtkCompositeImageToCylindersFilter::init()
     _outputAlgorithm = tubeFilter;
 }
 
-void VtkCompositeImageToCylindersFilter::SetUserProperty( QString name, QVariant value )
+void VtkCompositeImageToCylindersFilter::SetUserProperty(QString name,
+                                                         QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
@@ -97,11 +101,13 @@ void VtkCompositeImageToCylindersFilter::SetUserProperty( QString name, QVariant
     }
     else if (name.compare("NumberOfSides") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetNumberOfSides(value.toInt());
+        static_cast<vtkTubeFilter*>(_outputAlgorithm)
+            ->SetNumberOfSides(value.toInt());
     }
     else if (name.compare("Capping") == 0)
     {
-        static_cast<vtkTubeFilter*>(_outputAlgorithm)->SetCapping(value.toBool());
+        static_cast<vtkTubeFilter*>(_outputAlgorithm)
+            ->SetCapping(value.toBool());
     }
     else if (name.compare("RadiusFactor") == 0)
     {
@@ -110,8 +116,8 @@ void VtkCompositeImageToCylindersFilter::SetUserProperty( QString name, QVariant
     }
 }
 
-void VtkCompositeImageToCylindersFilter::SetUserVectorProperty( QString name,
-                                                                QList<QVariant> values )
+void VtkCompositeImageToCylindersFilter::SetUserVectorProperty(
+    QString name, QList<QVariant> values)
 {
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 

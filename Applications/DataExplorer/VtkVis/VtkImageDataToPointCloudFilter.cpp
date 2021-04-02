@@ -11,9 +11,6 @@
 // ** INCLUDES **
 #include "VtkImageDataToPointCloudFilter.h"
 
-#include <algorithm>
-#include <vector>
-
 #include <vtkDoubleArray.h>
 #include <vtkIdList.h>
 #include <vtkImageData.h>
@@ -24,6 +21,9 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+
+#include <algorithm>
+#include <vector>
 
 vtkStandardNewMacro(VtkImageDataToPointCloudFilter);
 
@@ -57,7 +57,8 @@ int VtkImageDataToPointCloudFilter::RequestData(
 
     if (input->GetScalarSize() != sizeof(float))
     {
-        vtkDebugMacro("Existing data does not have float-type and cannot be processed. "
+        vtkDebugMacro(
+            "Existing data does not have float-type and cannot be processed. "
             "Aborting filter process...");
         return 0;
     }
@@ -120,7 +121,8 @@ int VtkImageDataToPointCloudFilter::RequestData(
     new_points->SetNumberOfPoints(sum);
     vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
     cells->Allocate(sum);
-    vtkSmartPointer<vtkDoubleArray> intensity = vtkSmartPointer<vtkDoubleArray>::New();
+    vtkSmartPointer<vtkDoubleArray> intensity =
+        vtkSmartPointer<vtkDoubleArray>::New();
     intensity->Allocate(sum);
     intensity->SetName("Intensity");
     double const half_cellsize(spacing[0] / 2.0);
@@ -149,10 +151,12 @@ int VtkImageDataToPointCloudFilter::RequestData(
     output->SetPoints(new_points);
     output->SetVerts(cells);
     output->GetPointData()->AddArray(intensity);
-    output->GetPointData()->SetActiveAttribute("Intensity", vtkDataSetAttributes::SCALARS);
+    output->GetPointData()->SetActiveAttribute("Intensity",
+                                               vtkDataSetAttributes::SCALARS);
     output->Squeeze();
 
-    vtkDebugMacro(<< "Created " << new_points->GetNumberOfPoints() << " points.");
+    vtkDebugMacro(<< "Created " << new_points->GetNumberOfPoints()
+                  << " points.");
     return 1;
 }
 
@@ -176,7 +180,8 @@ void VtkImageDataToPointCloudFilter::createPoints(
     }
 }
 
-double VtkImageDataToPointCloudFilter::getRandomNumber(double const& min, double const& max) const
+double VtkImageDataToPointCloudFilter::getRandomNumber(double const& min,
+                                                       double const& max) const
 {
     return (static_cast<double>(std::rand()) / RAND_MAX) * (max - min) + min;
 }
@@ -189,6 +194,7 @@ std::size_t VtkImageDataToPointCloudFilter::interpolate(double low,
     p = std::clamp(p, low, high);
     double const r = (p - low) / (high - low);
     return static_cast<std::size_t>(
-        (MaxNumberOfPointsPerCell - MinNumberOfPointsPerCell) * std::pow(r, gamma) +
-         MinNumberOfPointsPerCell);
+        (MaxNumberOfPointsPerCell - MinNumberOfPointsPerCell) *
+            std::pow(r, gamma) +
+        MinNumberOfPointsPerCell);
 }

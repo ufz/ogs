@@ -15,21 +15,20 @@
 // ** INCLUDES **
 #include "VtkTextureOnSurfaceFilter.h"
 
-#include "BaseLib/Logging.h"
-
 #include <vtkCellData.h>
 #include <vtkFloatArray.h>
+#include <vtkImageAlgorithm.h>
+#include <vtkImageShiftScale.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
+#include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
-#include <vtkImageShiftScale.h>
-#include <vtkImageAlgorithm.h>
-#include <vtkProperty.h>
 #include <vtkTexture.h>
 
+#include "BaseLib/Logging.h"
 #include "MathTools.h"
 #include "VtkVisHelper.h"
 
@@ -38,14 +37,14 @@ vtkStandardNewMacro(VtkTextureOnSurfaceFilter);
 VtkTextureOnSurfaceFilter::VtkTextureOnSurfaceFilter() = default;
 VtkTextureOnSurfaceFilter::~VtkTextureOnSurfaceFilter() = default;
 
-void VtkTextureOnSurfaceFilter::PrintSelf( ostream& os, vtkIndent indent )
+void VtkTextureOnSurfaceFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-    this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os, indent);
 }
 
-int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
-                                            vtkInformationVector** inputVector,
-                                            vtkInformationVector* outputVector )
+int VtkTextureOnSurfaceFilter::RequestData(vtkInformation* request,
+                                           vtkInformationVector** inputVector,
+                                           vtkInformationVector* outputVector)
 {
     (void)request;
 
@@ -56,7 +55,8 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
     }
 
     vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
-    vtkPolyData* input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkPolyData* input =
+        vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     int dims[3];
     this->GetTexture()->GetInput()->GetDimensions(dims);
@@ -69,42 +69,43 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
         static_cast<int>(_origin.first + (imgWidth * _scalingFactor)),
         static_cast<int>(_origin.second + (imgHeight * _scalingFactor)));
 
-    //calculate texture coordinates
+    // calculate texture coordinates
     vtkPoints* points = input->GetPoints();
-    vtkSmartPointer<vtkFloatArray> textureCoordinates = vtkSmartPointer<vtkFloatArray>::New();
+    vtkSmartPointer<vtkFloatArray> textureCoordinates =
+        vtkSmartPointer<vtkFloatArray>::New();
     textureCoordinates->SetNumberOfComponents(2);
     std::size_t nPoints = points->GetNumberOfPoints();
     textureCoordinates->SetNumberOfTuples(nPoints);
     textureCoordinates->SetName("textureCoords");
-/*  // adaptation for netcdf-curtain for TERENO Demo
-    double dist(0.0);
-    for (std::size_t i = 0; i < nPoints; i++)
-    {
-        double coords[3];
-        if ((i==0) || (i==173))
+    /*  // adaptation for netcdf-curtain for TERENO Demo
+        double dist(0.0);
+        for (std::size_t i = 0; i < nPoints; i++)
         {
-            if (i==0) dist=0;
-        }
-        else
-        {
-            points->GetPoint(i-1, coords);
-            GeoLib::Point* pnt = new GeoLib::Point(coords);
-            points->GetPoint(i, coords);
-            GeoLib::Point* pnt2 = new GeoLib::Point(coords);
-            if (i<173)
-                dist += std::sqrt(MathLib::sqrDist(pnt, pnt2));
+            double coords[3];
+            if ((i==0) || (i==173))
+            {
+                if (i==0) dist=0;
+            }
             else
-                dist -= std::sqrt(MathLib::sqrDist(pnt, pnt2));
+            {
+                points->GetPoint(i-1, coords);
+                GeoLib::Point* pnt = new GeoLib::Point(coords);
+                points->GetPoint(i, coords);
+                GeoLib::Point* pnt2 = new GeoLib::Point(coords);
+                if (i<173)
+                    dist += std::sqrt(MathLib::sqrDist(pnt, pnt2));
+                else
+                    dist -= std::sqrt(MathLib::sqrDist(pnt, pnt2));
+            }
+            points->GetPoint(i, coords);
+            double x = MathLib::normalize(0, 8404, dist);
+            double z = MathLib::normalize(-79.5, 1.5, coords[2]);
+            float newcoords[2] = {x, z};
+            textureCoordinates->InsertNextTuple(newcoords);
         }
-        points->GetPoint(i, coords);
-        double x = MathLib::normalize(0, 8404, dist);
-        double z = MathLib::normalize(-79.5, 1.5, coords[2]);
-        float newcoords[2] = {x, z};
-        textureCoordinates->InsertNextTuple(newcoords);
-    }
-*/
+    */
 
-    int const range[2] = { max.first - min.first, max.second - min.second };
+    int const range[2] = {max.first - min.first, max.second - min.second};
     // Scale values relative to the range.
 
     double coords[3];
@@ -113,13 +114,14 @@ int VtkTextureOnSurfaceFilter::RequestData( vtkInformation* request,
         points->GetPoint(i, coords);
 
         textureCoordinates->SetTuple2(i,
-            (coords[0] - min.first) / range[0],
-            (coords[1] - min.second) / range[1]);
+                                      (coords[0] - min.first) / range[0],
+                                      (coords[1] - min.second) / range[1]);
     }
 
     // put it all together
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
-    vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkPolyData* output =
+        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
     output->CopyStructure(input);
     output->GetPointData()->PassData(input->GetPointData());
     output->GetCellData()->PassData(input->GetCellData());
@@ -134,11 +136,13 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img)
     double range[2];
     img->Update();
     img->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
-    vtkSmartPointer<vtkImageShiftScale> scale = vtkSmartPointer<vtkImageShiftScale>::New();
+    vtkSmartPointer<vtkImageShiftScale> scale =
+        vtkSmartPointer<vtkImageShiftScale>::New();
     scale->SetInputConnection(img->GetOutputPort());
     scale->SetShift(-range[0]);
-    scale->SetScale(255.0/(range[1]-range[0]));
-    scale->SetOutputScalarTypeToUnsignedChar(); // Comment this out to get colored grayscale textures
+    scale->SetScale(255.0 / (range[1] - range[0]));
+    scale->SetOutputScalarTypeToUnsignedChar();  // Comment this out to get
+                                                 // colored grayscale textures
     scale->Update();
 
     vtkTexture* texture = vtkTexture::New();
@@ -153,7 +157,7 @@ void VtkTextureOnSurfaceFilter::SetRaster(vtkImageAlgorithm* img)
     _scalingFactor = img->GetOutput()->GetSpacing()[0];
 }
 
-void VtkTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )
+void VtkTextureOnSurfaceFilter::SetUserProperty(QString name, QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 }

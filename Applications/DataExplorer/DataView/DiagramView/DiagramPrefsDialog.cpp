@@ -13,19 +13,20 @@
  */
 
 #include "DiagramPrefsDialog.h"
+
+#include <QCheckBox>
+#include <QFileDialog>
+#include <QMessageBox>
+
 #include "DetailWindow.h"
 #include "DiagramList.h"
 #include "GetDateTime.h"
 #include "OGSError.h"
 #include "Station.h"
 
-#include <QCheckBox>
-#include <QFileDialog>
-#include <QMessageBox>
-
 DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
-                                       const QString &listName,
-                                       //DatabaseConnection* db,
+                                       const QString& listName,
+                                       // DatabaseConnection* db,
                                        QDialog* parent)
     : QDialog(parent), _window(nullptr)
 {
@@ -44,12 +45,13 @@ DiagramPrefsDialog::DiagramPrefsDialog(GeoLib::Station* stn, QDialog* parent)
     stationTypeLabel->setText("");
     DiagramList::readList(stn->getSensorData(), _list);
 
-    fromDateLine->setText(QString::number(stn->getSensorData()->getStartTime()));
+    fromDateLine->setText(
+        QString::number(stn->getSensorData()->getStartTime()));
     toDateLine->setText(QString::number(stn->getSensorData()->getEndTime()));
     this->createVisibilityCheckboxes();
 }
 
-DiagramPrefsDialog::DiagramPrefsDialog(const QString &filename,
+DiagramPrefsDialog::DiagramPrefsDialog(const QString& filename,
                                        DetailWindow* window,
                                        QDialog* parent)
     : QDialog(parent), _window(window)
@@ -125,17 +127,18 @@ void DiagramPrefsDialog::reject()
 
 void DiagramPrefsDialog::on_loadFileButton_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    "Select time series file to open",
-                                                    "",
-                                                    "Time series files (*.stn *.txt)");
+    QString fileName =
+        QFileDialog::getOpenFileName(this,
+                                     "Select time series file to open",
+                                     "",
+                                     "Time series files (*.stn *.txt)");
     if (!fileName.isEmpty())
     {
         loadFile(fileName);
     }
 }
 
-int DiagramPrefsDialog::loadFile(const QString &filename)
+int DiagramPrefsDialog::loadFile(const QString& filename)
 {
     if (DiagramList::readList(filename, _list))
     {
@@ -161,16 +164,17 @@ int DiagramPrefsDialog::loadFile(const QString &filename)
     return 0;
 }
 
-int DiagramPrefsDialog::loadList(const std::vector< std::pair<QDateTime, float> > &coords)
+int DiagramPrefsDialog::loadList(
+    const std::vector<std::pair<QDateTime, float>>& coords)
 {
     if (!coords.empty())
     {
         auto* l = new DiagramList;
         l->setName(stationTypeLabel->text() + ": " + stationNameLabel->text());
         l->setXLabel("Time");
-        //l->setYLabel("Water Level");
+        // l->setYLabel("Water Level");
         l->setXUnit("day");
-        //l->setYUnit("metres");
+        // l->setYUnit("metres");
         l->setColor(QColor(Qt::red));
         l->setList(coords);
         _list.push_back(l);
@@ -189,4 +193,3 @@ void DiagramPrefsDialog::createVisibilityCheckboxes()
         _visability.push_back(box);
     }
 }
-

@@ -13,13 +13,13 @@
  */
 
 #include "CondFromRasterDialog.h"
-#include "Mesh.h"
 
 #include <QFileDialog>
 #include <QSettings>
 #include <utility>
 
 #include "DirectConditionGenerator.h"
+#include "Mesh.h"
 #include "OGSError.h"
 #include "StrictDoubleValidator.h"
 
@@ -32,7 +32,7 @@ CondFromRasterDialog::CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
     this->scalingEdit->setEnabled(false);
     _scale_validator = new StrictDoubleValidator(-1e+10, 1e+20, 5);
     this->scalingEdit->setText("1.0");
-    this->scalingEdit->setValidator (_scale_validator);
+    this->scalingEdit->setValidator(_scale_validator);
 
     for (auto mesh : _msh_vec)
     {
@@ -55,9 +55,10 @@ void CondFromRasterDialog::on_selectButton_pressed()
 #else
     QString geotiffExtension("");
 #endif
-    QString fileName = QFileDialog::getOpenFileName(this, "Select raster file",
-                                                    settings.value("lastOpenedRasterFileDirectory").toString(),
-                                                    QString("Raster files (*.asc *.grd);;").arg(geotiffExtension));
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Select raster file",
+        settings.value("lastOpenedRasterFileDirectory").toString(),
+        QString("Raster files (*.asc *.grd);;").arg(geotiffExtension));
 
     if (!fileName.isEmpty())
     {
@@ -68,13 +69,12 @@ void CondFromRasterDialog::on_selectButton_pressed()
     }
 }
 
-
 void CondFromRasterDialog::accept()
 {
-    std::string mesh_name (this->meshBox->currentText().toStdString());
-    std::string raster_name (this->rasterEdit->text().toStdString());
+    std::string mesh_name(this->meshBox->currentText().toStdString());
+    std::string raster_name(this->rasterEdit->text().toStdString());
     double scaling_factor = this->scalingEdit->text().toDouble();
-    std::vector< std::pair<std::size_t,double> > direct_values;
+    std::vector<std::pair<std::size_t, double>> direct_values;
 
     if (mesh_name.empty())
     {
@@ -101,7 +101,7 @@ void CondFromRasterDialog::accept()
     {
         DirectConditionGenerator dcg;
         direct_values = dcg.directToSurfaceNodes(*mesh, raster_name);
-        //dcg.writeToFile(direct_node_name);
+        // dcg.writeToFile(direct_node_name);
     }
     else
     {
@@ -112,11 +112,12 @@ void CondFromRasterDialog::accept()
         }
         auto* new_mesh = const_cast<MeshLib::Mesh*>(mesh);
         DirectConditionGenerator dcg;
-        direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name, scaling_factor);
+        direct_values = dcg.directWithSurfaceIntegration(*new_mesh, raster_name,
+                                                         scaling_factor);
 
-        //dcg.writeToFile(direct_node_name);
+        // dcg.writeToFile(direct_node_name);
     }
-    //emit directNodesWritten(direct_node_name);
+    // emit directNodesWritten(direct_node_name);
     emit transmitDisValues(direct_values);
     this->done(QDialog::Accepted);
 }

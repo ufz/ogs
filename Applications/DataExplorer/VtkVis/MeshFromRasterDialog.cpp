@@ -13,11 +13,12 @@
  */
 
 #include "MeshFromRasterDialog.h"
-#include "OGSError.h"
+
 #include "MeshGenerators/VtkMeshConverter.h"
+#include "OGSError.h"
 
 MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
-: QDialog(parent), _mesh_name("mesh"), _array_name("MaterialIDs")
+    : QDialog(parent), _mesh_name("mesh"), _array_name("MaterialIDs")
 {
     setupUi(this);
 
@@ -100,4 +101,3 @@ void MeshFromRasterDialog::reject()
 {
     this->done(QDialog::Rejected);
 }
-

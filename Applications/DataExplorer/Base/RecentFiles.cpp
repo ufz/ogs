@@ -43,7 +43,7 @@ QMenu* RecentFiles::menu()
 {
     return _filesMenu;
 }
-void RecentFiles::setCurrentFile( const QString& filename )
+void RecentFiles::setCurrentFile(const QString& filename)
 {
     _currentFile = filename;
 
@@ -81,7 +81,7 @@ void RecentFiles::updateRecentFileActions()
     }
 }
 
-QString RecentFiles::strippedName( const QString& fullFileName )
+QString RecentFiles::strippedName(const QString& fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
 }
