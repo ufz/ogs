@@ -92,11 +92,11 @@ function(ogs_add_library targetName)
     endforeach()
 
     if(ogs_add_library_STATIC)
-        set(TYPE STATIC)
+        set(type STATIC)
     elseif(ogs_add_library_SHARED)
-        set(TYPE SHARED)
+        set(type SHARED)
     endif()
-    add_library(${targetName} ${TYPE} ${files})
+    add_library(${targetName} ${type} ${files})
     target_compile_options(
         ${targetName}
         PRIVATE # OR does not work with cotire
