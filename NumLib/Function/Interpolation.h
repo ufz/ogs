@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include<array>
-#include<cassert>
+#include <array>
+#include <cassert>
 
 #include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"

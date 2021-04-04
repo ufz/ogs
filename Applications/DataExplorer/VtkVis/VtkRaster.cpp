@@ -28,8 +28,8 @@
 #include <limits>
 
 #ifdef GEOTIFF_FOUND
-#include "geo_tiffp.h"
-#include "xtiffio.h"
+#include <geo_tiffp.h>
+#include <xtiffio.h>
 #endif
 
 #include <memory>

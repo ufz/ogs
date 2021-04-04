@@ -11,7 +11,7 @@
  *
  */
 
-#include "../fileIO.h"
+#include "MeshLib/IO/XDMF/fileIO.h"
 
 #include <hdf5.h>
 #include <mpi.h>

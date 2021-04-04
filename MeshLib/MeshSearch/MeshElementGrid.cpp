@@ -15,10 +15,10 @@
 #include <cmath>
 #include <memory>
 
-#include "../Elements/Element.h"
-#include "../Mesh.h"
-#include "../Node.h"
 #include "GeoLib/GEOObjects.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {

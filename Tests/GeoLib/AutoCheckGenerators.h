@@ -9,14 +9,14 @@
 
 #pragma once
 
+#include <autocheck/autocheck.hpp>
 #include <cmath>
 #include <memory>
 #include <random>
 #include <utility>
 
-#include "autocheck/autocheck.hpp"
-#include "MathLib/Point3d.h"
 #include "GeoLib/LineSegment.h"
+#include "MathLib/Point3d.h"
 
 namespace autocheck
 {

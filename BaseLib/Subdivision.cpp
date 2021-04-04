@@ -10,10 +10,10 @@
 
 #include "Subdivision.h"
 
-#include <BaseLib/Error.h>
-
 #include <algorithm>
 #include <cmath>
+
+#include "BaseLib/Error.h"
 
 namespace BaseLib
 {
