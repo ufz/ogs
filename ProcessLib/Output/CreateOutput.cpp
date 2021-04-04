@@ -86,8 +86,8 @@ std::unique_ptr<Output> createOutput(
         {
             OGS_FATAL(
                 "You have not given any pair (<repeat/>, <each_steps/>) that "
-                "defines"
-                " at which timesteps output shall be written. Aborting.");
+                "defines at which timesteps output shall be written. "
+                "Aborting.");
         }
     }
     else

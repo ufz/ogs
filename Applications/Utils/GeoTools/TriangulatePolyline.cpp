@@ -127,9 +127,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        WARN(
-            "\t Creating a surface by triangulation of the polyline "
-            "failed.");
+        WARN("\t Creating a surface by triangulation of the polyline failed.");
     }
     GeoLib::SurfaceVec* sfc_vec(geo_objects.getSurfaceVecObj(geo_name));
     std::size_t const sfc_id = geo_objects.getSurfaceVec(geo_name)->size() - 1;

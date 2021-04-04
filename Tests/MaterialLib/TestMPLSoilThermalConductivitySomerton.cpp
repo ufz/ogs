@@ -111,8 +111,8 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
                 << "for expected derivative of thermal conductivity with "
                    "respect to saturation "
                 << 0.0
-                << " and for computed derivative of thermal conductivity "
-                   "with respect to saturation."
+                << " and for computed derivative of thermal conductivity with "
+                   "respect to saturation."
                 << computed_dk_T_dS;
         }
     }
@@ -132,11 +132,11 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
             pos, t, dt);
 
         ASSERT_LE(std::fabs(0.0 - computed_dk_T_dS), 1e-10)
-            << "for expected derivative of thermal conductivity with "
-               "respect to saturation "
+            << "for expected derivative of thermal conductivity with respect "
+               "to saturation "
             << 0.0
-            << " and for computed derivative of thermal conductivity "
-               "with respect to saturation."
+            << " and for computed derivative of thermal conductivity with "
+               "respect to saturation."
             << computed_dk_T_dS;
     }
 
@@ -176,11 +176,11 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton1D)
             pos, t, dt);
 
         ASSERT_LE(std::fabs(analytic_dk_T_dS - approximated_dk_T_dS), 1e-5)
-            << "for expected derivative of thermal conductivity with "
-               "respect to saturation "
+            << "for expected derivative of thermal conductivity with respect "
+               "to saturation "
             << analytic_dk_T_dS
-            << " and for computed derivative of thermal conductivity "
-               "with respect to saturation."
+            << " and for computed derivative of thermal conductivity with "
+               "respect to saturation."
             << approximated_dk_T_dS;
     }
 }
@@ -282,8 +282,8 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
                 << "for expected derivative of thermal conductivity with "
                    "respect to saturation "
                 << 0.0
-                << " and for computed derivative of thermal conductivity "
-                   "with respect to saturation."
+                << " and for computed derivative of thermal conductivity with "
+                   "respect to saturation."
                 << computed_dk_T_dS(k, k);
         }
     }
@@ -335,8 +335,8 @@ TEST(MaterialPropertyLib, SoilThermalConductivitySomerton3D)
                 << "for expected derivative of thermal conductivity with "
                    "respect to saturation "
                 << analytic_dk_T_dS(k, k)
-                << " and for computed derivative of thermal conductivity "
-                   "with respect to saturation."
+                << " and for computed derivative of thermal conductivity with "
+                   "respect to saturation."
                 << approximated_dk_T_dS;
         }
     }

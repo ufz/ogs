@@ -40,8 +40,7 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
 
     if (!mesh.getProperties().existsPropertyVector<double>(prop_name))
     {
-        ERR("Need element property, but the property '{:s}' is not "
-            "available.",
+        ERR("Need element property, but the property '{:s}' is not available.",
             prop_name);
         return std::vector<double>();
     }
@@ -77,9 +76,9 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Integrates the given element property and outputs an OGS-5 direct "
         "Neumann boundary condition. The mesh has to contain a property "
-        "'bulk_node_ids' that stores the original subsurface "
-        "mesh node ids. Such surface meshes can be created using the OGS-6 "
-        "tool ExtractSurface.\n\n"
+        "'bulk_node_ids' that stores the original subsurface mesh node ids. "
+        "Such surface meshes can be created using the OGS-6 tool "
+        "ExtractSurface.\n\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
@@ -87,21 +86,21 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> in_mesh("i",
-                                         "in-mesh",
-                                         "the surface mesh that has an element "
-                                         "property for the Neumann "
-                                         "boundary condition",
-                                         true,
-                                         "",
-                                         "filename for surface mesh input");
+    TCLAP::ValueArg<std::string> in_mesh(
+        "i",
+        "in-mesh",
+        "the surface mesh that has an element property for the Neumann "
+        "boundary condition",
+        true,
+        "",
+        "filename for surface mesh input");
     cmd.add(in_mesh);
 
     TCLAP::ValueArg<std::string> property_in_arg(
         "p",
         "property-in-name",
-        "name of an element property used for the computation of the "
-        "Neumann boundary condition",
+        "name of an element property used for the computation of the Neumann "
+        "boundary condition",
         true,
         "",
         "string (property name)");
@@ -110,8 +109,8 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> property_out_arg(
         "",
         "property-out-name",
-        "name of the node based property used for the output of the "
-        "Neumann boundary condition",
+        "name of the node based property used for the output of the Neumann "
+        "boundary condition",
         true,
         "",
         "string (property name)");

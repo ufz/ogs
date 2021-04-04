@@ -40,8 +40,8 @@ int convertVtkDataMode(std::string const& data_mode)
         return 2;
     }
     OGS_FATAL(
-        "Unsupported vtk output file data mode '{:s}'. Expected Ascii, "
-        "Binary, or Appended.",
+        "Unsupported vtk output file data mode '{:s}'. Expected Ascii, Binary, "
+        "or Appended.",
         data_mode);
 }
 
@@ -166,8 +166,8 @@ MeshLib::IO::PVDFile* Output::findPVDFile(
     if (pvd_file == nullptr)
     {
         OGS_FATAL(
-            "The given process is not contained in the output"
-            " configuration. Aborting.");
+            "The given process is not contained in the output configuration. "
+            "Aborting.");
     }
 
     return pvd_file;

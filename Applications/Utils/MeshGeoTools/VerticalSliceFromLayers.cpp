@@ -238,8 +238,7 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
     int const return_value = std::system(gmsh_command.c_str());
     if (return_value != 0)
     {
-        ERR("Execution of gmsh command returned non-zero "
-            "status, %d",
+        ERR("Execution of gmsh command returned non-zero status, %d",
             return_value);
     }
     return FileIO::GMSH::readGMSHMesh(gmsh_mesh_name);

@@ -104,8 +104,8 @@ int main(int argc, char* argv[])
     cmd.add(output_arg);
     TCLAP::ValueArg<std::string> new_order_arg(
         "n", "new-order",
-        "the new order of swapped coordinate values "
-        "(e.g. 'xzy' for converting XYZ values to XZY values)",
+        "the new order of swapped coordinate values (e.g. 'xzy' for converting "
+        "XYZ values to XZY values)",
         true, "", "string");
     cmd.add(new_order_arg);
     cmd.parse(argc, argv);

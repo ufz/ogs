@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> metis_mesh_input(
         "x", "metis-mesh-input-file",
-        "base name (without .mesh extension) of the file containing the "
-        "metis input mesh",
+        "base name (without .mesh extension) of the file containing the metis "
+        "input mesh",
         false, "",
         "base name (without .mesh extension) of the file containing the metis "
         "input mesh");
@@ -81,17 +81,17 @@ int main(int argc, char* argv[])
         "q", "lh_elements", "Mixed linear and high order elements.", false);
     cmd.add(lh_elems_flag);
 
-    TCLAP::ValueArg<std::string> log_level_arg("l", "log-level",
-                                               "the verbosity of logging "
-                                               "messages: none, error, warn, "
-                                               "info, debug, all",
-                                               false,
+    TCLAP::ValueArg<std::string> log_level_arg(
+        "l", "log-level",
+        "the verbosity of logging messages: none, error, warn, info, debug, "
+        "all",
+        false,
 #ifdef NDEBUG
-                                               "info",
+        "info",
 #else
-                                               "all",
+        "all",
 #endif
-                                               "LOG_LEVEL");
+        "LOG_LEVEL");
     cmd.add(log_level_arg);
 
     // All the remaining arguments are used as file names for boundary/subdomain

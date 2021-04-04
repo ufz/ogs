@@ -50,9 +50,9 @@ bool ElementValueModification::replace(MeshLib::Mesh& mesh,
             if ((*property_value_vec)[i] == new_value)
             {
                 WARN(
-                    "ElementValueModification::replaceElementValue() "
-                    "- Replacement value '{:d}' is already taken, "
-                    "no changes have been made.",
+                    "ElementValueModification::replaceElementValue() - "
+                    "Replacement value '{:d}' is already taken, no changes "
+                    "have been made.",
                     new_value);
                 return false;
             }

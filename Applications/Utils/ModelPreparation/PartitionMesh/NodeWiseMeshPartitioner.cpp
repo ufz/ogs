@@ -414,8 +414,8 @@ bool copyPropertyVector(
                                                 *partitioned_pv);
         }
         OGS_FATAL(
-            "Copying of property vector values for mesh item type {:s} is "
-            "not implemented.",
+            "Copying of property vector values for mesh item type {:s} is not "
+            "implemented.",
             item_type);
     };
 
@@ -506,8 +506,8 @@ MeshLib::Properties partitionProperties(
         {MeshItemType::Node, count_tuples(MeshItemType::Node)}};
 
     DBUG(
-        "total number of tuples after partitioning defined for cells is"
-        " {:d} and for nodes {:d}.",
+        "total number of tuples after partitioning defined for cells is {:d} "
+        "and for nodes {:d}.",
         total_number_of_tuples.at(MeshItemType::Cell),
         total_number_of_tuples.at(MeshItemType::Node));
 

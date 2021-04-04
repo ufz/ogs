@@ -90,8 +90,8 @@ PropertyDataType AverageMolarMass::dValue(
     (void)primary_variable;
     assert(((primary_variable == Variable::phase_pressure) ||
             (primary_variable == Variable::temperature)) &&
-           "AverageMolarMass::dValue is implemented for "
-           " derivatives with respect to phase_pressure or temperature only.");
+           "AverageMolarMass::dValue is implemented for derivatives with "
+           "respect to phase_pressure or temperature only.");
 
     auto phase = std::get<Phase*>(scale_);
 

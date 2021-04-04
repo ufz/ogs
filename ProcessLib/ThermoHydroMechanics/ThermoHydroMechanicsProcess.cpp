@@ -270,8 +270,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
     if (_use_monolithic_scheme)
     {
         DBUG(
-            "Assemble the Jacobian of ThermoHydroMechanics for the monolithic"
-            " scheme.");
+            "Assemble the Jacobian of ThermoHydroMechanics for the monolithic "
+            "scheme.");
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
     else

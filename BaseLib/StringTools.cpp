@@ -102,9 +102,7 @@ std::string format(const char* format_str, ...)
 std::string randomString(std::size_t const length)
 {
     static constexpr char charset[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     static const auto seed = static_cast<std::mt19937::result_type>(
         std::chrono::system_clock::now().time_since_epoch().count());

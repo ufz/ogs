@@ -36,8 +36,8 @@ LocalLinearLeastSquaresExtrapolator::LocalLinearLeastSquaresExtrapolator(
     if (dof_table.getNumberOfGlobalComponents() != 1)
     {
         OGS_FATAL(
-            "The d.o.f. table passed must be for one variable that has "
-            "only one component!");
+            "The d.o.f. table passed must be for one variable that has only "
+            "one component!");
     }
 }
 

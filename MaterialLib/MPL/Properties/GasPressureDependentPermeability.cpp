@@ -46,8 +46,8 @@ void GasPressureDependentPermeability<DisplacementDim>::checkScale() const
     if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
-            "The property 'GasPressureDependentPermeability' is "
-            "implemented on the 'medium' scale only.");
+            "The property 'GasPressureDependentPermeability' is implemented on "
+            "the 'medium' scale only.");
     }
 }
 

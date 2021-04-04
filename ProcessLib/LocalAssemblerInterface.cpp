@@ -68,8 +68,7 @@ void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
 {
     OGS_FATAL(
         "The assembleWithJacobianForStaggeredScheme() function is not "
-        "implemented in"
-        " the local assembler.");
+        "implemented in the local assembler.");
 }
 
 void LocalAssemblerInterface::computeSecondaryVariable(

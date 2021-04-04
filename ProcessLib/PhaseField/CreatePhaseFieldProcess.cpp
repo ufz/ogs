@@ -96,8 +96,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     {
         OGS_FATAL(
             "Phasefield process variable '{:s}' is not a scalar variable but "
-            "has "
-            "{:d} components.",
+            "has {:d} components.",
             variable_ph->getName(),
             variable_ph->getNumberOfGlobalComponents());
     }
@@ -178,8 +177,8 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         ((*crack_scheme != "propagating") && (*crack_scheme != "static")))
     {
         OGS_FATAL(
-            "hydro_crack_scheme must be 'propagating' or 'static' but "
-            "'{:s}' was given",
+            "hydro_crack_scheme must be 'propagating' or 'static' but '{:s}' "
+            "was given",
             crack_scheme->c_str());
     }
 

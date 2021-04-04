@@ -83,17 +83,17 @@ int main(int argc, char* argv[])
                                             false, "", "PATH");
     cmd.add(outdir_arg);
 
-    TCLAP::ValueArg<std::string> log_level_arg("l", "log-level",
-                                               "the verbosity of logging "
-                                               "messages: none, error, warn, "
-                                               "info, debug, all",
-                                               false,
+    TCLAP::ValueArg<std::string> log_level_arg(
+        "l", "log-level",
+        "the verbosity of logging messages: none, error, warn, info, debug, "
+        "all",
+        false,
 #ifdef NDEBUG
-                                               "info",
+        "info",
 #else
-                                               "all",
+        "all",
 #endif
-                                               "LOG_LEVEL");
+        "LOG_LEVEL");
     cmd.add(log_level_arg);
 
     TCLAP::SwitchArg nonfatal_arg("",

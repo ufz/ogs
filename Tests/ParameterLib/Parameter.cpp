@@ -137,8 +137,7 @@ bool testNodalValuesOfElement(
                 if (expected_value != nodal_values(i, 0))
                 {
                     ERR("Mismatch for element {:d}, node {:d}; Expected {:g}, "
-                        "got "
-                        "{:g}.",
+                        "got {:g}.",
                         e->getID(), i, expected_value, nodal_values(i, 0));
                     return false;
                 }

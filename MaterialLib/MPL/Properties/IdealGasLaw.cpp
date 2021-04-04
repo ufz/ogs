@@ -78,8 +78,8 @@ PropertyDataType IdealGasLaw::dValue(VariableArray const& variable_array,
     }
 
     OGS_FATAL(
-        "IdealGasLaw::dValue is implemented for derivatives "
-        "with respect to phase pressure or temperature only.");
+        "IdealGasLaw::dValue is implemented for derivatives with respect to "
+        "phase pressure or temperature only.");
 
     return 0.;
 }
@@ -120,8 +120,8 @@ PropertyDataType IdealGasLaw::d2Value(VariableArray const& variable_array,
     }
 
     OGS_FATAL(
-        "IdealGasLaw::d2Value is implemented for derivatives "
-        "with respect to phase pressure and temperature only.");
+        "IdealGasLaw::d2Value is implemented for derivatives with respect to "
+        "phase pressure and temperature only.");
 
     return 0.;
 }

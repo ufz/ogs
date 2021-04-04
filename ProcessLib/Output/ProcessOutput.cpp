@@ -71,8 +71,8 @@ static void addSecondaryVariableNodes(
     if (nodal_values_mesh.size() != global_vector_size)
     {
         OGS_FATAL(
-            "Secondary variable `{:s}' did not evaluate to the right "
-            "number of components. Expected: {:d}, actual: {:d}.",
+            "Secondary variable `{:s}' did not evaluate to the right number of "
+            "components. Expected: {:d}, actual: {:d}.",
             var.name, nodal_values_mesh.size(), global_vector_size);
     }
 
@@ -104,8 +104,7 @@ static void addSecondaryVariableResiduals(
     {
         OGS_FATAL(
             "Cell property `{:s}' does not have the right number of "
-            "components. "
-            "Expected: {:d}, actual: {:d}",
+            "components. Expected: {:d}, actual: {:d}",
             property_name_res,
             mesh.getNumberOfElements() * var.fcts.num_components,
             residuals_mesh.size());

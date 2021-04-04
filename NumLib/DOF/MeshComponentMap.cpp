@@ -74,8 +74,8 @@ MeshComponentMap::MeshComponentMap(
                 // a rank in the parallel computing.
                 OGS_FATAL(
                     "Global index in the system of equations"
-                    " can only be numbered by the order type"
-                    " of ComponentOrder::BY_LOCATION");
+                    " can only be numbered by the order type of "
+                    "ComponentOrder::BY_LOCATION");
             }
             global_id = static_cast<GlobalIndexType>(
                 components.size() * p_mesh.getGlobalNodeID(j) + comp_id);
@@ -124,8 +124,8 @@ MeshComponentMap MeshComponentMap::getSubset(
         if (first_mismatch != end(bulk_mesh_subsets))
         {
             OGS_FATAL(
-                "Assumption in the MeshComponentMap violated. Expecting "
-                "all of mesh ids to be the same, but it is not true for "
+                "Assumption in the MeshComponentMap violated. Expecting all of "
+                "mesh ids to be the same, but it is not true for "
                 "the mesh '{:s}' with id {:d}.",
                 first_mismatch->getMesh().getName(),
                 first_mismatch->getMeshID());

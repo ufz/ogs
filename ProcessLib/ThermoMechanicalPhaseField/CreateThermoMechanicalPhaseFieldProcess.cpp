@@ -96,8 +96,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     {
         OGS_FATAL(
             "Phasefield process variable '{:s}' is not a scalar variable but "
-            "has "
-            "{:d} components.",
+            "has {:d} components.",
             variable_ph->getName(),
             variable_ph->getNumberOfGlobalComponents());
     }
@@ -108,8 +107,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     {
         OGS_FATAL(
             "Temperature process variable '{:s}' is not a scalar variable but "
-            "has "
-            "{:d} components.",
+            "has {:d} components.",
             variable_T->getName(),
             variable_T->getNumberOfGlobalComponents());
     }

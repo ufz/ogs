@@ -155,8 +155,8 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     }
 
     OGS_FATAL(
-        "The capillary pressure saturation models {:s} are unavailable.\n"
-        "The available types are: \n\tBrooksCorey, \n\tvanGenuchten,",
+        "The capillary pressure saturation models {:s} are unavailable.\nThe "
+        "available types are: \n\tBrooksCorey, \n\tvanGenuchten,",
         "\n\tCurve.\n",
         type.data());
 }

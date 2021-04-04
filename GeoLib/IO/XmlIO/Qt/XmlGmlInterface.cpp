@@ -248,8 +248,8 @@ void XmlGmlInterface::readPolylines(
                     polyline_name = polyline.attribute("name").toStdString();
                 }
                 OGS_FATAL(
-                    "Polyline `{:s}' contains the point id `{:d}' which is "
-                    "not in the point list.",
+                    "Polyline `{:s}' contains the point id `{:d}' which is not "
+                    "in the point list.",
                     polyline_name, pt_idx);
             }
             return search->second;
@@ -294,8 +294,8 @@ void XmlGmlInterface::readSurfaces(
                     surface_name = surface.attribute("name").toStdString();
                 }
                 OGS_FATAL(
-                    "Surface `{:s}' contains the point id `{:d}', which is "
-                    "not in the point list.",
+                    "Surface `{:s}' contains the point id `{:d}', which is not "
+                    "in the point list.",
                     surface_name, pt_idx);
             }
             return search->second;

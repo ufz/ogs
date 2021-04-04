@@ -84,9 +84,9 @@ PorousMediaProperties createPorousMediaProperties(
     {
         OGS_FATAL(
             "The maximum value of MaterialIDs in mesh is {:d}. As the "
-            "given number of porous media definitions in the project "
-            "file is {:d}, the maximum value of MaterialIDs in mesh must be "
-            "{:d} (index starts with zero).",
+            "given number of porous media definitions in the project file is "
+            "{:d}, the maximum value of MaterialIDs in mesh must be {:d} "
+            "(index starts with zero).",
             max_material_id, mat_ids.size(), max_material_id - 1);
     }
 

@@ -78,8 +78,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         {
             OGS_FATAL(
                 "Could not find process variable '{:s}' in the provided "
-                "variables "
-                "list for config tag <{:s}>.",
+                "variables list for config tag <{:s}>.",
                 pv_name, "process_variable");
         }
         DBUG("Found process variable '{:s}' for config tag <{:s}>.",
@@ -167,8 +166,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         if (!scope.contains("bc_bhe"))
             OGS_FATAL(
                 "Function 'bc_bhe' is not defined in the python script file, "
-                "or there "
-                "was no python script file specified.");
+                "or there was no python script file specified.");
 
         py_object =
             scope["bc_bhe"]

@@ -28,8 +28,8 @@ createVariableDependentNeumannBoundaryCondition(
     if (dof_table.getNumberOfVariables() != 2)
     {
         OGS_FATAL(
-            "VariableDependentNeumann BC only implemented for 2 "
-            "variable processes.");
+            "VariableDependentNeumann BC only implemented for 2 variable "
+            "processes.");
     }
     assert(variable_id == 0 || variable_id == 1);
 

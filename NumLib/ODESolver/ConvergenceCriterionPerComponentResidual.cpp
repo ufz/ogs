@@ -97,8 +97,7 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
             auto const norm_res0 = _residual_norms_0[global_component];
             INFO(
                 "Convergence criterion, component {:d}: |r|={:.4e}, "
-                "|r0|={:.4e}, "
-                "|r|/|r0|={:.4e}",
+                "|r0|={:.4e}, |r|/|r0|={:.4e}",
                 global_component, norm_res, norm_res0,
                 (norm_res0 == 0. ? std::numeric_limits<double>::quiet_NaN()
                                  : (norm_res / norm_res0)));

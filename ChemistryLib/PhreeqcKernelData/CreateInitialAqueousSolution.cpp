@@ -52,8 +52,7 @@ InitialAqueousSolution createInitialAqueousSolution(
         {
             OGS_FATAL(
                 "Component {:s} given in <solution>/<components> is not found "
-                "in "
-                "specified coupled processes (see "
+                "in specified coupled processes (see "
                 "<process>/<process_variables>/<concentration>).",
                 component.first);
         }

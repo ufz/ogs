@@ -118,9 +118,8 @@ double RelPermNonWettingPhaseVanGenuchtenMualem::
 
     OGS_FATAL(
         "The given minimum relative permeability, {:g}, is  not "
-        "associated with the saturation  in the range of '('{:f}, "
-        "{:f}')'. Please try another one in '(0, 1)', which should be "
-        "close to zero",
+        "associated with the saturation  in the range of '('{:f}, {:f}')'. "
+        "Please try another one in '(0, 1)', which should be close to zero",
         krel_min_, S_L_r_, S_L_max_);
 }
 }  // namespace MaterialPropertyLib

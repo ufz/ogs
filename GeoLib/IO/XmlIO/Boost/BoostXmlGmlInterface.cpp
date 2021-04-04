@@ -247,8 +247,7 @@ void BoostXmlGmlInterface::readSurfaces(
                     {
                         OGS_FATAL(
                             "The element list of the surface `{:s}' contains "
-                            "the "
-                            "invalid point id `{:d}'.",
+                            "the invalid point id `{:d}'.",
                             s_name->c_str(), pt_idx);
                     }
                     return search->second;
@@ -342,8 +341,8 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
     if (!sfc_vec)
     {
         INFO(
-            "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
-            "No surfaces within the geometry '{:s}'.",
+            "BoostXmlGmlInterface::addSurfacesToPropertyTree(): No surfaces "
+            "within the geometry '{:s}'.",
             export_name);
         return;
     }
@@ -352,8 +351,8 @@ void BoostXmlGmlInterface::addSurfacesToPropertyTree(
     if (!surfaces || surfaces->empty())
     {
         INFO(
-            "BoostXmlGmlInterface::addSurfacesToPropertyTree(): "
-            "No surfaces within the geometry '{:s}'.",
+            "BoostXmlGmlInterface::addSurfacesToPropertyTree(): No surfaces "
+            "within the geometry '{:s}'.",
             export_name);
         return;
     }
@@ -388,8 +387,8 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
     if (!vec)
     {
         INFO(
-            "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
-            "No polylines within the geometry '{:s}'.",
+            "BoostXmlGmlInterface::addPolylinesToPropertyTree(): No polylines "
+            "within the geometry '{:s}'.",
             export_name);
         return;
     }
@@ -398,8 +397,8 @@ void BoostXmlGmlInterface::addPolylinesToPropertyTree(
     if (!polylines || polylines->empty())
     {
         INFO(
-            "BoostXmlGmlInterface::addPolylinesToPropertyTree(): "
-            "No polylines within the geometry '{:s}'.",
+            "BoostXmlGmlInterface::addPolylinesToPropertyTree(): No polylines "
+            "within the geometry '{:s}'.",
             export_name);
         return;
     }

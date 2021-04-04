@@ -40,8 +40,8 @@ void PermeabilityOrthotropicPowerLaw<DisplacementDim>::checkScale() const
     if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
-            "The property 'PermeabilityOrthotropicPowerLaw' is "
-            "implemented on the 'medium' scales only.");
+            "The property 'PermeabilityOrthotropicPowerLaw' is implemented on "
+            "the 'medium' scales only.");
     }
 }
 template <int DisplacementDim>
@@ -93,8 +93,8 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::dValue(
 {
     (void)primary_variable;
     assert((primary_variable == Variable::total_strain) &&
-           "PermeabilityOrthotropicPowerLaw::dValue is implemented for "
-           " derivatives with respect to total strain only.");
+           "PermeabilityOrthotropicPowerLaw::dValue is implemented for  "
+           "derivatives with respect to total strain only.");
 
     return 0.;
 }

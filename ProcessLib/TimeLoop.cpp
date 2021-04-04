@@ -468,8 +468,8 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
             OGS_FATAL(
                 "The new step size of {:g} is the same as that of the previous "
                 "rejected time step. \nPlease re-run ogs with a proper "
-                "adjustment in the numerical settings, \ne.g those for "
-                "time stepper, local or global non-linear solver.",
+                "adjustment in the numerical settings, \ne.g those for time "
+                "stepper, local or global non-linear solver.",
                 dt);
         }
         else
@@ -507,8 +507,8 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                                      std::numeric_limits<double>::epsilon())
             {
                 WARN(
-                    "Time step {:d} was rejected {:d} times "
-                    "and it will be repeated with a reduced step size.",
+                    "Time step {:d} was rejected {:d} times and it will be "
+                    "repeated with a reduced step size.",
                     accepted_steps + 1, _repeating_times_of_rejected_step);
                 MathLib::LinAlg::copy(x_prev, x);  // popState
             }
@@ -794,8 +794,8 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             process_data->nonlinear_solver_status = nonlinear_solver_status;
 
             INFO(
-                "[time] Solving process #{:d} took {:g} s in time step #{:d} "
-                " coupling iteration #{:d}",
+                "[time] Solving process #{:d} took {:g} s in time step #{:d}  "
+                "coupling iteration #{:d}",
                 process_id, time_timestep_process.elapsed(), timestep_id,
                 global_coupling_iteration);
 
@@ -844,7 +844,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     if (!coupling_iteration_converged)
     {
         WARN(
-            "The coupling iterations reaches its maximum number in time step"
+            "The coupling iterations reaches its maximum number in time step "
             "#{:d} at t = {:g} s",
             timestep_id, t);
     }

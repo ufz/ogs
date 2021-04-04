@@ -115,8 +115,8 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
                 "In order to make the specification of output in the project "
                 "file consistent, the variables output tags were moved from "
                 "xpath "
-                "'//OpenGeoSysProject/time_loop/processes/process/output' "
-                "to the global output section, i.e., to the xpath "
+                "'//OpenGeoSysProject/time_loop/processes/process/output' to "
+                "the global output section, i.e., to the xpath "
                 "'//OpenGeoSysProject/time_loop/output'. This has to be done "
                 "in the current project file!");
         }
@@ -133,8 +133,8 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
         if (processes.size() > 1)
         {
             OGS_FATAL(
-                "Some processes have not been configured to be solved by this "
-                " time loop.");
+                "Some processes have not been configured to be solved by this  "
+                "time loop.");
         }
         else
         {

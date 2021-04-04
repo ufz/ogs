@@ -239,9 +239,7 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
         std::get<2>(_process_data.py_bc_object->dataframe_network));
     if (!_process_data.py_bc_object->isOverriddenTespy())
     {
-        DBUG(
-            "Method `tespySolver' not overridden in Python "
-            "script.");
+        DBUG("Method `tespySolver' not overridden in Python script.");
     }
 
     // update the Tin and flow rate
@@ -320,8 +318,8 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         {
             INFO(
                 "For 1P-type BHE, the BHE inflow and outflow "
-                "nodes are identified according to their mesh node "
-                "id in ascending order");
+                "nodes are identified according to their mesh node id in "
+                "ascending order");
         }
         // for 1U, 2U, CXC, CXA type BHE
         else

@@ -78,8 +78,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         {
             OGS_FATAL(
                 "Could not find process variable '{:s}' in the provided "
-                "variables "
-                "list for config tag <{:s}>.",
+                "variables list for config tag <{:s}>.",
                 pv_name, "process_variable");
         }
         DBUG("Found process variable '{:s}' for config tag <{:s}>.",
@@ -90,8 +89,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         {
             OGS_FATAL(
                 "Number of components of the process variable '{:s}' is "
-                "different "
-                "from the displacement dimension: got {:d}, expected {:d}",
+                "different from the displacement dimension: got {:d}, expected "
+                "{:d}",
                 variable->getName(),
                 variable->getNumberOfGlobalComponents(),
                 GlobalDim);

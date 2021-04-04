@@ -516,8 +516,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
         {
             OGS_FATAL(
                 "Error when reading calculation result of Solution {:d} "
-                "after "
-                "the reaction.",
+                "after the reaction.",
                 chemical_system_id);
         }
 
@@ -540,8 +539,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                 catch (const std::invalid_argument& e)
                 {
                     OGS_FATAL(
-                        "Invalid argument. Could not convert string '{:s}' "
-                        "to double for chemical system {:d}, column {:d}. "
+                        "Invalid argument. Could not convert string '{:s}' to "
+                        "double for chemical system {:d}, column {:d}. "
                         "Exception '{:s}' was thrown.",
                         items[item_id], chemical_system_id + 1, item_id,
                         e.what());

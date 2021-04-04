@@ -146,8 +146,8 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
         else
         {
             WARN(
-                "Skipping property vector '{:s}' - no matching data type '{:s}'"
-                "found.",
+                "Skipping property vector '{:s}' - no matching data type "
+                "'{:s}' found.",
                 name, typeid(*property).name());
             vectors_skipped++;
         }

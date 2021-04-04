@@ -68,8 +68,8 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(Mesh& dest_mesh) const
         if (!dest_properties)
         {
             WARN(
-                "Could not get or create a PropertyVector of type double"
-                " using the given name '{:s}'.",
+                "Could not get or create a PropertyVector of type double using "
+                "the given name '{:s}'.",
                 _property_name);
             return false;
         }

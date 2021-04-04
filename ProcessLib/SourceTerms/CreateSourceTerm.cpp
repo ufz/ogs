@@ -48,16 +48,15 @@ std::unique_ptr<SourceTerm> createSourceTerm(
              .template existsPropertyVector<std::size_t>("bulk_node_ids"))
     {
         OGS_FATAL(
-            "The required bulk node ids map does not exist in the "
-            "source term mesh '{:s}'.",
+            "The required bulk node ids map does not exist in the source term "
+            "mesh '{:s}'.",
             source_term_mesh.getName());
     }
     std::vector<MeshLib::Node*> const& source_term_nodes =
         source_term_mesh.getNodes();
     DBUG(
         "Found {:d} nodes for source term at mesh '{:s}' for the variable {:d} "
-        "and "
-        "component {:d}",
+        "and component {:d}",
         source_term_nodes.size(), source_term_mesh.getName(), variable_id,
         *config.component_id);
 

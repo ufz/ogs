@@ -42,8 +42,8 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
     {
         const std::size_t i = std::distance(_supp_pnts.begin(), it);
         OGS_FATAL(
-            "Variable {:d} and variable {:d} are the same. "
-            "Piecewise linear interpolation is not possible\n",
+            "Variable {:d} and variable {:d} are the same. Piecewise linear "
+            "interpolation is not possible\n",
             i, i + 1);
     }
 }

@@ -150,8 +150,7 @@ void SurfaceGrid::sortTrianglesInGridCells(Surface const* const sfc)
             Point const& p1(*((*sfc)[l]->getPoint(1)));
             Point const& p2(*((*sfc)[l]->getPoint(2)));
             ERR("Sorting triangle {:d} [({:f},{:f},{:f}), ({:f},{:f},{:f}), "
-                "({:f},{:f},{:f}) into "
-                "grid.",
+                "({:f},{:f},{:f}) into grid.",
                 l, p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], p2[0], p2[1],
                 p2[2]);
             OGS_FATAL("");

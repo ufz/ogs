@@ -36,9 +36,7 @@ auto random_generator() -> T
 auto generate_random_alphanumeric_string(std::size_t len) -> std::string
 {
     static constexpr auto chars =
-        "123456788"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
+        "123456788ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     thread_local auto rng = random_generator<>();
 
     auto dist = std::uniform_int_distribution{{}, std::strlen(chars)};

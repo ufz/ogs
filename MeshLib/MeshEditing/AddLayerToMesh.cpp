@@ -168,8 +168,8 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
 
     if (!mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
     {
-        ERR("Could not copy the property 'MaterialIDs' since the original "
-            "mesh does not contain such a property.");
+        ERR("Could not copy the property 'MaterialIDs' since the original mesh "
+            "does not contain such a property.");
         return new_mesh;
     }
     auto const* const materials =

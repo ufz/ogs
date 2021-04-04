@@ -140,16 +140,16 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> output_base_fname(
         "o", "output-base-file-name",
-        "the base name of the file the output (geometry (gli) and boundary"
+        "the base name of the file the output (geometry (gli) and boundary "
         "condition (bc)) will be written to",
         true, "", "file name");
     cmd.add(output_base_fname);
 
     TCLAP::ValueArg<std::string> bc_type(
         "t", "type",
-        "the process type the boundary condition will be written for "
-        "currently LIQUID_FLOW (primary variable PRESSURE1) and "
-        "GROUNDWATER_FLOW (primary variable HEAD, default) are supported",
+        "the process type the boundary condition will be written for currently "
+        "LIQUID_FLOW (primary variable PRESSURE1) and GROUNDWATER_FLOW "
+        "(primary variable HEAD, default) are supported",
         true, "",
         "process type as string (LIQUID_FLOW or GROUNDWATER_FLOW (default))");
     cmd.add(bc_type);

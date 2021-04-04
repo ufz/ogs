@@ -115,8 +115,7 @@ std::string findVtkdiff()
         }
         WARN(
             "Calling {:s} from the VTKDIFF_EXE environment variable didn't "
-            "work "
-            "as expected. Return value was {:d}.",
+            "work as expected. Return value was {:d}.",
             vtkdiff_exe, return_value);
     }
 

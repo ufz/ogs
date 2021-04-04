@@ -138,8 +138,8 @@ PropertyDataType ClausiusClapeyron::dValue(
         return p_vap * dh / R * (1. / T_ref_ - 1. / T) * dM;
     }
     OGS_FATAL(
-        "ClausiusClapeyron::dValue is implemented for derivatives "
-        "with respect to phase pressure or temperature only.");
+        "ClausiusClapeyron::dValue is implemented for derivatives with respect "
+        "to phase pressure or temperature only.");
 }
 
 PropertyDataType ClausiusClapeyron::d2Value(

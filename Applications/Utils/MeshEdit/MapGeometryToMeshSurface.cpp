@@ -24,7 +24,7 @@
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
-        "Maps geometric objects to the surface of a given mesh."
+        "Maps geometric objects to the surface of a given mesh. "
         "The documentation is available at "
         "https://docs.opengeosys.org/docs/tools/model-preparation/"
         "map-geometric-object-to-the-surface-of-a-mesh.\n\n"

@@ -47,8 +47,7 @@ SolutionDependentDirichletBoundaryCondition::
         OGS_FATAL(
             "Found mesh property '{:s}' in the mesh '{:s}' which is for "
             "boundary assignment. This mesh property is the built-in property "
-            "of the "
-            "class SolutionDependentDirichletBoundaryCondition.",
+            "of the class SolutionDependentDirichletBoundaryCondition.",
             property_name, bc_mesh.getName());
     }
 

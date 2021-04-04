@@ -338,8 +338,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 case IterationResult::REPEAT_ITERATION:
                     INFO(
                         "Newton: The postIteration() hook decided that this "
-                        "iteration"
-                        " has to be repeated.");
+                        "iteration has to be repeated.");
                     // TODO introduce some onDestroy hook.
                     NumLib::GlobalVectorProvider::provider.releaseVector(
                         *x_new[process_id]);

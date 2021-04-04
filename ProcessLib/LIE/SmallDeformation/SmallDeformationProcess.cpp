@@ -58,8 +58,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     {
         OGS_FATAL(
             "The number of the given fracture properties ({:d}) are not "
-            "consistent"
-            " with the number of fracture groups in a mesh ({:d}).",
+            "consistent with the number of fracture groups in a mesh ({:d}).",
             _process_data.fracture_properties.size(),
             _vec_fracture_mat_IDs.size());
     }

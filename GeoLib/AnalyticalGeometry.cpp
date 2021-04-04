@@ -569,8 +569,8 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
             err.precision(std::numeric_limits<double>::digits10);
             err << ab << " x " << cd;
             OGS_FATAL(
-                "The case of parallel line segments ({:s}) "
-                "is not handled yet. Aborting.",
+                "The case of parallel line segments ({:s}) is not handled yet. "
+                "Aborting.",
                 err.str());
         }
         return std::vector<MathLib::Point3d>();

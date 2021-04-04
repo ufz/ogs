@@ -705,8 +705,7 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::size_t> arg_dim2(
         "", "dim2",
-        "index of second dimension (y/latitude) for the selected "
-        "variable",
+        "index of second dimension (y/latitude) for the selected variable",
         false, 0, &allowed_dim_vals);
     cmd.add(arg_dim2);
 

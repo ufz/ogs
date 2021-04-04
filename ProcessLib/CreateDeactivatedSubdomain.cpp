@@ -143,8 +143,8 @@ static std::pair<Eigen::Vector3d, Eigen::Vector3d> parseLineSegment(
     if (start.size() != 3)
     {
         OGS_FATAL(
-            "For construction of a line segment the start point must be a "
-            "3D point. Got a vector of size {}.",
+            "For construction of a line segment the start point must be a 3D "
+            "point. Got a vector of size {}.",
             start.size());
     }
 
@@ -155,8 +155,8 @@ static std::pair<Eigen::Vector3d, Eigen::Vector3d> parseLineSegment(
     if (end.size() != 3)
     {
         OGS_FATAL(
-            "For construction of a line segment the end point must be a "
-            "3D point. Got a vector of size {}.",
+            "For construction of a line segment the end point must be a 3D "
+            "point. Got a vector of size {}.",
             end.size());
     }
     return {Eigen::Vector3d{start[0], start[1], start[2]},

@@ -32,8 +32,8 @@ std::unique_ptr<Property> createGasPressureDependentPermeability(
     if ((geometry_dimension != 2) && (geometry_dimension != 3))
     {
         OGS_FATAL(
-            "The GasPressureDependentPermeability is implemented only "
-            "for 2D or 3D problems");
+            "The GasPressureDependentPermeability is implemented only for 2D "
+            "or 3D problems");
     }
 
     //! \ogs_file_param{properties__property__type}
