@@ -9,10 +9,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 
 #include "MathLib/Point3dWithID.h"
-#include "gtest/gtest.h"
 
 using namespace MathLib;
 

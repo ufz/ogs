@@ -8,6 +8,7 @@
  *
  */
 
+#include <gtest/gtest.h>
 #include <vtkImageAlgorithm.h>
 #include <vtkImageData.h>
 #include <vtkPNGReader.h>
@@ -19,7 +20,6 @@
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/TestInfo.h"
-#include "gtest/gtest.h"
 
 TEST(TestVtkRaster, TestPNGReader)
 {

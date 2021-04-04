@@ -7,6 +7,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "MeshLib/Elements/Element.h"
@@ -14,7 +16,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/NodeAdjacencyTable.h"
-#include "gtest/gtest.h"
 
 TEST(MeshLib, CreateNodeAdjacencyTable1D)
 {

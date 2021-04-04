@@ -10,10 +10,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include "GeoLib/LineSegment.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
-#include "gtest/gtest.h"
 
 /**
  * Polygon:

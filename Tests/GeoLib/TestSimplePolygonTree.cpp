@@ -11,12 +11,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/SimplePolygonTree.h"
-#include "gtest/gtest.h"
 
 /**
  *       2

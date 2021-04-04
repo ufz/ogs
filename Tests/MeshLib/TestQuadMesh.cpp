@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 #include <iterator>
 #include <list>
@@ -14,7 +16,6 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "gtest/gtest.h"
 
 class MeshLibQuadMesh : public ::testing::Test
 {

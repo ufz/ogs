@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <Eigen/Eigen>
 #include <boost/math/constants/constants.hpp>
 #include <cmath>
@@ -19,7 +21,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/ElementQualityInterface.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 class TetElementQuality : public ::testing::Test
 {

@@ -11,6 +11,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "MathLib/MathTools.h"
@@ -21,7 +23,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 TEST(MeshLib, Duplicate)
 {

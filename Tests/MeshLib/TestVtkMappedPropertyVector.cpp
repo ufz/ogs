@@ -11,6 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#include <gtest/gtest.h>
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
 #include <vtkNew.h>
@@ -21,7 +22,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "gtest/gtest.h"
 
 // Creates a PropertyVector<double> and maps it into a vtkDataArray-equivalent
 TEST(MeshLibMappedPropertyVector, Double)

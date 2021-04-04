@@ -11,12 +11,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "GeoLib/Grid.h"
 #include "GeoLib/Point.h"
 #include "MathLib/MathTools.h"
-#include "gtest/gtest.h"
 
 TEST(GeoLib, InsertZeroPointsInGrid)
 {

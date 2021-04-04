@@ -11,6 +11,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "GeoLib/Raster.h"
@@ -22,7 +24,6 @@
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 void detectHoles(MeshLib::Mesh const& mesh,
                  std::vector<std::size_t>

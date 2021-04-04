@@ -12,6 +12,7 @@
  *
  */
 
+#include <gtest/gtest.h>
 #include <spdlog/spdlog.h>
 
 #include <clocale>
@@ -20,7 +21,6 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/Logging.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
-#include "gtest/gtest.h"
 
 #ifdef OGS_BUILD_GUI
 #include <QCoreApplication>

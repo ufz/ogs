@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "MeshLib/Elements/Element.h"
@@ -15,7 +17,6 @@
 #include "MeshLib/MeshEditing/FlipElements.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 TEST(MeshLib, FlipLineMesh)
 {

@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <Eigen/Eigen>
 #include <numeric>
 
@@ -14,7 +16,6 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/PropertyVector.h"
-#include "gtest/gtest.h"
 
 class MeshLibProperties : public ::testing::Test
 {

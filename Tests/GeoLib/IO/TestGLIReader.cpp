@@ -10,6 +10,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdio>
 #include <fstream>
 
@@ -18,7 +20,6 @@
 #include "GeoLib/GEOObjects.h"
 #include "InfoLib/TestInfo.h"
 #include "filesystem.h"
-#include "gtest/gtest.h"
 
 class OGSIOVer4InterfaceTest : public ::testing::Test
 {

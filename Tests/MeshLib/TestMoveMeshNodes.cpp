@@ -6,6 +6,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdlib>
 #include <ctime>
 #include <numeric>
@@ -13,7 +15,6 @@
 
 #include "MeshLib/MeshEditing/moveMeshNodes.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 TEST(MeshLib, moveMeshNodes)
 {

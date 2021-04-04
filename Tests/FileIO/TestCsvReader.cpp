@@ -12,13 +12,14 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdio>
 
 #include "Applications/FileIO/CsvInterface.h"
 #include "GeoLib/Point.h"
 #include "InfoLib/TestInfo.h"
 #include "filesystem.h"
-#include "gtest/gtest.h"
 
 class CsvInterfaceTest : public ::testing::Test
 {

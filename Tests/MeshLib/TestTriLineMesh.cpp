@@ -7,11 +7,12 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
-#include "gtest/gtest.h"
 
 /// Creates a mesh consisiting of two triangles sharing a line element on their
 /// common edge.

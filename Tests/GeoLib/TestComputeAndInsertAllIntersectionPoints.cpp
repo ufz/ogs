@@ -9,6 +9,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 #include <tuple>
 
@@ -16,7 +18,6 @@
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
-#include "gtest/gtest.h"
 
 TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
 {

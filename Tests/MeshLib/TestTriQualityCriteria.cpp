@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <boost/math/constants/constants.hpp>
 #include <cmath>
 #include <memory>
@@ -18,7 +20,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/ElementQualityInterface.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 class TriElementQuality : public ::testing::Test
 {

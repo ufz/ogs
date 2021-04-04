@@ -10,10 +10,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 
 #include "GeoLib/Polyline.h"
-#include "gtest/gtest.h"
 
 TEST(GeoLib, PolylineTest)
 {

@@ -12,6 +12,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdlib>
 #include <ctime>
 #include <list>
@@ -20,7 +22,6 @@
 #include "GeoLib/AABB.h"
 #include "GeoLib/Point.h"
 #include "MathLib/Point3d.h"
-#include "gtest/gtest.h"
 
 TEST(GeoLibAABB, RandomNumberOfPointersToRandomPoints)
 {

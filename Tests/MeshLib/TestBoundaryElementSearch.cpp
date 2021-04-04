@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 #include <numeric>
 
@@ -21,7 +23,6 @@
 #include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 using namespace MeshLib;
 

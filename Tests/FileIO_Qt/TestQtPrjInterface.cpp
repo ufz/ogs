@@ -8,6 +8,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdio>
 
 #include "Applications/DataHolderLib/BoundaryCondition.h"
@@ -16,7 +18,6 @@
 #include "Applications/FileIO/XmlIO/Qt/XmlPrjInterface.h"
 #include "GeoLib/GEOObjects.h"
 #include "InfoLib/TestInfo.h"
-#include "gtest/gtest.h"
 
 TEST(TestQtPrjInterface, QtXmlPrjReader)
 {

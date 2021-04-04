@@ -11,8 +11,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include "BaseLib/FileTools.h"
-#include "gtest/gtest.h"
 
 #ifdef WIN32
 TEST(BaseLib, CopyPathToFileNameWin)

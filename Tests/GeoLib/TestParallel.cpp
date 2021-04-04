@@ -9,8 +9,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include "GeoLib/AnalyticalGeometry.h"
-#include "gtest/gtest.h"
 
 TEST(GeoLib, TestParallel)
 {

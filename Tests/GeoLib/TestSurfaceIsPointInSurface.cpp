@@ -9,6 +9,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <array>
 #include <boost/math/constants/constants.hpp>
 #include <memory>
@@ -25,7 +27,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/convertMeshToGeo.h"
-#include "gtest/gtest.h"
 
 inline double constant(double /*unused*/, double /*unused*/)
 {

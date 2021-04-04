@@ -7,12 +7,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "gtest/gtest.h"
 
 class MeshLibLineMesh : public ::testing::Test
 {

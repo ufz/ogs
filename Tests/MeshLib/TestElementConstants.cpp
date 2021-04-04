@@ -7,10 +7,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
-#include "gtest/gtest.h"
 
 using namespace MeshLib;
 

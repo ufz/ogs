@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 #include <memory>
 #include <random>
@@ -14,7 +16,6 @@
 #include "GeoLib/AABB.h"
 #include "GeoLib/OctTree.h"
 #include "GeoLib/Point.h"
-#include "gtest/gtest.h"
 
 class GeoLibOctTree : public testing::Test
 {

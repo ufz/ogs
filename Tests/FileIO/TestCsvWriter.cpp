@@ -8,6 +8,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -15,7 +17,6 @@
 #include "Applications/FileIO/CsvInterface.h"
 #include "InfoLib/TestInfo.h"
 #include "filesystem.h"
-#include "gtest/gtest.h"
 
 TEST(CsvWriter, WriteReadTest)
 {

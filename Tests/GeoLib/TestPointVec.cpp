@@ -7,11 +7,12 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 #include <random>
 
 #include "GeoLib/PointVec.h"
-#include "gtest/gtest.h"
 
 class PointVecTest : public testing::Test
 {

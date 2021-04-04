@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "GeoLib/Raster.h"
@@ -17,7 +19,6 @@
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 TEST(NodeSearch, UnusedNodes)
 {

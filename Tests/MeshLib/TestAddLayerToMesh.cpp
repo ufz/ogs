@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "MeshLib/Elements/Element.h"
@@ -17,7 +19,6 @@
 #include "MeshLib/MeshQuality/MeshValidation.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 namespace AddLayerValidation
 {

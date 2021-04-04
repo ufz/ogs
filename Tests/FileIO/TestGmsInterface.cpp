@@ -8,13 +8,14 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "Applications/FileIO/GMSInterface.h"
 #include "InfoLib/TestInfo.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
-#include "gtest/gtest.h"
 
 TEST(FileIO, TestGmsInterface)
 {

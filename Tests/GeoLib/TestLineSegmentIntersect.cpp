@@ -9,12 +9,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 #include <random>
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/Point.h"
-#include "gtest/gtest.h"
 
 TEST(GeoLib, TestXAxisParallelLineSegmentIntersection2d)
 {

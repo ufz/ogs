@@ -12,6 +12,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <limits>
 #include <memory>
 #include <vector>
@@ -25,7 +27,6 @@
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
 #include "filesystem.h"
-#include "gtest/gtest.h"
 
 // read TetGen geometry
 TEST(FileIO, TetGenSmeshReader)

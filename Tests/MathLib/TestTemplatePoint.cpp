@@ -9,10 +9,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <array>
 
 #include "MathLib/TemplatePoint.h"
-#include "gtest/gtest.h"
 
 using namespace MathLib;
 

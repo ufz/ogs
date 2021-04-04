@@ -12,6 +12,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdio>
 
 #include "BaseLib/StringTools.h"
@@ -20,7 +22,6 @@
 #include "InfoLib/TestInfo.h"
 #include "Tests/FileIO/TestGmlInterface.h"
 #include "filesystem.h"
-#include "gtest/gtest.h"
 
 TEST_F(TestGmlInterface, BoostXmlGmlWriterReaderTest)
 {

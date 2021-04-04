@@ -7,8 +7,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include "MeshLib/Mesh.h"
-#include "gtest/gtest.h"
 
 using namespace MeshLib;
 

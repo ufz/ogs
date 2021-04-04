@@ -11,6 +11,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Hex.h"
 #include "MeshLib/Elements/Prism.h"
@@ -21,7 +23,6 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/MeshRevision.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 TEST(MeshEditing, Tri)
 {

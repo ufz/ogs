@@ -11,6 +11,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "MeshLib/ElementStatus.h"
@@ -18,7 +20,6 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 TEST(MeshLib, ElementStatus)
 {

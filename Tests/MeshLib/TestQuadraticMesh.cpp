@@ -7,6 +7,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
 #include "GeoLib/Polyline.h"
@@ -17,7 +19,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 TEST(MeshLib, QuadraticOrderMesh_Line)
 {

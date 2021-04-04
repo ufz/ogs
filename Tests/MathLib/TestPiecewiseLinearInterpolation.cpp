@@ -14,8 +14,9 @@
 #include <limits>
 
 // google test
+#include <gtest/gtest.h>
+
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-#include "gtest/gtest.h"
 
 TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolation)
 {

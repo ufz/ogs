@@ -9,6 +9,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <cstdio>
 #include <memory>
@@ -19,7 +21,6 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RasterDataToMesh.h"
-#include "gtest/gtest.h"
 
 class RasterDataToMeshTest : public ::testing::Test
 {

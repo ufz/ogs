@@ -11,13 +11,13 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#include <gtest/gtest.h>
 #include <vtkNew.h>
 #include <vtkUnstructuredGrid.h>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Vtk/VtkMeshNodalCoordinatesTemplate.h"
-#include "gtest/gtest.h"
 
 TEST(MeshLibdalCoordinates, Init)
 {

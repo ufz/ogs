@@ -8,6 +8,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdio>
 #include <memory>
 
@@ -19,7 +21,6 @@
 #include "MeshLib/MeshGenerators/RasterToMesh.h"
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 #ifdef OGS_BUILD_GUI
 #include <vtkImageData.h>

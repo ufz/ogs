@@ -8,6 +8,8 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <cstdlib>
 #include <ctime>
 #include <random>
@@ -19,7 +21,6 @@
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
-#include "gtest/gtest.h"
 
 TEST(GeoLib, DuplicateGeometry)
 {

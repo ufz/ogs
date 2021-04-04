@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <cmath>
 #include <memory>
 #include <numeric>
@@ -17,7 +19,6 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 using namespace MeshLib;
 

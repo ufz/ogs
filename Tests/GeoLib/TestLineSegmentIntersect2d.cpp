@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <array>
 #include <ctime>
 #include <functional>
@@ -16,7 +18,6 @@
 #include "GeoLib/AnalyticalGeometry.h"
 #include "MathLib/Point3d.h"
 #include "Tests/GeoLib/AutoCheckGenerators.h"
-#include "gtest/gtest.h"
 
 namespace ac = autocheck;
 

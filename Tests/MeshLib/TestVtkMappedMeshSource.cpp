@@ -12,6 +12,7 @@
  *
  */
 
+#include <gtest/gtest.h>
 #include <vtkCellData.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
@@ -32,7 +33,6 @@
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "filesystem.h"
-#include "gtest/gtest.h"
 
 // Creates a mesh with different types of data (double, int, etc.) and point,
 // cell, or integration point properties.

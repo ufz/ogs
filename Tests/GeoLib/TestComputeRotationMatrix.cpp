@@ -9,8 +9,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include "GeoLib/AnalyticalGeometry.h"
-#include "gtest/gtest.h"
 
 auto test3equal = [](double a, double b, double c,
                      Eigen::Vector3d const& result) {
