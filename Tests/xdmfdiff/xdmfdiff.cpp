@@ -1,12 +1,11 @@
 /**
  * \file
  * \copyright
- * Copyright (c) 2015-2021, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  */
-
 #include <tclap/CmdLine.h>
 
 #include <Xdmf.hpp>
@@ -24,6 +23,8 @@
 #include <memory>
 #include <sstream>
 #include <tuple>
+
+#include "InfoLib/GitInfo.h"
 // See https://stackoverflow.com/a/8513803/2706707
 template <typename... Containers>
 auto zip(Containers&&... containers) -> boost::iterator_range<
@@ -54,14 +55,13 @@ struct Args
 auto parseCommandLine(int argc, char* argv[]) -> Args
 {
     TCLAP::CmdLine cmd(
-        "XdmfDiff software.\n"
-        "Copyright (c) 2015-2020, OpenGeoSys Community "
-        "(http://www.opengeosys.org) "
-        "Distributed under a Modified BSD License. "
-        "See accompanying file LICENSE.txt or "
-        "http://www.opengeosys.org/project/license",
-        ' ',
-        "0.1");
+        "XdmfDiff software.\n\n"
+        "OpenGeoSys-6 software, version " +
+            GitInfoLib::GitInfo::ogs_version +
+            ".\n"
+            "Copyright (c) 2012-2021, OpenGeoSys Community "
+            "(http://www.opengeosys.org)",
+        ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::UnlabeledValueArg<std::string> xdmf_input_a_arg(
         "input-file-a", "Path to the Xdmf input file.", true, "", "XDMF FILE");
