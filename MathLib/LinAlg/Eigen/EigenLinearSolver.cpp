@@ -10,17 +10,18 @@
 
 #include "EigenLinearSolver.h"
 
+#include <Eigen/Sparse>
+
 #include "BaseLib/Logging.h"
 
 #ifdef USE_MKL
 #include <Eigen/PardisoSupport>
 #endif
 
+
 #ifdef USE_EIGEN_UNSUPPORTED
 #include <unsupported/Eigen/src/IterativeSolvers/GMRES.h>
 #include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>
-
-#include <Eigen/Sparse>
 #endif
 
 #include "BaseLib/ConfigTree.h"
