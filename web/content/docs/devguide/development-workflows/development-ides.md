@@ -16,8 +16,8 @@ Here is a small compilation about **debugging tools** and how to **set them up**
 
 Here is a **link list** without specific order:
 
-- [Eclipse](http://www.eclipse.org/)
-- [Code::Blocks](http://www.codeblocks.org/)
+- [Eclipse](https://www.eclipse.org/)
+- [Code::Blocks](https://www.codeblocks.org/)
 - [Netbeans](https://netbeans.org/)
 - [GDB](https://www.sourceware.org/gdb/)
 - [CLion](https://www.jetbrains.com/clion/)
@@ -67,7 +67,7 @@ __________
 
 ## Eclipse
 
-<http://www.eclipse.org/downloads>
+<https://www.eclipse.org/downloads>
 
 Choose "Eclipse IDE for C/C++ Developers"
 
@@ -93,13 +93,13 @@ Choose "Eclipse IDE for C/C++ Developers"
 
 7. Start debugging...
 
-Documentation: <http://wiki.eclipse.org/Main_Page>
+Documentation: <https://wiki.eclipse.org/Main_Page>
 
 __________
 
 ## Code::Blocks
 
-<http://www.codeblocks.org/downloads>  
+<https://www.codeblocks.org/downloads>  
 or  
 <https://code.google.com/p/fortranproject>
 
@@ -128,8 +128,7 @@ The latter includes already plugins for Fortran, in case you want to cross-compi
 
 ### Documentation
 
-- <http://www.codeblocks.org/user-manual>
-- <http://wiki.codeblocks.org/index.php?title=Main_Page>
+- <https://www.codeblocks.org/user-manual>
 
 __________
 
