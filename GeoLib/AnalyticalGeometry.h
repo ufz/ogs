@@ -125,7 +125,7 @@ void rotatePoints(Eigen::Matrix3d const& rot_mat, std::vector<P*> const& pnts);
  * Points are rotated using a rotation matrix computed from the first three points
  * in the vector. Point coordinates are modified as a result of the rotation.
  */
-Eigen::Matrix3d rotatePointsToXY(std::vector<GeoLib::Point*>& pnts);
+Eigen::Matrix3d rotatePointsToXY(std::vector<Point*>& pnts);
 
 /**
  * rotate points to X-Y plane
@@ -150,10 +150,10 @@ Eigen::Matrix3d rotatePointsToXY(InputIterator1 p_pnts_begin,
  * @param intersection_pnt the intersection point if the segments intersect
  * @return true, if the polyline contains intersections
  */
-bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
-                           GeoLib::Polyline::SegmentIterator& seg_it0,
-                           GeoLib::Polyline::SegmentIterator& seg_it1,
-                           GeoLib::Point& intersection_pnt);
+bool lineSegmentsIntersect(const Polyline* ply,
+                           Polyline::SegmentIterator& seg_it0,
+                           Polyline::SegmentIterator& seg_it1,
+                           Point& intersection_pnt);
 
 /**
  * Check if the two vectors \f$v, w \in R^3\f$ are in parallel
@@ -171,8 +171,8 @@ bool parallel(Eigen::Vector3d v, Eigen::Vector3d w);
  * @param s the intersection point if the segments do intersect
  * @return true, if the line segments intersect, else false
  */
-bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
-                          GeoLib::LineSegment const& s1, GeoLib::Point& s);
+bool lineSegmentIntersect(LineSegment const& s0, LineSegment const& s1,
+                          Point& s);
 
 /// A line segment is given by its two end-points. The function checks,
 /// if the two line segments (ab) and (cd) intersects. This method checks the
@@ -184,26 +184,26 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
 /// vector containing two points describing the line segment the original line
 /// segments are interfering.
 std::vector<MathLib::Point3d> lineSegmentIntersect2d(
-    GeoLib::LineSegment const& ab, GeoLib::LineSegment const& cd);
+    LineSegment const& ab, LineSegment const& cd);
 
 /**
  * Calculates the intersection points of a line PQ and a triangle ABC.
  * This method requires ABC to be counterclockwise and PQ to point downward.
  * @return Intersection point or nullptr if there is no intersection.
  */
-std::unique_ptr<GeoLib::Point> triangleLineIntersection(
+std::unique_ptr<Point> triangleLineIntersection(
     MathLib::Point3d const& a, MathLib::Point3d const& b,
     MathLib::Point3d const& c, MathLib::Point3d const& p,
     MathLib::Point3d const& q);
 
 /**
- * Method first computes the intersection points of line segments of GeoLib::Polyline objects
- * (@see computeIntersectionPoints()) and pushes each intersection point in the GeoLib::PointVec
+ * Method first computes the intersection points of line segments of Polyline objects
+ * (@see computeIntersectionPoints()) and pushes each intersection point in the PointVec
  * pnt_vec. For each intersection an id is returned.  This id is used to split the two
  * intersecting straight line segments in four straight line segments.
  */
-void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
-    std::vector<GeoLib::Polyline*> & plys);
+void computeAndInsertAllIntersectionPoints(PointVec &pnt_vec,
+    std::vector<Polyline*> & plys);
 
 /**
  * Function rotates a polygon to the xy plane. For this reason, (1) the points of
@@ -216,7 +216,7 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec &pnt_vec,
  * @param plane_normal the normal of the original Newell plane
  * @return a rotated polygon
  */
-GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
+Polygon rotatePolygonToXY(Polygon const& polygon_in,
                                   Eigen::Vector3d& plane_normal);
 
 /// Sorts the vector of segments such that the \f$i\f$-th segment is connected
@@ -226,7 +226,7 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
 /// connectable. In order to obtain a unique result the segments are sorted such
 /// that the begin point of the first segment is \c seg_beg_pnt.
 void sortSegments(MathLib::Point3d const& seg_beg_pnt,
-    std::vector<GeoLib::LineSegment>& sub_segments);
+    std::vector<LineSegment>& sub_segments);
 
 } // end namespace GeoLib
 
