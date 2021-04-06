@@ -8,6 +8,7 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <ctime>
 #include <memory>
 
@@ -88,4 +89,3 @@ TEST(ConstructAdditionalMeshesFromGeoObjects, PointMeshLargeSearchRadius)
     ASSERT_EQ(geometries.getPointVec(geometry_name)->size(),
               meshes_from_multiple_nodes.size());
 }
-

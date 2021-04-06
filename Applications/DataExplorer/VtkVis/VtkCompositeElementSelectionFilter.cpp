@@ -14,23 +14,25 @@
 
 // ** INCLUDES **
 #include "VtkCompositeElementSelectionFilter.h"
-#include "VtkAppendArrayFilter.h"
-#include "VtkCompositePointToGlyphFilter.h"
-#include "VtkColorLookupTable.h"
-#include "VtkPointsSource.h"
 
 #include <vtkDataSetSurfaceFilter.h>
+#include <vtkIdFilter.h>
+#include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkThreshold.h>
-#include <vtkIdFilter.h>
 #include <vtkUnstructuredGrid.h>
-
 #include <vtkUnstructuredGridAlgorithm.h>
-#include <vtkPointData.h>
 
+#include "VtkAppendArrayFilter.h"
+#include "VtkColorLookupTable.h"
+#include "VtkCompositePointToGlyphFilter.h"
+#include "VtkPointsSource.h"
 
-VtkCompositeElementSelectionFilter::VtkCompositeElementSelectionFilter( vtkAlgorithm* inputAlgorithm )
-: VtkCompositeFilter(inputAlgorithm), _range(0.0, 1.0), _selection_name("Selection")
+VtkCompositeElementSelectionFilter::VtkCompositeElementSelectionFilter(
+    vtkAlgorithm* inputAlgorithm)
+    : VtkCompositeFilter(inputAlgorithm),
+      _range(0.0, 1.0),
+      _selection_name("Selection")
 {
 }
 
@@ -41,7 +43,8 @@ void VtkCompositeElementSelectionFilter::init()
     this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID;
     this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
 
-    this->SetLookUpTable(QString::fromStdString(_selection_name), this->GetLookupTable());
+    this->SetLookUpTable(QString::fromStdString(_selection_name),
+                         this->GetLookupTable());
     vtkSmartPointer<VtkAppendArrayFilter> selFilter(nullptr);
     if (!_selection.empty())
     {
@@ -61,17 +64,19 @@ void VtkCompositeElementSelectionFilter::init()
     {
         idFilter->SetInputConnection(selFilter->GetOutputPort());
     }
-        idFilter->PointIdsOn();
-        idFilter->CellIdsOn();
-        idFilter->FieldDataOn();
-        idFilter->Update();
+    idFilter->PointIdsOn();
+    idFilter->CellIdsOn();
+    idFilter->FieldDataOn();
+    idFilter->Update();
 
     vtkThreshold* threshold = vtkThreshold::New();
-        threshold->SetInputConnection(idFilter->GetOutputPort());
-        threshold->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_CELLS, _selection_name.c_str());
-        threshold->SetSelectedComponent(0);
-        threshold->ThresholdBetween(thresholdLower, thresholdUpper);
-        threshold->Update();
+    threshold->SetInputConnection(idFilter->GetOutputPort());
+    threshold->SetInputArrayToProcess(0, 0, 0,
+                                      vtkDataObject::FIELD_ASSOCIATION_CELLS,
+                                      _selection_name.c_str());
+    threshold->SetSelectedComponent(0);
+    threshold->ThresholdBetween(thresholdLower, thresholdUpper);
+    threshold->Update();
 
     QList<QVariant> thresholdRangeList;
     thresholdRangeList.push_back(thresholdLower);
@@ -80,14 +85,16 @@ void VtkCompositeElementSelectionFilter::init()
     _outputAlgorithm = threshold;
 }
 
-void VtkCompositeElementSelectionFilter::setSelectionArray(const std::string &selection_name, const std::vector<double> &selection)
+void VtkCompositeElementSelectionFilter::setSelectionArray(
+    const std::string& selection_name, const std::vector<double>& selection)
 {
     _selection_name = selection_name;
     _selection = selection;
     init();
 }
 
-void VtkCompositeElementSelectionFilter::SetUserVectorProperty( QString name, QList<QVariant> values)
+void VtkCompositeElementSelectionFilter::SetUserVectorProperty(
+    QString name, QList<QVariant> values)
 {
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 
@@ -101,9 +108,9 @@ void VtkCompositeElementSelectionFilter::SetUserVectorProperty( QString name, QL
 VtkColorLookupTable* VtkCompositeElementSelectionFilter::GetLookupTable()
 {
     VtkColorLookupTable* lut = VtkColorLookupTable::New();
-    lut->SetTableRange(0,1);
-    DataHolderLib::Color a{{0, 0, 255, 255}};   // blue
-    DataHolderLib::Color b{{0, 255, 0, 255}};   // green
+    lut->SetTableRange(0, 1);
+    DataHolderLib::Color a{{0, 0, 255, 255}};    // blue
+    DataHolderLib::Color b{{0, 255, 0, 255}};    // green
     DataHolderLib::Color c{{255, 255, 0, 255}};  // yellow
     DataHolderLib::Color d{{255, 0, 0, 255}};    // red
     lut->setColor(1.0, a);

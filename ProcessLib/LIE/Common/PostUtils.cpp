@@ -235,8 +235,8 @@ PostProcessTool::PostProcessTool(
         {
             copyPropertyValues(*p, createProperty(*p));
         }
-        else if (auto p =
-                     dynamic_cast<MeshLib::PropertyVector<long long>*>(property))
+        else if (auto p = dynamic_cast<MeshLib::PropertyVector<long long>*>(
+                     property))
         {
             copyPropertyValues(*p, createProperty(*p));
         }

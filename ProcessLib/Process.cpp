@@ -10,13 +10,12 @@
 
 #include "Process.h"
 
+#include "CoupledSolutionsForStaggeredScheme.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
 #include "ParameterLib/Parameter.h"
-
 #include "ProcessVariable.h"
-#include "CoupledSolutionsForStaggeredScheme.h"
 
 namespace ProcessLib
 {

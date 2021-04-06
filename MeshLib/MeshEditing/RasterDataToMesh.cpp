@@ -11,12 +11,11 @@
 #include "RasterDataToMesh.h"
 
 #include "BaseLib/StringTools.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
-
 namespace RasterDataToMesh
 {
 static bool checkMesh(MeshLib::Mesh const& mesh)

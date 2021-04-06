@@ -37,8 +37,8 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
 void DeactivatedSubdomainDirichlet::config(
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk)
 {
-    checkParametersOfDirichletBoundaryCondition(*_subdomain.mesh, dof_table_bulk,
-                                                _variable_id, _component_id);
+    checkParametersOfDirichletBoundaryCondition(
+        *_subdomain.mesh, dof_table_bulk, _variable_id, _component_id);
 
     std::vector<MeshLib::Node*> const& bc_nodes = _subdomain.mesh->getNodes();
     MeshLib::MeshSubset subdomain_mesh_subset(*_subdomain.mesh, bc_nodes);
@@ -80,9 +80,9 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
     };
     if (time_interval_contains(t))
     {
-        getEssentialBCValuesLocal(_parameter, *_subdomain.mesh,
-                                  inactive_nodes_in_bc_mesh, *_dof_table_boundary,
-                                  _variable_id, _component_id, t, x, bc_values);
+        getEssentialBCValuesLocal(
+            _parameter, *_subdomain.mesh, inactive_nodes_in_bc_mesh,
+            *_dof_table_boundary, _variable_id, _component_id, t, x, bc_values);
         return;
     }
 

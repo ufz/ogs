@@ -15,9 +15,9 @@
 #include "MeshSurfaceExtraction.h"
 
 #include <boost/math/constants/constants.hpp>
-#include "BaseLib/Logging.h"
 #include <memory>
 
+#include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Point.h"
 #include "MeshLib/Elements/Quad.h"
@@ -146,8 +146,8 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
         else
         {
             WARN(
-                "Skipping property vector '{:s}' - no matching data type '{:s}'"
-                "found.",
+                "Skipping property vector '{:s}' - no matching data type "
+                "'{:s}' found.",
                 name, typeid(*property).name());
             vectors_skipped++;
         }

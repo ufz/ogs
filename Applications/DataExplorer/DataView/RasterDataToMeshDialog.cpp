@@ -9,11 +9,12 @@
  */
 
 #include "RasterDataToMeshDialog.h"
+
+#include <QFileDialog>
+#include <QSettings>
+
 #include "OGSError.h"
 #include "StrictDoubleValidator.h"
-
-#include <QSettings>
-#include <QFileDialog>
 
 RasterDataToMeshDialog::RasterDataToMeshDialog(std::string const& mesh_name,
                                                QDialog* parent)
@@ -23,7 +24,7 @@ RasterDataToMeshDialog::RasterDataToMeshDialog(std::string const& mesh_name,
 
     this->meshNameEdit->setText(QString::fromStdString(mesh_name) + "_Raster");
     auto* no_data_validator = new StrictDoubleValidator(this);
-    this->noDataValueEdit->setValidator (no_data_validator);
+    this->noDataValueEdit->setValidator(no_data_validator);
 }
 
 void RasterDataToMeshDialog::on_rasterSelectButton_pressed()
@@ -63,4 +64,3 @@ void RasterDataToMeshDialog::accept()
 
     this->done(QDialog::Accepted);
 }
-

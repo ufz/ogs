@@ -19,8 +19,7 @@
 #include "MeshLib/NodePartitionedMesh.h"
 
 GlobalSparsityPattern computeSparsityPatternPETSc(
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    MeshLib::Mesh const& mesh)
+    NumLib::LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
 {
     assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(&mesh));
     auto const& npmesh =

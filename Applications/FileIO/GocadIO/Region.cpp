@@ -18,7 +18,6 @@ namespace FileIO
 {
 namespace Gocad
 {
-
 std::ostream& operator<<(std::ostream& os, Region const& r)
 {
     return os << "(" << r.name << "|" << r.bit << ")";

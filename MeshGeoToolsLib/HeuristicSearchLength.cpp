@@ -13,36 +13,39 @@
 #include "HeuristicSearchLength.h"
 
 #include "BaseLib/Logging.h"
-
 #include "MeshLib/Elements/Element.h"
 
 namespace MeshGeoToolsLib
 {
-
-HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthType length_type)
-: _mesh(mesh)
+HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh,
+                                             LengthType length_type)
+    : _mesh(mesh)
 {
-    double sum (0.0);
-    double sum_of_sqr (0.0); // total length of edges
+    double sum(0.0);
+    double sum_of_sqr(0.0);  // total length of edges
 
-    std::size_t n_sampling(0); // total length of edges squared
+    std::size_t n_sampling(0);  // total length of edges squared
     std::vector<MeshLib::Element*> const& elements(_mesh.getElements());
 
-    if (length_type==LengthType::Edge) {
+    if (length_type == LengthType::Edge)
+    {
         for (auto element : elements)
         {
             std::size_t const n_edges(element->getNumberOfEdges());
-            for (std::size_t k(0); k<n_edges; k++) {
+            for (std::size_t k(0); k < n_edges; k++)
+            {
                 auto edge =
                     element->getEdge(k);  // allocation inside getEdge().
                 double const len = edge->getContent();
                 delete edge;
                 sum += len;
-                sum_of_sqr += len*len;
+                sum_of_sqr += len * len;
             }
             n_sampling += n_edges;
         }
-    } else {
+    }
+    else
+    {
         for (const MeshLib::Element* e : elements)
         {
             auto const [min, max] =
@@ -53,14 +56,16 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
         n_sampling = _mesh.getNumberOfElements();
     }
 
-    const double mean (sum/n_sampling);
-    const double variance ((sum_of_sqr - (sum*sum)/n_sampling)/(n_sampling-1));
+    const double mean(sum / n_sampling);
+    const double variance((sum_of_sqr - (sum * sum) / n_sampling) /
+                          (n_sampling - 1));
 
     // Set the search length for the case of non-positive variance (which can
     // happen due to numerics).
-    _search_length = mean/2;
+    _search_length = mean / 2;
 
-    if (variance > 0) {
+    if (variance > 0)
+    {
         if (variance < mean * mean / 4)
         {
             _search_length -= std::sqrt(variance);
@@ -77,4 +82,4 @@ HeuristicSearchLength::HeuristicSearchLength(MeshLib::Mesh const& mesh, LengthTy
         _mesh.getName(), _search_length);
 }
 
-} // end namespace MeshGeoToolsLib
+}  // end namespace MeshGeoToolsLib

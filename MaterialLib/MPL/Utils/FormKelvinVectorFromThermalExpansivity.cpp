@@ -16,9 +16,9 @@
 namespace MaterialPropertyLib
 {
 static const char error_info[] =
-    "The thermal expansivity can only be either a scalar number for "
-    "isotropic thermal expansion or a three element array for anisotropic "
-    "thermal expansion.";
+    "The thermal expansivity can only be either a scalar number for isotropic "
+    "thermal expansion or a three element array for anisotropic thermal "
+    "expansion.";
 
 template <int GlobalDim>
 struct FormKelvinVectorFromThermalExpansivity

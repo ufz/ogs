@@ -18,7 +18,8 @@
 
 #include "VtkImageDataToPointCloudFilter.h"
 
-VtkCompositeImageToPointCloudFilter::VtkCompositeImageToPointCloudFilter(vtkAlgorithm* inputAlgorithm)
+VtkCompositeImageToPointCloudFilter::VtkCompositeImageToPointCloudFilter(
+    vtkAlgorithm* inputAlgorithm)
     : VtkCompositeFilter(inputAlgorithm)
 {
     init();
@@ -35,34 +36,41 @@ void VtkCompositeImageToPointCloudFilter::init()
     _inputAlgorithm->Update();
 
     QList<QVariant> n_points_range_list;
-    n_points_range_list.push_back(point_cloud_filter->GetMinNumberOfPointsPerCell());
-    n_points_range_list.push_back(point_cloud_filter->GetMaxNumberOfPointsPerCell());
-    (*_algorithmUserVectorProperties)["Number of points range"] = n_points_range_list;
+    n_points_range_list.push_back(
+        point_cloud_filter->GetMinNumberOfPointsPerCell());
+    n_points_range_list.push_back(
+        point_cloud_filter->GetMaxNumberOfPointsPerCell());
+    (*_algorithmUserVectorProperties)["Number of points range"] =
+        n_points_range_list;
     QList<QVariant> vertical_extent_list;
     vertical_extent_list.push_back(point_cloud_filter->GetMinHeight());
     vertical_extent_list.push_back(point_cloud_filter->GetMaxHeight());
     (*_algorithmUserVectorProperties)["Vertical extent"] = vertical_extent_list;
-    (*_algorithmUserProperties)["Logarithmic interpolation"] = !point_cloud_filter->GetIsLinear();
+    (*_algorithmUserProperties)["Logarithmic interpolation"] =
+        !point_cloud_filter->GetIsLinear();
     (*_algorithmUserProperties)["Gamma value"] = point_cloud_filter->GetGamma();
 
     point_cloud_filter->Update();
     _outputAlgorithm = point_cloud_filter;
 }
 
-void VtkCompositeImageToPointCloudFilter::SetUserProperty(QString name, QVariant value)
+void VtkCompositeImageToPointCloudFilter::SetUserProperty(QString name,
+                                                          QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
     if ((name == "Gamma value") && (value.toDouble() > 0))
     {
-        static_cast<VtkImageDataToPointCloudFilter*>(_outputAlgorithm)->SetGamma(value.toDouble());
+        static_cast<VtkImageDataToPointCloudFilter*>(_outputAlgorithm)
+            ->SetGamma(value.toDouble());
     }
     if (name == "Logarithmic interpolation")
     {
         if (value.toBool())
         {
             double const gamma =
-                VtkAlgorithmProperties::GetUserProperty("Gamma value").toDouble();
+                VtkAlgorithmProperties::GetUserProperty("Gamma value")
+                    .toDouble();
             if (gamma > 0)
             {
                 static_cast<VtkImageDataToPointCloudFilter*>(_outputAlgorithm)
@@ -77,7 +85,8 @@ void VtkCompositeImageToPointCloudFilter::SetUserProperty(QString name, QVariant
     }
 }
 
-void VtkCompositeImageToPointCloudFilter::SetUserVectorProperty(QString name, QList<QVariant> values)
+void VtkCompositeImageToPointCloudFilter::SetUserVectorProperty(
+    QString name, QList<QVariant> values)
 {
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 

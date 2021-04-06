@@ -7,7 +7,7 @@
  *
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <memory>
 
@@ -39,16 +39,16 @@ TEST(MeshLib, CreateNodeAdjacencyTable1D)
         std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
         switch (n_elements)
         {
-        case 1: // a corner node has 2 adjacent nodes.
-            ASSERT_EQ(2, n_connections) << " for boundary node " << i;
-            break;
-        case 2: // an interior node has 3 adjacent nodes.
-            ASSERT_EQ(3, n_connections) << " for interior node " << i;
-            break;
-        default:
+            case 1:  // a corner node has 2 adjacent nodes.
+                ASSERT_EQ(2, n_connections) << " for boundary node " << i;
+                break;
+            case 2:  // an interior node has 3 adjacent nodes.
+                ASSERT_EQ(3, n_connections) << " for interior node " << i;
+                break;
+            default:
                 FAIL() << "The regular line mesh node has unexpected number "
-                    << "of elements. Node " << i << " has " << n_elements
-                    << " elements.";
+                       << "of elements. Node " << i << " has " << n_elements
+                       << " elements.";
         }
     }
 }
@@ -73,19 +73,19 @@ TEST(MeshLib, CreateNodeAdjacencyTable2D)
         std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
         switch (n_elements)
         {
-        case 1: // a corner node has 4 adjacent nodes.
+            case 1:  // a corner node has 4 adjacent nodes.
                 ASSERT_EQ(4, n_connections) << " for corner node " << i;
                 break;
-        case 2: // a boundary node has 6 adjacent nodes.
+            case 2:  // a boundary node has 6 adjacent nodes.
                 ASSERT_EQ(6, n_connections) << " for boundary node " << i;
                 break;
-        case 4: // an interior node has 9 connections.
+            case 4:  // an interior node has 9 connections.
                 ASSERT_EQ(9, n_connections) << " for interior node " << i;
                 break;
-        default:
+            default:
                 FAIL() << "The regular quad mesh node has unexpected number "
-                    << "of elements. Node " << i << " has " << n_elements
-                    << " elements.";
+                       << "of elements. Node " << i << " has " << n_elements
+                       << " elements.";
         }
     }
 }
@@ -94,9 +94,10 @@ TEST(MeshLib, CreateNodeAdjacencyTable3D)
 {
     using namespace MeshLib;
 
-    std::unique_ptr<Mesh> mesh(MeshGenerator::generateRegularHexMesh(
-                1, 1, 1, 10.0, 10.0, 10.0));
-        //double(1), double(1), double(1), std::size_t(10), std::size_t(10), std::size_t(10)));
+    std::unique_ptr<Mesh> mesh(
+        MeshGenerator::generateRegularHexMesh(1, 1, 1, 10.0, 10.0, 10.0));
+    // double(1), double(1), double(1), std::size_t(10), std::size_t(10),
+    // std::size_t(10)));
 
     NodeAdjacencyTable table(mesh->getNodes());
 
@@ -111,22 +112,22 @@ TEST(MeshLib, CreateNodeAdjacencyTable3D)
         std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
         switch (n_elements)
         {
-        case 1: // a corner node has 8 adjacent nodes.
+            case 1:  // a corner node has 8 adjacent nodes.
                 ASSERT_EQ(8, n_connections) << " for corner node " << i;
                 break;
-        case 2: // an edge node has 12 adjacent nodes.
+            case 2:  // an edge node has 12 adjacent nodes.
                 ASSERT_EQ(12, n_connections) << " for edge node " << i;
                 break;
-        case 3: // a boundary node has 18 adjacent nodes.
+            case 3:  // a boundary node has 18 adjacent nodes.
                 ASSERT_EQ(18, n_connections) << " for boundary node " << i;
                 break;
-        case 4: // an interior node has 27 connections.
+            case 4:  // an interior node has 27 connections.
                 ASSERT_EQ(27, n_connections) << " for interior node " << i;
                 break;
-        default:
+            default:
                 FAIL() << "The regular hex mesh node has unexpected number "
-                    << "of elements. Node " << i << " has " << n_elements
-                    << " elements.";
+                       << "of elements. Node " << i << " has " << n_elements
+                       << " elements.";
         }
     }
 }

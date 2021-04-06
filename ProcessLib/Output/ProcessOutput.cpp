@@ -71,8 +71,8 @@ static void addSecondaryVariableNodes(
     if (nodal_values_mesh.size() != global_vector_size)
     {
         OGS_FATAL(
-            "Secondary variable `{:s}' did not evaluate to the right "
-            "number of components. Expected: {:d}, actual: {:d}.",
+            "Secondary variable `{:s}' did not evaluate to the right number of "
+            "components. Expected: {:d}, actual: {:d}.",
             var.name, nodal_values_mesh.size(), global_vector_size);
     }
 
@@ -104,8 +104,7 @@ static void addSecondaryVariableResiduals(
     {
         OGS_FATAL(
             "Cell property `{:s}' does not have the right number of "
-            "components. "
-            "Expected: {:d}, actual: {:d}",
+            "components. Expected: {:d}, actual: {:d}",
             property_name_res,
             mesh.getNumberOfElements() * var.fcts.num_components,
             residuals_mesh.size());
@@ -269,8 +268,8 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
     fegetenv(&fe_env);
     fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
                            // exceptions.
-#endif  //_WIN32
-#endif  //__APPLE__
+#endif                     //_WIN32
+#endif                     //__APPLE__
 
     switch (file_type)
     {
@@ -285,8 +284,7 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
         case OutputType::xdmf:
         {
 #ifdef OGS_USE_XDMF
-            MeshLib::IO::XdmfHdfWriter writer(
-                mesh, file_name, time_step);
+            MeshLib::IO::XdmfHdfWriter writer(mesh, file_name, time_step);
             writer.writeStep(time_step, time);
 #else
             // silence compiler warnings

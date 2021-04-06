@@ -9,30 +9,26 @@
  */
 
 #include "MatrixVectorTraits.h"
+
 #include "MatrixSpecifications.h"
 
 #ifdef USE_PETSC
 
 namespace MathLib
 {
-
-std::unique_ptr<PETScMatrix>
-MatrixVectorTraits<PETScMatrix>::
-newInstance()
+std::unique_ptr<PETScMatrix> MatrixVectorTraits<PETScMatrix>::newInstance()
 {
     return std::make_unique<PETScMatrix>();
 }
 
-std::unique_ptr<PETScMatrix>
-MatrixVectorTraits<PETScMatrix>::
-newInstance(PETScMatrix const& A)
+std::unique_ptr<PETScMatrix> MatrixVectorTraits<PETScMatrix>::newInstance(
+    PETScMatrix const& A)
 {
     return std::make_unique<PETScMatrix>(A);
 }
 
-std::unique_ptr<PETScMatrix>
-MatrixVectorTraits<PETScMatrix>::
-newInstance(MatrixSpecifications const& spec)
+std::unique_ptr<PETScMatrix> MatrixVectorTraits<PETScMatrix>::newInstance(
+    MatrixSpecifications const& spec)
 {
     auto const nrows = spec.nrows;
     auto const ncols = spec.ncols;
@@ -54,30 +50,29 @@ newInstance(MatrixSpecifications const& spec)
         return std::make_unique<PETScMatrix>(nrows, ncols);
 }
 
-std::unique_ptr<PETScVector>
-MatrixVectorTraits<PETScVector>::
-newInstance()
+std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance()
 {
     return std::make_unique<PETScVector>();
 }
 
-std::unique_ptr<PETScVector>
-MatrixVectorTraits<PETScVector>::
-newInstance(PETScVector const& x)
+std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance(
+    PETScVector const& x)
 {
     return std::make_unique<PETScVector>(x);
 }
 
-std::unique_ptr<PETScVector>
-MatrixVectorTraits<PETScVector>::
-newInstance(MatrixSpecifications const& spec)
+std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance(
+    MatrixSpecifications const& spec)
 {
     auto const is_global_size = false;
 
-    if (spec.ghost_indices != nullptr) {
+    if (spec.ghost_indices != nullptr)
+    {
         return std::make_unique<PETScVector>(spec.nrows, *spec.ghost_indices,
                                              is_global_size);
-    } else {
+    }
+    else
+    {
         return std::make_unique<PETScVector>(spec.nrows, is_global_size);
     }
 }
@@ -89,31 +84,25 @@ std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance(
 
     return std::make_unique<PETScVector>(length, is_global_size);
 }
-} // namespace MathLib
-
+}  // namespace MathLib
 
 #else
 
 namespace MathLib
 {
-
-std::unique_ptr<EigenMatrix>
-MatrixVectorTraits<EigenMatrix>::
-newInstance()
+std::unique_ptr<EigenMatrix> MatrixVectorTraits<EigenMatrix>::newInstance()
 {
     return std::make_unique<EigenMatrix>(0, 0);  // TODO default constructor
 }
 
-std::unique_ptr<EigenMatrix>
-MatrixVectorTraits<EigenMatrix>::
-newInstance(EigenMatrix const& A)
+std::unique_ptr<EigenMatrix> MatrixVectorTraits<EigenMatrix>::newInstance(
+    EigenMatrix const& A)
 {
     return std::make_unique<EigenMatrix>(A);
 }
 
-std::unique_ptr<EigenMatrix>
-MatrixVectorTraits<EigenMatrix>::
-newInstance(MatrixSpecifications const& spec)
+std::unique_ptr<EigenMatrix> MatrixVectorTraits<EigenMatrix>::newInstance(
+    MatrixSpecifications const& spec)
 {
     auto A = std::make_unique<EigenMatrix>(spec.nrows);
 
@@ -125,23 +114,19 @@ newInstance(MatrixSpecifications const& spec)
     return A;
 }
 
-std::unique_ptr<EigenVector>
-MatrixVectorTraits<EigenVector>::
-newInstance()
+std::unique_ptr<EigenVector> MatrixVectorTraits<EigenVector>::newInstance()
 {
     return std::make_unique<EigenVector>();
 }
 
-std::unique_ptr<EigenVector>
-MatrixVectorTraits<EigenVector>::
-newInstance(EigenVector const& x)
+std::unique_ptr<EigenVector> MatrixVectorTraits<EigenVector>::newInstance(
+    EigenVector const& x)
 {
     return std::make_unique<EigenVector>(x);
 }
 
-std::unique_ptr<EigenVector>
-MatrixVectorTraits<EigenVector>::
-newInstance(MatrixSpecifications const& spec)
+std::unique_ptr<EigenVector> MatrixVectorTraits<EigenVector>::newInstance(
+    MatrixSpecifications const& spec)
 {
     return std::make_unique<EigenVector>(spec.nrows);
 }
@@ -151,6 +136,6 @@ std::unique_ptr<EigenVector> MatrixVectorTraits<EigenVector>::newInstance(
 {
     return std::make_unique<EigenVector>(length);
 }
-} // namespace MathLib
+}  // namespace MathLib
 
 #endif

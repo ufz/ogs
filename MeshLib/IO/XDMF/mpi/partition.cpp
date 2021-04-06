@@ -16,8 +16,8 @@
 #include <deque>
 #include <numeric>
 
-#include "../fileIO.h"
 #include "BaseLib/Logging.h"
+#include "MeshLib/IO/XDMF/fileIO.h"
 
 namespace MeshLib::IO
 {

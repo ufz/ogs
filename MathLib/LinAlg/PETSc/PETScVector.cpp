@@ -323,4 +323,4 @@ void finalizeVectorAssembly(PETScVector& vec)
     vec.finalizeAssembly();
 }
 
-}  // end of namespace
+}  // namespace MathLib

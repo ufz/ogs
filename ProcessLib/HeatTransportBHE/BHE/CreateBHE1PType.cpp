@@ -8,10 +8,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "BHE_1P.h"
 #include "BaseLib/ConfigTree.h"
 #include "CreateBHEUType.h"
-
-#include "BHE_1P.h"
 #include "CreateFlowAndTemperatureControl.h"
 
 namespace ProcessLib

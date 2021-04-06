@@ -107,8 +107,8 @@ PropertyDataType SaturationVanGenuchten::d2Value(
     (void)primary_variable2;
     assert((primary_variable1 == Variable::capillary_pressure) &&
            (primary_variable2 == Variable::capillary_pressure) &&
-           "SaturationVanGenuchten::d2Value is implemented for "
-           " derivatives with respect to capillary pressure only.");
+           "SaturationVanGenuchten::d2Value is implemented for  derivatives "
+           "with respect to capillary pressure only.");
 
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);

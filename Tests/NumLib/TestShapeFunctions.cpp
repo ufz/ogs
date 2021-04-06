@@ -13,9 +13,9 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
-#include <type_traits>
 #include <limits>
 #include <numeric>
+#include <type_traits>
 #include <valarray>
 
 #include "MeshLib/Elements/Elements.h"
@@ -35,7 +35,6 @@
 
 namespace autocheck
 {
-
 template <typename ShapeFunction,
           typename Gen = randomTupleGenerator<double, ShapeFunction::DIM>>
 struct NaturalPointGenerator
@@ -114,7 +113,6 @@ TYPED_TEST(ShapeFunctionTest, PartitionOfUnity)
     auto isPartitionOfUnity =
         [](std::array<double, TypeParam::DIM>& natural_coordinates_point)
         -> bool {
-
         // compute shape functions
         std::array<double, TypeParam::NPOINTS> N;
         TypeParam::computeShapeFunction(natural_coordinates_point, N);
@@ -135,7 +133,6 @@ TYPED_TEST(ShapeFunctionTest, SumOfGradientsIsZero)
     auto isSumOfGradientsZero =
         [](std::array<double, TypeParam::DIM>& natural_coordinates_point)
         -> bool {
-
         // compute shape functions
         std::array<double, TypeParam::DIM * TypeParam::NPOINTS> dNdr;
         TypeParam::computeGradShapeFunction(natural_coordinates_point, dNdr);
@@ -159,25 +156,26 @@ TEST(NumLib, FemShapeQuad4)
     static const unsigned dim = 2;
     std::valarray<double> r(dim);
     std::valarray<double> N(NNodes);
-    std::valarray<double> dN(NNodes*dim);
+    std::valarray<double> dN(NNodes * dim);
 
     // check N, dN at specific location
     {
-        r = .5; // r = (0,5, 0.5)
+        r = .5;  // r = (0,5, 0.5)
         ShapeQuad4::computeShapeFunction(r, N);
         ShapeQuad4::computeGradShapeFunction(r, dN);
-        double exp_N[]= {0.5625, 0.1875, 0.0625, 0.1875};
-        double exp_dN[]= {0.375, -0.375, -0.125, 0.125, 0.375, 0.125, -0.125, -0.375};
+        double exp_N[] = {0.5625, 0.1875, 0.0625, 0.1875};
+        double exp_dN[] = {0.375, -0.375, -0.125, 0.125,
+                           0.375, 0.125,  -0.125, -0.375};
         ASSERT_ARRAY_NEAR(exp_N, N, N.size(), eps);
         ASSERT_ARRAY_NEAR(exp_dN, dN, dN.size(), eps);
     }
 
     std::valarray<double> exp_N(NNodes);
     // check N_i(r_j)= {i==j: 1, i!=j: 0}
-    for (unsigned i=0; i<NNodes; i++)
+    for (unsigned i = 0; i < NNodes; i++)
     {
-        r[0] = (i==0 || i==3) ? 1 : -1;
-        r[1] = i<2 ? 1 : -1;
+        r[0] = (i == 0 || i == 3) ? 1 : -1;
+        r[1] = i < 2 ? 1 : -1;
         exp_N = .0;
         exp_N[i] = 1.0;
         ShapeQuad4::computeShapeFunction(r, N);
@@ -186,17 +184,14 @@ TEST(NumLib, FemShapeQuad4)
 
     // check sum_i[N_i(r)] = 1
     const double dist = 0.5;
-    for (unsigned i=0; i<NNodes; i++)
+    for (unsigned i = 0; i < NNodes; i++)
     {
-        r[0] = (i==0 || i==3) ? dist : -dist;
-        r[1] = i<2 ? dist : -dist;
+        r[0] = (i == 0 || i == 3) ? dist : -dist;
+        r[1] = i < 2 ? dist : -dist;
         ShapeQuad4::computeShapeFunction(r, N);
         ASSERT_NEAR(1.0, N.sum(), eps);
-//        for(auto v: N)
-//            std::cout << v << " ";
-//        std::cout << "\n";
+        //        for(auto v: N)
+        //            std::cout << v << " ";
+        //        std::cout << "\n";
     }
-
 }
-
-

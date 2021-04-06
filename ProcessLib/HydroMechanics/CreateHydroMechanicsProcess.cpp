@@ -12,18 +12,16 @@
 
 #include <cassert>
 
+#include "HydroMechanicsProcess.h"
+#include "HydroMechanicsProcessData.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
-
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
-#include "HydroMechanicsProcess.h"
-#include "HydroMechanicsProcessData.h"
 
 namespace ProcessLib
 {
@@ -68,9 +66,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__pressure}
-            "pressure",
-            //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__displacement}
-            "displacement"});
+             "pressure",
+             //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__displacement}
+             "displacement"});
         variable_p = &per_process_variables[0].get();
         variable_u = &per_process_variables[1].get();
         process_variables.push_back(std::move(per_process_variables));
@@ -144,13 +142,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     std::array const requiredMediumProperties = {
         MaterialPropertyLib::reference_temperature,
-        MaterialPropertyLib::permeability,
-        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient
-    };
-    std::array const requiredFluidProperties = {
-        MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
-    std::array const requiredSolidProperties = {
-        MaterialPropertyLib::density};
+        MaterialPropertyLib::permeability, MaterialPropertyLib::porosity,
+        MaterialPropertyLib::biot_coefficient};
+    std::array const requiredFluidProperties = {MaterialPropertyLib::viscosity,
+                                                MaterialPropertyLib::density};
+    std::array const requiredSolidProperties = {MaterialPropertyLib::density};
 
     for (auto const& element : mesh.getElements())
     {

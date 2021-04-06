@@ -49,8 +49,7 @@ PropertyDataType SaturationDependentHeatConduction::dValue(
     (void)variable;
     assert((variable == Variable::liquid_saturation) &&
            "SaturationDependentHeatConduction::dvalue is implemented for "
-           "derivatives with "
-           "respect to liquid saturation only.");
+           "derivatives with respect to liquid saturation only.");
 
     return K_wet_ - K_dry_;
 }

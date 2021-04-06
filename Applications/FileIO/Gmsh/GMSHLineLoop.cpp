@@ -8,10 +8,11 @@
  *
  */
 
+#include "GMSHLineLoop.h"
+
 #include <ostream>
 
 #include "GMSHLine.h"
-#include "GMSHLineLoop.h"
 
 namespace FileIO
 {

@@ -13,16 +13,16 @@
  */
 
 // STL
-#include <string>
 #include <algorithm>
+#include <string>
 
 // ThirdParty
 #include <tclap/CmdLine.h>
 
 // BaseLib
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
+#include "InfoLib/GitInfo.h"
 #ifndef WIN32
 #include "BaseLib/MemWatch.h"
 #endif
@@ -131,7 +131,7 @@ static void identifyAndWriteBoundaryMeshes(
     }
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Converting meshes in gmsh file format (ASCII, version 2.2) to a vtk "
@@ -147,19 +147,16 @@ int main (int argc, char* argv[])
     TCLAP::ValueArg<std::string> ogs_mesh_arg(
         "o",
         "out",
-        "filename for output mesh (if extension is .msh, old OGS-5 fileformat is written, if extension is .vtu, a vtk unstructure grid file is written (OGS-6 mesh format))",
+        "filename for output mesh (if extension is .msh, old OGS-5 fileformat "
+        "is written, if extension is .vtu, a vtk unstructure grid file is "
+        "written (OGS-6 mesh format))",
         true,
         "",
         "filename as string");
     cmd.add(ogs_mesh_arg);
 
     TCLAP::ValueArg<std::string> gmsh_mesh_arg(
-        "i",
-        "in",
-        "gmsh input file",
-        true,
-        "",
-        "filename as string");
+        "i", "in", "gmsh input file", true, "", "filename as string");
     cmd.add(gmsh_mesh_arg);
 
     TCLAP::SwitchArg valid_arg("v", "validation", "validate the mesh");
@@ -169,7 +166,8 @@ int main (int argc, char* argv[])
         "b", "boundaries", "if set, boundary meshes will be generated");
     cmd.add(create_boundary_meshes_arg);
 
-    TCLAP::SwitchArg exclude_lines_arg("e", "exclude-lines",
+    TCLAP::SwitchArg exclude_lines_arg(
+        "e", "exclude-lines",
         "if set, lines will not be written to the ogs mesh");
     cmd.add(exclude_lines_arg);
 
@@ -179,14 +177,14 @@ int main (int argc, char* argv[])
     INFO("Reading {:s}.", gmsh_mesh_arg.getValue());
 #ifndef WIN32
     BaseLib::MemWatch mem_watch;
-    unsigned long mem_without_mesh (mem_watch.getVirtMemUsage());
+    unsigned long mem_without_mesh(mem_watch.getVirtMemUsage());
 #endif
     BaseLib::RunTime run_time;
     run_time.start();
-    MeshLib::Mesh* mesh(
-        FileIO::GMSH::readGMSHMesh(gmsh_mesh_arg.getValue()));
+    MeshLib::Mesh* mesh(FileIO::GMSH::readGMSHMesh(gmsh_mesh_arg.getValue()));
 
-    if (mesh == nullptr) {
+    if (mesh == nullptr)
+    {
         INFO("Could not read mesh from {:s}.", gmsh_mesh_arg.getValue());
         return -1;
     }
@@ -278,4 +276,3 @@ int main (int argc, char* argv[])
 
     delete mesh;
 }
-

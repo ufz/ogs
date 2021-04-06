@@ -13,6 +13,7 @@
  */
 
 #include "MeshItem.h"
+
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 
 MeshItem::MeshItem(const QList<QVariant>& data, TreeItem* parent,

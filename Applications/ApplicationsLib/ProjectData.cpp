@@ -41,7 +41,6 @@
 // FileIO
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/CreateTimeLoop.h"
@@ -490,9 +489,8 @@ void ProjectData::parseMedia(
             {
                 OGS_FATAL(
                     "Multiple media were specified for the same material id "
-                    "'{:d}'. "
-                    "Keep in mind, that if no material id is specified, it is "
-                    "assumed to be 0 by default.",
+                    "'{:d}'. Keep in mind, that if no material id is "
+                    "specified, it is assumed to be 0 by default.",
                     id);
             }
 
@@ -538,8 +536,8 @@ ProjectData::parseChemicalSolverInterface(
     if (boost::iequals(chemical_solver, "Phreeqc"))
     {
         INFO(
-            "Configuring phreeqc interface for water chemistry "
-            "calculation using file-based approach.");
+            "Configuring phreeqc interface for water chemistry calculation "
+            "using file-based approach.");
 
         chemical_solver_interface = ChemistryLib::createChemicalSolverInterface<
             ChemistryLib::ChemicalSolver::Phreeqc>(_mesh_vec, *config,
@@ -548,9 +546,9 @@ ProjectData::parseChemicalSolverInterface(
     else if (boost::iequals(chemical_solver, "PhreeqcKernel"))
     {
         OGS_FATAL(
-            "The chemical solver option of PhreeqcKernel is not accessible "
-            "for the time being. Please set 'Phreeqc'' as the chemical "
-            "solver for reactive transport modeling.");
+            "The chemical solver option of PhreeqcKernel is not accessible for "
+            "the time being. Please set 'Phreeqc'' as the chemical solver for "
+            "reactive transport modeling.");
     }
     else
     {
@@ -810,8 +808,8 @@ void ProjectData::parseProcesses(
                     break;
                 default:
                     OGS_FATAL(
-                        "SMALL_DEFORMATION process does not support "
-                        "given dimension");
+                        "SMALL_DEFORMATION process does not support given "
+                        "dimension");
             }
         }
         else

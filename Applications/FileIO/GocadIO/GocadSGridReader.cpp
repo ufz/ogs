@@ -435,8 +435,7 @@ void GocadSGridReader::readNodesBinary()
         {
             const std::size_t layer_transition_idx(
                 _index_calculator.getCoordsForID(k / 3)[2]);
-            _nodes[k / 3] =
-                new GocadNode(coords, k / 3, layer_transition_idx);
+            _nodes[k / 3] = new GocadNode(coords, k / 3, layer_transition_idx);
         }
         k++;
     }

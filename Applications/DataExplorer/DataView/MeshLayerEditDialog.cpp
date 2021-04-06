@@ -12,20 +12,11 @@
  *
  */
 
-#include "MeshGenerators/LayeredVolume.h"
 #include "MeshLayerEditDialog.h"
-
-#include "BaseLib/Logging.h"
-
-#include "OGSError.h"
-#include "StringTools.h"
-#include "Mesh.h"
-
-#include "Applications/FileIO/AsciiRasterInterface.h"
-#include "TetGenInterface.h"
 
 #include <QCheckBox>
 #include <QDoubleValidator>
+#include <QElapsedTimer>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QGridLayout>
@@ -35,32 +26,43 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSettings>
-#include <QElapsedTimer>
 #include <QVBoxLayout>
 
-MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh, QDialog* parent)
-    : QDialog(parent), _msh(mesh), _n_layers(0),
-      _layerEdit (new QLineEdit("1", this)),
+#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "BaseLib/Logging.h"
+#include "Mesh.h"
+#include "MeshGenerators/LayeredVolume.h"
+#include "OGSError.h"
+#include "StringTools.h"
+#include "TetGenInterface.h"
+
+MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh,
+                                         QDialog* parent)
+    : QDialog(parent),
+      _msh(mesh),
+      _n_layers(0),
+      _layerEdit(new QLineEdit("1", this)),
       _noDataReplacementEdit(nullptr),
       _minThicknessEdit(nullptr),
-      _nextButton (new QPushButton("Next", this)),
-      _layerBox (nullptr),
-      _radioButtonBox (nullptr),
-      _ogsMeshButton (nullptr),
-      _layerSelectionLayout (new QGridLayout(_layerBox)),
+      _nextButton(new QPushButton("Next", this)),
+      _layerBox(nullptr),
+      _radioButtonBox(nullptr),
+      _ogsMeshButton(nullptr),
+      _layerSelectionLayout(new QGridLayout(_layerBox)),
       _use_rasters(true)
 {
     setupUi(this);
 
-    this->gridLayoutLayerMapping->addWidget(new QLabel("Please specify the number of layers to add:", this), 0, 0);
+    this->gridLayoutLayerMapping->addWidget(
+        new QLabel("Please specify the number of layers to add:", this), 0, 0);
     this->gridLayoutLayerMapping->addWidget(_layerEdit, 0, 1);
     this->gridLayoutLayerMapping->addWidget(_nextButton, 0, 2);
-    _layerEdit->setValidator(new QIntValidator(1,999,_layerEdit));
+    _layerEdit->setValidator(new QIntValidator(1, 999, _layerEdit));
     connect(_nextButton, SIGNAL(pressed()), this, SLOT(nextButtonPressed()));
 
     // configure group box + layout
     this->_layerSelectionLayout->setMargin(10);
-    this->_layerSelectionLayout->setColumnMinimumWidth(2,10);
+    this->_layerSelectionLayout->setColumnMinimumWidth(2, 10);
     this->_layerSelectionLayout->setColumnStretch(0, 80);
     this->_layerSelectionLayout->setColumnStretch(1, 200);
     this->_layerSelectionLayout->setColumnStretch(2, 10);
@@ -70,7 +72,7 @@ MeshLayerEditDialog::~MeshLayerEditDialog() = default;
 
 void MeshLayerEditDialog::nextButtonPressed()
 {
-    _n_layers  = static_cast<unsigned>(_layerEdit->text().toInt());
+    _n_layers = static_cast<unsigned>(_layerEdit->text().toInt());
 
     if (_n_layers < 1)
     {
@@ -82,8 +84,10 @@ void MeshLayerEditDialog::nextButtonPressed()
     _nextButton->setEnabled(false);
 
     auto* _radiobuttonLayout(new QVBoxLayout(_radioButtonBox));
-    QRadioButton* selectButton1 (new QRadioButton("Add layers based on raster files", _radioButtonBox));
-    QRadioButton* selectButton2 (new QRadioButton("Add layers with static thickness", _radioButtonBox));
+    QRadioButton* selectButton1(
+        new QRadioButton("Add layers based on raster files", _radioButtonBox));
+    QRadioButton* selectButton2(
+        new QRadioButton("Add layers with static thickness", _radioButtonBox));
     _radioButtonBox = new QGroupBox(this);
     _radiobuttonLayout->addWidget(selectButton1);
     _radiobuttonLayout->addWidget(selectButton2);
@@ -97,9 +101,9 @@ void MeshLayerEditDialog::createWithRasters()
 {
     this->_use_rasters = true;
     this->_radioButtonBox->setEnabled(false);
-    const QString selectText = (_n_layers>0) ?
-            "Please specify a raster file for mapping each layer:" :
-            "Please specify raster file for surface mapping:";
+    const QString selectText =
+        (_n_layers > 0) ? "Please specify a raster file for mapping each layer:"
+                        : "Please specify raster file for surface mapping:";
     this->_layerBox = new QGroupBox(this);
     this->_layerBox->setTitle(selectText);
 
@@ -119,14 +123,15 @@ void MeshLayerEditDialog::createWithRasters()
             text = "Layer" + QString::number(i + 1) + "-Top";
         }
         auto* edit(new QLineEdit(this));
-        QPushButton* button (new QPushButton("...", _layerBox));
+        QPushButton* button(new QPushButton("...", _layerBox));
 
         this->_edits.push_back(edit);
         this->_fileButtonMap.insert(button, edit);
         connect(button, SIGNAL(clicked()), this, SLOT(getFileName()));
 
-        this->_layerSelectionLayout->addWidget(new QLabel(text, _layerBox),  i, 0);
-        this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
+        this->_layerSelectionLayout->addWidget(new QLabel(text, _layerBox), i,
+                                               0);
+        this->_layerSelectionLayout->addWidget(_edits[i], i, 1);
         this->_layerSelectionLayout->addWidget(button, i, 2);
     }
     this->_layerBox->setLayout(this->_layerSelectionLayout);
@@ -150,8 +155,9 @@ void MeshLayerEditDialog::createStatic()
         QLineEdit* staticLayerEdit = new QLineEdit("10", this);
         staticLayerEdit->setValidator(new QDoubleValidator(staticLayerEdit));
         _edits.push_back(staticLayerEdit);
-        this->_layerSelectionLayout->addWidget(new QLabel(text, _layerBox),  i, 0);
-        this->_layerSelectionLayout->addWidget(_edits[i],   i, 1);
+        this->_layerSelectionLayout->addWidget(new QLabel(text, _layerBox), i,
+                                               0);
+        this->_layerSelectionLayout->addWidget(_edits[i], i, 1);
     }
     this->_layerBox->setLayout(this->_layerSelectionLayout);
     this->gridLayoutLayerMapping->addWidget(_layerBox, 4, 0, 1, 3);
@@ -164,7 +170,8 @@ void MeshLayerEditDialog::createMeshToolSelection()
     meshToolSelectionBox->setTitle("Output element type");
     auto* meshToolSelectionLayout(new QGridLayout(meshToolSelectionBox));
     _ogsMeshButton = new QRadioButton("Prisms", meshToolSelectionBox);
-    QRadioButton* tetgenMeshButton = new QRadioButton("Tetrahedra", meshToolSelectionBox);
+    QRadioButton* tetgenMeshButton =
+        new QRadioButton("Tetrahedra", meshToolSelectionBox);
     tetgenMeshButton->setFixedWidth(150);
     auto* minThicknessLabel = new QLabel(meshToolSelectionBox);
     minThicknessLabel->setText("Minimum thickness of layers:");
@@ -195,7 +202,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
     myTimer0.start();
     if (_use_rasters)
     {
-        float minimum_thickness (_minThicknessEdit->text().toFloat());
+        float minimum_thickness(_minThicknessEdit->text().toFloat());
         if (minimum_thickness <= 0)
         {
             minimum_thickness = std::numeric_limits<float>::epsilon();
@@ -227,9 +234,10 @@ MeshLib::Mesh* MeshLayerEditDialog::createPrismMesh()
 MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 {
     QSettings settings;
-    QString filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
-                                                    settings.value("lastOpenedTetgenFileDirectory").toString(),
-                                                    "TetGen Geometry (*.smesh)");
+    QString filename = QFileDialog::getSaveFileName(
+        this, "Write TetGen input file to",
+        settings.value("lastOpenedTetgenFileDirectory").toString(),
+        "TetGen Geometry (*.smesh)");
     if (filename.isEmpty())
     {
         return nullptr;
@@ -242,7 +250,7 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 
     if (_use_rasters)
     {
-        float minimum_thickness (_minThicknessEdit->text().toFloat());
+        float minimum_thickness(_minThicknessEdit->text().toFloat());
         if (minimum_thickness <= 0)
         {
             minimum_thickness = std::numeric_limits<float>::epsilon();
@@ -262,9 +270,10 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
 
         if (tg_mesh)
         {
-            std::vector<MeshLib::Node> tg_attr (lv.getAttributePoints());
+            std::vector<MeshLib::Node> tg_attr(lv.getAttributePoints());
             FileIO::TetGenInterface tetgen_interface;
-            tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
+            tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh,
+                                              tg_attr);
         }
     }
     else
@@ -274,10 +283,12 @@ MeshLib::Mesh* MeshLayerEditDialog::createTetMesh()
         {
             layer_thickness.push_back(this->_edits[i]->text().toFloat());
         }
-        tg_mesh = MeshLib::MeshLayerMapper::createStaticLayers(*_msh, layer_thickness);
+        tg_mesh = MeshLib::MeshLayerMapper::createStaticLayers(*_msh,
+                                                               layer_thickness);
         std::vector<MeshLib::Node> tg_attr;
         FileIO::TetGenInterface tetgen_interface;
-        tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh, tg_attr);
+        tetgen_interface.writeTetGenSmesh(filename.toStdString(), *tg_mesh,
+                                          tg_attr);
     }
     INFO("Mesh construction time: {:d} ms.", myTimer0.elapsed());
 
@@ -293,8 +304,8 @@ void MeshLayerEditDialog::accept()
         return;
     }
 
-    bool all_paths_set (true);
-    if (_n_layers==0)
+    bool all_paths_set(true);
+    if (_n_layers == 0)
     {
         if (_edits[0]->text().isEmpty())
         {
@@ -303,7 +314,7 @@ void MeshLayerEditDialog::accept()
     }
     else
     {
-        int start_idx = (_use_rasters) ? 1:0;
+        int start_idx = (_use_rasters) ? 1 : 0;
         for (int i = start_idx; i < _edits.size(); ++i)
         {
             if (_edits[i]->text().isEmpty())
@@ -319,7 +330,7 @@ void MeshLayerEditDialog::accept()
         return;
     }
 
-    MeshLib::Mesh* new_mesh (nullptr);
+    MeshLib::Mesh* new_mesh(nullptr);
     if (_ogsMeshButton->isChecked())
     {
         new_mesh = createPrismMesh();

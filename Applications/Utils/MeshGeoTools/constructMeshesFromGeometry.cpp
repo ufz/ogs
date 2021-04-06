@@ -9,9 +9,9 @@
 
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshGeoToolsLib/ConstructMeshesFromGeometries.h"
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/IO/readMeshFromFile.h"

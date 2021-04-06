@@ -8,9 +8,9 @@
  *
  */
 
-#include <ostream>
-
 #include "Surface.h"
+
+#include <ostream>
 
 namespace ChemistryLib
 {

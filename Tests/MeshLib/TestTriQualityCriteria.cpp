@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <boost/math/constants/constants.hpp>
 #include <cmath>
 #include <memory>
@@ -18,7 +20,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/ElementQualityInterface.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 class TriElementQuality : public ::testing::Test
 {
@@ -92,7 +93,7 @@ TEST_F(TriElementQuality, EdgeRatio)
         std::minmax_element(n_subdivisions.begin(), n_subdivisions.end());
     auto const expected_value =
         double(*min_max.first) / std::sqrt(*min_max.first * *min_max.first +
-                                      *min_max.second * *min_max.second);
+                                           *min_max.second * *min_max.second);
     for (auto const element_quality : element_quality_vector)
     {
         ASSERT_NEAR(expected_value, element_quality,

@@ -19,7 +19,6 @@ namespace FileIO
 {
 namespace Gocad
 {
-
 std::ostream& operator<<(std::ostream& os, Layer const& l)
 {
     std::copy(l.regions.begin(), l.regions.end(),
@@ -27,8 +26,8 @@ std::ostream& operator<<(std::ostream& os, Layer const& l)
     return os;
 }
 
-
-Layer parseLayer(std::string const& line, std::vector<Gocad::Region> const& regions)
+Layer parseLayer(std::string const& line,
+                 std::vector<Gocad::Region> const& regions)
 {
     std::istringstream iss(line);
     std::istream_iterator<std::string> it(iss);

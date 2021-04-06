@@ -19,8 +19,7 @@
 
 namespace MeshLib
 {
-EdgeRatioMetric::EdgeRatioMetric(Mesh const& mesh) :
-    ElementQualityMetric(mesh)
+EdgeRatioMetric::EdgeRatioMetric(Mesh const& mesh) : ElementQualityMetric(mesh)
 {
 }
 
@@ -55,4 +54,4 @@ void EdgeRatioMetric::calculateQuality()
     }
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

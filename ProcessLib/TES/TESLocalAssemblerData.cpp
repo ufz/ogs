@@ -8,6 +8,7 @@
  */
 
 #include "TESLocalAssemblerData.h"
+
 #include "TESReactionAdaptor.h"
 
 namespace ProcessLib

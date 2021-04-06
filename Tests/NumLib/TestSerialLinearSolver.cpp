@@ -57,10 +57,10 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // Construct a linear system
     //--------------------------------------------------------------------------
     // allocate a vector and matrix
-    MathLib::MatrixSpecifications ms{local_to_global_index_map.dofSizeWithoutGhosts(),
+    MathLib::MatrixSpecifications ms{
         local_to_global_index_map.dofSizeWithoutGhosts(),
-        &local_to_global_index_map.getGhostIndices(),
-        nullptr};
+        local_to_global_index_map.dofSizeWithoutGhosts(),
+        &local_to_global_index_map.getGhostIndices(), nullptr};
     auto A = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
     A->setZero();
     auto rhs = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(ms);
@@ -78,16 +78,15 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
             MeshLib::Element const& item) -> LocalAssembler* {
         assert(local_to_global_index_map.size() > id);
 
-        auto const num_local_dof = local_to_global_index_map.getNumberOfElementDOF(id);
+        auto const num_local_dof =
+            local_to_global_index_map.getNumberOfElementDOF(id);
 
         return Example::initializeLocalData(item, num_local_dof, ex1);
     };
 
     // Call global initializer for each mesh element.
     GlobalExecutor::transformDereferenced(
-            local_asm_builder,
-            ex1.msh->getElements(),
-            local_assemblers);
+        local_asm_builder, ex1.msh->getElements(), local_assemblers);
 
     // Call global assembler for each mesh element.
     auto M_dummy = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(ms);
@@ -97,18 +96,18 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         &LocalAssembler::assemble, local_assemblers, local_to_global_index_map,
         t, *x, *M_dummy, *A, *rhs);
 
-    //std::cout << "A=\n";
-    //A->write(std::cout);
-    //std::cout << "rhs=\n";
-    //rhs->write(std::cout);
+    // std::cout << "A=\n";
+    // A->write(std::cout);
+    // std::cout << "rhs=\n";
+    // rhs->write(std::cout);
 
     // apply Dirichlet BC
     MathLib::applyKnownSolution(*A, *rhs, *x, ex1.vec_DirichletBC_id,
                                 ex1.vec_DirichletBC_value);
-    //std::cout << "A=\n";
-    //A->write(std::cout);
-    //std::cout << "rhs=\n";
-    //rhs->write(std::cout);
+    // std::cout << "A=\n";
+    // A->write(std::cout);
+    // std::cout << "rhs=\n";
+    // rhs->write(std::cout);
 
     MathLib::finalizeMatrixAssembly(*A);
     //--------------------------------------------------------------------------
@@ -124,8 +123,7 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         t_root.put_child("eigen", t_solver);
     }
     t_root.put("lis", "-i cg -p none -tol 1e-16 -maxiter 1000");
-    BaseLib::ConfigTree conf(t_root, "",
-                             BaseLib::ConfigTree::onerror,
+    BaseLib::ConfigTree conf(t_root, "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
 
     GlobalLinearSolver ls("solver_name", &conf);
@@ -138,7 +136,8 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
         solution[i] = (*x)[i];
     }
 
-    ASSERT_ARRAY_NEAR(&ex1.exact_solutions[0], &solution[0], ex1.dim_eqs, 1.e-5);
+    ASSERT_ARRAY_NEAR(&ex1.exact_solutions[0], &solution[0], ex1.dim_eqs,
+                      1.e-5);
 
     for (auto p : local_assemblers)
     {

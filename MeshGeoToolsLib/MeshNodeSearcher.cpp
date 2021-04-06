@@ -11,22 +11,19 @@
 
 #include "MeshNodeSearcher.h"
 
-#include <typeinfo>
 #include <sstream>
-
-#include "HeuristicSearchLength.h"
-#include "MeshNodesAlongPolyline.h"
-#include "MeshNodesAlongSurface.h"
-#include "MeshNodesOnPoint.h"
+#include <typeinfo>
 
 #include "BaseLib/Logging.h"
-
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
-
+#include "HeuristicSearchLength.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshNodesAlongPolyline.h"
+#include "MeshNodesAlongSurface.h"
+#include "MeshNodesOnPoint.h"
 
 namespace MeshGeoToolsLib
 {
@@ -67,8 +64,7 @@ std::vector<std::size_t> const& getMeshNodeIDs(
     std::vector<CacheType*>& cached_elements,
     std::function<GeometryType(CacheType const&)> getCachedItem,
     GeometryType const& item, MeshLib::Mesh const& mesh,
-    GeoLib::Grid<MeshLib::Node> const& mesh_grid,
-    double const search_length,
+    GeoLib::Grid<MeshLib::Node> const& mesh_grid, double const search_length,
     SearchAllNodes const search_all_nodes)
 {
     if (auto const it = find_if(cbegin(cached_elements), cend(cached_elements),

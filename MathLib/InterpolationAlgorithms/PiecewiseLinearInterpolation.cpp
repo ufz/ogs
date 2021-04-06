@@ -11,6 +11,8 @@
  *              http://www.opengeosys.org/project/license
  *
  */
+#include "PiecewiseLinearInterpolation.h"
+
 #include <cmath>
 #include <limits>
 #include <utility>
@@ -18,13 +20,12 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/quicksort.h"
 
-#include "PiecewiseLinearInterpolation.h"
-
 namespace MathLib
 {
 PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
     std::vector<double> supporting_points,
-    std::vector<double> values_at_supp_pnts,
+    std::vector<double>
+        values_at_supp_pnts,
     bool supp_pnts_sorted)
     : _supp_pnts(std::move(supporting_points)),
       _values_at_supp_pnts(std::move(values_at_supp_pnts))
@@ -41,8 +42,8 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
     {
         const std::size_t i = std::distance(_supp_pnts.begin(), it);
         OGS_FATAL(
-            "Variable {:d} and variable {:d} are the same. "
-            "Piecewise linear interpolation is not possible\n",
+            "Variable {:d} and variable {:d} are the same. Piecewise linear "
+            "interpolation is not possible\n",
             i, i + 1);
     }
 }

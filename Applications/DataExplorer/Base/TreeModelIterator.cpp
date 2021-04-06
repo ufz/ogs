@@ -42,7 +42,7 @@ TreeModelIterator& TreeModelIterator::operator++()
     return *this;
 }
 
-TreeItem* TreeModelIterator::next( const TreeItem* current )
+TreeItem* TreeModelIterator::next(const TreeItem* current)
 {
     if (!current)
     {
@@ -62,7 +62,7 @@ TreeItem* TreeModelIterator::next( const TreeItem* current )
         // walk the sibling
         TreeItem* parent = current->parentItem();
         next = parent ? parent->child(_currentIndex + 1)
-               : _model->rootItem()->child(_currentIndex + 1);
+                      : _model->rootItem()->child(_currentIndex + 1);
         while (!next && parent)
         {
             // if we had no sibling walk up the parent
@@ -70,7 +70,7 @@ TreeItem* TreeModelIterator::next( const TreeItem* current )
             parent = parent->parentItem();
             _currentIndex = _parentIndex.pop();
             next = parent ? parent->child(_currentIndex + 1)
-                   : _model->rootItem()->child(_currentIndex + 1);
+                          : _model->rootItem()->child(_currentIndex + 1);
         }
         if (next)
         {

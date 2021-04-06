@@ -33,7 +33,6 @@ bool testAABBIntersectingPlane(Eigen::Vector3d const& aabb_centre,
                                Eigen::Vector3d const& plane_normal,
                                double const pd)
 {
-
     double const r = aabb_extent.dot(plane_normal.cwiseAbs());
     double const s = plane_normal.dot(aabb_centre) - pd;
     return std::abs(s) > r;
@@ -205,9 +204,9 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<int> id_arg(
-        "m", "material", "material id for cells intersected by fault", false,
-        mat_not_set, "non-negative integer");
+    TCLAP::ValueArg<int> id_arg("m", "material",
+                                "material id for cells intersected by fault",
+                                false, mat_not_set, "non-negative integer");
     cmd.add(id_arg);
 
     TCLAP::ValueArg<std::string> output_arg(

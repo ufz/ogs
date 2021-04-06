@@ -9,8 +9,8 @@
  */
 #include "VtkConsoleOutputWindow.h"
 
-#include <string>
 #include <ostream>
+#include <string>
 
 #include "vtkObjectFactory.h"
 #ifdef WIN32
@@ -56,5 +56,5 @@ void VtkConsoleOutputWindow::DisplayText(const char* someText)
 //----------------------------------------------------------------------------
 void VtkConsoleOutputWindow::PrintSelf(ostream& os, vtkIndent indent)
 {
-    this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os, indent);
 }

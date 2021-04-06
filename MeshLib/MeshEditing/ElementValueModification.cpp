@@ -17,16 +17,16 @@
 #include <algorithm>
 
 #include "BaseLib/Logging.h"
-
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
 
-namespace MeshLib {
-
-bool ElementValueModification::replace(MeshLib::Mesh &mesh,
-    std::string const& property_name, int const old_value, int const new_value,
-    bool replace_if_exists)
+namespace MeshLib
+{
+bool ElementValueModification::replace(MeshLib::Mesh& mesh,
+                                       std::string const& property_name,
+                                       int const old_value, int const new_value,
+                                       bool replace_if_exists)
 {
     MeshLib::PropertyVector<int>* property_value_vec = nullptr;
     try
@@ -50,9 +50,9 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
             if ((*property_value_vec)[i] == new_value)
             {
                 WARN(
-                    "ElementValueModification::replaceElementValue() "
-                    "- Replacement value '{:d}' is already taken, "
-                    "no changes have been made.",
+                    "ElementValueModification::replaceElementValue() - "
+                    "Replacement value '{:d}' is already taken, no changes "
+                    "have been made.",
                     new_value);
                 return false;
             }
@@ -70,13 +70,15 @@ bool ElementValueModification::replace(MeshLib::Mesh &mesh,
     return true;
 }
 
-bool ElementValueModification::replace(MeshLib::Mesh &mesh,
-    int const old_value, int const new_value, bool replace_if_exists)
+bool ElementValueModification::replace(MeshLib::Mesh& mesh, int const old_value,
+                                       int const new_value,
+                                       bool replace_if_exists)
 {
-    return replace(mesh, "MaterialIDs", old_value, new_value, replace_if_exists);
+    return replace(mesh, "MaterialIDs", old_value, new_value,
+                   replace_if_exists);
 }
 
-std::size_t ElementValueModification::condense(MeshLib::Mesh &mesh)
+std::size_t ElementValueModification::condense(MeshLib::Mesh& mesh)
 {
     MeshLib::PropertyVector<int>* property_value_vector = nullptr;
     try
@@ -110,7 +112,9 @@ std::size_t ElementValueModification::condense(MeshLib::Mesh &mesh)
     return nValues;
 }
 
-std::size_t ElementValueModification::setByElementType(MeshLib::Mesh &mesh, MeshElemType ele_type, int const new_value)
+std::size_t ElementValueModification::setByElementType(MeshLib::Mesh& mesh,
+                                                       MeshElemType ele_type,
+                                                       int const new_value)
 {
     MeshLib::PropertyVector<int>* property_value_vector = nullptr;
     try
@@ -139,4 +143,4 @@ std::size_t ElementValueModification::setByElementType(MeshLib::Mesh &mesh, Mesh
     return cnt;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

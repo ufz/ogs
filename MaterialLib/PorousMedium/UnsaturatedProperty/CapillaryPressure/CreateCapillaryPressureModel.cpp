@@ -14,13 +14,11 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
-#include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
-#include "MathLib/Curve/PiecewiseLinearMonotonicCurve.h"
-
 #include "BrooksCoreyCapillaryPressureSaturation.h"
 #include "CapillaryPressureSaturation.h"
 #include "CapillaryPressureSaturationCurve.h"
+#include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
+#include "MathLib/Curve/PiecewiseLinearMonotonicCurve.h"
 #include "VanGenuchtenCapillaryPressureSaturation.h"
 
 namespace MaterialLib
@@ -157,8 +155,8 @@ std::unique_ptr<CapillaryPressureSaturation> createCapillaryPressureModel(
     }
 
     OGS_FATAL(
-        "The capillary pressure saturation models {:s} are unavailable.\n"
-        "The available types are: \n\tBrooksCorey, \n\tvanGenuchten,",
+        "The capillary pressure saturation models {:s} are unavailable.\nThe "
+        "available types are: \n\tBrooksCorey, \n\tvanGenuchten,",
         "\n\tCurve.\n",
         type.data());
 }

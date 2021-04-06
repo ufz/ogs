@@ -16,7 +16,6 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
 #include "SmallDeformationProcess.h"
 #include "SmallDeformationProcessData.h"
 

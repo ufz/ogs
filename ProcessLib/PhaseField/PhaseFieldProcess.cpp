@@ -13,11 +13,9 @@
 #include <cassert>
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
-
+#include "PhaseFieldFEM.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
-
-#include "PhaseFieldFEM.h"
 
 namespace ProcessLib
 {

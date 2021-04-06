@@ -17,11 +17,9 @@
 #include <limits>
 
 #include "BaseLib/ConfigTree.h"
-
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/CreateCapillaryPressureRegularizedVanGenuchten.h"
 #include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/CapillaryPressureRegularizedVanGenuchten.h"
-
+#include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/CreateCapillaryPressureRegularizedVanGenuchten.h"
 #include "TestMPL.h"
 #include "Tests/TestTools.h"
 

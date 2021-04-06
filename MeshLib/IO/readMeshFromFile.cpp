@@ -23,15 +23,12 @@
 
 #include <boost/algorithm/string/erase.hpp>
 
-#include "BaseLib/Logging.h"
-
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
-
-#include "MeshLib/Mesh.h"
-
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/Mesh.h"
 
 #ifdef USE_PETSC
 #include "MeshLib/IO/MPI_IO/NodePartitionedMeshReader.h"
@@ -42,7 +39,7 @@ namespace MeshLib
 {
 namespace IO
 {
-MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
+MeshLib::Mesh* readMeshFromFile(const std::string& file_name)
 {
 #ifdef USE_PETSC
     int world_size;
@@ -50,14 +47,15 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
     if (world_size > 1)
     {
         MeshLib::IO::NodePartitionedMeshReader read_pmesh(PETSC_COMM_WORLD);
-        const std::string file_name_base = BaseLib::dropFileExtension(file_name);
+        const std::string file_name_base =
+            BaseLib::dropFileExtension(file_name);
         return read_pmesh.read(file_name_base);
     }
     else if (world_size == 1)
     {
         MeshLib::Mesh* mesh = readMeshFromFileSerial(file_name);
-        MeshLib::NodePartitionedMesh* part_mesh
-                               = new MeshLib::NodePartitionedMesh(*mesh);
+        MeshLib::NodePartitionedMesh* part_mesh =
+            new MeshLib::NodePartitionedMesh(*mesh);
         delete mesh;
         return part_mesh;
     }
@@ -67,7 +65,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string &file_name)
 #endif
 }
 
-MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name)
+MeshLib::Mesh* readMeshFromFileSerial(const std::string& file_name)
 {
     if (BaseLib::hasFileExtension(".msh", file_name))
     {
@@ -90,6 +88,5 @@ MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name)
     return nullptr;
 }
 
-
-} // end namespace IO
-} // end namespace MeshLib
+}  // end namespace IO
+}  // end namespace MeshLib

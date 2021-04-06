@@ -13,10 +13,9 @@
 #include "CreateParameter.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "Parameter.h"
 #include "ParameterLib/Parameter.h"
 #include "ParameterLib/Utils.h"
-
-#include "Parameter.h"
 
 namespace MaterialPropertyLib
 {

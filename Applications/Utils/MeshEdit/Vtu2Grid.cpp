@@ -8,15 +8,6 @@
  */
 
 #include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
-
-#include "MeshLib/IO/writeMeshToFile.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
-#include "MeshLib/MeshSearch/ElementSearch.h"
-
 #include <vtkAbstractArray.h>
 #include <vtkCellData.h>
 #include <vtkCellLocator.h>
@@ -27,18 +18,23 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/writeMeshToFile.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
+
 std::string const cell_id_name = "CellIds";
 
 std::array<std::size_t, 3> getDimensions(MathLib::Point3d const& min,
                                          MathLib::Point3d const& max,
                                          std::array<double, 3> const& cellsize)
 {
-    return
-    {
+    return {
         static_cast<std::size_t>(std::ceil((max[0] - min[0]) / cellsize[0])),
         static_cast<std::size_t>(std::ceil((max[1] - min[1]) / cellsize[1])),
-        static_cast<std::size_t>(std::ceil((max[2] - min[2]) / cellsize[2]))
-    };
+        static_cast<std::size_t>(std::ceil((max[2] - min[2]) / cellsize[2]))};
 }
 
 std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
@@ -51,7 +47,7 @@ std::vector<int> assignCellIds(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
     locator->SetDataSet(mesh);
     locator->Update();
 
-    std::vector<int>  cell_ids;
+    std::vector<int> cell_ids;
     cell_ids.reserve(dims[0] * dims[1] * dims[2]);
     std::array<double, 3> const grid_max = {min[0] + dims[0] * cellsize[0],
                                             min[1] + dims[1] * cellsize[1],
@@ -82,7 +78,7 @@ bool removeUnusedGridCells(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
 
     if (n_elems_marked == grid->getNumberOfElements())
     {
-        ERR ("No valid elements found. Aborting...");
+        ERR("No valid elements found. Aborting...");
         return false;
     }
 
@@ -101,7 +97,7 @@ void mapArray(MeshLib::Mesh& grid, VTK_TYPE vtk_arr, std::string const& name)
         *grid.getProperties().getPropertyVector<int>(
             cell_id_name, MeshLib::MeshItemType::Cell, 1);
     std::vector<T>& arr = *grid.getProperties().createNewPropertyVector<T>(
-            name, MeshLib::MeshItemType::Cell, vtk_arr->GetNumberOfComponents());
+        name, MeshLib::MeshItemType::Cell, vtk_arr->GetNumberOfComponents());
     std::size_t const n_elems = cell_ids.size();
     arr.resize(n_elems);
     for (std::size_t j = 0; j < n_elems; ++j)
@@ -119,7 +115,8 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
             dynamic_cast<vtkDoubleArray*>(cell_data->GetArray(name.c_str()));
         if (dbl_arr)
         {
-            mapArray<double, vtkSmartPointer<vtkDoubleArray>>(*grid, dbl_arr, name);
+            mapArray<double, vtkSmartPointer<vtkDoubleArray>>(*grid, dbl_arr,
+                                                              name);
             continue;
         }
         vtkSmartPointer<vtkIntArray> const int_arr =
@@ -133,7 +130,7 @@ void mapMeshArraysOntoGrid(vtkSmartPointer<vtkUnstructuredGrid> const& mesh,
     }
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Reads a 3D unstructured mesh and samples it onto a structured grid of "
@@ -187,7 +184,7 @@ int main (int argc, char* argv[])
     double const x_size = x_arg.getValue();
     double const y_size = (y_arg.isSet()) ? y_arg.getValue() : x_arg.getValue();
     double const z_size = (z_arg.isSet()) ? z_arg.getValue() : x_arg.getValue();
-    std::array<double, 3> const cellsize = { x_size, y_size, z_size };
+    std::array<double, 3> const cellsize = {x_size, y_size, z_size};
 
     vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
         vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
@@ -196,14 +193,15 @@ int main (int argc, char* argv[])
     vtkSmartPointer<vtkUnstructuredGrid> mesh = reader->GetOutput();
 
     double* const bounds = mesh->GetBounds();
-    MathLib::Point3d const min(std::array<double, 3>{bounds[0], bounds[2], bounds[4]});
-    MathLib::Point3d const max(std::array<double, 3>{bounds[1], bounds[3], bounds[5]});
+    MathLib::Point3d const min(
+        std::array<double, 3>{bounds[0], bounds[2], bounds[4]});
+    MathLib::Point3d const max(
+        std::array<double, 3>{bounds[1], bounds[3], bounds[5]});
     std::array<std::size_t, 3> const dims = getDimensions(min, max, cellsize);
     std::unique_ptr<MeshLib::Mesh> grid(
         MeshLib::MeshGenerator::generateRegularHexMesh(
             dims[0], dims[1], dims[2], cellsize[0], cellsize[1], cellsize[2],
             min, "grid"));
-
 
     std::vector<int> const tmp_ids = assignCellIds(mesh, min, dims, cellsize);
     std::vector<int>& cell_ids =

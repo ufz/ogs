@@ -11,41 +11,38 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <memory>
 #include <vector>
 
-#include "NumLib/DOF/MeshComponentMap.h"
-
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSubset.h"
+#include "NumLib/DOF/MeshComponentMap.h"
 
 class NumLibMeshComponentMapTest : public ::testing::Test
 {
-    public:
-        using MeshItemType = MeshLib::MeshItemType;
-        using Location = MeshLib::Location;
-        using MeshComponentMap = NumLib::MeshComponentMap;
+public:
+    using MeshItemType = MeshLib::MeshItemType;
+    using Location = MeshLib::Location;
+    using MeshComponentMap = NumLib::MeshComponentMap;
 
-    public:
-        NumLibMeshComponentMapTest()
-        {
-            MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
-
-            // Add two components both based on the same nodesSubset.
-            components.emplace_back(nodesSubset);
-            components.emplace_back(nodesSubset);
-    }
-
-    ~NumLibMeshComponentMapTest() override
+public:
+    NumLibMeshComponentMapTest()
     {
-        delete cmap;
+        MeshLib::MeshSubset nodesSubset{*mesh, mesh->getNodes()};
+
+        // Add two components both based on the same nodesSubset.
+        components.emplace_back(nodesSubset);
+        components.emplace_back(nodesSubset);
     }
+
+    ~NumLibMeshComponentMapTest() override { delete cmap; }
 
     static std::size_t const mesh_size = 9;
     std::unique_ptr<MeshLib::Mesh> const mesh{
         MeshLib::MeshGenerator::generateLineMesh(1.0, mesh_size)};
 
-    //data component 0 and 1 are assigned to all nodes in the mesh
+    // data component 0 and 1 are assigned to all nodes in the mesh
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
     std::vector<MeshLib::MeshSubset> components;
@@ -56,11 +53,12 @@ class NumLibMeshComponentMapTest : public ::testing::Test
     //
 
     // Returns global index of a node location and a component.
-    std::size_t giAtNodeForComponent(std::size_t const n, std::size_t const c) const
+    std::size_t giAtNodeForComponent(std::size_t const n,
+                                     std::size_t const c) const
     {
-        return cmap->getGlobalIndex(Location(mesh->getID(), MeshItemType::Node, n), c);
+        return cmap->getGlobalIndex(
+            Location(mesh->getID(), MeshItemType::Node, n), c);
     }
-
 };
 
 #ifndef USE_PETSC
@@ -69,17 +67,19 @@ TEST_F(NumLibMeshComponentMapTest, CheckOrderByComponent)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
 #endif
 {
-    // - Entries in the vector are arranged in the order of a component type and then node ID
-    // - For example, x=[(node 0, comp 0) (node 1, comp 0) ... (node n, comp0), (node 0, comp1) ... ]
+    // - Entries in the vector are arranged in the order of a component type and
+    // then node ID
+    // - For example, x=[(node 0, comp 0) (node 1, comp 0) ... (node n, comp0),
+    // (node 0, comp1) ... ]
 
-    cmap = new MeshComponentMap(components,
-        NumLib::ComponentOrder::BY_COMPONENT);
+    cmap =
+        new MeshComponentMap(components, NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
     {
         // Test global indices for the different components of the node.
-        ASSERT_EQ(i , giAtNodeForComponent(i, comp0_id));
+        ASSERT_EQ(i, giAtNodeForComponent(i, comp0_id));
         ASSERT_EQ(mesh_size + 1 + i, giAtNodeForComponent(i, comp1_id));
 
         // Test component ids of the node.
@@ -97,17 +97,19 @@ TEST_F(NumLibMeshComponentMapTest, CheckOrderByLocation)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
 #endif
 {
-    // - Entries in the vector are arranged in the order of node ID and then a component type
-    // - For example, x=[(node 0, comp 0) (node 0, comp 1) ... (node n, comp0), (node n, comp1) ]
+    // - Entries in the vector are arranged in the order of node ID and then a
+    // component type
+    // - For example, x=[(node 0, comp 0) (node 0, comp 1) ... (node n, comp0),
+    // (node n, comp1) ]
 
-    cmap = new MeshComponentMap(components,
-        NumLib::ComponentOrder::BY_LOCATION);
+    cmap =
+        new MeshComponentMap(components, NumLib::ComponentOrder::BY_LOCATION);
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
     {
         // Test global indices for the different components of the node.
-        ASSERT_EQ(2 * i , giAtNodeForComponent(i, comp0_id));
+        ASSERT_EQ(2 * i, giAtNodeForComponent(i, comp0_id));
         ASSERT_EQ(2 * i + 1, giAtNodeForComponent(i, comp1_id));
 
         // Test component ids of the node.
@@ -125,17 +127,23 @@ TEST_F(NumLibMeshComponentMapTest, OutOfRangeAccess)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_OutOfRangeAccess)
 #endif
 {
-    cmap = new MeshComponentMap(components,
-        NumLib::ComponentOrder::BY_COMPONENT);
+    cmap =
+        new MeshComponentMap(components, NumLib::ComponentOrder::BY_COMPONENT);
 
-    ASSERT_EQ(MeshComponentMap::nop, cmap->getGlobalIndex(
-        Location(mesh->getID(), MeshItemType::Node, mesh_size + 1), comp0_id));
-    ASSERT_EQ(MeshComponentMap::nop, cmap->getGlobalIndex(
-        Location(mesh->getID() + 1, MeshItemType::Node, 0), comp0_id));
-    ASSERT_EQ(MeshComponentMap::nop, cmap->getGlobalIndex(
-        Location(mesh->getID(), MeshItemType::Cell, 0), comp0_id));
-    ASSERT_EQ(MeshComponentMap::nop, cmap->getGlobalIndex(
-        Location(mesh->getID(), MeshItemType::Node, 0), 10));
+    ASSERT_EQ(MeshComponentMap::nop,
+              cmap->getGlobalIndex(
+                  Location(mesh->getID(), MeshItemType::Node, mesh_size + 1),
+                  comp0_id));
+    ASSERT_EQ(
+        MeshComponentMap::nop,
+        cmap->getGlobalIndex(Location(mesh->getID() + 1, MeshItemType::Node, 0),
+                             comp0_id));
+    ASSERT_EQ(MeshComponentMap::nop,
+              cmap->getGlobalIndex(
+                  Location(mesh->getID(), MeshItemType::Cell, 0), comp0_id));
+    ASSERT_EQ(MeshComponentMap::nop,
+              cmap->getGlobalIndex(
+                  Location(mesh->getID(), MeshItemType::Node, 0), 10));
 }
 
 MeshLib::Mesh createMeshFromSelectedNodes(
@@ -162,8 +170,8 @@ TEST_F(NumLibMeshComponentMapTest, SubsetOfNodesByComponent)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
 #endif
 {
-    cmap = new MeshComponentMap(components,
-        NumLib::ComponentOrder::BY_COMPONENT);
+    cmap =
+        new MeshComponentMap(components, NumLib::ComponentOrder::BY_COMPONENT);
 
     // Select some nodes from the full mesh.
     std::vector<std::size_t> const ids = {0, 5, 9};
@@ -200,8 +208,8 @@ TEST_F(NumLibMeshComponentMapTest, SubsetOfNodesByLocation)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
 #endif
 {
-    cmap = new MeshComponentMap(components,
-        NumLib::ComponentOrder::BY_LOCATION);
+    cmap =
+        new MeshComponentMap(components, NumLib::ComponentOrder::BY_LOCATION);
 
     // Select some nodes from the full mesh.
     std::vector<std::size_t> const ids = {0, 5, 9};

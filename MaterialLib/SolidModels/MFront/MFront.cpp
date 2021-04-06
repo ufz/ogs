@@ -361,8 +361,9 @@ MFront<DisplacementDim>::integrateStress(
     auto const status = mgis::behaviour::integrate(v, _behaviour);
     if (status != 1)
     {
-        throw NumLib::AssemblyException("MFront: integration failed with status"
-                + std::to_string(status) + ".");
+        throw NumLib::AssemblyException(
+            "MFront: integration failed with status" + std::to_string(status) +
+            ".");
     }
 
     KelvinVector sigma;

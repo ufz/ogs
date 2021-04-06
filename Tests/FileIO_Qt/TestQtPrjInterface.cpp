@@ -8,16 +8,16 @@
  *
  */
 
-#include <cstdio>
+#include <gtest/gtest.h>
 
-#include "gtest/gtest.h"
+#include <cstdio>
 
 #include "Applications/DataHolderLib/BoundaryCondition.h"
 #include "Applications/DataHolderLib/Project.h"
 #include "Applications/DataHolderLib/SourceTerm.h"
 #include "Applications/FileIO/XmlIO/Qt/XmlPrjInterface.h"
-#include "InfoLib/TestInfo.h"
 #include "GeoLib/GEOObjects.h"
+#include "InfoLib/TestInfo.h"
 
 TEST(TestQtPrjInterface, QtXmlPrjReader)
 {
@@ -36,8 +36,9 @@ TEST(TestQtPrjInterface, QtXmlPrjReader)
         TestInfoLib::TestInfo::data_path +
         "/Elliptic/nonuniform_bc_SteadyStateDiffusion/neumann_nonuniform.prj";
     test_files.push_back({name, 0, 3, 2, 0});
-    name = TestInfoLib::TestInfo::data_path +
-           "/Elliptic/nonuniform_bc_SteadyStateDiffusion/neumann_nonuniform.prj";
+    name =
+        TestInfoLib::TestInfo::data_path +
+        "/Elliptic/nonuniform_bc_SteadyStateDiffusion/neumann_nonuniform.prj";
     test_files.push_back({name, 0, 3, 2, 0});
 
     for (auto& test_file : test_files)

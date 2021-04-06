@@ -15,19 +15,20 @@
 // ** INCLUDES **
 #include "VtkCompositeColormapToImageFilter.h"
 
-#include <vtkImageMapToColors.h>
 #include <vtkImageData.h>
+#include <vtkImageMapToColors.h>
 #include <vtkLookupTable.h>
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 
-#include <QSettings>
 #include <QFileDialog>
+#include <QSettings>
 
 #include "VtkColorLookupTable.h"
 #include "XmlIO/Qt/XmlLutReader.h"
 
-VtkCompositeColormapToImageFilter::VtkCompositeColormapToImageFilter( vtkAlgorithm* inputAlgorithm )
+VtkCompositeColormapToImageFilter::VtkCompositeColormapToImageFilter(
+    vtkAlgorithm* inputAlgorithm)
     : VtkCompositeFilter(inputAlgorithm)
 {
     this->init();
@@ -41,15 +42,21 @@ void VtkCompositeColormapToImageFilter::init()
     this->_inputDataObjectType = VTK_IMAGE_DATA;
     this->_outputDataObjectType = VTK_IMAGE_DATA;
 
-    vtkSmartPointer<VtkColorLookupTable> colormap = vtkSmartPointer<VtkColorLookupTable>::New();
+    vtkSmartPointer<VtkColorLookupTable> colormap =
+        vtkSmartPointer<VtkColorLookupTable>::New();
 
     QWidget* parent = nullptr;
     QSettings settings;
-    QString fileName = QFileDialog::getOpenFileName(parent, "Select color lookup table",
-                                                    settings.value("lastOpenedLookupTableFileDirectory").toString(),
-                                                    "Lookup table XML files (*.xml);;");
+    QString fileName = QFileDialog::getOpenFileName(
+        parent, "Select color lookup table",
+        settings.value("lastOpenedLookupTableFileDirectory").toString(),
+        "Lookup table XML files (*.xml);;");
     double range[2];
-    dynamic_cast<vtkImageAlgorithm*>(_inputAlgorithm)->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
+    dynamic_cast<vtkImageAlgorithm*>(_inputAlgorithm)
+        ->GetOutput()
+        ->GetPointData()
+        ->GetScalars()
+        ->GetRange(range);
 
     DataHolderLib::ColorLookupTable lut;
     if (FileIO::XmlLutReader::readFromFile(fileName, lut))
@@ -85,7 +92,8 @@ void VtkCompositeColormapToImageFilter::init()
     _outputAlgorithm = map;
 }
 
-void VtkCompositeColormapToImageFilter::SetUserProperty( QString name, QVariant value )
+void VtkCompositeColormapToImageFilter::SetUserProperty(QString name,
+                                                        QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
@@ -101,15 +109,16 @@ void VtkCompositeColormapToImageFilter::SetUserProperty( QString name, QVariant 
     }
 }
 
-void VtkCompositeColormapToImageFilter::SetUserVectorProperty( QString name, QList<QVariant> values )
+void VtkCompositeColormapToImageFilter::SetUserVectorProperty(
+    QString name, QList<QVariant> values)
 {
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 
     auto* map = static_cast<vtkImageMapToColors*>(_outputAlgorithm);
     if (name.compare("TableRange") == 0)
     {
-        static_cast<vtkLookupTable*>(map->GetLookupTable())->SetTableRange(
-                values[0].toInt(), values[1].toInt());
+        static_cast<vtkLookupTable*>(map->GetLookupTable())
+            ->SetTableRange(values[0].toInt(), values[1].toInt());
     }
     else if (name.compare("HueRange") == 0)
     {

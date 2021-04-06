@@ -9,11 +9,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "InfoLib/TestInfo.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
+#include "InfoLib/TestInfo.h"
 
 TEST(GeoLib, PointToStationConversion)
 {

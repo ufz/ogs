@@ -52,7 +52,7 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
 
     // res = M * x_dot + K * x_curr - b
     LinAlg::matMult(M, xdot, res);  // the local vector x_dot seems to be
-                                  // necessary because of this multiplication
+                                    // necessary because of this multiplication
     LinAlg::matMultAdd(K, x_curr, res, res);
     LinAlg::axpy(res, -1.0, b);
 }

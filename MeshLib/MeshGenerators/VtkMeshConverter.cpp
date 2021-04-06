@@ -322,15 +322,14 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
 
     if (vtkLongLongArray::SafeDownCast(&array))
     {
-        VtkMeshConverter::convertTypedArray<long long>(
-            array, properties, type);
+        VtkMeshConverter::convertTypedArray<long long>(array, properties, type);
         return;
     }
 
     if (vtkUnsignedLongArray::SafeDownCast(&array))
     {
-        VtkMeshConverter::convertTypedArray<unsigned long>(
-            array, properties, type);
+        VtkMeshConverter::convertTypedArray<unsigned long>(array, properties,
+                                                           type);
         return;
     }
 

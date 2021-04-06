@@ -20,8 +20,8 @@ void checkVanGenuchtenExponentRange(const double m)
     if (m <= 0 || m >= 1)
     {
         OGS_FATAL(
-            "The exponent value m = {:e} of van Genuchten saturation "
-            "model, is out of its range of(0, 1) ",
+            "The exponent value m = {:e} of van Genuchten saturation model, is "
+            "out of its range of(0, 1) ",
             m);
     }
 }

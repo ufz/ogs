@@ -9,7 +9,9 @@
  */
 
 #include "VariableType.h"
+
 #include <boost/algorithm/string/predicate.hpp>
+
 #include "BaseLib/Error.h"
 
 namespace MaterialPropertyLib

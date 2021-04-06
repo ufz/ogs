@@ -11,6 +11,7 @@
 #include "BHE_1P.h"
 
 #include <boost/math/constants/constants.hpp>
+
 #include "FlowAndTemperatureControl.h"
 #include "Physics.h"
 #include "ThermoMechanicalFlowProperties.h"

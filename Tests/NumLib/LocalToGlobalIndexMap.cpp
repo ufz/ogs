@@ -7,21 +7,20 @@
  *
  */
 
-#include <memory>
-#include <vector>
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 #include <gtest/gtest.h>
 
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "MeshLib/MeshGenerators/MeshGenerator.h"
+#include <memory>
+#include <vector>
 
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubset.h"
 
 class NumLibLocalToGlobalIndexMapTest : public ::testing::Test
 {
-
 public:
     NumLibLocalToGlobalIndexMapTest()
     {
@@ -43,7 +42,7 @@ protected:
     std::unique_ptr<MeshLib::Mesh const> mesh;
     std::unique_ptr<MeshLib::MeshSubset const> nodesSubset;
 
-    //data component 0 and 1 are assigned to all nodes in the mesh
+    // data component 0 and 1 are assigned to all nodes in the mesh
     static int const comp0_id = 0;
     static int const comp1_id = 1;
     std::vector<MeshLib::MeshSubset> components;
@@ -66,7 +65,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByComponent)
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(mesh->getNumberOfNodes() * components_size, dof_map->dofSizeWithGhosts());
+    ASSERT_EQ(mesh->getNumberOfNodes() * components_size,
+              dof_map->dofSizeWithGhosts());
 }
 
 #ifndef USE_PETSC
@@ -84,7 +84,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_NumberOfRowsByLocation)
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(mesh->getNumberOfNodes() * components_size, dof_map->dofSizeWithGhosts());
+    ASSERT_EQ(mesh->getNumberOfNodes() * components_size,
+              dof_map->dofSizeWithGhosts());
 }
 
 #ifndef USE_PETSC
@@ -97,7 +98,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
         std::move(components), NumLib::ComponentOrder::BY_COMPONENT);
 
     // Select some elements from the full mesh.
-    std::array<std::size_t, 3> const ids = {{ 0, 5, 8 }};
+    std::array<std::size_t, 3> const ids = {{0, 5, 8}};
     std::vector<MeshLib::Element*> some_elements;
     for (std::size_t id : ids)
     {
@@ -124,10 +125,12 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
 #ifndef USE_PETSC
 TEST_F(NumLibLocalToGlobalIndexMapTest, MultipleVariablesMultipleComponents)
 #else
-TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleComponents)
+TEST_F(NumLibLocalToGlobalIndexMapTest,
+       DISABLED_MultipleVariablesMultipleComponents)
 #endif
 {
-    // test 2 variables (1st variable with 1 component, 2nd variable with 2 components)
+    // test 2 variables (1st variable with 1 component, 2nd variable with 2
+    // components)
     components.emplace_back(*nodesSubset);
 
     std::vector<int> vec_var_n_components{1, 2};
@@ -153,10 +156,12 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
 #ifndef USE_PETSC
 TEST_F(NumLibLocalToGlobalIndexMapTest, MultipleVariablesMultipleComponents2)
 #else
-TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleComponents2)
+TEST_F(NumLibLocalToGlobalIndexMapTest,
+       DISABLED_MultipleVariablesMultipleComponents2)
 #endif
 {
-    // test 2 variables (1st variable with 2 component, 2nd variable with 1 components)
+    // test 2 variables (1st variable with 2 component, 2nd variable with 1
+    // components)
     components.emplace_back(*nodesSubset);
 
     std::vector<int> vec_var_n_components{2, 1};
@@ -179,24 +184,28 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     ASSERT_EQ(20, dof_map->getGlobalIndex(l_node0, 1, 0));
 }
 
-
 #ifndef USE_PETSC
-TEST_F(NumLibLocalToGlobalIndexMapTest, MultipleVariablesMultipleComponentsHeterogeneousElements)
+TEST_F(NumLibLocalToGlobalIndexMapTest,
+       MultipleVariablesMultipleComponentsHeterogeneousElements)
 #else
-TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleComponentsHeterogeneousElements)
+TEST_F(NumLibLocalToGlobalIndexMapTest,
+       DISABLED_MultipleVariablesMultipleComponentsHeterogeneousElements)
 #endif
 {
     // test 2 variables
     // - 1st variable with 2 components for all nodes, elements
     // - 2nd variable with 1 component for nodes of element id 1
-    std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1)), const_cast<MeshLib::Node*>(mesh->getNode(2))};
+    std::vector<MeshLib::Node*> var2_nodes{
+        const_cast<MeshLib::Node*>(mesh->getNode(1)),
+        const_cast<MeshLib::Node*>(mesh->getNode(2))};
     MeshLib::MeshSubset var2_subset{*mesh, var2_nodes};
     components.emplace_back(var2_subset);
 
     std::vector<int> vec_var_n_components{2, 1};
-    std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
+    std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     vec_var_elements.push_back(&mesh->getElements());
-    std::vector<MeshLib::Element*> var2_elements{const_cast<MeshLib::Element*>(mesh->getElement(1))};
+    std::vector<MeshLib::Element*> var2_elements{
+        const_cast<MeshLib::Element*>(mesh->getElement(1))};
     vec_var_elements.push_back(&var2_elements);
 
     dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
@@ -215,7 +224,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
 
     ASSERT_EQ(0, dof_map->getGlobalIndex(l_node0, 0, 0));
     ASSERT_EQ(10, dof_map->getGlobalIndex(l_node0, 0, 1));
-    ASSERT_EQ(std::numeric_limits<GlobalIndexType>::max(), dof_map->getGlobalIndex(l_node0, 1, 0));
+    ASSERT_EQ(std::numeric_limits<GlobalIndexType>::max(),
+              dof_map->getGlobalIndex(l_node0, 1, 0));
 
     MeshLib::Location l_node1(mesh->getID(), MeshLib::MeshItemType::Node, 1);
     ASSERT_EQ(1, dof_map->getGlobalIndex(l_node1, 0, 0));
@@ -231,24 +241,27 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
     ASSERT_EQ(2u, ele1_c2_indices.rows.size());
 }
 
-
 #ifndef USE_PETSC
-TEST_F(NumLibLocalToGlobalIndexMapTest, MultipleVariablesMultipleComponentsHeterogeneousWithinElement)
+TEST_F(NumLibLocalToGlobalIndexMapTest,
+       MultipleVariablesMultipleComponentsHeterogeneousWithinElement)
 #else
-TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleComponentsHeterogeneousWithinElement)
+TEST_F(NumLibLocalToGlobalIndexMapTest,
+       DISABLED_MultipleVariablesMultipleComponentsHeterogeneousWithinElement)
 #endif
 {
     // test 2 variables
     // - 1st variable with 2 components for all nodes, elements
     // - 2nd variable with 1 component for 1st node of element id 1
-    std::vector<MeshLib::Node*> var2_nodes{const_cast<MeshLib::Node*>(mesh->getNode(1))};
+    std::vector<MeshLib::Node*> var2_nodes{
+        const_cast<MeshLib::Node*>(mesh->getNode(1))};
     MeshLib::MeshSubset var2_subset = {*mesh, var2_nodes};
     components.emplace_back(var2_subset);
 
     std::vector<int> vec_var_n_components{2, 1};
-    std::vector<std::vector<MeshLib::Element*>const*> vec_var_elements;
+    std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     vec_var_elements.push_back(&mesh->getElements());
-    std::vector<MeshLib::Element*> var2_elements{const_cast<MeshLib::Element*>(mesh->getElement(1))};
+    std::vector<MeshLib::Element*> var2_elements{
+        const_cast<MeshLib::Element*>(mesh->getElement(1))};
     vec_var_elements.push_back(&var2_elements);
 
     dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
@@ -267,7 +280,8 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_MultipleVariablesMultipleCompon
 
     ASSERT_EQ(0, dof_map->getGlobalIndex(l_node0, 0, 0));
     ASSERT_EQ(10, dof_map->getGlobalIndex(l_node0, 0, 1));
-    ASSERT_EQ(std::numeric_limits<GlobalIndexType>::max(), dof_map->getGlobalIndex(l_node0, 1, 0));
+    ASSERT_EQ(std::numeric_limits<GlobalIndexType>::max(),
+              dof_map->getGlobalIndex(l_node0, 1, 0));
 
     MeshLib::Location l_node1(mesh->getID(), MeshLib::MeshItemType::Node, 1);
     ASSERT_EQ(1, dof_map->getGlobalIndex(l_node1, 0, 0));

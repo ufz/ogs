@@ -12,23 +12,23 @@
 #include <memory>
 #include <string>
 
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/AABB.h"
+#include "InfoLib/GitInfo.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshLib/MeshEditing/ProjectPointOnMesh.h"
+#include "MeshLib/MeshSearch/MeshElementGrid.h"
+#include "MeshLib/Node.h"
 
 double getClosestPointElevation(MeshLib::Node const& p,
-                              std::vector<MeshLib::Node*> const& nodes,
-                              double const& max_dist)
+                                std::vector<MeshLib::Node*> const& nodes,
+                                double const& max_dist)
 {
-    double sqr_shortest_dist (max_dist);
-    double elevation (p[2]);
+    double sqr_shortest_dist(max_dist);
+    double elevation(p[2]);
     for (MeshLib::Node* node : nodes)
     {
         double sqr_dist = (p[0] - (*node)[0]) * (p[0] - (*node)[0]) +
@@ -42,7 +42,7 @@ double getClosestPointElevation(MeshLib::Node const& p,
     return elevation;
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     std::vector<std::string> keywords;
     keywords.emplace_back("-ALL");
@@ -71,7 +71,7 @@ int main (int argc, char* argv[])
 
     const std::string msh_name(argv[1]);
     const std::string current_key(argv[2]);
-    std::string const ext (BaseLib::getFileExtension(msh_name));
+    std::string const ext(BaseLib::getFileExtension(msh_name));
     if (!(ext == ".msh" || ext == ".vtu"))
     {
         ERR("Error: Parameter 1 must be a mesh-file (*.msh / *.vtu).");
@@ -91,10 +91,11 @@ int main (int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    std::unique_ptr<MeshLib::Mesh> mesh (MeshLib::IO::readMeshFromFile(msh_name));
+    std::unique_ptr<MeshLib::Mesh> mesh(
+        MeshLib::IO::readMeshFromFile(msh_name));
     if (mesh == nullptr)
     {
-        ERR ("Error reading mesh file.");
+        ERR("Error reading mesh file.");
         return 1;
     }
 
@@ -110,19 +111,20 @@ int main (int argc, char* argv[])
         }
         const std::string dir(argv[3]);
         unsigned idx = (dir == "x") ? 0 : (dir == "y") ? 1 : 2;
-        const double value(strtod(argv[4],0));
+        const double value(strtod(argv[4], 0));
         INFO("Moving all mesh nodes by {:g} in direction {:d} ({:s})...", value,
              idx, dir);
-        //double value(-10);
+        // double value(-10);
         const std::size_t nNodes(mesh->getNumberOfNodes());
-        std::vector<MeshLib::Node*> nodes (mesh->getNodes());
-        for (std::size_t i=0; i<nNodes; i++)
+        std::vector<MeshLib::Node*> nodes(mesh->getNodes());
+        for (std::size_t i = 0; i < nNodes; i++)
         {
             (*nodes[i])[idx] += value;
         }
     }
 
-    // maps the elevation of mesh nodes according to a ground truth mesh whenever nodes exist within max_dist
+    // maps the elevation of mesh nodes according to a ground truth mesh
+    // whenever nodes exist within max_dist
     if (current_key == "-MESH")
     {
         if (argc < 4)
@@ -130,12 +132,13 @@ int main (int argc, char* argv[])
             ERR("Missing parameter...");
             return EXIT_FAILURE;
         }
-        const std::string value (argv[3]);
-        double max_dist(pow(strtod(argv[4],0), 2));
-        std::unique_ptr<MeshLib::Mesh> ground_truth (MeshLib::IO::readMeshFromFile(value));
+        const std::string value(argv[3]);
+        double max_dist(pow(strtod(argv[4], 0), 2));
+        std::unique_ptr<MeshLib::Mesh> ground_truth(
+            MeshLib::IO::readMeshFromFile(value));
         if (ground_truth == nullptr)
         {
-            ERR ("Error reading mesh file.");
+            ERR("Error reading mesh file.");
             return EXIT_FAILURE;
         }
 
@@ -155,18 +158,21 @@ int main (int argc, char* argv[])
                 grid.getElementsInVolume(min_vol, max_vol);
             auto const* element =
                 MeshLib::ProjectPointOnMesh::getProjectedElement(elems, *node);
-            (*node)[2] = (element != nullptr)
-                ? MeshLib::ProjectPointOnMesh::getElevation(*element, *node)
-                : getClosestPointElevation( *node, ground_truth->getNodes(), max_dist);
+            (*node)[2] =
+                (element != nullptr)
+                    ? MeshLib::ProjectPointOnMesh::getElevation(*element, *node)
+                    : getClosestPointElevation(*node, ground_truth->getNodes(),
+                                               max_dist);
         }
     }
 
-    // a simple lowpass filter for the elevation of mesh nodes using the elevation of each node
-    // weighted by 2 and the elevation of each connected node weighted by 1
+    // a simple lowpass filter for the elevation of mesh nodes using the
+    // elevation of each node weighted by 2 and the elevation of each connected
+    // node weighted by 1
     if (current_key == "-LOWPASS")
     {
         const std::size_t nNodes(mesh->getNumberOfNodes());
-        std::vector<MeshLib::Node*> nodes (mesh->getNodes());
+        std::vector<MeshLib::Node*> nodes(mesh->getNodes());
 
         std::vector<double> elevation(nNodes);
         for (std::size_t i = 0; i < nNodes; i++)
@@ -174,16 +180,17 @@ int main (int argc, char* argv[])
             elevation[i] = (*nodes[i])[2];
         }
 
-        for (std::size_t i=0; i<nNodes; i++)
+        for (std::size_t i = 0; i < nNodes; i++)
         {
-            const std::vector<MeshLib::Node*> conn_nodes (nodes[i]->getConnectedNodes());
-            const unsigned nConnNodes (conn_nodes.size());
-            elevation[i] = (2*(*nodes[i])[2]);
+            const std::vector<MeshLib::Node*> conn_nodes(
+                nodes[i]->getConnectedNodes());
+            const unsigned nConnNodes(conn_nodes.size());
+            elevation[i] = (2 * (*nodes[i])[2]);
             for (std::size_t j = 0; j < nConnNodes; ++j)
             {
                 elevation[i] += (*conn_nodes[j])[2];
             }
-            elevation[i] /= (nConnNodes+2);
+            elevation[i] /= (nConnNodes + 2);
         }
 
         for (std::size_t i = 0; i < nNodes; i++)
@@ -193,7 +200,8 @@ int main (int argc, char* argv[])
     }
     /**** add other keywords here ****/
 
-    std::string const new_mesh_name (msh_name.substr(0, msh_name.length() - 4) + "_new.vtu");
+    std::string const new_mesh_name(msh_name.substr(0, msh_name.length() - 4) +
+                                    "_new.vtu");
     if (MeshLib::IO::writeMeshToFile(*mesh, new_mesh_name) != 0)
     {
         return EXIT_FAILURE;

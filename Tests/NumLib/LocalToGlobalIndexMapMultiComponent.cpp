@@ -12,6 +12,8 @@
 
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polyline.h"
+#include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
+#include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
@@ -20,9 +22,6 @@
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubset.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-
-#include "MeshGeoToolsLib/MeshNodeSearcher.h"
-#include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 
 namespace NL = NumLib;
 namespace MeL = MeshLib;
@@ -34,7 +33,8 @@ public:
     static const std::size_t mesh_subdivs = 4;
     NumLibLocalToGlobalIndexMapMultiDOFTest()
     {
-        mesh.reset(MeL::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs));
+        mesh.reset(
+            MeL::MeshGenerator::generateRegularQuadMesh(2.0, mesh_subdivs));
         mesh_items_all_nodes =
             std::make_unique<MeL::MeshSubset>(*mesh, mesh->getNodes());
 
@@ -145,7 +145,6 @@ public:
     std::vector<MeshLib::Node*> nodes_subset;
 };
 
-
 struct ComputeGlobalIndexByComponent
 {
     std::size_t num_nodes;
@@ -184,7 +183,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     ASSERT_EQ(dof_map_boundary->size(), boundary_mesh->getNumberOfElements());
 
     // check mesh elements
-    for (unsigned e=0; e<dof_map->size(); ++e)
+    for (unsigned e = 0; e < dof_map->size(); ++e)
     {
         auto const element_nodes_size = mesh->getElement(e)->getNumberOfNodes();
         auto const ptr_element_nodes = mesh->getElement(e)->getNodes();
@@ -204,7 +203,7 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     }
 
     // check boundary elements
-    for (unsigned e=0; e<dof_map_boundary->size(); ++e)
+    for (unsigned e = 0; e < dof_map_boundary->size(); ++e)
     {
         ASSERT_EQ(1, dof_map_boundary->getNumberOfGlobalComponents());
 
@@ -212,7 +211,9 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
         {
             auto const& global_idcs = (*dof_map_boundary)(e, c).rows;
 
-            ASSERT_EQ(2, global_idcs.size()); // boundary of quad is line with two nodes
+            ASSERT_EQ(
+                2,
+                global_idcs.size());  // boundary of quad is line with two nodes
 
             // e is the number of a boundary element (which is a line, so two
             // nodes) from 0 to something. e+n must be the node ids along the
@@ -293,13 +294,14 @@ void NumLibLocalToGlobalIndexMapMultiDOFTest::test(
     }
 }
 
-void assert_equal(NL::LocalToGlobalIndexMap const& dof1, NL::LocalToGlobalIndexMap const& dof2)
+void assert_equal(NL::LocalToGlobalIndexMap const& dof1,
+                  NL::LocalToGlobalIndexMap const& dof2)
 {
     ASSERT_EQ(dof1.size(), dof2.size());
     ASSERT_EQ(dof1.getNumberOfGlobalComponents(),
               dof2.getNumberOfGlobalComponents());
 
-    for (unsigned e=0; e<dof1.size(); ++e)
+    for (unsigned e = 0; e < dof1.size(); ++e)
     {
         for (int c = 0; c < dof1.getNumberOfGlobalComponents(); ++c)
         {
@@ -334,7 +336,8 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_Test1Comp)
 #ifndef USE_PETSC
 TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByComponent)
 #else
-TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByComponent)
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest,
+       DISABLED_TestMultiCompByComponent)
 #endif
 {
     int const num_components = 5;
@@ -350,7 +353,8 @@ TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByComponen
 #ifndef USE_PETSC
 TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, TestMultiCompByLocation)
 #else
-TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest, DISABLED_TestMultiCompByLocation)
+TEST_F(NumLibLocalToGlobalIndexMapMultiDOFTest,
+       DISABLED_TestMultiCompByLocation)
 #endif
 {
     int const num_components = 5;

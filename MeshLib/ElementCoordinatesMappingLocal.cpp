@@ -9,15 +9,14 @@
 
 #include "ElementCoordinatesMappingLocal.h"
 
-#include <limits>
 #include <cassert>
+#include <limits>
 
 #include "GeoLib/AnalyticalGeometry.h"
-
-#include "MeshLib/Elements/Element.h"
-#include "MeshLib/Node.h"
 #include "MathLib/MathTools.h"
 #include "MathLib/Point3d.h"
+#include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
 
 namespace detail
 {

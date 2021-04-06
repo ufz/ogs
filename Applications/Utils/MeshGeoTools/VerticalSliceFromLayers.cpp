@@ -15,6 +15,7 @@
 
 // ThirdParty
 #include <tclap/CmdLine.h>
+
 #include <QCoreApplication>
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
@@ -183,7 +184,8 @@ std::pair<Eigen::Matrix3d, double> rotateGeometryToXY(
     GeoLib::rotatePoints(rotation_matrix, points.begin(), points.end());
 
     GeoLib::AABB aabb(points.begin(), points.end());
-    double const z_shift = (aabb.getMinPoint()[2] + aabb.getMaxPoint()[2]) / 2.0;
+    double const z_shift =
+        (aabb.getMinPoint()[2] + aabb.getMaxPoint()[2]) / 2.0;
     std::for_each(points.begin(), points.end(),
                   [z_shift](GeoLib::Point* p) { (*p)[2] -= z_shift; });
     return {rotation_matrix, z_shift};
@@ -236,8 +238,7 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
     int const return_value = std::system(gmsh_command.c_str());
     if (return_value != 0)
     {
-        ERR("Execution of gmsh command returned non-zero "
-            "status, %d",
+        ERR("Execution of gmsh command returned non-zero status, %d",
             return_value);
     }
     return FileIO::GMSH::readGMSHMesh(gmsh_mesh_name);
@@ -323,7 +324,7 @@ void extractBoundaries(MeshLib::Mesh const& mesh,
             continue;
         }
         // elements located at top or bottom
-        if (dist2.squaredNorm() < dist1.squaredNorm() )
+        if (dist2.squaredNorm() < dist1.squaredNorm())
         {
             top_bound_idx.push_back(id);
             left_bound_idx.push_back(id);

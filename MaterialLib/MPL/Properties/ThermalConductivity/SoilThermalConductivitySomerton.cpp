@@ -54,8 +54,8 @@ SoilThermalConductivitySomerton<1>::SoilThermalConductivitySomerton(
     {
         OGS_FATAL(
             "In 'SoilThermalConductivitySomerton', "
-            "dry_thermal_conductivity of '{:g}' is "
-            "larger than wet_thermal_conductivity of '{:g}'.",
+            "dry_thermal_conductivity of '{:g}' is larger than "
+            "wet_thermal_conductivity of '{:g}'.",
             lambda_try, lambda_wet);
     }
 }
@@ -134,9 +134,9 @@ SoilThermalConductivitySomerton<GlobalDimension>::
     if (lambda_try.size() != lambda_wet.size())
     {
         OGS_FATAL(
-            "In 'SoilThermalConductivitySomerton' input data, "
-            "the data size of dry_thermal_conductivity of '{:d}' is "
-            "different from that of dry_thermal_conductivity of '{:d}'.",
+            "In 'SoilThermalConductivitySomerton' input data, the data size of "
+            "dry_thermal_conductivity of '{:d}' is different from that of "
+            "dry_thermal_conductivity of '{:d}'.",
             lambda_try.size(), lambda_wet.size());
     }
 
@@ -146,8 +146,8 @@ SoilThermalConductivitySomerton<GlobalDimension>::
         {
             OGS_FATAL(
                 "In 'SoilThermalConductivitySomerton', "
-                "dry_thermal_conductivity of '{:g}' is "
-                "larger than wet_thermal_conductivity of '{:g}'.",
+                "dry_thermal_conductivity of '{:g}' is larger than "
+                "wet_thermal_conductivity of '{:g}'.",
                 lambda_try[i], lambda_wet[i]);
         }
     }

@@ -9,19 +9,22 @@
 
 #include "CoordinateSystem.h"
 
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Node.h"
 
 namespace MeshLib
 {
-
-CoordinateSystem::CoordinateSystem(const Element &ele)
+CoordinateSystem::CoordinateSystem(const Element& ele)
 {
-    GeoLib::AABB const aabb(ele.getNodes(), ele.getNodes() + ele.getNumberOfNodes());
+    GeoLib::AABB const aabb(ele.getNodes(),
+                            ele.getNodes() + ele.getNumberOfNodes());
     CoordinateSystem const bboxCoordSys(getCoordinateSystem(aabb));
-    if (bboxCoordSys.getDimension() >= ele.getDimension()) {
+    if (bboxCoordSys.getDimension() >= ele.getDimension())
+    {
         _type = bboxCoordSys.getType();
-    } else { // e.g. zero volume elements
+    }
+    else
+    {  // e.g. zero volume elements
         if (ele.getDimension() >= 1)
         {
             _type = CoordinateSystemType::X;
@@ -37,7 +40,8 @@ CoordinateSystem::CoordinateSystem(const Element &ele)
     }
 }
 
-unsigned char CoordinateSystem::getCoordinateSystem(const GeoLib::AABB &bbox) const
+unsigned char CoordinateSystem::getCoordinateSystem(
+    const GeoLib::AABB& bbox) const
 {
     unsigned char coords = 0;
 

@@ -9,20 +9,20 @@
  *
  */
 #include <gtest/gtest.h>
-#include <sstream>
 
-#include "TestMPL.h"
-#include "Tests/TestTools.h"
+#include <sstream>
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Properties/IdealGasLaw.h"
 #include "MaterialLib/PhysicalConstant.h"
+#include "TestMPL.h"
+#include "Tests/TestTools.h"
 
 TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
 {
-    const double pressure_norm = 101325.0;    // Pa
-    const double temperature_norm = 273.15;   // K
-    const double molar_mass_air = 0.02905;  // kg/mol
+    const double pressure_norm = 101325.0;   // Pa
+    const double temperature_norm = 273.15;  // K
+    const double molar_mass_air = 0.02905;   // kg/mol
     const auto R = MaterialLib::PhysicalConstant::IdealGasConstant;
 
     const double density_norm_air =

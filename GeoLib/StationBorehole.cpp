@@ -19,14 +19,12 @@
 #include <cstdlib>
 #include <fstream>
 
-#include "BaseLib/Logging.h"
-
-#include "BaseLib/StringTools.h"
 #include "BaseLib/DateTools.h"
+#include "BaseLib/Logging.h"
+#include "BaseLib/StringTools.h"
 
 namespace GeoLib
 {
-
 ////////////////////////
 // The Borehole class //
 ////////////////////////
@@ -54,7 +52,7 @@ StationBorehole::~StationBorehole()
     }
 }
 
-StationBorehole* StationBorehole::createStation(const std::string &line)
+StationBorehole* StationBorehole::createStation(const std::string& line)
 {
     StationBorehole* borehole = new StationBorehole();
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
@@ -63,13 +61,17 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
     {
         borehole->_name = fields.front();
         fields.pop_front();
-        (*borehole)[0] = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+        (*borehole)[0] = strtod(
+            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
-        (*borehole)[1] = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+        (*borehole)[1] = strtod(
+            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
-        (*borehole)[2] = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+        (*borehole)[2] = strtod(
+            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
-        borehole->_depth = strtod(BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+        borehole->_depth = strtod(
+            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
         if (fields.empty())
         {
@@ -90,18 +92,18 @@ StationBorehole* StationBorehole::createStation(const std::string &line)
     return borehole;
 }
 
-StationBorehole* StationBorehole::createStation(const std::string &name,
+StationBorehole* StationBorehole::createStation(const std::string& name,
                                                 double x,
                                                 double y,
                                                 double z,
                                                 double depth,
-                                                const std::string &date)
+                                                const std::string& date)
 {
     StationBorehole* station = new StationBorehole();
-    station->_name  = name;
-    (*station)[0]   = x;
-    (*station)[1]   = y;
-    (*station)[2]   = z;
+    station->_name = name;
+    (*station)[0] = x;
+    (*station)[1] = y;
+    (*station)[2] = z;
     station->_depth = depth;
     if (date != "0000-00-00")
     {
@@ -110,7 +112,8 @@ StationBorehole* StationBorehole::createStation(const std::string &name,
     return station;
 }
 
-void StationBorehole::addSoilLayer ( double thickness, const std::string &soil_name)
+void StationBorehole::addSoilLayer(double thickness,
+                                   const std::string& soil_name)
 {
     /*
        // TF - Altmark
@@ -132,16 +135,19 @@ void StationBorehole::addSoilLayer ( double thickness, const std::string &soil_n
         addSoilLayer((*this)[0], (*this)[1], (*this)[2], "");
     }
 
-    std::size_t idx (_profilePntVec.size());
+    std::size_t idx(_profilePntVec.size());
     double x((*_profilePntVec[idx - 1])[0]);
     double y((*_profilePntVec[idx - 1])[1]);
     double z((*_profilePntVec[0])[2] - thickness);
-    addSoilLayer (x, y, z, soil_name);
+    addSoilLayer(x, y, z, soil_name);
 }
 
-void StationBorehole::addSoilLayer ( double x, double y, double z, const std::string &soil_name)
+void StationBorehole::addSoilLayer(double x,
+                                   double y,
+                                   double z,
+                                   const std::string& soil_name)
 {
-    _profilePntVec.push_back (new Point (x, y, z));
+    _profilePntVec.push_back(new Point(x, y, z));
     _soilName.push_back(soil_name);
 }
 

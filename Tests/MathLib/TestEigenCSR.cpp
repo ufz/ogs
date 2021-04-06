@@ -9,16 +9,14 @@
 
 #include <gtest/gtest.h>
 
-#include <vector>
-#include <numeric>
-
 #include <Eigen/Sparse>
-
+#include <numeric>
+#include <vector>
 
 /**
- * This test case checks if the internal Eigen::SparseMatrix compressed storage format
- * is a conventional CSR matrix. Currently this is the case, but it is not guaranteed
- * for all time.
+ * This test case checks if the internal Eigen::SparseMatrix compressed storage
+ * format is a conventional CSR matrix. Currently this is the case, but it is
+ * not guaranteed for all time.
  *
  * Cf. section "Sparse matrix format" on page
  * http://eigen.tuxfamily.org/dox/group__TutorialSparse.html
@@ -32,21 +30,24 @@ TEST(MathLibEigen, Eigen2CSR)
 
     // set up sparsity pattern
     std::vector<int> pat(nrows);
-    for (std::size_t i=0; i<nrows; ++i)
+    for (std::size_t i = 0; i < nrows; ++i)
     {
-        if (i==0 || i==nrows-1) {
+        if (i == 0 || i == nrows - 1)
+        {
             pat[i] = 2;
-        } else {
+        }
+        else
+        {
             pat[i] = 3;
         }
     }
 
     // CSR representation of the matrix
     std::vector<double> values;
-    std::vector<int> ia(nrows+1); // row offsets
-    std::vector<int> ja;          // column indices
+    std::vector<int> ia(nrows + 1);  // row offsets
+    std::vector<int> ja;             // column indices
 
-    std::partial_sum(pat.begin(), pat.end(), ia.begin()+1);
+    std::partial_sum(pat.begin(), pat.end(), ia.begin() + 1);
 
     const int nnz = ia.back();
     values.reserve(nnz);
@@ -55,8 +56,10 @@ TEST(MathLibEigen, Eigen2CSR)
     mat.reserve(pat);
 
     // init matrix, build CSR matrix in parallel
-    for (int row=0; row<nrows; ++row) {
-        for (int col = -1; col<=1; ++col) {
+    for (int row = 0; row < nrows; ++row)
+    {
+        for (int col = -1; col <= 1; ++col)
+        {
             int cidx = row + col;
             if (cidx < 0 || cidx >= ncols)
             {
@@ -71,8 +74,10 @@ TEST(MathLibEigen, Eigen2CSR)
     }
 
     // change matrix
-    for (int row=0; row<nrows; ++row) {
-        for (int col = -1; col<=1; ++col) {
+    for (int row = 0; row < nrows; ++row)
+    {
+        for (int col = -1; col <= 1; ++col)
+        {
             int cidx = row + col;
             if (cidx < 0 || cidx >= ncols)
             {
@@ -103,9 +108,9 @@ TEST(MathLibEigen, Eigen2CSR)
         EXPECT_EQ(ia[r], ptr[r]);
     }
 
-    for (int i=0; i<nnz; ++i) {
+    for (int i = 0; i < nnz; ++i)
+    {
         EXPECT_EQ(values[i], data[i]);
         EXPECT_EQ(ja[i], col[i]);
     }
 }
-

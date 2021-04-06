@@ -15,14 +15,14 @@
 // ** INCLUDES **
 #include "VtkCompositeTextureOnSurfaceFilter.h"
 
-#include "BaseLib/Logging.h"
-
-#include "VtkTextureOnSurfaceFilter.h"
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
+
+#include "BaseLib/Logging.h"
 #include "VtkGeoImageSource.h"
 #include "VtkRaster.h"
+#include "VtkTextureOnSurfaceFilter.h"
 #ifdef OGS_USE_NETCDF
 #include "NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
@@ -33,9 +33,8 @@
 
 //#include "VtkCompositeColormapToImageFilter.h"
 
-
 VtkCompositeTextureOnSurfaceFilter::VtkCompositeTextureOnSurfaceFilter(
-        vtkAlgorithm* inputAlgorithm )
+    vtkAlgorithm* inputAlgorithm)
     : VtkCompositeFilter(inputAlgorithm)
 {
     this->init();
@@ -52,7 +51,8 @@ void VtkCompositeTextureOnSurfaceFilter::init()
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter;
     VtkTextureOnSurfaceFilter* surface = VtkTextureOnSurfaceFilter::New();
 
-    if (dynamic_cast<vtkUnstructuredGrid*>(_inputAlgorithm->GetOutputDataObject(0)))
+    if (dynamic_cast<vtkUnstructuredGrid*>(
+            _inputAlgorithm->GetOutputDataObject(0)))
     {
         surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
         surfaceFilter->SetInputConnection(_inputAlgorithm->GetOutputPort());
@@ -101,12 +101,14 @@ void VtkCompositeTextureOnSurfaceFilter::init()
     }
 #endif  // OGS_USE_NETCDF
     else
-        ERR("VtkCompositeTextureOnSurfaceFilter::init(): Error reading texture file.");
+        ERR("VtkCompositeTextureOnSurfaceFilter::init(): Error reading texture "
+            "file.");
 
     _outputAlgorithm = surface;
 }
 
-void VtkCompositeTextureOnSurfaceFilter::SetUserProperty( QString name, QVariant value )
+void VtkCompositeTextureOnSurfaceFilter::SetUserProperty(QString name,
+                                                         QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 }

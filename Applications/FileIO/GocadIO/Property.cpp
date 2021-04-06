@@ -7,13 +7,12 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "Property.h"
+
 #include <algorithm>
+#include <boost/tokenizer.hpp>
 #include <iterator>
 #include <sstream>
-
-#include <boost/tokenizer.hpp>
-
-#include "Property.h"
 
 #include "BaseLib/StringTools.h"
 
@@ -21,7 +20,6 @@ namespace FileIO
 {
 namespace Gocad
 {
-
 std::ostream& operator<<(std::ostream& os, Property const& p)
 {
     return os << "'" << p._property_name << "' '" << p._property_id << "' '"

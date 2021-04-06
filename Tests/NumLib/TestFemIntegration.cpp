@@ -14,9 +14,8 @@
 
 #include <limits>
 
-#include "Tests/TestTools.h"
-
 #include "NumLib/Fem/Integration/IntegrationGaussLegendreRegular.h"
+#include "Tests/TestTools.h"
 
 using namespace NumLib;
 
@@ -28,7 +27,7 @@ TEST(NumLib, FemIntegrationGaussLegendreRegular)
     // check position indices
     // dim = 1
     {
-        std::size_t expected[1] = { 0u };
+        std::size_t expected[1] = {0u};
         ASSERT_ARRAY_EQ(expected,
                         IntegrationGaussLegendreRegular<1>::getPositionIndices(
                             integrationOrder, 0),
@@ -41,7 +40,7 @@ TEST(NumLib, FemIntegrationGaussLegendreRegular)
     }
     // dim = 2
     {
-        std::size_t expected[2] = { 0u, 0u };
+        std::size_t expected[2] = {0u, 0u};
         ASSERT_ARRAY_EQ(expected,
                         IntegrationGaussLegendreRegular<2>::getPositionIndices(
                             integrationOrder, 0),
@@ -66,12 +65,15 @@ TEST(NumLib, FemIntegrationGaussLegendreRegular)
     }
     // dim = 3
     {
-        std::size_t expected[3] = { 0u, 0u, 0u };
-        for (std::size_t i(0); i <= 1; i++) {
+        std::size_t expected[3] = {0u, 0u, 0u};
+        for (std::size_t i(0); i <= 1; i++)
+        {
             expected[0] = i;
-            for (std::size_t j(0); j <= 1; j++) {
+            for (std::size_t j(0); j <= 1; j++)
+            {
                 expected[1] = j;
-                for (std::size_t k(0); k <= 1; k++) {
+                for (std::size_t k(0); k <= 1; k++)
+                {
                     expected[2] = k;
                     const std::size_t l(i * 4 + j * 2 + k);
                     ASSERT_ARRAY_EQ(
@@ -186,5 +188,3 @@ TEST(NumLib, FemIntegrationGaussLegendreRegular)
     ASSERT_EQ(2u, q3.getIntegrationOrder());
     ASSERT_EQ(8u, q3.getNumberOfPoints());
 }
-
-

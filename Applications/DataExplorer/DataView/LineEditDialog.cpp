@@ -13,12 +13,17 @@
  */
 
 #include "LineEditDialog.h"
-#include "OGSError.h"
+
 #include <QStringList>
 #include <QStringListModel>
 
-LineEditDialog::LineEditDialog(const GeoLib::PolylineVec &ply_vec, QDialog* parent)
-    : QDialog(parent), _allPly(new QStringListModel), _selPly(new QStringListModel),
+#include "OGSError.h"
+
+LineEditDialog::LineEditDialog(const GeoLib::PolylineVec& ply_vec,
+                               QDialog* parent)
+    : QDialog(parent),
+      _allPly(new QStringListModel),
+      _selPly(new QStringListModel),
       _geoName(ply_vec.getName())
 {
     setupUi(this);
@@ -31,7 +36,8 @@ LineEditDialog::LineEditDialog(const GeoLib::PolylineVec &ply_vec, QDialog* pare
     {
         std::string ply_name;
         ply_vec.getNameOfElementByID(i, ply_name);
-        list.append("Line " + QString::number(i) + "  " + QString::fromStdString(ply_name));
+        list.append("Line " + QString::number(i) + "  " +
+                    QString::fromStdString(ply_name));
     }
     _allPly->setStringList(list);
 
@@ -47,7 +53,8 @@ LineEditDialog::~LineEditDialog()
 
 void LineEditDialog::on_selectPlyButton_pressed()
 {
-    QModelIndexList selected = this->allPlyView->selectionModel()->selectedIndexes();
+    QModelIndexList selected =
+        this->allPlyView->selectionModel()->selectedIndexes();
     QStringList list = _selPly->stringList();
 
     for (auto& index : selected)
@@ -61,7 +68,8 @@ void LineEditDialog::on_selectPlyButton_pressed()
 
 void LineEditDialog::on_deselectPlyButton_pressed()
 {
-    QModelIndexList selected = this->selectedPlyView->selectionModel()->selectedIndexes();
+    QModelIndexList selected =
+        this->selectedPlyView->selectionModel()->selectedIndexes();
     QStringList list = _allPly->stringList();
 
     for (auto& index : selected)
@@ -75,16 +83,17 @@ void LineEditDialog::on_deselectPlyButton_pressed()
 
 void LineEditDialog::accept()
 {
-    std::vector<std::size_t> selectedIndeces = this->getSelectedIndeces(_selPly->stringList());
+    std::vector<std::size_t> selectedIndeces =
+        this->getSelectedIndeces(_selPly->stringList());
 
     if (!selectedIndeces.empty())
     {
         std::string prox_string = this->proximityEdit->text().toStdString();
         double prox =
             (prox_string.empty()) ? 0.0 : strtod(prox_string.c_str(), nullptr);
-        std::string ply_name =
-                (plyNameEdit->text().toStdString().empty()) ? "" : plyNameEdit->text().
-                toStdString();
+        std::string ply_name = (plyNameEdit->text().toStdString().empty())
+                                   ? ""
+                                   : plyNameEdit->text().toStdString();
         emit connectPolylines(_geoName,
                               selectedIndeces,
                               prox,

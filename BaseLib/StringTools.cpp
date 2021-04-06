@@ -30,12 +30,12 @@ std::vector<std::string> splitString(std::string const& str)
     std::istringstream str_stream(str);
     std::vector<std::string> items;
     std::copy(std::istream_iterator<std::string>(str_stream),
-        std::istream_iterator<std::string>(),
-        std::back_inserter(items));
+              std::istream_iterator<std::string>(),
+              std::back_inserter(items));
     return items;
 }
 
-std::list<std::string> splitString(const std::string &str, char delim)
+std::list<std::string> splitString(const std::string& str, char delim)
 {
     std::list<std::string> strList;
     std::stringstream ss(str);
@@ -47,18 +47,18 @@ std::list<std::string> splitString(const std::string &str, char delim)
     return strList;
 }
 
-std::string replaceString(const std::string &searchString,
-                          const std::string &replaceString,
+std::string replaceString(const std::string& searchString,
+                          const std::string& replaceString,
                           std::string stringToReplace)
 {
     boost::replace_all(stringToReplace, searchString, replaceString);
     return stringToReplace;
 }
 
-void trim(std::string &str, char ch)
+void trim(std::string& str, char ch)
 {
     std::string::size_type pos = str.find_last_not_of(ch);
-    if(pos != std::string::npos)
+    if (pos != std::string::npos)
     {
         str.erase(pos + 1);
         pos = str.find_first_not_of(ch);
@@ -73,16 +73,16 @@ void trim(std::string &str, char ch)
     }
 }
 
-void simplify(std::string &str)
+void simplify(std::string& str)
 {
-    trim (str);
-    str.erase(
-        std::unique(str.begin(), str.end(), [](char a, char b) { return a == ' ' && b == ' '; }),
-        str.end()
-    );
+    trim(str);
+    str.erase(std::unique(str.begin(),
+                          str.end(),
+                          [](char a, char b) { return a == ' ' && b == ' '; }),
+              str.end());
 }
 
-std::string format(const char* format_str, ... )
+std::string format(const char* format_str, ...)
 {
     va_list args;
     va_start(args, format_str);
@@ -92,7 +92,7 @@ std::string format(const char* format_str, ... )
     int char_length = std::vsnprintf(nullptr, 0, format_str, args_tmp);
     va_end(args_tmp);
     // allocate buffer and store formatted output there
-    std::vector<char> buffer(char_length + 1); // note +1 for null terminator
+    std::vector<char> buffer(char_length + 1);  // note +1 for null terminator
     vsnprintf(buffer.data(), buffer.size(), format_str, args);
     va_end(args);
 
@@ -102,9 +102,7 @@ std::string format(const char* format_str, ... )
 std::string randomString(std::size_t const length)
 {
     static constexpr char charset[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
     static const auto seed = static_cast<std::mt19937::result_type>(
         std::chrono::system_clock::now().time_since_epoch().count());

@@ -9,6 +9,7 @@
  */
 
 #include "CurveScaledParameter.h"
+
 #include "Utils.h"
 
 namespace ParameterLib

@@ -87,7 +87,8 @@ CreepBGRa<DisplacementDim>::integrateStress(
 
     double const G2b = 2.0 * b * this->_mp.mu(t, x);
 
-    auto const update_jacobian = [&solution, &G2b, &n](JacobianMatrix& jacobian) {
+    auto const update_jacobian = [&solution, &G2b,
+                                  &n](JacobianMatrix& jacobian) {
         auto const& D = Invariants::deviatoric_projection;
         KelvinVector const s_n1 = D * solution;
         double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);

@@ -41,7 +41,8 @@ void VtkCompositeImageToSurfacePointsFilter::init()
     _outputAlgorithm = point_cloud_filter;
 }
 
-void VtkCompositeImageToSurfacePointsFilter::SetUserProperty(QString name, QVariant value)
+void VtkCompositeImageToSurfacePointsFilter::SetUserProperty(QString name,
+                                                             QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
     if ((name == "Points per pixel") && (value.toInt() > 0))

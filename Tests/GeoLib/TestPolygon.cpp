@@ -10,10 +10,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "GeoLib/Point.h"
 #include "GeoLib/LineSegment.h"
+#include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 
 /**
@@ -30,21 +30,20 @@
  *        0
  */
 
-
 class PolygonTest : public testing::Test
 {
 public:
     PolygonTest()
     {
         // create points and construct polygon
-        _pnts.push_back(new GeoLib::Point( 0.0, 0.0,0.0)); // 0
-        _pnts.push_back(new GeoLib::Point(-2.0, 2.0,0.0)); // 1
-        _pnts.push_back(new GeoLib::Point(-2.0, 4.0,0.0)); // 2
-        _pnts.push_back(new GeoLib::Point(-1.0, 2.0,0.0)); // 3
-        _pnts.push_back(new GeoLib::Point( 0.0, 4.0,0.0)); // 4
-        _pnts.push_back(new GeoLib::Point( 1.0, 2.0,0.0)); // 5
-        _pnts.push_back(new GeoLib::Point( 2.0, 4.0,0.0)); // 6
-        _pnts.push_back(new GeoLib::Point( 2.0, 2.0,0.0)); // 7
+        _pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));   // 0
+        _pnts.push_back(new GeoLib::Point(-2.0, 2.0, 0.0));  // 1
+        _pnts.push_back(new GeoLib::Point(-2.0, 4.0, 0.0));  // 2
+        _pnts.push_back(new GeoLib::Point(-1.0, 2.0, 0.0));  // 3
+        _pnts.push_back(new GeoLib::Point(0.0, 4.0, 0.0));   // 4
+        _pnts.push_back(new GeoLib::Point(1.0, 2.0, 0.0));   // 5
+        _pnts.push_back(new GeoLib::Point(2.0, 4.0, 0.0));   // 6
+        _pnts.push_back(new GeoLib::Point(2.0, 2.0, 0.0));   // 7
 
         // create closed polyline
         GeoLib::Polyline ply(_pnts);
@@ -86,7 +85,8 @@ TEST_F(PolygonTest, isPntInPolygonCheckCorners)
 
 TEST_F(PolygonTest, isPntInPolygonCheckPointsRestOnPolygonEdges)
 {
-    for (std::size_t k(0); k<_pnts.size()-1; k++) {
+    for (std::size_t k(0); k < _pnts.size() - 1; k++)
+    {
         double t = 0;
         while (t < 1.0)
         {
@@ -101,28 +101,28 @@ TEST_F(PolygonTest, isPntInPolygonCheckPointsRestOnPolygonEdges)
 
 TEST_F(PolygonTest, isPntInPolygonCheckInnerPoints)
 {
-    ASSERT_TRUE(_polygon->isPntInPolygon(GeoLib::Point(1.0,1.0,0.0)));
-    ASSERT_TRUE(_polygon->isPntInPolygon(GeoLib::Point(0.5,1.0,0.0)));
+    ASSERT_TRUE(_polygon->isPntInPolygon(GeoLib::Point(1.0, 1.0, 0.0)));
+    ASSERT_TRUE(_polygon->isPntInPolygon(GeoLib::Point(0.5, 1.0, 0.0)));
 }
 
 TEST_F(PolygonTest, isPntInPolygonCheckOuterPoints)
 {
-    ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
-        0.0-std::numeric_limits<float>::epsilon(),0.0,0.0)));
-    ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
-        -2.0-std::numeric_limits<float>::epsilon(),2.0,0.0)));
-    ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
-        -2.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
-    ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
-        -1.0, 2.0+std::numeric_limits<float>::epsilon(),0.0)));
-    ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
-        0.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
-    ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
-        1.0,2.0+std::numeric_limits<float>::epsilon(),0.0)));
-    ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
-        2.0-std::numeric_limits<float>::epsilon(),4.0,0.0)));
-    ASSERT_FALSE(_polygon->isPntInPolygon(GeoLib::Point(
-        2.0+std::numeric_limits<float>::epsilon(),2.0,0.0)));
+    ASSERT_FALSE(_polygon->isPntInPolygon(
+        GeoLib::Point(0.0 - std::numeric_limits<float>::epsilon(), 0.0, 0.0)));
+    ASSERT_FALSE(_polygon->isPntInPolygon(
+        GeoLib::Point(-2.0 - std::numeric_limits<float>::epsilon(), 2.0, 0.0)));
+    ASSERT_FALSE(_polygon->isPntInPolygon(
+        GeoLib::Point(-2.0 - std::numeric_limits<float>::epsilon(), 4.0, 0.0)));
+    ASSERT_FALSE(_polygon->isPntInPolygon(
+        GeoLib::Point(-1.0, 2.0 + std::numeric_limits<float>::epsilon(), 0.0)));
+    ASSERT_FALSE(_polygon->isPntInPolygon(
+        GeoLib::Point(0.0 - std::numeric_limits<float>::epsilon(), 4.0, 0.0)));
+    ASSERT_FALSE(_polygon->isPntInPolygon(
+        GeoLib::Point(1.0, 2.0 + std::numeric_limits<float>::epsilon(), 0.0)));
+    ASSERT_FALSE(_polygon->isPntInPolygon(
+        GeoLib::Point(2.0 - std::numeric_limits<float>::epsilon(), 4.0, 0.0)));
+    ASSERT_FALSE(_polygon->isPntInPolygon(
+        GeoLib::Point(2.0 + std::numeric_limits<float>::epsilon(), 2.0, 0.0)));
 }
 
 /**
@@ -140,7 +140,7 @@ TEST_F(PolygonTest, isPntInPolygonCheckOuterPoints)
  */
 TEST_F(PolygonTest, containsSegment)
 {
-    { // test segment (2,6)
+    {  // test segment (2,6)
         GeoLib::LineSegment const segment{
             const_cast<GeoLib::Point*>(_polygon->getPoint(2)),
             const_cast<GeoLib::Point*>(_polygon->getPoint(6))};
@@ -148,33 +148,33 @@ TEST_F(PolygonTest, containsSegment)
     }
 
     // test all segments of polygon
-    for (auto && segment_it : *_polygon)
+    for (auto&& segment_it : *_polygon)
     {
         EXPECT_TRUE(_polygon->containsSegment(segment_it));
     }
 
-    { // 70
+    {  // 70
         GeoLib::LineSegment const segment{
             const_cast<GeoLib::Point*>(_polygon->getPoint(7)),
             const_cast<GeoLib::Point*>(_polygon->getPoint(0))};
         ASSERT_TRUE(_polygon->containsSegment(segment));
     }
 
-    { // test segment (3,5)
+    {  // test segment (3,5)
         GeoLib::LineSegment const segment{
             const_cast<GeoLib::Point*>(_polygon->getPoint(3)),
             const_cast<GeoLib::Point*>(_polygon->getPoint(5))};
         ASSERT_TRUE(_polygon->containsSegment(segment));
     }
 
-    { // test segment (1,7)
+    {  // test segment (1,7)
         GeoLib::LineSegment const segment{
             const_cast<GeoLib::Point*>(_polygon->getPoint(1)),
             const_cast<GeoLib::Point*>(_polygon->getPoint(7))};
         ASSERT_TRUE(_polygon->containsSegment(segment));
     }
 
-    { // test segment (1,4)
+    {  // test segment (1,4)
         GeoLib::LineSegment const segment{
             const_cast<GeoLib::Point*>(_polygon->getPoint(1)),
             const_cast<GeoLib::Point*>(_polygon->getPoint(4))};
@@ -186,8 +186,8 @@ TEST_F(PolygonTest, isPolylineInPolygon)
 {
     // create a test polyline
     std::vector<GeoLib::Point*> pnts;
-    pnts.push_back(new GeoLib::Point(-2.0,4.0,0.0)); // 2
-    pnts.push_back(new GeoLib::Point( 2.0,4.0,0.0)); // 6
+    pnts.push_back(new GeoLib::Point(-2.0, 4.0, 0.0));  // 2
+    pnts.push_back(new GeoLib::Point(2.0, 4.0, 0.0));   // 6
     GeoLib::Polyline outer_ply(pnts);
     outer_ply.addPoint(0);
     outer_ply.addPoint(1);
@@ -198,8 +198,8 @@ TEST_F(PolygonTest, isPolylineInPolygon)
     }
     pnts.clear();
 
-    pnts.push_back(new GeoLib::Point(-1.0,2.0,0.0)); // 3
-    pnts.push_back(new GeoLib::Point( 1.0,2.0,0.0)); // 5
+    pnts.push_back(new GeoLib::Point(-1.0, 2.0, 0.0));  // 3
+    pnts.push_back(new GeoLib::Point(1.0, 2.0, 0.0));   // 5
     GeoLib::Polyline inner_ply(pnts);
     inner_ply.addPoint(0);
     inner_ply.addPoint(1);
@@ -213,7 +213,8 @@ TEST_F(PolygonTest, isPolylineInPolygon)
 TEST_F(PolygonTest, CopyConstructor)
 {
     GeoLib::Polygon polygon_copy(*_polygon);
-    ASSERT_EQ(_polygon->getNumberOfSegments(), polygon_copy.getNumberOfSegments());
+    ASSERT_EQ(_polygon->getNumberOfSegments(),
+              polygon_copy.getNumberOfSegments());
 
     // Check if all line segments of the original polygon are contained in the
     // copy

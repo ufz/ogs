@@ -9,19 +9,18 @@
  *
  */
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <cstdio>
 #include <memory>
 
-#include "gtest/gtest.h"
-
-#include "InfoLib/TestInfo.h"
-
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/TestInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RasterDataToMesh.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 class RasterDataToMeshTest : public ::testing::Test
 {
@@ -44,11 +43,12 @@ protected:
 TEST_F(RasterDataToMeshTest, readRasterValuesToNodes)
 {
     std::string const vec_name = "imgvalues";
-    bool ret = MeshLib::RasterDataToMesh::projectToNodes(*_mesh, *_raster, 0, vec_name);
+    bool ret = MeshLib::RasterDataToMesh::projectToNodes(*_mesh, *_raster, 0,
+                                                         vec_name);
     ASSERT_TRUE(ret);
 
-    std::string const compare_path =
-        TestInfoLib::TestInfo::data_path + "/MeshLib/RasterDataToMesh-Nodes.vtu";
+    std::string const compare_path = TestInfoLib::TestInfo::data_path +
+                                     "/MeshLib/RasterDataToMesh-Nodes.vtu";
     std::unique_ptr<MeshLib::Mesh> compare{
         MeshLib::IO::VtuInterface::readVTUFile(compare_path)};
 
@@ -56,7 +56,8 @@ TEST_F(RasterDataToMeshTest, readRasterValuesToNodes)
     auto org_vec =
         compare->getProperties().getPropertyVector<double>("RasterValues");
 
-    bool is_equal = std::equal(org_vec->cbegin(), org_vec->cend(), new_vec->cbegin());
+    bool is_equal =
+        std::equal(org_vec->cbegin(), org_vec->cend(), new_vec->cbegin());
 
     ASSERT_TRUE(is_equal);
 }
@@ -64,7 +65,8 @@ TEST_F(RasterDataToMeshTest, readRasterValuesToNodes)
 TEST_F(RasterDataToMeshTest, readRasterValuesToElements)
 {
     std::string const vec_name = "imgvalues";
-    bool ret = MeshLib::RasterDataToMesh::projectToElements(*_mesh, *_raster, 0, vec_name);
+    bool ret = MeshLib::RasterDataToMesh::projectToElements(*_mesh, *_raster, 0,
+                                                            vec_name);
     ASSERT_TRUE(ret);
 
     std::string const compare_path = TestInfoLib::TestInfo::data_path +

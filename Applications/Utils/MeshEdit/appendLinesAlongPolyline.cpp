@@ -7,23 +7,20 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
+
 #include <tclap/CmdLine.h>
 
 #include "Applications/FileIO/readGeometryFromFile.h"
-
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
-
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/PolylineVec.h"
-
-#include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
-
-#include "MeshLib/IO/writeMeshToFile.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Append line elements into a mesh.\n\n"
@@ -33,16 +30,20 @@ int main (int argc, char* argv[])
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
-                                         "the name of the file containing the input mesh", true,
-                                         "", "file name of input mesh");
+    TCLAP::ValueArg<std::string> mesh_in(
+        "i", "mesh-input-file",
+        "the name of the file containing the input mesh", true, "",
+        "file name of input mesh");
     cmd.add(mesh_in);
-    TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
-                                          "the name of the file the mesh will be written to", true,
-                                          "", "file name of output mesh");
+    TCLAP::ValueArg<std::string> mesh_out(
+        "o", "mesh-output-file",
+        "the name of the file the mesh will be written to", true, "",
+        "file name of output mesh");
     cmd.add(mesh_out);
-    TCLAP::ValueArg<std::string> geoFileArg("g", "geo-file",
-                                          "the name of the geometry file which contains polylines", true, "", "the name of the geometry file");
+    TCLAP::ValueArg<std::string> geoFileArg(
+        "g", "geo-file",
+        "the name of the geometry file which contains polylines", true, "",
+        "the name of the geometry file");
     cmd.add(geoFileArg);
 
     TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
@@ -64,7 +65,8 @@ int main (int argc, char* argv[])
         ERR("No geometries found.");
         return EXIT_FAILURE;
     }
-    const GeoLib::PolylineVec* ply_vec (geo_objs.getPolylineVecObj(geo_names[0]));
+    const GeoLib::PolylineVec* ply_vec(
+        geo_objs.getPolylineVecObj(geo_names[0]));
     if (!ply_vec)
     {
         ERR("Could not find polylines in geometry '{:s}'.", geo_names.front());
@@ -72,7 +74,8 @@ int main (int argc, char* argv[])
     }
 
     // read a mesh
-    MeshLib::Mesh const*const mesh (MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+    MeshLib::Mesh const* const mesh(
+        MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     if (!mesh)
     {
         ERR("Mesh file '{:s}' not found", mesh_in.getValue());

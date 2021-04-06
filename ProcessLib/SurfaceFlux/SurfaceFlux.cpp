@@ -16,10 +16,9 @@
 
 namespace ProcessLib
 {
-SurfaceFlux::SurfaceFlux(
-    MeshLib::Mesh& boundary_mesh,
-    std::size_t bulk_property_number_of_components,
-    unsigned const integration_order)
+SurfaceFlux::SurfaceFlux(MeshLib::Mesh& boundary_mesh,
+                         std::size_t bulk_property_number_of_components,
+                         unsigned const integration_order)
 {
     DBUG("Create local balance assemblers.");
     // Populate the vector of local assemblers.
@@ -66,8 +65,8 @@ void SurfaceFlux::integrate(
     DBUG("Integrate SurfaceFlux.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &SurfaceFluxLocalAssemblerInterface::integrate,
-        _local_assemblers, active_element_ids, x, balance, t, bulk_mesh, getFlux);
+        &SurfaceFluxLocalAssemblerInterface::integrate, _local_assemblers,
+        active_element_ids, x, balance, t, bulk_mesh, getFlux);
 }
 
 }  // namespace ProcessLib

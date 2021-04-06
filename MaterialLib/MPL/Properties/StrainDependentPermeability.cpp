@@ -108,8 +108,7 @@ PropertyDataType StrainDependentPermeability<DisplacementDim>::dValue(
 
     OGS_FATAL(
         "The derivative of the intrinsic permeability of "
-        "StrainDependentPermeability"
-        "is not implemented.");
+        "StrainDependentPermeabilityis not implemented.");
 }
 template class StrainDependentPermeability<2>;
 template class StrainDependentPermeability<3>;

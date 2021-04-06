@@ -11,7 +11,6 @@
 #include "ThermalTwoPhaseFlowWithPPMaterialProperties.h"
 
 #include "BaseLib/Logging.h"
-
 #include "MaterialLib/Fluid/FluidProperty.h"
 #include "MaterialLib/PorousMedium/Porosity/Porosity.h"
 #include "MaterialLib/PorousMedium/Storage/Storage.h"
@@ -154,8 +153,8 @@ double
 ThermalTwoPhaseFlowWithPPMaterialProperties::calculateVaporPressureNonwet(
     const double pc, const double T, const double mass_density_water) const
 {
-    return _water_vapor_properties->calculateVaporPressureNonwet(pc, T,
-                                                                 mass_density_water);
+    return _water_vapor_properties->calculateVaporPressureNonwet(
+        pc, T, mass_density_water);
 }
 double ThermalTwoPhaseFlowWithPPMaterialProperties::calculateDerivativedPsatdT(
     const double T) const
@@ -165,14 +164,14 @@ double ThermalTwoPhaseFlowWithPPMaterialProperties::calculateDerivativedPsatdT(
 double ThermalTwoPhaseFlowWithPPMaterialProperties::calculateDerivativedPgwdT(
     const double pc, const double T, const double mass_density_water) const
 {
-    return _water_vapor_properties->calculateDerivativedPgwdT(pc, T,
-                                                              mass_density_water);
+    return _water_vapor_properties->calculateDerivativedPgwdT(
+        pc, T, mass_density_water);
 }
 double ThermalTwoPhaseFlowWithPPMaterialProperties::calculateDerivativedPgwdPC(
     const double pc, const double T, const double mass_density_water) const
 {
-    return _water_vapor_properties->calculateDerivativedPgwdPC(pc, T,
-                                                               mass_density_water);
+    return _water_vapor_properties->calculateDerivativedPgwdPC(
+        pc, T, mass_density_water);
 }
 double ThermalTwoPhaseFlowWithPPMaterialProperties::calculatedDensityNonwetdT(
     const double p_air_nonwet, const double p_vapor_nonwet, const double pc,
@@ -196,7 +195,8 @@ double ThermalTwoPhaseFlowWithPPMaterialProperties::getAirEnthalpySimple(
     const double /*pg*/) const
 {
     return heat_capacity_dry_air * (temperature - CelsiusZeroInKelvin) +
-           IdealGasConstant * (temperature - CelsiusZeroInKelvin) / _air_mol_mass;
+           IdealGasConstant * (temperature - CelsiusZeroInKelvin) /
+               _air_mol_mass;
 }
 
 double

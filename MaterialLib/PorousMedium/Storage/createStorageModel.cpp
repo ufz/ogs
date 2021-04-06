@@ -12,11 +12,10 @@
 
 #include "createStorageModel.h"
 
-#include "BaseLib/Error.h"
 #include "BaseLib/ConfigTree.h"
-
-#include "Storage.h"
+#include "BaseLib/Error.h"
 #include "ConstantStorage.h"
+#include "Storage.h"
 
 namespace MaterialLib
 {

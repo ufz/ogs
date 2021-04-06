@@ -9,6 +9,7 @@
  */
 
 #include "UserPunch.h"
+
 #include "BaseLib/ConfigTreeUtil.h"
 
 namespace ChemistryLib
@@ -25,7 +26,8 @@ void UserPunch::initialize(std::size_t const num_chemical_systems)
 
 std::ostream& operator<<(std::ostream& os, UserPunch const& user_punch)
 {
-    os << "USER_PUNCH" << "\n";
+    os << "USER_PUNCH"
+       << "\n";
     os << "-headings ";
     auto const& secondary_variables = user_punch.secondary_variables;
     for (auto& secondary_variable : secondary_variables)
@@ -34,14 +36,16 @@ std::ostream& operator<<(std::ostream& os, UserPunch const& user_punch)
     }
     os << "\n";
 
-    os << "-start" << "\n";
+    os << "-start"
+       << "\n";
     int line_number = 1;
     for (auto const& statement : user_punch.statements)
     {
         os << line_number << " " << statement << "\n";
         ++line_number;
     }
-    os << "-end" << "\n";
+    os << "-end"
+       << "\n";
 
     return os;
 }

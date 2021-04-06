@@ -8,20 +8,16 @@
 
 #include <tclap/CmdLine.h>
 
+#include "Applications/FileIO/CsvInterface.h"
 #include "Applications/FileIO/SWMM/SWMMInterface.h"
-
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
-
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
-
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
-
-#include "Applications/FileIO/CsvInterface.h"
 
 int writeGeoOutput(std::string input_file, std::string output_file)
 {

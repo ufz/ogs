@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include "MeshLib/Mesh.h"
 
@@ -40,6 +40,4 @@ TEST(MeshLib, UniqueMeshId)
     // Copy mesh keeps also increments the counter.
     Mesh m4 = m0;
     ASSERT_EQ(counter_value + std::size_t(4), m4.getID());
-
 }
-

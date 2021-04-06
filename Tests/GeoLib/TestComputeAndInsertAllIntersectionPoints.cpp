@@ -9,10 +9,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <ctime>
 #include <tuple>
-
-#include "gtest/gtest.h"
 
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
@@ -27,21 +27,21 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
     {
         // *** insert points in vector
         auto pnts = std::make_unique<std::vector<GeoLib::Point*>>();
-        pnts->push_back(new GeoLib::Point(0.0,0.0,0.0,0));
-        pnts->push_back(new GeoLib::Point(11.0,0.0,0.0,1));
+        pnts->push_back(new GeoLib::Point(0.0, 0.0, 0.0, 0));
+        pnts->push_back(new GeoLib::Point(11.0, 0.0, 0.0, 1));
 
-        pnts->push_back(new GeoLib::Point(0.0,1.0,0.0,2));
-        pnts->push_back(new GeoLib::Point(1.0,-1.0,0.0,3));
-        pnts->push_back(new GeoLib::Point(2.0, 1.0,0.0,4));
-        pnts->push_back(new GeoLib::Point(3.0,-1.0,0.0,5));
-        pnts->push_back(new GeoLib::Point(4.0, 1.0,0.0,6));
-        pnts->push_back(new GeoLib::Point(5.0,-1.0,0.0,7));
-        pnts->push_back(new GeoLib::Point(6.0, 1.0,0.0,8));
-        pnts->push_back(new GeoLib::Point(7.0,-1.0,0.0,9));
-        pnts->push_back(new GeoLib::Point(8.0, 1.0,0.0,10));
-        pnts->push_back(new GeoLib::Point(9.0,-1.0,0.0,11));
-        pnts->push_back(new GeoLib::Point(10.0, 1.0,0.0,12));
-        pnts->push_back(new GeoLib::Point(11.0,-1.0,0.0,13));
+        pnts->push_back(new GeoLib::Point(0.0, 1.0, 0.0, 2));
+        pnts->push_back(new GeoLib::Point(1.0, -1.0, 0.0, 3));
+        pnts->push_back(new GeoLib::Point(2.0, 1.0, 0.0, 4));
+        pnts->push_back(new GeoLib::Point(3.0, -1.0, 0.0, 5));
+        pnts->push_back(new GeoLib::Point(4.0, 1.0, 0.0, 6));
+        pnts->push_back(new GeoLib::Point(5.0, -1.0, 0.0, 7));
+        pnts->push_back(new GeoLib::Point(6.0, 1.0, 0.0, 8));
+        pnts->push_back(new GeoLib::Point(7.0, -1.0, 0.0, 9));
+        pnts->push_back(new GeoLib::Point(8.0, 1.0, 0.0, 10));
+        pnts->push_back(new GeoLib::Point(9.0, -1.0, 0.0, 11));
+        pnts->push_back(new GeoLib::Point(10.0, 1.0, 0.0, 12));
+        pnts->push_back(new GeoLib::Point(11.0, -1.0, 0.0, 13));
 
         geo_objs.addPointVec(std::move(pnts), geo_name);
     }
@@ -60,7 +60,8 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
     plys->push_back(ply0);
     plys->push_back(ply1);
 
-    GeoLib::PointVec &pnt_vec(*(const_cast<GeoLib::PointVec*>(geo_objs.getPointVecObj(geo_name))));
+    GeoLib::PointVec& pnt_vec(
+        *(const_cast<GeoLib::PointVec*>(geo_objs.getPointVecObj(geo_name))));
     GeoLib::computeAndInsertAllIntersectionPoints(pnt_vec, *plys);
 
     ASSERT_EQ(25u, pnt_vec.size());
@@ -111,4 +112,3 @@ TEST(GeoLib, TestComputeAndInsertAllIntersectionPoints)
     delete ply1;
     delete ply0;
 }
-

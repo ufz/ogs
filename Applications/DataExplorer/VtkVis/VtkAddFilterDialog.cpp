@@ -15,8 +15,13 @@
 // ** INCLUDES **
 #include "VtkAddFilterDialog.h"
 
-#include "BaseLib/Logging.h"
+#include <vtkContourFilter.h>
+#include <vtkOutlineFilter.h>
+#include <vtkTransformFilter.h>
 
+#include <QModelIndex>
+
+#include "BaseLib/Logging.h"
 #include "VtkCompositeFilter.h"
 #include "VtkFilterFactory.h"
 #include "VtkVisImageItem.h"
@@ -24,15 +29,9 @@
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"
 
-#include <vtkContourFilter.h>
-#include <vtkOutlineFilter.h>
-#include <vtkTransformFilter.h>
-
-#include <QModelIndex>
-
-VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline &pipeline,
-                                        QModelIndex parentIndex,
-                                        QDialog* parent /*= 0*/ )
+VtkAddFilterDialog::VtkAddFilterDialog(VtkVisPipeline& pipeline,
+                                       QModelIndex parentIndex,
+                                       QDialog* parent /*= 0*/)
     : QDialog(parent), _pipeline(pipeline), _parentIndex(parentIndex)
 {
     setupUi(this);
@@ -40,11 +39,12 @@ VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline &pipeline,
 
     auto* parentItem =
         static_cast<VtkVisPipelineItem*>(_pipeline.getItem(parentIndex));
-    vtkDataObject* parentDataObject = parentItem->algorithm()->GetOutputDataObject(0);
+    vtkDataObject* parentDataObject =
+        parentItem->algorithm()->GetOutputDataObject(0);
     int parentDataObjectType = parentDataObject->GetDataObjectType();
 
     QVector<VtkFilterInfo> filterList = VtkFilterFactory::GetFilterList();
-    foreach(VtkFilterInfo filter, filterList)
+    foreach (VtkFilterInfo filter, filterList)
     {
         // Check for suitable filters (see vtkDataSet inheritance diagram)
         int inputType = filter.inputDataObjectType;
@@ -60,17 +60,18 @@ VtkAddFilterDialog::VtkAddFilterDialog( VtkVisPipeline &pipeline,
     }
 
     // On double clicking an item the dialog gets accepted
-    connect(filterListWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-            this->buttonBox,SIGNAL(accepted()));
+    connect(filterListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+            this->buttonBox, SIGNAL(accepted()));
 }
 
 void VtkAddFilterDialog::on_buttonBox_accepted()
 {
     QVector<VtkFilterInfo> filterList = VtkFilterFactory::GetFilterList();
     QString filterName;
-    foreach(VtkFilterInfo filter, filterList)
+    foreach (VtkFilterInfo filter, filterList)
     {
-        if (filter.readableName.compare(filterListWidget->currentItem()->text()) == 0)
+        if (filter.readableName.compare(
+                filterListWidget->currentItem()->text()) == 0)
         {
             filterName = filter.name;
             break;
@@ -84,7 +85,8 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
     VtkCompositeFilter* filter;
     if (dynamic_cast<VtkVisImageItem*>(parentItem))
     {
-        filter = VtkFilterFactory::CreateCompositeFilter(filterName, parentItem->algorithm());
+        filter = VtkFilterFactory::CreateCompositeFilter(
+            filterName, parentItem->algorithm());
     }
     else
     {
@@ -106,7 +108,8 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
     }
     else
     {
-        vtkAlgorithm* algorithm = VtkFilterFactory::CreateSimpleFilter(filterName);
+        vtkAlgorithm* algorithm =
+            VtkFilterFactory::CreateSimpleFilter(filterName);
         if (algorithm)
         {
             item = new VtkVisPointSetItem(algorithm, parentItem, itemData);
@@ -121,17 +124,17 @@ void VtkAddFilterDialog::on_buttonBox_accepted()
     _pipeline.addPipelineItem(item, _parentIndex);
 }
 
-void VtkAddFilterDialog::on_filterListWidget_currentRowChanged( int currentRow )
+void VtkAddFilterDialog::on_filterListWidget_currentRowChanged(int currentRow)
 {
-    foreach(VtkFilterInfo filter, VtkFilterFactory::GetFilterList())
+    foreach (VtkFilterInfo filter, VtkFilterFactory::GetFilterList())
     {
-        if (filter.readableName.compare(filterListWidget->item(currentRow)->text()) == 0)
+        if (filter.readableName.compare(
+                filterListWidget->item(currentRow)->text()) == 0)
         {
             QString desc = filter.description;
             desc = desc + QString("\n\nThis filter outputs ") +
                    filter.OutputDataObjectTypeAsString() +
-                   QString("\n\nFilter class name: ") +
-                   filter.name;
+                   QString("\n\nFilter class name: ") + filter.name;
 
             this->filterDescTextEdit->setText(desc);
             continue;

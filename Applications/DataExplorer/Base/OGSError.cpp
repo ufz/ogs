@@ -20,12 +20,12 @@ OGSError::OGSError() = default;
 
 OGSError::~OGSError() = default;
 
-void OGSError::box(const QString &e)
+void OGSError::box(const QString& e)
 {
     box(e, "OpenGeoSys");
 }
 
-void OGSError::box(const QString &e, const QString &t)
+void OGSError::box(const QString& e, const QString& t)
 {
     QMessageBox msgBox;
     msgBox.setWindowTitle(t);
@@ -33,7 +33,7 @@ void OGSError::box(const QString &e, const QString &t)
     msgBox.exec();
 }
 
-bool OGSError::question(const QString &e, const QString &t)
+bool OGSError::question(const QString& e, const QString& t)
 {
     QMessageBox msgBox;
     msgBox.setWindowTitle(t);
@@ -43,4 +43,3 @@ bool OGSError::question(const QString &e, const QString &t)
 
     return msgBox.exec() == QMessageBox::Ok;
 }
-

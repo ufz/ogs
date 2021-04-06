@@ -7,7 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
+
 #include <ctime>
 #include <random>
 
@@ -18,22 +19,17 @@ class PointVecTest : public testing::Test
 public:
     using VectorOfPoints = std::vector<GeoLib::Point*>;
 
-    PointVecTest()
-        : gen(std::random_device() ()), name("JustAName")
-    {
-    }
+    PointVecTest() : gen(std::random_device()()), name("JustAName") {}
 
 protected:
     // Generates n new points according to given random number distribution,
     // which is uniform distribution in [-1, 1]^3.
-    void
-    generateRandomPoints(VectorOfPoints& ps, std::size_t const n = 1000)
+    void generateRandomPoints(VectorOfPoints& ps, std::size_t const n = 1000)
     {
         std::uniform_real_distribution<double> rnd(-1, 1);
-        std::generate_n(std::back_inserter(ps), n,
-            [&]() {
-                return new GeoLib::Point(rnd(gen), rnd(gen), rnd(gen), ps.size());
-            });
+        std::generate_n(std::back_inserter(ps), n, [&]() {
+            return new GeoLib::Point(rnd(gen), rnd(gen), rnd(gen), ps.size());
+        });
     }
 
 protected:
@@ -58,7 +54,7 @@ TEST_F(PointVecTest, TestPointVecCtorEmpty)
 TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 {
     auto ps_ptr = std::make_unique<VectorOfPoints>();
-    ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
+    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 0));
     auto point_vec =
         std::make_unique<GeoLib::PointVec>(name, std::move(ps_ptr));
     ASSERT_EQ(std::size_t(1), point_vec->size());
@@ -68,8 +64,8 @@ TEST_F(PointVecTest, TestPointVecCtorSinglePoint)
 TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
 {
     auto ps_ptr = std::make_unique<VectorOfPoints>();
-    ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
-    ps_ptr->push_back(new GeoLib::Point(1,0,0,1));
+    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 0));
+    ps_ptr->push_back(new GeoLib::Point(1, 0, 0, 1));
 
     auto point_vec =
         std::make_unique<GeoLib::PointVec>(name, std::move(ps_ptr));
@@ -80,8 +76,8 @@ TEST_F(PointVecTest, TestPointVecCtorTwoDiffPoints)
 TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
 {
     auto ps_ptr = std::make_unique<VectorOfPoints>();
-    ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
-    ps_ptr->push_back(new GeoLib::Point(0,0,0,1));
+    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 0));
+    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 1));
 
     auto point_vec =
         std::make_unique<GeoLib::PointVec>(name, std::move(ps_ptr));
@@ -92,10 +88,10 @@ TEST_F(PointVecTest, TestPointVecCtorTwoEqualPoints)
 TEST_F(PointVecTest, TestPointVecPushBack)
 {
     auto ps_ptr = std::make_unique<VectorOfPoints>();
-    ps_ptr->push_back(new GeoLib::Point(0,0,0,0));
-    ps_ptr->push_back(new GeoLib::Point(1,0,0,1));
-    ps_ptr->push_back(new GeoLib::Point(0,1,0,2));
-    ps_ptr->push_back(new GeoLib::Point(0,0,1,3));
+    ps_ptr->push_back(new GeoLib::Point(0, 0, 0, 0));
+    ps_ptr->push_back(new GeoLib::Point(1, 0, 0, 1));
+    ps_ptr->push_back(new GeoLib::Point(0, 1, 0, 2));
+    ps_ptr->push_back(new GeoLib::Point(0, 0, 1, 3));
     GeoLib::PointVec point_vec(name, std::move(ps_ptr));
 
     ASSERT_EQ(std::size_t(0), point_vec.getIDMap()[0]);
@@ -104,10 +100,14 @@ TEST_F(PointVecTest, TestPointVecPushBack)
     ASSERT_EQ(std::size_t(3), point_vec.getIDMap()[3]);
 
     // Adding some points that are already existing.
-    ASSERT_EQ(std::size_t(0), point_vec.push_back(new GeoLib::Point(0,0,0,4)));
-    ASSERT_EQ(std::size_t(1), point_vec.push_back(new GeoLib::Point(1,0,0,5)));
-    ASSERT_EQ(std::size_t(2), point_vec.push_back(new GeoLib::Point(0,1,0,6)));
-    ASSERT_EQ(std::size_t(3), point_vec.push_back(new GeoLib::Point(0,0,1,7)));
+    ASSERT_EQ(std::size_t(0),
+              point_vec.push_back(new GeoLib::Point(0, 0, 0, 4)));
+    ASSERT_EQ(std::size_t(1),
+              point_vec.push_back(new GeoLib::Point(1, 0, 0, 5)));
+    ASSERT_EQ(std::size_t(2),
+              point_vec.push_back(new GeoLib::Point(0, 1, 0, 6)));
+    ASSERT_EQ(std::size_t(3),
+              point_vec.push_back(new GeoLib::Point(0, 0, 1, 7)));
 
     ASSERT_EQ(std::size_t(4), point_vec.size());
     ASSERT_EQ(std::size_t(8), point_vec.getIDMap().size());
@@ -118,10 +118,14 @@ TEST_F(PointVecTest, TestPointVecPushBack)
     ASSERT_EQ(std::size_t(3), point_vec.getIDMap()[7]);
 
     // Adding again some already existing points.
-    ASSERT_EQ(std::size_t(0), point_vec.push_back(new GeoLib::Point(0,0,0,8)));
-    ASSERT_EQ(std::size_t(1), point_vec.push_back(new GeoLib::Point(1,0,0,9)));
-    ASSERT_EQ(std::size_t(2), point_vec.push_back(new GeoLib::Point(0,1,0,10)));
-    ASSERT_EQ(std::size_t(3), point_vec.push_back(new GeoLib::Point(0,0,1,11)));
+    ASSERT_EQ(std::size_t(0),
+              point_vec.push_back(new GeoLib::Point(0, 0, 0, 8)));
+    ASSERT_EQ(std::size_t(1),
+              point_vec.push_back(new GeoLib::Point(1, 0, 0, 9)));
+    ASSERT_EQ(std::size_t(2),
+              point_vec.push_back(new GeoLib::Point(0, 1, 0, 10)));
+    ASSERT_EQ(std::size_t(3),
+              point_vec.push_back(new GeoLib::Point(0, 0, 1, 11)));
 
     ASSERT_EQ(std::size_t(4), point_vec.size());
     ASSERT_EQ(std::size_t(12), point_vec.getIDMap().size());
@@ -132,10 +136,14 @@ TEST_F(PointVecTest, TestPointVecPushBack)
     ASSERT_EQ(std::size_t(3), point_vec.getIDMap()[11]);
 
     // Adding some new points.
-    ASSERT_EQ(std::size_t(4), point_vec.push_back(new GeoLib::Point(0.1,0.1,0.1,12)));
-    ASSERT_EQ(std::size_t(5), point_vec.push_back(new GeoLib::Point(1.1,0.1,0.1,13)));
-    ASSERT_EQ(std::size_t(6), point_vec.push_back(new GeoLib::Point(0.1,1.1,0.1,14)));
-    ASSERT_EQ(std::size_t(7), point_vec.push_back(new GeoLib::Point(0.1,0.1,1.1,15)));
+    ASSERT_EQ(std::size_t(4),
+              point_vec.push_back(new GeoLib::Point(0.1, 0.1, 0.1, 12)));
+    ASSERT_EQ(std::size_t(5),
+              point_vec.push_back(new GeoLib::Point(1.1, 0.1, 0.1, 13)));
+    ASSERT_EQ(std::size_t(6),
+              point_vec.push_back(new GeoLib::Point(0.1, 1.1, 0.1, 14)));
+    ASSERT_EQ(std::size_t(7),
+              point_vec.push_back(new GeoLib::Point(0.1, 0.1, 1.1, 15)));
 
     ASSERT_EQ(std::size_t(8), point_vec.size());
     ASSERT_EQ(std::size_t(16), point_vec.getIDMap().size());
@@ -146,10 +154,14 @@ TEST_F(PointVecTest, TestPointVecPushBack)
     ASSERT_EQ(std::size_t(7), point_vec.getIDMap()[15]);
 
     // Adding again some already existing points.
-    ASSERT_EQ(std::size_t(0), point_vec.push_back(new GeoLib::Point(0,0,0,16)));
-    ASSERT_EQ(std::size_t(1), point_vec.push_back(new GeoLib::Point(1,0,0,17)));
-    ASSERT_EQ(std::size_t(2), point_vec.push_back(new GeoLib::Point(0,1,0,18)));
-    ASSERT_EQ(std::size_t(3), point_vec.push_back(new GeoLib::Point(0,0,1,19)));
+    ASSERT_EQ(std::size_t(0),
+              point_vec.push_back(new GeoLib::Point(0, 0, 0, 16)));
+    ASSERT_EQ(std::size_t(1),
+              point_vec.push_back(new GeoLib::Point(1, 0, 0, 17)));
+    ASSERT_EQ(std::size_t(2),
+              point_vec.push_back(new GeoLib::Point(0, 1, 0, 18)));
+    ASSERT_EQ(std::size_t(3),
+              point_vec.push_back(new GeoLib::Point(0, 0, 1, 19)));
 
     ASSERT_EQ(std::size_t(8), point_vec.size());
     ASSERT_EQ(std::size_t(20), point_vec.getIDMap().size());

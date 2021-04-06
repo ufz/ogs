@@ -40,8 +40,8 @@ int convertVtkDataMode(std::string const& data_mode)
         return 2;
     }
     OGS_FATAL(
-        "Unsupported vtk output file data mode '{:s}'. Expected Ascii, "
-        "Binary, or Appended.",
+        "Unsupported vtk output file data mode '{:s}'. Expected Ascii, Binary, "
+        "or Appended.",
         data_mode);
 }
 
@@ -166,8 +166,8 @@ MeshLib::IO::PVDFile* Output::findPVDFile(
     if (pvd_file == nullptr)
     {
         OGS_FATAL(
-            "The given process is not contained in the output"
-            " configuration. Aborting.");
+            "The given process is not contained in the output configuration. "
+            "Aborting.");
     }
 
     return pvd_file;
@@ -240,9 +240,8 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
     if (!_mesh_xdmf_hdf_writer)
     {
         std::filesystem::path path(output_file.path);
-        _mesh_xdmf_hdf_writer =
-            std::make_unique<MeshLib::IO::XdmfHdfWriter>(MeshLib::IO::XdmfHdfWriter(
-                mesh, path, timestep));
+        _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
+            MeshLib::IO::XdmfHdfWriter(mesh, path, timestep));
     }
     _mesh_xdmf_hdf_writer->writeStep(timestep, t);
 }
@@ -317,10 +316,10 @@ void Output::doOutputAlways(Process const& process,
         else if (_output_file_type == ProcessLib::OutputType::xdmf)
         {
 #ifdef OGS_USE_XDMF
-            OutputFile const file(_output_directory, _output_file_type,
-                                  _output_file_prefix, "", mesh.getName(),
-                                  timestep, t, iteration, _output_file_data_mode,
-                                  _output_file_compression);
+            OutputFile const file(
+                _output_directory, _output_file_type, _output_file_prefix, "",
+                mesh.getName(), timestep, t, iteration, _output_file_data_mode,
+                _output_file_compression);
 
             outputMeshXdmf(file, mesh, timestep, t);
 #else

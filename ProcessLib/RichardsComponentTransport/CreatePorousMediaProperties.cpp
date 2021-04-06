@@ -16,7 +16,6 @@
 #include "MaterialLib/PorousMedium/Storage/createStorageModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/CapillaryPressure/CreateCapillaryPressureModel.h"
 #include "MaterialLib/PorousMedium/UnsaturatedProperty/RelativePermeability/CreateRelativePermeabilityModel.h"
-
 #include "MeshLib/Mesh.h"
 
 namespace ProcessLib
@@ -43,11 +42,12 @@ PorousMediaProperties createPorousMediaProperties(
         relative_permeability_models;
 
     std::vector<int> mat_ids;
-    for (auto const& porous_medium_config :
-         //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium__porous_medium}
-         porous_medium_configs.getConfigSubtreeList("porous_medium"))
+    for (
+        auto const& porous_medium_config :
+        //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium__porous_medium}
+        porous_medium_configs.getConfigSubtreeList("porous_medium"))
     {
-         //! \ogs_file_attr{prj__processes__process__RichardsComponentTransport__porous_medium__porous_medium__id}
+        //! \ogs_file_attr{prj__processes__process__RichardsComponentTransport__porous_medium__porous_medium__id}
         auto const id = porous_medium_config.getConfigAttribute<int>("id");
         mat_ids.push_back(id);
 
@@ -76,8 +76,9 @@ PorousMediaProperties createPorousMediaProperties(
         auto const& capillary_pressure_config =
             //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium__porous_medium__capillary_pressure}
             porous_medium_config.getConfigSubtree("capillary_pressure");
-        auto capillary_pressure = MaterialLib::PorousMedium::createCapillaryPressureModel(
-            capillary_pressure_config);
+        auto capillary_pressure =
+            MaterialLib::PorousMedium::createCapillaryPressureModel(
+                capillary_pressure_config);
         capillary_pressure_models.emplace_back(std::move(capillary_pressure));
 
         auto const& krel_config =

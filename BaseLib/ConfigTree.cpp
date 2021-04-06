@@ -12,9 +12,9 @@
 
 #include <forward_list>
 #include <utility>
-#include "Logging.h"
 
 #include "Error.h"
+#include "Logging.h"
 
 // Explicitly instantiate the boost::property_tree::ptree which is a typedef to
 // the following basic_ptree.
@@ -27,7 +27,6 @@ static std::forward_list<std::string> configtree_destructor_error_messages;
 
 namespace BaseLib
 {
-
 const char ConfigTree::pathseparator = '/';
 const std::string ConfigTree::key_chars_start = "abcdefghijklmnopqrstuvwxyz";
 const std::string ConfigTree::key_chars = key_chars_start + "_0123456789";
@@ -84,17 +83,18 @@ ConfigTree::~ConfigTree()
         return;
     }
 
-    try {
+    try
+    {
         checkAndInvalidate();
-    } catch (std::exception& e) {
+    }
+    catch (std::exception& e)
+    {
         ERR("{:s}", e.what());
         configtree_destructor_error_messages.push_front(e.what());
     }
 }
 
-ConfigTree&
-ConfigTree::
-operator=(ConfigTree&& other)
+ConfigTree& ConfigTree::operator=(ConfigTree&& other)
 {
     checkAndInvalidate();
 
@@ -110,9 +110,7 @@ operator=(ConfigTree&& other)
     return *this;
 }
 
-ConfigTree
-ConfigTree::
-getConfigParameter(std::string const& root) const
+ConfigTree ConfigTree::getConfigParameter(std::string const& root) const
 {
     auto ct = getConfigSubtree(root);
     if (ct.hasChildren())
@@ -133,25 +131,22 @@ std::optional<ConfigTree> ConfigTree::getConfigParameterOptional(
     return ct;
 }
 
-Range<ConfigTree::ParameterIterator>
-ConfigTree::
-getConfigParameterList(const std::string &param) const
+Range<ConfigTree::ParameterIterator> ConfigTree::getConfigParameterList(
+    const std::string& param) const
 {
     checkUnique(param);
     markVisited(param, Attr::TAG, true);
 
     auto p = tree_->equal_range(param);
 
-    return Range<ParameterIterator>(
-                ParameterIterator(p.first,  param, *this),
-                ParameterIterator(p.second, param, *this));
+    return Range<ParameterIterator>(ParameterIterator(p.first, param, *this),
+                                    ParameterIterator(p.second, param, *this));
 }
 
-ConfigTree
-ConfigTree::
-getConfigSubtree(std::string const& root) const
+ConfigTree ConfigTree::getConfigSubtree(std::string const& root) const
 {
-    if (auto t = getConfigSubtreeOptional(root)) {
+    if (auto t = getConfigSubtreeOptional(root))
+    {
         return std::move(*t);
     }
     error("Key <" + root + "> has not been found.");
@@ -171,21 +166,19 @@ std::optional<ConfigTree> ConfigTree::getConfigSubtreeOptional(
     return std::nullopt;
 }
 
-Range<ConfigTree::SubtreeIterator>
-ConfigTree::
-getConfigSubtreeList(std::string const& root) const
+Range<ConfigTree::SubtreeIterator> ConfigTree::getConfigSubtreeList(
+    std::string const& root) const
 {
     checkUnique(root);
     markVisited(root, Attr::TAG, true);
 
     auto p = tree_->equal_range(root);
 
-    return Range<SubtreeIterator>(
-                SubtreeIterator(p.first,  root, *this),
-                SubtreeIterator(p.second, root, *this));
+    return Range<SubtreeIterator>(SubtreeIterator(p.first, root, *this),
+                                  SubtreeIterator(p.second, root, *this));
 }
 
-void ConfigTree::ignoreConfigParameter(const std::string &param) const
+void ConfigTree::ignoreConfigParameter(const std::string& param) const
 {
     checkUnique(param);
     // if not found, peek only
@@ -193,7 +186,7 @@ void ConfigTree::ignoreConfigParameter(const std::string &param) const
     markVisited(param, Attr::TAG, peek_only);
 }
 
-void ConfigTree::ignoreConfigAttribute(const std::string &attr) const
+void ConfigTree::ignoreConfigAttribute(const std::string& attr) const
 {
     checkUniqueAttr(attr);
 
@@ -204,17 +197,17 @@ void ConfigTree::ignoreConfigAttribute(const std::string &attr) const
     markVisited(attr, Attr::ATTR, peek_only);
 }
 
-void ConfigTree::ignoreConfigParameterAll(const std::string &param) const
+void ConfigTree::ignoreConfigParameterAll(const std::string& param) const
 {
     checkUnique(param);
     auto& ct = markVisited(param, Attr::TAG, true);
 
     auto p = tree_->equal_range(param);
-    for (auto it = p.first; it != p.second; ++it) {
+    for (auto it = p.first; it != p.second; ++it)
+    {
         ++ct.count;
     }
 }
-
 
 void ConfigTree::error(const std::string& message) const
 {
@@ -229,16 +222,15 @@ void ConfigTree::warning(const std::string& message) const
     onwarning_(filename_, path_, message);
 }
 
-
 void ConfigTree::onerror(const std::string& filename, const std::string& path,
-                            const std::string& message)
+                         const std::string& message)
 {
     OGS_FATAL("ConfigTree: In file `{:s}' at path <{:s}>: {:s}", filename, path,
               message);
 }
 
 void ConfigTree::onwarning(const std::string& filename, const std::string& path,
-                              const std::string& message)
+                           const std::string& message)
 {
     WARN("ConfigTree: In file `{:s}' at path <{:s}>: {:s}", filename, path,
          message);
@@ -254,14 +246,15 @@ void ConfigTree::assertNoSwallowedErrors()
     ERR("ConfigTree: There have been errors when parsing the configuration "
         "file(s):");
 
-    for (auto const& msg : configtree_destructor_error_messages) {
+    for (auto const& msg : configtree_destructor_error_messages)
+    {
         ERR("{:s}", msg);
     }
 
     OGS_FATAL("There have been errors when parsing the configuration file(s).");
 }
 
-std::string ConfigTree::shortString(const std::string &s)
+std::string ConfigTree::shortString(const std::string& s)
 {
     const std::size_t maxlen = 100;
 
@@ -270,19 +263,25 @@ std::string ConfigTree::shortString(const std::string &s)
         return s;
     }
 
-    return s.substr(0, maxlen-3) + "...";
+    return s.substr(0, maxlen - 3) + "...";
 }
-
 
 void ConfigTree::checkKeyname(std::string const& key) const
 {
-    if (key.empty()) {
+    if (key.empty())
+    {
         error("Search for empty key.");
-    } else if (key_chars_start.find(key.front()) == std::string::npos) {
+    }
+    else if (key_chars_start.find(key.front()) == std::string::npos)
+    {
         error("Key <" + key + "> starts with an illegal character.");
-    } else if (key.find_first_not_of(key_chars, 1) != std::string::npos) {
+    }
+    else if (key.find_first_not_of(key_chars, 1) != std::string::npos)
+    {
         error("Key <" + key + "> contains illegal characters.");
-    } else if (key.find("__") != std::string::npos) {
+    }
+    else if (key.find("__") != std::string::npos)
+    {
         // This is illegal because we use parameter names to generate doxygen
         // page names. Thereby "__" acts as a separator character. Choosing
         // other separators is not possible because of observed limitations
@@ -291,10 +290,11 @@ void ConfigTree::checkKeyname(std::string const& key) const
     }
 }
 
-std::string ConfigTree::
-joinPaths( const std::string &p1, const std::string &p2) const
+std::string ConfigTree::joinPaths(const std::string& p1,
+                                  const std::string& p2) const
 {
-    if (p2.empty()) {
+    if (p2.empty())
+    {
         error("Second path to be joined is empty.");
     }
 
@@ -306,7 +306,7 @@ joinPaths( const std::string &p1, const std::string &p2) const
     return p1 + pathseparator + p2;
 }
 
-void ConfigTree::checkUnique(const std::string &key) const
+void ConfigTree::checkUnique(const std::string& key) const
 {
     checkKeyname(key);
 
@@ -316,9 +316,10 @@ void ConfigTree::checkUnique(const std::string &key) const
     }
 }
 
-void ConfigTree::checkUniqueAttr(const std::string &attr) const
+void ConfigTree::checkUniqueAttr(const std::string& attr) const
 {
-    // Workaround for handling attributes with xml namespaces and uppercase letters.
+    // Workaround for handling attributes with xml namespaces and uppercase
+    // letters.
     if (attr.find(':') != std::string::npos)
     {
         auto pos = decltype(std::string::npos){0};
@@ -327,7 +328,8 @@ void ConfigTree::checkUniqueAttr(const std::string &attr) const
         // That means, attributes containing a colon are also allowed to contain
         // uppercase letters.
         auto attr2 = attr;
-        do {
+        do
+        {
             pos = attr2.find_first_of(":ABCDEFGHIJKLMNOPQRSTUVWXYZ", pos);
             if (pos != std::string::npos)
             {
@@ -348,30 +350,29 @@ void ConfigTree::checkUniqueAttr(const std::string &attr) const
     }
 }
 
-ConfigTree::CountType&
-ConfigTree::
-markVisited(std::string const& key, Attr const is_attr, bool const peek_only) const
+ConfigTree::CountType& ConfigTree::markVisited(std::string const& key,
+                                               Attr const is_attr,
+                                               bool const peek_only) const
 {
     return markVisited<ConfigTree>(key, is_attr, peek_only);
 }
 
-void
-ConfigTree::
-markVisitedDecrement(Attr const is_attr, std::string const& key) const
+void ConfigTree::markVisitedDecrement(Attr const is_attr,
+                                      std::string const& key) const
 {
     auto const type = std::type_index(typeid(nullptr));
 
     auto p = visited_params_.emplace(std::make_pair(is_attr, key),
                                      CountType{-1, type});
 
-    if (!p.second) { // no insertion happened
+    if (!p.second)
+    {  // no insertion happened
         auto& v = p.first->second;
         --v.count;
     }
 }
 
-bool
-ConfigTree::hasChildren() const
+bool ConfigTree::hasChildren() const
 {
     auto const& tree = *tree_;
     if (tree.begin() == tree.end())
@@ -386,8 +387,7 @@ ConfigTree::hasChildren() const
     return true;
 }
 
-void
-ConfigTree::checkAndInvalidate()
+void ConfigTree::checkAndInvalidate()
 {
     if (!tree_)
     {
@@ -415,48 +415,59 @@ ConfigTree::checkAndInvalidate()
     // iterate over attributes
     if (auto attrs = tree_->get_child_optional("<xmlattr>"))
     {
-        for (auto const& p : *attrs) {
+        for (auto const& p : *attrs)
+        {
             markVisitedDecrement(Attr::ATTR, p.first);
         }
     }
 
     for (auto const& p : visited_params_)
     {
-        auto const& tag   = p.first.second;
+        auto const& tag = p.first.second;
         auto const& count = p.second.count;
 
-        switch (p.first.first) {
-        case Attr::ATTR:
-            if (count > 0) {
-                warning("XML attribute '" + tag + "' has been read " +
-                        std::to_string(count) +
-                        " time(s) more than it was present in the "
-                        "configuration tree.");
-            } else if (count < 0) {
-                warning("XML attribute '" + tag + "' has been read " +
-                        std::to_string(-count) +
-                        " time(s) less than it was present in the "
-                        "configuration tree.");
-            }
-            break;
-        case Attr::TAG:
-            if (count > 0) {
-                warning("Key <" + tag + "> has been read " + std::to_string(count)
-                        + " time(s) more than it was present in the configuration tree.");
-            } else if (count < 0) {
-                warning("Key <" + tag + "> has been read " + std::to_string(-count)
-                        + " time(s) less than it was present in the configuration tree.");
-            }
+        switch (p.first.first)
+        {
+            case Attr::ATTR:
+                if (count > 0)
+                {
+                    warning("XML attribute '" + tag + "' has been read " +
+                            std::to_string(count) +
+                            " time(s) more than it was present in the "
+                            "configuration tree.");
+                }
+                else if (count < 0)
+                {
+                    warning("XML attribute '" + tag + "' has been read " +
+                            std::to_string(-count) +
+                            " time(s) less than it was present in the "
+                            "configuration tree.");
+                }
+                break;
+            case Attr::TAG:
+                if (count > 0)
+                {
+                    warning("Key <" + tag + "> has been read " +
+                            std::to_string(count) +
+                            " time(s) more than it was present in the "
+                            "configuration tree.");
+                }
+                else if (count < 0)
+                {
+                    warning("Key <" + tag + "> has been read " +
+                            std::to_string(-count) +
+                            " time(s) less than it was present in the "
+                            "configuration tree.");
+                }
         }
     }
 
-    // The following invalidates this instance, s.t. it can not be read from it anymore,
-    // but it also prevents double-checking.
+    // The following invalidates this instance, s.t. it can not be read from it
+    // anymore, but it also prevents double-checking.
     tree_ = nullptr;
 }
 
-
-void checkAndInvalidate(ConfigTree &conf)
+void checkAndInvalidate(ConfigTree& conf)
 {
     conf.checkAndInvalidate();
 }

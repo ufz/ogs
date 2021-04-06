@@ -16,14 +16,13 @@
 
 #include <boost/math/constants/constants.hpp>
 
-#include "BaseLib/quicksort.h"
-
 #include "AnalyticalGeometry.h"
+#include "BaseLib/quicksort.h"
 
 namespace GeoLib
 {
-Polygon::Polygon(const Polyline &ply, bool init) :
-    Polyline(ply), _aabb(ply.getPointsVec(), ply._ply_pnt_ids)
+Polygon::Polygon(const Polyline& ply, bool init)
+    : Polyline(ply), _aabb(ply.getPointsVec(), ply._ply_pnt_ids)
 {
     if (init)
     {
@@ -32,8 +31,7 @@ Polygon::Polygon(const Polyline &ply, bool init) :
     _simple_polygon_list.push_back(this);
 }
 
-Polygon::Polygon(Polygon const& other)
-    : Polyline(other), _aabb(other._aabb)
+Polygon::Polygon(Polygon const& other) : Polyline(other), _aabb(other._aabb)
 {
     _simple_polygon_list.push_back(this);
     auto sub_polygon_it(other._simple_polygon_list.begin());
@@ -59,9 +57,10 @@ Polygon::~Polygon()
     }
 }
 
-bool Polygon::initialise ()
+bool Polygon::initialise()
 {
-    if (this->isClosed()) {
+    if (this->isClosed())
+    {
         ensureCCWOrientation();
         return true;
     }
@@ -128,18 +127,19 @@ bool Polygon::isPntInPolygon(GeoLib::Point const& pnt) const
 
 bool Polygon::isPntInPolygon(double x, double y, double z) const
 {
-    const GeoLib::Point pnt(x,y,z);
+    const GeoLib::Point pnt(x, y, z);
     return isPntInPolygon(pnt);
 }
 
 std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
-        GeoLib::LineSegment const& segment) const
+    GeoLib::LineSegment const& segment) const
 {
     std::vector<GeoLib::Point> intersections;
     GeoLib::Point s;
     for (auto&& seg_it : *this)
     {
-        if (GeoLib::lineSegmentIntersect(seg_it, segment, s)) {
+        if (GeoLib::lineSegmentIntersect(seg_it, segment, s))
+        {
             intersections.push_back(s);
         }
     }
@@ -154,21 +154,25 @@ bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
     GeoLib::Point const& a{segment.getBeginPoint()};
     GeoLib::Point const& b{segment.getEndPoint()};
     // no intersections -> check if at least one point of segment is in polygon
-    if (s.empty()) {
+    if (s.empty())
+    {
         return (isPntInPolygon(a));
     }
 
     const double tol(std::numeric_limits<float>::epsilon());
 
     // one intersection, intersection in line segment end point
-    if (s.size() == 1) {
-        const double sqr_dist_as(MathLib::sqrDist(a,s[0]));
-        if (sqr_dist_as < tol) {
+    if (s.size() == 1)
+    {
+        const double sqr_dist_as(MathLib::sqrDist(a, s[0]));
+        if (sqr_dist_as < tol)
+        {
             return (isPntInPolygon(b));
         }
 
-        const double sqr_dist_bs(MathLib::sqrDist(b,s[0]));
-        if (sqr_dist_bs < tol) {
+        const double sqr_dist_bs(MathLib::sqrDist(b, s[0]));
+        if (sqr_dist_bs < tol)
+        {
             return (isPntInPolygon(a));
         }
     }
@@ -176,16 +180,19 @@ bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
     // Sorting the intersection with respect to the distance to the point a.
     // This induces a partition of the line segment into sub segments.
     std::sort(s.begin(), s.end(),
-        [&a] (GeoLib::Point const& p0, GeoLib::Point const& p1) {
-            return MathLib::sqrDist(a, p0) < MathLib::sqrDist(a, p1);
-        }
-    );
+              [&a](GeoLib::Point const& p0, GeoLib::Point const& p1) {
+                  return MathLib::sqrDist(a, p0) < MathLib::sqrDist(a, p1);
+              });
 
     // remove sub segments with almost zero length
-    for (std::size_t k(0); k<s.size()-1; ) {
-        if (MathLib::sqrDist(s[k], s[k+1]) < tol) {
-            s.erase(s.begin()+k+1);
-        } else {
+    for (std::size_t k(0); k < s.size() - 1;)
+    {
+        if (MathLib::sqrDist(s[k], s[k + 1]) < tol)
+        {
+            s.erase(s.begin() + k + 1);
+        }
+        else
+        {
             k++;
         }
     }
@@ -197,8 +204,9 @@ bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
     {
         return false;
     }
-    const std::size_t n_sub_segs(s.size()-1);
-    for (std::size_t k(0); k<n_sub_segs; k++) {
+    const std::size_t n_sub_segs(s.size() - 1);
+    for (std::size_t k(0); k < n_sub_segs; k++)
+    {
         if (!isPntInPolygon(GeoLib::Point(0.5 * (s[k][0] + s[k + 1][0]),
                                           0.5 * (s[k][1] + s[k + 1][1]),
                                           0.5 * (s[k][2] + s[k + 1][2]))))
@@ -220,7 +228,7 @@ bool Polygon::isPolylineInPolygon(const Polyline& ply) const
 
 bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
 {
-    const std::size_t ply_size (ply.getNumberOfPoints());
+    const std::size_t ply_size(ply.getNumberOfPoints());
     // check points
     for (std::size_t k(0); k < ply_size; k++)
     {
@@ -247,15 +255,19 @@ bool Polygon::getNextIntersectionPointPolygonLine(
     GeoLib::LineSegment const& seg, GeoLib::Point& intersection_pnt,
     std::size_t& seg_num) const
 {
-    if (_simple_polygon_list.size() == 1) {
-        for (auto seg_it(begin()+seg_num); seg_it != end(); ++seg_it) {
+    if (_simple_polygon_list.size() == 1)
+    {
+        for (auto seg_it(begin() + seg_num); seg_it != end(); ++seg_it)
+        {
             if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection_pnt))
             {
                 seg_num = seg_it.getSegmentNumber();
                 return true;
             }
         }
-    } else {
+    }
+    else
+    {
         for (auto polygon : _simple_polygon_list)
         {
             for (auto seg_it(polygon->begin()); seg_it != polygon->end();
@@ -277,40 +289,42 @@ EdgeType Polygon::getEdgeType(std::size_t k, GeoLib::Point const& pnt) const
 {
     switch (getLocationOfPoint(k, pnt))
     {
-    case Location::LEFT: {
-        const GeoLib::Point & v (*(getPoint(k)));
-        const GeoLib::Point & w (*(getPoint(k + 1)));
-        if (v[1] < pnt[1] && pnt[1] <= w[1])
+        case Location::LEFT:
         {
-            return EdgeType::CROSSING;
-        }
+            const GeoLib::Point& v(*(getPoint(k)));
+            const GeoLib::Point& w(*(getPoint(k + 1)));
+            if (v[1] < pnt[1] && pnt[1] <= w[1])
+            {
+                return EdgeType::CROSSING;
+            }
 
-        return EdgeType::INESSENTIAL;
-    }
-    case Location::RIGHT: {
-        const GeoLib::Point & v (*(getPoint(k)));
-        const GeoLib::Point & w (*(getPoint(k + 1)));
-        if (w[1] < pnt[1] && pnt[1] <= v[1])
+            return EdgeType::INESSENTIAL;
+        }
+        case Location::RIGHT:
         {
-            return EdgeType::CROSSING;
-        }
+            const GeoLib::Point& v(*(getPoint(k)));
+            const GeoLib::Point& w(*(getPoint(k + 1)));
+            if (w[1] < pnt[1] && pnt[1] <= v[1])
+            {
+                return EdgeType::CROSSING;
+            }
 
-        return EdgeType::INESSENTIAL;
-    }
-    case Location::BETWEEN:
-    case Location::SOURCE:
-    case Location::DESTINATION:
-        return EdgeType::TOUCHING;
-    default:
-        return EdgeType::INESSENTIAL;
+            return EdgeType::INESSENTIAL;
+        }
+        case Location::BETWEEN:
+        case Location::SOURCE:
+        case Location::DESTINATION:
+            return EdgeType::TOUCHING;
+        default:
+            return EdgeType::INESSENTIAL;
     }
 }
 
-void Polygon::ensureCCWOrientation ()
+void Polygon::ensureCCWOrientation()
 {
     // *** pre processing: rotate points to xy-plan
     // *** copy points to vector - last point is identical to the first
-    std::size_t n_pnts (this->getNumberOfPoints() - 1);
+    std::size_t n_pnts(this->getNumberOfPoints() - 1);
     std::vector<GeoLib::Point*> tmp_polygon_pnts;
     for (std::size_t k(0); k < n_pnts; k++)
     {
@@ -327,10 +341,11 @@ void Polygon::ensureCCWOrientation ()
     }
 
     // *** get the left most upper point
-    std::size_t min_x_max_y_idx (0); // for orientation check
+    std::size_t min_x_max_y_idx(0);  // for orientation check
     for (std::size_t k(0); k < n_pnts; k++)
     {
-        if ((*(tmp_polygon_pnts[k]))[0] <= (*(tmp_polygon_pnts[min_x_max_y_idx]))[0])
+        if ((*(tmp_polygon_pnts[k]))[0] <=
+            (*(tmp_polygon_pnts[min_x_max_y_idx]))[0])
         {
             if ((*(tmp_polygon_pnts[k]))[0] <
                 (*(tmp_polygon_pnts[min_x_max_y_idx]))[0])
@@ -371,8 +386,9 @@ void Polygon::ensureCCWOrientation ()
     if (orient != GeoLib::CCW)
     {
         // switch orientation
-        std::size_t tmp_n_pnts (n_pnts);
-        tmp_n_pnts++; // include last point of polygon (which is identical to the first)
+        std::size_t tmp_n_pnts(n_pnts);
+        tmp_n_pnts++;  // include last point of polygon (which is identical to
+                       // the first)
         for (std::size_t k(0); k < tmp_n_pnts / 2; k++)
         {
             std::swap(_ply_pnt_ids[k], _ply_pnt_ids[tmp_n_pnts - 1 - k]);
@@ -405,9 +421,9 @@ void Polygon::splitPolygonAtIntersection(
     std::size_t idx0(seg_it0.getSegmentNumber());
     std::size_t idx1(seg_it1.getSegmentNumber());
     // adding intersection point to pnt_vec
-    std::size_t const intersection_pnt_id (_ply_pnts.size());
-    const_cast<std::vector<Point*>&>(_ply_pnts)
-        .push_back(new GeoLib::Point(intersection_pnt));
+    std::size_t const intersection_pnt_id(_ply_pnts.size());
+    const_cast<std::vector<Point*>&>(_ply_pnts).push_back(
+        new GeoLib::Point(intersection_pnt));
 
     // split Polygon
     if (idx0 > idx1)
@@ -449,18 +465,19 @@ void Polygon::splitPolygonAtIntersection(
     splitPolygonAtIntersection(polygon1_it);
 }
 
-void Polygon::splitPolygonAtPoint (const std::list<GeoLib::Polygon*>::iterator& polygon_it)
+void Polygon::splitPolygonAtPoint(
+    const std::list<GeoLib::Polygon*>::iterator& polygon_it)
 {
     std::size_t const n((*polygon_it)->getNumberOfPoints() - 1);
     std::vector<std::size_t> id_vec(n);
     std::vector<std::size_t> perm(n);
     for (std::size_t k(0); k < n; k++)
     {
-        id_vec[k] = (*polygon_it)->getPointID (k);
+        id_vec[k] = (*polygon_it)->getPointID(k);
         perm[k] = k;
     }
 
-    BaseLib::quicksort (id_vec, 0, n, perm);
+    BaseLib::quicksort(id_vec, 0, n, perm);
 
     for (std::size_t k(0); k < n - 1; k++)
     {
@@ -525,8 +542,10 @@ bool operator==(Polygon const& lhs, Polygon const& rhs)
     // search start point of first polygon in second polygon
     bool nfound(true);
     std::size_t k(0);
-    for (; k < n-1 && nfound; k++) {
-        if (start_pnt == rhs.getPointID(k)) {
+    for (; k < n - 1 && nfound; k++)
+    {
+        if (start_pnt == rhs.getPointID(k))
+        {
             nfound = false;
             break;
         }
@@ -540,26 +559,35 @@ bool operator==(Polygon const& lhs, Polygon const& rhs)
 
     // *** determine direction
     // opposite direction
-    if (k == n-2) {
-        for (k=1; k<n-1; k++) {
-            if (lhs.getPointID(k) != rhs.getPointID(n-1-k)) {
+    if (k == n - 2)
+    {
+        for (k = 1; k < n - 1; k++)
+        {
+            if (lhs.getPointID(k) != rhs.getPointID(n - 1 - k))
+            {
                 return false;
             }
         }
         return true;
     }
 
-    // same direction - start point of first polygon at arbitrary position in second polygon
-    if (lhs.getPointID(1) == rhs.getPointID(k+1)) {
-        std::size_t j(k+2);
-        for (; j<n-1; j++) {
-            if (lhs.getPointID(j-k) != rhs.getPointID(j)) {
+    // same direction - start point of first polygon at arbitrary position in
+    // second polygon
+    if (lhs.getPointID(1) == rhs.getPointID(k + 1))
+    {
+        std::size_t j(k + 2);
+        for (; j < n - 1; j++)
+        {
+            if (lhs.getPointID(j - k) != rhs.getPointID(j))
+            {
                 return false;
             }
         }
-        j=0; // new start point at second polygon
-        for (; j<k+1; j++) {
-            if (lhs.getPointID(n-(k+2)+j+1) != rhs.getPointID(j)) {
+        j = 0;  // new start point at second polygon
+        for (; j < k + 1; j++)
+        {
+            if (lhs.getPointID(n - (k + 2) + j + 1) != rhs.getPointID(j))
+            {
                 return false;
             }
         }
@@ -598,4 +626,4 @@ bool operator==(Polygon const& lhs, Polygon const& rhs)
     return false;
 }
 
-} // end namespace GeoLib
+}  // end namespace GeoLib

@@ -63,8 +63,8 @@ TEST(MaterialPropertyLib, RelPermNonWettingPhaseVanGenuchtenMualem)
 
     const double S_n_r = 0.05;
     const double S_n_max = 0.9;
-    const double S_L_r = 0.1; //1.0 - S_n_max;
-    const double S_L_max = 0.95; //1.0 - S_n_r;
+    const double S_L_r = 0.1;     // 1.0 - S_n_max;
+    const double S_L_max = 0.95;  // 1.0 - S_n_r;
     for (std::size_t i = 0; i < S_L.size(); i++)
     {
         MPL::VariableArray variable_array;

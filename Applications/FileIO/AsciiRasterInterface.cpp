@@ -22,10 +22,9 @@
 
 namespace FileIO
 {
-
 GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
 {
-    std::string ext (BaseLib::getFileExtension(fname));
+    std::string ext(BaseLib::getFileExtension(fname));
     std::transform(ext.begin(), ext.end(), ext.begin(), tolower);
     if (ext == ".asc")
     {
@@ -38,11 +37,13 @@ GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
     return nullptr;
 }
 
-GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fname)
+GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(
+    std::string const& fname)
 {
     std::ifstream in(fname.c_str());
 
-    if (!in.is_open()) {
+    if (!in.is_open())
+    {
         WARN("Raster::getRasterFromASCFile(): Could not open file {:s}.",
              fname);
         return nullptr;
@@ -50,13 +51,16 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
 
     // header information
     GeoLib::RasterHeader header;
-    if (readASCHeader(in, header)) {
+    if (readASCHeader(in, header))
+    {
         std::vector<double> values(header.n_cols * header.n_rows);
         std::string s;
         // read the data into the double-array
-        for (std::size_t j(0); j < header.n_rows; ++j) {
-            const std::size_t idx ((header.n_rows - j - 1) * header.n_cols);
-            for (std::size_t i(0); i < header.n_cols; ++i) {
+        for (std::size_t j(0); j < header.n_rows; ++j)
+        {
+            const std::size_t idx((header.n_rows - j - 1) * header.n_cols);
+            for (std::size_t i(0); i < header.n_cols; ++i)
+            {
                 in >> s;
                 values[idx + i] = strtod(
                     BaseLib::replaceString(",", ".", s).c_str(), nullptr);
@@ -73,7 +77,8 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(std::string const& fn
     return nullptr;
 }
 
-bool AsciiRasterInterface::readASCHeader(std::ifstream &in, GeoLib::RasterHeader &header)
+bool AsciiRasterInterface::readASCHeader(std::ifstream& in,
+                                         GeoLib::RasterHeader& header)
 {
     std::string tag;
     std::string value;
@@ -154,11 +159,13 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream &in, GeoLib::RasterHeader
     return true;
 }
 
-GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const& fname)
+GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
+    std::string const& fname)
 {
     std::ifstream in(fname.c_str());
 
-    if (!in.is_open()) {
+    if (!in.is_open())
+    {
         ERR("Raster::getRasterFromSurferFile() - Could not open file {:s}",
             fname);
         return nullptr;
@@ -171,19 +178,19 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
 
     if (readSurferHeader(in, header, min, max))
     {
-        const double no_data_val (min-1);
+        const double no_data_val(min - 1);
         std::vector<double> values(header.n_cols * header.n_rows);
         std::string s;
         // read the data into the double-array
         for (std::size_t j(0); j < header.n_rows; ++j)
         {
-            const std::size_t idx (j * header.n_cols);
+            const std::size_t idx(j * header.n_cols);
             for (std::size_t i(0); i < header.n_cols; ++i)
             {
                 in >> s;
                 const double val(strtod(
                     BaseLib::replaceString(",", ".", s).c_str(), nullptr));
-                values[idx+i] = (val > max || val < min) ? no_data_val : val;
+                values[idx + i] = (val > max || val < min) ? no_data_val : val;
             }
         }
         in.close();
@@ -197,8 +204,9 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(std::string const&
     return nullptr;
 }
 
-bool AsciiRasterInterface::readSurferHeader(
-    std::ifstream &in, GeoLib::RasterHeader &header, double &min, double &max)
+bool AsciiRasterInterface::readSurferHeader(std::ifstream& in,
+                                            GeoLib::RasterHeader& header,
+                                            double& min, double& max)
 {
     std::string tag;
 
@@ -236,12 +244,13 @@ bool AsciiRasterInterface::readSurferHeader(
     return true;
 }
 
-void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::string const& file_name)
+void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster,
+                                            std::string const& file_name)
 {
-    GeoLib::RasterHeader header (raster.getHeader());
-    MathLib::Point3d const& origin (header.origin);
-    unsigned const nCols (header.n_cols);
-    unsigned const nRows (header.n_rows);
+    GeoLib::RasterHeader header(raster.getHeader());
+    MathLib::Point3d const& origin(header.origin);
+    unsigned const nCols(header.n_cols);
+    unsigned const nRows(header.n_rows);
 
     // write header
     std::ofstream out(file_name);
@@ -251,15 +260,15 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
     out.precision(std::numeric_limits<double>::digits10);
     out << "xllcorner " << origin[0] << "\n";
     out << "yllcorner " << origin[1] << "\n";
-    out << "cellsize " <<  header.cell_size << "\n";
+    out << "cellsize " << header.cell_size << "\n";
     out.precision(default_precision);
     out << "NODATA_value " << header.no_data << "\n";
 
     // write data
-    double const*const elevation(raster.begin());
+    double const* const elevation(raster.begin());
     for (unsigned row(0); row < nRows; ++row)
     {
-        for (unsigned col(0); col < nCols-1; ++col)
+        for (unsigned col(0); col < nCols - 1; ++col)
         {
             out << elevation[(nRows - row - 1) * nCols + col] << " ";
         }
@@ -267,7 +276,6 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster, std::s
     }
     out.close();
 }
-
 
 /// Checks if all raster files actually exist
 static bool allRastersExist(std::vector<std::string> const& raster_paths)
@@ -300,4 +308,4 @@ std::optional<std::vector<GeoLib::Raster const*>> readRasters(
                    });
     return std::make_optional(rasters);
 }
-} // end namespace FileIO
+}  // end namespace FileIO

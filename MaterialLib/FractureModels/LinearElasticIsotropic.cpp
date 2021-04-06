@@ -70,6 +70,5 @@ void LinearElasticIsotropic<DisplacementDim>::computeConstitutiveRelation(
 template class LinearElasticIsotropic<2>;
 template class LinearElasticIsotropic<3>;
 
-
-}   // namespace Fracture
-}   // namespace MaterialLib
+}  // namespace Fracture
+}  // namespace MaterialLib

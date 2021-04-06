@@ -41,4 +41,4 @@ void VolumetricSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
         _local_assemblers, *_source_term_dof_table, t, b);
 }
 
-}   // namespace ProcessLib
+}  // namespace ProcessLib

@@ -42,8 +42,8 @@ PropertyDataType LinearWaterVapourLatentHeat::dValue(
     }
 
     OGS_FATAL(
-        "LinearWaterVapourLatentHeat::dValue is implemented for "
-        "the derivative with respect to temperature only.");
+        "LinearWaterVapourLatentHeat::dValue is implemented for the derivative "
+        "with respect to temperature only.");
 }
 
 }  // namespace MaterialPropertyLib

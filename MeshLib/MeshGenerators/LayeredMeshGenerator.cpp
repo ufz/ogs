@@ -14,21 +14,19 @@
 
 #include "LayeredMeshGenerator.h"
 
-#include <vector>
 #include <fstream>
+#include <vector>
 
 #include "BaseLib/Logging.h"
-
 #include "GeoLib/Raster.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/MeshInformation.h"
-#include "MeshLib/PropertyVector.h"
-#include "MeshLib/Properties.h"
-#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
+#include "MeshLib/MeshInformation.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "MeshLib/Node.h"
+#include "MeshLib/Properties.h"
+#include "MeshLib/PropertyVector.h"
 
 bool LayeredMeshGenerator::createLayers(
     MeshLib::Mesh const& mesh,
@@ -41,7 +39,8 @@ bool LayeredMeshGenerator::createLayers(
         return false;
     }
 
-    auto const elem_count = MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
+    auto const elem_count =
+        MeshLib::MeshInformation::getNumberOfElementTypes(mesh);
     if (elem_count.find(MeshLib::MeshElemType::QUAD) != elem_count.end())
     {
         ERR("Input mesh contains QUAD-elements. Please use input mesh "
@@ -49,13 +48,16 @@ bool LayeredMeshGenerator::createLayers(
         return false;
     }
 
-    bool result = createRasterLayers(mesh, rasters, minimum_thickness, noDataReplacementValue);
-    std::for_each(rasters.begin(), rasters.end(), [](GeoLib::Raster const*const raster){ delete raster; });
+    bool result = createRasterLayers(
+        mesh, rasters, minimum_thickness, noDataReplacementValue);
+    std::for_each(rasters.begin(),
+                  rasters.end(),
+                  [](GeoLib::Raster const* const raster) { delete raster; });
     return result;
 }
 
-std::unique_ptr<MeshLib::Mesh>
-LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
+std::unique_ptr<MeshLib::Mesh> LayeredMeshGenerator::getMesh(
+    std::string const& mesh_name) const
 {
     if (_nodes.empty())
     {
@@ -86,9 +88,11 @@ LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
             "element number");
     }
 
-    std::unique_ptr<MeshLib::Mesh> result(new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
+    std::unique_ptr<MeshLib::Mesh> result(
+        new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
     MeshLib::NodeSearch ns(*result);
-    if (ns.searchUnused() > 0) {
+    if (ns.searchUnused() > 0)
+    {
         std::unique_ptr<MeshLib::Mesh> new_mesh(
             MeshLib::removeNodes(*result, ns.getSearchedNodeIDs(), mesh_name));
         return new_mesh;
@@ -96,19 +100,22 @@ LayeredMeshGenerator::getMesh(std::string const& mesh_name) const
     return result;
 }
 
-double LayeredMeshGenerator::calcEpsilon(GeoLib::Raster const& low, GeoLib::Raster const& high)
+double LayeredMeshGenerator::calcEpsilon(GeoLib::Raster const& low,
+                                         GeoLib::Raster const& high)
 {
-    const double max (*std::max_element(high.begin(), high.end()));
-    const double min (*std::min_element( low.begin(),  low.end()));
-    return ((max-min)*1e-07);
+    const double max(*std::max_element(high.begin(), high.end()));
+    const double min(*std::min_element(low.begin(), low.end()));
+    return ((max - min) * 1e-07);
 }
 
-MeshLib::Node* LayeredMeshGenerator::getNewLayerNode(MeshLib::Node const& dem_node,
-                                                     MeshLib::Node const& last_layer_node,
-                                                     GeoLib::Raster const& raster,
-                                                     std::size_t new_node_id) const
+MeshLib::Node* LayeredMeshGenerator::getNewLayerNode(
+    MeshLib::Node const& dem_node,
+    MeshLib::Node const& last_layer_node,
+    GeoLib::Raster const& raster,
+    std::size_t new_node_id) const
 {
-    double const elevation = std::min(raster.interpolateValueAtPoint(dem_node), dem_node[2]);
+    double const elevation =
+        std::min(raster.interpolateValueAtPoint(dem_node), dem_node[2]);
 
     if ((std::abs(elevation - raster.getHeader().no_data) <
          std::numeric_limits<double>::epsilon()) ||

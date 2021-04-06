@@ -26,11 +26,11 @@ struct FormEigenVector
         }
         if constexpr (GlobalDim == 2)
         {
-            return Eigen::Matrix<double, 2, 1>{ value, value };
+            return Eigen::Matrix<double, 2, 1>{value, value};
         }
         if constexpr (GlobalDim == 3)
         {
-            return Eigen::Matrix<double, 3, 1>{ value, value, value };
+            return Eigen::Matrix<double, 3, 1>{value, value, value};
         }
     }
 

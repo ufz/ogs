@@ -14,16 +14,19 @@
 
 #include "FileListDialog.h"
 
-#include <QSettings>
 #include <QFileInfo>
 #include <QFont>
 #include <QLineEdit>
+#include <QSettings>
 
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "BaseLib/StringTools.h"
 
 FileListDialog::FileListDialog(FileType input, FileType output, QWidget* parent)
-: QDialog(parent), _output_dir(""), _input_file_type(input), _output_file_type(output)
+    : QDialog(parent),
+      _output_dir(""),
+      _input_file_type(input),
+      _output_file_type(output)
 {
     setupUi(this);
 
@@ -64,7 +67,8 @@ void FileListDialog::on_addButton_pressed()
 
 void FileListDialog::on_removeButton_pressed()
 {
-    QModelIndexList selected = this->listView->selectionModel()->selectedIndexes();
+    QModelIndexList selected =
+        this->listView->selectionModel()->selectedIndexes();
     for (auto& item : selected)
     {
         this->_allFiles.removeRow(item.row());
@@ -75,7 +79,8 @@ void FileListDialog::on_browseButton_pressed()
 {
     QSettings const settings("UFZ", "OpenGeoSys-5");
     QFileInfo const fi(settings.value("lastOpenedOgsFileDirectory").toString());
-    QString const dirName = QFileDialog::getExistingDirectory(this, "Save to", fi.absolutePath().append("/"));
+    QString const dirName = QFileDialog::getExistingDirectory(
+        this, "Save to", fi.absolutePath().append("/"));
     this->outputDirEdit->setText(dirName);
 }
 
@@ -133,5 +138,7 @@ void FileListDialog::displayWarningLabel() const
     font.setBold(true);
     warningLabel->setFont(font);
     this->warningLabel->setStyleSheet("QLabel { color : red; }");
-    this->warningLabel->setText("Warning: all scalar information except<br />MaterialIDs will be lost!");
+    this->warningLabel->setText(
+        "Warning: all scalar information except<br />MaterialIDs will be "
+        "lost!");
 }

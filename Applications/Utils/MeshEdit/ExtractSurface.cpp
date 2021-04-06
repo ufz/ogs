@@ -9,32 +9,31 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"
-
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
-
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Extracts a 2D surface from a 3D input mesh by specifying a normal "
         "vector and an angle. (The surface normal (0, 0, 0) will extract the "
         "complete outer boundary of the 3D mesh.)\n"
         "An extensive documentation can be found at "
-        "https://docs.opengeosys.org/docs/tools/meshing-submeshes/extract-surface\n"
+        "https://docs.opengeosys.org/docs/tools/meshing-submeshes/"
+        "extract-surface\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"

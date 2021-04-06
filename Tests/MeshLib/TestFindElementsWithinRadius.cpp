@@ -8,6 +8,7 @@
  */
 
 #include <gtest/gtest.h>
+
 #include <autocheck/autocheck.hpp>
 #include <memory>
 
@@ -17,7 +18,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/findElementsWithinRadius.h"
-
 #include "Tests/AutoCheckTools.h"
 
 using namespace MeshLib;

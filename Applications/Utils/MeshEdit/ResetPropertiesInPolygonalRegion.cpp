@@ -51,8 +51,8 @@ int main(int argc, char* argv[])
     cmd.add(polygon_name_arg);
     TCLAP::ValueArg<std::string> geometry_fname(
         "g", "geometry",
-        "the name of "
-        "the file containing the input geometry (gli or gml format)",
+        "the name of the file containing the input geometry (gli or gml "
+        "format)",
         true, "", "file name");
     cmd.add(geometry_fname);
     TCLAP::ValueArg<char> char_property_arg(

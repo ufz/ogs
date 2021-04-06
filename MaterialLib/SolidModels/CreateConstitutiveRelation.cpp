@@ -20,11 +20,9 @@
 #include "MFront/CreateMFront.h"
 #endif  // OGS_USE_MFRONT
 
-#include "MechanicsBase.h"
-
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
+#include "MechanicsBase.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialLib

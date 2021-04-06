@@ -11,19 +11,19 @@
 
 #include <Eigen/Dense>
 
-#include "Point.h"
 #include "AnalyticalGeometry.h"
-
 #include "MathLib/GeometricBasics.h"
+#include "Point.h"
 
-namespace GeoLib {
-
-Triangle::Triangle (std::vector<Point *> const &pnt_vec,
-    std::size_t pnt_a, std::size_t pnt_b, std::size_t pnt_c) :
-    _pnts(pnt_vec), _pnt_ids( {{pnt_a, pnt_b, pnt_c}} )
+namespace GeoLib
+{
+Triangle::Triangle(std::vector<Point*> const& pnt_vec, std::size_t pnt_a,
+                   std::size_t pnt_b, std::size_t pnt_c)
+    : _pnts(pnt_vec), _pnt_ids({{pnt_a, pnt_b, pnt_c}})
 {
     assert(!_pnts.empty());
-    assert (pnt_a < _pnts.size() && pnt_b < _pnts.size() && pnt_c < _pnts.size());
+    assert(pnt_a < _pnts.size() && pnt_b < _pnts.size() &&
+           pnt_c < _pnts.size());
 }
 
 bool Triangle::containsPoint(MathLib::Point3d const& q, double eps) const

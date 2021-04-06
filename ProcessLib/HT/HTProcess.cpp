@@ -12,12 +12,11 @@
 
 #include <cassert>
 
+#include "MonolithicHTFEM.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
-
-#include "MonolithicHTFEM.h"
 #include "StaggeredHTFEM.h"
 
 namespace ProcessLib
@@ -207,8 +206,8 @@ void HTProcess::postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
     if (_use_monolithic_scheme && process_id != 0)
     {
         OGS_FATAL(
-            "The condition of process_id = 0 must be satisfied for "
-            "monolithic HTProcess, which is a single process.");
+            "The condition of process_id = 0 must be satisfied for monolithic "
+            "HTProcess, which is a single process.");
     }
     if (!_use_monolithic_scheme &&
         process_id != _process_data.hydraulic_process_id)

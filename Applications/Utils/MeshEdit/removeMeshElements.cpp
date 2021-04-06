@@ -11,9 +11,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <memory>
-
 #include <tclap/CmdLine.h>
+
+#include <memory>
 
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
@@ -66,7 +66,7 @@ void searchByPropertyRange(std::string const& property_name,
          std::to_string(min_value), std::to_string(max_value));
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Removes mesh elements based on element type, element volume, scalar "
@@ -81,27 +81,34 @@ int main (int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
 
     // Bounding box params
-    TCLAP::ValueArg<double> zLargeArg("", "z-max", "largest allowed extent in z-dimension",
-                                      false, std::numeric_limits<double>::max(), "value");
+    TCLAP::ValueArg<double> zLargeArg(
+        "", "z-max", "largest allowed extent in z-dimension", false,
+        std::numeric_limits<double>::max(), "value");
     cmd.add(zLargeArg);
-    TCLAP::ValueArg<double> zSmallArg("", "z-min", "smallest allowed extent in z-dimension",
-                                      false,  -1 * std::numeric_limits<double>::max(), "value");
+    TCLAP::ValueArg<double> zSmallArg(
+        "", "z-min", "smallest allowed extent in z-dimension", false,
+        -1 * std::numeric_limits<double>::max(), "value");
     cmd.add(zSmallArg);
-    TCLAP::ValueArg<double> yLargeArg("", "y-max", "largest allowed extent in y-dimension",
-                                      false, std::numeric_limits<double>::max(), "value");
+    TCLAP::ValueArg<double> yLargeArg(
+        "", "y-max", "largest allowed extent in y-dimension", false,
+        std::numeric_limits<double>::max(), "value");
     cmd.add(yLargeArg);
-    TCLAP::ValueArg<double> ySmallArg("", "y-min", "smallest allowed extent in y-dimension",
-                                       false,  -1 * std::numeric_limits<double>::max(), "value");
+    TCLAP::ValueArg<double> ySmallArg(
+        "", "y-min", "smallest allowed extent in y-dimension", false,
+        -1 * std::numeric_limits<double>::max(), "value");
     cmd.add(ySmallArg);
-    TCLAP::ValueArg<double> xLargeArg("", "x-max", "largest allowed extent in x-dimension",
-                                       false, std::numeric_limits<double>::max(), "value");
+    TCLAP::ValueArg<double> xLargeArg(
+        "", "x-max", "largest allowed extent in x-dimension", false,
+        std::numeric_limits<double>::max(), "value");
     cmd.add(xLargeArg);
-    TCLAP::ValueArg<double> xSmallArg("", "x-min", "smallest allowed extent in x-dimension",
-                                      false, -1 * std::numeric_limits<double>::max(), "value");
+    TCLAP::ValueArg<double> xSmallArg(
+        "", "x-min", "smallest allowed extent in x-dimension", false,
+        -1 * std::numeric_limits<double>::max(), "value");
     cmd.add(xSmallArg);
 
     // Non-bounding-box params
-    TCLAP::SwitchArg zveArg("z", "zero-volume", "remove zero volume elements", false);
+    TCLAP::SwitchArg zveArg("z", "zero-volume", "remove zero volume elements",
+                            false);
     cmd.add(zveArg);
 
     std::vector<std::string> allowed_ele_types{"line",  "tri", "quad",   "hex",
@@ -116,19 +123,23 @@ int main (int argc, char* argv[])
 
     // scalar array params
     TCLAP::ValueArg<std::string> property_name_arg(
-        "n", "property-name", "name of property in the mesh", false, "MaterialIDs", "string");
+        "n", "property-name", "name of property in the mesh", false,
+        "MaterialIDs", "string");
     cmd.add(property_name_arg);
 
     TCLAP::MultiArg<int> property_arg(
-        "", "property-value", "value of selected property to be removed", false, "number");
+        "", "property-value", "value of selected property to be removed", false,
+        "number");
     cmd.add(property_arg);
 
     TCLAP::ValueArg<double> min_property_arg(
-        "", "min-value", "minimum value of range for selected property", false, 0, "number");
+        "", "min-value", "minimum value of range for selected property", false,
+        0, "number");
     cmd.add(min_property_arg);
 
     TCLAP::ValueArg<double> max_property_arg(
-        "", "max-value", "maximum value of range for selected property", false, 0, "number");
+        "", "max-value", "maximum value of range for selected property", false,
+        0, "number");
     cmd.add(max_property_arg);
 
     TCLAP::SwitchArg outside_property_arg(
@@ -140,13 +151,15 @@ int main (int argc, char* argv[])
     cmd.add(inside_property_arg);
 
     // I/O params
-    TCLAP::ValueArg<std::string> mesh_out("o", "mesh-output-file",
-                                          "the name of the file the mesh will be written to", true,
-                                          "", "file name of output mesh");
+    TCLAP::ValueArg<std::string> mesh_out(
+        "o", "mesh-output-file",
+        "the name of the file the mesh will be written to", true, "",
+        "file name of output mesh");
     cmd.add(mesh_out);
-    TCLAP::ValueArg<std::string> mesh_in("i", "mesh-input-file",
-                                         "the name of the file containing the input mesh", true,
-                                         "", "file name of input mesh");
+    TCLAP::ValueArg<std::string> mesh_in(
+        "i", "mesh-input-file",
+        "the name of the file containing the input mesh", true, "",
+        "file name of input mesh");
     cmd.add(mesh_in);
     cmd.parse(argc, argv);
 
@@ -162,13 +175,17 @@ int main (int argc, char* argv[])
     MeshLib::ElementSearch searcher(*mesh);
 
     // search elements IDs to be removed
-    if (zveArg.isSet()) {
+    if (zveArg.isSet())
+    {
         INFO("{:d} zero volume elements found.", searcher.searchByContent());
     }
-    if (eleTypeArg.isSet()) {
+    if (eleTypeArg.isSet())
+    {
         const std::vector<std::string> eleTypeNames = eleTypeArg.getValue();
-        for (const auto& typeName : eleTypeNames) {
-            const MeshLib::MeshElemType type = MeshLib::String2MeshElemType(typeName);
+        for (const auto& typeName : eleTypeNames)
+        {
+            const MeshLib::MeshElemType type =
+                MeshLib::String2MeshElemType(typeName);
             if (type == MeshLib::MeshElemType::INVALID)
             {
                 continue;
@@ -181,7 +198,8 @@ int main (int argc, char* argv[])
     if (property_name_arg.isSet() || property_arg.isSet() ||
         min_property_arg.isSet() || max_property_arg.isSet())
     {
-        if ((property_arg.isSet() || min_property_arg.isSet() || max_property_arg.isSet()) &&
+        if ((property_arg.isSet() || min_property_arg.isSet() ||
+             max_property_arg.isSet()) &&
             !property_name_arg.isSet())
         {
             ERR("Specify a property name for the value/range selected.");
@@ -189,10 +207,11 @@ int main (int argc, char* argv[])
         }
 
         if (property_name_arg.isSet() &&
-            !((min_property_arg.isSet() && max_property_arg.isSet()) || property_arg.isSet()))
+            !((min_property_arg.isSet() && max_property_arg.isSet()) ||
+              property_arg.isSet()))
         {
-            ERR("Specify a value or range ('-min-value' and '-max_value') "
-                "for the property selected.");
+            ERR("Specify a value or range ('-min-value' and '-max_value') for "
+                "the property selected.");
             return EXIT_FAILURE;
         }
 
@@ -223,24 +242,23 @@ int main (int argc, char* argv[])
         }
     }
 
-    if (xSmallArg.isSet() || xLargeArg.isSet() ||
-        ySmallArg.isSet() || yLargeArg.isSet() ||
-        zSmallArg.isSet() || zLargeArg.isSet())
+    if (xSmallArg.isSet() || xLargeArg.isSet() || ySmallArg.isSet() ||
+        yLargeArg.isSet() || zSmallArg.isSet() || zLargeArg.isSet())
     {
-        bool aabb_error (false);
+        bool aabb_error(false);
         if (xSmallArg.getValue() >= xLargeArg.getValue())
         {
-            ERR ("Minimum x-extent larger than maximum x-extent.");
+            ERR("Minimum x-extent larger than maximum x-extent.");
             aabb_error = true;
         }
         if (ySmallArg.getValue() >= yLargeArg.getValue())
         {
-            ERR ("Minimum y-extent larger than maximum y-extent.");
+            ERR("Minimum y-extent larger than maximum y-extent.");
             aabb_error = true;
         }
         if (zSmallArg.getValue() >= zLargeArg.getValue())
         {
-            ERR ("Minimum z-extent larger than maximum z-extent.");
+            ERR("Minimum z-extent larger than maximum z-extent.");
             aabb_error = true;
         }
         if (aabb_error)
@@ -248,11 +266,13 @@ int main (int argc, char* argv[])
             return EXIT_FAILURE;
         }
 
-        std::array<MathLib::Point3d, 2> extent({{
-            MathLib::Point3d(std::array<double,3>{{xSmallArg.getValue(),
-                ySmallArg.getValue(), zSmallArg.getValue()}}),
-            MathLib::Point3d(std::array<double,3>{{xLargeArg.getValue(),
-                yLargeArg.getValue(), zLargeArg.getValue()}})}});
+        std::array<MathLib::Point3d, 2> extent(
+            {{MathLib::Point3d(std::array<double, 3>{{xSmallArg.getValue(),
+                                                      ySmallArg.getValue(),
+                                                      zSmallArg.getValue()}}),
+              MathLib::Point3d(std::array<double, 3>{
+                  {xLargeArg.getValue(), yLargeArg.getValue(),
+                   zLargeArg.getValue()}})}});
         INFO("{:d} elements found.",
              searcher.searchByBoundingBox(
                  GeoLib::AABB(extent.begin(), extent.end())));

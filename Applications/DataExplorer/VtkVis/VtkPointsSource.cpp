@@ -14,57 +14,57 @@
 
 #include "VtkPointsSource.h"
 
-#include "BaseLib/Logging.h"
-
 #include <vtkCellArray.h>
+#include <vtkCellData.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
+#include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
-#include <vtkCellData.h>
-#include <vtkProperty.h>
 
 #include "Applications/DataHolderLib/Color.h"
+#include "BaseLib/Logging.h"
 
 vtkStandardNewMacro(VtkPointsSource);
 
 VtkPointsSource::VtkPointsSource()
 {
-    _removable = false; // From VtkAlgorithmProperties
+    _removable = false;  // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
 
     const DataHolderLib::Color c = DataHolderLib::getRandomColor();
-    GetProperties()->SetColor(c[0] / 255.0,c[1] / 255.0,c[2] / 255.0);
+    GetProperties()->SetColor(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
 }
 
-void VtkPointsSource::PrintSelf( ostream& os, vtkIndent indent )
+void VtkPointsSource::PrintSelf(ostream& os, vtkIndent indent)
 {
-    this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os, indent);
 
     if (_points->empty())
     {
         return;
     }
 
-    os << indent << "== VtkPointsSource ==" << "\n";
+    os << indent << "== VtkPointsSource =="
+       << "\n";
 
     int i = 0;
     for (auto point : *_points)
     {
         const double* coords = point->getCoords();
-        os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] << ", " <<
-        coords[2] << ")\n";
+        os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1]
+           << ", " << coords[2] << ")\n";
         i++;
     }
 }
 
-int VtkPointsSource::RequestData( vtkInformation* request,
-                                  vtkInformationVector** inputVector,
-                                  vtkInformationVector* outputVector )
+int VtkPointsSource::RequestData(vtkInformation* request,
+                                 vtkInformationVector** inputVector,
+                                 vtkInformationVector* outputVector)
 {
     (void)request;
     (void)inputVector;
@@ -80,12 +80,14 @@ int VtkPointsSource::RequestData( vtkInformation* request,
         return 0;
     }
 
-    vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
+    vtkSmartPointer<vtkInformation> outInfo =
+        outputVector->GetInformationObject(0);
     vtkSmartPointer<vtkPolyData> output =
-            vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
+    vtkSmartPointer<vtkCellArray> newVerts =
+        vtkSmartPointer<vtkCellArray>::New();
     newPoints->SetNumberOfPoints(numPoints);
     newVerts->Allocate(numPoints);
 
@@ -116,19 +118,20 @@ int VtkPointsSource::RequestData( vtkInformation* request,
     output->SetPoints(newPoints);
     output->SetVerts(newVerts);
     output->GetCellData()->AddArray(pointIDs);
-    output->GetCellData()->SetActiveAttribute("PointIDs", vtkDataSetAttributes::SCALARS);
+    output->GetCellData()->SetActiveAttribute("PointIDs",
+                                              vtkDataSetAttributes::SCALARS);
 
     return 1;
 }
 
-int VtkPointsSource::RequestInformation( vtkInformation* /*request*/,
-                                         vtkInformationVector** /*inputVector*/,
-                                         vtkInformationVector* /*outputVector*/ )
+int VtkPointsSource::RequestInformation(vtkInformation* /*request*/,
+                                        vtkInformationVector** /*inputVector*/,
+                                        vtkInformationVector* /*outputVector*/)
 {
     return 1;
 }
 
-void VtkPointsSource::SetUserProperty( QString name, QVariant value )
+void VtkPointsSource::SetUserProperty(QString name, QVariant value)
 {
     Q_UNUSED(name);
     Q_UNUSED(value);

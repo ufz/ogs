@@ -10,12 +10,10 @@
 
 #include "CreateNodalSourceTerm.h"
 
-#include "BaseLib/Logging.h"
-
 #include "BaseLib/ConfigTree.h"
-#include "ParameterLib/Utils.h"
-
+#include "BaseLib/Logging.h"
 #include "NodalSourceTerm.h"
+#include "ParameterLib/Utils.h"
 
 namespace ProcessLib
 {

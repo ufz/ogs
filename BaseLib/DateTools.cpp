@@ -25,7 +25,7 @@ namespace BaseLib
 {
 int date2int(int y, int m, int d)
 {
-    if ( (y < 1000 || y > 9999) || (m < 1 || m > 12) || (d < 1 || d > 31) )
+    if ((y < 1000 || y > 9999) || (m < 1 || m > 12) || (d < 1 || d > 31))
     {
         WARN("date2int(): Input not in expected range.");
         return 0;
@@ -95,40 +95,40 @@ std::string date2string(double ddate)
     {
         month = "0" + month;
     }
-    std::string s =  std::to_string(y) + "-" + month + "-" + day;
+    std::string s = std::to_string(y) + "-" + month + "-" + day;
     return s;
 }
 
-int strDate2int(const std::string &s)
+int strDate2int(const std::string& s)
 {
     std::string str(s);
     if (s.length() > 10)
     {
         str = s.substr(0, 10);
     }
-    std::size_t sep ( str.find('.',0) );
-    int d ( atoi(str.substr(0, sep).c_str()) );
-    std::size_t sep2 ( str.find('.', sep + 1) );
-    int m ( atoi(str.substr(sep + 1,sep2 - (sep + 1)).c_str()) );
-    int y ( atoi(str.substr(sep2 + 1, s.length() - (sep2 + 1)).c_str()) );
+    std::size_t sep(str.find('.', 0));
+    int d(atoi(str.substr(0, sep).c_str()));
+    std::size_t sep2(str.find('.', sep + 1));
+    int m(atoi(str.substr(sep + 1, sep2 - (sep + 1)).c_str()));
+    int y(atoi(str.substr(sep2 + 1, s.length() - (sep2 + 1)).c_str()));
     return date2int(y, m, d);
 }
 
-int xmlDate2int(const std::string &s)
+int xmlDate2int(const std::string& s)
 {
     if (s.length() == 10)
     {
-        int d = atoi(s.substr(8,2).c_str());
+        int d = atoi(s.substr(8, 2).c_str());
         if (d < 1 || d > 31)
         {
             WARN("xmlDate2double(): day not in [1:31].");
         }
-        int m = atoi(s.substr(5,2).c_str());
+        int m = atoi(s.substr(5, 2).c_str());
         if (m < 1 || m > 12)
         {
             WARN("xmlDate2double(): month not in [1:12].");
         }
-        int y = atoi(s.substr(0,4).c_str());
+        int y = atoi(s.substr(0, 4).c_str());
         return date2int(y, m, d);
     }
     return 0;
@@ -140,9 +140,10 @@ std::string formatDate(
     auto const time_t = std::chrono::system_clock::to_time_t(time);
     char time_str[100];
     if (std::strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S%z",
-                      std::localtime(&time_t))) {
+                      std::localtime(&time_t)))
+    {
         return time_str;
     }
     return "FAILED FORMATTING THE GIVEN TIME POINT.";
 }
-} // end namespace BaseLib
+}  // end namespace BaseLib

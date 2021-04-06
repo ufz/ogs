@@ -7,26 +7,25 @@
  *
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include <memory>
 
 #include "GeoLib/Polyline.h"
 #include "GeoLib/PolylineVec.h"
-
+#include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 #include "MeshLib/Node.h"
-#include "MeshGeoToolsLib/AppendLinesAlongPolyline.h"
 
 TEST(MeshLib, QuadraticOrderMesh_Line)
 {
     using namespace MeshLib;
 
-    std::unique_ptr<Mesh> linear_mesh(MeshGenerator::generateLineMesh(
-        1, std::size_t(2)));
+    std::unique_ptr<Mesh> linear_mesh(
+        MeshGenerator::generateLineMesh(1, std::size_t(2)));
     std::unique_ptr<Mesh> mesh(
         createQuadraticOrderMesh(*linear_mesh, false /* add centre node*/));
     ASSERT_EQ(5u, mesh->getNumberOfNodes());
@@ -180,18 +179,20 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
 {
     using namespace MeshLib;
 
-    std::unique_ptr<Mesh> linear_quad_mesh(MeshGenerator::generateRegularQuadMesh(
-        1, 1, std::size_t(2), std::size_t(2)));
+    std::unique_ptr<Mesh> linear_quad_mesh(
+        MeshGenerator::generateRegularQuadMesh(1, 1, std::size_t(2),
+                                               std::size_t(2)));
 
     std::unique_ptr<Mesh> linear_mesh;
     {
         std::vector<GeoLib::Point*> pnts;
-        pnts.push_back(new GeoLib::Point(0,0.5,0,0));
-        pnts.push_back(new GeoLib::Point(1,0.5,0,1));
+        pnts.push_back(new GeoLib::Point(0, 0.5, 0, 0));
+        pnts.push_back(new GeoLib::Point(1, 0.5, 0, 1));
         auto* ply = new GeoLib::Polyline(pnts);
         ply->addPoint(0);
         ply->addPoint(1);
-        std::unique_ptr<std::vector<GeoLib::Polyline*>> plys(new std::vector<GeoLib::Polyline*>());
+        std::unique_ptr<std::vector<GeoLib::Polyline*>> plys(
+            new std::vector<GeoLib::Polyline*>());
         plys->push_back(ply);
         GeoLib::PolylineVec ply_vec("", std::move(plys));
 

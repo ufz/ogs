@@ -8,9 +8,9 @@
  *
  */
 
-#include <ostream>
-
 #include "EquilibriumReactant.h"
+
+#include <ostream>
 
 namespace ChemistryLib
 {

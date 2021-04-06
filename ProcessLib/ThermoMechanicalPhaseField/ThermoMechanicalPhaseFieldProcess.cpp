@@ -8,15 +8,15 @@
  *
  */
 
-#include "ThermoMechanicalPhaseFieldFEM.h"
 #include "ThermoMechanicalPhaseFieldProcess.h"
-#include "ThermoMechanicalPhaseFieldProcessData.h"
 
 #include <cassert>
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
+#include "ThermoMechanicalPhaseFieldFEM.h"
+#include "ThermoMechanicalPhaseFieldProcessData.h"
 
 namespace ProcessLib
 {
@@ -222,26 +222,21 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
     {
         DBUG(
             "Assemble the Jacobian equations of "
-            "temperature-deformation in "
-            "ThermoMechanicalPhaseFieldProcess for "
+            "temperature-deformation in ThermoMechanicalPhaseFieldProcess for "
             "the staggered scheme.");
     }
 
     if (process_id == _phase_field_process_id)
     {
         DBUG(
-            "Assemble the Jacobian equations of"
-            "phase field in "
-            "ThermoMechanicalPhaseFieldProcess for "
-            "the staggered scheme.");
+            "Assemble the Jacobian equations ofphase field in "
+            "ThermoMechanicalPhaseFieldProcess for the staggered scheme.");
     }
     else
     {
         DBUG(
-            "Assemble the Jacobian equations of "
-            "heat conduction in "
-            "ThermoMechanicalPhaseFieldProcess for "
-            "the staggered scheme.");
+            "Assemble the Jacobian equations of heat conduction in "
+            "ThermoMechanicalPhaseFieldProcess for the staggered scheme.");
     }
     dof_tables.emplace_back(
         getDOFTableByProcessID(_heat_conduction_process_id));

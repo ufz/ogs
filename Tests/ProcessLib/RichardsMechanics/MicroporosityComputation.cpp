@@ -170,7 +170,7 @@ TEST(RichardsMechanics, computeMicroPorosity)
     {
         double const p_L = pressure_M.getValue(t);
         double const S_L_m_prev = saturation(state_prev.p_L_m);
-        //auto const [delta_phi_m, delta_e_sw, delta_sigma_sw, delta_p_L_m] =
+        // auto const [delta_phi_m, delta_e_sw, delta_sigma_sw, delta_p_L_m] =
         auto const state_increment = computeMicroPorosity<DisplacementDim>(
             I_2_C_el_inverse,
             rho_LR_m,  // for simplification equal to rho_LR_M

@@ -9,6 +9,7 @@
  */
 
 #include "RefrigerantProperties.h"
+
 #include "BaseLib/ConfigTree.h"
 
 namespace ProcessLib

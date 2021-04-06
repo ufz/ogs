@@ -11,18 +11,17 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 
-#include "gtest/gtest.h"
-
 #include "MathLib/MathTools.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/Node.h"
 
 TEST(MeshLib, RemoveNodes)
 {

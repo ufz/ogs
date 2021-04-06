@@ -20,14 +20,16 @@
 
 namespace GeoLib
 {
-
-std::string convertGeoTypeToString (GEOTYPE geo_type)
+std::string convertGeoTypeToString(GEOTYPE geo_type)
 {
     switch (geo_type)
     {
-    case GEOTYPE::POINT:    return "POINT";
-    case GEOTYPE::POLYLINE: return "POLYLINE";
-    case GEOTYPE::SURFACE:  return "SURFACE";
+        case GEOTYPE::POINT:
+            return "POINT";
+        case GEOTYPE::POLYLINE:
+            return "POLYLINE";
+        case GEOTYPE::SURFACE:
+            return "SURFACE";
     }
 
     // Cannot happen, because switch covers all cases.
@@ -35,4 +37,4 @@ std::string convertGeoTypeToString (GEOTYPE geo_type)
     OGS_FATAL("convertGeoTypeToString(): Given geo type is not supported");
 }
 
-} // end namespace GeoLib
+}  // end namespace GeoLib

@@ -9,26 +9,24 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
 #include <iterator>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/IO/readStringListFromFile.h"
-
-#include "MeshLib/IO/readMeshFromFile.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
-
+#include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Creates a layered 3D OGS mesh from an existing 2D OGS mesh and a list "
@@ -63,16 +61,14 @@ int main (int argc, char* argv[])
         true, "", "file name");
     cmd.add(raster_path_arg);
 
-        TCLAP::ValueArg<std::string> mesh_out_arg(
-        "o", "output-mesh-file",
-        "The file name of the resulting 3D mesh.",
+    TCLAP::ValueArg<std::string> mesh_out_arg(
+        "o", "output-mesh-file", "The file name of the resulting 3D mesh.",
         true, "", "file name");
     cmd.add(mesh_out_arg);
 
-    TCLAP::ValueArg<std::string> mesh_arg(
-        "i", "input-mesh-file",
-        "The file name of the 2D input mesh.", true, "",
-        "file name");
+    TCLAP::ValueArg<std::string> mesh_arg("i", "input-mesh-file",
+                                          "The file name of the 2D input mesh.",
+                                          true, "", "file name");
     cmd.add(mesh_arg);
 
     cmd.parse(argc, argv);
@@ -104,9 +100,9 @@ int main (int argc, char* argv[])
 
     std::vector<std::string> raster_paths =
         BaseLib::IO::readStringListFromFile(raster_path_arg.getValue());
-    if (raster_paths.size()<2)
+    if (raster_paths.size() < 2)
     {
-        ERR ("At least two raster files needed to create 3D mesh.");
+        ERR("At least two raster files needed to create 3D mesh.");
         return EXIT_FAILURE;
     }
     std::reverse(raster_paths.begin(), raster_paths.end());

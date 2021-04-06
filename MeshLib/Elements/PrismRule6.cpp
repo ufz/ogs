@@ -11,38 +11,34 @@
 #include "PrismRule6.h"
 
 #include "BaseLib/Logging.h"
-
 #include "MathLib/GeometricBasics.h"
-
 #include "MeshLib/Node.h"
 #include "Quad.h"
 #include "Tri.h"
 
-namespace MeshLib {
-
-const unsigned PrismRule6::face_nodes[5][4] =
+namespace MeshLib
 {
-    {0, 2, 1, 99}, // Face 0
-    {0, 1, 4,  3}, // Face 1
-    {1, 2, 5,  4}, // Face 2
-    {2, 0, 3,  5}, // Face 3
-    {3, 4, 5, 99}  // Face 4
+const unsigned PrismRule6::face_nodes[5][4] = {
+    {0, 2, 1, 99},  // Face 0
+    {0, 1, 4, 3},   // Face 1
+    {1, 2, 5, 4},   // Face 2
+    {2, 0, 3, 5},   // Face 3
+    {3, 4, 5, 99}   // Face 4
 };
 
-const unsigned PrismRule6::edge_nodes[9][2] =
-{
-    {0, 1}, // Edge 0
-    {1, 2}, // Edge 1
-    {0, 2}, // Edge 2
-    {0, 3}, // Edge 3
-    {1, 4}, // Edge 4
-    {2, 5}, // Edge 5
-    {3, 4}, // Edge 6
-    {4, 5}, // Edge 7
-    {3, 5}  // Edge 8
+const unsigned PrismRule6::edge_nodes[9][2] = {
+    {0, 1},  // Edge 0
+    {1, 2},  // Edge 1
+    {0, 2},  // Edge 2
+    {0, 3},  // Edge 3
+    {1, 4},  // Edge 4
+    {2, 5},  // Edge 5
+    {3, 4},  // Edge 6
+    {4, 5},  // Edge 7
+    {3, 5}   // Edge 8
 };
 
-const unsigned PrismRule6::n_face_nodes[5] = { 3, 4, 4, 4, 3 };
+const unsigned PrismRule6::n_face_nodes[5] = {3, 4, 4, 4, 3};
 
 const Element* PrismRule6::getFace(const Element* e, unsigned i)
 {
@@ -68,9 +64,12 @@ const Element* PrismRule6::getFace(const Element* e, unsigned i)
 
 double PrismRule6::computeVolume(Node const* const* _nodes)
 {
-    return MathLib::calcTetrahedronVolume(*_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3])
-         + MathLib::calcTetrahedronVolume(*_nodes[1], *_nodes[4], *_nodes[2], *_nodes[3])
-         + MathLib::calcTetrahedronVolume(*_nodes[2], *_nodes[4], *_nodes[5], *_nodes[3]);
+    return MathLib::calcTetrahedronVolume(
+               *_nodes[0], *_nodes[1], *_nodes[2], *_nodes[3]) +
+           MathLib::calcTetrahedronVolume(
+               *_nodes[1], *_nodes[4], *_nodes[2], *_nodes[3]) +
+           MathLib::calcTetrahedronVolume(
+               *_nodes[2], *_nodes[4], *_nodes[5], *_nodes[3]);
 }
 
 bool PrismRule6::isPntInElement(Node const* const* nodes,
@@ -87,7 +86,7 @@ bool PrismRule6::isPntInElement(Node const* const* nodes,
 
 unsigned PrismRule6::identifyFace(Node const* const* _nodes, Node* nodes[3])
 {
-    for (unsigned i=0; i<5; i++)
+    for (unsigned i = 0; i < 5; i++)
     {
         unsigned flag(0);
         for (unsigned j = 0; j < 4; j++)
@@ -114,7 +113,7 @@ ElementErrorCode PrismRule6::validate(const Element* e)
     ElementErrorCode error_code;
     error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
 
-    for (unsigned i=1; i<4; ++i)
+    for (unsigned i = 1; i < 4; ++i)
     {
         const auto* quad(dynamic_cast<const MeshLib::Quad*>(e->getFace(i)));
         if (quad)
@@ -131,4 +130,4 @@ ElementErrorCode PrismRule6::validate(const Element* e)
     return error_code;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

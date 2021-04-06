@@ -13,12 +13,9 @@
 #include "MathLib/Point3d.h"
 #include "MeshLib/Node.h"
 
-namespace MeshLib {
-
-const unsigned PointRule1::edge_nodes[1][1] =
+namespace MeshLib
 {
-    {0}
-};
+const unsigned PointRule1::edge_nodes[1][1] = {{0}};
 
 double PointRule1::computeVolume(Node const* const* /*_nodes*/)
 {
@@ -48,4 +45,4 @@ ElementErrorCode PointRule1::validate(const Element* e)
     return error_code;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

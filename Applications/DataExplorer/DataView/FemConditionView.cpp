@@ -11,10 +11,10 @@
 
 #include "FemConditionView.h"
 
+#include <QModelIndex>
+
 #include "CondItem.h"
 #include "FemConditionModel.h"
-
-#include <QModelIndex>
 
 FemConditionView::FemConditionView(QWidget* parent) : QTreeView(parent) {}
 

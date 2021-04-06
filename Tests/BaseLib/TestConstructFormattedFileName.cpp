@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <array>
 #include <cstring>
@@ -14,8 +16,6 @@
 #include <limits>
 #include <random>
 #include <string>
-
-#include <gtest/gtest.h>
 
 #include "BaseLib/FileTools.h"
 
@@ -33,9 +33,8 @@ TEST(BaseLib, constructFormattedFileName)
         ASSERT_EQ("test_0.20000", formatted_filename_time);
     }
     {
-        auto const formatted_filename =
-            BaseLib::constructFormattedFileName("test_{:iteration}", "mesh_name",
-                                                2, 0.2, 3);
+        auto const formatted_filename = BaseLib::constructFormattedFileName(
+            "test_{:iteration}", "mesh_name", 2, 0.2, 3);
         ASSERT_EQ("test_3", formatted_filename);
     }
     {

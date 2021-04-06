@@ -14,7 +14,8 @@
 
 #include "PolylineWithSegmentMarker.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 PolylineWithSegmentMarker::PolylineWithSegmentMarker(
     GeoLib::Polyline const& polyline)
     : GeoLib::Polyline(polyline), _marker(polyline.getNumberOfSegments(), false)
@@ -33,7 +34,8 @@ bool PolylineWithSegmentMarker::isSegmentMarked(std::size_t seg_num) const
 
 bool PolylineWithSegmentMarker::addPoint(std::size_t pnt_id)
 {
-    if (Polyline::addPoint(pnt_id)) {
+    if (Polyline::addPoint(pnt_id))
+    {
         _marker.push_back(false);
         return true;
     }
@@ -42,8 +44,9 @@ bool PolylineWithSegmentMarker::addPoint(std::size_t pnt_id)
 
 bool PolylineWithSegmentMarker::insertPoint(std::size_t pos, std::size_t pnt_id)
 {
-    if (Polyline::insertPoint(pos, pnt_id)) {
-        _marker.insert(_marker.begin()+pos, _marker[pos]);
+    if (Polyline::insertPoint(pos, pnt_id))
+    {
+        _marker.insert(_marker.begin() + pos, _marker[pos]);
         return true;
     }
     return false;

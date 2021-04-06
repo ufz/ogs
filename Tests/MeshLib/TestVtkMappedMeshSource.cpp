@@ -12,6 +12,7 @@
  *
  */
 
+#include <gtest/gtest.h>
 #include <vtkCellData.h>
 #include <vtkNew.h>
 #include <vtkPointData.h>
@@ -32,13 +33,12 @@
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "filesystem.h"
-#include "gtest/gtest.h"
 
 // Creates a mesh with different types of data (double, int, etc.) and point,
 // cell, or integration point properties.
 class InSituMesh : public ::testing::Test
 {
-    public:
+public:
     InSituMesh()
     {
         mesh = MeshLib::MeshGenerator::generateRegularHexMesh(
@@ -66,8 +66,9 @@ class InSituMesh : public ::testing::Test
             mesh->getProperties().createNewPropertyVector<double>(
                 field_prop_name, MeshLib::MeshItemType::IntegrationPoint);
         field_double_properties->resize(mesh->getNumberOfElements() * 2);
-        std::iota(
-            field_double_properties->begin(), field_double_properties->end(), 1);
+        std::iota(field_double_properties->begin(),
+                  field_double_properties->end(),
+                  1);
 
         std::string const point_int_prop_name("PointIntProperty");
         auto* const point_int_properties =
@@ -89,7 +90,8 @@ class InSituMesh : public ::testing::Test
             mesh->getProperties().createNewPropertyVector<int>(
                 field_int_prop_name, MeshLib::MeshItemType::IntegrationPoint);
         field_int_properties->resize(mesh->getNumberOfElements() * 2);
-        std::iota(field_int_properties->begin(), field_int_properties->end(), 1);
+        std::iota(
+            field_int_properties->begin(), field_int_properties->end(), 1);
 
         std::string const point_unsigned_prop_name("PointUnsignedProperty");
         auto point_unsigned_properties =
@@ -112,7 +114,8 @@ class InSituMesh : public ::testing::Test
         std::string const field_unsigned_prop_name("FieldUnsignedProperty");
         auto field_unsigned_properties =
             mesh->getProperties().createNewPropertyVector<unsigned>(
-                field_unsigned_prop_name, MeshLib::MeshItemType::IntegrationPoint);
+                field_unsigned_prop_name,
+                MeshLib::MeshItemType::IntegrationPoint);
         field_unsigned_properties->resize(mesh->getNumberOfElements() * 2);
         std::iota(field_unsigned_properties->begin(),
                   field_unsigned_properties->end(),
@@ -137,7 +140,8 @@ class InSituMesh : public ::testing::Test
 TEST_F(InSituMesh, Construction)
 {
     ASSERT_TRUE(mesh != nullptr);
-    ASSERT_EQ((subdivisions+1)*(subdivisions+1)*(subdivisions+1), mesh->getNumberOfNodes());
+    ASSERT_EQ((subdivisions + 1) * (subdivisions + 1) * (subdivisions + 1),
+              mesh->getNumberOfNodes());
 }
 
 // Writes the mesh into a vtk file, reads the file back and converts it into a
@@ -161,25 +165,30 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     vtkUnstructuredGrid* output = vtkSource->GetOutput();
 
     // Point and cell numbers
-    ASSERT_EQ((subdivisions+1)*(subdivisions+1)*(subdivisions+1), output->GetNumberOfPoints());
-    ASSERT_EQ(subdivisions*subdivisions*subdivisions, output->GetNumberOfCells());
+    ASSERT_EQ((subdivisions + 1) * (subdivisions + 1) * (subdivisions + 1),
+              output->GetNumberOfPoints());
+    ASSERT_EQ(subdivisions * subdivisions * subdivisions,
+              output->GetNumberOfCells());
 
     // Point data arrays
-    vtkDataArray* pointDoubleArray = output->GetPointData()->GetScalars("PointDoubleProperty");
+    vtkDataArray* pointDoubleArray =
+        output->GetPointData()->GetScalars("PointDoubleProperty");
     ASSERT_EQ(pointDoubleArray->GetSize(), mesh->getNumberOfNodes());
     ASSERT_EQ(pointDoubleArray->GetComponent(0, 0), 1.0);
     double* range = pointDoubleArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
     ASSERT_EQ(range[1], 1.0 + mesh->getNumberOfNodes() - 1.0);
 
-    vtkDataArray* pointIntArray = output->GetPointData()->GetScalars("PointIntProperty");
+    vtkDataArray* pointIntArray =
+        output->GetPointData()->GetScalars("PointIntProperty");
     ASSERT_EQ(pointIntArray->GetSize(), mesh->getNumberOfNodes());
     ASSERT_EQ(pointIntArray->GetComponent(0, 0), 1.0);
     range = pointIntArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
     ASSERT_EQ(range[1], 1 + mesh->getNumberOfNodes() - 1);
 
-    vtkDataArray* pointUnsignedArray = output->GetPointData()->GetScalars("PointUnsignedProperty");
+    vtkDataArray* pointUnsignedArray =
+        output->GetPointData()->GetScalars("PointUnsignedProperty");
     ASSERT_EQ(pointUnsignedArray->GetSize(), mesh->getNumberOfNodes());
     ASSERT_EQ(pointUnsignedArray->GetComponent(0, 0), 1.0);
     range = pointUnsignedArray->GetRange(0);
@@ -187,21 +196,24 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     ASSERT_EQ(range[1], 1 + mesh->getNumberOfNodes() - 1);
 
     // Cell data arrays
-    vtkDataArray* cellDoubleArray = output->GetCellData()->GetScalars("CellDoubleProperty");
+    vtkDataArray* cellDoubleArray =
+        output->GetCellData()->GetScalars("CellDoubleProperty");
     ASSERT_EQ(cellDoubleArray->GetSize(), mesh->getNumberOfElements());
     ASSERT_EQ(cellDoubleArray->GetComponent(0, 0), 1.0);
     range = cellDoubleArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
     ASSERT_EQ(range[1], 1.0 + mesh->getNumberOfElements() - 1.0);
 
-    vtkDataArray* cellIntArray = output->GetCellData()->GetScalars("CellIntProperty");
+    vtkDataArray* cellIntArray =
+        output->GetCellData()->GetScalars("CellIntProperty");
     ASSERT_EQ(cellIntArray->GetSize(), mesh->getNumberOfElements());
     ASSERT_EQ(cellIntArray->GetComponent(0, 0), 1.0);
     range = cellIntArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
     ASSERT_EQ(range[1], 1 + mesh->getNumberOfElements() - 1);
 
-    vtkDataArray* cellUnsignedArray = output->GetCellData()->GetScalars("CellUnsignedProperty");
+    vtkDataArray* cellUnsignedArray =
+        output->GetCellData()->GetScalars("CellUnsignedProperty");
     ASSERT_EQ(cellUnsignedArray->GetSize(), mesh->getNumberOfElements());
     ASSERT_EQ(cellUnsignedArray->GetComponent(0, 0), 1.0);
     range = cellUnsignedArray->GetRange(0);
@@ -215,7 +227,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     ASSERT_EQ(fieldDoubleArray->GetComponent(0, 0), 1.0);
     range = fieldDoubleArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
-    ASSERT_EQ(range[1],  mesh->getNumberOfElements() * 2);
+    ASSERT_EQ(range[1], mesh->getNumberOfElements() * 2);
 
     vtkDataArray* fieldIntArray = vtkDataArray::SafeDownCast(
         output->GetFieldData()->GetAbstractArray("FieldIntProperty"));
@@ -233,11 +245,12 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     ASSERT_EQ(range[0], 1.0);
     ASSERT_EQ(range[1], mesh->getNumberOfElements() * 2);
 
-    // -- Write VTK mesh to file (in all combinations of binary, appended and compressed)
+    // -- Write VTK mesh to file (in all combinations of binary, appended and
+    // compressed)
     // TODO: atm vtkXMLWriter::Ascii fails
-    for(int dataMode : { vtkXMLWriter::Appended, vtkXMLWriter::Binary })
+    for (int dataMode : {vtkXMLWriter::Appended, vtkXMLWriter::Binary})
     {
-        for(bool compressed : { true, false })
+        for (bool compressed : {true, false})
         {
             if (dataMode == vtkXMLWriter::Ascii && compressed)
             {
@@ -251,23 +264,37 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                 vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
             reader->SetFileName(test_data_file.c_str());
             reader->Update();
-            vtkUnstructuredGrid *vtkMesh = reader->GetOutput();
+            vtkUnstructuredGrid* vtkMesh = reader->GetOutput();
 
             // Both VTK meshes should be identical
-            ASSERT_EQ(vtkMesh->GetNumberOfPoints(), output->GetNumberOfPoints());
+            ASSERT_EQ(vtkMesh->GetNumberOfPoints(),
+                      output->GetNumberOfPoints());
             ASSERT_EQ(vtkMesh->GetNumberOfCells(), output->GetNumberOfCells());
-            ASSERT_EQ(vtkMesh->GetFieldData()->GetNumberOfArrays(), output->GetFieldData()->GetNumberOfArrays());
-            ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointDoubleProperty")->GetNumberOfTuples(),
-                pointDoubleArray->GetNumberOfTuples());
-            ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointIntProperty")->GetNumberOfTuples(),
-                pointIntArray->GetNumberOfTuples());
-            ASSERT_EQ(vtkMesh->GetPointData()->GetScalars("PointUnsignedProperty")->GetNumberOfTuples(),
-                pointUnsignedArray->GetNumberOfTuples());
-            ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellDoubleProperty")->GetNumberOfTuples(),
-                cellDoubleArray->GetNumberOfTuples());
-            ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellIntProperty")->GetNumberOfTuples(),
-                cellIntArray->GetNumberOfTuples());
-            ASSERT_EQ(vtkMesh->GetCellData()->GetScalars("CellUnsignedProperty")->GetNumberOfTuples(),
+            ASSERT_EQ(vtkMesh->GetFieldData()->GetNumberOfArrays(),
+                      output->GetFieldData()->GetNumberOfArrays());
+            ASSERT_EQ(vtkMesh->GetPointData()
+                          ->GetScalars("PointDoubleProperty")
+                          ->GetNumberOfTuples(),
+                      pointDoubleArray->GetNumberOfTuples());
+            ASSERT_EQ(vtkMesh->GetPointData()
+                          ->GetScalars("PointIntProperty")
+                          ->GetNumberOfTuples(),
+                      pointIntArray->GetNumberOfTuples());
+            ASSERT_EQ(vtkMesh->GetPointData()
+                          ->GetScalars("PointUnsignedProperty")
+                          ->GetNumberOfTuples(),
+                      pointUnsignedArray->GetNumberOfTuples());
+            ASSERT_EQ(vtkMesh->GetCellData()
+                          ->GetScalars("CellDoubleProperty")
+                          ->GetNumberOfTuples(),
+                      cellDoubleArray->GetNumberOfTuples());
+            ASSERT_EQ(vtkMesh->GetCellData()
+                          ->GetScalars("CellIntProperty")
+                          ->GetNumberOfTuples(),
+                      cellIntArray->GetNumberOfTuples());
+            ASSERT_EQ(vtkMesh->GetCellData()
+                          ->GetScalars("CellUnsignedProperty")
+                          ->GetNumberOfTuples(),
                       cellUnsignedArray->GetNumberOfTuples());
 
             auto get_field_data =
@@ -287,35 +314,42 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                 fieldUnsignedArray->GetNumberOfTuples());
 
             // Both OGS meshes should be identical
-            auto newMesh = std::unique_ptr<MeshLib::Mesh>{MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh)};
+            auto newMesh = std::unique_ptr<MeshLib::Mesh>{
+                MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkMesh)};
             ASSERT_EQ(mesh->getNumberOfNodes(), newMesh->getNumberOfNodes());
-            ASSERT_EQ(mesh->getNumberOfElements(), newMesh->getNumberOfElements());
+            ASSERT_EQ(mesh->getNumberOfElements(),
+                      newMesh->getNumberOfElements());
 
             // Both properties should be identical
             auto meshProperties = mesh->getProperties();
             auto newMeshProperties = newMesh->getProperties();
-            ASSERT_EQ(newMeshProperties.hasPropertyVector("PointDoubleProperty"),
+            ASSERT_EQ(
+                newMeshProperties.hasPropertyVector("PointDoubleProperty"),
                 meshProperties.hasPropertyVector("PointDoubleProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("PointIntProperty"),
                       meshProperties.hasPropertyVector("PointIntProperty"));
-            ASSERT_EQ(newMeshProperties.hasPropertyVector("PointUnsignedProperty"),
+            ASSERT_EQ(
+                newMeshProperties.hasPropertyVector("PointUnsignedProperty"),
                 meshProperties.hasPropertyVector("PointUnsignedProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("CellDoubleProperty"),
-                meshProperties.hasPropertyVector("CellDoubleProperty"));
+                      meshProperties.hasPropertyVector("CellDoubleProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("CellIntProperty"),
-                meshProperties.hasPropertyVector("CellIntProperty"));
-            ASSERT_EQ(newMeshProperties.hasPropertyVector("CellUnsignedProperty"),
+                      meshProperties.hasPropertyVector("CellIntProperty"));
+            ASSERT_EQ(
+                newMeshProperties.hasPropertyVector("CellUnsignedProperty"),
                 meshProperties.hasPropertyVector("CellUnsignedProperty"));
 
-            ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldDoubleProperty"),
+            ASSERT_EQ(
+                newMeshProperties.hasPropertyVector("FieldDoubleProperty"),
                 meshProperties.hasPropertyVector("FieldDoubleProperty"));
             ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldIntProperty"),
-                meshProperties.hasPropertyVector("FieldIntProperty"));
-            ASSERT_EQ(newMeshProperties.hasPropertyVector("FieldUnsignedProperty"),
+                      meshProperties.hasPropertyVector("FieldIntProperty"));
+            ASSERT_EQ(
+                newMeshProperties.hasPropertyVector("FieldUnsignedProperty"),
                 meshProperties.hasPropertyVector("FieldUnsignedProperty"));
 
             ASSERT_EQ(newMeshProperties.hasPropertyVector("MaterialIDs"),
-                meshProperties.hasPropertyVector("MaterialIDs"));
+                      meshProperties.hasPropertyVector("MaterialIDs"));
 
             // Check some properties on equality
             auto const* const doubleProps =
@@ -348,7 +382,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
                 ASSERT_EQ((*newUnsignedIds)[i], (*unsignedProps)[i]);
             }
 
-            {   // Field data
+            {  // Field data
                 auto p =
                     meshProperties.getPropertyVector<int>("FieldIntProperty");
                 auto new_p = newMeshProperties.getPropertyVector<int>(

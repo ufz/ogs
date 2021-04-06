@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include "MathLib/TemplateWeightedPoint.h"
 

@@ -17,7 +17,7 @@
 
 #include <QColorDialog>
 
-ColorPickerPushButton::ColorPickerPushButton( QWidget* parent /*= 0*/ )
+ColorPickerPushButton::ColorPickerPushButton(QWidget* parent /*= 0*/)
     : QPushButton(parent)
 {
     setAutoFillBackground(true);
@@ -38,7 +38,7 @@ void ColorPickerPushButton::mouseReleaseEvent(QMouseEvent* e)
     emit colorPicked(_color);
 }
 
-QString ColorPickerPushButton::colorToCss( QColor color )
+QString ColorPickerPushButton::colorToCss(QColor color)
 {
     QString colorStr = "rgb";
     colorStr.append(colorToString(color));
@@ -46,7 +46,7 @@ QString ColorPickerPushButton::colorToCss( QColor color )
     return colorStr;
 }
 
-QString ColorPickerPushButton::colorToString( QColor color )
+QString ColorPickerPushButton::colorToString(QColor color)
 {
     QString colorStr = "(";
     colorStr.append(QString::number(color.red()));
@@ -59,7 +59,7 @@ QString ColorPickerPushButton::colorToString( QColor color )
     return colorStr;
 }
 
-void ColorPickerPushButton::setColor( QColor color )
+void ColorPickerPushButton::setColor(QColor color)
 {
     _color = color;
 
@@ -84,7 +84,7 @@ void ColorPickerPushButton::setColor( QColor color )
     this->setText(colorToString(_color));
 }
 
-void ColorPickerPushButton::setColor( double* color )
+void ColorPickerPushButton::setColor(double* color)
 {
     setColor(QColor::fromRgbF(color[0], color[1], color[2]));
 }

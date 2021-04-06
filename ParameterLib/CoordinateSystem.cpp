@@ -17,10 +17,10 @@
 namespace ParameterLib
 {
 static double const tolerance = 1.e-15;
-static const char*const error_info =
-    "The determinant of the coordinate system transformation matrix is "
-    "'{:g}', which is not sufficiently close to unity with the tolerance of "
-    "'{:g}'. Please adjust the accuracy of the local system bases";
+static const char* const error_info =
+    "The determinant of the coordinate system transformation matrix is '{:g}', "
+    "which is not sufficiently close to unity with the tolerance of '{:g}'. "
+    "Please adjust the accuracy of the local system bases";
 
 CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
                                    Parameter<double> const& e1)
@@ -30,8 +30,7 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
     {
         OGS_FATAL(
             "The parameter types for the basis must be equal but they are "
-            "'{:s}' "
-            "and '{:s}'.",
+            "'{:s}' and '{:s}'.",
             typeid(_base[0]).name(),
             typeid(_base[1]).name());
     }

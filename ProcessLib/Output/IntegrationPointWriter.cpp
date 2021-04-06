@@ -8,11 +8,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "IntegrationPointWriter.h"
+
 #include <nlohmann/json.hpp>
 
 #include "MeshLib/Mesh.h"
-
-#include "IntegrationPointWriter.h"
 
 using nlohmann::json;
 
@@ -112,9 +112,9 @@ IntegrationPointMetaData getIntegrationPointMetaData(MeshLib::Mesh const& mesh,
             "IntegrationPointMetaData"))
     {
         OGS_FATAL(
-            "Integration point data '{:s}' is present in the vtk field "
-            "data but the required 'IntegrationPointMetaData' array "
-            "is not available.",
+            "Integration point data '{:s}' is present in the vtk field data "
+            "but the required 'IntegrationPointMetaData' array is not "
+            "available.",
             name);
     }
     auto const& mesh_property_ip_meta_data =

@@ -20,21 +20,24 @@
 #include <fstream>
 
 #include "BaseLib/Logging.h"
-
 #include "BaseLib/StringTools.h"
-#include "GeoLib/StationBorehole.h"
 #include "GeoLib/GEOObjects.h"
+#include "GeoLib/StationBorehole.h"
 
 namespace FileIO
 {
-PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
-                                 std::list<std::string> &well_path_fnames,
-                                 std::string &unique_model_name, GeoLib::GEOObjects* geo_obj) :
-    _unique_name(unique_model_name), pnt_vec(new std::vector<GeoLib::Point*>),
-    well_vec(new std::vector<GeoLib::Point*>), ply_vec(new std::vector<GeoLib::Polyline*>)
+PetrelInterface::PetrelInterface(std::list<std::string>& sfc_fnames,
+                                 std::list<std::string>& well_path_fnames,
+                                 std::string& unique_model_name,
+                                 GeoLib::GEOObjects* geo_obj)
+    : _unique_name(unique_model_name),
+      pnt_vec(new std::vector<GeoLib::Point*>),
+      well_vec(new std::vector<GeoLib::Point*>),
+      ply_vec(new std::vector<GeoLib::Polyline*>)
 {
-    for (std::list<std::string>::const_iterator it(sfc_fnames.begin()); it
-         != sfc_fnames.end(); ++it)
+    for (std::list<std::string>::const_iterator it(sfc_fnames.begin());
+         it != sfc_fnames.end();
+         ++it)
     {
         INFO("PetrelInterface::PetrelInterface(): open surface file.");
         std::ifstream in((*it).c_str());
@@ -53,8 +56,9 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
         }
     }
 
-    for (std::list<std::string>::const_iterator it(well_path_fnames.begin()); it
-         != well_path_fnames.end(); ++it)
+    for (std::list<std::string>::const_iterator it(well_path_fnames.begin());
+         it != well_path_fnames.end();
+         ++it)
     {
         INFO("PetrelInterface::PetrelInterface(): open well path file.");
         std::ifstream in((*it).c_str());
@@ -90,7 +94,7 @@ PetrelInterface::PetrelInterface(std::list<std::string> &sfc_fnames,
     }
 }
 
-void PetrelInterface::readPetrelSurface(std::istream &in)
+void PetrelInterface::readPetrelSurface(std::istream& in)
 {
     char buffer[MAX_COLS_PER_ROW];
     in.getline(buffer, MAX_COLS_PER_ROW);
@@ -138,7 +142,7 @@ void PetrelInterface::readPetrelSurface(std::istream &in)
     }
 }
 
-void PetrelInterface::readPetrelWellTrace(std::istream &in)
+void PetrelInterface::readPetrelWellTrace(std::istream& in)
 {
     char buffer[MAX_COLS_PER_ROW];
     in.getline(buffer, MAX_COLS_PER_ROW);
@@ -152,7 +156,8 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
         line = buffer;
         std::list<std::string> str_list(BaseLib::splitString(line, ' '));
         std::list<std::string>::const_iterator it(str_list.begin());
-        while (it != str_list.end()) {
+        while (it != str_list.end())
+        {
             INFO("PetrelInterface::readPetrelWellTrace(): well name: {:s}.",
                  it->c_str());
             ++it;
@@ -163,7 +168,8 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
         line = buffer;
         str_list = BaseLib::splitString(line, ' ');
         it = str_list.begin();
-        while (it != str_list.end()) {
+        while (it != str_list.end())
+        {
             INFO(
                 "PetrelInterface::readPetrelWellTrace(): well head x coord: "
                 "{:s}.",
@@ -180,7 +186,8 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
         line = buffer;
         str_list = BaseLib::splitString(line, ' ');
         it = str_list.begin();
-        while (it != str_list.end()) {
+        while (it != str_list.end())
+        {
             INFO(
                 "PetrelInterface::readPetrelWellTrace(): well head y coord: "
                 "{:s}.",
@@ -196,7 +203,8 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
         line = buffer;
         str_list = BaseLib::splitString(line, ' ');
         it = str_list.begin();
-        while (it != str_list.end()) {
+        while (it != str_list.end())
+        {
             INFO("PetrelInterface::readPetrelWellTrace(): well kb entry: {:s}.",
                  it->c_str());
             ++it;
@@ -209,17 +217,18 @@ void PetrelInterface::readPetrelWellTrace(std::istream &in)
              well_head_x,
              well_head_y,
              well_kb);
-        well_vec->push_back(new GeoLib::StationBorehole(well_head_x, well_head_y, well_kb));
+        well_vec->push_back(
+            new GeoLib::StationBorehole(well_head_x, well_head_y, well_kb));
 
         // read well type
         in.getline(buffer, MAX_COLS_PER_ROW);
-//        std::string type(*((str_list.end())--));
+        //        std::string type(*((str_list.end())--));
 
         readPetrelWellTraceData(in);
     }
 }
 
-void PetrelInterface::readPetrelWellTraceData(std::istream &in)
+void PetrelInterface::readPetrelWellTraceData(std::istream& in)
 {
     char buffer[MAX_COLS_PER_ROW];
     in.getline(buffer, MAX_COLS_PER_ROW);
@@ -237,7 +246,8 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
     // read column information
     std::list<std::string> str_list = BaseLib::splitString(line, ' ');
     auto it = str_list.begin();
-    while (it != str_list.end()) {
+    while (it != str_list.end())
+    {
         INFO(
             "PetrelInterface::readPetrelWellTraceData(): column information: "
             "{:s}.",
@@ -266,12 +276,13 @@ void PetrelInterface::readPetrelWellTraceData(std::istream &in)
             stream >> md;
             stream >> x >> y >> z;
             //            pnt_vec->push_back (new GeoLib::Point (x,y,z));
-            static_cast<GeoLib::StationBorehole*> ((*well_vec)[well_vec->size() - 1])->addSoilLayer(
-                            x, y, z, "unknown");
+            static_cast<GeoLib::StationBorehole*>(
+                (*well_vec)[well_vec->size() - 1])
+                ->addSoilLayer(x, y, z, "unknown");
             stream >> tvd >> dx >> dy >> azim >> incl >> dls;
         }
         in.getline(buffer, MAX_COLS_PER_ROW);
         line = buffer;
     }
 }
-} // end namespace FileIO
+}  // end namespace FileIO

@@ -14,22 +14,23 @@
 
 #include "StationTreeModel.h"
 
+#include <QDebug>
 
 #include "BaseItem.h"
 #include "OGSError.h"
 #include "Station.h"
 
-#include <QDebug>
-
 /**
  * Constructor.
  */
-StationTreeModel::StationTreeModel( QObject* parent )
-    : TreeModel(parent)
+StationTreeModel::StationTreeModel(QObject* parent) : TreeModel(parent)
 {
     QList<QVariant> rootData;
     delete _rootItem;
-    rootData << "Station Name" << "x" << "y" << "z";
+    rootData << "Station Name"
+             << "x"
+             << "y"
+             << "z";
     _rootItem = new ModelTreeItem(rootData, nullptr, nullptr);
 }
 
@@ -42,8 +43,8 @@ StationTreeModel::~StationTreeModel() = default;
  * \param parent The parent of the item
  * \return The model index of the item
  */
-QModelIndex StationTreeModel::index( int row, int column,
-                                     const QModelIndex &parent /*= QModelIndex()*/ ) const
+QModelIndex StationTreeModel::index(
+    int row, int column, const QModelIndex& parent /*= QModelIndex()*/) const
 {
     if (!hasIndex(row, column, parent))
     {
@@ -78,13 +79,13 @@ QModelIndex StationTreeModel::index( int row, int column,
 }
 
 /**
- * Returns the Station-Object of the ModelTreeItem with the given index and the name of the list this station belongs to.
- * \param index Index of the requested item
- * \param listName Here, the method will put the name of the list this station belongs to.
- * \return The station object associated with the tree item
+ * Returns the Station-Object of the ModelTreeItem with the given index and the
+ * name of the list this station belongs to. \param index Index of the requested
+ * item \param listName Here, the method will put the name of the list this
+ * station belongs to. \return The station object associated with the tree item
  */
-GeoLib::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
-                                                     QString &listName ) const
+GeoLib::Station* StationTreeModel::stationFromIndex(const QModelIndex& index,
+                                                    QString& listName) const
 {
     if (index.isValid())
     {
@@ -97,7 +98,7 @@ GeoLib::Station* StationTreeModel::stationFromIndex( const QModelIndex& index,
     return nullptr;
 }
 
-vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string &name) const
+vtkPolyDataAlgorithm* StationTreeModel::vtkSource(const std::string& name) const
 {
     std::size_t nLists = _lists.size();
     for (std::size_t i = 0; i < nLists; i++)
@@ -124,26 +125,31 @@ void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
     {
         return;
     }
-    TreeItem *const item = (*stn_list)->child(id);
+    TreeItem* const item = (*stn_list)->child(id);
     item->setData(0, QString::fromStdString(item_name));
 }
 
 /**
  * Inserts a subtree under _rootItem.
- * \param listName Name of the new subtree. If no name is given a default name is assigned.
- * \param stations The list with stations to be added as children of that subtree
+ * \param listName Name of the new subtree. If no name is given a default name
+ * is assigned. \param stations The list with stations to be added as children
+ * of that subtree
  */
-void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib::Point*>* stations)
+void StationTreeModel::addStationList(
+    QString listName, const std::vector<GeoLib::Point*>* stations)
 {
     beginResetModel();
 
     QList<QVariant> grpName;
-    if (listName.compare("") == 0) // if no name is given a default name is assigned
+    if (listName.compare("") ==
+        0)  // if no name is given a default name is assigned
     {
         listName = "List";
         listName.append(QString::number(rowCount() + 1));
     }
-    grpName << listName << "" << "" << "";
+    grpName << listName << ""
+            << ""
+            << "";
     auto* group =
         new ModelTreeItem(grpName, _rootItem, new BaseItem(listName, stations));
     _lists.push_back(group);
@@ -153,17 +159,19 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
     for (int i = 0; i < vectorSize; i++)
     {
         QList<QVariant> stn;
-        stn << QString::fromStdString(static_cast<GeoLib::Station*>((*stations)[i])->getName())
-            << QString::number((*(*stations)[i])[0],'f')
-            << QString::number((*(*stations)[i])[1],'f')
-            << QString::number((*(*stations)[i])[2],'f');
+        stn << QString::fromStdString(
+                   static_cast<GeoLib::Station*>((*stations)[i])->getName())
+            << QString::number((*(*stations)[i])[0], 'f')
+            << QString::number((*(*stations)[i])[1], 'f')
+            << QString::number((*(*stations)[i])[2], 'f');
 
         auto* child = new ModelTreeItem(stn, group);
         child->setStation(static_cast<GeoLib::Station*>((*stations)[i]));
         group->appendChild(child);
     }
 
-    qDebug() << "List" << listName << "loaded, " << stations->size() << "items added.";
+    qDebug() << "List" << listName << "loaded, " << stations->size()
+             << "items added.";
 
     endResetModel();
 }
@@ -173,7 +181,7 @@ void StationTreeModel::addStationList(QString listName, const std::vector<GeoLib
  */
 void StationTreeModel::removeStationList(QModelIndex index)
 {
-    if (index.isValid()) //
+    if (index.isValid())  //
     {
         auto* item = static_cast<ModelTreeItem*>(getItem(index));
 
@@ -194,7 +202,7 @@ void StationTreeModel::removeStationList(QModelIndex index)
 /**
  * Removes the TreeItem with the given name including all its children
  */
-void StationTreeModel::removeStationList(const std::string &name)
+void StationTreeModel::removeStationList(const std::string& name)
 {
     for (auto& list : _lists)
     {

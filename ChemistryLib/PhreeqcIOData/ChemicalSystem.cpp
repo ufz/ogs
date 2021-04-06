@@ -9,8 +9,8 @@
  */
 
 #include "ChemicalSystem.h"
-#include "AqueousSolution.h"
 
+#include "AqueousSolution.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 

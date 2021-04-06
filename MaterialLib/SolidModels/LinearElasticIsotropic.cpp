@@ -63,5 +63,5 @@ LinearElasticIsotropic<DisplacementDim>::getElasticTensor(
 template class LinearElasticIsotropic<2>;
 template class LinearElasticIsotropic<3>;
 
-}   // namespace Solids
-}   // namespace MaterialLib
+}  // namespace Solids
+}  // namespace MaterialLib

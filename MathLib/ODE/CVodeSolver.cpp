@@ -9,17 +9,17 @@
  */
 #include "CVodeSolver.h"
 
-#include <cassert>
-#include "BaseLib/Logging.h"
-
 #include <cvode/cvode.h>             /* prototypes for CVODE fcts., consts. */
-#include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
 #include <cvode/cvode_dense.h>       /* prototype for CVDense */
+#include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
 #include <sundials/sundials_dense.h> /* definitions DlsMat DENSE_ELEM */
 #include <sundials/sundials_types.h> /* definition of type realtype */
 
+#include <cassert>
+
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 
 //! \addtogroup ExternalODESolverInterface
 //! @{
@@ -132,8 +132,9 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
                                  const unsigned num_equations)
 {
     if (auto const param =
-        //! \ogs_file_param{ode_solver__CVODE__linear_multistep_method}
-        config.getConfigParameterOptional<std::string>("linear_multistep_method"))
+            //! \ogs_file_param{ode_solver__CVODE__linear_multistep_method}
+        config.getConfigParameterOptional<std::string>(
+            "linear_multistep_method"))
     {
         DBUG("setting linear multistep method (config: {:s})", param->c_str());
 
@@ -152,8 +153,9 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
     }
 
     if (auto const param =
-        //! \ogs_file_param{ode_solver__CVODE__nonlinear_solver_iteration}
-        config.getConfigParameterOptional<std::string>("nonlinear_solver_iteration"))
+            //! \ogs_file_param{ode_solver__CVODE__nonlinear_solver_iteration}
+        config.getConfigParameterOptional<std::string>(
+            "nonlinear_solver_iteration"))
     {
         DBUG("setting nonlinear solver iteration (config: {:s})",
              param->c_str());
@@ -186,8 +188,7 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
     }
 
     auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
-                        void* function_handles) -> int
-    {
+                        void* function_handles) -> int {
         bool successful =
             static_cast<detail::FunctionHandles*>(function_handles)
                 ->call(t, NV_DATA_S(y), NV_DATA_S(ydot));
@@ -257,8 +258,7 @@ void CVodeSolverImpl::preSolve()
                              const N_Vector ydot, const DlsMat jac,
                              void* function_handles, N_Vector /*tmp1*/,
                              N_Vector /*tmp2*/, N_Vector /*tmp3*/
-                             ) -> int
-        {
+                             ) -> int {
             (void)N;  // prevent warnings during non-debug build
             auto* fh = static_cast<detail::FunctionHandles*>(function_handles);
             assert(N == fh->getNumberOfEquations());

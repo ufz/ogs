@@ -7,12 +7,12 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <algorithm>
 #include <numeric>
 #include <random>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include "BaseLib/Algorithm.h"
 

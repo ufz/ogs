@@ -7,17 +7,16 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <map>
-#include <memory>
-#include <vector>
-
 #include <tclap/CmdLine.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <map>
+#include <memory>
+#include <vector>
 
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/FileTools.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"

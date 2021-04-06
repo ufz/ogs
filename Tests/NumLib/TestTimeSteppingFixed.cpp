@@ -13,10 +13,8 @@
 
 #include <vector>
 
-
 #include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
 #include "NumLib/TimeStepping/TimeStep.h"
-
 #include "Tests/TestTools.h"
 #include "TimeSteppingTestingTools.h"
 

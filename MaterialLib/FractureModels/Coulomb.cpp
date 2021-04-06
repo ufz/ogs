@@ -22,13 +22,12 @@ namespace Fracture
 {
 namespace Coulomb
 {
-
 struct MaterialPropertyValues
 {
     double Kn = 0.0;
     double Ks = 0.0;
-    double phi = 0.0; // friction angle
-    double psi = 0.0; // dilation angle
+    double phi = 0.0;  // friction angle
+    double psi = 0.0;  // dilation angle
     double c = 0.0;
 
     template <typename MaterialProperties>
@@ -36,13 +35,13 @@ struct MaterialPropertyValues
                            double const t,
                            ParameterLib::SpatialPosition const& x)
     {
-        Kn = mp.normal_stiffness(t,x)[0];
-        Ks = mp.shear_stiffness(t,x)[0];
+        Kn = mp.normal_stiffness(t, x)[0];
+        Ks = mp.shear_stiffness(t, x)[0];
         auto constexpr degree =
             boost::math::constants::degree<double>();  // pi/180
         phi = mp.friction_angle(t, x)[0] * degree;
         psi = mp.dilatancy_angle(t, x)[0] * degree;
-        c = mp.cohesion(t,x)[0];
+        c = mp.cohesion(t, x)[0];
     }
 };
 

@@ -10,9 +10,9 @@
 
 #include "VtkOGSEnum.h"
 
-#include "BaseLib/Error.h"
-
 #include <vtkCellType.h>
+
+#include "BaseLib/Error.h"
 
 int OGSToVtkCellType(MeshLib::CellType ogs)
 {
@@ -63,5 +63,3 @@ int OGSToVtkCellType(MeshLib::CellType ogs)
                 ogs);
     }
 }
-
-

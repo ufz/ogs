@@ -15,11 +15,9 @@
 #include <Eigen/Eigen>
 
 #include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
-
 #include "Tests/TestTools.h"
 
 using namespace NumLib;
-
 
 TEST(NumLib, FemShapeMatricesWithEigen)
 {
@@ -36,15 +34,14 @@ TEST(NumLib, FemShapeMatricesWithEigen)
     using ShapeMatricesType =
         ShapeMatrices<NodalVector, DimNodalMatrix, DimMatrix, DimNodalMatrix>;
 
-    auto setShapeDataToOnes = [](ShapeMatricesType &shape)
-            {
-                shape.N.setOnes();
-                shape.dNdr.setOnes();
-                shape.dNdx.setOnes();
-                shape.J.setOnes();
-                shape.invJ.setOnes();
-                shape.detJ = 1.0;
-            };
+    auto setShapeDataToOnes = [](ShapeMatricesType& shape) {
+        shape.N.setOnes();
+        shape.dNdr.setOnes();
+        shape.dNdx.setOnes();
+        shape.J.setOnes();
+        shape.invJ.setOnes();
+        shape.detJ = 1.0;
+    };
 
     ShapeMatricesType shape(dim, dim, e_nnodes);
 

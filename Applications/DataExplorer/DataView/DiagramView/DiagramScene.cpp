@@ -13,8 +13,9 @@
  */
 
 #include "DiagramScene.h"
-#include <limits>
+
 #include <cmath>
+#include <limits>
 
 // default size of a new window
 const float DEFAULTX = 500.0;
@@ -26,7 +27,7 @@ const float DEFAULTY = 300.0;
  */
 DiagramScene::DiagramScene(QObject* parent) : QGraphicsScene(parent)
 {
-    _bounds.setRect(0,0,1,1);
+    _bounds.setRect(0, 0, 1, 1);
     initialize();
 }
 
@@ -35,7 +36,8 @@ DiagramScene::DiagramScene(QObject* parent) : QGraphicsScene(parent)
  * \param list includes all necessary information of the graph to display.
  * \param parent The parent QObject.
  */
-DiagramScene::DiagramScene(DiagramList* list, QObject* parent) : QGraphicsScene(parent)
+DiagramScene::DiagramScene(DiagramList* list, QObject* parent)
+    : QGraphicsScene(parent)
 {
     setDiagramBoundaries(list);
     initialize();
@@ -77,7 +79,8 @@ DiagramScene::~DiagramScene()
     _lists.clear();
 }
 
-/// Adds an arrow object to the diagram which might be used as a coordinate axis, etc.
+/// Adds an arrow object to the diagram which might be used as a coordinate
+/// axis, etc.
 QArrow* DiagramScene::addArrow(qreal length, qreal angle, QPen& pen)
 {
     auto* arrow = new QArrow(length, angle, 8, 5, pen);
@@ -86,12 +89,12 @@ QArrow* DiagramScene::addArrow(qreal length, qreal angle, QPen& pen)
 }
 
 /// Adds a caption for a graph beneath the actual diagram.
-void DiagramScene::addCaption(const QString &name, QPen &pen)
+void DiagramScene::addCaption(const QString& name, QPen& pen)
 {
     auto* caption = new QGraphicsItemGroup(nullptr);
-    QGraphicsLineItem* l = addLine(0,0,100,0,pen);
+    QGraphicsLineItem* l = addLine(0, 0, 100, 0, pen);
     QGraphicsTextItem* t = addText(name);
-    l->setPos(0,0);
+    l->setPos(0, 0);
     t->setPos(110, -(t->boundingRect()).height() / 2);
     caption->addToGroup(l);
     caption->addToGroup(t);
@@ -124,7 +127,8 @@ void DiagramScene::addGraph(DiagramList* list)
 }
 
 /// Adds a grid-object to the scene
-QGraphicsGrid* DiagramScene::addGrid(const QRectF &rect, int xTicks, int yTicks, const QPen &pen)
+QGraphicsGrid* DiagramScene::addGrid(const QRectF& rect, int xTicks, int yTicks,
+                                     const QPen& pen)
 {
     QGraphicsGrid* g = new QGraphicsGrid(rect, xTicks, yTicks, true, pen);
     addItem(g);
@@ -132,8 +136,8 @@ QGraphicsGrid* DiagramScene::addGrid(const QRectF &rect, int xTicks, int yTicks,
 }
 
 /// Adds a non-scalable text object to the scene
-QNonScalableGraphicsTextItem* DiagramScene::addNonScalableText(const QString &text,
-                                                               const QFont &font)
+QNonScalableGraphicsTextItem* DiagramScene::addNonScalableText(
+    const QString& text, const QFont& font)
 {
     auto* item = new QNonScalableGraphicsTextItem(text);
     item->setFont(font);
@@ -141,7 +145,8 @@ QNonScalableGraphicsTextItem* DiagramScene::addNonScalableText(const QString &te
     return item;
 }
 
-/// Resizes a given axis to "nice" dimensions and calculates an adequate number of ticks to be placed on it
+/// Resizes a given axis to "nice" dimensions and calculates an adequate number
+/// of ticks to be placed on it
 void DiagramScene::adjustAxis(qreal& min, qreal& max, int& numberOfTicks)
 {
     const int MinTicks = 4;
@@ -164,10 +169,11 @@ void DiagramScene::adjustAxis(qreal& min, qreal& max, int& numberOfTicks)
     max = ceil(max / step) * step;
 }
 
-///Calculates scaling factors to set coordinate system and graphs to default window size
+/// Calculates scaling factors to set coordinate system and graphs to default
+/// window size
 void DiagramScene::adjustScaling()
 {
-    if ( (_unscaledBounds.width() > 0) && (_unscaledBounds.height() > 0))
+    if ((_unscaledBounds.width() > 0) && (_unscaledBounds.height() > 0))
     {
         _scaleX = DEFAULTX / static_cast<float>(_unscaledBounds.width());
         _scaleY = DEFAULTY / static_cast<float>(_unscaledBounds.height());
@@ -205,7 +211,8 @@ void DiagramScene::clearGrid()
     }
 }
 
-/// Adjusts the underlying grid based on the graphs that are displayed in the diagram
+/// Adjusts the underlying grid based on the graphs that are displayed in the
+/// diagram
 void DiagramScene::constructGrid()
 {
     // be very careful with scaling parameters here!
@@ -220,11 +227,10 @@ void DiagramScene::constructGrid()
     adjustAxis(yMin, yMax, numYTicks);
 
     // adjust boundaries of coordinate system according to scaling
-    _bounds.setRect(    xMin * _scaleX,
-                        yMin * _scaleY,
-                        (xMax - xMin) * _scaleX,
-                        (yMax - yMin) * _scaleY
-                        );
+    _bounds.setRect(xMin * _scaleX,
+                    yMin * _scaleY,
+                    (xMax - xMin) * _scaleX,
+                    (yMax - yMin) * _scaleY);
 
     QPen pen(Qt::black, 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     _grid = addGrid(_bounds, numXTicks, numYTicks, pen);
@@ -272,7 +278,8 @@ void DiagramScene::drawGraph(DiagramList* list)
 
     if (list->getPath(path, _scaleX, _scaleY))
     {
-        QPen pen(list->getColor(), 2, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
+        QPen pen(list->getColor(), 2, Qt::SolidLine, Qt::SquareCap,
+                 Qt::RoundJoin);
         pen.setCosmetic(true);
         _graphs.push_back(addPath(path, pen));
         addCaption(list->getName(), pen);
@@ -284,10 +291,10 @@ void DiagramScene::drawGraph(DiagramList* list)
          * translated back to its original position
          */
         int verticalShift =
-                static_cast<int>(2 *
-                                 (list->minYValue() *
-                                  _scaleY) + (_graphs[last]->boundingRect()).height());
-        _graphs[last]->setTransform(QTransform(QMatrix(1,0,0,-1,0,verticalShift)));
+            static_cast<int>(2 * (list->minYValue() * _scaleY) +
+                             (_graphs[last]->boundingRect()).height());
+        _graphs[last]->setTransform(
+            QTransform(QMatrix(1, 0, 0, -1, 0, verticalShift)));
     }
 }
 
@@ -316,7 +323,7 @@ void DiagramScene::initialize()
     QPen pen(Qt::black, 1, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
     pen.setCosmetic(true);
 
-    setXAxis(addArrow(_bounds.width(),  0, pen));
+    setXAxis(addArrow(_bounds.width(), 0, pen));
     setYAxis(addArrow(_bounds.height(), -90, pen));
     _xLabel = addNonScalableText(" ");
     _yLabel = addNonScalableText(" ");
@@ -328,8 +335,8 @@ void DiagramScene::initialize()
     update();
 }
 
-/// Updates the (unscaled) boundaries of the visible coordinate system when a new
-/// list is added (boundaries are rescaled in the constructGrid-method
+/// Updates the (unscaled) boundaries of the visible coordinate system when a
+/// new list is added (boundaries are rescaled in the constructGrid-method
 void DiagramScene::setDiagramBoundaries(DiagramList* list)
 {
     if (!_lists.isEmpty())
@@ -372,16 +379,18 @@ void DiagramScene::setDiagramBoundaries(DiagramList* list)
  */
 void DiagramScene::update()
 {
-    _xAxis->setPos(_bounds.left(),getXAxisOffset());
-    _yAxis->setPos(getYAxisOffset(),_bounds.bottom());
+    _xAxis->setPos(_bounds.left(), getXAxisOffset());
+    _yAxis->setPos(getYAxisOffset(), _bounds.bottom());
     _xAxis->setLength(_bounds.width());
     _yAxis->setLength(_bounds.height());
 
-    _xLabel->setPos( _bounds.left() + _bounds.width() / 2, _bounds.bottom() + 1.5 * MARGIN );
-    _yLabel->setPos( _bounds.left() - 1.5 * MARGIN, _bounds.top() + _bounds.height() / 2 );
+    _xLabel->setPos(_bounds.left() + _bounds.width() / 2,
+                    _bounds.bottom() + 1.5 * MARGIN);
+    _yLabel->setPos(_bounds.left() - 1.5 * MARGIN,
+                    _bounds.top() + _bounds.height() / 2);
 
-    _xUnit->setPos( _bounds.right(), _bounds.bottom() + 1.2 * MARGIN);
-    _yUnit->setPos( _bounds.left(), _bounds.top() - 0.5 * MARGIN);
+    _xUnit->setPos(_bounds.right(), _bounds.bottom() + 1.2 * MARGIN);
+    _yUnit->setPos(_bounds.left(), _bounds.top() - 0.5 * MARGIN);
 
     /* update graphs and their captions */
     QRectF rect;
@@ -393,6 +402,6 @@ void DiagramScene::update()
         _graphs[i]->setPos(0, offset);
 
         rect = itemsBoundingRect();
-        _graphCaptions[i]->setPos(_bounds.left(),rect.bottom() + 10);
+        _graphCaptions[i]->setPos(_bounds.left(), rect.bottom() + 10);
     }
 }

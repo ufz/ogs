@@ -13,14 +13,14 @@
  */
 #include "VtkMappedMeshSource.h"
 
-#include <vector>
-
 #include <vtkCellType.h>
 #include <vtkDemandDrivenPipeline.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+
+#include <vector>
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -172,8 +172,8 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
         {
             addProperty(*p);
         }
-        else if (auto p =
-                     dynamic_cast<PropertyVector<unsigned long long>*>(property))
+        else if (auto p = dynamic_cast<PropertyVector<unsigned long long>*>(
+                     property))
         {
             addProperty(*p);
         }

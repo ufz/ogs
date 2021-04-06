@@ -8,9 +8,9 @@
  *
  */
 
-#include <ostream>
-
 #include "KineticReactant.h"
+
+#include <ostream>
 
 namespace ChemistryLib
 {

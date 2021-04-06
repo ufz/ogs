@@ -228,9 +228,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerIF::getIntPtEpsilon);
 
-    add_secondary_variable("velocity",
-                           DisplacementDim,
-                           &LocalAssemblerIF::getIntPtDarcyVelocity);
+    add_secondary_variable(
+        "velocity", DisplacementDim, &LocalAssemblerIF::getIntPtDarcyVelocity);
 
     //
     // enable output of internal variables defined by material models
@@ -383,8 +382,8 @@ void HydroMechanicsProcess<DisplacementDim>::
     if (_use_monolithic_scheme)
     {
         DBUG(
-            "Assemble the Jacobian of HydroMechanics for the monolithic"
-            " scheme.");
+            "Assemble the Jacobian of HydroMechanics for the monolithic "
+            "scheme.");
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
     else

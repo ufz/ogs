@@ -14,7 +14,6 @@
 #include "ProcessLib/CreateProcessData.h"
 #include "ProcessLib/Output/CreateOutput.h"
 #include "ProcessLib/Output/Output.h"
-
 #include "TimeLoop.h"
 
 namespace ProcessLib

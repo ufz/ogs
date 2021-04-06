@@ -397,8 +397,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 {
     OGS_FATAL(
         "The Picard method or the Newton-Raphson method with numerical "
-        "Jacobian is not implemented for ThermoRichardsMechanics with "
-        "the full monolithic coupling scheme");
+        "Jacobian is not implemented for ThermoRichardsMechanics with the full "
+        "monolithic coupling scheme");
 }
 
 template <int DisplacementDim>
@@ -413,9 +413,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
         dof_tables;
 
     DBUG(
-        "Assemble the Jacobian of ThermoRichardsMechanics for the "
-        "monolithic"
-        " scheme.");
+        "Assemble the Jacobian of ThermoRichardsMechanics for the monolithic "
+        "scheme.");
     dof_tables.emplace_back(*_local_to_global_index_map);
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
@@ -457,9 +456,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
                                      GlobalVector const& x_dot,
                                      int const process_id)
 {
-    DBUG(
-        "Compute the secondary variables for "
-        "ThermoRichardsMechanicsProcess.");
+    DBUG("Compute the secondary variables for ThermoRichardsMechanicsProcess.");
 
     auto const dof_tables = getDOFTables(x.size());
 

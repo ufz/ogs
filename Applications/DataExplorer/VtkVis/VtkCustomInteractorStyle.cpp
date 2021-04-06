@@ -15,8 +15,6 @@
 // ** INCLUDES **
 #include "VtkCustomInteractorStyle.h"
 
-#include "BaseLib/Logging.h"
-
 #include <vtkActor.h>
 #include <vtkAlgorithmOutput.h>
 #include <vtkCamera.h>
@@ -39,6 +37,7 @@
 
 #include <string>
 
+#include "BaseLib/Logging.h"
 #include "VtkCompositeElementSelectionFilter.h"
 
 vtkStandardNewMacro(VtkCustomInteractorStyle);
@@ -49,7 +48,7 @@ VtkCustomInteractorStyle::VtkCustomInteractorStyle()
     _selectedActor = vtkActor::New();
     _selectedActor->SetMapper(_selectedMapper);
     _selectedActor->GetProperty()->EdgeVisibilityOn();
-    _selectedActor->GetProperty()->SetEdgeColor(1,0,0);
+    _selectedActor->GetProperty()->SetEdgeColor(1, 0, 0);
     _selectedActor->GetProperty()->SetLineWidth(3);
 }
 
@@ -63,13 +62,13 @@ void VtkCustomInteractorStyle::OnChar()
 {
     switch (Interactor->GetKeyCode())
     {
-    case '3':
-        INFO("The 3 key was pressed.");
-        break;
-    case 'a':
-        break;
-    default:
-        vtkInteractorStyleTrackballCamera::OnChar();
+        case '3':
+            INFO("The 3 key was pressed.");
+            break;
+        case 'a':
+            break;
+        default:
+            vtkInteractorStyleTrackballCamera::OnChar();
     }
 }
 
@@ -77,12 +76,12 @@ void VtkCustomInteractorStyle::OnKeyDown()
 {
     switch (Interactor->GetKeyCode())
     {
-    case 32: // Space
-        _alternateMouseActions = true;
-        emit cursorChanged(Qt::CrossCursor);
-        break;
-    default:
-        vtkInteractorStyleTrackballCamera::OnKeyDown();
+        case 32:  // Space
+            _alternateMouseActions = true;
+            emit cursorChanged(Qt::CrossCursor);
+            break;
+        default:
+            vtkInteractorStyleTrackballCamera::OnKeyDown();
     }
 }
 
@@ -90,16 +89,16 @@ void VtkCustomInteractorStyle::OnKeyUp()
 {
     switch (Interactor->GetKeyCode())
     {
-    case 32: // Space
-        _alternateMouseActions = false;
-        emit cursorChanged(Qt::ArrowCursor);
-        break;
-    default:
-        vtkInteractorStyleTrackballCamera::OnKeyUp();
+        case 32:  // Space
+            _alternateMouseActions = false;
+            emit cursorChanged(Qt::ArrowCursor);
+            break;
+        default:
+            vtkInteractorStyleTrackballCamera::OnKeyUp();
     }
 }
 
-void VtkCustomInteractorStyle::highlightActor( vtkProp3D* actor )
+void VtkCustomInteractorStyle::highlightActor(vtkProp3D* actor)
 {
     if (_highlightActor)
     {
@@ -109,8 +108,10 @@ void VtkCustomInteractorStyle::highlightActor( vtkProp3D* actor )
 
 void VtkCustomInteractorStyle::removeHighlightActor()
 {
-    this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
-        RemoveActor(_selectedActor);
+    this->Interactor->GetRenderWindow()
+        ->GetRenderers()
+        ->GetFirstRenderer()
+        ->RemoveActor(_selectedActor);
 }
 
 void VtkCustomInteractorStyle::setHighlightActor(bool on)
@@ -127,8 +128,10 @@ void VtkCustomInteractorStyle::pickableDataObject(vtkDataObject* object)
     _data = object;
     if (!object)
     {
-        this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
-        RemoveActor(_selectedActor);
+        this->Interactor->GetRenderWindow()
+            ->GetRenderers()
+            ->GetFirstRenderer()
+            ->RemoveActor(_selectedActor);
         _selectedMapper->SetInputConnection(nullptr);
     }
 }
@@ -147,7 +150,7 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
         int* pos = this->GetInteractor()->GetEventPosition();
 
         vtkSmartPointer<vtkCellPicker> picker =
-                vtkSmartPointer<vtkCellPicker>::New();
+            vtkSmartPointer<vtkCellPicker>::New();
         picker->SetTolerance(0.0005);
 
         // Pick from this location.
@@ -156,35 +159,35 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
         double* worldPosition = picker->GetPickPosition();
         INFO("Cell id is: {:d}", picker->GetCellId());
 
-        if(picker->GetCellId() != -1)
+        if (picker->GetCellId() != -1)
         {
             INFO("Pick position is: {:f} {:f} {:f}", worldPosition[0],
                  worldPosition[1], worldPosition[2]);
 
             vtkSmartPointer<vtkIdTypeArray> ids =
-                    vtkSmartPointer<vtkIdTypeArray>::New();
+                vtkSmartPointer<vtkIdTypeArray>::New();
             ids->SetNumberOfValues(1);
             ids->SetValue(0, picker->GetCellId());
 
             vtkSmartPointer<vtkSelectionNode> selectionNode =
-                    vtkSmartPointer<vtkSelectionNode>::New();
+                vtkSmartPointer<vtkSelectionNode>::New();
             selectionNode->SetFieldType(vtkSelectionNode::CELL);
             selectionNode->SetContentType(vtkSelectionNode::INDICES);
             selectionNode->SetSelectionList(ids);
 
             vtkSmartPointer<vtkSelection> selection =
-                    vtkSmartPointer<vtkSelection>::New();
+                vtkSmartPointer<vtkSelection>::New();
             selection->AddNode(selectionNode);
 
             vtkSmartPointer<vtkExtractSelection> extractSelection =
-                    vtkSmartPointer<vtkExtractSelection>::New();
+                vtkSmartPointer<vtkExtractSelection>::New();
             extractSelection->SetInputData(0, _data);
             extractSelection->SetInputData(1, selection);
             extractSelection->Update();
 
             // In selection
             vtkSmartPointer<vtkUnstructuredGrid> selected =
-                    vtkSmartPointer<vtkUnstructuredGrid>::New();
+                vtkSmartPointer<vtkUnstructuredGrid>::New();
             selected->ShallowCopy(extractSelection->GetOutput());
 
             INFO("There are {:d} points in the selection.",
@@ -192,13 +195,21 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
             INFO("There are {:d} cells in the selection.",
                  selected->GetNumberOfCells());
 
-            // check if the underlying object is a mesh and if so, send a signal to the element model for display of information about the picked element.
-            vtkAlgorithm* data_set = picker->GetActor()->GetMapper()->GetInputConnection(0, 0)->GetProducer()->GetInputConnection(0,0)->GetProducer();
+            // check if the underlying object is a mesh and if so, send a signal
+            // to the element model for display of information about the picked
+            // element.
+            vtkAlgorithm* data_set = picker->GetActor()
+                                         ->GetMapper()
+                                         ->GetInputConnection(0, 0)
+                                         ->GetProducer()
+                                         ->GetInputConnection(0, 0)
+                                         ->GetProducer();
             auto* source =
                 dynamic_cast<vtkUnstructuredGridAlgorithm*>(data_set);
             if (source)
             {
-                emit elementPicked(source, static_cast<unsigned>(picker->GetCellId()));
+                emit elementPicked(source,
+                                   static_cast<unsigned>(picker->GetCellId()));
             }
             else
             {
@@ -206,8 +217,10 @@ void VtkCustomInteractorStyle::OnLeftButtonDown()
             }
             _selectedMapper->SetInputData(selected);
 
-            this->Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->
-            AddActor(_selectedActor);
+            this->Interactor->GetRenderWindow()
+                ->GetRenderers()
+                ->GetFirstRenderer()
+                ->AddActor(_selectedActor);
             //_highlightActor = true;
         }
         else
@@ -239,7 +252,7 @@ void VtkCustomInteractorStyle::OnRightButtonDown()
         int* pos = this->GetInteractor()->GetEventPosition();
 
         vtkSmartPointer<vtkCellPicker> picker =
-                vtkSmartPointer<vtkCellPicker>::New();
+            vtkSmartPointer<vtkCellPicker>::New();
         picker->SetTolerance(0.0005);
 
         // Pick from this location.
@@ -248,11 +261,11 @@ void VtkCustomInteractorStyle::OnRightButtonDown()
         double* worldPosition = picker->GetPickPosition();
         INFO("Cell id is: {:d}", picker->GetCellId());
 
-        if(picker->GetCellId() != -1)
+        if (picker->GetCellId() != -1)
         {
-            vtkRenderer* renderer =
-                    this->Interactor->GetRenderWindow()->GetRenderers()->
-                    GetFirstRenderer();
+            vtkRenderer* renderer = this->Interactor->GetRenderWindow()
+                                        ->GetRenderers()
+                                        ->GetFirstRenderer();
             vtkCamera* cam = renderer->GetActiveCamera();
             cam->SetFocalPoint(worldPosition);
             emit requestViewUpdate();

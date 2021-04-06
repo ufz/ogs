@@ -291,9 +291,8 @@ void NodeWiseMeshPartitioner::processPartition(
                                     _mesh->getNodes(), _nodes_partition_ids);
 
     partition.number_of_regular_base_nodes = partition.nodes.size();
-    partition.number_of_regular_nodes =
-        partition.number_of_regular_base_nodes +
-        higher_order_regular_nodes.size();
+    partition.number_of_regular_nodes = partition.number_of_regular_base_nodes +
+                                        higher_order_regular_nodes.size();
 
     std::tie(partition.regular_elements, partition.ghost_elements) =
         findElementsInPartition(part_id, _mesh->getElements(),
@@ -415,8 +414,8 @@ bool copyPropertyVector(
                                                 *partitioned_pv);
         }
         OGS_FATAL(
-            "Copying of property vector values for mesh item type {:s} is "
-            "not implemented.",
+            "Copying of property vector values for mesh item type {:s} is not "
+            "implemented.",
             item_type);
     };
 
@@ -471,7 +470,7 @@ void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
 
     vtk_ghost_type->resize(total_number_of_cells);
     std::size_t offset = 0;
-    for(auto const& partition : partitions)
+    for (auto const& partition : partitions)
     {
         offset += partition.regular_elements.size();
         for (std::size_t i = 0; i < partition.ghost_elements.size(); ++i)
@@ -484,7 +483,6 @@ void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
         }
         offset += partition.ghost_elements.size();
     }
-
 }
 
 /// Partition existing properties and add vtkGhostType cell data array property.
@@ -508,8 +506,8 @@ MeshLib::Properties partitionProperties(
         {MeshItemType::Node, count_tuples(MeshItemType::Node)}};
 
     DBUG(
-        "total number of tuples after partitioning defined for cells is"
-        " {:d} and for nodes {:d}.",
+        "total number of tuples after partitioning defined for cells is {:d} "
+        "and for nodes {:d}.",
         total_number_of_tuples.at(MeshItemType::Cell),
         total_number_of_tuples.at(MeshItemType::Node));
 
@@ -736,8 +734,7 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
     // -- Base nodes
     for (auto& partition : _partitions)
     {
-        for (std::size_t i = 0; i < partition.number_of_regular_base_nodes;
-             i++)
+        for (std::size_t i = 0; i < partition.number_of_regular_base_nodes; i++)
         {
             _nodes_global_ids[partition.nodes[i]->getID()] =
                 node_global_id_offset;
@@ -962,7 +959,8 @@ void getElementIntegerVariables(
     std::vector<long>& elem_info,
     long& counter)
 {
-    constexpr unsigned mat_id = 0;  // TODO: Material ID to be set from the mesh data
+    constexpr unsigned mat_id =
+        0;  // TODO: Material ID to be set from the mesh data
     const long nn = elem.getNumberOfNodes();
     elem_info[counter++] = mat_id;
     elem_info[counter++] = static_cast<long>(elem.getCellType());

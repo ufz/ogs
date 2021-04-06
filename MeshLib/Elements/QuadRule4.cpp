@@ -11,23 +11,21 @@
 #include "QuadRule4.h"
 
 #include "MathLib/GeometricBasics.h"
-
 #include "MeshLib/Node.h"
 
-namespace MeshLib {
-
-const unsigned QuadRule4::edge_nodes[4][2] =
+namespace MeshLib
 {
-        {0, 1}, // Edge 0
-        {1, 2}, // Edge 1
-        {2, 3}, // Edge 2
-        {3, 0}  // Edge 3
+const unsigned QuadRule4::edge_nodes[4][2] = {
+    {0, 1},  // Edge 0
+    {1, 2},  // Edge 1
+    {2, 3},  // Edge 2
+    {3, 0}   // Edge 3
 };
 
 double QuadRule4::computeVolume(Node const* const* _nodes)
 {
-    return MathLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2])
-         + MathLib::calcTriangleArea(*_nodes[2], *_nodes[3], *_nodes[0]);
+    return MathLib::calcTriangleArea(*_nodes[0], *_nodes[1], *_nodes[2]) +
+           MathLib::calcTriangleArea(*_nodes[2], *_nodes[3], *_nodes[0]);
 }
 
 bool QuadRule4::isPntInElement(Node const* const* nodes,
@@ -41,7 +39,7 @@ bool QuadRule4::isPntInElement(Node const* const* nodes,
 
 unsigned QuadRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
 {
-    for (unsigned i=0; i<4; i++)
+    for (unsigned i = 0; i < 4; i++)
     {
         unsigned flag(0);
         for (unsigned j = 0; j < 2; j++)
@@ -83,4 +81,4 @@ ElementErrorCode QuadRule4::validate(const Element* e)
     return error_code;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

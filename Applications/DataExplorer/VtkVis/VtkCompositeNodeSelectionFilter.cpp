@@ -13,22 +13,22 @@
  */
 
 // ** INCLUDES **
-#include <memory>
-
 #include "VtkCompositeNodeSelectionFilter.h"
-//#include "VtkCompositePointToGlyphFilter.h"
-#include "VtkPointsSource.h"
 
+#include <memory>
+//#include "VtkCompositePointToGlyphFilter.h"
 #include <vtkDataSetAlgorithm.h>
+#include <vtkGlyph3D.h>
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
-#include <vtkGlyph3D.h>
 
+#include "VtkPointsSource.h"
 
-VtkCompositeNodeSelectionFilter::VtkCompositeNodeSelectionFilter( vtkAlgorithm* inputAlgorithm )
-: VtkCompositeFilter(inputAlgorithm)
+VtkCompositeNodeSelectionFilter::VtkCompositeNodeSelectionFilter(
+    vtkAlgorithm* inputAlgorithm)
+    : VtkCompositeFilter(inputAlgorithm)
 {
-    //this->init();
+    // this->init();
 }
 
 VtkCompositeNodeSelectionFilter::~VtkCompositeNodeSelectionFilter()
@@ -46,15 +46,17 @@ void VtkCompositeNodeSelectionFilter::init()
 
     if (!_selection.empty())
     {
-        vtkSmartPointer<VtkPointsSource> point_source = vtkSmartPointer<VtkPointsSource>::New();
+        vtkSmartPointer<VtkPointsSource> point_source =
+            vtkSmartPointer<VtkPointsSource>::New();
         point_source->setPoints(&_selection);
 
-        vtkSmartPointer<vtkSphereSource> _glyphSource = vtkSmartPointer<vtkSphereSource>::New();
-            _glyphSource->SetRadius(this->GetInitialRadius());
+        vtkSmartPointer<vtkSphereSource> _glyphSource =
+            vtkSmartPointer<vtkSphereSource>::New();
+        _glyphSource->SetRadius(this->GetInitialRadius());
 
         vtkGlyph3D* glyphFilter = vtkGlyph3D::New();
-            glyphFilter->SetSourceConnection(_glyphSource->GetOutputPort());
-            glyphFilter->SetInputConnection(point_source->GetOutputPort());
+        glyphFilter->SetSourceConnection(_glyphSource->GetOutputPort());
+        glyphFilter->SetInputConnection(point_source->GetOutputPort());
 
         _outputAlgorithm = glyphFilter;
     }
@@ -64,7 +66,8 @@ void VtkCompositeNodeSelectionFilter::init()
     }
 }
 
-void VtkCompositeNodeSelectionFilter::setSelectionArray(const std::vector<unsigned> &point_indeces)
+void VtkCompositeNodeSelectionFilter::setSelectionArray(
+    const std::vector<unsigned>& point_indeces)
 {
     for (unsigned int point_index : point_indeces)
     {
@@ -76,4 +79,3 @@ void VtkCompositeNodeSelectionFilter::setSelectionArray(const std::vector<unsign
     }
     init();
 }
-

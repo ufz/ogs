@@ -84,8 +84,7 @@ int GMSInterface::readBoreholesFromGMS(std::vector<GeoLib::Point*>* boreholes,
                 {
                     if (newBorehole == nullptr)
                         OGS_FATAL("Trying to access a nullptr.");
-                    newBorehole->addSoilLayer(
-                        pnt[0], pnt[1], pnt[2], sName);
+                    newBorehole->addSoilLayer(pnt[0], pnt[1], pnt[2], sName);
                     sName = (*(++it));
                     depth = pnt[2];
                 }
@@ -278,8 +277,8 @@ MeshLib::Mesh* GMSInterface::readGMS3DMMesh(const std::string& filename)
             mat_ids.push_back(mat_id);
         }
         else if (element_id == "ND ")
-        {  // Node
-            continue; // skip because nodes have already been read
+        {              // Node
+            continue;  // skip because nodes have already been read
         }
         else  // default
         {

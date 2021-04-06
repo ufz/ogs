@@ -9,13 +9,13 @@
  */
 
 #include "ConvergenceCriterion.h"
+
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
 #include "ConvergenceCriterionDeltaX.h"
-#include "ConvergenceCriterionResidual.h"
 #include "ConvergenceCriterionPerComponentDeltaX.h"
 #include "ConvergenceCriterionPerComponentResidual.h"
+#include "ConvergenceCriterionResidual.h"
 
 namespace NumLib
 {
@@ -25,7 +25,8 @@ std::unique_ptr<ConvergenceCriterion> createConvergenceCriterion(
     //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__type}
     auto const type = config.peekConfigParameter<std::string>("type");
 
-    if (type == "DeltaX") {
+    if (type == "DeltaX")
+    {
         return createConvergenceCriterionDeltaX(config);
     }
     if (type == "Residual")

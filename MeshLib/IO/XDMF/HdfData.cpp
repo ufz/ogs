@@ -48,8 +48,10 @@ HdfData::HdfData(void const* data_start, std::size_t const size_partitioned_dim,
       name(name)
 {
     auto const& partition_info = getPartitionInfo(size_partitioned_dim);
-    DBUG("HdfData: The partition of dataset {:s} has dimension {:d} and offset {:d}.",
-         name, size_partitioned_dim, partition_info.first);
+    DBUG(
+        "HdfData: The partition of dataset {:s} has dimension {:d} and offset "
+        "{:d}.",
+        name, size_partitioned_dim, partition_info.first);
     auto const& offset_partitioned_dim = partition_info.first;
     offsets = {offset_partitioned_dim, 0};
     file_space = {partition_info.second, size_tuple};

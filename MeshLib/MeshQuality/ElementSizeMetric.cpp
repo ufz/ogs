@@ -19,8 +19,9 @@
 namespace MeshLib
 {
 ElementSizeMetric::ElementSizeMetric(Mesh const& mesh)
-: ElementQualityMetric(mesh)
-{}
+    : ElementQualityMetric(mesh)
+{
+}
 
 void ElementSizeMetric::calculateQuality()
 {
@@ -50,7 +51,7 @@ void ElementSizeMetric::calculateQuality()
 
 std::size_t ElementSizeMetric::calc1dQuality()
 {
-    const std::vector<MeshLib::Element*> &elements(_mesh.getElements());
+    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
     const std::size_t nElems(elements.size());
     std::size_t error_count(0);
 
@@ -79,13 +80,13 @@ std::size_t ElementSizeMetric::calc1dQuality()
 
 std::size_t ElementSizeMetric::calc2dQuality()
 {
-    const std::vector<MeshLib::Element*> &elements(_mesh.getElements());
+    const std::vector<MeshLib::Element*>& elements(_mesh.getElements());
     const std::size_t nElems(elements.size());
     std::size_t error_count(0);
 
     for (std::size_t k(0); k < nElems; k++)
     {
-        Element const& elem (*elements[k]);
+        Element const& elem(*elements[k]);
 
         if (elem.getDimension() == 1)
         {
@@ -120,14 +121,14 @@ std::size_t ElementSizeMetric::calc3dQuality()
 
     for (std::size_t k(0); k < nElems; k++)
     {
-        Element const& elem (*elements[k]);
-        if (elem.getDimension()<3)
+        Element const& elem(*elements[k]);
+        if (elem.getDimension() < 3)
         {
             _element_quality_metric[k] = 0.0;
             continue;
         }
 
-        double const volume (elem.getContent());
+        double const volume(elem.getContent());
         if (volume < sqrt(std::abs(std::numeric_limits<double>::epsilon())))
         {
             error_count++;
@@ -146,4 +147,4 @@ std::size_t ElementSizeMetric::calc3dQuality()
     return error_count;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

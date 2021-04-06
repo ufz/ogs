@@ -8,7 +8,7 @@
  *
  */
 
-#include "../partition.h"
+#include "MeshLib/IO/XDMF/partition.h"
 
 namespace MeshLib::IO
 {

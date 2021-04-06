@@ -7,10 +7,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
-#include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Hex.h"
+#include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 
 using namespace MeshLib;
@@ -126,9 +126,9 @@ TEST(MeshLib, ElementConstantsHex8)
 
 TEST(MeshLib, ElementConstantsHex20)
 {
-    ASSERT_EQ( 3u, Hex20::dimension);
+    ASSERT_EQ(3u, Hex20::dimension);
     ASSERT_EQ(20u, Hex20::n_all_nodes);
-    ASSERT_EQ( 8u, Hex20::n_base_nodes);
+    ASSERT_EQ(8u, Hex20::n_base_nodes);
 
     std::array<Node*, 20> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
@@ -153,9 +153,9 @@ TEST(MeshLib, ElementConstantsHex20)
     nodes[19] = new Node(0.0, 1.0, 0.5);
     Hex20 ele(nodes);
 
-    ASSERT_EQ( 3u, ele.getDimension());
+    ASSERT_EQ(3u, ele.getDimension());
     ASSERT_EQ(20u, ele.getNumberOfNodes());
-    ASSERT_EQ( 8u, ele.getNumberOfBaseNodes());
+    ASSERT_EQ(8u, ele.getNumberOfBaseNodes());
 
     for (auto n : nodes)
     {
@@ -188,9 +188,9 @@ TEST(MeshLib, ElementConstantsTet4)
 
 TEST(MeshLib, ElementConstantsTet10)
 {
-    ASSERT_EQ( 3u, Tet10::dimension);
+    ASSERT_EQ(3u, Tet10::dimension);
     ASSERT_EQ(10u, Tet10::n_all_nodes);
-    ASSERT_EQ( 4u, Tet10::n_base_nodes);
+    ASSERT_EQ(4u, Tet10::n_base_nodes);
 
     std::array<Node*, 10> nodes{};
     nodes[0] = new Node(0.0, 0.0, 0.0);
@@ -206,13 +206,12 @@ TEST(MeshLib, ElementConstantsTet10)
     nodes[9] = new Node(0.0, 0.5, 0.5);
     Tet10 ele(nodes);
 
-    ASSERT_EQ( 3u, ele.getDimension());
+    ASSERT_EQ(3u, ele.getDimension());
     ASSERT_EQ(10u, ele.getNumberOfNodes());
-    ASSERT_EQ( 4u, ele.getNumberOfBaseNodes());
+    ASSERT_EQ(4u, ele.getNumberOfBaseNodes());
 
     for (auto n : nodes)
     {
         delete n;
     }
 }
-

@@ -13,8 +13,10 @@
  */
 
 #include "QArrow.h"
-#include <QPainter>
+
 #include <math.h>
+
+#include <QPainter>
 
 /**
  * Creates an arrow as a QGraphicItem.
@@ -30,39 +32,38 @@ QArrow::QArrow(qreal l, qreal a, qreal hl, qreal hw, QPen& pen,
     : QGraphicsItem(parent)
 {
     _arrowLength = l;
-    _arrowAngle  = a;
-    _headLength  = hl;
-    _headWidth   = hw;
-    _arrowPen    = pen;
+    _arrowAngle = a;
+    _headLength = hl;
+    _headWidth = hw;
+    _arrowPen = pen;
 }
 
 /**
- * Creates an arrow as a QGraphicItem. Length and width of the arrow head are given by default values.
- * \param l Length of the arrow
- * \param a Orientation of the arrow
- * \param pen The pen for drawing the arrow
- * \param parent The parent QGraphicsItem.
+ * Creates an arrow as a QGraphicItem. Length and width of the arrow head are
+ * given by default values. \param l Length of the arrow \param a Orientation of
+ * the arrow \param pen The pen for drawing the arrow \param parent The parent
+ * QGraphicsItem.
  */
 QArrow::QArrow(qreal l, qreal a, QPen& pen, QGraphicsItem* parent)
     : QGraphicsItem(parent)
 {
     _arrowLength = l;
-    _arrowAngle  = a;
-    _headLength  = 8;   // default headlength
-    _headWidth   = 5;   // default headwidth
-    _arrowPen    = pen;
+    _arrowAngle = a;
+    _headLength = 8;  // default headlength
+    _headWidth = 5;   // default headwidth
+    _arrowPen = pen;
 }
 
 QArrow::~QArrow() = default;
 
 double QArrow::calcCos(double angle)
 {
-    return cos (angle * PI / 180);
+    return cos(angle * PI / 180);
 }
 
 double QArrow::calcSin(double angle)
 {
-    return sin (angle * PI / 180);
+    return sin(angle * PI / 180);
 }
 
 /// The bounding box of the arrow
@@ -88,17 +89,19 @@ double QArrow::getAngle()
 
 /**
  * Overloaded paint-method from QGraphicsItem.
- * Basically it draws a line with an arrowhead consisting of two short lines at the end
+ * Basically it draws a line with an arrowhead consisting of two short lines at
+ * the end
  */
-void QArrow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void QArrow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+                   QWidget* widget)
 {
-    Q_UNUSED (option)
-    Q_UNUSED (widget)
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
 
-    double ddeltaX    = calcCos(_arrowAngle) * _arrowLength;
-    double ddeltaY    = calcSin(_arrowAngle) * _arrowLength;
-    double theta     = atan(ddeltaY / ddeltaX);
-    double theta2    = (ddeltaX < 0.0) ? (theta + PI) : theta;
+    double ddeltaX = calcCos(_arrowAngle) * _arrowLength;
+    double ddeltaY = calcSin(_arrowAngle) * _arrowLength;
+    double theta = atan(ddeltaY / ddeltaX);
+    double theta2 = (ddeltaX < 0.0) ? (theta + PI) : theta;
     int lengthdeltaX = -static_cast<int>(cos(theta2) * _headLength);
     int lengthdeltaY = -static_cast<int>(sin(theta2) * _headLength);
     auto widthdeltaX = static_cast<int>(sin(theta2) * _headWidth);

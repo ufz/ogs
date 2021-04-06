@@ -76,8 +76,8 @@ PropertyDataType VapourDiffusionFEBEX::dValue(
     }
 
     OGS_FATAL(
-        "VapourDiffusionFEBEX::dValue is implemented for "
-        "derivatives with respect to temperature or saturation only.");
+        "VapourDiffusionFEBEX::dValue is implemented for derivatives with "
+        "respect to temperature or saturation only.");
 }
 
 }  // namespace MaterialPropertyLib

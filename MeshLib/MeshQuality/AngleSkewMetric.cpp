@@ -14,18 +14,16 @@
 
 #include "AngleSkewMetric.h"
 
-#include <cmath>
 #include <boost/math/constants/constants.hpp>
-
-#include "MeshLib/Node.h"
+#include <cmath>
 
 #include "MathLib/MathTools.h"
+#include "MeshLib/Node.h"
 
 using namespace boost::math::double_constants;
 
 namespace MeshLib
 {
-
 namespace
 {
 template <unsigned long N>
@@ -144,9 +142,9 @@ double checkPrism(Element const& elem)
 
 }  // end unnamed namespace
 
-AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) :
-    ElementQualityMetric(mesh)
-{}
+AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) : ElementQualityMetric(mesh)
+{
+}
 
 void AngleSkewMetric::calculateQuality()
 {
@@ -178,4 +176,4 @@ void AngleSkewMetric::calculateQuality()
     }
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

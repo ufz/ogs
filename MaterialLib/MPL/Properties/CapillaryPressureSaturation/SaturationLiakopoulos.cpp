@@ -14,11 +14,11 @@
 
 #include "SaturationLiakopoulos.h"
 
-#include "MaterialLib/MPL/Medium.h"
-#include "MathLib/MathTools.h"
-
 #include <algorithm>
 #include <cmath>
+
+#include "MaterialLib/MPL/Medium.h"
+#include "MathLib/MathTools.h"
 
 namespace MaterialPropertyLib
 {
@@ -44,8 +44,8 @@ PropertyDataType SaturationLiakopoulos::dValue(
 {
     (void)primary_variable;
     assert((primary_variable == Variable::capillary_pressure) &&
-           "SaturationLiakopoulos::dvalue is implemented for "
-           " derivatives with respect to capillary pressure only.");
+           "SaturationLiakopoulos::dvalue is implemented for  derivatives with "
+           "respect to capillary pressure only.");
 
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
@@ -69,8 +69,8 @@ PropertyDataType SaturationLiakopoulos::d2Value(
     (void)primary_variable2;
     assert((primary_variable1 == Variable::capillary_pressure) &&
            (primary_variable2 == Variable::capillary_pressure) &&
-           "SaturationLiakopoulos::ddvalue is implemented for "
-           " derivatives with respect to capillary pressure only.");
+           "SaturationLiakopoulos::ddvalue is implemented for  derivatives "
+           "with respect to capillary pressure only.");
 
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);

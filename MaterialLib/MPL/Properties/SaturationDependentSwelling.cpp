@@ -40,8 +40,8 @@ void SaturationDependentSwelling::checkScale() const
     if (!std::holds_alternative<Phase*>(scale_))
     {
         OGS_FATAL(
-            "The property 'SaturationDependentSwelling' is "
-            "implemented on the 'phase' scales only.");
+            "The property 'SaturationDependentSwelling' is implemented on the "
+            "'phase' scales only.");
     }
     auto const phase = std::get<Phase*>(scale_);
     if (phase->name != "Solid")
@@ -74,7 +74,7 @@ PropertyDataType SaturationDependentSwelling::value(
 
     if (S_L < S_min_)
     {
-        return delta_sigma_sw;   // still being zero.
+        return delta_sigma_sw;  // still being zero.
     }
 
     double const S_eff = std::clamp((S_L - S_min_) / (S_max_ - S_min_), 0., 1.);
@@ -106,8 +106,8 @@ PropertyDataType SaturationDependentSwelling::dValue(
 {
     (void)primary_variable;
     assert((primary_variable == Variable::liquid_saturation) &&
-           "SaturationDependentSwelling::dValue is implemented for "
-           " derivatives with respect to liquid saturation only.");
+           "SaturationDependentSwelling::dValue is implemented for  "
+           "derivatives with respect to liquid saturation only.");
 
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
@@ -124,7 +124,7 @@ PropertyDataType SaturationDependentSwelling::dValue(
 
     if (S_L < S_min_)
     {
-        return delta_sigma_sw;   // still being zero.
+        return delta_sigma_sw;  // still being zero.
     }
 
     double const S_eff = std::clamp((S_L - S_min_) / (S_max_ - S_min_), 0., 1.);

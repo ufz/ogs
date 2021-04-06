@@ -7,15 +7,15 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <memory>
 #include <string>
 
-#include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
-#include "BaseLib/FileTools.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
+#include "BaseLib/FileTools.h"
 #include "GeoLib/Raster.h"
+#include "InfoLib/GitInfo.h"
 
 int main(int argc, char* argv[])
 {
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
             double const step = (max - min) / static_cast<double>(n + 1);
             for (std::size_t i = 0; i < n; ++i)
             {
-                raster[i].push_back(max - ((i+1) * step));
+                raster[i].push_back(max - ((i + 1) * step));
             }
         }
         it2++;
@@ -140,7 +140,8 @@ int main(int argc, char* argv[])
         std::string const ext = BaseLib::getFileExtension(filename);
 
         GeoLib::Raster r(h1, raster[i].begin(), raster[i].end());
-        FileIO::AsciiRasterInterface::writeRasterAsASC(r, basename + std::to_string(i) + ext);
+        FileIO::AsciiRasterInterface::writeRasterAsASC(
+            r, basename + std::to_string(i) + ext);
         INFO("Layer {:d} written.", i + 1);
     }
     return EXIT_SUCCESS;

@@ -10,6 +10,9 @@
 
 #include "CreateHTProcess.h"
 
+#include "HTLocalAssemblerInterface.h"
+#include "HTProcess.h"
+#include "HTProcessData.h"
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -18,10 +21,6 @@
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
-#include "HTProcess.h"
-#include "HTProcessData.h"
-#include "HTLocalAssemblerInterface.h"
 
 namespace ProcessLib
 {
@@ -46,8 +45,8 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::storage};
 
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
-        mesh, media_map, required_property_medium, required_property_solid_phase,
-        required_property_liquid_phase);
+        mesh, media_map, required_property_medium,
+        required_property_solid_phase, required_property_liquid_phase);
 }
 
 std::unique_ptr<Process> createHTProcess(

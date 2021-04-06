@@ -8,9 +8,9 @@
  *
  */
 
-#include <ostream>
-
 #include "Output.h"
+
+#include <ostream>
 
 namespace ChemistryLib
 {
@@ -19,7 +19,8 @@ namespace PhreeqcIOData
 std::ostream& operator<<(std::ostream& os,
                          BasicOutputSetups const& basic_output_setups)
 {
-    os << "SELECTED_OUTPUT" << "\n";
+    os << "SELECTED_OUTPUT"
+       << "\n";
     os << "-file " << basic_output_setups.output_file << "\n";
     os << "-high_precision " << std::boolalpha
        << basic_output_setups.use_high_precision << "\n";

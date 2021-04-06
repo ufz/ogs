@@ -15,8 +15,6 @@
 // ** INCLUDES **
 #include "VtkPolylinesSource.h"
 
-#include "BaseLib/Logging.h"
-
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkInformation.h>
@@ -29,16 +27,15 @@
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 
-#include "Polyline.h"
-
 #include "Applications/DataHolderLib/Color.h"
-
+#include "BaseLib/Logging.h"
+#include "Polyline.h"
 
 vtkStandardNewMacro(VtkPolylinesSource);
 
 VtkPolylinesSource::VtkPolylinesSource()
 {
-    _removable = false; // From VtkAlgorithmProperties
+    _removable = false;  // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
 
     const DataHolderLib::Color c = DataHolderLib::getRandomColor();
@@ -47,9 +44,9 @@ VtkPolylinesSource::VtkPolylinesSource()
 
 VtkPolylinesSource::~VtkPolylinesSource() = default;
 
-void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
+void VtkPolylinesSource::PrintSelf(ostream& os, vtkIndent indent)
 {
-    this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os, indent);
 
     if (_polylines->empty())
     {
@@ -58,21 +55,22 @@ void VtkPolylinesSource::PrintSelf( ostream& os, vtkIndent indent )
 
     for (auto polyline : *_polylines)
     {
-        os << indent << "== Polyline ==" << "\n";
+        os << indent << "== Polyline =="
+           << "\n";
         int numPoints = polyline->getNumberOfPoints();
         for (int i = 0; i < numPoints; i++)
         {
             const GeoLib::Point* point = polyline->getPoint(i);
             const double* coords = point->getCoords();
-            os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1] <<
-            ", " << coords[2] << ")\n";
+            os << indent << "Point " << i << " (" << coords[0] << ", "
+               << coords[1] << ", " << coords[2] << ")\n";
         }
     }
 }
 
-int VtkPolylinesSource::RequestData( vtkInformation* request,
-                                     vtkInformationVector** inputVector,
-                                     vtkInformationVector* outputVector )
+int VtkPolylinesSource::RequestData(vtkInformation* request,
+                                    vtkInformationVector** inputVector,
+                                    vtkInformationVector* outputVector)
 {
     (void)request;
     (void)inputVector;
@@ -87,15 +85,17 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
         return 0;
     }
 
-    vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
+    vtkSmartPointer<vtkInformation> outInfo =
+        outputVector->GetInformationObject(0);
     vtkSmartPointer<vtkPolyData> output =
-            vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkCellArray> newLines = vtkSmartPointer<vtkCellArray>::New();
+    vtkSmartPointer<vtkCellArray> newLines =
+        vtkSmartPointer<vtkCellArray>::New();
 
-    //newPoints->Allocate(numPoints);
-    //newLines->Allocate(newLines->EstimateSize(numLines, 2));
+    // newPoints->Allocate(numPoints);
+    // newLines->Allocate(newLines->EstimateSize(numLines, 2));
 
     if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) >
         0)
@@ -107,15 +107,15 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
     plyIDs->SetNumberOfComponents(1);
     plyIDs->SetName("PolylineIDs");
 
-    unsigned lastMaxIndex (0);
-    const std::size_t nPolylines (_polylines->size());
+    unsigned lastMaxIndex(0);
+    const std::size_t nPolylines(_polylines->size());
     for (std::size_t j = 0; j < nPolylines; j++)
     {
         const int numPoints = (*_polylines)[j]->getNumberOfPoints();
         const bool isClosed = (*_polylines)[j]->isClosed();
 
         // Generate points
-        const int numVerts = (isClosed) ? numPoints-1 : numPoints;
+        const int numVerts = (isClosed) ? numPoints - 1 : numPoints;
         for (int i = 0; i < numVerts; i++)
         {
             const GeoLib::Point* point = (*_polylines)[j]->getPoint(i);
@@ -142,20 +142,22 @@ int VtkPolylinesSource::RequestData( vtkInformation* request,
     output->SetPoints(newPoints);
     output->SetLines(newLines);
     output->GetCellData()->AddArray(plyIDs);
-    output->GetCellData()->SetActiveAttribute("PolylineIDs", vtkDataSetAttributes::SCALARS);
+    output->GetCellData()->SetActiveAttribute("PolylineIDs",
+                                              vtkDataSetAttributes::SCALARS);
     output->Squeeze();
 
     return 1;
 }
 
-int VtkPolylinesSource::RequestInformation( vtkInformation* /*request*/,
-                                            vtkInformationVector** /*inputVector*/,
-                                            vtkInformationVector* /*outputVector*/ )
+int VtkPolylinesSource::RequestInformation(
+    vtkInformation* /*request*/,
+    vtkInformationVector** /*inputVector*/,
+    vtkInformationVector* /*outputVector*/)
 {
     return 1;
 }
 
-void VtkPolylinesSource::SetUserProperty( QString name, QVariant value )
+void VtkPolylinesSource::SetUserProperty(QString name, QVariant value)
 {
     Q_UNUSED(name);
     Q_UNUSED(value);

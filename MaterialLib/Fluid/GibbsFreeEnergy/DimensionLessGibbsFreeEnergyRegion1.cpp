@@ -54,8 +54,8 @@ double DimensionLessGibbsFreeEnergyRegion1::get_gamma(const double tau,
     return val;
 }
 
-double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau(
-    const double tau, const double pi)
+double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau(const double tau,
+                                                            const double pi)
 {
     double val = 0.;
     for (int i = 0; i < 34; i++)
@@ -80,8 +80,8 @@ double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dtau(
     return val;
 }
 
-double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(
-    const double tau, const double pi)
+double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const double tau,
+                                                           const double pi)
 {
     double val = 0.;
     for (int i = 0; i < 34; i++)
@@ -93,8 +93,8 @@ double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(
     return val;
 }
 
-double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi_dpi(
-    const double tau, const double pi)
+double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi_dpi(const double tau,
+                                                               const double pi)
 {
     double val = 0.;
     for (int i = 0; i < 34; i++)

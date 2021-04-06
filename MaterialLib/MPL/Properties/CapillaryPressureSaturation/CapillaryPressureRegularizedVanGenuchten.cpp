@@ -16,8 +16,8 @@
 
 #include "BaseLib/Error.h"
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/VariableType.h"
 #include "MaterialLib/MPL/Utils/CheckVanGenuchtenExponentRange.h"
+#include "MaterialLib/MPL/VariableType.h"
 
 namespace MaterialPropertyLib
 {
@@ -74,10 +74,9 @@ PropertyDataType CapillaryPressureRegularizedVanGenuchten::dValue(
     double const /*dt*/) const
 {
     (void)primary_variable;
-    assert(
-        (primary_variable == Variable::liquid_saturation) &&
-        "CapillaryPressureRegularizedVanGenuchten::dValue is implemented for "
-        "derivatives with respect to liquid saturation only.");
+    assert((primary_variable == Variable::liquid_saturation) &&
+           "CapillaryPressureRegularizedVanGenuchten::dValue is implemented "
+           "for derivatives with respect to liquid saturation only.");
 
     const double Sl = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);

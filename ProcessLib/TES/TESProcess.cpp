@@ -9,6 +9,7 @@
  */
 
 #include "TESProcess.h"
+
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 
@@ -63,7 +64,7 @@ TESProcess::TESProcess(
         {
             if (auto const par =
                     //! \ogs_file_special
-                    config.getConfigParameterOptional<double>(p.first))
+                config.getConfigParameterOptional<double>(p.first))
             {
                 DBUG("setting parameter `{:s}' to value `{:g}'", p.first, *par);
                 *p.second = *par;
@@ -85,7 +86,7 @@ TESProcess::TESProcess(
         {
             if (auto const par =
                     //! \ogs_file_special
-                    config.getConfigParameterOptional<double>(p.first))
+                config.getConfigParameterOptional<double>(p.first))
             {
                 INFO("setting parameter `{:s}' to value `{:g}'", p.first, *par);
                 *p.second = Trafo{*par};
@@ -96,7 +97,8 @@ TESProcess::TESProcess(
     // permeability
     if (auto par =
             //! \ogs_file_param{prj__processes__process__TES__solid_hydraulic_permeability}
-            config.getConfigParameterOptional<double>("solid_hydraulic_permeability"))
+        config.getConfigParameterOptional<double>(
+            "solid_hydraulic_permeability"))
     {
         DBUG(
             "setting parameter `solid_hydraulic_permeability' to isotropic "
@@ -115,7 +117,7 @@ TESProcess::TESProcess(
     // debug output
     if (auto const param =
             //! \ogs_file_param{prj__processes__process__TES__output_element_matrices}
-            config.getConfigParameterOptional<bool>("output_element_matrices"))
+        config.getConfigParameterOptional<bool>("output_element_matrices"))
     {
         DBUG("output_element_matrices: {:s}", (*param) ? "true" : "false");
 
@@ -216,7 +218,7 @@ void TESProcess::assembleConcreteProcess(const double t, double const dt,
     DBUG("Assemble TESProcess.");
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*_local_to_global_index_map)};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
@@ -233,7 +235,7 @@ void TESProcess::assembleWithJacobianConcreteProcess(
     GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-       dof_table = {std::ref(*_local_to_global_index_map)};
+        dof_table = {std::ref(*_local_to_global_index_map)};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
@@ -296,7 +298,7 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
         };
 
         GlobalExecutor::executeDereferenced(check_variable_bounds,
-                                         _local_assemblers);
+                                            _local_assemblers);
     }
 
     if (!check_passed)

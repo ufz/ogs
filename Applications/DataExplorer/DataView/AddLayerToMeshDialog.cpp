@@ -13,17 +13,16 @@
  */
 
 #include "AddLayerToMeshDialog.h"
+
 #include "OGSError.h"
 #include "StrictDoubleValidator.h"
 
-
-AddLayerToMeshDialog::AddLayerToMeshDialog(QDialog* parent)
-: QDialog(parent)
+AddLayerToMeshDialog::AddLayerToMeshDialog(QDialog* parent) : QDialog(parent)
 {
     setupUi(this);
 
     auto* thickness_validator = new StrictDoubleValidator(0, 1000000, 7, this);
-    this->thicknessEdit->setValidator (thickness_validator);
+    this->thicknessEdit->setValidator(thickness_validator);
 }
 
 void AddLayerToMeshDialog::accept()
@@ -47,4 +46,3 @@ void AddLayerToMeshDialog::reject()
 {
     this->done(QDialog::Rejected);
 }
-

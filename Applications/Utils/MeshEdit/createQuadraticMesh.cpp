@@ -7,21 +7,18 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <memory>
 #include <string>
 
-#include <tclap/CmdLine.h>
-
 #include "InfoLib/GitInfo.h"
-
+#include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/QuadraticMeshGenerator.h"
 
-#include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/IO/writeMeshToFile.h"
-
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Create quadratic order mesh.\n\n"
@@ -32,14 +29,16 @@ int main(int argc, char *argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file","input mesh file",true,"","string");
-    cmd.add( input_arg );
-    TCLAP::ValueArg<std::string> output_arg("o", "output-mesh-file","output mesh file",true,"","string");
-    cmd.add( output_arg );
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input-mesh-file", "input mesh file", true, "", "string");
+    cmd.add(input_arg);
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output-mesh-file", "output mesh file", true, "", "string");
+    cmd.add(output_arg);
     TCLAP::SwitchArg add_centre_node_arg("c", "add-centre-node",
                                          "add centre node", false);
     cmd.add(add_centre_node_arg);
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(input_arg.getValue()));

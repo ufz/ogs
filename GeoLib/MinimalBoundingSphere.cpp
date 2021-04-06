@@ -16,22 +16,23 @@
 
 #include <ctime>
 
-#include "MathLib/Point3d.h"
 #include "MathLib/GeometricBasics.h"
 #include "MathLib/MathTools.h"
+#include "MathLib/Point3d.h"
 
-namespace GeoLib {
+namespace GeoLib
+{
 MinimalBoundingSphere::MinimalBoundingSphere() = default;
 
-MinimalBoundingSphere::MinimalBoundingSphere(
-    MathLib::Point3d const& p, double radius)
-: _radius(radius), _center(p)
+MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
+                                             double radius)
+    : _radius(radius), _center(p)
 {
 }
 
-MinimalBoundingSphere::MinimalBoundingSphere(
-    MathLib::Point3d const& p, MathLib::Point3d const& q)
-: _radius(std::numeric_limits<double>::epsilon()), _center(p)
+MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
+                                             MathLib::Point3d const& q)
+    : _radius(std::numeric_limits<double>::epsilon()), _center(p)
 {
     auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
     auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
@@ -44,7 +45,8 @@ MinimalBoundingSphere::MinimalBoundingSphere(
 }
 
 MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
-    MathLib::Point3d const& q, MathLib::Point3d const& r)
+                                             MathLib::Point3d const& q,
+                                             MathLib::Point3d const& r)
 {
     auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
     auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
@@ -67,7 +69,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
         MinimalBoundingSphere two_pnts_sphere;
         if (a.squaredNorm() > b.squaredNorm())
         {
-            two_pnts_sphere = MinimalBoundingSphere(p,r);
+            two_pnts_sphere = MinimalBoundingSphere(p, r);
         }
         else
         {
@@ -79,9 +81,9 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
 }
 
 MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
-    MathLib::Point3d const& q,
-    MathLib::Point3d const& r,
-    MathLib::Point3d const& s)
+                                             MathLib::Point3d const& q,
+                                             MathLib::Point3d const& r,
+                                             MathLib::Point3d const& s)
 {
     auto const vp = Eigen::Map<Eigen::Vector3d const>(p.getCoords());
     auto const vq = Eigen::Map<Eigen::Vector3d const>(q.getCoords());
@@ -106,10 +108,10 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
     }
     else
     {
-        MinimalBoundingSphere const pqr(p, q , r);
-        MinimalBoundingSphere const pqs(p, q , s);
-        MinimalBoundingSphere const prs(p, r , s);
-        MinimalBoundingSphere const qrs(q, r , s);
+        MinimalBoundingSphere const pqr(p, q, r);
+        MinimalBoundingSphere const pqs(p, q, s);
+        MinimalBoundingSphere const prs(p, r, s);
+        MinimalBoundingSphere const qrs(q, r, s);
         _radius = pqr.getRadius();
         _center = pqr.getCenter();
         if (_radius < pqs.getRadius())
@@ -135,62 +137,72 @@ MinimalBoundingSphere::MinimalBoundingSphere(
     : _radius(-1), _center({0, 0, 0})
 {
     const std::vector<MathLib::Point3d*>& sphere_points(points);
-    MinimalBoundingSphere const bounding_sphere = recurseCalculation(sphere_points, 0, sphere_points.size(), 0);
+    MinimalBoundingSphere const bounding_sphere =
+        recurseCalculation(sphere_points, 0, sphere_points.size(), 0);
     _center = bounding_sphere.getCenter();
     _radius = bounding_sphere.getRadius();
 }
 
-MinimalBoundingSphere
-MinimalBoundingSphere::recurseCalculation(
+MinimalBoundingSphere MinimalBoundingSphere::recurseCalculation(
     std::vector<MathLib::Point3d*> sphere_points,
     std::size_t start_idx,
     std::size_t length,
     std::size_t n_boundary_points)
 {
     MinimalBoundingSphere sphere;
-    switch(n_boundary_points)
+    switch (n_boundary_points)
     {
-    case 0:
-        sphere = MinimalBoundingSphere();
-        break;
-    case 1:
-        sphere = MinimalBoundingSphere(*sphere_points[start_idx-1]);
-        break;
-    case 2:
-        sphere = MinimalBoundingSphere(*sphere_points[start_idx-1], *sphere_points[start_idx-2]);
-        break;
-    case 3:
-        sphere = MinimalBoundingSphere(*sphere_points[start_idx-1], *sphere_points[start_idx-2], *sphere_points[start_idx-3]);
-        break;
-    case 4:
-        sphere = MinimalBoundingSphere(*sphere_points[start_idx-1], *sphere_points[start_idx-2], *sphere_points[start_idx-3], *sphere_points[start_idx-4]);
-        return sphere;
+        case 0:
+            sphere = MinimalBoundingSphere();
+            break;
+        case 1:
+            sphere = MinimalBoundingSphere(*sphere_points[start_idx - 1]);
+            break;
+        case 2:
+            sphere = MinimalBoundingSphere(*sphere_points[start_idx - 1],
+                                           *sphere_points[start_idx - 2]);
+            break;
+        case 3:
+            sphere = MinimalBoundingSphere(*sphere_points[start_idx - 1],
+                                           *sphere_points[start_idx - 2],
+                                           *sphere_points[start_idx - 3]);
+            break;
+        case 4:
+            sphere = MinimalBoundingSphere(
+                *sphere_points[start_idx - 1], *sphere_points[start_idx - 2],
+                *sphere_points[start_idx - 3], *sphere_points[start_idx - 4]);
+            return sphere;
     }
 
-    for(std::size_t i=0; i<length; ++i)
+    for (std::size_t i = 0; i < length; ++i)
     {
         // current point is located outside of sphere
-        if (sphere.pointDistanceSquared(*sphere_points[start_idx+i]) > 0)
+        if (sphere.pointDistanceSquared(*sphere_points[start_idx + i]) > 0)
         {
-            if (i>start_idx)
+            if (i > start_idx)
             {
-                using DiffType = std::vector<MathLib::Point3d*>::iterator::difference_type;
+                using DiffType =
+                    std::vector<MathLib::Point3d*>::iterator::difference_type;
                 std::vector<MathLib::Point3d*> const tmp_ps(
                     sphere_points.cbegin() + static_cast<DiffType>(start_idx),
-                    sphere_points.cbegin() + static_cast<DiffType>(start_idx + i + 1));
+                    sphere_points.cbegin() +
+                        static_cast<DiffType>(start_idx + i + 1));
                 std::copy(tmp_ps.cbegin(), --tmp_ps.cend(),
-                    sphere_points.begin() + static_cast<DiffType>(start_idx + 1));
+                          sphere_points.begin() +
+                              static_cast<DiffType>(start_idx + 1));
                 sphere_points[start_idx] = tmp_ps.back();
             }
-            sphere = recurseCalculation(sphere_points, start_idx+1, i, n_boundary_points+1);
+            sphere = recurseCalculation(sphere_points, start_idx + 1, i,
+                                        n_boundary_points + 1);
         }
     }
     return sphere;
 }
 
-double MinimalBoundingSphere::pointDistanceSquared(MathLib::Point3d const& pnt) const
+double MinimalBoundingSphere::pointDistanceSquared(
+    MathLib::Point3d const& pnt) const
 {
-    return MathLib::sqrDist(_center, pnt)-(_radius*_radius);
+    return MathLib::sqrDist(_center, pnt) - (_radius * _radius);
 }
 
 }  // namespace GeoLib

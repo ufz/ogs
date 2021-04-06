@@ -7,14 +7,15 @@
  *
  */
 
-#include <limits>
-#include <random>
 #include <gtest/gtest.h>
 
+#include <limits>
+#include <random>
+
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-#include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/AnalyticalJacobianAssembler.h"
 #include "ProcessLib/CentralDifferencesJacobianAssembler.h"
+#include "ProcessLib/LocalAssemblerInterface.h"
 
 //! Fills a vector with values whose absolute value is between \c abs_min and
 //! \c abs_max.
@@ -28,10 +29,12 @@ void fillRandomlyConstrainedAbsoluteValues(std::vector<double>& xs,
     std::uniform_real_distribution<double> rnd(abs_min,
                                                abs_min + 2.0 * abs_range);
 
-    for (auto& x : xs) {
+    for (auto& x : xs)
+    {
         // v in [ abs_min, abs_min + 2 abs_range ]
         auto v = rnd(random_number_generator);
-        if (v > abs_max) {
+        if (v > abs_max)
+        {
             // produce negative values
             // (v - abs_range) in [ abs_min, abs_max ]
             v = -(v - abs_range);
@@ -57,8 +60,8 @@ struct MatDiagX
                                 std::vector<double> const& y_data,
                                 std::vector<double>& dMdxTy_data)
     {
-        auto dMdxTy =
-            MathLib::createZeroedMatrix(dMdxTy_data, x_data.size(), x_data.size());
+        auto dMdxTy = MathLib::createZeroedMatrix(dMdxTy_data, x_data.size(),
+                                                  x_data.size());
         dMdxTy.diagonal().noalias() =
             MathLib::toVector<Eigen::VectorXd>(y_data, y_data.size());
     }
@@ -97,8 +100,10 @@ struct MatXY
     {
         auto mat =
             MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
-        for (std::size_t r=0; r<x_data.size(); ++r) {
-            for (std::size_t c=0; c<x_data.size(); ++c) {
+        for (std::size_t r = 0; r < x_data.size(); ++r)
+        {
+            for (std::size_t c = 0; c < x_data.size(); ++c)
+            {
                 mat(r, c) = x_data[r] * x_data[c];
             }
         }
@@ -117,10 +122,11 @@ struct MatXY
         auto const N = x_data.size();
         auto const x_dot_y = MathLib::toVector<Eigen::VectorXd>(x_data, N).dot(
             MathLib::toVector<Eigen::VectorXd>(y_data, N));
-        auto dMdxTy =
-            MathLib::createZeroedMatrix(dMdxTy_data, N, N);
-        for (std::size_t r=0; r<N; ++r) {
-            for (std::size_t c=0; c<N; ++c) {
+        auto dMdxTy = MathLib::createZeroedMatrix(dMdxTy_data, N, N);
+        for (std::size_t r = 0; r < N; ++r)
+        {
+            for (std::size_t c = 0; c < N; ++c)
+            {
                 dMdxTy(r, c) = x_data[r] * y_data[c];
             }
             dMdxTy(r, r) += x_dot_y;
@@ -136,8 +142,9 @@ struct VecXRevX
     {
         vec_data = x_data;
         auto const N = x_data.size();
-        for (std::size_t i=0; i<N; ++i) {
-            vec_data[i] *= x_data[N-i-1];
+        for (std::size_t i = 0; i < N; ++i)
+        {
+            vec_data[i] *= x_data[N - i - 1];
         }
     }
 
@@ -152,9 +159,10 @@ struct VecXRevX
         auto mat =
             MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
         auto const N = x_data.size();
-        for (std::size_t i=0; i<N; ++i) {
-            mat(i, i) += x_data[N-i-1];
-            mat(N-i-1, i) += x_data[N-i-1];
+        for (std::size_t i = 0; i < N; ++i)
+        {
+            mat(i, i) += x_data[N - i - 1];
+            mat(N - i - 1, i) += x_data[N - i - 1];
         }
     }
 };
@@ -179,8 +187,8 @@ struct MatDiagXSquared
                                 std::vector<double> const& y_data,
                                 std::vector<double>& dMdxTy_data)
     {
-        auto dMdxTy =
-            MathLib::createZeroedMatrix(dMdxTy_data, x_data.size(), x_data.size());
+        auto dMdxTy = MathLib::createZeroedMatrix(dMdxTy_data, x_data.size(),
+                                                  x_data.size());
 
         for (std::size_t i = 0; i < x_data.size(); ++i)
         {
@@ -208,7 +216,8 @@ struct VecXSquared
     {
         auto mat =
             MathLib::createZeroedMatrix(mat_data, x_data.size(), x_data.size());
-        for (std::size_t i=0; i< x_data.size(); ++i) {
+        for (std::size_t i = 0; i < x_data.size(); ++i)
+        {
             mat(i, i) = 2.0 * x_data[i];
         }
     }
@@ -226,10 +235,11 @@ struct MatXSquaredShifted
                        std::vector<double>& mat_data)
     {
         auto const N = x_data.size();
-        auto mat =
-            MathLib::createZeroedMatrix(mat_data, N, N);
-        for (std::size_t r=0; r<N; ++r) {
-            for (std::size_t c=0; c<N; ++c) {
+        auto mat = MathLib::createZeroedMatrix(mat_data, N, N);
+        for (std::size_t r = 0; r < N; ++r)
+        {
+            for (std::size_t c = 0; c < N; ++c)
+            {
                 auto const i = (r + c) % N;
                 mat(r, i) = x_data[c] * x_data[c];
             }
@@ -246,10 +256,11 @@ struct MatXSquaredShifted
                                 std::vector<double>& dMdxTy_data)
     {
         auto const N = x_data.size();
-        auto dMdxTy =
-            MathLib::createZeroedMatrix(dMdxTy_data, N, N);
-        for (std::size_t r=0; r<N; ++r) {
-            for (std::size_t c=0; c<N; ++c) {
+        auto dMdxTy = MathLib::createZeroedMatrix(dMdxTy_data, N, N);
+        for (std::size_t r = 0; r < N; ++r)
+        {
+            for (std::size_t c = 0; c < N; ++c)
+            {
                 auto const i = (r + c) % N;
                 dMdxTy(r, c) = 2.0 * x_data[c] * y_data[i];
             }
@@ -459,7 +470,8 @@ public:
 
         local_Jac_data = local_JacM_data;
         auto const N = local_Jac_data.size();
-        for (std::size_t i = 0; i < N; ++i) {
+        for (std::size_t i = 0; i < N; ++i)
+        {
             local_Jac_data[i] += local_JacK_data[i] - local_JacB_data[i];
         }
 
@@ -483,7 +495,7 @@ public:
     static const bool asmb = true;
 };
 
-template<class LocAsm>
+template <class LocAsm>
 struct ProcessLibCentralDifferencesJacobianAssembler : public ::testing::Test
 {
     static void test()
@@ -522,7 +534,7 @@ private:
                           const double dxdot_dx, const double dx_dx)
     {
         ProcessLib::AnalyticalJacobianAssembler jac_asm_ana;
-        ProcessLib::CentralDifferencesJacobianAssembler jac_asm_cd({ 1e-8 });
+        ProcessLib::CentralDifferencesJacobianAssembler jac_asm_cd({1e-8});
         LocAsm loc_asm;
 
         double const eps = std::numeric_limits<double>::epsilon();
@@ -546,25 +558,28 @@ private:
                                          dx_dx, M_data_ana, K_data_ana,
                                          b_data_ana, Jac_data_ana);
 
-        if (LocAsm::asmM) {
-            ASSERT_EQ(x.size()*x.size(), M_data_cd.size());
-            ASSERT_EQ(x.size()*x.size(), M_data_ana.size());
+        if (LocAsm::asmM)
+        {
+            ASSERT_EQ(x.size() * x.size(), M_data_cd.size());
+            ASSERT_EQ(x.size() * x.size(), M_data_ana.size());
             for (std::size_t i = 0; i < x.size() * x.size(); ++i)
             {
                 EXPECT_NEAR(M_data_ana[i], M_data_cd[i], eps);
             }
         }
 
-        if (LocAsm::asmK) {
-            ASSERT_EQ(x.size()*x.size(), K_data_cd.size());
-            ASSERT_EQ(x.size()*x.size(), K_data_ana.size());
+        if (LocAsm::asmK)
+        {
+            ASSERT_EQ(x.size() * x.size(), K_data_cd.size());
+            ASSERT_EQ(x.size() * x.size(), K_data_ana.size());
             for (std::size_t i = 0; i < x.size() * x.size(); ++i)
             {
                 EXPECT_NEAR(K_data_ana[i], K_data_cd[i], eps);
             }
         }
 
-        if (LocAsm::asmb) {
+        if (LocAsm::asmb)
+        {
             ASSERT_EQ(x.size(), b_data_cd.size());
             ASSERT_EQ(x.size(), b_data_ana.size());
             for (std::size_t i = 0; i < x.size(); ++i)
@@ -573,9 +588,10 @@ private:
             }
         }
 
-        ASSERT_EQ(x.size()*x.size(), Jac_data_cd.size());
-        ASSERT_EQ(x.size()*x.size(), Jac_data_ana.size());
-        for (std::size_t i=0; i<x.size()*x.size(); ++i) {
+        ASSERT_EQ(x.size() * x.size(), Jac_data_cd.size());
+        ASSERT_EQ(x.size() * x.size(), Jac_data_ana.size());
+        for (std::size_t i = 0; i < x.size() * x.size(); ++i)
+        {
             // DBUG("{:d}, {:g}, {:g}", i, Jac_data_ana[i], Jac_data_cd[i]);
             EXPECT_NEAR(Jac_data_ana[i], Jac_data_cd[i], LocAsm::getTol());
         }

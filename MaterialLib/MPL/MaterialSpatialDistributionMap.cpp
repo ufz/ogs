@@ -10,6 +10,7 @@
  *
  */
 #include "MaterialSpatialDistributionMap.h"
+
 #include "MeshLib/Mesh.h"
 
 namespace MaterialPropertyLib

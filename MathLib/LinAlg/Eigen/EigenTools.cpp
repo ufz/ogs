@@ -10,27 +10,27 @@
 
 #include "EigenTools.h"
 
-
 #include "EigenVector.h"
 
 namespace MathLib
 {
-
-void applyKnownSolution(EigenMatrix &A, EigenVector &b, EigenVector &/*x*/,
-        const std::vector<EigenMatrix::IndexType> &vec_knownX_id,
-        const std::vector<double> &vec_knownX_x, double /*penalty_scaling*/)
+void applyKnownSolution(
+    EigenMatrix& A, EigenVector& b, EigenVector& /*x*/,
+    const std::vector<EigenMatrix::IndexType>& vec_knownX_id,
+    const std::vector<double>& vec_knownX_x, double /*penalty_scaling*/)
 {
     using SpMat = EigenMatrix::RawMatrixType;
     static_assert(SpMat::IsRowMajor, "matrix is assumed to be row major!");
 
-    auto &A_eigen = A.getRawMatrix();
-    auto &b_eigen = b.getRawVector();
+    auto& A_eigen = A.getRawMatrix();
+    auto& b_eigen = b.getRawVector();
 
     // A_eigen(k, j) = 0.
     // set row to zero
     for (auto row_id : vec_knownX_id)
     {
-        for (SpMat::InnerIterator it(A_eigen,row_id); it; ++it) {
+        for (SpMat::InnerIterator it(A_eigen, row_id); it; ++it)
+        {
             if (it.col() != decltype(it.col())(row_id))
             {
                 it.valueRef() = 0.0;
@@ -40,7 +40,7 @@ void applyKnownSolution(EigenMatrix &A, EigenVector &b, EigenVector &/*x*/,
 
     SpMat AT = A_eigen.transpose();
 
-    for (std::size_t ix=0; ix<vec_knownX_id.size(); ix++)
+    for (std::size_t ix = 0; ix < vec_knownX_id.size(); ix++)
     {
         SpMat::Index const row_id = vec_knownX_id[ix];
         auto const x = vec_knownX_x[ix];
@@ -54,14 +54,17 @@ void applyKnownSolution(EigenMatrix &A, EigenVector &b, EigenVector &/*x*/,
                 continue;
             }
 
-            b_eigen[it.col()] -= it.value()*x;
+            b_eigen[it.col()] -= it.value() * x;
             it.valueRef() = 0.0;
         }
 
         auto& c = AT.coeffRef(row_id, row_id);
-        if (c != 0.0) {
+        if (c != 0.0)
+        {
             b_eigen[row_id] = x * c;
-        } else {
+        }
+        else
+        {
             b_eigen[row_id] = x;
             c = 1.0;
         }

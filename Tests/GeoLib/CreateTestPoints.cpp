@@ -7,11 +7,11 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "CreateTestPoints.h"
+
 #include <map>
 #include <memory>
 #include <vector>
-
-#include "CreateTestPoints.h"
 
 void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
                                              std::string& name,
@@ -42,4 +42,3 @@ void createSetOfTestPointsAndAssociatedNames(GeoLib::GEOObjects& geo_objs,
 
     geo_objs.addPointVec(std::move(pnts), name, std::move(pnt_name_map));
 }
-

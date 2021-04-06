@@ -8,12 +8,13 @@
  *
  */
 
+#include "CreateOutput.h"
+
 #include <algorithm>
 #include <numeric>
 
 #include "AqueousSolution.h"
 #include "ChemicalSystem.h"
-#include "CreateOutput.h"
 #include "KineticReactant.h"
 #include "UserPunch.h"
 

@@ -15,60 +15,60 @@
 // ** VTK INCLUDES **
 #include "VtkStationSource.h"
 
-#include "BaseLib/Logging.h"
-
-#include "StationBorehole.h"
-
-#include "vtkObjectFactory.h"
-#include <vtkDoubleArray.h>
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
+#include <vtkDoubleArray.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkLine.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
+#include <vtkProperty.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
-#include <vtkProperty.h>
+
+#include "BaseLib/Logging.h"
+#include "StationBorehole.h"
+#include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(VtkStationSource);
 
 VtkStationSource::VtkStationSource()
 {
-    _removable = false; // From VtkAlgorithmProperties
+    _removable = false;  // From VtkAlgorithmProperties
     this->SetNumberOfInputPorts(0);
 
     const DataHolderLib::Color c = DataHolderLib::getRandomColor();
     GetProperties()->SetColor(c[0] / 255.0, c[1] / 255.0, c[2] / 255.0);
 }
 
-void VtkStationSource::PrintSelf( ostream& os, vtkIndent indent )
+void VtkStationSource::PrintSelf(ostream& os, vtkIndent indent)
 {
-    this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os, indent);
 
     if (_stations->empty())
     {
         return;
     }
 
-    os << indent << "== VtkStationSource ==" << "\n";
+    os << indent << "== VtkStationSource =="
+       << "\n";
 
     int i = 0;
     for (auto station : *_stations)
     {
         const double* coords = station->getCoords();
-        os << indent << "Station " << i << " (" << coords[0] << ", " << coords[1] <<
-        ", " << coords[2] << ")\n";
+        os << indent << "Station " << i << " (" << coords[0] << ", "
+           << coords[1] << ", " << coords[2] << ")\n";
         i++;
     }
 }
 
 /// Create 3d Station objects
-int VtkStationSource::RequestData( vtkInformation* request,
-                                   vtkInformationVector** inputVector,
-                                   vtkInformationVector* outputVector )
+int VtkStationSource::RequestData(vtkInformation* request,
+                                  vtkInformationVector** inputVector,
+                                  vtkInformationVector* outputVector)
 {
     (void)request;
     (void)inputVector;
@@ -84,10 +84,12 @@ int VtkStationSource::RequestData( vtkInformation* request,
     }
 
     bool useStationValues(false);
-    double sValue=static_cast<GeoLib::Station*>((*_stations)[0])->getStationValue();
+    double sValue =
+        static_cast<GeoLib::Station*>((*_stations)[0])->getStationValue();
     for (std::size_t i = 1; i < nStations; i++)
     {
-        if (static_cast<GeoLib::Station*>((*_stations)[i])->getStationValue() != sValue)
+        if (static_cast<GeoLib::Station*>((*_stations)[i])->getStationValue() !=
+            sValue)
         {
             useStationValues = true;
             break;
@@ -97,12 +99,14 @@ int VtkStationSource::RequestData( vtkInformation* request,
     bool isBorehole = static_cast<GeoLib::Station*>((*_stations)[0])->type() ==
                       GeoLib::Station::StationType::BOREHOLE;
 
-    vtkSmartPointer<vtkInformation> outInfo = outputVector->GetInformationObject(0);
+    vtkSmartPointer<vtkInformation> outInfo =
+        outputVector->GetInformationObject(0);
     vtkSmartPointer<vtkPolyData> output =
-            vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     vtkSmartPointer<vtkPoints> newStations = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkCellArray> newVerts = vtkSmartPointer<vtkCellArray>::New();
+    vtkSmartPointer<vtkCellArray> newVerts =
+        vtkSmartPointer<vtkCellArray>::New();
     newVerts->Allocate(nStations);
 
     vtkSmartPointer<vtkCellArray> newLines;
@@ -118,15 +122,18 @@ int VtkStationSource::RequestData( vtkInformation* request,
         return 1;
     }
 
-    vtkSmartPointer<vtkIntArray> station_ids = vtkSmartPointer<vtkIntArray>::New();
+    vtkSmartPointer<vtkIntArray> station_ids =
+        vtkSmartPointer<vtkIntArray>::New();
     station_ids->SetNumberOfComponents(1);
     station_ids->SetName("SiteIDs");
 
-    vtkSmartPointer<vtkDoubleArray> station_values = vtkSmartPointer<vtkDoubleArray>::New();
+    vtkSmartPointer<vtkDoubleArray> station_values =
+        vtkSmartPointer<vtkDoubleArray>::New();
     station_values->SetNumberOfComponents(1);
     station_values->SetName("StationValue");
 
-    vtkSmartPointer<vtkIntArray> strat_ids = vtkSmartPointer<vtkIntArray>::New();
+    vtkSmartPointer<vtkIntArray> strat_ids =
+        vtkSmartPointer<vtkIntArray>::New();
     strat_ids->SetNumberOfComponents(1);
     strat_ids->SetName("Stratigraphies");
 
@@ -187,14 +194,16 @@ int VtkStationSource::RequestData( vtkInformation* request,
     {
         output->SetVerts(newVerts);
         output->GetCellData()->AddArray(station_ids);
-        output->GetCellData()->SetActiveAttribute("SiteIDs", vtkDataSetAttributes::SCALARS);
+        output->GetCellData()->SetActiveAttribute(
+            "SiteIDs", vtkDataSetAttributes::SCALARS);
     }
     else
     {
         output->SetLines(newLines);
-        //output->GetCellData()->AddArray(station_ids);
+        // output->GetCellData()->AddArray(station_ids);
         output->GetCellData()->AddArray(strat_ids);
-        output->GetCellData()->SetActiveAttribute("Stratigraphies", vtkDataSetAttributes::SCALARS);
+        output->GetCellData()->SetActiveAttribute(
+            "Stratigraphies", vtkDataSetAttributes::SCALARS);
     }
     if (useStationValues)
     {
@@ -206,20 +215,20 @@ int VtkStationSource::RequestData( vtkInformation* request,
     return 1;
 }
 
-int VtkStationSource::RequestInformation( vtkInformation* /*request*/,
-                                          vtkInformationVector** /*inputVector*/,
-                                          vtkInformationVector* /*outputVector*/ )
+int VtkStationSource::RequestInformation(vtkInformation* /*request*/,
+                                         vtkInformationVector** /*inputVector*/,
+                                         vtkInformationVector* /*outputVector*/)
 {
     return 1;
 }
 
-void VtkStationSource::SetUserProperty( QString name, QVariant value )
+void VtkStationSource::SetUserProperty(QString name, QVariant value)
 {
     Q_UNUSED(name);
     Q_UNUSED(value);
 }
 
-std::size_t VtkStationSource::GetIndexByName( std::string const& name )
+std::size_t VtkStationSource::GetIndexByName(std::string const& name)
 {
     vtkIdType max_key(0);
     for (auto& it : _id_map)
@@ -234,9 +243,8 @@ std::size_t VtkStationSource::GetIndexByName( std::string const& name )
         }
     }
 
-    vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key+1);
+    vtkIdType new_index = (_id_map.empty()) ? 0 : (max_key + 1);
     INFO("Key '{:s}' has been assigned index {:d}.", name, new_index);
     _id_map.insert(std::pair<std::string, vtkIdType>(name, new_index));
     return new_index;
 }
-

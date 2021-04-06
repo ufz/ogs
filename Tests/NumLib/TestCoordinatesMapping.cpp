@@ -9,22 +9,19 @@
 
 #include <gtest/gtest.h>
 
+#include <Eigen/Eigen>
 #include <algorithm>
 #include <limits>
 #include <vector>
-
-#include <Eigen/Eigen>
-
-#include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
-#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 #include "CoordinatesMappingTestData/TestHex8.h"
 #include "CoordinatesMappingTestData/TestLine2.h"
 #include "CoordinatesMappingTestData/TestLine3.h"
 #include "CoordinatesMappingTestData/TestQuad4.h"
 #include "CoordinatesMappingTestData/TestTri3.h"
-
+#include "NumLib/Fem/CoordinatesMapping/NaturalCoordinatesMapping.h"
+#include "NumLib/Fem/CoordinatesMapping/ShapeMatrices.h"
+#include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "Tests/TestTools.h"
 
 using namespace NumLib;
@@ -35,7 +32,7 @@ namespace
 // Element types to be tested
 using TestTypes =
     ::testing::Types<TestLine2, TestLine3, TestTri3, TestQuad4, TestHex8>;
-}
+}  // namespace
 
 template <class T_TEST>
 class NumLibFemNaturalCoordinatesMappingTest : public ::testing::Test,

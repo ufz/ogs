@@ -9,9 +9,9 @@
  */
 
 #include "CreateJacobianAssembler.h"
-#include "BaseLib/Error.h"
 
 #include "AnalyticalJacobianAssembler.h"
+#include "BaseLib/Error.h"
 #include "CentralDifferencesJacobianAssembler.h"
 #include "CompareJacobiansJacobianAssembler.h"
 
@@ -28,7 +28,8 @@ std::unique_ptr<AbstractJacobianAssembler> createJacobianAssembler(
     //! \ogs_file_param{prj__processes__process__jacobian_assembler__type}
     auto const type = config->peekConfigParameter<std::string>("type");
 
-    if (type == "Analytical") {
+    if (type == "Analytical")
+    {
         config->ignoreConfigParameter("type");
         return std::make_unique<AnalyticalJacobianAssembler>();
     }

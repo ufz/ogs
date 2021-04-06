@@ -8,18 +8,16 @@
  *
  */
 
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include <numeric>
 
-#include <tclap/CmdLine.h>
-
 #include "InfoLib/GitInfo.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-
 #include "MeshLib/Mesh.h"
 
 template <typename T1, typename T2>

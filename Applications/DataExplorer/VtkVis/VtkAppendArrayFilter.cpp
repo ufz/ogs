@@ -15,8 +15,6 @@
 // ** VTK INCLUDES **
 #include "VtkAppendArrayFilter.h"
 
-#include "BaseLib/Logging.h"
-
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
 #include <vtkInformation.h>
@@ -27,15 +25,17 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkUnstructuredGrid.h>
 
+#include "BaseLib/Logging.h"
+
 vtkStandardNewMacro(VtkAppendArrayFilter);
 
 VtkAppendArrayFilter::VtkAppendArrayFilter() = default;
 
 VtkAppendArrayFilter::~VtkAppendArrayFilter() = default;
 
-void VtkAppendArrayFilter::PrintSelf( ostream& os, vtkIndent indent )
+void VtkAppendArrayFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-    this->Superclass::PrintSelf(os,indent);
+    this->Superclass::PrintSelf(os, indent);
     os << indent << "== VtkAppendArrayFilter ==" << endl;
 }
 
@@ -49,10 +49,11 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
         return 0;
     }
     vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
-    vtkUnstructuredGrid* input =
-            vtkUnstructuredGrid::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkUnstructuredGrid* input = vtkUnstructuredGrid::SafeDownCast(
+        inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-    vtkSmartPointer<vtkDoubleArray> colors = vtkSmartPointer<vtkDoubleArray>::New();
+    vtkSmartPointer<vtkDoubleArray> colors =
+        vtkSmartPointer<vtkDoubleArray>::New();
     colors->SetNumberOfComponents(1);
     std::size_t arrayLength = this->_array.size();
     colors->SetNumberOfValues(arrayLength);
@@ -60,7 +61,9 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
 
     std::size_t nCells = input->GetNumberOfCells();
     if (nCells > arrayLength)
-        WARN("VtkAppendArrayFilter::RequestData(): Number of cells exceeds selection array length. Surplus cells won't be examined.");
+        WARN(
+            "VtkAppendArrayFilter::RequestData(): Number of cells exceeds "
+            "selection array length. Surplus cells won't be examined.");
 
     for (std::size_t i = 0; i < arrayLength; i++)
     {
@@ -68,8 +71,8 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
     }
 
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
-    vtkUnstructuredGrid* output =
-            vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkUnstructuredGrid* output = vtkUnstructuredGrid::SafeDownCast(
+        outInfo->Get(vtkDataObject::DATA_OBJECT()));
     output->CopyStructure(input);
     output->GetPointData()->PassData(input->GetPointData());
     output->GetCellData()->PassData(input->GetCellData());
@@ -79,8 +82,8 @@ int VtkAppendArrayFilter::RequestData(vtkInformation* /*request*/,
     return 1;
 }
 
-void VtkAppendArrayFilter::SetArray(const std::string &array_name,
-                                    const std::vector<double> &new_array)
+void VtkAppendArrayFilter::SetArray(const std::string& array_name,
+                                    const std::vector<double>& new_array)
 {
     this->_array_name = array_name;
     this->_array = new_array;

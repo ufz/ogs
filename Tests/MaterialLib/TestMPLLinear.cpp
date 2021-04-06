@@ -48,4 +48,3 @@ TEST(MaterialPropertyLib, Linear)
                   MaterialPropertyLib::Variable::temperature, pos, time, dt)),
               0.0);
 }
-

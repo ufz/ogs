@@ -10,12 +10,10 @@
 #include "ConstructMeshesFromGeometries.h"
 
 #include "BaseLib/Logging.h"
-
+#include "BoundaryElementsSearcher.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
-
-#include "BoundaryElementsSearcher.h"
 #include "MeshNodeSearcher.h"
 
 namespace MeshGeoToolsLib

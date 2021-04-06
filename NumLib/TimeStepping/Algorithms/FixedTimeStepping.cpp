@@ -13,9 +13,9 @@
 #include "FixedTimeStepping.h"
 
 #include <algorithm>
-#include <numeric>
-#include <limits>
 #include <cassert>
+#include <limits>
+#include <numeric>
 
 namespace NumLib
 {

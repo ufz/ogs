@@ -12,8 +12,8 @@
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
-#include "NumLib/IndexValueVector.h"
 #include "NumLib/Exceptions.h"
+#include "NumLib/IndexValueVector.h"
 
 namespace detail
 {
@@ -87,7 +87,8 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     _xdot_ids.resize(x_new_timestep.size());
     for (std::size_t i = 0; i < xdot.size(); i++)
     {
-        xdot[i] = &NumLib::GlobalVectorProvider::provider.getVector(_xdot_ids[i]);
+        xdot[i] =
+            &NumLib::GlobalVectorProvider::provider.getVector(_xdot_ids[i]);
         _time_disc.getXdot(*x_new_timestep[i], *x_prev[i], *xdot[i]);
     }
 
@@ -225,7 +226,8 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     for (std::size_t i = 0; i < xdot.size(); i++)
     {
-        xdot[i] = &NumLib::GlobalVectorProvider::provider.getVector(_xdot_ids[i]);
+        xdot[i] =
+            &NumLib::GlobalVectorProvider::provider.getVector(_xdot_ids[i]);
         _time_disc.getXdot(*x_new_timestep[i], *x_prev[i], *xdot[i]);
     }
 

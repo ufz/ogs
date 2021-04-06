@@ -12,15 +12,12 @@
 
 #include "CreateMedium.h"
 
-#include "Medium.h"
-
 #include "BaseLib/ConfigTree.h"
-#include "ParameterLib/Parameter.h"
-
-#include "Properties/Properties.h"
-
 #include "CreatePhase.h"
 #include "CreateProperty.h"
+#include "Medium.h"
+#include "ParameterLib/Parameter.h"
+#include "Properties/Properties.h"
 
 namespace MaterialPropertyLib
 {

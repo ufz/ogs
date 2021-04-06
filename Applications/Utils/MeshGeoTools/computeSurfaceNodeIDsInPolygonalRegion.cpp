@@ -10,55 +10,62 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <tclap/CmdLine.h>
-
 #include "Applications/FileIO/readGeometryFromFile.h"
-#include "InfoLib/GitInfo.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
 
-void writeToFile(std::string const& id_area_fname, std::string const& csv_fname,
+void writeToFile(
+    std::string const& id_area_fname, std::string const& csv_fname,
     std::vector<std::pair<std::size_t, double>> const& ids_and_areas,
     std::vector<MeshLib::Node*> const& mesh_nodes)
 {
     std::ofstream ids_and_area_out(id_area_fname);
-    if (!ids_and_area_out) {
+    if (!ids_and_area_out)
+    {
         OGS_FATAL("Unable to open the file '{:s}' - aborting.", id_area_fname);
     }
     std::ofstream csv_out(csv_fname);
-    if (!csv_out) {
+    if (!csv_out)
+    {
         OGS_FATAL("Unable to open the file '{:s}' - aborting.", csv_fname);
     }
 
     ids_and_area_out << std::setprecision(20);
     csv_out << std::setprecision(20);
 
-    ids_and_area_out << ids_and_areas[0].first << " " << ids_and_areas[0].second;
-    csv_out << "ID x y z area node_id\n"; // CSV header
+    ids_and_area_out << ids_and_areas[0].first << " "
+                     << ids_and_areas[0].second;
+    csv_out << "ID x y z area node_id\n";  // CSV header
     csv_out << 0 << " " << *mesh_nodes[ids_and_areas[0].first]
             << ids_and_areas[0].second << " " << ids_and_areas[0].first;
-    for (std::size_t k(1); k<ids_and_areas.size(); k++) {
+    for (std::size_t k(1); k < ids_and_areas.size(); k++)
+    {
         ids_and_area_out << "\n"
-            << ids_and_areas[k].first << " " << ids_and_areas[k].second;
-        csv_out << "\n" << k << " " << *mesh_nodes[ids_and_areas[k].first]
-            << ids_and_areas[k].second << " " << ids_and_areas[k].first;
+                         << ids_and_areas[k].first << " "
+                         << ids_and_areas[k].second;
+        csv_out << "\n"
+                << k << " " << *mesh_nodes[ids_and_areas[k].first]
+                << ids_and_areas[k].second << " " << ids_and_areas[k].first;
     }
     ids_and_area_out << "\n";
     csv_out << "\n";
 }
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Computes ids of mesh nodes that are in polygonal regions and resides "
@@ -73,13 +80,14 @@ int main (int argc, char* argv[])
             "Copyright (c) 2012-2021, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> mesh_in("m", "mesh-input-file",
-        "the name of the file containing the input mesh", true,
-        "", "file name of input mesh");
+    TCLAP::ValueArg<std::string> mesh_in(
+        "m", "mesh-input-file",
+        "the name of the file containing the input mesh", true, "",
+        "file name of input mesh");
     cmd.add(mesh_in);
-    TCLAP::ValueArg<std::string> geo_in("g", "geo-file",
-        "the name of the gml file containing the polygons", true,
-        "", "file name of input geometry");
+    TCLAP::ValueArg<std::string> geo_in(
+        "g", "geo-file", "the name of the gml file containing the polygons",
+        true, "", "file name of input geometry");
     cmd.add(geo_in);
 
     TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
@@ -88,7 +96,8 @@ int main (int argc, char* argv[])
     cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
 
-    std::unique_ptr<MeshLib::Mesh const> mesh(MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+    std::unique_ptr<MeshLib::Mesh const> mesh(
+        MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
     INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
          mesh->getNumberOfElements());
 
@@ -104,31 +113,29 @@ int main (int argc, char* argv[])
     Eigen::Vector3d const dir({0.0, 0.0, -1.0});
     double angle(90);
 
-    auto computeElementTopSurfaceAreas = [](MeshLib::Mesh const& mesh,
-        Eigen::Vector3d const& d, double angle)
-    {
-        std::unique_ptr<MeshLib::Mesh> surface_mesh(
-            MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, d, angle));
-        return MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
-            *surface_mesh);
-    };
+    auto computeElementTopSurfaceAreas =
+        [](MeshLib::Mesh const& mesh, Eigen::Vector3d const& d, double angle) {
+            std::unique_ptr<MeshLib::Mesh> surface_mesh(
+                MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, d, angle));
+            return MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
+                *surface_mesh);
+        };
 
     std::vector<double> areas(computeElementTopSurfaceAreas(*mesh, dir, angle));
     std::vector<MeshLib::Node*> all_sfc_nodes(
-        MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, dir, angle)
-    );
+        MeshLib::MeshSurfaceExtraction::getSurfaceNodes(*mesh, dir, angle));
 
     std::for_each(all_sfc_nodes.begin(), all_sfc_nodes.end(),
                   [](MeshLib::Node* p) { (*p)[2] = 0.0; });
 
     std::vector<MeshLib::Node*> const& mesh_nodes(mesh->getNodes());
-    GeoLib::PolylineVec const* ply_vec(
-        geo_objs.getPolylineVecObj(geo_name)
-    );
+    GeoLib::PolylineVec const* ply_vec(geo_objs.getPolylineVecObj(geo_name));
     std::vector<GeoLib::Polyline*> const& plys(*(ply_vec->getVector()));
 
-    for (std::size_t j(0); j<plys.size(); j++) {
-        if (! plys[j]->isClosed()) {
+    for (std::size_t j(0); j < plys.size(); j++)
+    {
+        if (!plys[j]->isClosed())
+        {
             continue;
         }
         std::string polygon_name;
@@ -141,13 +148,16 @@ int main (int argc, char* argv[])
         GeoLib::Polygon const polygon{*plys[j]};
         // ids of mesh nodes on surface that are within the given polygon
         std::vector<std::pair<std::size_t, double>> ids_and_areas;
-        for (std::size_t k(0); k<all_sfc_nodes.size(); k++) {
+        for (std::size_t k(0); k < all_sfc_nodes.size(); k++)
+        {
             MeshLib::Node const& pnt(*(all_sfc_nodes[k]));
-            if (polygon.isPntInPolygon(pnt[0], pnt[1], pnt[2])) {
+            if (polygon.isPntInPolygon(pnt[0], pnt[1], pnt[2]))
+            {
                 ids_and_areas.emplace_back(pnt.getID(), areas[k]);
             }
         }
-        if (ids_and_areas.empty()) {
+        if (ids_and_areas.empty())
+        {
             ERR("Polygonal part of surface '{:s}' doesn't contains nodes. No "
                 "output will be generated.",
                 polygon_name);
@@ -160,8 +170,8 @@ int main (int argc, char* argv[])
         id_and_area_fname += std::to_string(j) + ".txt";
         csv_fname += std::to_string(j) + ".csv";
         INFO(
-            "Polygonal part of surface '{:s}' contains %{ul} nodes. Writing to"
-            " files '{:s}' and '{:s}'.",
+            "Polygonal part of surface '{:s}' contains %{ul} nodes. Writing to "
+            "files '{:s}' and '{:s}'.",
             polygon_name,
             ids_and_areas.size(),
             id_and_area_fname,

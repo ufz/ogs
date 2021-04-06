@@ -49,8 +49,8 @@ TEST(MaterialPropertyLib, PermeabilityMohrCoulombFailureIndexModel)
     stress[5] = -1.39944e+7;
 
     MPL::VariableArray vars;
-    vars[static_cast<int>(MPL::Variable::total_stress)].emplace<SymmetricTensor>(
-        stress);
+    vars[static_cast<int>(MPL::Variable::total_stress)]
+        .emplace<SymmetricTensor>(stress);
 
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();

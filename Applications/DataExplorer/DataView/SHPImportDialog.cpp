@@ -12,10 +12,7 @@
  *
  */
 
-#include "GeoLib/GEOObjects.h"
-#include "OGSError.h"
 #include "SHPImportDialog.h"
-#include "SHPInterface.h"
 
 #include <QDialogButtonBox>
 #include <QFileInfo>
@@ -23,6 +20,10 @@
 #include <QLineEdit>
 #include <QRadioButton>
 #include <QVBoxLayout>
+
+#include "GeoLib/GEOObjects.h"
+#include "OGSError.h"
+#include "SHPInterface.h"
 
 SHPImportDialog::SHPImportDialog(std::string filename,
                                  GeoLib::GEOObjects& geo_objects,
@@ -90,26 +91,28 @@ void SHPImportDialog::setupDialog()
         }
 
         _shpContentLabel =
-                new QLabel("The selected file contains " + QString::number(
-                                   numberOfEntities) + " " + type, this);
+            new QLabel("The selected file contains " +
+                           QString::number(numberOfEntities) + " " + type,
+                       this);
         _nameLabel = new QLabel("List Name: ", this);
 
         QFileInfo fi(QString::fromStdString(_filename));
         _listName->setText(fi.baseName());
 
-        if ((shpType - 1) % 10 == 0 && shpType != 31) // Points
+        if ((shpType - 1) % 10 == 0 && shpType != 31)  // Points
         {
             _choice1 = new QRadioButton("Read as Geometry Points");
             _choice2 = new QRadioButton("Read as Station Points");
-            _choice1->toggle(); // default choice
-            _layout->addWidget( _shpContentLabel );
-            _layout->addWidget( _choice1 );
-            _layout->addWidget( _choice2 );
-            _layout->addWidget( _nameLabel );
-            _layout->addWidget( _listName );
+            _choice1->toggle();  // default choice
+            _layout->addWidget(_shpContentLabel);
+            _layout->addWidget(_choice1);
+            _layout->addWidget(_choice2);
+            _layout->addWidget(_nameLabel);
+            _layout->addWidget(_listName);
             _fileType = 1;
         }
-        else if ((shpType - 3) % 10 == 0 || (shpType - 5) % 10 == 0) // Polylines
+        else if ((shpType - 3) % 10 == 0 ||
+                 (shpType - 5) % 10 == 0)  // Polylines
         {
             _choice1 = new QRadioButton("Read Polylines only");
             _choice2 = new QRadioButton("Read Polylines/Surfaces");
@@ -118,25 +121,27 @@ void SHPImportDialog::setupDialog()
                 _choice2->setDisabled(true);  // disable polygon-choice if file
                                               // contains only polylines
             }
-            _choice1->toggle(); // default choice
-            _layout->addWidget( _shpContentLabel );
-            _layout->addWidget( _choice1 );
-            _layout->addWidget( _choice2 );
-            _layout->addWidget( _nameLabel );
-            _layout->addWidget( _listName );
+            _choice1->toggle();  // default choice
+            _layout->addWidget(_shpContentLabel);
+            _layout->addWidget(_choice1);
+            _layout->addWidget(_choice2);
+            _layout->addWidget(_nameLabel);
+            _layout->addWidget(_listName);
             _fileType = 2;
         }
         else
         {
-            _nameLabel->setText("This element type is currently not supported.");
-            _layout->addWidget( _shpContentLabel );
-            _layout->addWidget( _nameLabel );
+            _nameLabel->setText(
+                "This element type is currently not supported.");
+            _layout->addWidget(_shpContentLabel);
+            _layout->addWidget(_nameLabel);
         }
 
-        _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+        _buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                          QDialogButtonBox::Cancel);
         connect(_buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
         connect(_buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-        _layout->addWidget( _buttonBox );
+        _layout->addWidget(_buttonBox);
 
         setLayout(_layout);
     }

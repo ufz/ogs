@@ -13,20 +13,17 @@
 
 // ThirdParty
 #include <tclap/CmdLine.h>
-
-#include "InfoLib/GitInfo.h"
-
 #include <vtkPolyDataAlgorithm.h>
-#include <vtkXMLPolyDataWriter.h>
 #include <vtkSmartPointer.h>
+#include <vtkXMLPolyDataWriter.h>
 
-#include "BaseLib/FileTools.h"
-
-#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
 #include "Applications/DataExplorer/VtkVis/VtkImageDataToPointCloudFilter.h"
+#include "Applications/FileIO/AsciiRasterInterface.h"
+#include "BaseLib/FileTools.h"
+#include "InfoLib/GitInfo.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Batch conversion of raster files into VTK point cloud data.\n"
@@ -34,7 +31,8 @@ int main(int argc, char *argv[])
         "number of random points based on the intensity value in each pixel "
         "(the higher the value, the more points. The [x,y]-extend of these "
         "random points is limited by the extent of the pixel they represent, "
-        "the elevation is limited by the max-elevation parameter. Likewise, the "
+        "the elevation is limited by the max-elevation parameter. Likewise, "
+        "the "
         "maximum number of points per pixel is limited by the max-points "
         "parameter. The increase of the number of points in relation to the "
         "pixel value is indicated by gamma, where 1 is a linear increase and "
@@ -77,7 +75,7 @@ int main(int argc, char *argv[])
         "'file1.asc', etc.",
         true, "", "input file name");
     cmd.add(input_arg);
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     std::string const input_name = input_arg.getValue().c_str();
     std::string const output_name = output_arg.getValue().c_str();
@@ -86,8 +84,7 @@ int main(int argc, char *argv[])
         (max_height_arg.isSet()) ? max_height_arg.getValue() : 5000;
     std::size_t const max_points =
         (max_points_arg.isSet()) ? max_points_arg.getValue() : 1000;
-    double const gamma =
-        (gamma_arg.isSet()) ? gamma_arg.getValue() : 1;
+    double const gamma = (gamma_arg.isSet()) ? gamma_arg.getValue() : 1;
 
     std::string const ibase_name = BaseLib::dropFileExtension(input_name);
     std::string const ifile_ext = BaseLib::getFileExtension(input_name);
@@ -101,9 +98,10 @@ int main(int argc, char *argv[])
     double global_max = 0;
 
     std::size_t n_rasters = 0;
-    for (std::size_t i = 0; ; ++i)
+    for (std::size_t i = 0;; ++i)
     {
-        std::string const file_name = ibase_name + std::to_string(i) + ifile_ext;
+        std::string const file_name =
+            ibase_name + std::to_string(i) + ifile_ext;
         std::unique_ptr<GeoLib::Raster> r(
             FileIO::AsciiRasterInterface::getRasterFromASCFile(file_name));
         if (r == nullptr)
@@ -129,7 +127,7 @@ int main(int argc, char *argv[])
         vtkSmartPointer<VtkGeoImageSource> geo_image =
             vtkSmartPointer<VtkGeoImageSource>::New();
         geo_image->readImage(QString::fromStdString(file_name));
-        VtkImageDataToPointCloudFilter *const point_cloud_filter =
+        VtkImageDataToPointCloudFilter* const point_cloud_filter =
             VtkImageDataToPointCloudFilter::New();
         point_cloud_filter->SetInputConnection(geo_image->GetOutputPort());
         geo_image->Update();

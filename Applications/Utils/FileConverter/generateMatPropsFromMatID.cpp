@@ -12,20 +12,18 @@
  *
  */
 
-#include <memory>
-
 #include <tclap/CmdLine.h>
 
-#include "InfoLib/GitInfo.h"
-#include "BaseLib/FileTools.h"
+#include <memory>
 
+#include "BaseLib/FileTools.h"
+#include "InfoLib/GitInfo.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
-
 #include "MeshLib/Mesh.h"
-#include "MeshLib/Elements/Element.h"
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Creates a new file for material properties and sets the material ids "
@@ -38,14 +36,14 @@ int main (int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> mesh_arg("m",
-                                              "mesh",
-                                              "the mesh to open from a file",
-                                              false,
-                                              "",
-                                              "filename for mesh input");
-    cmd.add( mesh_arg );
+                                          "mesh",
+                                          "the mesh to open from a file",
+                                          false,
+                                          "",
+                                          "filename for mesh input");
+    cmd.add(mesh_arg);
 
-    cmd.parse( argc, argv );
+    cmd.parse(argc, argv);
 
     // read mesh
     std::unique_ptr<MeshLib::Mesh> mesh(

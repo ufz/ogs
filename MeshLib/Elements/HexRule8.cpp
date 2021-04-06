@@ -13,39 +13,35 @@
 #include <array>
 
 #include "BaseLib/Logging.h"
-
+#include "Line.h"
 #include "MathLib/GeometricBasics.h"
-
 #include "MeshLib/Node.h"
 #include "Quad.h"
-#include "Line.h"
 
-namespace MeshLib {
-
-const unsigned HexRule8::face_nodes[6][4] =
+namespace MeshLib
 {
-    {0, 3, 2, 1}, // Face 0
-    {0, 1, 5, 4}, // Face 1
-    {1, 2, 6, 5}, // Face 2
-    {2, 3, 7, 6}, // Face 3
-    {3, 0, 4, 7}, // Face 4
-    {4, 5, 6, 7}  // Face 5
+const unsigned HexRule8::face_nodes[6][4] = {
+    {0, 3, 2, 1},  // Face 0
+    {0, 1, 5, 4},  // Face 1
+    {1, 2, 6, 5},  // Face 2
+    {2, 3, 7, 6},  // Face 3
+    {3, 0, 4, 7},  // Face 4
+    {4, 5, 6, 7}   // Face 5
 };
 
-const unsigned HexRule8::edge_nodes[12][2] =
-{
-    {0, 1}, // Edge 0
-    {1, 2}, // Edge 1
-    {2, 3}, // Edge 2
-    {0, 3}, // Edge 3
-    {4, 5}, // Edge 4
-    {5, 6}, // Edge 5
-    {6, 7}, // Edge 6
-    {4, 7}, // Edge 7
-    {0, 4}, // Edge 8
-    {1, 5}, // Edge 9
-    {2, 6}, // Edge 10
-    {3, 7}  // Edge 11
+const unsigned HexRule8::edge_nodes[12][2] = {
+    {0, 1},  // Edge 0
+    {1, 2},  // Edge 1
+    {2, 3},  // Edge 2
+    {0, 3},  // Edge 3
+    {4, 5},  // Edge 4
+    {5, 6},  // Edge 5
+    {6, 7},  // Edge 6
+    {4, 7},  // Edge 7
+    {0, 4},  // Edge 8
+    {1, 5},  // Edge 9
+    {2, 6},  // Edge 10
+    {3, 7}   // Edge 11
 };
 
 const Element* HexRule8::getFace(const Element* e, unsigned i)
@@ -65,12 +61,18 @@ const Element* HexRule8::getFace(const Element* e, unsigned i)
 
 double HexRule8::computeVolume(Node const* const* _nodes)
 {
-    return MathLib::calcTetrahedronVolume(*_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0])
-         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0])
-         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0])
-         + MathLib::calcTetrahedronVolume(*_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2])
-         + MathLib::calcTetrahedronVolume(*_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2])
-         + MathLib::calcTetrahedronVolume(*_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2]);
+    return MathLib::calcTetrahedronVolume(
+               *_nodes[4], *_nodes[7], *_nodes[5], *_nodes[0]) +
+           MathLib::calcTetrahedronVolume(
+               *_nodes[5], *_nodes[3], *_nodes[1], *_nodes[0]) +
+           MathLib::calcTetrahedronVolume(
+               *_nodes[5], *_nodes[7], *_nodes[3], *_nodes[0]) +
+           MathLib::calcTetrahedronVolume(
+               *_nodes[5], *_nodes[7], *_nodes[6], *_nodes[2]) +
+           MathLib::calcTetrahedronVolume(
+               *_nodes[1], *_nodes[3], *_nodes[5], *_nodes[2]) +
+           MathLib::calcTetrahedronVolume(
+               *_nodes[3], *_nodes[7], *_nodes[5], *_nodes[2]);
 }
 
 bool HexRule8::isPntInElement(Node const* const* nodes,
@@ -93,7 +95,7 @@ bool HexRule8::isPntInElement(Node const* const* nodes,
 
 unsigned HexRule8::identifyFace(Node const* const* _nodes, Node* nodes[3])
 {
-    for (unsigned i=0; i<6; i++)
+    for (unsigned i = 0; i < 6; i++)
     {
         unsigned flag(0);
         for (unsigned j = 0; j < 4; j++)
@@ -119,19 +121,19 @@ ElementErrorCode HexRule8::validate(const Element* e)
     ElementErrorCode error_code;
     error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
 
-    for (unsigned i=0; i<6; ++i)
+    for (unsigned i = 0; i < 6; ++i)
     {
         if (error_code.all())
         {
             break;
         }
 
-        const MeshLib::Element* quad (e->getFace(i));
+        const MeshLib::Element* quad(e->getFace(i));
         error_code |= quad->validate();
         delete quad;
     }
-    error_code[ElementErrorFlag::NodeOrder]  = !e->testElementNodeOrder();
+    error_code[ElementErrorFlag::NodeOrder] = !e->testElementNodeOrder();
     return error_code;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

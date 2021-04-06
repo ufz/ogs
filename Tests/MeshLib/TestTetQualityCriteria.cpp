@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <Eigen/Eigen>
 #include <boost/math/constants/constants.hpp>
 #include <cmath>
@@ -19,7 +21,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/ElementQualityInterface.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 class TetElementQuality : public ::testing::Test
 {
@@ -106,19 +107,19 @@ TEST_F(TetElementQuality, EdgeRatio)
     auto const expected_value_tet4 = expected_value_tet1;
     auto const expected_value_tet5 = expected_value_tet0;
 
-    for (int i = 0; i<element_quality_vector.size(); i=i+6)
+    for (int i = 0; i < element_quality_vector.size(); i = i + 6)
     {
         ASSERT_NEAR(expected_value_tet0, element_quality_vector[i],
                     10 * std::numeric_limits<double>::epsilon());
-        ASSERT_NEAR(expected_value_tet1, element_quality_vector[i+1],
+        ASSERT_NEAR(expected_value_tet1, element_quality_vector[i + 1],
                     10 * std::numeric_limits<double>::epsilon());
-        ASSERT_NEAR(expected_value_tet2, element_quality_vector[i+2],
+        ASSERT_NEAR(expected_value_tet2, element_quality_vector[i + 2],
                     10 * std::numeric_limits<double>::epsilon());
-        ASSERT_NEAR(expected_value_tet3, element_quality_vector[i+3],
+        ASSERT_NEAR(expected_value_tet3, element_quality_vector[i + 3],
                     10 * std::numeric_limits<double>::epsilon());
-        ASSERT_NEAR(expected_value_tet4, element_quality_vector[i+4],
+        ASSERT_NEAR(expected_value_tet4, element_quality_vector[i + 4],
                     10 * std::numeric_limits<double>::epsilon());
-        ASSERT_NEAR(expected_value_tet5, element_quality_vector[i+5],
+        ASSERT_NEAR(expected_value_tet5, element_quality_vector[i + 5],
                     10 * std::numeric_limits<double>::epsilon());
     }
 }

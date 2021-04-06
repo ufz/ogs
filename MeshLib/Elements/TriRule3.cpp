@@ -11,16 +11,14 @@
 #include "TriRule3.h"
 
 #include "MathLib/GeometricBasics.h"
-
 #include "MeshLib/Node.h"
 
-namespace MeshLib {
-
-const unsigned TriRule3::edge_nodes[3][2] =
+namespace MeshLib
 {
-        {0, 1}, // Edge 0
-        {1, 2}, // Edge 1
-        {2, 0}, // Edge 2
+const unsigned TriRule3::edge_nodes[3][2] = {
+    {0, 1},  // Edge 0
+    {1, 2},  // Edge 1
+    {2, 0},  // Edge 2
 };
 
 double TriRule3::computeVolume(Node const* const* _nodes)
@@ -37,7 +35,7 @@ bool TriRule3::isPntInElement(Node const* const* nodes,
 
 unsigned TriRule3::identifyFace(Node const* const* _nodes, Node* nodes[3])
 {
-    for (unsigned i=0; i<3; i++)
+    for (unsigned i = 0; i < 3; i++)
     {
         unsigned flag(0);
         for (unsigned j = 0; j < 2; j++)
@@ -62,8 +60,8 @@ ElementErrorCode TriRule3::validate(const Element* e)
 {
     ElementErrorCode error_code;
     error_code[ElementErrorFlag::ZeroVolume] = hasZeroVolume(*e);
-    error_code[ElementErrorFlag::NodeOrder]  = !e->testElementNodeOrder();
+    error_code[ElementErrorFlag::NodeOrder] = !e->testElementNodeOrder();
     return error_code;
 }
 
-} // end namespace MeshLib
+}  // end namespace MeshLib

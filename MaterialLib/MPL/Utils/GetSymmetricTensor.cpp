@@ -55,8 +55,8 @@ struct GetSymmetricTensor
         if constexpr (GlobalDim == 3)
         {
             SymmetricTensor<GlobalDim> result;
-            result << values(0, 0), values(1, 1), values(2, 2),
-                      values(0, 1), values(1, 2), values(0, 2);
+            result << values(0, 0), values(1, 1), values(2, 2), values(0, 1),
+                values(1, 2), values(0, 2);
             return result;
         }
         OGS_FATAL("Cannot convert 3d matrix to 2d symmetric Tensor.");

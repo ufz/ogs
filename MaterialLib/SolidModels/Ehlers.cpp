@@ -111,7 +111,8 @@ double plasticFlowVolumetricPart(
     double const sqrtPhi, double const alpha_p, double const beta_p,
     double const delta_p, double const epsilon_p)
 {
-    return 3 * (alpha_p * s.I_1 +
+    return 3 *
+               (alpha_p * s.I_1 +
                 4 * boost::math::pow<2>(delta_p) * boost::math::pow<3>(s.I_1)) /
                (2 * sqrtPhi) +
            3 * beta_p + 6 * epsilon_p * s.I_1;
@@ -137,13 +138,12 @@ double yieldFunction(MaterialProperties const& mp,
     double const I_1_squared = boost::math::pow<2>(s.I_1);
     assert(s.J_2 != 0);
 
-    return std::sqrt(
-               s.J_2 *
-                   std::pow(1 + mp.gamma * s.J_3 / (s.J_2 * std::sqrt(s.J_2)),
-                            mp.m) +
-               mp.alpha / 2. * I_1_squared +
-               boost::math::pow<2>(mp.delta) *
-                   boost::math::pow<2>(I_1_squared)) +
+    return std::sqrt(s.J_2 * std::pow(1 + mp.gamma * s.J_3 /
+                                              (s.J_2 * std::sqrt(s.J_2)),
+                                      mp.m) +
+                     mp.alpha / 2. * I_1_squared +
+                     boost::math::pow<2>(mp.delta) *
+                         boost::math::pow<2>(I_1_squared)) +
            mp.beta * s.I_1 + mp.epsilon * I_1_squared - k;
 }
 
@@ -332,9 +332,8 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
         // derivative of flow_V w.r.t. sigma
         KelvinVector const dflow_V_dsigma =
             3 * mp.G *
-            (-(mp.alpha_p * s.I_1 +
-               4 * boost::math::pow<2>(mp.delta_p) *
-                   boost::math::pow<3>(s.I_1)) /
+            (-(mp.alpha_p * s.I_1 + 4 * boost::math::pow<2>(mp.delta_p) *
+                                        boost::math::pow<3>(s.I_1)) /
                  (4 * boost::math::pow<3>(sqrtPhi)) * dPhi_dsigma +
              (mp.alpha_p * identity2 +
               12 * boost::math::pow<2>(mp.delta_p * s.I_1) * identity2) /
@@ -388,11 +387,11 @@ typename SolidEhlers<DisplacementDim>::JacobianMatrix calculatePlasticJacobian(
         double const gm = mp.gamma * mp.m;
         // derivative of yield function w.r.t. sigma
         KelvinVector const dF_dsigma =
-            mp.G * (one_gt_pow_m * (s.D + gm * M0) +
-                    (mp.alpha * s.I_1 +
-                     4 * boost::math::pow<2>(mp.delta) *
-                         boost::math::pow<3>(s.I_1)) *
-                        identity2) /
+            mp.G *
+                (one_gt_pow_m * (s.D + gm * M0) +
+                 (mp.alpha * s.I_1 + 4 * boost::math::pow<2>(mp.delta) *
+                                         boost::math::pow<3>(s.I_1)) *
+                     identity2) /
                 (2. * sqrtPhi) +
             mp.G * (mp.beta + 2 * mp.epsilon_p * s.I_1) * identity2;
 
@@ -595,7 +594,6 @@ SolidEhlers<DisplacementDim>::integrateStress(
             solution << sigma, state.eps_p.D, state.eps_p.V, state.eps_p.eff, 0;
 
             auto const update_residual = [&](ResidualVectorType& residual) {
-
                 auto const& eps_p_D =
                     solution.template segment<KelvinVectorSize>(
                         KelvinVectorSize);
@@ -603,8 +601,7 @@ SolidEhlers<DisplacementDim>::integrateStress(
                     (eps_p_D - state.eps_p_prev.D) / dt;
 
                 double const& eps_p_V = solution[KelvinVectorSize * 2];
-                double const eps_p_V_dot =
-                    (eps_p_V - state.eps_p_prev.V) / dt;
+                double const eps_p_V_dot = (eps_p_V - state.eps_p_prev.V) / dt;
 
                 double const& eps_p_eff = solution[KelvinVectorSize * 2 + 1];
                 double const eps_p_eff_dot =
@@ -711,76 +708,75 @@ template <int DisplacementDim>
 std::vector<typename MechanicsBase<DisplacementDim>::InternalVariable>
 SolidEhlers<DisplacementDim>::getInternalVariables() const
 {
-    return {
-        {"damage.kappa_d", 1,
-         [](typename MechanicsBase<
-                DisplacementDim>::MaterialStateVariables const& state,
-            std::vector<double>& cache) -> std::vector<double> const& {
-             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
-                        &state) != nullptr);
-             auto const& ehlers_state =
-                 static_cast<StateVariables<DisplacementDim> const&>(state);
+    return {{"damage.kappa_d", 1,
+             [](typename MechanicsBase<
+                    DisplacementDim>::MaterialStateVariables const& state,
+                std::vector<double>& cache) -> std::vector<double> const& {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto const& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim> const&>(state);
 
-             cache.resize(1);
-             cache.front() = ehlers_state.damage.kappa_d();
-             return cache;
-         }},
-        {"damage.value", 1,
-         [](typename MechanicsBase<
-                DisplacementDim>::MaterialStateVariables const& state,
-            std::vector<double>& cache) -> std::vector<double> const& {
-             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
-                        &state) != nullptr);
-             auto const& ehlers_state =
-                 static_cast<StateVariables<DisplacementDim> const&>(state);
+                 cache.resize(1);
+                 cache.front() = ehlers_state.damage.kappa_d();
+                 return cache;
+             }},
+            {"damage.value", 1,
+             [](typename MechanicsBase<
+                    DisplacementDim>::MaterialStateVariables const& state,
+                std::vector<double>& cache) -> std::vector<double> const& {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto const& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim> const&>(state);
 
-             cache.resize(1);
-             cache.front() = ehlers_state.damage.value();
-             return cache;
-         }},
-        {"eps_p.D", KelvinVector::RowsAtCompileTime,
-         [](typename MechanicsBase<
-                DisplacementDim>::MaterialStateVariables const& state,
-            std::vector<double>& cache) -> std::vector<double> const& {
-             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
-                        &state) != nullptr);
-             auto const& ehlers_state =
-                 static_cast<StateVariables<DisplacementDim> const&>(state);
+                 cache.resize(1);
+                 cache.front() = ehlers_state.damage.value();
+                 return cache;
+             }},
+            {"eps_p.D", KelvinVector::RowsAtCompileTime,
+             [](typename MechanicsBase<
+                    DisplacementDim>::MaterialStateVariables const& state,
+                std::vector<double>& cache) -> std::vector<double> const& {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto const& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim> const&>(state);
 
-             cache.resize(KelvinVector::RowsAtCompileTime);
-             MathLib::toVector<KelvinVector>(cache,
-                                             KelvinVector::RowsAtCompileTime) =
-                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                     ehlers_state.eps_p.D);
+                 cache.resize(KelvinVector::RowsAtCompileTime);
+                 MathLib::toVector<KelvinVector>(
+                     cache, KelvinVector::RowsAtCompileTime) =
+                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                         ehlers_state.eps_p.D);
 
-             return cache;
-         }},
-        {"eps_p.V", 1,
-         [](typename MechanicsBase<
-                DisplacementDim>::MaterialStateVariables const& state,
-            std::vector<double>& cache) -> std::vector<double> const& {
-             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
-                        &state) != nullptr);
-             auto const& ehlers_state =
-                 static_cast<StateVariables<DisplacementDim> const&>(state);
+                 return cache;
+             }},
+            {"eps_p.V", 1,
+             [](typename MechanicsBase<
+                    DisplacementDim>::MaterialStateVariables const& state,
+                std::vector<double>& cache) -> std::vector<double> const& {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto const& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim> const&>(state);
 
-             cache.resize(1);
-             cache.front() = ehlers_state.eps_p.V;
-             return cache;
-         }},
-        {"eps_p.eff", 1,
-         [](typename MechanicsBase<
-                DisplacementDim>::MaterialStateVariables const& state,
-            std::vector<double>& cache) -> std::vector<double> const& {
-             assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
-                        &state) != nullptr);
-             auto const& ehlers_state =
-                 static_cast<StateVariables<DisplacementDim> const&>(state);
+                 cache.resize(1);
+                 cache.front() = ehlers_state.eps_p.V;
+                 return cache;
+             }},
+            {"eps_p.eff", 1,
+             [](typename MechanicsBase<
+                    DisplacementDim>::MaterialStateVariables const& state,
+                std::vector<double>& cache) -> std::vector<double> const& {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto const& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim> const&>(state);
 
-             cache.resize(1);
-             cache.front() = ehlers_state.eps_p.eff;
-             return cache;
-         }}};
+                 cache.resize(1);
+                 cache.front() = ehlers_state.eps_p.eff;
+                 return cache;
+             }}};
 }
 
 template class SolidEhlers<2>;

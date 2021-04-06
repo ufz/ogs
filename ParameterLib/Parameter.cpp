@@ -9,9 +9,9 @@
  */
 
 #include "Parameter.h"
+
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-
 #include "ConstantParameter.h"
 #include "CurveScaledParameter.h"
 #include "FunctionParameter.h"

@@ -8,15 +8,15 @@
  *
  */
 
+#include "ProcessView.h"
+
 #include <QFileDialog>
 #include <QMenu>
 
 #include "Applications/DataHolderLib/FemCondition.h"
-
 #include "CondItem.h"
 #include "ProcessModel.h"
 #include "ProcessVarItem.h"
-#include "ProcessView.h"
 //#include "FEMConditionSetupDialog.h"
 #include "SelectMeshDialog.h"
 

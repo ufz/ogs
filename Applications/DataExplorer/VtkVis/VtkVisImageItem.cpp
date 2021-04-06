@@ -15,23 +15,21 @@
 // ** INCLUDES **
 #include "VtkVisImageItem.h"
 
-#include "BaseLib/Logging.h"
-
-#include "BaseLib/FileTools.h"
-
-#include "VtkAlgorithmProperties.h"
-#include "VtkGeoImageSource.h"
-
 #include <vtkActor.h>
+#include <vtkDataArray.h>
 #include <vtkDataSetMapper.h>
 #include <vtkImageAlgorithm.h>
 #include <vtkImageChangeInformation.h>
 #include <vtkImageData.h>
+#include <vtkImageShiftScale.h>
 #include <vtkPointData.h>
 #include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
-#include <vtkImageShiftScale.h>
-#include <vtkDataArray.h>
+
+#include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
+#include "VtkAlgorithmProperties.h"
+#include "VtkGeoImageSource.h"
 
 // export
 #include <vtkImageActor.h>
@@ -151,14 +149,15 @@ void VtkVisImageItem::setVtkProperties(VtkAlgorithmProperties* vtkProps)
     (void)vtkProps;
 }
 
-int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &filename) const
+int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm,
+                                   const std::string& filename) const
 {
     std::string file_name_cpy(filename);
     auto* algID = dynamic_cast<vtkImageAlgorithm*>(algorithm);
     if (algID)
     {
         vtkSmartPointer<vtkXMLImageDataWriter> iWriter =
-                vtkSmartPointer<vtkXMLImageDataWriter>::New();
+            vtkSmartPointer<vtkXMLImageDataWriter>::New();
         iWriter->SetInputData(algID->GetOutputDataObject(0));
         if (BaseLib::getFileExtension(filename) != ".vti")
         {
@@ -173,7 +172,7 @@ int VtkVisImageItem::callVTKWriter(vtkAlgorithm* algorithm, const std::string &f
 
 void VtkVisImageItem::setTranslation(double x, double y, double z) const
 {
-    _transformFilter->SetOriginTranslation(x,y,z);
+    _transformFilter->SetOriginTranslation(x, y, z);
 }
 
 vtkAlgorithm* VtkVisImageItem::transformFilter() const

@@ -10,9 +10,9 @@
 
 #include "FaceRule.h"
 
+#include "Element.h"
 #include "MathLib/MathTools.h"
 #include "MeshLib/Node.h"
-#include "Element.h"
 
 namespace MeshLib
 {

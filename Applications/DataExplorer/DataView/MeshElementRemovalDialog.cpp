@@ -41,8 +41,8 @@ MeshElementRemovalDialog::MeshElementRemovalDialog(
 
     auto const& mesh_vec(_project.getMeshObjects());
 
-    const std::size_t nMeshes (mesh_vec.size());
-    for (std::size_t i=0; i<nMeshes; ++i)
+    const std::size_t nMeshes(mesh_vec.size());
+    for (std::size_t i = 0; i < nMeshes; ++i)
     {
         std::string name = mesh_vec[i]->getName();
         this->meshNameComboBox->addItem(QString::fromStdString(name));
@@ -59,19 +59,21 @@ MeshElementRemovalDialog::~MeshElementRemovalDialog() = default;
 
 void MeshElementRemovalDialog::accept()
 {
-    if (this->newMeshNameEdit->text().size()==0)
+    if (this->newMeshNameEdit->text().size() == 0)
     {
         OGSError::box("Please enter name for new mesh.");
         return;
     }
 
-    bool anything_checked (false);
+    bool anything_checked(false);
 
-    const MeshLib::Mesh* msh = _project.getMesh(this->meshNameComboBox->currentText().toStdString());
+    const MeshLib::Mesh* msh =
+        _project.getMesh(this->meshNameComboBox->currentText().toStdString());
     MeshLib::ElementSearch ex(*msh);
     if (this->elementTypeCheckBox->isChecked())
     {
-        QList<QListWidgetItem*> items = this->elementTypeListWidget->selectedItems();
+        QList<QListWidgetItem*> items =
+            this->elementTypeListWidget->selectedItems();
         for (auto& item : items)
         {
             ex.searchByElementType(
@@ -81,7 +83,8 @@ void MeshElementRemovalDialog::accept()
     }
     if (this->scalarArrayCheckBox->isChecked())
     {
-        std::string const array_name = this->scalarArrayComboBox->currentText().toStdString();
+        std::string const array_name =
+            this->scalarArrayComboBox->currentText().toStdString();
         double min_val;
         double max_val;
         bool outside = this->outsideButton->isChecked();
@@ -117,18 +120,28 @@ void MeshElementRemovalDialog::accept()
     }
     if (this->boundingBoxCheckBox->isChecked())
     {
-        std::vector<MeshLib::Node*> const& nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
+        std::vector<MeshLib::Node*> const& nodes(
+            _project
+                .getMesh(this->meshNameComboBox->currentText().toStdString())
+                ->getNodes());
         GeoLib::AABB const aabb(nodes.begin(), nodes.end());
         auto minAABB = aabb.getMinPoint();
         auto maxAABB = aabb.getMaxPoint();
 
-        // only extract bounding box parameters that have been edited (otherwise there will be rounding errors!)
-        minAABB[0] = (aabb_edits[0]) ? this->xMinEdit->text().toDouble() : (minAABB[0]);
-        maxAABB[0] = (aabb_edits[1]) ? this->xMaxEdit->text().toDouble() : (maxAABB[0]);
-        minAABB[1] = (aabb_edits[2]) ? this->yMinEdit->text().toDouble() : (minAABB[1]);
-        maxAABB[1] = (aabb_edits[3]) ? this->yMaxEdit->text().toDouble() : (maxAABB[1]);
-        minAABB[2] = (aabb_edits[4]) ? this->zMinEdit->text().toDouble() : (minAABB[2]);
-        maxAABB[2] = (aabb_edits[5]) ? this->zMaxEdit->text().toDouble() : (maxAABB[2]);
+        // only extract bounding box parameters that have been edited (otherwise
+        // there will be rounding errors!)
+        minAABB[0] =
+            (aabb_edits[0]) ? this->xMinEdit->text().toDouble() : (minAABB[0]);
+        maxAABB[0] =
+            (aabb_edits[1]) ? this->xMaxEdit->text().toDouble() : (maxAABB[0]);
+        minAABB[1] =
+            (aabb_edits[2]) ? this->yMinEdit->text().toDouble() : (minAABB[1]);
+        maxAABB[1] =
+            (aabb_edits[3]) ? this->yMaxEdit->text().toDouble() : (maxAABB[1]);
+        minAABB[2] =
+            (aabb_edits[4]) ? this->zMinEdit->text().toDouble() : (minAABB[2]);
+        maxAABB[2] =
+            (aabb_edits[5]) ? this->zMaxEdit->text().toDouble() : (maxAABB[2]);
         std::vector<MathLib::Point3d> extent;
         extent.push_back(minAABB);
         extent.push_back(maxAABB);
@@ -176,7 +189,8 @@ void MeshElementRemovalDialog::reject()
     this->done(QDialog::Rejected);
 }
 
-std::size_t MeshElementRemovalDialog::addScalarArrays(MeshLib::Mesh const& mesh) const
+std::size_t MeshElementRemovalDialog::addScalarArrays(
+    MeshLib::Mesh const& mesh) const
 {
     for (auto [name, property] : mesh.getProperties())
     {
@@ -195,10 +209,14 @@ void MeshElementRemovalDialog::enableScalarArrayWidgets(bool enable) const
     this->scalarArrayComboBox->setEnabled(enable);
     this->outsideButton->setEnabled(enable);
     this->insideButton->setEnabled(enable);
-    this->outsideScalarMinEdit->setEnabled(enable && this->outsideButton->isChecked());
-    this->outsideScalarMaxEdit->setEnabled(enable && this->outsideButton->isChecked());
-    this->insideScalarMinEdit->setEnabled(enable && this->insideButton->isChecked());
-    this->insideScalarMaxEdit->setEnabled(enable && this->insideButton->isChecked());
+    this->outsideScalarMinEdit->setEnabled(enable &&
+                                           this->outsideButton->isChecked());
+    this->outsideScalarMaxEdit->setEnabled(enable &&
+                                           this->outsideButton->isChecked());
+    this->insideScalarMinEdit->setEnabled(enable &&
+                                          this->insideButton->isChecked());
+    this->insideScalarMaxEdit->setEnabled(enable &&
+                                          this->insideButton->isChecked());
 }
 
 void MeshElementRemovalDialog::toggleScalarEdits(bool outside) const
@@ -216,14 +234,20 @@ void MeshElementRemovalDialog::on_insideButton_toggled(bool /*is_checked*/)
 
 void MeshElementRemovalDialog::on_boundingBoxCheckBox_toggled(bool is_checked)
 {
-    this->xMinEdit->setEnabled(is_checked); this->xMaxEdit->setEnabled(is_checked);
-    this->yMinEdit->setEnabled(is_checked); this->yMaxEdit->setEnabled(is_checked);
-    this->zMinEdit->setEnabled(is_checked); this->zMaxEdit->setEnabled(is_checked);
+    this->xMinEdit->setEnabled(is_checked);
+    this->xMaxEdit->setEnabled(is_checked);
+    this->yMinEdit->setEnabled(is_checked);
+    this->yMaxEdit->setEnabled(is_checked);
+    this->zMinEdit->setEnabled(is_checked);
+    this->zMaxEdit->setEnabled(is_checked);
 
     if (is_checked && (_currentIndex != _aabbIndex))
     {
         _aabbIndex = _currentIndex;
-        std::vector<MeshLib::Node*> const& nodes (_project.getMesh(this->meshNameComboBox->currentText().toStdString())->getNodes());
+        std::vector<MeshLib::Node*> const& nodes(
+            _project
+                .getMesh(this->meshNameComboBox->currentText().toStdString())
+                ->getNodes());
         GeoLib::AABB aabb(nodes.begin(), nodes.end());
         auto const& minAABB = aabb.getMinPoint();
         auto const& maxAABB = aabb.getMaxPoint();
@@ -268,7 +292,8 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
 {
     Q_UNUSED(idx);
     this->_currentIndex = this->meshNameComboBox->currentIndex();
-    this->newMeshNameEdit->setText(this->meshNameComboBox->currentText() + "_new");
+    this->newMeshNameEdit->setText(this->meshNameComboBox->currentText() +
+                                   "_new");
     this->elementTypeListWidget->clearSelection();
     this->scalarArrayComboBox->clear();
     this->outsideScalarMinEdit->setText("");
@@ -279,10 +304,12 @@ void MeshElementRemovalDialog::on_meshNameComboBox_currentIndexChanged(int idx)
     on_boundingBoxCheckBox_toggled(this->boundingBoxCheckBox->isChecked());
 }
 
-void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(int idx)
+void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(
+    int idx)
 {
     Q_UNUSED(idx);
-    std::string const vec_name(scalarArrayComboBox->currentText().toStdString());
+    std::string const vec_name(
+        scalarArrayComboBox->currentText().toStdString());
     if (vec_name.empty())
     {
         return;
@@ -307,7 +334,8 @@ void MeshElementRemovalDialog::on_scalarArrayComboBox_currentIndexChanged(int id
 }
 
 template <typename T>
-void MeshElementRemovalDialog::setRangeValues(MeshLib::PropertyVector<T> const& vec)
+void MeshElementRemovalDialog::setRangeValues(
+    MeshLib::PropertyVector<T> const& vec)
 {
     auto min = std::min_element(vec.cbegin(), vec.cend());
     auto max = std::max_element(vec.cbegin(), vec.cend());

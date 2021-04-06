@@ -15,17 +15,6 @@
 // ** INCLUDES **
 #include "VtkVisPipelineView.h"
 
-#include "Mesh.h"
-#include "MeshGenerators/RasterToMesh.h"
-#include "MeshGenerators/VtkMeshConverter.h"
-
-#include "OGSError.h"
-
-#include "CheckboxDelegate.h"
-#include "VtkVisPipeline.h"
-#include "VtkVisPipelineItem.h"
-#include "VtkVisPointSetItem.h"
-
 #include <vtkDataSetMapper.h>
 #include <vtkProp3D.h>
 
@@ -34,23 +23,32 @@
 #include <QFileDialog>
 #include <QHeaderView>
 #include <QMenu>
-#include <QSettings>
 #include <QMessageBox>
+#include <QSettings>
 
-//image to mesh conversion
-#include "VtkGeoImageSource.h"
-#include <vtkImageData.h>
-#include "MeshFromRasterDialog.h"
+#include "CheckboxDelegate.h"
+#include "Mesh.h"
+#include "MeshGenerators/RasterToMesh.h"
+#include "MeshGenerators/VtkMeshConverter.h"
+#include "OGSError.h"
+#include "VtkVisPipeline.h"
+#include "VtkVisPipelineItem.h"
+#include "VtkVisPointSetItem.h"
+
+// image to mesh conversion
 #include <vtkDataObject.h>
-#include <vtkSmartPointer.h>
 #include <vtkGenericDataObjectReader.h>
+#include <vtkImageData.h>
+#include <vtkSmartPointer.h>
 #include <vtkTransformFilter.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridAlgorithm.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
+#include "MeshFromRasterDialog.h"
+#include "VtkGeoImageSource.h"
 
-VtkVisPipelineView::VtkVisPipelineView( QWidget* parent /*= 0*/ )
+VtkVisPipelineView::VtkVisPipelineView(QWidget* parent /*= 0*/)
     : QTreeView(parent)
 {
     this->setItemsExpandable(false);
@@ -69,15 +67,17 @@ void VtkVisPipelineView::setModel(QAbstractItemModel* model)
     this->header()->moveSection(1, 0);
 }
 
-void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
+void VtkVisPipelineView::contextMenuEvent(QContextMenuEvent* event)
 {
     QModelIndex index = selectionModel()->currentIndex();
     if (index.isValid())
     {
         // check object type
-        VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(
-            this->model())->getItem(this->selectionModel()->currentIndex()));
-        int objectType = item->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
+        VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(
+            static_cast<VtkVisPipeline*>(this->model())
+                ->getItem(this->selectionModel()->currentIndex()));
+        int objectType =
+            item->algorithm()->GetOutputDataObject(0)->GetDataObjectType();
         VtkAlgorithmProperties* vtkProps = item->getVtkProperties();
         bool isSourceItem =
             !(this->selectionModel()->currentIndex().parent().isValid());
@@ -87,7 +87,8 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
 
         if (objectType == VTK_IMAGE_DATA)
         {
-            // this exception is needed as image object are only displayed in the vis-pipeline
+            // this exception is needed as image object are only displayed in
+            // the vis-pipeline
             isSourceItem = false;
             QAction* addMeshingAction =
                 menu.addAction("Convert Image to Mesh...");
@@ -97,7 +98,8 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
         else
         {
             QAction* addLUTAction = menu.addAction("Add color table...");
-            connect(addLUTAction, SIGNAL(triggered()), this, SLOT(addColorTable()));
+            connect(addLUTAction, SIGNAL(triggered()), this,
+                    SLOT(addColorTable()));
         }
 
         if (objectType == VTK_UNSTRUCTURED_GRID)
@@ -118,7 +120,8 @@ void VtkVisPipelineView::contextMenuEvent( QContextMenuEvent* event )
                     SLOT(removeSelectedPipelineItem()));
         }
 
-        connect(addFilterAction, SIGNAL(triggered()), this, SLOT(addPipelineFilterItem()));
+        connect(addFilterAction, SIGNAL(triggered()), this,
+                SLOT(addPipelineFilterItem()));
         connect(exportVtkAction, SIGNAL(triggered()), this,
                 SLOT(exportSelectedPipelineItemAsVtk()));
 
@@ -130,13 +133,15 @@ void VtkVisPipelineView::exportSelectedPipelineItemAsVtk()
 {
     QSettings settings;
     QModelIndex idx = this->selectionModel()->currentIndex();
-    QString filename = QFileDialog::getSaveFileName(this, "Export object to vtk-file",
-                                    settings.value("lastExportedFileDirectory").toString(),
-                                    "VTK file (*.*)");
+    QString filename = QFileDialog::getSaveFileName(
+        this, "Export object to vtk-file",
+        settings.value("lastExportedFileDirectory").toString(),
+        "VTK file (*.*)");
     if (!filename.isEmpty())
     {
-        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-                                         getItem(idx))->writeToFile(filename.toStdString());
+        static_cast<VtkVisPipelineItem*>(
+            static_cast<VtkVisPipeline*>(this->model())->getItem(idx))
+            ->writeToFile(filename.toStdString());
         QDir dir = QDir(filename);
         settings.setValue("lastExportedFileDirectory", dir.absolutePath());
     }
@@ -161,10 +166,13 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
     }
 
     vtkSmartPointer<vtkAlgorithm> algorithm =
-        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-            getItem(this->selectionModel()->currentIndex()))->algorithm();
+        static_cast<VtkVisPipelineItem*>(
+            static_cast<VtkVisPipeline*>(this->model())
+                ->getItem(this->selectionModel()->currentIndex()))
+            ->algorithm();
 
-    vtkSmartPointer<VtkGeoImageSource> imageSource = VtkGeoImageSource::SafeDownCast(algorithm);
+    vtkSmartPointer<VtkGeoImageSource> imageSource =
+        VtkGeoImageSource::SafeDownCast(algorithm);
     double origin[3];
     imageSource->GetOutput()->GetOrigin(origin);
     double spacing[3];
@@ -187,11 +195,13 @@ void VtkVisPipelineView::showImageToMeshConversionDialog()
 void VtkVisPipelineView::convertVTKToOGSMesh()
 {
     VtkVisPipelineItem* item = static_cast<VtkVisPipelineItem*>(
-        static_cast<VtkVisPipeline*>(this->model())->getItem(this->selectionModel()->currentIndex()));
+        static_cast<VtkVisPipeline*>(this->model())
+            ->getItem(this->selectionModel()->currentIndex()));
     vtkSmartPointer<vtkAlgorithm> algorithm = item->algorithm();
 
     vtkUnstructuredGrid* grid(nullptr);
-    vtkUnstructuredGridAlgorithm* ugAlg = vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
+    vtkUnstructuredGridAlgorithm* ugAlg =
+        vtkUnstructuredGridAlgorithm::SafeDownCast(algorithm);
     if (ugAlg)
     {
         grid = ugAlg->GetOutput();
@@ -199,7 +209,8 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
     else
     {
         // for old filetypes
-        vtkGenericDataObjectReader* dataReader = vtkGenericDataObjectReader::SafeDownCast(algorithm);
+        vtkGenericDataObjectReader* dataReader =
+            vtkGenericDataObjectReader::SafeDownCast(algorithm);
         if (dataReader)
         {
             grid = vtkUnstructuredGrid::SafeDownCast(dataReader->GetOutput());
@@ -207,17 +218,19 @@ void VtkVisPipelineView::convertVTKToOGSMesh()
         else
         {
             // for new filetypes
-            vtkXMLUnstructuredGridReader* xmlReader = vtkXMLUnstructuredGridReader::SafeDownCast(algorithm);
+            vtkXMLUnstructuredGridReader* xmlReader =
+                vtkXMLUnstructuredGridReader::SafeDownCast(algorithm);
             grid = vtkUnstructuredGrid::SafeDownCast(xmlReader->GetOutput());
         }
     }
-    MeshLib::Mesh* mesh = MeshLib::VtkMeshConverter::convertUnstructuredGrid(grid);
+    MeshLib::Mesh* mesh =
+        MeshLib::VtkMeshConverter::convertUnstructuredGrid(grid);
     mesh->setName(item->data(0).toString().toStdString());
     emit meshAdded(mesh);
 }
 
-void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
-                                           const QItemSelection &deselected )
+void VtkVisPipelineView::selectionChanged(const QItemSelection& selected,
+                                          const QItemSelection& deselected)
 {
     QTreeView::selectionChanged(selected, deselected);
 
@@ -248,10 +261,11 @@ void VtkVisPipelineView::selectionChanged( const QItemSelection &selected,
 
 void VtkVisPipelineView::selectItem(vtkProp3D* actor)
 {
-    this->selectItem(static_cast<VtkVisPipeline*>(this->model())->getIndex(actor));
+    this->selectItem(
+        static_cast<VtkVisPipeline*>(this->model())->getIndex(actor));
 }
 
-void VtkVisPipelineView::selectItem(const QModelIndex &index)
+void VtkVisPipelineView::selectItem(const QModelIndex& index)
 {
     if (!index.isValid())
     {
@@ -265,15 +279,16 @@ void VtkVisPipelineView::selectItem(const QModelIndex &index)
 
 void VtkVisPipelineView::addColorTable()
 {
-    VtkVisPipelineItem* item (
-        static_cast<VtkVisPipelineItem*>(static_cast<VtkVisPipeline*>(this->model())->
-                                         getItem(this->selectionModel()->currentIndex())) );
+    VtkVisPipelineItem* item(static_cast<VtkVisPipelineItem*>(
+        static_cast<VtkVisPipeline*>(this->model())
+            ->getItem(this->selectionModel()->currentIndex())));
     const QString array_name = item->GetActiveAttribute();
 
     QSettings settings;
-    QString filename = QFileDialog::getOpenFileName(this, "Select color table",
-                                                    settings.value("lastOpenedLutFileDirectory"). toString(),
-                                                    "Color table files (*.xml);;");
+    QString filename = QFileDialog::getOpenFileName(
+        this, "Select color table",
+        settings.value("lastOpenedLutFileDirectory").toString(),
+        "Color table files (*.xml);;");
     QFileInfo fi(filename);
 
     if (fi.suffix().toLower() == "xml")

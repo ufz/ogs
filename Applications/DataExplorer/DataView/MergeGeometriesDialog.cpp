@@ -14,14 +14,18 @@
 
 #include "MergeGeometriesDialog.h"
 
-#include "GEOObjects.h"
 #include <QStringList>
 #include <QStringListModel>
 
+#include "GEOObjects.h"
 #include "OGSError.h"
 
-MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDialog* parent)
-    : QDialog(parent), _geo_objects(geoObjects), _allGeo(new QStringListModel), _selGeo(new QStringListModel)
+MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects,
+                                             QDialog* parent)
+    : QDialog(parent),
+      _geo_objects(geoObjects),
+      _allGeo(new QStringListModel),
+      _selGeo(new QStringListModel)
 {
     setupUi(this);
 
@@ -31,9 +35,11 @@ MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects, QDi
     std::vector<std::string> geo_station_names;
     _geo_objects.getStationVectorNames(geo_station_names);
 
-    // merge method does currently not merge stations, converter function needed first
-    //geoNames.reserve(geo_station_names.size());
-    //std::copy(geo_station_names.begin(), geo_station_names.end(), std::back_inserter(geoNames));
+    // merge method does currently not merge stations, converter function needed
+    // first
+    // geoNames.reserve(geo_station_names.size());
+    // std::copy(geo_station_names.begin(), geo_station_names.end(),
+    // std::back_inserter(geoNames));
 
     std::size_t nGeoObjects(geoNames.size());
 
@@ -66,7 +72,8 @@ MergeGeometriesDialog::~MergeGeometriesDialog()
 
 void MergeGeometriesDialog::on_selectGeoButton_pressed()
 {
-    QModelIndexList selected = this->allGeoView->selectionModel()->selectedIndexes();
+    QModelIndexList selected =
+        this->allGeoView->selectionModel()->selectedIndexes();
     QStringList list = _selGeo->stringList();
 
     for (auto& index : selected)
@@ -80,7 +87,8 @@ void MergeGeometriesDialog::on_selectGeoButton_pressed()
 
 void MergeGeometriesDialog::on_deselectGeoButton_pressed()
 {
-    QModelIndexList selected = this->selectedGeoView->selectionModel()->selectedIndexes();
+    QModelIndexList selected =
+        this->selectedGeoView->selectionModel()->selectedIndexes();
     QStringList list = _allGeo->stringList();
 
     for (auto& index : selected)

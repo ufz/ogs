@@ -12,9 +12,9 @@
  *
  */
 
-#include <utility>
-
 #include "TreeItem.h"
+
+#include <utility>
 
 /**
  * The constructor is only used to record the item's parent
@@ -99,7 +99,7 @@ QVariant TreeItem::data(int column) const
 /**
  * Sets the data at a given column.
  */
-bool TreeItem::setData( int column, const QVariant &value )
+bool TreeItem::setData(int column, const QVariant& value)
 {
     if (column < 0 || column >= _itemData.size())
     {
@@ -118,7 +118,8 @@ TreeItem* TreeItem::parentItem() const
 }
 
 /**
- * Removes a number of children of the TreeItem starting from the given position.
+ * Removes a number of children of the TreeItem starting from the given
+ * position.
  */
 bool TreeItem::removeChildren(int position, int count)
 {

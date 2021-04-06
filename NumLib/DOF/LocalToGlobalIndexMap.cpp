@@ -16,16 +16,14 @@
 
 namespace NumLib
 {
-
 namespace
 {
-
 // Make the cumulative sum of an array, which starts with zero
 template <typename T>
 std::vector<T> to_cumulative(std::vector<T> const& vec)
 {
-    std::vector<T> result(vec.size()+1, 0);
-    std::partial_sum(vec.begin(), vec.end(), result.begin()+1);
+    std::vector<T> result(vec.size() + 1, 0);
+    std::partial_sum(vec.begin(), vec.end(), result.begin() + 1);
 
     return result;
 }
@@ -44,7 +42,8 @@ void LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
     std::vector<MeshLib::Node*> const& nodes, std::size_t const mesh_id,
     const int comp_id, const int comp_id_write)
 {
-    std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(), nodes.end());
+    std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(),
+                                                       nodes.end());
 
     // For each element find the global indices for node/element
     // components.
@@ -54,15 +53,16 @@ void LocalToGlobalIndexMap::findGlobalIndicesWithElementID(
         indices.reserve((*e)->getNumberOfNodes());
 
         for (auto* n = (*e)->getNodes();
-             n < (*e)->getNodes()+(*e)->getNumberOfNodes(); ++n)
+             n < (*e)->getNodes() + (*e)->getNumberOfNodes();
+             ++n)
         {
             // Check if the element's node is in the given list of nodes.
             if (set_nodes.find(*n) == set_nodes.end())
             {
                 continue;
             }
-            MeshLib::Location l(
-                mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
+            MeshLib::Location l(mesh_id, MeshLib::MeshItemType::Node,
+                                (*n)->getID());
             indices.push_back(_mesh_component_map.getGlobalIndex(l, comp_id));
         }
 
@@ -79,7 +79,8 @@ void LocalToGlobalIndexMap::findGlobalIndices(
 {
     _rows.resize(std::distance(first, last), _mesh_subsets.size());
 
-    std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(), nodes.end());
+    std::unordered_set<MeshLib::Node*> const set_nodes(nodes.begin(),
+                                                       nodes.end());
 
     // For each element find the global indices for node/element
     // components.
@@ -90,15 +91,16 @@ void LocalToGlobalIndexMap::findGlobalIndices(
         indices.reserve((*e)->getNumberOfNodes());
 
         for (auto* n = (*e)->getNodes();
-             n < (*e)->getNodes() + (*e)->getNumberOfNodes(); ++n)
+             n < (*e)->getNodes() + (*e)->getNumberOfNodes();
+             ++n)
         {
             // Check if the element's node is in the given list of nodes.
             if (set_nodes.find(*n) == set_nodes.end())
             {
                 continue;
             }
-            MeshLib::Location l(
-                mesh_id, MeshLib::MeshItemType::Node, (*n)->getID());
+            MeshLib::Location l(mesh_id, MeshLib::MeshItemType::Node,
+                                (*n)->getID());
             auto const global_index =
                 _mesh_component_map.getGlobalIndex(l, comp_id);
             if (global_index == std::numeric_limits<GlobalIndexType>::max())
@@ -130,10 +132,12 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
       _variable_component_offsets(to_cumulative(vec_var_n_components))
 {
     // For each element of that MeshSubset save a line of global indices.
-    for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
+    for (int variable_id = 0;
+         variable_id < static_cast<int>(vec_var_n_components.size());
          ++variable_id)
     {
-        for (int component_id = 0; component_id < static_cast<int>(vec_var_n_components[variable_id]);
+        for (int component_id = 0;
+             component_id < static_cast<int>(vec_var_n_components[variable_id]);
              ++component_id)
         {
             auto const global_component_id =
@@ -164,7 +168,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
 
     // _rows should be resized based on an element ID
     std::size_t max_elem_id = 0;
-    for (std::vector<MeshLib::Element*>const* elements : vec_var_elements)
+    for (std::vector<MeshLib::Element*> const* elements : vec_var_elements)
     {
         for (auto e : *elements)
         {
@@ -173,11 +177,14 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     }
     _rows.resize(max_elem_id + 1, _mesh_subsets.size());
 
-    for (int variable_id = 0; variable_id < static_cast<int>(vec_var_n_components.size());
+    for (int variable_id = 0;
+         variable_id < static_cast<int>(vec_var_n_components.size());
          ++variable_id)
     {
-        std::vector<MeshLib::Element*> const& var_elements = *vec_var_elements[variable_id];
-        for (int component_id = 0; component_id < static_cast<int>(vec_var_n_components[variable_id]);
+        std::vector<MeshLib::Element*> const& var_elements =
+            *vec_var_elements[variable_id];
+        for (int component_id = 0;
+             component_id < static_cast<int>(vec_var_n_components[variable_id]);
              ++component_id)
         {
             auto const global_component_id =
@@ -344,8 +351,8 @@ LocalToGlobalIndexMap::RowColumnIndices LocalToGlobalIndexMap::operator()(
                             _columns(mesh_item_id, component_id));
 }
 
-std::size_t
-LocalToGlobalIndexMap::getNumberOfElementDOF(std::size_t const mesh_item_id) const
+std::size_t LocalToGlobalIndexMap::getNumberOfElementDOF(
+    std::size_t const mesh_item_id) const
 {
     std::size_t ndof = 0;
 
@@ -357,8 +364,8 @@ LocalToGlobalIndexMap::getNumberOfElementDOF(std::size_t const mesh_item_id) con
     return ndof;
 }
 
-std::size_t
-LocalToGlobalIndexMap::getNumberOfElementComponents(std::size_t const mesh_item_id) const
+std::size_t LocalToGlobalIndexMap::getNumberOfElementComponents(
+    std::size_t const mesh_item_id) const
 {
     std::size_t n = 0;
     for (Table::Index c = 0; c < _rows.cols(); ++c)
@@ -377,7 +384,7 @@ std::vector<int> LocalToGlobalIndexMap::getElementVariableIDs(
     std::vector<int> vec;
     for (int i = 0; i < getNumberOfVariables(); i++)
     {
-        for (int j=0; j<getNumberOfVariableComponents(i); j++)
+        for (int j = 0; j < getNumberOfVariableComponents(i); j++)
         {
             auto comp_id = getGlobalComponent(i, j);
             if (!_rows(mesh_item_id, comp_id).empty())
@@ -450,8 +457,8 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
     std::size_t lines_printed = 0;
 
     os << "Rows of the local to global index map; " << map._rows.size()
-        << " rows\n";
-    for (std::size_t e=0; e<map.size(); ++e)
+       << " rows\n";
+    for (std::size_t e = 0; e < map.size(); ++e)
     {
         os << "== e " << e << " ==\n";
         for (int c = 0; c < map.getNumberOfGlobalComponents(); ++c)
@@ -460,7 +467,7 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
 
             os << "c" << c << " { ";
             std::copy(line.cbegin(), line.cend(),
-                std::ostream_iterator<std::size_t>(os, " "));
+                      std::ostream_iterator<std::size_t>(os, " "));
             os << " }\n";
         }
 
@@ -476,4 +483,4 @@ std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map)
 }
 #endif  // NDEBUG
 
-}   // namespace NumLib
+}  // namespace NumLib

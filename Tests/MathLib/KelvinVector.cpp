@@ -7,9 +7,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <gtest/gtest.h>
-
 #include "MathLib/KelvinVector.h"
+
+#include <gtest/gtest.h>
 
 #include "Tests/AutoCheckTools.h"
 

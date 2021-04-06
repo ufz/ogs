@@ -17,21 +17,24 @@
 #include <cstdlib>
 #include <fstream>
 
-#include "BaseLib/Logging.h"
-
-#include "BaseLib/StringTools.h"
 #include "BaseLib/DateTools.h"
+#include "BaseLib/Logging.h"
+#include "BaseLib/StringTools.h"
 
-SensorData::SensorData(const std::string &file_name)
-: _start(0), _end(0), _step_size(0), _time_unit(TimeStepType::NONE)
+SensorData::SensorData(const std::string& file_name)
+    : _start(0), _end(0), _step_size(0), _time_unit(TimeStepType::NONE)
 {
     this->readDataFromFile(file_name);
 }
 
 SensorData::SensorData(std::vector<std::size_t> time_steps)
-: _start(time_steps[0]), _end(time_steps[time_steps.size()-1]), _step_size(0), _time_unit(TimeStepType::NONE), _time_steps(time_steps)
+    : _start(time_steps[0]),
+      _end(time_steps[time_steps.size() - 1]),
+      _step_size(0),
+      _time_unit(TimeStepType::NONE),
+      _time_steps(time_steps)
 {
-    for (std::size_t i=1; i<time_steps.size(); i++)
+    for (std::size_t i = 1; i < time_steps.size(); i++)
     {
         if (time_steps[i - 1] >= time_steps[i])
         {
@@ -40,8 +43,13 @@ SensorData::SensorData(std::vector<std::size_t> time_steps)
     }
 }
 
-SensorData::SensorData(std::size_t first_timestep, std::size_t last_timestep, std::size_t step_size)
-: _start(first_timestep), _end(last_timestep), _step_size(step_size), _time_unit(TimeStepType::NONE)
+SensorData::SensorData(std::size_t first_timestep,
+                       std::size_t last_timestep,
+                       std::size_t step_size)
+    : _start(first_timestep),
+      _end(last_timestep),
+      _step_size(step_size),
+      _time_unit(TimeStepType::NONE)
 {
 }
 
@@ -53,22 +61,36 @@ SensorData::~SensorData()
     }
 }
 
-
-void SensorData::addTimeSeries( const std::string &data_name, std::vector<float> *data, const std::string &data_unit_string )
+void SensorData::addTimeSeries(const std::string& data_name,
+                               std::vector<float>* data,
+                               const std::string& data_unit_string)
 {
-    this->addTimeSeries(SensorData::convertString2SensorDataType(data_name), data, data_unit_string);
+    this->addTimeSeries(SensorData::convertString2SensorDataType(data_name),
+                        data,
+                        data_unit_string);
 }
 
-void SensorData::addTimeSeries(SensorDataType data_name, std::vector<float> *data, const std::string &data_unit_string)
+void SensorData::addTimeSeries(SensorDataType data_name,
+                               std::vector<float>* data,
+                               const std::string& data_unit_string)
 {
-    if (_step_size>0) {
-        if (((_end-_start)/_step_size) != data->size()) {
-            WARN("Warning in SensorData::addTimeSeries() - Lengths of time series does not match number of time steps.");
+    if (_step_size > 0)
+    {
+        if (((_end - _start) / _step_size) != data->size())
+        {
+            WARN(
+                "Warning in SensorData::addTimeSeries() - Lengths of time "
+                "series does not match number of time steps.");
             return;
         }
-    } else {
-        if  (data->size() != _time_steps.size()) {
-            WARN("Warning in SensorData::addTimeSeries() - Lengths of time series does not match number of time steps.");
+    }
+    else
+    {
+        if (data->size() != _time_steps.size())
+        {
+            WARN(
+                "Warning in SensorData::addTimeSeries() - Lengths of time "
+                "series does not match number of time steps.");
             return;
         }
     }
@@ -78,9 +100,10 @@ void SensorData::addTimeSeries(SensorDataType data_name, std::vector<float> *dat
     _data_unit_string.push_back(data_unit_string);
 }
 
-const std::vector<float>* SensorData::getTimeSeries(SensorDataType time_series_name) const
+const std::vector<float>* SensorData::getTimeSeries(
+    SensorDataType time_series_name) const
 {
-    for (std::size_t i=0; i<_vec_names.size(); i++)
+    for (std::size_t i = 0; i < _vec_names.size(); i++)
     {
         if (time_series_name == _vec_names[i])
         {
@@ -92,9 +115,9 @@ const std::vector<float>* SensorData::getTimeSeries(SensorDataType time_series_n
     return nullptr;
 }
 
-int SensorData::readDataFromFile(const std::string &file_name)
+int SensorData::readDataFromFile(const std::string& file_name)
 {
-    std::ifstream in( file_name.c_str() );
+    std::ifstream in(file_name.c_str());
 
     if (!in.is_open())
     {
@@ -108,7 +131,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
     /* first line contains field names */
     std::getline(in, line);
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
-    std::list<std::string>::const_iterator it (fields.begin());
+    std::list<std::string>::const_iterator it(fields.begin());
     std::size_t nFields = fields.size();
 
     if (nFields < 2)
@@ -116,12 +139,13 @@ int SensorData::readDataFromFile(const std::string &file_name)
         return 0;
     }
 
-    std::size_t nDataArrays(nFields-1);
+    std::size_t nDataArrays(nFields - 1);
 
-    //create vectors necessary to hold the data
-    for (std::size_t i=0; i<nDataArrays; i++)
+    // create vectors necessary to hold the data
+    for (std::size_t i = 0; i < nDataArrays; i++)
     {
-        this->_vec_names.push_back(SensorData::convertString2SensorDataType(*++it));
+        this->_vec_names.push_back(
+            SensorData::convertString2SensorDataType(*++it));
         this->_data_unit_string.emplace_back("");
         auto* data = new std::vector<float>;
         this->_data_vecs.push_back(data);
@@ -135,7 +159,9 @@ int SensorData::readDataFromFile(const std::string &file_name)
         {
             it = fields.begin();
             std::size_t pos(it->rfind("."));
-            std::size_t current_time_step = (pos == std::string::npos) ? atoi((it++)->c_str()) : BaseLib::strDate2int(*it++);
+            std::size_t current_time_step = (pos == std::string::npos)
+                                                ? atoi((it++)->c_str())
+                                                : BaseLib::strDate2int(*it++);
             this->_time_steps.push_back(current_time_step);
 
             for (std::size_t i = 0; i < nDataArrays; i++)
@@ -153,7 +179,7 @@ int SensorData::readDataFromFile(const std::string &file_name)
     in.close();
 
     this->_start = this->_time_steps[0];
-    this->_end   = this->_time_steps[this->_time_steps.size()-1];
+    this->_end = this->_time_steps[this->_time_steps.size() - 1];
 
     return 1;
 }
@@ -176,7 +202,7 @@ std::string SensorData::convertSensorDataType2String(SensorDataType t)
     return "Unknown";
 }
 
-SensorDataType SensorData::convertString2SensorDataType(const std::string &s)
+SensorDataType SensorData::convertString2SensorDataType(const std::string& s)
 {
     if (s == "Evaporation" || s == "EVAPORATION")
     {
@@ -192,4 +218,3 @@ SensorDataType SensorData::convertString2SensorDataType(const std::string &s)
     }
     return SensorDataType::OTHER;
 }
-

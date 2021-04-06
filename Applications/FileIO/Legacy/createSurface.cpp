@@ -8,28 +8,24 @@
  *
  */
 
+#include "createSurface.h"
+
 #include <cstdio>
 #include <list>
 #include <memory>
 
-#include "BaseLib/Logging.h"
-
-#include "createSurface.h"
-#include "filesystem.h"
-
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
-
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
-
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
-
 #include "MeshLib/IO/readMeshFromFile.h"
-#include "MeshLib/convertMeshToGeo.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/convertMeshToGeo.h"
+#include "filesystem.h"
 
 namespace FileIO
 {
@@ -84,9 +80,9 @@ bool createSurface(GeoLib::Polyline const& ply,
     BaseLib::IO::writeStringToFile(gmsh_io.writeToString(), geo_file);
     // Using GMSH's vtk output here so we don't have to deal with GMSH and it's
     // various file format versions here
-    std::string gmsh_command =
-        "\"" + gmsh_binary + "\" -2 -algo meshadapt -format vtk -o "
-        + msh_file.string() + " " + geo_file.string();
+    std::string gmsh_command = "\"" + gmsh_binary +
+                               "\" -2 -algo meshadapt -format vtk -o " +
+                               msh_file.string() + " " + geo_file.string();
 
     int const gmsh_return_value = std::system(gmsh_command.c_str());
     if (gmsh_return_value != 0)

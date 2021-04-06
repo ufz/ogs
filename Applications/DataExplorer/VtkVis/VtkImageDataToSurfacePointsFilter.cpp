@@ -11,9 +11,6 @@
 // ** INCLUDES **
 #include "VtkImageDataToSurfacePointsFilter.h"
 
-#include <algorithm>
-#include <vector>
-
 #include <vtkIdList.h>
 #include <vtkImageData.h>
 #include <vtkInformation.h>
@@ -23,6 +20,9 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
+
+#include <algorithm>
+#include <vector>
 
 vtkStandardNewMacro(VtkImageDataToSurfacePointsFilter);
 
@@ -80,7 +80,8 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
     input->GetDimensions(dimensions);
     double origin[3];
     input->GetOrigin(origin);
-    MathLib::Point3d const ll(std::array<double, 3>{{origin[0], origin[1], origin[2]}});
+    MathLib::Point3d const ll(
+        std::array<double, 3>{{origin[0], origin[1], origin[2]}});
 
     std::vector<double> pixels;
     pixels.reserve(n_points);
@@ -137,7 +138,8 @@ int VtkImageDataToSurfacePointsFilter::RequestData(
     output->SetVerts(cells);
     output->Squeeze();
 
-    vtkDebugMacro(<< "Created " << new_points->GetNumberOfPoints() << " points.");
+    vtkDebugMacro(<< "Created " << new_points->GetNumberOfPoints()
+                  << " points.");
     return 1;
 }
 
@@ -163,7 +165,8 @@ void VtkImageDataToSurfacePointsFilter::createPointSurface(
     }
 }
 
-double VtkImageDataToSurfacePointsFilter::getRandomNumber(double const& min, double const& max) const
+double VtkImageDataToSurfacePointsFilter::getRandomNumber(
+    double const& min, double const& max) const
 {
     return (static_cast<double>(std::rand()) / RAND_MAX) * (max - min) + min;
 }

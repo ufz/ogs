@@ -56,8 +56,10 @@ int VtkImageDataToLinePolyDataFilter::RequestData(
 
     vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
-    vtkImageData* input = vtkImageData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
-    vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkImageData* input =
+        vtkImageData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkPolyData* output =
+        vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
     void* inScalarPtr = input->GetScalarPointer();
     int numScalarComponents = input->GetNumberOfScalarComponents();
@@ -98,7 +100,8 @@ int VtkImageDataToLinePolyDataFilter::RequestData(
 
     double dir[3] = {0, 0, 1};
 
-    // Traverse all points creating another point with scalar distance in Z direction
+    // Traverse all points creating another point with scalar distance in Z
+    // direction
     for (vtkIdType ptId = 0; ptId < numPts; ++ptId)
     {
         // Skip translucent pixels
@@ -153,8 +156,7 @@ int VtkImageDataToLinePolyDataFilter::RequestData(
     // Avoid keeping extra memory around
     output->Squeeze();
 
-    vtkDebugMacro(<< "Created: "
-                  << newPts->GetNumberOfPoints() << " points, "
+    vtkDebugMacro(<< "Created: " << newPts->GetNumberOfPoints() << " points, "
                   << output->GetNumberOfCells() << " lines");
 
     return 1;

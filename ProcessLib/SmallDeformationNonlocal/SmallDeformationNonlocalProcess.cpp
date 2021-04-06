@@ -10,8 +10,8 @@
 
 #include "SmallDeformationNonlocalProcess.h"
 
-#include <nlohmann/json.hpp>
 #include <iostream>
+#include <nlohmann/json.hpp>
 
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 
@@ -168,8 +168,7 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
             {
                 OGS_FATAL(
                     "Different number of components in meta data ({:d}) than "
-                    "in "
-                    "the integration point field data for '{:s}': {:d}.",
+                    "in the integration point field data for '{:s}': {:d}.",
                     ip_meta_data.n_components, name,
                     mesh_property.getNumberOfGlobalComponents());
             }

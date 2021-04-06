@@ -13,11 +13,10 @@
 #include <cassert>
 #include <functional>  // for std::reference_wrapper.
 
-#include "NumLib/DOF/DOFTableUtil.h"
-#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-#include "LocalAssemblerInterface.h"
-
 #include "CoupledSolutionsForStaggeredScheme.h"
+#include "LocalAssemblerInterface.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "Process.h"
 
 namespace ProcessLib
@@ -77,7 +76,6 @@ void VectorMatrixAssembler::assemble(
         auto local_coupled_xdots =
             getCoupledLocalSolutions(xdot, indices_of_processes);
         auto const local_xdot = MathLib::toVector(local_coupled_xdots);
-
 
         local_assembler.assembleForStaggeredScheme(
             t, dt, local_x, local_xdot, process_id, _local_M_data,
@@ -147,7 +145,6 @@ void VectorMatrixAssembler::assembleWithJacobian(
         auto local_coupled_xdots =
             getCoupledLocalSolutions(xdot, indices_of_processes);
         auto const local_xdot = MathLib::toVector(local_coupled_xdots);
-
 
         _jacobian_assembler->assembleWithJacobianForStaggeredScheme(
             local_assembler, t, dt, local_x, local_xdot, dxdot_dx, dx_dx,

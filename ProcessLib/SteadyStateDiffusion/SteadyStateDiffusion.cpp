@@ -93,4 +93,4 @@ void SteadyStateDiffusion::assembleWithJacobianConcreteProcess(
 }
 
 }  // namespace SteadyStateDiffusion
-}   // namespace ProcessLib
+}  // namespace ProcessLib

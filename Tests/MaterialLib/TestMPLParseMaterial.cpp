@@ -15,10 +15,9 @@
 
 #include <sstream>
 
+#include "MaterialLib/MPL/Medium.h"
 #include "TestMPL.h"
 #include "Tests/TestTools.h"
-
-#include "MaterialLib/MPL/Medium.h"
 
 namespace MPL = MaterialPropertyLib;
 

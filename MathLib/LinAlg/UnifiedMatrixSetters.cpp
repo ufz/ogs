@@ -8,21 +8,22 @@
  *
  */
 
-#include <cassert>
 #include "UnifiedMatrixSetters.h"
+
+#include <cassert>
 
 #ifdef USE_PETSC
 
 // Global PETScMatrix/PETScVector //////////////////////////////////////////
 
 #include <numeric>
-#include "MathLib/LinAlg/PETSc/PETScVector.h"
+
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
+#include "MathLib/LinAlg/PETSc/PETScVector.h"
 
 namespace MathLib
 {
-void setVector(PETScVector& v,
-               std::initializer_list<double> values)
+void setVector(PETScVector& v, std::initializer_list<double> values)
 {
     std::vector<double> const vals(values);
     std::vector<PETScVector::IndexType> idcs(vals.size());
@@ -31,14 +32,14 @@ void setVector(PETScVector& v,
     v.set(idcs, vals);
 }
 
-void setVector(PETScVector& v, MatrixVectorTraits<PETScVector>::Index const index,
+void setVector(PETScVector& v,
+               MatrixVectorTraits<PETScVector>::Index const index,
                double const value)
 {
-    v.set(index, value); // TODO handle negative indices
+    v.set(index, value);  // TODO handle negative indices
 }
 
-void setMatrix(PETScMatrix& m,
-               std::initializer_list<double> values)
+void setMatrix(PETScMatrix& m, std::initializer_list<double> values)
 {
     m.setZero();
     addToMatrix(m, values);
@@ -61,26 +62,29 @@ void setMatrix(PETScMatrix& m, Eigen::MatrixXd const& tmp)
     std::iota(col_idcs.begin(), col_idcs.end(), 0);
 
     // PETSc wants row-major
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp_ = tmp;
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>
+        tmp_ = tmp;
 
     m.add(row_idcs, col_idcs, tmp_);
 }
 
-void addToMatrix(PETScMatrix& m,
-                 std::initializer_list<double> values)
+void addToMatrix(PETScMatrix& m, std::initializer_list<double> values)
 {
     using IndexType = PETScMatrix::IndexType;
 
     auto const rows = m.getNumberOfRows();
     auto const cols = m.getNumberOfColumns();
 
-    assert((IndexType) values.size() == rows*cols);
+    assert((IndexType)values.size() == rows * cols);
 
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(
+        rows, cols);
 
     auto it = values.begin();
-    for (IndexType r=0; r<rows; ++r) {
-        for (IndexType c=0; c<cols; ++c) {
+    for (IndexType r = 0; r < rows; ++r)
+    {
+        for (IndexType c = 0; c < cols; ++c)
+        {
             tmp(r, c) = *(it++);
         }
     }
@@ -94,21 +98,19 @@ void addToMatrix(PETScMatrix& m,
     m.add(row_idcs, col_idcs, tmp);
 }
 
-} // namespace MathLib
-
+}  // namespace MathLib
 
 #else
 
-// Sparse global EigenMatrix/EigenVector //////////////////////////////////////////
+// Sparse global EigenMatrix/EigenVector
+// //////////////////////////////////////////
 
-#include "MathLib/LinAlg/Eigen/EigenVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
+#include "MathLib/LinAlg/Eigen/EigenVector.h"
 
 namespace MathLib
 {
-
-void setVector(EigenVector& v_,
-                      std::initializer_list<double> values)
+void setVector(EigenVector& v_, std::initializer_list<double> values)
 {
     auto& v(v_.getRawVector());
     assert((std::size_t)v.size() == values.size());
@@ -119,25 +121,26 @@ void setVector(EigenVector& v_,
     }
 }
 
-void setVector(EigenVector& v, MatrixVectorTraits<EigenVector>::Index const index,
+void setVector(EigenVector& v,
+               MatrixVectorTraits<EigenVector>::Index const index,
                double const value)
 {
     v.getRawVector()[index] = value;
 }
 
-
-void setMatrix(EigenMatrix& m,
-               std::initializer_list<double> values)
+void setMatrix(EigenMatrix& m, std::initializer_list<double> values)
 {
     auto const rows = m.getNumberOfRows();
     auto const cols = m.getNumberOfColumns();
 
-    assert(static_cast<EigenMatrix::IndexType>(values.size()) == rows*cols);
+    assert(static_cast<EigenMatrix::IndexType>(values.size()) == rows * cols);
     Eigen::MatrixXd tmp(rows, cols);
 
     auto it = values.begin();
-    for (GlobalIndexType r=0; r<rows; ++r) {
-        for (GlobalIndexType c=0; c<cols; ++c) {
+    for (GlobalIndexType r = 0; r < rows; ++r)
+    {
+        for (GlobalIndexType c = 0; c < cols; ++c)
+        {
             tmp(r, c) = *(it++);
         }
     }
@@ -150,18 +153,20 @@ void setMatrix(EigenMatrix& m, Eigen::MatrixXd const& tmp)
     m.getRawMatrix() = tmp.sparseView();
 }
 
-void addToMatrix(EigenMatrix& m,
-                 std::initializer_list<double> values)
+void addToMatrix(EigenMatrix& m, std::initializer_list<double> values)
 {
     auto const rows = m.getNumberOfRows();
     auto const cols = m.getNumberOfColumns();
 
-    assert(static_cast<EigenMatrix::IndexType>(values.size()) == rows*cols);
-    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(rows, cols);
+    assert(static_cast<EigenMatrix::IndexType>(values.size()) == rows * cols);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> tmp(
+        rows, cols);
 
     auto it = values.begin();
-    for (GlobalIndexType r=0; r<rows; ++r) {
-        for (GlobalIndexType c=0; c<cols; ++c) {
+    for (GlobalIndexType r = 0; r < rows; ++r)
+    {
+        for (GlobalIndexType c = 0; c < cols; ++c)
+        {
             tmp(r, c) = *(it++);
         }
     }
@@ -169,6 +174,6 @@ void addToMatrix(EigenMatrix& m,
     m.getRawMatrix() += tmp.sparseView();
 }
 
-} // namespace MathLib
+}  // namespace MathLib
 
 #endif

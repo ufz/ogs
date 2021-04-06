@@ -27,7 +27,7 @@
 #include "MeshLib/MeshSurfaceExtraction.h"
 #include "MeshLib/Node.h"
 
-int main (int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
         "Tool extracts the boundary of the given mesh. The documentation is "

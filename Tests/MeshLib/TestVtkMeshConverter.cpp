@@ -7,10 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <memory>
-
-#include "gtest/gtest.h"
-
+#include <gtest/gtest.h>
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
@@ -20,6 +17,8 @@
 #include <vtkUnsignedIntArray.h>
 #include <vtkUnstructuredGrid.h>
 
+#include <memory>
+
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshGenerators/VtkMeshConverter.h"
@@ -28,8 +27,7 @@
 class TestVtkMeshConverter : public ::testing::Test
 {
 public:
-    TestVtkMeshConverter()
-        : vtu(nullptr)
+    TestVtkMeshConverter() : vtu(nullptr)
     {
         // Points and cells
         auto points = vtkSmartPointer<vtkPoints>::New();

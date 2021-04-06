@@ -9,12 +9,13 @@
  */
 
 #include "ConvergenceCriterionPerComponentDeltaX.h"
+
 #include <limits>
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/ConfigTree.h"
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "BaseLib/Logging.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace NumLib
 {
@@ -112,9 +113,12 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
             "At least one of absolute or relative tolerance has to be "
             "specified.");
     }
-    if (!abstols) {
+    if (!abstols)
+    {
         abstols = std::vector<double>(reltols->size());
-    } else if (!reltols) {
+    }
+    else if (!reltols)
+    {
         reltols = std::vector<double>(abstols->size());
     }
 

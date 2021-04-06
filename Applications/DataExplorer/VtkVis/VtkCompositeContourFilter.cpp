@@ -15,14 +15,15 @@
 // ** INCLUDES **
 #include "VtkCompositeContourFilter.h"
 
-#include <vtkPointData.h>
 #include <vtkContourFilter.h>
+#include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
 
 #include <limits>
 
-VtkCompositeContourFilter::VtkCompositeContourFilter( vtkAlgorithm* inputAlgorithm )
+VtkCompositeContourFilter::VtkCompositeContourFilter(
+    vtkAlgorithm* inputAlgorithm)
     : VtkCompositeFilter(inputAlgorithm)
 {
     this->init();
@@ -33,18 +34,19 @@ VtkCompositeContourFilter::~VtkCompositeContourFilter() = default;
 void VtkCompositeContourFilter::init()
 {
     // Set meta information about input and output data types
-    this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID; //VTK_DATA_SET;
+    this->_inputDataObjectType = VTK_UNSTRUCTURED_GRID;  // VTK_DATA_SET;
     this->_outputDataObjectType = VTK_UNSTRUCTURED_GRID;
 
     // Because this is the only filter here we cannot use vtkSmartPointer
     vtkContourFilter* contour = vtkContourFilter::New();
     contour->SetInputConnection(_inputAlgorithm->GetOutputPort());
 
-    // Getting the scalar range from the active point data scalar of the input algorithm
-    // This assumes that we do not want to contour on cell data.
+    // Getting the scalar range from the active point data scalar of the input
+    // algorithm This assumes that we do not want to contour on cell data.
     double range[2];
-    vtkDataSet* dataSet = vtkDataSet::SafeDownCast(_inputAlgorithm->GetOutputDataObject(0));
-    if(dataSet)
+    vtkDataSet* dataSet =
+        vtkDataSet::SafeDownCast(_inputAlgorithm->GetOutputDataObject(0));
+    if (dataSet)
     {
         vtkPointData* pointData = dataSet->GetPointData();
         if (pointData)
@@ -54,8 +56,8 @@ void VtkCompositeContourFilter::init()
     }
     else
     {
-        // Setting the range to min / max values, this will result in a "bad table range"
-        // vtk warning.
+        // Setting the range to min / max values, this will result in a "bad
+        // table range" vtk warning.
         range[0] = std::numeric_limits<double>::lowest();
         range[1] = std::numeric_limits<double>::max();
     }
@@ -78,7 +80,7 @@ void VtkCompositeContourFilter::init()
     _outputAlgorithm = contour;
 }
 
-void VtkCompositeContourFilter::SetUserProperty( QString name, QVariant value )
+void VtkCompositeContourFilter::SetUserProperty(QString name, QVariant value)
 {
     VtkAlgorithmProperties::SetUserProperty(name, value);
 
@@ -90,7 +92,8 @@ void VtkCompositeContourFilter::SetUserProperty( QString name, QVariant value )
     }
 }
 
-void VtkCompositeContourFilter::SetUserVectorProperty( QString name, QList<QVariant> values )
+void VtkCompositeContourFilter::SetUserVectorProperty(
+    QString name, QList<QVariant> values)
 {
     VtkAlgorithmProperties::SetUserVectorProperty(name, values);
 

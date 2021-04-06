@@ -13,8 +13,10 @@
  */
 
 #include "DiagramView.h"
-#include <QGraphicsTextItem>
+
 #include <math.h>
+
+#include <QGraphicsTextItem>
 
 DiagramView::DiagramView(QWidget* parent) : QGraphicsView(parent)
 {
@@ -23,7 +25,8 @@ DiagramView::DiagramView(QWidget* parent) : QGraphicsView(parent)
     initialize();
 }
 
-DiagramView::DiagramView(DiagramList* list, QWidget* parent) : QGraphicsView(parent)
+DiagramView::DiagramView(DiagramList* list, QWidget* parent)
+    : QGraphicsView(parent)
 {
     _scene = new DiagramScene(list);
     setScene(_scene);
@@ -56,8 +59,8 @@ int DiagramView::getWidth()
  */
 void DiagramView::initialize()
 {
-    //QMatrix currentMatrix = matrix();
-    //setMatrix(currentMatrix * scene->getTransformationMatrix());
+    // QMatrix currentMatrix = matrix();
+    // setMatrix(currentMatrix * scene->getTransformationMatrix());
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -98,9 +101,9 @@ QSize DiagramView::sizeHint() const
 
 void DiagramView::resizeEvent(QResizeEvent* event)
 {
-    Q_UNUSED (event)
+    Q_UNUSED(event)
     update();
-    //keepItemAspectRatio();
+    // keepItemAspectRatio();
 }
 
 /**
@@ -111,7 +114,7 @@ void DiagramView::resizeEvent(QResizeEvent* event)
  */
 void DiagramView::update()
 {
-    //setResizeAnchor(QGraphicsView::AnchorViewCenter);
+    // setResizeAnchor(QGraphicsView::AnchorViewCenter);
     QRectF viewRect = _scene->itemsBoundingRect();
     _scene->setSceneRect(viewRect);
     QRectF sceneInView(0 /*_scene->MARGIN*/, DiagramScene::MARGIN / 2,

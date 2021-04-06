@@ -11,14 +11,14 @@
 #include "LocalLinearLeastSquaresExtrapolator.h"
 
 #include <Eigen/SVD>
-#include "BaseLib/Logging.h"
 
+#include "BaseLib/Logging.h"
+#include "ExtrapolatableElementCollection.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/Assembler/SerialExecutor.h"
 #include "NumLib/Function/Interpolation.h"
-#include "ExtrapolatableElementCollection.h"
 
 namespace NumLib
 {
@@ -36,8 +36,8 @@ LocalLinearLeastSquaresExtrapolator::LocalLinearLeastSquaresExtrapolator(
     if (dof_table.getNumberOfGlobalComponents() != 1)
     {
         OGS_FATAL(
-            "The d.o.f. table passed must be for one variable that has "
-            "only one component!");
+            "The d.o.f. table passed must be for one variable that has only "
+            "one component!");
     }
 }
 

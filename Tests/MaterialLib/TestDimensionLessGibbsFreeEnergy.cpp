@@ -13,9 +13,8 @@
 
 #include <memory>
 
-#include "Tests/TestTools.h"
-
 #include "MaterialLib/Fluid/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
+#include "Tests/TestTools.h"
 
 using namespace MaterialLib;
 using namespace MaterialLib::Fluid;

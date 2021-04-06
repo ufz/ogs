@@ -19,14 +19,13 @@
 #include <utility>
 
 #include "BaseLib/RunTime.h"
-
 #include "Elements/Element.h"
-#include "Elements/Tri.h"
+#include "Elements/Hex.h"
+#include "Elements/Prism.h"
+#include "Elements/Pyramid.h"
 #include "Elements/Quad.h"
 #include "Elements/Tet.h"
-#include "Elements/Hex.h"
-#include "Elements/Pyramid.h"
-#include "Elements/Prism.h"
+#include "Elements/Tri.h"
 
 /// Mesh counter used to uniquely identify meshes by id.
 static std::size_t global_mesh_counter = 0;
@@ -80,16 +79,16 @@ Mesh::Mesh(const Mesh& mesh)
       _n_base_nodes(mesh.getNumberOfBaseNodes()),
       _properties(mesh._properties)
 {
-    const std::vector<Node*>& nodes (mesh.getNodes());
-    const std::size_t nNodes (nodes.size());
+    const std::vector<Node*>& nodes(mesh.getNodes());
+    const std::size_t nNodes(nodes.size());
     for (unsigned i = 0; i < nNodes; ++i)
     {
         _nodes[i] = new Node(*nodes[i]);
     }
 
-    const std::vector<Element*>& elements (mesh.getElements());
-    const std::size_t nElements (elements.size());
-    for (unsigned i=0; i<nElements; ++i)
+    const std::vector<Element*>& elements(mesh.getElements());
+    const std::size_t nElements(elements.size());
+    for (unsigned i = 0; i < nElements; ++i)
     {
         const std::size_t nElemNodes = elements[i]->getNumberOfNodes();
         _elements[i] = elements[i]->clone();
@@ -104,19 +103,19 @@ Mesh::Mesh(const Mesh& mesh)
         this->setDimension();
     }
     this->setElementsConnectedToNodes();
-    //this->setNodesConnectedByElements();
+    // this->setNodesConnectedByElements();
     this->setElementNeighbors();
 }
 
 Mesh::~Mesh()
 {
-    const std::size_t nElements (_elements.size());
+    const std::size_t nElements(_elements.size());
     for (std::size_t i = 0; i < nElements; ++i)
     {
         delete _elements[i];
     }
 
-    const std::size_t nNodes (_nodes.size());
+    const std::size_t nNodes(_nodes.size());
     for (std::size_t i = 0; i < nNodes; ++i)
     {
         delete _nodes[i];
@@ -128,7 +127,7 @@ void Mesh::addElement(Element* elem)
     _elements.push_back(elem);
 
     // add element information to nodes
-    unsigned nNodes (elem->getNumberOfNodes());
+    unsigned nNodes(elem->getNumberOfNodes());
     for (unsigned i = 0; i < nNodes; ++i)
     {
         elem->_nodes[i]->addElement(elem);
@@ -159,7 +158,7 @@ void Mesh::recalculateMaxBaseNodeId()
 
 void Mesh::resetElementIDs()
 {
-    const std::size_t nElements (this->_elements.size());
+    const std::size_t nElements(this->_elements.size());
     for (unsigned i = 0; i < nElements; ++i)
     {
         _elements[i]->setID(i);
@@ -168,7 +167,7 @@ void Mesh::resetElementIDs()
 
 void Mesh::setDimension()
 {
-    const std::size_t nElements (_elements.size());
+    const std::size_t nElements(_elements.size());
     for (unsigned i = 0; i < nElements; ++i)
     {
         if (_elements[i]->getDimension() > _mesh_dimension)
@@ -209,17 +208,22 @@ void Mesh::setElementNeighbors()
     std::vector<Element*> neighbors;
     for (auto element : _elements)
     {
-        // create vector with all elements connected to current element (includes lots of doubles!)
-        const std::size_t nNodes (element->getNumberOfBaseNodes());
-        for (unsigned n(0); n<nNodes; ++n)
+        // create vector with all elements connected to current element
+        // (includes lots of doubles!)
+        const std::size_t nNodes(element->getNumberOfBaseNodes());
+        for (unsigned n(0); n < nNodes; ++n)
         {
-            std::vector<Element*> const& conn_elems ((element->getNode(n)->getElements()));
-            neighbors.insert(neighbors.end(), conn_elems.begin(), conn_elems.end());
+            std::vector<Element*> const& conn_elems(
+                (element->getNode(n)->getElements()));
+            neighbors.insert(neighbors.end(), conn_elems.begin(),
+                             conn_elems.end());
         }
         std::sort(neighbors.begin(), neighbors.end());
-        auto const neighbors_new_end = std::unique(neighbors.begin(), neighbors.end());
+        auto const neighbors_new_end =
+            std::unique(neighbors.begin(), neighbors.end());
 
-        for (auto neighbor = neighbors.begin(); neighbor != neighbors_new_end; ++neighbor)
+        for (auto neighbor = neighbors.begin(); neighbor != neighbors_new_end;
+             ++neighbor)
         {
             std::optional<unsigned> const opposite_face_id =
                 element->addNeighbor(*neighbor);
@@ -257,8 +261,9 @@ void Mesh::setNodesConnectedByElements()
         // Make nodes unique and sorted by their ids.
         // This relies on the node's id being equivalent to it's address.
         std::sort(adjacent_nodes.begin(), adjacent_nodes.end(),
-            [](Node* a, Node* b) { return a->getID() < b->getID(); });
-        auto const last = std::unique(adjacent_nodes.begin(), adjacent_nodes.end());
+                  [](Node* a, Node* b) { return a->getID() < b->getID(); });
+        auto const last =
+            std::unique(adjacent_nodes.begin(), adjacent_nodes.end());
         adjacent_nodes.erase(last, adjacent_nodes.end());
 
         node->setConnectedNodes(adjacent_nodes);
@@ -269,7 +274,8 @@ void Mesh::checkNonlinearNodeIDs() const
 {
     for (MeshLib::Element const* e : _elements)
     {
-        for (unsigned i=e->getNumberOfBaseNodes(); i<e->getNumberOfNodes(); i++)
+        for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
+             i++)
         {
             if (e->getNodeIndex(i) >= getNumberOfBaseNodes())
             {
@@ -288,13 +294,13 @@ void Mesh::checkNonlinearNodeIDs() const
 
 bool Mesh::hasNonlinearElement() const
 {
-    return std::any_of(std::begin(_elements), std::end(_elements),
-        [](Element const* const e) {
+    return std::any_of(
+        std::begin(_elements), std::end(_elements), [](Element const* const e) {
             return e->getNumberOfNodes() != e->getNumberOfBaseNodes();
         });
 }
 
-void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
+void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
                              std::string const& property_name,
                              double factor)
 {
@@ -303,7 +309,7 @@ void scaleMeshPropertyVector(MeshLib::Mesh & mesh,
         WARN("Did not find PropertyVector '{:s}' for scaling.", property_name);
         return;
     }
-    auto & pv = *mesh.getProperties().getPropertyVector<double>(property_name);
+    auto& pv = *mesh.getProperties().getPropertyVector<double>(property_name);
     std::transform(pv.begin(), pv.end(), pv.begin(),
                    [factor](auto const& v) { return v * factor; });
 }

@@ -87,8 +87,8 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 << "for expected derivative of water vapour density with "
                    "respect to temperature "
                 << approximated_drho_wv_dT
-                << " and for computed derivative of water vapour density "
-                   "with respect to temperature."
+                << " and for computed derivative of water vapour density with "
+                   "respect to temperature."
                 << analytic_drho_wv_dT;
         }
     }

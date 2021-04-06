@@ -14,9 +14,9 @@
 #include <functional>
 #include <limits>
 #include <vector>
-#include "BaseLib/Logging.h"
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/Logging.h"
 
 namespace NumLib
 {

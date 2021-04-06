@@ -14,46 +14,40 @@
 
 #include "MeshView.h"
 
-#include <memory>
-
-#include <QHeaderView>
 #include <QContextMenuEvent>
 #include <QFileDialog>
+#include <QHeaderView>
 #include <QMenu>
 #include <QObject>
 #include <QSettings>
+#include <memory>
 
-#include "SHPInterface.h"
-#include "TetGenInterface.h"
-#include "Applications/FileIO/AsciiRasterInterface.h"
-
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
-#include "MeshLib/MeshEditing/AddLayerToMesh.h"
-#include "MeshLib/MeshEditing/RasterDataToMesh.h"
-
-#include "OGSError.h"
-#include "MeshMapping2DDialog.h"
-#include "RasterDataToMeshDialog.h"
-#include "MeshLayerEditDialog.h"
-#include "MeshValueEditDialog.h"
-#include "SurfaceExtractionDialog.h"
 #include "AddLayerToMeshDialog.h"
-#include "MeshItem.h"
-#include "MeshModel.h"
-
+#include "Applications/FileIO/AsciiRasterInterface.h"
 #include "ImportFileTypes.h"
 #include "LastSavedFileDirectory.h"
+#include "MeshItem.h"
+#include "MeshLayerEditDialog.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/AddLayerToMesh.h"
+#include "MeshLib/MeshEditing/RasterDataToMesh.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Node.h"
+#include "MeshMapping2DDialog.h"
+#include "MeshModel.h"
+#include "MeshValueEditDialog.h"
+#include "OGSError.h"
+#include "RasterDataToMeshDialog.h"
+#include "SHPInterface.h"
 #include "SaveMeshDialog.h"
+#include "SurfaceExtractionDialog.h"
+#include "TetGenInterface.h"
 
-
-MeshView::MeshView( QWidget* parent /*= 0*/ )
-    : QTreeView(parent)
+MeshView::MeshView(QWidget* parent /*= 0*/) : QTreeView(parent)
 {
     setUniformRowHeights(true);
-    //resizeColumnsToContents();
-    //resizeRowsToContents();
+    // resizeColumnsToContents();
+    // resizeRowsToContents();
 }
 
 MeshView::~MeshView() = default;
@@ -61,22 +55,25 @@ MeshView::~MeshView() = default;
 void MeshView::updateView()
 {
     setAlternatingRowColors(true);
-    setColumnWidth(0,150);
-    std::size_t nColumns = (this->model() != nullptr) ? this->model()->columnCount() : 0;
+    setColumnWidth(0, 150);
+    std::size_t nColumns =
+        (this->model() != nullptr) ? this->model()->columnCount() : 0;
     for (std::size_t i = 1; i < nColumns; i++)
     {
         resizeColumnToContents(i);
     }
 }
 
-void MeshView::selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )
+void MeshView::selectionChanged(const QItemSelection& selected,
+                                const QItemSelection& deselected)
 {
     Q_UNUSED(deselected);
     if (!selected.isEmpty())
     {
         emit removeSelectedMeshComponent();
         const QModelIndex idx = *(selected.indexes().begin());
-        const TreeItem* tree_item = static_cast<TreeModel*>(this->model())->getItem(idx);
+        const TreeItem* tree_item =
+            static_cast<TreeModel*>(this->model())->getItem(idx);
 
         const auto* list_item = dynamic_cast<const MeshItem*>(tree_item);
         if (list_item)
@@ -89,7 +86,10 @@ void MeshView::selectionChanged( const QItemSelection &selected, const QItemSele
         {
             emit enableSaveButton(false);
             emit enableRemoveButton(false);
-            emit elementSelected(dynamic_cast<const MeshItem*>(tree_item->parentItem())->vtkSource(), static_cast<unsigned>(tree_item->row()), true);
+            emit elementSelected(
+                dynamic_cast<const MeshItem*>(tree_item->parentItem())
+                    ->vtkSource(),
+                static_cast<unsigned>(tree_item->row()), true);
         }
     }
 }
@@ -101,7 +101,7 @@ void MeshView::addMesh()
 
 void MeshView::removeMesh()
 {
-    QModelIndex index (this->selectionModel()->currentIndex());
+    QModelIndex index(this->selectionModel()->currentIndex());
     if (!index.isValid())
     {
         OGSError::box("No mesh selected.");
@@ -114,39 +114,52 @@ void MeshView::removeMesh()
     }
 }
 
-void MeshView::contextMenuEvent( QContextMenuEvent* event )
+void MeshView::contextMenuEvent(QContextMenuEvent* event)
 {
     QModelIndex const& index = this->selectionModel()->currentIndex();
-    MeshItem const*const item = dynamic_cast<MeshItem*>(static_cast<TreeItem*>(index.internalPointer()));
+    MeshItem const* const item = dynamic_cast<MeshItem*>(
+        static_cast<TreeItem*>(index.internalPointer()));
 
     if (item == nullptr)
     {
         return;
     }
 
-    unsigned const mesh_dim (item->getMesh()->getDimension());
+    unsigned const mesh_dim(item->getMesh()->getDimension());
 
     std::vector<MeshAction> actions;
     actions.push_back({new QAction("Map mesh...", this), 1, 2});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMap2dMeshDialog()));
-    actions.push_back({new QAction("Assign raster data to mesh...", this), 1, 2});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openRasterDataToMeshDialog()));
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(openMap2dMeshDialog()));
+    actions.push_back(
+        {new QAction("Assign raster data to mesh...", this), 1, 2});
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(openRasterDataToMeshDialog()));
     actions.push_back({new QAction("Edit mesh...", this), 2, 3});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openMeshEditDialog()));
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(openMeshEditDialog()));
     actions.push_back({new QAction("Add layer...", this), 1, 3});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openAddLayerDialog()));
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(openAddLayerDialog()));
     actions.push_back({new QAction("Edit material groups...", this), 1, 3});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(openValuesEditDialog()));
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(openValuesEditDialog()));
     actions.push_back({new QAction("Extract surface...", this), 3, 3});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(extractSurfaceMesh()));
-    actions.push_back({new QAction("Calculate element quality...", this), 2, 3});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(checkMeshQuality()));
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(extractSurfaceMesh()));
+    actions.push_back(
+        {new QAction("Calculate element quality...", this), 2, 3});
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(checkMeshQuality()));
     actions.push_back({new QAction("Convert to geometry", this), 1, 2});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(convertMeshToGeometry()));
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(convertMeshToGeometry()));
     actions.push_back({new QAction("Export to Shapefile...", this), 2, 2});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(exportToShapefile()));
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(exportToShapefile()));
     actions.push_back({new QAction("Export to TetGen...", this), 3, 3});
-    connect(actions.back().action, SIGNAL(triggered()), this, SLOT(exportToTetGen()));
+    connect(actions.back().action, SIGNAL(triggered()), this,
+            SLOT(exportToTetGen()));
 
     QMenu menu(this);
     for (MeshAction a : actions)
@@ -161,9 +174,9 @@ void MeshView::contextMenuEvent( QContextMenuEvent* event )
 
 void MeshView::openMap2dMeshDialog()
 {
-    MeshModel const*const model = static_cast<MeshModel*>(this->model());
+    MeshModel const* const model = static_cast<MeshModel*>(this->model());
     QModelIndex const index = this->selectionModel()->currentIndex();
-    MeshLib::Mesh const*const mesh = model->getMesh(index);
+    MeshLib::Mesh const* const mesh = model->getMesh(index);
     if (mesh == nullptr)
     {
         return;
@@ -202,7 +215,6 @@ void MeshView::openMap2dMeshDialog()
                                                    dlg.getStaticValue());
     }
     static_cast<MeshModel*>(this->model())->addMesh(std::move(result));
-
 }
 
 void MeshView::openRasterDataToMeshDialog()
@@ -246,25 +258,25 @@ void MeshView::openRasterDataToMeshDialog()
 
 void MeshView::openMeshEditDialog()
 {
-    MeshModel const*const model = static_cast<MeshModel*>(this->model());
+    MeshModel const* const model = static_cast<MeshModel*>(this->model());
     QModelIndex const index = this->selectionModel()->currentIndex();
-    MeshLib::Mesh const*const mesh = model->getMesh(index);
+    MeshLib::Mesh const* const mesh = model->getMesh(index);
 
     MeshLayerEditDialog meshLayerEdit(mesh);
-    connect(&meshLayerEdit, SIGNAL(mshEditFinished(MeshLib::Mesh*)),
-            model, SLOT(addMesh(MeshLib::Mesh*)));
+    connect(&meshLayerEdit, SIGNAL(mshEditFinished(MeshLib::Mesh*)), model,
+            SLOT(addMesh(MeshLib::Mesh*)));
     meshLayerEdit.exec();
 }
 
 void MeshView::openValuesEditDialog()
 {
-    MeshModel const*const model = static_cast<MeshModel*>(this->model());
+    MeshModel const* const model = static_cast<MeshModel*>(this->model());
     QModelIndex const index = this->selectionModel()->currentIndex();
     auto* mesh = const_cast<MeshLib::Mesh*>(model->getMesh(index));
 
     MeshValueEditDialog valueEdit(mesh);
-    connect(&valueEdit, SIGNAL(valueEditFinished(MeshLib::Mesh*)),
-            model, SLOT(updateMesh(MeshLib::Mesh*)));
+    connect(&valueEdit, SIGNAL(valueEditFinished(MeshLib::Mesh*)), model,
+            SLOT(updateMesh(MeshLib::Mesh*)));
     valueEdit.exec();
 }
 
@@ -276,7 +288,8 @@ void MeshView::openAddLayerDialog()
         return;
     }
 
-    MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
+    MeshLib::Mesh const* const mesh =
+        static_cast<MeshModel*>(this->model())->getMesh(index);
     if (mesh == nullptr)
     {
         return;
@@ -290,9 +303,8 @@ void MeshView::openAddLayerDialog()
 
     bool const copy_material_ids = false;
     double const thickness(dlg.getThickness());
-    std::unique_ptr<MeshLib::Mesh> result(
-        MeshLib::addLayerToMesh(*mesh, thickness, dlg.getName(),
-                                dlg.isTopLayer(), copy_material_ids));
+    std::unique_ptr<MeshLib::Mesh> result(MeshLib::addLayerToMesh(
+        *mesh, thickness, dlg.getName(), dlg.isTopLayer(), copy_material_ids));
 
     if (result)
     {
@@ -312,7 +324,8 @@ void MeshView::extractSurfaceMesh()
         return;
     }
 
-    MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
+    MeshLib::Mesh const* const mesh =
+        static_cast<MeshModel*>(this->model())->getMesh(index);
     SurfaceExtractionDialog dlg;
     if (dlg.exec() != QDialog::Accepted)
     {
@@ -320,7 +333,7 @@ void MeshView::extractSurfaceMesh()
     }
 
     Eigen::Vector3d const& dir(dlg.getNormal());
-    int const tolerance (dlg.getTolerance());
+    int const tolerance(dlg.getTolerance());
     std::unique_ptr<MeshLib::Mesh> sfc_mesh(
         MeshLib::MeshSurfaceExtraction::getMeshSurface(
             *mesh, dir, tolerance, "Bulk Mesh Node IDs",
@@ -339,7 +352,8 @@ void MeshView::extractSurfaceMesh()
 void MeshView::convertMeshToGeometry()
 {
     QModelIndex const index = this->selectionModel()->currentIndex();
-    MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
+    MeshLib::Mesh const* const mesh =
+        static_cast<MeshModel*>(this->model())->getMesh(index);
     emit requestMeshToGeometryConversion(mesh);
 }
 
@@ -352,10 +366,14 @@ void MeshView::exportToShapefile() const
     }
 
     QSettings const settings;
-    QFileInfo const fi (settings.value("lastOpenedMeshFileDirectory").toString());
-    MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
-    QString const fileName = QFileDialog::getSaveFileName(nullptr, "Convert mesh to shapefile...",
-        LastSavedFileDirectory::getDir() + QString::fromStdString(mesh->getName()),
+    QFileInfo const fi(
+        settings.value("lastOpenedMeshFileDirectory").toString());
+    MeshLib::Mesh const* const mesh =
+        static_cast<MeshModel*>(this->model())->getMesh(index);
+    QString const fileName = QFileDialog::getSaveFileName(
+        nullptr, "Convert mesh to shapefile...",
+        LastSavedFileDirectory::getDir() +
+            QString::fromStdString(mesh->getName()),
         "ESRI Shapefile (*.shp)");
     if (!fileName.isEmpty())
     {
@@ -376,9 +394,11 @@ void MeshView::exportToTetGen()
         return;
     }
 
-    MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
+    MeshLib::Mesh const* const mesh =
+        static_cast<MeshModel*>(this->model())->getMesh(index);
     QSettings const settings;
-    QString const filename = QFileDialog::getSaveFileName(this, "Write TetGen input file to",
+    QString const filename = QFileDialog::getSaveFileName(
+        this, "Write TetGen input file to",
         settings.value("lastOpenedTetgenFileDirectory").toString(),
         "TetGen Geometry (*.smesh)");
     if (!filename.isEmpty())
@@ -398,7 +418,8 @@ void MeshView::writeToFile() const
         return;
     }
 
-    MeshLib::Mesh const*const mesh = static_cast<MeshModel*>(this->model())->getMesh(index);
+    MeshLib::Mesh const* const mesh =
+        static_cast<MeshModel*>(this->model())->getMesh(index);
     if (mesh == nullptr)
     {
         OGSError::box("No mesh selected.");
@@ -411,8 +432,9 @@ void MeshView::writeToFile() const
 
 void MeshView::addDIRECTSourceTerms()
 {
-    //QModelIndex const index = this->selectionModel()->currentIndex();
-    //MeshLib::Mesh const*const grid = static_cast<MeshModel*>(this->model())->getMesh(index);
+    // QModelIndex const index = this->selectionModel()->currentIndex();
+    // MeshLib::Mesh const*const grid =
+    // static_cast<MeshModel*>(this->model())->getMesh(index);
 }
 
 void MeshView::loadDIRECTSourceTerms()
@@ -421,10 +443,10 @@ void MeshView::loadDIRECTSourceTerms()
     emit loadFEMCondFileRequested(index.data(0).toString().toStdString());
 }
 
-void MeshView::checkMeshQuality ()
+void MeshView::checkMeshQuality()
 {
     QModelIndex const index = this->selectionModel()->currentIndex();
-    MeshItem const*const item = static_cast<MeshItem*>(static_cast<MeshModel*>(this->model())->getItem(index));
+    MeshItem const* const item = static_cast<MeshItem*>(
+        static_cast<MeshModel*>(this->model())->getItem(index));
     emit qualityCheckRequested(item->vtkSource());
 }
-

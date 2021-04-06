@@ -21,8 +21,9 @@
 #include "BaseLib/FileTools.h"
 #include "filesystem.h"
 #ifdef USE_PETSC
-#include "MeshLib/IO/VtkIO/VtuInterface.h"  // For petsc file name conversion.
 #include <petsc.h>
+
+#include "MeshLib/IO/VtkIO/VtuInterface.h"  // For petsc file name conversion.
 #endif
 
 namespace
@@ -114,8 +115,7 @@ std::string findVtkdiff()
         }
         WARN(
             "Calling {:s} from the VTKDIFF_EXE environment variable didn't "
-            "work "
-            "as expected. Return value was {:d}.",
+            "work as expected. Return value was {:d}.",
             vtkdiff_exe, return_value);
     }
 
@@ -168,13 +168,14 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
 
         std::vector<std::string> filenames;
         if (auto const regex_string =
-            //! \ogs_file_param{prj__test_definition__vtkdiff__regex}
+                //! \ogs_file_param{prj__test_definition__vtkdiff__regex}
             vtkdiff_config.getConfigParameterOptional<std::string>("regex"))
         {
             // TODO: insert rank into regex for mpi case
             DBUG("vtkdiff regex is '{}'.", *regex_string);
             auto const regex = std::regex(*regex_string);
-            for (auto const & p: fs::directory_iterator(fs::path(reference_path)))
+            for (auto const& p :
+                 fs::directory_iterator(fs::path(reference_path)))
             {
                 auto const filename = p.path().filename().string();
                 if (std::regex_match(filename, regex))
@@ -242,7 +243,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         std::string const relative_tolerance_parameter =
             "--rel " + relative_tolerance;
 
-        for (auto const &filename : filenames)
+        for (auto const& filename : filenames)
         {
             std::string const& output_filename =
                 BaseLib::joinPaths(output_directory, filename);
@@ -257,7 +258,8 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
                 vtkdiff + " -a " + safeString(field_name) + " -b " +
                 safeString(field_name) + " " + safeString(reference_filename) +
                 " " + safeString(output_filename) + " " +
-                absolute_tolerance_parameter + " " + relative_tolerance_parameter;
+                absolute_tolerance_parameter + " " +
+                relative_tolerance_parameter;
             INFO("Will run '{:s}'", command_line);
             _command_lines.emplace_back(std::move(command_line));
         }

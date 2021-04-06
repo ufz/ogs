@@ -9,6 +9,7 @@
  */
 
 #include "DOFTableUtil.h"
+
 #include <cassert>
 
 namespace NumLib
@@ -97,7 +98,7 @@ double getNonGhostNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
                               node_id};
 
     auto const index = dof_table.getGlobalIndex(l, global_component_id);
-    assert (index != NumLib::MeshComponentMap::nop);
+    assert(index != NumLib::MeshComponentMap::nop);
 
     if (index < 0)
     {  // ghost node value
@@ -116,7 +117,7 @@ double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
                               node_id};
 
     auto const index = dof_table.getGlobalIndex(l, global_component_id);
-    assert (index != NumLib::MeshComponentMap::nop);
+    assert(index != NumLib::MeshComponentMap::nop);
 
     return x.get(index);
 }

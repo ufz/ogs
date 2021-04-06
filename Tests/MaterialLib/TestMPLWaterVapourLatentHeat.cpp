@@ -73,8 +73,8 @@ TEST(MaterialPropertyLib, LinearWaterVapourLatentHeat)
             << "for expected derivative of water vapour latent heat with "
                "respect to temperature "
             << approximated_dLw_dT
-            << " and for computed derivative of water vapour latent heat "
-               "with respect to temperature."
+            << " and for computed derivative of water vapour latent heat with "
+               "respect to temperature."
             << analytic_dLw_dT;
     }
 }

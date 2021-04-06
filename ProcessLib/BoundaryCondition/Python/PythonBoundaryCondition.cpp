@@ -128,11 +128,10 @@ void PythonBoundaryCondition::getEssentialBCValues(
                     // TODO extend Python BC to mixed FEM ansatz functions
                     OGS_FATAL(
                         "No d.o.f. found for (node={:d}, var={:d}, comp={:d}). "
-                        " "
-                        "That might be due to the use of mixed FEM ansatz "
-                        "functions, which is currently not supported by "
-                        "the implementation of Python BCs. That excludes, "
-                        "e.g., the HM process.",
+                        " That might be due to the use of mixed FEM ansatz "
+                        "functions, which is currently not supported by the "
+                        "implementation of Python BCs. That excludes, e.g., "
+                        "the HM process.",
                         bulk_node_id, var, comp);
                 }
 

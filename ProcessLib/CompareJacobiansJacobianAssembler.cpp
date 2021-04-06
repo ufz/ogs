@@ -12,9 +12,8 @@
 
 #include <sstream>
 
-#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-
 #include "CreateJacobianAssembler.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 
 namespace
 {

@@ -15,7 +15,6 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "ParameterLib/Utils.h"
-
 #include "Porosity.h"
 
 namespace MaterialLib

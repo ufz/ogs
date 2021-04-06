@@ -23,53 +23,53 @@
 DetailWindow::DetailWindow(QWidget* parent) : QWidget(parent)
 {
     setupUi(this);
-    stationView->setRenderHints( QPainter::Antialiasing );
+    stationView->setRenderHints(QPainter::Antialiasing);
 
-/*
-    DiagramList* list  = new DiagramList();
-    DiagramList* list2 = new DiagramList();
-
-
-    // ==================================================
-    // input files should be defined in WaterML
-    // inserting the details below into the list-objects
-    // kind of simulates the information that would be
-    // included in a WaterML-file and is needed for
-    // display
-    // ==================================================
-
-    // make up list-object for the first test station
-    list->setName("Water Level Observation Station: Halberstadt 2002");
-    list->setXLabel("Time");
-    list->setYLabel("Water Level");
-    list->setXUnit("day");
-    list->setYUnit("metres");
-    list->setColor(QColor(Qt::red));
-    list->readList("c:\\project\\timeseries-a.stn");
-
-    // make up list-object for the second test station
-    list2->setName("Water Level Observation Station: Oschersleben 2002");
-    list2->setXLabel("Time");
-    list2->setYLabel("Water Level");
-    list2->setXUnit("day");
-    list2->setYUnit("metres");
-    list2->setColor(QColor(Qt::green));
-    list2->readList("c:\\project\\timeseries-b.stn");
-
-    // ==================================================
+    /*
+        DiagramList* list  = new DiagramList();
+        DiagramList* list2 = new DiagramList();
 
 
-    stationView->addGraph(list);
-    stationView->addGraph(list2);
+        // ==================================================
+        // input files should be defined in WaterML
+        // inserting the details below into the list-objects
+        // kind of simulates the information that would be
+        // included in a WaterML-file and is needed for
+        // display
+        // ==================================================
 
-    resizeWindow();
- */
+        // make up list-object for the first test station
+        list->setName("Water Level Observation Station: Halberstadt 2002");
+        list->setXLabel("Time");
+        list->setYLabel("Water Level");
+        list->setXUnit("day");
+        list->setYUnit("metres");
+        list->setColor(QColor(Qt::red));
+        list->readList("c:\\project\\timeseries-a.stn");
+
+        // make up list-object for the second test station
+        list2->setName("Water Level Observation Station: Oschersleben 2002");
+        list2->setXLabel("Time");
+        list2->setYLabel("Water Level");
+        list2->setXUnit("day");
+        list2->setYUnit("metres");
+        list2->setColor(QColor(Qt::green));
+        list2->readList("c:\\project\\timeseries-b.stn");
+
+        // ==================================================
+
+
+        stationView->addGraph(list);
+        stationView->addGraph(list2);
+
+        resizeWindow();
+     */
 }
 
 DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
 {
     setupUi(this);
-    stationView->setRenderHints( QPainter::Antialiasing );
+    stationView->setRenderHints(QPainter::Antialiasing);
 
     std::vector<DiagramList*> lists;
     DiagramList::readList(filename, lists);
@@ -85,16 +85,17 @@ DetailWindow::DetailWindow(QString filename, QWidget* parent) : QWidget(parent)
 DetailWindow::DetailWindow(DiagramList* list, QWidget* parent) : QWidget(parent)
 {
     setupUi(this);
-    stationView->setRenderHints( QPainter::Antialiasing );
+    stationView->setRenderHints(QPainter::Antialiasing);
     stationView->addGraph(list);
     resizeWindow();
 }
 
-DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent) : QWidget(parent)
+DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent)
+    : QWidget(parent)
 {
     setupUi(this);
     std::size_t nEntries = data.size();
-    std::vector< std::pair<float, float> > list_data(nEntries);
+    std::vector<std::pair<float, float>> list_data(nEntries);
 
     for (std::size_t i = 0; i < nEntries; i++)
     {
@@ -107,7 +108,7 @@ DetailWindow::DetailWindow(std::vector<std::size_t> data, QWidget* parent) : QWi
     list->setXUnit("Value");
     list->setYUnit("Amount");
     list->setName("Histogram");
-    stationView->setRenderHints( QPainter::Antialiasing );
+    stationView->setRenderHints(QPainter::Antialiasing);
     stationView->addGraph(list);
     resizeWindow();
 }
@@ -122,7 +123,8 @@ void DetailWindow::on_closeButton_clicked()
 void DetailWindow::resizeWindow()
 {
     int width = (stationView->getWidth() > 800) ? 800 : stationView->getWidth();
-    int height = (stationView->getHeight() > 600) ? 600 : stationView->getHeight();
+    int height =
+        (stationView->getHeight() > 600) ? 600 : stationView->getHeight();
     resize(width, height);
 }
 
@@ -143,9 +145,10 @@ void DetailWindow::addList(DiagramList* list, QColor c)
 void DetailWindow::on_addDataButton_clicked()
 {
     QSettings settings;
-    QString fileName = QFileDialog::getOpenFileName( this, "Select data file to open",
-                                                     settings.value("lastOpenedFileDirectory").toString(),
-                                                     "Text files (*.txt);;All files (* *.*)");
+    QString fileName = QFileDialog::getOpenFileName(
+        this, "Select data file to open",
+        settings.value("lastOpenedFileDirectory").toString(),
+        "Text files (*.txt);;All files (* *.*)");
     if (!fileName.isEmpty())
     {
         QDir dir = QDir(fileName);
@@ -155,4 +158,3 @@ void DetailWindow::on_addDataButton_clicked()
         prefs->show();
     }
 }
-

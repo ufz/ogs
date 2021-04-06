@@ -15,6 +15,8 @@
 // ** INCLUDES **
 #include "VtkFilterFactory.h"
 
+#include <vtkDataSetSurfaceFilter.h>
+
 #include "VtkCompositeColorByHeightFilter.h"
 #include "VtkCompositeColormapToImageFilter.h"
 #include "VtkCompositeContourFilter.h"
@@ -30,60 +32,60 @@
 #include "VtkCompositeThresholdFilter.h"
 #include "VtkImageDataToLinePolyDataFilter.h"
 
-#include <vtkDataSetSurfaceFilter.h>
-
 QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
 {
     QVector<VtkFilterInfo> filterList;
 
     // Composite filters
-    filterList.push_back(VtkFilterInfo(
-                                 "VtkCompositeImageToCylindersFilter",
-                                 "Image to bar chart",
-                                 "This filter converts the red pixel values of the image into a bar graph.",
-                                 VTK_IMAGE_DATA, VTK_POLY_DATA));
+    filterList.push_back(VtkFilterInfo("VtkCompositeImageToCylindersFilter",
+                                       "Image to bar chart",
+                                       "This filter converts the red pixel "
+                                       "values of the image into a bar graph.",
+                                       VTK_IMAGE_DATA, VTK_POLY_DATA));
+
+    filterList.push_back(
+        VtkFilterInfo("VtkCompositePointToGlyphFilter", "Points to spheres",
+                      "This filter generates spheres on point data that can be "
+                      "scaled and colored by scalar data.",
+                      VTK_POLY_DATA, VTK_POLY_DATA));
+
+    filterList.push_back(
+        VtkFilterInfo("VtkCompositeLineToTubeFilter", "Lines to tubes",
+                      "This filter will convert lines to tubes that can be "
+                      "colored by scalar data.",
+                      VTK_POLY_DATA, VTK_POLY_DATA));
 
     filterList.push_back(VtkFilterInfo(
-                                 "VtkCompositePointToGlyphFilter",
-                                 "Points to spheres",
-                                 "This filter generates spheres on point data that can be scaled and colored by scalar data.",
-                                 VTK_POLY_DATA, VTK_POLY_DATA));
+        "VtkCompositeColormapToImageFilter", "Apply lookup table to image",
+        "This filter will take an input image of any valid scalar type, and "
+        "map the first component of the image through a lookup table.",
+        VTK_IMAGE_DATA, VTK_IMAGE_DATA));
 
     filterList.push_back(VtkFilterInfo(
-                                 "VtkCompositeLineToTubeFilter",
-                                 "Lines to tubes",
-                                 "This filter will convert lines to tubes that can be colored by scalar data.",
-                                 VTK_POLY_DATA, VTK_POLY_DATA));
+        "VtkCompositeTextureOnSurfaceFilter", "Apply texture to surface",
+        "This filter assigns an image or raster file as a texture for the "
+        "given surface.",
+        VTK_POINT_SET, VTK_POLY_DATA));
 
     filterList.push_back(VtkFilterInfo(
-                                 "VtkCompositeColormapToImageFilter",
-                                 "Apply lookup table to image",
-                                 "This filter will take an input image of any valid scalar type, and map the first component of the image through a lookup table.",
-                                 VTK_IMAGE_DATA, VTK_IMAGE_DATA));
+        "VtkCompositeThresholdFilter", "Extract cells by threshold",
+        "This filter extracts cells from any dataset type that satisfy a "
+        "threshold criterion. A cell satisfies the criterion if the (first) "
+        "scalar value of (every or any) point satisfies the criterion. For "
+        "example this can be used to show only certain material groups in a "
+        "mesh.",
+        VTK_POINT_SET, VTK_UNSTRUCTURED_GRID));
 
     filterList.push_back(VtkFilterInfo(
-                                 "VtkCompositeTextureOnSurfaceFilter",
-                                 "Apply texture to surface",
-                                 "This filter assigns an image or raster file as a texture for the given surface.",
-                                 VTK_POINT_SET, VTK_POLY_DATA));
+        "VtkCompositeColorByHeightFilter", "Elevation-based colouring",
+        "This filter will generate scalar values based on the elevation of "
+        "each point in the dataset.",
+        VTK_POINT_SET, VTK_POLY_DATA));
 
     filterList.push_back(VtkFilterInfo(
-                                 "VtkCompositeThresholdFilter",
-                                 "Extract cells by threshold",
-                                 "This filter extracts cells from any dataset type that satisfy a threshold criterion. A cell satisfies the criterion if the (first) scalar value of (every or any) point satisfies the criterion. For example this can be used to show only certain material groups in a mesh.",
-                                 VTK_POINT_SET, VTK_UNSTRUCTURED_GRID));
-
-    filterList.push_back(VtkFilterInfo(
-                                 "VtkCompositeColorByHeightFilter",
-                                 "Elevation-based colouring",
-                                 "This filter will generate scalar values based on the elevation of each point in the dataset.",
-                                 VTK_POINT_SET, VTK_POLY_DATA));
-
-    filterList.push_back(VtkFilterInfo(
-                                 "VtkCompositeContourFilter",
-                                 "Generate contours based on scalar fields",
-                                 "Visualisation of contour-lines/-planes within dense scalar fields.",
-                                 VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
+        "VtkCompositeContourFilter", "Generate contours based on scalar fields",
+        "Visualisation of contour-lines/-planes within dense scalar fields.",
+        VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
 
     filterList.push_back(VtkFilterInfo(
         "VtkCompositeImageToPointCloudFilter", "Image to point cloud",
@@ -99,29 +101,29 @@ QVector<VtkFilterInfo> VtkFilterFactory::GetFilterList()
 
     // Simple filters
     filterList.push_back(VtkFilterInfo(
-                                 "VtkImageDataToLinePolyDataFilter",
-                                 "Image to vertical lines",
-                                 "This filter converts the red pixel values of the image to lines with length of the value.",
-                                 VTK_IMAGE_DATA, VTK_POLY_DATA));
+        "VtkImageDataToLinePolyDataFilter", "Image to vertical lines",
+        "This filter converts the red pixel values of the image to lines with "
+        "length of the value.",
+        VTK_IMAGE_DATA, VTK_POLY_DATA));
 
     // Standard VTK filter without properties
-    filterList.push_back(VtkFilterInfo(
-                                 "vtkDataSetSurfaceFilter",
-                                 "Surface filter",
-                                 "Extracts outer (polygonal) surface.",
-                                 VTK_UNSTRUCTURED_GRID, VTK_POLY_DATA));
+    filterList.push_back(VtkFilterInfo("vtkDataSetSurfaceFilter",
+                                       "Surface filter",
+                                       "Extracts outer (polygonal) surface.",
+                                       VTK_UNSTRUCTURED_GRID, VTK_POLY_DATA));
 
-//      filterList.push_back(VtkFilterInfo(
-//              "VtkCompositeSelectionFilter",
-//              "Mesh Quality Filter",
-//              "This filter calculates the quality of meshes and highlights deformed elements.",
-//              VTK_UNSTRUCTURED_GRID, VTK_UNSTRUCTURED_GRID));
+    //      filterList.push_back(VtkFilterInfo(
+    //              "VtkCompositeSelectionFilter",
+    //              "Mesh Quality Filter",
+    //              "This filter calculates the quality of meshes and highlights
+    //              deformed elements.", VTK_UNSTRUCTURED_GRID,
+    //              VTK_UNSTRUCTURED_GRID));
 
     return filterList;
 }
 
-VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
-                                                             vtkAlgorithm* inputAlgorithm )
+VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter(
+    QString type, vtkAlgorithm* inputAlgorithm)
 {
     if (type.compare(QString("VtkCompositeImageToCylindersFilter")) == 0)
     {
@@ -179,7 +181,7 @@ VtkCompositeFilter* VtkFilterFactory::CreateCompositeFilter( QString type,
     return nullptr;
 }
 
-vtkAlgorithm* VtkFilterFactory::CreateSimpleFilter( QString type )
+vtkAlgorithm* VtkFilterFactory::CreateSimpleFilter(QString type)
 {
     if (type.compare(QString("VtkImageDataToLinePolyDataFilter")) == 0)
     {

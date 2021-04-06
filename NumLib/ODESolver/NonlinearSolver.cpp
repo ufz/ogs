@@ -56,10 +56,8 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
-    auto& A =
-        NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
-    auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(
-        _rhs_id);
+    auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
+    auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(_rhs_id);
 
     std::vector<GlobalVector*> x_new{x};
     x_new[process_id] =
@@ -71,8 +69,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     _convergence_criterion->preFirstIteration();
 
     int iteration = 1;
-    for (; iteration <= _maxiter;
-         ++iteration, _convergence_criterion->reset())
+    for (; iteration <= _maxiter; ++iteration, _convergence_criterion->reset())
     {
         BaseLib::RunTime timer_dirichlet;
         double time_dirichlet = 0.0;
@@ -105,10 +102,11 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         time_dirichlet += timer_dirichlet.elapsed();
         INFO("[time] Applying Dirichlet BCs took {:g} s.", time_dirichlet);
 
-        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck()) {
+        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
+        {
             GlobalVector res;
             LinAlg::matMult(A, *x_new[process_id], res);  // res = A * x_new
-            LinAlg::axpy(res, -1.0, rhs);   // res -= rhs
+            LinAlg::axpy(res, -1.0, rhs);                 // res -= rhs
             _convergence_criterion->checkResidual(res);
         }
 
@@ -162,10 +160,14 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             break;
         }
 
-        if (sys.isLinear()) {
+        if (sys.isLinear())
+        {
             error_norms_met = true;
-        } else {
-            if (_convergence_criterion->hasDeltaXCheck()) {
+        }
+        else
+        {
+            if (_convergence_criterion->hasDeltaXCheck())
+            {
                 GlobalVector minus_delta_x(*x[process_id]);
                 LinAlg::axpy(minus_delta_x, -1.0,
                              *x_new[process_id]);  // minus_delta_x = x - x_new
@@ -234,13 +236,10 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
-    auto& res = NumLib::GlobalVectorProvider::provider.getVector(
-        _res_id);
+    auto& res = NumLib::GlobalVectorProvider::provider.getVector(_res_id);
     auto& minus_delta_x =
-        NumLib::GlobalVectorProvider::provider.getVector(
-            _minus_delta_x_id);
-    auto& J =
-        NumLib::GlobalMatrixProvider::provider.getMatrix(_J_id);
+        NumLib::GlobalVectorProvider::provider.getVector(_minus_delta_x_id);
+    auto& J = NumLib::GlobalMatrixProvider::provider.getMatrix(_J_id);
 
     bool error_norms_met = false;
 
@@ -251,8 +250,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     _convergence_criterion->preFirstIteration();
 
     int iteration = 1;
-    for (; iteration <= _maxiter;
-         ++iteration, _convergence_criterion->reset())
+    for (; iteration <= _maxiter; ++iteration, _convergence_criterion->reset())
     {
         BaseLib::RunTime timer_dirichlet;
         double time_dirichlet = 0.0;
@@ -340,8 +338,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 case IterationResult::REPEAT_ITERATION:
                     INFO(
                         "Newton: The postIteration() hook decided that this "
-                        "iteration"
-                        " has to be repeated.");
+                        "iteration has to be repeated.");
                     // TODO introduce some onDestroy hook.
                     NumLib::GlobalVectorProvider::provider.releaseVector(
                         *x_new[process_id]);
@@ -361,10 +358,14 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             break;
         }
 
-        if (sys.isLinear()) {
+        if (sys.isLinear())
+        {
             error_norms_met = true;
-        } else {
-            if (_convergence_criterion->hasDeltaXCheck()) {
+        }
+        else
+        {
+            if (_convergence_criterion->hasDeltaXCheck())
+            {
                 // Note: x contains the new solution!
                 _convergence_criterion->checkDeltaX(minus_delta_x,
                                                     *x[process_id]);
@@ -398,8 +399,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(J);
     NumLib::GlobalVectorProvider::provider.releaseVector(res);
-    NumLib::GlobalVectorProvider::provider.releaseVector(
-        minus_delta_x);
+    NumLib::GlobalVectorProvider::provider.releaseVector(minus_delta_x);
 
     return {error_norms_met, iteration};
 }
@@ -413,7 +413,8 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__max_iter}
     auto const max_iter = config.getConfigParameter<int>("max_iter");
 
-    if (type == "Picard") {
+    if (type == "Picard")
+    {
         auto const tag = NonlinearSolverTag::Picard;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(

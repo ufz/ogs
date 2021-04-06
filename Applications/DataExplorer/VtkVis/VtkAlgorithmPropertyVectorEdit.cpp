@@ -15,14 +15,14 @@
 // ** INCLUDES **
 #include "VtkAlgorithmPropertyVectorEdit.h"
 
-#include "VtkAlgorithmProperties.h"
-
 #include <QDoubleValidator>
 #include <QHBoxLayout>
 #include <QIntValidator>
 #include <QLineEdit>
 #include <QSize>
 #include <utility>
+
+#include "VtkAlgorithmProperties.h"
 
 VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit(
     const QList<QString> contents,
@@ -36,23 +36,23 @@ VtkAlgorithmPropertyVectorEdit::VtkAlgorithmPropertyVectorEdit(
     layout->setSpacing(3);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    foreach(QString content, contents)
+    foreach (QString content, contents)
     {
         auto* lineEdit = new QLineEdit(content, this);
         layout->addWidget(lineEdit);
 
-        switch(_type)
+        switch (_type)
         {
-        case QVariant::Double:
-            lineEdit->setValidator(new QDoubleValidator(this));
-            break;
+            case QVariant::Double:
+                lineEdit->setValidator(new QDoubleValidator(this));
+                break;
 
-        case QVariant::Int:
-            lineEdit->setValidator(new QIntValidator(this));
-            break;
+            case QVariant::Int:
+                lineEdit->setValidator(new QIntValidator(this));
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
 
         connect(lineEdit, SIGNAL(editingFinished()), this, SLOT(setNewValue()));

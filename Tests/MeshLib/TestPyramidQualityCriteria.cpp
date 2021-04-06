@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 #include <numeric>
 #include <random>
@@ -16,7 +18,6 @@
 #include "MeshLib/MeshGenerators/MeshGenerator.h"
 #include "MeshLib/MeshQuality/ElementQualityInterface.h"
 #include "MeshLib/Node.h"
-#include "gtest/gtest.h"
 
 class PyramidElementQuality : public ::testing::Test
 {
@@ -116,7 +117,7 @@ TEST_F(PyramidElementQuality, EdgeRatio)
         edge_lengths_front_back.begin(), edge_lengths_front_back.end());
     auto const expected_value_front_back =
         *min_max_front_back.first / *min_max_front_back.second;
-    for (int i = 0; i<element_quality_vector.size(); i=i+6)
+    for (int i = 0; i < element_quality_vector.size(); i = i + 6)
     {
         ASSERT_NEAR(expected_value_top_bottom, element_quality_vector[i],
                     10 * std::numeric_limits<double>::epsilon());

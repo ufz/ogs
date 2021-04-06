@@ -7,19 +7,16 @@
  *
  */
 
-#include <cmath>
-#include <memory>
-
 #include <gtest/gtest.h>
 
 #include <Eigen/Eigen>
+#include <cmath>
+#include <memory>
 
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Tri.h"
 #include "MeshLib/Mesh.h"
-
 #include "ProcessLib/LIE/Common/Utils.h"
-
 
 namespace
 {
@@ -117,13 +114,13 @@ TEST(LIE, rotationMatrixX)
     ASSERT_EQ(1., nv[1]);
     ASSERT_EQ(0., nv[2]);
 
-    Eigen::MatrixXd R(2,2);
+    Eigen::MatrixXd R(2, 2);
     ProcessLib::LIE::computeRotationMatrix(*e, nv, 2, R);
 
-    ASSERT_NEAR(1., R(0,0), eps);
-    ASSERT_NEAR(0., R(0,1), eps);
-    ASSERT_NEAR(0., R(1,0), eps);
-    ASSERT_NEAR(1., R(1,1), eps);
+    ASSERT_NEAR(1., R(0, 0), eps);
+    ASSERT_NEAR(0., R(0, 1), eps);
+    ASSERT_NEAR(0., R(1, 0), eps);
+    ASSERT_NEAR(1., R(1, 1), eps);
 }
 
 TEST(LIE, rotationMatrixY)
@@ -136,13 +133,13 @@ TEST(LIE, rotationMatrixY)
     ASSERT_EQ(0., nv[1]);
     ASSERT_EQ(0., nv[2]);
 
-    Eigen::MatrixXd R(2,2);
+    Eigen::MatrixXd R(2, 2);
     ProcessLib::LIE::computeRotationMatrix(*e, nv, 2, R);
 
-    ASSERT_NEAR(0., R(0,0), eps);
-    ASSERT_NEAR(1., R(0,1), eps);
-    ASSERT_NEAR(-1., R(1,0), eps);
-    ASSERT_NEAR(0., R(1,1), eps);
+    ASSERT_NEAR(0., R(0, 0), eps);
+    ASSERT_NEAR(1., R(0, 1), eps);
+    ASSERT_NEAR(-1., R(1, 0), eps);
+    ASSERT_NEAR(0., R(1, 1), eps);
 }
 
 TEST(LIE, rotationMatrixXY)
@@ -153,15 +150,15 @@ TEST(LIE, rotationMatrixXY)
     auto e(msh->getElement(0));
     Eigen::Vector3d nv;
     ProcessLib::LIE::computeNormalVector(*e, 2, nv);
-    ASSERT_NEAR(-1./std::sqrt(2), nv[0], eps);
-    ASSERT_NEAR(1./std::sqrt(2), nv[1], eps);
+    ASSERT_NEAR(-1. / std::sqrt(2), nv[0], eps);
+    ASSERT_NEAR(1. / std::sqrt(2), nv[1], eps);
     ASSERT_EQ(0., nv[2]);
 
-    Eigen::MatrixXd R(2,2);
+    Eigen::MatrixXd R(2, 2);
     ProcessLib::LIE::computeRotationMatrix(*e, nv, 2, R);
 
-    ASSERT_NEAR(1./std::sqrt(2), R(0,0), eps);
-    ASSERT_NEAR(1./std::sqrt(2), R(0,1), eps);
-    ASSERT_NEAR(-1./std::sqrt(2), R(1,0), eps);
-    ASSERT_NEAR(1./std::sqrt(2), R(1,1), eps);
+    ASSERT_NEAR(1. / std::sqrt(2), R(0, 0), eps);
+    ASSERT_NEAR(1. / std::sqrt(2), R(0, 1), eps);
+    ASSERT_NEAR(-1. / std::sqrt(2), R(1, 0), eps);
+    ASSERT_NEAR(1. / std::sqrt(2), R(1, 1), eps);
 }

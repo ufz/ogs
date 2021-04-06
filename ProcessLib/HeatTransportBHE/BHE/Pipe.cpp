@@ -9,6 +9,7 @@
  */
 
 #include "Pipe.h"
+
 #include "BaseLib/ConfigTree.h"
 
 namespace ProcessLib

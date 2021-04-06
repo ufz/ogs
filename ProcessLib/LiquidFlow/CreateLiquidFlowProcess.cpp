@@ -13,14 +13,13 @@
 
 #include <algorithm>
 
+#include "LiquidFlowProcess.h"
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
-
-#include "LiquidFlowProcess.h"
 
 namespace ProcessLib
 {
@@ -78,7 +77,6 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     process_variables.push_back(std::move(per_process_variables));
 
     SecondaryVariableCollection secondary_variables;
-
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
