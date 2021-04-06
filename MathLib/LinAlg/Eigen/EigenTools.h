@@ -34,15 +34,4 @@ void applyKnownSolution(EigenMatrix &A, EigenVector &b, EigenVector &/*x*/,
         const std::vector<EigenMatrix::IndexType> &vec_knownX_id,
         const std::vector<double> &vec_knownX_x, double penalty_scaling = 1e+10);
 
-inline void applyKnownSolution(
-    Eigen::MatrixXd const& A, Eigen::VectorXd const& b, Eigen::VectorXd& /*x*/,
-    const std::vector<Eigen::MatrixXd::Index>& _vec_knownX_id,
-    const std::vector<double>& _vec_knownX_x, double penalty_scaling = 1e+10)
-{
-    (void) A; (void) b; (void) _vec_knownX_id; (void) _vec_knownX_x;
-    (void) penalty_scaling;
-
-    OGS_FATAL("Method not implemented."); // TODO implement
-}
-
 }  // namespace MathLib
