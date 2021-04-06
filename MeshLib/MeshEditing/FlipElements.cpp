@@ -19,8 +19,8 @@
 
 namespace MeshLib
 {
-std::unique_ptr<MeshLib::Element> createFlippedElement(
-    MeshLib::Element const& elem, std::vector<MeshLib::Node*> const& nodes)
+std::unique_ptr<Element> createFlippedElement(Element const& elem,
+                                              std::vector<Node*> const& nodes)
 {
     if (elem.getDimension() > 2)
     {
@@ -28,7 +28,7 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(
     }
 
     unsigned const n_nodes(elem.getNumberOfNodes());
-    auto elem_nodes = std::make_unique<MeshLib::Node*[]>(n_nodes);
+    auto elem_nodes = std::make_unique<Node*[]>(n_nodes);
     for (unsigned i = 0; i < n_nodes; ++i)
     {
         elem_nodes[i] = nodes[elem.getNode(i)->getID()];
@@ -37,34 +37,30 @@ std::unique_ptr<MeshLib::Element> createFlippedElement(
 
     if (elem.getGeomType() == MeshElemType::LINE)
     {
-        return std::make_unique<MeshLib::Line>(elem_nodes.release(),
-                                               elem.getID());
+        return std::make_unique<Line>(elem_nodes.release(), elem.getID());
     }
     if (elem.getGeomType() == MeshElemType::TRIANGLE)
     {
-        return std::make_unique<MeshLib::Tri>(elem_nodes.release(),
-                                              elem.getID());
+        return std::make_unique<Tri>(elem_nodes.release(), elem.getID());
     }
     if (elem.getGeomType() == MeshElemType::QUAD)
     {
         std::swap(elem_nodes[2], elem_nodes[3]);
-        return std::make_unique<MeshLib::Quad>(elem_nodes.release(),
-                                               elem.getID());
+        return std::make_unique<Quad>(elem_nodes.release(), elem.getID());
     }
     return nullptr;
 }
 
-std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
+std::unique_ptr<Mesh> createFlippedMesh(Mesh const& mesh)
 {
     if (mesh.getDimension() > 2)
     {
         return nullptr;
     }
 
-    std::vector<MeshLib::Node*> new_nodes(
-        MeshLib::copyNodeVector(mesh.getNodes()));
-    std::vector<MeshLib::Element*> const& elems(mesh.getElements());
-    std::vector<MeshLib::Element*> new_elems;
+    std::vector<Node*> new_nodes(copyNodeVector(mesh.getNodes()));
+    std::vector<Element*> const& elems(mesh.getElements());
+    std::vector<Element*> new_elems;
     std::size_t n_elems(mesh.getNumberOfElements());
     new_elems.reserve(n_elems);
 
@@ -74,8 +70,8 @@ std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
             createFlippedElement(*elems[i], new_nodes).release());
     }
 
-    return std::make_unique<MeshLib::Mesh>("FlippedElementMesh", new_nodes,
-                                           new_elems, mesh.getProperties());
+    return std::make_unique<Mesh>("FlippedElementMesh", new_nodes, new_elems,
+                                  mesh.getProperties());
 }
 
 }  // end namespace MeshLib

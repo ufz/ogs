@@ -19,26 +19,24 @@
 
 namespace MeshLib
 {
-std::vector<MeshLib::Node*> copyNodeVector(
-    const std::vector<MeshLib::Node*>& nodes)
+std::vector<Node*> copyNodeVector(const std::vector<Node*>& nodes)
 {
     const std::size_t nNodes(nodes.size());
-    std::vector<MeshLib::Node*> new_nodes;
+    std::vector<Node*> new_nodes;
     new_nodes.reserve(nNodes);
     for (std::size_t k = 0; k < nNodes; ++k)
     {
-        new_nodes.push_back(
-            new MeshLib::Node(nodes[k]->getCoords(), new_nodes.size()));
+        new_nodes.push_back(new Node(nodes[k]->getCoords(), new_nodes.size()));
     }
     return new_nodes;
 }
 
-std::vector<MeshLib::Element*> copyElementVector(
-    std::vector<MeshLib::Element*> const& elements,
-    std::vector<MeshLib::Node*> const& new_nodes,
+std::vector<Element*> copyElementVector(
+    std::vector<Element*> const& elements,
+    std::vector<Node*> const& new_nodes,
     std::vector<std::size_t> const* const node_id_map)
 {
-    std::vector<MeshLib::Element*> new_elements;
+    std::vector<Element*> new_elements;
     new_elements.reserve(elements.size());
     std::transform(elements.begin(), elements.end(),
                    std::back_inserter(new_elements),
@@ -51,12 +49,12 @@ std::vector<MeshLib::Element*> copyElementVector(
 /// Copies an element without change, using the nodes vector from the result
 /// mesh.
 template <typename E>
-MeshLib::Element* copyElement(MeshLib::Element const* const element,
-                              const std::vector<MeshLib::Node*>& nodes,
-                              std::vector<std::size_t> const* const id_map)
+Element* copyElement(Element const* const element,
+                     const std::vector<Node*>& nodes,
+                     std::vector<std::size_t> const* const id_map)
 {
     unsigned const number_of_element_nodes(element->getNumberOfNodes());
-    auto** new_nodes = new MeshLib::Node*[number_of_element_nodes];
+    auto** new_nodes = new Node*[number_of_element_nodes];
     if (id_map)
     {
         for (unsigned i = 0; i < number_of_element_nodes; ++i)
@@ -74,42 +72,42 @@ MeshLib::Element* copyElement(MeshLib::Element const* const element,
     return new E(new_nodes);
 }
 
-MeshLib::Element* copyElement(MeshLib::Element const* const element,
-                              const std::vector<MeshLib::Node*>& nodes,
-                              std::vector<std::size_t> const* const id_map)
+Element* copyElement(Element const* const element,
+                     const std::vector<Node*>& nodes,
+                     std::vector<std::size_t> const* const id_map)
 {
     switch (element->getCellType())
     {
         case CellType::LINE2:
-            return copyElement<MeshLib::Line>(element, nodes, id_map);
+            return copyElement<Line>(element, nodes, id_map);
         case CellType::LINE3:
-            return copyElement<MeshLib::Line3>(element, nodes, id_map);
+            return copyElement<Line3>(element, nodes, id_map);
         case CellType::TRI3:
-            return copyElement<MeshLib::Tri>(element, nodes, id_map);
+            return copyElement<Tri>(element, nodes, id_map);
         case CellType::TRI6:
-            return copyElement<MeshLib::Tri6>(element, nodes, id_map);
+            return copyElement<Tri6>(element, nodes, id_map);
         case CellType::QUAD4:
-            return copyElement<MeshLib::Quad>(element, nodes, id_map);
+            return copyElement<Quad>(element, nodes, id_map);
         case CellType::QUAD8:
-            return copyElement<MeshLib::Quad8>(element, nodes, id_map);
+            return copyElement<Quad8>(element, nodes, id_map);
         case CellType::QUAD9:
-            return copyElement<MeshLib::Quad9>(element, nodes, id_map);
+            return copyElement<Quad9>(element, nodes, id_map);
         case CellType::TET4:
-            return copyElement<MeshLib::Tet>(element, nodes, id_map);
+            return copyElement<Tet>(element, nodes, id_map);
         case CellType::TET10:
-            return copyElement<MeshLib::Tet10>(element, nodes, id_map);
+            return copyElement<Tet10>(element, nodes, id_map);
         case CellType::HEX8:
-            return copyElement<MeshLib::Hex>(element, nodes, id_map);
+            return copyElement<Hex>(element, nodes, id_map);
         case CellType::HEX20:
-            return copyElement<MeshLib::Hex20>(element, nodes, id_map);
+            return copyElement<Hex20>(element, nodes, id_map);
         case CellType::PYRAMID5:
-            return copyElement<MeshLib::Pyramid>(element, nodes, id_map);
+            return copyElement<Pyramid>(element, nodes, id_map);
         case CellType::PYRAMID13:
-            return copyElement<MeshLib::Pyramid13>(element, nodes, id_map);
+            return copyElement<Pyramid13>(element, nodes, id_map);
         case CellType::PRISM6:
-            return copyElement<MeshLib::Prism>(element, nodes, id_map);
+            return copyElement<Prism>(element, nodes, id_map);
         case CellType::PRISM15:
-            return copyElement<MeshLib::Prism15>(element, nodes, id_map);
+            return copyElement<Prism15>(element, nodes, id_map);
         default:
         {
             ERR("Error: Unknown cell type.");
@@ -118,14 +116,13 @@ MeshLib::Element* copyElement(MeshLib::Element const* const element,
     }
 }
 
-std::vector<MeshLib::Element*> cloneElements(
-    std::vector<MeshLib::Element*> const& elements)
+std::vector<Element*> cloneElements(std::vector<Element*> const& elements)
 {
-    std::vector<MeshLib::Element*> cloned_elements;
+    std::vector<Element*> cloned_elements;
     cloned_elements.reserve(elements.size());
     std::transform(begin(elements), end(elements),
                    std::back_inserter(cloned_elements),
-                   [](MeshLib::Element* const e) { return e->clone(); });
+                   [](Element* const e) { return e->clone(); });
     return cloned_elements;
 }
 

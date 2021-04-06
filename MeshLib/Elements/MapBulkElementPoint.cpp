@@ -14,7 +14,7 @@
 
 namespace MeshLib
 {
-MathLib::Point3d getBulkElementPoint(MeshLib::Tri const& /*tri*/,
+MathLib::Point3d getBulkElementPoint(Tri const& /*tri*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint1D const& wp)
 {
@@ -33,7 +33,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Tri const& /*tri*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& /*quad*/,
+MathLib::Point3d getBulkElementPoint(Quad const& /*quad*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint1D const& wp)
 {
@@ -54,7 +54,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Quad const& /*quad*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& /*hex*/,
+MathLib::Point3d getBulkElementPoint(Hex const& /*hex*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint2D const& wp)
 {
@@ -81,7 +81,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Hex const& /*hex*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Prism const& /*prism*/,
+MathLib::Point3d getBulkElementPoint(Prism const& /*prism*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint2D const& wp)
 {
@@ -106,7 +106,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Prism const& /*prism*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Pyramid const& /*pyramid*/,
+MathLib::Point3d getBulkElementPoint(Pyramid const& /*pyramid*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint2D const& wp)
 {
@@ -132,7 +132,7 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Pyramid const& /*pyramid*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Tet const& /*tet*/,
+MathLib::Point3d getBulkElementPoint(Tet const& /*tet*/,
                                      std::size_t const face_id,
                                      MathLib::WeightedPoint2D const& wp)
 {
@@ -152,60 +152,58 @@ MathLib::Point3d getBulkElementPoint(MeshLib::Tet const& /*tet*/,
     }
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
+MathLib::Point3d getBulkElementPoint(Mesh const& mesh,
                                      std::size_t const bulk_element_id,
                                      std::size_t const bulk_face_id,
                                      MathLib::WeightedPoint1D const& wp)
 {
     auto const* element = mesh.getElement(bulk_element_id);
-    if (element->getCellType() == MeshLib::CellType::QUAD4)
+    if (element->getCellType() == CellType::QUAD4)
     {
-        MeshLib::Quad const& quad(*dynamic_cast<MeshLib::Quad const*>(element));
+        Quad const& quad(*dynamic_cast<Quad const*>(element));
         return getBulkElementPoint(quad, bulk_face_id, wp);
     }
-    if (element->getCellType() == MeshLib::CellType::TRI3)
+    if (element->getCellType() == CellType::TRI3)
     {
-        MeshLib::Tri const& tri = *static_cast<MeshLib::Tri const*>(element);
+        Tri const& tri = *static_cast<Tri const*>(element);
         return getBulkElementPoint(tri, bulk_face_id, wp);
     }
     OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
-              MeshLib::CellType2String(element->getCellType()));
+              CellType2String(element->getCellType()));
 }
 
-MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& mesh,
+MathLib::Point3d getBulkElementPoint(Mesh const& mesh,
                                      std::size_t bulk_element_id,
                                      std::size_t bulk_face_id,
                                      MathLib::WeightedPoint2D const& wp)
 {
     auto const* element = mesh.getElement(bulk_element_id);
-    if (element->getCellType() == MeshLib::CellType::HEX8)
+    if (element->getCellType() == CellType::HEX8)
     {
-        MeshLib::Hex const& hex = *static_cast<MeshLib::Hex const*>(element);
+        Hex const& hex = *static_cast<Hex const*>(element);
         return getBulkElementPoint(hex, bulk_face_id, wp);
     }
-    if (element->getCellType() == MeshLib::CellType::PRISM6)
+    if (element->getCellType() == CellType::PRISM6)
     {
-        MeshLib::Prism const& prism =
-            *static_cast<MeshLib::Prism const*>(element);
+        Prism const& prism = *static_cast<Prism const*>(element);
         return getBulkElementPoint(prism, bulk_face_id, wp);
     }
-    if (element->getCellType() == MeshLib::CellType::PYRAMID5)
+    if (element->getCellType() == CellType::PYRAMID5)
     {
-        MeshLib::Pyramid const& pyramid =
-            *static_cast<MeshLib::Pyramid const*>(element);
+        Pyramid const& pyramid = *static_cast<Pyramid const*>(element);
         return getBulkElementPoint(pyramid, bulk_face_id, wp);
     }
-    if (element->getCellType() == MeshLib::CellType::TET4)
+    if (element->getCellType() == CellType::TET4)
     {
-        MeshLib::Tet const& tet = *static_cast<MeshLib::Tet const*>(element);
+        Tet const& tet = *static_cast<Tet const*>(element);
         return getBulkElementPoint(tet, bulk_face_id, wp);
     }
     OGS_FATAL("Wrong cell type '{:s}' or functionality not yet implemented.",
-              MeshLib::CellType2String(element->getCellType()));
+              CellType2String(element->getCellType()));
 }
 
 // TODO disable the 3d elements in the local assembler creator
-MathLib::Point3d getBulkElementPoint(MeshLib::Mesh const& /*mesh*/,
+MathLib::Point3d getBulkElementPoint(Mesh const& /*mesh*/,
                                      std::size_t /*bulk_element_id*/,
                                      std::size_t /*bulk_face_id*/,
                                      MathLib::WeightedPoint3D const& /*wp*/)
