@@ -12,8 +12,6 @@
  *
  */
 
-#include "VtkMeshNodalCoordinatesTemplate.h"
-
 #include <vtkIdList.h>
 #include <vtkObjectFactory.h>
 #include <vtkVariant.h>
