@@ -55,6 +55,7 @@ struct FunctionParameter final : public Parameter<T>
      *
      * @param name        the parameter's name
      * @param vec_expression_str  a vector of mathematical expressions
+     * @param curves      named list of curves used by expressions.
      * The vector size specifies the number of components of the parameter.
      */
     FunctionParameter(
