@@ -38,6 +38,7 @@ struct XdmfData
      * @param size_tuple We assume there is at most a rank of 2 of data
      * (properties). The size of tuple gives the length of the second dimension
      * (index 1).
+     * @param mesh_property_data_type property vector data type.
      * @param name The name of the attribute. It assumed to be unique.
      * @param attribute_center XdmfData is used for topology, geometry and
      * attributes. Geometry and topology have never a attribute_center.

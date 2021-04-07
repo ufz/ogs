@@ -22,12 +22,11 @@ namespace Gocad
 std::ostream& operator<<(std::ostream& os, Layer const& l)
 {
     std::copy(l.regions.begin(), l.regions.end(),
-              std::ostream_iterator<Gocad::Region>(os, " "));
+              std::ostream_iterator<Region>(os, " "));
     return os;
 }
 
-Layer parseLayer(std::string const& line,
-                 std::vector<Gocad::Region> const& regions)
+Layer parseLayer(std::string const& line, std::vector<Region> const& regions)
 {
     std::istringstream iss(line);
     std::istream_iterator<std::string> it(iss);
@@ -45,7 +44,7 @@ Layer parseLayer(std::string const& line,
     {
         auto const& region_it =
             std::find_if(regions.begin(), regions.end(),
-                         [&](Gocad::Region const& r) { return r.name == *it; });
+                         [&](Region const& r) { return r.name == *it; });
         if (region_it != regions.end())
         {
             l.regions.push_back(*region_it);

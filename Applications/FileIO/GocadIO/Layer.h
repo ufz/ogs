@@ -32,8 +32,7 @@ struct Layer final
 
 std::ostream& operator<<(std::ostream& os, Layer const& l);
 
-Layer parseLayer(std::string const& line,
-                 std::vector<Gocad::Region> const& regions);
+Layer parseLayer(std::string const& line, std::vector<Region> const& regions);
 
 }  // end namespace Gocad
 }  // end namespace FileIO

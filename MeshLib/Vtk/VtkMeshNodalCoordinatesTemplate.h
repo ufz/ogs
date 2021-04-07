@@ -38,7 +38,7 @@ public:
     using ValueType = typename Superclass::ValueType;
 
     /// Pass the nodes from OGS mesh
-    void SetNodes(std::vector<MeshLib::Node*> const& nodes);
+    void SetNodes(std::vector<Node*> const& nodes);
 
     // Reimplemented virtuals -- see superclasses for descriptions
     void Initialize() override;
@@ -108,7 +108,7 @@ protected:
     VtkMeshNodalCoordinatesTemplate();
     ~VtkMeshNodalCoordinatesTemplate() override;
 
-    const std::vector<MeshLib::Node*>* _nodes{nullptr};
+    const std::vector<Node*>* _nodes{nullptr};
 
 private:
     vtkIdType Lookup(const Scalar& val, vtkIdType startIndex);

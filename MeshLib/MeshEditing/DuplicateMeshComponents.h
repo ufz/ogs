@@ -23,8 +23,7 @@ class Node;
 class Element;
 
 /// Creates a deep copy of a Node vector
-std::vector<MeshLib::Node*> copyNodeVector(
-    const std::vector<MeshLib::Node*>& nodes);
+std::vector<Node*> copyNodeVector(const std::vector<Node*>& nodes);
 
 /** Creates a deep copy of an element vector using the given Node vector.
  * @param elements The element vector that should be duplicated.
@@ -34,19 +33,17 @@ std::vector<MeshLib::Node*> copyNodeVector(
  * vector.
  * @return A deep copy of the elements vector using the new nodes vector.
  */
-std::vector<MeshLib::Element*> copyElementVector(
-    std::vector<MeshLib::Element*> const& elements,
-    std::vector<MeshLib::Node*> const& new_nodes,
+std::vector<Element*> copyElementVector(
+    std::vector<Element*> const& elements,
+    std::vector<Node*> const& new_nodes,
     std::vector<std::size_t> const* const node_id_map = nullptr);
 
 /// Copies an element without change, using the nodes vector from the result
 /// mesh and an optional mapping from the nodes the 'old' elements.
-MeshLib::Element* copyElement(
-    MeshLib::Element const* const element,
-    const std::vector<MeshLib::Node*>& nodes,
-    std::vector<std::size_t> const* const id_map = nullptr);
+Element* copyElement(Element const* const element,
+                     const std::vector<Node*>& nodes,
+                     std::vector<std::size_t> const* const id_map = nullptr);
 
 /// Clones a vector of elements using the Element::clone() function.
-std::vector<MeshLib::Element*> cloneElements(
-    std::vector<MeshLib::Element*> const& elements);
+std::vector<Element*> cloneElements(std::vector<Element*> const& elements);
 }  // end namespace MeshLib

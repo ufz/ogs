@@ -40,7 +40,8 @@ namespace MeshLib
 class Mesh
 {
     /* friend functions: */
-    friend void removeMeshNodes(MeshLib::Mesh &mesh, const std::vector<std::size_t> &nodes);
+    friend void removeMeshNodes(Mesh& mesh,
+                                const std::vector<std::size_t>& nodes);
 
     friend class ApplicationUtils::NodeWiseMeshPartitioner;
 
@@ -127,8 +128,8 @@ public:
     /// Return true if the mesh has any nonlinear nodes
     bool isNonlinear() const { return (getNumberOfNodes() != getNumberOfBaseNodes()); }
 
-    MeshLib::Properties & getProperties() { return _properties; }
-    MeshLib::Properties const& getProperties() const { return _properties; }
+    Properties& getProperties() { return _properties; }
+    Properties const& getProperties() const { return _properties; }
 
     bool isAxiallySymmetric() const { return _is_axially_symmetric; }
     void setAxiallySymmetric(bool is_axial_symmetric) {
@@ -190,7 +191,7 @@ inline bool operator!=(Mesh const& a, Mesh const& b)
 
 /// Scales the mesh property with name \c property_name by given \c factor.
 /// \note The property must be a "double" property.
-void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
+void scaleMeshPropertyVector(Mesh& mesh,
                              std::string const& property_name,
                              double factor);
 
@@ -205,12 +206,11 @@ void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
 /// \param values A vector containing the values that are used for
 /// initialization.
 template <typename T>
-void addPropertyToMesh(MeshLib::Mesh& mesh, std::string const& name,
-                       MeshLib::MeshItemType item_type,
-                       std::size_t number_of_components,
+void addPropertyToMesh(Mesh& mesh, std::string const& name,
+                       MeshItemType item_type, std::size_t number_of_components,
                        std::vector<T> const& values)
 {
-    if (item_type == MeshLib::MeshItemType::Node)
+    if (item_type == MeshItemType::Node)
     {
         if (mesh.getNumberOfNodes() != values.size() / number_of_components)
         {
@@ -220,7 +220,7 @@ void addPropertyToMesh(MeshLib::Mesh& mesh, std::string const& name,
                 mesh.getNumberOfNodes(), values.size() / number_of_components);
         }
     }
-    if (item_type == MeshLib::MeshItemType::Cell)
+    if (item_type == MeshItemType::Cell)
     {
         if (mesh.getNumberOfElements() != values.size() / number_of_components)
         {
@@ -249,7 +249,7 @@ void addPropertyToMesh(MeshLib::Mesh& mesh, std::string const& name,
 template <typename T>
 PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
                                            std::string const& property_name,
-                                           MeshLib::MeshItemType const item_type,
+                                           MeshItemType const item_type,
                                            int const number_of_components)
 {
     if (property_name.empty())
@@ -261,16 +261,16 @@ PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
     auto numberOfMeshItems = [&mesh, &item_type]() -> std::size_t {
         switch (item_type)
         {
-            case MeshLib::MeshItemType::Cell:
+            case MeshItemType::Cell:
                 return mesh.getNumberOfElements();
-            case MeshLib::MeshItemType::Node:
+            case MeshItemType::Node:
                 return mesh.getNumberOfNodes();
-            case MeshLib::MeshItemType::IntegrationPoint:
+            case MeshItemType::IntegrationPoint:
                 return 0;  // For the integration point data the size is
                            // variable
             default:
                 OGS_FATAL(
-                    "MeshLib::getOrCreateMeshProperty cannot handle other "
+                    "getOrCreateMeshProperty cannot handle other "
                     "types than Node, Cell, or IntegrationPoint.");
         }
         return 0;
@@ -309,7 +309,7 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh);
 ///
 /// \note The elements are owned by the returned mesh object as well as the
 /// nodes and will be destructed together with the mesh.
-std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
-    std::string mesh_name, std::vector<MeshLib::Element*> const& elements);
+std::unique_ptr<Mesh> createMeshFromElementSelection(
+    std::string mesh_name, std::vector<Element*> const& elements);
 
 }  // namespace MeshLib

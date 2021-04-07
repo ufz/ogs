@@ -12,8 +12,6 @@
  *
  */
 
-#include "VtkMeshNodalCoordinatesTemplate.h"
-
 #include <vtkIdList.h>
 #include <vtkObjectFactory.h>
 #include <vtkVariant.h>
@@ -52,8 +50,9 @@ template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
     this->NumberOfComponents = 1;
 }
 
-template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
-::SetNodes(std::vector<MeshLib::Node*> const & nodes)
+template <class Scalar>
+void VtkMeshNodalCoordinatesTemplate<Scalar>::SetNodes(
+    std::vector<Node*> const& nodes)
 {
     Initialize();
     _nodes = &nodes;

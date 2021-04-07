@@ -18,11 +18,10 @@ namespace MeshLib
 {
 namespace ProjectPointOnMesh
 {
-MeshLib::Element const* getProjectedElement(
-    std::vector<const MeshLib::Element*> const& elements,
-    MeshLib::Node const& node)
+Element const* getProjectedElement(std::vector<const Element*> const& elements,
+                                   Node const& node)
 {
-    auto is_right_of = [&node](MeshLib::Node const& a, MeshLib::Node const& b) {
+    auto is_right_of = [&node](Node const& a, Node const& b) {
         return GeoLib::getOrientationFast(node, a, b) ==
                GeoLib::Orientation::CW;
     };
@@ -30,7 +29,7 @@ MeshLib::Element const* getProjectedElement(
     for (auto const* e : elements)
     {
         auto const* nodes = e->getNodes();
-        if (e->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
+        if (e->getGeomType() == MeshElemType::TRIANGLE)
         {
             auto const& a = *nodes[0];
             auto const& b = *nodes[1];
@@ -40,7 +39,7 @@ MeshLib::Element const* getProjectedElement(
                 return e;
             }
         }
-        else if (e->getGeomType() == MeshLib::MeshElemType::QUAD)
+        else if (e->getGeomType() == MeshElemType::QUAD)
         {
             auto const& a = *nodes[0];
             auto const& b = *nodes[1];
@@ -56,12 +55,12 @@ MeshLib::Element const* getProjectedElement(
     return nullptr;
 }
 
-double getElevation(MeshLib::Element const& element, MeshLib::Node const& node)
+double getElevation(Element const& element, Node const& node)
 {
     Eigen::Vector3d const v =
         Eigen::Map<Eigen::Vector3d const>(node.getCoords()) -
         Eigen::Map<Eigen::Vector3d const>(element.getNode(0)->getCoords());
-    auto const n = MeshLib::FaceRule::getSurfaceNormal(&element).normalized();
+    auto const n = FaceRule::getSurfaceNormal(&element).normalized();
     return node[2] - n.dot(v) * n[2];
 }
 

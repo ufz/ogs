@@ -38,6 +38,8 @@ Geometry transformGeometry(MeshLib::Mesh const& mesh);
  * The topology is specific to xdmf because it contains the xdmf cell types!!
  * See section topology in https://www.xdmf.org/index.php/XDMF_Model_and_Format
  * @param mesh OGS mesh can be mesh or partitionedMesh
+ * @param offset Local offset to transform local to global cell ID. Offset must
+ * be zero in serial and must be defined for each process in parallel execution.
  * @return Topology containing a copy of the data and the topology meta data
  */
 Topology transformTopology(MeshLib::Mesh const& mesh, std::size_t offset);
