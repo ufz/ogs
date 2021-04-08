@@ -30,10 +30,21 @@ Singularity per default mounts your home directory and also passes your current 
 
 ### Prerequisites
 
-- Linux and [Mac](https://sylabs.io/singularity-desktop-macos/) only!
-  - Note: You can run Singularity **on Windows** inside a lightweight virtual machine using [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10). Under Ubuntu use Homebrew package `singularity`, under CentOS install via [EPEL](https://sylabs.io/guides/3.0/user-guide/installation.html#install-the-centos-rhel-package-using-yum).
 - [Install Git]({{< ref "prerequisites" >}}/#step-install-git)
-- [Install Singularity](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps)
+- Linux and [Mac](https://sylabs.io/singularity-desktop-macos/) only!
+  - Note: You can run Singularity **on Windows** inside a lightweight virtual machine using [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or with [Vagrant](https://app.vagrantup.com/sylabs).
+
+#### Install Singularity
+
+- *CentOS 6/7 / RedHat*: Install via [EPEL](https://sylabs.io/guides/3.0/user-guide/installation.html#install-the-centos-rhel-package-using-yum).
+- *Ubuntu 20.04 / Debian Sid*:
+  ```
+  wget http://ftp.us.debian.org/debian/pool/main/s/singularity-container/singularity-container_3.5.2+ds1-1_amd64.deb
+  sudo apt install containernetworking-plugins squashfs-tools
+  sudo dpkg -i singularity-container_3.5.2+ds1-1_amd64.deb
+  ```
+  - **OR** install [Homebrew](https://docs.brew.sh/Homebrew-on-Linux) package `singularity`.
+- If you do not have one of the above OS versions [install Singularity from source](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps).
 
 ### Build OGS inside a container
 
