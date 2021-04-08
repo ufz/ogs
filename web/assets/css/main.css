@@ -26,6 +26,10 @@ cite::before {
   content: "— ";
 }
 
+.prose-sm li pre {
+  @apply mt-2;
+}
+
 /* The sticky class is added to the header with JS when it reaches its scroll position */
 #theHeader.sticky {
   position: fixed;

@@ -21,10 +21,9 @@ This page describes how to **run** OGS with the help of a Linux container (for *
 
 ### Prerequisites
 
-* Linux or [macOS](https://sylabs.io/singularity-desktop-macos/)
-  * Note: You can run Singularity on Windows inside a virtual machine using [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or with [Vagrant](https://app.vagrantup.com/sylabs)
-* A running [installation](https://sylabs.io/guides/3.5/user-guide/quick_start.html#quick-installation-steps) of Singularity 3.0 or higher
-  * Available on Eve (UFZ), `envinf1` (UFZ), Juwels (SC Jülich), Taurus (TU Dresden)
+* A running installation of Singularity 3.0 or higher:
+  * Available on Eve (UFZ), `envinf1` / `envinf2` (UFZ), Juwels (SC Jülich), Taurus (TU Dresden).
+  * See the developer guide for [install instructions]({{< ref "singularity.md#prerequisites" >}}).
 
 ### Get a container image
 
@@ -43,9 +42,9 @@ Simply download an image from the [latest master-branch build](https://gitlab.op
 singularity exec --app ogs ogs-6.2.2-serial.sif ogs some/path/project.prj
 ```
 
-This starts the container, mounts your home directory inside the container, passes the current working directory and runs the ogs executable (in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When ogs finishes the container stops and you returns to the host system.
+This starts the container, mounts your home directory inside the container, passes the current working directory and runs the ogs executable (in your home directory which is mounted inside the container) with the passed project file. Everything works as expected and is transparent to the user. When ogs finishes the container stops and returns to the host system.
 
-The `--app ogs` selects a pre-defined execution environment in the container (i.e. setting the `PATH` to `/scif/apps/ogs/bin` in which all the executables are located). You could also (and **on macOS you have to**) run without the `--app`-parameter but then you had to specify the full executable path in the container:
+The `--app ogs` selects a predefined execution environment in the container (i.e. setting the `PATH` to `/scif/apps/ogs/bin` in which all the executables are located). You could also (and **on macOS you have to**) run without the `--app`-parameter but then you had to specify the full executable path in the container:
 
 ```bash
 # Works on macOS too:
