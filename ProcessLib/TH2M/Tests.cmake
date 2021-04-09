@@ -1,3 +1,18 @@
+# TH2M 1d heat diffusion w/ Dirichlet-BC
+AddTest(
+    NAME TH2M_T_1d_dirichlet
+    PATH TH2M/T/T_1d_dirichlet
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS T_1d_dirichlet.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+
+    result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu
+    temperature_interpolated temperature_interpolated 1e-8 1e-8
+)
+
 # TH2M Heatpipe w/ static gas phase in radial domain
 AddTest(
     NAME TH2M_TH_unsaturated_heatpipe_radial
