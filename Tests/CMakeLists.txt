@@ -91,7 +91,7 @@ if(OGS_BUILD_GUI)
                 Qt5::Gui
                 Qt5::Xml
                 Qt5::Network
-                VtkVis
+                VtkVisFilter
                 QtDataView
     )
     if(GEOTIFF_FOUND)
