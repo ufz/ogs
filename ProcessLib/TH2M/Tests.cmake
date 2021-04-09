@@ -13,6 +13,20 @@ AddTest(
     temperature_interpolated temperature_interpolated 1e-8 1e-8
 )
 
+# TH2M 2d linear elastic mechanics w/ neumann BC
+AddTest(
+    NAME TH2M_M_2d_neumann
+    PATH TH2M/M/M_2d_neumann
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS M_2d_neumann.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+
+    result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu displacement displacement 1e-8 1e-8
+)
+
 # TH2M Heatpipe w/ static gas phase in radial domain
 AddTest(
     NAME TH2M_TH_unsaturated_heatpipe_radial
