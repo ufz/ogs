@@ -7,15 +7,8 @@ endif()
 if(OGS_BUILD_GUI)
     add_executable(Raster2PointCloud Raster2PointCloud.cpp)
     target_link_libraries(
-        Raster2PointCloud
-        ${VTK_LIBRARIES}
-        ApplicationsFileIO
-        BaseLib
-        GeoLib
-        GitInfoLib
-        QtDataView
-        tclap
-        VtkVis
+        Raster2PointCloud ApplicationsFileIO BaseLib GitInfoLib tclap
+        VtkVisFilter
     )
     install(TARGETS Raster2PointCloud RUNTIME DESTINATION bin)
 endif()

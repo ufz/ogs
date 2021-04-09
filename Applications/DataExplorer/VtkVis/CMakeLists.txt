@@ -1,22 +1,15 @@
-set(SOURCES
-    MeshFromRasterDialog.cpp
-    QVtkDataSetMapper.cpp
-    VisPrefsDialog.cpp
-    VisualizationWidget.cpp
-    VtkAddFilterDialog.cpp
+# ---- VtkVisFilter ----
+set(FILTER_SOURCES
     VtkAlgorithmProperties.cpp
-    VtkAlgorithmPropertyCheckbox.cpp
-    VtkAlgorithmPropertyLineEdit.cpp
-    VtkAlgorithmPropertyVectorEdit.cpp
     VtkAppendArrayFilter.cpp
     VtkBGImageSource.cpp
     VtkColorByHeightFilter.cpp
     VtkColorLookupTable.cpp
-    VtkCompositeFilter.cpp
     VtkCompositeColorByHeightFilter.cpp
     VtkCompositeColormapToImageFilter.cpp
     VtkCompositeContourFilter.cpp
     VtkCompositeElementSelectionFilter.cpp
+    VtkCompositeFilter.cpp
     VtkCompositeGeoObjectFilter.cpp
     VtkCompositeImageToCylindersFilter.cpp
     VtkCompositeImageToPointCloudFilter.cpp
@@ -26,20 +19,58 @@ set(SOURCES
     VtkCompositePointToGlyphFilter.cpp
     VtkCompositeTextureOnSurfaceFilter.cpp
     VtkCompositeThresholdFilter.cpp
-    VtkConsoleOutputWindow.cpp
-    VtkCustomInteractorStyle.cpp
-    VtkFilterFactory.cpp
     VtkGeoImageSource.cpp
     VtkImageDataToLinePolyDataFilter.cpp
     VtkImageDataToPointCloudFilter.cpp
     VtkImageDataToSurfacePointsFilter.cpp
-    VtkPickCallback.cpp
-    VtkPolylinesSource.cpp
     VtkPointsSource.cpp
+    VtkPolylinesSource.cpp
     VtkRaster.cpp
     VtkStationSource.cpp
     VtkSurfacesSource.cpp
     VtkTextureOnSurfaceFilter.cpp
+)
+if(OGS_USE_NETCDF)
+    list(APPEND FILTER_SOURCES NetCdfConfigureDialog.cpp NetCdfConfigure.ui)
+    set(UIS NetCdfConfigure.ui)
+endif()
+
+ogs_add_library(VtkVisFilter ${FILTER_SOURCES})
+target_include_directories(VtkVisFilter PUBLIC ${VTK_INCLUDE_DIRS})
+target_link_libraries(VtkVisFilter PRIVATE GeoLib Qt5::Core Qt5::Widgets)
+
+if(OGS_USE_NETCDF)
+    target_link_libraries(
+        VtkVisFilter PUBLIC ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
+                            ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES}
+    )
+    if(OGS_USE_CONAN AND MSVC)
+        target_link_libraries(VtkVisFilter PUBLIC ${CONAN_LIBS})
+    endif()
+    # Workaround for system installed VTK (tested on arch)
+    if(NOT OGS_USE_CONAN)
+        target_include_directories(
+            VtkVisFilter SYSTEM PUBLIC ${NETCDF_INCLUDES_C}
+                                       ${NETCDF_INCLUDES_CXX}
+        )
+    endif()
+    add_autogen_include(VtkVisFilter)
+endif()
+
+# ---- VtkVis ----
+set(SOURCES
+    MeshFromRasterDialog.cpp
+    QVtkDataSetMapper.cpp
+    VisPrefsDialog.cpp
+    VisualizationWidget.cpp
+    VtkAddFilterDialog.cpp
+    VtkAlgorithmPropertyCheckbox.cpp
+    VtkAlgorithmPropertyLineEdit.cpp
+    VtkAlgorithmPropertyVectorEdit.cpp
+    VtkConsoleOutputWindow.cpp
+    VtkCustomInteractorStyle.cpp
+    VtkFilterFactory.cpp
+    VtkPickCallback.cpp
     VtkVisHelper.cpp
     VtkVisImageItem.cpp
     VtkVisPipeline.cpp
@@ -55,7 +86,6 @@ set(HEADERS
     VisPrefsDialog.h
     VisualizationWidget.h
     VtkAddFilterDialog.h
-    VtkAlgorithmProperties.h
     VtkAlgorithmPropertyLineEdit.h
     VtkAlgorithmPropertyCheckbox.h
     VtkAlgorithmPropertyVectorEdit.h
@@ -100,14 +130,15 @@ set(HEADERS
     VtkVisTabWidget.h
 )
 
-set(UIS MeshFromRaster.ui VisPrefs.ui VisualizationWidgetBase.ui
-        VtkAddFilterDialogBase.ui VtkVisTabWidgetBase.ui
+list(
+    APPEND
+    UIS
+    MeshFromRaster.ui
+    VisPrefs.ui
+    VisualizationWidgetBase.ui
+    VtkAddFilterDialogBase.ui
+    VtkVisTabWidgetBase.ui
 )
-
-if(OGS_USE_NETCDF)
-    set(SOURCES ${SOURCES} NetCdfConfigureDialog.h NetCdfConfigureDialog.cpp)
-    set(UIS ${UIS} NetCdfConfigure.ui)
-endif()
 
 # Visual Studio folder
 source_group("Filter Header Files" REGULAR_EXPRESSION "[.]*Filter.h")
@@ -141,25 +172,9 @@ if(GEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
 
 target_link_libraries(
-    VtkVis PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase
+    VtkVis PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase VtkVisFilter
     PRIVATE MathLib ApplicationsFileIO Qt5::Gui spdlog::spdlog
 )
-
-if(OGS_USE_NETCDF)
-    target_link_libraries(
-        VtkVis PUBLIC ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
-                      ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES}
-    )
-    if(OGS_USE_CONAN AND MSVC)
-        target_link_libraries(VtkVis PUBLIC ${CONAN_LIBS})
-    endif()
-    # Workaround for system installed VTK (tested on arch)
-    if(NOT OGS_USE_CONAN)
-        target_include_directories(
-            VtkVis SYSTEM PUBLIC ${NETCDF_INCLUDES_C} ${NETCDF_INCLUDES_CXX}
-        )
-    endif()
-endif()
 
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")
 
