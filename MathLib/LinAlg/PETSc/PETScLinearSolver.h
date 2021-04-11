@@ -49,7 +49,7 @@ public:
     PETScLinearSolver(const std::string prefix,
                       BaseLib::ConfigTree const* const option);
 
-    ~PETScLinearSolver() { KSPDestroy(&_solver); }
+    ~PETScLinearSolver() { KSPDestroy(&solver_); }
     // TODO check if some args in LinearSolver interface can be made const&.
     bool solve(PETScMatrix& A, PETScVector& b, PETScVector& x);
 
@@ -57,17 +57,18 @@ public:
     PetscInt getNumberOfIterations() const
     {
         PetscInt its = 0;
-        KSPGetIterationNumber(_solver, &its);
+        KSPGetIterationNumber(solver_, &its);
         return its;
     }
 
     /// Get elapsed wall clock time.
-    double getElapsedTime() const { return _elapsed_ctime; }
-private:
-    KSP _solver;  ///< Solver type.
-    PC _pc;       ///< Preconditioner type.
+    double getElapsedTime() const { return elapsed_ctime_; }
 
-    double _elapsed_ctime = 0.0;  ///< Clock time
+private:
+    KSP solver_;  ///< Solver type.
+    PC pc_;       ///< Preconditioner type.
+
+    double elapsed_ctime_ = 0.0;  ///< Clock time
 };
 
 }  // end namespace

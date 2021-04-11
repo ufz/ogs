@@ -95,8 +95,8 @@ public:
     void preSolve();
     bool solve(const double t_end);
 
-    double const* getSolution() const { return NV_DATA_S(_y); }
-    double getTime() const { return _t; }
+    double const* getSolution() const { return NV_DATA_S(y_); }
+    double getTime() const { return t_; }
     void getYDot(const double t, double const* const y, double* const y_dot);
     void setTolerance(const double* abstol, const double reltol);
     void setTolerance(const double abstol, const double reltol);
@@ -105,25 +105,25 @@ public:
     ~CVodeSolverImpl();
 
 private:
-    N_Vector _y = nullptr;  //!< The solution vector.
+    N_Vector y_ = nullptr;  //!< The solution vector.
 
-    realtype _t;  //! current time
+    realtype t_;  //! current time
 
-    N_Vector _abstol = nullptr;  //!< Array of absolute tolerances.
-    realtype _reltol;            //!< Relative tolerance
+    N_Vector abstol_ = nullptr;  //!< Array of absolute tolerances.
+    realtype reltol_;            //!< Relative tolerance
 
-    unsigned _num_equations;  //!< Number of equations in the ODE system.
-    void* _cvode_mem;         //!< CVode's internal memory
+    unsigned num_equations_;  //!< Number of equations in the ODE system.
+    void* cvode_mem_;         //!< CVode's internal memory
 
     //! Function handles that compute \f$\partial \dot y/\partial y\f$
     //! and \f$\dot y\f$.
-    std::unique_ptr<detail::FunctionHandles> _f;
+    std::unique_ptr<detail::FunctionHandles> f_;
 
     //! The multistep method used for solving the ODE.
-    int _linear_multistep_method = CV_ADAMS;
+    int linear_multistep_method_ = CV_ADAMS;
 
     //! Either solve via fixed-point iteration or via Newton-Raphson method.
-    int _nonlinear_solver_iteration = CV_FUNCTIONAL;
+    int nonlinear_solver_iteration_ = CV_FUNCTIONAL;
 };
 
 //! @}
@@ -140,11 +140,11 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 
         if (*param == "Adams")
         {
-            _linear_multistep_method = CV_ADAMS;
+            linear_multistep_method_ = CV_ADAMS;
         }
         else if (*param == "BDF")
         {
-            _linear_multistep_method = CV_BDF;
+            linear_multistep_method_ = CV_BDF;
         }
         else
         {
@@ -162,11 +162,11 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
 
         if (*param == "Functional")
         {
-            _nonlinear_solver_iteration = CV_FUNCTIONAL;
+            nonlinear_solver_iteration_ = CV_FUNCTIONAL;
         }
         else if (*param == "Newton")
         {
-            _nonlinear_solver_iteration = CV_NEWTON;
+            nonlinear_solver_iteration_ = CV_NEWTON;
         }
         else
         {
@@ -175,14 +175,14 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         }
     }
 
-    _y = N_VNew_Serial(num_equations);
-    _abstol = N_VNew_Serial(num_equations);
-    _num_equations = num_equations;
+    y_ = N_VNew_Serial(num_equations);
+    abstol_ = N_VNew_Serial(num_equations);
+    num_equations_ = num_equations;
 
-    _cvode_mem =
-        CVodeCreate(_linear_multistep_method, _nonlinear_solver_iteration);
+    cvode_mem_ =
+        CVodeCreate(linear_multistep_method_, nonlinear_solver_iteration_);
 
-    if (_cvode_mem == nullptr || _y == nullptr || _abstol == nullptr)
+    if (cvode_mem_ == nullptr || y_ == nullptr || abstol_ == nullptr)
     {
         OGS_FATAL("couldn't allocate storage for CVode solver.");
     }
@@ -195,64 +195,64 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
         return successful ? 0 : 1;
     };
 
-    check_error("CVodeInit", CVodeInit(_cvode_mem, f_wrapped, 0.0, _y));
+    check_error("CVodeInit", CVodeInit(cvode_mem_, f_wrapped, 0.0, y_));
 }
 
 void CVodeSolverImpl::setTolerance(const double* abstol, const double reltol)
 {
-    for (unsigned i = 0; i < _num_equations; ++i)
+    for (unsigned i = 0; i < num_equations_; ++i)
     {
-        NV_Ith_S(_abstol, i) = abstol[i];
+        NV_Ith_S(abstol_, i) = abstol[i];
     }
 
-    _reltol = reltol;
+    reltol_ = reltol;
 }
 
 void CVodeSolverImpl::setTolerance(const double abstol, const double reltol)
 {
-    for (unsigned i = 0; i < _num_equations; ++i)
+    for (unsigned i = 0; i < num_equations_; ++i)
     {
-        NV_Ith_S(_abstol, i) = abstol;
+        NV_Ith_S(abstol_, i) = abstol;
     }
 
-    _reltol = reltol;
+    reltol_ = reltol;
 }
 
 void CVodeSolverImpl::setFunction(std::unique_ptr<detail::FunctionHandles>&& f)
 {
-    _f = std::move(f);
-    assert(_num_equations == _f->getNumberOfEquations());
+    f_ = std::move(f);
+    assert(num_equations_ == f_->getNumberOfEquations());
 }
 
 void CVodeSolverImpl::setIC(const double t0, double const* const y0)
 {
-    for (unsigned i = 0; i < _num_equations; ++i)
+    for (unsigned i = 0; i < num_equations_; ++i)
     {
-        NV_Ith_S(_y, i) = y0[i];
+        NV_Ith_S(y_, i) = y0[i];
     }
 
-    _t = t0;
+    t_ = t0;
 }
 
 void CVodeSolverImpl::preSolve()
 {
-    assert(_f != nullptr && "ode function handle was not provided");
+    assert(f_ != nullptr && "ode function handle was not provided");
 
     // sets initial conditions
-    check_error("CVodeReInit", CVodeReInit(_cvode_mem, _t, _y));
+    check_error("CVodeReInit", CVodeReInit(cvode_mem_, t_, y_));
 
     check_error("CVodeSetUserData",
-                CVodeSetUserData(_cvode_mem, static_cast<void*>(_f.get())));
+                CVodeSetUserData(cvode_mem_, static_cast<void*>(f_.get())));
 
     /* Call CVodeSVtolerances to specify the scalar relative tolerance
      * and vector absolute tolerances */
     check_error("CVodeSVtolerances",
-                CVodeSVtolerances(_cvode_mem, _reltol, _abstol));
+                CVodeSVtolerances(cvode_mem_, reltol_, abstol_));
 
     /* Call CVDense to specify the CVDENSE dense linear solver */
-    check_error("CVDense", CVDense(_cvode_mem, _num_equations));
+    check_error("CVDense", CVDense(cvode_mem_, num_equations_));
 
-    if (_f->hasJacobian())
+    if (f_->hasJacobian())
     {
         auto df_wrapped = [](const long N, const realtype t, const N_Vector y,
                              const N_Vector ydot, const DlsMat jac,
@@ -274,7 +274,7 @@ void CVodeSolverImpl::preSolve()
         };
 
         check_error("CVDlsSetDenseJacFn",
-                    CVDlsSetDenseJacFn(_cvode_mem, df_wrapped));
+                    CVDlsSetDenseJacFn(cvode_mem_, df_wrapped));
     }
 }
 
@@ -282,8 +282,8 @@ bool CVodeSolverImpl::solve(const double t_end)
 {
     realtype t_reached;
     check_error("CVode solve",
-                CVode(_cvode_mem, t_end, _y, &t_reached, CV_NORMAL));
-    _t = t_reached;
+                CVode(cvode_mem_, t_end, y_, &t_reached, CV_NORMAL));
+    t_ = t_reached;
 
     // check_error asserts that t_end == t_reached and that solving the ODE
     // went fine. Otherwise the program will be aborted. Therefore, we don't
@@ -294,69 +294,69 @@ bool CVodeSolverImpl::solve(const double t_end)
 void CVodeSolverImpl::getYDot(const double t, double const* const y,
                               double* const y_dot)
 {
-    assert(_f != nullptr);
-    _f->call(t, y, y_dot);
+    assert(f_ != nullptr);
+    f_->call(t, y, y_dot);
 }
 
 CVodeSolverImpl::~CVodeSolverImpl()
 {
-    printStats(_cvode_mem);
+    printStats(cvode_mem_);
 
-    N_VDestroy_Serial(_y);
-    N_VDestroy_Serial(_abstol);
-    CVodeFree(&_cvode_mem);
+    N_VDestroy_Serial(y_);
+    N_VDestroy_Serial(abstol_);
+    CVodeFree(&cvode_mem_);
 }
 
 CVodeSolver::CVodeSolver(BaseLib::ConfigTree const& config,
                          unsigned const num_equations)
-    : _impl{new CVodeSolverImpl{config, num_equations}}
+    : impl_{new CVodeSolverImpl{config, num_equations}}
 {
 }
 
 void CVodeSolver::setTolerance(const double* abstol, const double reltol)
 {
-    _impl->setTolerance(abstol, reltol);
+    impl_->setTolerance(abstol, reltol);
 }
 
 void CVodeSolver::setTolerance(const double abstol, const double reltol)
 {
-    _impl->setTolerance(abstol, reltol);
+    impl_->setTolerance(abstol, reltol);
 }
 
 void CVodeSolver::setFunction(std::unique_ptr<detail::FunctionHandles>&& f)
 {
-    _impl->setFunction(std::move(f));
+    impl_->setFunction(std::move(f));
 }
 
 void CVodeSolver::setIC(const double t0, double const* const y0)
 {
-    _impl->setIC(t0, y0);
+    impl_->setIC(t0, y0);
 }
 
 void CVodeSolver::preSolve()
 {
-    _impl->preSolve();
+    impl_->preSolve();
 }
 
 bool CVodeSolver::solve(const double t_end)
 {
-    return _impl->solve(t_end);
+    return impl_->solve(t_end);
 }
 
 double const* CVodeSolver::getSolution() const
 {
-    return _impl->getSolution();
+    return impl_->getSolution();
 }
 
 void CVodeSolver::getYDot(const double t, double const* const y,
                           double* const y_dot) const
 {
-    _impl->getYDot(t, y, y_dot);
+    impl_->getYDot(t, y, y_dot);
 }
 
 double CVodeSolver::getTime() const
 {
-    return _impl->getTime();
+    return impl_->getTime();
 }
 
 CVodeSolver::~CVodeSolver() = default;

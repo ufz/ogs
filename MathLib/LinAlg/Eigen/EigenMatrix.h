@@ -41,20 +41,20 @@ public:
      * @param n_nonzero_columns the number of non-zero columns used for preallocation
      */
     explicit EigenMatrix(IndexType n, IndexType n_nonzero_columns = 0)
-        : _mat(n, n)
+        : mat_(n, n)
     {
         if (n_nonzero_columns > 0)
         {
-            _mat.reserve(Eigen::Matrix<IndexType, Eigen::Dynamic, 1>::Constant(
+            mat_.reserve(Eigen::Matrix<IndexType, Eigen::Dynamic, 1>::Constant(
                 n, n_nonzero_columns));
         }
     }
 
     /// return the number of rows
-    IndexType getNumberOfRows() const { return _mat.rows(); }
+    IndexType getNumberOfRows() const { return mat_.rows(); }
 
     /// return the number of columns
-    IndexType getNumberOfColumns() const { return _mat.cols(); }
+    IndexType getNumberOfColumns() const { return mat_.cols(); }
 
     /// return a start index of the active data range
     static constexpr IndexType getRangeBegin() { return 0; }
@@ -65,12 +65,12 @@ public:
     /// reset data entries to zero.
     void setZero()
     {
-        auto const N = _mat.nonZeros();
+        auto const N = mat_.nonZeros();
         for (auto i = decltype(N){0}; i < N; i++)
         {
-            _mat.valuePtr()[i] = 0;
+            mat_.valuePtr()[i] = 0;
         }
-        // don't use _mat.setZero(). it makes a matrix uncompressed
+        // don't use mat_.setZero(). it makes a matrix uncompressed
     }
 
     /// set a value to the given entry. If the entry doesn't exist, this class
@@ -78,7 +78,7 @@ public:
     int setValue(IndexType row, IndexType col, double val)
     {
         assert(row < (IndexType) getNumberOfRows() && col < (IndexType) getNumberOfColumns());
-        _mat.coeffRef(row, col) = val;
+        mat_.coeffRef(row, col) = val;
         return 0;
     }
 
@@ -86,7 +86,7 @@ public:
     /// inserted.
     int add(IndexType row, IndexType col, double val)
     {
-        _mat.coeffRef(row, col) += val;
+        mat_.coeffRef(row, col) += val;
         return 0;
     }
 
@@ -126,7 +126,7 @@ public:
     /// get value. This function returns zero if the element doesn't exist.
     double get(IndexType row, IndexType col) const
     {
-        return _mat.coeff(row, col);
+        return mat_.coeff(row, col);
     }
 
     /// return always true, i.e. the matrix is always ready for use
@@ -145,9 +145,9 @@ public:
     /// printout this matrix for debugging
     void write(std::ostream &os) const
     {
-        for (int k = 0; k < _mat.outerSize(); ++k)
+        for (int k = 0; k < mat_.outerSize(); ++k)
         {
-            for (RawMatrixType::InnerIterator it(_mat, k); it; ++it)
+            for (RawMatrixType::InnerIterator it(mat_, k); it; ++it)
             {
                 os << it.row() << " " << it.col() << ": " << it.value() << "\n";
             }
@@ -155,11 +155,11 @@ public:
         os << std::endl;
     }
 
-    RawMatrixType& getRawMatrix() { return _mat; }
-    const RawMatrixType& getRawMatrix() const { return _mat; }
+    RawMatrixType& getRawMatrix() { return mat_; }
+    const RawMatrixType& getRawMatrix() const { return mat_; }
 
 protected:
-    RawMatrixType _mat;
+    RawMatrixType mat_;
 };
 
 template <class T_DENSE_MATRIX>

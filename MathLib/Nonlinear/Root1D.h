@@ -51,17 +51,22 @@ public:
     //! Initializes finding a root of the \c Function \c f in the interval
     //! [\c a, \c b].
     RegulaFalsi(Function&& f, double a, double b)
-        : _f(f), _a(a), _b(b), _fa(f(a)), _fb(f(b))
+        : f_(f), a_(a), b_(b), fa_(f(a)), fb_(f(b))
     {
         static_assert(std::is_same_v<double, decltype(f(0.0))>,
                       "Using this class for functions that do not return double"
                       " involves a lot of casts. Hence it is disabled.");
 
-        if (detail::almost_zero(_fa)) {
-            _b = _a;
-        } else if (detail::almost_zero(_fb)) {
-            _a = _b;
-        } else if (detail::same_sign(_fa, _fb)) {
+        if (detail::almost_zero(fa_))
+        {
+            b_ = a_;
+        }
+        else if (detail::almost_zero(fb_))
+        {
+            a_ = b_;
+        }
+        else if (detail::same_sign(fa_, fb_))
+        {
             OGS_FATAL("Regula falsi cannot be done, because the function values"
                 " at the interval ends have the same sign.");
         }
@@ -72,28 +77,30 @@ public:
     {
         for (unsigned i=0; i<num_steps; ++i)
         {
-            if (_a == _b)
+            if (a_ == b_)
             {
                 return;
             }
 
-            const double s = (_fb - _fa)/(_b - _a);
-            const double c = _a - _fa/s;
-            const double fc = _f(c);
+            const double s = (fb_ - fa_) / (b_ - a_);
+            const double c = a_ - fa_ / s;
+            const double fc = f_(c);
 
             if (detail::almost_zero(fc)) {
-                _a = _b = c;
+                a_ = b_ = c;
                 return;
             }
-            if (!detail::same_sign(fc, _fb))
+            if (!detail::same_sign(fc, fb_))
             {
-                _a = _b; _fa = _fb;
-                _b =  c; _fb =  fc;
+                a_ = b_;
+                fa_ = fb_;
+                b_ = c;
+                fb_ = fc;
             } else {
-                const double m = SubType::get_m(_fa, _fb, fc);
-                _fa *= m;
-                _b = c;
-                _fb = fc;
+                const double m = SubType::get_m(fa_, fb_, fc);
+                fa_ *= m;
+                b_ = c;
+                fb_ = fc;
             }
         }
     }
@@ -101,23 +108,23 @@ public:
     //! Returns the current estimate of the root.
     double getResult() const
     {
-        if (_a == _b)
+        if (a_ == b_)
         {
-            return _a;
+            return a_;
         }
 
-        const double s = (_fb - _fa)/(_b - _a);
-        const double c = _a - _fa/s;
+        const double s = (fb_ - fa_) / (b_ - a_);
+        const double c = a_ - fa_ / s;
 
         return c;
     }
 
     //! Returns the size of the current search interval.
-    double getRange() const { return std::abs(_a - _b); }
+    double getRange() const { return std::abs(a_ - b_); }
 
 private:
-    Function _f;
-    double _a, _b, _fa, _fb;
+    Function f_;
+    double a_, b_, fa_, fb_;
 };
 
 

@@ -52,18 +52,18 @@ public:
     /**
      * copy linear solvers options
      */
-    void setOption(const EigenOption &option) { _option = option; }
+    void setOption(const EigenOption& option) { option_ = option; }
 
     /**
      * get linear solver options
      */
-    EigenOption &getOption() { return _option; }
+    EigenOption& getOption() { return option_; }
 
     bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x);
 
 protected:
-    EigenOption _option;
-    std::unique_ptr<EigenLinearSolverBase> _solver;
+    EigenOption option_;
+    std::unique_ptr<EigenLinearSolverBase> solver_;
     void setRestart();
 };
 

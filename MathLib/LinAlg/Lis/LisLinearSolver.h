@@ -51,12 +51,12 @@ public:
      * configure linear solvers
      * @param option
      */
-    void setOption(const LisOption &option) { _lis_option = option; }
+    void setOption(const LisOption& option) { lis_option_ = option; }
 
     bool solve(LisMatrix& A, LisVector &b, LisVector &x);
 
 private:
-    LisOption _lis_option;
+    LisOption lis_option_;
 };
 
 } // MathLib

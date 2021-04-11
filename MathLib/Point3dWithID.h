@@ -31,8 +31,8 @@ public:
     /// @param x2 z coordinate of point
     /// @param id the id of the object [default: max of std::size_t]
     Point3dWithID(double x0, double x1, double x2,
-        std::size_t id = std::numeric_limits<std::size_t>::max())
-        : Point3d(std::array<double,3>({{x0, x1, x2}})), _id(id)
+                  std::size_t id = std::numeric_limits<std::size_t>::max())
+        : Point3d(std::array<double, 3>({{x0, x1, x2}})), id_(id)
     {}
 
     /// Constructs a point using std::array<double,3> as coordinates and
@@ -42,30 +42,31 @@ public:
     explicit Point3dWithID(
         std::array<double, 3> const& coords,
         std::size_t id = std::numeric_limits<std::size_t>::max())
-        : Point3d(coords), _id(id)
+        : Point3d(coords), id_(id)
     {}
 
     /// Constructs a point with the same coordinates as the given
     /// Point3d pnt and the provided id.
     /// @param pnt a MathLib::Point3d object containing the coordinates
     /// @param id the id of the object [default: max of std::size_t]
-    explicit Point3dWithID(MathLib::Point3d const& pnt,
+    explicit Point3dWithID(
+        MathLib::Point3d const& pnt,
         std::size_t id = std::numeric_limits<std::size_t>::max())
-        : MathLib::Point3d(pnt), _id(id)
+        : MathLib::Point3d(pnt), id_(id)
     {}
 
     /// Default constructor that initializes the id with max of std::size_t
     /// the default constructor of class Point3d.
-    Point3dWithID() : _id(std::numeric_limits<std::size_t>::max()) {}
+    Point3dWithID() : id_(std::numeric_limits<std::size_t>::max()) {}
 
-    std::size_t getID() const { return _id; }
+    std::size_t getID() const { return id_; }
 
 protected:
     /// Sets the ID of a node to the given value.
-    void setID(std::size_t id) { _id = id; }
+    void setID(std::size_t id) { id_ = id; }
 
 private:
-    std::size_t _id;
+    std::size_t id_;
 };
 
 }  // namespace MathLib

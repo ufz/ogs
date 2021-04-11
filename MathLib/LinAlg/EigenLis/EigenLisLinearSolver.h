@@ -43,12 +43,12 @@ public:
     /**
      * copy linear solvers options
      */
-    void setOption(const LisOption &option) { _lis_option = option; }
+    void setOption(const LisOption& option) { lis_option_ = option; }
 
     bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x);
 
 private:
-    LisOption _lis_option;
+    LisOption lis_option_;
 };
 
 } // MathLib

@@ -70,7 +70,7 @@ protected:
 
 private:
     //! pimpl idiom.
-    std::unique_ptr<CVodeSolverImpl> _impl;
+    std::unique_ptr<CVodeSolverImpl> impl_;
 };
 
 //! @}}
