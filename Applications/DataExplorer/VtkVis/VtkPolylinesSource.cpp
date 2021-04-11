@@ -60,10 +60,9 @@ void VtkPolylinesSource::PrintSelf(ostream& os, vtkIndent indent)
         int numPoints = polyline->getNumberOfPoints();
         for (int i = 0; i < numPoints; i++)
         {
-            const GeoLib::Point* point = polyline->getPoint(i);
-            const double* coords = point->getCoords();
-            os << indent << "Point " << i << " (" << coords[0] << ", "
-               << coords[1] << ", " << coords[2] << ")\n";
+            const GeoLib::Point& point = *polyline->getPoint(i);
+            os << indent << "Point " << i << " (" << point[0] << ", "
+               << point[1] << ", " << point[2] << ")\n";
         }
     }
 }

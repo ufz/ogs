@@ -313,8 +313,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         // the boundary node order is according to the default node id order in
         // the model mesh.
         // for 1P-type BHE
-        if (bhe_boundary_nodes[0]->getCoords()[2] ==
-            bhe_boundary_nodes[1]->getCoords()[2])
+        if ((*bhe_boundary_nodes[0])[2] == (*bhe_boundary_nodes[1])[2])
         {
             INFO(
                 "For 1P-type BHE, the BHE inflow and outflow "
@@ -326,8 +325,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         {
             // swap the boundary nodes if the z coordinate of the
             // first node is lower than it on the second node
-            if (bhe_boundary_nodes[0]->getCoords()[2] <
-                bhe_boundary_nodes[1]->getCoords()[2])
+            if ((*bhe_boundary_nodes[0])[2] < (*bhe_boundary_nodes[1])[2])
             {
                 std::swap(bhe_boundary_nodes[0], bhe_boundary_nodes[1]);
             }

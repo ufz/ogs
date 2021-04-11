@@ -58,9 +58,8 @@ void VtkStationSource::PrintSelf(ostream& os, vtkIndent indent)
     int i = 0;
     for (auto station : *_stations)
     {
-        const double* coords = station->getCoords();
-        os << indent << "Station " << i << " (" << coords[0] << ", "
-           << coords[1] << ", " << coords[2] << ")\n";
+        os << indent << "Station " << i << " (" << (*station)[0] << ", "
+           << (*station)[1] << ", " << (*station)[2] << ")\n";
         i++;
     }
 }
