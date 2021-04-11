@@ -89,9 +89,6 @@ protected:
         _connected_nodes = connected_nodes;
     }
 
-    /// Sets the ID of a node to the given value.
-    void setID(std::size_t id) { _id = id; }
-
     std::vector<Node*> _connected_nodes;
     std::vector<Element*> _elements;
 }; /* class */

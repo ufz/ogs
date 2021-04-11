@@ -61,6 +61,10 @@ public:
     std::size_t getID() const { return _id; }
 
 protected:
+    /// Sets the ID of a node to the given value.
+    void setID(std::size_t id) { _id = id; }
+
+private:
     std::size_t _id;
 };
 

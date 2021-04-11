@@ -56,8 +56,6 @@ public:
 
 protected:
     friend PointVec;
-    /// Resets the id.
-    void setID(std::size_t id) { _id = id; }
 };
 
 }  // namespace GeoLib

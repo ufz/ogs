@@ -97,7 +97,7 @@ public:
             OGS_FATAL(
                 "GocadNode {:d}: Could not found face indicator for face set "
                 "{:d}",
-                _id, face_set_number);
+                getID(), face_set_number);
         }
         return it->second;
     }
