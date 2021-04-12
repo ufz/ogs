@@ -88,6 +88,7 @@ void initializeReactantMolality(Reactant& reactant,
                 .template initialValue<double>(pos, t);
 
         (*reactant.molality)[chemical_system_id] = molality;
+        (*reactant.molality_prev)[chemical_system_id] = molality;
     }
     else
     {
@@ -97,6 +98,8 @@ void initializeReactantMolality(Reactant& reactant,
                 .template initialValue<double>(pos, t);
 
         (*reactant.volume_fraction)[chemical_system_id] = volume_fraction;
+
+        (*reactant.volume_fraction_prev)[chemical_system_id] = volume_fraction;
 
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -113,6 +116,9 @@ void initializeReactantMolality(Reactant& reactant,
 
         (*reactant.molality)[chemical_system_id] =
             volume_fraction / fluid_density / porosity / molar_volume;
+
+        (*reactant.molality_prev)[chemical_system_id] =
+            (*reactant.molality)[chemical_system_id];
     }
 }
 
@@ -130,10 +136,16 @@ void setReactantMolality(Reactant& reactant,
     if (solid_constituent.hasProperty(
             MaterialPropertyLib::PropertyType::molality))
     {
+        (*reactant.molality_prev)[chemical_system_id] =
+            (*reactant.molality)[chemical_system_id];
+
         return;
     }
 
     auto const volume_fraction =
+        (*reactant.volume_fraction)[chemical_system_id];
+
+    (*reactant.volume_fraction_prev)[chemical_system_id] =
         (*reactant.volume_fraction)[chemical_system_id];
 
     auto const& liquid_phase = medium->phase("AqueousLiquid");
@@ -151,6 +163,9 @@ void setReactantMolality(Reactant& reactant,
 
     (*reactant.molality)[chemical_system_id] =
         volume_fraction / fluid_density / porosity / molar_volume;
+
+    (*reactant.molality_prev)[chemical_system_id] =
+        (*reactant.molality)[chemical_system_id];
 }
 
 template <typename Reactant>
