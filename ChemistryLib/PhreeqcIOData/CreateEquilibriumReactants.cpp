@@ -61,8 +61,17 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
         auto molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
+        auto molality_prev = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, name + "_prev", MeshLib::MeshItemType::IntegrationPoint, 1);
+
         auto volume_fraction = MeshLib::getOrCreateMeshProperty<double>(
             mesh, "phi_" + name, MeshLib::MeshItemType::IntegrationPoint, 1);
+
+        auto volume_fraction_prev = MeshLib::getOrCreateMeshProperty<double>(
+            mesh,
+            "phi_" + name + "_prev",
+            MeshLib::MeshItemType::IntegrationPoint,
+            1);
 
         auto mesh_prop_molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
@@ -70,7 +79,9 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
 
         equilibrium_reactants.emplace_back(std::move(name),
                                            molality,
+                                           molality_prev,
                                            volume_fraction,
+                                           volume_fraction_prev,
                                            mesh_prop_molality,
                                            saturation_index,
                                            std::move(reaction_irreversibility));
