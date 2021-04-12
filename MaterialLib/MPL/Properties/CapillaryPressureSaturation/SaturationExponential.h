@@ -24,14 +24,30 @@ namespace MaterialPropertyLib
  * \details This property must be a medium property, it
  * computes the saturation of the wetting phase as function
  * of capillary pressure.
+ *
+ * Very simple capillary pressure-saturation relationship given by
+ * \f$s_{eff}=1-\left(\frac{p_{c}}{p_{c}^{ref}}\right)^{\lambda}\f$
+ * where
+ * \f$\lambda\f$ is an exponent
+ * \f$p_{c}\f$ is capillary pressure
+ * \f$p_{c}^{ref}\f$ is reference capillary pressure at which \f$s_{eff}=0\f$
+ * This property can mainly be used for testing. If the exponent is set to 1,
+ * the characteristic curve shows a linear dependence.
+ *
+ *
+ * Reference capillary pressure at which \f$s_{eff}=0\f$
+ *
  */
 class SaturationExponential final : public Property
 {
 private:
-    const double residual_liquid_saturation_;
-    const double residual_gas_saturation_;
-    const double p_cap_ref_;
-    const double exponent_;
+    const double
+        residual_liquid_saturation_;  /// Residual saturation of the gas phase.
+    const double
+        residual_gas_saturation_;  /// Residual saturation of the liquid phase.
+    const double p_cap_ref_;       /// Reference capillary pressure at which
+                                   /// effective saturation is zero.
+    const double exponent_;        /// Exponent to govern the shape of the curve
 
 public:
     SaturationExponential(std::string name,
@@ -49,8 +65,6 @@ public:
         }
     }
 
-    /// Those methods override the base class implementations and
-    /// actually compute and set the property values_ and dValues_.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& /*pos*/,
                            double const /*t*/,

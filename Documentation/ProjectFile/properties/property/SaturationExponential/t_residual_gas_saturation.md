@@ -1,0 +1,1 @@
+\copydoc MaterialPropertyLib::SaturationExponential::residual_gas_saturation_
