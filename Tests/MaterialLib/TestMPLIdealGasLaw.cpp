@@ -64,6 +64,8 @@ TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
         MaterialPropertyLib::Variable::phase_pressure)] = pressure_norm;
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = temperature_norm;
+    variable_array[static_cast<int>(
+        MaterialPropertyLib::Variable::molar_mass)] = molar_mass_air;
 
     ParameterLib::SpatialPosition const pos;
     double const time = std::numeric_limits<double>::quiet_NaN();
