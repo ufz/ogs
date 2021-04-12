@@ -1158,7 +1158,7 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const t,
-        double const /*dt*/,
+        double const dt,
         Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& /*local_x_dot*/) override
     {
@@ -1183,6 +1183,28 @@ public:
 
         if (_process_data.chemical_solver_interface)
         {
+            if (_process_data.chemically_induced_porosity_change)
+            {
+                auto const& medium = _process_data.media_map->getMedium(ele_id);
+
+                ParameterLib::SpatialPosition pos;
+                pos.setElementID(ele_id);
+
+                for (auto& ip_data : _ip_data)
+                {
+                    ip_data.porosity = ip_data.porosity_prev;
+
+                    _process_data.chemical_solver_interface
+                        ->updateVolumeFractionPostReaction(
+                            ip_data.chemical_system_id, medium, pos,
+                            ip_data.porosity, t, dt);
+
+                    _process_data.chemical_solver_interface
+                        ->updatePorosityPostReaction(chemical_system_id, medium,
+                                                     porosity);
+                }
+            }
+
             std::vector<GlobalIndexType> chemical_system_indices;
             chemical_system_indices.reserve(n_integration_points);
             std::transform(

@@ -671,6 +671,44 @@ std::vector<std::string> const PhreeqcIO::getComponentList() const
     return component_names;
 }
 
+void PhreeqcIO::updateVolumeFractionPostReaction(
+    GlobalIndexType const& chemical_system_id,
+    MaterialPropertyLib::Medium const* medium,
+    ParameterLib::SpatialPosition const& pos, double const porosity,
+    double const t, double const dt)
+{
+    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    MaterialPropertyLib::VariableArray vars;
+
+    auto const liquid_density =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(vars, pos, t, dt);
+
+    for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
+    {
+        auto const& solid_constituent =
+            solid_phase.component(kinetic_reactant.name);
+
+        if (solid_constituent.hasProperty(
+                MaterialPropertyLib::PropertyType::molality))
+        {
+            continue;
+        }
+
+        auto const molar_volume =
+            solid_constituent
+                .property(MaterialPropertyLib::PropertyType::molar_volume)
+                .template value<double>(vars, pos, t, dt);
+
+        (*kinetic_reactant.volume_fraction)[chemical_system_id] +=
+            ((*kinetic_reactant.molality)[chemical_system_id] -
+             (*kinetic_reactant.molality_prev)[chemical_system_id]) *
+            liquid_density * porosity * molar_volume;
+    }
+}
+
 void PhreeqcIO::computeSecondaryVariable(
     std::size_t const ele_id,
     std::vector<GlobalIndexType> const& chemical_system_indices)
