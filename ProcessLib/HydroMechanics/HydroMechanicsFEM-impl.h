@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include "HydroMechanicsFEM.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
