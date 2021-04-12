@@ -952,24 +952,17 @@ std::size_t HydroMechanicsLocalAssembler<
                 _process_data.initial_stress->name);
         }
 
-        return setSigma(values);
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_eff);
     }
+
     if (name == "epsilon_ip")
     {
-        return setEpsilon(values);
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::eps);
     }
 
     return 0;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t HydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setSigma(double const* values)
-{
-    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, _ip_data, &IpData::sigma_eff);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -980,16 +973,6 @@ std::vector<double> HydroMechanicsLocalAssembler<
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::sigma_eff);
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t HydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setEpsilon(double const* values)
-{
-    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, _ip_data, &IpData::eps);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
