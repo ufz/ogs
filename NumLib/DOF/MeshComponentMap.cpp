@@ -335,12 +335,10 @@ void MeshComponentMap::createParallelMeshComponentMap(
             "the order type of ComponentOrder::BY_LOCATION");
     }
 
-    // Use PETSc with multi-thread
     // get number of unknowns
     GlobalIndexType num_unknowns = 0;
     for (auto const& c : components)
     {
-        // PETSc always works with MeshLib::NodePartitionedMesh.
         const MeshLib::NodePartitionedMesh& p_mesh =
             static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
         num_unknowns += p_mesh.getNumberOfGlobalNodes();
