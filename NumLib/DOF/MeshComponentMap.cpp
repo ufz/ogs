@@ -58,7 +58,7 @@ MeshComponentMap MeshComponentMap::getSubset(
     std::vector<int> const& new_global_component_ids) const
 {
     {  // Testing first an assumption met later in the code that the meshes for
-       // the all bulk_mesh_subsets are equal.
+       // all the bulk_mesh_subsets are equal.
         auto const first_mismatch =
             std::adjacent_find(begin(bulk_mesh_subsets), end(bulk_mesh_subsets),
                                [](auto const& a, auto const& b) {
@@ -102,7 +102,7 @@ MeshComponentMap MeshComponentMap::getSubset(
         MeshLib::Location const new_location{
             new_mesh_id, MeshLib::MeshItemType::Node, node_id};
 
-        // Assuming the meshes for the all bulk_mesh_subsets are equal.
+        // Assuming the meshes for all the bulk_mesh_subsets are equal.
         MeshLib::Location const bulk_location{
             bulk_mesh_subsets.front().getMeshID(), MeshLib::MeshItemType::Node,
             bulk_node_ids_map[node_id]};
