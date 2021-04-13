@@ -9,6 +9,15 @@
 #include "VtkVis/VtkConsoleOutputWindow.h"
 #include "mainwindow.h"
 
+// TODO: Replace this on VTK 9 upgrade, see
+// https://discourse.vtk.org/t/vtk-use-file/3645/2
+#if VTK_VIA_CPM
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkInteractionStyle)
+VTK_MODULE_INIT(vtkRenderingFreeType)
+VTK_MODULE_INIT(vtkRenderingOpenGL2)
+#endif
+
 int main(int argc, char* argv[])
 {
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
