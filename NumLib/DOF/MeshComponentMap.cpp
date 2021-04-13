@@ -339,9 +339,9 @@ void MeshComponentMap::createParallelMeshComponentMap(
     GlobalIndexType num_unknowns = 0;
     for (auto const& c : components)
     {
-        const MeshLib::NodePartitionedMesh& p_mesh =
+        const MeshLib::NodePartitionedMesh& partitioned_mesh =
             static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
-        num_unknowns += p_mesh.getNumberOfGlobalNodes();
+        num_unknowns += partitioned_mesh.getNumberOfGlobalNodes();
     }
 
     // construct dict (and here we number global_index by component type)
@@ -353,7 +353,7 @@ void MeshComponentMap::createParallelMeshComponentMap(
         assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
                    &c.getMesh()) != nullptr);
         std::size_t const mesh_id = c.getMeshID();
-        const MeshLib::NodePartitionedMesh& p_mesh =
+        const MeshLib::NodePartitionedMesh& partitioned_mesh =
             static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
 
         // mesh items are ordered first by node, cell, ....
@@ -362,8 +362,8 @@ void MeshComponentMap::createParallelMeshComponentMap(
             GlobalIndexType global_id = 0;
             global_id = static_cast<GlobalIndexType>(
                 components.size() * p_mesh.getGlobalNodeID(j) + comp_id);
-            const bool is_ghost =
-                p_mesh.isGhostNode(p_mesh.getNode(j)->getID());
+            const bool is_ghost = partitioned_mesh.isGhostNode(
+                partitioned_mesh.getNode(j)->getID());
             if (is_ghost)
             {
                 _ghosts_indices.push_back(global_id);
@@ -380,7 +380,7 @@ void MeshComponentMap::createParallelMeshComponentMap(
                               comp_id, global_id));
         }
 
-        _num_global_dof += p_mesh.getNumberOfGlobalNodes();
+        _num_global_dof += partitioned_mesh.getNumberOfGlobalNodes();
         comp_id++;
     }
 }
