@@ -359,9 +359,9 @@ void MeshComponentMap::createParallelMeshComponentMap(
         // mesh items are ordered first by node, cell, ....
         for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
         {
-            GlobalIndexType global_id = 0;
-            global_id = static_cast<GlobalIndexType>(
-                components.size() * p_mesh.getGlobalNodeID(j) + comp_id);
+            GlobalIndexType global_id = static_cast<GlobalIndexType>(
+                components.size() * partitioned_mesh.getGlobalNodeID(j) +
+                comp_id);
             const bool is_ghost = partitioned_mesh.isGhostNode(
                 partitioned_mesh.getNode(j)->getID());
             if (is_ghost)
@@ -371,10 +371,14 @@ void MeshComponentMap::createParallelMeshComponentMap(
                 // If the ghost entry has an index of 0,
                 // its index is set to the negative value of unknowns.
                 if (global_id == 0)
+                {
                     global_id = -num_unknowns;
+                }
             }
             else
+            {
                 _num_local_dof++;
+            }
 
             _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
                               comp_id, global_id));
