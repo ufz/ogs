@@ -14,6 +14,8 @@ build docs:
   retry:
     max: 2
     when: runner_system_failure
+  variables:
+    DOX_WARNINGS_THRESHOLD: 16
   before_script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
@@ -23,7 +25,13 @@ build docs:
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_USE_POETRY=OFF -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
     - cmake --build . --target doc > >(tee make-docs.output)
     - cat DoxygenWarnings.log|grep -v 'too many nodes'
-    - echo "doxygen_warnings `cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'|wc -l|xargs`" > metrics.txt
+    - NUM_DOX_WARNINGS=`cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'|wc -l|xargs`
+    - echo "doxygen_warnings $NUM_DOX_WARNINGS" > metrics.txt
+    - |
+      if [[ ( "$NUM_DOX_WARNINGS" > "$DOX_WARNINGS_THRESHOLD" ) ]]; then
+        echo "Error: Number of Doxygen warnings exceeded threshold –> $NUM_DOX_WARNINGS > $DOX_WARNINGS_THRESHOLD"
+        exit 1
+      fi
     - |
       if [ "$DEPLOY" == "true" ]; then
         if [ "$ON_MASTER" == "true" ]; then
