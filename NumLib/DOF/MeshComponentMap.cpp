@@ -325,6 +325,16 @@ void MeshComponentMap::createSerialMeshComponentMap(
 void MeshComponentMap::createParallelMeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
+    if (order != ComponentOrder::BY_LOCATION)
+    {
+        // Not allowed in parallel case since this is not suitable to
+        // arrange non ghost entries of a partition within
+        // a rank in the parallel computing.
+        OGS_FATAL(
+            "Global index in the system of equations can only be numbered by "
+            "the order type of ComponentOrder::BY_LOCATION");
+    }
+
     // Use PETSc with multi-thread
     // get number of unknowns
     GlobalIndexType num_unknowns = 0;
@@ -352,16 +362,6 @@ void MeshComponentMap::createParallelMeshComponentMap(
         for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
         {
             GlobalIndexType global_id = 0;
-            if (order != ComponentOrder::BY_LOCATION)
-            {
-                // Deactivated since this case is not suitable to
-                // arrange non ghost entries of a partition within
-                // a rank in the parallel computing.
-                OGS_FATAL(
-                    "Global index in the system of equations"
-                    " can only be numbered by the order type of "
-                    "ComponentOrder::BY_LOCATION");
-            }
             global_id = static_cast<GlobalIndexType>(
                 components.size() * p_mesh.getGlobalNodeID(j) + comp_id);
             const bool is_ghost =
