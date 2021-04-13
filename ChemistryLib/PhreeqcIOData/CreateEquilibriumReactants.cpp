@@ -43,6 +43,21 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
             equilibrium_reactant_config.getConfigParameter<double>(
                 "saturation_index");
 
+        auto reaction_irreversibility =
+            //! \ogs_file_param{prj__chemical_system__equilibrium_reactants__phase_component__reaction_irreversibility}
+            equilibrium_reactant_config.getConfigParameter<std::string>(
+                "reaction_irreversibility", "");
+
+        if (!reaction_irreversibility.empty() &&
+            (reaction_irreversibility != "dissolve_only" &&
+             reaction_irreversibility != "precipitate_only"))
+        {
+            OGS_FATAL(
+                "{:s}: reaction direction only allows `dissolve_only` or "
+                "`precipitate_only`",
+                name);
+        }
+
         auto molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
@@ -57,7 +72,8 @@ std::vector<EquilibriumReactant> createEquilibriumReactants(
                                            molality,
                                            volume_fraction,
                                            mesh_prop_molality,
-                                           saturation_index);
+                                           saturation_index,
+                                           std::move(reaction_irreversibility));
     }
 
     return equilibrium_reactants;
