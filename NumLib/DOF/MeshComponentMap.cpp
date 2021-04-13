@@ -39,66 +39,9 @@ MeshComponentMap::MeshComponentMap(
         createSerialMeshComponentMap(components, order);
         return;
     }
-
-    // Use PETSc with multi-thread
-    // get number of unknowns
-    GlobalIndexType num_unknowns = 0;
-    for (auto const& c : components)
+    else
     {
-        // PETSc always works with MeshLib::NodePartitionedMesh.
-        const MeshLib::NodePartitionedMesh& p_mesh =
-            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
-        num_unknowns += p_mesh.getNumberOfGlobalNodes();
-    }
-
-    // construct dict (and here we number global_index by component type)
-    int comp_id = 0;
-    _num_global_dof = 0;
-    _num_local_dof = 0;
-    for (auto const& c : components)
-    {
-        assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
-                   &c.getMesh()) != nullptr);
-        std::size_t const mesh_id = c.getMeshID();
-        const MeshLib::NodePartitionedMesh& p_mesh =
-            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
-
-        // mesh items are ordered first by node, cell, ....
-        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
-        {
-            GlobalIndexType global_id = 0;
-            if (order != ComponentOrder::BY_LOCATION)
-            {
-                // Deactivated since this case is not suitable to
-                // arrange non ghost entries of a partition within
-                // a rank in the parallel computing.
-                OGS_FATAL(
-                    "Global index in the system of equations"
-                    " can only be numbered by the order type of "
-                    "ComponentOrder::BY_LOCATION");
-            }
-            global_id = static_cast<GlobalIndexType>(
-                components.size() * p_mesh.getGlobalNodeID(j) + comp_id);
-            const bool is_ghost =
-                p_mesh.isGhostNode(p_mesh.getNode(j)->getID());
-            if (is_ghost)
-            {
-                _ghosts_indices.push_back(global_id);
-                global_id = -global_id;
-                // If the ghost entry has an index of 0,
-                // its index is set to the negative value of unknowns.
-                if (global_id == 0)
-                    global_id = -num_unknowns;
-            }
-            else
-                _num_local_dof++;
-
-            _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
-                              comp_id, global_id));
-        }
-
-        _num_global_dof += p_mesh.getNumberOfGlobalNodes();
-        comp_id++;
+        createParallelMeshComponentMap(components, order);
     }
 }
 #else
@@ -377,5 +320,72 @@ void MeshComponentMap::createSerialMeshComponentMap(
         renumberByLocation();
     }
 }
+
+#ifdef USE_PETSC
+void MeshComponentMap::createParallelMeshComponentMap(
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
+{
+    // Use PETSc with multi-thread
+    // get number of unknowns
+    GlobalIndexType num_unknowns = 0;
+    for (auto const& c : components)
+    {
+        // PETSc always works with MeshLib::NodePartitionedMesh.
+        const MeshLib::NodePartitionedMesh& p_mesh =
+            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
+        num_unknowns += p_mesh.getNumberOfGlobalNodes();
+    }
+
+    // construct dict (and here we number global_index by component type)
+    int comp_id = 0;
+    _num_global_dof = 0;
+    _num_local_dof = 0;
+    for (auto const& c : components)
+    {
+        assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
+                   &c.getMesh()) != nullptr);
+        std::size_t const mesh_id = c.getMeshID();
+        const MeshLib::NodePartitionedMesh& p_mesh =
+            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
+
+        // mesh items are ordered first by node, cell, ....
+        for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
+        {
+            GlobalIndexType global_id = 0;
+            if (order != ComponentOrder::BY_LOCATION)
+            {
+                // Deactivated since this case is not suitable to
+                // arrange non ghost entries of a partition within
+                // a rank in the parallel computing.
+                OGS_FATAL(
+                    "Global index in the system of equations"
+                    " can only be numbered by the order type of "
+                    "ComponentOrder::BY_LOCATION");
+            }
+            global_id = static_cast<GlobalIndexType>(
+                components.size() * p_mesh.getGlobalNodeID(j) + comp_id);
+            const bool is_ghost =
+                p_mesh.isGhostNode(p_mesh.getNode(j)->getID());
+            if (is_ghost)
+            {
+                _ghosts_indices.push_back(global_id);
+                global_id = -global_id;
+                // If the ghost entry has an index of 0,
+                // its index is set to the negative value of unknowns.
+                if (global_id == 0)
+                    global_id = -num_unknowns;
+            }
+            else
+                _num_local_dof++;
+
+            _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
+                              comp_id, global_id));
+        }
+
+        _num_global_dof += p_mesh.getNumberOfGlobalNodes();
+        comp_id++;
+    }
+}
+#endif
 
 }  // namespace NumLib

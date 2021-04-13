@@ -188,6 +188,14 @@ private:
     void createSerialMeshComponentMap(
         std::vector<MeshLib::MeshSubset> const& components,
         ComponentOrder order);
+
+#ifdef USE_PETSC
+    /// \param components   a vector of components
+    /// \param order        type of ordering values in a vector
+    void createParallelMeshComponentMap(
+        std::vector<MeshLib::MeshSubset> const& components,
+        ComponentOrder order);
+#endif
 };
 
 }  // namespace NumLib
