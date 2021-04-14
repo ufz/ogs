@@ -41,14 +41,28 @@ void NodalSourceTerm::integrate(const double t, GlobalVector const& /*x*/,
         auto const node_id = node->getID();
         MeshLib::Location const l{_source_term_mesh_id,
                                   MeshLib::MeshItemType::Node, node_id};
-        auto const index = _source_term_dof_table->getGlobalIndex(
+        auto const global_index = _source_term_dof_table->getGlobalIndex(
             l, _variable_id, _component_id);
 
-        ParameterLib::SpatialPosition pos;
-        pos.setNodeID(node_id);
-        pos.setCoordinates(*node);
+        if (global_index == NumLib::MeshComponentMap::nop)
+        {
+            continue;
+        }
+        // For the DDC approach (e.g. with PETSc option), the negative
+        // index of global_index means that the entry by that index is a ghost
+        // one, which should be dropped. Especially for PETSc routines
+        // MatZeroRows and MatZeroRowsColumns, which are called to apply the
+        // Dirichlet BC, the negative index is not accepted like other matrix or
+        // vector PETSc routines. Therefore, the following if-condition is
+        // applied.
+        if (global_index >= 0)
+        {
+            ParameterLib::SpatialPosition pos;
+            pos.setNodeID(node_id);
+            pos.setCoordinates(*node);
 
-        b.add(index, _parameter(t, pos).front());
+            b.add(global_index, _parameter(t, pos).front());
+        }
     }
 }
 
