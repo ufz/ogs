@@ -192,7 +192,7 @@
             <initial_condition>pressure0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>domain_left</mesh>
+                    <mesh>domain_right</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>pressure0</parameter>
@@ -200,7 +200,7 @@
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <mesh>domain_right</mesh>
+                    <mesh>domain_left</mesh>
                     <type>Nodal</type>
                     <parameter>nodal_flux</parameter>
                 </source_term>

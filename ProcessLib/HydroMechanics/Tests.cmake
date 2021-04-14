@@ -419,3 +419,18 @@ AddTest(
     hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu sigma sigma 1.0e-6 0.0
     hm1_3Dgravity_ts_1_t_1.000000.vtu hm1_3Dgravity_ts_1_t_1.000000.vtu epsilon epsilon 1.0e-15 0.0
 )
+
+AddTest(
+    NAME HydroMechanics_nodal_source_test
+    PATH HydroMechanics/NodalSourceTerm
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS nodal_source_test.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu pressure pressure 1.0e-8 0.0
+    HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu displacement displacement 1.0e-15 0.0
+    HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu sigma sigma 1.0e-8 0.0
+    HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu epsilon epsilon 1.0e-15 0.0
+)
