@@ -209,7 +209,9 @@ public:
     }
 
     double kappa_d() const { return _kappa_d; }
+    double& kappa_d() { return _kappa_d; }
     double value() const { return _value; }
+    double& value() { return _value; }
 
 private:
     double _kappa_d = 0;  ///< damage driving variable

@@ -9,15 +9,16 @@
 
 #pragma once
 
-#include <optional>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <tuple>
 #include <vector>
 
+#include "BaseLib/DynamicSpan.h"
 #include "BaseLib/Error.h"
-#include "MathLib/KelvinVector.h"
 #include "MaterialLib/MPL/VariableType.h"
+#include "MathLib/KelvinVector.h"
 
 namespace ParameterLib
 {
@@ -96,6 +97,8 @@ struct MechanicsBase
     {
         using Getter = std::function<std::vector<double> const&(
             MaterialStateVariables const&, std::vector<double>& /*cache*/)>;
+        using WriteAccess = std::function<BaseLib::DynamicSpan<double>(
+            MaterialStateVariables&)>;
 
         /// name of the internal variable
         std::string const name;
@@ -105,6 +108,9 @@ struct MechanicsBase
 
         /// function accessing the internal variable
         Getter const getter;
+
+        /// function accessing the internal variable
+        WriteAccess const reference;
     };
 
     /// Returns internal variables defined by the specific material model, if
