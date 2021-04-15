@@ -96,9 +96,8 @@ struct IntegrationPointData final
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     computeElasticTangentStiffness(
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
+        double const t, ParameterLib::SpatialPosition const& x_position,
+        double const dt, double const temperature_prev,
         double const temperature)
     {
         namespace MPL = MaterialPropertyLib;
@@ -122,7 +121,7 @@ struct IntegrationPointData final
         variable_array_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<KV>(KV::Zero());
         variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
-            .emplace<double>(temperature);
+            .emplace<double>(temperature_prev);
 
         auto&& solution =
             solid_material.integrateStress(variable_array_prev, variable_array,
@@ -144,7 +143,7 @@ struct IntegrationPointData final
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
-        double const temperature)
+        double const temperature_prev)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev[static_cast<int>(
@@ -157,7 +156,7 @@ struct IntegrationPointData final
                 eps_m_prev);
         variable_array_prev[static_cast<int>(
                                 MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(temperature);
+            .emplace<double>(temperature_prev);
 
         auto&& solution = solid_material.integrateStress(
             variable_array_prev, variable_array, t, x_position, dt,
