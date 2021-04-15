@@ -11,7 +11,7 @@
 
 #include <Eigen/Eigen>
 
-#include "materiallib_export.h"
+#include "materiallib_fracturemodels_export.h"
 
 namespace MaterialLib
 {
@@ -25,7 +25,7 @@ struct FractureIdentity2
 {
     using VectorType = Eigen::Matrix<double, DisplacementDim, 1>;
 
-    static MATERIALLIB_EXPORT VectorType const value;
+    static MATERIALLIB_FRACTUREMODELS_EXPORT VectorType const value;
 };
 
 extern template struct FractureIdentity2<2>;

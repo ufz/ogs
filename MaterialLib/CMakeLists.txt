@@ -1,10 +1,9 @@
 add_subdirectory(SolidModels)
+add_subdirectory(FractureModels)
 
 # Source files
 get_source_files(SOURCES)
 append_source_files(SOURCES Adsorption)
-append_source_files(SOURCES FractureModels)
-append_source_files(SOURCES FractureModels/Permeability)
 
 append_source_files(SOURCES Fluid)
 append_source_files(SOURCES Fluid/Density)
@@ -40,6 +39,6 @@ append_source_files(SOURCES TwoPhaseModels)
 ogs_add_library(MaterialLib ${SOURCES})
 
 target_link_libraries(
-    MaterialLib PUBLIC MaterialLib_SolidModels
+    MaterialLib PUBLIC MaterialLib_SolidModels MaterialLib_FractureModels
     PRIVATE MathLib MeshLib ParameterLib spdlog::spdlog
 )
