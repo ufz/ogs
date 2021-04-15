@@ -100,7 +100,6 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
     auto mat_ids = mesh.getProperties().getPropertyVector<int>(mat_name);
     auto const& fnodes = fault.getNodes();
     auto const& felems = fault.getElements();
-    std::size_t const n_felems = fault.getNumberOfElements();
     GeoLib::AABB const fault_aabb(fnodes.cbegin(), fnodes.cend());
     auto min_pnt = fault_aabb.getMinPoint();
     auto max_pnt = fault_aabb.getMaxPoint();

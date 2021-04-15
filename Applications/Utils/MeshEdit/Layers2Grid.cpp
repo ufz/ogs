@@ -120,7 +120,7 @@ void voteMatId(MeshLib::Node const& node, MeshLib::MeshElementGrid const& grid,
 // between
 void setMaterialIDs(MeshLib::Mesh& mesh,
                     std::vector<std::unique_ptr<MeshLib::Mesh>> const& layers,
-                    std::array<double, 3> half_cell_size, bool const dilate)
+                    bool const dilate)
 {
     INFO("Setting material properties...");
     std::size_t const n_layers = layers.size();
@@ -313,9 +313,7 @@ int main(int argc, char* argv[])
         ERR("Error creating mesh...");
         return EXIT_FAILURE;
     }
-    std::array<double, 3> const half_cell_size{
-        {cellsize[0] / 2.0, cellsize[1] / 2.0, cellsize[2] / 2.0}};
-    setMaterialIDs(*mesh, layers, half_cell_size, dilate_arg.getValue());
+    setMaterialIDs(*mesh, layers, dilate_arg.getValue());
 
     std::unique_ptr<MeshLib::Mesh> new_mesh(removeUnusedElements(*mesh));
     if (new_mesh == nullptr)
