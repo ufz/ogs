@@ -12,9 +12,6 @@ macro(GET_SOURCE_FILES source_files)
     file(GLOB GET_SOURCE_FILES_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
          CONFIGURE_DEPENDS ${DIR}/*.h
     )
-    file(GLOB GET_SOURCE_FILES_TEMPLATES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-         CONFIGURE_DEPENDS ${DIR}/*.tpp
-    )
     file(GLOB GET_SOURCE_FILES_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
          CONFIGURE_DEPENDS ${DIR}/*.cpp
     )
@@ -81,7 +78,7 @@ function(add_autogen_include target)
     endif()
 endfunction()
 
-# Replacement for add_library() for ogs targets
+# Replacement for add_library() for ogs libraries
 function(ogs_add_library targetName)
     set(options STATIC SHARED)
     cmake_parse_arguments(ogs_add_library "${options}" "" "" ${ARGN})
@@ -130,6 +127,35 @@ function(ogs_add_library targetName)
         )
     endif()
     GroupSourcesByFolder(${targetName})
+endfunction()
+
+# Replacement for ogs_add_executable() for ogs executables
+function(ogs_add_executable targetName)
+    cmake_parse_arguments(ogs_add_executable "" "" "" ${ARGN})
+
+    foreach(file ${ogs_add_executable_UNPARSED_ARGUMENTS})
+        get_filename_component(file_path ${file} REALPATH)
+        list(APPEND files ${file_path})
+    endforeach()
+
+    add_executable(${targetName} ${files})
+
+    target_compile_options(
+        ${targetName}
+        PRIVATE # OR does not work with cotire
+                # $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,
+                # $<CXX_COMPILER_ID:GNU>>:-Wall -Wextra>
+                $<$<CXX_COMPILER_ID:Clang>:-Wall
+                -Wextra
+                -Wunreachable-code>
+                $<$<CXX_COMPILER_ID:AppleClang>:-Wall
+                -Wextra
+                -Wunreachable-code>
+                $<$<CXX_COMPILER_ID:GNU>:-Wall
+                -Wextra
+                -Wunreachable-code>
+                $<$<CXX_COMPILER_ID:MSVC>:/W3>
+    )
 endfunction()
 
 # Parses current directory into a list
