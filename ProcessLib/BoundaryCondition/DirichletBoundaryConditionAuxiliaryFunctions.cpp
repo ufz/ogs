@@ -70,8 +70,8 @@ void getEssentialBCValuesLocal(
     bc_values.values.clear();
 
     // convert mesh node ids to global index for the given component
-    bc_values.ids.reserve(bc_values.ids.size() + nodes_in_bc_mesh.size());
-    bc_values.values.reserve(bc_values.values.size() + nodes_in_bc_mesh.size());
+    bc_values.ids.reserve(nodes_in_bc_mesh.size());
+    bc_values.values.reserve(nodes_in_bc_mesh.size());
     for (auto const* const node : nodes_in_bc_mesh)
     {
         auto const id = node->getID();
