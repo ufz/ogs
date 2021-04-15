@@ -9,7 +9,7 @@ target_link_libraries(
 
 set_target_properties(OGSFileConverterLib PROPERTIES AUTOMOC TRUE AUTOUIC TRUE)
 
-add_executable(OGSFileConverter main.cpp)
+ogs_add_executable(OGSFileConverter main.cpp)
 
 target_link_libraries(
     OGSFileConverter PUBLIC ApplicationsFileIO GitInfoLib OGSFileConverterLib

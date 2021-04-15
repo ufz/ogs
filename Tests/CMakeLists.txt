@@ -54,7 +54,7 @@ if(OGS_USE_PETSC)
     list(REMOVE_ITEM TEST_SOURCES NumLib/TestSerialLinearSolver.cpp)
 endif()
 
-add_executable(testrunner ${TEST_SOURCES})
+ogs_add_executable(testrunner ${TEST_SOURCES})
 
 target_link_libraries(
     testrunner

@@ -48,7 +48,7 @@ if(OGS_USE_PYTHON)
     )
 endif()
 
-add_executable(ogs ogs.cpp)
+ogs_add_executable(ogs ogs.cpp)
 
 target_link_libraries(
     ogs
