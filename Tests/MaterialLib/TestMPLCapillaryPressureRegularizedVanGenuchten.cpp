@@ -43,7 +43,6 @@ TEST(MaterialPropertyLib, CapillaryPressureRegularizedVanGenuchten)
         *capillary_pressure_property_ptr;
 
     double const Sl_r = 0.1;
-    double const Sl_max = 0.95;
 
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;

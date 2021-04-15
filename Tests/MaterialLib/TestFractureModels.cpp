@@ -27,7 +27,7 @@ constexpr double eps_sigma = 1e6 * eps;
 constexpr double eps_C = 2e10 * eps;
 
 static NumLib::NewtonRaphsonSolverParameters const nonlinear_solver_parameters{
-    1000, 1e-16};
+    1000, 1e-16, 0.0};
 
 TEST(MaterialLib_Fracture, LinearElasticIsotropic)
 {
@@ -364,7 +364,7 @@ TEST(MaterialLib_Fracture, Coulomb3D_negative_t1t2)
     double const penalty_aperture_cutoff = aperture0;
     bool const tension_cutoff = true;
     Coulomb::Coulomb<3> fractureModel{
-        {1000, 1e-9}, penalty_aperture_cutoff, tension_cutoff, mp};
+        {1000, 1e-9, 0.0}, penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<3>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
     state->pushBackState();
@@ -414,7 +414,7 @@ TEST(MaterialLib_Fracture, Coulomb3D_negative_t1_positive_t2)
     bool const tension_cutoff = true;
 
     Coulomb::Coulomb<3> fractureModel{
-        {1000, 1e-9}, penalty_aperture_cutoff, tension_cutoff, mp};
+        {1000, 1e-9, 0.0}, penalty_aperture_cutoff, tension_cutoff, mp};
     std::unique_ptr<FractureModelBase<3>::MaterialStateVariables> state(
         fractureModel.createMaterialStateVariables());
     state->pushBackState();
