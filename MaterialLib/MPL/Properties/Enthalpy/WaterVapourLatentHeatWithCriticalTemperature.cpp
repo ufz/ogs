@@ -45,15 +45,19 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::value(
     }
 
     double const tau = (T_c - T) / T_c;
+    double const tau_p2 = tau * tau;
+    double const tau_p3 = tau_p2 * tau;
+    double const tau_p4 = tau_p3 * tau;
+    double const tau_p5 = tau_p4 * tau;
 
     std::array v = {std::pow(tau, beta),
                     std::pow(tau, beta + Delta),
                     std::pow(tau, 1 - alpha + beta),
                     tau,
-                    tau * tau,
-                    tau * tau * tau,
-                    tau * tau * tau * tau,
-                    tau * tau * tau * tau * tau};
+                    tau_p2,
+                    tau_p3,
+                    tau_p4,
+                    tau_p5};
 
     // The formula gives the value in kJ/kg, and the return value is in the
     // units of J/kg.
@@ -81,8 +85,6 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::dValue(
         return 0.0;
     }
 
-    double const tau = (T_c - T) / T_c;
-
     constexpr std::array dc = {c[0] * beta,
                                c[1] * (beta + Delta),
                                c[2] * (1 - alpha + beta),
@@ -92,14 +94,18 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::dValue(
                                c[6] * 4,
                                c[7] * 5};
 
+    double const tau = (T_c - T) / T_c;
+    double const tau_p2 = tau * tau;
+    double const tau_p3 = tau_p2 * tau;
+    double const tau_p4 = tau_p3 * tau;
     std::array v = {std::pow(tau, beta - 1),
                     std::pow(tau, beta + Delta - 1),
                     std::pow(tau, -alpha + beta),
                     1.,
                     tau,
-                    tau * tau,
-                    tau * tau * tau,
-                    tau * tau * tau * tau};
+                    tau_p2,
+                    tau_p3,
+                    tau_p4};
 
     // The formula gives the value in kJ/kg/K, and the value is return in
     // the unit of J/kg/K.
