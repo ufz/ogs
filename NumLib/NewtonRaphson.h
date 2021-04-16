@@ -17,7 +17,6 @@
 
 namespace NumLib
 {
-
 struct NewtonRaphsonSolverParameters
 {
     int maximum_iterations;
@@ -101,7 +100,7 @@ public:
                 "residual: "
                 "{:g}",
                 iteration - 1, increment.norm(), residual.norm());
-            return {};
+            return std::nullopt;
         }
 
         return iteration;
