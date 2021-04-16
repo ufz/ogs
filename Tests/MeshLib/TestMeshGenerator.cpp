@@ -184,8 +184,9 @@ TEST(MeshLib, MeshGeneratorRegularPyramid)
     // upper right back)
     const Node& node0 = *msh->getNode(0);
     const Node& node1 = *msh->getNode(1);
-    const Node& node_n = *msh->getNode(L * L * L - 2);
-    const Node& node_n1 = *msh->getNode(L * L * L - 1);
+    const size_t L_index = static_cast<size_t>(L);
+    const Node& node_n = *msh->getNode(L_index * L_index * L_index - 2);
+    const Node& node_n1 = *msh->getNode(L_index * L_index * L_index - 1);
     ASSERT_DOUBLE_EQ(.0, node0[0]);
     ASSERT_DOUBLE_EQ(.0, node0[1]);
     ASSERT_DOUBLE_EQ(.0, node0[2]);
