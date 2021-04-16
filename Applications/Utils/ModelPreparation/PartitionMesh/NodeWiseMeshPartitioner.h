@@ -67,8 +67,7 @@ public:
      */
     NodeWiseMeshPartitioner(const IntegerType num_partitions,
                             std::unique_ptr<MeshLib::Mesh>&& mesh)
-        : _npartitions(num_partitions),
-          _partitions(num_partitions),
+        : _partitions(num_partitions),
           _partitioned_properties(),
           _mesh(std::move(mesh)),
           _nodes_global_ids(_mesh->getNumberOfNodes()),
@@ -116,9 +115,6 @@ public:
     MeshLib::Mesh const& mesh() const { return *_mesh; }
 
 private:
-    /// Number of partitions.
-    IntegerType _npartitions;
-
     /// Data for all  partitions.
     std::vector<Partition> _partitions;
 

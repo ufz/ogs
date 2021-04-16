@@ -58,13 +58,6 @@ static std::unique_ptr<MeshLib::Mesh> createMeshFromElements(
 static std::vector<std::unique_ptr<MeshLib::Mesh>> extractBoundaryMeshes(
     MeshLib::Mesh const& mesh, std::vector<std::size_t> selected_element_ids)
 {
-    // Bulk mesh node searcher usef for boundary mesh identification.
-    auto const& mesh_node_searcher =
-        MeshGeoToolsLib::MeshNodeSearcher::getMeshNodeSearcher(
-            mesh,
-            std::make_unique<MeshGeoToolsLib::SearchLength>(
-                0));  // Exact match of nodes.
-
     auto const material_ids = materialIDs(mesh);
     if (material_ids == nullptr)
     {
@@ -155,8 +148,8 @@ int main(int argc, char* argv[])
         "filename as string");
     cmd.add(ogs_mesh_arg);
 
-    TCLAP::ValueArg<std::string> gmsh_mesh_arg(
-        "i", "in", "gmsh input file", true, "", "filename as string");
+    TCLAP::ValueArg<std::string> gmsh_mesh_arg("i", "in", "gmsh input file",
+                                               true, "", "filename as string");
     cmd.add(gmsh_mesh_arg);
 
     TCLAP::SwitchArg valid_arg("v", "validation", "validate the mesh");

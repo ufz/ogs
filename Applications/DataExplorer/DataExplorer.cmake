@@ -21,8 +21,12 @@ source_group("UI Files" FILES ${UIS})
 set(APP_ICON ${SOURCE_DIR_REL}/scripts/packaging/ogs-de-icon.icns)
 
 # Create the executable
-add_executable(DataExplorer main.cpp ${SOURCES} ${UIS} ${APP_ICON} exe-icon.rc)
-target_compile_definitions(DataExplorer PUBLIC $<$<BOOL:${VTK_ADDED}>:VTK_VIA_CPM>)
+ogs_add_executable(
+    DataExplorer main.cpp ${SOURCES} ${UIS} ${APP_ICON} exe-icon.rc
+)
+target_compile_definitions(
+    DataExplorer PUBLIC $<$<BOOL:${VTK_ADDED}>:VTK_VIA_CPM>
+)
 
 target_link_libraries(
     DataExplorer

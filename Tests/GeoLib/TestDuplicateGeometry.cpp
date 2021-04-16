@@ -124,7 +124,7 @@ TEST(GeoLib, DuplicateGeometry)
         auto sfcs = std::make_unique<std::vector<GeoLib::Surface*>>();
         for (int i = 0; i < n_sfcs; ++i)
         {
-            int const n_tris = std::rand() % 10 + 1;
+            std::size_t const n_tris = std::rand() % 10 + 1;
             auto* sfc = new GeoLib::Surface(*geo.getPointVec(input_name));
             while (sfc->getNumberOfTriangles() <= n_tris)
             {

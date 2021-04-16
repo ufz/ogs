@@ -107,7 +107,7 @@ TEST_F(TetElementQuality, EdgeRatio)
     auto const expected_value_tet4 = expected_value_tet1;
     auto const expected_value_tet5 = expected_value_tet0;
 
-    for (int i = 0; i < element_quality_vector.size(); i = i + 6)
+    for (std::size_t i = 0; i < element_quality_vector.size(); i = i + 6)
     {
         ASSERT_NEAR(expected_value_tet0, element_quality_vector[i],
                     10 * std::numeric_limits<double>::epsilon());
@@ -191,7 +191,7 @@ TEST_F(TetElementQuality, EquiAngleSkew)
     auto const expected_value_tet5 = computeCriterionForTet(n3, n4, n5, n7);
 
     auto constexpr eps = 11 * std::numeric_limits<double>::epsilon();
-    for (int i = 0; i < element_quality_vector.size(); i = i + 6)
+    for (std::size_t i = 0; i < element_quality_vector.size(); i = i + 6)
     {
         ASSERT_NEAR(expected_value_tet0, element_quality_vector[i], eps);
         ASSERT_NEAR(expected_value_tet1, element_quality_vector[i + 1], eps);

@@ -54,7 +54,6 @@ TEST(MaterialPropertyLib, RelPermUdellDerivatives)
          s_L += stepsize)
     {
         // Wetting phase
-        bool nonwetting_phase = false;
         const std::stringstream m =
             configRelPermUdell(ref_residual_liquid_saturation,
                                ref_residual_gas_saturation, ref_k_rel_L_min);

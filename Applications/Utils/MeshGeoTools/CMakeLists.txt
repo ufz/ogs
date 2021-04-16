@@ -15,7 +15,7 @@ if(OGS_BUILD_GUI)
 endif()
 
 foreach(tool ${TOOLS})
-    add_executable(${tool} ${tool}.cpp)
+    ogs_add_executable(${tool} ${tool}.cpp)
     target_link_libraries(
         ${tool} ApplicationsFileIO GitInfoLib MeshLib MeshGeoToolsLib tclap
     )
