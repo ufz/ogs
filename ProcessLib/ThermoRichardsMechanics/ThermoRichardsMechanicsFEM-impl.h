@@ -236,7 +236,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
         auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
-            t, x_position, dt, T_ip);
+            t, x_position, dt, T_ip, T_ip);
         auto& eps = ip_data_[ip].eps;
         auto& sigma_sw = ip_data_[ip].sigma_sw;
         ip_data_[ip].eps_m_prev.noalias() =
@@ -371,6 +371,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
         double T_dot_ip;
         NumLib::shapeFunctionInterpolate(T_dot, N, T_dot_ip);
+        double const dT = T_dot_ip * dt;
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
@@ -393,8 +394,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
+        double const T_ip_prev = T_ip - dT;
         auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
-            t, x_position, dt, T_ip);
+            t, x_position, dt, T_ip_prev, T_ip);
 
         auto const beta_SR =
             (1 - alpha) /
@@ -529,8 +531,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     .value(variables, x_position, t, dt));
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansivity_vector * T_dot_ip * dt;
+            dthermal_strain = solid_linear_thermal_expansivity_vector * dT;
 
         eps_m.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
@@ -540,8 +541,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m - dthermal_strain);
 
-        auto C = ip_data_[ip].updateConstitutiveRelation(variables, t,
-                                                         x_position, dt, T_ip);
+        auto C = ip_data_[ip].updateConstitutiveRelation(
+            variables, t, x_position, dt, T_ip_prev);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -1144,6 +1145,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
         double T_dot_ip;
         NumLib::shapeFunctionInterpolate(T_dot, N, T_dot_ip);
+        double const dT = T_dot_ip * dt;
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
@@ -1182,8 +1184,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
+        double const T_ip_prev = T_ip - dT;
         auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
-            t, x_position, dt, T_ip);
+            t, x_position, dt, T_ip_prev, T_ip);
 
         auto const beta_SR =
             (1 - alpha) /
@@ -1314,8 +1317,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     .value(variables, x_position, t, dt));
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansivity_vector * T_dot_ip * dt;
+            dthermal_strain = solid_linear_thermal_expansivity_vector * dT;
 
         eps_m.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
@@ -1327,7 +1329,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 eps_m - dthermal_strain);
 
         ip_data_[ip].updateConstitutiveRelation(variables, t, x_position, dt,
-                                                T_ip);
+                                                T_ip_prev);
 
         auto const& b = process_data_.specific_body_force;
 
