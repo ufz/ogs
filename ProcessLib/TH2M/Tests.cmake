@@ -27,6 +27,44 @@ AddTest(
     result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu displacement displacement 1e-8 1e-8
 )
 
+# TH2M THM point_heatsource benchmark
+AddTest(
+    NAME TH2M_THM_point_heatsource
+    PATH TH2M/THM/sphere
+    RUNTIME 40
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS point_heatsource.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+
+    result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu gas_pressure_interpolated gas_pressure_interpolated 4e-7 1e-8
+
+    result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
+
+    result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu displacement displacement 1e-8 1e-8
+)
+
+# TH2M Thermohydromechanics in a slab
+AddTest(
+    NAME TH2M_THM_THM_1d_dirichlet
+    PATH TH2M/THM/slab
+    RUNTIME 15
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS THM_1d_dirichlet.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+
+    result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu gas_pressure_interpolated gas_pressure_interpolated 1e-8 2e-8
+
+    result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
+
+    result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu displacement displacement 1e-8 1e-8
+)
+
 # TH2M Heatpipe w/ static gas phase in radial domain
 AddTest(
     NAME TH2M_TH_unsaturated_heatpipe_radial
