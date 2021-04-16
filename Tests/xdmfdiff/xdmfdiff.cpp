@@ -252,7 +252,6 @@ bool compareValues(std::vector<double> const& points_a,
                       << "The distance is: " << distance << "\n";
             return false;
         }
-        return true;
     }
     return true;
 }
