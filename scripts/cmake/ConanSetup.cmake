@@ -48,12 +48,16 @@ if(OGS_USE_MFRONT)
 endif()
 
 if(OGS_BUILD_GUI)
+    set(QT_VERSION ${ogs.minimum_version.qt})
+    if(UNIX)
+        set(QT_VERSION ${ogs.tested_version.qt})
+    endif()
     set(CONAN_REQUIRES ${CONAN_REQUIRES}
         # libgeotiff/1.4.2@bilke/stable # TODO
         # Overrides for dependency mismatches
         bzip2/1.0.8
         zlib/1.2.11
-        qt/${ogs.minimum_version.qt}@bincrafters/stable
+        qt/${QT_VERSION}@bincrafters/stable
     )
     set(CONAN_OPTIONS ${CONAN_OPTIONS}
         qt:qtxmlpatterns=True
@@ -70,6 +74,9 @@ if(OGS_BUILD_GUI)
     )
     if(MSVC)
         set(CONAN_OPTIONS ${CONAN_OPTIONS} qt:with_harfbuzz=False)
+    endif()
+    if(UNIX AND NOT APPLE)
+        list(APPEND CONAN_OPTIONS qt:qtx11extras=True)
     endif()
 endif()
 
