@@ -1288,6 +1288,23 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
+    getMaterialStateVariableInternalState(
+        std::function<BaseLib::DynamicSpan<double>(
+            typename MaterialLib::Solids::MechanicsBase<
+                DisplacementDim>::MaterialStateVariables&)>
+            get_values_span,
+        int const n_components) const
+{
+    return ProcessLib::getIntegrationPointDataMaterialStateVariables(
+        _ip_data, &IpData::material_state_variables, get_values_span,
+        n_components);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
 std::vector<double> const& RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
     DisplacementDim>::
