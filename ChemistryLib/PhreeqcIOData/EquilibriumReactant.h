@@ -32,12 +32,14 @@ struct EquilibriumReactant
                         MeshLib::PropertyVector<double>* molality_,
                         MeshLib::PropertyVector<double>* volume_fraction_,
                         MeshLib::PropertyVector<double>* mesh_prop_molality_,
-                        double saturation_index_)
+                        double saturation_index_,
+                        std::string reaction_irreversibility_)
         : name(std::move(name_)),
           molality(molality_),
           volume_fraction(volume_fraction_),
           mesh_prop_molality(mesh_prop_molality_),
-          saturation_index(saturation_index_)
+          saturation_index(saturation_index_),
+          reaction_irreversibility(std::move(reaction_irreversibility_))
     {
     }
 
@@ -48,6 +50,7 @@ struct EquilibriumReactant
     MeshLib::PropertyVector<double>* volume_fraction;
     MeshLib::PropertyVector<double>* mesh_prop_molality;
     double const saturation_index;
+    std::string const reaction_irreversibility;
     static const ItemType item_type = ItemType::EquilibriumReactant;
 };
 }  // namespace PhreeqcIOData
