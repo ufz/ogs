@@ -255,7 +255,7 @@ MeshTest(
 
 MeshTest(
     NAME GocadTSurface_Mesh_Test
-    PATH MeshLib/
+    PATH MeshLib
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE GocadTSurfaceReader
     EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
@@ -265,10 +265,11 @@ MeshTest(
 
 AddTest(
     NAME GocadTSurface_Array_Test
-    PATH MeshLib/
+    PATH MeshLib
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE GocadTSurfaceReader
     EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
+    DEPENDS GocadTSurfaceReader-GocadTSurface_Mesh_Test-vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
