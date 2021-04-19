@@ -78,7 +78,7 @@ struct IntegrationPointData final
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
         DisplacementVectorType const& /*u*/,
-        double const T)
+        double const temperature_prev)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev[static_cast<int>(
@@ -91,7 +91,7 @@ struct IntegrationPointData final
                 eps_m_prev);
         variable_array_prev[static_cast<int>(
                                 MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(T);
+            .emplace<double>(temperature_prev);
 
         auto&& solution = solid_material.integrateStress(
             variable_array_prev, variable_array, t, x_position, dt,
