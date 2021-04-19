@@ -23,6 +23,11 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_QN.prj RUNTIME 50)
 endif()
 
+if (NOT OGS_USE_MPI AND OGS_USE_MFRONT)
+    OgsTest(PROJECTFILE RichardsMechanics/mfront_restart_part1.prj RUNTIME 1)
+    OgsTest(PROJECTFILE RichardsMechanics/mfront_restart_part2.prj RUNTIME 1)
+endif()
+
 AddTest(
     NAME RichardsMechanics_square_1e2_confined_compression_restart
     PATH RichardsMechanics
