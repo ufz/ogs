@@ -376,10 +376,6 @@ void Output::doOutputAlways(Process const& process,
             process.getIntegrationPointWriter(non_bulk_mesh),
             _output_data_specification);
 
-        // TODO (TomFischer): add pvd support here. This can be done if the
-        // output is mesh related instead of process related. This would also
-        // allow for merging bulk mesh output and arbitrary mesh output.
-
         output_bulk_mesh(non_bulk_mesh);
     }
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
