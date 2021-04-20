@@ -217,6 +217,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_T = N_p;
         auto const& dNdx_T = dNdx_p;
         auto const T_int_pt = N_T.dot(T);
+        double const dT_int_pt = N_T.dot(T_dot) * dt;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -350,8 +351,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 eps_m);
 
         auto C = _ip_data[ip].updateConstitutiveRelationThermal(
-            vars, t, x_position, dt, u,
-            _process_data.reference_temperature(t, x_position)[0]);
+            vars, t, x_position, dt, u, T_int_pt - dT_int_pt);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -661,7 +661,7 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                         ShapeFunctionPressure,
                                         IntegrationMethod, DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                std::vector<double> const& /*local_xdot*/,
+                                std::vector<double> const& local_xdot,
                                 double const t, double const dt,
                                 bool const use_monolithic_scheme,
                                 int const /*process_id*/)
@@ -679,6 +679,11 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                  temperature_size);
     auto p = Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
         pressure_size> const>(local_x.data() + pressure_index, pressure_size);
+
+    auto const T_dot =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            temperature_size> const>(local_xdot.data() + temperature_index,
+                                     temperature_size);
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -736,9 +741,9 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        _ip_data[ip].updateConstitutiveRelationThermal(
-            vars, t, x_position, dt, u,
-            _process_data.reference_temperature(t, x_position)[0]);
+        double const dT_int_pt = N_T.dot(T_dot) * dt;
+        _ip_data[ip].updateConstitutiveRelationThermal(vars, t, x_position, dt,
+                                                       u, T_int_pt - dT_int_pt);
     }
 }
 
