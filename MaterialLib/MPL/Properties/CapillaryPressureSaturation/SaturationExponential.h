@@ -13,41 +13,39 @@
  */
 #pragma once
 
-#include <limits>
-
 #include "MaterialLib/MPL/Property.h"
 
 namespace MaterialPropertyLib
 {
 /**
- * \brief A simplistic soil characteristics function
- * \details This property must be a medium property, it
+ * \brief A simplistic soil characteristics function.
+ * \details This property must be a medium property. It
  * computes the saturation of the wetting phase as function
  * of capillary pressure.
  *
- * Very simple capillary pressure-saturation relationship given by
- * \f$s_{eff}=1-\left(\frac{p_{c}}{p_{c}^{ref}}\right)^{\lambda}\f$
+ * The capillary pressure-saturation relationship given by
+ * \f$s_{eff}=1-\left(\frac{p_{c}}{p_{c}^{ref}}\right)^{\lambda}\f$,
  * where
- * \f$\lambda\f$ is an exponent
- * \f$p_{c}\f$ is capillary pressure
- * \f$p_{c}^{ref}\f$ is reference capillary pressure at which \f$s_{eff}=0\f$
+ * \f$\lambda\f$ is an exponent,
+ * \f$p_{c}\f$ is capillary pressure,
+ * \f$p_{c}^{ref}\f$ is reference capillary pressure at which \f$s_{eff}=0\f$.
+ *
  * This property can mainly be used for testing. If the exponent is set to 1,
  * the characteristic curve shows a linear dependence.
  *
  *
- * Reference capillary pressure at which \f$s_{eff}=0\f$
- *
+ * Reference capillary pressure at which \f$s_{eff}=0\f$.
  */
 class SaturationExponential final : public Property
 {
 private:
     const double
-        residual_liquid_saturation_;  /// Residual saturation of the gas phase.
+        residual_liquid_saturation_;  ///< Residual saturation of the gas phase.
     const double
-        residual_gas_saturation_;  /// Residual saturation of the liquid phase.
-    const double p_cap_ref_;       /// Reference capillary pressure at which
-                                   /// effective saturation is zero.
-    const double exponent_;        /// Exponent to govern the shape of the curve
+        residual_gas_saturation_;  ///< Residual saturation of the liquid phase.
+    const double p_cap_ref_;       ///< Reference capillary pressure at which
+                                   ///  effective saturation is zero.
+    const double exponent_;        ///< Exponent to govern the shape of the curve.
 
 public:
     SaturationExponential(std::string name,
