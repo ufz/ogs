@@ -39,9 +39,19 @@ GEOModels::~GEOModels()
 
 void GEOModels::updateGeometry(const std::string& geo_name)
 {
-    GeoLib::PointVec* points(_geo_objects.getPointVecObj(geo_name));
-    GeoLib::PolylineVec* lines(_geo_objects.getPolylineVecObj(geo_name));
-    GeoLib::SurfaceVec* surfaces(_geo_objects.getSurfaceVecObj(geo_name));
+    auto const stations = _geo_objects.getStationVec(geo_name);
+    if (stations)
+    {
+        emit stationVectorRemoved(_stationModel, geo_name);
+        _stationModel->removeStationList(geo_name);
+        _stationModel->addStationList(QString::fromStdString(geo_name), stations);
+        emit stationVectorAdded(_stationModel, geo_name);
+        return;
+    }
+
+    auto const points = _geo_objects.getPointVecObj(geo_name);
+    auto const lines = _geo_objects.getPolylineVecObj(geo_name);
+    auto const surfaces = _geo_objects.getSurfaceVecObj(geo_name);
 
     if (points)
     {

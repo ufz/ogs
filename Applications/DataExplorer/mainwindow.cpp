@@ -141,6 +141,9 @@ MainWindow::MainWindow(QWidget* parent /* = 0*/) : QMainWindow(parent)
     connect(stationTabWidget->treeView,
             SIGNAL(requestNameChangeDialog(const std::string&, std::size_t)),
             this, SLOT(showStationNameDialog(const std::string&, std::size_t)));
+    connect(stationTabWidget->treeView,
+            SIGNAL(geometryMappingRequested(const std::string&)), this,
+            SLOT(mapGeometry(const std::string&)));
     connect(stationTabWidget->treeView, SIGNAL(diagramRequested(QModelIndex&)),
             this,
             SLOT(showDiagramPrefsDialog(
