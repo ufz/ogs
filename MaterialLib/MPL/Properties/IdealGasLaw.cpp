@@ -20,60 +20,53 @@
 
 namespace MaterialPropertyLib
 {
-double molarMass(std::variant<Medium*, Phase*, Component*> const scale,
-                 VariableArray const& variable_array,
-                 ParameterLib::SpatialPosition const& pos, double const t,
-                 double const dt)
-{
-    return std::visit(
-        [&variable_array, &pos, t, dt](auto&& s) -> double {
-            return s->property(PropertyType::molar_mass)
-                .template value<double>(variable_array, pos, t, dt);
-        },
-        scale);
-}
-
 IdealGasLaw::IdealGasLaw(std::string name)
 {
     name_ = std::move(name);
 }
 
-PropertyDataType IdealGasLaw::value(VariableArray const& variable_array,
-                                    ParameterLib::SpatialPosition const& pos,
-                                    double const t, double const dt) const
+PropertyDataType IdealGasLaw::value(
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
     const double pressure = std::get<double>(
         variable_array[static_cast<int>(Variable::phase_pressure)]);
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
-    double molar_mass = molarMass(scale_, variable_array, pos, t, dt);
+    const double molar_mass = std::get<double>(
+        variable_array[static_cast<int>(Variable::molar_mass)]);
 
     const double density = pressure * molar_mass / gas_constant / temperature;
 
     return density;
 }
 
-PropertyDataType IdealGasLaw::dValue(VariableArray const& variable_array,
-                                     Variable const primary_variable,
-                                     ParameterLib::SpatialPosition const& pos,
-                                     double const t, double const dt) const
+PropertyDataType IdealGasLaw::dValue(
+    VariableArray const& variable_array, Variable const primary_variable,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
     const double pressure = std::get<double>(
         variable_array[static_cast<int>(Variable::phase_pressure)]);
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
-    double molar_mass = molarMass(scale_, variable_array, pos, t, dt);
+    const double molar_mass = std::get<double>(
+        variable_array[static_cast<int>(Variable::molar_mass)]);
+    // todo: add molar mass derivatives
 
     if (primary_variable == Variable::temperature)
     {
+        // extend to take temperature-dependent molar mass into account
         return -pressure * molar_mass / gas_constant / temperature /
                temperature;
     }
 
     if (primary_variable == Variable::phase_pressure)
     {
+        // extend to take pressure-dependent molar mass into account
         return molar_mass / gas_constant / temperature;
     }
 
@@ -84,29 +77,33 @@ PropertyDataType IdealGasLaw::dValue(VariableArray const& variable_array,
     return 0.;
 }
 
-PropertyDataType IdealGasLaw::d2Value(VariableArray const& variable_array,
-                                      Variable const primary_variable1,
-                                      Variable const primary_variable2,
-                                      ParameterLib::SpatialPosition const& pos,
-                                      double const t, double const dt) const
+PropertyDataType IdealGasLaw::d2Value(
+    VariableArray const& variable_array, Variable const primary_variable1,
+    Variable const primary_variable2,
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     const double gas_constant = MaterialLib::PhysicalConstant::IdealGasConstant;
     const double pressure = std::get<double>(
         variable_array[static_cast<int>(Variable::phase_pressure)]);
     const double temperature = std::get<double>(
         variable_array[static_cast<int>(Variable::temperature)]);
-    double molar_mass = molarMass(scale_, variable_array, pos, t, dt);
+    const double molar_mass = std::get<double>(
+        variable_array[static_cast<int>(Variable::molar_mass)]);
+    // todo: add molar mass derivatives
 
     if ((primary_variable1 == Variable::phase_pressure) &&
         (primary_variable2 == Variable::phase_pressure))
     {
         // d2rho_dp2
+        // extend to take pressure-dependent molar mass into account
         return 0.;
     }
     if ((primary_variable1 == Variable::temperature) &&
         (primary_variable2 == Variable::temperature))
     {
         // d2rho_dT2
+        // extend to take temperature-dependent molar mass into account
         return 2. * molar_mass * pressure / gas_constant / temperature /
                temperature / temperature;
     }
@@ -116,6 +113,7 @@ PropertyDataType IdealGasLaw::d2Value(VariableArray const& variable_array,
          (primary_variable2 == Variable::phase_pressure)))
     {
         // d2rho_dpdT or d2rho_dTdp
+        // extend to take pressure-temperature-dependent molar mass into account
         return -molar_mass / gas_constant / temperature / temperature;
     }
 

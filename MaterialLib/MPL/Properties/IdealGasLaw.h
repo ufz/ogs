@@ -57,8 +57,9 @@ public:
                             double const /*dt*/) const override;
     PropertyDataType d2Value(VariableArray const& variable_array,
                              Variable const variable1, Variable const variable2,
-                             ParameterLib::SpatialPosition const& pos,
-                             double const t, double const dt) const override;
+                             ParameterLib::SpatialPosition const& /*pos*/,
+                             double const /*t*/,
+                             double const /*dt*/) const override;
 };
 
 }  // namespace MaterialPropertyLib

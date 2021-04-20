@@ -240,6 +240,18 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const mu = fluid.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
+
+        // Quick workaround: If fluid density is described as ideal gas, then
+        // the molar mass must be passed to the MPL::IdealGasLaw via the
+        // varialbe_array and the fluid must have the property
+        // MPL::PropertyType::molar_mass. For other density models (e.g.
+        // Constant), it is not mandatory to specify the molar mass.
+        if (fluid.hasProperty(MPL::PropertyType::molar_mass))
+        {
+            vars[static_cast<int>(MPL::Variable::molar_mass)] =
+                fluid.property(MPL::PropertyType::molar_mass)
+                    .template value<double>(vars, x_position, t, dt);
+        }
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
@@ -435,6 +447,17 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const mu = fluid.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
+        // Quick workaround: If fluid density is described as ideal gas, then
+        // the molar mass must be passed to the MPL::IdealGasLaw via the
+        // varialbe_array and the fluid must have the property
+        // MPL::PropertyType::molar_mass. For other density models (e.g.
+        // Constant), it is not mandatory to specify the molar mass.
+        if (fluid.hasProperty(MPL::PropertyType::molar_mass))
+        {
+            vars[static_cast<int>(MPL::Variable::molar_mass)] =
+                fluid.property(MPL::PropertyType::molar_mass)
+                    .template value<double>(vars, x_position, t, dt);
+        }
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
@@ -557,6 +580,17 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const mu = fluid.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
+        // Quick workaround: If fluid density is described as ideal gas, then
+        // the molar mass must be passed to the MPL::IdealGasLaw via the
+        // varialbe_array and the fluid must have the property
+        // MPL::PropertyType::molar_mass. For other density models (e.g.
+        // Constant), it is not mandatory to specify the molar mass.
+        if (fluid.hasProperty(MPL::PropertyType::molar_mass))
+        {
+            vars[static_cast<int>(MPL::Variable::molar_mass)] =
+                fluid.property(MPL::PropertyType::molar_mass)
+                    .template value<double>(vars, x_position, t, dt);
+        }
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
@@ -683,6 +717,17 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
+        // Quick workaround: If fluid density is described as ideal gas, then
+        // the molar mass must be passed to the MPL::IdealGasLaw via the
+        // varialbe_array and the fluid must have the property
+        // MPL::PropertyType::molar_mass. For other density models (e.g.
+        // Constant), it is not mandatory to specify the molar mass.
+        if (fluid.hasProperty(MPL::PropertyType::molar_mass))
+        {
+            vars[static_cast<int>(MPL::Variable::molar_mass)] =
+                fluid.property(MPL::PropertyType::molar_mass)
+                    .template value<double>(vars, x_position, t, dt);
+        }
         auto const rho_fr =
             fluid.property(MPL::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);

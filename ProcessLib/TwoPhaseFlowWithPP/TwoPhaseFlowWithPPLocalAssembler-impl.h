@@ -122,6 +122,9 @@ void TwoPhaseFlowWithPPLocalAssembler<
             pc_int_pt;
         variables[static_cast<int>(MPL::Variable::temperature)] =
             _process_data.temperature(t, pos)[0];
+        variables[static_cast<int>(MPL::Variable::molar_mass)] =
+            gas_phase.property(MPL::PropertyType::molar_mass)
+                .template value<double>(variables, pos, t, dt);
 
         auto const rho_nonwet =
             gas_phase.property(MPL::PropertyType::density)

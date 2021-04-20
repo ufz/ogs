@@ -42,6 +42,10 @@ Variable convertStringToVariable(std::string const& input)
     {
         return Variable::temperature;
     }
+    if (boost::iequals(input, "molar_mass"))
+    {
+        return Variable::molar_mass;
+    }
     if (boost::iequals(input, "liquid_saturation"))
     {
         return Variable::liquid_saturation;
