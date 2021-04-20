@@ -24,7 +24,8 @@
     "libxml2": "2.9.10"
   },
   "tested_version": {
-    "ubuntu": "20.04"
+    "ubuntu": "20.04",
+    "qt": "5.15.2"
   },
   "ctest": {
     "large_runtime": 60
