@@ -39,8 +39,8 @@ GEOModels::~GEOModels()
 
 void GEOModels::updateGeometry(const std::string& geo_name)
 {
-    auto const stations = _geo_objects.getStationVec(geo_name);
-    if (stations)
+    if (auto const stations = _geo_objects.getStationVec(geo_name);
+        stations != nullptr)
     {
         emit stationVectorRemoved(_stationModel, geo_name);
         _stationModel->removeStationList(geo_name);
@@ -49,18 +49,16 @@ void GEOModels::updateGeometry(const std::string& geo_name)
         return;
     }
 
-    auto const points = _geo_objects.getPointVecObj(geo_name);
-    auto const lines = _geo_objects.getPolylineVecObj(geo_name);
-    auto const surfaces = _geo_objects.getSurfaceVecObj(geo_name);
-
-    if (points)
+    if (auto const points = _geo_objects.getPointVecObj(geo_name);
+        points != nullptr)
     {
         emit geoDataRemoved(_geoModel, geo_name, GeoLib::GEOTYPE::POINT);
         this->_geoModel->removeGeoList(geo_name, GeoLib::GEOTYPE::POINT);
         _geoModel->addPointList(QString::fromStdString(geo_name), *points);
         emit geoDataAdded(_geoModel, geo_name, GeoLib::GEOTYPE::POINT);
 
-        if (lines)
+        if (auto const lines = _geo_objects.getPolylineVecObj(geo_name);
+            lines != nullptr)
         {
             emit geoDataRemoved(_geoModel, geo_name, GeoLib::GEOTYPE::POLYLINE);
             this->_geoModel->removeGeoList(geo_name, GeoLib::GEOTYPE::POLYLINE);
@@ -69,7 +67,8 @@ void GEOModels::updateGeometry(const std::string& geo_name)
             emit geoDataAdded(_geoModel, geo_name, GeoLib::GEOTYPE::POLYLINE);
         }
 
-        if (surfaces)
+        if (auto const surfaces = _geo_objects.getSurfaceVecObj(geo_name);
+            surfaces != nullptr)
         {
             emit geoDataRemoved(_geoModel, geo_name, GeoLib::GEOTYPE::SURFACE);
             this->_geoModel->removeGeoList(geo_name, GeoLib::GEOTYPE::SURFACE);
