@@ -176,6 +176,31 @@ std::size_t RichardsMechanicsLocalAssembler<
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::eps);
     }
+    if (name.starts_with("material_state_variable_") && name.ends_with("_ip"))
+    {
+        std::string const variable_name = name.substr(24, name.size() - 24 - 3);
+        DBUG("Setting material state variable '{:s}'", variable_name);
+
+        // Using first ip data for solid material. TODO (naumov) move solid
+        // material into element, store only material state in IPs.
+        auto const& internal_variables =
+            _ip_data[0].solid_material.getInternalVariables();
+        if (auto const iv =
+                std::find_if(begin(internal_variables), end(internal_variables),
+                             [&variable_name](auto const& iv) {
+                                 return iv.name == variable_name;
+                             });
+            iv != end(internal_variables))
+        {
+            return ProcessLib::setIntegrationPointDataMaterialStateVariables(
+                values, _ip_data, &IpData::material_state_variables,
+                iv->reference);
+        }
+
+        ERR("Could not find variable {:s} in solid material model's internal "
+            "variables.",
+            variable_name);
+    }
     return 0;
 }
 
@@ -1284,6 +1309,23 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::eps, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::vector<double> RichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::
+    getMaterialStateVariableInternalState(
+        std::function<BaseLib::DynamicSpan<double>(
+            typename MaterialLib::Solids::MechanicsBase<
+                DisplacementDim>::MaterialStateVariables&)>
+            get_values_span,
+        int const n_components) const
+{
+    return ProcessLib::getIntegrationPointDataMaterialStateVariables(
+        _ip_data, &IpData::material_state_variables, get_values_span,
+        n_components);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

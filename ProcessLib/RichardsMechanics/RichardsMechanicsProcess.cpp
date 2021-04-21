@@ -334,6 +334,20 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         LocalAssemblerIF>(_process_data.solid_materials,
                           add_secondary_variable);
 
+    auto add_integration_point_writer =
+        [&](std::string const& name, int const n_components, auto function) {
+            _integration_point_writer.emplace_back(
+                std::make_unique<IntegrationPointWriter>(
+                    "material_state_variable_" + name + "_ip", n_components,
+                    integration_order, function));
+        };
+
+    // Assume all materials have same internal variables.
+    ProcessLib::Deformation::
+        solidMaterialInternalVariablesToIntegrationPointWriter(
+            _process_data.solid_materials, _local_assemblers,
+            add_integration_point_writer);
+
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
         MeshLib::MeshItemType::Cell, 1);
@@ -398,7 +412,8 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             {
                 OGS_FATAL(
                     "No integration points read in the integration point "
-                    "initial conditions set function.");
+                    "initial conditions set function for {:s} variable.",
+                    name);
             }
             position += integration_points_read * ip_meta_data.n_components;
         }

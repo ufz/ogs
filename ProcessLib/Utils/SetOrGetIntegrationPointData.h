@@ -136,4 +136,51 @@ std::size_t setIntegrationPointScalarData(
     return n_integration_points;
 }
 
+template <typename IntegrationPointData, typename MemberType,
+          typename MaterialStateVariables>
+std::vector<double> getIntegrationPointDataMaterialStateVariables(
+    std::vector<IntegrationPointData,
+                Eigen::aligned_allocator<IntegrationPointData>> const&
+        ip_data_vector,
+    MemberType member,
+    std::function<BaseLib::DynamicSpan<double>(MaterialStateVariables&)>
+        get_values_span,
+    int const n_components)
+{
+    std::vector<double> result;
+    result.reserve(ip_data_vector.size() * n_components);
+
+    for (auto& ip_data : ip_data_vector)
+    {
+        auto const values_span = get_values_span(*(ip_data.*member));
+        assert(values_span.size == static_cast<std::size_t>(n_components));
+
+        result.insert(end(result), values_span.data,
+                      values_span.data + values_span.size);
+    }
+
+    return result;
+}
+
+template <typename IntegrationPointData, typename MemberType,
+          typename MaterialStateVariables>
+std::size_t setIntegrationPointDataMaterialStateVariables(
+    double const* values,
+    std::vector<IntegrationPointData,
+                Eigen::aligned_allocator<IntegrationPointData>>& ip_data_vector,
+    MemberType member,
+    std::function<BaseLib::DynamicSpan<double>(MaterialStateVariables&)>
+        get_values_span)
+{
+    auto const n_integration_points = ip_data_vector.size();
+
+    std::size_t position = 0;
+    for (auto& ip_data : ip_data_vector)
+    {
+        auto const values_span = get_values_span(*(ip_data.*member));
+        std::copy_n(values + position, values_span.size, values_span.data);
+        position += values_span.size;
+    }
+    return n_integration_points;
+}
 }  // namespace ProcessLib

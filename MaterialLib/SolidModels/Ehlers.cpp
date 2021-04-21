@@ -720,6 +720,15 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  cache.resize(1);
                  cache.front() = ehlers_state.damage.kappa_d();
                  return cache;
+             },
+             [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+                    state) -> BaseLib::DynamicSpan<double> {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim>&>(state);
+
+                 return {&ehlers_state.damage.kappa_d(), 1};
              }},
             {"damage.value", 1,
              [](typename MechanicsBase<
@@ -733,6 +742,15 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  cache.resize(1);
                  cache.front() = ehlers_state.damage.value();
                  return cache;
+             },
+             [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+                    state) -> BaseLib::DynamicSpan<double> {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim>&>(state);
+
+                 return {&ehlers_state.damage.value(), 1};
              }},
             {"eps_p.D", KelvinVector::RowsAtCompileTime,
              [](typename MechanicsBase<
@@ -750,6 +768,17 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                          ehlers_state.eps_p.D);
 
                  return cache;
+             },
+             [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+                    state) -> BaseLib::DynamicSpan<double> {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim>&>(state);
+
+                 return {
+                     ehlers_state.eps_p.D.data(),
+                     static_cast<std::size_t>(KelvinVector::RowsAtCompileTime)};
              }},
             {"eps_p.V", 1,
              [](typename MechanicsBase<
@@ -763,6 +792,15 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  cache.resize(1);
                  cache.front() = ehlers_state.eps_p.V;
                  return cache;
+             },
+             [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+                    state) -> BaseLib::DynamicSpan<double> {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim>&>(state);
+
+                 return {&ehlers_state.eps_p.V, 1};
              }},
             {"eps_p.eff", 1,
              [](typename MechanicsBase<
@@ -776,6 +814,15 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  cache.resize(1);
                  cache.front() = ehlers_state.eps_p.eff;
                  return cache;
+             },
+             [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+                    state) -> BaseLib::DynamicSpan<double> {
+                 assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
+                            &state) != nullptr);
+                 auto& ehlers_state =
+                     static_cast<StateVariables<DisplacementDim>&>(state);
+
+                 return {&ehlers_state.eps_p.eff, 1};
              }}};
 }
 

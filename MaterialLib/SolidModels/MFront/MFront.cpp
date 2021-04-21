@@ -431,6 +431,17 @@ MFront<DisplacementDim>::getInternalVariables() const
                             size,
                             begin(cache));
                 return cache;
+            },
+            [offset, size](
+                typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+                    state) -> BaseLib::DynamicSpan<double> {
+                assert(dynamic_cast<MaterialStateVariables const*>(&state) !=
+                       nullptr);
+                auto& internal_state_variables =
+                    static_cast<MaterialStateVariables&>(state)
+                        ._behaviour_data.s1.internal_state_variables;
+
+                return {internal_state_variables.data() + offset, size};
             }};
         internal_variables.push_back(new_variable);
     }

@@ -102,6 +102,13 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> getMaterialStateVariableInternalState(
+        std::function<BaseLib::DynamicSpan<double>(
+            typename MaterialLib::Solids::MechanicsBase<
+                DisplacementDim>::MaterialStateVariables&)>
+            get_values_span,
+        int n_components) const = 0;
+
     // TODO move to NumLib::ExtrapolatableElement
     virtual unsigned getNumberOfIntegrationPoints() const = 0;
 
