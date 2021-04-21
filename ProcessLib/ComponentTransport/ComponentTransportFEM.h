@@ -1200,8 +1200,8 @@ public:
                             ip_data.porosity, t, dt);
 
                     _process_data.chemical_solver_interface
-                        ->updatePorosityPostReaction(chemical_system_id, medium,
-                                                     porosity);
+                        ->updatePorosityPostReaction(ip_data.chemical_system_id,
+                                                     medium, ip_data.porosity);
                 }
             }
 

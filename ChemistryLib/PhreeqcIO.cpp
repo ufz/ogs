@@ -709,6 +709,29 @@ void PhreeqcIO::updateVolumeFractionPostReaction(
     }
 }
 
+void PhreeqcIO::updatePorosityPostReaction(
+    GlobalIndexType const& chemical_system_id,
+    MaterialPropertyLib::Medium const* medium,
+    double& porosity)
+{
+    auto const& solid_phase = medium->phase("Solid");
+    for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
+    {
+        auto const& solid_constituent =
+            solid_phase.component(kinetic_reactant.name);
+
+        if (solid_constituent.hasProperty(
+                MaterialPropertyLib::PropertyType::molality))
+        {
+            continue;
+        }
+
+        porosity -=
+            ((*kinetic_reactant.volume_fraction)[chemical_system_id] -
+             (*kinetic_reactant.volume_fraction_prev)[chemical_system_id]);
+    }
+}
+
 void PhreeqcIO::computeSecondaryVariable(
     std::size_t const ele_id,
     std::vector<GlobalIndexType> const& chemical_system_indices)
