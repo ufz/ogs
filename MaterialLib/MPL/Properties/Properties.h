@@ -22,6 +22,7 @@
 #include "Curve.h"
 #include "Density/WaterVapourDensity.h"
 #include "DupuitPermeability.h"
+#include "EffectiveThermalConductivityPorosityMixing.h"
 #include "EmbeddedFracturePermeability.h"
 #include "Enthalpy/LinearWaterVapourLatentHeat.h"
 #include "Exponential.h"

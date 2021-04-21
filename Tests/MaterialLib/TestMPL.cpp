@@ -17,13 +17,15 @@
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/CreateMedium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/Parameter.h"
 #include "Tests/TestTools.h"
 
 namespace Tests
 {
-std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml,
-                                                int const geometry_dimension)
+std::unique_ptr<MPL::Medium> createTestMaterial(
+    std::string const& xml, int const geometry_dimension,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system)
 {
     auto const ptree = Tests::readXml(xml.c_str());
     BaseLib::ConfigTree conf(ptree, "", BaseLib::ConfigTree::onerror,
@@ -34,8 +36,8 @@ std::unique_ptr<MPL::Medium> createTestMaterial(std::string const& xml,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         curves;
 
-    return MPL::createMedium(geometry_dimension, config, parameters, nullptr,
-                             curves);
+    return MPL::createMedium(geometry_dimension, config, parameters,
+                             local_coordinate_system, curves);
 }
 
 std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(

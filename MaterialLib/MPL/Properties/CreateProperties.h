@@ -23,6 +23,7 @@
 #include "CreateConstant.h"
 #include "CreateCurve.h"
 #include "CreateDupuitPermeability.h"
+#include "CreateEffectiveThermalConductivityPorosityMixing.h"
 #include "CreateEmbeddedFracturePermeability.h"
 #include "CreateExponential.h"
 #include "CreateGasPressureDependentPermeability.h"

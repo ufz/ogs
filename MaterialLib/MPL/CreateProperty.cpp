@@ -76,6 +76,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createDupuitPermeability(config, parameters);
     }
 
+    if (boost::iequals(property_type, "EffectiveThermalConductivityPorosityMixing"))
+    {
+        return createEffectiveThermalConductivityPorosityMixing(
+                geometry_dimension, config, local_coordinate_system);
+    }
+
     if (boost::iequals(property_type, "IdealGasLaw"))
     {
         return createIdealGasLaw(config);

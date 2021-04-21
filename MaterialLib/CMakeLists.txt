@@ -1,9 +1,9 @@
+add_subdirectory(SolidModels)
+add_subdirectory(FractureModels)
+
 # Source files
 get_source_files(SOURCES)
 append_source_files(SOURCES Adsorption)
-append_source_files(SOURCES SolidModels)
-append_source_files(SOURCES FractureModels)
-append_source_files(SOURCES FractureModels/Permeability)
 
 append_source_files(SOURCES Fluid)
 append_source_files(SOURCES Fluid/Density)
@@ -36,18 +36,9 @@ append_source_files(
 )
 append_source_files(SOURCES TwoPhaseModels)
 
-if(OGS_USE_MFRONT)
-    add_subdirectory(SolidModels/MFront)
-endif()
-
 ogs_add_library(MaterialLib ${SOURCES})
 
-if(OGS_USE_MFRONT)
-    target_compile_definitions(MaterialLib PUBLIC OGS_USE_MFRONT)
-endif()
 target_link_libraries(
-    MaterialLib
-    PUBLIC
-        $<$<TARGET_EXISTS:MaterialLib_SolidModels_MFront>:MaterialLib_SolidModels_MFront>
+    MaterialLib PUBLIC MaterialLib_SolidModels MaterialLib_FractureModels
     PRIVATE MathLib MeshLib ParameterLib spdlog::spdlog
 )

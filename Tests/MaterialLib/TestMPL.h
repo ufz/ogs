@@ -20,6 +20,11 @@
 
 namespace MPL = MaterialPropertyLib;
 
+namespace ParameterLib
+{
+struct CoordinateSystem;
+}
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -33,7 +38,9 @@ class Property;
 namespace Tests
 {
 std::unique_ptr<MPL::Medium> createTestMaterial(
-    std::string const& xml, int const geometry_dimension = 1);
+    std::string const& xml,
+    int const geometry_dimension = 1,
+    ParameterLib::CoordinateSystem const* const local_coordinate_system = nullptr);
 
 std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
     const char xml[],
