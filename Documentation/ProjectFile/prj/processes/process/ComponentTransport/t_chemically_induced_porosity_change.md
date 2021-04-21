@@ -1,0 +1,1 @@
+\copydoc ProcessLib::ComponentTransport::ComponentTransportProcessData::chemically_induced_porosity_change
