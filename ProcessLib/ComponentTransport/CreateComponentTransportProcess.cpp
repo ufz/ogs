@@ -216,6 +216,11 @@ std::unique_ptr<Process> createComponentTransportProcess(
         //! \ogs_file_param{prj__processes__process__ComponentTransport__non_advective_form}
         config.getConfigParameter<bool>("non_advective_form", false);
 
+    bool chemically_induced_porosity_change =
+        //! \ogs_file_param{prj__processes__process__ComponentTransport__chemically_induced_porosity_change}
+        config.getConfigParameter<bool>("chemically_induced_porosity_change",
+                                        false);
+
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
@@ -223,13 +228,15 @@ std::unique_ptr<Process> createComponentTransportProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
-    ComponentTransportProcessData process_data{std::move(media_map),
-                                               specific_body_force,
-                                               has_gravity,
-                                               non_advective_form,
-                                               chemical_solver_interface.get(),
-                                               hydraulic_process_id,
-                                               first_transport_process_id};
+    ComponentTransportProcessData process_data{
+        std::move(media_map),
+        specific_body_force,
+        has_gravity,
+        non_advective_form,
+        chemically_induced_porosity_change,
+        chemical_solver_interface.get(),
+        hydraulic_process_id,
+        first_transport_process_id};
 
     SecondaryVariableCollection secondary_variables;
 

@@ -38,6 +38,7 @@ struct ComponentTransportProcessData
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const non_advective_form;
+    bool const chemically_induced_porosity_change;
     ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface;
 
     const int hydraulic_process_id;
