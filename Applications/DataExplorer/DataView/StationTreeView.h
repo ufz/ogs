@@ -59,6 +59,7 @@ private slots:
     void displayStratigraphy();
     void exportList();
     void exportStation();
+    void mapStations();
     void removeStationList();
     /// Calls a SetNameDialog.
     void setNameForElement();
@@ -69,6 +70,7 @@ signals:
     void enableSaveButton(bool);
     void enableRemoveButton(bool);
     void geoItemSelected(const vtkPolyDataAlgorithm*, int);
+    void geometryMappingRequested(const std::string&);
     void removeGeoItemSelection();
     void itemSelectionChanged(const QItemSelection & selected,
                               const QItemSelection & deselected);

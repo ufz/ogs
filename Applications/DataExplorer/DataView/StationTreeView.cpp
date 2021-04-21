@@ -104,9 +104,11 @@ void StationTreeView::contextMenuEvent(QContextMenuEvent* event)
     if (item->childCount() > 0)
     {
         QMenu menu;
+        QAction* mapAction = menu.addAction("Map stations...");
         QAction* exportAction = menu.addAction("Export to GMS...");
         menu.addSeparator();
 
+        connect(mapAction, SIGNAL(triggered()), this, SLOT(mapStations()));
         connect(exportAction, SIGNAL(triggered()), this, SLOT(exportList()));
         menu.exec(event->globalPos());
     }
@@ -149,6 +151,15 @@ void StationTreeView::setNameForElement()
     std::string const stn_vec_name =
         item->parentItem()->data(0).toString().toStdString();
     emit requestNameChangeDialog(stn_vec_name, item->row());
+}
+
+void StationTreeView::mapStations()
+{
+    TreeItem const* const item =
+        static_cast<StationTreeModel*>(model())->getItem(
+            this->selectionModel()->currentIndex());
+    std::string const& geo_name(item->data(0).toString().toStdString());
+    emit geometryMappingRequested(geo_name);
 }
 
 void StationTreeView::displayStratigraphy()

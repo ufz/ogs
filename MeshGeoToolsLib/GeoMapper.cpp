@@ -156,6 +156,7 @@ void GeoMapper::mapStationData(std::vector<GeoLib::Point*> const& points)
 
         if (!GeoLib::isBorehole(pnt))
         {
+            (*pnt)[2] = offset;
             continue;
         }
         auto const& layers =
