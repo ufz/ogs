@@ -66,13 +66,14 @@ XdmfData::XdmfData(std::size_t size_partitioned_dim,
     assert(partition_info.local_length <
            std::numeric_limits<unsigned int>::max());
     auto const ui_global_components =
-        static_cast<unsigned int>(partition_info.local_length);
+        static_cast<unsigned int>(partition_info.global_length);
     auto const ui_tuple_size = static_cast<unsigned int>(size_tuple);
-
-    piece_dims = {ui_global_components, ui_tuple_size};
-    block_dims = {static_cast<XdmfDimType>(size_partitioned_dim),
-                  ui_tuple_size};
-
+    global_block_dims = {ui_global_components, ui_tuple_size};
     data_type = MeshPropertyDataType2XdmfType(mesh_property_data_type);
+    DBUG(
+        "XDMF: dataset name: {:s}, offset: {:d} "
+        "global_blocks: {:d}, tuples: {:d}",
+        name, partition_info.local_offset,
+        global_block_dims[0], ui_tuple_size);
 }
 }  // namespace MeshLib::IO

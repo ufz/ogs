@@ -53,12 +53,7 @@ struct XdmfData
     // https://www.xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
     std::vector<XdmfDimType> const starts;
     std::vector<XdmfDimType> const strides;
-    // piece and block nomenclature taken from
-    // https://www.paraview.org/Wiki/VTK/Tutorials/Composite_Datasets in XDMF it
-    // refers to spatial grid collection composed from subsets
-    // https://www.xdmf.org/index.php/XDMF_Model_and_Format#Grid
-    std::vector<XdmfDimType> piece_dims;
-    std::vector<XdmfDimType> block_dims;
+    std::vector<XdmfDimType> global_block_dims;
     boost::shared_ptr<const XdmfArrayType> data_type;
     std::string const name;
     std::optional<MeshLib::MeshItemType> const attribute_center;

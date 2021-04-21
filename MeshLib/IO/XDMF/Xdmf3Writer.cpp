@@ -60,8 +60,8 @@ static boost::shared_ptr<XdmfGeometry> getLightGeometry(
                                 XdmfArrayType::Float64(),
                                 geometry.starts,
                                 geometry.strides,
-                                geometry.block_dims,
-                                geometry.block_dims);
+                                geometry.global_block_dims,
+                                geometry.global_block_dims);
     xdmf_geometry->setHeavyDataController(geometry_controller);
     return xdmf_geometry;
 }
@@ -77,8 +77,8 @@ static boost::shared_ptr<XdmfTopology> getLightTopology(
                                 XdmfArrayType::Int32(),
                                 topology.starts,
                                 topology.strides,
-                                topology.block_dims,
-                                topology.block_dims);
+                                topology.global_block_dims,
+                                topology.global_block_dims);
     xdmf_topology->setHeavyDataController(topology_controller);
     return xdmf_topology;
 }
@@ -92,8 +92,8 @@ static boost::shared_ptr<XdmfAttribute> getLightAttribute(
                                 attribute.data_type,
                                 attribute.starts,
                                 attribute.strides,
-                                attribute.block_dims,
-                                attribute.block_dims);
+                                attribute.global_block_dims,
+                                attribute.global_block_dims);
 
     auto const xdmf_attribute = XdmfAttribute::New();
     auto const center = elemTypeOGS2XDMF(*(attribute.attribute_center));
