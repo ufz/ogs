@@ -1,0 +1,1 @@
+A set of the first two orthogonal fracture normal vectors. The third normal vector is calculated as the cross product.
