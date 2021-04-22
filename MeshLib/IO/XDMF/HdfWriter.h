@@ -31,11 +31,13 @@ public:
      * property), contains meta data for geometry and topology
      * @param step number of the step (temporal collection)
      * @param filepath absolute or relative filepath to the hdf5 file
+     * @param use_compression if true gzip compression is enabled
      */
     HdfWriter(std::vector<HdfData> constant_attributes,
               std::vector<HdfData> variable_attributes,
               int const step,
-              std::filesystem::path const& filepath);
+              std::filesystem::path const& filepath,
+              bool const use_compression);
 
     /**
      * \brief Writes attributes. The data
@@ -51,7 +53,7 @@ public:
 private:
     std::vector<HdfData> const _variable_attributes;
     std::filesystem::path const _hdf5_filepath;
-    bool const _has_compression;
-    hid_t file;
+    bool const _use_compression;
+    hid_t _file;
 };
 }  // namespace MeshLib::IO

@@ -246,7 +246,7 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
         _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
         MeshLib::IO::XdmfHdfWriter(
                 mesh, path, timestep,
-                _output_data_specification.output_variables));
+                _output_data_specification.output_variables, output_file.compression));
     }
     _mesh_xdmf_hdf_writer->writeStep(timestep, t);
 }

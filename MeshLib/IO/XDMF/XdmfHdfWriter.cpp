@@ -21,7 +21,8 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
                              std::filesystem::path const& filepath,
                              int const time_step,
                              std::set<std::string>
-                                 variable_output_names)
+                             variable_output_names,
+                             bool const use_compression)
 {
     // transform Data into contiguous data and collect meta data
     Geometry const& geometry = transformGeometry(mesh);
@@ -57,7 +58,7 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     // The hdf writer can write when data is out of scope.
     _hdf_writer = std::make_unique<HdfWriter>(
         std::move(hdf_constant_attributes), std::move(hdf_variable_attributes),
-        time_step, hdf_filepath);
+        time_step, hdf_filepath, use_compression);
     // XDMF
     // The light data is only written by just one process
     if (!isFileManager())
