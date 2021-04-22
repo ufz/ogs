@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>square_1x1_quad_16.vtu</mesh>
@@ -95,6 +95,10 @@
                     <type>Constant</type>
                     <value>0.5</value>
                 </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
             </properties>
         </medium>
         <medium id="1">
@@ -170,6 +174,10 @@
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>0.5</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
             </properties>
         </medium>

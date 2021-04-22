@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>RichardsFlow_2d_small.vtu</mesh>
     <geometry>RichardsFlow_2d_small.gml</geometry>
@@ -126,6 +126,10 @@
                     <name>bishops_effective_stress</name>
                     <type>BishopsPowerLaw</type>
                     <exponent>1</exponent>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
             </properties>
         </medium>

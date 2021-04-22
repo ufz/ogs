@@ -14,7 +14,6 @@
 #include <cassert>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
@@ -745,23 +744,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                  (S_L * rho_LR * specific_heat_capacity_fluid) * phi) *
                 N.transpose() * N;
 
-            auto const thermal_conductivity_solid =
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .value(variables, x_position, t, dt);
-
-            auto const thermal_conductivity_fluid =
-                liquid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .template value<double>(variables, x_position, t, dt) *
-                S_L;
-
-            GlobalDimMatrixType const thermal_conductivity =
-                MaterialPropertyLib::formEffectiveThermalConductivity<
-                    DisplacementDim>(thermal_conductivity_solid,
-                                     thermal_conductivity_fluid, phi);
+            auto const thermal_conductivity =
+                MaterialPropertyLib::formEigenTensor<DisplacementDim>(medium
+                    ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(variables, x_position, t, dt));
 
             GlobalDimVectorType const velocity_l =
                 GlobalDimVectorType(-Ki_over_mu * (dNdx * p_L - rho_LR * b));

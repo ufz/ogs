@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>th_decovalex.vtu</mesh>
     <geometry>boundary.gml</geometry>
@@ -99,6 +99,10 @@
                     <type>Constant</type>
                     <value>0.01</value>
                 </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
             </properties>
         </medium>
         <medium id="1">
@@ -185,6 +189,10 @@
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>0.41</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
             </properties>
         </medium>

@@ -116,7 +116,10 @@
                     <type>Constant</type>
                     <value>0.8</value>
                 </property>
-
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
             </properties>
         </medium>
     </media>
@@ -224,7 +227,6 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
         <process_variable>
             <name>displacement</name>
             <components>2</components>

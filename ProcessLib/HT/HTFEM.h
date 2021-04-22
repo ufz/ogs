@@ -16,7 +16,7 @@
 #include "HTLocalAssemblerInterface.h"
 #include "HTProcessData.h"
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -193,7 +193,7 @@ protected:
     }
 
     GlobalDimMatrixType getThermalConductivityDispersivity(
-        MaterialPropertyLib::VariableArray const& vars, const double porosity,
+        MaterialPropertyLib::VariableArray const& vars,
         const double fluid_density, const double specific_heat_capacity_fluid,
         const GlobalDimVectorType& velocity, const GlobalDimMatrixType& I,
         ParameterLib::SpatialPosition const& pos, double const t,
@@ -201,25 +201,13 @@ protected:
     {
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
-        auto const& solid_phase = medium.phase("Solid");
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
-
-        auto const thermal_conductivity_solid =
-            solid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .value(vars, pos, t, dt);
-
-        auto const thermal_conductivity_fluid =
-            liquid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>(vars, pos, t, dt);
 
         auto const thermal_conductivity =
-            MaterialPropertyLib::formEffectiveThermalConductivity<GlobalDim>(
-                thermal_conductivity_solid, thermal_conductivity_fluid,
-                porosity);
+            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt));
 
         auto const thermal_dispersivity_longitudinal =
             medium

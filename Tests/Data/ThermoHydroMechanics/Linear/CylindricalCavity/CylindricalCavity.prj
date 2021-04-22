@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh axially_symmetric="true">CylindricalCavity_msh.vtu</mesh>
     <geometry>CylindricalCavity.gml</geometry>
@@ -26,7 +26,6 @@
             <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
-
     <media>
         <medium id="0">
             <phases>
@@ -53,11 +52,11 @@
                                 <slope>-3.0e-4</slope>
                             </independent_variable>
                             <independent_variable>
-                                    <variable_name>phase_pressure</variable_name>
-                                    <reference_condition>0.0</reference_condition>
-                                    <slope>0.303e-9</slope>
-                                    <!-- drho_dp=1/(3.3.e9) -->
-                                </independent_variable>
+                                <variable_name>phase_pressure</variable_name>
+                                <reference_condition>0.0</reference_condition>
+                                <slope>0.303e-9</slope>
+                                <!-- drho_dp=1/(3.3.e9) -->
+                            </independent_variable>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -119,6 +118,10 @@
                     <value>0.9999728813559</value>
                     <!-- alpha=1-beta_skp/beta_sp=1-E/(3*(1-2*miu))/(5.9e10) -->
                 </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
             </properties>
         </medium>
     </media>
@@ -147,49 +150,49 @@
                             <repeat>10</repeat>
                             <delta_t>7200</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>1</repeat>
                             <delta_t>10000</delta_t>
                         </pair>
-				    	<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>10000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>50000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>15</repeat>
                             <delta_t>100000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>9</repeat>
                             <delta_t>200000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>400000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>4</repeat>
                             <delta_t>500000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
                             <delta_t>1000000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>5</repeat>
                             <delta_t>2000000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>25</repeat>
                             <delta_t>2000000</delta_t>
                         </pair>
-						<pair>
+                        <pair>
                             <repeat>10</repeat>
-                            <delta_t>10000000</delta_t>   
+                            <delta_t>10000000</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -281,7 +284,7 @@
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
-				<boundary_condition>
+                <boundary_condition>
                     <geometrical_set>CylindricalCavity_geometry</geometrical_set>
                     <geometry>top</geometry>
                     <type>Dirichlet</type>
