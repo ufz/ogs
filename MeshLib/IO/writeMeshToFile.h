@@ -22,5 +22,5 @@ namespace MeshLib::IO
 {
 int writeMeshToFile(MeshLib::Mesh const& mesh,
                     std::filesystem::path const& file_path,
-                    std::set<std::string> names = {});
+                    std::set<std::string> variable_output_names = {});
 }  // namespace MeshLib::IO

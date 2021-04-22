@@ -179,7 +179,7 @@ struct Output::OutputFile
                std::string const& prefix, std::string const& suffix,
                std::string const& mesh_name, int const timestep, double const t,
                int const iteration, int const data_mode_,
-               bool const compression_, std::set<std::string> outputnames)
+               bool const compression_, std::set<std::string> const& outputnames)
         : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
                                  iteration)),
           path(BaseLib::joinPaths(directory, name)),

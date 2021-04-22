@@ -27,14 +27,18 @@ public:
      * \brief Write file with geometry and topology data. The data
      * itself is held by a structure outside of this class. The writer assumes
      * the data holder to not change during writing
-     * @param attributes vector of attributes (each attribute is a OGS mesh
-     * property), contains meta data for geometry and topology
+     * @param constant_attributes vector of constant attributes (each attribute
+     * is a OGS mesh property), geometry and topology are considered as constant
+     * attributes
+     * @param variable_attributes vector of variable attributes (each attribute
+     * is a OGS mesh property
      * @param step number of the step (temporal collection)
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param use_compression if true gzip compression is enabled
      */
     HdfWriter(std::vector<HdfData> constant_attributes,
-              std::vector<HdfData> variable_attributes,
+              std::vector<HdfData>
+                  variable_attributes,
               int const step,
               std::filesystem::path const& filepath,
               bool const use_compression);

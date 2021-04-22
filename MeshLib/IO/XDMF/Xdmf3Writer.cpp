@@ -116,11 +116,12 @@ Xdmf3Writer::Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
     _initial_geometry = getLightGeometry(_hdf5filename, time_step, geometry);
     _initial_topology = getLightTopology(_hdf5filename, time_step, topology);
 
-    for (auto const& attribute : constant_attributes)
-    {
-        _constant_attributes.push_back(
-            getLightAttribute(_hdf5filename, time_step, attribute));
-    }
+    std::transform(
+        constant_attributes.begin(), constant_attributes.end(),
+        std::back_inserter(_constant_attributes),
+        [&](XdmfData const& attribute) -> boost::shared_ptr<XdmfAttribute> {
+            return getLightAttribute(_hdf5filename, time_step, attribute);
+        });
 
     _writer = XdmfWriter::New(filepath.string());
     _writer->setMode(XdmfWriter::DistributedHeavyData);
@@ -135,7 +136,6 @@ Xdmf3Writer::Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
     _root = XdmfDomain::New();
     _root->insert(version);
     _root->insert(grid_collection);
-
 }
 
 Xdmf3Writer::~Xdmf3Writer()
@@ -163,6 +163,5 @@ void Xdmf3Writer::writeStep(int const time_step, double const time)
 
     auto grid_collection = _root->getGridCollection(0);
     grid_collection->insert(grid);
-
 }
 }  // namespace MeshLib::IO

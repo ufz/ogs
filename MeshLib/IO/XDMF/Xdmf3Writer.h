@@ -44,7 +44,10 @@ public:
      * address is the same)
      * @param geometry contains meta data to coordinates
      * @param topology contains meta data cells
-     * @param attributes vector of attributes (each attribute is a OGS property)
+     * @param constant_attributes vector of constant attributes (each attribute
+     * is a OGS mesh property)
+     * @param variable_attributes vector of variable attributes (each attribute
+     * is a OGS mesh property
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param time_step number of the step (temporal collection)
      */

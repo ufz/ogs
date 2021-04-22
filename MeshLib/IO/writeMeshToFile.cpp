@@ -22,7 +22,7 @@ namespace MeshLib::IO
 int writeMeshToFile(const MeshLib::Mesh& mesh,
                     std::filesystem::path const& file_path,
                     std::set<std::string>
-                        names)
+                        variable_output_names)
 {
     if (file_path.extension().string() == ".msh")
     {
@@ -46,8 +46,9 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
 #ifdef OGS_USE_XDMF
     if (file_path.extension().string() == ".xdmf")
     {
-        auto writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-            MeshLib::IO::XdmfHdfWriter(mesh, file_path, 0, names, true));
+        MeshLib::IO::XdmfHdfWriter(
+            mesh, file_path, 0, variable_output_names, true);
+
         return 0;
     }
 #endif

@@ -31,10 +31,15 @@ public:
      * @param mesh Mesh or NodePartitionedMesh to be written to file(s)
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param time_step number of the step (temporal collection)
+     * @param variable_output_names names of all process variables (attributes)
+     * that change over time
+     * @param use_compression if true, zlib compression in HDFWriter component
+     * is used
      */
     XdmfHdfWriter(MeshLib::Mesh const& mesh,
                   std::filesystem::path const& filepath, int time_step,
-                  std::set<std::string> variable_output_names, bool use_compression);
+                  std::set<std::string> variable_output_names,
+                  bool use_compression);
     /**
      * \brief Write attribute data that has modified to previous time step or
      * initial

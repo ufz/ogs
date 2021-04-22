@@ -35,7 +35,6 @@ struct XdmfData
      * be the dimension that is partitioned. This first dimension expresses  the
      * length, usually the number of nodes or the number of cells. These values
      * give the length of the local partition.
-     * @param MeshPropertyDataType OGS propertyVector's data type
      * @param size_tuple We assume there is at most a rank of 2 of data
      * (properties). The size of tuple gives the length of the second dimension
      * (index 1).
@@ -44,7 +43,6 @@ struct XdmfData
      * @param attribute_center XdmfData is used for topology, geometry and
      * attributes. Geometry and topology have never a attribute_center.
      * Attributes have always an  attribute_center
-     * @return vector of meta data
      */
     XdmfData(std::size_t size_partitioned_dim, std::size_t size_tuple,
              MeshPropertyDataType mesh_property_data_type,

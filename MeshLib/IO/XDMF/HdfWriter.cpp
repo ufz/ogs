@@ -145,13 +145,13 @@ HdfWriter::HdfWriter(std::vector<HdfData> constant_attributes,
                          variable_attributes,
                      int const step,
                      std::filesystem::path const& filepath,
-                     bool const compression_factor)
+                     bool const use_compression)
     : _variable_attributes(std::move(variable_attributes)),
       _hdf5_filepath(filepath),
-//      _has_compression(checkCompression()),
-      _use_compression(checkCompression() && compression_factor)
+      _use_compression(checkCompression() && use_compression),
+      _file(createFile(filepath))
 {
-    _file = createFile(filepath);
+
     std::string const& time_section = getTimeSection(step);
     hid_t const group_id = H5Gcreate2(_file, time_section.c_str(), H5P_DEFAULT,
                                       H5P_DEFAULT, H5P_DEFAULT);
