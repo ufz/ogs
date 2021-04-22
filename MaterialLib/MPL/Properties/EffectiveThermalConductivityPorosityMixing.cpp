@@ -58,10 +58,12 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
     auto const solid_thermal_conductivity = solid_phase.property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .template value<double>(variable_array, pos, t, dt);
+    auto const S_L = std::get<double>(
+        variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
     double const effective_thermal_conductivity =
         (1.0 - porosity) * solid_thermal_conductivity +
-        porosity * liquid_thermal_conductivity;
+        porosity * liquid_thermal_conductivity * S_L;
     return effective_thermal_conductivity;
 }
 template <>
@@ -76,7 +78,7 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::dValue(
     auto const porosity = medium->property(
                         MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(variable_array, pos, t, dt);
-    auto const liquid_thermal_conductivity =
+   auto const liquid_thermal_conductivity =
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variable_array, pos, t, dt);
@@ -100,6 +102,7 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::dValue(
         dporosity * liquid_thermal_conductivity +
         porosity * dliquid_thermal_conductivity;
     return deffective_thermal_conductivity;
+
 }
 //
 // For 2D and 3D problems
@@ -144,6 +147,8 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
         solid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, t, dt));
+    auto const S_L = std::get<double>(
+        variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
     // Local coordinate transformation is only applied for the case that the
     // initial solid thermal conductivity is given with orthotropic assumption.
@@ -158,7 +163,7 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
         effective_thermal_conductivity =
             (1.0 - porosity) * solid_thermal_conductivity +
             porosity * liquid_thermal_conductivity *
-                Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity();
+                Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity() * S_L;
     return effective_thermal_conductivity;
 }
 
@@ -194,7 +199,7 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::dValue(
                 .template dValue<double>(variable_array, variable, pos, t, dt);
     auto dsolid_thermal_conductivity =
         formEigenTensor<GlobalDim>(solid_phase
-                    .property(
+                   .property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .dValue(variable_array, variable, pos, t, dt));
 
