@@ -15,6 +15,7 @@
 #include "CapillaryPressureSaturation/CreateCapillaryPressureVanGenuchten.h"
 #include "CapillaryPressureSaturation/CreateSaturationBrooksCorey.h"
 #include "CapillaryPressureSaturation/CreateSaturationLiakopoulos.h"
+#include "CapillaryPressureSaturation/CreateSaturationExponential.h"
 #include "CapillaryPressureSaturation/CreateSaturationVanGenuchten.h"
 #include "CreateAverageMolarMass.h"
 #include "CreateBishopsPowerLaw.h"

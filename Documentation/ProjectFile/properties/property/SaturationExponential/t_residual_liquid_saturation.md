@@ -1,0 +1,1 @@
+\copydoc MaterialPropertyLib::SaturationExponential::residual_liquid_saturation_

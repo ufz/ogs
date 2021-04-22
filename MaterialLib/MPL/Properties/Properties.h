@@ -16,6 +16,7 @@
 #include "BishopsSaturationCutoff.h"
 #include "CapillaryPressureSaturation/SaturationBrooksCorey.h"
 #include "CapillaryPressureSaturation/SaturationLiakopoulos.h"
+#include "CapillaryPressureSaturation/SaturationExponential.h"
 #include "CapillaryPressureSaturation/SaturationVanGenuchten.h"
 #include "ClausiusClapeyron.h"
 #include "Constant.h"
