@@ -26,15 +26,15 @@ SaturationExponential::SaturationExponential(
     std::string name,
     const double residual_liquid_saturation,
     const double residual_gas_saturation,
-    const double p_cap_ref,
+    const double p_cap_max,
     const double exponent)
     : residual_liquid_saturation_(residual_liquid_saturation),
       residual_gas_saturation_(residual_gas_saturation),
-      p_cap_ref_(p_cap_ref),
+      p_cap_max_(p_cap_max),
       exponent_(exponent)
 {
     name_ = std::move(name);
-    if (p_cap_ref_ <= 0.)
+    if (p_cap_max_ <= 0.)
     {
         OGS_FATAL(
             "Reference capillary pressure must be positive in "
@@ -50,12 +50,12 @@ PropertyDataType SaturationExponential::value(
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
 
-    const double s_res = residual_liquid_saturation_;
-    const double s_max = 1. - residual_gas_saturation_;
+    const double S_res = residual_liquid_saturation_;
+    const double S_max = 1. - residual_gas_saturation_;
 
-    const double pc = std::clamp(p_cap, 0., p_cap_ref_);
-    const double s_e = 1. - std::pow(pc / p_cap_ref_, exponent_);
-    return s_e * (s_max - s_res) + s_res;
+    const double pc = std::clamp(p_cap, 0., p_cap_max_);
+    const double S_e = 1. - std::pow(pc / p_cap_max_, exponent_);
+    return S_e * (S_max - S_res) + S_res;
 }
 
 PropertyDataType SaturationExponential::dValue(
@@ -71,15 +71,15 @@ PropertyDataType SaturationExponential::dValue(
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
 
-    const double s_res = residual_liquid_saturation_;
-    const double s_max = 1. - residual_gas_saturation_;
+    const double S_res = residual_liquid_saturation_;
+    const double S_max = 1. - residual_gas_saturation_;
 
-    if ((p_cap > p_cap_ref_) || (p_cap <= 0.))
+    if ((p_cap > p_cap_max_) || (p_cap <= 0.))
     {
         return 0.;
     }
-    return (exponent_ / p_cap) * (s_res - s_max) *
-           std::pow(p_cap / p_cap_ref_, exponent_);
+    return (exponent_ / p_cap) * (S_res - S_max) *
+           std::pow(p_cap / p_cap_max_, exponent_);
 }
 
 PropertyDataType SaturationExponential::d2Value(

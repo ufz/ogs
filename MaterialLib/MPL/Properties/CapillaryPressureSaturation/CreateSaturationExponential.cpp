@@ -31,15 +31,15 @@ std::unique_ptr<SaturationExponential> createSaturationExponential(
     auto const residual_gas_saturation =
         //! \ogs_file_param{properties__property__SaturationExponential__residual_gas_saturation}
         config.getConfigParameter<double>("residual_gas_saturation");
-    auto const p_cap_ref =
-        //! \ogs_file_param{properties__property__SaturationExponential__reference_capillary_pressure}
-        config.getConfigParameter<double>("reference_capillary_pressure");
+    auto const p_cap_max =
+        //! \ogs_file_param{properties__property__SaturationExponential__maximum_capillary_pressure}
+        config.getConfigParameter<double>("maximum_capillary_pressure");
     auto const exponent =
         //! \ogs_file_param{properties__property__SaturationExponential__exponent}
         config.getConfigParameter<double>("exponent");
 
     return std::make_unique<SaturationExponential>(
         std::move(property_name), residual_liquid_saturation,
-        residual_gas_saturation, p_cap_ref, exponent);
+        residual_gas_saturation, p_cap_max, exponent);
 }
 }  // namespace MaterialPropertyLib

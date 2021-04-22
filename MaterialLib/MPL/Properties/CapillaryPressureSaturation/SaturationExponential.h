@@ -24,17 +24,17 @@ namespace MaterialPropertyLib
  * of capillary pressure.
  *
  * The capillary pressure-saturation relationship given by
- * \f$s_{eff}=1-\left(\frac{p_{c}}{p_{c}^{ref}}\right)^{\lambda}\f$,
+ * \f$S_{eff}=1-\left(\frac{p_{c}}{p_{c}^{max}}\right)^{\lambda}\f$,
  * where
  * \f$\lambda\f$ is an exponent,
  * \f$p_{c}\f$ is capillary pressure,
- * \f$p_{c}^{ref}\f$ is reference capillary pressure at which \f$s_{eff}=0\f$.
+ * \f$p_{c}^{max}\f$ is the maximum capillary pressure at which \f$S_{eff}=0\f$.
  *
  * This property can mainly be used for testing. If the exponent is set to 1,
  * the characteristic curve shows a linear dependence.
  *
  *
- * Reference capillary pressure at which \f$s_{eff}=0\f$.
+ * Reference capillary pressure at which \f$S_{eff}=0\f$.
  */
 class SaturationExponential final : public Property
 {
@@ -43,15 +43,15 @@ private:
         residual_liquid_saturation_;  ///< Residual saturation of the gas phase.
     const double
         residual_gas_saturation_;  ///< Residual saturation of the liquid phase.
-    const double p_cap_ref_;       ///< Reference capillary pressure at which
+    const double p_cap_max_;       ///< Maximum capillary pressure at which
                                    ///  effective saturation is zero.
-    const double exponent_;        ///< Exponent to govern the shape of the curve.
+    const double exponent_;  ///< Exponent to govern the shape of the curve.
 
 public:
     SaturationExponential(std::string name,
                           const double residual_liquid_saturation,
                           const double residual_gas_saturation,
-                          const double p_cap_ref, const double exponent);
+                          const double p_cap_max, const double exponent);
 
     void checkScale() const override
     {

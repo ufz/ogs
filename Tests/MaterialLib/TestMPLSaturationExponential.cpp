@@ -22,19 +22,19 @@ TEST(MaterialPropertyLib, SaturationExponential)
     double const residual_liquid_saturation = 0.1;
     double const residual_gas_saturation = 0.05;
     double const exponent = 1.5;
-    double const p_cap_ref = 30000;
+    double const p_cap_max = 30000;
 
     MPL::Property const& saturation = MPL::SaturationExponential{
         "saturation", residual_liquid_saturation, residual_gas_saturation,
-        p_cap_ref, exponent};
+        p_cap_max, exponent};
 
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
     double const t = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    double const p_0 = -p_cap_ref;
-    double const p_max = 1.5 * p_cap_ref;
+    double const p_0 = -p_cap_max;
+    double const p_max = 1.5 * p_cap_max;
     int const n_steps = 9999;
     for (int i = 0; i <= n_steps; ++i)
     {
@@ -46,7 +46,7 @@ TEST(MaterialPropertyLib, SaturationExponential)
         double const s_max = 1. - residual_gas_saturation;
         double const s_eff =
             1. -
-            std::pow(std::clamp(p_cap, 0., p_cap_ref) / p_cap_ref, exponent);
+            std::pow(std::clamp(p_cap, 0., p_cap_max) / p_cap_max, exponent);
 
         double s_ref = s_eff * (s_max - s_res) + s_res;
 
