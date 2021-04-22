@@ -10,8 +10,11 @@
  *
  */
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
+#include <xml_patch.h>
 
 #include <chrono>
 
@@ -77,6 +80,12 @@ int main(int argc, char* argv[])
         "",
         "PROJECT_FILE");
     cmd.add(project_arg);
+
+    TCLAP::ValueArg<std::string> xml_patch_file(
+        "p", "xml-patch",
+        "the xml patch file which is applied to the PROJECT_FILE", false, "",
+        "XML_PATCH_FILE");
+    cmd.add(xml_patch_file);
 
     TCLAP::ValueArg<std::string> outdir_arg("o", "output-directory",
                                             "the output directory to write to",
@@ -177,11 +186,74 @@ int main(int argc, char* argv[])
                 spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
             }
 #endif
+
             run_time.start();
 
+            std::string prj_file;
+            // read diff
+            if (xml_patch_file.getValue() != "")
+            {
+                auto patch = xmlParseFile(xml_patch_file.getValue().c_str());
+                if (patch == NULL)
+                {
+                    OGS_FATAL("Error reading XML diff file {:s}.",
+                              xml_patch_file.getValue());
+                }
+
+                auto doc = xmlParseFile(project_arg.getValue().c_str());
+                if (doc == NULL)
+                {
+                    OGS_FATAL("Error reading project file {:s}.",
+                              project_arg.getValue());
+                }
+
+                auto node = xmlDocGetRootElement(patch);
+                int rc = 0;
+                for (node = node ? node->children : NULL; node;
+                     node = node->next)
+                {
+                    if (node->type != XML_ELEMENT_NODE)
+                        continue;
+
+                    if (!strcmp((char*)node->name, "add"))
+                        rc = xml_patch_add(doc, node);
+                    else if (!strcmp((char*)node->name, "replace"))
+                        rc = xml_patch_replace(doc, node);
+                    else if (!strcmp((char*)node->name, "remove"))
+                        rc = xml_patch_remove(doc, node);
+                    else
+                        rc = -1;
+
+                    if (rc)
+                        break;
+                }
+
+                if (rc != 0)
+                {
+                    OGS_FATAL(
+                        "Error while patching prj file {:s} with patch file "
+                        "{:}.",
+                        project_arg.getValue(), xml_patch_file.getValue());
+                }
+
+                prj_file =
+                    BaseLib::joinPaths(outdir_arg.getValue(),
+                                       BaseLib::extractBaseNameWithoutExtension(
+                                           xml_patch_file.getValue()) +
+                                           ".prj");
+                xmlSaveFile(prj_file.c_str(), doc);
+
+                xmlFreeDoc(doc);
+                xmlFreeDoc(patch);
+                xmlCleanupParser();
+            }
+            else
+            {
+                prj_file = project_arg.getValue();
+            }
+
             auto project_config = BaseLib::makeConfigTree(
-                project_arg.getValue(), !nonfatal_arg.getValue(),
-                "OpenGeoSysProject");
+                prj_file, !nonfatal_arg.getValue(), "OpenGeoSysProject");
 
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));

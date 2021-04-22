@@ -62,6 +62,7 @@ target_link_libraries(
             $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
             tclap
+            xmlpatch
 )
 
 target_compile_definitions(
