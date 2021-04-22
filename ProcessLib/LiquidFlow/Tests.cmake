@@ -448,6 +448,26 @@ AddTest(
 )
 
 AddTest(
+    NAME LiquidFlow_Flux_3D_HEX_Parallel_2
+    PATH Parabolic/LiquidFlow/Flux/3D/Hex/Parallel
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cuboid_1x1x1_hex_27_Dirichlet_Dirichlet.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400_000000_0.vtu pressure pressure 1e-10 1e-15
+    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400_000000_1.vtu pressure pressure 1e-10 1e-15
+    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400_000000_0.vtu pressure pressure  1e-7 1e-13
+    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400_000000_1.vtu pressure pressure  1e-7 1e-13
+    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400_000000_0.vtu pressure pressure  1e-7 1e-13
+    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400_000000_1.vtu pressure pressure  1e-7 1e-13
+    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_2_t_86400_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_2_t_86400_000000_0.vtu specific_flux specific_flux  1e-7 1e-13
+    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_2_t_86400_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_2_t_86400_000000_1.vtu specific_flux specific_flux  1e-7 1e-13
+)
+
+AddTest(
     NAME SimpleSynthetics_XDMF
     PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF
     EXECUTABLE ogs

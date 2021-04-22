@@ -284,7 +284,7 @@ void Output::doOutputAlways(Process const& process,
     bool output_secondary_variable = true;
     // Need to add variables of process to vtu even no output takes place.
     addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
-                         process.getProcessVariables(process_id),
+                         dof_tables, process.getProcessVariables(process_id),
                          process.getSecondaryVariables(),
                          output_secondary_variable,
                          process.getIntegrationPointWriter(process.getMesh()),
@@ -339,16 +339,16 @@ void Output::doOutputAlways(Process const& process,
             continue;
         }
         // mesh related output
-        auto& mesh = *BaseLib::findElementOrError(
+        auto& non_bulk_mesh = *BaseLib::findElementOrError(
             begin(_meshes), end(_meshes),
             [&mesh_output_name](auto const& m) {
                 return m->getName() == mesh_output_name;
             },
             "Need mesh '" + mesh_output_name + "' for the output.");
 
-        std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
+        std::vector<MeshLib::Node*> const& nodes = non_bulk_mesh.getNodes();
         DBUG("Found {:d} nodes for output at mesh '{:s}'.", nodes.size(),
-             mesh.getName());
+             non_bulk_mesh.getName());
 
         std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
             mesh_dof_tables;
@@ -357,7 +357,7 @@ void Output::doOutputAlways(Process const& process,
         {
             mesh_dof_tables.push_back(
                 process.getDOFTable(i).deriveBoundaryConstrainedMap(
-                    MeshLib::MeshSubset{mesh, nodes}));
+                    MeshLib::MeshSubset{non_bulk_mesh, nodes}));
         }
         std::vector<NumLib::LocalToGlobalIndexMap const*>
             mesh_dof_table_pointers;
@@ -369,18 +369,14 @@ void Output::doOutputAlways(Process const& process,
                   });
 
         output_secondary_variable = false;
-        addProcessDataToMesh(t, x, process_id, mesh, mesh_dof_table_pointers,
-                             process.getProcessVariables(process_id),
-                             process.getSecondaryVariables(),
-                             output_secondary_variable,
-                             process.getIntegrationPointWriter(mesh),
-                             _output_data_specification);
+        addProcessDataToMesh(
+            t, x, process_id, non_bulk_mesh, dof_tables,
+            mesh_dof_table_pointers, process.getProcessVariables(process_id),
+            process.getSecondaryVariables(), output_secondary_variable,
+            process.getIntegrationPointWriter(non_bulk_mesh),
+            _output_data_specification);
 
-        // TODO (TomFischer): add pvd support here. This can be done if the
-        // output is mesh related instead of process related. This would also
-        // allow for merging bulk mesh output and arbitrary mesh output.
-
-        output_bulk_mesh(mesh);
+        output_bulk_mesh(non_bulk_mesh);
     }
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
@@ -444,7 +440,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
 
     bool const output_secondary_variable = true;
     addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
-                         process.getProcessVariables(process_id),
+                         dof_tables, process.getProcessVariables(process_id),
                          process.getSecondaryVariables(),
                          output_secondary_variable,
                          process.getIntegrationPointWriter(process.getMesh()),

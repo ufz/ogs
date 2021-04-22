@@ -33,7 +33,8 @@ struct OutputDataSpecification final
 void addProcessDataToMesh(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& bulk_dof_tables,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
     SecondaryVariableCollection const& secondary_variables,
