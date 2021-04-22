@@ -56,7 +56,7 @@ std::stringstream config(const double molar_mass,
     m << "         </independent_variable>\n";
     m << " </property>\n";
     m << "                        <property>\n";
-    m << "                            <name>vapor_pressure</name>\n";
+    m << "                            <name>vapour_pressure</name>\n";
     m << "                            <type>ClausiusClapeyron</type>\n";
     m << "<triple_temperature>" << T_triple << "</triple_temperature>\n";
     m << "<critical_temperature>" << T_critical << "</critical_temperature>\n";
@@ -105,7 +105,7 @@ std::array<double, 29> const ref_liquid_pressure = {
     1.50000E+05, 2.00000E+05, 5.00000E+05, 1.00000E+06, 5.00000E+06,
     1.01325E+05, 1.50000E+05, 2.00000E+05, 5.00000E+05};
 
-std::array<double, 29> const ref_vapor_pressure = {
+std::array<double, 29> const ref_vapour_pressure = {
     8.36218490000000E+02, 8.36218490000000E+02, 8.36218490000000E+02,
     8.36218490000000E+02, 8.36218490000000E+02, 9.35003929341767E+02,
     1.28489641893467E+03, 4.12252674333030E+03, 1.14370551053552E+04,
@@ -117,7 +117,7 @@ std::array<double, 29> const ref_vapor_pressure = {
     4.08809303341452E+05, 8.36218490000000E+02, 4.12894398711138E+03,
     1.82193325072170E+04, 6.28213193519972E+04};
 
-std::array<double, 29> const ref_d_vapor_pressure_dT = {
+std::array<double, 29> const ref_d_vapour_pressure_dT = {
     0.00000000000000E+00, 0.00000000000000E+00, 0.00000000000000E+00,
     0.00000000000000E+00, 5.48586853887215E+01, 6.05228838489413E+01,
     8.02335271069103E+01, 2.24315684282508E+02, 5.47138176563398E+02,
@@ -129,7 +129,7 @@ std::array<double, 29> const ref_d_vapor_pressure_dT = {
     1.08201481763584E+04, 0.00000000000000E+00, 2.24555657648407E+02,
     8.18907637521856E+02, 2.36684655384022E+03};
 
-std::array<double, 29> const ref_d_vapor_pressure_dp = {
+std::array<double, 29> const ref_d_vapour_pressure_dp = {
     0.00000000000000E+00,  0.00000000000000E+00,  0.00000000000000E+00,
     0.00000000000000E+00,  4.01150605544652E-05,  4.37340067538689E-05,
     5.60197502360705E-05,  1.31736092964623E-04,  2.48952060831370E-04,
@@ -171,25 +171,25 @@ TEST(MaterialPropertyLib, ClausiusClapeyron)
 
         auto const p_vap =
             gas_phase.component(0)
-                .property(MaterialPropertyLib::PropertyType::vapor_pressure)
+                .property(MaterialPropertyLib::PropertyType::vapour_pressure)
                 .template value<double>(variable_array, pos, t, dt);
 
         auto const d_p_vap_dT =
             gas_phase.component(0)
-                .property(MaterialPropertyLib::PropertyType::vapor_pressure)
+                .property(MaterialPropertyLib::PropertyType::vapour_pressure)
                 .template dValue<double>(
                     variable_array, MaterialPropertyLib::Variable::temperature,
                     pos, t, dt);
 
         auto const d_p_vap_dp =
             gas_phase.component(0)
-                .property(MaterialPropertyLib::PropertyType::vapor_pressure)
+                .property(MaterialPropertyLib::PropertyType::vapour_pressure)
                 .template dValue<double>(
                     variable_array,
                     MaterialPropertyLib::Variable::phase_pressure, pos, t, dt);
 
-        ASSERT_NEAR(p_vap, ref_vapor_pressure[i], 1.e-7);
-        ASSERT_NEAR(d_p_vap_dT, ref_d_vapor_pressure_dT[i], 1.e-7);
-        ASSERT_NEAR(d_p_vap_dp, ref_d_vapor_pressure_dp[i], 1.e-7);
+        ASSERT_NEAR(p_vap, ref_vapour_pressure[i], 1.e-7);
+        ASSERT_NEAR(d_p_vap_dT, ref_d_vapour_pressure_dT[i], 1.e-7);
+        ASSERT_NEAR(d_p_vap_dp, ref_d_vapour_pressure_dp[i], 1.e-7);
     }
 }

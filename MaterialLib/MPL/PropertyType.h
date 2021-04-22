@@ -94,7 +94,7 @@ enum PropertyType : int
     transport_porosity,
     /// used to compute the hydrodynamic dispersion tensor.
     transversal_dispersivity,
-    vapor_pressure,
+    vapour_pressure,
     vapour_density,
     vapour_diffusion,
     viscosity,
@@ -317,9 +317,9 @@ inline PropertyType convertStringToProperty(std::string const& inString)
     {
         return PropertyType::transversal_dispersivity;
     }
-    if (boost::iequals(inString, "vapor_pressure"))
+    if (boost::iequals(inString, "vapour_pressure"))
     {
-        return PropertyType::vapor_pressure;
+        return PropertyType::vapour_pressure;
     }
     if (boost::iequals(inString, "vapour_density"))
     {
@@ -399,7 +399,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "thermal_transversal_dispersivity",
                              "transport_porosity",
                              "transversal_dispersivity",
-                             "vapor_pressure",
+                             "vapour_pressure",
                              "vapour_density",
                              "vapour_diffusion",
                              "viscosity",
