@@ -12,11 +12,11 @@
 
 #pragma once
 #include <filesystem.h>
+#include <hdf5.h>
 
 #include <vector>
 
 #include "HdfData.h"
-#include <hdf5.h>
 
 namespace MeshLib::IO
 {
@@ -32,10 +32,8 @@ public:
      * @param step number of the step (temporal collection)
      * @param filepath absolute or relative filepath to the hdf5 file
      */
-    HdfWriter(std::vector<HdfData>
-                  constant_attributes,
-              std::vector<HdfData>
-                  variable_attributes,
+    HdfWriter(std::vector<HdfData> constant_attributes,
+              std::vector<HdfData> variable_attributes,
               int const step,
               std::filesystem::path const& filepath);
 

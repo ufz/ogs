@@ -42,10 +42,11 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
 
     std::vector<HdfData> hdf_variable_attributes;
     std::copy_if(hdf_data_attributes.begin(), hdf_data_attributes.end(),
-                 back_inserter(hdf_variable_attributes), is_variable_hdf_attribute);
-    std::vector<HdfData> constant_attributes;
+                 back_inserter(hdf_variable_attributes),
+                 is_variable_hdf_attribute);
+    std::vector<HdfData> hdf_constant_attributes;
     std::copy_if(hdf_data_attributes.begin(), hdf_data_attributes.end(),
-                 back_inserter(constant_attributes),
+                 back_inserter(hdf_constant_attributes),
                  std::not_fn(is_variable_hdf_attribute));
 
     // HDF5
@@ -54,9 +55,9 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
 
     // geometry hdf data refers to the local data geometry and topology vector.
     // The hdf writer can write when data is out of scope.
-    _hdf_writer = std::make_unique<HdfWriter>(std::move(constant_attributes),
-                                              std::move(hdf_variable_attributes),
-                                              time_step, hdf_filepath);
+    _hdf_writer = std::make_unique<HdfWriter>(
+        std::move(hdf_constant_attributes), std::move(hdf_variable_attributes),
+        time_step, hdf_filepath);
     // XDMF
     // The light data is only written by just one process
     if (!isFileManager())
@@ -82,7 +83,7 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     std::vector<XdmfData> xdmf_variable_attributes;
     std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),
                  back_inserter(xdmf_variable_attributes),
-                is_variable_xdmf_attribute);
+                 is_variable_xdmf_attribute);
 
     std::vector<XdmfData> xdmf_constant_attributes;
     std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),

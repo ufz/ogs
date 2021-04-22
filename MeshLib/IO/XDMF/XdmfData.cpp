@@ -58,10 +58,6 @@ XdmfData::XdmfData(std::size_t size_partitioned_dim,
       attribute_center(attribute_center)
 {
     auto partition_info = getPartitionInfo(size_partitioned_dim);
-    DBUG(
-        "XdmfData: The partition of dataset {:s} has dimension {:d} and offset "
-        "{:d}.",
-        name, size_partitioned_dim, partition_info.local_offset);
     // TODO (tm) XdmfLib does not support 64 bit data types so far
     assert(partition_info.local_length <
            std::numeric_limits<unsigned int>::max());

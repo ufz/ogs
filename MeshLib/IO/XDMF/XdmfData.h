@@ -35,6 +35,7 @@ struct XdmfData
      * be the dimension that is partitioned. This first dimension expresses  the
      * length, usually the number of nodes or the number of cells. These values
      * give the length of the local partition.
+     * @param MeshPropertyDataType OGS propertyVector's data type
      * @param size_tuple We assume there is at most a rank of 2 of data
      * (properties). The size of tuple gives the length of the second dimension
      * (index 1).

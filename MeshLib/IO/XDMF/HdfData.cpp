@@ -65,12 +65,12 @@ HdfData::HdfData(void const* data_start, std::size_t const size_partitioned_dim,
             ? std::vector<Hdf5DimType>{partition_info.global_length, size_tuple}
             : std::vector<Hdf5DimType>{partition_info.global_length};
 
-    INFO(
-        "Size {:d} x {:d} \t Offset "
-        "{:d} \t Global chunk {:d} \t  Global length {:d} \t Dataset {:s} ",
-        partition_info.local_length, size_tuple,
-        partition_info.local_offset, partition_info.longest_local_length,
-        partition_info.global_length, name );
     data_type = meshPropertyType2HdfType(mesh_property_data_type);
-}
+
+    DBUG(
+        "HDF: dataset name: {:s}, offset: {:d}, data_space: {:d}, chunk_space "
+        "{:d}, file_space: {:d}, tuples: {:d}",
+        name, partition_info.local_offset, data_space[0], chunk_space[0],
+        file_space[0], size_tuple);
+    }
 }  // namespace MeshLib::IO

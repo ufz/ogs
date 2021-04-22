@@ -11,13 +11,13 @@
  *
  */
 
+#include "../partition.h"
+
 #include <mpi.h>
 
 #include <deque>
 #include <numeric>
 
-
-#include "../partition.h"
 #include "BaseLib/Logging.h"
 #include "MeshLib/IO/XDMF/fileIO.h"
 
