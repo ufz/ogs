@@ -38,6 +38,8 @@ To build with the `ninja` tool on the shell go to your previously configured bui
 cd ../build/release
 ninja
 ```
+By default, `ninja` uses maximum parallelism causing it to crash on many machines as the memory consumption exceeds the available memory.
+Therefore, we recommend restricting the number of threads to be used, e.g., type `ninja -j 2` for a maximum of two threads.
 </div>
 
 <div class='mac'>
