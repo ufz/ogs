@@ -25,6 +25,7 @@
 #include "EffectiveThermalConductivityPorosityMixing.h"
 #include "EmbeddedFracturePermeability.h"
 #include "Enthalpy/LinearWaterVapourLatentHeat.h"
+#include "Enthalpy/WaterVapourLatentHeatWithCriticalTemperature.h"
 #include "Exponential.h"
 #include "GasPressureDependentPermeability.h"
 #include "IdealGasLaw.h"

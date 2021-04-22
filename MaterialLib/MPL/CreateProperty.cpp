@@ -247,6 +247,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createLinearWaterVapourLatentHeat(config);
     }
 
+    if (boost::iequals(property_type,
+                       "WaterVapourLatentHeatWithCriticalTemperature"))
+    {
+        return createWaterVapourLatentHeatWithCriticalTemperature(config);
+    }
+
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL("The specified component property type '{:s}' was not recognized",
               property_type);

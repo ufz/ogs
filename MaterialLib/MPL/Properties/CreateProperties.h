@@ -40,6 +40,7 @@
 #include "CreateTransportPorosityFromMassBalance.h"
 #include "Density/CreateWaterVapourDensity.h"
 #include "Enthalpy/CreateLinearWaterVapourLatentHeat.h"
+#include "Enthalpy/CreateWaterVapourLatentHeatWithCriticalTemperature.h"
 #include "RelativePermeability/CreateRelPermBrooksCorey.h"
 #include "RelativePermeability/CreateRelPermBrooksCoreyNonwettingPhase.h"
 #include "RelativePermeability/CreateRelPermLiakopoulos.h"
