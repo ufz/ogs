@@ -21,10 +21,10 @@ class Medium;
 class Phase;
 class Component;
 /**
- * Vapor pressure as function of temperature based on Clausius-Clapeyron
+ * Vapour pressure as function of temperature based on Clausius-Clapeyron
  * equation.
  * This property must be either a phase or a component
- * property, it computes the saturation vapor pressure of a substance
+ * property, it computes the saturation vapour pressure of a substance
  */
 class ClausiusClapeyron final : public Property
 {
