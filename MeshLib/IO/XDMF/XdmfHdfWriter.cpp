@@ -34,12 +34,27 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
                    std::back_inserter(hdf_data_attributes),
                    [](AttributeMeta att) -> HdfData { return att.hdf; });
 
+    // if no output name is specified, all data will be assumened to be variable
+    // over the timesteps. The xdmfhdfwriter is an alternative to other writers,
+    // that do not consider the constantness of data Callers of xdmfwriter (e.g.
+    // ogs tools) do not provide these information yet and indicate with empty
+    // list
     std::function<bool(HdfData)> is_variable_hdf_attribute =
-        [&variable_output_names](HdfData data) -> bool {
-        return std::find(variable_output_names.begin(),
-                         variable_output_names.end(),
-                         data.name) != variable_output_names.end();
-    };
+        [&variable_output_names](
+            bool outputnames) -> std::function<bool(HdfData)> {
+        if (outputnames)
+        {
+            return [&variable_output_names](HdfData data) -> bool {
+                return std::find(variable_output_names.begin(),
+                                 variable_output_names.end(),
+                                 data.name) != variable_output_names.end();
+            };
+        }
+        else
+        {
+            return [](HdfData) -> bool { return true; };
+        }
+    }(!variable_output_names.empty());
 
     std::vector<HdfData> hdf_variable_attributes;
     std::copy_if(hdf_data_attributes.begin(), hdf_data_attributes.end(),
