@@ -34,6 +34,9 @@ set_source_files_properties(
 set(TEST_SOURCES ${TEST_SOURCES} ${TEST_SOURCES_NUMLIB})
 append_source_files(TEST_SOURCES ParameterLib)
 append_source_files(TEST_SOURCES ProcessLib)
+if(OGS_BUILD_PROCESS_TH2M)
+    append_source_files(TEST_SOURCES ProcessLib/TH2M)
+endif()
 
 if(OGS_BUILD_GUI)
     append_source_files(TEST_SOURCES FileIO_Qt)
@@ -73,6 +76,7 @@ target_link_libraries(
             Threads::Threads
             ${VTK_LIBRARIES}
             $<$<TARGET_EXISTS:LIE>:LIE>
+            $<$<TARGET_EXISTS:TH2M>:TH2M>
             $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
             $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
