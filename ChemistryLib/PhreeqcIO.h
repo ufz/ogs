@@ -72,6 +72,16 @@ public:
 
     friend std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io);
 
+    void updateVolumeFractionPostReaction(
+        GlobalIndexType const& chemical_system_id,
+        MaterialPropertyLib::Medium const* medium,
+        ParameterLib::SpatialPosition const& pos, double const porosity,
+        double const t, double const dt) override;
+
+    void updatePorosityPostReaction(GlobalIndexType const& chemical_system_id,
+                                    MaterialPropertyLib::Medium const* medium,
+                                    double& porosity) override;
+
     void computeSecondaryVariable(
         std::size_t const ele_id,
         std::vector<GlobalIndexType> const& chemical_system_indices) override;

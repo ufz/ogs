@@ -88,6 +88,7 @@ void initializeReactantMolality(Reactant& reactant,
                 .template initialValue<double>(pos, t);
 
         (*reactant.molality)[chemical_system_id] = molality;
+        (*reactant.molality_prev)[chemical_system_id] = molality;
     }
     else
     {
@@ -97,6 +98,8 @@ void initializeReactantMolality(Reactant& reactant,
                 .template initialValue<double>(pos, t);
 
         (*reactant.volume_fraction)[chemical_system_id] = volume_fraction;
+
+        (*reactant.volume_fraction_prev)[chemical_system_id] = volume_fraction;
 
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -113,6 +116,9 @@ void initializeReactantMolality(Reactant& reactant,
 
         (*reactant.molality)[chemical_system_id] =
             volume_fraction / fluid_density / porosity / molar_volume;
+
+        (*reactant.molality_prev)[chemical_system_id] =
+            (*reactant.molality)[chemical_system_id];
     }
 }
 
@@ -130,10 +136,16 @@ void setReactantMolality(Reactant& reactant,
     if (solid_constituent.hasProperty(
             MaterialPropertyLib::PropertyType::molality))
     {
+        (*reactant.molality_prev)[chemical_system_id] =
+            (*reactant.molality)[chemical_system_id];
+
         return;
     }
 
     auto const volume_fraction =
+        (*reactant.volume_fraction)[chemical_system_id];
+
+    (*reactant.volume_fraction_prev)[chemical_system_id] =
         (*reactant.volume_fraction)[chemical_system_id];
 
     auto const& liquid_phase = medium->phase("AqueousLiquid");
@@ -151,6 +163,9 @@ void setReactantMolality(Reactant& reactant,
 
     (*reactant.molality)[chemical_system_id] =
         volume_fraction / fluid_density / porosity / molar_volume;
+
+    (*reactant.molality_prev)[chemical_system_id] =
+        (*reactant.molality)[chemical_system_id];
 }
 
 template <typename Reactant>
@@ -654,6 +669,67 @@ std::vector<std::string> const PhreeqcIO::getComponentList() const
     component_names.push_back("H");
 
     return component_names;
+}
+
+void PhreeqcIO::updateVolumeFractionPostReaction(
+    GlobalIndexType const& chemical_system_id,
+    MaterialPropertyLib::Medium const* medium,
+    ParameterLib::SpatialPosition const& pos, double const porosity,
+    double const t, double const dt)
+{
+    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    MaterialPropertyLib::VariableArray vars;
+
+    auto const liquid_density =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(vars, pos, t, dt);
+
+    for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
+    {
+        auto const& solid_constituent =
+            solid_phase.component(kinetic_reactant.name);
+
+        if (solid_constituent.hasProperty(
+                MaterialPropertyLib::PropertyType::molality))
+        {
+            continue;
+        }
+
+        auto const molar_volume =
+            solid_constituent
+                .property(MaterialPropertyLib::PropertyType::molar_volume)
+                .template value<double>(vars, pos, t, dt);
+
+        (*kinetic_reactant.volume_fraction)[chemical_system_id] +=
+            ((*kinetic_reactant.molality)[chemical_system_id] -
+             (*kinetic_reactant.molality_prev)[chemical_system_id]) *
+            liquid_density * porosity * molar_volume;
+    }
+}
+
+void PhreeqcIO::updatePorosityPostReaction(
+    GlobalIndexType const& chemical_system_id,
+    MaterialPropertyLib::Medium const* medium,
+    double& porosity)
+{
+    auto const& solid_phase = medium->phase("Solid");
+    for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
+    {
+        auto const& solid_constituent =
+            solid_phase.component(kinetic_reactant.name);
+
+        if (solid_constituent.hasProperty(
+                MaterialPropertyLib::PropertyType::molality))
+        {
+            continue;
+        }
+
+        porosity -=
+            ((*kinetic_reactant.volume_fraction)[chemical_system_id] -
+             (*kinetic_reactant.volume_fraction_prev)[chemical_system_id]);
+    }
 }
 
 void PhreeqcIO::computeSecondaryVariable(

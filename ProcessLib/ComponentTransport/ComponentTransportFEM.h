@@ -294,6 +294,7 @@ public:
             _process_data.media_map->getMedium(_element.getID());
 
         MaterialPropertyLib::VariableArray vars;
+        MaterialPropertyLib::VariableArray vars_prev;
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
@@ -305,6 +306,7 @@ public:
             auto& ip_data = _ip_data[ip];
             auto const& N = ip_data.N;
             auto& porosity = ip_data.porosity;
+            auto const& porosity_prev = ip_data.porosity_prev;
             auto const& chemical_system_id = ip_data.chemical_system_id;
 
             auto const n_component = _transport_process_variables.size();
@@ -323,8 +325,22 @@ public:
                                                  C_int_pt[component_id]);
             }
 
-            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                porosity;
+            {
+                vars_prev[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+
+                porosity =
+                    _process_data.chemically_induced_porosity_change
+                        ? porosity_prev
+                        : medium
+                              ->property(
+                                  MaterialPropertyLib::PropertyType::porosity)
+                              .template value<double>(vars, vars_prev, pos, t,
+                                                      dt);
+
+                vars[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = porosity;
+            }
 
             _process_data.chemical_solver_interface->setChemicalSystemConcrete(
                 C_int_pt, chemical_system_id, medium, vars, pos, t, dt);
@@ -663,9 +679,16 @@ public:
             {
                 vars_prev[static_cast<int>(
                     MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+
                 porosity =
-                    medium.property(MaterialPropertyLib::PropertyType::porosity)
-                        .template value<double>(vars, vars_prev, pos, t, dt);
+                    _process_data.chemically_induced_porosity_change
+                        ? porosity_prev
+                        : medium
+                              .property(
+                                  MaterialPropertyLib::PropertyType::porosity)
+                              .template value<double>(vars, vars_prev, pos, t,
+                                                      dt);
+
                 vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
                         porosity;
             }
@@ -789,9 +812,16 @@ public:
             {
                 vars_prev[static_cast<int>(
                     MaterialPropertyLib::Variable::porosity)] = porosity_prev;
+
                 porosity =
-                    medium.property(MaterialPropertyLib::PropertyType::porosity)
-                        .template value<double>(vars, vars_prev, pos, t, dt);
+                    _process_data.chemically_induced_porosity_change
+                        ? porosity_prev
+                        : medium
+                              .property(
+                                  MaterialPropertyLib::PropertyType::porosity)
+                              .template value<double>(vars, vars_prev, pos, t,
+                                                      dt);
+
                 vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
                         porosity;
             }
@@ -1128,7 +1158,7 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const t,
-        double const /*dt*/,
+        double const dt,
         Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& /*local_x_dot*/) override
     {
@@ -1153,6 +1183,28 @@ public:
 
         if (_process_data.chemical_solver_interface)
         {
+            if (_process_data.chemically_induced_porosity_change)
+            {
+                auto const& medium = _process_data.media_map->getMedium(ele_id);
+
+                ParameterLib::SpatialPosition pos;
+                pos.setElementID(ele_id);
+
+                for (auto& ip_data : _ip_data)
+                {
+                    ip_data.porosity = ip_data.porosity_prev;
+
+                    _process_data.chemical_solver_interface
+                        ->updateVolumeFractionPostReaction(
+                            ip_data.chemical_system_id, medium, pos,
+                            ip_data.porosity, t, dt);
+
+                    _process_data.chemical_solver_interface
+                        ->updatePorosityPostReaction(ip_data.chemical_system_id,
+                                                     medium, ip_data.porosity);
+                }
+            }
+
             std::vector<GlobalIndexType> chemical_system_indices;
             chemical_system_indices.reserve(n_integration_points);
             std::transform(
