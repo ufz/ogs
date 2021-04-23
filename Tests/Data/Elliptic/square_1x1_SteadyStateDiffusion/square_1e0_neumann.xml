@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff>
+    <replace sel="/*/time_loop/output/prefix/text()">square_1e0_neumann</replace>
+    <replace sel="/*/parameters/parameter[2]/name/text()">p_neumann</replace>
+    <replace sel="/*/parameters/parameter[3]/name/text()">p_Dirichlet</replace>
+    <replace sel="/*/parameters/parameter[3]/value/text()">1</replace>
+    <replace sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]/parameter/text()">p_Dirichlet</replace>
+    <replace sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[2]/type/text()">Neumann</replace>
+    <replace sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[2]/parameter/text()">p_neumann</replace>
+    <add sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]" pos="after">
+        <boundary_condition>
+            <geometrical_set>square_1x1_geometry</geometrical_set>
+            <geometry>bottom</geometry>
+            <type>Dirichlet</type>
+            <parameter>p_Dirichlet</parameter>
+        </boundary_condition>
+    </add>
+</OpenGeoSysProjectDiff>
