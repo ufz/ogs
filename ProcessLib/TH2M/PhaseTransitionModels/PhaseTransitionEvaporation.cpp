@@ -10,7 +10,6 @@
 #include "PhaseTransitionEvaporation.h"
 
 #include "MaterialLib/PhysicalConstant.h"
-#include "PhaseTransitionModels.h"
 
 namespace ProcessLib
 {
