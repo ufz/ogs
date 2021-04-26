@@ -72,13 +72,11 @@ struct IntegrationPointData final
         material_state_variables->pushBackState();
     }
 
-    template <typename DisplacementVectorType>
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
-        DisplacementVectorType const& /*u*/,
         double const temperature_prev)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;

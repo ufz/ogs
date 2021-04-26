@@ -353,8 +353,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        auto C = _ip_data[ip].updateConstitutiveRelationThermal(
-            vars, t, x_position, dt, u, T_int_pt - dT_int_pt);
+        auto C = _ip_data[ip].updateConstitutiveRelation(
+            vars, t, x_position, dt, T_int_pt - dT_int_pt);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -734,8 +734,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        _ip_data[ip].updateConstitutiveRelationThermal(vars, t, x_position, dt,
-                                                       u, T_int_pt - dT_int_pt);
+        _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt,
+                                                T_int_pt - dT_int_pt);
     }
 }
 
