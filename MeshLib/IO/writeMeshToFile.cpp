@@ -14,7 +14,9 @@
 #include "BaseLib/StringTools.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#ifdef OGS_USE_XDMF
 #include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
+#endif
 #include "MeshLib/Mesh.h"
 
 namespace MeshLib::IO
