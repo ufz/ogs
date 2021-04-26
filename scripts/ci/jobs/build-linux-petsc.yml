@@ -9,3 +9,5 @@ build linux petsc:
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-petsc
+    CMAKE_ARGS: >-
+      -DOGS_USE_XDMF=ON
