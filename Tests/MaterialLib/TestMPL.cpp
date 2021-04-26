@@ -21,6 +21,8 @@
 #include "ParameterLib/Parameter.h"
 #include "Tests/TestTools.h"
 
+#include <sstream>
+
 namespace Tests
 {
 std::unique_ptr<MPL::Medium> createTestMaterial(
@@ -57,4 +59,17 @@ std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(
     return createProperty(sub_config);
 }
 
+std::string makeConstantPropertyElement(std::string const name,
+                                        double const value)
+{
+    std::stringstream ss;
+
+    ss << "<property>\n";
+    ss << "    <name>" << name << "</name>\n";
+    ss << "    <type>Constant</type>\n";
+    ss << "    <value> " << value << " </value>\n";
+    ss << "</property>\n";
+
+    return ss.str();
+}
 }  // namespace Tests

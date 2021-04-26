@@ -62,6 +62,10 @@ Variable convertStringToVariable(std::string const& input)
     {
         return Variable::solid_grain_pressure;
     }
+    if (boost::iequals(input, "vapour_pressure"))
+    {
+        return Variable::vapour_pressure;
+    }
 
     OGS_FATAL(
         "The variable name '{:s}' does not correspond to any known variable",
