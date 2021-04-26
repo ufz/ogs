@@ -23,7 +23,6 @@
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 /// Copies the ogs_version string containing the release number and the git
@@ -315,7 +314,6 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                            // exceptions.
 #endif                     //_WIN32
 #endif                     //__APPLE__
-
 
     MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
     vtu_interface.writeToFile(file_name);
