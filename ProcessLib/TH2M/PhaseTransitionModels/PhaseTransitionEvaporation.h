@@ -30,9 +30,9 @@ struct PhaseTransitionEvaporation : PhaseTransitionModels
                                   double const t, double const dt) override;
 
 private:
-    int n_components_gas_;
-    int gas_phase_vapour_component_index_ = -1;
-    int gas_phase_dry_air_component_index_ = -1;
+    int const n_components_gas_;
+    int const gas_phase_vapour_component_index_;
+    int const gas_phase_dry_air_component_index_;
 };
 
 }  // namespace TH2M
