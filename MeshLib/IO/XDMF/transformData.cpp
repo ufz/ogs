@@ -12,6 +12,7 @@
 #include "transformData.h"
 
 #include <XdmfTopologyType.hpp>
+#include <algorithm>
 #include <optional>
 #include <string>
 
@@ -192,7 +193,6 @@ std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh)
 
     // \TODO (tm) use c++20 ranges
     // a = p | filter (first!=OGS_VERSION) | filter null_opt | transformAttr |
-    // optional_value
     std::vector<AttributeMeta> attributes;
     for (auto [name, property_base] : properties)
     {
@@ -201,10 +201,13 @@ std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh)
             continue;
         }
 
-        auto attribute = transformAttribute(std::pair(name, property_base));
-        if (attribute)
+        if (auto attribute = transformAttribute(std::pair(name, property_base)))
         {
             attributes.push_back(attribute.value());
+        }
+        else
+        {
+            WARN("Could not create attribute meta of {:s}.", name);
         }
     }
     return attributes;

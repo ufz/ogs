@@ -12,6 +12,7 @@
 
 #pragma once
 #include <filesystem.h>
+#include <hdf5.h>
 
 #include <vector>
 
@@ -26,19 +27,21 @@ public:
      * \brief Write file with geometry and topology data. The data
      * itself is held by a structure outside of this class. The writer assumes
      * the data holder to not change during writing
-     * @param geometry contains meta data to coordinates
-     * @param topology contains meta data cells
-     * @param attributes vector of attributes (each attribute is a OGS mesh
-     * property)
+     * @param constant_attributes vector of constant attributes (each attribute
+     * is a OGS mesh property), geometry and topology are considered as constant
+     * attributes
+     * @param variable_attributes vector of variable attributes (each attribute
+     * is a OGS mesh property
      * @param step number of the step (temporal collection)
      * @param filepath absolute or relative filepath to the hdf5 file
+     * @param use_compression if true gzip compression is enabled
      */
-    HdfWriter(HdfData const& geometry,
-              HdfData const& topology,
+    HdfWriter(std::vector<HdfData> constant_attributes,
               std::vector<HdfData>
-                  attributes,
+                  variable_attributes,
               int const step,
-              std::filesystem::path const& filepath);
+              std::filesystem::path const& filepath,
+              bool const use_compression);
 
     /**
      * \brief Writes attributes. The data
@@ -49,10 +52,12 @@ public:
      * @return true = success, false = error
      */
     bool writeStep(int step) const;
+    ~HdfWriter();
 
 private:
-    std::vector<HdfData> const _attributes;
+    std::vector<HdfData> const _variable_attributes;
     std::filesystem::path const _hdf5_filepath;
-    bool const _has_compression;
+    bool const _use_compression;
+    hid_t _file;
 };
 }  // namespace MeshLib::IO

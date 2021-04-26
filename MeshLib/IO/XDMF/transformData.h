@@ -11,6 +11,9 @@
  */
 #pragma once
 
+#include <set>
+#include <string>
+
 #include "XdmfHdfData.h"
 
 namespace MeshLib
@@ -40,6 +43,7 @@ Geometry transformGeometry(MeshLib::Mesh const& mesh);
  * @param mesh OGS mesh can be mesh or partitionedMesh
  * @param offset Local offset to transform local to global cell ID. Offset must
  * be zero in serial and must be defined for each process in parallel execution.
+
  * @return Topology containing a copy of the data and the topology meta data
  */
 Topology transformTopology(MeshLib::Mesh const& mesh, std::size_t offset);

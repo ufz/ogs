@@ -43,7 +43,6 @@ struct XdmfData
      * @param attribute_center XdmfData is used for topology, geometry and
      * attributes. Geometry and topology have never a attribute_center.
      * Attributes have always an  attribute_center
-     * @return vector of meta data
      */
     XdmfData(std::size_t size_partitioned_dim, std::size_t size_tuple,
              MeshPropertyDataType mesh_property_data_type,
@@ -53,12 +52,7 @@ struct XdmfData
     // https://www.xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
     std::vector<XdmfDimType> const starts;
     std::vector<XdmfDimType> const strides;
-    // piece and block nomenclature taken from
-    // https://www.paraview.org/Wiki/VTK/Tutorials/Composite_Datasets in XDMF it
-    // refers to spatial grid collection composed from subsets
-    // https://www.xdmf.org/index.php/XDMF_Model_and_Format#Grid
-    std::vector<XdmfDimType> piece_dims;
-    std::vector<XdmfDimType> block_dims;
+    std::vector<XdmfDimType> global_block_dims;
     boost::shared_ptr<const XdmfArrayType> data_type;
     std::string const name;
     std::optional<MeshLib::MeshItemType> const attribute_center;

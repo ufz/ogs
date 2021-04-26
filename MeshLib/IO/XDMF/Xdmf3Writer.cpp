@@ -60,8 +60,8 @@ static boost::shared_ptr<XdmfGeometry> getLightGeometry(
                                 XdmfArrayType::Float64(),
                                 geometry.starts,
                                 geometry.strides,
-                                geometry.block_dims,
-                                geometry.block_dims);
+                                geometry.global_block_dims,
+                                geometry.global_block_dims);
     xdmf_geometry->setHeavyDataController(geometry_controller);
     return xdmf_geometry;
 }
@@ -77,8 +77,8 @@ static boost::shared_ptr<XdmfTopology> getLightTopology(
                                 XdmfArrayType::Int32(),
                                 topology.starts,
                                 topology.strides,
-                                topology.block_dims,
-                                topology.block_dims);
+                                topology.global_block_dims,
+                                topology.global_block_dims);
     xdmf_topology->setHeavyDataController(topology_controller);
     return xdmf_topology;
 }
@@ -92,8 +92,8 @@ static boost::shared_ptr<XdmfAttribute> getLightAttribute(
                                 attribute.data_type,
                                 attribute.starts,
                                 attribute.strides,
-                                attribute.block_dims,
-                                attribute.block_dims);
+                                attribute.global_block_dims,
+                                attribute.global_block_dims);
 
     auto const xdmf_attribute = XdmfAttribute::New();
     auto const center = elemTypeOGS2XDMF(*(attribute.attribute_center));
@@ -106,14 +106,22 @@ static boost::shared_ptr<XdmfAttribute> getLightAttribute(
 namespace MeshLib::IO
 {
 Xdmf3Writer::Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
-                         std::vector<XdmfData> attributes,
+                         std::vector<XdmfData> constant_attributes,
+                         std::vector<XdmfData> variable_attributes,
                          std::filesystem::path const& filepath,
                          int const time_step)
-    : _attributes(std::move(attributes)),
+    : _variable_attributes(std::move(variable_attributes)),
       _hdf5filename(filepath.stem().string() + ".h5")
 {
     _initial_geometry = getLightGeometry(_hdf5filename, time_step, geometry);
     _initial_topology = getLightTopology(_hdf5filename, time_step, topology);
+
+    std::transform(
+        constant_attributes.begin(), constant_attributes.end(),
+        std::back_inserter(_constant_attributes),
+        [&](XdmfData const& attribute) -> boost::shared_ptr<XdmfAttribute> {
+            return getLightAttribute(_hdf5filename, time_step, attribute);
+        });
 
     _writer = XdmfWriter::New(filepath.string());
     _writer->setMode(XdmfWriter::DistributedHeavyData);
@@ -130,20 +138,30 @@ Xdmf3Writer::Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
     _root->insert(grid_collection);
 }
 
+Xdmf3Writer::~Xdmf3Writer()
+{
+    _root->accept(_writer);
+}
+
 void Xdmf3Writer::writeStep(int const time_step, double const time)
 {
     auto grid = XdmfUnstructuredGrid::New();
     grid->setGeometry(_initial_geometry);
     grid->setTopology(_initial_topology);
+
+    for (auto const& constant_attribute : _constant_attributes)
+    {
+        grid->insert(constant_attribute);
+    }
+
     grid->setTime(XdmfTime::New(time));
 
-    for (auto const& attribute : _attributes)
+    for (auto const& attribute : _variable_attributes)
     {
         grid->insert(getLightAttribute(_hdf5filename, time_step, attribute));
     }
 
     auto grid_collection = _root->getGridCollection(0);
     grid_collection->insert(grid);
-    _root->accept(_writer);
 }
 }  // namespace MeshLib::IO

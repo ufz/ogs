@@ -16,6 +16,14 @@
 
 namespace MeshLib::IO
 {
-std::pair<std::size_t, std::size_t> getPartitionInfo(std::size_t const size);
+struct PartitionInfo
+{
+    std::size_t local_offset;
+    std::size_t local_length;
+    std::size_t longest_local_length;
+    std::size_t global_length;
+};
+
+PartitionInfo getPartitionInfo(std::size_t const size);
 bool isFileManager();
 }  // namespace MeshLib::IO

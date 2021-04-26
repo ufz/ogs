@@ -19,6 +19,7 @@
 #include "MeshLib/Mesh.h"
 #include "XdmfData.h"
 
+class XdmfAttribute;
 class XdmfGridCollection;
 class XdmfTopology;
 class XdmfGeometry;
@@ -43,12 +44,16 @@ public:
      * address is the same)
      * @param geometry contains meta data to coordinates
      * @param topology contains meta data cells
-     * @param attributes vector of attributes (each attribute is a OGS property)
+     * @param constant_attributes vector of constant attributes (each attribute
+     * is a OGS mesh property)
+     * @param variable_attributes vector of variable attributes (each attribute
+     * is a OGS mesh property
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param time_step number of the step (temporal collection)
      */
     Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
-                std::vector<XdmfData> attributes,
+                std::vector<XdmfData> constant_attributes,
+                std::vector<XdmfData> variable_attributes,
                 std::filesystem::path const& filepath, int time_step);
     /**
      * \brief Write attribute data that has modified to previous time step or
@@ -57,12 +62,14 @@ public:
      * @param time time value of the current time_step
      */
     void writeStep(int time_step, double time);
+    ~Xdmf3Writer();
 
 private:
     boost::shared_ptr<XdmfGridCollection> _gridCollection;
     boost::shared_ptr<XdmfTopology> _initial_topology;
     boost::shared_ptr<XdmfGeometry> _initial_geometry;
-    std::vector<XdmfData> const _attributes;
+    std::vector<boost::shared_ptr<XdmfAttribute>> _constant_attributes;
+    std::vector<XdmfData> const _variable_attributes;
     boost::shared_ptr<XdmfWriter> _writer;
     boost::shared_ptr<XdmfDomain> _root;
     std::string const _hdf5filename;

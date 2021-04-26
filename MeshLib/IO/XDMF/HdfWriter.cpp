@@ -29,7 +29,7 @@ void checkHdfStatus(const hid_t status, std::string const& formatting,
     }
 }
 
-static unsigned short int const compression_factor = 5;
+static unsigned short int const default_compression_factor = 1;
 
 using namespace MeshLib::IO;
 
@@ -76,38 +76,35 @@ static hid_t createStepGroup(hid_t const& file, int const step)
 static hid_t writeDataSet(
     void const* nodes_data,  // what
     hid_t const data_type,
-    std::vector<Hdf5DimType> const& chunked_dims,  // how ...
+    std::vector<Hdf5DimType> const& data_dims,  // how ...
     std::vector<Hdf5DimType> const& dim_offsets,
-    std::vector<Hdf5DimType> const& dim_maxs, bool has_compression_lib,
+    std::vector<Hdf5DimType> const& dim_maxs,
+    [[maybe_unused]] std::vector<Hdf5DimType> const& chunk_dim,
+    bool use_compression,
     hid_t const section,
     std::string const& dataset_name)  // where
 {
-    DBUG("Num global nodes : {:d} ", dim_maxs[0]);
-    int const dim_size = chunked_dims.size();
+    int const dim_size = data_dims.size();
     hid_t const memspace =
-        H5Screate_simple(dim_size, chunked_dims.data(), nullptr);
+        H5Screate_simple(dim_size, data_dims.data(), nullptr);
     hid_t const filespace =
         H5Screate_simple(dim_size, dim_maxs.data(), nullptr);
 
     hid_t dataset_property = H5Pcreate(H5P_DATASET_CREATE);
 
-    if (has_compression_lib)
+    if (use_compression )
     {
-        H5Pset_deflate(dataset_property, compression_factor);
-        DBUG("Compression will be used for {:s} with factor {:d}.",
-             dataset_name, compression_factor);
-    }
-    hid_t status =
-        H5Pset_chunk(dataset_property, dim_size, chunked_dims.data());
-    if (status != 0)
-    {
-        ERR("H5Pset_layout failed for data set: {:s}.", dataset_name);
+        hid_t status =
+            H5Pset_chunk(dataset_property, dim_size, dim_maxs.data());
+        if (status != 0)
+        {
+            ERR("H5Pset_layout failed for data set: {:s}.", dataset_name);
+        }
+        H5Pset_deflate(dataset_property, default_compression_factor);
     }
 
-    // TODO (tm) Compression is not enabled!!
-    dataset_property = H5P_DEFAULT;
     hid_t const dataset =
-        H5Dcreate2(section, dataset_name.c_str(), H5T_IEEE_F64BE, filespace,
+        H5Dcreate2(section, dataset_name.c_str(), data_type, filespace,
                    H5P_DEFAULT, dataset_property, H5P_DEFAULT);
 
     H5Pclose(dataset_property);
@@ -117,11 +114,9 @@ static hid_t writeDataSet(
 
     std::vector<hsize_t> const stride(dim_size, 1);
     std::vector<hsize_t> const count(dim_size, 1);
-    std::vector<hsize_t> const block = chunked_dims;
+    std::vector<hsize_t> const block = data_dims;
 
-    DBUG("Offset in dataset '{:s}' is: {:d}.", dataset_name, dim_offsets[0]);
-
-    status = H5Sselect_hyperslab(dataset_filespace, H5S_SELECT_SET,
+    hid_t status = H5Sselect_hyperslab(dataset_filespace, H5S_SELECT_SET,
                                  dim_offsets.data(), stride.data(),
                                  count.data(), block.data());
     if (status != 0)
@@ -138,65 +133,67 @@ static hid_t writeDataSet(
     }
 
     H5Dclose(dataset);
-    H5Pclose(io_transfer_property);
     status = H5Sclose(memspace);
+    H5Pclose(io_transfer_property);
 
     return (status >= 0 ? 1 : 0);
 }
 namespace MeshLib::IO
 {
-HdfWriter::HdfWriter(HdfData const& geometry,
-                     HdfData const& topology,
+HdfWriter::HdfWriter(std::vector<HdfData> constant_attributes,
                      std::vector<HdfData>
-                         attributes,
+                         variable_attributes,
                      int const step,
-                     std::filesystem::path const& filepath)
-    : _attributes(std::move(attributes)),
+                     std::filesystem::path const& filepath,
+                     bool const use_compression)
+    : _variable_attributes(std::move(variable_attributes)),
       _hdf5_filepath(filepath),
-      _has_compression(checkCompression())
+      _use_compression(checkCompression() && use_compression),
+      _file(createFile(filepath))
 {
-    hid_t const file = createFile(filepath);
+
     std::string const& time_section = getTimeSection(step);
-    hid_t const group_id = H5Gcreate2(file, time_section.c_str(), H5P_DEFAULT,
+    hid_t const group_id = H5Gcreate2(_file, time_section.c_str(), H5P_DEFAULT,
                                       H5P_DEFAULT, H5P_DEFAULT);
-    // geometry
-    hid_t status =
-        writeDataSet(geometry.data_start, geometry.data_type,
-                     geometry.data_space, geometry.offsets, geometry.file_space,
-                     _has_compression, group_id, geometry.name);
 
-    checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.", geometry.name);
+    for (auto const& attribute : constant_attributes)
+    {
+        hid_t status = writeDataSet(attribute.data_start, attribute.data_type,
+                                    attribute.data_space, attribute.offsets,
+                                    attribute.file_space, attribute.chunk_space,
+                                    _use_compression, group_id, attribute.name);
 
-    // topology
-    status =
-        writeDataSet(topology.data_start, topology.data_type,
-                     topology.data_space, topology.offsets, topology.file_space,
-                     _has_compression, group_id, topology.name);
-    checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.", topology.name);
+        checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.",
+                       attribute.name);
+    }
 
-    H5Gclose(group_id);
-    status = H5Fclose(file);
-    checkHdfStatus(status, "HDF Writer could not be created!", topology.name);
+    hid_t status = H5Gclose(group_id);
+
+    checkHdfStatus(status, "HDF group could not be created!");
+}
+
+HdfWriter::~HdfWriter()
+{
+    H5Fclose(_file);
 }
 
 bool HdfWriter::writeStep(int const step) const
 {
-    hid_t const file = openHDF5File(_hdf5_filepath);
-    hid_t const group = createStepGroup(file, step);
+    hid_t const group = createStepGroup(_file, step);
 
     hid_t status = 0;
-    for (auto const& attribute : _attributes)
+    for (auto const& attribute : _variable_attributes)
     {
         status = writeDataSet(attribute.data_start, attribute.data_type,
                               attribute.data_space, attribute.offsets,
-                              attribute.file_space, _has_compression, group,
-                              attribute.name);
+                              attribute.file_space, attribute.chunk_space,
+                              _use_compression, group, attribute.name);
 
-        checkHdfStatus(status, "Not all attributes written to HDF5 file.");
+        checkHdfStatus(status, "Writing HDF5 Dataset: {:s} failed.",
+                       attribute.name);
     }
 
     H5Gclose(group);
-    status = H5Fclose(file);
     return (status >= 0);
 }
 }  // namespace MeshLib::IO

@@ -298,9 +298,7 @@ void addProcessDataToMesh(
 }
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
-                bool const compress_output, int const data_mode,
-                OutputType const file_type, int const time_step,
-                double const time)
+                bool const compress_output, int const data_mode)
 {
     // Write output file
     DBUG("Writing output to '{:s}'.", file_name);
@@ -318,38 +316,15 @@ void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
 #endif                     //_WIN32
 #endif                     //__APPLE__
 
-    switch (file_type)
-    {
-        case OutputType::vtk:
-        {
-            MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode,
-                                                    compress_output);
-            vtu_interface.writeToFile(file_name);
-            break;
-        }
 
-        case OutputType::xdmf:
-        {
-#ifdef OGS_USE_XDMF
-            MeshLib::IO::XdmfHdfWriter writer(mesh, file_name, time_step);
-            writer.writeStep(time_step, time);
-#else
-            // silence compiler warnings
-            (void)(time_step);
-            (void)(time);
-            OGS_FATAL(
-                "Trying to write Xdmf file but OGS was not built with "
-                "Xdmf-support.");
-#endif
-        }
-    }
+    MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
+    vtu_interface.writeToFile(file_name);
 
-        // Restore floating-point exception handling.
+    // Restore floating-point exception handling.
 #ifndef _WIN32
 #ifndef __APPLE__
     fesetenv(&fe_env);
 #endif  //_WIN32
 #endif  //__APPLE__
 }
-
 }  // namespace ProcessLib

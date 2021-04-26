@@ -10,7 +10,6 @@
  *              http://www.opengeosys.org/project/license
  */
 
-
 #pragma once
 
 #include <string>
@@ -28,9 +27,10 @@ struct HdfData
             std::size_t size_tuple, std::string const& name,
             MeshPropertyDataType mesh_property_data_type);
     void const* data_start;
-    std::vector<Hdf5DimType> const data_space;
+    std::vector<Hdf5DimType> data_space;
     std::vector<Hdf5DimType> offsets;
     std::vector<Hdf5DimType> file_space;
+    std::vector<Hdf5DimType> chunk_space;
     std::string const name;
     int64_t data_type;
 };

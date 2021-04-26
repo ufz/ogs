@@ -179,13 +179,14 @@ struct Output::OutputFile
                std::string const& prefix, std::string const& suffix,
                std::string const& mesh_name, int const timestep, double const t,
                int const iteration, int const data_mode_,
-               bool const compression_)
+               bool const compression_, std::set<std::string> const& outputnames)
         : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
                                  iteration)),
           path(BaseLib::joinPaths(directory, name)),
           type(type),
           data_mode(data_mode_),
-          compression(compression_)
+          compression(compression_),
+          outputnames(outputnames)
     {
     }
 
@@ -200,6 +201,8 @@ struct Output::OutputFile
 
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
+
+    std::set<std::string> outputnames;
 
     static std::string constructFilename(OutputType const type,
                                          std::string prefix, std::string suffix,
@@ -241,7 +244,9 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
     {
         std::filesystem::path path(output_file.path);
         _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-            MeshLib::IO::XdmfHdfWriter(mesh, path, timestep));
+        MeshLib::IO::XdmfHdfWriter(
+                mesh, path, timestep,
+                _output_data_specification.output_variables, output_file.compression));
     }
     _mesh_xdmf_hdf_writer->writeStep(timestep, t);
 }
@@ -250,7 +255,6 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
 void Output::outputMesh(OutputFile const& output_file,
                         MeshLib::IO::PVDFile* const pvd_file,
                         MeshLib::Mesh const& mesh,
-                        int const timestep,
                         double const t)
 {
     DBUG("output to {:s}", output_file.path);
@@ -261,7 +265,7 @@ void Output::outputMesh(OutputFile const& output_file,
     }
 
     makeOutput(output_file.path, mesh, output_file.compression,
-               output_file.data_mode, output_file.type, timestep, t);
+               output_file.data_mode);
 }
 
 void Output::doOutputAlways(Process const& process,
@@ -308,10 +312,11 @@ void Output::doOutputAlways(Process const& process,
             OutputFile const file(
                 _output_directory, _output_file_type, _output_file_prefix,
                 _output_file_suffix, mesh.getName(), timestep, t, iteration,
-                _output_file_data_mode, _output_file_compression);
+                _output_file_data_mode, _output_file_compression,
+                _output_data_specification.output_variables);
 
             pvd_file = findPVDFile(process, process_id, mesh.getName());
-            outputMesh(file, pvd_file, mesh, timestep, t);
+            outputMesh(file, pvd_file, mesh, t);
         }
         else if (_output_file_type == ProcessLib::OutputType::xdmf)
         {
@@ -319,7 +324,8 @@ void Output::doOutputAlways(Process const& process,
             OutputFile const file(
                 _output_directory, _output_file_type, _output_file_prefix, "",
                 mesh.getName(), timestep, t, iteration, _output_file_data_mode,
-                _output_file_compression);
+                _output_file_compression,
+                _output_data_specification.output_variables);
 
             outputMeshXdmf(file, mesh, timestep, t);
 #else
@@ -467,7 +473,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
 
     DBUG("output iteration results to {:s}", output_file_path);
     makeOutput(output_file_path, process.getMesh(), _output_file_compression,
-               _output_file_data_mode, _output_file_type, timestep, t);
+               _output_file_data_mode);
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 }  // namespace ProcessLib
