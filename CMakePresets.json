@@ -1,8 +1,8 @@
 {
-  "version": 1,
+  "version": 2,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 19,
+    "minor": 20,
     "patch": 0
   },
   "configurePresets": [
@@ -172,6 +172,60 @@
         "OGS_USE_CONAN": "OFF",
         "OGS_USE_POETRY": "OFF"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release-gui",
+      "configurePreset": "release-gui",
+      "targets": [
+        "DataExplorer"
+      ]
+    },
+    {
+      "name": "debug-gui",
+      "configurePreset": "debug-gui",
+      "targets": [
+        "DataExplorer"
+      ]
+    },
+    {
+      "name": "release-petsc",
+      "configurePreset": "release-petsc"
+    },
+    {
+      "name": "debug-petsc",
+      "configurePreset": "debug-petsc"
+    },
+    {
+      "name": "msvc-release",
+      "configurePreset": "msvc-release"
+    },
+    {
+      "name": "msvc-debug",
+      "configurePreset": "msvc-debug"
+    },
+    {
+      "name": "msvc-release-gui",
+      "configurePreset": "msvc-release-gui",
+      "targets": [
+        "DataExplorer"
+      ]
+    },
+    {
+      "name": "msvc-debug-gui",
+      "configurePreset": "msvc-debug-gui",
+      "targets": [
+        "DataExplorer"
+      ]
     }
   ]
 }
