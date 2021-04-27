@@ -227,5 +227,71 @@
         "DataExplorer"
       ]
     }
+  ],
+  "testPresets": [
+    {
+      "name": "_release",
+      "configurePreset": "release",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "release",
+      "inherits": [
+        "_release"
+      ],
+      "execution": {
+        "timeout": 900
+      },
+      "filter": {
+        "exclude": {
+          "name": "LARGE"
+        }
+      }
+    },
+    {
+      "name": "release-large",
+      "inherits": [
+        "_release"
+      ],
+      "execution": {
+        "timeout": 5400
+      },
+      "filter": {
+        "include": {
+          "name": "LARGE"
+        }
+      }
+    },
+    {
+      "name": "release-petsc",
+      "configurePreset": "release-petsc",
+      "inherits": [
+        "release"
+      ]
+    },
+    {
+      "name": "release-petsc-large",
+      "configurePreset": "release-petsc",
+      "inherits": [
+        "release-large"
+      ]
+    },
+    {
+      "name": "msvc-release",
+      "configurePreset": "msvc-release",
+      "inherits": [
+        "release"
+      ]
+    },
+    {
+      "name": "msvc-release-large",
+      "configurePreset": "msvc-release",
+      "inherits": [
+        "release-large"
+      ]
+    }
   ]
 }
