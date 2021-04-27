@@ -242,7 +242,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // varialbe_array and the fluid must have the property
+        // variable_array and the fluid must have the property
         // MPL::PropertyType::molar_mass. For other density models (e.g.
         // Constant), it is not mandatory to specify the molar mass.
         if (fluid.hasProperty(MPL::PropertyType::molar_mass))
@@ -448,7 +448,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                             .template value<double>(vars, x_position, t, dt);
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // varialbe_array and the fluid must have the property
+        // variable_array and the fluid must have the property
         // MPL::PropertyType::molar_mass. For other density models (e.g.
         // Constant), it is not mandatory to specify the molar mass.
         if (fluid.hasProperty(MPL::PropertyType::molar_mass))
@@ -581,7 +581,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                             .template value<double>(vars, x_position, t, dt);
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // varialbe_array and the fluid must have the property
+        // variable_array and the fluid must have the property
         // MPL::PropertyType::molar_mass. For other density models (e.g.
         // Constant), it is not mandatory to specify the molar mass.
         if (fluid.hasProperty(MPL::PropertyType::molar_mass))
@@ -718,7 +718,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // varialbe_array and the fluid must have the property
+        // variable_array and the fluid must have the property
         // MPL::PropertyType::molar_mass. For other density models (e.g.
         // Constant), it is not mandatory to specify the molar mass.
         if (fluid.hasProperty(MPL::PropertyType::molar_mass))
