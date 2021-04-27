@@ -23,7 +23,7 @@ namespace MeshLib::IO
 {
 int writeMeshToFile(const MeshLib::Mesh& mesh,
                     std::filesystem::path const& file_path,
-                    std::set<std::string>
+                    [[maybe_unused]] std::set<std::string>
                         variable_output_names)
 {
     if (file_path.extension().string() == ".msh")
