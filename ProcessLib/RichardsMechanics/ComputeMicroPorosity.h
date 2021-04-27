@@ -66,7 +66,7 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
     double const rho_LR_m,  // for simplification equal to rho_LR_M
     double const mu_LR,
     MicroPorosityParameters const& micro_porosity_parameters,
-    double const alpha_B, double const phi_M, double const p_L,
+    double const alpha_B, double const phi, double const p_L,
     double const p_L_m_prev,
     MaterialPropertyLib::VariableArray const& /*variables_prev*/,
     double const S_L_m_prev, double const phi_m_prev,
@@ -135,14 +135,14 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
                 swelling_stress_rate.template value<Eigen::Matrix3d>(
                     variables, variables_prev, pos, t, dt));
 
-        residual[i_phi_m] = delta_phi_m - (alpha_B - phi_M) * delta_e_sw;
+        residual[i_phi_m] = delta_phi_m - (alpha_B - phi) * delta_e_sw;
         residual[i_e_sw] = delta_e_sw + I_2_C_el_inverse.dot(delta_sigma_sw);
         residual.template segment<kelvin_vector_size>(i_sigma_sw).noalias() =
             delta_sigma_sw - sigma_sw_dot * dt;
 
         residual[i_p_L_m] =
             rho_LR_m *
-                (phi_m * delta_S_L_m - (alpha_B - phi_M) * S_L_m * delta_e_sw) +
+                (phi_m * delta_S_L_m - (alpha_B - phi) * S_L_m * delta_e_sw) +
             phi_m * S_L_m * rho_LR_m * delta_e_sw -
             micro_porosity_parameters.mass_exchange_coefficient / mu_LR *
                 (p_L - p_L_m) * dt;
@@ -178,7 +178,7 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
                     variables, variables_prev, MPL::Variable::liquid_saturation,
                     pos, t, dt));
 
-        jacobian(i_phi_m, i_e_sw) = -(alpha_B - phi_M);
+        jacobian(i_phi_m, i_e_sw) = -(alpha_B - phi);
 
         jacobian.template block<1, kelvin_vector_size>(i_e_sw, i_sigma_sw) =
             I_2_C_el_inverse.transpose();
@@ -189,11 +189,11 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
         jacobian(i_p_L_m, i_phi_m) =
             rho_LR_m * (delta_S_L_m + S_L_m * delta_e_sw);
 
-        jacobian(i_p_L_m, i_e_sw) = -rho_LR_m * S_L_m * (alpha_B - phi_M - phi_m);
+        jacobian(i_p_L_m, i_e_sw) = -rho_LR_m * S_L_m * (alpha_B - phi - phi_m);
 
         jacobian(i_p_L_m, i_p_L_m) =
             alpha_bar / mu_LR * dt -
-            rho_LR_m * (phi_m - (alpha_B - phi_M - phi_m) * delta_e_sw) *
+            rho_LR_m * (phi_m - (alpha_B - phi - phi_m) * delta_e_sw) *
                 dS_L_m_dp_cap_m;
     };
 
