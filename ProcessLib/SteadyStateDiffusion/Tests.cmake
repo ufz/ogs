@@ -416,17 +416,31 @@ AddTest(
 )
 
 AddTest(
-    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF
-    PATH EllipticPETSc/Xdmf
+    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np3
+    PATH EllipticPETSc
     EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e3.prj
+    EXECUTABLE_ARGS cube_1e3_XDMF.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 3
     TESTER xdmfdiff
     REQUIREMENTS (OGS_USE_MPI AND OGS_USE_XDMF)
     DIFF_DATA
-    cube_1e3.xdmf cube_1e.xdmf pressure pressure 1e-2 1e-2
-    cube_1e3.xdmf cube_1e.xdmf D1_left_front_N1_right D1_left_front_N1_right 0 0
+    cube_1e3_np3.xdmf cube_1e3.xdmf pressure pressure 1e-3 1e-3
+    cube_1e3_np3.xdmf cube_1e3.xdmf v v 1e-3 1e-3
+)
+
+AddTest(
+    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np2
+    PATH EllipticPETSc
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e3_XDMF.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER xdmfdiff
+    REQUIREMENTS (OGS_USE_MPI AND OGS_USE_XDMF)
+    DIFF_DATA
+    cube_1e3_np2.xdmf cube_1e3.xdmf pressure pressure 1e-3 1e-3
+    cube_1e3_np2.xdmf cube_1e3.xdmf v v 1e-3 1e-3
 )
 
 AddTest(
