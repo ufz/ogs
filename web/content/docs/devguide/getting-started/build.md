@@ -38,8 +38,19 @@ To build with the `ninja` tool on the shell go to your previously configured bui
 cd ../build/release
 ninja
 ```
-By default, `ninja` uses maximum parallelism causing it to crash on many machines as the memory consumption exceeds the available memory.
-Therefore, we recommend restricting the number of threads to be used, e.g., type `ninja -j 2` for a maximum of two threads.
+
+<div class="note">
+
+<h3><i class="fal fa-exclamation-triangle"></i> Exceeding memory consumption during compilation</h3>
+
+By default, `ninja` uses maximum parallelism which may lead to a memory consumption exceeding the available memory (especially when compiling the processes).
+
+Therefore, we recommend restricting the number of parallel compilations to be used to **one per 8 GB RAM**, e.g., if your machine has 16 GB RAM type `ninja -j 2` for a maximum of two parallel compilations.
+
+Another option is to build just the process you are interested in by configuring with the CMake option `OGS_BUILD_PROCESSES`, e.g.: `cmake -DOGS_BUILD_PROCESSES=HT ....`. In this case you should be able to compile with full parallelization.
+
+</div>
+
 </div>
 
 <div class='mac'>

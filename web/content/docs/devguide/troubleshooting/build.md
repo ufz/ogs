@@ -36,3 +36,7 @@ If this still fails you can disable building of the failing processes, e.g.:
 cmake . -DOGS_BUILD_PROCESS_HT=OFF
 cmake --build . --config Release -j 1
 ```
+
+## Compiler crash on Linux / macOS
+
+The same as described above for Windows can happen on other platforms if there is not enough RAM to compile in parallel. See the note on [Exceeding memory consumption during compilation]({{< ref "docs/devguide/getting-started/build.md#build-the-project" >}}).
