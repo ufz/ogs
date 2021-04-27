@@ -49,6 +49,15 @@ Therefore, we recommend restricting the number of parallel compilations to be us
 
 Another option is to build just the process you are interested in by configuring with the CMake option `OGS_BUILD_PROCESSES`, e.g.: `cmake -DOGS_BUILD_PROCESSES=HT ....`. In this case you should be able to compile with full parallelization.
 
+<h3>Build with CMake presets</h3>
+
+Similar to the configure presets there are build presets, e.g. in your source-directory:
+
+```bash
+cmake --build --preset release             # equivalent to running ninja above
+cmake --build --preset release -j 2 -t ogs # build the ogs-target with 2 threads
+```
+
 </div>
 
 </div>
