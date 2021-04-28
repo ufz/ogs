@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>single_cube_bulk.vtu</mesh>
@@ -23,7 +23,7 @@
             <reference_temperature>temperature0</reference_temperature>
             <process_variables>
                 <displacement>displacement</displacement>
-                <!-- β*ΔT/((α-ϕ)*(1-α)/K) //-->
+                <!-- beta*DeltaT/((alpha-phi)*(1-alpha)/K) //-->
                 <pressure>pressure</pressure>
                 <temperature>temperature</temperature>
             </process_variables>
@@ -118,6 +118,10 @@
                     <name>biot_coefficient</name>
                     <type>Constant</type>
                     <value>1</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
             </properties>
         </medium>

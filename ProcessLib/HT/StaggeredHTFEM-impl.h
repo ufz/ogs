@@ -103,6 +103,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_int_pt;
 
+        vars[static_cast<int>(MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t, dt);
@@ -231,6 +233,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_at_xi;
 
+        vars[static_cast<int>(MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t, dt);
@@ -271,7 +275,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         GlobalDimMatrixType const thermal_conductivity_dispersivity =
             this->getThermalConductivityDispersivity(
-                vars, porosity, fluid_density, specific_heat_capacity_fluid,
+                vars, fluid_density, specific_heat_capacity_fluid,
                 velocity, I, pos, t, dt);
 
         local_K.noalias() +=

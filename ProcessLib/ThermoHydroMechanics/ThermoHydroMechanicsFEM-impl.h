@@ -12,7 +12,6 @@
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
-#include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
@@ -240,6 +239,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_int_pt;
 
+        vars[static_cast<int>(MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, x_position, t, dt);
@@ -406,23 +407,14 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .property(
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, x_position, t, dt);
-        auto const fluid_thermal_conductivity =
-            liquid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .template value<double>(vars, x_position, t, dt);
-        GlobalDimMatrixType effective_thermal_condictivity =
-            MaterialPropertyLib::formEffectiveThermalConductivity<
-                DisplacementDim>(
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .value(vars, x_position, t, dt),
-                fluid_thermal_conductivity, porosity);
+        auto const effective_thermal_conductivity =
+            MaterialPropertyLib::formEigenTensor<DisplacementDim>(medium
+                    ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, x_position, t, dt));
 
         // Add thermo-osmosis effect on KTT
         KTT.noalias() +=
-            (dNdx_T.transpose() * effective_thermal_condictivity * dNdx_T +
+            (dNdx_T.transpose() * effective_thermal_conductivity * dNdx_T +
              N_T.transpose() * velocity.transpose() * dNdx_T * fluid_density * c_f) *
                 w -
             fluid_density * c_f * N_T.transpose() * (dNdx_T * T).transpose() *

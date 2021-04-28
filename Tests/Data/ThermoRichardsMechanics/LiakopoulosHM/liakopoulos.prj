@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">liakopoulos.vtu</mesh>
@@ -112,7 +112,6 @@
                     <name>saturation</name>
                     <type>SaturationLiakopoulos</type>
                 </property>
-
                 <property>
                     <name>bishops_effective_stress</name>
                     <type>BishopsPowerLaw</type>
@@ -128,6 +127,10 @@
                     <type>Curve</type>
                     <independent_variable>liquid_saturation</independent_variable>
                     <curve>k_rel</curve>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
             </properties>
         </medium>
@@ -151,18 +154,30 @@
                     <t_initial> 0.0 </t_initial>
                     <t_end>7200</t_end>
                     <timesteps>
-                        <pair><repeat>10</repeat>
-                              <delta_t>1</delta_t></pair>
-                        <pair><repeat>9</repeat>
-                              <delta_t>10</delta_t></pair>
-                        <pair><repeat>11</repeat>
-                              <delta_t>100</delta_t></pair>
-                        <pair><repeat>3</repeat>
-                              <delta_t>200</delta_t></pair>
-                        <pair><repeat>3</repeat>
-                              <delta_t>400</delta_t></pair>
-                        <pair><repeat>7</repeat>
-                              <delta_t>600</delta_t></pair>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>1</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>9</repeat>
+                            <delta_t>10</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>11</repeat>
+                            <delta_t>100</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>3</repeat>
+                            <delta_t>200</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>3</repeat>
+                            <delta_t>400</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>7</repeat>
+                            <delta_t>600</delta_t>
+                        </pair>
                     </timesteps>
                 </time_stepping>
             </process>
@@ -248,7 +263,6 @@
             <value>293.15</value>
         </parameter>
     </parameters>
-
     <curves>
         <curve>
             <name>k_rel</name>
@@ -394,7 +408,6 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
         <process_variable>
             <name>pressure</name>
             <components>1</components>

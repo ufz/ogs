@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh.vtu</mesh>
@@ -121,6 +121,10 @@
                     <type>Constant</type>
                     <value>1.0</value>
                 </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
             </properties>
         </medium>
     </media>
@@ -185,7 +189,6 @@
             <type>Constant</type>
             <value>.3</value>
         </parameter>
-
         <parameter>
             <name>T0</name>
             <type>Constant</type>
@@ -286,7 +289,6 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-
     </process_variables>
     <nonlinear_solvers>
         <nonlinear_solver>

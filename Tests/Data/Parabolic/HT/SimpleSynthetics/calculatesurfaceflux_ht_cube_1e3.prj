@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>cube_1x1x1_hex_1e3.vtu</mesh>
@@ -99,6 +99,10 @@
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>0.001</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
             </properties>
         </medium>

@@ -106,6 +106,10 @@
                     <type>Constant</type>
                     <value>1.0</value>
                 </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
             </properties>
         </medium>
         <medium id="1">
@@ -187,6 +191,10 @@
                     <type>Constant</type>
                     <value>0.0</value>
                 </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
             </properties>
         </medium>
         <medium id="2">
@@ -267,6 +275,10 @@
                     <name>biot_coefficient</name>
                     <type>Constant</type>
                     <value>1.0</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
             </properties>
         </medium>

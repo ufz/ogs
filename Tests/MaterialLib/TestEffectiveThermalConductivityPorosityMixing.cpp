@@ -59,14 +59,12 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixing)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
+    variable_array[static_cast<int>(
+        MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
             medium->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
                 .value(variable_array, pos, time, dt));
-    auto const deff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
-        medium->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .dValue(variable_array, MaterialPropertyLib::Variable::phase_pressure, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 2.481, 1.e-10);
-    ASSERT_NEAR(deff_th_cond.trace(), 0.0, 1.e-10);
 }
 
 TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingRot90deg)
@@ -116,20 +114,13 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingRot90deg)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
+    variable_array[static_cast<int>(
+        MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
-    auto const deff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
-        medium
-            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-            .dValue(variable_array,
-                    MaterialPropertyLib::Variable::phase_pressure,
-                    pos,
-                    time,
-                    dt));
     ASSERT_NEAR(eff_th_cond(0, 0), 0.467280, 1.e-10);
     ASSERT_NEAR(eff_th_cond(1, 1), 0.7832, 1.e-10);
     ASSERT_NEAR(eff_th_cond(2, 2), 0.81224, 1.e-10);
-    ASSERT_NEAR(deff_th_cond.trace(), 0.0, 1.e-10);
 }

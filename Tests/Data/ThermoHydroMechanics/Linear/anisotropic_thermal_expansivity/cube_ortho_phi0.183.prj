@@ -97,9 +97,9 @@
                         <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
-                            <!-- sum_eps = (β_F*ϕ+(1-ϕ)*(sum(thermal_expansivity_ii)))*ΔT
-                                 sigma_ii = ((2*G+3*λ)*sum_eps_sim-(3*λ+2*G)*(sum(thermal_expansivity_ii)))/3
-                                 eps_ii = sigma_ii*((1-2ν)/E)+thermal_expansivity_ii*ΔT //-->
+                            <!-- sum_eps = (beta_F*phi+(1-phi)*(sum(thermal_expansivity_ii)))*DeltaT
+                                 sigma_ii = ((2*G+3*lambda)*sum_eps_sim-(3*lambda+2*G)*(sum(thermal_expansivity_ii)))/3
+                                 eps_ii = sigma_ii*((1-2nu)/E)+thermal_expansivity_ii*DeltaT //-->
                             <value>1.5e-5 2.5e-5 3.5e-5</value>
                         </property>
                     </properties>
@@ -120,6 +120,10 @@
                     <name>biot_coefficient</name>
                     <type>Constant</type>
                     <value>1.0</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
             </properties>
         </medium>
