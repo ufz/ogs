@@ -90,10 +90,9 @@
                         <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
-                            <!--  sum_eps = (β_F*ϕ+(1-ϕ)*(sum(thermal_expansivity)))*ΔT
-                                  sigma_ii = ((2*G+2*λ)*sum_eps-(2*λ+2*G)*(sum(thermal_expansivity))*ΔT)/2
-                                  eps_ii = sigma_ii*((1-ν)/(2*G+λ))+thermal_expansivity*ΔT
-                            -->
+                            <!--  sum_eps = (beta_F*phi+(1-phi)*(sum(thermal_expansivity)))*DeltaT
+                                  sigma_ii = ((2*G+2*lambda)*sum_eps-(2*lambda+2*G)*(sum(thermal_expansivity))*DeltaT)/2
+                                  eps_ii = sigma_ii*((1-nu)/(2*G+lambda))+thermal_expansivity*DeltaT //-->
                             <value>1.5e-5 2.5e-5 0.0</value>
                         </property>
                     </properties>

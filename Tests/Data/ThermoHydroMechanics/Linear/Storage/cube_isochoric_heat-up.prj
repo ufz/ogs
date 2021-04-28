@@ -23,7 +23,7 @@
             <reference_temperature>temperature0</reference_temperature>
             <process_variables>
                 <displacement>displacement</displacement>
-                <!-- β*ΔT/((α-ϕ)*(1-α)/K) //-->
+                <!-- beta*DeltaT/((alpha-phi)*(1-alpha)/K) //-->
                 <pressure>pressure</pressure>
                 <temperature>temperature</temperature>
             </process_variables>
