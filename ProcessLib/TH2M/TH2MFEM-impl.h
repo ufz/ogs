@@ -39,40 +39,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
       _element(e),
       _is_axially_symmetric(is_axially_symmetric),
       _liquid_pressure(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _liquid_density(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _gas_density(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _solid_density(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _vapour_pressure(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _porosity(std::vector<double>(_integration_method.getNumberOfPoints())),
-      _saturation(std::vector<double>(_integration_method.getNumberOfPoints())),
-      _mole_fraction_gas(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _mass_fraction_gas(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _mass_fraction_liquid(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _relative_permeability_gas(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _relative_permeability_liquid(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _internal_energy_gas(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _internal_energy_liquid(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _enthalpy_gas(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _enthalpy_liquid(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _enthalpy_solid(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _enthalpy_CG(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
-      _enthalpy_WG(std::vector<double>(_integration_method.getNumberOfPoints()))
+          std::vector<double>(_integration_method.getNumberOfPoints()))
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -389,24 +356,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const pLR = pGR - pCap;
 
         _liquid_pressure[ip] = pLR;
-        _liquid_density[ip] = ip_data.rhoLR;
-        _gas_density[ip] = ip_data.rhoGR;
-        _solid_density[ip] = ip_data.rhoSR;
-        _vapour_pressure[ip] = ip_data.pWGR;
-        _porosity[ip] = ip_data.phi;
-        _saturation[ip] = ip_data.s_L;
-        _mole_fraction_gas[ip] = ip_data.xnCG;
-        _mass_fraction_gas[ip] = ip_data.xmCG;
-        _mass_fraction_liquid[ip] = ip_data.xmWL;
-        _relative_permeability_gas[ip] = ip_data.k_rel_G;
-        _relative_permeability_liquid[ip] = ip_data.k_rel_L;
-        _internal_energy_gas[ip] = ip_data.u_G;
-        _internal_energy_liquid[ip] = ip_data.u_L;
-        _enthalpy_gas[ip] = ip_data.h_G;
-        _enthalpy_liquid[ip] = ip_data.h_L;
-        _enthalpy_solid[ip] = ip_data.h_S;
-        _enthalpy_CG[ip] = ip_data.h_CG;
-        _enthalpy_WG[ip] = ip_data.h_WG;
     }
 }
 
@@ -622,24 +571,6 @@ void TH2MLocalAssembler<
         auto const rho = phi_G * ip.rhoGR + phi_L * ip.rhoLR + phi_S * rho_SR;
 
         _liquid_pressure[int_point] = pLR;
-        _liquid_density[int_point] = ip.rhoLR;
-        _gas_density[int_point] = ip.rhoGR;
-        _solid_density[int_point] = ip.rhoSR;
-        _vapour_pressure[int_point] = ip.pWGR;
-        _porosity[int_point] = phi;
-        _saturation[int_point] = s_L;
-        _mole_fraction_gas[int_point] = ip.xnCG;
-        _mass_fraction_gas[int_point] = ip.xmCG;
-        _mass_fraction_liquid[int_point] = ip.xmWL;
-        _relative_permeability_gas[int_point] = ip.k_rel_G;
-        _relative_permeability_liquid[int_point] = ip.k_rel_L;
-        _internal_energy_gas[int_point] = ip.u_G;
-        _internal_energy_liquid[int_point] = ip.u_L;
-        _enthalpy_gas[int_point] = ip.h_G;
-        _enthalpy_liquid[int_point] = ip.h_L;
-        _enthalpy_solid[int_point] = ip.h_S;
-        _enthalpy_CG[int_point] = ip.h_CG;
-        _enthalpy_WG[int_point] = ip.h_WG;
 
         // abbreviations
         const double rho_C_FR = s_G * ip.rhoCGR + s_L * ip.rhoCLR;
@@ -1198,23 +1129,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const pLR = pGR - pCap;
 
         _liquid_pressure[ip] = pLR;
-        _liquid_density[ip] = ip_data.rhoLR;
-        _gas_density[ip] = ip_data.rhoGR;
-        _solid_density[ip] = ip_data.rhoSR;
-        _vapour_pressure[ip] = ip_data.pWGR;
-        _saturation[ip] = ip_data.s_L;
-        _mole_fraction_gas[ip] = ip_data.xnCG;
-        _mass_fraction_gas[ip] = ip_data.xmCG;
-        _mass_fraction_liquid[ip] = ip_data.xmWL;
-        _relative_permeability_gas[ip] = ip_data.k_rel_G;
-        _relative_permeability_liquid[ip] = ip_data.k_rel_L;
-        _internal_energy_gas[ip] = ip_data.u_G;
-        _internal_energy_liquid[ip] = ip_data.u_L;
-        _enthalpy_gas[ip] = ip_data.h_G;
-        _enthalpy_liquid[ip] = ip_data.h_L;
-        _enthalpy_solid[ip] = ip_data.h_S;
-        _enthalpy_CG[ip] = ip_data.h_CG;
-        _enthalpy_WG[ip] = ip_data.h_WG;
 
         saturation_avg += ip_data.s_L;
     }
