@@ -993,7 +993,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         IntegrationMethod, DisplacementDim>::
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                std::vector<double> const& /*local_xdot*/,
+                                std::vector<double> const& local_xdot,
                                 double const t, double const dt,
                                 bool const use_monolithic_scheme,
                                 int const /*process_id*/)
@@ -1001,7 +1001,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     const int displacement_offset =
         use_monolithic_scheme ? displacement_index : 0;
 
-    auto const displacement =
+    auto const u =
         Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
             displacement_size> const>(local_x.data() + displacement_offset,
                                       displacement_size);
@@ -1045,37 +1045,38 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
-        double const T0 = _process_data.reference_temperature(t, x_position)[0];
-
         double const T = N_T.dot(temperature);
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] = T;
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             N_T.dot(p);  // N_T = N_p
 
-        // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
-        // component.
-        Eigen::Matrix<double, 3,
-                      3> const solid_linear_thermal_expansion_coefficient =
-            MaterialPropertyLib::formEigenTensor<3>(
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim> const solid_linear_thermal_expansivity_vector =
+            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
                 solid_phase
                     .property(
                         MaterialPropertyLib::PropertyType::thermal_expansivity)
                     .value(vars, x_position, t, dt));
 
-        double const delta_T(T - T0);
+        double const dT_int_pt = N_T.dot(dT);
+
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            thermal_strain =
-                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    solid_linear_thermal_expansion_coefficient) *
-                delta_T;
+            dthermal_strain =
+                solid_linear_thermal_expansivity_vector * dT_int_pt;
 
         auto& eps = _ip_data[ip].eps;
-        eps.noalias() = B * displacement;
+        eps.noalias() = B * u;
 
-        _ip_data[ip].updateConstitutiveRelationThermal(
-            t, x_position, dt, displacement,
-            _process_data.reference_temperature(t, x_position)[0],
-            thermal_strain);
+        auto& eps_prev = _ip_data[ip].eps_prev;
+        auto& eps_m = _ip_data[ip].eps_m;
+        auto& eps_m_prev = _ip_data[ip].eps_m_prev;
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m);
+
+        _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt,
+                                                T - dT_int_pt);
     }
 }
 
