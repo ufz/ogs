@@ -265,8 +265,8 @@ createDeactivatedSubdomains(
     {
         INFO("There are subdomains being deactivated.");
 
-        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain}
         auto const deactivated_subdomain_configs =
+            //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain}
             subdomains_config->getConfigSubtreeList("deactivated_subdomain");
         std::transform(
             begin(deactivated_subdomain_configs),
