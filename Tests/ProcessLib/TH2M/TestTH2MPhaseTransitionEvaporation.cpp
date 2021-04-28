@@ -126,8 +126,8 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = T;
 
-    ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time,
-                                      dt);
+    ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time, dt);
+    auto const& cv = ptm->cv;
 
     // reference values
     double const rhoCGR = 1.185858524394711;
@@ -152,26 +152,26 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     double const muLR = viscosity_water;
     double const lambdaLR = thermal_conductivity_water;
 
-    ASSERT_NEAR(density_air, ptm->rhoGR, 1.0e-10);
-    ASSERT_NEAR(density_water, ptm->rhoLR, 1.0e-10);
-    ASSERT_NEAR(rhoCGR, ptm->rhoCGR, 1.0e-10);
-    ASSERT_NEAR(rhoWGR, ptm->rhoWGR, 1.0e-10);
-    ASSERT_NEAR(xmCG, ptm->xmCG, 1.e-10);
-    ASSERT_NEAR(xmWG, ptm->xmWG, 1.e-10);
-    ASSERT_NEAR(dxmWG_dpGR, ptm->dxmWG_dpGR, 1.0e-10);
-    ASSERT_NEAR(dxmCG_dpGR, ptm->dxmCG_dpGR, 1.0e-10);
-    ASSERT_NEAR(dxmWG_dT, ptm->dxmWG_dT, 1.0e-10);
-    ASSERT_NEAR(dxmCG_dT, ptm->dxmCG_dT, 1.0e-10);
-    ASSERT_NEAR(hCG, ptm->hCG, 1.0e-09);
-    ASSERT_NEAR(hWG, ptm->hWG, 1.0e-09);
-    ASSERT_NEAR(hG, ptm->hG, 1.0e-09);
-    ASSERT_NEAR(hL, ptm->hL, 1.0e-09);
-    ASSERT_NEAR(uG, ptm->uG, 1.0e-09);
-    ASSERT_NEAR(uL, ptm->uL, 1.0e-09);
-    ASSERT_NEAR(diffusion_coefficient_vapour, ptm->diffusion_coefficient_vapour,
+    ASSERT_NEAR(density_air, cv.rhoGR, 1.0e-10);
+    ASSERT_NEAR(density_water, cv.rhoLR, 1.0e-10);
+    ASSERT_NEAR(rhoCGR, cv.rhoCGR, 1.0e-10);
+    ASSERT_NEAR(rhoWGR, cv.rhoWGR, 1.0e-10);
+    ASSERT_NEAR(xmCG, cv.xmCG, 1.e-10);
+    ASSERT_NEAR(xmWG, cv.xmWG, 1.e-10);
+    ASSERT_NEAR(dxmWG_dpGR, cv.dxmWG_dpGR, 1.0e-10);
+    ASSERT_NEAR(dxmCG_dpGR, cv.dxmCG_dpGR, 1.0e-10);
+    ASSERT_NEAR(dxmWG_dT, cv.dxmWG_dT, 1.0e-10);
+    ASSERT_NEAR(dxmCG_dT, cv.dxmCG_dT, 1.0e-10);
+    ASSERT_NEAR(hCG, cv.hCG, 1.0e-09);
+    ASSERT_NEAR(hWG, cv.hWG, 1.0e-09);
+    ASSERT_NEAR(hG, cv.hG, 1.0e-09);
+    ASSERT_NEAR(hL, cv.hL, 1.0e-09);
+    ASSERT_NEAR(uG, cv.uG, 1.0e-09);
+    ASSERT_NEAR(uL, cv.uL, 1.0e-09);
+    ASSERT_NEAR(diffusion_coefficient_vapour, cv.diffusion_coefficient_vapour,
                 1.0e-10);
-    ASSERT_NEAR(muGR, ptm->muGR, 1.0e-10);
-    ASSERT_NEAR(lambdaGR, ptm->lambdaGR, 1.0e-10);
-    ASSERT_NEAR(muLR, ptm->muLR, 1.0e-10);
-    ASSERT_NEAR(lambdaLR, ptm->lambdaLR, 1.0e-10);
+    ASSERT_NEAR(muGR, cv.muGR, 1.0e-10);
+    ASSERT_NEAR(lambdaGR, cv.lambdaGR, 1.0e-10);
+    ASSERT_NEAR(muLR, cv.muLR, 1.0e-10);
+    ASSERT_NEAR(lambdaLR, cv.lambdaLR, 1.0e-10);
 }

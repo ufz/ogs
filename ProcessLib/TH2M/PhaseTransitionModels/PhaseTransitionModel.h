@@ -17,40 +17,8 @@ namespace ProcessLib
 {
 namespace TH2M
 {
-struct PhaseTransitionModel
+struct PhaseTransitionModelVariables
 {
-    explicit PhaseTransitionModel(
-        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
-            media)
-    {
-        DBUG("Create phase transition models...");
-
-        // check for minimum requirement definitions in media object
-        std::array const required_gas_properties = {
-            MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
-            MaterialPropertyLib::thermal_conductivity};
-        std::array const required_liquid_properties = {
-            MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
-            MaterialPropertyLib::thermal_conductivity};
-
-        for (auto const& m : media)
-        {
-            checkRequiredProperties(m.second->phase("Gas"),
-                                    required_gas_properties);
-            checkRequiredProperties(m.second->phase("AqueousLiquid"),
-                                    required_liquid_properties);
-        }
-    }
-
-    virtual ~PhaseTransitionModel() = default;
-
-    virtual void computeConstitutiveVariables(
-        const MaterialPropertyLib::Medium* medium,
-        MaterialPropertyLib::VariableArray variables,
-        ParameterLib::SpatialPosition pos, double const t, double const dt) = 0;
-
-    // constitutive variables as public members
-
     // gas phase density
     double rhoGR = 0.;
     double rhoCGR = 0.;
@@ -106,6 +74,42 @@ struct PhaseTransitionModel
     // specific inner energies
     double uG = 0;
     double uL = 0;
+};
+
+struct PhaseTransitionModel
+{
+    explicit PhaseTransitionModel(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media)
+    {
+        DBUG("Create phase transition models...");
+
+        // check for minimum requirement definitions in media object
+        std::array const required_gas_properties = {
+            MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
+            MaterialPropertyLib::thermal_conductivity};
+        std::array const required_liquid_properties = {
+            MaterialPropertyLib::viscosity, MaterialPropertyLib::density,
+            MaterialPropertyLib::thermal_conductivity};
+
+        for (auto const& m : media)
+        {
+            checkRequiredProperties(m.second->phase("Gas"),
+                                    required_gas_properties);
+            checkRequiredProperties(m.second->phase("AqueousLiquid"),
+                                    required_liquid_properties);
+        }
+    }
+
+    virtual ~PhaseTransitionModel() = default;
+
+    virtual void computeConstitutiveVariables(
+        const MaterialPropertyLib::Medium* medium,
+        MaterialPropertyLib::VariableArray variables,
+        ParameterLib::SpatialPosition pos, double const t, double const dt) = 0;
+
+    // constitutive variables
+    PhaseTransitionModelVariables cv;
 };
 
 }  // namespace TH2M

@@ -165,29 +165,29 @@ void PhaseTransitionEvaporation::computeConstitutiveVariables(
             .property(MaterialPropertyLib::PropertyType::molar_mass)
             .template value<double>(variables, pos, t, dt);
 
-    rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+    cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(variables, pos, t, dt);
-    rhoWLR = rhoLR;
+    cv.rhoWLR = cv.rhoLR;
 
     // Kelvin-Laplace correction for menisci
-    const double K = std::exp(-pCap * M_W / rhoLR / R / T);
-    const double dK_dT = pCap * M_W / rhoLR / R / T / T * K;
+    const double K = std::exp(-pCap * M_W / cv.rhoLR / R / T);
+    const double dK_dT = pCap * M_W / cv.rhoLR / R / T / T * K;
 
     // vapour pressure inside porespace (== water partial pressure in gas phase)
-    pWGR = p_vap_flat * K;
+    cv.pWGR = p_vap_flat * K;
 
     auto const dp_vap_dT = dp_vap_flat_dT * K + p_vap_flat * dK_dT;
 
     // gas phase molar fractions
-    xnWG = std::clamp(pWGR / pGR, 0., 1.);
-    xnCG = 1. - xnWG;
+    cv.xnWG = std::clamp(cv.pWGR / pGR, 0., 1.);
+    cv.xnCG = 1. - cv.xnWG;
 
     // molar mass of the gas phase as a mixture of 'air' and vapour
-    auto const MG = xnCG * M_C + xnWG * M_W;
+    auto const MG = cv.xnCG * M_C + cv.xnWG * M_W;
     variables[static_cast<int>(MaterialPropertyLib::Variable::molar_mass)] = MG;
 
     // gas phase mixture density
-    rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
+    cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(variables, pos, t, dt);
 
     auto const drhoGR_dpGR =
@@ -203,23 +203,23 @@ void PhaseTransitionEvaporation::computeConstitutiveVariables(
                                      pos, t, dt);
 
     // gas phase mass fractions
-    xmCG = xnCG * M_C / MG;
-    xmWG = 1. - xmCG;
+    cv.xmCG = cv.xnCG * M_C / MG;
+    cv.xmWG = 1. - cv.xmCG;
 
-    auto beta_pGR = 1. / rhoGR * drhoGR_dpGR;
-    dxmWG_dpGR = xmWG * beta_pGR;
-    dxmCG_dpGR = -dxmWG_dpGR;
+    auto beta_pGR = 1. / cv.rhoGR * drhoGR_dpGR;
+    cv.dxmWG_dpGR = cv.xmWG * beta_pGR;
+    cv.dxmCG_dpGR = -cv.dxmWG_dpGR;
 
-    auto beta_TGR = -1. / rhoGR * drhoGR_dT;
+    auto beta_TGR = -1. / cv.rhoGR * drhoGR_dT;
 
     // component partial densities in the gas phase
-    rhoCGR = xmCG * rhoGR;
-    rhoWGR = xmWG * rhoGR;
+    cv.rhoCGR = cv.xmCG * cv.rhoGR;
+    cv.rhoWGR = cv.xmWG * cv.rhoGR;
 
-    auto drhoWGR_dT = M_W / R / T / T * (T * dp_vap_dT - pWGR);
+    auto drhoWGR_dT = M_W / R / T / T * (T * dp_vap_dT - cv.pWGR);
 
-    dxmWG_dT = 1. / rhoGR * drhoWGR_dT + xmWG * beta_TGR;
-    dxmCG_dT = -dxmWG_dT;
+    cv.dxmWG_dT = 1. / cv.rhoGR * drhoWGR_dT + cv.xmWG * beta_TGR;
+    cv.dxmCG_dT = -cv.dxmWG_dT;
 
     // specific heat capacities of dry air and vapour
     auto const cpCG =
@@ -232,11 +232,11 @@ void PhaseTransitionEvaporation::computeConstitutiveVariables(
             .template value<double>(variables, pos, t, dt);
 
     // specific enthalpy of dry air and vapour components
-    hCG = cpCG * T;
-    hWG = cpWG * T + dh_evap;
+    cv.hCG = cpCG * T;
+    cv.hWG = cpWG * T + dh_evap;
 
     // specific enthalpy of gas phase and derivatives
-    hG = xmCG * hCG + xmWG * (hWG);
+    cv.hG = cv.xmCG * cv.hCG + cv.xmWG * cv.hWG;
 
     // specific heat capacities of liquid phase
     auto const cpL =
@@ -245,32 +245,32 @@ void PhaseTransitionEvaporation::computeConstitutiveVariables(
             .template value<double>(variables, pos, t, dt);
 
     // specific enthalpy of liquid phase and derivatives
-    hL = cpL * T;
+    cv.hL = cpL * T;
 
     // specific inner energies of gas and liquid phases
-    uG = hG - pGR / rhoGR;
-    uL = hL;
+    cv.uG = cv.hG - pGR / cv.rhoGR;
+    cv.uL = cv.hL;
 
-    diffusion_coefficient_vapour =
+    cv.diffusion_coefficient_vapour =
         vapour_component.property(MaterialPropertyLib::PropertyType::diffusion)
             .template value<double>(variables, pos, t, dt);
 
     // gas phase viscosity
-    muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+    cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                .template value<double>(variables, pos, t, dt);
 
     // gas phase thermal conductivity
-    lambdaGR =
+    cv.lambdaGR =
         gas_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variables, pos, t, dt);
 
     // liquid phase viscosity
-    muLR = liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+    cv.muLR = liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                .template value<double>(variables, pos, t, dt);
 
     // liquid phase thermal conductivity
-    lambdaLR =
+    cv.lambdaLR =
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variables, pos, t, dt);

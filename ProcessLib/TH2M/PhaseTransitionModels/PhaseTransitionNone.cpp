@@ -52,8 +52,8 @@ void PhaseTransitionNone::computeConstitutiveVariables(
     auto const& gas_phase = medium->phase("Gas");
 
     // C-component is only component in the gas phase
-    xnCG = 1.;
-    xmCG = 1.;
+    cv.xnCG = 1.;
+    cv.xmCG = 1.;
 
     auto const M =
         gas_phase.property(MaterialPropertyLib::PropertyType::molar_mass)
@@ -61,32 +61,32 @@ void PhaseTransitionNone::computeConstitutiveVariables(
 
     variables[static_cast<int>(MaterialPropertyLib::Variable::molar_mass)] = M;
 
-    rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
+    cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(variables, pos, t, dt);
-    muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+    cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                .template value<double>(variables, pos, t, dt);
-    lambdaGR =
+    cv.lambdaGR =
         gas_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variables, pos, t, dt);
 
-    rhoCGR = rhoGR;
+    cv.rhoCGR = cv.rhoGR;
 
     // W-component is only component in the liquid phase
-    xmWL = 1.;
+    cv.xmWL = 1.;
 
-    rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+    cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(variables, pos, t, dt);
 
-    muLR = liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+    cv.muLR = liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                .template value<double>(variables, pos, t, dt);
 
-    lambdaLR =
+    cv.lambdaLR =
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variables, pos, t, dt);
 
-    rhoWLR = rhoLR;
+    cv.rhoWLR = cv.rhoLR;
 
     // specifi heat capacities
     auto const cpG =
@@ -100,12 +100,12 @@ void PhaseTransitionNone::computeConstitutiveVariables(
             .template value<double>(variables, pos, t, dt);
 
     // specific phase enthalpies
-    hG = cpG * T;
-    hL = cpL * T;
+    cv.hG = cpG * T;
+    cv.hL = cpL * T;
 
     // specific inner energies
-    uG = hG - pGR / rhoGR;
-    uL = hL;
+    cv.uG = cv.hG - pGR / cv.rhoGR;
+    cv.uL = cv.hL;
 }
 }  // namespace TH2M
 }  // namespace ProcessLib
