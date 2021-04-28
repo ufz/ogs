@@ -190,6 +190,7 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
+        eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
         s_L_prev = s_L;
@@ -212,28 +213,13 @@ struct IntegrationPointData final
         material_state_variables->pushBackState();
     }
 
-    template <typename DisplacementVectorType>
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+        MaterialPropertyLib::VariableArray& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
-        DisplacementVectorType const& /*u*/,
-        double const T)
+        double const T_prev)
     {
-        // TODO (Norbert) These current time step variables should be filled in
-        // the FEM and passed here instead of the T and thermal_strain.
-        MaterialPropertyLib::VariableArray variable_array;
-        variable_array[static_cast<int>(MaterialPropertyLib::Variable::stress)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                sigma_eff);
-        variable_array[static_cast<int>(
-                           MaterialPropertyLib::Variable::mechanical_strain)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m);
-        variable_array[static_cast<int>(
-                           MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(T);
-
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev[static_cast<int>(
                                 MaterialPropertyLib::Variable::stress)]
@@ -245,7 +231,7 @@ struct IntegrationPointData final
                 eps_m_prev);
         variable_array_prev[static_cast<int>(
                                 MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(T);  // TODO (Norbert) should be T_prev
+            .emplace<double>(T_prev);
         auto&& solution = solid_material.integrateStress(
             variable_array_prev, variable_array, t, x_position, dt,
             *material_state_variables);
