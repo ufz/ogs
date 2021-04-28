@@ -37,10 +37,11 @@ PhaseTransitionNone::PhaseTransitionNone(
     }
 }
 
-void PhaseTransitionNone::computeConstitutiveVariables(
+PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
+    PhaseTransitionModelVariables const& phase_transition_model_variables,
     const MaterialPropertyLib::Medium* medium,
     MaterialPropertyLib::VariableArray variables,
-    ParameterLib::SpatialPosition pos, double const t, double const dt)
+    ParameterLib::SpatialPosition pos, double const t, double const dt) const
 {
     // primary variables
     auto const pGR = std::get<double>(variables[static_cast<int>(
@@ -50,6 +51,9 @@ void PhaseTransitionNone::computeConstitutiveVariables(
 
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& gas_phase = medium->phase("Gas");
+
+    // copy previous state before modification.
+    PhaseTransitionModelVariables cv = phase_transition_model_variables;
 
     // C-component is only component in the gas phase
     cv.xnCG = 1.;
@@ -106,6 +110,8 @@ void PhaseTransitionNone::computeConstitutiveVariables(
     // specific inner energies
     cv.uG = cv.hG - pGR / cv.rhoGR;
     cv.uL = cv.hL;
+
+    return cv;
 }
 }  // namespace TH2M
 }  // namespace ProcessLib

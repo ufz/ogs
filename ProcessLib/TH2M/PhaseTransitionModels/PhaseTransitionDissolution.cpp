@@ -20,16 +20,17 @@ PhaseTransitionDissolution::PhaseTransitionDissolution(
     DBUG("Create PhaseTransitionDissolution constitutive model.");
 }
 
-void PhaseTransitionDissolution::computeConstitutiveVariables(
+PhaseTransitionModelVariables
+PhaseTransitionDissolution::updateConstitutiveVariables(
+    PhaseTransitionModelVariables const& /*phase_transition_model_variables*/,
     const MaterialPropertyLib::Medium* /*medium*/,
     MaterialPropertyLib::VariableArray /*variables*/,
     ParameterLib::SpatialPosition /*pos*/, double const /*t*/,
-    const double /*dt*/)
+    double const /*dt*/) const
 {
     OGS_FATAL(
-        "PhaseTransitionDissolution::computeConstitutiveVariables is not "
+        "PhaseTransitionDissolution::updateConstitutiveVariables is not "
         "implemented.");
 }
-
 }  // namespace TH2M
 }  // namespace ProcessLib

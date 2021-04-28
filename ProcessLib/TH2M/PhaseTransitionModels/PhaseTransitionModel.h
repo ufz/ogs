@@ -106,7 +106,17 @@ struct PhaseTransitionModel
     virtual void computeConstitutiveVariables(
         const MaterialPropertyLib::Medium* medium,
         MaterialPropertyLib::VariableArray variables,
-        ParameterLib::SpatialPosition pos, double const t, double const dt) = 0;
+        ParameterLib::SpatialPosition pos, double const t, double const dt)
+    {
+        cv = updateConstitutiveVariables(cv, medium, variables, pos, t, dt);
+    }
+
+    virtual PhaseTransitionModelVariables updateConstitutiveVariables(
+        PhaseTransitionModelVariables const& phase_transition_model_variables,
+        const MaterialPropertyLib::Medium* medium,
+        MaterialPropertyLib::VariableArray variables,
+        ParameterLib::SpatialPosition pos, double const t,
+        double const dt) const = 0;
 
     // constitutive variables
     PhaseTransitionModelVariables cv;

@@ -108,10 +108,12 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
     checkRequiredProperties(liquid_phase, required_liquid_properties);
 }
 
-void PhaseTransitionEvaporation::computeConstitutiveVariables(
+PhaseTransitionModelVariables
+PhaseTransitionEvaporation::updateConstitutiveVariables(
+    PhaseTransitionModelVariables const& phase_transition_model_variables,
     const MaterialPropertyLib::Medium* medium,
     MaterialPropertyLib::VariableArray variables,
-    ParameterLib::SpatialPosition pos, double const t, const double dt)
+    ParameterLib::SpatialPosition pos, double const t, const double dt) const
 {
     // primary variables
     auto const pGR = std::get<double>(variables[static_cast<int>(
@@ -165,6 +167,8 @@ void PhaseTransitionEvaporation::computeConstitutiveVariables(
             .property(MaterialPropertyLib::PropertyType::molar_mass)
             .template value<double>(variables, pos, t, dt);
 
+    // copy previous state before modification.
+    PhaseTransitionModelVariables cv = phase_transition_model_variables;
     cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(variables, pos, t, dt);
     cv.rhoWLR = cv.rhoLR;
@@ -274,6 +278,8 @@ void PhaseTransitionEvaporation::computeConstitutiveVariables(
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variables, pos, t, dt);
+
+    return cv;
 }
 
 }  // namespace TH2M

@@ -28,11 +28,12 @@ struct PhaseTransitionFull : PhaseTransitionModel
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media);
 
-    void computeConstitutiveVariables(
+    PhaseTransitionModelVariables updateConstitutiveVariables(
+        PhaseTransitionModelVariables const& phase_transition_model_variables,
         const MaterialPropertyLib::Medium* medium,
         MaterialPropertyLib::VariableArray variables,
         ParameterLib::SpatialPosition pos, double const t,
-        double const dt) override;
+        double const dt) const override;
 };
 
 }  // namespace TH2M
