@@ -181,7 +181,7 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         WARN(
             "Consider switching from mesh and geometry input to multiple "
             "meshes input. See "
-            "https://www.opengeosys.org/docs/tools/model-preparation/"
+            "https://www.opengeosys.org/docs/tools/meshing-submeshes/"
             "constructmeshesfromgeometry/ tool for conversion.");
         //! \ogs_file_param{prj__mesh}
         meshes.push_back(readSingleMesh(config.getConfigParameter("mesh"),

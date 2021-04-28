@@ -236,14 +236,10 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
-    std::size_t setSigma(double const* values);
-
     // TODO (naumov) This method is same as getIntPtSigma but for arguments and
     // the ordering of the cache_mat.
     // There should be only one.
     std::vector<double> getSigma() const override;
-
-    std::size_t setEpsilon(double const* values);
 
     std::vector<double> getEpsilon() const override;
 

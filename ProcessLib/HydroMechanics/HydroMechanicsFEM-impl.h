@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include "HydroMechanicsFEM.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -243,7 +242,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // varialbe_array and the fluid must have the property
+        // variable_array and the fluid must have the property
         // MPL::PropertyType::molar_mass. For other density models (e.g.
         // Constant), it is not mandatory to specify the molar mass.
         if (fluid.hasProperty(MPL::PropertyType::molar_mass))
@@ -449,7 +448,7 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                             .template value<double>(vars, x_position, t, dt);
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // varialbe_array and the fluid must have the property
+        // variable_array and the fluid must have the property
         // MPL::PropertyType::molar_mass. For other density models (e.g.
         // Constant), it is not mandatory to specify the molar mass.
         if (fluid.hasProperty(MPL::PropertyType::molar_mass))
@@ -582,7 +581,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                             .template value<double>(vars, x_position, t, dt);
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // varialbe_array and the fluid must have the property
+        // variable_array and the fluid must have the property
         // MPL::PropertyType::molar_mass. For other density models (e.g.
         // Constant), it is not mandatory to specify the molar mass.
         if (fluid.hasProperty(MPL::PropertyType::molar_mass))
@@ -719,7 +718,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Quick workaround: If fluid density is described as ideal gas, then
         // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // varialbe_array and the fluid must have the property
+        // variable_array and the fluid must have the property
         // MPL::PropertyType::molar_mass. For other density models (e.g.
         // Constant), it is not mandatory to specify the molar mass.
         if (fluid.hasProperty(MPL::PropertyType::molar_mass))
@@ -953,24 +952,17 @@ std::size_t HydroMechanicsLocalAssembler<
                 _process_data.initial_stress->name);
         }
 
-        return setSigma(values);
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_eff);
     }
+
     if (name == "epsilon_ip")
     {
-        return setEpsilon(values);
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::eps);
     }
 
     return 0;
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t HydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setSigma(double const* values)
-{
-    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, _ip_data, &IpData::sigma_eff);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -981,16 +973,6 @@ std::vector<double> HydroMechanicsLocalAssembler<
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
         _ip_data, &IpData::sigma_eff);
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          typename IntegrationMethod, int DisplacementDim>
-std::size_t HydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
-    DisplacementDim>::setEpsilon(double const* values)
-{
-    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-        values, _ip_data, &IpData::eps);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
