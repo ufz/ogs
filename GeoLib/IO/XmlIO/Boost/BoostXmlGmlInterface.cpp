@@ -126,9 +126,9 @@ void BoostXmlGmlInterface::readPoints(
                                             "The point id is not unique.");
         points.push_back(new GeoLib::Point(p_x, p_y, p_z, p_id));
 
-        //! \ogs_file_attr{gml__points__point__name}
         if (auto const p_name =
-                pt.getConfigAttributeOptional<std::string>("name"))
+                //! \ogs_file_attr{gml__points__point__name}
+            pt.getConfigAttributeOptional<std::string>("name"))
         {
             if (p_name->empty())
             {
@@ -159,9 +159,9 @@ void BoostXmlGmlInterface::readPolylines(
 
         polylines.push_back(new GeoLib::Polyline(points));
 
-        //! \ogs_file_attr{gml__polylines__polyline__name}
         if (auto const p_name =
-                pl.getConfigAttributeOptional<std::string>("name"))
+                //! \ogs_file_attr{gml__polylines__polyline__name}
+            pl.getConfigAttributeOptional<std::string>("name"))
         {
             if (p_name->empty())
             {
@@ -215,9 +215,9 @@ void BoostXmlGmlInterface::readSurfaces(
         (void)id;
         surfaces.push_back(new GeoLib::Surface(points));
 
-        //! \ogs_file_attr{gml__surfaces__surface__name}
         if (auto const s_name =
-                sfc.getConfigAttributeOptional<std::string>("name"))
+                //! \ogs_file_attr{gml__surfaces__surface__name}
+            sfc.getConfigAttributeOptional<std::string>("name"))
         {
             if (s_name->empty())
             {
@@ -231,14 +231,14 @@ void BoostXmlGmlInterface::readSurfaces(
             //! \ogs_file_param{gml__surfaces__surface__element}
             for (auto const& element : sfc.getConfigParameterList("element"))
             {
-                //! \ogs_file_attr{gml__surfaces__surface__element__p1}
                 auto const p1_attr =
+                    //! \ogs_file_attr{gml__surfaces__surface__element__p1}
                     element.getConfigAttribute<std::size_t>("p1");
-                //! \ogs_file_attr{gml__surfaces__surface__element__p2}
                 auto const p2_attr =
+                    //! \ogs_file_attr{gml__surfaces__surface__element__p2}
                     element.getConfigAttribute<std::size_t>("p2");
-                //! \ogs_file_attr{gml__surfaces__surface__element__p3}
                 auto const p3_attr =
+                    //! \ogs_file_attr{gml__surfaces__surface__element__p3}
                     element.getConfigAttribute<std::size_t>("p3");
 
                 auto accessOrError = [this, &s_name](std::size_t pt_idx) {
