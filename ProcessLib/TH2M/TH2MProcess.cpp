@@ -189,9 +189,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
                            &LocalAssemblerInterface::getIntPtLiquidPressure);
     add_secondary_variable("mole_fraction_gas", 1,
                            &LocalAssemblerInterface::getIntPtMoleFractionGas);
-    add_secondary_variable(
-        "mole_fraction_liquid", 1,
-        &LocalAssemblerInterface::getIntPtMoleFractionLiquid);
     add_secondary_variable("mass_fraction_gas", 1,
                            &LocalAssemblerInterface::getIntPtMassFractionGas);
     add_secondary_variable(

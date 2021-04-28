@@ -291,15 +291,6 @@ private:
         assert(!_mole_fraction_gas.empty());
         return _mole_fraction_gas;
     }
-    virtual std::vector<double> const& getIntPtMoleFractionLiquid(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(!_mole_fraction_liquid.empty());
-        return _mole_fraction_liquid;
-    }
     virtual std::vector<double> const& getIntPtMassFractionGas(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,

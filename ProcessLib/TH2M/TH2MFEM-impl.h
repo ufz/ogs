@@ -52,8 +52,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
       _saturation(std::vector<double>(_integration_method.getNumberOfPoints())),
       _mole_fraction_gas(
           std::vector<double>(_integration_method.getNumberOfPoints())),
-      _mole_fraction_liquid(
-          std::vector<double>(_integration_method.getNumberOfPoints())),
       _mass_fraction_gas(
           std::vector<double>(_integration_method.getNumberOfPoints())),
       _mass_fraction_liquid(
