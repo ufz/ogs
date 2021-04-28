@@ -84,8 +84,7 @@ TEST(ProcessLib, TH2MPhaseTransitionNone)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    std::unique_ptr<ProcessLib::TH2M::PhaseTransitionModels> ptm =
-        std::make_unique<ProcessLib::TH2M::PhaseTransitionNone>(media);
+    auto ptm = std::make_unique<ProcessLib::TH2M::PhaseTransitionNone>(media);
 
     double const pGR = 1000000.;
     double const pCap = 1000000.;

@@ -17,7 +17,7 @@ namespace TH2M
 {
 PhaseTransitionNone::PhaseTransitionNone(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
-    : PhaseTransitionModels(media)
+    : PhaseTransitionModel(media)
 {
     DBUG("Create PhaseTransitionNone constitutive model.");
 

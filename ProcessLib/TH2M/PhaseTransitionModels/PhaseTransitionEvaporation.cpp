@@ -74,7 +74,7 @@ namespace TH2M
 {
 PhaseTransitionEvaporation::PhaseTransitionEvaporation(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
-    : PhaseTransitionModels(media),
+    : PhaseTransitionModel(media),
       n_components_gas_{numberOfGasComponents(media)},
       gas_phase_vapour_component_index_{findVapourComponentIndex(media)},
       // dry air component is complement of vapour component index

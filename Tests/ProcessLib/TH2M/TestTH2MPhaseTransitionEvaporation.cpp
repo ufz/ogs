@@ -112,7 +112,7 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    std::unique_ptr<ProcessLib::TH2M::PhaseTransitionModels> ptm =
+    auto ptm =
         std::make_unique<ProcessLib::TH2M::PhaseTransitionEvaporation>(media);
 
     double const pGR = 1000000.;

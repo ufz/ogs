@@ -12,7 +12,7 @@
 #include <map>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "PhaseTransitionModels.h"
+#include "PhaseTransitionModel.h"
 
 namespace ProcessLib
 {
@@ -21,7 +21,7 @@ namespace TH2M
 /// Dissolution only: Amounts of the gas phase can be dissolved into the liquid
 /// phase. This is realized by defining two components in the liqid phase but
 /// only one (or zero) components in the gas phase.
-struct PhaseTransitionDissolution : PhaseTransitionModels
+struct PhaseTransitionDissolution : PhaseTransitionModel
 {
     explicit PhaseTransitionDissolution(
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&

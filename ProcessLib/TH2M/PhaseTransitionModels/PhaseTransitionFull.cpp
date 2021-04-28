@@ -17,7 +17,7 @@ namespace TH2M
 {
 PhaseTransitionFull::PhaseTransitionFull(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
-    : PhaseTransitionModels(media)
+    : PhaseTransitionModel(media)
 {
     DBUG("Create PhaseTransitionFull constitutive model.");
 }

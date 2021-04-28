@@ -15,7 +15,7 @@ namespace TH2M
 {
 PhaseTransitionDissolution::PhaseTransitionDissolution(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
-    : PhaseTransitionModels(media)
+    : PhaseTransitionModel(media)
 {
     DBUG("Create PhaseTransitionDissolution constitutive model.");
 }

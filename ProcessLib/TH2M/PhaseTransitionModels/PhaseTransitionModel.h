@@ -5,7 +5,6 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
@@ -18,9 +17,9 @@ namespace ProcessLib
 {
 namespace TH2M
 {
-struct PhaseTransitionModels
+struct PhaseTransitionModel
 {
-    explicit PhaseTransitionModels(
+    explicit PhaseTransitionModel(
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media)
     {
@@ -43,7 +42,7 @@ struct PhaseTransitionModels
         }
     }
 
-    virtual ~PhaseTransitionModels() = default;
+    virtual ~PhaseTransitionModel() = default;
 
     virtual void computeConstitutiveVariables(
         const MaterialPropertyLib::Medium* medium,

@@ -12,13 +12,13 @@
 #include <map>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "PhaseTransitionModels.h"
+#include "PhaseTransitionModel.h"
 
 namespace ProcessLib
 {
 namespace TH2M
 {
-struct PhaseTransitionEvaporation : PhaseTransitionModels
+struct PhaseTransitionEvaporation : PhaseTransitionModel
 {
     explicit PhaseTransitionEvaporation(
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
