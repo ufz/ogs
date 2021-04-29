@@ -374,6 +374,11 @@ void TH2MLocalAssembler<
                              temperature_size + displacement_size;
     assert(local_x.size() == matrix_size);
 
+    auto const T =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            temperature_size> const>(local_x.data() + temperature_index,
+                                     temperature_size);
+
     auto const gas_pressure =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
             gas_pressure_size> const>(local_x.data() + gas_pressure_index,
@@ -394,6 +399,12 @@ void TH2MLocalAssembler<
             capillary_pressure_size> const>(
             local_x_dot.data() + capillary_pressure_index,
             capillary_pressure_size);
+
+    auto const dT =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            temperature_size> const>(local_x_dot.data() + temperature_index,
+                                     temperature_size) *
+        dt;
 
     // pointer to local_M_data vector
     auto M = MathLib::createZeroedMatrix<
@@ -482,6 +493,10 @@ void TH2MLocalAssembler<
     updateConstitutiveVariables(
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()), t,
         dt);
+
+    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& solid_phase = medium.phase("Solid");
+    MPL::VariableArray vars;
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
@@ -740,14 +755,30 @@ void TH2MLocalAssembler<
 
         eps.noalias() = Bu * displacement;
 
-        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const eps_th =
-            MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                MaterialPropertyLib::formEigenTensor<3>(
-                    ip.thermal_volume_strain / 3.));
+        auto& eps_prev = ip.eps_prev;
+        auto& eps_m = ip.eps_m;
+        auto& eps_m_prev = ip.eps_m_prev;
 
-        ip.updateConstitutiveRelationThermal(
-            t, pos, dt, displacement,
-            _process_data.reference_temperature(t, pos)[0], eps_th);
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim> const solid_linear_thermal_expansivity_vector =
+            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
+                solid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_expansivity)
+                    .value(vars, pos, t, dt));
+
+        double const T_int_pt = NT.dot(T);
+        double const dT_int_pt = NT.dot(dT);
+
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+            dthermal_strain =
+                solid_linear_thermal_expansivity_vector * dT_int_pt;
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m);
+
+        ip.updateConstitutiveRelation(vars, t, pos, dt, T_int_pt - dT_int_pt);
 
         fU.noalias() -= (BuT * sigma_eff - Nu_op.transpose() * rho * b) * w;
 
