@@ -245,58 +245,6 @@ struct IntegrationPointData final
         return C;
     }
 
-    template <typename DisplacementVectorType>
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        DisplacementVectorType const& /*u*/,
-        double const T,
-        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&
-            thermal_strain)
-    {
-        eps_m.noalias() = eps - thermal_strain;
-
-        // TODO (Norbert) These current time step variables should be filled in
-        // the FEM and passed here instead of the T and thermal_strain.
-        MaterialPropertyLib::VariableArray variable_array;
-        variable_array[static_cast<int>(MaterialPropertyLib::Variable::stress)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                sigma_eff);
-        variable_array[static_cast<int>(
-                           MaterialPropertyLib::Variable::mechanical_strain)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m);
-        variable_array[static_cast<int>(
-                           MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(T);
-
-        MaterialPropertyLib::VariableArray variable_array_prev;
-        variable_array_prev[static_cast<int>(
-                                MaterialPropertyLib::Variable::stress)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                sigma_eff_prev);
-        variable_array_prev[static_cast<int>(MaterialPropertyLib::Variable::
-                                                 mechanical_strain)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m_prev);
-        variable_array_prev[static_cast<int>(
-                                MaterialPropertyLib::Variable::temperature)]
-            .emplace<double>(T);  // TODO (Norbert) should be T_prev
-
-        auto&& solution = solid_material.integrateStress(
-            variable_array_prev, variable_array, t, x_position, dt,
-            *material_state_variables);
-
-        if (!solution)
-            OGS_FATAL("Computation of local constitutive relation failed.");
-
-        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
-        std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
-
-        return C;
-    }
-
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
