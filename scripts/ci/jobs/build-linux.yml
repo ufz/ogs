@@ -72,6 +72,26 @@ build linux arch:
       -DOGS_USE_POETRY=OFF
       -DOGS_TEST_NOTEBOOKS=OFF
 
+build linux debug with sanitizers:
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+  tags: [envinf2-shell]
+  needs: [meta]
+  variables:
+    CMAKE_PRESET: debug
+    CMAKE_ARGS: >-
+      -DCMAKE_C_COMPILER=/usr/bin/clang
+      -DCMAKE_CXX_COMPILER=/usr/bin/clang++
+      -DBUILD_SHARED_LIBS=ON
+      -DOGS_USE_POETRY=OFF
+      -DOGS_COMPILE_FLAGS=-O3;-fno-var-tracking
+      -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=OFF
+      -DOGS_ADDRESS_SANITIZER=ON
+      -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON
+    UBSAN_OPTIONS: "print_stacktrace=1"
+    LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
+
 build linux ubuntu:
   extends:
     - .template-build-linux
