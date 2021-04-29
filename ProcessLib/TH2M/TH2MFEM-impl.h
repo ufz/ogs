@@ -236,7 +236,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // constitutive model object as specified in process creation
         auto& c = *_process_data.phase_transition_model_;
-        c.getConstitutiveVariables(&medium, vars, pos, t, dt);
+        c.computeConstitutiveVariables(&medium, vars, pos, t, dt);
         auto const phi_L = ip_data.s_L * ip_data.phi;
         auto const phi_G = (1. - ip_data.s_L) * ip_data.phi;
 

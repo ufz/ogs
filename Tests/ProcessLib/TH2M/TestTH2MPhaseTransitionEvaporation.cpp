@@ -126,7 +126,8 @@ TEST(ProcessLib, TH2MPhaseTransitionEvaporation)
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = T;
 
-    ptm->getConstitutiveVariables(medium.get(), variable_array, pos, time, dt);
+    ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time,
+                                      dt);
 
     // reference values
     double const rhoCGR = 1.185858524394711;

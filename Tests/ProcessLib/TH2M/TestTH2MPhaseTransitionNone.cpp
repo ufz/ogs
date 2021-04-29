@@ -98,7 +98,8 @@ TEST(ProcessLib, TH2MPhaseTransitionNone)
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = T;
 
-    ptm->getConstitutiveVariables(medium.get(), variable_array, pos, time, dt);
+    ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time,
+                                      dt);
 
     // reference values
     double const rhoCGR = density_air;
