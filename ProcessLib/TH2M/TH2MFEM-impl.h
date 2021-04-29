@@ -742,20 +742,11 @@ void TH2MLocalAssembler<
         auto& eps_m = ip.eps_m;
         auto& eps_m_prev = ip.eps_m_prev;
 
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim> const solid_linear_thermal_expansivity_vector =
-            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_expansivity)
-                    .value(vars, pos, t, dt));
-
         double const T_int_pt = NT.dot(T);
         double const dT_int_pt = NT.dot(dT);
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansivity_vector * dT_int_pt;
+            dthermal_strain = ip.alpha_T_SR * dT_int_pt;
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
         vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
