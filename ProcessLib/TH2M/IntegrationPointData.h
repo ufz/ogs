@@ -67,6 +67,7 @@ struct IntegrationPointData final
     double rhoGR = std::numeric_limits<double>::quiet_NaN();
     double rhoLR = std::numeric_limits<double>::quiet_NaN();
     double rhoSR = std::numeric_limits<double>::quiet_NaN();
+    // vapour pressure (water component partial gas phase pressure)
     double pWGR = std::numeric_limits<double>::quiet_NaN();
 
     // real constitutent partial densities

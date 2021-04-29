@@ -299,6 +299,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         ip_data.h_G = c.hG;
         ip_data.h_L = c.hL;
+        ip_data.pWGR = c.pWGR;
     }
 }
 
