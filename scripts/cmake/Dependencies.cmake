@@ -425,7 +425,7 @@ cpm_licenses_create_disclaimer_target(
 )
 
 # ccache
-if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_CCACHE)
+if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_COMPILER_CACHE)
     set(CCACHE_OPTIONS "CCACHE_SLOPPINESS=pch_defines,time_macros")
     if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang|AppleClang")
         list(APPEND CCACHE_OPTIONS "CCACHE_CPP2=true")
