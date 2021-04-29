@@ -211,10 +211,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 .template value<double>(
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
 
-        ip_data.c_p_S =
-            solid_phase.property(MPL::PropertyType::specific_heat_capacity)
-                .template value<double>(vars, pos, t, dt);
-
         auto const lambdaSR = MPL::formEigenTensor<DisplacementDim>(
             solid_phase.property(MPL::PropertyType::thermal_conductivity)
                 .value(vars, pos, t, dt));
@@ -262,12 +258,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const lambdaGR = MPL::formEigenTensor<DisplacementDim>(c.lambdaGR);
         auto const lambdaLR = MPL::formEigenTensor<DisplacementDim>(c.lambdaLR);
 
-        auto const lambda =
-            phi_S * lambdaSR + phi_L * lambdaLR + phi_G * lambdaGR;
+        ip_data.lambda = phi_S * lambdaSR + phi_L * lambdaLR + phi_G * lambdaGR;
 
-        ip_data.lambda = lambda;
-
-        ip_data.h_S = ip_data.c_p_S * T;
+        auto const cpS =
+            solid_phase.property(MPL::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t, dt);
+        ip_data.h_S = cpS * T;
         auto const u_S = ip_data.h_S;
 
         ip_data.rho_u_eff = phi_G * c.rhoGR * c.uG + phi_L * c.rhoLR * c.uL +
@@ -276,12 +272,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.rho_G_h_G = phi_G * c.rhoGR * c.hG;
         ip_data.rho_L_h_L = phi_L * c.rhoLR * c.hL;
         ip_data.rho_S_h_S = phi_S * rhoSR * ip_data.h_S;
-
-        ip_data.pWGR = c.pWGR;
-
-        ip_data.xnCG = c.xnCG;
-        ip_data.xmCG = c.xmCG;
-        ip_data.xmWL = c.xmWL;
 
         ip_data.muGR = c.muGR;
         ip_data.muLR = c.muLR;
@@ -307,12 +297,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.diffusion_coefficient_vapour = c.diffusion_coefficient_vapour;
         ip_data.diffusion_coefficient_solvate = c.diffusion_coefficient_solvate;
 
-        ip_data.u_G = c.uG;
-        ip_data.u_L = c.uL;
         ip_data.h_G = c.hG;
-        ip_data.h_CG = c.hCG;
         ip_data.h_L = c.hL;
-        ip_data.h_WG = c.hWG;
     }
 }
 
@@ -494,8 +480,6 @@ void TH2MLocalAssembler<
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()), t,
         dt);
 
-    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
-    auto const& solid_phase = medium.phase("Solid");
     MPL::VariableArray vars;
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
@@ -594,7 +578,6 @@ void TH2MLocalAssembler<
         // phase specific enthalpies
         auto& h_G = ip.h_G;
         auto& h_L = ip.h_L;
-        // auto& h_S = ip.h_S;
 
         auto const rho_C_GR_dot = (ip.rhoCGR - ip.rhoCGR_prev) / dt;
         auto const rho_C_LR_dot = (ip.rhoCLR - ip.rhoCLR_prev) / dt;

@@ -62,21 +62,12 @@ struct IntegrationPointData final
 
     double s_L = std::numeric_limits<double>::quiet_NaN();
     double s_L_prev = std::numeric_limits<double>::quiet_NaN();
-    double dsLdpCap = std::numeric_limits<double>::quiet_NaN();
-    double MC = std::numeric_limits<double>::quiet_NaN();
-    double MW = std::numeric_limits<double>::quiet_NaN();
-    double MG = std::numeric_limits<double>::quiet_NaN();
 
     // phase intrinsic densities
     double rhoGR = std::numeric_limits<double>::quiet_NaN();
     double rhoLR = std::numeric_limits<double>::quiet_NaN();
     double rhoSR = std::numeric_limits<double>::quiet_NaN();
-    // solid phase pressure
-    double p_SR = std::numeric_limits<double>::quiet_NaN();
     double pWGR = std::numeric_limits<double>::quiet_NaN();
-
-    double dp_vap_dT = std::numeric_limits<double>::quiet_NaN();
-    double dp_vap_dpCap = std::numeric_limits<double>::quiet_NaN();
 
     // real constitutent partial densities
     double rhoCGR = std::numeric_limits<double>::quiet_NaN();
@@ -88,24 +79,12 @@ struct IntegrationPointData final
     double rhoWLR = std::numeric_limits<double>::quiet_NaN();
     double rhoWLR_prev = std::numeric_limits<double>::quiet_NaN();
 
-    double drhoGR_dpGR = std::numeric_limits<double>::quiet_NaN();
-    double drhoGR_dT = std::numeric_limits<double>::quiet_NaN();
-
     // phase composition
     // molar fraction
     double xnCG = std::numeric_limits<double>::quiet_NaN();
-    double xnWG = std::numeric_limits<double>::quiet_NaN();
-    double xnCL = std::numeric_limits<double>::quiet_NaN();
-    double xnWL = std::numeric_limits<double>::quiet_NaN();
-
-    double dxnCG_dpGR = std::numeric_limits<double>::quiet_NaN();
-    double dxnCG_dpCap = std::numeric_limits<double>::quiet_NaN();
-    double dxnCG_dT = std::numeric_limits<double>::quiet_NaN();
 
     // mass fraction
     double xmCG = std::numeric_limits<double>::quiet_NaN();
-    double xmWG = std::numeric_limits<double>::quiet_NaN();
-    double xmCL = std::numeric_limits<double>::quiet_NaN();
     double xmWL = std::numeric_limits<double>::quiet_NaN();
     // mass fraction derivatives
     double dxmCG_dpGR = std::numeric_limits<double>::quiet_NaN();
@@ -138,22 +117,11 @@ struct IntegrationPointData final
     double h_CG = std::numeric_limits<double>::quiet_NaN();
     double h_WG = std::numeric_limits<double>::quiet_NaN();
 
-    double dhG_dT = std::numeric_limits<double>::quiet_NaN();
-
     // internal energies
     double u_G = std::numeric_limits<double>::quiet_NaN();
     double u_L = std::numeric_limits<double>::quiet_NaN();
     double rho_u_eff = std::numeric_limits<double>::quiet_NaN();
     double rho_u_eff_prev = std::numeric_limits<double>::quiet_NaN();
-
-    // heat capacities
-    double cp_G = std::numeric_limits<double>::quiet_NaN();
-    double cp_CG = std::numeric_limits<double>::quiet_NaN();
-    double cp_WG = std::numeric_limits<double>::quiet_NaN();
-    double cp_L = std::numeric_limits<double>::quiet_NaN();
-    double cp_CL = std::numeric_limits<double>::quiet_NaN();
-    double cp_WL = std::numeric_limits<double>::quiet_NaN();
-    double cp_S = std::numeric_limits<double>::quiet_NaN();
 
     // porosity
     double phi = std::numeric_limits<double>::quiet_NaN();
@@ -169,9 +137,7 @@ struct IntegrationPointData final
     double phi_S_p_SR_prev = std::numeric_limits<double>::quiet_NaN();
 
     double thermal_volume_strain = std::numeric_limits<double>::quiet_NaN();
-    double beta_pS = std::numeric_limits<double>::quiet_NaN();
     double beta_T_SR = std::numeric_limits<double>::quiet_NaN();
-    double c_p_S = std::numeric_limits<double>::quiet_NaN();
     double alpha_B = std::numeric_limits<double>::quiet_NaN();
     double beta_p_SR = std::numeric_limits<double>::quiet_NaN();
 
