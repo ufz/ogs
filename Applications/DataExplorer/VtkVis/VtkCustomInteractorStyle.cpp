@@ -136,7 +136,7 @@ void VtkCustomInteractorStyle::pickableDataObject(vtkDataObject* object)
     }
 }
 
-// From http://www.vtk.org/Wiki/VTK/Examples/Cxx/Picking/CellPicking
+// From https://kitware.github.io/vtk-examples/site/Cxx/Picking/CellPicking/
 void VtkCustomInteractorStyle::OnLeftButtonDown()
 {
     if (!_data)
