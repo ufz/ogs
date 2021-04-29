@@ -31,17 +31,22 @@ void checkMPLProperties(
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
 {
     std::array const required_property_medium = {
+        MaterialPropertyLib::PropertyType::permeability,
         MaterialPropertyLib::PropertyType::porosity,
-        MaterialPropertyLib::PropertyType::permeability};
+        MaterialPropertyLib::PropertyType::thermal_conductivity,
+        MaterialPropertyLib::PropertyType::thermal_longitudinal_dispersivity,
+        MaterialPropertyLib::PropertyType::thermal_transversal_dispersivity};
 
     std::array const required_property_liquid_phase = {
         MaterialPropertyLib::PropertyType::viscosity,
         MaterialPropertyLib::PropertyType::density,
-        MaterialPropertyLib::PropertyType::specific_heat_capacity};
+        MaterialPropertyLib::PropertyType::specific_heat_capacity,
+        MaterialPropertyLib::PropertyType::thermal_conductivity};
 
     std::array const required_property_solid_phase = {
         MaterialPropertyLib::PropertyType::specific_heat_capacity,
         MaterialPropertyLib::PropertyType::density,
+        MaterialPropertyLib::PropertyType::thermal_conductivity,
         MaterialPropertyLib::PropertyType::storage};
 
     MaterialPropertyLib::checkMaterialSpatialDistributionMap(
