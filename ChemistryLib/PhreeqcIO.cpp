@@ -703,6 +703,28 @@ void PhreeqcIO::updateVolumeFractionPostReaction(
              (*kinetic_reactant.molality_prev)[chemical_system_id]) *
             liquid_density * porosity * molar_volume;
     }
+
+    for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
+    {
+        auto const& solid_constituent =
+            solid_phase.component(equilibrium_reactant.name);
+
+        if (solid_constituent.hasProperty(
+                MaterialPropertyLib::PropertyType::molality))
+        {
+            continue;
+        }
+
+        auto const molar_volume =
+            solid_constituent
+                .property(MaterialPropertyLib::PropertyType::molar_volume)
+                .template value<double>(vars, pos, t, dt);
+
+        (*equilibrium_reactant.volume_fraction)[chemical_system_id] +=
+            ((*equilibrium_reactant.molality)[chemical_system_id] -
+             (*equilibrium_reactant.molality_prev)[chemical_system_id]) *
+            liquid_density * porosity * molar_volume;
+    }
 }
 
 void PhreeqcIO::updatePorosityPostReaction(
@@ -725,6 +747,22 @@ void PhreeqcIO::updatePorosityPostReaction(
         porosity -=
             ((*kinetic_reactant.volume_fraction)[chemical_system_id] -
              (*kinetic_reactant.volume_fraction_prev)[chemical_system_id]);
+    }
+
+    for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
+    {
+        auto const& solid_constituent =
+            solid_phase.component(equilibrium_reactant.name);
+
+        if (solid_constituent.hasProperty(
+                MaterialPropertyLib::PropertyType::molality))
+        {
+            continue;
+        }
+
+        porosity -=
+            ((*equilibrium_reactant.volume_fraction)[chemical_system_id] -
+             (*equilibrium_reactant.volume_fraction_prev)[chemical_system_id]);
     }
 }
 
