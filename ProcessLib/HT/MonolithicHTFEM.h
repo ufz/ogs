@@ -134,7 +134,8 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
-            vars[static_cast<int>(MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+            vars[static_cast<int>(
+                MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
             // \todo the argument to getValue() has to be changed for non
             // constant storage model
             auto const specific_storage =
@@ -179,8 +180,8 @@ public:
             // matrix assembly
             GlobalDimMatrixType const thermal_conductivity_dispersivity =
                 this->getThermalConductivityDispersivity(
-                    vars, fluid_density, specific_heat_capacity_fluid,
-                    velocity, I, pos, t, dt);
+                    vars, fluid_density, specific_heat_capacity_fluid, velocity,
+                    I, pos, t, dt);
             KTT.noalias() +=
                 (dNdx.transpose() * thermal_conductivity_dispersivity * dNdx +
                  N.transpose() * velocity.transpose() * dNdx * fluid_density *
