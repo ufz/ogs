@@ -8,7 +8,7 @@ fi
 module use /global/apps/modulefiles
 
 module load foss/2020b
-module load cmake/3.19.4-1
+module load cmake/3.20.2-1
 module load Ninja/1.10.1
 
 # Tools
