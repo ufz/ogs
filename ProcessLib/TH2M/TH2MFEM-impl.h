@@ -344,7 +344,7 @@ void TH2MLocalAssembler<
                              temperature_size + displacement_size;
     assert(local_x.size() == matrix_size);
 
-    auto const T =
+    auto const temperature =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
             temperature_size> const>(local_x.data() + temperature_index,
                                      temperature_size);
@@ -370,11 +370,10 @@ void TH2MLocalAssembler<
             local_x_dot.data() + capillary_pressure_index,
             capillary_pressure_size);
 
-    auto const dT =
+    auto const temperature_dot =
         Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
             temperature_size> const>(local_x_dot.data() + temperature_index,
-                                     temperature_size) *
-        dt;
+                                     temperature_size);
 
     // pointer to local_M_data vector
     auto local_M = MathLib::createZeroedMatrix<
@@ -723,17 +722,17 @@ void TH2MLocalAssembler<
         auto& eps_m = ip.eps_m;
         auto& eps_m_prev = ip.eps_m_prev;
 
-        double const T_int_pt = NT.dot(T);
-        double const dT_int_pt = NT.dot(dT);
+        double const T = NT.dot(temperature);
+        double const T_dot = NT.dot(temperature_dot);
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain = ip.alpha_T_SR * dT_int_pt;
+            dthermal_strain = ip.alpha_T_SR * T_dot * dt;
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
         vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        ip.updateConstitutiveRelation(vars, t, pos, dt, T_int_pt - dT_int_pt);
+        ip.updateConstitutiveRelation(vars, t, pos, dt, T - T_dot * dt);
 
         fU.noalias() -= (BuT * sigma_eff - Nu_op.transpose() * rho * b) * w;
 
