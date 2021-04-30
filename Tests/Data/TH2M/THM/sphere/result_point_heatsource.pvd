@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="result_point_heatsource_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="100000" group="" part="0" file="result_point_heatsource_ts_5_t_100000.000000.vtu"/>
+  </Collection>
+</VTKFile>

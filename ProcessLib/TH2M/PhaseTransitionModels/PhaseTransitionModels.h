@@ -45,7 +45,7 @@ struct PhaseTransitionModels
 
     virtual ~PhaseTransitionModels() = default;
 
-    virtual void getConstitutiveVariables(
+    virtual void computeConstitutiveVariables(
         const MaterialPropertyLib::Medium* medium,
         MaterialPropertyLib::VariableArray variables,
         ParameterLib::SpatialPosition pos, double const t, double const dt) = 0;

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="results_heatpipe_radial_static_gas_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="100000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_1_t_100000.000000.vtu"/>
+    <DataSet timestep="200000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_2_t_200000.000000.vtu"/>
+    <DataSet timestep="300000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_3_t_300000.000000.vtu"/>
+    <DataSet timestep="400000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_4_t_400000.000000.vtu"/>
+    <DataSet timestep="500000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_5_t_500000.000000.vtu"/>
+    <DataSet timestep="600000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_6_t_600000.000000.vtu"/>
+    <DataSet timestep="700000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_7_t_700000.000000.vtu"/>
+    <DataSet timestep="800000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_8_t_800000.000000.vtu"/>
+    <DataSet timestep="900000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_9_t_900000.000000.vtu"/>
+    <DataSet timestep="1000000" group="" part="0" file="results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu"/>
+  </Collection>
+</VTKFile>

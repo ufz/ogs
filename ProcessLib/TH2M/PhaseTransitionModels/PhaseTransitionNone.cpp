@@ -37,7 +37,7 @@ PhaseTransitionNone::PhaseTransitionNone(
     }
 }
 
-void PhaseTransitionNone::getConstitutiveVariables(
+void PhaseTransitionNone::computeConstitutiveVariables(
     const MaterialPropertyLib::Medium* medium,
     MaterialPropertyLib::VariableArray variables,
     ParameterLib::SpatialPosition pos, double const t, double const dt)

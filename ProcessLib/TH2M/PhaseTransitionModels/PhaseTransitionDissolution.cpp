@@ -20,14 +20,14 @@ PhaseTransitionDissolution::PhaseTransitionDissolution(
     DBUG("Create PhaseTransitionDissolution constitutive model.");
 }
 
-void PhaseTransitionDissolution::getConstitutiveVariables(
+void PhaseTransitionDissolution::computeConstitutiveVariables(
     const MaterialPropertyLib::Medium* /*medium*/,
     MaterialPropertyLib::VariableArray /*variables*/,
     ParameterLib::SpatialPosition /*pos*/, double const /*t*/,
     const double /*dt*/)
 {
     OGS_FATAL(
-        "PhaseTransitionDissolution::getConstitutiveVariables is not "
+        "PhaseTransitionDissolution::computeConstitutiveVariables is not "
         "implemented.");
 }
 

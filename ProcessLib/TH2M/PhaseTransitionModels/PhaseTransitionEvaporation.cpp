@@ -108,7 +108,7 @@ PhaseTransitionEvaporation::PhaseTransitionEvaporation(
     checkRequiredProperties(liquid_phase, required_liquid_properties);
 }
 
-void PhaseTransitionEvaporation::getConstitutiveVariables(
+void PhaseTransitionEvaporation::computeConstitutiveVariables(
     const MaterialPropertyLib::Medium* medium,
     MaterialPropertyLib::VariableArray variables,
     ParameterLib::SpatialPosition pos, double const t, const double dt)

@@ -27,10 +27,11 @@ struct PhaseTransitionDissolution : PhaseTransitionModels
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media);
 
-    void getConstitutiveVariables(const MaterialPropertyLib::Medium* medium,
-                                  MaterialPropertyLib::VariableArray variables,
-                                  ParameterLib::SpatialPosition pos,
-                                  double const t, double const dt) override;
+    void computeConstitutiveVariables(
+        const MaterialPropertyLib::Medium* medium,
+        MaterialPropertyLib::VariableArray variables,
+        ParameterLib::SpatialPosition pos, double const t,
+        double const dt) override;
 };
 
 }  // namespace TH2M

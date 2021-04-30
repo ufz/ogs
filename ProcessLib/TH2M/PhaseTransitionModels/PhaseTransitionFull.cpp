@@ -22,14 +22,15 @@ PhaseTransitionFull::PhaseTransitionFull(
     DBUG("Create PhaseTransitionFull constitutive model.");
 }
 
-void PhaseTransitionFull::getConstitutiveVariables(
+void PhaseTransitionFull::computeConstitutiveVariables(
     const MaterialPropertyLib::Medium* /*medium*/,
     MaterialPropertyLib::VariableArray /*variables*/,
     ParameterLib::SpatialPosition /*pos*/, double const /*t*/,
     const double /*dt*/)
 {
     OGS_FATAL(
-        "PhaseTransitionFull::getConstitutiveVariables is not implemented.");
+        "PhaseTransitionFull::computeConstitutiveVariables is not "
+        "implemented.");
 }
 
 }  // namespace TH2M
