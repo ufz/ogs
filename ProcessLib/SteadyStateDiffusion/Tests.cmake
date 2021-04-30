@@ -82,7 +82,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         NAME SteadyStateDiffusion_square_1x1_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
         EXECUTABLE ogs
-        EXECUTABLE_ARGS square_${mesh_size}.prj
+        EXECUTABLE_ARGS -p square_${mesh_size}.xml square_1e0.prj
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
@@ -94,7 +94,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
         EXECUTABLE ogs
-        EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
+        EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
@@ -113,7 +113,7 @@ foreach(mesh_size 1e5 1e6)
         PATH Elliptic/square_1x1_SteadyStateDiffusion
         RUNTIME ${RUNTIME}
         EXECUTABLE ogs
-        EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
+        EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
@@ -126,7 +126,7 @@ AddTest(
     PATH Elliptic/square_1x1_SteadyStateDiffusion
     RUNTIME 2
     EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e5.prj
+    EXECUTABLE_ARGS -p square_1e5.xml square_1e0.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
@@ -533,7 +533,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         NAME SteadyStateDiffusion_square_1x1_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
         EXECUTABLE ogs
-        EXECUTABLE_ARGS square_${mesh_size}.prj
+        EXECUTABLE_ARGS -p square_${mesh_size}.xml square_1e0.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
@@ -546,7 +546,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
         PATH Elliptic/square_1x1_SteadyStateDiffusion
         EXECUTABLE ogs
-        EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
+        EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
@@ -557,10 +557,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
 endforeach()
 
 foreach(mesh_size 1e5 1e6)
-    set(RUNTIME 10)
-    if("${mesh_size}" STREQUAL "1e5")
-        set(RUNTIME 65)
-    endif()
+    set(RUNTIME 65)
     if("${mesh_size}" STREQUAL "1e6")
         set(RUNTIME 450)
     endif()
@@ -569,7 +566,7 @@ foreach(mesh_size 1e5 1e6)
         PATH Elliptic/square_1x1_SteadyStateDiffusion
         EXECUTABLE ogs
         RUNTIME ${RUNTIME}
-        EXECUTABLE_ARGS square_${mesh_size}.prj
+        EXECUTABLE_ARGS -p square_${mesh_size}.xml square_1e0.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
@@ -583,7 +580,7 @@ foreach(mesh_size 1e5 1e6)
         PATH Elliptic/square_1x1_SteadyStateDiffusion
         EXECUTABLE ogs
         RUNTIME ${RUNTIME}
-        EXECUTABLE_ARGS square_${mesh_size}_neumann.prj
+        EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff

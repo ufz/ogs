@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProjectDiff>
-    <replace sel="/*/time_loop/output/prefix/text()">square_1e0_neumann</replace>
+    <add sel="/*/time_loop/output/prefix/text()" pos="after">_neumann</add>
     <replace sel="/*/parameters/parameter[2]/name/text()">p_neumann</replace>
     <replace sel="/*/parameters/parameter[3]/name/text()">p_Dirichlet</replace>
     <replace sel="/*/parameters/parameter[3]/value/text()">1</replace>
