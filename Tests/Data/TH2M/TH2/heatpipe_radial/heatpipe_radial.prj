@@ -56,11 +56,8 @@
                 <secondary_variable internal_name="mole_fraction_gas" output_name="xnCG"/>
                 <secondary_variable internal_name="mass_fraction_gas" output_name="xmCG"/>
                 <secondary_variable internal_name="mass_fraction_liquid" output_name="xmWL"/>
-
-
                 <secondary_variable internal_name="relative_permeability_gas" output_name="k_rel_G"/>
                 <secondary_variable internal_name="relative_permeability_liquid" output_name="k_rel_L"/>
-
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
             <initial_stress>initial_stress</initial_stress>
