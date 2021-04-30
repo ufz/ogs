@@ -21,6 +21,9 @@ AddTest(
 
     # secondary variables
     result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu
+    liquid_pressure_interpolated liquid_pressure_interpolated 1e-8 1e-8
+
+    result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu
     velocity_gas velocity_gas 1e-8 1e-8
 
     result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu
@@ -66,6 +69,8 @@ AddTest(
     result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu displacement displacement 1e-8 1e-8
 
     # secondary variables
+    result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-8 1e-8
+
     result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu velocity_gas velocity_gas 1e-8 1e-8
 
     result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
@@ -105,6 +110,8 @@ AddTest(
     result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu displacement displacement 1e-8 1e-8
 
     # secondary variables
+    result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu liquid_pressure_interpolated liquid_pressure_interpolated 6e-7 1e-8
+
     result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu velocity_gas velocity_gas 1e-8 1e-8
 
     result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
@@ -144,6 +151,8 @@ AddTest(
     result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu displacement displacement 1e-8 1e-8
 
     # secondary variables
+    result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-8 2e-8
+
     result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu velocity_gas velocity_gas 1e-8 1e-8
 
     result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
@@ -210,6 +219,8 @@ AddTest(
     results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
 
     # secondary variables
+    results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-8 1e-8
+
     results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu velocity_gas velocity_gas 1e-8 1e-8
 
     results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu results_heatpipe_radial_static_gas_ts_10_t_1000000.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
@@ -279,6 +290,8 @@ AddTest(
     results_heatpipe_slab_static_gas_ts_19_t_100000.000000.vtu results_heatpipe_slab_static_gas_ts_19_t_100000.000000.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
 
     # secondary variables
+    results_heatpipe_slab_static_gas_ts_19_t_100000.000000.vtu results_heatpipe_slab_static_gas_ts_19_t_100000.000000.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-8 1e-8
+
     results_heatpipe_slab_static_gas_ts_19_t_100000.000000.vtu results_heatpipe_slab_static_gas_ts_19_t_100000.000000.vtu velocity_gas velocity_gas 1e-8 1e-8
 
     results_heatpipe_slab_static_gas_ts_19_t_100000.000000.vtu results_heatpipe_slab_static_gas_ts_19_t_100000.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
@@ -359,6 +372,8 @@ AddTest(
     results_heatpipe_radial_ts_10_t_1000000.000000.vtu results_heatpipe_radial_ts_10_t_1000000.000000.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
 
     # secondary variables
+    results_heatpipe_radial_ts_10_t_1000000.000000.vtu results_heatpipe_radial_ts_10_t_1000000.000000.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-8 1e-8
+
     results_heatpipe_radial_ts_10_t_1000000.000000.vtu results_heatpipe_radial_ts_10_t_1000000.000000.vtu velocity_gas velocity_gas 1e-8 1e-8
 
     results_heatpipe_radial_ts_10_t_1000000.000000.vtu results_heatpipe_radial_ts_10_t_1000000.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
@@ -430,6 +445,8 @@ AddTest(
     results_heatpipe_slab_ts_19_t_100000.000000.vtu results_heatpipe_slab_ts_19_t_100000.000000.vtu temperature_interpolated temperature_interpolated 1e-8 1e-8
 
     # secondary variables
+    results_heatpipe_slab_ts_19_t_100000.000000.vtu results_heatpipe_slab_ts_19_t_100000.000000.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-8 1e-8
+
     results_heatpipe_slab_ts_19_t_100000.000000.vtu results_heatpipe_slab_ts_19_t_100000.000000.vtu velocity_gas velocity_gas 1e-8 1e-8
 
     results_heatpipe_slab_ts_19_t_100000.000000.vtu results_heatpipe_slab_ts_19_t_100000.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
