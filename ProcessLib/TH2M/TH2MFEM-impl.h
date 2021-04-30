@@ -1050,19 +1050,18 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             N_T.dot(p);  // N_T = N_p
 
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim> const solid_linear_thermal_expansivity_vector =
-            MPL::formKelvinVectorFromThermalExpansivity<DisplacementDim>(
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_expansivity)
-                    .value(vars, x_position, t, dt));
+        // solid phase linear thermal expansion coefficient
+        auto const alpha_T_SR = MathLib::KelvinVector::tensorToKelvin<
+            DisplacementDim>(MaterialPropertyLib::formEigenTensor<3>(
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_expansivity)
+                .value(vars, x_position, t, dt)));
 
         double const dT_int_pt = N_T.dot(dT);
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                solid_linear_thermal_expansivity_vector * dT_int_pt;
+            dthermal_strain = alpha_T_SR * dT_int_pt;
 
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
