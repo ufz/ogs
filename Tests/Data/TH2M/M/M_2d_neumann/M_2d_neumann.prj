@@ -48,7 +48,6 @@
                 <secondary_variable internal_name="velocity_liquid" output_name="velocity_liquid"/>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="liquid_pressure" output_name="liquid_pressure"/>
                 <secondary_variable internal_name="liquid_density" output_name="liquid_density"/>
                 <secondary_variable internal_name="gas_density" output_name="gas_density"/>
                 <secondary_variable internal_name="porosity" output_name="porosity"/>
@@ -259,6 +258,7 @@
                 <variable>gas_pressure_interpolated</variable>
                 <variable>capillary_pressure</variable>
                 <variable>capillary_pressure_interpolated</variable>
+                <variable>liquid_pressure_interpolated</variable>
                 <variable>temperature</variable>
                 <variable>temperature_interpolated</variable>
                 <variable>displacement</variable>
@@ -266,7 +266,6 @@
                 <variable>epsilon</variable>
                 <variable>velocity_gas</variable>
                 <variable>velocity_liquid</variable>
-                <variable>liquid_pressure</variable>
                 <variable>liquid_density</variable>
                 <variable>gas_density</variable>
                 <variable>porosity</variable>

@@ -212,16 +212,6 @@ private:
     // be stored in some container to avoid defining one method for each
     // variable.
 
-    virtual std::vector<double> const& getIntPtLiquidPressure(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& /*cache*/) const override
-    {
-        assert(!_liquid_pressure.empty());
-        return _liquid_pressure;
-    }
-
     virtual std::vector<double> const& getIntPtLiquidDensity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -411,8 +401,6 @@ private:
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;
-
-    std::vector<double> _liquid_pressure;
 
     // The shape function of pressure has the same form with the shape function
     // of temperature

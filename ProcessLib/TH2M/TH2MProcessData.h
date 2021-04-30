@@ -67,6 +67,7 @@ struct TH2MProcessData
     MeshLib::PropertyVector<double>* gas_pressure_interpolated = nullptr;
     MeshLib::PropertyVector<double>* capillary_pressure_interpolated = nullptr;
     MeshLib::PropertyVector<double>* temperature_interpolated = nullptr;
+    MeshLib::PropertyVector<double>* liquid_pressure_interpolated = nullptr;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

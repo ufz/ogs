@@ -37,9 +37,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     : _process_data(process_data),
       _integration_method(integration_order),
       _element(e),
-      _is_axially_symmetric(is_axially_symmetric),
-      _liquid_pressure(
-          std::vector<double>(_integration_method.getNumberOfPoints()))
+      _is_axially_symmetric(is_axially_symmetric)
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -318,15 +316,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     assert(local_x.size() == matrix_size);
 
-    auto gas_pressure =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            gas_pressure_size> const>(local_x.data() + gas_pressure_index,
-                                      gas_pressure_size);
-
-    auto capillary_pressure =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            capillary_pressure_size> const>(
-            local_x.data() + capillary_pressure_index, capillary_pressure_size);
     updateConstitutiveVariables(
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()), t,
         std::numeric_limits<double>::quiet_NaN());
@@ -337,12 +326,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     {
         auto& ip_data = _ip_data[ip];
         ip_data.pushBackState();
-
-        double const pGR = ip_data.N_p.dot(gas_pressure);
-        double const pCap = ip_data.N_p.dot(capillary_pressure);
-        double const pLR = pGR - pCap;
-
-        _liquid_pressure[ip] = pLR;
     }
 }
 
@@ -526,9 +509,7 @@ void TH2MLocalAssembler<
         auto& eps = ip.eps;
         auto const& sigma_eff = ip.sigma_eff;
 
-        double const pGR = Np.dot(gas_pressure);
         double const pCap = Np.dot(capillary_pressure);
-        double const pLR = pGR - pCap;
 
         GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
@@ -570,8 +551,6 @@ void TH2MLocalAssembler<
         auto& rho_SR = ip.rhoSR;
         // effective density
         auto const rho = phi_G * ip.rhoGR + phi_L * ip.rhoLR + phi_S * rho_SR;
-
-        _liquid_pressure[int_point] = pLR;
 
         // abbreviations
         const double rho_C_FR = s_G * ip.rhoCGR + s_L * ip.rhoCLR;
@@ -1099,6 +1078,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const capillary_pressure =
         local_x.template segment<capillary_pressure_size>(
             capillary_pressure_index);
+    auto const liquid_pressure = (gas_pressure - capillary_pressure).eval();
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
@@ -1109,6 +1089,11 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(_element, _is_axially_symmetric, capillary_pressure,
                          *_process_data.capillary_pressure_interpolated);
+
+    NumLib::interpolateToHigherOrderNodes<
+        ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
+        DisplacementDim>(_element, _is_axially_symmetric, liquid_pressure,
+                         *_process_data.liquid_pressure_interpolated);
 
     auto const temperature =
         local_x.template segment<temperature_size>(temperature_index);
@@ -1127,17 +1112,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto& ip_data = _ip_data[ip];
-
-        auto const& Np = ip_data.N_p;
-
-        double const pGR = Np.dot(gas_pressure);
-        double const pCap = Np.dot(capillary_pressure);
-        double const pLR = pGR - pCap;
-
-        _liquid_pressure[ip] = pLR;
-
-        saturation_avg += ip_data.s_L;
+        saturation_avg += _ip_data[ip].s_L;
     }
     saturation_avg /= n_integration_points;
     (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
