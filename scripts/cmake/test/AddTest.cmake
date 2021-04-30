@@ -105,8 +105,9 @@ function(AddTest)
     if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
         set(AddTest_EXECUTABLE_ARGS
             -o ${AddTest_BINARY_PATH_NATIVE}
-            ${AddTest_SOURCE_PATH}/${AddTest_EXECUTABLE_ARGS}
+            ${AddTest_EXECUTABLE_ARGS}
         )
+        set(AddTest_WORKING_DIRECTORY ${AddTest_SOURCE_PATH})
     endif()
 
     if(DEFINED OGS_CTEST_MAX_RUNTIME)
