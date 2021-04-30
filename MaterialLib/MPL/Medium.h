@@ -45,6 +45,9 @@ public:
     /// A get-function for a property. The argument refers to the name of the
     /// property.
     Property const& property(PropertyType const& p) const;
+
+    Property const& operator[](PropertyType const& p) const;
+
     bool hasProperty(PropertyType const& p) const;
 
     /// A simple get-function for retrieving the number of phases the medium

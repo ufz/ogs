@@ -31,7 +31,19 @@ Component::Component(std::string const& component_name,
 
 Property const& Component::property(PropertyType const& p) const
 {
+    Property const* const property = properties_[p].get();
+    if (property == nullptr)
+    {
+        OGS_FATAL("Trying to access undefined property '{:s}' of {:s}",
+                  property_enum_to_string[p], description());
+    }
+
     return *properties_[p];
+}
+
+Property const& Component::operator[](PropertyType const& p) const
+{
+    return property(p);
 }
 
 bool Component::hasProperty(PropertyType const& p) const

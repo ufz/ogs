@@ -61,6 +61,11 @@ Property const& Medium::property(PropertyType const& p) const
     return *properties_[p];
 }
 
+Property const& Medium::operator[](PropertyType const& p) const
+{
+    return property(p);
+}
+
 bool Medium::hasProperty(PropertyType const& p) const
 {
     return properties_[p] != nullptr;

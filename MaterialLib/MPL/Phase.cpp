@@ -60,6 +60,11 @@ Property const& Phase::property(PropertyType const& p) const
     return *properties_[p];
 }
 
+Property const& Phase::operator[](PropertyType const& p) const
+{
+    return property(p);
+}
+
 bool Phase::hasProperty(PropertyType const& p) const
 {
     return properties_[p] != nullptr;
