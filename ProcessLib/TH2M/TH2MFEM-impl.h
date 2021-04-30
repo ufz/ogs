@@ -394,17 +394,17 @@ void TH2MLocalAssembler<
         dt;
 
     // pointer to local_M_data vector
-    auto M = MathLib::createZeroedMatrix<
+    auto local_M = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
             matrix_size, matrix_size>>(local_M_data, matrix_size, matrix_size);
 
     // pointer to local_K_data vector
-    auto K = MathLib::createZeroedMatrix<
+    auto local_K = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
             matrix_size, matrix_size>>(local_K_data, matrix_size, matrix_size);
 
-    // pointer to local_K_data vector
-    auto f =
+    // pointer to local_rhs_data vector
+    auto local_f =
         MathLib::createZeroedVector<typename ShapeMatricesTypeDisplacement::
                                         template VectorType<matrix_size>>(
             local_rhs_data, matrix_size);
@@ -413,63 +413,64 @@ void TH2MLocalAssembler<
     // W - liquid phase main component
     // C - gas phase main component
     // pointer-matrices to the mass matrix - C component equation
-    auto MCpG = M.template block<C_size, gas_pressure_size>(C_index,
-                                                            gas_pressure_index);
-    auto MCpC = M.template block<C_size, capillary_pressure_size>(
+    auto MCpG = local_M.template block<C_size, gas_pressure_size>(
+        C_index, gas_pressure_index);
+    auto MCpC = local_M.template block<C_size, capillary_pressure_size>(
         C_index, capillary_pressure_index);
-    auto MCT =
-        M.template block<C_size, temperature_size>(C_index, temperature_index);
-    auto MCu = M.template block<C_size, displacement_size>(C_index,
-                                                           displacement_index);
+    auto MCT = local_M.template block<C_size, temperature_size>(
+        C_index, temperature_index);
+    auto MCu = local_M.template block<C_size, displacement_size>(
+        C_index, displacement_index);
 
     // pointer-matrices to the stiffness matrix - C component equation
-    auto LCpG = K.template block<C_size, gas_pressure_size>(C_index,
-                                                            gas_pressure_index);
-    auto LCpC = K.template block<C_size, capillary_pressure_size>(
+    auto LCpG = local_K.template block<C_size, gas_pressure_size>(
+        C_index, gas_pressure_index);
+    auto LCpC = local_K.template block<C_size, capillary_pressure_size>(
         C_index, capillary_pressure_index);
-    auto LCT =
-        K.template block<C_size, temperature_size>(C_index, temperature_index);
+    auto LCT = local_K.template block<C_size, temperature_size>(
+        C_index, temperature_index);
 
     // pointer-matrices to the mass matrix - W component equation
-    auto MWpG = M.template block<W_size, gas_pressure_size>(W_index,
-                                                            gas_pressure_index);
-    auto MWpC = M.template block<W_size, capillary_pressure_size>(
+    auto MWpG = local_M.template block<W_size, gas_pressure_size>(
+        W_index, gas_pressure_index);
+    auto MWpC = local_M.template block<W_size, capillary_pressure_size>(
         W_index, capillary_pressure_index);
-    auto MWT =
-        M.template block<W_size, temperature_size>(W_index, temperature_index);
-    auto MWu = M.template block<W_size, displacement_size>(W_index,
-                                                           displacement_index);
+    auto MWT = local_M.template block<W_size, temperature_size>(
+        W_index, temperature_index);
+    auto MWu = local_M.template block<W_size, displacement_size>(
+        W_index, displacement_index);
 
     // pointer-matrices to the stiffness matrix - W component equation
-    auto LWpG = K.template block<W_size, gas_pressure_size>(W_index,
-                                                            gas_pressure_index);
-    auto LWpC = K.template block<W_size, capillary_pressure_size>(
+    auto LWpG = local_K.template block<W_size, gas_pressure_size>(
+        W_index, gas_pressure_index);
+    auto LWpC = local_K.template block<W_size, capillary_pressure_size>(
         W_index, capillary_pressure_index);
-    auto LWT =
-        K.template block<W_size, temperature_size>(W_index, temperature_index);
+    auto LWT = local_K.template block<W_size, temperature_size>(
+        W_index, temperature_index);
 
     // pointer-matrices to the mass matrix - temperature equation
-    auto MTu = M.template block<temperature_size, displacement_size>(
+    auto MTu = local_M.template block<temperature_size, displacement_size>(
         temperature_index, displacement_index);
 
     // pointer-matrices to the stiffness matrix - temperature equation
-    auto KTT = K.template block<temperature_size, temperature_size>(
+    auto KTT = local_K.template block<temperature_size, temperature_size>(
         temperature_index, temperature_index);
 
     // pointer-matrices to the stiffness matrix - displacement equation
-    auto KUpG = K.template block<displacement_size, gas_pressure_size>(
+    auto KUpG = local_K.template block<displacement_size, gas_pressure_size>(
         displacement_index, gas_pressure_index);
-    auto KUpC = K.template block<displacement_size, capillary_pressure_size>(
-        displacement_index, capillary_pressure_index);
+    auto KUpC =
+        local_K.template block<displacement_size, capillary_pressure_size>(
+            displacement_index, capillary_pressure_index);
 
     // pointer-vectors to the right hand side terms - C-component equation
-    auto fC = f.template segment<C_size>(C_index);
+    auto fC = local_f.template segment<C_size>(C_index);
     // pointer-vectors to the right hand side terms - W-component equation
-    auto fW = f.template segment<W_size>(W_index);
+    auto fW = local_f.template segment<W_size>(W_index);
     // pointer-vectors to the right hand side terms - temperature equation
-    auto fT = f.template segment<temperature_size>(temperature_index);
+    auto fT = local_f.template segment<temperature_size>(temperature_index);
     // pointer-vectors to the right hand side terms - displacement equation
-    auto fU = f.template segment<displacement_size>(displacement_index);
+    auto fU = local_f.template segment<displacement_size>(displacement_index);
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
