@@ -70,21 +70,20 @@ void setAqueousSolution(std::vector<double> const& concentrations,
 template <typename Reactant>
 void initializeReactantMolality(Reactant& reactant,
                                 GlobalIndexType const& chemical_system_id,
-                                MaterialPropertyLib::Medium const* medium,
+                                MaterialPropertyLib::Medium const& medium,
                                 ParameterLib::SpatialPosition const& pos,
                                 double const t)
 {
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_phase = medium.phase("Solid");
     auto const& solid_constituent = solid_phase.component(reactant.name);
 
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     if (solid_constituent.hasProperty(
             MaterialPropertyLib::PropertyType::molality))
     {
         auto const molality =
-            solid_constituent
-                .property(MaterialPropertyLib::PropertyType::molality)
+            solid_constituent[MaterialPropertyLib::PropertyType::molality]
                 .template initialValue<double>(pos, t);
 
         (*reactant.molality)[chemical_system_id] = molality;
@@ -94,24 +93,23 @@ void initializeReactantMolality(Reactant& reactant,
     {
         auto const volume_fraction =
             solid_constituent
-                .property(MaterialPropertyLib::PropertyType::volume_fraction)
-                .template initialValue<double>(pos, t);
+                [MaterialPropertyLib::PropertyType::volume_fraction]
+                    .template initialValue<double>(pos, t);
 
         (*reactant.volume_fraction)[chemical_system_id] = volume_fraction;
 
         (*reactant.volume_fraction_prev)[chemical_system_id] = volume_fraction;
 
         auto const fluid_density =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            liquid_phase[MaterialPropertyLib::PropertyType::density]
                 .template initialValue<double>(pos, t);
 
         auto const porosity =
-            medium->property(MaterialPropertyLib::PropertyType::porosity)
+            medium[MaterialPropertyLib::PropertyType::porosity]
                 .template initialValue<double>(pos, t);
 
         auto const molar_volume =
-            solid_constituent
-                .property(MaterialPropertyLib::PropertyType::molar_volume)
+            solid_constituent[MaterialPropertyLib::PropertyType::molar_volume]
                 .template initialValue<double>(pos, t);
 
         (*reactant.molality)[chemical_system_id] =
@@ -150,15 +148,14 @@ void setReactantMolality(Reactant& reactant,
 
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const fluid_density =
-        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+        liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template value<double>(vars, pos, t, dt);
 
     auto const porosity = std::get<double>(
         vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)]);
 
     auto const molar_volume =
-        solid_constituent
-            .property(MaterialPropertyLib::PropertyType::molar_volume)
+        solid_constituent[MaterialPropertyLib::PropertyType::molar_volume]
             .template value<double>(vars, pos, t, dt);
 
     (*reactant.molality)[chemical_system_id] =
@@ -249,7 +246,7 @@ void PhreeqcIO::initialize()
 void PhreeqcIO::initializeChemicalSystemConcrete(
     std::vector<double> const& concentrations,
     GlobalIndexType const& chemical_system_id,
-    MaterialPropertyLib::Medium const* medium,
+    MaterialPropertyLib::Medium const& medium,
     ParameterLib::SpatialPosition const& pos,
     double const t)
 {
@@ -683,7 +680,7 @@ void PhreeqcIO::updateVolumeFractionPostReaction(
     MaterialPropertyLib::VariableArray vars;
 
     auto const liquid_density =
-        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+        liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template value<double>(vars, pos, t, dt);
 
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
@@ -698,8 +695,7 @@ void PhreeqcIO::updateVolumeFractionPostReaction(
         }
 
         auto const molar_volume =
-            solid_constituent
-                .property(MaterialPropertyLib::PropertyType::molar_volume)
+            solid_constituent[MaterialPropertyLib::PropertyType::molar_volume]
                 .template value<double>(vars, pos, t, dt);
 
         (*kinetic_reactant.volume_fraction)[chemical_system_id] +=
