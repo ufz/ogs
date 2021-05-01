@@ -300,7 +300,7 @@ AddTest(
     AmmerSubsurfaceGrid.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
 )
 
-if(SNAKEMAKE AND NOT OGS_USE_MPI)
+if(SNAKEMAKE AND NOT OGS_USE_MPI AND TEE_TOOL_PATH)
     add_test(NAME snakemake_ExtractBoundary
         COMMAND ${SNAKEMAKE} -j 1
             --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
@@ -485,7 +485,7 @@ if(TARGET VerticalSliceFromLayers AND GMSH)
 
 endif()
 
-if(TARGET GMSH2OGS AND SNAKEMAKE AND NOT OGS_USE_MPI)
+if(TARGET GMSH2OGS AND SNAKEMAKE AND NOT OGS_USE_MPI AND TEE_TOOL_PATH)
     add_test(NAME snakemake_GMSH2OGS_ExtractBoundary
         COMMAND ${SNAKEMAKE} --cores all
         --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml

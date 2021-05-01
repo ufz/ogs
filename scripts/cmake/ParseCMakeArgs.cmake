@@ -29,8 +29,9 @@ foreach(cache_var ${CACHE_VARS})
         else()
             set(CACHE_VAR_TYPE :${CACHE_VAR_TYPE})
         endif()
+        file(TO_CMAKE_PATH "${${cache_var}}" cache_value)
         set(CMAKE_ARGS
-            "${CMAKE_ARGS} -D${cache_var}${CACHE_VAR_TYPE}=\"${${cache_var}}\""
+            "${CMAKE_ARGS} -D${cache_var}${CACHE_VAR_TYPE}=\"${cache_value}\""
         )
     endif()
 endforeach()

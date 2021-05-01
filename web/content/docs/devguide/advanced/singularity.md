@@ -55,7 +55,7 @@ singularity pull docker://registry.opengeosys.org/ogs/ogs/gcc # Downloads the im
 singularity shell gcc_latest.sif
 [Now inside the container]
 mkdir build; cd build
-cmake ../ogs -DCMAKE_BUILD_TYPE=Release -DOGS_DISABLE_CCACHE=ON # OR set env var CCACHE_DIR
+cmake ../ogs -DCMAKE_BUILD_TYPE=Release -DOGS_DISABLE_COMPILER_CACHE=ON # OR set env var CCACHE_DIR
 ninja
 ./bin/ogs
 ```

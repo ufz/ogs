@@ -11,7 +11,13 @@ if(OGS_USE_CONAN_lower STREQUAL "auto" AND POETRY)
 else()
     find_program(CONAN_CMD conan)
 endif()
-if(NOT CONAN_CMD)
+if(NOT CONAN_CMD
+   AND (OGS_USE_PETSC
+        OR OGS_USE_LIS
+        OR OGS_USE_MFRONT
+        OR OGS_BUILD_GUI
+       )
+)
     message(WARNING "conan executable not found. Specify CMake option "
         "OGS_USE_CONAN=auto for automatic installation in the build directory "
         "OR install it system-wide (https://www.opengeosys.org/docs/devguide/"

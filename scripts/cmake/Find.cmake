@@ -26,7 +26,9 @@ find_program(CURL_TOOL_PATH curl DOC "The curl-tool")
 find_program(S3CMD_TOOL_PATH s3cmd DOC "S3cmd tool for uploading to Amazon S3")
 
 if(WIN32)
-    find_program(CLCACHE_TOOL_PATH clcache)
+    if(${CMAKE_GENERATOR} STREQUAL "Ninja")
+        find_program(CLCACHE_TOOL_PATH clcache)
+    endif()
 else()
     find_program(CCACHE_TOOL_PATH ccache)
 endif()
@@ -45,6 +47,10 @@ find_program(PANDOC_CITEPROC pandoc-citeproc)
 find_program(MODULE_CMD lmod PATHS /software/lmod/lmod/libexec)
 
 find_program(SNAKEMAKE snakemake HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
+find_program(TEE_TOOL_PATH tee)
+if(OGS_BUILD_TESTING AND SNAKEMAKE AND NOT TEE_TOOL_PATH)
+    message(WARNING "tee tool was not found. Snakemake tests are disabled!")
+endif()
 
 find_program(GMSH gmsh)
 
