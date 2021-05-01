@@ -34,6 +34,9 @@ public:
 
     /// A get-function for retrieving a certain property.
     Property const& property(PropertyType const& /*p*/) const;
+
+    Property const& operator[](PropertyType const& p) const;
+
     bool hasProperty(PropertyType const& p) const;
 
     template <typename T>

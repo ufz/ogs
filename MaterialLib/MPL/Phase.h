@@ -46,6 +46,9 @@ public:
     /// A get-function for a property. The argument refers to the name of the
     /// property.
     Property const& property(PropertyType const& p) const;
+
+    Property const& operator[](PropertyType const& p) const;
+
     bool hasProperty(PropertyType const& p) const;
 
     /// A get-function for retrieving the number of components in this phase.

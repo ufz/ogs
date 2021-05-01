@@ -206,7 +206,7 @@ public:
                                       GlobalDim>(element, is_axially_symmetric,
                                                  _integration_method);
         auto const& medium =
-            _process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map->getMedium(_element.getID());
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
@@ -218,7 +218,7 @@ public:
             pos.setIntegrationPoint(ip);
 
             _ip_data[ip].porosity =
-                medium->property(MaterialPropertyLib::PropertyType::porosity)
+                medium[MaterialPropertyLib::PropertyType::porosity]
                     .template initialValue<double>(
                         pos, std::numeric_limits<double>::quiet_NaN() /*t*/);
 
@@ -474,16 +474,13 @@ public:
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
 
             // update according to a particular porosity model
-            porosity =
-                medium.property(MaterialPropertyLib::PropertyType::porosity)
-                    .template value<double>(vars, pos, t, dt);
+            porosity = medium[MaterialPropertyLib::PropertyType::porosity]
+                           .template value<double>(vars, pos, t, dt);
             vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
                 porosity;
 
             auto const& retardation_factor =
-                component
-                    .property(
-                        MaterialPropertyLib::PropertyType::retardation_factor)
+                component[MaterialPropertyLib::PropertyType::retardation_factor]
                     .template value<double>(vars, pos, t, dt);
 
             auto const& solute_dispersivity_transverse = medium.template value<
@@ -499,29 +496,25 @@ public:
             // TODO (renchao): concentration of which component as the argument
             // for calculation of fluid density
             auto const density =
-                phase.property(MaterialPropertyLib::PropertyType::density)
+                phase[MaterialPropertyLib::PropertyType::density]
                     .template value<double>(vars, pos, t, dt);
 
             auto const decay_rate =
-                component
-                    .property(MaterialPropertyLib::PropertyType::decay_rate)
+                component[MaterialPropertyLib::PropertyType::decay_rate]
                     .template value<double>(vars, pos, t, dt);
 
             auto const& pore_diffusion_coefficient =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                    component
-                        .property(
-                            MaterialPropertyLib::PropertyType::pore_diffusion)
+                    component[MaterialPropertyLib::PropertyType::pore_diffusion]
                         .value(vars, pos, t, dt));
 
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                medium.property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t, dt));
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
 
             // Use the viscosity model to compute the viscosity
-            auto const mu =
-                phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                    .template value<double>(vars, pos, t, dt);
+            auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
+                                .template value<double>(vars, pos, t, dt);
 
             GlobalDimMatrixType const K_over_mu = K / mu;
             GlobalDimVectorType const velocity =
@@ -531,13 +524,13 @@ public:
                     : GlobalDimVectorType(-K_over_mu * dNdx * p_nodal_values);
 
             const double drho_dp =
-                phase.property(MaterialPropertyLib::PropertyType::density)
+                phase[MaterialPropertyLib::PropertyType::density]
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::phase_pressure,
                         pos, t, dt);
 
             const double drho_dC =
-                phase.property(MaterialPropertyLib::PropertyType::density)
+                phase[MaterialPropertyLib::PropertyType::density]
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::concentration, pos,
                         t, dt);
@@ -683,9 +676,7 @@ public:
                 porosity =
                     _process_data.chemically_induced_porosity_change
                         ? porosity_prev
-                        : medium
-                              .property(
-                                  MaterialPropertyLib::PropertyType::porosity)
+                        : medium[MaterialPropertyLib::PropertyType::porosity]
                               .template value<double>(vars, vars_prev, pos, t,
                                                       dt);
 
@@ -697,27 +688,26 @@ public:
             // TODO: Concentration of which component as one of arguments for
             // calculation of fluid density
             auto const density =
-                phase.property(MaterialPropertyLib::PropertyType::density)
+                phase[MaterialPropertyLib::PropertyType::density]
                     .template value<double>(vars, pos, t, dt);
 
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                medium.property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t, dt));
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
 
             // Use the viscosity model to compute the viscosity
-            auto const mu =
-                phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                    .template value<double>(vars, pos, t, dt);
+            auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
+                                .template value<double>(vars, pos, t, dt);
 
             GlobalDimMatrixType const K_over_mu = K / mu;
 
             const double drho_dp =
-                phase.property(MaterialPropertyLib::PropertyType::density)
+                phase[MaterialPropertyLib::PropertyType::density]
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::phase_pressure,
                         pos, t, dt);
             const double drho_dC =
-                phase.property(MaterialPropertyLib::PropertyType::density)
+                phase[MaterialPropertyLib::PropertyType::density]
                     .template dValue<double>(
                         vars, MaterialPropertyLib::Variable::concentration, pos,
                         t, dt);
@@ -816,9 +806,7 @@ public:
                 porosity =
                     _process_data.chemically_induced_porosity_change
                         ? porosity_prev
-                        : medium
-                              .property(
-                                  MaterialPropertyLib::PropertyType::porosity)
+                        : medium[MaterialPropertyLib::PropertyType::porosity]
                               .template value<double>(vars, vars_prev, pos, t,
                                                       dt);
 
@@ -827,9 +815,7 @@ public:
             }
 
             auto const& retardation_factor =
-                component
-                    .property(
-                        MaterialPropertyLib::PropertyType::retardation_factor)
+                component[MaterialPropertyLib::PropertyType::retardation_factor]
                     .template value<double>(vars, pos, t, dt);
 
             auto const& solute_dispersivity_transverse = medium.template value<
@@ -842,27 +828,23 @@ public:
 
             // Use the fluid density model to compute the density
             auto const density =
-                phase.property(MaterialPropertyLib::PropertyType::density)
+                phase[MaterialPropertyLib::PropertyType::density]
                     .template value<double>(vars, pos, t, dt);
             auto const decay_rate =
-                component
-                    .property(MaterialPropertyLib::PropertyType::decay_rate)
+                component[MaterialPropertyLib::PropertyType::decay_rate]
                     .template value<double>(vars, pos, t, dt);
 
             auto const& pore_diffusion_coefficient =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                    component
-                        .property(
-                            MaterialPropertyLib::PropertyType::pore_diffusion)
+                    component[MaterialPropertyLib::PropertyType::pore_diffusion]
                         .value(vars, pos, t, dt));
 
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                medium.property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t, dt));
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
             // Use the viscosity model to compute the viscosity
-            auto const mu =
-                phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                    .template value<double>(vars, pos, t, dt);
+            auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
+                                .template value<double>(vars, pos, t, dt);
 
             GlobalDimMatrixType const K_over_mu = K / mu;
             GlobalDimVectorType const velocity =
@@ -893,7 +875,7 @@ public:
             if (_process_data.non_advective_form)
             {
                 const double drho_dC =
-                    phase.property(MaterialPropertyLib::PropertyType::density)
+                    phase[MaterialPropertyLib::PropertyType::density]
                         .template dValue<double>(
                             vars, MaterialPropertyLib::Variable::concentration,
                             pos, t, dt);
@@ -911,7 +893,7 @@ public:
 
                 NumLib::shapeFunctionInterpolate(local_pdot, N, dot_p_int_pt);
                 const double drho_dp =
-                    phase.property(MaterialPropertyLib::PropertyType::density)
+                    phase[MaterialPropertyLib::PropertyType::density]
                         .template dValue<double>(
                             vars, MaterialPropertyLib::Variable::phase_pressure,
                             pos, t, dt);
@@ -1023,18 +1005,17 @@ public:
             // models. Need extension of secondary variables interface.
             double const dt = std::numeric_limits<double>::quiet_NaN();
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                medium.property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t, dt));
-            auto const mu =
-                phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                    .template value<double>(vars, pos, t, dt);
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
+            auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
+                                .template value<double>(vars, pos, t, dt);
             GlobalDimMatrixType const K_over_mu = K / mu;
 
             cache_mat.col(ip).noalias() = -K_over_mu * dNdx * p_nodal_values;
             if (_process_data.has_gravity)
             {
                 auto const rho_w =
-                    phase.property(MaterialPropertyLib::PropertyType::density)
+                    phase[MaterialPropertyLib::PropertyType::density]
                         .template value<double>(vars, pos, t, dt);
                 auto const b = _process_data.specific_body_force;
                 // here it is assumed that the vector b is directed 'downwards'
@@ -1096,18 +1077,16 @@ public:
         // Need extension of secondary variables interface.
         double const dt = std::numeric_limits<double>::quiet_NaN();
         auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-            medium.property(MaterialPropertyLib::PropertyType::permeability)
-                .value(vars, pos, t, dt));
+            medium[MaterialPropertyLib::PropertyType::permeability].value(
+                vars, pos, t, dt));
 
-        auto const mu =
-            phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                .template value<double>(vars, pos, t, dt);
+        auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
+                            .template value<double>(vars, pos, t, dt);
         GlobalDimMatrixType const K_over_mu = K / mu;
 
         GlobalDimVectorType q = -K_over_mu * shape_matrices.dNdx * local_p;
-        auto const rho_w =
-            phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(vars, pos, t, dt);
+        auto const rho_w = phase[MaterialPropertyLib::PropertyType::density]
+                               .template value<double>(vars, pos, t, dt);
         if (_process_data.has_gravity)
         {
             auto const b = _process_data.specific_body_force;
