@@ -157,6 +157,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     RichardsComponentTransportProcessData process_data{
+        std::move(media_map),
         std::move(porous_media_properties),
         fluid_reference_density,
         std::move(fluid_properties),

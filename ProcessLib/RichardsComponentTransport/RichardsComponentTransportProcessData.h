@@ -18,6 +18,11 @@
 
 #include "PorousMediaProperties.h"
 
+namespace MaterialPropertyLib
+{
+class MaterialSpatialDistributionMap;
+}
+
 namespace ProcessLib
 {
 template <typename ReturnType>
@@ -27,6 +32,8 @@ namespace RichardsComponentTransport
 {
 struct RichardsComponentTransportProcessData
 {
+    std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
+        media_map;
     PorousMediaProperties porous_media_properties;
     ParameterLib::Parameter<double> const& fluid_reference_density;
     std::unique_ptr<MaterialLib::Fluid::FluidProperties> fluid_properties;
