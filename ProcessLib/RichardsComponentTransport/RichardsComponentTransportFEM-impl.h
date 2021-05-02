@@ -10,6 +10,9 @@
 
 #include "RichardsComponentTransportFEM.h"
 
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Property.h"
+
 namespace ProcessLib
 {
 namespace RichardsComponentTransport
@@ -56,7 +59,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
 template <typename ShapeFunction, typename IntegrationMethod,
           unsigned GlobalDim>
 void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
-    double const t, double const /*dt*/, std::vector<double> const& local_x,
+    double const t, double const dt, std::vector<double> const& local_x,
     std::vector<double> const& /*local_xdot*/,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data)
@@ -88,6 +91,10 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
 
     GlobalDimMatrixType const& I(
         GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
+
+    // Get material properties
+    auto const& medium = *_process_data.media_map->getMedium(_element_id);
+    auto const& phase = medium.phase("AqueousLiquid");
 
     auto KCC = local_K.template block<concentration_size, concentration_size>(
         concentration_index, concentration_index);
