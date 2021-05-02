@@ -9,9 +9,11 @@
  */
 
 #include "CreateRichardsComponentTransportProcess.h"
-
 #include "CreatePorousMediaProperties.h"
+
 #include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -150,6 +152,9 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         specific_body_force.resize(b.size());
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
+
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     RichardsComponentTransportProcessData process_data{
         std::move(porous_media_properties),
