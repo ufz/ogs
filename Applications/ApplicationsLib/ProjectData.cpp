@@ -810,7 +810,7 @@ void ProjectData::parseProcesses(
                 createRichardsComponentTransportProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
-                    process_config);
+                    process_config, _media);
         }
         else
 #endif

@@ -30,7 +30,8 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "RichardsComponentTransport");
