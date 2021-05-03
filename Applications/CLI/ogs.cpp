@@ -17,6 +17,7 @@
 #include <xml_patch.h>
 
 #include <chrono>
+#include <sstream>
 
 #ifndef _WIN32
 #ifdef __APPLE__
@@ -190,14 +191,42 @@ int main(int argc, char* argv[])
 
             run_time.start();
 
-            std::string prj_file;
-            if (!xml_patch_files.getValue().empty())
+            std::string prj_file = project_arg.getValue();
+            auto patch_files = xml_patch_files.getValue();
+            if (BaseLib::getFileExtension(prj_file) == ".xml")
             {
-                std::string current_prj_file = project_arg.getValue();
+                if (!patch_files.empty())
+                {
+                    OGS_FATAL(
+                        "It is not allowed to specify additional patch files "
+                        "if a patch file was already specified as the "
+                        "prj-file.");
+                }
+                auto patch = xmlParseFile(prj_file.c_str());
+                auto node = xmlDocGetRootElement(patch);
+                auto base_file = xmlGetProp(node, (const xmlChar*)"base_file");
+                if (base_file != nullptr)
+                {
+                    patch_files = {prj_file};
+                    std::stringstream ss;
+                    ss << base_file;
+                    prj_file = BaseLib::joinPaths(
+                        BaseLib::extractPath(prj_file), ss.str());
+                }
+                else
+                {
+                    OGS_FATAL(
+                        "Error reading base prj file in given patch file {:s}.",
+                        prj_file);
+                }
+            }
+
+            if (!patch_files.empty())
+            {
+                std::string current_prj_file = prj_file;
                 std::string current_prj_file_base =
                     BaseLib::extractBaseNameWithoutExtension(current_prj_file);
-                // apply patch files
-                for (const auto& patch_file : xml_patch_files.getValue())
+                for (const auto& patch_file : patch_files)
                 {
                     auto patch = xmlParseFile(patch_file.c_str());
                     if (patch == NULL)
