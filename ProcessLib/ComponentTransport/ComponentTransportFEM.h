@@ -250,7 +250,7 @@ public:
         assert(_process_data.chemical_solver_interface);
 
         auto const& medium =
-            _process_data.media_map->getMedium(_element.getID());
+            *_process_data.media_map->getMedium(_element.getID());
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
