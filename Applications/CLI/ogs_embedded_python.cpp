@@ -50,7 +50,12 @@ pybind11::scoped_interpreter setupEmbeddedPython()
     mark_used(&pybind11_init_impl_OpenGeoSys);
 #endif
 
-    return pybind11::scoped_interpreter{};
+    // Allows ogs to be interrupted by SIGINT, which otherwise is handled by
+    // python. See
+    // https://docs.python.org/3/c-api/exceptions.html#c.PyErr_CheckSignals and
+    // https://pybind11.readthedocs.io/en/stable/faq.html#how-can-i-properly-handle-ctrl-c-in-long-running-functions
+    constexpr bool init_signal_handlers = false;
+    return pybind11::scoped_interpreter{init_signal_handlers};
 }
 
 }  // namespace ApplicationsLib
