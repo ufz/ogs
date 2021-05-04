@@ -166,6 +166,42 @@ void setReactantMolality(Reactant& reactant,
 }
 
 template <typename Reactant>
+void setReactantVolumeFraction(Reactant& reactant,
+                         GlobalIndexType const& chemical_system_id,
+                         MaterialPropertyLib::Medium const* medium,
+                         ParameterLib::SpatialPosition const& pos, double const porosity,
+                         double const t, double const dt)
+{
+    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
+    MaterialPropertyLib::VariableArray vars;
+
+    auto const liquid_density =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(vars, pos, t, dt);
+
+    auto const& solid_constituent =
+        solid_phase.component(reactant.name);
+
+    if (solid_constituent.hasProperty(
+            MaterialPropertyLib::PropertyType::molality))
+    {
+        return;
+    }
+
+    auto const molar_volume =
+        solid_constituent
+            .property(MaterialPropertyLib::PropertyType::molar_volume)
+            .template value<double>(vars, pos, t, dt);
+
+    (*reactant.volume_fraction)[chemical_system_id] +=
+        ((*reactant.molality)[chemical_system_id] -
+            (*reactant.molality_prev)[chemical_system_id]) *
+        liquid_density * porosity * molar_volume;
+}
+
+template <typename Reactant>
 static double averageReactantMolality(
     Reactant const& reactant,
     std::vector<GlobalIndexType> const& chemical_system_indices)
@@ -674,56 +710,16 @@ void PhreeqcIO::updateVolumeFractionPostReaction(
     ParameterLib::SpatialPosition const& pos, double const porosity,
     double const t, double const dt)
 {
-    auto const& solid_phase = medium->phase("Solid");
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-
-    MaterialPropertyLib::VariableArray vars;
-
-    auto const liquid_density =
-        liquid_phase[MaterialPropertyLib::PropertyType::density]
-            .template value<double>(vars, pos, t, dt);
-
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        auto const& solid_constituent =
-            solid_phase.component(kinetic_reactant.name);
-
-        if (solid_constituent.hasProperty(
-                MaterialPropertyLib::PropertyType::molality))
-        {
-            continue;
-        }
-
-        auto const molar_volume =
-            solid_constituent[MaterialPropertyLib::PropertyType::molar_volume]
-                .template value<double>(vars, pos, t, dt);
-
-        (*kinetic_reactant.volume_fraction)[chemical_system_id] +=
-            ((*kinetic_reactant.molality)[chemical_system_id] -
-             (*kinetic_reactant.molality_prev)[chemical_system_id]) *
-            liquid_density * porosity * molar_volume;
+        setReactantVolumeFraction(kinetic_reactant, chemical_system_id, medium,
+                            pos, porosity, t, dt);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        auto const& solid_constituent =
-            solid_phase.component(equilibrium_reactant.name);
-
-        if (solid_constituent.hasProperty(
-                MaterialPropertyLib::PropertyType::molality))
-        {
-            continue;
-        }
-
-        auto const molar_volume =
-            solid_constituent
-                .property(MaterialPropertyLib::PropertyType::molar_volume)
-                .template value<double>(vars, pos, t, dt);
-
-        (*equilibrium_reactant.volume_fraction)[chemical_system_id] +=
-            ((*equilibrium_reactant.molality)[chemical_system_id] -
-             (*equilibrium_reactant.molality_prev)[chemical_system_id]) *
-            liquid_density * porosity * molar_volume;
+        setReactantVolumeFraction(equilibrium_reactant, chemical_system_id, medium,
+                            pos, porosity, t, dt);
     }
 }
 
