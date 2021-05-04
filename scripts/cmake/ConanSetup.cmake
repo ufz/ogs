@@ -127,10 +127,9 @@ if("${file_timestamp}" VERSION_LESS ${timestamp} OR DEFINED ENV{CI})
     set(CONAN_COMMAND ${CONAN_CMD} CACHE INTERNAL "") # Speed up conan_add_remote
     conan_add_remote(NAME ogs INDEX 0
         URL https://ogs.jfrog.io/ogs/api/conan/conan)
-    conan_add_remote(NAME conan-community INDEX 1
-        URL https://api.bintray.com/conan/conan-community/conan)
-    conan_add_remote(NAME bincrafters INDEX 2
-        URL https://api.bintray.com/conan/bincrafters/public-conan)
+    conan_add_remote(NAME bincrafters INDEX 1
+        URL https://bincrafters.jfrog.io/artifactory/api/conan/public-conan)
+    execute_process(COMMAND ${CONAN_COMMAND} config set general.revisions_enabled=1)
 else()
     message(STATUS "Conan: Skipping update step.")
 endif()
