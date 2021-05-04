@@ -24,6 +24,7 @@
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "RichardsComponentTransportProcessData.h"
+#include "ProcessLib/ProcessVariable.h"
 
 namespace ProcessLib
 {
@@ -102,7 +103,8 @@ public:
         std::size_t const local_matrix_size,
         bool is_axially_symmetric,
         unsigned const integration_order,
-        RichardsComponentTransportProcessData const& process_data);
+        RichardsComponentTransportProcessData const& process_data,
+        ProcessVariable const& transport_process_variable);
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
@@ -131,6 +133,8 @@ private:
     RichardsComponentTransportProcessData const& _process_data;
 
     IntegrationMethod const _integration_method;
+    ProcessVariable const& _transport_process_variable;
+
     std::vector<
         IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType,
                              NodalMatrixType>,

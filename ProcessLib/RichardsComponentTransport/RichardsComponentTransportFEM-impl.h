@@ -25,10 +25,12 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
         std::size_t const local_matrix_size,
         bool is_axially_symmetric,
         unsigned const integration_order,
-        RichardsComponentTransportProcessData const& process_data)
+        RichardsComponentTransportProcessData const& process_data,
+        ProcessVariable const& transport_process_variable)
     : _element_id(element.getID()),
       _process_data(process_data),
-      _integration_method(integration_order)
+      _integration_method(integration_order),
+      _transport_process_variable(transport_process_variable)
 {
     // This assertion is valid only if all nodal d.o.f. use the same shape
     // matrices.
