@@ -39,7 +39,7 @@ features:
 
 - headline: Process Coupling
   textline: |
-    A coupled system of equations can be either solved in a fully coupled way of the monolithic method, or in the sequential manner of the staggered scheme. The monolithic scheme is applied for all coupled processes, while the staggered scheme are available for the coupled processes of themo-hydraulic, hydro-mechanical, and phase field mechanical problems.
+    A coupled system of equations can be either solved in a fully coupled way of the monolithic method, or in the sequential manner of the staggered scheme. The monolithic scheme is applied for all coupled processes, while the staggered scheme are available for the coupled processes of thermo-hydraulic, hydro-mechanical, and phase field mechanical problems.
   visual:
     permalink: /features/StaggeredCouplingScheme.png
     alt: Staggered coupling scheme
