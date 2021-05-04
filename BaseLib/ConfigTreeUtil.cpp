@@ -111,7 +111,8 @@ void replace_includes(
 
 ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
                                   const bool be_ruthless,
-                                  const std::string& toplevel_tag)
+                                  const std::string& toplevel_tag,
+                                  std::string includepath)
 {
     ConfigTree::PTree ptree;
 
@@ -125,7 +126,11 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
 
         if (toplevel_tag == "OpenGeoSysProject")
         {
-            traverse(ptree, fs::path(filepath).parent_path(), replace_includes);
+            if (includepath == "")
+            {
+                includepath = fs::path(filepath).parent_path().string();
+            }
+            traverse(ptree, fs::path(includepath), replace_includes);
         }
     }
     catch (boost::property_tree::xml_parser_error const& e)

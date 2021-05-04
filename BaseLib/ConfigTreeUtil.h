@@ -69,6 +69,7 @@ private:
  * \param be_ruthless  see ConfigTreeTopLevel::ConfigTreeTopLevel()
  * \param toplevel_tag name of the outermost tag in the XML file. The returned ConfigTree is rooted
  *                     one level below that tag.
+ * \param includepath  optional path in which relative include file path will be resolved.
  *
  * The parameter \c toplevel_tag is provided for compatibility with our existing configuration
  * files whose toplevel tags are written in camel case, which conflicts with the naming rules of
@@ -87,6 +88,6 @@ private:
  */
 ConfigTreeTopLevel
 makeConfigTree(std::string const& filepath, bool const be_ruthless,
-               std::string const& toplevel_tag);
+               std::string const& toplevel_tag, std::string includepath = "");
 
 }  // namespace BaseLib

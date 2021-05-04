@@ -45,6 +45,7 @@
 #include "InfoLib/GitInfo.h"
 #include "NumLib/NumericsConfig.h"
 #include "ProcessLib/TimeLoop.h"
+#include "filesystem.h"
 
 #ifdef OGS_USE_PYTHON
 #include "ogs_embedded_python.h"
@@ -193,6 +194,7 @@ int main(int argc, char* argv[])
 
             std::string prj_file = project_arg.getValue();
             auto patch_files = xml_patch_files.getValue();
+            std::string includepath = "";
             if (BaseLib::getFileExtension(prj_file) == ".xml")
             {
                 if (!patch_files.empty())
@@ -223,6 +225,8 @@ int main(int argc, char* argv[])
 
             if (!patch_files.empty())
             {
+                includepath =
+                    fs::canonical(fs::path(prj_file)).parent_path().string();
                 std::string current_prj_file = prj_file;
                 std::string current_prj_file_base =
                     BaseLib::extractBaseNameWithoutExtension(current_prj_file);
@@ -290,8 +294,9 @@ int main(int argc, char* argv[])
                 prj_file = project_arg.getValue();
             }
 
-            auto project_config = BaseLib::makeConfigTree(
-                prj_file, !nonfatal_arg.getValue(), "OpenGeoSysProject");
+            auto project_config =
+                BaseLib::makeConfigTree(prj_file, !nonfatal_arg.getValue(),
+                                        "OpenGeoSysProject", includepath);
 
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));
