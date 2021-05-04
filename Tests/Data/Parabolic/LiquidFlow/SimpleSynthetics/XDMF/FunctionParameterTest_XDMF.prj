@@ -132,8 +132,6 @@ boundary meshes will be written as well -->
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <meshes>
                 <mesh>square_5x5_tris_32</mesh>
-                <mesh>square_5x5_tris_32_left_boundary</mesh>
-                <mesh>square_5x5_tris_32_right_boundary</mesh>
             </meshes>
             <timesteps>
                 <pair>
