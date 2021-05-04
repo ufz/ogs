@@ -21,7 +21,7 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
                              std::filesystem::path const& filepath,
                              int const time_step,
                              std::set<std::string>
-                             variable_output_names,
+                                 variable_output_names,
                              bool const use_compression)
 {
     // transform Data into contiguous data and collect meta data
