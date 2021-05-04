@@ -11,7 +11,6 @@
 #include "CreateRichardsComponentTransportProcess.h"
 #include "CreatePorousMediaProperties.h"
 
-#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/ConstantParameter.h"
@@ -80,60 +79,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium}
         config.getConfigSubtree("porous_medium");
     PorousMediaProperties porous_media_properties{
-        createPorousMediaProperties(mesh, porous_medium_configs, parameters)};
-
-    //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-
-    auto fluid_properties =
-        MaterialLib::Fluid::createFluidProperties(fluid_config);
-
-    // Parameter for the density of the fluid.
-    auto const& fluid_reference_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__fluid_reference_density}
-        "fluid_reference_density", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as fluid_reference_density parameter.",
-         fluid_reference_density.name);
-
-    // Parameter for the longitudinal solute dispersivity.
-    auto const& molecular_diffusion_coefficient = ParameterLib::findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__molecular_diffusion_coefficient}
-        "molecular_diffusion_coefficient", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as molecular diffusion coefficient parameter.",
-         molecular_diffusion_coefficient.name);
-
-    // Parameter for the longitudinal solute dispersivity.
-    auto const& solute_dispersivity_longitudinal = ParameterLib::findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_longitudinal}
-        "solute_dispersivity_longitudinal", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as longitudinal solute dispersivity parameter.",
-         solute_dispersivity_longitudinal.name);
-
-    // Parameter for the transverse solute dispersivity.
-    auto const& solute_dispersivity_transverse = ParameterLib::findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_transverse}
-        "solute_dispersivity_transverse", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as transverse solute dispersivity parameter.",
-         solute_dispersivity_transverse.name);
-
-    // Parameter for the retardation factor.
-    auto const& retardation_factor = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__retardation_factor}
-        "retardation_factor", parameters, 1, &mesh);
-
-    // Parameter for the decay rate.
-    auto const& decay_rate = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__decay_rate}
-        "decay_rate", parameters, 1, &mesh);
+        createPorousMediaProperties(mesh, porous_medium_configs)};
 
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
@@ -161,13 +107,6 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     RichardsComponentTransportProcessData process_data{
         std::move(media_map),
         std::move(porous_media_properties),
-        fluid_reference_density,
-        std::move(fluid_properties),
-        molecular_diffusion_coefficient,
-        solute_dispersivity_longitudinal,
-        solute_dispersivity_transverse,
-        retardation_factor,
-        decay_rate,
         specific_body_force,
         has_gravity};
 
