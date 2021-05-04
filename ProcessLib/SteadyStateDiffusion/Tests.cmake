@@ -4,7 +4,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
         EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_${mesh_size}.prj
+        EXECUTABLE_ARGS cube_${mesh_size}.xml
         TESTER vtkdiff
         REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
@@ -466,7 +466,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
         PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
         EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_${mesh_size}.prj
+        EXECUTABLE_ARGS cube_${mesh_size}.xml
         WRAPPER mpirun
         WRAPPER_ARGS -np 1
         TESTER vtkdiff
