@@ -72,5 +72,5 @@ HdfData::HdfData(void const* data_start, std::size_t const size_partitioned_dim,
         "{:d}, file_space: {:d}, tuples: {:d}",
         name, partition_info.local_offset, data_space[0], chunk_space[0],
         file_space[0], size_tuple);
-    }
+}
 }  // namespace MeshLib::IO
