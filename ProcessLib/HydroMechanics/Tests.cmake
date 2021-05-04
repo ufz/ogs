@@ -311,6 +311,96 @@ AddTest(
 )
 
 AddTest(
+    NAME HydroMechanics_Permeability_OrthotropicEmbeddedFracture_x_strain_y_flow
+    PATH HydroMechanics/OrthotropicEmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS x_strain_y_flow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    x_strain_y_flow_ts_10_t_1000000000.000000.vtu x_strain_y_flow_ts_10_t_1000000000.000000.vtu pressure pressure 0 1e-14
+    x_strain_y_flow_ts_10_t_1000000000.000000.vtu x_strain_y_flow_ts_10_t_1000000000.000000.vtu permeability permeability 0 1e-14
+    x_strain_y_flow_ts_10_t_1000000000.000000.vtu x_strain_y_flow_ts_10_t_1000000000.000000.vtu displacement displacement 1e-15 0
+    x_strain_y_flow_ts_10_t_1000000000.000000.vtu x_strain_y_flow_ts_10_t_1000000000.000000.vtu epsilon epsilon 1e-16 0
+)
+
+AddTest(
+    NAME HydroMechanics_Permeability_OrthotropicEmbeddedFracture_y_strain_z_flow
+    PATH HydroMechanics/OrthotropicEmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS y_strain_z_flow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    y_strain_z_flow_ts_10_t_1000000000.000000.vtu y_strain_z_flow_ts_10_t_1000000000.000000.vtu pressure pressure 0 1e-14
+    y_strain_z_flow_ts_10_t_1000000000.000000.vtu y_strain_z_flow_ts_10_t_1000000000.000000.vtu permeability permeability 0 1e-14
+    y_strain_z_flow_ts_10_t_1000000000.000000.vtu y_strain_z_flow_ts_10_t_1000000000.000000.vtu displacement displacement 1e-15 0
+    y_strain_z_flow_ts_10_t_1000000000.000000.vtu y_strain_z_flow_ts_10_t_1000000000.000000.vtu epsilon epsilon 1e-16 0
+)
+
+AddTest(
+    NAME HydroMechanics_Permeability_OrthotropicEmbeddedFracture_z_strain_x_flow
+    PATH HydroMechanics/OrthotropicEmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS z_strain_x_flow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    z_strain_x_flow_ts_10_t_1000000000.000000.vtu z_strain_x_flow_ts_10_t_1000000000.000000.vtu pressure pressure 0 1e-14
+    z_strain_x_flow_ts_10_t_1000000000.000000.vtu z_strain_x_flow_ts_10_t_1000000000.000000.vtu permeability permeability 0 1e-14
+    z_strain_x_flow_ts_10_t_1000000000.000000.vtu z_strain_x_flow_ts_10_t_1000000000.000000.vtu displacement displacement 1e-15 0
+    z_strain_x_flow_ts_10_t_1000000000.000000.vtu z_strain_x_flow_ts_10_t_1000000000.000000.vtu epsilon epsilon 1e-16 0
+)
+
+AddTest(
+    NAME HydroMechanics_Permeability_OrthotropicEmbeddedFracture_disc_anisotropic
+    PATH HydroMechanics/OrthotropicEmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS disc_with_hole_anisotropic.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu pressure pressure 0 1e-14
+    disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu permeability permeability 0 5e-12
+    disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu velocity velocity 0 5e-12
+    disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu displacement displacement 1e-15 0
+)
+
+AddTest(
+    NAME HydroMechanics_Permeability_OrthotropicEmbeddedFracture_disc_anisotropic_rotated
+    PATH HydroMechanics/OrthotropicEmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS disc_with_hole_anisotropic_rotated.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    disc_with_hole_anisotropic_rotated_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_rotated_ts_1_t_1000000000.000000.vtu pressure pressure 0 1e-14
+    disc_with_hole_anisotropic_rotated_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_rotated_ts_1_t_1000000000.000000.vtu permeability permeability 0 5e-12
+    disc_with_hole_anisotropic_rotated_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_rotated_ts_1_t_1000000000.000000.vtu velocity velocity 0 5e-12
+    disc_with_hole_anisotropic_rotated_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_rotated_ts_1_t_1000000000.000000.vtu displacement displacement 1e-15 0
+)
+
+AddTest(
+    NAME HydroMechanics_Permeability_OrthotropicEmbeddedFracture_disc_quasiisotropic
+    PATH HydroMechanics/OrthotropicEmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS disc_with_hole_quasiisotropic.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    disc_with_hole_quasiisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_quasiisotropic_ts_1_t_1000000000.000000.vtu pressure pressure 0 1e-14
+    disc_with_hole_quasiisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_quasiisotropic_ts_1_t_1000000000.000000.vtu permeability permeability 0 5e-12
+    disc_with_hole_quasiisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_quasiisotropic_ts_1_t_1000000000.000000.vtu velocity velocity 0 5e-12
+    disc_with_hole_quasiisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_quasiisotropic_ts_1_t_1000000000.000000.vtu displacement displacement 1e-15 0
+)
+
+AddTest(
     NAME FailureIndexDependentPermeability
     PATH HydroMechanics/FailureIndexDependentPermeability
     EXECUTABLE ogs

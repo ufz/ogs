@@ -32,6 +32,7 @@
 #include "IdealGasLaw.h"
 #include "Linear.h"
 #include "Parameter.h"
+#include "OrthotropicEmbeddedFracturePermeability.h"
 #include "PorosityFromMassBalance.h"
 #include "RelativePermeability/RelPermBrooksCorey.h"
 #include "RelativePermeability/RelPermBrooksCoreyNonwettingPhase.h"

@@ -104,6 +104,12 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createEmbeddedFracturePermeability(geometry_dimension, config);
     }
 
+    if (boost::iequals(property_type, "OrthotropicEmbeddedFracturePermeability"))
+    {
+        return createOrthotropicEmbeddedFracturePermeability(
+            geometry_dimension, config, parameters);
+    }
+
     if (boost::iequals(property_type,
                        "PermeabilityMohrCoulombFailureIndexModel"))
     {
