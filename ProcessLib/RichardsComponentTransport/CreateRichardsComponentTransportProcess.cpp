@@ -65,6 +65,8 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     }
     else  // staggered scheme.
     {
+        OGS_FATAL("The staggered coupling scheme is not implemented.");
+
         using namespace std::string_literals;
         for (auto const& variable_name : {"concentration"s, "pressure"s})
         {
