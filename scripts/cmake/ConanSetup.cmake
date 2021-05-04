@@ -127,8 +127,6 @@ if("${file_timestamp}" VERSION_LESS ${timestamp} OR DEFINED ENV{CI})
     set(CONAN_COMMAND ${CONAN_CMD} CACHE INTERNAL "") # Speed up conan_add_remote
     conan_add_remote(NAME ogs INDEX 0
         URL https://ogs.jfrog.io/ogs/api/conan/conan)
-    conan_add_remote(NAME conan-community INDEX 1
-        URL https://api.bintray.com/conan/conan-community/conan)
     conan_add_remote(NAME bincrafters INDEX 2
         URL https://api.bintray.com/conan/bincrafters/public-conan)
 else()
