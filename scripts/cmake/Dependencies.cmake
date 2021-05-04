@@ -118,7 +118,7 @@ string(REPLACE "." "_" BOOST_VERSION_UNDESCORE ${ogs.minimum_version.boost})
 CPMFindPackage(
     NAME Boost
     VERSION ${ogs.minimum_version.boost}
-    URL https://dl.bintray.com/boostorg/release/${ogs.minimum_version.boost}/source/boost_${BOOST_VERSION_UNDESCORE}.tar.gz
+    URL https://boostorg.jfrog.io/artifactory/main/release/${ogs.minimum_version.boost}/source/boost_${BOOST_VERSION_UNDESCORE}.tar.gz
 )
 if(Boost_ADDED)
     add_library(Boost::boost INTERFACE IMPORTED)
