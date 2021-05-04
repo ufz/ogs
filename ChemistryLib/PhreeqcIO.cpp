@@ -202,6 +202,28 @@ void setReactantVolumeFraction(Reactant& reactant,
 }
 
 template <typename Reactant>
+void setPorosityPostReaction(Reactant& reactant,
+    GlobalIndexType const& chemical_system_id,
+    MaterialPropertyLib::Medium const* medium,
+    double& porosity)
+{
+    auto const& solid_phase = medium->phase("Solid");
+
+    auto const& solid_constituent =
+        solid_phase.component(reactant.name);
+
+    if (solid_constituent.hasProperty(
+            MaterialPropertyLib::PropertyType::molality))
+    {
+        return;
+    }
+
+    porosity -=
+        ((*reactant.volume_fraction)[chemical_system_id] -
+            (*reactant.volume_fraction_prev)[chemical_system_id]);
+}
+
+template <typename Reactant>
 static double averageReactantMolality(
     Reactant const& reactant,
     std::vector<GlobalIndexType> const& chemical_system_indices)
@@ -728,37 +750,14 @@ void PhreeqcIO::updatePorosityPostReaction(
     MaterialPropertyLib::Medium const* medium,
     double& porosity)
 {
-    auto const& solid_phase = medium->phase("Solid");
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        auto const& solid_constituent =
-            solid_phase.component(kinetic_reactant.name);
-
-        if (solid_constituent.hasProperty(
-                MaterialPropertyLib::PropertyType::molality))
-        {
-            continue;
-        }
-
-        porosity -=
-            ((*kinetic_reactant.volume_fraction)[chemical_system_id] -
-             (*kinetic_reactant.volume_fraction_prev)[chemical_system_id]);
+        setPorosityPostReaction(kinetic_reactant, chemical_system_id, medium, porosity);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        auto const& solid_constituent =
-            solid_phase.component(equilibrium_reactant.name);
-
-        if (solid_constituent.hasProperty(
-                MaterialPropertyLib::PropertyType::molality))
-        {
-            continue;
-        }
-
-        porosity -=
-            ((*equilibrium_reactant.volume_fraction)[chemical_system_id] -
-             (*equilibrium_reactant.volume_fraction_prev)[chemical_system_id]);
+        setPorosityPostReaction(equilibrium_reactant, chemical_system_id, medium, porosity);
     }
 }
 
