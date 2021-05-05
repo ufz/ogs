@@ -179,7 +179,7 @@ void setReactantVolumeFraction(Reactant& reactant,
     MaterialPropertyLib::VariableArray vars;
 
     auto const liquid_density =
-        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+        liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template value<double>(vars, pos, t, dt);
 
     auto const& solid_constituent =
@@ -192,8 +192,7 @@ void setReactantVolumeFraction(Reactant& reactant,
     }
 
     auto const molar_volume =
-        solid_constituent
-            .property(MaterialPropertyLib::PropertyType::molar_volume)
+        solid_constituent[MaterialPropertyLib::PropertyType::molar_volume]
             .template value<double>(vars, pos, t, dt);
 
     (*reactant.volume_fraction)[chemical_system_id] +=
