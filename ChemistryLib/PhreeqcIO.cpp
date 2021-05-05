@@ -166,7 +166,7 @@ void setReactantMolality(Reactant& reactant,
 }
 
 template <typename Reactant>
-void setReactantVolumeFraction(Reactant& reactant,
+void updateReactantVolumeFraction(Reactant& reactant,
                                GlobalIndexType const& chemical_system_id,
                                MaterialPropertyLib::Medium const& medium,
                                ParameterLib::SpatialPosition const& pos,
@@ -734,13 +734,13 @@ void PhreeqcIO::updateVolumeFractionPostReaction(
 {
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        setReactantVolumeFraction(kinetic_reactant, chemical_system_id, medium,
+        updateReactantVolumeFraction(kinetic_reactant, chemical_system_id, medium,
                             pos, porosity, t, dt);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        setReactantVolumeFraction(equilibrium_reactant, chemical_system_id, medium,
+        updateReactantVolumeFraction(equilibrium_reactant, chemical_system_id, medium,
                             pos, porosity, t, dt);
     }
 }
