@@ -362,10 +362,13 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, xdot, process_id, M, K, b);
+        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        b);
 }
 
 template <int DisplacementDim>
