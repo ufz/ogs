@@ -70,8 +70,7 @@ private:
  * \param be_ruthless  see ConfigTreeTopLevel::ConfigTreeTopLevel()
  * \param toplevel_tag name of the outermost tag in the XML file. The returned
  *                     ConfigTree is rooted one level below that tag.
- * \param includepath  optional path in which relative include file path will be
- *                     resolved.
+ * \param patch_files  optional vector of strings with patch file paths.
  *
  * The parameter \c toplevel_tag is provided for compatibility with our existing
  * configuration files whose toplevel tags are written in camel case, which
@@ -92,10 +91,10 @@ private:
  *
  * \see http://www.boost.org/doc/libs/1_60_0/doc/html/property_tree/parsers.html
  */
-ConfigTreeTopLevel makeConfigTree(std::string const& filepath,
-                                  bool const be_ruthless,
-                                  std::string const& toplevel_tag,
-                                  std::vector<std::string> patch_files = {},
-                                  std::string outdir = "");
+ConfigTreeTopLevel makeConfigTree(
+    std::string const& filepath,
+    bool const be_ruthless,
+    std::string const& toplevel_tag,
+    const std::vector<std::string>& patch_files = {});
 
 }  // namespace BaseLib

@@ -115,15 +115,73 @@ void replace_includes(
     }
 }
 
-ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
-                                  const bool be_ruthless,
-                                  const std::string& toplevel_tag,
-                                  std::vector<std::string>
-                                      patch_files,
-                                  std::string outdir)
+// Applies a patch file to the prj content in prj_stream.
+void patch_stream(std::string patch_file, std::stringstream& prj_stream)
 {
-    std::string prj_file = filepath;
-    std::string includepath = "";
+    auto patch = xmlParseFile(patch_file.c_str());
+    if (patch == NULL)
+    {
+        OGS_FATAL("Error reading XML diff file {:s}.", patch_file);
+    }
+
+    auto doc =
+        xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
+    if (doc == NULL)
+    {
+        OGS_FATAL("Error reading project file from memory.");
+    }
+
+    auto node = xmlDocGetRootElement(patch);
+    int rc = 0;
+    for (node = node ? node->children : NULL; node; node = node->next)
+    {
+        if (node->type != XML_ELEMENT_NODE)
+        {
+            continue;
+        }
+
+        if (!strcmp((char*)node->name, "add"))
+        {
+            rc = xml_patch_add(doc, node);
+        }
+        else if (!strcmp((char*)node->name, "replace"))
+        {
+            rc = xml_patch_replace(doc, node);
+        }
+        else if (!strcmp((char*)node->name, "remove"))
+        {
+            rc = xml_patch_remove(doc, node);
+        }
+        else
+        {
+            continue;
+        }
+
+        if (rc)
+        {
+            OGS_FATAL("Error while patching prj file with patch file {:}.",
+                      patch_file);
+        }
+    }
+
+    xmlChar* xmlbuff;
+    int buffersize;
+    xmlDocDumpMemory(doc, &xmlbuff, &buffersize);
+    prj_stream.str("");  // Empty stream
+    prj_stream << xmlbuff;
+
+    xmlFree(xmlbuff);
+    xmlFreeDoc(doc);
+    xmlFreeDoc(patch);
+}
+
+// Will set prj_file to the actual .prj file and returns the final prj file
+// content in prj_stream.
+void read_and_patch_prj(std::stringstream& prj_stream, std::string& prj_file,
+                        std::vector<std::string> patch_files)
+{
+    // Extract base project file path if an xml (patch) file is given as prj
+    // file and it contains the base_file attribute.
     if (BaseLib::getFileExtension(prj_file) == ".xml")
     {
         if (!patch_files.empty())
@@ -138,8 +196,10 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
         auto base_file = xmlGetProp(node, (const xmlChar*)"base_file");
         if (base_file == nullptr)
         {
-            OGS_FATAL("Error reading base prj file in given patch file {:s}.",
-                      prj_file);
+            OGS_FATAL(
+                "Error reading base prj file (base_file attribute) in given "
+                "patch file {:s}.",
+                prj_file);
         }
         patch_files = {prj_file};
         std::stringstream ss;
@@ -147,71 +207,33 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
         prj_file = BaseLib::joinPaths(BaseLib::extractPath(prj_file), ss.str());
     }
 
+    // read base prj file into stream
+    std::ifstream file(prj_file);
+    if (file)
+    {
+        prj_stream << file.rdbuf();
+        file.close();
+    }
+
+    // apply xml patches to stream
     if (!patch_files.empty())
     {
-        includepath = fs::canonical(fs::path(prj_file)).parent_path().string();
-        std::string current_prj_file = prj_file;
-        std::string current_prj_file_base =
-            BaseLib::extractBaseNameWithoutExtension(current_prj_file);
         for (const auto& patch_file : patch_files)
         {
-            auto patch = xmlParseFile(patch_file.c_str());
-            if (patch == NULL)
-            {
-                OGS_FATAL("Error reading XML diff file {:s}.", patch_file);
-            }
-
-            auto doc = xmlParseFile(current_prj_file.c_str());
-            if (doc == NULL)
-            {
-                OGS_FATAL("Error reading project file {:s}.", current_prj_file);
-            }
-
-            auto node = xmlDocGetRootElement(patch);
-            int rc = 0;
-            for (node = node ? node->children : NULL; node; node = node->next)
-            {
-                if (node->type != XML_ELEMENT_NODE)
-                    continue;
-
-                if (!strcmp((char*)node->name, "add"))
-                    rc = xml_patch_add(doc, node);
-                else if (!strcmp((char*)node->name, "replace"))
-                    rc = xml_patch_replace(doc, node);
-                else if (!strcmp((char*)node->name, "remove"))
-                    rc = xml_patch_remove(doc, node);
-                else
-                    continue;
-
-                if (rc)
-                {
-                    OGS_FATAL(
-                        "Error while patching prj file {:s} with patch "
-                        "file "
-                        "{:}.",
-                        filepath, patch_file);
-                }
-            }
-
-            current_prj_file_base =
-                current_prj_file_base + "_" +
-                BaseLib::extractBaseNameWithoutExtension(patch_file);
-            current_prj_file =
-                BaseLib::joinPaths(outdir, current_prj_file_base + ".prj");
-
-            // TODO: make name unique
-            xmlSaveFile(current_prj_file.c_str(), doc);
-
-            xmlFreeDoc(doc);
-            xmlFreeDoc(patch);
+            patch_stream(patch_file, prj_stream);
         }
         xmlCleanupParser();
-        prj_file = current_prj_file;
     }
-    else
-    {
-        prj_file = filepath;
-    }
+}
+
+ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
+                                  const bool be_ruthless,
+                                  const std::string& toplevel_tag,
+                                  const std::vector<std::string>& patch_files)
+{
+    std::string prj_file = filepath;
+    std::stringstream prj_stream;
+    read_and_patch_prj(prj_stream, prj_file, patch_files);
 
     ConfigTree::PTree ptree;
 
@@ -219,17 +241,13 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
     //       for our configuration tree implementation to work!
     try
     {
-        read_xml(prj_file, ptree,
+        read_xml(prj_stream, ptree,
                  boost::property_tree::xml_parser::no_comments |
                      boost::property_tree::xml_parser::trim_whitespace);
 
         if (toplevel_tag == "OpenGeoSysProject")
         {
-            if (includepath == "")
-            {
-                includepath = fs::path(filepath).parent_path().string();
-            }
-            traverse(ptree, fs::path(includepath), replace_includes);
+            traverse(ptree, fs::path(prj_file).parent_path(), replace_includes);
         }
     }
     catch (boost::property_tree::xml_parser_error const& e)

@@ -191,8 +191,7 @@ int main(int argc, char* argv[])
 
             auto project_config = BaseLib::makeConfigTree(
                 project_arg.getValue(), !nonfatal_arg.getValue(),
-                "OpenGeoSysProject", xml_patch_files.getValue(),
-                outdir_arg.getValue());
+                "OpenGeoSysProject", xml_patch_files.getValue());
 
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));
