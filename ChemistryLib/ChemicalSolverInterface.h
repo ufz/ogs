@@ -61,7 +61,7 @@ public:
 
     virtual void updateVolumeFractionPostReaction(
         GlobalIndexType const& /*chemical_system_id*/,
-        MaterialPropertyLib::Medium const* /*medium*/,
+        MaterialPropertyLib::Medium const& /*medium*/,
         ParameterLib::SpatialPosition const& /*pos*/, double const /*porosity*/,
         double const /*t*/, double const /*dt*/)
     {
@@ -69,7 +69,7 @@ public:
 
     virtual void updatePorosityPostReaction(
         GlobalIndexType const& /*chemical_system_id*/,
-        MaterialPropertyLib::Medium const* /*medium*/,
+        MaterialPropertyLib::Medium const& /*medium*/,
         double& /*porosity*/)
     {
     }
