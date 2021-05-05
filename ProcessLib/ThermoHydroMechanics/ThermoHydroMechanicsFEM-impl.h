@@ -230,7 +230,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
-        auto& eps_m = _ip_data[ip].eps_m;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
@@ -303,12 +302,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(vars, x_position, t, dt);
         GlobalDimMatrixType K_over_mu = intrinsic_permeability / viscosity;
 
-        double const T0 = _process_data.reference_temperature(t, x_position)[0];
-
         auto const& b = _process_data.specific_body_force;
 
-        // TODO (Wenqing) : Change dT to time step wise increment
-        double const delta_T(T_int_pt - T0);
         // Consider also anisotropic thermal expansion.
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim> const solid_linear_thermal_expansion_coefficient =
@@ -319,13 +314,17 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     .value(vars, x_position, t, dt));
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            thermal_strain =
-                solid_linear_thermal_expansion_coefficient * delta_T;
+            dthermal_strain =
+                solid_linear_thermal_expansion_coefficient * dT_int_pt;
 
+        double const T_ref =
+            _process_data.reference_temperature(t, x_position)[0];
         double const rho_s =
             solid_density *
-            (1 - Invariants::trace(solid_linear_thermal_expansion_coefficient) *
-                     delta_T);
+            (1 -
+             Invariants::trace(solid_linear_thermal_expansion_coefficient) *
+                 T_int_pt -
+             T_ref);
 
         auto const K_pT_thermal_osmosis =
             (solid_phase.hasProperty(
@@ -346,13 +345,16 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // displacement equation, displacement part
         //
-        eps_m.noalias() = eps - thermal_strain;
+        auto& eps_prev = _ip_data[ip].eps_prev;
+        auto& eps_m = _ip_data[ip].eps_m;
+        auto& eps_m_prev = _ip_data[ip].eps_m_prev;
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
         vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        auto C = _ip_data[ip].updateConstitutiveRelationThermal(
-            vars, t, x_position, dt, u, T_int_pt - dT_int_pt);
+        auto C = _ip_data[ip].updateConstitutiveRelation(
+            vars, t, x_position, dt, T_int_pt - dT_int_pt);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -701,8 +703,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                           typename BMatricesType::BMatrixType>(
                 dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
-        double const T0 = _process_data.reference_temperature(t, x_position)[0];
-
         double const T_int_pt = N_T.dot(T);
         vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
             T_int_pt;
@@ -718,24 +718,24 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                         MaterialPropertyLib::PropertyType::thermal_expansivity)
                     .value(vars, x_position, t, dt));
 
-        double const delta_T(T_int_pt - T0);
+        double const dT_int_pt = N_T.dot(T_dot) * dt;
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            thermal_strain =
-                solid_linear_thermal_expansion_coefficient * delta_T;
+            dthermal_strain =
+                solid_linear_thermal_expansion_coefficient * dT_int_pt;
 
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
 
+        auto& eps_prev = _ip_data[ip].eps_prev;
         auto& eps_m = _ip_data[ip].eps_m;
-        eps_m.noalias() = eps - thermal_strain;
-
+        auto& eps_m_prev = _ip_data[ip].eps_m_prev;
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
         vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        double const dT_int_pt = N_T.dot(T_dot) * dt;
-        _ip_data[ip].updateConstitutiveRelationThermal(vars, t, x_position, dt,
-                                                       u, T_int_pt - dT_int_pt);
+        _ip_data[ip].updateConstitutiveRelation(vars, t, x_position, dt,
+                                                T_int_pt - dT_int_pt);
     }
 }
 

@@ -37,11 +37,11 @@ struct IntegrationPointData final
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
         sigma_eff.setZero(kelvin_vector_size);
         eps.setZero(kelvin_vector_size);
+        eps_prev.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
-        eps_prev.resize(kelvin_vector_size);
         sigma_eff_prev.resize(kelvin_vector_size);
     }
 
@@ -66,18 +66,17 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
+        eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
         material_state_variables->pushBackState();
     }
 
-    template <typename DisplacementVectorType>
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelationThermal(
+    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
-        DisplacementVectorType const& /*u*/,
         double const temperature_prev)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
