@@ -195,7 +195,27 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            auto& ip_data = _ip_data[ip];
+
+            /// Set initial stress from parameter.
+            if (_process_data.initial_stress != nullptr)
+            {
+                ParameterLib::SpatialPosition const x_position{
+                    std::nullopt, _element.getID(), ip,
+                    MathLib::Point3d(NumLib::interpolateCoordinates<
+                                     ShapeFunctionDisplacement,
+                                     ShapeMatricesTypeDisplacement>(
+                        _element, ip_data.N_u))};
+
+                ip_data.sigma_eff =
+                    MathLib::KelvinVector::symmetricTensorToKelvinVector<
+                        DisplacementDim>((*_process_data.initial_stress)(
+                        std::numeric_limits<
+                            double>::quiet_NaN() /* time independent */,
+                        x_position));
+            }
+
+            ip_data.pushBackState();
         }
     }
 
