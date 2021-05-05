@@ -21,6 +21,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/rotated_consolidation.prj)
     OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos.prj RUNTIME 17)
     OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_QN.prj RUNTIME 50)
+    OgsTest(PROJECTFILE RichardsMechanics/A2.prj RUNTIME 20)
 endif()
 
 if (NOT OGS_USE_MPI AND OGS_USE_MFRONT)
