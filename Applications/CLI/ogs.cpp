@@ -207,20 +207,17 @@ int main(int argc, char* argv[])
                 auto patch = xmlParseFile(prj_file.c_str());
                 auto node = xmlDocGetRootElement(patch);
                 auto base_file = xmlGetProp(node, (const xmlChar*)"base_file");
-                if (base_file != nullptr)
-                {
-                    patch_files = {prj_file};
-                    std::stringstream ss;
-                    ss << base_file;
-                    prj_file = BaseLib::joinPaths(
-                        BaseLib::extractPath(prj_file), ss.str());
-                }
-                else
+                if (base_file == nullptr)
                 {
                     OGS_FATAL(
                         "Error reading base prj file in given patch file {:s}.",
                         prj_file);
                 }
+                patch_files = {prj_file};
+                std::stringstream ss;
+                ss << base_file;
+                prj_file = BaseLib::joinPaths(BaseLib::extractPath(prj_file),
+                                              ss.str());
             }
 
             if (!patch_files.empty())
@@ -261,26 +258,25 @@ int main(int argc, char* argv[])
                         else if (!strcmp((char*)node->name, "remove"))
                             rc = xml_patch_remove(doc, node);
                         else
-                            rc = -1;
+                            continue;
 
                         if (rc)
-                            break;
+                        {
+                            OGS_FATAL(
+                                "Error while patching prj file {:s} with patch "
+                                "file "
+                                "{:}.",
+                                project_arg.getValue(), patch_file);
+                        }
                     }
 
-                    if (rc != 0)
-                    {
-                        OGS_FATAL(
-                            "Error while patching prj file {:s} with patch "
-                            "file "
-                            "{:}.",
-                            project_arg.getValue(), patch_file);
-                    }
                     current_prj_file_base =
                         current_prj_file_base + "_" +
                         BaseLib::extractBaseNameWithoutExtension(patch_file);
                     current_prj_file = BaseLib::joinPaths(
                         outdir_arg.getValue(), current_prj_file_base + ".prj");
 
+                    // TODO: make name unique
                     xmlSaveFile(current_prj_file.c_str(), doc);
 
                     xmlFreeDoc(doc);
