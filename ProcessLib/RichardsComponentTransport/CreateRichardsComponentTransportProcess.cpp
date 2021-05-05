@@ -115,6 +115,12 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
              "concentration",
              //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__pressure}
              "pressure"});
+        if (per_process_variables.size() > 2)
+        {
+            OGS_FATAL(
+                "By now RichardsComponentTransport process only supports "
+                "single component transport simulation.");
+        }
         process_variables.push_back(std::move(per_process_variables));
     }
     else  // staggered scheme.
