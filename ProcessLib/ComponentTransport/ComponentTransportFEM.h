@@ -1164,7 +1164,8 @@ public:
         {
             if (_process_data.chemically_induced_porosity_change)
             {
-                auto const& medium = _process_data.media_map->getMedium(ele_id);
+                auto const& medium =
+                    *_process_data.media_map->getMedium(ele_id);
 
                 ParameterLib::SpatialPosition pos;
                 pos.setElementID(ele_id);

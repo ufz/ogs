@@ -167,13 +167,14 @@ void setReactantMolality(Reactant& reactant,
 
 template <typename Reactant>
 void setReactantVolumeFraction(Reactant& reactant,
-                         GlobalIndexType const& chemical_system_id,
-                         MaterialPropertyLib::Medium const* medium,
-                         ParameterLib::SpatialPosition const& pos, double const porosity,
-                         double const t, double const dt)
+                               GlobalIndexType const& chemical_system_id,
+                               MaterialPropertyLib::Medium const& medium,
+                               ParameterLib::SpatialPosition const& pos,
+                               double const porosity, double const t,
+                               double const dt)
 {
-    auto const& solid_phase = medium->phase("Solid");
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium.phase("Solid");
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
 
@@ -203,11 +204,11 @@ void setReactantVolumeFraction(Reactant& reactant,
 
 template <typename Reactant>
 void setPorosityPostReaction(Reactant& reactant,
-    GlobalIndexType const& chemical_system_id,
-    MaterialPropertyLib::Medium const* medium,
-    double& porosity)
+                             GlobalIndexType const& chemical_system_id,
+                             MaterialPropertyLib::Medium const& medium,
+                             double& porosity)
 {
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_phase = medium.phase("Solid");
 
     auto const& solid_constituent =
         solid_phase.component(reactant.name);
@@ -728,7 +729,7 @@ std::vector<std::string> const PhreeqcIO::getComponentList() const
 
 void PhreeqcIO::updateVolumeFractionPostReaction(
     GlobalIndexType const& chemical_system_id,
-    MaterialPropertyLib::Medium const* medium,
+    MaterialPropertyLib::Medium const& medium,
     ParameterLib::SpatialPosition const& pos, double const porosity,
     double const t, double const dt)
 {
@@ -747,7 +748,7 @@ void PhreeqcIO::updateVolumeFractionPostReaction(
 
 void PhreeqcIO::updatePorosityPostReaction(
     GlobalIndexType const& chemical_system_id,
-    MaterialPropertyLib::Medium const* medium,
+    MaterialPropertyLib::Medium const& medium,
     double& porosity)
 {
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
