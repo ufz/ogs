@@ -244,10 +244,6 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble the equations for ThermoHydroMechanics");
 
-    // Note: This assembly function is for the Picard nonlinear solver. Since
-    // only the Newton-Raphson method is employed to simulate coupled HM
-    // processes in this class, this function is actually not used so far.
-
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
     // Call global assembler for each local assembly item.
