@@ -74,7 +74,8 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
     const Element& e, const unsigned global_dim)
     : _global_dim(global_dim), _matR2global(Eigen::Matrix3d::Identity())
 {
-    assert(e.getDimension() <= global_dim);
+    unsigned const space_dim = std::max(e.space_dimension_, _global_dim);
+    assert(e.getDimension() <= space_dim);
     _points.reserve(e.getNumberOfNodes());
     for (unsigned i = 0; i < e.getNumberOfNodes(); i++)
     {
@@ -83,10 +84,10 @@ ElementCoordinatesMappingLocal::ElementCoordinatesMappingLocal(
 
     auto const element_dim = e.getDimension();
 
-    if (global_dim != element_dim)
+    if (element_dim != space_dim)
     {
         _matR2global =
-            detail::getRotationMatrixToGlobal(element_dim, global_dim, _points);
+            detail::getRotationMatrixToGlobal(element_dim, space_dim, _points);
         detail::rotateToLocal(_matR2global.transpose(), _points);
     }
 }
