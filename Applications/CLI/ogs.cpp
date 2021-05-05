@@ -10,11 +10,8 @@
  *
  */
 
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
-#include <xml_patch.h>
 
 #include <chrono>
 #include <sstream>
@@ -192,107 +189,10 @@ int main(int argc, char* argv[])
 
             run_time.start();
 
-            std::string prj_file = project_arg.getValue();
-            auto patch_files = xml_patch_files.getValue();
-            std::string includepath = "";
-            if (BaseLib::getFileExtension(prj_file) == ".xml")
-            {
-                if (!patch_files.empty())
-                {
-                    OGS_FATAL(
-                        "It is not allowed to specify additional patch files "
-                        "if a patch file was already specified as the "
-                        "prj-file.");
-                }
-                auto patch = xmlParseFile(prj_file.c_str());
-                auto node = xmlDocGetRootElement(patch);
-                auto base_file = xmlGetProp(node, (const xmlChar*)"base_file");
-                if (base_file == nullptr)
-                {
-                    OGS_FATAL(
-                        "Error reading base prj file in given patch file {:s}.",
-                        prj_file);
-                }
-                patch_files = {prj_file};
-                std::stringstream ss;
-                ss << base_file;
-                prj_file = BaseLib::joinPaths(BaseLib::extractPath(prj_file),
-                                              ss.str());
-            }
-
-            if (!patch_files.empty())
-            {
-                includepath =
-                    fs::canonical(fs::path(prj_file)).parent_path().string();
-                std::string current_prj_file = prj_file;
-                std::string current_prj_file_base =
-                    BaseLib::extractBaseNameWithoutExtension(current_prj_file);
-                for (const auto& patch_file : patch_files)
-                {
-                    auto patch = xmlParseFile(patch_file.c_str());
-                    if (patch == NULL)
-                    {
-                        OGS_FATAL("Error reading XML diff file {:s}.",
-                                  patch_file);
-                    }
-
-                    auto doc = xmlParseFile(current_prj_file.c_str());
-                    if (doc == NULL)
-                    {
-                        OGS_FATAL("Error reading project file {:s}.",
-                                  current_prj_file);
-                    }
-
-                    auto node = xmlDocGetRootElement(patch);
-                    int rc = 0;
-                    for (node = node ? node->children : NULL; node;
-                         node = node->next)
-                    {
-                        if (node->type != XML_ELEMENT_NODE)
-                            continue;
-
-                        if (!strcmp((char*)node->name, "add"))
-                            rc = xml_patch_add(doc, node);
-                        else if (!strcmp((char*)node->name, "replace"))
-                            rc = xml_patch_replace(doc, node);
-                        else if (!strcmp((char*)node->name, "remove"))
-                            rc = xml_patch_remove(doc, node);
-                        else
-                            continue;
-
-                        if (rc)
-                        {
-                            OGS_FATAL(
-                                "Error while patching prj file {:s} with patch "
-                                "file "
-                                "{:}.",
-                                project_arg.getValue(), patch_file);
-                        }
-                    }
-
-                    current_prj_file_base =
-                        current_prj_file_base + "_" +
-                        BaseLib::extractBaseNameWithoutExtension(patch_file);
-                    current_prj_file = BaseLib::joinPaths(
-                        outdir_arg.getValue(), current_prj_file_base + ".prj");
-
-                    // TODO: make name unique
-                    xmlSaveFile(current_prj_file.c_str(), doc);
-
-                    xmlFreeDoc(doc);
-                    xmlFreeDoc(patch);
-                }
-                xmlCleanupParser();
-                prj_file = current_prj_file;
-            }
-            else
-            {
-                prj_file = project_arg.getValue();
-            }
-
-            auto project_config =
-                BaseLib::makeConfigTree(prj_file, !nonfatal_arg.getValue(),
-                                        "OpenGeoSysProject", includepath);
+            auto project_config = BaseLib::makeConfigTree(
+                project_arg.getValue(), !nonfatal_arg.getValue(),
+                "OpenGeoSysProject", xml_patch_files.getValue(),
+                outdir_arg.getValue());
 
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));

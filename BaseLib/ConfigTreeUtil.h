@@ -95,6 +95,7 @@ private:
 ConfigTreeTopLevel makeConfigTree(std::string const& filepath,
                                   bool const be_ruthless,
                                   std::string const& toplevel_tag,
-                                  std::string includepath = "");
+                                  std::vector<std::string> patch_files = {},
+                                  std::string outdir = "");
 
 }  // namespace BaseLib
