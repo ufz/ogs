@@ -2,7 +2,7 @@
 date = "2020-11-24T09:45:13+01`:00"
 title = "Get support / fill a bug report"
 author = "Lars Bilke"
-weight = 1
+weight = 21
 
 [menu]
   [menu.userguide]
