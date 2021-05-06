@@ -80,28 +80,26 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
-    // Get the gravity vector for the Darcy velocity
-    //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity}
-    auto const& darcy_g_config = config.getConfigSubtree("darcy_gravity");
-    const auto gravity_axis_id_input =
-        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity__axis_id}
-        darcy_g_config.getConfigParameter<int>("axis_id");
-    if (gravity_axis_id_input >= static_cast<int>(mesh.getDimension()))
+    std::vector<double> const b =
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__specific_body_force}
+        config.getConfigParameter<std::vector<double>>("specific_body_force");
+    if (b.size() != mesh.getDimension())
     {
         OGS_FATAL(
-            "The gravity axis must be a number between 0 and one less than the "
-            "mesh dimension, which is {:d}. Read gravity axis {:d} from input "
-            "file.",
-            mesh.getDimension(), gravity_axis_id_input);
+            "specific body force (gravity vector) has {:d} components, mesh "
+            "dimension is {:d}",
+            b.size(), mesh.getDimension());
     }
-    const auto g =
-        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__darcy_gravity__g}
-        darcy_g_config.getConfigParameter<double>("g");
-    if (g < 0.)
+    int gravity_axis_id = -1; // default: no gravity
+    double const g = -b[mesh.getDimension()-1];
+    bool const has_gravity = MathLib::toVector(b).norm() > 0;
+    if (has_gravity)
     {
-        OGS_FATAL("Gravity magnitude must be non-negative.");
+        if (g != 0.0)
+        {
+            gravity_axis_id = mesh.getDimension()-1;
+        }
     }
-    const int gravity_axis_id = (g == 0.) ? -1 : gravity_axis_id_input;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
     auto calculatesurfaceflux_config =
