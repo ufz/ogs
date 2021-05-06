@@ -7,7 +7,10 @@ author = "Lars Bilke"
 categories = ["Tutorials"]
 image = "/books/geoenergy-modeling-i.png"
 
-aliases = [ "/tutorials/ces-i/e07", "/tutorials/ces-i/e08",
+aliases = [ "/tutorials/ces-i/e01",
+            "/tutorials/ces-i/e02", "/tutorials/ces-i/e03",
+            "/tutorials/ces-i/e04", "/tutorials/ces-i/e06",
+            "/tutorials/ces-i/e07", "/tutorials/ces-i/e08",
             "/tutorials/ces-i/e09", "/tutorials/ces-i/e10" ]
 
 +++
