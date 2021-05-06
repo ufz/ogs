@@ -36,18 +36,16 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        medium
-            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+        medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
     vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
         std::numeric_limits<double>::quiet_NaN();
-    auto const permeability =
-        MaterialPropertyLib::formEigenTensor<GlobalDim>(
-            medium->property(MaterialPropertyLib::PropertyType::permeability)
-                .value(vars, pos, t, dt));
+    auto const permeability = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+        medium[MaterialPropertyLib::PropertyType::permeability].value(vars, pos,
+                                                                      t, dt));
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to permeability.rows() ==
     //  _element->getDimension()
@@ -88,8 +86,8 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
 
@@ -100,10 +98,10 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
 
     auto const intrinsic_permeability =
         MaterialPropertyLib::formEigenTensor<GlobalDim>(
-            medium->property(MaterialPropertyLib::PropertyType::permeability)
-                .value(vars, pos, t, dt));
+            medium[MaterialPropertyLib::PropertyType::permeability].value(
+                vars, pos, t, dt));
     auto const viscosity =
-        liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+        liquid_phase[MaterialPropertyLib::PropertyType::viscosity]
             .template value<double>(vars, pos, t, dt);
 
     Eigen::Vector3d flux(0.0, 0.0, 0.0);
@@ -140,13 +138,12 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        medium
-            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+        medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -160,21 +157,20 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Compute density:
         auto const fluid_density =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            liquid_phase[MaterialPropertyLib::PropertyType::density]
                 .template value<double>(vars, pos, t, dt);
         assert(fluid_density > 0.);
         auto const ddensity_dpressure =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            liquid_phase[MaterialPropertyLib::PropertyType::density]
                 .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::phase_pressure, pos,
-                    t, dt);
+                    vars, MaterialPropertyLib::Variable::phase_pressure, pos, t,
+                    dt);
 
         auto const porosity =
-            medium->property(MaterialPropertyLib::PropertyType::porosity)
+            medium[MaterialPropertyLib::PropertyType::porosity]
                 .template value<double>(vars, pos, t, dt);
-        auto const storage =
-            medium->property(MaterialPropertyLib::PropertyType::storage)
-                .template value<double>(vars, pos, t, dt);
+        auto const storage = medium[MaterialPropertyLib::PropertyType::storage]
+                                 .template value<double>(vars, pos, t, dt);
 
         // Assemble mass matrix, M
         local_M.noalias() +=
@@ -183,15 +179,14 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Compute viscosity:
         auto const viscosity =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            liquid_phase[MaterialPropertyLib::PropertyType::viscosity]
                 .template value<double>(vars, pos, t, dt);
 
         pos.setIntegrationPoint(ip);
         auto const permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                medium
-                    ->property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t, dt));
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
@@ -228,18 +223,16 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
+    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        medium
-            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+        medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
     vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
         std::numeric_limits<double>::quiet_NaN();
-    auto const permeability =
-        MaterialPropertyLib::formEigenTensor<GlobalDim>(
-            medium->property(MaterialPropertyLib::PropertyType::permeability)
-                .value(vars, pos, t, dt));
+    auto const permeability = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+        medium[MaterialPropertyLib::PropertyType::permeability].value(vars, pos,
+                                                                      t, dt));
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to perm.rows() == _element->getDimension()
     assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
@@ -277,13 +270,12 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    auto const& medium = _process_data.media_map->getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& medium = *_process_data.media_map->getMedium(_element.getID());
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     MaterialPropertyLib::VariableArray vars;
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        medium
-            ->property(MaterialPropertyLib::PropertyType::reference_temperature)
+        medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -295,18 +287,17 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
 
         // Compute density:
         auto const fluid_density =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            liquid_phase[MaterialPropertyLib::PropertyType::density]
                 .template value<double>(vars, pos, t, dt);
         // Compute viscosity:
         auto const viscosity =
-            liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            liquid_phase[MaterialPropertyLib::PropertyType::viscosity]
                 .template value<double>(vars, pos, t, dt);
 
         auto const permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                medium
-                    ->property(MaterialPropertyLib::PropertyType::permeability)
-                    .value(vars, pos, t, dt));
+                medium[MaterialPropertyLib::PropertyType::permeability].value(
+                    vars, pos, t, dt));
         LaplacianGravityVelocityCalculator::calculateVelocity(
             ip, local_p_vec, ip_data, permeability, viscosity,
             fluid_density * _process_data.gravitational_acceleration,
