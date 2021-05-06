@@ -13,7 +13,7 @@ If you encounter issues using or developing OGS let us know. To help you in the 
 
 ### Report contents
 
-- OGS version (e.g. version number or git commit hash)
+- Output of `ogs --version` (e.g. version number or git commit hash and CMake arguments)
 - Where did you obtained the program (e.g. self-compiled or as a binary download from the web site)
 - Operating system / hardware information (e.g. Ubuntu 20.04, Intel i5-10600K, 16 GB Ram)
 - Description of the issue:

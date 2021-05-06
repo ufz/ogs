@@ -2,7 +2,7 @@
 date = "2018-11-14T11:00:13+01`:00"
 title = "Project file syntax"
 author = "Lars Bilke"
-weight = 3
+weight = 4
 
 [menu]
   [menu.userguide]
@@ -75,6 +75,8 @@ Patch files contain `<replace>`, `<add>` and `<remove>`-elements with [XPath](ht
 ```bash
 ogs -p path/to/square_1e0_neumann.xml [other/optional/patch_file.xml] path/to/square_1e0.prj
 ```
+
+Supplied patch files are applied in the given order.
 
 ### Option 2b: Use a patch file directly
 
