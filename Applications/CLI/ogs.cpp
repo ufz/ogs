@@ -62,7 +62,8 @@ int main(int argc, char* argv[])
             GitInfoLib::GitInfo::ogs_version + "\n" +
             "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args,
         ' ',
-        GitInfoLib::GitInfo::ogs_version);
+        GitInfoLib::GitInfo::ogs_version + "\n\n" +
+            "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args);
 
     TCLAP::ValueArg<std::string> reference_path_arg(
         "r", "reference",
