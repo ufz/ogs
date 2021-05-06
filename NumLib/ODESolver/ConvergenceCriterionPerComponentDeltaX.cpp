@@ -48,9 +48,6 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
         OGS_FATAL("D.o.f. table or mesh have not been set.");
     }
 
-    bool satisfied_abs = true;
-    bool satisfied_rel = true;
-
     for (unsigned global_component = 0; global_component < _abstols.size();
          ++global_component)
     {
@@ -67,13 +64,12 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
             (norm_x == 0. ? std::numeric_limits<double>::quiet_NaN()
                           : (error_dx / norm_x)));
 
-        satisfied_abs = satisfied_abs && error_dx < _abstols[global_component];
-        satisfied_rel =
-            satisfied_rel && checkRelativeTolerance(_reltols[global_component],
-                                                    error_dx, norm_x);
-    }
+        bool const satisfied_abs = error_dx < _abstols[global_component];
+        bool const satisfied_rel = checkRelativeTolerance(
+            _reltols[global_component], error_dx, norm_x);
 
-    _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
+        _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
+    }
 }
 
 void ConvergenceCriterionPerComponentDeltaX::setDOFTable(

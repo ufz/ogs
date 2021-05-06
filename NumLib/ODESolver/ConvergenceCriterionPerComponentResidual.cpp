@@ -74,11 +74,6 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
         OGS_FATAL("D.o.f. table or mesh have not been set.");
     }
 
-    bool satisfied_abs = true;
-    // Make sure that in the first iteration the relative residual tolerance is
-    // not satisfied.
-    bool satisfied_rel = !_is_first_iteration;
-
     for (unsigned global_component = 0; global_component < _abstols.size();
          ++global_component)
     {
@@ -103,14 +98,16 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
                                  : (norm_res / norm_res0)));
         }
 
-        satisfied_abs = satisfied_abs && norm_res < _abstols[global_component];
-        satisfied_rel =
-            satisfied_rel &&
+        bool const satisfied_abs = norm_res < _abstols[global_component];
+        // Make sure that in the first iteration the relative residual tolerance
+        // is not satisfied.
+        bool const satisfied_rel =
+            !_is_first_iteration &&
             checkRelativeTolerance(_reltols[global_component], norm_res,
                                    _residual_norms_0[global_component]);
+        _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
     }
 
-    _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
 }
 
 void ConvergenceCriterionPerComponentResidual::setDOFTable(
