@@ -345,16 +345,17 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        auto const& w = ip_data_[ip].integration_weight;
+        auto& ip_data = ip_data_[ip];
+        auto const& w = ip_data.integration_weight;
 
-        auto const& N_u_op = ip_data_[ip].N_u_op;
+        auto const& N_u_op = ip_data.N_u_op;
 
-        auto const& N_u = ip_data_[ip].N_u;
-        auto const& dNdx_u = ip_data_[ip].dNdx_u;
+        auto const& N_u = ip_data.N_u;
+        auto const& dNdx_u = ip_data.dNdx_u;
 
         // N and dNdx are used for both p and T variables
-        auto const& N = ip_data_[ip].N_p;
-        auto const& dNdx = ip_data_[ip].dNdx_p;
+        auto const& N = ip_data.N_p;
+        auto const& dNdx = ip_data.dNdx_p;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -383,23 +384,23 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables[static_cast<int>(MPL::Variable::phase_pressure)] = -p_cap_ip;
         variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
 
-        auto& eps = ip_data_[ip].eps;
-        auto& eps_m = ip_data_[ip].eps_m;
+        auto& eps = ip_data.eps;
+        auto& eps_m = ip_data.eps_m;
         eps.noalias() = B * u;
-        auto const& sigma_eff = ip_data_[ip].sigma_eff;
-        auto& S_L = ip_data_[ip].saturation;
-        auto const S_L_prev = ip_data_[ip].saturation_prev;
+        auto const& sigma_eff = ip_data.sigma_eff;
+        auto& S_L = ip_data.saturation;
+        auto const S_L_prev = ip_data.saturation_prev;
         auto const alpha =
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
         double const T_ip_prev = T_ip - dT;
-        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
+        auto const C_el = ip_data.computeElasticTangentStiffness(
             t, x_position, dt, T_ip_prev, T_ip);
 
         auto const beta_SR =
             (1 - alpha) /
-            ip_data_[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+            ip_data.solid_material.getBulkModulus(t, x_position, &C_el);
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
 
@@ -447,11 +448,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
             .emplace<double>(Invariants::trace(B * (u - u_dot * dt)));
 
-        auto& phi = ip_data_[ip].porosity;
+        auto& phi = ip_data.porosity;
         {  // Porosity update
 
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
-                ip_data_[ip].porosity_prev;
+                ip_data.porosity_prev;
             phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
@@ -467,9 +468,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         // Swelling and possibly volumetric strain rate update.
-        auto& sigma_sw = ip_data_[ip].sigma_sw;
+        auto& sigma_sw = ip_data.sigma_sw;
         {
-            auto const& sigma_sw_prev = ip_data_[ip].sigma_sw_prev;
+            auto const& sigma_sw_prev = ip_data.sigma_sw_prev;
 
             // If there is swelling, compute it. Update volumetric strain rate,
             // s.t. it corresponds to the mechanical part only.
@@ -500,14 +501,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             {
                 variables_prev[static_cast<int>(
                     MPL::Variable::transport_porosity)] =
-                    ip_data_[ip].transport_porosity_prev;
+                    ip_data.transport_porosity_prev;
 
-                ip_data_[ip].transport_porosity =
+                ip_data.transport_porosity =
                     solid_phase.property(MPL::PropertyType::transport_porosity)
                         .template value<double>(variables, variables_prev,
                                                 x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    ip_data_[ip].transport_porosity;
+                    ip_data.transport_porosity;
             }
             else
             {
@@ -532,14 +533,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = solid_linear_thermal_expansivity_vector * dT;
 
-        auto& eps_prev = ip_data_[ip].eps_prev;
-        auto& eps_m_prev = ip_data_[ip].eps_m_prev;
+        auto& eps_prev = ip_data.eps_prev;
+        auto& eps_m_prev = ip_data.eps_m_prev;
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
             eps_m.noalias() +=
-                C_el.inverse() * (ip_data_[ip].sigma_sw - ip_data_[ip].sigma_sw_prev);
+                C_el.inverse() * (ip_data.sigma_sw - ip_data.sigma_sw_prev);
         }
 
         variables[static_cast<int>(
@@ -547,8 +548,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        auto C = ip_data_[ip].updateConstitutiveRelation(
-            variables, t, x_position, dt, T_ip_prev);
+        auto C = ip_data.updateConstitutiveRelation(variables, t, x_position,
+                                                    dt, T_ip_prev);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -638,7 +639,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables[static_cast<int>(
             MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
-            ip_data_[ip].material_state_variables->getEquivalentPlasticStrain();
+            ip_data.material_state_variables->getEquivalentPlasticStrain();
 
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             medium->property(MPL::PropertyType::permeability)
@@ -1119,10 +1120,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         x_position.setIntegrationPoint(ip);
 
+        auto& ip_data = ip_data_[ip];
         // N is used for both p and T variables
-        auto const& N = ip_data_[ip].N_p;
-        auto const& N_u = ip_data_[ip].N_u;
-        auto const& dNdx_u = ip_data_[ip].dNdx_u;
+        auto const& N = ip_data.N_p;
+        auto const& N_u = ip_data.N_u;
+        auto const& dNdx_u = ip_data.dNdx_u;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -1152,11 +1154,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables[static_cast<int>(MPL::Variable::temperature)] = T_ip;
 
-        auto& eps = ip_data_[ip].eps;
+        auto& eps = ip_data.eps;
         eps.noalias() = B * u;
-        auto& eps_m = ip_data_[ip].eps_m;
-        auto& S_L = ip_data_[ip].saturation;
-        auto const S_L_prev = ip_data_[ip].saturation_prev;
+        auto& eps_m = ip_data.eps_m;
+        auto& S_L = ip_data.saturation;
+        auto const S_L_prev = ip_data.saturation_prev;
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
@@ -1178,12 +1180,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
 
         double const T_ip_prev = T_ip - dT;
-        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
+        auto const C_el = ip_data.computeElasticTangentStiffness(
             t, x_position, dt, T_ip_prev, T_ip);
 
         auto const beta_SR =
             (1 - alpha) /
-            ip_data_[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+            ip_data.solid_material.getBulkModulus(t, x_position, &C_el);
         variables[static_cast<int>(MPL::Variable::grain_compressibility)] =
             beta_SR;
 
@@ -1199,10 +1201,10 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables_prev[static_cast<int>(MPL::Variable::volumetric_strain)]
             .emplace<double>(Invariants::trace(B * (u - u_dot * dt)));
 
-        auto& phi = ip_data_[ip].porosity;
+        auto& phi = ip_data.porosity;
         {  // Porosity update
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
-                ip_data_[ip].porosity_prev;
+                ip_data.porosity_prev;
             phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
@@ -1210,9 +1212,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         // Swelling and possibly volumetric strain rate update.
-        auto& sigma_sw = ip_data_[ip].sigma_sw;
+        auto& sigma_sw = ip_data.sigma_sw;
         {
-            auto const& sigma_sw_prev = ip_data_[ip].sigma_sw_prev;
+            auto const& sigma_sw_prev = ip_data.sigma_sw_prev;
 
             // If there is swelling, compute it. Update volumetric strain rate,
             // s.t. it corresponds to the mechanical part only.
@@ -1243,14 +1245,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             {
                 variables_prev[static_cast<int>(
                     MPL::Variable::transport_porosity)] =
-                    ip_data_[ip].transport_porosity_prev;
+                    ip_data.transport_porosity_prev;
 
-                ip_data_[ip].transport_porosity =
+                ip_data.transport_porosity =
                     solid_phase.property(MPL::PropertyType::transport_porosity)
                         .template value<double>(variables, variables_prev,
                                                 x_position, t, dt);
                 variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    ip_data_[ip].transport_porosity;
+                    ip_data.transport_porosity;
             }
             else
             {
@@ -1268,9 +1270,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
         {
-            auto const sigma_total = (ip_data_[ip].sigma_eff +
-                                      alpha * chi_S_L * identity2 * p_cap_ip)
-                                         .eval();
+            auto const sigma_total =
+                (ip_data.sigma_eff + alpha * chi_S_L * identity2 * p_cap_ip)
+                    .eval();
             // For stress dependent permeability.
             variables[static_cast<int>(MPL::Variable::total_stress)]
                 .emplace<SymmetricTensor>(
@@ -1280,7 +1282,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables[static_cast<int>(
             MaterialPropertyLib::Variable::equivalent_plastic_strain)] =
-            ip_data_[ip].material_state_variables->getEquivalentPlasticStrain();
+            ip_data.material_state_variables->getEquivalentPlasticStrain();
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             medium->property(MPL::PropertyType::permeability)
                 .value(variables, x_position, t, dt));
@@ -1291,7 +1293,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
 
-        auto const& sigma_eff = ip_data_[ip].sigma_eff;
+        auto const& sigma_eff = ip_data.sigma_eff;
         double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables[static_cast<int>(MPL::Variable::solid_grain_pressure)] =
@@ -1299,7 +1301,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
-        ip_data_[ip].dry_density_solid = (1 - phi) * rho_SR;
+        ip_data.dry_density_solid = (1 - phi) * rho_SR;
 
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim> const solid_linear_thermal_expansivity_vector =
@@ -1312,14 +1314,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = solid_linear_thermal_expansivity_vector * dT;
 
-        auto& eps_prev = ip_data_[ip].eps_prev;
-        auto& eps_m_prev = ip_data_[ip].eps_m_prev;
+        auto& eps_prev = ip_data.eps_prev;
+        auto& eps_m_prev = ip_data.eps_m_prev;
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
-            eps_m.noalias() += C_el.inverse() * (ip_data_[ip].sigma_sw -
-                                                  ip_data_[ip].sigma_sw_prev);
+            eps_m.noalias() -= -C_el.inverse() * (ip_data.sigma_sw -
+                                                  ip_data.sigma_sw_prev);
         }
 
         variables[static_cast<int>(
@@ -1327,14 +1329,14 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        ip_data_[ip].updateConstitutiveRelation(variables, t, x_position, dt,
-                                                T_ip_prev);
+        ip_data.updateConstitutiveRelation(variables, t, x_position, dt,
+                                           T_ip_prev);
 
         auto const& b = process_data_.specific_body_force;
 
         // Compute the velocity
-        auto const& dNdx = ip_data_[ip].dNdx_p;
-        ip_data_[ip].v_darcy.noalias() =
+        auto const& dNdx = ip_data.dNdx_p;
+        ip_data.v_darcy.noalias() =
             -K_over_mu * dNdx * p_L + rho_LR * K_over_mu * b;
 
         saturation_avg += S_L;
