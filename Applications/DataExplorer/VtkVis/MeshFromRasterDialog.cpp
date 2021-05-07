@@ -14,7 +14,7 @@
 
 #include "MeshFromRasterDialog.h"
 
-#include "MeshGenerators/VtkMeshConverter.h"
+#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "Base/OGSError.h"
 
 MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)

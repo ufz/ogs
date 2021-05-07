@@ -119,7 +119,7 @@ if(GEOTIFF_FOUND)
 endif() # GEOTIFF_FOUND
 
 ogs_add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS})
-target_include_directories(QtDataView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(QtDataView PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(
     QtDataView
     PUBLIC GeoLib MeshGeoToolsLib MeshLib QtBase VtkVis

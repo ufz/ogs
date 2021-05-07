@@ -150,21 +150,9 @@ source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${SOURCE_DIR_REL}/Applications/FileIO
-    ${SOURCE_DIR_REL}/BaseLib
-    ${SOURCE_DIR_REL}/GeoLib
-    ${SOURCE_DIR_REL}/MathLib
-    ${SOURCE_DIR_REL}/MeshLib
-    ${GUI_SOURCE_DIR_REL}/Base
-    ${GUI_SOURCE_DIR_REL}/DataView
-    ${GUI_SOURCE_DIR_REL}/VtkModules/Qt
-)
 
 ogs_add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS})
-
+target_include_directories(VtkVis PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if(GEOTIFF_FOUND)
     target_compile_definitions(VtkVis PRIVATE GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})

@@ -29,7 +29,7 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 
 #include "BaseLib/Logging.h"
-#include "StationBorehole.h"
+#include "GeoLib/StationBorehole.h"
 #include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(VtkStationSource);

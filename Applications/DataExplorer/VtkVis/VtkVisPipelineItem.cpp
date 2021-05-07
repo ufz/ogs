@@ -30,7 +30,7 @@
 
 #include <QMessageBox>
 
-#include "FileTools.h"
+#include "BaseLib/FileTools.h"
 #include "QVtkDataSetMapper.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkCompositeFilter.h"

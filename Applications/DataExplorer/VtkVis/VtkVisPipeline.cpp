@@ -44,13 +44,13 @@
 #include <QString>
 
 #include "BaseLib/Logging.h"
-#include "GeoTreeModel.h"
+#include "DataView/GeoTreeModel.h"
 #include "MathLib/InterpolationAlgorithms/LinearIntervalInterpolation.h"
-#include "MeshItem.h"
+#include "DataView/MeshItem.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "MeshModel.h"
-#include "StationTreeModel.h"
+#include "DataView/MeshModel.h"
+#include "DataView/StationTreeModel.h"
 #include "Base/TreeModel.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkCompositeElementSelectionFilter.h"

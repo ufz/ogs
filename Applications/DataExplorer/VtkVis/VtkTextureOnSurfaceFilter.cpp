@@ -29,7 +29,7 @@
 #include <vtkTexture.h>
 
 #include "BaseLib/Logging.h"
-#include "MathTools.h"
+#include "MathLib/MathTools.h"
 #include "VtkVisHelper.h"
 
 vtkStandardNewMacro(VtkTextureOnSurfaceFilter);
