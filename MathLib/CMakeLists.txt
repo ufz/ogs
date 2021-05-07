@@ -43,7 +43,11 @@ target_link_libraries(
 if(OGS_USE_PETSC)
     target_link_libraries(MathLib PUBLIC ${PETSC_LIBRARIES})
 endif()
+if(OGS_USE_LIS)
+    target_include_directories(MathLib PUBLIC ${LIS_INCLUDE_DIR})
+endif()
 if(OGS_USE_MKL)
+    target_include_directories(MathLib PRIVATE ${MKL_INCLUDE_DIR})
     target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
 endif()
 

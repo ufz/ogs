@@ -187,13 +187,6 @@ option(OGS_USE_MFRONT
        OFF
 )
 # ---- Definitions ----
-if(OGS_USE_LIS)
-    include_directories(SYSTEM ${LIS_INCLUDE_DIR})
-endif()
-
-if(OGS_USE_MKL)
-    include_directories(SYSTEM ${MKL_INCLUDE_DIR})
-endif()
 
 # Eigen
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
