@@ -44,10 +44,11 @@ void RichardsComponentTransportProcess::initializeConcreteProcess(
     const int monolithic_process_id = 0;
     ProcessLib::ProcessVariable const& pv =
         getProcessVariables(monolithic_process_id)[0];
+
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
         mesh.getDimension(), mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
-        mesh.isAxiallySymmetric(), integration_order, _process_data);
+        mesh.isAxiallySymmetric(), integration_order, _process_data, pv);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",

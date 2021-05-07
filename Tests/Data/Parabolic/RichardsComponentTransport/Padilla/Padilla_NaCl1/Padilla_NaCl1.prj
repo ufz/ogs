@@ -12,30 +12,8 @@
                 <concentration>concentration</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
-            <fluid>
-                <density>
-                    <type>Constant</type>
-                    <value>1000</value>
-                </density>
-                <viscosity>
-                    <type>Constant</type>
-                    <value>1.0e-3</value>
-                </viscosity>
-            </fluid>
             <porous_medium>
                 <porous_medium id="0">
-                    <permeability>
-                        <permeability_tensor_entries>kappa1</permeability_tensor_entries>
-                        <type>Constant</type>
-                    </permeability>
-                    <porosity>
-                        <type>Constant</type>
-                        <porosity_parameter>constant_porosity_parameter</porosity_parameter>
-                    </porosity>
-                    <storage>
-                        <type>Constant</type>
-                        <value>0</value>
-                    </storage>
                     <capillary_pressure>
                         <type>vanGenuchten</type>
                         <m>0.789029535864979</m>
@@ -44,21 +22,8 @@
                         <smax>1</smax>
                         <sr>0.1689</sr>
                     </capillary_pressure>
-                    <relative_permeability>
-                        <type>WettingPhaseVanGenuchten</type>
-                        <krel_min>1e-12</krel_min>
-                        <m>0.789029535864979</m>
-                        <smax>1</smax>
-                        <sr>0.1689</sr>
-                    </relative_permeability>
                 </porous_medium>
             </porous_medium>
-            <decay_rate>decay_rate</decay_rate>
-            <fluid_reference_density>rho_fluid</fluid_reference_density>
-            <retardation_factor>retardation_factor</retardation_factor>
-            <solute_dispersivity_longitudinal>alpha_l</solute_dispersivity_longitudinal>
-            <solute_dispersivity_transverse>alpha_l</solute_dispersivity_transverse>
-            <molecular_diffusion_coefficient>Dm</molecular_diffusion_coefficient>
             <specific_body_force>-9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
@@ -66,6 +31,101 @@
             </secondary_variables>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <components>
+                        <component>
+                            <name>concentration</name>
+                            <properties>
+                                <property>
+                                    <name>pore_diffusion</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>Dm</parameter_name>
+                                </property>
+                                <property>
+                                    <name>retardation_factor</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>retardation_factor</parameter_name>
+                                </property>
+                                <property>
+                                    <name>decay_rate</name>
+                                    <type>Parameter</type>
+                                    <parameter_name>decay_rate</parameter_name>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>kappa1</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>constant_porosity_parameter</parameter_name>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value>0</value>
+                </property>
+                <property>
+                    <name>capillary_pressure</name>
+                    <type>CapillaryPressureVanGenuchten</type>
+                    <residual_liquid_saturation>0.1689</residual_liquid_saturation>
+                    <residual_gas_saturation>0</residual_gas_saturation>
+                    <exponent>0.789029535864979</exponent>
+                    <p_b>3633.33</p_b>
+                    <maximum_capillary_pressure>36333.30</maximum_capillary_pressure>
+                </property>
+                <property>
+                    <name>relative_permeability</name>
+                    <type>RelativePermeabilityVanGenuchten</type>
+                    <residual_liquid_saturation>0.1689</residual_liquid_saturation>
+                    <residual_gas_saturation>0</residual_gas_saturation>
+                    <minimum_relative_permeability_liquid>1e-12</minimum_relative_permeability_liquid>
+                    <exponent>0.789029535864979</exponent>
+                </property>
+                <property>
+                    <name>saturation</name>
+                    <type>SaturationVanGenuchten</type>
+                    <residual_liquid_saturation>0.1689</residual_liquid_saturation>
+                    <residual_gas_saturation>0</residual_gas_saturation>
+                    <exponent>0.789029535864979</exponent>
+                    <p_b>3633.33</p_b>
+                </property>
+                <property>
+                    <name>longitudinal_dispersivity</name>
+                    <type>Parameter</type>
+                    <parameter_name>alpha_l</parameter_name>
+                </property>
+                <property>
+                    <name>transversal_dispersivity</name>
+                    <type>Parameter</type>
+                    <parameter_name>alpha_l</parameter_name>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
             <process ref="HusC">
@@ -265,7 +325,7 @@
         <vtkdiff>
             <regex>Padilla_NaCl1_ts_.*.vtu</regex>
             <field>concentration</field>
-            <absolute_tolerance>1e-12</absolute_tolerance>
+            <absolute_tolerance>2e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

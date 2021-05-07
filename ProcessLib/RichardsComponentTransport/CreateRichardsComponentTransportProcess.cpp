@@ -9,9 +9,10 @@
  */
 
 #include "CreateRichardsComponentTransportProcess.h"
-
 #include "CreatePorousMediaProperties.h"
-#include "MaterialLib/Fluid/FluidProperties/CreateFluidProperties.h"
+
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -23,6 +24,61 @@ namespace ProcessLib
 {
 namespace RichardsComponentTransport
 {
+namespace
+{
+void checkMPLProperties(
+    MeshLib::Mesh const& mesh,
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+{
+    std::array const required_properties_medium = {
+        MaterialPropertyLib::PropertyType::porosity,
+        MaterialPropertyLib::PropertyType::transversal_dispersivity,
+        MaterialPropertyLib::PropertyType::longitudinal_dispersivity,
+        MaterialPropertyLib::PropertyType::permeability,
+        MaterialPropertyLib::PropertyType::saturation,
+        MaterialPropertyLib::PropertyType::storage,
+        MaterialPropertyLib::PropertyType::relative_permeability};
+
+    std::array const required_properties_liquid_phase = {
+        MaterialPropertyLib::PropertyType::density,
+        MaterialPropertyLib::PropertyType::viscosity};
+
+    std::array const required_properties_components = {
+        MaterialPropertyLib::PropertyType::retardation_factor,
+        MaterialPropertyLib::PropertyType::decay_rate,
+        MaterialPropertyLib::PropertyType::pore_diffusion};
+
+    for (auto const& element : mesh.getElements())
+    {
+        auto const element_id = element->getID();
+
+        auto const& medium = *media_map.getMedium(element_id);
+        checkRequiredProperties(medium, required_properties_medium);
+
+        // check if liquid phase definition and the corresponding properties
+        // exist
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        checkRequiredProperties(liquid_phase, required_properties_liquid_phase);
+
+        // check if components and the corresponding properties exist
+        auto const number_of_components = liquid_phase.numberOfComponents();
+        for (std::size_t component_id = 0; component_id < number_of_components;
+             ++component_id)
+        {
+            if (!liquid_phase.hasComponent(component_id))
+            {
+                OGS_FATAL(
+                    "The component {:d} in the AqueousLiquid phase isn't "
+                    "specified.",
+                    component_id);
+            }
+            auto const& component = liquid_phase.component(component_id);
+            checkRequiredProperties(component, required_properties_components);
+        }
+    }
+}
+}  // namespace
+
 std::unique_ptr<Process> createRichardsComponentTransportProcess(
     std::string name,
     MeshLib::Mesh& mesh,
@@ -30,7 +86,8 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "RichardsComponentTransport");
@@ -58,10 +115,18 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
              "concentration",
              //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__pressure}
              "pressure"});
+        if (per_process_variables.size() > 2)
+        {
+            OGS_FATAL(
+                "By now RichardsComponentTransport process only supports "
+                "single component transport simulation.");
+        }
         process_variables.push_back(std::move(per_process_variables));
     }
     else  // staggered scheme.
     {
+        OGS_FATAL("The staggered coupling scheme is not implemented.");
+
         using namespace std::string_literals;
         for (auto const& variable_name : {"concentration"s, "pressure"s})
         {
@@ -75,60 +140,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium}
         config.getConfigSubtree("porous_medium");
     PorousMediaProperties porous_media_properties{
-        createPorousMediaProperties(mesh, porous_medium_configs, parameters)};
-
-    //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__fluid}
-    auto const& fluid_config = config.getConfigSubtree("fluid");
-
-    auto fluid_properties =
-        MaterialLib::Fluid::createFluidProperties(fluid_config);
-
-    // Parameter for the density of the fluid.
-    auto const& fluid_reference_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__fluid_reference_density}
-        "fluid_reference_density", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as fluid_reference_density parameter.",
-         fluid_reference_density.name);
-
-    // Parameter for the longitudinal solute dispersivity.
-    auto const& molecular_diffusion_coefficient = ParameterLib::findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__molecular_diffusion_coefficient}
-        "molecular_diffusion_coefficient", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as molecular diffusion coefficient parameter.",
-         molecular_diffusion_coefficient.name);
-
-    // Parameter for the longitudinal solute dispersivity.
-    auto const& solute_dispersivity_longitudinal = ParameterLib::findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_longitudinal}
-        "solute_dispersivity_longitudinal", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as longitudinal solute dispersivity parameter.",
-         solute_dispersivity_longitudinal.name);
-
-    // Parameter for the transverse solute dispersivity.
-    auto const& solute_dispersivity_transverse = ParameterLib::findParameter<
-        double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__solute_dispersivity_transverse}
-        "solute_dispersivity_transverse", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as transverse solute dispersivity parameter.",
-         solute_dispersivity_transverse.name);
-
-    // Parameter for the retardation factor.
-    auto const& retardation_factor = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__retardation_factor}
-        "retardation_factor", parameters, 1, &mesh);
-
-    // Parameter for the decay rate.
-    auto const& decay_rate = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__decay_rate}
-        "decay_rate", parameters, 1, &mesh);
+        createPorousMediaProperties(mesh, porous_medium_configs)};
 
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
@@ -150,15 +162,17 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
+    DBUG(
+        "Check the media properties of RichardsComponentTransport process ...");
+    checkMPLProperties(mesh, *media_map);
+    DBUG("Media properties verified.");
+
     RichardsComponentTransportProcessData process_data{
+        std::move(media_map),
         std::move(porous_media_properties),
-        fluid_reference_density,
-        std::move(fluid_properties),
-        molecular_diffusion_coefficient,
-        solute_dispersivity_longitudinal,
-        solute_dispersivity_transverse,
-        retardation_factor,
-        decay_rate,
         specific_body_force,
         has_gravity};
 

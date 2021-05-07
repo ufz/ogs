@@ -10,6 +10,8 @@
 
 #include "PorousMediaProperties.h"
 
+#include "ParameterLib/SpatialPosition.h"
+
 namespace ProcessLib
 {
 namespace RichardsComponentTransport
@@ -21,38 +23,11 @@ int PorousMediaProperties::getMaterialID(
     return _material_ids[element_id];
 }
 
-MaterialLib::PorousMedium::Porosity const& PorousMediaProperties::getPorosity(
-    double /*t*/, ParameterLib::SpatialPosition const& pos) const
-{
-    return *_porosity_models[getMaterialID(pos)];
-}
-
-MaterialLib::PorousMedium::Permeability const&
-PorousMediaProperties::getIntrinsicPermeability(
-    double /*t*/, ParameterLib::SpatialPosition const& pos) const
-{
-    return *_intrinsic_permeability_models[getMaterialID(pos)];
-}
-
-MaterialLib::PorousMedium::Storage const&
-PorousMediaProperties::getSpecificStorage(
-    double /*t*/, ParameterLib::SpatialPosition const& pos) const
-{
-    return *_specific_storage_models[getMaterialID(pos)];
-}
-
 MaterialLib::PorousMedium::CapillaryPressureSaturation const&
 PorousMediaProperties::getCapillaryPressureSaturationModel(
     double /*t*/, ParameterLib::SpatialPosition const& pos) const
 {
     return *_capillary_pressure_saturation_models[getMaterialID(pos)];
-}
-
-MaterialLib::PorousMedium::RelativePermeability const&
-PorousMediaProperties::getRelativePermeability(
-    double /*t*/, ParameterLib::SpatialPosition const& pos) const
-{
-    return *_relative_permeability_models[getMaterialID(pos)];
 }
 }  // namespace RichardsComponentTransport
 }  // namespace ProcessLib
