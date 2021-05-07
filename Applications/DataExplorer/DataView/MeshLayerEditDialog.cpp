@@ -30,11 +30,11 @@
 
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/Logging.h"
-#include "Mesh.h"
-#include "MeshGenerators/LayeredVolume.h"
-#include "OGSError.h"
-#include "StringTools.h"
-#include "TetGenInterface.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshGenerators/LayeredVolume.h"
+#include "Base/OGSError.h"
+#include "BaseLib/StringTools.h"
+#include "Applications/FileIO/TetGenInterface.h"
 
 MeshLayerEditDialog::MeshLayerEditDialog(const MeshLib::Mesh* mesh,
                                          QDialog* parent)

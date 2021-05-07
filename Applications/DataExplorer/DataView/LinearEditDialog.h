@@ -17,7 +17,7 @@
 #include "ui_LinearEdit.h"
 #include <QDialog>
 
-#include "Polyline.h"
+#include "GeoLib/Polyline.h"
 
 /**
  * \brief A dialog window for creating linear boundary conditions on polylines

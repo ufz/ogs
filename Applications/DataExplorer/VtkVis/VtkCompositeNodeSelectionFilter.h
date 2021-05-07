@@ -15,7 +15,7 @@
 #pragma once
 
 #include "VtkCompositeFilter.h"
-#include "Point.h"
+#include "GeoLib/Point.h"
 
 #include <vector>
 

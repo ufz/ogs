@@ -13,7 +13,7 @@
  */
 #pragma once
 
-#include "VtkStationSource.h"
+#include "VtkVis/VtkStationSource.h"
 #include <QModelIndex>
 #include <vtkPolyDataAlgorithm.h>
 

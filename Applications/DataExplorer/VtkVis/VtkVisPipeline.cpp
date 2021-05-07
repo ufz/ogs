@@ -51,7 +51,7 @@
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "MeshModel.h"
 #include "StationTreeModel.h"
-#include "TreeModel.h"
+#include "Base/TreeModel.h"
 #include "VtkAlgorithmProperties.h"
 #include "VtkCompositeElementSelectionFilter.h"
 #include "VtkCompositeGeoObjectFilter.h"

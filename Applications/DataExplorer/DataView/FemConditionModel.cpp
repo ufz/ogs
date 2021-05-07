@@ -12,7 +12,7 @@
 
 #include "Applications/DataHolderLib/BoundaryCondition.h"
 #include "Applications/DataHolderLib/SourceTerm.h"
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
 /**
  * Constructor.

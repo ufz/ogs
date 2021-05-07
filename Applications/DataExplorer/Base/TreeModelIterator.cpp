@@ -15,8 +15,8 @@
 // ** INCLUDES **
 #include "TreeModelIterator.h"
 
-#include "TreeItem.h"
-#include "TreeModel.h"
+#include "Base/TreeItem.h"
+#include "Base/TreeModel.h"
 
 TreeModelIterator::TreeModelIterator(TreeModel* model)
     : _current(nullptr), _model(model)

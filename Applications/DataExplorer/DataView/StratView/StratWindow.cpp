@@ -12,9 +12,9 @@
  *
  */
 
-#include "StratWindow.h"
+#include "DataView/StratView/StratWindow.h"
 
-#include "Station.h"
+#include "GeoLib/Station.h"
 
 StratWindow::StratWindow(
     GeoLib::StationBorehole* station,

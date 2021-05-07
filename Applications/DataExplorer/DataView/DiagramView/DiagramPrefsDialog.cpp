@@ -21,8 +21,8 @@
 #include "DetailWindow.h"
 #include "DiagramList.h"
 #include "GetDateTime.h"
-#include "OGSError.h"
-#include "Station.h"
+#include "Base/OGSError.h"
+#include "GeoLib/Station.h"
 
 DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
                                        const QString& listName,

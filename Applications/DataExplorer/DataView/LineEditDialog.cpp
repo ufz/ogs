@@ -17,7 +17,7 @@
 #include <QStringList>
 #include <QStringListModel>
 
-#include "OGSError.h"
+#include "Base/OGSError.h"
 
 LineEditDialog::LineEditDialog(const GeoLib::PolylineVec& ply_vec,
                                QDialog* parent)

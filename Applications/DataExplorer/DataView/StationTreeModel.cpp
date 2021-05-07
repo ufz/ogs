@@ -17,8 +17,8 @@
 #include <QDebug>
 
 #include "BaseItem.h"
-#include "OGSError.h"
-#include "Station.h"
+#include "Base/OGSError.h"
+#include "GeoLib/Station.h"
 
 /**
  * Constructor.

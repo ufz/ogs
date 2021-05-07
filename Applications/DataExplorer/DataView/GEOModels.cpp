@@ -19,7 +19,7 @@
 #include "BaseLib/Logging.h"
 #include "GeoLib/Triangle.h"
 #include "GeoTreeModel.h"
-#include "OGSError.h"
+#include "Base/OGSError.h"
 #include "StationTreeModel.h"
 
 GEOModels::GEOModels(GeoLib::GEOObjects& geo_objects, QObject* parent /*= 0*/)

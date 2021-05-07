@@ -15,7 +15,7 @@
 #pragma once
 
 #include "VtkCompositeFilter.h"
-#include "GeoType.h"
+#include "GeoLib/GeoType.h"
 
 class vtkThreshold;
 

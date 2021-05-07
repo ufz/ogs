@@ -15,7 +15,7 @@
 #pragma once
 
 #include "Applications/DataHolderLib/Project.h"
-#include "TreeModel.h"
+#include "Base/TreeModel.h"
 
 class FEMCondition;
 class ProcessVarItem;

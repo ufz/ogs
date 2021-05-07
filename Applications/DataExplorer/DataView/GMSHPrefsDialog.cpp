@@ -13,17 +13,17 @@
  */
 
 // Base
-#include "StringTools.h"
+#include "BaseLib/StringTools.h"
 
 // Qt/Base
 #include <QStringList>
 #include <QStringListModel>
 
-#include "GEOObjects.h"
+#include "GeoLib/GEOObjects.h"
 #include "GMSHPrefsDialog.h"
-#include "OGSError.h"
-#include "StrictDoubleValidator.h"
-#include "StrictIntValidator.h"
+#include "Base/OGSError.h"
+#include "Base/StrictDoubleValidator.h"
+#include "Base/StrictIntValidator.h"
 
 GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects,
                                  QDialog* parent)

@@ -20,7 +20,7 @@
 
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "Applications/DataHolderLib/Project.h"
-#include "Elements/Element.h"
+#include "MeshLib/Elements/Element.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"

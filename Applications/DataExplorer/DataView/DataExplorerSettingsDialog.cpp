@@ -17,7 +17,7 @@
 #include <QFileDialog>
 #include <QSettings>
 
-#include "OGSError.h"
+#include "Base/OGSError.h"
 
 DataExplorerSettingsDialog::DataExplorerSettingsDialog(QDialog* parent)
     : QDialog(parent)

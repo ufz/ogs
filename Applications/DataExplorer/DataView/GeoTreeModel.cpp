@@ -18,7 +18,7 @@
 #include "GeoLib/Triangle.h"
 #include "GeoObjectListItem.h"
 #include "GeoTreeItem.h"
-#include "OGSError.h"
+#include "Base/OGSError.h"
 
 /**
  * Constructor.

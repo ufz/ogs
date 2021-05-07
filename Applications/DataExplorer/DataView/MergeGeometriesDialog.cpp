@@ -17,8 +17,8 @@
 #include <QStringList>
 #include <QStringListModel>
 
-#include "GEOObjects.h"
-#include "OGSError.h"
+#include "GeoLib/GEOObjects.h"
+#include "Base/OGSError.h"
 
 MergeGeometriesDialog::MergeGeometriesDialog(GeoLib::GEOObjects& geoObjects,
                                              QDialog* parent)

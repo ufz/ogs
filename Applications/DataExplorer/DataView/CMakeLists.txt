@@ -113,26 +113,13 @@ source_group("UI Files" FILES ${UIS})
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
-include_directories(
-    ${SOURCE_DIR_REL}/Applications/FileIO
-    ${SOURCE_DIR_REL}/BaseLib
-    ${SOURCE_DIR_REL}/MathLib
-    ${SOURCE_DIR_REL}/GeoLib
-    ${SOURCE_DIR_REL}/MeshGeoToolsLib
-    ${SOURCE_DIR_REL}/MeshLib
-    ${GUI_SOURCE_DIR_REL}/Base
-    ${GUI_SOURCE_DIR_REL}/VtkVis
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/DiagramView
-    ${CMAKE_CURRENT_SOURCE_DIR}/StratView
-)
 
 if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
 endif() # GEOTIFF_FOUND
 
 ogs_add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS})
-
+target_include_directories(QtDataView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(
     QtDataView
     PUBLIC GeoLib MeshGeoToolsLib MeshLib QtBase VtkVis

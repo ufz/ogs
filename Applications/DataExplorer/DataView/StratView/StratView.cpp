@@ -16,7 +16,7 @@
 
 #include <math.h>
 
-#include "Station.h"
+#include "GeoLib/Station.h"
 
 StratView::~StratView()
 {

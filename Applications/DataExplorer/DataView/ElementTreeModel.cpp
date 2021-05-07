@@ -20,7 +20,7 @@
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
 namespace
 {

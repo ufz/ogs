@@ -24,8 +24,8 @@
 
 #include "AddLayerToMeshDialog.h"
 #include "Applications/FileIO/AsciiRasterInterface.h"
-#include "ImportFileTypes.h"
-#include "LastSavedFileDirectory.h"
+#include "Base/ImportFileTypes.h"
+#include "Base/LastSavedFileDirectory.h"
 #include "MeshItem.h"
 #include "MeshLayerEditDialog.h"
 #include "MeshLib/Mesh.h"
@@ -36,12 +36,12 @@
 #include "MeshMapping2DDialog.h"
 #include "MeshModel.h"
 #include "MeshValueEditDialog.h"
-#include "OGSError.h"
+#include "Base/OGSError.h"
 #include "RasterDataToMeshDialog.h"
-#include "SHPInterface.h"
+#include "Applications/FileIO/SHPInterface.h"
 #include "SaveMeshDialog.h"
 #include "SurfaceExtractionDialog.h"
-#include "TetGenInterface.h"
+#include "Applications/FileIO/TetGenInterface.h"
 
 MeshView::MeshView(QWidget* parent /*= 0*/) : QTreeView(parent)
 {

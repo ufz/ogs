@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 

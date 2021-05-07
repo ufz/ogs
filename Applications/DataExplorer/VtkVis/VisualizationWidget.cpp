@@ -41,7 +41,7 @@
 #include <QString>
 #include <cmath>
 
-#include "Point.h"
+#include "GeoLib/Point.h"
 #include "VtkCustomInteractorStyle.h"
 #include "VtkPickCallback.h"
 

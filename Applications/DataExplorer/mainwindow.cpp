@@ -82,8 +82,8 @@
 #include "NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
 #include "GeoTreeModel.h"
-#include "LastSavedFileDirectory.h"
-#include "OGSError.h"
+#include "Base/LastSavedFileDirectory.h"
+#include "Base/OGSError.h"
 #include "RecentFiles.h"
 #include "SHPImportDialog.h"
 #include "SetNameDialog.h"

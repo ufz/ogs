@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
 /**
  * \brief A TreeItem representing process variable information.

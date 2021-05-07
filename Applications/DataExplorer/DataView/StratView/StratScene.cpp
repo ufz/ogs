@@ -19,8 +19,8 @@
 #include <QGraphicsTextItem>
 #include <limits>
 
-#include "DateTools.h"
-#include "QNonScalableGraphicsTextItem.h"
+#include "BaseLib/DateTools.h"
+#include "Base/QNonScalableGraphicsTextItem.h"
 #include "StratBar.h"
 
 StratScene::StratScene(GeoLib::StationBorehole* station,

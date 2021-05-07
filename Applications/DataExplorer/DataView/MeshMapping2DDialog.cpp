@@ -12,8 +12,8 @@
 #include <QFileDialog>
 #include <QSettings>
 
-#include "OGSError.h"
-#include "StrictDoubleValidator.h"
+#include "Base/OGSError.h"
+#include "Base/StrictDoubleValidator.h"
 
 MeshMapping2DDialog::MeshMapping2DDialog(QDialog* parent) : QDialog(parent)
 {

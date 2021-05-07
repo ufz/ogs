@@ -27,10 +27,10 @@
 #include <QSettings>
 
 #include "CheckboxDelegate.h"
-#include "Mesh.h"
+#include "MeshLib/Mesh.h"
 #include "MeshGenerators/RasterToMesh.h"
 #include "MeshGenerators/VtkMeshConverter.h"
-#include "OGSError.h"
+#include "Base/OGSError.h"
 #include "VtkVisPipeline.h"
 #include "VtkVisPipelineItem.h"
 #include "VtkVisPointSetItem.h"

@@ -12,13 +12,13 @@
  *
  */
 
-#include "TreeModel.h"
+#include "Base/TreeModel.h"
 
 #include <QModelIndex>
 #include <QStringList>
 #include <QVariant>
 
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
 /**
  * A model for the QTreeView implementing the tree as a double-linked list.

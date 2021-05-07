@@ -19,7 +19,7 @@
 #include <QString>
 #include <QVariant>
 
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
 class QStringList;
 class vtkAlgorithm;

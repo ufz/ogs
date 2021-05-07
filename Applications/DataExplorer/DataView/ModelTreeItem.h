@@ -17,7 +17,7 @@
 #include "GeoLib/Station.h"
 
 #include "BaseItem.h"
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
 /**
  * \brief A TreeItem containing some additional information used in the StationModel.
