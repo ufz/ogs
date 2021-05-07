@@ -76,7 +76,7 @@ void traverse(boost::property_tree::ptree& parent, const fs::path bench_dir,
     traverse_recursive(parent, "", parent, bench_dir, method);
 }
 
-void replace_includes(
+void replaceIncludes(
     [[maybe_unused]] boost::property_tree::ptree const& parent,
     [[maybe_unused]] boost::property_tree::ptree::path_type const& child_path,
     boost::property_tree::ptree& child,
@@ -116,7 +116,7 @@ void replace_includes(
 }
 
 // Applies a patch file to the prj content in prj_stream.
-void patch_stream(std::string patch_file, std::stringstream& prj_stream)
+void patchStream(std::string patch_file, std::stringstream& prj_stream)
 {
     auto patch = xmlParseFile(patch_file.c_str());
     if (patch == NULL)
@@ -140,21 +140,24 @@ void patch_stream(std::string patch_file, std::stringstream& prj_stream)
             continue;
         }
 
-        if (!strcmp((char*)node->name, "add"))
+        if (!strcmp(reinterpret_cast<const char*>(node->name), "add"))
         {
             rc = xml_patch_add(doc, node);
         }
-        else if (!strcmp((char*)node->name, "replace"))
+        else if (!strcmp(reinterpret_cast<const char*>(node->name), "replace"))
         {
             rc = xml_patch_replace(doc, node);
         }
-        else if (!strcmp((char*)node->name, "remove"))
+        else if (!strcmp(reinterpret_cast<const char*>(node->name), "remove"))
         {
             rc = xml_patch_remove(doc, node);
         }
         else
         {
-            continue;
+            OGS_FATAL(
+                "Error while patching prj file with patch file {:}. Only "
+                "'add', 'replace' and 'remove' elements are allowed!",
+                patch_file);
         }
 
         if (rc)
@@ -177,8 +180,8 @@ void patch_stream(std::string patch_file, std::stringstream& prj_stream)
 
 // Will set prj_file to the actual .prj file and returns the final prj file
 // content in prj_stream.
-void read_and_patch_prj(std::stringstream& prj_stream, std::string& prj_file,
-                        std::vector<std::string> patch_files)
+void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
+                     std::vector<std::string> patch_files)
 {
     // Extract base project file path if an xml (patch) file is given as prj
     // file and it contains the base_file attribute.
@@ -220,7 +223,7 @@ void read_and_patch_prj(std::stringstream& prj_stream, std::string& prj_file,
     {
         for (const auto& patch_file : patch_files)
         {
-            patch_stream(patch_file, prj_stream);
+            patchStream(patch_file, prj_stream);
         }
         xmlCleanupParser();
     }
@@ -233,7 +236,7 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
 {
     std::string prj_file = filepath;
     std::stringstream prj_stream;
-    read_and_patch_prj(prj_stream, prj_file, patch_files);
+    readAndPatchPrj(prj_stream, prj_file, patch_files);
 
     ConfigTree::PTree ptree;
 
@@ -247,7 +250,7 @@ ConfigTreeTopLevel makeConfigTree(const std::string& filepath,
 
         if (toplevel_tag == "OpenGeoSysProject")
         {
-            traverse(ptree, fs::path(prj_file).parent_path(), replace_includes);
+            traverse(ptree, fs::path(prj_file).parent_path(), replaceIncludes);
         }
     }
     catch (boost::property_tree::xml_parser_error const& e)
