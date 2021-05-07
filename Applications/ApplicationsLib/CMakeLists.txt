@@ -16,16 +16,14 @@ target_link_libraries(
             ProcessLib
             spdlog::spdlog
             $<$<BOOL:${OGS_USE_PYTHON}>:pybind11::pybind11>
+            $<$<BOOL:${OGS_USE_PETSC}>:petsc>
 )
 
 if(OGS_USE_LIS)
     target_include_directories(ApplicationsLib PUBLIC ${LIS_INCLUDE_DIR})
 endif()
 
-target_compile_definitions(
-    ApplicationsLib PUBLIC $<$<BOOL:${USE_LIS}>:USE_LIS>
-                           $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
-)
+target_compile_definitions(ApplicationsLib PUBLIC $<$<BOOL:${USE_LIS}>:USE_LIS>)
 
 # Set cpp definitions if the cmake option is enabled for the given process.
 foreach(process ${_processes_list})

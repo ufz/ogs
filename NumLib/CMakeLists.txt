@@ -15,12 +15,9 @@ append_source_files(SOURCES Extrapolation)
 
 # Create the library
 ogs_add_library(NumLib ${SOURCES})
-if(OGS_USE_PETSC)
-    target_compile_definitions(NumLib PUBLIC USE_PETSC)
-endif()
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(
-    NumLib PUBLIC BaseLib GeoLib MathLib MeshLib PRIVATE MeshGeoToolsLib
-                                                         spdlog::spdlog
+    NumLib PUBLIC BaseLib GeoLib MathLib MeshLib $<$<TARGET_EXISTS:petsc>:petsc>
+    PRIVATE MeshGeoToolsLib spdlog::spdlog
 )

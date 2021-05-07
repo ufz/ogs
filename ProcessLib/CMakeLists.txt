@@ -33,6 +33,7 @@ target_link_libraries(
         NumLib
         $<$<TARGET_EXISTS:ProcessLibBoundaryConditionPython>:ProcessLibBoundaryConditionPython>
         $<$<TARGET_EXISTS:ProcessLibSourceTermPython>:ProcessLibSourceTermPython>
+        $<$<TARGET_EXISTS:petsc>:petsc>
         nlohmann_json
     PRIVATE ParameterLib GitInfoLib spdlog::spdlog
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
@@ -40,8 +41,7 @@ target_link_libraries(
 
 target_compile_definitions(
     ProcessLib
-    PUBLIC $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
-           $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
+    PUBLIC $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
            # Enabled elements
            OGS_MAX_ELEMENT_DIM=${OGS_MAX_ELEMENT_DIM}
            OGS_MAX_ELEMENT_ORDER=${OGS_MAX_ELEMENT_ORDER}

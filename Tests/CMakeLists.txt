@@ -80,11 +80,8 @@ target_link_libraries(
             $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
             $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+            $<$<TARGET_EXISTS:petsc>:petsc>
 )
-
-if(OGS_USE_PETSC)
-    target_link_libraries(testrunner PRIVATE ${PETSC_LIBRARIES})
-endif()
 
 if(OGS_BUILD_GUI)
     target_compile_definitions(testrunner PUBLIC OGS_BUILD_GUI)
