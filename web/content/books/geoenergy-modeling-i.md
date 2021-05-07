@@ -19,10 +19,7 @@ aliases = [ "/tutorials/ces-i/e01",
 
 This introduction to geothermal modeling deals with flow and heat transport processes in porous and fractured media related to geothermal energy applications. Following background coverage of geothermal resources and utilization in several countries, the basics of continuum mechanics for heat transport processes, as well as numerical methods for solving underlying governing equations are discussed. This examination forms the theoretical basis for five included step-by-step OpenGeoSys exercises, highlighting the most important computational areas within geothermal resource utilization, including heat diffusion, heat advection in porous and fractured media, and heat convection. The book concludes with an outlook on practical follow-up contributions investigating the numerical simulation of shallow and deep geothermal systems.
 
-<div class='flow-root'>
-</div>
-
-<div class='note'>
+<div class='note clear-both'>
 
 ### <i class="far fa-download"></i> Downloads
 

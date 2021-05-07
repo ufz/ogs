@@ -15,10 +15,7 @@ aliases = [ "/books/shallow-geothermal-systems" ]
 
 This book is dedicated to the numerical modeling of shallow geothermal systems. The utilization of shallow geothermal energy involves the integration of multiple Borehole Heat Exchangers (BHE) with Ground Source Heat Pump (GSHP) systems to provide heating and cooling. The modeling practices explained in this book can improve the efficiency of these increasingly common systems. The book begins by explaining the basic theory of heat transport processes in man-made as well as natural media. These techniques are then applied to the simulation of borehole heat exchangers and their interaction with the surrounding soil. The numerical and analytical models are verified against analytical solutions and measured data from a Thermal Response Test, and finally, a real test site is analyzed through the model and discussed with regard to BHE and GSHP system design and optimization.
 
-<div class='flow-root'>
-</div>
-
-<div class='note'>
+<div class='note clear-both'>
 
 ### <i class="far fa-download"></i> Downloads
 

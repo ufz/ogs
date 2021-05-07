@@ -16,10 +16,7 @@ This book presents an introduction to the computational modelling of the various
 
 This book is intended primarily for graduate students and applied scientists working in the ﬁeld of thermochemical heat storage in particular or nonisothermal reactive transport processes in packed beds in general, especially those interested in applying a freely available and customizable open-source simulation framework in their research. As such, this book will be a valuable help in the training of multi-physical modelling and provides an entry point to a modelling tool which is expandable and highly ﬂexible.
 
-<div class='flow-root'>
-</div>
-
-<div class='note'>
+<div class='note clear-both'>
 
 ### <i class="far fa-book"></i> Bibliography
 

@@ -13,10 +13,7 @@ image = "/books/computational-hydrology-ii.png"
 
 This book explores the application of the open-source software OpenGeoSys (OGS) for hydrological numerical simulations concerning conservative and reactive transport modeling. It provides general information on the hydrological and groundwater flow modeling of a real case study and step-by-step model set-up with OGS, while also highlighting related components such as the OGS Data Explorer. The material is based on unpublished manuals and the results of a collaborative project between China and Germany (SUSTAIN H2O). Though the book is primarily intended for graduate students and applied scientists who deal with hydrological modeling, it also offers a valuable source of information for professional geoscientists wishing to expand their knowledge of the numerical modeling of hydrological processes including nitrate reactive transport modeling. This book is the second in a series that showcases further applications of computational modeling in hydrological science.
 
-<div class='flow-root'>
-</div>
-
-<div class='note'>
+<div class='note clear-both'>
 
 ### <i class="far fa-download"></i> Downloads
 

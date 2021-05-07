@@ -13,10 +13,7 @@ image = "[TODO]"
 
 TODO DESCRIPTION
 
-<div class='flow-root'>
-</div>
-
-<div class='note'>
+<div class='note clear-both'>
 ### <i class="far fa-download"></i> Downloads
 - [<i class="far fa-file-archive"></i> TODO LINK DESCRIPTION](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DOWNLOAD-LINK)  
 </div>

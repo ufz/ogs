@@ -15,10 +15,7 @@ This tutorial presents the application of the open-source software OpenGeoSys(OG
 
 The tutorial book is intended primarily for graduate students and applied scientists who deal with reactive transport modeling. It also can give valuable information to professional geo-scientists wishing to advance their knowledge in reactive transport modeling. This tutorial is the third volume in a series that represents the further application of computational modeling in hydrological science.
 
-<div class='flow-root'>
-</div>
-
-<div class='note'>
+<div class='note clear-both'>
 
 ### <i class="far fa-download"></i> Downloads
 
