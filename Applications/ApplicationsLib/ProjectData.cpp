@@ -643,7 +643,6 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_TH2M
             if (type == "TH2M")
         {
-            //! \ogs_file_param{prj__processes__process__TH2M__dimension}
             switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
