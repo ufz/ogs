@@ -191,7 +191,7 @@ option(OGS_USE_MFRONT
 include(scripts/cmake/packaging/Pack.cmake)
 
 # ---- Subdirectories ----
-
+include_directories(${PROJECT_SOURCE_DIR})
 # xdmfdiff
 if(OGS_USE_XDMF AND OGS_BUILD_TESTING)
     add_subdirectory(Tests/xdmfdiff)
