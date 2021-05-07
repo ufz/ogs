@@ -240,7 +240,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& sigma_sw = ip_data_[ip].sigma_sw;
         ip_data_[ip].eps_m_prev.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps - C_el.inverse() * sigma_sw
+                ? eps + C_el.inverse() * sigma_sw
                 : eps;
     }
 }
@@ -532,13 +532,20 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = solid_linear_thermal_expansivity_vector * dT;
 
-        eps_m.noalias() =
-            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps + C_el.inverse() * sigma_sw
-                : eps;
-        variables[static_cast<int>(MPL::Variable::mechanical_strain)]
+        auto& eps_prev = ip_data_[ip].eps_prev;
+        auto& eps_m_prev = ip_data_[ip].eps_m_prev;
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            eps_m.noalias() +=
+                C_el.inverse() * (ip_data_[ip].sigma_sw - ip_data_[ip].sigma_sw_prev);
+        }
+
+        variables[static_cast<int>(
+                      MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m - dthermal_strain);
+                eps_m);
 
         auto C = ip_data_[ip].updateConstitutiveRelation(
             variables, t, x_position, dt, T_ip_prev);
@@ -1305,14 +1312,20 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = solid_linear_thermal_expansivity_vector * dT;
 
-        eps_m.noalias() =
-            solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps + C_el.inverse() * sigma_sw
-                : eps;
+        auto& eps_prev = ip_data_[ip].eps_prev;
+        auto& eps_m_prev = ip_data_[ip].eps_m_prev;
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
 
-        variables[static_cast<int>(MPL::Variable::mechanical_strain)]
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+        {
+            eps_m.noalias() += C_el.inverse() * (ip_data_[ip].sigma_sw -
+                                                  ip_data_[ip].sigma_sw_prev);
+        }
+
+        variables[static_cast<int>(
+                      MaterialPropertyLib::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m - dthermal_strain);
+                eps_m);
 
         ip_data_[ip].updateConstitutiveRelation(variables, t, x_position, dt,
                                                 T_ip_prev);
