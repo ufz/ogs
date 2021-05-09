@@ -132,9 +132,10 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
                             .template value<double>(vars, pos, t, dt);
 
         double const dSw_dpc =
-            1. / _process_data.porous_media_properties
-                     .getCapillaryPressureSaturationModel(t, pos)
-                     .getdPcdS(Sw);
+            medium[MaterialPropertyLib::PropertyType::saturation]
+                .template dValue<double>(
+                    vars, MaterialPropertyLib::Variable::capillary_pressure,
+                    pos, t, dt);
 
         vars[static_cast<int>(MaterialPropertyLib::Variable::concentration)] =
             C_int_pt;
