@@ -10,9 +10,8 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <memory>
-
-#include "PorousMediaProperties.h"
 
 namespace MaterialPropertyLib
 {
@@ -21,16 +20,12 @@ class MaterialSpatialDistributionMap;
 
 namespace ProcessLib
 {
-template <typename ReturnType>
-struct Parameter;
-
 namespace RichardsComponentTransport
 {
 struct RichardsComponentTransportProcessData
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
-    PorousMediaProperties porous_media_properties;
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
 };
