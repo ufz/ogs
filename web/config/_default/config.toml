@@ -112,12 +112,12 @@ name = "Basics"
 identifier = "basics"
 weight = 1
 [[menu.userguide]]
-name = "Post Processing"
-identifier = "post-processing"
-weight = 2
-[[menu.userguide]]
 name = "Troubleshooting"
 identifier = "troubleshooting"
+weight = 2
+[[menu.userguide]]
+name = "Post Processing"
+identifier = "post-processing"
 weight = 3
 [[menu.userguide]]
 name = "Process Dependent Configuration"

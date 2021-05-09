@@ -2,7 +2,7 @@ The OGS6 input file parameters are documented in the page hierarchy rooted here.
 A project file has the ending `.prj` and is a valid
 [XML](https://en.wikipedia.org/wiki/XML) document. To check proper formatting
 you can use [`xmllint`](http://xmlsoft.org/xmllint.html), see
-[usage instructions](https://www.opengeosys.org/docs/userguide/troubleshooting/project-file/)
+[usage instructions](https://www.opengeosys.org/docs/userguide/basics/project-file/)
 in the documentation.
 
 Depending on the type of the parameters the corresponding page titles have

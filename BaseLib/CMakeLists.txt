@@ -16,6 +16,7 @@ target_link_libraries(
            $<$<BOOL:${MSVC}>:WinMM> # needed for timeGetTime
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
+    PRIVATE xmlpatch
 )
 
 target_compile_definitions(

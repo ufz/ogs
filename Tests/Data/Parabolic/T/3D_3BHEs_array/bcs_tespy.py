@@ -166,7 +166,8 @@ class BC(OpenGeoSys.BHENetwork):
 # initialize the tespy model of the bhe network
 # load path of network model:
 # loading the TESPy model
-project_dir = os.chdir(ogs_prj_directory)
+if ogs_prj_directory != "":
+    os.chdir(ogs_prj_directory)
 nw = load_network("./pre/tespy_nw")
 # set if print the network iteration info
 nw.set_attr(iterinfo=False)

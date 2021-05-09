@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff>
+    <replace sel="/*/mesh/text()">square_1x1_quad_1e6.vtu</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">square_1e6</replace>
+</OpenGeoSysProjectDiff>

@@ -125,6 +125,30 @@ if(Boost_ADDED)
     target_include_directories(Boost::boost INTERFACE "${Boost_SOURCE_DIR}")
 endif()
 
+CPMFindPackage(
+    NAME LibXml2
+    GITHUB_REPOSITORY GNOME/libxml2
+    VERSION ${ogs.minimum_version.libxml2}
+    GIT_TAG f93ca3e140a371b26366f747a408588c631e0fd1
+    OPTIONS "LIBXML2_WITH_TESTS OFF"
+            "LIBXML2_WITH_PROGRAMS OFF"
+            "LIBXML2_WITH_ICONV OFF"
+            "LIBXML2_WITH_ICU OFF"
+            "LIBXML2_WITH_LZMA OFF"
+            "LIBXML2_WITH_PYTHON OFF"
+            "LIBXML2_WITH_ZLIB OFF"
+    EXCLUDE_FROM_ALL YES
+)
+if(LibXml2_ADDED)
+    add_library(LibXml2::LibXml2 ALIAS LibXml2)
+    set(LIBXML2_INCLUDE_DIR ${LibXml2_SOURCE_DIR})
+endif()
+
+CPMAddPackage(
+    NAME xmlpatch VERSION 0.4.2
+    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/xmlpatch.git
+)
+
 if(OGS_USE_XDMF)
     # ZLIB is a HDF5 dependency
     CPMFindPackage(
@@ -164,25 +188,6 @@ if(OGS_USE_XDMF)
         set(HDF5_LIBRARIES hdf5-static)
         set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
         set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
-    endif()
-
-    CPMFindPackage(
-        NAME LibXml2
-        GITHUB_REPOSITORY GNOME/libxml2
-        VERSION ${ogs.minimum_version.libxml2}
-        GIT_TAG f93ca3e140a371b26366f747a408588c631e0fd1
-        OPTIONS "LIBXML2_WITH_TESTS OFF"
-                "LIBXML2_WITH_PROGRAMS OFF"
-                "LIBXML2_WITH_ICONV OFF"
-                "LIBXML2_WITH_ICU OFF"
-                "LIBXML2_WITH_LZMA OFF"
-                "LIBXML2_WITH_PYTHON OFF"
-                "LIBXML2_WITH_ZLIB OFF"
-        EXCLUDE_FROM_ALL YES
-    )
-    if(LibXml2_ADDED)
-        add_library(LibXml2::LibXml2 ALIAS LibXml2)
-        set(LIBXML2_INCLUDE_DIR ${LibXml2_SOURCE_DIR})
     endif()
 
     CPMAddPackage(

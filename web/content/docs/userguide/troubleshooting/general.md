@@ -2,7 +2,7 @@
 date = "2018-11-14T11:00:13+01`:00"
 title = "General"
 author = "Lars Bilke"
-weight = 2
+weight = 22
 toc = true
 
 [menu]

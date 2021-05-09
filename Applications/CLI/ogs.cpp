@@ -14,6 +14,7 @@
 #include <tclap/CmdLine.h>
 
 #include <chrono>
+#include <sstream>
 
 #ifndef _WIN32
 #ifdef __APPLE__
@@ -41,6 +42,7 @@
 #include "InfoLib/GitInfo.h"
 #include "NumLib/NumericsConfig.h"
 #include "ProcessLib/TimeLoop.h"
+#include "filesystem.h"
 
 #ifdef OGS_USE_PYTHON
 #include "ogs_embedded_python.h"
@@ -60,7 +62,8 @@ int main(int argc, char* argv[])
             GitInfoLib::GitInfo::ogs_version + "\n" +
             "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args,
         ' ',
-        GitInfoLib::GitInfo::ogs_version);
+        GitInfoLib::GitInfo::ogs_version + "\n\n" +
+            "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args);
 
     TCLAP::ValueArg<std::string> reference_path_arg(
         "r", "reference",
@@ -77,6 +80,13 @@ int main(int argc, char* argv[])
         "",
         "PROJECT_FILE");
     cmd.add(project_arg);
+
+    TCLAP::MultiArg<std::string> xml_patch_files(
+        "p", "xml-patch",
+        "the xml patch file(s) which is (are) applied (in the given order) to "
+        "the PROJECT_FILE",
+        false, "");
+    cmd.add(xml_patch_files);
 
     TCLAP::ValueArg<std::string> outdir_arg("o", "output-directory",
                                             "the output directory to write to",
@@ -177,11 +187,12 @@ int main(int argc, char* argv[])
                 spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
             }
 #endif
+
             run_time.start();
 
             auto project_config = BaseLib::makeConfigTree(
                 project_arg.getValue(), !nonfatal_arg.getValue(),
-                "OpenGeoSysProject");
+                "OpenGeoSysProject", xml_patch_files.getValue());
 
             BaseLib::setProjectDirectory(
                 BaseLib::extractPath(project_arg.getValue()));
