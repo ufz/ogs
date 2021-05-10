@@ -48,9 +48,6 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
     auto const& medium = std::get<Medium*>(scale_);
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
-    auto const porosity = medium->property(
-                        MaterialPropertyLib::PropertyType::porosity)
-                    .template value<double>(variable_array, pos, t, dt);
     auto const liquid_thermal_conductivity =
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -58,6 +55,10 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
     auto const solid_thermal_conductivity = solid_phase.property(
                         MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .template value<double>(variable_array, pos, t, dt);
+
+    auto const porosity =
+        std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
+
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
@@ -106,9 +107,6 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
     auto const& medium = std::get<Medium*>(scale_);
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
-    auto const porosity = medium->property(
-                        MaterialPropertyLib::PropertyType::porosity)
-                    .template value<double>(variable_array, pos, t, dt);
     auto const liquid_thermal_conductivity =
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -117,6 +115,10 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
         solid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, t, dt));
+
+    auto const porosity =
+        std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
+
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
 
