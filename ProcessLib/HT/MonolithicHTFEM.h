@@ -145,6 +145,8 @@ public:
             auto const porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
+            vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+                porosity;
 
             auto const intrinsic_permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(

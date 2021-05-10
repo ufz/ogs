@@ -247,6 +247,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const porosity =
             medium->property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+            porosity;
 
         auto const alpha =
             medium
