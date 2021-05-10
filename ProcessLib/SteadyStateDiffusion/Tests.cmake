@@ -139,7 +139,7 @@ AddTest(
     PATH Elliptic/square_1x1_SteadyStateDiffusion
     RUNTIME 75
     EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e6.prj
+    EXECUTABLE_ARGS -p square_1e6.xml square_1e0.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
