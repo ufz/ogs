@@ -54,8 +54,9 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    auto const eps = formEigenTensor<3>(std::get<SymmetricTensor>(
-        variable_array[static_cast<int>(Variable::mechanical_strain)]));
+    auto const eps = MathLib::KelvinVector::kelvinVectorToTensor(
+        std::get<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+            variable_array[static_cast<int>(Variable::mechanical_strain)]));
     double const k = std::get<double>(fromVector(_k(t, pos)));
     double const _b0 = std::sqrt(12.0 * k);
 
@@ -76,6 +77,7 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::value(
         result += H_de * (b_f / _a[i]) * ((b_f * b_f / 12.0) - k) *
                   (Eigen::Matrix3d::Identity() - n_i * n_i.transpose());
     }
+
     return result.template topLeftCorner<DisplacementDim, DisplacementDim>()
         .eval();
 }
