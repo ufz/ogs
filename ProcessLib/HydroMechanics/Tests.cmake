@@ -9,6 +9,7 @@ if (NOT OGS_USE_MPI)
 endif()
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE HydroMechanics/Linear/DrainageEexcavation/HMdrainage.prj RUNTIME 330)
+    OgsTest(PROJECTFILE HydroMechanics/A2/A2.prj RUNTIME 10)
 endif()
 AddTest(
     NAME HydroMechanics_HML_square_1e2_quad9_confined_compression
