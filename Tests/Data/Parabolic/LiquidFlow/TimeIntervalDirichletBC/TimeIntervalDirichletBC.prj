@@ -10,18 +10,13 @@
             <name>LiquidFlow</name>
             <type>LIQUID_FLOW</type>
             <integration_order>2</integration_order>
-            <darcy_gravity>
-                <!-- axis_id: 0, 1, or the dimension of space minus one -->
-                <axis_id>1</axis_id>
-                <!-- g>=0. g=0: non gravity term -->
-                <g>0.0</g>
-            </darcy_gravity>
             <process_variables>
                 <process_variable>pressure</process_variable>
             </process_variables>
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
+            <specific_body_force>0.0 0.0</specific_body_force>
         </process>
     </processes>
     <time_loop>
