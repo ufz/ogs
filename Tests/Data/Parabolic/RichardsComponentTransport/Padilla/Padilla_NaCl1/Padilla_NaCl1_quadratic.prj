@@ -12,18 +12,6 @@
                 <concentration>concentration</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
-            <porous_medium>
-                <porous_medium id="0">
-                    <capillary_pressure>
-                        <type>vanGenuchten</type>
-                        <m>0.789029535864979</m>
-                        <pc_max>36333.30</pc_max>
-                        <pd>3633.33</pd>
-                        <smax>1</smax>
-                        <sr>0.1689</sr>
-                    </capillary_pressure>
-                </porous_medium>
-            </porous_medium>
             <specific_body_force>-9.81</specific_body_force>
             <secondary_variables>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>

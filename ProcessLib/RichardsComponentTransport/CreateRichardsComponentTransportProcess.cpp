@@ -9,12 +9,9 @@
  */
 
 #include "CreateRichardsComponentTransportProcess.h"
-#include "CreatePorousMediaProperties.h"
 
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
-#include "ParameterLib/ConstantParameter.h"
-#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "RichardsComponentTransportProcess.h"
@@ -136,12 +133,6 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         }
     }
 
-    auto const& porous_medium_configs =
-        //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__porous_medium}
-        config.getConfigSubtree("porous_medium");
-    PorousMediaProperties porous_media_properties{
-        createPorousMediaProperties(mesh, porous_medium_configs)};
-
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
     std::vector<double> const b =
@@ -172,7 +163,6 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
 
     RichardsComponentTransportProcessData process_data{
         std::move(media_map),
-        std::move(porous_media_properties),
         specific_body_force,
         has_gravity};
 
