@@ -44,19 +44,27 @@ boost::shared_ptr<const XdmfAttributeCenter> elemTypeOGS2XDMF(
     return mesh_item_type_ogs2xdmf.at(elem_type);
 }
 
-static std::string getTimeSection(int const step, std::string const& name)
+static std::string getDataSection(std::string const& name)
 {
-    return "t_"s + std::to_string(step) + "/"s + name;
+    return "data/"s + name;
+}
+
+static std::vector<XdmfDimType> prependDimension(
+    XdmfDimType const prepend_value, std::vector<XdmfDimType> const& dimensions)
+{
+    std::vector<XdmfDimType> dims = {prepend_value};
+    dims.insert(dims.end(), dimensions.begin(), dimensions.end());
+    return dims;
 }
 
 static boost::shared_ptr<XdmfGeometry> getLightGeometry(
-    std::string const& hdf5filename, int const step, XdmfData const& geometry)
+    std::string const& hdf5filename, XdmfData const& geometry)
 {
     auto xdmf_geometry = XdmfGeometry::New();
     xdmf_geometry->setType(XdmfGeometryType::XYZ());
     boost::shared_ptr<XdmfHDF5Controller> geometry_controller =
         XdmfHDF5Controller::New(hdf5filename,
-                                getTimeSection(step, "geometry"),
+                                getDataSection("geometry"),
                                 XdmfArrayType::Float64(),
                                 geometry.starts,
                                 geometry.strides,
@@ -67,13 +75,13 @@ static boost::shared_ptr<XdmfGeometry> getLightGeometry(
 }
 
 static boost::shared_ptr<XdmfTopology> getLightTopology(
-    std::string const& hdf5filename, int const step, XdmfData const& topology)
+    std::string const& hdf5filename, XdmfData const& topology)
 {
     auto xdmf_topology = XdmfTopology::New();
     xdmf_topology->setType(XdmfTopologyType::Mixed());
     auto topology_controller =
         XdmfHDF5Controller::New(hdf5filename,
-                                getTimeSection(step, "topology"),
+                                getDataSection("topology"),
                                 XdmfArrayType::Int32(),
                                 topology.starts,
                                 topology.strides,
@@ -86,14 +94,21 @@ static boost::shared_ptr<XdmfTopology> getLightTopology(
 static boost::shared_ptr<XdmfAttribute> getLightAttribute(
     std::string const& hdf5filename, int const step, XdmfData const& attribute)
 {
+    std::vector<XdmfDimType> starts = prependDimension(step, attribute.starts);
+    std::vector<XdmfDimType> strides = prependDimension(1, attribute.strides);
+    std::vector<XdmfDimType> global_block_dims =
+        prependDimension(1, attribute.global_block_dims);
+    std::vector<XdmfDimType> all_global_block_dims =
+        prependDimension(step + 1, attribute.global_block_dims);
+
     auto const attribute_controller =
         XdmfHDF5Controller::New(hdf5filename,
-                                getTimeSection(step, attribute.name),
+                                getDataSection(attribute.name),
                                 attribute.data_type,
-                                attribute.starts,
-                                attribute.strides,
-                                attribute.global_block_dims,
-                                attribute.global_block_dims);
+                                starts,
+                                strides,
+                                global_block_dims,
+                                all_global_block_dims);
 
     auto const xdmf_attribute = XdmfAttribute::New();
     auto const center = elemTypeOGS2XDMF(*(attribute.attribute_center));
@@ -113,8 +128,8 @@ Xdmf3Writer::Xdmf3Writer(XdmfData const& geometry, XdmfData const& topology,
     : _variable_attributes(std::move(variable_attributes)),
       _hdf5filename(filepath.stem().string() + ".h5")
 {
-    _initial_geometry = getLightGeometry(_hdf5filename, time_step, geometry);
-    _initial_topology = getLightTopology(_hdf5filename, time_step, topology);
+    _initial_geometry = getLightGeometry(_hdf5filename, geometry);
+    _initial_topology = getLightTopology(_hdf5filename, topology);
 
     std::transform(
         constant_attributes.begin(), constant_attributes.end(),

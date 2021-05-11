@@ -14,6 +14,7 @@
 #include <filesystem.h>
 #include <hdf5.h>
 
+#include <map>
 #include <vector>
 
 #include "HdfData.h"
@@ -58,6 +59,8 @@ private:
     std::vector<HdfData> const _variable_attributes;
     std::filesystem::path const _hdf5_filepath;
     bool const _use_compression;
-    hid_t _file;
+    hid_t const _file;
+    hid_t _group;
+    std::map<std::string, hid_t> _datasets;
 };
 }  // namespace MeshLib::IO

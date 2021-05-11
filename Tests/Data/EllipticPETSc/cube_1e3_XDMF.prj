@@ -45,7 +45,15 @@
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
-                    <type>SingleStep</type>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>1e-1</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1e-1</delta_t>
+                        </pair>
+                    </timesteps>
                 </time_stepping>
             </process>
         </processes>
