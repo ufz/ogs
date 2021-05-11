@@ -95,7 +95,10 @@ function(AddTest)
     if(NOT DEFINED AddTest_REQUIREMENTS)
         set(AddTest_REQUIREMENTS TRUE)
     endif()
-    if(NOT DEFINED AddTest_RUNTIME)
+    set(timeout ${ogs.ctest.large_runtime})
+    if(DEFINED AddTest_RUNTIME)
+        math(EXPR timeout "${AddTest_RUNTIME} * 3")
+    else()
         set(AddTest_RUNTIME 1)
     endif()
     if(NOT DEFINED AddTest_WORKING_DIRECTORY)
@@ -410,9 +413,13 @@ Use six arguments version of AddTest with absolute and relative tolerances"
     endif()
 
     current_dir_as_list(ProcessLib DIR_LABELS)
-    set_tests_properties(
-        ${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME} DISABLED
-                                ${AddTest_DISABLED} LABELS "${DIR_LABELS}"
+
+    set_tests_properties( ${TEST_NAME}
+        PROPERTIES
+            COST ${AddTest_RUNTIME}
+            DISABLED ${AddTest_DISABLED}
+            LABELS "${DIR_LABELS}"
+            TIMEOUT ${timeout}
     )
 
     add_dependencies(ctest ${AddTest_EXECUTABLE})
