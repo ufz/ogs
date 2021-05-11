@@ -49,6 +49,9 @@ std::unique_ptr<SourceTerm> createVolumetricSourceTerm(
         volumetric_source_term_parameter_name, parameters, 1,
         &source_term_mesh);
 
+    // instruction to create documentation for the parameter
+    //! \ogs_file_param_special{prj__process_variables__process_variable__source_terms__source_term__Line__parameter}
+
     DBUG("Using '{:s}' as volumetric source term parameter.",
          volumetric_source_term.name);
 
