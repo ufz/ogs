@@ -22,7 +22,10 @@ function(OgsTest)
         )
     endif()
 
-    if(NOT DEFINED OgsTest_RUNTIME)
+    set(timeout ${ogs.ctest.large_runtime})
+    if(DEFINED OgsTest_RUNTIME)
+        math(EXPR timeout "${OgsTest_RUNTIME} * 3")
+    else()
         set(OgsTest_RUNTIME 1)
     endif()
 
@@ -59,16 +62,19 @@ function(OgsTest)
     # $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR}
     # ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
 
-    current_dir_as_list(ProcessLib DIR_LABELS)
-    set_tests_properties(
-        ${TEST_NAME}
-        PROPERTIES ENVIRONMENT
-                   VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
-                   COST
-                   ${OgsTest_RUNTIME}
-                   DISABLED
-                   ${OgsTest_DISABLED}
-                   LABELS
-                   "${DIR_LABELS}"
+    current_dir_as_list(ProcessLib labels)
+    if(${OgsTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels default)
+    else()
+        list(APPEND labels large)
+    endif()
+
+    set_tests_properties( ${TEST_NAME}
+        PROPERTIES
+            ENVIRONMENT VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
+            COST ${OgsTest_RUNTIME}
+            DISABLED ${OgsTest_DISABLED}
+            LABELS "${labels}"
+            TIMEOUT ${timeout}
     )
 endfunction()
