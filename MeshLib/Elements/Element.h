@@ -184,6 +184,9 @@ public:
     friend std::ostream& operator<<(std::ostream& os, Element const& e);
 #endif  // NDEBUG
 
+    /// Dimension of the space, where the element exists.
+    unsigned space_dimension_ = 3u;
+
 protected:
     /// Constructor for a generic mesh element without an array of mesh nodes.
     /// @param id     element id
@@ -201,7 +204,6 @@ protected:
     /// Sets the neighbor over the face with \c face_id to the given \c
     /// neighbor.
     void setNeighbor(Element* neighbor, unsigned const face_id);
-
 }; /* class */
 
 /// Returns true if elem is a neighbour of this element and false otherwise.

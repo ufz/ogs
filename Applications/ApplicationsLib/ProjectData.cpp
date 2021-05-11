@@ -34,6 +34,7 @@
 #include "MeshGeoToolsLib/CreateSearchLength.h"
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/SetMeshSpaceDimension.h"
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
 #include "ProcessLib/CreateJacobianAssembler.h"
 #include "ProcessLib/DeactivatedSubdomain.h"
@@ -208,6 +209,9 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         std::move(begin(additional_meshes), end(additional_meshes),
                   std::back_inserter(meshes));
     }
+
+    MeshLib::setMeshSpaceDimension(meshes);
+
     return meshes;
 }
 

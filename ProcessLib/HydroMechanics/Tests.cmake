@@ -538,3 +538,18 @@ AddTest(
     HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu sigma sigma 1.0e-8 0.0
     HM_NodalSourceTem_ts_100_t_86400.000000.vtu HM_NodalSourceTem_ts_100_t_86400.000000.vtu epsilon epsilon 1.0e-15 0.0
 )
+
+# Rotated 2D mesh
+AddTest(
+    NAME HydroMechanics_HML_flow_gravity_rotated_2D_mesh
+    PATH HydroMechanics/Linear/Gravity/RotatedAroundVerticalAxis
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS flow_gravity.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    flow_gravity_ts_16_t_40000000.000000.vtu flow_gravity_ts_16_t_40000000.000000.vtu displacement displacement 1e-9 0
+    flow_gravity_ts_16_t_40000000.000000.vtu flow_gravity_ts_16_t_40000000.000000.vtu pressure pressure 1e-9 0
+    flow_gravity_ts_16_t_40000000.000000.vtu flow_gravity_ts_16_t_40000000.000000.vtu velocity velocity 1e-9 0
+)

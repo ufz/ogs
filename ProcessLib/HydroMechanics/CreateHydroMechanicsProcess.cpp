@@ -19,6 +19,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "MeshLib/Utils/Is2DMeshOnRotatedVerticalPlane.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -41,6 +42,18 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HYDRO_MECHANICS");
     DBUG("Create HydroMechanicsProcess.");
+
+    if (DisplacementDim == 2)
+    {
+        if (mesh.isAxiallySymmetric() &&
+            MeshLib::is2DMeshOnRotatedVerticalPlane(mesh))
+        {
+            OGS_FATAL(
+                "Mesh {:s} is on a plane rotated around the vertical axis. The "
+                "axisymmetric problem can not use such mesh.",
+                mesh.getName());
+        }
+    }
 
     auto const staggered_scheme =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme}
