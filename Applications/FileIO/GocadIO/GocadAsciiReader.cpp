@@ -255,6 +255,21 @@ MeshLib::Node* createNode(std::stringstream& sstr)
     return new MeshLib::Node(data, id);
 }
 
+/// parse Atom Region Indicator section for current TFACE
+/// (currently the information in this section is ignored)
+bool parseAtomRegionIndicators(std::ifstream& in)
+{
+    std::string line;
+    while (std::getline(in, line))
+    {
+        if (line.substr(0, 26) == "END_ATOM_REGION_INDICATORS")
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 /// Parses the node data for the current mesh
 bool parseNodes(std::ifstream& in,
                 std::vector<MeshLib::Node*>& nodes,
@@ -267,15 +282,19 @@ bool parseNodes(std::ifstream& in,
     while (std::getline(in, line))
     {
         std::vector<std::string> str = BaseLib::splitString(line);
-        if (line.substr(0, 3) == "SEG")
+        if (line.substr(0, 3) == "SEG" || line.substr(0, 4) == "TRGL")
         {
             in.seekg(pos);
             return true;
         }
 
-        if (line.substr(0, 4) == "TRGL")
+        if (line.substr(0, 28) == "BEGIN_ATOM_REGION_INDICATORS")
         {
-            in.seekg(pos);
+            if (!parseAtomRegionIndicators(in))
+            {
+                ERR("File ended while parsing Atom Region Indicators...");
+                return false;
+            }
             return true;
         }
 
