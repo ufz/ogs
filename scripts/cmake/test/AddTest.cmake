@@ -412,13 +412,18 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         )
     endif()
 
-    current_dir_as_list(ProcessLib DIR_LABELS)
+    current_dir_as_list(ProcessLib labels)
+    if(${AddTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels default)
+    else()
+        list(APPEND labels large)
+    endif()
 
     set_tests_properties( ${TEST_NAME}
         PROPERTIES
             COST ${AddTest_RUNTIME}
             DISABLED ${AddTest_DISABLED}
-            LABELS "${DIR_LABELS}"
+            LABELS "${labels}"
             TIMEOUT ${timeout}
     )
 
@@ -470,9 +475,11 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             --debug-output
         WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
     )
-    set_tests_properties(
-        ${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME} DISABLED
-                                  ${AddTest_DISABLED}
+    set_tests_properties(${TESTER_NAME}
+        PROPERTIES
+            DEPENDS ${TEST_NAME}
+            DISABLED ${AddTest_DISABLED}
+            LABELS "tester;${labels}"
     )
 
 endfunction()

@@ -42,7 +42,10 @@ function(MeshTest)
     if(NOT DEFINED MeshTest_REQUIREMENTS)
         set(MeshTest_REQUIREMENTS TRUE)
     endif()
-    if(NOT DEFINED MeshTest_RUNTIME)
+    set(timeout ${ogs.ctest.large_runtime})
+    if(DEFINED MeshTest_RUNTIME)
+        math(EXPR timeout "${MeshTest_RUNTIME} * 3")
+    else()
         set(MeshTest_RUNTIME 1)
     endif()
     if(NOT DEFINED MeshTest_WORKING_DIRECTORY)
@@ -189,7 +192,18 @@ function(MeshTest)
             -DWORKING_DIRECTORY=${MeshTest_WORKING_DIRECTORY} -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
-    set_tests_properties(${TEST_NAME} PROPERTIES COST ${MeshTest_RUNTIME})
+    current_dir_as_list(ProcessLib labels)
+    if(${MeshTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels default)
+    else()
+        list(APPEND labels large)
+    endif()
+    set_tests_properties(${TEST_NAME}
+        PROPERTIES
+            COST ${MeshTest_RUNTIME}
+            LABELS "meshtest;${labels}"
+            TIMEOUT ${timeout}
+    )
 
     if(TARGET ${MeshTest_EXECUTABLE})
         add_dependencies(ctest ${MeshTest_EXECUTABLE})
@@ -214,6 +228,10 @@ function(MeshTest)
             --debug-output
         WORKING_DIRECTORY ${MeshTest_SOURCE_PATH}
     )
-    set_tests_properties(${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME})
+    set_tests_properties(${TESTER_NAME}
+        PROPERTIES
+            DEPENDS ${TEST_NAME}
+            LABELS "tester;${labels}"
+    )
 
 endfunction()
