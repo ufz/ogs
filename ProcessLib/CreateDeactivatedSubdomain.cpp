@@ -17,14 +17,16 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
+#include "ParameterLib/Parameter.h"
+#include "ParameterLib/Utils.h"
 
 namespace ProcessLib
 {
 template <typename IsActive>
-static std::vector<MeshLib::Node*> extractInnerNodes(
-    MeshLib::Mesh const& mesh,
-    MeshLib::Mesh const& sub_mesh,
-    IsActive is_active)
+static std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
+extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
+                          MeshLib::Mesh const& sub_mesh,
+                          IsActive is_active)
 {
     auto* const bulk_node_ids =
         sub_mesh.getProperties().template getPropertyVector<std::size_t>(
@@ -38,21 +40,25 @@ static std::vector<MeshLib::Node*> extractInnerNodes(
 
     std::vector<MeshLib::Node*> inner_nodes;
     // Reserve for more than needed, but not much, because almost all nodes will
-    // be found and copied.
+    // be the inner nodes.
     inner_nodes.reserve(sub_mesh.getNumberOfNodes());
-    std::copy_if(begin(sub_mesh.getNodes()), end(sub_mesh.getNodes()),
-                 back_inserter(inner_nodes), [&](MeshLib::Node* const n) {
-                     auto const bulk_node =
-                         mesh.getNode((*bulk_node_ids)[n->getID()]);
-                     const auto& connected_elements = bulk_node->getElements();
 
-                     // Check whether this node is connected to an active
-                     // element.
-                     return std::all_of(begin(connected_elements),
-                                        end(connected_elements), is_active);
-                 });
+    std::vector<MeshLib::Node*> outer_nodes;
 
-    return inner_nodes;
+    std::partition_copy(
+        begin(sub_mesh.getNodes()), end(sub_mesh.getNodes()),
+        back_inserter(inner_nodes), back_inserter(outer_nodes),
+        [&](MeshLib::Node* const n) {
+            auto const bulk_node = mesh.getNode((*bulk_node_ids)[n->getID()]);
+            const auto& connected_elements = bulk_node->getElements();
+
+            // Check whether this node is connected only to an active
+            // elements. Then it is an inner node, and outer otherwise.
+            return std::all_of(begin(connected_elements),
+                               end(connected_elements), is_active);
+        });
+
+    return {std::move(inner_nodes), std::move(outer_nodes)};
 }
 
 static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
@@ -75,9 +81,10 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
         "deactivate_subdomain_" + std::to_string(material_id),
         MeshLib::cloneElements(deactivated_elements));
 
-    auto inner_nodes = extractInnerNodes(mesh, *sub_mesh, is_active);
-    return std::make_unique<DeactivatedSubdomainMesh>(std::move(sub_mesh),
-                                                      std::move(inner_nodes));
+    auto [inner_nodes, outer_nodes] =
+        extractInnerAndOuterNodes(mesh, *sub_mesh, is_active);
+    return std::make_unique<DeactivatedSubdomainMesh>(
+        std::move(sub_mesh), std::move(inner_nodes), std::move(outer_nodes));
 }
 
 static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
@@ -165,6 +172,7 @@ static std::pair<Eigen::Vector3d, Eigen::Vector3d> parseLineSegment(
 
 std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
@@ -207,6 +215,17 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
         line_segment = parseLineSegment(*line_segment_config);
     }
 
+    ParameterLib::Parameter<double>* boundary_value_parameter = nullptr;
+    auto boundary_value_parameter_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__boundary_parameter}
+        config.getConfigParameterOptional<std::string>("boundary_parameter");
+    if (boundary_value_parameter_name)
+    {
+        DBUG("Using parameter {:s}", *boundary_value_parameter_name);
+        boundary_value_parameter = &ParameterLib::findParameter<double>(
+            *boundary_value_parameter_name, parameters, 1, &mesh);
+    }
+
     auto deactivated_subdomain_material_ids =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__material_ids}
         config.getConfigParameter("material_ids", std::vector<int>{});
@@ -245,13 +264,15 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
         std::move(time_interval),
         line_segment,
         std::move(deactivated_subdomain_material_ids),
-        std::move(deactivated_subdomain_meshes));
+        std::move(deactivated_subdomain_meshes),
+        boundary_value_parameter);
 }
 
 std::vector<std::unique_ptr<DeactivatedSubdomain const>>
 createDeactivatedSubdomains(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
@@ -272,7 +293,7 @@ createDeactivatedSubdomains(
             begin(deactivated_subdomain_configs),
             end(deactivated_subdomain_configs),
             back_inserter(deactivated_subdomains), [&](auto const& config) {
-                return createDeactivatedSubdomain(config, mesh, curves);
+                return createDeactivatedSubdomain(config, mesh, parameters, curves);
             });
     }
     return deactivated_subdomains;

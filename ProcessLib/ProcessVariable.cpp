@@ -105,7 +105,7 @@ ProcessVariable::ProcessVariable(
       //! \ogs_file_param{prj__process_variables__process_variable__order}
       _shapefunction_order(config.getConfigParameter<unsigned>("order")),
       _deactivated_subdomains(
-          createDeactivatedSubdomains(config, mesh, curves)),
+          createDeactivatedSubdomains(config, mesh, parameters, curves)),
       _initial_condition(ParameterLib::findParameter<double>(
           //! \ogs_file_param{prj__process_variables__process_variable__initial_condition}
           config.getConfigParameter<std::string>("initial_condition"),
@@ -241,9 +241,6 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::vector<std::unique_ptr<BoundaryCondition>>& bcs)
 {
-    auto& parameter = ParameterLib::findParameter<double>(
-        DeactivatedSubdomain::zero_parameter_name, parameters, 1);
-
     for (auto const& deactivated_subdomain : _deactivated_subdomains)
     {
         auto const& deactivated_subdomain_meshes =
@@ -251,6 +248,15 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
         for (auto const& deactivated_subdomain_mesh :
              deactivated_subdomain_meshes)
         {
+            auto const* parameter = &ParameterLib::findParameter<double>(
+                DeactivatedSubdomain::zero_parameter_name, parameters, 1);
+            bool const set_outer_nodes_dirichlet_values =
+                deactivated_subdomain->boundary_value_parameter != nullptr;
+            if (set_outer_nodes_dirichlet_values)
+            {
+                parameter = deactivated_subdomain->boundary_value_parameter;
+            }
+
             for (int component_id = 0;
                  component_id <
                  dof_table.getNumberOfVariableComponents(variable_id);
@@ -258,7 +264,8 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
             {
                 auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
                     &_ids_of_active_elements,
-                    deactivated_subdomain->time_interval, parameter,
+                    deactivated_subdomain->time_interval, *parameter,
+                    set_outer_nodes_dirichlet_values,
                     *deactivated_subdomain_mesh, dof_table, variable_id,
                     component_id);
 

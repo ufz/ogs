@@ -21,6 +21,7 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
     std::vector<std::size_t> const* const active_element_ids,
     MathLib::PiecewiseLinearInterpolation time_interval,
     ParameterLib::Parameter<double> const& parameter,
+    bool const set_outer_nodes_dirichlet_values,
     DeactivatedSubdomainMesh const& subdomain,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id)
@@ -29,7 +30,8 @@ DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
       _variable_id(variable_id),
       _component_id(component_id),
       _time_interval(std::move(time_interval)),
-      _active_element_ids(active_element_ids)
+      _active_element_ids(active_element_ids),
+      _set_outer_nodes_dirichlet_values(set_outer_nodes_dirichlet_values)
 {
     config(dof_table_bulk);
 }
@@ -73,6 +75,19 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
                      return std::all_of(begin(connected_elements),
                                         end(connected_elements), is_inactive);
                  });
+
+    if (_set_outer_nodes_dirichlet_values)
+    {
+        std::copy_if(begin(_subdomain.outer_nodes), end(_subdomain.outer_nodes),
+                     back_inserter(inactive_nodes_in_bc_mesh),
+                     [&](MeshLib::Node* const n) {
+                         const auto& connected_elements = n->getElements();
+
+                         return std::all_of(begin(connected_elements),
+                                            end(connected_elements),
+                                            is_inactive);
+                     });
+    }
 
     auto time_interval_contains = [&](double const t) {
         return _time_interval.getSupportMin() <= t &&
