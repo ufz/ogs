@@ -18,6 +18,8 @@ variables:
   BUILD_PROCESSES: "" # Empty string: builds all processes
   BUILD_TESTS: "true"
   BUILD_CTEST: "true"
+  # Test config
+  NUM_CTEST_ERROR_LINES: 1000 # tail this much lines from failed output
 
 workflow:
   rules:
