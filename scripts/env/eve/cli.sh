@@ -13,3 +13,4 @@ module load Ninja/1.10.1
 
 # Tools
 module load ccache/3.3.3
+module load git-lfs
