@@ -408,7 +408,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 26
+    RUNTIME 48
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
@@ -876,7 +876,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 15
+    RUNTIME 40
     DIFF_DATA
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu pressure_ogs5 pressure 2.4e1 1.4e-2
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 1e-10 1.4e-2
@@ -1080,7 +1080,7 @@ AddTest(
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sno Sno 1e-10 1e-16
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sso Sso 1e-10 1e-16
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sulphide Sulphide 1e-10 1e-16
-    RUNTIME 24
+    RUNTIME 40
 )
 
 AddTest(

@@ -95,7 +95,10 @@ function(AddTest)
     if(NOT DEFINED AddTest_REQUIREMENTS)
         set(AddTest_REQUIREMENTS TRUE)
     endif()
-    if(NOT DEFINED AddTest_RUNTIME)
+    set(timeout ${ogs.ctest.large_runtime})
+    if(DEFINED AddTest_RUNTIME)
+        math(EXPR timeout "${AddTest_RUNTIME} * 3")
+    else()
         set(AddTest_RUNTIME 1)
     endif()
     if(NOT DEFINED AddTest_WORKING_DIRECTORY)
@@ -409,11 +412,23 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         )
     endif()
 
-    current_dir_as_list(ProcessLib DIR_LABELS)
-    set_tests_properties(
-        ${TEST_NAME} PROPERTIES COST ${AddTest_RUNTIME} DISABLED
-                                ${AddTest_DISABLED} LABELS "${DIR_LABELS}"
+    current_dir_as_list(ProcessLib labels)
+    if(${AddTest_RUNTIME} LESS_EQUAL ${ogs.ctest.large_runtime})
+        list(APPEND labels default)
+    else()
+        list(APPEND labels large)
+    endif()
+
+    set_tests_properties(${TEST_NAME}
+        PROPERTIES
+            COST ${AddTest_RUNTIME}
+            DISABLED ${AddTest_DISABLED}
+            LABELS "${labels}"
     )
+    # Disabled for the moment, does not work with CI under load
+    # if(NOT OGS_COVERAGE)
+    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
+    # endif()
 
     add_dependencies(ctest ${AddTest_EXECUTABLE})
     add_dependencies(ctest-large ${AddTest_EXECUTABLE})
@@ -463,9 +478,11 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             --debug-output
         WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
     )
-    set_tests_properties(
-        ${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME} DISABLED
-                                  ${AddTest_DISABLED}
+    set_tests_properties(${TESTER_NAME}
+        PROPERTIES
+            DEPENDS ${TEST_NAME}
+            DISABLED ${AddTest_DISABLED}
+            LABELS "tester;${labels}"
     )
 
 endfunction()

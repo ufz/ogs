@@ -242,12 +242,9 @@
       "inherits": [
         "_release"
       ],
-      "execution": {
-        "timeout": 900
-      },
       "filter": {
         "exclude": {
-          "name": "LARGE"
+          "label": "large"
         }
       }
     },
@@ -256,12 +253,9 @@
       "inherits": [
         "_release"
       ],
-      "execution": {
-        "timeout": 5400
-      },
       "filter": {
         "include": {
-          "name": "LARGE"
+          "label": "large"
         }
       }
     },

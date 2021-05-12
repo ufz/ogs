@@ -26,7 +26,7 @@
     - |
       if($env:BUILD_CTEST -eq "true")
       {
-        ctest -T Test --no-compress-output --exclude-regex LARGE --timeout 900
+        ctest -T Test --no-compress-output -LE large --repeat until-pass:2 --stop-time ((get-date) + (New-TimeSpan -Minutes 15)).ToString("HH:mm:ss")
         $ctest_exit=$?
         if(!$ctest_exit)
         {
@@ -35,8 +35,8 @@
           Get-Content -Path ./ctest-error-ouput.txt -Tail $env:NUM_CTEST_ERROR_LINES
           exit $ctest_exit
         }
+        cp Testing/**/Test.xml Tests/ctest.xml
       }
-    - if($env:BUILD_CTEST -eq "true") { cp Testing/**/Test.xml Tests/ctest.xml }
     - |
       if($env:CHECK_WARNINGS -eq "true" -and (cat make.output | Select-String -Pattern ': warning') )
       {

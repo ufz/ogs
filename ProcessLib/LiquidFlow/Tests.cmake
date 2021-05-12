@@ -233,7 +233,7 @@ AddTest(
 AddTest(
     NAME LiquidFlow_Isotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
-    RUNTIME 5
+    RUNTIME 130
     EXECUTABLE ogs
     EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
     WRAPPER mpirun

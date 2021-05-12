@@ -62,8 +62,8 @@ add_custom_target(
     ctest
     COMMAND
         ${CMAKE_CTEST_COMMAND} -T Test --force-new-ctest-process
-        --output-on-failure --output-log Tests/ctest.log --exclude-regex LARGE
-        ${CONFIG_PARAMETER} --timeout 900 # 15 minutes
+        --output-on-failure --output-log Tests/ctest.log -LE large
+        ${CONFIG_PARAMETER}
     DEPENDS ${test_dependencies} ctest-cleanup
     USES_TERMINAL
 )
@@ -76,8 +76,8 @@ add_custom_target(
     ctest-large
     COMMAND
         ${CMAKE_CTEST_COMMAND} -T Test --force-new-ctest-process
-        --output-on-failure --output-log Tests/ctest-large.log --tests-regex
-        LARGE ${CONFIG_PARAMETER} --timeout 5400 # 90 minutes
+        --output-on-failure --output-log Tests/ctest-large.log -L large
+        ${CONFIG_PARAMETER}
     DEPENDS ${test_dependencies} ctest-large-cleanup
     USES_TERMINAL
 )
