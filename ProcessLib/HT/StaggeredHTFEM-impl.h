@@ -238,6 +238,8 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t, dt);
+        vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
+            porosity;
 
         // Use the fluid density model to compute the density
         auto const fluid_density =
