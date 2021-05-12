@@ -38,11 +38,28 @@ struct ComponentTransportProcessData
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const non_advective_form;
-    /// When this optional tag is on, the feedback of chemical reactions on the
-    /// porosity will be counted. The change of porosity equals to the summation
-    /// over the changes in the volume fractions of solid constituents. The
-    /// change of the volume fraction, in terms of a solid constituent, results
-    /// from chemical reactions.
+    /**
+     * When this optional tag is on, the feedback of chemical reactions on the
+     * porosity will be counted. The change of porosity equals to the summation
+     * over the changes in the volume fractions of solid constituents. The
+     * change of the volume fraction, in terms of a solid constituent, results
+     * from chemical reactions.
+     *
+     * \note In order to use this optional tag, the amount of solid constituents
+     * should be given as volume fraction instead of molality. In addition,
+     * an appropriate molar volume is required for each solid. The relationship
+     * to calculate volume fractions of m solids from molalities is as follows:
+     * \f[
+     * b_i = \frac{n_i}{m^l} = \frac{\phi_i}{\rho^l \phi V_{m,i}}, i=1,...,m
+     * \f]
+     * where \f$b_i\f$ is the molality in mol/kg of water,
+     * \f$n_i\f$ is the amount of solid in mol,
+     * \f$m^l\f$ is the mass of water in kg,
+     * \f$\phi_i\f$ is the volume fraction of solid i,
+     * \f$\rho^l\f$ is the density of water in kg/m\f$^3\f$,
+     * \f$\phi\f$ is the porosity,
+     * \f$V_{m,i}\f$ is the molar volume of solid i in m\f$^3\f$/mol.
+     */
     bool const chemically_induced_porosity_change;
     ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface;
 
