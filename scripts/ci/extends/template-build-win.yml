@@ -26,7 +26,7 @@
     - |
       if($env:BUILD_CTEST -eq "true")
       {
-        ctest -T Test --no-compress-output -LE large --repeat until-pass:2
+        ctest -T Test --no-compress-output -LE large --repeat until-pass:2 --stop-time ((get-date) + (New-TimeSpan -Minutes 15)).ToString("HH:mm:ss")
         $ctest_exit=$?
         if(!$ctest_exit)
         {

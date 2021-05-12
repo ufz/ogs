@@ -21,13 +21,18 @@
     - |
       if [[ -z "$TARGETS" ]]; then
           $BUILD_CMD_PREFIX cmake --build . --target package > >(tee make.output)
-          if [ "$BUILD_TESTS" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
+          if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
 
           if [ "$BUILD_CTEST" = true ]; then
             ctest_labels="default"
-            if [ "$BUILD_CTEST_LARGE" = true ] ; then ctest_labels="large|$ctest_labels"  ; fi
+            ctest_timeout=15
+            if [ "$BUILD_CTEST_LARGE" = true ]; then
+              ctest_labels="large|$ctest_labels"
+              ctest_timeout=90
+            fi
             ctest_exit=0
-            ctest -T Test --no-compress-output -L "$ctest_labels" --repeat until-pass:2 || ctest_exit=$?
+            if [[ "$OSTYPE" == "darwin"* ]]; then alias date=gdate ; fi
+            ctest -T Test --no-compress-output -L "$ctest_labels" --repeat until-pass:2 --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` || ctest_exit=$?
             if [ $ctest_exit -ne 0 ]; then
               echo "ctests failed (showing the last ${NUM_CTEST_ERROR_LINES} lines):"
               xsltproc ${CI_PROJECT_DIR}/scripts/test/ctest-error-output.xsl Testing/*/Test.xml | tail -n ${NUM_CTEST_ERROR_LINES}
