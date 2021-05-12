@@ -419,13 +419,16 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         list(APPEND labels large)
     endif()
 
-    set_tests_properties( ${TEST_NAME}
+    set_tests_properties(${TEST_NAME}
         PROPERTIES
             COST ${AddTest_RUNTIME}
             DISABLED ${AddTest_DISABLED}
             LABELS "${labels}"
-            TIMEOUT ${timeout}
     )
+    # Disabled for the moment, does not work with CI under load
+    # if(NOT OGS_COVERAGE)
+    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
+    # endif()
 
     add_dependencies(ctest ${AddTest_EXECUTABLE})
     add_dependencies(ctest-large ${AddTest_EXECUTABLE})

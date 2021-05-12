@@ -69,12 +69,15 @@ function(OgsTest)
         list(APPEND labels large)
     endif()
 
-    set_tests_properties( ${TEST_NAME}
+    set_tests_properties(${TEST_NAME}
         PROPERTIES
             ENVIRONMENT VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
             COST ${OgsTest_RUNTIME}
             DISABLED ${OgsTest_DISABLED}
             LABELS "${labels}"
-            TIMEOUT ${timeout}
     )
+    # Disabled for the moment, does not work with CI under load
+    # if(NOT OGS_COVERAGE)
+    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
+    # endif()
 endfunction()

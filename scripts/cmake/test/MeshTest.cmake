@@ -202,8 +202,11 @@ function(MeshTest)
         PROPERTIES
             COST ${MeshTest_RUNTIME}
             LABELS "meshtest;${labels}"
-            TIMEOUT ${timeout}
     )
+    # Disabled for the moment, does not work with CI under load
+    # if(NOT OGS_COVERAGE)
+    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
+    # endif()
 
     if(TARGET ${MeshTest_EXECUTABLE})
         add_dependencies(ctest ${MeshTest_EXECUTABLE})
