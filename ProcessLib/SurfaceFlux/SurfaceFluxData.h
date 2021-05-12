@@ -25,6 +25,11 @@ struct SurfaceFluxData final
         : surface_mesh(surfaceflux_mesh),
           property_vector_name(std::move(surfaceflux_property_vector_name))
     {
+        // set the initial surface flux into the mesh
+        auto* const surfaceflux_pv = MeshLib::getOrCreateMeshProperty<double>(
+            surface_mesh, property_vector_name, MeshLib::MeshItemType::Cell, 1);
+        // initialise the PropertyVector pv with zero values
+        std::fill(surfaceflux_pv->begin(), surfaceflux_pv->end(), 0.0);
     }
 
     static std::unique_ptr<ProcessLib::SurfaceFluxData> createSurfaceFluxData(
