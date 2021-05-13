@@ -21,7 +21,7 @@
 #include "GeoLib/GeoType.h"
 #include "GeoLib/Point.h"
 #include "MeshLib/MeshEnums.h"
-#include "TreeModel.h"
+#include "Base/TreeModel.h"
 
 class vtkAlgorithm;
 class vtkDataSet;

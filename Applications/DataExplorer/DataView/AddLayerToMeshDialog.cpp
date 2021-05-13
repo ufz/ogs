@@ -14,8 +14,8 @@
 
 #include "AddLayerToMeshDialog.h"
 
-#include "OGSError.h"
-#include "StrictDoubleValidator.h"
+#include "Base/OGSError.h"
+#include "Base/StrictDoubleValidator.h"
 
 AddLayerToMeshDialog::AddLayerToMeshDialog(QDialog* parent) : QDialog(parent)
 {

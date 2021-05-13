@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "Applications/DataHolderLib/FemCondition.h"
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
 #include <QList>
 #include <QVariant>

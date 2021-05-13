@@ -11,7 +11,7 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-#include "OGSError.h"
+#include "Base/OGSError.h"
 
 #include <QMessageBox>
 #include <QString>

@@ -21,7 +21,7 @@
 #include "GeoLib/PointVec.h"
 #include "GeoLib/PolylineVec.h"
 #include "GeoLib/SurfaceVec.h"
-#include "TreeModel.h"
+#include "Base/TreeModel.h"
 
 namespace GeoLib
 {

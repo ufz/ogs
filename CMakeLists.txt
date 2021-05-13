@@ -186,40 +186,12 @@ option(OGS_USE_MFRONT
        "Enable solid material models by MFront (https://tfel.sourceforge.net)"
        OFF
 )
-# ---- Definitions ----
-if(OGS_USE_LIS)
-    include_directories(SYSTEM ${LIS_INCLUDE_DIR})
-endif()
-
-if(OGS_USE_MKL)
-    include_directories(SYSTEM ${MKL_INCLUDE_DIR})
-endif()
-
-# Eigen
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
-endif()
-if(EIGEN_NO_DEBUG)
-    add_definitions(-DEIGEN_NO_DEBUG)
-endif()
-if(EIGEN_DONT_VECTORIZE)
-    add_definitions(-DEIGEN_DONT_VECTORIZE)
-endif()
-if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL)
-    add_definitions(-DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES)
-endif()
-if(OGS_USE_EIGEN_UNSUPPORTED)
-    add_definitions(-DUSE_EIGEN_UNSUPPORTED)
-endif()
-if(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN)
-    add_definitions(-DEIGEN_INITIALIZE_MATRICES_BY_NAN)
-endif()
 
 # Packaging
 include(scripts/cmake/packaging/Pack.cmake)
 
 # ---- Subdirectories ----
-
+include_directories(${PROJECT_SOURCE_DIR})
 # xdmfdiff
 if(OGS_USE_XDMF AND OGS_BUILD_TESTING)
     add_subdirectory(Tests/xdmfdiff)

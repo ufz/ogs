@@ -22,8 +22,8 @@
 #include <QVBoxLayout>
 
 #include "GeoLib/GEOObjects.h"
-#include "OGSError.h"
-#include "SHPInterface.h"
+#include "Base/OGSError.h"
+#include "Applications/FileIO/SHPInterface.h"
 
 SHPImportDialog::SHPImportDialog(std::string filename,
                                  GeoLib::GEOObjects& geo_objects,

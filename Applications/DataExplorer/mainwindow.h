@@ -14,16 +14,16 @@
 
 #include "Applications/DataHolderLib/Project.h"
 
-#include "ImportFileTypes.h"
+#include "Base/ImportFileTypes.h"
 #include "ui_mainwindow.h"
 
-#include "ElementTreeModel.h"
-#include "FemConditionModel.h"
-#include "GEOModels.h"
-#include "MeshModel.h"
-#include "ProcessModel.h"
-#include "VisPrefsDialog.h"
-#include "VtkVisPipeline.h"
+#include "DataView/ElementTreeModel.h"
+#include "DataView/FemConditionModel.h"
+#include "DataView/GEOModels.h"
+#include "DataView/MeshModel.h"
+#include "DataView/ProcessModel.h"
+#include "VtkVis/VisPrefsDialog.h"
+#include "VtkVis/VtkVisPipeline.h"
 
 class TreeModel;
 

@@ -29,7 +29,7 @@
 
 #include "Applications/DataHolderLib/Color.h"
 #include "BaseLib/Logging.h"
-#include "Polyline.h"
+#include "GeoLib/Polyline.h"
 
 vtkStandardNewMacro(VtkPolylinesSource);
 

@@ -19,7 +19,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 
-#include "GeoObject.h"
+#include "GeoLib/GeoObject.h"
 
 SelectMeshDialog::SelectMeshDialog(const GeoLib::GeoObject* geo_object,
                                    const std::list<std::string>& msh_names,

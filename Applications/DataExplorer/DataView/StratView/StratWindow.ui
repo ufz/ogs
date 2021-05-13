@@ -49,7 +49,7 @@
   <customwidget>
    <class>StratView</class>
    <extends>QGraphicsView</extends>
-   <header location="global">StratView.h</header>
+   <header location="global">DataView/StratView/StratView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

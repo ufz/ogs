@@ -133,7 +133,10 @@ if(OGS_USE_PETSC)
 
     find_package(PETSc ${ogs.minimum_version.petsc} REQUIRED)
 
-    include_directories(SYSTEM ${PETSC_INCLUDES})
+    add_library(petsc SHARED IMPORTED)
+    target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
+    set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${PETSC_LIBRARIES})
+    target_compile_definitions(petsc INTERFACE USE_PETSC)
 endif()
 
 # Check MPI package

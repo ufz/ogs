@@ -18,7 +18,7 @@
 #include "VtkAlgorithmProperties.h"
 #include <vtkPolyDataAlgorithm.h>
 
-#include "Surface.h"
+#include "GeoLib/Surface.h"
 
 /**
  * \brief VTK source object for the visualisation of surfaces.

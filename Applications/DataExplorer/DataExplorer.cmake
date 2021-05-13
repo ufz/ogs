@@ -4,13 +4,6 @@ set(SOURCES mainwindow.cpp mainwindow.h
 )
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Base
-    ${CMAKE_CURRENT_SOURCE_DIR}/DataView
-    ${CMAKE_CURRENT_SOURCE_DIR}/DataView/StratView
-    ${CMAKE_CURRENT_SOURCE_DIR}/DataView/DiagramView
-    ${CMAKE_CURRENT_SOURCE_DIR}/VtkVis
-)
 
 # Put moc files in a project folder
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")

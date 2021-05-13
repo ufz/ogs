@@ -19,10 +19,10 @@
 #include <limits>
 
 #include "BaseLib/Logging.h"
-#include "DateTools.h"
+#include "BaseLib/DateTools.h"
 #include "GetDateTime.h"
-#include "SensorData.h"
-#include "StringTools.h"
+#include "GeoLib/SensorData.h"
+#include "BaseLib/StringTools.h"
 
 DiagramList::DiagramList() : _xLabel(""), _yLabel(""), _xUnit(""), _yUnit("") {}
 

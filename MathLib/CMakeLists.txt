@@ -22,10 +22,6 @@ endif()
 
 # Create the library
 ogs_add_library(MathLib ${SOURCES})
-target_include_directories(
-    MathLib PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-                   $<$<BOOL:${OGS_USE_PETSC}>:${PETSC_INCLUDE_DIRS}>
-)
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
@@ -36,20 +32,29 @@ target_link_libraries(
            $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
            $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
            $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
+           $<$<BOOL:${OGS_USE_PETSC}>:petsc>
            Eigen3::Eigen
     PRIVATE spdlog::spdlog
 )
 
-if(OGS_USE_PETSC)
-    target_link_libraries(MathLib PUBLIC ${PETSC_LIBRARIES})
+if(OGS_USE_LIS)
+    target_include_directories(MathLib PUBLIC ${LIS_INCLUDE_DIR})
 endif()
 if(OGS_USE_MKL)
+    target_include_directories(MathLib PRIVATE ${MKL_INCLUDE_DIR})
     target_link_libraries(MathLib PUBLIC ${MKL_LIBRARIES})
 endif()
 
 target_compile_definitions(
     MathLib
-    PUBLIC $<$<BOOL:${USE_LIS}>:USE_LIS> $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
-           $<$<BOOL:${OGS_USE_CVODE}>:CVODE_FOUND>
+    PUBLIC
+        $<$<BOOL:${USE_LIS}>:USE_LIS>
+        $<$<BOOL:${OGS_USE_CVODE}>:CVODE_FOUND>
+        $<$<BOOL:${EIGEN_NO_DEBUG}>:EIGEN_NO_DEBUG>
+        $<$<BOOL:${EIGEN_DONT_VECTORIZE}>:EIGEN_DONT_VECTORIZE>
+        $<$<BOOL:${OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL}>:OGS_EIGEN_DYNAMIC_SHAPE_MATRICES>
+        $<$<BOOL:${OGS_USE_EIGEN_UNSUPPORTED}>:USE_EIGEN_UNSUPPORTED>
+        $<$<BOOL:${OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN}>:EIGEN_INITIALIZE_MATRICES_BY_NAN>
+        $<$<CONFIG:Debug>:EIGEN_INITIALIZE_MATRICES_BY_NAN>
     PRIVATE $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>
 )

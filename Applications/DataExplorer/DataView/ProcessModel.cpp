@@ -18,7 +18,7 @@
 #include "CondItem.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/GeoObject.h"
-#include "GeoType.h"
+#include "GeoLib/GeoType.h"
 #include "ProcessVarItem.h"
 
 ProcessModel::ProcessModel(DataHolderLib::Project& project, QObject* parent)

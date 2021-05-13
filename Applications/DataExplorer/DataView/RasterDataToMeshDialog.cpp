@@ -13,8 +13,8 @@
 #include <QFileDialog>
 #include <QSettings>
 
-#include "OGSError.h"
-#include "StrictDoubleValidator.h"
+#include "Base/OGSError.h"
+#include "Base/StrictDoubleValidator.h"
 
 RasterDataToMeshDialog::RasterDataToMeshDialog(std::string const& mesh_name,
                                                QDialog* parent)

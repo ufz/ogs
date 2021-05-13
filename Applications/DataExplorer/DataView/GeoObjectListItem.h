@@ -14,13 +14,13 @@
  */
 #pragma once
 
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
-#include "GeoType.h"
+#include "GeoLib/GeoType.h"
 
-#include "VtkPointsSource.h"
-#include "VtkPolylinesSource.h"
-#include "VtkSurfacesSource.h"
+#include "VtkVis/VtkPointsSource.h"
+#include "VtkVis/VtkPolylinesSource.h"
+#include "VtkVis/VtkSurfacesSource.h"
 #include <QModelIndex>
 #include <vtkPolyDataAlgorithm.h>
 

@@ -14,11 +14,11 @@
 
 #include "MeshAnalysisDialog.h"
 
-#include "Mesh.h"
-#include "MeshEditing/MeshRevision.h"
-#include "MeshQuality/MeshValidation.h"
-#include "MeshSearch/NodeSearch.h"
-#include "StrictDoubleValidator.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEditing/MeshRevision.h"
+#include "MeshLib/MeshQuality/MeshValidation.h"
+#include "MeshLib/MeshSearch/NodeSearch.h"
+#include "Base/StrictDoubleValidator.h"
 
 MeshAnalysisDialog::MeshAnalysisDialog(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,

@@ -18,7 +18,7 @@
 #include <QFileInfo>
 #include <QSettings>
 
-#include "OGSError.h"
+#include "Base/OGSError.h"
 
 /// Constructor
 MeshQualitySelectionDialog::MeshQualitySelectionDialog(QDialog* parent)

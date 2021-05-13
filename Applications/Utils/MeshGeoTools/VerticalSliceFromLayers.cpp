@@ -166,7 +166,6 @@ void mergeGeometries(GeoLib::GEOObjects& geo,
         lines->push_back(line);
     }
 
-    std::size_t const n_lines = lines->size();
     geo.addPointVec(std::move(points), merged_geo_name);
     geo.addPolylineVec(std::move(lines), merged_geo_name);
 }
@@ -229,8 +228,7 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
         geo, true, FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity, res, 0,
         0, gmsh_geo, false, false);
     gmsh_io.writePhysicalGroups(true);
-    bool const success =
-        BaseLib::IO::writeStringToFile(gmsh_io.writeToString(), gmsh_geo_name);
+    BaseLib::IO::writeStringToFile(gmsh_io.writeToString(), gmsh_geo_name);
 
     std::string const gmsh_mesh_name = output_name + ".msh";
     std::string gmsh_command = "gmsh -2 -algo meshadapt " + gmsh_geo_name;

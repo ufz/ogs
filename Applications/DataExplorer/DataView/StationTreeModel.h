@@ -20,7 +20,7 @@
 #include "GeoLib/Point.h"
 
 #include "ModelTreeItem.h"
-#include "TreeModel.h"
+#include "Base/TreeModel.h"
 
 namespace GeoLib
 {

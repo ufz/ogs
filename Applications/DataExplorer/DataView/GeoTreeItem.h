@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include "TreeItem.h"
+#include "Base/TreeItem.h"
 
-#include "GeoObject.h"
+#include "GeoLib/GeoObject.h"
 
 /**
  * \brief A TreeItem containing an additional GeoObject

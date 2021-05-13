@@ -407,7 +407,7 @@
   <customwidget>
    <class>ColorPickerPushButton</class>
    <extends>QPushButton</extends>
-   <header>ColorPickerPushButton.h</header>
+   <header>Base/ColorPickerPushButton.h</header>
   </customwidget>
   <customwidget>
    <class>VtkVisPipelineView</class>
@@ -417,7 +417,7 @@
   <customwidget>
    <class>QValueTooltipSlider</class>
    <extends>QSlider</extends>
-   <header>QValueTooltipSlider.h</header>
+   <header>Base/QValueTooltipSlider.h</header>
   </customwidget>
  </customwidgets>
  <resources>

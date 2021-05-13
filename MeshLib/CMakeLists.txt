@@ -41,6 +41,7 @@ target_link_libraries(
            ${VTK_LIBRARIES}
            $<$<TARGET_EXISTS:OgsXdmf>:OgsXdmf>
            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+           $<$<TARGET_EXISTS:petsc>:petsc>
     PRIVATE spdlog::spdlog
 )
 
@@ -49,7 +50,6 @@ target_include_directories(MeshLib PUBLIC ${VTK_INCLUDE_DIRS})
 target_compile_definitions(
     MeshLib
     PUBLIC
-        $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
         $<$<AND:$<BOOL:$ENV{VTK_USE_64BIT_IDS}>,$<NOT:$<BOOL:VTK_ADDED>>>:VTK_USE_64BIT_IDS>
     PRIVATE $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
 )

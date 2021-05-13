@@ -434,7 +434,7 @@ static std::vector<std::size_t> getLength(NcVar const& var,
     return length;
 }
 
-static std::vector<double> getData(NcFile const& dataset, NcVar const& var,
+static std::vector<double> getData(NcVar const& var,
                                    std::size_t const total_length,
                                    std::size_t const time_step,
                                    std::vector<std::size_t> const& length)
@@ -562,8 +562,7 @@ static bool convert(NcFile const& dataset, NcVar const& var,
                 ? std::string(" time step " + std::to_string(i))
                 : "";
         std::cout << "Converting" << step_str << "...\n";
-        std::vector<double> data_vec =
-            getData(dataset, var, array_length, i, length);
+        std::vector<double> data_vec = getData(var, array_length, i, length);
 
         // reverse lines in vertical direction if file has its origin in the
         // northwest corner

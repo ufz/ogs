@@ -18,7 +18,7 @@
 #include <QDialog>
 #include <QLineEdit>
 
-#include "MeshGenerators/MeshLayerMapper.h"
+#include "MeshLib/MeshGenerators/MeshLayerMapper.h"
 
 class QPushButton;
 class QCheckBox;

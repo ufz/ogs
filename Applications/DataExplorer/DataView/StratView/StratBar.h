@@ -18,7 +18,7 @@
 
 #include <QGraphicsItem>
 
-#include "StationBorehole.h"
+#include "GeoLib/StationBorehole.h"
 #include "Applications/DataHolderLib/Color.h"
 
 /**

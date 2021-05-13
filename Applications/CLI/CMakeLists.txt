@@ -61,13 +61,11 @@ target_link_libraries(
             $<$<TARGET_EXISTS:ogs_embedded_python>:ogs_embedded_python>
             $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+            $<$<TARGET_EXISTS:petsc>:petsc>
             tclap
 )
 
-target_compile_definitions(
-    ogs PRIVATE $<$<BOOL:${USE_INSITU}>:USE_INSITU>
-                $<$<BOOL:${OGS_USE_PETSC}>:USE_PETSC>
-)
+target_compile_definitions(ogs PRIVATE $<$<BOOL:${USE_INSITU}>:USE_INSITU>)
 
 # ---- Tests ----
 add_test(NAME ogs_no_args COMMAND ogs)

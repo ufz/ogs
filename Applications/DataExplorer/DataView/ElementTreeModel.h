@@ -15,7 +15,7 @@
 #pragma once
 
 #include <array>
-#include "TreeModel.h"
+#include "Base/TreeModel.h"
 
 class vtkUnstructuredGridAlgorithm;
 
