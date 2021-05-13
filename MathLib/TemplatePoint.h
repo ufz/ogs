@@ -95,7 +95,7 @@ public:
         std::copy(std::istream_iterator<T>(is), std::istream_iterator<T>(), _x.begin());
     }
 
-protected:
+private:
     std::array<T, DIM> _x;
 };
 

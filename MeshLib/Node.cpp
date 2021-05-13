@@ -34,13 +34,13 @@ Node::Node(double x, double y, double z, std::size_t id)
 {
 }
 
-Node::Node(const Node& node) : MathLib::Point3dWithID(node._x, node.getID()) {}
+Node::Node(const Node& node) : MathLib::Point3dWithID(node, node.getID()) {}
 
 void Node::updateCoordinates(double x, double y, double z)
 {
-    _x[0] = x;
-    _x[1] = y;
-    _x[2] = z;
+    (*this)[0] = x;
+    (*this)[1] = y;
+    (*this)[2] = z;
 
     const std::size_t nElements(this->_elements.size());
     for (std::size_t i = 0; i < nElements; i++)
