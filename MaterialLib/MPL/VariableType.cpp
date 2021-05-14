@@ -26,6 +26,10 @@ Variable convertStringToVariable(std::string const& input)
     {
         return Variable::phase_pressure;
     }
+    if (boost::iequals(input, "liquid_phase_pressure"))
+    {
+        return Variable::liquid_phase_pressure;
+    }
     if (boost::iequals(input, "capillary_pressure"))
     {
         return Variable::capillary_pressure;
