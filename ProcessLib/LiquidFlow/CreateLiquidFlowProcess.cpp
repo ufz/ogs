@@ -98,16 +98,6 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
-    int gravity_axis_id = -1;  // default: no gravity
-    double const g = -b[mesh.getDimension() - 1];
-    if (has_gravity)
-    {
-        if (g != 0.0)
-        {
-            gravity_axis_id = mesh.getDimension() - 1;
-        }
-    }
-
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
     auto calculatesurfaceflux_config =
         //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}
@@ -126,8 +116,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     DBUG("Media properties verified.");
 
     LiquidFlowData process_data{std::move(media_map),
-                                std::move(specific_body_force), has_gravity,
-                                gravity_axis_id, g};
+                                std::move(specific_body_force), has_gravity};
 
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
