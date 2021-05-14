@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <Eigen/Dense>
 #include <memory>
 
 namespace MaterialPropertyLib
@@ -25,6 +26,9 @@ struct LiquidFlowData final
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
+    Eigen::VectorXd const specific_body_force;
+    bool const has_gravity;
+
     const int gravitational_axis_id;
     const double gravitational_acceleration;
 };
