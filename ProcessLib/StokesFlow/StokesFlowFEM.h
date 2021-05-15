@@ -20,6 +20,7 @@
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -194,6 +195,17 @@ public:
                                 .template value<double>(vars, pos, t, dt);
 
             // Kvv
+            if (_process_data.use_stokes_brinkman_form)
+            {
+                // permeability
+                auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    medium[MaterialPropertyLib::PropertyType::permeability]
+                        .value(vars, pos, t, dt));
+
+                Kvv.noalias() +=
+                    w * N_v_op.transpose() * mu * K.inverse() * N_v_op;
+            }
+
             for (int i = 0; i < GlobalDim; ++i)
             {
                 Kvv.template block<liquid_velocity_size / GlobalDim,
