@@ -145,8 +145,10 @@ if(LibXml2_ADDED)
 endif()
 
 CPMAddPackage(
-    NAME xmlpatch VERSION 0.4.2
+    NAME xmlpatch
+    VERSION 0.4.2
     GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/xmlpatch.git
+    OPTIONS "BUILD_SHARED_LIBS OFF"
 )
 
 if(OGS_USE_XDMF)
