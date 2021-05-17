@@ -21,7 +21,7 @@
     "python": "3.6",
     "snakemake": "5.27.4",
     "hdf5": "1.10.5",
-    "libxml2": "2.9.10"
+    "libxml2": "2.9.12"
   },
   "tested_version": {
     "ubuntu": "20.04",

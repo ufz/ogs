@@ -129,8 +129,8 @@ CPMFindPackage(
     NAME LibXml2
     GITHUB_REPOSITORY GNOME/libxml2
     VERSION ${ogs.minimum_version.libxml2}
-    GIT_TAG f93ca3e140a371b26366f747a408588c631e0fd1
-    OPTIONS "LIBXML2_WITH_TESTS OFF"
+    OPTIONS "BUILD_SHARED_LIBS OFF"
+            "LIBXML2_WITH_TESTS OFF"
             "LIBXML2_WITH_PROGRAMS OFF"
             "LIBXML2_WITH_ICONV OFF"
             "LIBXML2_WITH_ICU OFF"
@@ -142,6 +142,7 @@ CPMFindPackage(
 if(LibXml2_ADDED)
     add_library(LibXml2::LibXml2 ALIAS LibXml2)
     set(LIBXML2_INCLUDE_DIR ${LibXml2_SOURCE_DIR})
+    list(APPEND DISABLE_WARNINGS_TARGETS LibXml2)
 endif()
 
 CPMAddPackage(
