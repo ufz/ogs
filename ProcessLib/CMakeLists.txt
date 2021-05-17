@@ -5,6 +5,9 @@ foreach(process ${_processes_list})
     if(OGS_BUILD_PROCESS_${process})
         add_subdirectory(${process})
         target_link_libraries(Processes INTERFACE ${process})
+        set_target_properties(
+            ${process} PROPERTIES JOB_POOL_COMPILE heavy_tasks
+        )
     endif()
 endforeach()
 
