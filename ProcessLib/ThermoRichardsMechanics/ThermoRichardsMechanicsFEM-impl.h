@@ -468,53 +468,51 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         // Swelling and possibly volumetric strain rate update.
-        auto& sigma_sw = ip_data.sigma_sw;
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
+            auto& sigma_sw = ip_data.sigma_sw;
             auto const& sigma_sw_prev = ip_data.sigma_sw_prev;
 
             // If there is swelling, compute it. Update volumetric strain rate,
             // s.t. it corresponds to the mechanical part only.
             sigma_sw = sigma_sw_prev;
-            if (solid_phase.hasProperty(
-                    MPL::PropertyType::swelling_stress_rate))
-            {
-                using DimMatrix = Eigen::Matrix<double, 3, 3>;
-                auto const sigma_sw_dot =
-                    MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                        solid_phase
-                            .property(MPL::PropertyType::swelling_stress_rate)
-                            .template value<DimMatrix>(
-                                variables, variables_prev, x_position, t, dt));
-                sigma_sw += sigma_sw_dot * dt;
 
-                // !!! Misusing volumetric strain for mechanical volumetric
-                // strain just to update the transport porosity !!!
-                std::get<double>(variables[static_cast<int>(
-                    MPL::Variable::volumetric_strain)]) +=
-                    identity2.transpose() * C_el.inverse() * sigma_sw;
-                std::get<double>(variables_prev[static_cast<int>(
-                    MPL::Variable::volumetric_strain)]) +=
-                    identity2.transpose() * C_el.inverse() * sigma_sw_prev;
-            }
+            using DimMatrix = Eigen::Matrix<double, 3, 3>;
+            auto const sigma_sw_dot =
+                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                    solid_phase
+                        .property(MPL::PropertyType::swelling_stress_rate)
+                        .template value<DimMatrix>(variables, variables_prev,
+                                                   x_position, t, dt));
+            sigma_sw += sigma_sw_dot * dt;
 
-            if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
-            {
-                variables_prev[static_cast<int>(
-                    MPL::Variable::transport_porosity)] =
-                    ip_data.transport_porosity_prev;
+            // !!! Misusing volumetric strain for mechanical volumetric
+            // strain just to update the transport porosity !!!
+            std::get<double>(variables[static_cast<int>(
+                MPL::Variable::volumetric_strain)]) +=
+                identity2.transpose() * C_el.inverse() * sigma_sw;
+            std::get<double>(variables_prev[static_cast<int>(
+                MPL::Variable::volumetric_strain)]) +=
+                identity2.transpose() * C_el.inverse() * sigma_sw_prev;
+        }
 
-                ip_data.transport_porosity =
-                    solid_phase.property(MPL::PropertyType::transport_porosity)
-                        .template value<double>(variables, variables_prev,
-                                                x_position, t, dt);
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    ip_data.transport_porosity;
-            }
-            else
-            {
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    phi;
-            }
+        if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+        {
+            variables_prev[static_cast<int>(
+                MPL::Variable::transport_porosity)] =
+                ip_data.transport_porosity_prev;
+
+            ip_data.transport_porosity =
+                solid_phase.property(MPL::PropertyType::transport_porosity)
+                    .template value<double>(variables, variables_prev,
+                                            x_position, t, dt);
+            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                ip_data.transport_porosity;
+        }
+        else
+        {
+            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                phi;
         }
 
         //
@@ -747,15 +745,16 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     .template value<double>(variables, x_position, t, dt);
 
             M_TT.noalias() +=
-                w *
-                (rho_SR * specific_heat_capacity_solid * (1 - phi) +
-                 (S_L * rho_LR * specific_heat_capacity_fluid) * phi) *
+                w * (rho_SR * specific_heat_capacity_solid * (1 - phi) +
+                     (S_L * rho_LR * specific_heat_capacity_fluid) * phi) *
                 N.transpose() * N;
 
             auto const thermal_conductivity =
-                MaterialPropertyLib::formEigenTensor<DisplacementDim>(medium
-                    ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .value(variables, x_position, t, dt));
+                MaterialPropertyLib::formEigenTensor<DisplacementDim>(
+                    medium
+                        ->property(MaterialPropertyLib::PropertyType::
+                                       thermal_conductivity)
+                        .value(variables, x_position, t, dt));
 
             GlobalDimVectorType const velocity_l =
                 GlobalDimVectorType(-Ki_over_mu * (dNdx * p_L - rho_LR * b));
@@ -1212,54 +1211,53 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         // Swelling and possibly volumetric strain rate update.
-        auto& sigma_sw = ip_data.sigma_sw;
+        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
+            auto& sigma_sw = ip_data.sigma_sw;
             auto const& sigma_sw_prev = ip_data.sigma_sw_prev;
 
             // If there is swelling, compute it. Update volumetric strain rate,
             // s.t. it corresponds to the mechanical part only.
             sigma_sw = sigma_sw_prev;
-            if (solid_phase.hasProperty(
-                    MPL::PropertyType::swelling_stress_rate))
-            {
-                using DimMatrix = Eigen::Matrix<double, 3, 3>;
-                auto const sigma_sw_dot =
-                    MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                        solid_phase
-                            .property(MPL::PropertyType::swelling_stress_rate)
-                            .template value<DimMatrix>(
-                                variables, variables_prev, x_position, t, dt));
-                sigma_sw += sigma_sw_dot * dt;
 
-                // !!! Misusing volumetric strain for mechanical volumetric
-                // strain just to update the transport porosity !!!
-                std::get<double>(variables[static_cast<int>(
-                    MPL::Variable::volumetric_strain)]) +=
-                    identity2.transpose() * C_el.inverse() * sigma_sw;
-                std::get<double>(variables_prev[static_cast<int>(
-                    MPL::Variable::volumetric_strain)]) +=
-                    identity2.transpose() * C_el.inverse() * sigma_sw_prev;
-            }
+            using DimMatrix = Eigen::Matrix<double, 3, 3>;
+            auto const sigma_sw_dot =
+                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                    solid_phase
+                        .property(MPL::PropertyType::swelling_stress_rate)
+                        .template value<DimMatrix>(variables, variables_prev,
+                                                   x_position, t, dt));
+            sigma_sw += sigma_sw_dot * dt;
 
-            if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
-            {
-                variables_prev[static_cast<int>(
-                    MPL::Variable::transport_porosity)] =
-                    ip_data.transport_porosity_prev;
-
-                ip_data.transport_porosity =
-                    solid_phase.property(MPL::PropertyType::transport_porosity)
-                        .template value<double>(variables, variables_prev,
-                                                x_position, t, dt);
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    ip_data.transport_porosity;
-            }
-            else
-            {
-                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                    phi;
-            }
+            // !!! Misusing volumetric strain for mechanical volumetric
+            // strain just to update the transport porosity !!!
+            std::get<double>(variables[static_cast<int>(
+                MPL::Variable::volumetric_strain)]) +=
+                identity2.transpose() * C_el.inverse() * sigma_sw;
+            std::get<double>(variables_prev[static_cast<int>(
+                MPL::Variable::volumetric_strain)]) +=
+                identity2.transpose() * C_el.inverse() * sigma_sw_prev;
         }
+
+        if (solid_phase.hasProperty(MPL::PropertyType::transport_porosity))
+        {
+            variables_prev[static_cast<int>(
+                MPL::Variable::transport_porosity)] =
+                ip_data.transport_porosity_prev;
+
+            ip_data.transport_porosity =
+                solid_phase.property(MPL::PropertyType::transport_porosity)
+                    .template value<double>(variables, variables_prev,
+                                            x_position, t, dt);
+            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                ip_data.transport_porosity;
+        }
+        else
+        {
+            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                phi;
+        }
+
         auto const mu =
             liquid_phase.property(MPL::PropertyType::viscosity)
                 .template value<double>(variables, x_position, t, dt);
