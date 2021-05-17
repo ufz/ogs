@@ -37,10 +37,9 @@ struct IntegrationPointData final
     explicit IntegrationPointData(NodalRowVectorType const& N_,
                                   GlobalDimNodalMatrixType const& dNdx_,
                                   double const& integration_weight_)
-        : N(N_),
-          dNdx(dNdx_),
-          integration_weight(integration_weight_)
-    {}
+        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+    {
+    }
 
     NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
@@ -83,12 +82,11 @@ class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>;
 
 public:
-    LiquidFlowLocalAssembler(
-        MeshLib::Element const& element,
-        std::size_t const /*local_matrix_size*/,
-        bool const is_axially_symmetric,
-        unsigned const integration_order,
-        LiquidFlowData const& process_data)
+    LiquidFlowLocalAssembler(MeshLib::Element const& element,
+                             std::size_t const /*local_matrix_size*/,
+                             bool const is_axially_symmetric,
+                             unsigned const integration_order,
+                             LiquidFlowData const& process_data)
         : _element(element),
           _integration_method(integration_order),
           _process_data(process_data)
@@ -162,15 +160,16 @@ private:
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
             Eigen::MatrixXd const& permeability, double const mu,
-            double const rho_g, int const gravitational_axis_id);
+            double const rho_L, const LiquidFlowData& process_data);
 
         static void calculateVelocity(
             unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
             Eigen::MatrixXd const& permeability, double const mu,
-            double const rho_g, int const gravitational_axis_id,
-            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
+            double const rho_L,
+            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips,
+            const LiquidFlowData& process_data);
     };
 
     /**
@@ -185,15 +184,16 @@ private:
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
             Eigen::MatrixXd const& permeability, double const mu,
-            double const rho_g, int const gravitational_axis_id);
+            double const rho_L, const LiquidFlowData& process_data);
 
         static void calculateVelocity(
             unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
             Eigen::MatrixXd const& permeability, double const mu,
-            double const rho_g, int const gravitational_axis_id,
-            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips);
+            double const rho_L,
+            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips,
+            const LiquidFlowData& process_data);
     };
 
     template <typename LaplacianGravityVelocityCalculator>
