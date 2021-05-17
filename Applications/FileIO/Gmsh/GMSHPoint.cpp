@@ -25,7 +25,8 @@ GMSHPoint::GMSHPoint(GeoLib::Point const& pnt, std::size_t id,
 
 void GMSHPoint::write(std::ostream& os) const
 {
-    os << "Point(" << _id << ") = {" << _x[0] << ", " << _x[1] << ", " << _x[2];
+    os << "Point(" << getID() << ") = {" << (*this)[0] << ", " << (*this)[1]
+       << ", " << (*this)[2];
     if (fabs(_mesh_density) > std::numeric_limits<double>::epsilon())
     {
         os << ", " << _mesh_density << "};";

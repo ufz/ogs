@@ -67,33 +67,33 @@ public:
     */
     void finalizeAssembly(const MatAssemblyType asm_type = MAT_FINAL_ASSEMBLY)
     {
-        MatAssemblyBegin(_A, asm_type);
-        MatAssemblyEnd(_A, asm_type);
+        MatAssemblyBegin(A_, asm_type);
+        MatAssemblyEnd(A_, asm_type);
     }
 
     /// Get the number of rows.
-    PetscInt getNumberOfRows() const { return _nrows; }
+    PetscInt getNumberOfRows() const { return nrows_; }
     /// Get the number of columns.
-    PetscInt getNumberOfColumns() const { return _ncols; }
+    PetscInt getNumberOfColumns() const { return ncols_; }
     /// Get the number of local rows.
-    PetscInt getNumberOfLocalRows() const { return _n_loc_rows; }
+    PetscInt getNumberOfLocalRows() const { return n_loc_rows_; }
     /// Get the number of local columns.
-    PetscInt getNumberOfLocalColumns() const { return _n_loc_cols; }
+    PetscInt getNumberOfLocalColumns() const { return n_loc_cols_; }
     /// Get the start global index of the rows of the same rank.
-    PetscInt getRangeBegin() const { return _start_rank; }
+    PetscInt getRangeBegin() const { return start_rank_; }
     /// Get the end global index of the rows in the same rank.
-    PetscInt getRangeEnd() const { return _end_rank; }
+    PetscInt getRangeEnd() const { return end_rank_; }
     /// Get matrix reference.
-    Mat& getRawMatrix() { return _A; }
+    Mat& getRawMatrix() { return A_; }
     /*! Get a matrix reference.
      *
      * \warning
      * This method is dangerous insofar as you can do arbitrary things also
      * with a const PETSc matrix.
      */
-    Mat const& getRawMatrix() const { return _A; }
+    Mat const& getRawMatrix() const { return A_; }
     /// Set all entries to zero.
-    void setZero() { MatZeroEntries(_A); }
+    void setZero() { MatZeroEntries(A_); }
     /*!
        \brief Set the specified rows to zero except diagonal entries, i.e.
               \f$A(k, j) = \begin{cases}
@@ -113,7 +113,7 @@ public:
     */
     void set(const PetscInt i, const PetscInt j, const PetscScalar value)
     {
-        MatSetValue(_A, i, j, value, INSERT_VALUES);
+        MatSetValue(A_, i, j, value, INSERT_VALUES);
     }
 
     /*!
@@ -124,7 +124,7 @@ public:
     */
     void add(const PetscInt i, const PetscInt j, const PetscScalar value)
     {
-        MatSetValue(_A, i, j, value, ADD_VALUES);
+        MatSetValue(A_, i, j, value, ADD_VALUES);
     }
 
     /*!
@@ -156,7 +156,7 @@ public:
         for (auto col : indices.columns)
         {
             // Ghost entries, and its original index is 0.
-            if (col == -_ncols)
+            if (col == -ncols_)
                 cols.push_back(0);
             else
                 cols.push_back(std::abs(col));
@@ -212,31 +212,31 @@ public:
 private:
     void destroy()
     {
-        if (_A)
-            MatDestroy(&_A);
-        _A = nullptr;
+        if (A_)
+            MatDestroy(&A_);
+        A_ = nullptr;
     }
 
     /// PETSc matrix
-    Mat _A = nullptr;
+    Mat A_ = nullptr;
 
     /// Number of the global rows
-    PetscInt _nrows;
+    PetscInt nrows_;
 
     /// Number of the global columns
-    PetscInt _ncols;
+    PetscInt ncols_;
 
     /// Number of the local rows
-    PetscInt _n_loc_rows;
+    PetscInt n_loc_rows_;
 
     /// Number of the local columns
-    PetscInt _n_loc_cols;
+    PetscInt n_loc_cols_;
 
     /// Starting index in a rank
-    PetscInt _start_rank;
+    PetscInt start_rank_;
 
     /// Ending index in a rank
-    PetscInt _end_rank;
+    PetscInt end_rank_;
 
     /*!
       \brief Create the matrix, configure memory allocation and set the
@@ -260,7 +260,7 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
     const PetscInt nrows = static_cast<PetscInt>(row_pos.size());
     const PetscInt ncols = static_cast<PetscInt>(col_pos.size());
 
-    MatSetValues(_A, nrows, &row_pos[0], ncols, &col_pos[0], &sub_mat(0, 0),
+    MatSetValues(A_, nrows, &row_pos[0], ncols, &col_pos[0], &sub_mat(0, 0),
                  ADD_VALUES);
 };
 

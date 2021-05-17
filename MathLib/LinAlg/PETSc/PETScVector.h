@@ -79,15 +79,15 @@ public:
     void finalizeAssembly();
 
     /// Get the global size of the vector
-    PetscInt size() const { return _size; }
+    PetscInt size() const { return size_; }
     /// Get the number of entries in the same rank
-    PetscInt getLocalSize() const { return _size_loc; }
+    PetscInt getLocalSize() const { return size_loc_; }
     /// Get the number of ghost entries in the same rank
-    PetscInt getGhostSize() const { return _size_ghosts; }
+    PetscInt getGhostSize() const { return size_ghosts_; }
     /// Get the start index of the local vector
-    PetscInt getRangeBegin() const { return _start_rank; }
+    PetscInt getRangeBegin() const { return start_rank_; }
     /// Get the end index of the local vector
-    PetscInt getRangeEnd() const { return _end_rank; }
+    PetscInt getRangeEnd() const { return end_rank_; }
     /*!
        Insert a single entry with value.
        \param i     Entry index
@@ -96,7 +96,7 @@ public:
     */
     void set(const PetscInt i, const PetscScalar value)
     {
-        VecSetValue(_v, i, value, INSERT_VALUES);
+        VecSetValue(v_, i, value, INSERT_VALUES);
     }
 
     /*!
@@ -106,7 +106,7 @@ public:
     */
     void add(const PetscInt i, const PetscScalar value)
     {
-        VecSetValue(_v, i, value, ADD_VALUES);
+        VecSetValue(v_, i, value, ADD_VALUES);
     }
 
     /*!
@@ -119,7 +119,7 @@ public:
     template <class T_SUBVEC>
     void add(const std::vector<PetscInt>& e_idxs, const T_SUBVEC& sub_vec)
     {
-        VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], ADD_VALUES);
+        VecSetValues(v_, e_idxs.size(), &e_idxs[0], &sub_vec[0], ADD_VALUES);
     }
 
     /*!
@@ -132,11 +132,11 @@ public:
     template <class T_SUBVEC>
     void set(const std::vector<PetscInt>& e_idxs, const T_SUBVEC& sub_vec)
     {
-        VecSetValues(_v, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
+        VecSetValues(v_, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
     }
 
     // TODO preliminary
-    void setZero() { VecSet(_v, 0.0); }
+    void setZero() { VecSet(v_, 0.0); }
     /// Disallow moving.
     /// \todo This operator should be implemented properly when doing a
     ///       general cleanup of all matrix and vector classes.
@@ -168,14 +168,14 @@ public:
     PetscScalar get(const PetscInt idx) const;
 
     //! Exposes the underlying PETSc vector.
-    PETSc_Vec& getRawVector() { return _v; }
+    PETSc_Vec& getRawVector() { return v_; }
     /*! Exposes the underlying PETSc vector.
      *
      * \warning
      * This method is dangerous insofar as you can do arbitrary things also
      * with a const PETSc vector!
      */
-    PETSc_Vec const&  getRawVector() const { return _v; }
+    PETSc_Vec const& getRawVector() const { return v_; }
     /*!
        Copy local entries including ghost ones to an array
        \param u Preallocated vector for the values of local entries.
@@ -220,42 +220,42 @@ public:
 private:
     void destroy()
     {
-        if (_v)
-            VecDestroy(&_v);
-        _v = nullptr;
+        if (v_)
+            VecDestroy(&v_);
+        v_ = nullptr;
     }
 
-    PETSc_Vec _v = nullptr;
-    /// Local vector, which is only for the case that  _v is created
+    PETSc_Vec v_ = nullptr;
+    /// Local vector, which is only for the case that  v_ is created
     /// with ghost entries.
-    mutable PETSc_Vec _v_loc = nullptr;
+    mutable PETSc_Vec v_loc_ = nullptr;
 
     /// Starting index in a rank
-    PetscInt _start_rank;
+    PetscInt start_rank_;
     /// Ending index in a rank
-    PetscInt _end_rank;
+    PetscInt end_rank_;
 
     /// Size of the vector
-    PetscInt _size;
+    PetscInt size_;
     /// Size of local entries
-    PetscInt _size_loc;
+    PetscInt size_loc_;
     /// Size of local ghost entries
-    PetscInt _size_ghosts = 0;
+    PetscInt size_ghosts_ = 0;
 
     /// Flag to indicate whether the vector is created with ghost entry indices
-    bool _has_ghost_id = false;
+    bool has_ghost_id_ = false;
 
     /*!
        \brief Array containing the entries of the vector.
        If the vector is created without given ghost IDs, the array
-       contains all entries of the global vector, _v. Otherwise it
+       contains all entries of the global vector, v_. Otherwise it
        only contains the entries of the global vector owned by the
        current rank.
     */
-    mutable std::vector<PetscScalar> _entry_array;
+    mutable std::vector<PetscScalar> entry_array_;
 
     /// Map global indices of ghost entries to local indices
-    mutable std::map<PetscInt, PetscInt> _global_ids2local_ids_ghost;
+    mutable std::map<PetscInt, PetscInt> global_ids2local_ids_ghost_;
 
     /*!
           \brief  Collect local vectors

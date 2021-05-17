@@ -52,29 +52,29 @@ private:
     /**
      * the slope of the linear map
      */
-    NUMERIC_TYPE _m;
+    NUMERIC_TYPE m_;
     /**
      * the offset of the linear map for \f$x\f$ equals zero
      */
-    NUMERIC_TYPE _n;
+    NUMERIC_TYPE n_;
 };
 
 template <typename NUMERIC_TYPE>
-LinearIntervalInterpolation<NUMERIC_TYPE>::LinearIntervalInterpolation(NUMERIC_TYPE a, NUMERIC_TYPE b,
-                NUMERIC_TYPE c, NUMERIC_TYPE d) :
-    _m (d-c), _n(0.0)
+LinearIntervalInterpolation<NUMERIC_TYPE>::LinearIntervalInterpolation(
+    NUMERIC_TYPE a, NUMERIC_TYPE b, NUMERIC_TYPE c, NUMERIC_TYPE d)
+    : m_(d - c), n_(0.0)
 {
     if (b == a) {
         OGS_FATAL("LinearIntervalInterpolation::LinearIntervalInterpolation: a == b, empty interval");
     }
-    _m /= (b-a);
-    _n = c - _m * a;
+    m_ /= (b - a);
+    n_ = c - m_ * a;
 }
 
 template <typename NUMERIC_TYPE>
 inline NUMERIC_TYPE LinearIntervalInterpolation<NUMERIC_TYPE>::operator() (NUMERIC_TYPE x) const
 {
-    return _m * x + _n;
+    return m_ * x + n_;
 }
 
 } // end namespace MathLib

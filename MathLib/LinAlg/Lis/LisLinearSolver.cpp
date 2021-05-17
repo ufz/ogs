@@ -26,7 +26,7 @@ namespace MathLib
 {
 LisLinearSolver::LisLinearSolver(const std::string /*solver_name*/,
                                  const BaseLib::ConfigTree* const option)
-    : _lis_option(option)
+    : lis_option_(option)
 {
 }
 
@@ -43,7 +43,7 @@ bool LisLinearSolver::solve(LisMatrix& A, LisVector& b, LisVector& x)
     if (!checkLisError(ierr))
         return false;
 
-    lis_solver_set_option(const_cast<char*>(_lis_option._option_string.c_str()),
+    lis_solver_set_option(const_cast<char*>(lis_option_.option_string_.c_str()),
                           solver);
 #ifdef _OPENMP
     INFO("-> number of threads: {:i}", (int)omp_get_max_threads());

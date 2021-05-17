@@ -25,7 +25,7 @@ namespace MathLib
 {
 EigenLisLinearSolver::EigenLisLinearSolver(
     const std::string /*solver_name*/, BaseLib::ConfigTree const* const option)
-    : _lis_option(option)
+    : lis_option_(option)
 {
 }
 
@@ -49,7 +49,7 @@ bool EigenLisLinearSolver::solve(EigenMatrix& A_, EigenVector& b_,
     LisVector lisx(x.rows(), x.data());
 
     LisLinearSolver lissol;  // TODO not always create Lis solver here
-    lissol.setOption(_lis_option);
+    lissol.setOption(lis_option_);
     bool const status = lissol.solve(lisA, lisb, lisx);
 
     for (std::size_t i = 0; i < lisx.size(); i++)

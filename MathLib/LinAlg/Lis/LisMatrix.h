@@ -88,16 +88,16 @@ public:
     virtual ~LisMatrix();
 
     /// return the number of rows
-    std::size_t getNumberOfRows() const { return _n_rows; }
+    std::size_t getNumberOfRows() const { return n_rows_; }
 
     /// return the number of columns
     std::size_t getNumberOfColumns() const { return getNumberOfRows(); }
 
     /// return a start index of the active data range
-    std::size_t getRangeBegin() const { return _is; }
+    std::size_t getRangeBegin() const { return is_; }
 
     /// return an end index of the active data range
-    std::size_t getRangeEnd() const { return _ie; }
+    std::size_t getRangeEnd() const { return ie_; }
 
     /// reset this matrix with keeping its original dimension
     void setZero();
@@ -112,7 +112,7 @@ public:
     void write(const std::string &filename) const;
 
     /// return a raw Lis matrix object
-    LIS_MATRIX& getRawMatrix() { return _AA; }
+    LIS_MATRIX& getRawMatrix() { return AA_; }
 
     /// Add sub-matrix at positions \c row_pos and same column positions as the
     /// given row positions.
@@ -139,20 +139,22 @@ public:
              const T_DENSE_MATRIX& sub_matrix, double fkt = 1.0);
 
     /// get this matrix type
-    MatrixType getMatrixType() const { return _mat_type; }
+    MatrixType getMatrixType() const { return mat_type_; }
 
     /// return if this matrix is already assembled or not
-    bool isAssembled() const { return _is_assembled; }
+    bool isAssembled() const { return is_assembled_; }
 
 private:
-    std::size_t const _n_rows;
-    MatrixType const _mat_type;
-    LIS_MATRIX _AA;
-    LIS_VECTOR _diag;
-    bool _is_assembled;
-    IndexType _is;    ///< location where the partial matrix _AA starts in global matrix.
-    IndexType _ie;    ///< location where the partial matrix _AA ends in global matrix.
-    bool _use_external_arrays;
+    std::size_t const n_rows_;
+    MatrixType const mat_type_;
+    LIS_MATRIX AA_;
+    LIS_VECTOR diag_;
+    bool is_assembled_;
+    IndexType is_;  ///< location where the partial matrix AA_ starts in global
+                    ///< matrix.
+    IndexType
+        ie_;  ///< location where the partial matrix AA_ ends in global matrix.
+    bool use_external_arrays_;
 
     // friend function
     friend bool finalizeMatrixAssembly(LisMatrix &mat);
@@ -197,7 +199,7 @@ void operator()(LisMatrix& matrix,
     transform(cbegin(sparsity_pattern), cend(sparsity_pattern),
               back_inserter(row_sizes), [](auto const i) { return i + 1; });
 
-    int ierr = lis_matrix_malloc(matrix._AA, 0, row_sizes.data());
+    int ierr = lis_matrix_malloc(matrix.AA_, 0, row_sizes.data());
     checkLisError(ierr);
 }
 };

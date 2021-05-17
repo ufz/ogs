@@ -60,17 +60,17 @@ PETScLinearSolver::PETScLinearSolver(const std::string /*prefix*/,
     PetscOptionsInsertString(nullptr, petsc_options.c_str());
 #endif
 
-    KSPCreate(PETSC_COMM_WORLD, &_solver);
+    KSPCreate(PETSC_COMM_WORLD, &solver_);
 
-    KSPGetPC(_solver, &_pc);
+    KSPGetPC(solver_, &pc_);
 
     if (!prefix.empty())
     {
-        KSPSetOptionsPrefix(_solver, prefix.c_str());
+        KSPSetOptionsPrefix(solver_, prefix.c_str());
     }
 
-    KSPSetInitialGuessNonzero(_solver, PETSC_TRUE);
-    KSPSetFromOptions(_solver);  // set run-time options
+    KSPSetInitialGuessNonzero(solver_, PETSC_TRUE);
+    KSPSetFromOptions(solver_);  // set run-time options
 }
 
 bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
@@ -84,20 +84,20 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
     PetscMemoryGetCurrentUsage(&mem1);
 #endif
 
-    KSPSetOperators(_solver, A.getRawMatrix(), A.getRawMatrix());
+    KSPSetOperators(solver_, A.getRawMatrix(), A.getRawMatrix());
 
-    KSPSolve(_solver, b.getRawVector(), x.getRawVector());
+    KSPSolve(solver_, b.getRawVector(), x.getRawVector());
 
     KSPConvergedReason reason;
-    KSPGetConvergedReason(_solver, &reason);
+    KSPGetConvergedReason(solver_, &reason);
 
     bool converged = true;
     if (reason > 0)
     {
         const char* ksp_type;
         const char* pc_type;
-        KSPGetType(_solver, &ksp_type);
-        PCGetType(_pc, &pc_type);
+        KSPGetType(solver_, &ksp_type);
+        PCGetType(pc_, &pc_type);
 
         PetscPrintf(PETSC_COMM_WORLD,
                     "\n================================================");
@@ -106,7 +106,7 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
                     pc_type);
 
         PetscInt its;
-        KSPGetIterationNumber(_solver, &its);
+        KSPGetIterationNumber(solver_, &its);
         PetscPrintf(PETSC_COMM_WORLD, "\nconverged in %d iterations", its);
         switch (reason)
         {
@@ -129,8 +129,8 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
     {
         const char* ksp_type;
         const char* pc_type;
-        KSPGetType(_solver, &ksp_type);
-        PCGetType(_pc, &pc_type);
+        KSPGetType(solver_, &ksp_type);
+        PCGetType(pc_, &pc_type);
         PetscPrintf(PETSC_COMM_WORLD,
                     "\nLinear solver %s with %s preconditioner", ksp_type,
                     pc_type);
@@ -178,7 +178,7 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
         mem2, (int)(mem2 - mem1));
 #endif
 
-    _elapsed_ctime += wtimer.elapsed();
+    elapsed_ctime_ += wtimer.elapsed();
 
     return converged;
 }

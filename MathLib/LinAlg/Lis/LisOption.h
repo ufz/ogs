@@ -46,14 +46,13 @@ struct LisOption final
             //! \ogs_file_param{prj__linear_solvers__linear_solver__lis}
             if (auto s = options->getConfigParameterOptional<std::string>("lis")) {
                 if (!s->empty()) {
-                    _option_string += " " + *s;
-                    INFO("Lis options: '{:s}'", _option_string);
+                    option_string_ += " " + *s;
+                    INFO("Lis options: '{:s}'", option_string_);
                 }
             }
         }
     }
 
-    std::string _option_string = "-initx_zeros 0";
-
+    std::string option_string_ = "-initx_zeros 0";
 };
 }
