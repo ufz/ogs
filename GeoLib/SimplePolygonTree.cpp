@@ -64,7 +64,7 @@ void SimplePolygonTree::insertSimplePolygonTree(
     if (nfound)
     {
         _children.push_back(polygon_hierarchy);
-        polygon_hierarchy->setParent(this);
+        polygon_hierarchy->_parent = this;
     }
 }
 

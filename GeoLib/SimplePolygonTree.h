@@ -73,12 +73,6 @@ protected:
      * in the _node_polygon
      */
     std::list<SimplePolygonTree*> _children;
-
-private:
-    void setParent(SimplePolygonTree* parent)
-    {
-        _parent = parent;
-    }
 };
 
 /**
