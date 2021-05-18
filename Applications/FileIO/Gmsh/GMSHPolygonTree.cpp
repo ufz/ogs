@@ -39,7 +39,7 @@ GMSHPolygonTree::~GMSHPolygonTree()
 {
     // the polylines are processed also by the children, but the root is
     // responsible to cleanup up
-    if (_parent == nullptr)
+    if (isRoot())
     {  // root
         for (auto* polyline : _plys)
         {
@@ -55,7 +55,7 @@ void GMSHPolygonTree::markSharedSegments()
         return;
     }
 
-    if (_parent == nullptr)
+    if (isRoot())
     {
         return;
     }
@@ -412,7 +412,7 @@ void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(
             ->writeSubPolygonsAsLineConstraints(line_offset, sfc_number, out);
     }
 
-    if (_parent != nullptr)
+    if (!isRoot())
     {
         const std::size_t n_pnts(_node_polygon->getNumberOfPoints());
         std::size_t first_pnt_id(_node_polygon->getPointID(0));

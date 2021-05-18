@@ -30,6 +30,11 @@ SimplePolygonTree::~SimplePolygonTree()
     }
 }
 
+bool SimplePolygonTree::isRoot() const
+{
+    return _parent == nullptr;
+}
+
 bool SimplePolygonTree::isPolygonInside(
     const SimplePolygonTree* polygon_hierarchy) const
 {
