@@ -207,6 +207,7 @@ if(OGS_USE_XDMF)
         set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
     endif()
 
+    set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf
         VERSION 3.0.0
