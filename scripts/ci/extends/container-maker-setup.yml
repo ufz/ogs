@@ -1,6 +1,6 @@
 .container-maker-setup:
   before_script:
-    - git submodule update --init ThirdParty/container-maker
+    - git submodule update --init --force ThirdParty/container-maker
     - cd ThirdParty/container-maker
     - rm -rf _out .venv
     - poetry install
