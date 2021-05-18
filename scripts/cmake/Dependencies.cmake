@@ -1,5 +1,19 @@
 set(CMAKE_FOLDER ThirdParty)
 
+# ccache
+if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_COMPILER_CACHE)
+    set(CCACHE_OPTIONS "CCACHE_SLOPPINESS=pch_defines,time_macros")
+    if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang|AppleClang")
+        list(APPEND CCACHE_OPTIONS "CCACHE_CPP2=true")
+    endif()
+    CPMAddPackage(
+        NAME Ccache.cmake
+        GITHUB_REPOSITORY TheLartians/Ccache.cmake
+        VERSION 1.2.2
+        OPTIONS "USE_CCACHE ON"
+    )
+endif()
+
 if(OGS_BUILD_TESTING)
     CPMAddPackage(
         NAME googletest
@@ -129,8 +143,8 @@ CPMFindPackage(
     NAME LibXml2
     GITHUB_REPOSITORY GNOME/libxml2
     VERSION ${ogs.minimum_version.libxml2}
-    GIT_TAG f93ca3e140a371b26366f747a408588c631e0fd1
-    OPTIONS "LIBXML2_WITH_TESTS OFF"
+    OPTIONS "BUILD_SHARED_LIBS OFF"
+            "LIBXML2_WITH_TESTS OFF"
             "LIBXML2_WITH_PROGRAMS OFF"
             "LIBXML2_WITH_ICONV OFF"
             "LIBXML2_WITH_ICU OFF"
@@ -142,6 +156,7 @@ CPMFindPackage(
 if(LibXml2_ADDED)
     add_library(LibXml2::LibXml2 ALIAS LibXml2)
     set(LIBXML2_INCLUDE_DIR ${LibXml2_SOURCE_DIR})
+    list(APPEND DISABLE_WARNINGS_TARGETS LibXml2)
 endif()
 
 CPMAddPackage(
@@ -192,6 +207,7 @@ if(OGS_USE_XDMF)
         set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
     endif()
 
+    set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf
         VERSION 3.0.0
@@ -361,6 +377,10 @@ else()
         list(APPEND VTK_OPTIONS "Module_${comp} ON")
     endforeach()
 
+    # Workaround for configuration error in [vtk]/CMake/vtkGroups.cmake:43
+    set(VTK_Group_Rendering OFF CACHE BOOL "")
+    set(VTK_Group_StandAlone OFF CACHE BOOL "")
+
     CPMAddPackage(
         NAME VTK
         GITHUB_REPOSITORY kitware/vtk
@@ -430,20 +450,6 @@ cpm_licenses_create_disclaimer_target(
     write-licenses "${PROJECT_BINARY_DIR}/third_party_licenses.txt"
     "${CPM_PACKAGES}"
 )
-
-# ccache
-if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_COMPILER_CACHE)
-    set(CCACHE_OPTIONS "CCACHE_SLOPPINESS=pch_defines,time_macros")
-    if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang|AppleClang")
-        list(APPEND CCACHE_OPTIONS "CCACHE_CPP2=true")
-    endif()
-    CPMAddPackage(
-        NAME Ccache.cmake
-        GITHUB_REPOSITORY TheLartians/Ccache.cmake
-        VERSION 1.2.2
-        OPTIONS "USE_CCACHE ON"
-    )
-endif()
 
 CPMAddPackage(
     NAME GroupSourcesByFolder.cmake
