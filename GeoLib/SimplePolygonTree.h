@@ -56,6 +56,8 @@ public:
      */
     const Polygon* getPolygon () const;
 
+    const SimplePolygonTree* parent() const;
+
     /** returns the number of children */
     std::size_t getNumberOfChildren() const { return _children.size(); }
 

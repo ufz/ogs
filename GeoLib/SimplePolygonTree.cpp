@@ -42,6 +42,11 @@ bool SimplePolygonTree::isPolygonInside(
         *(polygon_hierarchy->getPolygon()));
 }
 
+const SimplePolygonTree* SimplePolygonTree::parent() const
+{
+    return _parent;
+}
+
 void SimplePolygonTree::insertSimplePolygonTree(
     SimplePolygonTree* polygon_hierarchy)
 {

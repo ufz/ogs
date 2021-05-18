@@ -65,7 +65,7 @@ void GMSHPolygonTree::markSharedSegments()
         std::size_t const n_pnts(child->getPolygon()->getNumberOfPoints());
         for (std::size_t k(1); k < n_pnts; k++)
         {
-            if (GeoLib::containsEdge(*(_parent->getPolygon()),
+            if (GeoLib::containsEdge(*(parent()->getPolygon()),
                                      _node_polygon->getPointID(k - 1),
                                      _node_polygon->getPointID(k)))
             {
