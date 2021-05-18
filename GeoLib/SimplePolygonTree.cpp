@@ -38,8 +38,7 @@ bool SimplePolygonTree::isRoot() const
 bool SimplePolygonTree::isPolygonInside(
     const SimplePolygonTree* polygon_hierarchy) const
 {
-    return _node_polygon->isPolylineInPolygon(
-        *(polygon_hierarchy->getPolygon()));
+    return _node_polygon->isPolylineInPolygon(polygon_hierarchy->polygon());
 }
 
 const SimplePolygonTree* SimplePolygonTree::parent() const
@@ -50,13 +49,13 @@ const SimplePolygonTree* SimplePolygonTree::parent() const
 void SimplePolygonTree::insertSimplePolygonTree(
     SimplePolygonTree* polygon_hierarchy)
 {
-    const Polygon* polygon(polygon_hierarchy->getPolygon());
+    Polygon const& polygon = polygon_hierarchy->polygon();
     bool nfound(true);
     for (std::list<SimplePolygonTree*>::const_iterator it(_children.begin());
          it != _children.end() && nfound;
          ++it)
     {
-        if (((*it)->getPolygon())->isPolylineInPolygon(*(polygon)))
+        if ((*it)->polygon().isPolylineInPolygon(polygon))
         {
             (*it)->insertSimplePolygonTree(polygon_hierarchy);
             nfound = false;
@@ -69,9 +68,13 @@ void SimplePolygonTree::insertSimplePolygonTree(
     }
 }
 
-const Polygon* SimplePolygonTree::getPolygon() const
+Polygon& SimplePolygonTree::polygon()
 {
-    return _node_polygon;
+    return *_node_polygon;
+}
+Polygon const& SimplePolygonTree::polygon() const
+{
+    return *_node_polygon;
 }
 
 }  // end namespace GeoLib

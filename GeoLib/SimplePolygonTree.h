@@ -50,11 +50,8 @@ public:
      */
     void insertSimplePolygonTree(SimplePolygonTree* polygon_hierarchy);
 
-    /**
-     * get the polygon represented by the tree node
-     * @return the polygon
-     */
-    const Polygon* getPolygon () const;
+    Polygon const& polygon() const;
+    Polygon& polygon();
 
     const SimplePolygonTree* parent() const;
 
