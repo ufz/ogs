@@ -376,6 +376,10 @@ else()
         list(APPEND VTK_OPTIONS "Module_${comp} ON")
     endforeach()
 
+    # Workaround for configuration error in [vtk]/CMake/vtkGroups.cmake:43
+    set(VTK_Group_Rendering OFF CACHE BOOL "")
+    set(VTK_Group_StandAlone OFF CACHE BOOL "")
+
     CPMAddPackage(
         NAME VTK
         GITHUB_REPOSITORY kitware/vtk
