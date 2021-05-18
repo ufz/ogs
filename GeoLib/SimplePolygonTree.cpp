@@ -51,14 +51,13 @@ void SimplePolygonTree::insertSimplePolygonTree(
 {
     Polygon const& polygon = polygon_hierarchy->polygon();
     bool nfound(true);
-    for (std::list<SimplePolygonTree*>::const_iterator it(_children.begin());
-         it != _children.end() && nfound;
-         ++it)
+    for (auto* child : _children)
     {
-        if ((*it)->polygon().isPolylineInPolygon(polygon))
+        if (child->polygon().isPolylineInPolygon(polygon))
         {
-            (*it)->insertSimplePolygonTree(polygon_hierarchy);
+            child->insertSimplePolygonTree(polygon_hierarchy);
             nfound = false;
+            break;
         }
     }
     if (nfound)

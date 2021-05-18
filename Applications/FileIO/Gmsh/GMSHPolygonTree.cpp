@@ -60,7 +60,7 @@ void GMSHPolygonTree::markSharedSegments()
         return;
     }
 
-    for (auto& child : _children)
+    for (auto& child : *this)
     {
         std::size_t const n_pnts(child->polygon().getNumberOfPoints());
         for (std::size_t k(1); k < n_pnts; k++)
@@ -81,17 +81,14 @@ bool GMSHPolygonTree::insertStation(GeoLib::Point const* station)
     if (polygon().isPntInPolygon(*station))
     {
         // try to insert station into the child nodes
-        for (std::list<SimplePolygonTree*>::const_iterator it(
-                 _children.begin());
-             it != _children.end();
-             ++it)
+        for (auto* child : *this)
         {
-            if ((*it)->polygon().isPntInPolygon(*station))
+            if (child->polygon().isPntInPolygon(*station))
             {
-                bool rval(dynamic_cast<GMSHPolygonTree*>((*it))->insertStation(
+                bool rval(dynamic_cast<GMSHPolygonTree*>(child)->insertStation(
                     station));
                 // stop recursion if sub SimplePolygonTree is a leaf
-                if (rval && (*it)->getNumberOfChildren() == 0)
+                if (rval && child->getNumberOfChildren() == 0)
                 {
                     _stations.push_back(station);
                 }
@@ -115,9 +112,9 @@ void GMSHPolygonTree::insertPolyline(GeoLib::PolylineWithSegmentMarker* ply)
 
     // check if polyline segments are inside of the polygon, intersect the
     // polygon or are part of the boundary of the polygon
-    for (auto* polygon_tree : _children)
+    for (auto* child : *this)
     {
-        dynamic_cast<GMSHPolygonTree*>(polygon_tree)->insertPolyline(ply);
+        dynamic_cast<GMSHPolygonTree*>(child)->insertPolyline(ply);
     }
 
     // calculate possible intersection points between the node polygon and the
@@ -334,7 +331,7 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*>& gmsh_pnts) const
     }
 
     // walk through children
-    for (auto child : _children)
+    for (auto* child : *this)
     {
         dynamic_cast<GMSHPolygonTree*>(child)->createGMSHPoints(gmsh_pnts);
     }
@@ -405,7 +402,7 @@ void GMSHPolygonTree::writeLineConstraints(std::size_t& line_offset,
 void GMSHPolygonTree::writeSubPolygonsAsLineConstraints(
     std::size_t& line_offset, std::size_t sfc_number, std::ostream& out) const
 {
-    for (auto child : _children)
+    for (auto* child : *this)
     {
         dynamic_cast<GMSHPolygonTree*>(child)
             ->writeSubPolygonsAsLineConstraints(line_offset, sfc_number, out);
@@ -500,10 +497,9 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t& pnt_id_offset,
 void GMSHPolygonTree::getPointsFromSubPolygons(
     std::vector<GeoLib::Point const*>& pnts) const
 {
-    for (std::list<SimplePolygonTree*>::const_iterator it(_children.begin());
-         it != _children.end(); ++it)
+    for (auto const* child : *this)
     {
-        dynamic_cast<GMSHPolygonTree*>((*it))->getPointsFromSubPolygons(pnts);
+        dynamic_cast<GMSHPolygonTree*>(child)->getPointsFromSubPolygons(pnts);
     }
 }
 
@@ -516,10 +512,9 @@ void GMSHPolygonTree::getStationsInsideSubPolygons(
         stations.push_back(_stations[k]);
     }
 
-    for (std::list<SimplePolygonTree*>::const_iterator it(_children.begin());
-         it != _children.end(); ++it)
+    for (auto const* child : *this)
     {
-        dynamic_cast<GMSHPolygonTree*>((*it))->getStationsInsideSubPolygons(
+        dynamic_cast<GMSHPolygonTree*>(child)->getStationsInsideSubPolygons(
             stations);
     }
 }

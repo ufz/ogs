@@ -73,6 +73,20 @@ protected:
      * in the _node_polygon
      */
     std::list<SimplePolygonTree*> _children;
+
+public:
+    decltype(_children)::iterator begin() { return _children.begin(); }
+    decltype(_children)::iterator end() { return _children.end(); }
+
+    decltype(_children)::const_iterator begin() const
+    {
+        return _children.begin();
+    }
+    decltype(_children)::const_iterator end() const
+    {
+        return _children.end();
+    }
+
 };
 
 /**
