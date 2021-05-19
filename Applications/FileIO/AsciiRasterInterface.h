@@ -16,7 +16,6 @@
 #include <fstream>
 #include <optional>
 #include <string>
-#include <tuple>
 #include <vector>
 
 #include "GeoLib/Raster.h"
@@ -41,17 +40,6 @@ public:
 
     /// Writes an Esri asc-file
     static void writeRasterAsASC(GeoLib::Raster const& raster, std::string const& file_name);
-
-
-private:
-    /// Reads the header of a Esri asc-file.
-    /// If the return value is empty, reading was not successful.
-    static std::optional<GeoLib::RasterHeader> readASCHeader(std::ifstream& in);
-
-    /// Reads the header of a Surfer grd-file with minimum and maximum values.
-    /// If the return value is empty, reading was not successful.
-    static std::optional<std::tuple<GeoLib::RasterHeader, double, double>>
-    readSurferHeader(std::ifstream& in);
 };
 
 /// Reads a vector of rasters given by file names. On error nothing is returned,
