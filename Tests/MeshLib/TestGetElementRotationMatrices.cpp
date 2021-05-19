@@ -131,3 +131,82 @@ TEST(MeshLib, GetElementRotationMatrices3DMesh)
                   1.e-15);
     }
 }
+
+TEST(MeshLib, GetElementRotationMatrices2DMesh)
+{
+    // The memory of the nodes are allocated by new operator, and it is released
+    // in the destructor of MeshLib::Mesh.
+
+    // Construct a 2D mesh, which contains an inclined line element.
+    std::vector<MeshLib::Node*> nodes(4);
+    nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
+    nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0, 1);
+    nodes[2] = new MeshLib::Node(1.0, 1.0, 0.0, 2);
+    nodes[3] = new MeshLib::Node(0.0, 1.0, 0.0, 3);
+
+    std::vector<MeshLib::Element*> elements;
+
+    // Two triangle elements:
+    std::array<MeshLib::Node*, 3> tri_element_nodes{nodes[0], nodes[1],
+                                                    nodes[2]};
+    elements.push_back(new MeshLib::Tri(tri_element_nodes));
+    tri_element_nodes[0] = nodes[0];
+    tri_element_nodes[1] = nodes[2];
+    tri_element_nodes[2] = nodes[3];
+    elements.push_back(new MeshLib::Tri(tri_element_nodes));
+
+    // One inclined line element:
+    std::array<MeshLib::Node*, 2> line_element_nodes{nodes[0], nodes[2]};
+    elements.push_back(new MeshLib::Line(line_element_nodes));
+
+    std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
+    meshes.push_back(
+        std::make_unique<MeshLib::Mesh>("a_mesh", nodes, elements));
+
+    int const space_dimension = MeshLib::getSpaceDimension(nodes);
+    auto const element_rotation_matrices = MeshLib::getElementRotationMatrices(
+        space_dimension, meshes[0]->getDimension(), meshes[0]->getElements());
+
+    // First and second elements, the triangle elements have identity matrix:
+    EXPECT_EQ(4, element_rotation_matrices[0].size());
+    EXPECT_EQ(4, element_rotation_matrices[1].size());
+
+    Eigen::VectorXd b(2);
+    b[0] = 0.0;
+    b[1] = 1.0;
+
+    // Third element, the inclined line element:
+    // Projection test:
+    Eigen::VectorXd const b_local_1D =
+        element_rotation_matrices[2].transpose() * b;
+    EXPECT_EQ(elements[2]->getDimension(), b_local_1D.size());
+
+    double const* const x_0 = nodes[0]->getCoords();
+    double const* const x_2 = nodes[2]->getCoords();
+    // b_local_1D = |b| (x_2-x_0) * b/(|(x_2-x_0)| |b|)
+    double dx[2];
+    for (int i = 0; i < 2; i++)
+    {
+        dx[i] = x_2[i] - x_0[i];
+    }
+
+    double const dx_norm = std::sqrt(dx[0] * dx[0] + dx[1] * dx[1]);
+    double const expected_b_local_1D = dx[1] / dx_norm;
+
+    EXPECT_LE(std::fabs(expected_b_local_1D - b_local_1D[0]), 1.e-16);
+
+    // Test of rotation of a local vector to the global system
+    Eigen::VectorXd const local_1D_to_global =
+        element_rotation_matrices[2] * b_local_1D;
+    EXPECT_EQ(meshes[0]->getDimension(), local_1D_to_global.size());
+
+    double const local_1D_to_global_norm =
+        std::sqrt(local_1D_to_global[0] * local_1D_to_global[0] +
+                  local_1D_to_global[1] * local_1D_to_global[1]);
+    for (int i = 0; i < 2; i++)
+    {
+        EXPECT_LE(std::fabs(dx[i] / dx_norm -
+                            local_1D_to_global[i] / local_1D_to_global_norm),
+                  1.e-15);
+    }
+}
