@@ -15,4 +15,16 @@ ogs_add_executable(
 )
 target_link_libraries(partmesh GitInfoLib MeshLib tclap)
 add_dependencies(partmesh mpmetis)
+
+ogs_add_executable(
+    binaryToVTU BinaryToVTU.cpp NodeWiseMeshPartitioner.cpp
+)
+target_link_libraries(
+    binaryToVTU
+    GitInfoLib
+    MeshLib
+    tclap
+    $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+)
+
 install(TARGETS partmesh RUNTIME DESTINATION bin)
