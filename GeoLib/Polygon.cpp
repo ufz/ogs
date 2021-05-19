@@ -401,13 +401,8 @@ void Polygon::ensureCCWOrientation()
     }
 }
 
-#if __GNUC__ <= 4 && (__GNUC_MINOR__ < 9)
-void Polygon::splitPolygonAtIntersection(
-    const std::list<Polygon*>::iterator& polygon_it)
-#else
 void Polygon::splitPolygonAtIntersection(
     const std::list<Polygon*>::const_iterator& polygon_it)
-#endif
 {
     GeoLib::Polyline::SegmentIterator seg_it0((*polygon_it)->begin());
     GeoLib::Polyline::SegmentIterator seg_it1((*polygon_it)->begin());
