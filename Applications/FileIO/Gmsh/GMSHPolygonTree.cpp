@@ -50,11 +50,6 @@ GMSHPolygonTree::~GMSHPolygonTree()
 
 void GMSHPolygonTree::markSharedSegments()
 {
-    if (_children.empty())
-    {
-        return;
-    }
-
     if (isRoot())
     {
         return;
