@@ -6,4 +6,6 @@ target_link_libraries(
     SteadyStateDiffusion PUBLIC ProcessLib PRIVATE ParameterLib
 )
 
-include(Tests.cmake)
+if(OGS_BUILD_TESTING)
+    include(Tests.cmake)
+endif()
