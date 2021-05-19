@@ -88,8 +88,10 @@ public:
     void writeAdditionalPointData(std::size_t & pnt_id_offset, std::size_t sfc_number, std::ostream& out) const;
 
 private:
-    void getPointsFromSubPolygons(std::vector<GeoLib::Point const*>& pnts);
-    void getStationsInsideSubPolygons(std::vector<GeoLib::Point const*>& stations);
+    void getPointsFromSubPolygons(
+        std::vector<GeoLib::Point const*>& pnts) const;
+    void getStationsInsideSubPolygons(
+        std::vector<GeoLib::Point const*>& stations) const;
     void checkIntersectionsSegmentExistingPolylines(
         GeoLib::PolylineWithSegmentMarker* ply,
         GeoLib::Polyline::SegmentIterator const& seg_it);

@@ -501,7 +501,7 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t& pnt_id_offset,
 }
 
 void GMSHPolygonTree::getPointsFromSubPolygons(
-    std::vector<GeoLib::Point const*>& pnts)
+    std::vector<GeoLib::Point const*>& pnts) const
 {
     for (std::list<SimplePolygonTree*>::const_iterator it(_children.begin());
          it != _children.end(); ++it)
@@ -511,7 +511,7 @@ void GMSHPolygonTree::getPointsFromSubPolygons(
 }
 
 void GMSHPolygonTree::getStationsInsideSubPolygons(
-    std::vector<GeoLib::Point const*>& stations)
+    std::vector<GeoLib::Point const*>& stations) const
 {
     const std::size_t n_stations(_stations.size());
     for (std::size_t k(0); k < n_stations; k++)
