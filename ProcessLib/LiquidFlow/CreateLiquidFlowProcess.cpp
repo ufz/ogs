@@ -17,6 +17,8 @@
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/PhysicalConstant.h"
+#include "MeshLib/Utils/GetElementRotationMatrices.h"
+#include "MeshLib/Utils/GetSpaceDimension.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -83,12 +85,14 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
-    if (b.size() != mesh.getDimension())
+    int const mesh_space_dimension =
+        MeshLib::getSpaceDimension(mesh.getNodes());
+    if (static_cast<int>(b.size()) != mesh_space_dimension)
     {
         OGS_FATAL(
-            "specific body force (gravity vector) has {:d} components, mesh "
-            "dimension is {:d}",
-            b.size(), mesh.getDimension());
+            "specific body force (gravity vector) has {:d} components, but the "
+            "space dimension is {:d}.",
+            b.size(), mesh_space_dimension);
     }
 
     Eigen::VectorXd specific_body_force(b.size());
@@ -115,8 +119,11 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
-    LiquidFlowData process_data{std::move(media_map),
-                                std::move(specific_body_force), has_gravity};
+    LiquidFlowData process_data{
+        std::move(media_map),
+        MeshLib::getElementRotationMatrices(
+            mesh_space_dimension, mesh.getDimension(), mesh.getElements()),
+        mesh_space_dimension, std::move(specific_body_force), has_gravity};
 
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

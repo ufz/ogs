@@ -26,6 +26,12 @@ struct LiquidFlowData final
 {
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map;
+
+    /// A vector of the rotation matrices for all elements.
+    std::vector<Eigen::MatrixXd> const element_rotation_matrices;
+
+    int const mesh_space_dimension;
+
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
 };
