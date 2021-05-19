@@ -58,21 +58,22 @@ public:
     /** returns the number of children */
     std::size_t getNumberOfChildren() const { return _children.size(); }
 
-protected:
+private:
     /**
      * the polygon this node stands for
      */
     Polygon* _node_polygon;
-    /**
-     * the polygon represented by this node is contained in the
-     * polygon represented by the parent node in the tree
-     */
-    SimplePolygonTree* _parent;
+
     /**
      * list of polygons (represented by SimplePolygonTree nodes) contained
      * in the _node_polygon
      */
     std::list<SimplePolygonTree*> _children;
+    /**
+     * the polygon represented by this node is contained in the
+     * polygon represented by the parent node in the tree
+     */
+    SimplePolygonTree* _parent;
 
 public:
     decltype(_children)::iterator begin() { return _children.begin(); }
