@@ -2,7 +2,7 @@
 title = "A test with nodal source term"
 date = 2021-04-14T15:31:38+02:00
 weight = 151
-project = "HydroMechanics/HydroMechanics/NodalSourceTerm/nodal_source_test.prj"
+project = "HydroMechanics/NodalSourceTerm/nodal_source_test.prj"
 author = "Wenqing Wang"
 
 [menu]
