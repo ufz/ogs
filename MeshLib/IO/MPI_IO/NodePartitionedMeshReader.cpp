@@ -92,7 +92,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
             fname_new);
     }
 
-    INFO("Reading binary mesh file ...");
+    INFO("Reading corresponding part of mesh data from binary file {:s} ...",
+         file_name_base);
     mesh = readMesh(file_name_base);
 
     INFO("[time] Reading the mesh took {:f} s.", timer.elapsed());
