@@ -134,27 +134,31 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(
         return nullptr;
     }
 
-    if (auto const header = readASCHeader(in))
+    auto const header = readASCHeader(in);
+    if (!header)
     {
-        std::vector<double> values(header->n_cols * header->n_rows);
-        std::string s;
-        // read the data into the double-array
-        for (std::size_t j(0); j < header->n_rows; ++j)
-        {
-            const std::size_t idx((header->n_rows - j - 1) * header->n_cols);
-            for (std::size_t i(0); i < header->n_cols; ++i)
-            {
-                in >> s;
-                values[idx + i] = strtod(
-                    BaseLib::replaceString(",", ".", s).c_str(), nullptr);
-            }
-        }
-        in.close();
-        return new GeoLib::Raster(*header, values.begin(), values.end());
+        WARN(
+            "Raster::getRasterFromASCFile(): Could not read header of file "
+            "{:s}",
+            fname);
+        return nullptr;
     }
-    WARN("Raster::getRasterFromASCFile(): Could not read header of file {:s}",
-         fname);
-    return nullptr;
+
+    std::vector<double> values(header->n_cols * header->n_rows);
+    std::string s;
+    // read the data into the double-array
+    for (std::size_t j(0); j < header->n_rows; ++j)
+    {
+        const std::size_t idx((header->n_rows - j - 1) * header->n_cols);
+        for (std::size_t i(0); i < header->n_cols; ++i)
+        {
+            in >> s;
+            values[idx + i] =
+                strtod(BaseLib::replaceString(",", ".", s).c_str(), nullptr);
+        }
+    }
+
+    return new GeoLib::Raster(*header, values.begin(), values.end());
 }
 
 /// Reads the header of a Surfer grd-file with minimum and maximum values.
@@ -212,30 +216,33 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
         return nullptr;
     }
 
-    if (auto const optional_header = readSurferHeader(in))
+    auto const optional_header = readSurferHeader(in);
+    if (!optional_header)
     {
-        auto const [header, min, max] = *optional_header;
-        const double no_data_val(min - 1);
-        std::vector<double> values(header.n_cols * header.n_rows);
-        std::string s;
-        // read the data into the double-array
-        for (std::size_t j(0); j < header.n_rows; ++j)
-        {
-            const std::size_t idx(j * header.n_cols);
-            for (std::size_t i(0); i < header.n_cols; ++i)
-            {
-                in >> s;
-                const double val(strtod(
-                    BaseLib::replaceString(",", ".", s).c_str(), nullptr));
-                values[idx + i] = (val > max || val < min) ? no_data_val : val;
-            }
-        }
-        in.close();
-        return new GeoLib::Raster(header, values.begin(), values.end());
+        ERR("Raster::getRasterFromASCFile() - could not read header of file "
+            "{:s}",
+            fname);
+        return nullptr;
     }
-    ERR("Raster::getRasterFromASCFile() - could not read header of file {:s}",
-        fname);
-    return nullptr;
+
+    auto const [header, min, max] = *optional_header;
+    const double no_data_val(min - 1);
+    std::vector<double> values(header.n_cols * header.n_rows);
+    std::string s;
+    // read the data into the double-array
+    for (std::size_t j(0); j < header.n_rows; ++j)
+    {
+        const std::size_t idx(j * header.n_cols);
+        for (std::size_t i(0); i < header.n_cols; ++i)
+        {
+            in >> s;
+            const double val(
+                strtod(BaseLib::replaceString(",", ".", s).c_str(), nullptr));
+            values[idx + i] = (val > max || val < min) ? no_data_val : val;
+        }
+    }
+
+    return new GeoLib::Raster(header, values.begin(), values.end());
 }
 
 void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster,
