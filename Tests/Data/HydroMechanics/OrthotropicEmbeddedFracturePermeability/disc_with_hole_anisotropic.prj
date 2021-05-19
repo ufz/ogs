@@ -79,7 +79,7 @@
                     <name>permeability</name>
                     <type>OrthotropicEmbeddedFracturePermeability</type>
                     <intrinsic_permeability>k</intrinsic_permeability>
-                    <mean_frac_distances>1e-4 1e-4 1e-4</mean_frac_distances>
+                    <mean_frac_distances>1e-2 1e-2 1e-2</mean_frac_distances>
                     <threshold_strains>1e-5 1e-5 1e-5</threshold_strains>
                     <fracture_normals> 1 0 0    0 1 0 </fracture_normals>
                     <fracture_rotation_xy>phi</fracture_rotation_xy>
