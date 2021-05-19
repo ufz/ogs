@@ -34,6 +34,10 @@ container:
       --cvode --ccache
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
       --gui
+    - |
+      for sif in _out/images/*.sif; do
+        singularity exec $sif ogs --version
+      done
   artifacts:
     name: container
     paths:
