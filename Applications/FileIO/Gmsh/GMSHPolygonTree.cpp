@@ -499,7 +499,8 @@ void GMSHPolygonTree::getPointsFromSubPolygons(
 {
     for (auto const* child : *this)
     {
-        dynamic_cast<GMSHPolygonTree*>(child)->getPointsFromSubPolygons(pnts);
+        dynamic_cast<GMSHPolygonTree const*>(child)->getPointsFromSubPolygons(
+            pnts);
     }
 }
 
@@ -514,8 +515,8 @@ void GMSHPolygonTree::getStationsInsideSubPolygons(
 
     for (auto const* child : *this)
     {
-        dynamic_cast<GMSHPolygonTree*>(child)->getStationsInsideSubPolygons(
-            stations);
+        dynamic_cast<GMSHPolygonTree const*>(child)
+            ->getStationsInsideSubPolygons(stations);
     }
 }
 
