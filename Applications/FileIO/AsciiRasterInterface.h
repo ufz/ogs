@@ -16,6 +16,7 @@
 #include <fstream>
 #include <optional>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "GeoLib/Raster.h"
@@ -47,9 +48,10 @@ private:
     /// If the return value is empty, reading was not successful.
     static std::optional<GeoLib::RasterHeader> readASCHeader(std::ifstream& in);
 
-    /// Reads the header of a Surfer grd-file.
-    static bool readSurferHeader(std::ifstream &in, GeoLib::RasterHeader &header,
-                                 double &min, double &max);
+    /// Reads the header of a Surfer grd-file with minimum and maximum values.
+    /// If the return value is empty, reading was not successful.
+    static std::optional<std::tuple<GeoLib::RasterHeader, double, double>>
+    readSurferHeader(std::ifstream& in);
 };
 
 /// Reads a vector of rasters given by file names. On error nothing is returned,

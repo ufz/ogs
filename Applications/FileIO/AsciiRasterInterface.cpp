@@ -168,13 +168,9 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
         return nullptr;
     }
 
-    // header information
-    GeoLib::RasterHeader header;
-    double min(0.0);
-    double max(0.0);
-
-    if (readSurferHeader(in, header, min, max))
+    if (auto const optional_header = readSurferHeader(in))
     {
+        auto const [header, min, max] = *optional_header;
         const double no_data_val(min - 1);
         std::vector<double> values(header.n_cols * header.n_rows);
         std::string s;
@@ -191,17 +187,15 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
             }
         }
         in.close();
-        return new GeoLib::Raster(std::move(header), values.begin(),
-                                  values.end());
+        return new GeoLib::Raster(header, values.begin(), values.end());
     }
     ERR("Raster::getRasterFromASCFile() - could not read header of file {:s}",
         fname);
     return nullptr;
 }
 
-bool AsciiRasterInterface::readSurferHeader(std::ifstream& in,
-                                            GeoLib::RasterHeader& header,
-                                            double& min, double& max)
+std::optional<std::tuple<GeoLib::RasterHeader, double, double>>
+AsciiRasterInterface::readSurferHeader(std::ifstream& in)
 {
     std::string tag;
 
@@ -210,10 +204,12 @@ bool AsciiRasterInterface::readSurferHeader(std::ifstream& in,
     if (tag != "DSAA")
     {
         ERR("Error in readSurferHeader() - No Surfer file.");
-        return false;
+        return {};
     }
 
+    GeoLib::RasterHeader header;
     in >> header.n_cols >> header.n_rows;
+    double min, max;
     in >> min >> max;
     header.origin[0] = min;
     header.cell_size = (max - min) / static_cast<double>(header.n_cols);
@@ -230,13 +226,13 @@ bool AsciiRasterInterface::readSurferHeader(std::ifstream& in,
     else
     {
         ERR("Error in readSurferHeader() - Anisotropic cellsize detected.");
-        return false;
+        return {};
     }
     header.n_depth = 1;
     header.no_data = min - 1;
     in >> min >> max;
 
-    return true;
+    return {{header, min, max}};
 }
 
 void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster,
