@@ -210,3 +210,75 @@ TEST(MeshLib, GetElementRotationMatrices2DMesh)
                   1.e-15);
     }
 }
+
+TEST(MeshLib, GetElementRotationMatricesMeshWithoutInclinedElement)
+{
+    // The memory of the nodes are allocated by new operator, and it is released
+    // in the destructor of MeshLib::Mesh.
+
+    // Test GetElementRotationMatricesMesh for the meshes without
+    // any inclined elements, for which GetElementRotationMatricesMesh returns
+    // an empty vector.
+
+    // A 2D mesh with two triangle elements:
+    {
+        std::vector<MeshLib::Node*> nodes(4);
+        nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
+        nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0, 1);
+        nodes[2] = new MeshLib::Node(1.0, 1.0, 0.0, 2);
+        nodes[3] = new MeshLib::Node(0.0, 1.0, 0.0, 3);
+
+        std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
+
+        std::vector<MeshLib::Element*> elements;
+        std::array<MeshLib::Node*, 3> tri_element_nodes{nodes[0], nodes[1],
+                                                        nodes[2]};
+        elements.push_back(new MeshLib::Tri(tri_element_nodes));
+        tri_element_nodes[0] = nodes[0];
+        tri_element_nodes[1] = nodes[2];
+        tri_element_nodes[2] = nodes[3];
+        elements.push_back(new MeshLib::Tri(tri_element_nodes));
+
+        meshes.push_back(
+            std::make_unique<MeshLib::Mesh>("2D_mesh", nodes, elements));
+        int const space_dimension = MeshLib::getSpaceDimension(nodes);
+        auto const element_rotation_matrices_2D_mesh =
+            MeshLib::getElementRotationMatrices(space_dimension,
+                                                meshes[0]->getDimension(),
+                                                meshes[0]->getElements());
+
+        EXPECT_EQ(elements.size(), element_rotation_matrices_2D_mesh.size());
+    }
+
+    // A 3D mesh with two tedrahedral elements:
+    std::vector<MeshLib::Node*> nodes(5);
+    nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
+    nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0, 1);
+    nodes[2] = new MeshLib::Node(1.0, 1.0, 0.0, 2);
+    nodes[3] = new MeshLib::Node(0.0, 1.0, 0.0, 3);
+    nodes[4] = new MeshLib::Node(0.5, 0.5, 1.0, 4);
+
+    std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
+    std::vector<MeshLib::Element*> elements;
+
+    std::array<MeshLib::Node*, 4> tet_element_nodes{nodes[0], nodes[1],
+                                                    nodes[3], nodes[4]};
+
+    elements.push_back(new MeshLib::Tet(tet_element_nodes));
+    tet_element_nodes[0] = nodes[1];
+    tet_element_nodes[1] = nodes[2];
+    tet_element_nodes[2] = nodes[3];
+    tet_element_nodes[3] = nodes[4];
+    elements.push_back(new MeshLib::Tet(tet_element_nodes));
+
+    meshes.push_back(
+        std::make_unique<MeshLib::Mesh>("3D_mesh", nodes, elements));
+
+    int const space_dimension = MeshLib::getSpaceDimension(nodes);
+    auto const element_rotation_matrices_3D_mesh =
+        MeshLib::getElementRotationMatrices(space_dimension,
+                                            meshes[0]->getDimension(),
+                                            meshes[0]->getElements());
+
+    EXPECT_EQ(elements.size(), element_rotation_matrices_3D_mesh.size());
+}
