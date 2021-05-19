@@ -44,7 +44,8 @@ public:
 
 private:
     /// Reads the header of a Esri asc-file.
-    static bool readASCHeader(std::ifstream &in, GeoLib::RasterHeader &header);
+    /// If the return value is empty, reading was not successful.
+    static std::optional<GeoLib::RasterHeader> readASCHeader(std::ifstream& in);
 
     /// Reads the header of a Surfer grd-file.
     static bool readSurferHeader(std::ifstream &in, GeoLib::RasterHeader &header,

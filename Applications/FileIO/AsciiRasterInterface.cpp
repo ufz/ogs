@@ -49,17 +49,15 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(
         return nullptr;
     }
 
-    // header information
-    GeoLib::RasterHeader header;
-    if (readASCHeader(in, header))
+    if (auto const header = readASCHeader(in))
     {
-        std::vector<double> values(header.n_cols * header.n_rows);
+        std::vector<double> values(header->n_cols * header->n_rows);
         std::string s;
         // read the data into the double-array
-        for (std::size_t j(0); j < header.n_rows; ++j)
+        for (std::size_t j(0); j < header->n_rows; ++j)
         {
-            const std::size_t idx((header.n_rows - j - 1) * header.n_cols);
-            for (std::size_t i(0); i < header.n_cols; ++i)
+            const std::size_t idx((header->n_rows - j - 1) * header->n_cols);
+            for (std::size_t i(0); i < header->n_cols; ++i)
             {
                 in >> s;
                 values[idx + i] = strtod(
@@ -67,17 +65,18 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromASCFile(
             }
         }
         in.close();
-        return new GeoLib::Raster(std::move(header), values.begin(),
-                                  values.end());
+        return new GeoLib::Raster(*header, values.begin(), values.end());
     }
     WARN("Raster::getRasterFromASCFile(): Could not read header of file {:s}",
          fname);
     return nullptr;
 }
 
-bool AsciiRasterInterface::readASCHeader(std::ifstream& in,
-                                         GeoLib::RasterHeader& header)
+std::optional<GeoLib::RasterHeader> AsciiRasterInterface::readASCHeader(
+    std::ifstream& in)
 {
+    GeoLib::RasterHeader header;
+
     std::string tag;
     std::string value;
 
@@ -89,7 +88,7 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream& in,
     }
     else
     {
-        return false;
+        return {};
     }
 
     in >> tag;
@@ -100,7 +99,7 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream& in,
     }
     else
     {
-        return false;
+        return {};
     }
 
     header.n_depth = 1;
@@ -114,7 +113,7 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream& in,
     }
     else
     {
-        return false;
+        return {};
     }
 
     in >> tag;
@@ -126,7 +125,7 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream& in,
     }
     else
     {
-        return false;
+        return {};
     }
     header.origin[2] = 0;
 
@@ -139,7 +138,7 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream& in,
     }
     else
     {
-        return false;
+        return {};
     }
 
     in >> tag;
@@ -151,10 +150,10 @@ bool AsciiRasterInterface::readASCHeader(std::ifstream& in,
     }
     else
     {
-        return false;
+        return {};
     }
 
-    return true;
+    return header;
 }
 
 GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
