@@ -602,3 +602,15 @@ AddTest(
     cube_1x1x1_hex_1e3_1.vtu cube_1x1x1_hex_1e3_1.vtu 1e-16
     cube_1x1x1_hex_1e3_2.vtu cube_1x1x1_hex_1e3_2.vtu 1e-16
 )
+
+AddTest(
+    NAME geometryToGmshGeo
+    PATH MeshGeoToolsLib/geometryToGmshGeo/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/geometryToGmshGeo
+    EXECUTABLE geometryToGmshGeo
+    EXECUTABLE_ARGS -i square_1x1.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1.geo
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    DIFF_DATA
+    square_1x1.geo
+)
