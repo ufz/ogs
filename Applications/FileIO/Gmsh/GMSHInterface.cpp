@@ -171,6 +171,10 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
             new GeoLib::PolygonWithSegmentMarker(*polyline), nullptr, _geo_objs,
             _gmsh_geo_name, *_mesh_density_strategy));
     }
+    if (_polygon_tree_list.empty())
+    {
+        OGS_FATAL("GMSHInterface::writeGMSHInputFile(): no polygons found.");
+    }
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
         "detected {:d} polygons.",
