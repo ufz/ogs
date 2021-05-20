@@ -10,6 +10,7 @@ set(TOOLS
     identifySubdomains
     IntegrateBoreholesIntoMesh
     Raster2Mesh
+    geometryToGmshGeo
 )
 
 if(OGS_BUILD_GUI)
