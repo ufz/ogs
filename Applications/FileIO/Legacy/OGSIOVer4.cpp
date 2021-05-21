@@ -29,7 +29,6 @@
 #include "GeoLib/PointVec.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/Polyline.h"
-#include "GeoLib/SimplePolygonTree.h"
 #include "GeoLib/Surface.h"
 #include "GeoLib/Triangle.h"
 

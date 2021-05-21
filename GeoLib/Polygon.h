@@ -129,13 +129,9 @@ private:
 
     void ensureCCWOrientation ();
 
-#if __GNUC__ <= 4 && (__GNUC_MINOR__ < 9)
-    void splitPolygonAtIntersection(
-        const std::list<Polygon*>::iterator& polygon_it);
-#else
     void splitPolygonAtIntersection(
         const std::list<Polygon*>::const_iterator& polygon_it);
-#endif
+
     void splitPolygonAtPoint (const std::list<Polygon*>::iterator& polygon_it);
     std::list<Polygon*> _simple_polygon_list;
     AABB _aabb;

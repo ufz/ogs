@@ -58,7 +58,7 @@ void LinearEditDialog::on_comboBox_currentIndexChanged(int index)
         for (std::size_t i = 0; i < nRows; i++)
         {
             tableWidget->item(i, 0)->setText(
-                QString::number(_line.getPoint(i)->getCoords()[2]));
+                QString::number((*_line.getPoint(i))[2]));
         }
     }
 }

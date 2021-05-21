@@ -55,9 +55,8 @@ void VtkPointsSource::PrintSelf(ostream& os, vtkIndent indent)
     int i = 0;
     for (auto point : *_points)
     {
-        const double* coords = point->getCoords();
-        os << indent << "Point " << i << " (" << coords[0] << ", " << coords[1]
-           << ", " << coords[2] << ")\n";
+        os << indent << "Point " << i << " (" << (*point)[0] << ", "
+           << (*point)[1] << ", " << (*point)[2] << ")\n";
         i++;
     }
 }

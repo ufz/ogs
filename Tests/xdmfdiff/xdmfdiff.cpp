@@ -13,7 +13,6 @@
 #include <XdmfGridCollection.hpp>
 #include <XdmfReader.hpp>
 #include <XdmfUnstructuredGrid.hpp>
-#include <boost/iterator/zip_iterator.hpp>
 #include <boost/range.hpp>
 #include <cmath>
 #include <cstdlib>
@@ -25,17 +24,6 @@
 #include <tuple>
 
 #include "InfoLib/GitInfo.h"
-// See https://stackoverflow.com/a/8513803/2706707
-template <typename... Containers>
-auto zip(Containers&&... containers) -> boost::iterator_range<
-    boost::zip_iterator<decltype(boost::make_tuple(std::begin(containers)...))>>
-{
-    auto zip_begin =
-        boost::make_zip_iterator(boost::make_tuple(std::begin(containers)...));
-    auto zip_end =
-        boost::make_zip_iterator(boost::make_tuple(std::end(containers)...));
-    return boost::make_iterator_range(zip_begin, zip_end);
-}
 
 struct Args
 {
