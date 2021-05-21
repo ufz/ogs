@@ -40,15 +40,6 @@ public:
 
     /// Writes an Esri asc-file
     static void writeRasterAsASC(GeoLib::Raster const& raster, std::string const& file_name);
-
-
-private:
-    /// Reads the header of a Esri asc-file.
-    static bool readASCHeader(std::ifstream &in, GeoLib::RasterHeader &header);
-
-    /// Reads the header of a Surfer grd-file.
-    static bool readSurferHeader(std::ifstream &in, GeoLib::RasterHeader &header,
-                                 double &min, double &max);
 };
 
 /// Reads a vector of rasters given by file names. On error nothing is returned,
