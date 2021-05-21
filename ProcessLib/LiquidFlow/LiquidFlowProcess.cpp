@@ -55,15 +55,17 @@ void LiquidFlowProcess::initializeConcreteProcess(
 {
     const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    int const mesh_space_dimension = _process_data.mesh_space_dimension;
     ProcessLib::createLocalAssemblers<LiquidFlowLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
+        mesh_space_dimension, mesh.getElements(), dof_table,
         pv.getShapeFunctionOrder(), _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
         makeExtrapolator(
-            mesh.getDimension(), getExtrapolator(), _local_assemblers,
+            mesh_space_dimension, getExtrapolator(), _local_assemblers,
             &LiquidFlowLocalAssemblerInterface::getIntPtDarcyVelocity));
 }
 
