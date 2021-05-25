@@ -1,7 +1,7 @@
 cppcheck:
   stage: check
   image: $CONTAINER_GCC_IMAGE
-  needs: ["pre commit", meta]
+  needs: [ ci_images, meta ]
   before_script:
     - mkdir -p build
     - cd build

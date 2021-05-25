@@ -4,7 +4,7 @@ build linux:
     - .template-build-linux
     - .test-artifacts
   tags: [ docker ]
-  needs: [meta, "pre commit"]
+  needs: [meta, ci_images]
   timeout: 2h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
@@ -24,7 +24,7 @@ linux ctest large:
   extends:
     - .template-build-linux
   tags: [ docker, envinf2 ]
-  needs: [meta, "pre commit"]
+  needs: [meta, ci_images]
   rules:
     - when: manual
       allow_failure: true
@@ -44,7 +44,7 @@ build linux (no unity):
     - .template-build-linux
     - .test-artifacts
   tags: [ docker ]
-  needs: [meta, "pre commit"]
+  needs: [meta, ci_images]
   timeout: 1h
   variables:
     BUILD_DIR: "no-unity"
@@ -63,7 +63,7 @@ build linux (no deps, no procs):
   image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
   tags: [ docker ]
-  needs: [meta, "pre commit"]
+  needs: [ meta, ci_images ]
   timeout: 1h
   variables:
     BUILD_TESTS: "false"

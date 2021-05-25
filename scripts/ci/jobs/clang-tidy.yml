@@ -2,12 +2,11 @@ clang tidy:
   stage: check
   extends:
     - .rules-manual
-  needs: ["pre commit"]
+  needs: [ ci_images ]
   variables:
     BUILD_DIR: "../build/tidy"
     CMAKE_ARGS: "-DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DCMAKE_CXX_CLANG_TIDY=clang-tidy-9"
-  image:
-    name: $CONTAINER_CLANG_IMAGE
+  image: $CONTAINER_CLANG_IMAGE
   script:
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR

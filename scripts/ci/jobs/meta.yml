@@ -1,24 +1,10 @@
 meta:
   stage: .pre
   tags: [shell]
-  rules:
-    - if: '$CI_PROJECT_NAMESPACE != "ogs"'
-      changes:
-      - ThirdParty/container-maker
-      - scripts/ci/jobs/build_image.yml
-      variables:
-        OVERWRITE_CONTAINER: "true"
-    - when: always
   variables:
     GIT_DEPTH: 1000
   script:
     - echo "OGS_VERSION=${CI_COMMIT_TAG:-`git describe --tags --long --dirty --always`}" >> build.env
-    - |
-      if [ "$OVERWRITE_CONTAINER" == "true" ]; then
-          echo "CONTAINER_GCC_IMAGE=$CI_REGISTRY_IMAGE/gcc:$CI_COMMIT_REF_SLUG" >> build.env
-          echo "CONTAINER_GCC_GUI_IMAGE=$CI_REGISTRY_IMAGE/gcc-gui:$CI_COMMIT_REF_SLUG" >> build.env
-          echo "CONTAINER_CLANG_IMAGE=$CI_REGISTRY_IMAGE/clang:$CI_COMMIT_REF_SLUG" >> build.env
-      fi
     - cat build.env
   artifacts:
     reports:

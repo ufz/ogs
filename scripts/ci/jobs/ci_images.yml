@@ -1,0 +1,53 @@
+ci_images:
+  stage: .pre
+  variables:
+    CONTAINER_REGISTRY: ${CI_REGISTRY}/${CI_PROJECT_PATH}
+    CONTAINER_TAG: latest
+  rules:
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      changes:
+      - ThirdParty/container-maker
+      - scripts/ci/jobs/build_image.yml
+      - scripts/docker/saxon/**/*
+      - scripts/docker/Dockerfile.pre-commit
+      - scripts/docker/Dockerfile.web
+      variables:
+        BUILD_CONTAINER: "true"
+        CONTAINER_TAG: ${CI_COMMIT_REF_SLUG}
+    - when: always
+  tags: [envinf1-shell]
+  artifacts:
+    reports:
+      dotenv: build.env
+  script:
+    - |
+      echo "CONTAINER_GCC_IMAGE=${CONTAINER_REGISTRY}/gcc:${CONTAINER_TAG}" >> build.env
+      echo "CONTAINER_GCC_GUI_IMAGE=${CONTAINER_REGISTRY}/gcc-gui:${CONTAINER_TAG}" >> build.env
+      echo "CONTAINER_CLANG_IMAGE=${CONTAINER_REGISTRY}/clang:${CONTAINER_TAG}" >> build.env
+      echo "XUNIT_TO_JUNIT_IMAGE=${CONTAINER_REGISTRY}/xunit-to-junit:${CONTAINER_TAG}" >> build.env
+      echo "PRECOMMIT_IMAGE=${CONTAINER_REGISTRY}/pre-commit:${CONTAINER_TAG}" >> build.env
+      echo "WEB_IMAGE=${CONTAINER_REGISTRY}/web:${CONTAINER_TAG}" >> build.env
+      cat build.env
+      if [ "${BUILD_CONTAINER}" != true ]; then exit 0; fi
+    - source build.env
+    - !reference [.container-maker-setup, before_script]
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - poetry run ogscm compiler.py ogs.py --build --ogs off
+      --pm system --cvode --cppcheck --docs --gcovr --mfront --ccache
+      --version_file ../../web/data/versions.json
+      --tag $CONTAINER_GCC_IMAGE --upload
+    - poetry run ogscm compiler.py ogs.py --build --ogs off
+      --cvode --cppcheck --docs --gcovr --gui --ccache
+      --version_file ../../web/data/versions.json
+      --tag $CONTAINER_GCC_GUI_IMAGE --upload
+    - poetry run ogscm compiler.py ogs.py --build --ogs off
+      --pm conan --compiler clang --compiler_version 9 --ccache
+      --version_file ../../web/data/versions.json
+      --tag $CONTAINER_CLANG_IMAGE --upload
+    - cd ${CI_PROJECT_DIR}
+    - docker build --cache-from $XUNIT_TO_JUNIT_IMAGE -t $XUNIT_TO_JUNIT_IMAGE -f scripts/docker/saxon/Dockerfile scripts/docker/saxon
+    - docker push $XUNIT_TO_JUNIT_IMAGE
+    - docker build --cache-from $PRECOMMIT_IMAGE -t $PRECOMMIT_IMAGE -f scripts/docker/Dockerfile.pre-commit scripts/docker
+    - docker push $PRECOMMIT_IMAGE
+    - docker build --cache-from $WEB_IMAGE -t $WEB_IMAGE -f scripts/docker/Dockerfile.web scripts/docker
+    - docker push $WEB_IMAGE

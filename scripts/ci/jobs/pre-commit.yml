@@ -1,6 +1,7 @@
 pre commit:
   stage: preparation
   image: $PRECOMMIT_IMAGE
+  needs: [ ci_images ]
   script:
     - pre-commit install
     - pre-commit run --all-files
