@@ -17,6 +17,7 @@ else()
     set(TERMINAL_CMD bash -c)
 endif()
 set(TEST_FAILED FALSE)
+set(_counter 0)
 foreach(cmd ${TESTER_COMMAND})
     if(GLOB_MODE)
         # cmake-lint: disable=E1120
@@ -38,6 +39,8 @@ foreach(cmd ${TESTER_COMMAND})
             )
         endif()
         foreach(file ${FILES})
+            math(EXPR _counter "${_counter}+1")
+            set(LOG_FILE ${LOG_FILE_BASE}-${_counter}.log)
             if("$ENV{HOSTNAME}" MATCHES "frontend.*")
                 string(REPLACE "gpfs1" "../.." file ${file})
             endif()
@@ -53,23 +56,30 @@ foreach(cmd ${TESTER_COMMAND})
                 RESULT_VARIABLE EXIT_CODE
                 OUTPUT_VARIABLE OUTPUT
                 ERROR_VARIABLE OUTPUT
+                ECHO_OUTPUT_VARIABLE
+                ECHO_ERROR_VARIABLE
             )
-
+            file(WRITE ${LOG_FILE} ${OUTPUT})
             if(NOT EXIT_CODE STREQUAL "0")
-                message(WARNING "Error exit code: ${EXIT_CODE}\n${OUTPUT}")
+                message(WARNING "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
                 set(TEST_FAILED TRUE)
             endif()
         endforeach()
     else()
+        math(EXPR _counter "${_counter}+1")
+        set(LOG_FILE ${LOG_FILE_BASE}-${_counter}.log)
         execute_process(
             COMMAND ${TERMINAL_CMD} "${cmd}"
             WORKING_DIRECTORY ${SOURCE_PATH}
             RESULT_VARIABLE EXIT_CODE
             OUTPUT_VARIABLE OUTPUT
             ERROR_VARIABLE OUTPUT
+            ECHO_OUTPUT_VARIABLE
+            ECHO_ERROR_VARIABLE
         )
+        file(WRITE ${LOG_FILE} ${OUTPUT})
         if(NOT EXIT_CODE STREQUAL "0")
-            message(WARNING "Error exit code: ${EXIT_CODE}${OUTPUT}")
+            message(WARNING "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
             set(TEST_FAILED TRUE)
         endif()
     endif()

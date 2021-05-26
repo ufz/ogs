@@ -15,12 +15,10 @@ execute_process(
     COMMAND ${WRAPPER_COMMAND} ${WRAPPER_ARGS} ${EXECUTABLE} ${EXECUTABLE_ARGS}
     WORKING_DIRECTORY ${WORKING_DIRECTORY}
     RESULT_VARIABLE EXIT_CODE
-    OUTPUT_VARIABLE OUTPUT
-    ERROR_VARIABLE OUTPUT
+    OUTPUT_FILE ${LOG_FILE}
+    ERROR_FILE ${LOG_FILE}
 )
 
 if(NOT EXIT_CODE STREQUAL "0")
-    message(
-        FATAL_ERROR "Test wrapper exited with code: ${EXIT_CODE}\n${OUTPUT}"
-    )
+    message(FATAL_ERROR "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
 endif()
