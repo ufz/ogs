@@ -189,7 +189,9 @@ function(MeshTest)
             "-DWRAPPER_ARGS=${MeshTest_WRAPPER_ARGS}"
             "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
             -DSTDOUT_FILE_PATH=${MeshTest_STDOUT_FILE_PATH}
-            -DWORKING_DIRECTORY=${MeshTest_WORKING_DIRECTORY} -P
+            -DWORKING_DIRECTORY=${MeshTest_WORKING_DIRECTORY}
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.log
+            -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     current_dir_as_list(ProcessLib labels)
@@ -226,7 +228,10 @@ function(MeshTest)
             -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
             -DBINARY_PATH=${MeshTest_BINARY_PATH}
             -DVTKJS_OUTPUT_PATH=${PROJECT_SOURCE_DIR}/web/static/vis/${MeshTest_PATH}
-            "-DVIS_FILES=${MeshTest_VIS}" -DGLOB_MODE=${GLOB_MODE} -P
+            "-DVIS_FILES=${MeshTest_VIS}"
+            -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME}
+            -DGLOB_MODE=${GLOB_MODE}
+            -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
             --debug-output
         WORKING_DIRECTORY ${MeshTest_SOURCE_PATH}
