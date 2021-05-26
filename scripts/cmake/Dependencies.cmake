@@ -53,7 +53,8 @@ CPMAddPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.2)
 CPMAddPackage(
     NAME tclap
     GITHUB_REPOSITORY ufz/tclap
-    GIT_TAG 03abc3a3327214137c6ffd5b9a6efe23f0927cc2
+    VERSION 1.2.4
+    GIT_TAG 098dd0fe07a31618f3c2a9f8727bb01c8c5d61e2
     DOWNLOAD_ONLY YES
 )
 if(tclap_ADDED)
