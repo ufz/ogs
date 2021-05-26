@@ -52,11 +52,21 @@ function(OgsTest)
         endif()
     endif()
 
-    add_test(
-        NAME ${TEST_NAME} WORKING_DIRECTORY "${OgsTest_BINARY_DIR}"
-        COMMAND ${OgsTest_WRAPPER} $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR}
-                ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
+    set(_exe_args -r ${OgsTest_SOURCE_DIR}
+                  ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
     )
+    string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
+    add_test(
+        NAME ${TEST_NAME}
+        COMMAND
+            ${CMAKE_COMMAND} -DEXECUTABLE=$<TARGET_FILE:ogs>
+            "-DEXECUTABLE_ARGS=${_exe_args}"
+            "-DWRAPPER_COMMAND=${OgsTest_WRAPPER}"
+            -DWORKING_DIRECTORY=${OgsTest_BINARY_DIR}
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME_UNDERSCORE}.log
+            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
+    )
+
     # For debugging: message("Adding test with NAME ${TEST_NAME}
     # WORKING_DIRECTORY ${OgsTest_BINARY_DIR} COMMAND ${OgsTest_WRAPPER}
     # $<TARGET_FILE:ogs> -r ${OgsTest_SOURCE_DIR}
@@ -69,15 +79,18 @@ function(OgsTest)
         list(APPEND labels large)
     endif()
 
-    set_tests_properties(${TEST_NAME}
-        PROPERTIES
-            ENVIRONMENT VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
-            COST ${OgsTest_RUNTIME}
-            DISABLED ${OgsTest_DISABLED}
-            LABELS "${labels}"
+    set_tests_properties(
+        ${TEST_NAME}
+        PROPERTIES ENVIRONMENT
+                   VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
+                   COST
+                   ${OgsTest_RUNTIME}
+                   DISABLED
+                   ${OgsTest_DISABLED}
+                   LABELS
+                   "${labels}"
     )
-    # Disabled for the moment, does not work with CI under load
-    # if(NOT OGS_COVERAGE)
-    #     set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT ${timeout})
-    # endif()
+    # Disabled for the moment, does not work with CI under load if(NOT
+    # OGS_COVERAGE) set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT
+    # ${timeout}) endif()
 endfunction()
