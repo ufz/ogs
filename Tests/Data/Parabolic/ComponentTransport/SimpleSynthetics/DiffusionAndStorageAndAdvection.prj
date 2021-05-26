@@ -47,6 +47,20 @@
                     <properties>
                         <property>
                             <name>density</name>
+                            <type>Function</type>
+                            <value>
+                                <expression>1 + 0.026 * concentration + 5e-5 * (phase_pressure - 0.5)</expression>
+                            </value>
+                            <dvalue>
+                                <variable_name>concentration</variable_name>
+                                <expression>0.026</expression>
+                            </dvalue>
+                            <dvalue>
+                                <variable_name>phase_pressure</variable_name>
+                                <expression>5e-5</expression>
+                            </dvalue>
+
+                            <!-- Keep for testing of the Function type property resembling the Linear property
                             <type>Linear</type>
                             <reference_value>1</reference_value>
                             <independent_variable>
@@ -59,6 +73,7 @@
                                 <reference_condition>0.5</reference_condition>
                                 <slope>5e-5</slope>
                             </independent_variable>
+                            -->
                         </property>
                         <property>
                             <name>viscosity</name>
