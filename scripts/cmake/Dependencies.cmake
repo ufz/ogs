@@ -53,7 +53,8 @@ CPMAddPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.2)
 CPMAddPackage(
     NAME tclap
     GITHUB_REPOSITORY ufz/tclap
-    GIT_TAG 03abc3a3327214137c6ffd5b9a6efe23f0927cc2
+    VERSION 1.2.4
+    GIT_TAG 098dd0fe07a31618f3c2a9f8727bb01c8c5d61e2
     DOWNLOAD_ONLY YES
 )
 if(tclap_ADDED)
@@ -395,12 +396,9 @@ endif()
 if(OGS_BUILD_TESTING)
     CPMAddPackage(
         NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-        GIT_TAG 49403cee266bb8e80405a02d677dbb5f71afc61a
+        GIT_TAG 8b7bfce2f2302263c9fdc0201f765e375c8a8a36
     )
     if(vtkdiff_ADDED)
-        if(VTK_ADDED)
-            target_include_directories(vtkdiff PRIVATE ${VTK_INCLUDE_DIRS})
-        endif()
         install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
     endif()
 endif()
