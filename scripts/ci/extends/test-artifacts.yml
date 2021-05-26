@@ -1,6 +1,7 @@
 .test-artifacts:
   artifacts:
     paths:
+      - build/*/logs/*.log
       - build/*/Tests/ctest.xml
       - build/*/Tests/testrunner.xml
       - build/*/make.output
