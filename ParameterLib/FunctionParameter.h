@@ -48,7 +48,6 @@ struct FunctionParameter final : public Parameter<T>
     using symbol_table_t = exprtk::symbol_table<T>;
     using expression_t = exprtk::expression<T>;
     using parser_t = exprtk::parser<T>;
-    using error_t = exprtk::parser_error::type;
 
     /**
      * Constructing from a vector of expressions
@@ -64,7 +63,7 @@ struct FunctionParameter final : public Parameter<T>
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves)
-        : Parameter<T>(name, nullptr), _vec_expression_str(vec_expression_str)
+        : Parameter<T>(name, nullptr)
     {
         // Convert curves to function objects callable by the exprtk.
         _curves.reserve(curves.size());
@@ -86,16 +85,16 @@ struct FunctionParameter final : public Parameter<T>
         }
 
         // Compile expressions.
-        _vec_expression.resize(_vec_expression_str.size());
-        for (unsigned i = 0; i < _vec_expression_str.size(); i++)
+        _vec_expression.resize(vec_expression_str.size());
+        for (unsigned i = 0; i < vec_expression_str.size(); i++)
         {
             _vec_expression[i].register_symbol_table(_symbol_table);
             parser_t parser;
-            if (!parser.compile(_vec_expression_str[i], _vec_expression[i]))
+            if (!parser.compile(vec_expression_str[i], _vec_expression[i]))
             {
                 OGS_FATAL("Error: {:s}\tExpression: {:s}\n",
                           parser.error(),
-                          _vec_expression_str[i]);
+                          vec_expression_str[i]);
             }
         }
     }
@@ -141,7 +140,6 @@ struct FunctionParameter final : public Parameter<T>
     }
 
 private:
-    std::vector<std::string> const _vec_expression_str;
     symbol_table_t _symbol_table;
     std::vector<expression_t> _vec_expression;
     std::vector<std::pair<std::string, CurveWrapper>> _curves;
