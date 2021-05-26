@@ -56,6 +56,10 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     {
         return createExponential(config);
     }
+    if (property_type == "Function")
+    {
+        return createFunction(config);
+    }
 
     if (property_type == "Parameter")
     {

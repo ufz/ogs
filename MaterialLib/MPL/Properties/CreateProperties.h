@@ -27,6 +27,7 @@
 #include "CreateEffectiveThermalConductivityPorosityMixing.h"
 #include "CreateEmbeddedFracturePermeability.h"
 #include "CreateExponential.h"
+#include "CreateFunction.h"
 #include "CreateGasPressureDependentPermeability.h"
 #include "CreateIdealGasLaw.h"
 #include "CreateKozenyCarmanModel.h"
