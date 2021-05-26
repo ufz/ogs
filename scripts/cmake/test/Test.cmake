@@ -54,10 +54,6 @@ if(CMAKE_CONFIGURATION_TYPES)
 endif()
 add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest.log)
 
-if(OGS_BUILD_UTILS)
-    list(APPEND test_dependencies generateStructuredMesh)
-endif()
-
 add_custom_target(
     ctest
     COMMAND
