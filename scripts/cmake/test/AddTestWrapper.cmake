@@ -19,6 +19,10 @@ execute_process(
     ERROR_FILE ${LOG_FILE}
 )
 
-if(NOT EXIT_CODE STREQUAL "0")
+if(EXIT_CODE STREQUAL "0")
+    if(DEFINED ENV{CI})
+        file(REMOVE ${LOG_FILE})
+    endif()
+else()
     message(FATAL_ERROR "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
 endif()

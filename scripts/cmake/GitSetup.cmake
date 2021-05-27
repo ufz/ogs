@@ -19,7 +19,7 @@ if(NOT _IS_GIT_REPO)
     if(_IS_GIT_REPO GREATER 0)
         set(_IS_GIT_REPO FALSE CACHE INTERNAL "")
         if(NOT DEFINED OGS_VERSION)
-            if(DEFINED $ENV{CI})
+            if(DEFINED ENV{CI})
                 message(
                     FATAL_ERROR
                         "No git repository found at ${PROJECT_SOURCE_DIR}! "

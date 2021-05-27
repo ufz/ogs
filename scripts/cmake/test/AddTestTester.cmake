@@ -59,8 +59,8 @@ foreach(cmd ${TESTER_COMMAND})
                 ECHO_OUTPUT_VARIABLE
                 ECHO_ERROR_VARIABLE
             )
-            file(WRITE ${LOG_FILE} ${OUTPUT})
             if(NOT EXIT_CODE STREQUAL "0")
+                file(WRITE ${LOG_FILE} ${OUTPUT})
                 message(WARNING "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
                 set(TEST_FAILED TRUE)
             endif()
@@ -77,8 +77,8 @@ foreach(cmd ${TESTER_COMMAND})
             ECHO_OUTPUT_VARIABLE
             ECHO_ERROR_VARIABLE
         )
-        file(WRITE ${LOG_FILE} ${OUTPUT})
         if(NOT EXIT_CODE STREQUAL "0")
+            file(WRITE ${LOG_FILE} ${OUTPUT})
             message(WARNING "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
             set(TEST_FAILED TRUE)
         endif()
