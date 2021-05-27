@@ -13,11 +13,8 @@
 #pragma once
 
 #include <array>
-#include <boost/algorithm/string/predicate.hpp>
 #include <memory>
 #include <string>
-
-#include "BaseLib/Error.h"
 
 namespace MaterialPropertyLib
 {
@@ -167,21 +164,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
 
 /// This function converts a string (e.g. a string from the configuration-tree)
 /// into one of the entries of the PropertyType enumerator.
-inline PropertyType convertStringToProperty(std::string const& string)
-{
-    for (int i = 0; i < static_cast<int>(PropertyType::number_of_properties);
-         ++i)
-    {
-        if (boost::iequals(string, property_enum_to_string[i]))
-        {
-            return static_cast<PropertyType>(i);
-        }
-    }
-
-    OGS_FATAL(
-        "The property name '{:s}' does not correspond to any known property",
-        string);
-}
+PropertyType convertStringToProperty(std::string const& string);
 
 /// This data type is based on a std::array. It can hold pointers to objects of
 /// class Property or its inheritors. The size of this array is determined by
