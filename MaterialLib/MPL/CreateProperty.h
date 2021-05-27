@@ -14,6 +14,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <vector>
 
 #include "PropertyType.h"
 

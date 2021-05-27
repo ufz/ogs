@@ -11,6 +11,7 @@
  */
 #pragma once
 
+#include "BaseLib/Error.h"
 #include "Property.h"
 
 namespace MaterialPropertyLib

@@ -9,8 +9,9 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  */
-
 #include "CreateComponent.h"
+
+#include <boost/algorithm/string/predicate.hpp>
 
 #include "BaseLib/ConfigTree.h"
 #include "Components/Components.h"

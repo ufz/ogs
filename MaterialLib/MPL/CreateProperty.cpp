@@ -12,6 +12,7 @@
 
 #include "CreateProperty.h"
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <string>
 #include <vector>
 

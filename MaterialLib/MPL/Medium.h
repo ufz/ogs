@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "BaseLib/Error.h"
 #include "Phase.h"
 
 namespace MaterialPropertyLib

@@ -17,6 +17,7 @@
 #include <typeinfo>
 #include <variant>
 
+#include "BaseLib/Error.h"
 #include "ParameterLib/SpatialPosition.h"
 #include "PropertyType.h"
 #include "VariableType.h"
