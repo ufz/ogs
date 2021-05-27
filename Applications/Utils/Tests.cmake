@@ -587,3 +587,18 @@ if(TEST reviseMesh-ReviseMesh_Test_Arrays-vtkdiff)
     set_tests_properties(reviseMesh-ReviseMesh_Test_Arrays
         PROPERTIES DEPENDS reviseMesh-ReviseMesh_Test-vtkdiff)
 endif()
+
+AddTest(
+    NAME BinaryToPVTU
+    PATH MeshLib/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/EllipticPETSc
+    EXECUTABLE binaryToPVTU
+    EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3 -o ${Data_BINARY_DIR}/EllipticPETSc/cube_1x1x1_hex_1e3
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    cube_1x1x1_hex_1e3_0 cube_1x1x1_hex_1e3_0.vtu 1e-16
+    cube_1x1x1_hex_1e3_1.vtu cube_1x1x1_hex_1e3_1.vtu 1e-16
+    cube_1x1x1_hex_1e3_2.vtu cube_1x1x1_hex_1e3_2.vtu 1e-16
+)
