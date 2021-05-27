@@ -16,65 +16,18 @@
 
 namespace MaterialPropertyLib
 {
-Variable convertStringToVariable(std::string const& input)
+Variable convertStringToVariable(std::string const& string)
 {
-    if (boost::iequals(input, "concentration"))
+    for (int i = 0; i < static_cast<int>(Variable::number_of_variables); ++i)
     {
-        return Variable::concentration;
-    }
-    if (boost::iequals(input, "phase_pressure"))
-    {
-        return Variable::phase_pressure;
-    }
-    if (boost::iequals(input, "liquid_phase_pressure"))
-    {
-        return Variable::liquid_phase_pressure;
-    }
-    if (boost::iequals(input, "capillary_pressure"))
-    {
-        return Variable::capillary_pressure;
-    }
-    if (boost::iequals(input, "density"))
-    {
-        return Variable::density;
-    }
-    if (boost::iequals(input, "equivalent_plastic_strain"))
-    {
-        return Variable::equivalent_plastic_strain;
-    }
-    if (boost::iequals(input, "temperature"))
-    {
-        return Variable::temperature;
-    }
-    if (boost::iequals(input, "molar_mass"))
-    {
-        return Variable::molar_mass;
-    }
-    if (boost::iequals(input, "liquid_saturation"))
-    {
-        return Variable::liquid_saturation;
-    }
-    if (boost::iequals(input, "displacement"))
-    {
-        return Variable::displacement;
-    }
-    if (boost::iequals(input, "grain_compressibility"))
-    {
-        return Variable::grain_compressibility;
-    }
-    if (boost::iequals(input, "solid_grain_pressure"))
-    {
-        return Variable::solid_grain_pressure;
-    }
-    if (boost::iequals(input, "vapour_pressure"))
-    {
-        return Variable::vapour_pressure;
+        if (boost::iequals(string, variable_enum_to_string[i]))
+        {
+            return static_cast<Variable>(i);
+        }
     }
 
     OGS_FATAL(
         "The variable name '{:s}' does not correspond to any known variable",
-        input);
-
-    return Variable::number_of_variables;  // to avoid the 'no return' warning
+        string);
 }
 }  // namespace MaterialPropertyLib

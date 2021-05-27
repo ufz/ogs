@@ -107,5 +107,7 @@ using VariableType =
 using VariableArray =
     std::array<VariableType, static_cast<int>(Variable::number_of_variables)>;
 
-Variable convertStringToVariable(std::string const& input);
+/// This function converts a string (e.g. a string from the configuration-tree)
+/// into one of the entries of the VariableType enumerator.
+Variable convertStringToVariable(std::string const& string);
 }  // namespace MaterialPropertyLib
