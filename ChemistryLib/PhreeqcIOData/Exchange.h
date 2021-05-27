@@ -22,18 +22,19 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct Exchange
+struct ExchangeSite
 {
-    Exchange(std::string name_, double const molality_)
-        : name(std::move(name_)), molality(molality_)
+    ExchangeSite(std::string ion_exchanging_species_, double const molality_)
+        : ion_exchanging_species(std::move(ion_exchanging_species_)),
+          molality(molality_)
     {
     }
 
-    friend std::ostream& operator<<(std::ostream& os,
-                                    Exchange const& exchange_assemblage);
-
-    std::string const name;
+    std::string const ion_exchanging_species;
     double const molality;
 };
+
+std::ostream& operator<<(std::ostream& os, ExchangeSite const& exchange_site);
+
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

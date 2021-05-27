@@ -74,8 +74,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // Find and extract mesh from the list of meshes.
     auto const& mesh = *BaseLib::findElementOrError(
         std::begin(meshes), std::end(meshes),
-        [&mesh_name](auto const& mesh)
-        {
+        [&mesh_name](auto const& mesh) {
             assert(mesh != nullptr);
             return mesh->getName() == mesh_name;
         },
@@ -109,6 +108,13 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto const project_file_name = BaseLib::joinPaths(
         output_directory,
         BaseLib::extractBaseNameWithoutExtension(config.getProjectFileName()));
+
+    if (!surface.empty() && !exchange.empty())
+    {
+        OGS_FATAL(
+            "Using surface and exchange reactions simultaneously is not "
+            "supported at the moment");
+    }
 
     auto dump = surface.empty() && exchange.empty()
                     ? nullptr

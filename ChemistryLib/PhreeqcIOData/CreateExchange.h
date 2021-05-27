@@ -22,9 +22,9 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct Exchange;
+struct ExchangeSite;
 
-std::vector<Exchange> createExchange(
+std::vector<ExchangeSite> createExchange(
     std::optional<BaseLib::ConfigTree> const& config);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

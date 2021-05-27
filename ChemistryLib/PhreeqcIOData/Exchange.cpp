@@ -16,9 +16,9 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-std::ostream& operator<<(std::ostream& os, Exchange const& exchange_assemblage)
+std::ostream& operator<<(std::ostream& os, ExchangeSite const& exchange_site)
 {
-    os << exchange_assemblage.name << " " << exchange_assemblage.molality << "\n";
+    os << exchange_site.ion_exchanging_species << " " << exchange_site.molality << "\n";
 
     return os;
 }

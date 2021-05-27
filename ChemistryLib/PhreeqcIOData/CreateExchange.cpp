@@ -8,7 +8,7 @@
  *
  */
 
-#include <optional>
+#include "CreateExchange.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "Exchange.h"
@@ -17,7 +17,7 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-std::vector<Exchange> createExchange(
+std::vector<ExchangeSite> createExchange(
     std::optional<BaseLib::ConfigTree> const& config)
 {
     if (!config)
@@ -25,20 +25,20 @@ std::vector<Exchange> createExchange(
         return {};
     }
 
-    std::vector<Exchange> exchange;
+    std::vector<ExchangeSite> exchange;
     for (auto const& site_config :
-         //! \ogs_file_param{prj__chemical_system__exchange_assemblage}
-         config->getConfigSubtreeList("exchange_assemblage"))
+         //! \ogs_file_param{prj__chemical_system__exchange__exchange_site}
+         config->getConfigSubtreeList("exchange_site"))
     {
-        //! \ogs_file_param{prj__chemical_system__exchange_assemblage__name}
-        auto name = site_config.getConfigParameter<std::string>("name");
+        //! \ogs_file_param{prj__chemical_system__exchange__exchange_site__ion_exchanging_species}
+        auto name = site_config.getConfigParameter<std::string>(
+            "ion_exchanging_species");
 
         auto const molality =
-            //! \ogs_file_param{prj__chemical_system__exchange_assemblage__molality}
+            //! \ogs_file_param{prj__chemical_system__exchange__exchange_site__molality}
             site_config.getConfigParameter<double>("molality");
 
-        exchange.emplace_back(
-            std::move(name), molality);
+        exchange.emplace_back(std::move(name), molality);
     }
 
     return exchange;

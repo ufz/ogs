@@ -1,0 +1,1 @@
+This keyword is used to input the species of the exchange site. When using the Phreeqc chemical solver, the species should be defined in the EXCHANGE_MASTER_SPECIES keyword in the database.

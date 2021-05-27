@@ -243,7 +243,7 @@ PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
                      std::unique_ptr<ChemicalSystem>&& chemical_system,
                      std::vector<ReactionRate>&& reaction_rates,
                      std::vector<SurfaceSite>&& surface,
-                     std::vector<Exchange>&& exchange,
+                     std::vector<ExchangeSite>&& exchange,
                      std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
@@ -512,7 +512,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
         if (!exchange.empty())
         {
             os << "EXCHANGE " << chemical_system_id + 1 << "\n";
-            std::size_t aqueous_solution_id =
+            std::size_t const aqueous_solution_id =
                 dump->aqueous_solutions_prev.empty()
                     ? chemical_system_id + 1
                     : phreeqc_io._num_chemical_systems + chemical_system_id + 1;
@@ -583,21 +583,14 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     auto const& surface = phreeqc_io._surface;
     auto const& exchange = phreeqc_io._exchange;
 
-    int const reaction_case = !surface.empty() + !exchange.empty();
-    int num_skipped_lines;
-
-    switch (reaction_case)
+    if (!surface.empty() && !exchange.empty())
     {
-        case 0:
-            num_skipped_lines = 1;
-            break;
-        case 1:
-            num_skipped_lines = 2;
-            break;
-        case 2:
-            num_skipped_lines = 3;
-            break;
+        OGS_FATAL(
+            "Using surface and exchange reactions simultaneously is not "
+            "supported at the moment");
     }
+
+    int const num_skipped_lines = surface.empty() && exchange.empty() ? 1 : 2;
 
     auto& equilibrium_reactants =
         phreeqc_io._chemical_system->equilibrium_reactants;

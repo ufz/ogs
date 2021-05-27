@@ -28,7 +28,7 @@ struct ChemicalSystem;
 struct ReactionRate;
 struct Output;
 struct SurfaceSite;
-struct Exchange;
+struct ExchangeSite;
 struct Dump;
 struct UserPunch;
 
@@ -40,7 +40,7 @@ public:
               std::unique_ptr<ChemicalSystem>&& chemical_system,
               std::vector<ReactionRate>&& reaction_rates,
               std::vector<SurfaceSite>&& surface,
-              std::vector<Exchange>&& exchange,
+              std::vector<ExchangeSite>&& exchange,
               std::unique_ptr<UserPunch>&& user_punch,
               std::unique_ptr<Output>&& output,
               std::unique_ptr<Dump>&& dump,
@@ -109,7 +109,7 @@ private:
     std::unique_ptr<ChemicalSystem> _chemical_system;
     std::vector<ReactionRate> const _reaction_rates;
     std::vector<SurfaceSite> const _surface;
-    std::vector<Exchange> const _exchange;
+    std::vector<ExchangeSite> const _exchange;
     std::unique_ptr<UserPunch> _user_punch;
     std::unique_ptr<Output> const _output;
     std::unique_ptr<Dump> const _dump;
