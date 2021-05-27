@@ -69,6 +69,32 @@ enum class Variable : int
     number_of_variables
 };
 
+static const std::array<std::string,
+                        static_cast<int>(Variable::number_of_variables)>
+    variable_enum_to_string{{"capillary_pressure",
+                             "concentration",
+                             "density",
+                             "displacement",
+                             "effective_pore_pressure",
+                             "enthalpy_of_evaporation",
+                             "equivalent_plastic_strain",
+                             "grain_compressibility",
+                             "liquid_phase_pressure",
+                             "liquid_saturation",
+                             "mechanical_strain",
+                             "molar_mass",
+                             "molar_fraction",
+                             "phase_pressure",
+                             "porosity",
+                             "solid_grain_pressure",
+                             "stress",
+                             "temperature",
+                             "total_strain",
+                             "total_stress",
+                             "transport_porosity",
+                             "vapour_pressure",
+                             "volumetric_strain"}};
+
 /// Data type for primary variables, designed to contain both scalar and vector
 /// data.
 using VariableType =
@@ -81,5 +107,7 @@ using VariableType =
 using VariableArray =
     std::array<VariableType, static_cast<int>(Variable::number_of_variables)>;
 
-Variable convertStringToVariable(std::string const& input);
+/// This function converts a string (e.g. a string from the configuration-tree)
+/// into one of the entries of the VariableType enumerator.
+Variable convertStringToVariable(std::string const& string);
 }  // namespace MaterialPropertyLib

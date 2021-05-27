@@ -14,6 +14,7 @@
 #include "ProjectData.h"
 
 #include <algorithm>
+#include <boost/algorithm/string/predicate.hpp>
 #include <cctype>
 #include <set>
 
