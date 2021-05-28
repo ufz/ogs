@@ -1,3 +1,7 @@
+if(OGS_USE_MPI)
+    return()
+endif()
+
 set(TOOLS generateStructuredMesh)
 if(OGS_BUILD_GUI)
     list(APPEND TOOLS createMeshElemPropertiesFromASCRaster)

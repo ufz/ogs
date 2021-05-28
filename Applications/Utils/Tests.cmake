@@ -312,7 +312,7 @@ if(SNAKEMAKE AND NOT OGS_USE_MPI AND TEE_TOOL_PATH)
             --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
             -s ${CMAKE_CURRENT_SOURCE_DIR}/VoxelGridFromLayers.smk
     )
-    add_dependencies(ctest ExtractBoundary Layers2Grid AddFaultToVoxelGrid)
+    add_dependencies(ctest ExtractBoundary Layers2Grid AddFaultToVoxelGrid generateStructuredMesh)
 endif()
 
 AddTest(

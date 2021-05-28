@@ -1,3 +1,9 @@
+add_subdirectory(PartitionMesh)
+
+if(OGS_USE_MPI)
+    return()
+endif()
+
 set(TOOLS ComputeNodeAreasFromSurfaceMesh convertVtkDataArrayToVtkDataArray
           createNeumannBc scaleProperty
 )
@@ -6,5 +12,3 @@ foreach(tool ${TOOLS})
     target_link_libraries(${tool} GitInfoLib MeshLib tclap)
 endforeach()
 install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
-
-add_subdirectory(PartitionMesh)

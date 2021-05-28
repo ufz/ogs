@@ -1,3 +1,7 @@
+if(OGS_USE_MPI)
+    return()
+endif()
+
 set(TOOLS
     convertGEO
     generateMatPropsFromMatID

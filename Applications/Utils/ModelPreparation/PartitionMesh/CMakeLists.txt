@@ -1,3 +1,7 @@
+if(OGS_USE_MPI)
+    return()
+endif()
+
 CPMAddPackage(
     NAME metis
     GITHUB_REPOSITORY scibuilder/metis
