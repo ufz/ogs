@@ -17,11 +17,13 @@
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
+#include "GeoLib/EarClippingTriangulation.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
+#include "GeoLib/Triangle.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/convertMeshToGeo.h"
@@ -120,6 +122,56 @@ bool createSurface(GeoLib::Polyline const& ply,
     geometries.renameGeometry(merged_geometry_name, geometry_name);
 
     return true;
+}
+
+GeoLib::Surface* createSurfaceWithEarClipping(GeoLib::Polyline const& line)
+{
+    if (!line.isClosed())
+    {
+        WARN("Error in Surface::createSurface() - Polyline is not closed.");
+        return nullptr;
+    }
+
+    if (line.getNumberOfPoints() <= 2)
+    {
+        WARN(
+            "Error in Surface::createSurface() - Polyline consists of less "
+            "than three points and therefore cannot be triangulated.");
+        return nullptr;
+    }
+
+    // create empty surface
+    GeoLib::Surface* sfc(new GeoLib::Surface(line.getPointsVec()));
+    GeoLib::Polygon* polygon(new GeoLib::Polygon(line));
+    std::list<GeoLib::Polygon*> const& list_of_simple_polygons =
+        polygon->computeListOfSimplePolygons();
+
+    for (std::list<GeoLib::Polygon*>::const_iterator simple_polygon_it(
+             list_of_simple_polygons.begin());
+         simple_polygon_it != list_of_simple_polygons.end();
+         ++simple_polygon_it)
+    {
+        std::list<GeoLib::Triangle> triangles;
+        GeoLib::EarClippingTriangulation(*simple_polygon_it, triangles);
+
+        // add Triangles to Surface
+        std::list<GeoLib::Triangle>::const_iterator it(triangles.begin());
+        while (it != triangles.end())
+        {
+            sfc->addTriangle((*it)[0], (*it)[1], (*it)[2]);
+            ++it;
+        }
+    }
+    // delete polygon;
+    if (sfc->getNumberOfTriangles() == 0)
+    {
+        WARN(
+            "Surface::createSurface(): Triangulation does not contain any "
+            "triangle.");
+        delete sfc;
+        return nullptr;
+    }
+    return sfc;
 }
 
 }  // namespace FileIO
