@@ -54,7 +54,6 @@ std::unique_ptr<Function> createFunction(BaseLib::ConfigTree const& config)
     }
 
     return std::make_unique<MaterialPropertyLib::Function>(
-        std::move(property_name), std::move(value_expressions),
-        std::move(dvalue_expressions));
+        std::move(property_name), value_expressions, dvalue_expressions);
 }
 }  // namespace MaterialPropertyLib

@@ -146,11 +146,11 @@ static std::vector<std::string> collectVariables(
     return variables;
 }
 
-Function::Function(std::string name,
-                   std::vector<std::string>
-                       value_string_expressions,
-                   std::vector<std::pair<std::string, std::vector<std::string>>>
-                       dvalue_string_expressions)
+Function::Function(
+    std::string name,
+    std::vector<std::string> const& value_string_expressions,
+    std::vector<std::pair<std::string, std::vector<std::string>>> const&
+        dvalue_string_expressions)
 {
     name_ = std::move(name);
 
