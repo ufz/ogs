@@ -1,7 +1,7 @@
 ci_images:
   stage: .pre
   variables:
-    CONTAINER_REGISTRY: ${CI_REGISTRY}/${CI_PROJECT_PATH}
+    CONTAINER_REGISTRY: ${CI_REGISTRY}/ogs/ogs
     CONTAINER_TAG: latest
   rules:
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
@@ -14,6 +14,7 @@ ci_images:
       variables:
         BUILD_CONTAINER: "true"
         CONTAINER_TAG: ${CI_COMMIT_REF_SLUG}
+        CONTAINER_REGISTRY: ${CI_REGISTRY}/${CI_PROJECT_PATH}
     - when: always
   tags: [envinf1-shell]
   artifacts:
