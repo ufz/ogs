@@ -1,4 +1,16 @@
-if(OGS_USE_MPI)
+if (OGS_USE_MPI)
+    ogs_add_executable(
+        binaryToPVTU BinaryToPVTU.cpp NodeWiseMeshPartitioner.cpp
+    )
+    target_link_libraries(
+        binaryToPVTU
+        GitInfoLib
+        MeshLib
+        tclap
+        $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
+    )
+    install(TARGETS binaryToPVTU RUNTIME DESTINATION bin)
+
     return()
 endif()
 

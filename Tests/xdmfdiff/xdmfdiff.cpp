@@ -223,7 +223,7 @@ bool compareValues(std::vector<double> const& points_a,
     if (points_a.size() != points_b.size())
     {
         std::cerr << "Number of points in the first mesh is " << points_a.size()
-                  << " and differst from the number of point in the second "
+                  << " and differs from the number of point in the second "
                      "mesh, which is "
                   << points_b.size() << "\n";
         return false;

@@ -46,7 +46,7 @@ MeshLib::Mesh* readMeshFromFile(const std::string& file_name)
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     if (world_size > 1)
     {
-        MeshLib::IO::NodePartitionedMeshReader read_pmesh(PETSC_COMM_WORLD);
+        MeshLib::IO::NodePartitionedMeshReader read_pmesh(MPI_COMM_WORLD);
         const std::string file_name_base =
             BaseLib::dropFileExtension(file_name);
         return read_pmesh.read(file_name_base);
