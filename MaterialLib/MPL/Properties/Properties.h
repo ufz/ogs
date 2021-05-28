@@ -28,6 +28,7 @@
 #include "Enthalpy/LinearWaterVapourLatentHeat.h"
 #include "Enthalpy/WaterVapourLatentHeatWithCriticalTemperature.h"
 #include "Exponential.h"
+#include "Function.h"
 #include "GasPressureDependentPermeability.h"
 #include "IdealGasLaw.h"
 #include "Linear.h"
