@@ -91,3 +91,5 @@ configure_file(
     ${PROJECT_SOURCE_DIR}/scripts/test/buildinfo.in.yaml
     ${PROJECT_BINARY_DIR}/buildinfo.yaml
 )
+
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/logs)

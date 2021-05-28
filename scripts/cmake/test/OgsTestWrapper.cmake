@@ -1,0 +1,15 @@
+execute_process(
+    COMMAND ${WRAPPER_COMMAND} ${EXECUTABLE} ${EXECUTABLE_ARGS}
+    WORKING_DIRECTORY ${WORKING_DIRECTORY}
+    RESULT_VARIABLE EXIT_CODE
+    OUTPUT_FILE ${LOG_FILE}
+    ERROR_FILE ${LOG_FILE}
+)
+
+if(EXIT_CODE STREQUAL "0")
+    if(DEFINED ENV{CI})
+        file(REMOVE ${LOG_FILE})
+    endif()
+else()
+    message(FATAL_ERROR "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
+endif()

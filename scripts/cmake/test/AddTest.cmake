@@ -400,7 +400,9 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
             "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
             "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
-            -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY} -P
+            -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.log
+            -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
     if(DEFINED AddTest_DEPENDS)
@@ -468,7 +470,10 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             -DVTKJS_CONVERTER=${VTKJS_CONVERTER}
             -DBINARY_PATH=${AddTest_BINARY_PATH}
             -DVTKJS_OUTPUT_PATH=${PROJECT_SOURCE_DIR}/web/static/vis/${AddTest_PATH}
-            "-DVIS_FILES=${AddTest_VIS}" -DGLOB_MODE=${GLOB_MODE} -P
+            "-DVIS_FILES=${AddTest_VIS}"
+            -DGLOB_MODE=${GLOB_MODE}
+            -DLOG_FILE_BASE=${PROJECT_BINARY_DIR}/logs/${TESTER_NAME}
+            -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestTester.cmake
             --debug-output
         WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
