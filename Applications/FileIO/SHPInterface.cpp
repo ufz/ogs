@@ -183,6 +183,15 @@ void SHPInterface::readPolylines(const SHPHandle& hSHP, int numberOfElements,
 
         for (int p = 0; p < noOfParts; ++p)
         {
+            // output for the first part of multipart polyline
+            if (noOfParts > 1 && p == 0)
+            {
+                INFO(
+                    "Polygon {:d} consists of {:d} parts (PolylineIDs "
+                    "{:d}-{:d}).",
+                    i, noOfParts, lines->size(), lines->size() + noOfParts - 1);
+            }
+
             int const firstPnt = *(hSHPObject->panPartStart + p);
             int const lastPnt = (p < (noOfParts - 1))
                                     ? *(hSHPObject->panPartStart + p + 1)
