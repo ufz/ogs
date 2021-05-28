@@ -4,7 +4,7 @@ build gui linux:
     - .test-artifacts
   stage: build
   image: $CONTAINER_GCC_GUI_IMAGE
-  needs: [meta, "pre commit"]
+  needs: [meta, ci_images]
   tags: [ docker ]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'

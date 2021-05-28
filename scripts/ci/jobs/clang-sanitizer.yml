@@ -2,14 +2,13 @@ clang sanitizer:
   stage: check
   extends:
     - .rules-manual
-  needs: ["pre commit"]
+  needs: [ ci_images ]
   variables:
     BUILD_DIR: "../build/sanitizer"
     CMAKE_ARGS: "-DOGS_ADDRESS_SANITIZER=ON -DOGS_UNDEFINED_BEHAVIOR_SANITIZER=ON"
     UBSAN_OPTIONS: "print_stacktrace=1"
     LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
-  image:
-    name: $CONTAINER_CLANG_IMAGE
+  image: $CONTAINER_CLANG_IMAGE
   script:
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
