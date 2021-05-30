@@ -2,6 +2,7 @@
 # processes to be build.
 set(_processes_list
     ComponentTransport
+    StokesFlow
     HT
     HeatConduction
     HeatTransportBHE
