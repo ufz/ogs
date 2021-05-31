@@ -667,9 +667,9 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
     TracerSimulation_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_ts_100_t_100000_000000_0.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_ts_100_t_100000_000000_0.vtu pressure pressure 2.5e-5 1.7e-9
+    TracerSimulation_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_ts_100_t_100000_000000_0.vtu pressure pressure 3.0e-5 2.0e-9
     TracerSimulation_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_ts_100_t_100000_000000_1.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_ts_100_t_100000_000000_1.vtu pressure pressure 2.5e-5 1.7e-9
+    TracerSimulation_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_ts_100_t_100000_000000_1.vtu pressure pressure 3.0e-5 2.0e-9
     TracerSimulation_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_ts_100_t_100000_000000_2.vtu Cs Cs 1e-10 1e-16
     TracerSimulation_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_ts_100_t_100000_000000_2.vtu pressure pressure 2.5e-5 1.7e-9
     TracerSimulation_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_ts_100_t_100000_000000_3.vtu Cs Cs 1e-10 1e-16
