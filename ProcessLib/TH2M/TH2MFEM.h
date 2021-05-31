@@ -49,9 +49,16 @@ public:
     using ShapeMatricesTypeDisplacement =
         ShapeMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
 
-    // Types for pressure.
     using ShapeMatricesTypePressure =
         ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
+
+    template <int N>
+    using VectorType =
+        typename ShapeMatricesTypePressure::template VectorType<N>;
+
+    template <int M, int N>
+    using MatrixType =
+        typename ShapeMatricesTypePressure::template MatrixType<M, N>;
 
     using GlobalDimMatrixType =
         typename ShapeMatricesTypePressure::GlobalDimMatrixType;

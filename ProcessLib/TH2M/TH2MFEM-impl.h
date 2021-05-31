@@ -344,52 +344,40 @@ void TH2MLocalAssembler<
                              temperature_size + displacement_size;
     assert(local_x.size() == matrix_size);
 
-    auto const temperature =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            temperature_size> const>(local_x.data() + temperature_index,
-                                     temperature_size);
+    auto const temperature = Eigen::Map<VectorType<temperature_size> const>(
+        local_x.data() + temperature_index, temperature_size);
 
-    auto const gas_pressure =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            gas_pressure_size> const>(local_x.data() + gas_pressure_index,
-                                      gas_pressure_size);
+    auto const gas_pressure = Eigen::Map<VectorType<gas_pressure_size> const>(
+        local_x.data() + gas_pressure_index, gas_pressure_size);
 
     auto const capillary_pressure =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            capillary_pressure_size> const>(
+        Eigen::Map<VectorType<capillary_pressure_size> const>(
             local_x.data() + capillary_pressure_index, capillary_pressure_size);
 
-    auto const displacement =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_index,
-                                      displacement_size);
+    auto const displacement = Eigen::Map<VectorType<displacement_size> const>(
+        local_x.data() + displacement_index, displacement_size);
 
     auto const capillary_pressure_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            capillary_pressure_size> const>(
+        Eigen::Map<VectorType<capillary_pressure_size> const>(
             local_x_dot.data() + capillary_pressure_index,
             capillary_pressure_size);
 
-    auto const temperature_dot =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            temperature_size> const>(local_x_dot.data() + temperature_index,
-                                     temperature_size);
+    auto const temperature_dot = Eigen::Map<VectorType<temperature_size> const>(
+        local_x_dot.data() + temperature_index, temperature_size);
 
     // pointer to local_M_data vector
-    auto local_M = MathLib::createZeroedMatrix<
-        typename ShapeMatricesTypeDisplacement::template MatrixType<
-            matrix_size, matrix_size>>(local_M_data, matrix_size, matrix_size);
+    auto local_M =
+        MathLib::createZeroedMatrix<MatrixType<matrix_size, matrix_size>>(
+            local_M_data, matrix_size, matrix_size);
 
     // pointer to local_K_data vector
-    auto local_K = MathLib::createZeroedMatrix<
-        typename ShapeMatricesTypeDisplacement::template MatrixType<
-            matrix_size, matrix_size>>(local_K_data, matrix_size, matrix_size);
+    auto local_K =
+        MathLib::createZeroedMatrix<MatrixType<matrix_size, matrix_size>>(
+            local_K_data, matrix_size, matrix_size);
 
     // pointer to local_rhs_data vector
-    auto local_f =
-        MathLib::createZeroedVector<typename ShapeMatricesTypeDisplacement::
-                                        template VectorType<matrix_size>>(
-            local_rhs_data, matrix_size);
+    auto local_f = MathLib::createZeroedVector<VectorType<matrix_size>>(
+        local_rhs_data, matrix_size);
 
     // component-formulation
     // W - liquid phase main component
