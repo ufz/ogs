@@ -30,8 +30,8 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> geo_output_arg(
         "o", "output", "output gmsh geometry file (*.geo)", true, "", "output file");
     cmd.add(geo_output_arg);
-    TCLAP::ValueArg<std::string> geo_input_arg(
-        "i", "input", "input geometry file (*.gml)", true, "", "input file");
+    TCLAP::MultiArg<std::string> geo_input_arg(
+        "i", "input", "input geometry file (*.gml)", true, "input file name");
     cmd.add(geo_input_arg);
     TCLAP::ValueArg<unsigned> max_number_of_points_in_quadtree_leaf_arg(
         "", "max_points_in_quadtree_leaf", "positive number", false, 2,
@@ -60,21 +60,24 @@ int main(int argc, char* argv[])
     cmd.parse(argc, argv);
 
     GeoLib::GEOObjects geo_objects;
-    GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
-    try
+    for (auto const& geometry_name : geo_input_arg.getValue())
     {
-        if (!xml.readFile(geo_input_arg.getValue()))
+        GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
+        try
         {
+            if (!xml.readFile(geometry_name))
+            {
+                return EXIT_FAILURE;
+            }
+        }
+        catch (std::runtime_error const& err)
+        {
+            ERR("Failed to read file '{:s}'.", geometry_name);
+            ERR("{:s}", err.what());
             return EXIT_FAILURE;
         }
+        INFO("Successfully read file '{:s}'.", geometry_name);
     }
-    catch (std::runtime_error const& err)
-    {
-        ERR("Failed to read file `{:s}'.", geo_input_arg.getValue());
-        ERR("{:s}", err.what());
-        return EXIT_FAILURE;
-    }
-    INFO("Successfully read file `{:s}'.", geo_input_arg.getValue());
 
     auto const geo_names = geo_objects.getGeometryNames();
 
