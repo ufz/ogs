@@ -604,14 +604,27 @@ AddTest(
 )
 
 AddTest(
-    NAME geometryToGmshGeo
+    NAME geometryToGmshAdaptiveGeo
     PATH MeshGeoToolsLib/geometryToGmshGeo/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/geometryToGmshGeo
     EXECUTABLE geometryToGmshGeo
-    EXECUTABLE_ARGS -i square_1x1.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1.geo
+    EXECUTABLE_ARGS -i square_1x1.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1_adaptive.geo
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     TESTER_ARGS --ignore-matching-lines=OpenGeoSys
     DIFF_DATA
-    square_1x1.geo
+    square_1x1_adaptive.geo
+)
+
+AddTest(
+    NAME geometryToGmshHomogeneousGeo
+    PATH MeshGeoToolsLib/geometryToGmshGeo/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/geometryToGmshGeo
+    EXECUTABLE geometryToGmshGeo
+    EXECUTABLE_ARGS -i square_1x1.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1_homogeneous.geo --homogeneous -a 0.01
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER diff
+    TESTER_ARGS --ignore-matching-lines=OpenGeoSys
+    DIFF_DATA
+    square_1x1_homogeneous.geo
 )
