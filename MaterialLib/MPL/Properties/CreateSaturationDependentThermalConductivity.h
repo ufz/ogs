@@ -18,11 +18,11 @@ class ConfigTree;
 
 namespace MaterialPropertyLib
 {
-class SaturationDependentHeatConduction;
+class SaturationDependentThermalConductivity;
 }
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<SaturationDependentHeatConduction>
-createSaturationDependentHeatConduction(BaseLib::ConfigTree const& config);
+std::unique_ptr<SaturationDependentThermalConductivity>
+createSaturationDependentThermalConductivity(BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib

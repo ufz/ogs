@@ -37,7 +37,7 @@
 #include "CreateOrthotropicEmbeddedFracturePermeability.h"
 #include "CreatePermeabilityOrthotropicPowerLaw.h"
 #include "CreatePorosityFromMassBalance.h"
-#include "CreateSaturationDependentHeatConduction.h"
+#include "CreateSaturationDependentThermalConductivity.h"
 #include "CreateSaturationDependentSwelling.h"
 #include "CreateStrainDependentPermeability.h"
 #include "CreateTransportPorosityFromMassBalance.h"

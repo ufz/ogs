@@ -7,30 +7,30 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "SaturationDependentHeatConduction.h"
+#include "SaturationDependentThermalConductivity.h"
 
 #include "MaterialLib/MPL/Medium.h"
 
 namespace MaterialPropertyLib
 {
-SaturationDependentHeatConduction::SaturationDependentHeatConduction(
+SaturationDependentThermalConductivity::SaturationDependentThermalConductivity(
     std::string name, double const K_dry, double const K_wet)
     : K_dry_(K_dry), K_wet_(K_wet)
 {
     name_ = std::move(name);
 }
 
-void SaturationDependentHeatConduction::checkScale() const
+void SaturationDependentThermalConductivity::checkScale() const
 {
     if (!std::holds_alternative<Medium*>(scale_))
     {
         OGS_FATAL(
-            "The property 'SaturationDependentHeatConduction' is "
+            "The property 'SaturationDependentThermalConductivity' is "
             "implemented on the 'medium' scale only.");
     }
 }
 
-PropertyDataType SaturationDependentHeatConduction::value(
+PropertyDataType SaturationDependentThermalConductivity::value(
     VariableArray const& variable_array,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
@@ -41,14 +41,14 @@ PropertyDataType SaturationDependentHeatConduction::value(
     return K_dry_ * (1 - S_L) + K_wet_ * S_L;
 }
 
-PropertyDataType SaturationDependentHeatConduction::dValue(
+PropertyDataType SaturationDependentThermalConductivity::dValue(
     VariableArray const& /*variable_array*/, Variable const variable,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
     (void)variable;
     assert((variable == Variable::liquid_saturation) &&
-           "SaturationDependentHeatConduction::dvalue is implemented for "
+           "SaturationDependentThermalConductivity::dvalue is implemented for "
            "derivatives with respect to liquid saturation only.");
 
     return K_wet_ - K_dry_;
