@@ -59,7 +59,7 @@
         </processes>
         <output>
             <type>XDMF</type>
-            <prefix>cube_1e3</prefix>
+            <prefix>cube_1e3_np2</prefix>
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
