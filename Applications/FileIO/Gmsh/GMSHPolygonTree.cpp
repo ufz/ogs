@@ -46,8 +46,6 @@ GMSHPolygonTree::~GMSHPolygonTree()
             delete polyline;
         }
     }
-    // member of GeoLib::SimplePolygonTree, but the ownership is not transmitted
-    delete _node_polygon;
 }
 
 void GMSHPolygonTree::markSharedSegments()

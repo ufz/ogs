@@ -160,21 +160,35 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     GeoLib::computeAndInsertAllIntersectionPoints(
         pnt_vec, *(const_cast<std::vector<GeoLib::Polyline*>*>(merged_plys)));
 
-    // *** compute topological hierarchy of polygons
+    std::vector<GeoLib::Polyline*> polygons;
+    // for each closed polyline add a PolygonWithSegmentMarker object into
+    // polygons
     for (auto polyline : *merged_plys)
     {
         if (!polyline->isClosed())
         {
             continue;
         }
+        polygons.push_back(new GeoLib::PolygonWithSegmentMarker(*polyline));
+    }
+    if (polygons.empty())
+    {
+        OGS_FATAL("GMSHInterface::writeGMSHInputFile(): no polygons found.");
+    }
+    // let the polygon memory management be done by GEOObjects
+    _geo_objs.appendPolylineVec(polygons, _gmsh_geo_name);
+    // create for each polygon a PolygonTree
+    for (auto* polygon : polygons)
+    {
         _polygon_tree_list.push_back(new GMSH::GMSHPolygonTree(
-            new GeoLib::PolygonWithSegmentMarker(*polyline), nullptr, _geo_objs,
-            _gmsh_geo_name, *_mesh_density_strategy));
+            dynamic_cast<GeoLib::PolygonWithSegmentMarker*>(polygon), nullptr,
+            _geo_objs, _gmsh_geo_name, *_mesh_density_strategy));
     }
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "
         "detected {:d} polygons.",
         _polygon_tree_list.size());
+    // compute topological hierarchy of polygons
     GeoLib::createPolygonTrees<GMSH::GMSHPolygonTree>(_polygon_tree_list);
     DBUG(
         "GMSHInterface::writeGMSHInputFile(): Computed topological hierarchy - "

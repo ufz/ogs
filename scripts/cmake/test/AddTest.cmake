@@ -13,6 +13,7 @@
 #   WRAPPER <time|memcheck|callgrind|mpirun> # optional
 #   WRAPPER_ARGS <arguments> # optional
 #   TESTER <diff|vtkdiff|gmldiff|memcheck> # optional
+#   TESTER_ARGS <argument> # optional
 #   REQUIREMENTS # optional simple boolean expression which has to be true to
 #                  enable the test, e.g.
 #                  OGS_USE_PETSC AND (FOO OR BAR)
@@ -72,6 +73,7 @@ function(AddTest)
         DATA
         DIFF_DATA
         WRAPPER_ARGS
+        TESTER_ARGS
         REQUIREMENTS
         PYTHON_PACKAGES
         VIS
@@ -245,7 +247,7 @@ function(AddTest)
         foreach(FILE ${AddTest_DIFF_DATA})
             get_filename_component(FILE_EXPECTED ${FILE} NAME)
             list(APPEND TESTER_COMMAND "${SELECTED_DIFF_TOOL_PATH} \
-                ${TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
+                ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${AddTest_BINARY_PATH}/${FILE}"
             )
         endforeach()
@@ -285,7 +287,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                 ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
                 ${AddTest_BINARY_PATH}/${VTK_FILE} \
                 -a ${NAME_A} -b ${NAME_B} \
-                ${TESTER_ARGS}"
+                ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
                 )
             endforeach()
         elseif(${DiffDataLengthMod6} EQUAL 0)
@@ -325,7 +327,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                     ${AddTest_BINARY_PATH}/${VTK_FILE} \
                     -a ${NAME_A} -b ${NAME_B} \
                     --abs ${ABS_TOL} --rel ${REL_TOL} \
-                    ${TESTER_ARGS}"
+                    ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
                     )
                 endif()
             endforeach()
@@ -356,7 +358,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                 TESTER_COMMAND
                 "${PY_EXE} ${PROJECT_SOURCE_DIR}/scripts/test/gmldiff.py \
                 --abs ${ABS_TOL} --rel ${REL_TOL} \
-                ${TESTER_ARGS} \
+                ${TESTER_ARGS} ${AddTest_TESTER_ARGS}\
                 ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${AddTest_BINARY_PATH}/${GML_FILE}"
             )
