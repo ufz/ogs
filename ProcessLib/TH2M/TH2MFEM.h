@@ -49,9 +49,16 @@ public:
     using ShapeMatricesTypeDisplacement =
         ShapeMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
 
-    // Types for pressure.
     using ShapeMatricesTypePressure =
         ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
+
+    template <int N>
+    using VectorType =
+        typename ShapeMatricesTypePressure::template VectorType<N>;
+
+    template <int M, int N>
+    using MatrixType =
+        typename ShapeMatricesTypePressure::template MatrixType<M, N>;
 
     using GlobalDimMatrixType =
         typename ShapeMatricesTypePressure::GlobalDimMatrixType;
@@ -319,25 +326,6 @@ private:
             _ip_data, &IpData::k_rel_L, cache);
     }
 
-    virtual std::vector<double> const& getIntPtInternalEnergyGas(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::u_G,
-                                                         cache);
-    }
-
-    virtual std::vector<double> const& getIntPtInternalEnergyLiquid(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::u_L,
-                                                         cache);
-    }
     virtual std::vector<double> const& getIntPtEnthalpyGas(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -364,24 +352,6 @@ private:
     {
         return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::h_S,
                                                          cache);
-    }
-    virtual std::vector<double> const& getIntPtEnthalpyCG(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::h_CG, cache);
-    }
-    virtual std::vector<double> const& getIntPtEnthalpyWG(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::h_WG, cache);
     }
 
 private:

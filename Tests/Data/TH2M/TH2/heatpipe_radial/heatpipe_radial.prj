@@ -145,11 +145,6 @@
                         </property> -->
 
                         <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>0.0e-3</value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1.8e-5</value>
@@ -177,11 +172,6 @@
                             <value>1000</value>
                         </property>
 
-                        <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>0.0e-6</value>
-                        </property>
                         <property>
                             <name>viscosity</name>
                             <type>Constant</type>

@@ -115,27 +115,18 @@ struct IntegrationPointData final
     double h_G = std::numeric_limits<double>::quiet_NaN();
     double h_L = std::numeric_limits<double>::quiet_NaN();
     double h_S = std::numeric_limits<double>::quiet_NaN();
-    double h_CG = std::numeric_limits<double>::quiet_NaN();
-    double h_WG = std::numeric_limits<double>::quiet_NaN();
 
     // internal energies
-    double u_G = std::numeric_limits<double>::quiet_NaN();
-    double u_L = std::numeric_limits<double>::quiet_NaN();
     double rho_u_eff = std::numeric_limits<double>::quiet_NaN();
     double rho_u_eff_prev = std::numeric_limits<double>::quiet_NaN();
 
     // porosity
     double phi = std::numeric_limits<double>::quiet_NaN();
-    double phi_prev = std::numeric_limits<double>::quiet_NaN();
 
     double muGR = std::numeric_limits<double>::quiet_NaN();
     double muLR = std::numeric_limits<double>::quiet_NaN();
 
     GlobalDimMatrixType lambda;
-
-    // other
-    double phi_S_p_SR = std::numeric_limits<double>::quiet_NaN();
-    double phi_S_p_SR_prev = std::numeric_limits<double>::quiet_NaN();
 
     double thermal_volume_strain = std::numeric_limits<double>::quiet_NaN();
     double beta_T_SR = std::numeric_limits<double>::quiet_NaN();
@@ -166,9 +157,6 @@ struct IntegrationPointData final
         rho_L_h_L_prev = rho_L_h_L;
         rho_S_h_S_prev = rho_S_h_S;
 
-        phi_prev = phi;
-
-        phi_S_p_SR_prev = phi_S_p_SR;
 
         rhoCGR_prev = rhoCGR;
         rhoWGR_prev = rhoWGR;

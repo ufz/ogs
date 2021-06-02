@@ -12,7 +12,7 @@
 #include <map>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "PhaseTransitionModels.h"
+#include "PhaseTransitionModel.h"
 
 namespace ProcessLib
 {
@@ -22,17 +22,18 @@ namespace TH2M
 /// an equilibrium and water evaporates into the gas phase according to Dalton's
 /// law. This is realized by defining two components in each gas and liquid
 /// phase.
-struct PhaseTransitionFull : PhaseTransitionModels
+struct PhaseTransitionFull : PhaseTransitionModel
 {
     explicit PhaseTransitionFull(
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media);
 
-    void computeConstitutiveVariables(
+    PhaseTransitionModelVariables updateConstitutiveVariables(
+        PhaseTransitionModelVariables const& phase_transition_model_variables,
         const MaterialPropertyLib::Medium* medium,
         MaterialPropertyLib::VariableArray variables,
         ParameterLib::SpatialPosition pos, double const t,
-        double const dt) override;
+        double const dt) const override;
 };
 
 }  // namespace TH2M

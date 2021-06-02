@@ -27,7 +27,7 @@ namespace ProcessLib
 {
 namespace TH2M
 {
-std::unique_ptr<PhaseTransitionModels> createPhaseTransitionModel(
+std::unique_ptr<PhaseTransitionModel> createPhaseTransitionModel(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     // the approach here is that the number of phase components determines the

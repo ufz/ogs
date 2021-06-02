@@ -19,7 +19,7 @@
 #include "PhaseTransitionModels/PhaseTransitionDissolution.h"
 #include "PhaseTransitionModels/PhaseTransitionEvaporation.h"
 #include "PhaseTransitionModels/PhaseTransitionFull.h"
-#include "PhaseTransitionModels/PhaseTransitionModels.h"
+#include "PhaseTransitionModels/PhaseTransitionModel.h"
 #include "PhaseTransitionModels/PhaseTransitionNone.h"
 
 namespace MaterialLib
@@ -48,7 +48,7 @@ struct TH2MProcessData
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
-    std::unique_ptr<PhaseTransitionModels> phase_transition_model_ = nullptr;
+    std::unique_ptr<PhaseTransitionModel> phase_transition_model_ = nullptr;
 
     ParameterLib::Parameter<double> const& reference_temperature;
 

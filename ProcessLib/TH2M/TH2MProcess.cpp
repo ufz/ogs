@@ -200,13 +200,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         "relative_permeability_liquid", 1,
         &LocalAssemblerInterface::getIntPtRelativePermeabilityLiquid);
 
-    add_secondary_variable("internal_energy_gas", 1,
-                           &LocalAssemblerInterface::getIntPtInternalEnergyGas);
-
-    add_secondary_variable(
-        "internal_energy_liquid", 1,
-        &LocalAssemblerInterface::getIntPtInternalEnergyLiquid);
-
     add_secondary_variable("enthalpy_gas", 1,
                            &LocalAssemblerInterface::getIntPtEnthalpyGas);
 
@@ -215,12 +208,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
 
     add_secondary_variable("enthalpy_solid", 1,
                            &LocalAssemblerInterface::getIntPtEnthalpySolid);
-
-    add_secondary_variable("enthalpy_CG", 1,
-                           &LocalAssemblerInterface::getIntPtEnthalpyCG);
-
-    add_secondary_variable("enthalpy_WG", 1,
-                           &LocalAssemblerInterface::getIntPtEnthalpyWG);
 
     _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
