@@ -197,14 +197,12 @@ lam.setEntryName("EquivalentPlasticStrainMatrix");
             {
                 n[3] = nF[3] = sig[3] / (t_s * 2.);  // xy
                 const double t_s_cube_over_four = t_s * t_s * t_s * 4.;
-                dn_dsig[21] = dn_dsig[28] = 1. / (t_s * 2.);  //(3,3) and (4,4)
-                dn_dsig[21] -= sig[3] * sig[3] / t_s_cube_over_four;  //(3,3)
-                dn_dsig[28] -= sig[4] * sig[4] / t_s_cube_over_four;  //(4,4)
-                // xz direction
-                if (sig.size() == 6)
+                dn_dsig(3,3) = 1. / (t_s * 2.) - sig[3] * sig[3] / t_s_cube_over_four;
+                if (sig.size() == 6) {
                     n[4] = nF[4] = sig[4] / (t_s * 2);  // xz
-                dn_dsig[22] = dn_dsig[24] =
-                    -sig[3] * sig[4] / t_s_cube_over_four;  //(3,4), (4,3)
+                    dn_dsig(4,4) = 1. / (t_s * 2.) - sig[4] * sig[4] / t_s_cube_over_four;
+                    dn_dsig(3,4) = -sig[3] * sig[4] / t_s_cube_over_four;
+                }
             }
 
             if (this->iter > 30 &&
