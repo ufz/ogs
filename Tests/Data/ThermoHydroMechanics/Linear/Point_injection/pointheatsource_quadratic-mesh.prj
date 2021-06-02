@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
-    <mesh axially_symmetric="true">quarter_002.vtu</mesh>
-    <geometry>square_1x1.gml</geometry>
+    <mesh axially_symmetric="true">quarter_002_2nd.vtu</mesh>
+    <geometry>quarter_circle_geometry.gml</geometry>
     <processes>
         <process>
             <name>THERMO_HYDRO_MECHANICS</name>
@@ -140,7 +140,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>square_1e0_lin</prefix>
+            <prefix>pointheatsource_quadratic-mesh</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -218,18 +218,18 @@
         <process_variable>
             <name>displacement</name>
             <components>2</components>
-            <order>1</order>
+            <order>2</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
                     <geometry>bottom</geometry>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
                     <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
@@ -244,7 +244,7 @@
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
                     <geometry>out</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
@@ -259,7 +259,7 @@
             <initial_condition>temperature_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
                     <geometry>out</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
@@ -268,7 +268,7 @@
             </boundary_conditions>
             <source_terms>
                 <source_term>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometrical_set>quarter_circle_geometry</geometrical_set>
                     <geometry>center</geometry>
                     <type>Nodal</type>
                     <parameter>temperature_source_term</parameter>
