@@ -225,7 +225,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const p_int_pt = N_p.dot(p);
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = p_int_pt;
 
-        auto const K_S = solid_material.getBulkModulus(t, x_position);
+        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+            t, x_position, dt, T_ref);
+        auto const K_S = solid_material.getBulkModulus(t, x_position, &C_el);
 
         auto const alpha = medium->property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
@@ -528,9 +530,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
 
-    vars[static_cast<int>(MPL::Variable::temperature)] =
+    auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
             .template value<double>(vars, x_position, t, dt);
+    vars[static_cast<int>(MPL::Variable::temperature)] = T_ref;
 
     auto const& identity2 = Invariants::identity2;
 
@@ -546,7 +549,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         double const p_int_pt = N_p.dot(p);
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = p_int_pt;
 
-        auto const K_S = solid_material.getBulkModulus(t, x_position);
+        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+            t, x_position, dt, T_ref);
+        auto const K_S = solid_material.getBulkModulus(t, x_position, &C_el);
 
         auto const alpha_b =
             medium->property(MPL::PropertyType::biot_coefficient)
