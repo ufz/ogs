@@ -76,7 +76,9 @@ struct DeactivatedSubdomain
             deactivated_subdomain_meshes_,
         ParameterLib::Parameter<double> const* boundary_value_parameter);
 
-    bool includesTimeOf(double const t) const;
+    /// \returns true if the given time is included in the subdomains time
+    /// support interval.
+    bool isInTimeSupportInterval(double const t) const;
 
     /// \returns true if the point is in the deactivated part of the subdomain.
     /// The domain is split into two parts by a plane defined as a normal plane

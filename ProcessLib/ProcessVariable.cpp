@@ -290,7 +290,7 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 
     auto is_active_in_subdomain = [&](std::size_t const i,
                                       DeactivatedSubdomain const& ds) -> bool {
-        if (!ds.includesTimeOf(time))
+        if (!ds.isInTimeSupportInterval(time))
         {
             return true;
         }

@@ -49,7 +49,7 @@ DeactivatedSubdomain::DeactivatedSubdomain(
 {
 }
 
-bool DeactivatedSubdomain::includesTimeOf(double const t) const
+bool DeactivatedSubdomain::isInTimeSupportInterval(double const t) const
 {
     return time_interval.getSupportMin() <= t &&
            t <= time_interval.getSupportMax();
