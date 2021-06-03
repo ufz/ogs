@@ -41,42 +41,53 @@ public:
     /** Checks if the polygon represented by the given polygon tree node
      * is inside this node polygon.
      */
+
+    bool isRoot() const;
+
     bool isPolygonInside(const SimplePolygonTree* polygon_hierarchy) const;
     /** Either insert the given SimplePolygonTree in one of the existing
      * children or as a new child.
      */
     void insertSimplePolygonTree(SimplePolygonTree* polygon_hierarchy);
 
-    /**
-     * get the polygon represented by the tree node
-     * @return the polygon
-     */
-    const Polygon* getPolygon () const;
+    Polygon const& polygon() const;
+    Polygon& polygon();
+
+    const SimplePolygonTree* parent() const;
 
     /** returns the number of children */
     std::size_t getNumberOfChildren() const { return _children.size(); }
 
-protected:
+private:
     /**
      * the polygon this node stands for
      */
     Polygon* _node_polygon;
-    /**
-     * the polygon represented by this node is contained in the
-     * polygon represented by the parent node in the tree
-     */
-    SimplePolygonTree* _parent;
+
     /**
      * list of polygons (represented by SimplePolygonTree nodes) contained
      * in the _node_polygon
      */
     std::list<SimplePolygonTree*> _children;
+    /**
+     * the polygon represented by this node is contained in the
+     * polygon represented by the parent node in the tree
+     */
+    SimplePolygonTree* _parent;
 
-private:
-    void setParent(SimplePolygonTree* parent)
+public:
+    decltype(_children)::iterator begin() { return _children.begin(); }
+    decltype(_children)::iterator end() { return _children.end(); }
+
+    decltype(_children)::const_iterator begin() const
     {
-        _parent = parent;
+        return _children.begin();
     }
+    decltype(_children)::const_iterator end() const
+    {
+        return _children.end();
+    }
+
 };
 
 /**
