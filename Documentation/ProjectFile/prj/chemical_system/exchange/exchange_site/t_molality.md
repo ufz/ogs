@@ -1,0 +1,1 @@
+This keyword is used to input the amount (mol/kg of water) of the exchange site.

@@ -33,6 +33,7 @@
 #include "PhreeqcIOData/Output.h"
 #include "PhreeqcIOData/ReactionRate.h"
 #include "PhreeqcIOData/Surface.h"
+#include "PhreeqcIOData/Exchange.h"
 #include "PhreeqcIOData/UserPunch.h"
 
 namespace ChemistryLib
@@ -242,6 +243,7 @@ PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
                      std::unique_ptr<ChemicalSystem>&& chemical_system,
                      std::vector<ReactionRate>&& reaction_rates,
                      std::vector<SurfaceSite>&& surface,
+                     std::vector<ExchangeSite>&& exchange,
                      std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
@@ -251,6 +253,7 @@ PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
       _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
       _surface(std::move(surface)),
+      _exchange(std::move(exchange)),
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
@@ -505,6 +508,19 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
+        auto const& exchange = phreeqc_io._exchange;
+        if (!exchange.empty())
+        {
+            os << "EXCHANGE " << chemical_system_id + 1 << "\n";
+            std::size_t const aqueous_solution_id =
+                dump->aqueous_solutions_prev.empty()
+                    ? chemical_system_id + 1
+                    : phreeqc_io._num_chemical_systems + chemical_system_id + 1;
+            os << "-equilibrate with solution " << aqueous_solution_id << "\n";
+            os << exchange << "\n";
+            os << "SAVE solution " << chemical_system_id + 1 << "\n";
+        }
+
         os << "END"
            << "\n\n";
     }
@@ -565,7 +581,16 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     auto const& dropped_item_ids = output.dropped_item_ids;
 
     auto const& surface = phreeqc_io._surface;
-    int const num_skipped_lines = surface.empty() ? 1 : 2;
+    auto const& exchange = phreeqc_io._exchange;
+
+    if (!surface.empty() && !exchange.empty())
+    {
+        OGS_FATAL(
+            "Using surface and exchange reactions simultaneously is not "
+            "supported at the moment");
+    }
+
+    int const num_skipped_lines = surface.empty() && exchange.empty() ? 1 : 2;
 
     auto& equilibrium_reactants =
         phreeqc_io._chemical_system->equilibrium_reactants;

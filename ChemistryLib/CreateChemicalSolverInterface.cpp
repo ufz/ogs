@@ -19,11 +19,13 @@
 #include "PhreeqcIO.h"
 #include "PhreeqcIOData/ChemicalSystem.h"
 #include "PhreeqcIOData/CreateChemicalSystem.h"
+#include "PhreeqcIOData/CreateExchange.h"
 #include "PhreeqcIOData/CreateKnobs.h"
 #include "PhreeqcIOData/CreateOutput.h"
 #include "PhreeqcIOData/CreateSurface.h"
 #include "PhreeqcIOData/CreateUserPunch.h"
 #include "PhreeqcIOData/Dump.h"
+#include "PhreeqcIOData/Exchange.h"
 #include "PhreeqcIOData/Knobs.h"
 #include "PhreeqcIOData/ReactionRate.h"
 #include "PhreeqcIOData/Surface.h"
@@ -97,12 +99,24 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         //! \ogs_file_param{prj__chemical_system__surface}
         config.getConfigSubtreeOptional("surface"));
 
+    // exchange
+    auto exchange = PhreeqcIOData::createExchange(
+        //! \ogs_file_param{prj__chemical_system__exchange}
+        config.getConfigSubtreeOptional("exchange"));
+
     // dump
     auto const project_file_name = BaseLib::joinPaths(
         output_directory,
         BaseLib::extractBaseNameWithoutExtension(config.getProjectFileName()));
 
-    auto dump = surface.empty()
+    if (!surface.empty() && !exchange.empty())
+    {
+        OGS_FATAL(
+            "Using surface and exchange reactions simultaneously is not "
+            "supported at the moment");
+    }
+
+    auto dump = surface.empty() && exchange.empty()
                     ? nullptr
                     : std::make_unique<PhreeqcIOData::Dump>(project_file_name);
 
@@ -126,8 +140,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
         std::move(project_file_name), std::move(path_to_database),
         std::move(chemical_system), std::move(reaction_rates),
-        std::move(surface), std::move(user_punch), std::move(output),
-        std::move(dump), std::move(knobs));
+        std::move(surface), std::move(exchange), std::move(user_punch),
+        std::move(output), std::move(dump), std::move(knobs));
 }
 
 template <>

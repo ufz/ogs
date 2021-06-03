@@ -1027,6 +1027,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption.prj RUNTIME 60)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calciteDissolvePrecipitateOnly.prj RUNTIME 25)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcitePorosityChange.prj RUNTIME 25)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchange.prj RUNTIME 60)
 endif()
 
 AddTest(
