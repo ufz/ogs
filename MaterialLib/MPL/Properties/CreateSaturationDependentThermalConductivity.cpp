@@ -8,15 +8,15 @@
  */
 
 #include "BaseLib/ConfigTree.h"
-#include "SaturationDependentHeatConduction.h"
+#include "SaturationDependentThermalConductivity.h"
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<SaturationDependentHeatConduction>
-createSaturationDependentHeatConduction(BaseLib::ConfigTree const& config)
+std::unique_ptr<SaturationDependentThermalConductivity>
+createSaturationDependentThermalConductivity(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{properties__property__type}
-    config.checkConfigParameter("type", "SaturationDependentHeatConduction");
+    config.checkConfigParameter("type", "SaturationDependentThermalConductivity");
 
     // Second access for storage.
     //! \ogs_file_param{properties__property__name}
@@ -26,15 +26,15 @@ createSaturationDependentHeatConduction(BaseLib::ConfigTree const& config)
          property_name);
 
     auto const K_dry =
-        //! \ogs_file_param{properties__property__SaturationDependentHeatConduction__dry}
+        //! \ogs_file_param{properties__property__SaturationDependentThermalConductivity__dry}
         config.getConfigParameter<double>("dry");
 
     auto const K_wet =
-        //! \ogs_file_param{properties__property__SaturationDependentHeatConduction__wet}
+        //! \ogs_file_param{properties__property__SaturationDependentThermalConductivity__wet}
         config.getConfigParameter<double>("wet");
 
     return std::make_unique<
-        MaterialPropertyLib::SaturationDependentHeatConduction>(
+        MaterialPropertyLib::SaturationDependentThermalConductivity>(
         std::move(property_name), K_dry, K_wet);
 }
 }  // namespace MaterialPropertyLib

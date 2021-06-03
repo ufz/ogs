@@ -42,7 +42,7 @@
 #include "RelativePermeability/RelPermUdell.h"
 #include "RelativePermeability/RelPermUdellNonwettingPhase.h"
 #include "RelativePermeability/RelPermVanGenuchten.h"
-#include "SaturationDependentHeatConduction.h"
+#include "SaturationDependentThermalConductivity.h"
 #include "SaturationDependentSwelling.h"
 #include "ThermalConductivity/SoilThermalConductivitySomerton.h"
 #include "TransportPorosityFromMassBalance.h"

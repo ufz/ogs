@@ -210,9 +210,9 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createRelPermUdellNonwettingPhase(config);
     }
 
-    if (boost::iequals(property_type, "SaturationDependentHeatConduction"))
+    if (boost::iequals(property_type, "SaturationDependentThermalConductivity"))
     {
-        return createSaturationDependentHeatConduction(config);
+        return createSaturationDependentThermalConductivity(config);
     }
 
     if (boost::iequals(property_type, "SaturationDependentSwelling"))

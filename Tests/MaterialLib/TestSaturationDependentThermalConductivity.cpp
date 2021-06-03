@@ -15,19 +15,19 @@
 #include <boost/math/constants/constants.hpp>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Properties/CreateSaturationDependentHeatConduction.h"
-#include "MaterialLib/MPL/Properties/SaturationDependentHeatConduction.h"
+#include "MaterialLib/MPL/Properties/CreateSaturationDependentThermalConductivity.h"
+#include "MaterialLib/MPL/Properties/SaturationDependentThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "TestMPL.h"
 #include "Tests/TestTools.h"
 
-TEST(MaterialPropertyLib, SaturationDependentHeatConduction)
+TEST(MaterialPropertyLib, SaturationDependentThermalConductivity)
 {
     double const k_dry = 0.2;
     double const k_wet = 1.5;
 
-    auto const k_model_eff = MPL::SaturationDependentHeatConduction(
+    auto const k_model_eff = MPL::SaturationDependentThermalConductivity(
         "thermal_conductivity", k_dry, k_wet);
 
     ParameterLib::SpatialPosition const pos;
