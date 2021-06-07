@@ -286,6 +286,15 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
     _ids_of_active_elements.clear();
 
+    // If none of the deactivated subdomains is active at current time, then the
+    // _ids_of_active_elements remain empty.
+    if (std::none_of(
+            begin(_deactivated_subdomains), end(_deactivated_subdomains),
+            [&](auto const& ds) { return ds->isInTimeSupportInterval(time); }))
+    {
+        return;
+    }
+
     auto const* const material_ids = MeshLib::materialIDs(_mesh);
 
     auto is_active_in_subdomain = [&](std::size_t const i,
