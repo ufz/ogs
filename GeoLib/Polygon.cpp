@@ -620,11 +620,9 @@ std::list<Polygon*> const& Polygon::computeListOfSimplePolygons()
     splitPolygonAtPoint(_simple_polygon_list.begin());
     splitPolygonAtIntersection(_simple_polygon_list.begin());
 
-    for (std::list<GeoLib::Polygon*>::iterator it(_simple_polygon_list.begin());
-         it != _simple_polygon_list.end();
-         ++it)
+    for (auto polygon : _simple_polygon_list)
     {
-        (*it)->initialise();
+        polygon->initialise();
     }
     return _simple_polygon_list;
 }

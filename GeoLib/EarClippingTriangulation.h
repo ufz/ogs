@@ -12,8 +12,7 @@
  *
  */
 
-#ifndef EARCLIPPINGTRIANGULATION_H_
-#define EARCLIPPINGTRIANGULATION_H_
+#pragma once
 
 #include <list>
 #include <vector>
@@ -26,18 +25,19 @@ namespace GeoLib
 class Polygon;
 class Triangle;
 
-class EarClippingTriangulation
+class EarClippingTriangulation final
 {
 public:
-    EarClippingTriangulation(const GeoLib::Polygon* ply,
+    EarClippingTriangulation(GeoLib::Polygon const& polygon,
                              std::list<GeoLib::Triangle> &triangles,
                              bool rot = true);
-    virtual ~EarClippingTriangulation();
+    ~EarClippingTriangulation();
+
 private:
     /**
      * copies the points of the polygon to the vector _pnts
      */
-    inline void copyPolygonPoints (const GeoLib::Polygon* polygon);
+    inline void copyPolygonPoints(GeoLib::Polygon const& polygon);
     inline void ensureCWOrientation ();
 
     inline bool isEar(std::size_t v0, std::size_t v1, std::size_t v2) const;
@@ -59,8 +59,6 @@ private:
      */
     std::list<GeoLib::Triangle> _triangles;
 
-    GeoLib::Orientation _original_orient;
+    GeoLib::Orientation _original_orientation;
 };
 } // end namespace GeoLib
-
-#endif /* EARCLIPPINGTRIANGULATION_H_ */

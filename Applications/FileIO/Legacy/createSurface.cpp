@@ -146,20 +146,15 @@ GeoLib::Surface* createSurfaceWithEarClipping(GeoLib::Polyline const& line)
     std::list<GeoLib::Polygon*> const& list_of_simple_polygons =
         polygon->computeListOfSimplePolygons();
 
-    for (std::list<GeoLib::Polygon*>::const_iterator simple_polygon_it(
-             list_of_simple_polygons.begin());
-         simple_polygon_it != list_of_simple_polygons.end();
-         ++simple_polygon_it)
+    for (auto const& simple_polygon : list_of_simple_polygons)
     {
         std::list<GeoLib::Triangle> triangles;
-        GeoLib::EarClippingTriangulation(*simple_polygon_it, triangles);
+        GeoLib::EarClippingTriangulation(*simple_polygon, triangles);
 
         // add Triangles to Surface
-        std::list<GeoLib::Triangle>::const_iterator it(triangles.begin());
-        while (it != triangles.end())
+        for (auto const& t : triangles)
         {
-            sfc->addTriangle((*it)[0], (*it)[1], (*it)[2]);
-            ++it;
+            sfc->addTriangle(t[0], t[1], t[2]);
         }
     }
     // delete polygon;
@@ -167,7 +162,7 @@ GeoLib::Surface* createSurfaceWithEarClipping(GeoLib::Polyline const& line)
     {
         WARN(
             "Surface::createSurface(): Triangulation does not contain any "
-            "triangle.");
+            "triangles.");
         delete sfc;
         return nullptr;
     }
