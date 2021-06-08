@@ -170,6 +170,7 @@ private:
         std::vector<double>& cache) const override;
 
     void updateConstitutiveVariables(Eigen::VectorXd const& local_x,
+                                     Eigen::VectorXd const& local_x_dot,
                                      double const t, double const dt);
 
     std::size_t setSigma(double const* values)

@@ -95,8 +95,9 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         IntegrationMethod, DisplacementDim>::
-    updateConstitutiveVariables(Eigen::VectorXd const& local_x, double const t,
-                                double const dt)
+    updateConstitutiveVariables(Eigen::VectorXd const& local_x,
+                                Eigen::VectorXd const& local_x_dot,
+                                double const t, double const dt)
 {
     [[maybe_unused]] auto const matrix_size =
         gas_pressure_size + capillary_pressure_size + temperature_size +
@@ -318,7 +319,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     assert(local_x.size() == matrix_size);
 
     updateConstitutiveVariables(
-        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()), t,
+        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
+        Eigen::VectorXd::Zero(matrix_size), t,
         std::numeric_limits<double>::quiet_NaN());
 
     unsigned const n_integration_points =
@@ -450,8 +452,10 @@ void TH2MLocalAssembler<
         _integration_method.getNumberOfPoints();
 
     updateConstitutiveVariables(
-        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()), t,
-        dt);
+        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
+        Eigen::Map<Eigen::VectorXd const>(local_x_dot.data(),
+                                          local_x_dot.size()),
+        t, dt);
 
     MPL::VariableArray vars;
 
@@ -966,9 +970,9 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         IntegrationMethod, DisplacementDim>::
-    computeSecondaryVariableConcrete(double const t, double const /*dt*/,
+    computeSecondaryVariableConcrete(double const t, double const dt,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& /*local_x_dot*/)
+                                     Eigen::VectorXd const& local_x_dot)
 {
     auto const gas_pressure =
         local_x.template segment<gas_pressure_size>(gas_pressure_index);
@@ -1005,7 +1009,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     double saturation_avg = 0;
 
-    updateConstitutiveVariables(local_x, t, 0);
+    updateConstitutiveVariables(local_x, local_x_dot, t, dt);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
