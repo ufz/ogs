@@ -70,8 +70,6 @@ public:
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
-    using SymmetricTensor = Eigen::Matrix<double, KelvinVectorSize, 1>;
-
     TH2MLocalAssembler(TH2MLocalAssembler const&) = delete;
     TH2MLocalAssembler(TH2MLocalAssembler&&) = delete;
 
