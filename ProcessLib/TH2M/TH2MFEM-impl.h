@@ -113,6 +113,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     auto const temperature =
         local_x.template segment<temperature_size>(temperature_index);
+    auto const temperature_dot =
+        local_x_dot.template segment<temperature_size>(temperature_index);
 
     auto const displacement =
         local_x.template segment<displacement_size>(displacement_index);
@@ -143,18 +145,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                            ShapeMatricesTypeDisplacement>(
                 _element, Nu);
 
-        auto const Bu =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                gradNu, Nu, x_coord, _is_axially_symmetric);
-
         double const T = NT.dot(temperature);
         double const pGR = Np.dot(gas_pressure);
         double const pCap = Np.dot(capillary_pressure);
         double const pLR = pGR - pCap;
-
-        double const div_u = mT * Bu * displacement;
 
         MPL::VariableArray vars;
         vars[static_cast<int>(MPL::Variable::temperature)] = T;
@@ -205,6 +199,28 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // isotropic solid phase volumetric thermal expansion coefficient
         ip_data.beta_T_SR = Invariants::trace(ip_data.alpha_T_SR);
 
+        double const T_dot = NT.dot(temperature_dot);
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+            dthermal_strain = ip_data.alpha_T_SR * T_dot * dt;
+
+        auto const Bu =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                gradNu, Nu, x_coord, _is_axially_symmetric);
+
+        auto& eps = ip_data.eps;
+        eps.noalias() = Bu * displacement;
+
+        auto& eps_prev = ip_data.eps_prev;
+        auto& eps_m = ip_data.eps_m;
+        auto& eps_m_prev = ip_data.eps_m_prev;
+
+        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps_m);
+
         auto const rho_ref_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(
@@ -223,6 +239,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                .template value<double>(vars, pos, t, dt);
 
         // solid phase volume fraction
+        double const div_u = mT * eps;
         auto const phi_S_0 = 1. - phi_0;
         const double phi_S = phi_S_0 * (1. + ip_data.thermal_volume_strain -
                                         ip_data.alpha_B * div_u);
@@ -232,6 +249,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // solid phase density
         auto const rhoSR = rho_ref_SR * (1. - ip_data.thermal_volume_strain +
                                          (ip_data.alpha_B - 1.) * div_u);
+
+        ip_data.updateConstitutiveRelation(vars, t, pos, dt, T - T_dot * dt);
 
         // constitutive model object as specified in process creation
         auto& ptm = *_process_data.phase_transition_model_;
@@ -347,9 +366,6 @@ void TH2MLocalAssembler<
                              temperature_size + displacement_size;
     assert(local_x.size() == matrix_size);
 
-    auto const temperature = Eigen::Map<VectorType<temperature_size> const>(
-        local_x.data() + temperature_index, temperature_size);
-
     auto const gas_pressure = Eigen::Map<VectorType<gas_pressure_size> const>(
         local_x.data() + gas_pressure_index, gas_pressure_size);
 
@@ -357,16 +373,10 @@ void TH2MLocalAssembler<
         Eigen::Map<VectorType<capillary_pressure_size> const>(
             local_x.data() + capillary_pressure_index, capillary_pressure_size);
 
-    auto const displacement = Eigen::Map<VectorType<displacement_size> const>(
-        local_x.data() + displacement_index, displacement_size);
-
     auto const capillary_pressure_dot =
         Eigen::Map<VectorType<capillary_pressure_size> const>(
             local_x_dot.data() + capillary_pressure_index,
             capillary_pressure_size);
-
-    auto const temperature_dot = Eigen::Map<VectorType<temperature_size> const>(
-        local_x_dot.data() + temperature_index, temperature_size);
 
     // pointer to local_M_data vector
     auto local_M =
@@ -457,8 +467,6 @@ void TH2MLocalAssembler<
                                           local_x_dot.size()),
         t, dt);
 
-    MPL::VariableArray vars;
-
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
         pos.setIntegrationPoint(int_point);
@@ -497,9 +505,6 @@ void TH2MLocalAssembler<
                 gradNu, Nu, x_coord, _is_axially_symmetric);
 
         auto const BuT = Bu.transpose().eval();
-
-        auto& eps = ip.eps;
-        auto const& sigma_eff = ip.sigma_eff;
 
         double const pCap = Np.dot(capillary_pressure);
 
@@ -709,25 +714,7 @@ void TH2MLocalAssembler<
 
         KUpC.noalias() += (BuT * alpha_B * s_L * m * Np) * w;
 
-        eps.noalias() = Bu * displacement;
-
-        auto& eps_prev = ip.eps_prev;
-        auto& eps_m = ip.eps_m;
-        auto& eps_m_prev = ip.eps_m_prev;
-
-        double const T = NT.dot(temperature);
-        double const T_dot = NT.dot(temperature_dot);
-
-        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain = ip.alpha_T_SR * T_dot * dt;
-        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::mechanical_strain)]
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m);
-
-        ip.updateConstitutiveRelation(vars, t, pos, dt, T - T_dot * dt);
-
-        fU.noalias() -= (BuT * sigma_eff - Nu_op.transpose() * rho * b) * w;
+        fU.noalias() -= (BuT * ip.sigma_eff - Nu_op.transpose() * rho * b) * w;
 
         if (_process_data.apply_mass_lumping)
         {
