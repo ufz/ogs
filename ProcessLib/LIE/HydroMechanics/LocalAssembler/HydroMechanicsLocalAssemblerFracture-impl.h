@@ -192,10 +192,12 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             displacement_size, pressure_size>::Zero(displacement_size,
                                                     pressure_size);
 
-    using GlobalDimMatrix = Eigen::Matrix<double, GlobalDim, GlobalDim>;
-    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
+    // Projection of the body force vector at the element.
+    Eigen::MatrixXd const global2local_rotation =
+        R.topLeftCorner(_element.getDimension(), GlobalDim);
 
-    auto const& gravity_vec = _process_data.specific_body_force;
+    auto const& gravity_vec =
+        (global2local_rotation * _process_data.specific_body_force).eval();
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
@@ -253,19 +255,14 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             t, x_position, ip_data.aperture0, stress0, w_prev, w,
             effective_stress_prev, effective_stress, C, state);
 
-        auto& permeability = ip_data.permeability;
-        permeability = frac_prop.permeability_model->permeability(
+        auto& k = ip_data.permeability;
+        k = frac_prop.permeability_model->permeability(
             ip_data.permeability_state.get(), ip_data.aperture0, b_m);
-
-        GlobalDimMatrix const k =
-            createRotatedTensor<GlobalDim>(R, permeability);
 
         // derivative of permeability respect to aperture
         double const local_dk_db =
             frac_prop.permeability_model->dpermeability_daperture(
                 ip_data.permeability_state.get(), ip_data.aperture0, b_m);
-        GlobalDimMatrix const dk_db =
-            createRotatedTensor<GlobalDim>(R, local_dk_db);
 
         //
         // displacement equation, displacement jump part
@@ -292,18 +289,18 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         //
         // pressure equation, displacement jump part.
         //
-        GlobalDimVector const grad_head_over_mu =
-            (dNdx_p * p + rho_fr * gravity_vec) / mu;
+        auto const grad_head_over_mu =
+            ((dNdx_p * p + rho_fr * gravity_vec) / mu).eval();
         Eigen::Matrix<double, 1, displacement_size> const mT_R_Hg =
             identity2.transpose() * R * H_g;
         // velocity in global coordinates
         ip_data.darcy_velocity.head(GlobalDim).noalias() =
-            -R.transpose() * k * grad_head_over_mu;
+            -global2local_rotation.transpose() * k * grad_head_over_mu;
         J_pg.noalias() += N_p.transpose() * S * N_p * p_dot * mT_R_Hg * ip_w;
         J_pg.noalias() +=
             dNdx_p.transpose() * k * grad_head_over_mu * mT_R_Hg * ip_w;
-        J_pg.noalias() += dNdx_p.transpose() * b_m * dk_db * grad_head_over_mu *
-                          mT_R_Hg * ip_w;
+        J_pg.noalias() += dNdx_p.transpose() * b_m * local_dk_db *
+                          grad_head_over_mu * mT_R_Hg * ip_w;
     }
 
     // displacement equation, pressure part
