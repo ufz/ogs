@@ -365,24 +365,6 @@ void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
 }
 
 template <int DisplacementDim>
-void TH2MProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
-    GlobalVector const& x, GlobalVector const& xdot, const double t,
-    double const dt, const int process_id)
-{
-    if (!hasMechanicalProcess(process_id))
-    {
-        return;
-    }
-
-    DBUG("PostNonLinearSolver TH2MProcess.");
-    // Calculate strain, stress or other internal variables of mechanics.
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        getDOFTable(process_id), x, xdot, t, dt, _use_monolithic_scheme,
-        process_id);
-}
-
-template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
     GlobalVector const& x_dot, const int process_id)
