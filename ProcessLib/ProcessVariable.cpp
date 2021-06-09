@@ -286,34 +286,47 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 {
     _ids_of_active_elements.clear();
 
-    auto found_a_set =
-        std::find_if(_deactivated_subdomains.begin(),
-                     _deactivated_subdomains.end(),
-                     [&](auto& _deactivated_subdomain) {
-                         return _deactivated_subdomain->includesTimeOf(time);
-                     });
-
-    if (found_a_set == _deactivated_subdomains.end())
+    // If none of the deactivated subdomains is active at current time, then the
+    // _ids_of_active_elements remain empty.
+    if (std::none_of(
+            begin(_deactivated_subdomains), end(_deactivated_subdomains),
+            [&](auto const& ds) { return ds->isInTimeSupportInterval(time); }))
     {
         return;
     }
 
-    auto const& deactivated_materialIDs = (*found_a_set)->materialIDs;
-
     auto const* const material_ids = MeshLib::materialIDs(_mesh);
-    auto const number_of_elements = _mesh.getNumberOfElements();
 
-    for (std::size_t i = 0; i < number_of_elements; i++)
-    {
+    auto is_active_in_subdomain = [&](std::size_t const i,
+                                      DeactivatedSubdomain const& ds) -> bool {
+        if (!ds.isInTimeSupportInterval(time))
+        {
+            return true;
+        }
+
+        auto const& deactivated_materialIDs =
+            ds.materialIDs;
+
         auto const& element_center = getCenterOfGravity(*_mesh.getElement(i));
         if (std::binary_search(deactivated_materialIDs.begin(),
                                deactivated_materialIDs.end(),
                                (*material_ids)[i]) &&
-            (*found_a_set)->isDeactivated(element_center, time))
+            ds.isDeactivated(element_center, time))
         {
-            continue;
+            return false;
         }
-        _ids_of_active_elements.push_back(_mesh.getElement(i)->getID());
+        return true;
+    };
+
+    auto const number_of_elements = _mesh.getNumberOfElements();
+    for (std::size_t i = 0; i < number_of_elements; i++)
+    {
+        if (std::all_of(
+                begin(_deactivated_subdomains), end(_deactivated_subdomains),
+                [&](auto const& ds) { return is_active_in_subdomain(i, *ds); }))
+        {
+            _ids_of_active_elements.push_back(_mesh.getElement(i)->getID());
+        }
     }
 }
 
