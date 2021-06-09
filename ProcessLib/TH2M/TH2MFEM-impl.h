@@ -339,8 +339,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     updateConstitutiveVariables(
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
-        Eigen::VectorXd::Zero(matrix_size), t,
-        std::numeric_limits<double>::quiet_NaN());
+        Eigen::VectorXd::Zero(matrix_size), t, 0);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
