@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>excavation_niches.vtu</mesh>
-    <geometry>excavation_niches.gml</geometry>
+    <meshes>
+        <mesh>excavation_niches.vtu</mesh>
+        <mesh>excavation_niches_back.vtu</mesh>
+        <mesh>excavation_niches_front.vtu</mesh>
+        <mesh>excavation_niches_left.vtu</mesh>
+        <mesh>excavation_niches_right.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>HM</name>
@@ -175,29 +180,25 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>example</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>excavation_niches_left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>example</geometrical_set>
-                    <geometry>back</geometry>
+                    <mesh>excavation_niches_back</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>example</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>excavation_niches_right</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>example</geometrical_set>
-                    <geometry>front</geometry>
+                    <mesh>excavation_niches_front</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
@@ -229,8 +230,7 @@
             <initial_condition>pressure0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>example</geometrical_set>
-                    <geometry>back</geometry>
+                    <mesh>excavation_niches_back</mesh>
                     <type>Dirichlet</type>
                     <parameter>pressure0</parameter>
                 </boundary_condition>
