@@ -17,7 +17,7 @@ target_link_libraries(
     PUBLIC BaseLib MathLib $<$<BOOL:${OGS_BUILD_GUI}>:rapidxml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
-    PRIVATE tet spdlog::spdlog
+    PRIVATE tet
 )
 
 configure_file(

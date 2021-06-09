@@ -2,7 +2,7 @@ get_source_files(SOURCES)
 
 ogs_add_library(MaterialLib_SolidModels ${SOURCES})
 target_link_libraries(
-    MaterialLib_SolidModels PUBLIC MathLib PRIVATE spdlog::spdlog ParameterLib
+    MaterialLib_SolidModels PUBLIC MathLib PRIVATE ParameterLib
                                                    NumLib
 )
 

@@ -5,5 +5,5 @@ get_source_files(SOURCES_DataHolderLib)
 ogs_add_library(DataHolderLib ${SOURCES_DataHolderLib})
 
 target_link_libraries(
-    DataHolderLib PUBLIC GeoLib MeshLib PRIVATE BaseLib MathLib spdlog::spdlog
+    DataHolderLib PUBLIC GeoLib MeshLib PRIVATE BaseLib MathLib
 )

@@ -23,7 +23,7 @@ target_compile_definitions(
 target_link_libraries(
     ProcessLibBoundaryConditionPython PUBLIC BaseLib MathLib MeshLib NumLib
                                              ${Python3_LIBRARIES}
-    PRIVATE pybind11::pybind11 spdlog::spdlog
+    PRIVATE pybind11::pybind11
 )
 
 # For the embedded Python module

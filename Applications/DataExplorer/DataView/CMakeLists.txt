@@ -129,7 +129,6 @@ target_link_libraries(
             QtDiagramView
             QtStratView
             DataHolderLib
-            spdlog::spdlog
             Qt5::Core
             Qt5::Gui
 )

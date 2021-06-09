@@ -38,7 +38,7 @@ target_link_libraries(
         $<$<TARGET_EXISTS:ProcessLibSourceTermPython>:ProcessLibSourceTermPython>
         $<$<TARGET_EXISTS:petsc>:petsc>
         nlohmann_json
-    PRIVATE ParameterLib GitInfoLib spdlog::spdlog
+    PRIVATE ParameterLib GitInfoLib
             $<$<TARGET_EXISTS:InSituLib>:InSituLib>
 )
 
