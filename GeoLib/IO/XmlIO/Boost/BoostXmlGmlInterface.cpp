@@ -194,6 +194,9 @@ void BoostXmlGmlInterface::readPolylines(
         {
             // polyline has no name, ignore it.
             pl.ignoreConfigParameterAll("pnt");
+            WARN(
+                "Polyline name is required! Polylines without a name are "
+                "ignored.");
         }
     }
 }
