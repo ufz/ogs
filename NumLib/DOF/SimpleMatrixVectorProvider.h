@@ -63,19 +63,15 @@ private:
 
     // returns a pair with the pointer to the matrix/vector and
     // a boolean indicating if a new object has been built (then true else false)
-    template<bool do_search, typename MatVec, typename... Args>
-    std::pair<MatVec*, bool>
-    get_(std::size_t& id,
-         std::map<std::size_t, MatVec*>& unused_map,
-         std::map<MatVec*, std::size_t>& used_map,
-         Args&&... args);
+    template <bool do_search, typename MatVec, typename... Args>
+    std::pair<MatVec*, bool> get_(std::size_t& id,
+                                  std::map<MatVec*, std::size_t>& used_map,
+                                  Args&&... args);
 
     std::size_t _next_id = 1;
 
-    std::map<std::size_t, GlobalMatrix*> _unused_matrices;
     std::map<GlobalMatrix*, std::size_t> _used_matrices;
 
-    std::map<std::size_t, GlobalVector*> _unused_vectors;
     std::map<GlobalVector*, std::size_t> _used_vectors;
 };
 

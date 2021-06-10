@@ -23,10 +23,7 @@ namespace NumLib
 {
 template <bool do_search, typename MatVec, typename... Args>
 std::pair<MatVec*, bool> SimpleMatrixVectorProvider::get_(
-    std::size_t& id,
-    std::map<std::size_t, MatVec*>& unused_map,
-    std::map<MatVec*, std::size_t>& used_map,
-    Args&&... args)
+    std::size_t& id, std::map<MatVec*, std::size_t>& used_map, Args&&... args)
 {
     id = _next_id++;
     auto res =
@@ -41,8 +38,7 @@ template <bool do_search, typename... Args>
 std::pair<GlobalMatrix*, bool> SimpleMatrixVectorProvider::getMatrix_(
     std::size_t& id, Args&&... args)
 {
-    return get_<do_search>(
-        id, _unused_matrices, _used_matrices, std::forward<Args>(args)...);
+    return get_<do_search>(id, _used_matrices, std::forward<Args>(args)...);
 }
 
 GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(std::size_t& id)
@@ -76,8 +72,7 @@ template <bool do_search, typename... Args>
 std::pair<GlobalVector*, bool> SimpleMatrixVectorProvider::getVector_(
     std::size_t& id, Args&&... args)
 {
-    return get_<do_search>(
-        id, _unused_vectors, _used_vectors, std::forward<Args>(args)...);
+    return get_<do_search>(id, _used_vectors, std::forward<Args>(args)...);
 }
 
 GlobalVector& SimpleMatrixVectorProvider::getVector(std::size_t& id)
@@ -155,19 +150,9 @@ SimpleMatrixVectorProvider::~SimpleMatrixVectorProvider()
     }
 
     /*
-    for (auto& id_ptr : _unused_matrices)
-    {
-        delete id_ptr.second;
-    }
-
     for (auto& ptr_id : _used_matrices)
     {
         delete ptr_id.first;
-    }
-
-    for (auto& id_ptr : _unused_vectors)
-    {
-        delete id_ptr.second;
     }
 
     for (auto& ptr_id : _used_vectors)
