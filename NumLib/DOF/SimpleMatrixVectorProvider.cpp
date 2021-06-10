@@ -45,23 +45,9 @@ std::pair<GlobalMatrix*, bool> SimpleMatrixVectorProvider::getMatrix_(
         id, _unused_matrices, _used_matrices, std::forward<Args>(args)...);
 }
 
-GlobalMatrix& SimpleMatrixVectorProvider::getMatrix()
-{
-    std::size_t id = 0u;
-    return *getMatrix_<false>(id).first;
-}
-
 GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(std::size_t& id)
 {
     return *getMatrix_<true>(id).first;
-}
-
-GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(
-    MathLib::MatrixSpecifications const& ms)
-{
-    std::size_t id = 0u;
-    return *getMatrix_<false>(id, ms).first;
-    // TODO assert that the returned object always is of the right size
 }
 
 GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(
@@ -69,28 +55,6 @@ GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(
 {
     return *getMatrix_<true>(id, ms).first;
     // TODO assert that the returned object always is of the right size
-}
-
-GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(GlobalMatrix const& A)
-{
-    std::size_t id = 0u;
-    auto const& res = getMatrix_<false>(id, A);
-    if (!res.second)
-    {  // no new object has been created
-        LinAlg::copy(A, *res.first);
-    }
-    return *res.first;
-}
-
-GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(GlobalMatrix const& A,
-                                                    std::size_t& id)
-{
-    auto const& res = getMatrix_<true>(id, A);
-    if (!res.second)
-    {  // no new object has been created
-        LinAlg::copy(A, *res.first);
-    }
-    return *res.first;
 }
 
 void SimpleMatrixVectorProvider::releaseMatrix(GlobalMatrix const& A)

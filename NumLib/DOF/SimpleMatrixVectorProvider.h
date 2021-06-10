@@ -46,13 +46,8 @@ public:
 
     void releaseVector(GlobalVector const& x) override;
 
-    GlobalMatrix& getMatrix() override;
     GlobalMatrix& getMatrix(std::size_t& id) override;
 
-    GlobalMatrix& getMatrix(GlobalMatrix const& A) override;
-    GlobalMatrix& getMatrix(GlobalMatrix const& A, std::size_t& id) override;
-
-    GlobalMatrix& getMatrix(MathLib::MatrixSpecifications const& ms) override;
     GlobalMatrix& getMatrix(MathLib::MatrixSpecifications const& ms, std::size_t& id) override;
 
     void releaseMatrix(GlobalMatrix const& A) override;
@@ -83,7 +78,5 @@ private:
     std::map<std::size_t, GlobalVector*> _unused_vectors;
     std::map<GlobalVector*, std::size_t> _used_vectors;
 };
-
-
 
 } // namespace NumLib
