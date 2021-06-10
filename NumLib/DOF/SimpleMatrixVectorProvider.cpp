@@ -21,7 +21,7 @@ namespace LinAlg = MathLib::LinAlg;
 
 namespace NumLib
 {
-template <bool do_search, typename MatVec, typename... Args>
+template <typename MatVec, typename... Args>
 std::pair<MatVec*, bool> SimpleMatrixVectorProvider::get_(
     std::size_t& id, std::map<MatVec*, std::size_t>& used_map, Args&&... args)
 {
@@ -34,22 +34,22 @@ std::pair<MatVec*, bool> SimpleMatrixVectorProvider::get_(
     return {res.first->first, true};
 }
 
-template <bool do_search, typename... Args>
+template <typename... Args>
 std::pair<GlobalMatrix*, bool> SimpleMatrixVectorProvider::getMatrix_(
     std::size_t& id, Args&&... args)
 {
-    return get_<do_search>(id, _used_matrices, std::forward<Args>(args)...);
+    return get_(id, _used_matrices, std::forward<Args>(args)...);
 }
 
 GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(std::size_t& id)
 {
-    return *getMatrix_<true>(id).first;
+    return *getMatrix_(id).first;
 }
 
 GlobalMatrix& SimpleMatrixVectorProvider::getMatrix(
     MathLib::MatrixSpecifications const& ms, std::size_t& id)
 {
-    return *getMatrix_<true>(id, ms).first;
+    return *getMatrix_(id, ms).first;
     // TODO assert that the returned object always is of the right size
 }
 
@@ -68,37 +68,37 @@ void SimpleMatrixVectorProvider::releaseMatrix(GlobalMatrix const& A)
     }
 }
 
-template <bool do_search, typename... Args>
+template <typename... Args>
 std::pair<GlobalVector*, bool> SimpleMatrixVectorProvider::getVector_(
     std::size_t& id, Args&&... args)
 {
-    return get_<do_search>(id, _used_vectors, std::forward<Args>(args)...);
+    return get_(id, _used_vectors, std::forward<Args>(args)...);
 }
 
 GlobalVector& SimpleMatrixVectorProvider::getVector(std::size_t& id)
 {
-    return *getVector_<true>(id).first;
+    return *getVector_(id).first;
 }
 
 GlobalVector& SimpleMatrixVectorProvider::getVector(
     MathLib::MatrixSpecifications const& ms)
 {
     std::size_t id = 0u;
-    return *getVector_<false>(id, ms).first;
+    return *getVector_(id, ms).first;
     // TODO assert that the returned object always is of the right size
 }
 
 GlobalVector& SimpleMatrixVectorProvider::getVector(
     MathLib::MatrixSpecifications const& ms, std::size_t& id)
 {
-    return *getVector_<true>(id, ms).first;
+    return *getVector_(id, ms).first;
     // TODO assert that the returned object always is of the right size
 }
 
 GlobalVector& SimpleMatrixVectorProvider::getVector(GlobalVector const& x)
 {
     std::size_t id = 0u;
-    auto const& res = getVector_<false>(id, x);
+    auto const& res = getVector_(id, x);
     if (!res.second)
     {  // no new object has been created
         LinAlg::copy(x, *res.first);
@@ -109,7 +109,7 @@ GlobalVector& SimpleMatrixVectorProvider::getVector(GlobalVector const& x)
 GlobalVector& SimpleMatrixVectorProvider::getVector(GlobalVector const& x,
                                                     std::size_t& id)
 {
-    auto const& res = getVector_<true>(id, x);
+    auto const& res = getVector_(id, x);
     if (!res.second)
     {  // no new object has been created
         LinAlg::copy(x, *res.first);

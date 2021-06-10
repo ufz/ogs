@@ -55,15 +55,15 @@ public:
     ~SimpleMatrixVectorProvider() override;
 
 private:
-    template<bool do_search, typename... Args>
+    template <typename... Args>
     std::pair<GlobalMatrix*, bool> getMatrix_(std::size_t& id, Args&&... args);
 
-    template<bool do_search, typename... Args>
+    template <typename... Args>
     std::pair<GlobalVector*, bool> getVector_(std::size_t& id, Args&&... args);
 
     // returns a pair with the pointer to the matrix/vector and
     // a boolean indicating if a new object has been built (then true else false)
-    template <bool do_search, typename MatVec, typename... Args>
+    template <typename MatVec, typename... Args>
     std::pair<MatVec*, bool> get_(std::size_t& id,
                                   std::map<MatVec*, std::size_t>& used_map,
                                   Args&&... args);
