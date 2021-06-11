@@ -70,8 +70,6 @@ public:
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
 
-    using SymmetricTensor = Eigen::Matrix<double, KelvinVectorSize, 1>;
-
     TH2MLocalAssembler(TH2MLocalAssembler const&) = delete;
     TH2MLocalAssembler(TH2MLocalAssembler&&) = delete;
 
@@ -151,12 +149,6 @@ private:
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_x_dot) override;
 
-    void postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                     std::vector<double> const& local_xdot,
-                                     double const t, double const dt,
-                                     bool const use_monolithic_scheme,
-                                     int const process_id) override;
-
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
@@ -178,6 +170,7 @@ private:
         std::vector<double>& cache) const override;
 
     void updateConstitutiveVariables(Eigen::VectorXd const& local_x,
+                                     Eigen::VectorXd const& local_x_dot,
                                      double const t, double const dt);
 
     std::size_t setSigma(double const* values)
