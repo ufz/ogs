@@ -42,7 +42,6 @@ target_link_libraries(
            $<$<TARGET_EXISTS:OgsXdmf>:OgsXdmf>
            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
            $<$<TARGET_EXISTS:petsc>:petsc>
-    PRIVATE spdlog::spdlog
 )
 
 target_include_directories(MeshLib PUBLIC ${VTK_INCLUDE_DIRS})

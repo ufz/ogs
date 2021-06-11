@@ -6,5 +6,4 @@ ogs_add_library(MeshGeoToolsLib ${SOURCES})
 
 target_link_libraries(
     MeshGeoToolsLib PUBLIC GeoLib MathLib PRIVATE BaseLib MeshLib
-                                                  spdlog::spdlog
 )

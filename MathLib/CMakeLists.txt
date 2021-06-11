@@ -34,7 +34,6 @@ target_link_libraries(
            $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
            $<$<BOOL:${OGS_USE_PETSC}>:petsc>
            Eigen3::Eigen
-    PRIVATE spdlog::spdlog
 )
 
 if(OGS_USE_LIS)

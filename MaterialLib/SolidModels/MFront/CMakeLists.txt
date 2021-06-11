@@ -23,7 +23,7 @@ mfront_behaviours_check_library(
 
 target_link_libraries(
     MaterialLib_SolidModels_MFront PUBLIC BaseLib NumLib OgsMFrontBehaviour
-    PRIVATE MathLib MeshLib spdlog::spdlog
+    PRIVATE MathLib MeshLib
 )
 
 # Disable warnings for generated OgsMFrontBehaviour

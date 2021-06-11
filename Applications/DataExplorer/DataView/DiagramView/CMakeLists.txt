@@ -28,7 +28,6 @@ ogs_add_library(QtDiagramView ${SOURCES} ${HEADERS} ${UIS})
 target_include_directories(QtDiagramView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(
     QtDiagramView PRIVATE BaseLib GeoLib QtBase DataHolderLib Qt5::Gui
-                          spdlog::spdlog
 )
 
 add_autogen_include(QtDiagramView)

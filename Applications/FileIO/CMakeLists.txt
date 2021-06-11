@@ -32,7 +32,7 @@ target_link_libraries(
            $<$<BOOL:${OGS_BUILD_GUI}>:QtBase>
            $<$<TARGET_EXISTS:shp>:shp>
            $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
-    PRIVATE MeshLib GitInfoLib std::filesystem spdlog::spdlog
+    PRIVATE MeshLib GitInfoLib std::filesystem
 )
 
 configure_file(

@@ -161,7 +161,7 @@ endif() # GEOTIFF_FOUND
 
 target_link_libraries(
     VtkVis PUBLIC BaseLib GeoLib MeshLib DataHolderLib QtBase VtkVisFilter
-    PRIVATE MathLib ApplicationsFileIO Qt5::Gui spdlog::spdlog
+    PRIVATE MathLib ApplicationsFileIO Qt5::Gui
 )
 
 set_property(TARGET VtkVis PROPERTY FOLDER "DataExplorer")

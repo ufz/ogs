@@ -14,7 +14,6 @@ target_link_libraries(
             MeshGeoToolsLib
             ParameterLib
             ProcessLib
-            spdlog::spdlog
             $<$<BOOL:${OGS_USE_PYTHON}>:pybind11::pybind11>
             $<$<BOOL:${OGS_USE_PETSC}>:petsc>
 )

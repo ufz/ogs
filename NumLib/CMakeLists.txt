@@ -19,5 +19,5 @@ set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(
     NumLib PUBLIC BaseLib GeoLib MathLib MeshLib $<$<TARGET_EXISTS:petsc>:petsc>
-    PRIVATE MeshGeoToolsLib spdlog::spdlog
+    PRIVATE MeshGeoToolsLib
 )

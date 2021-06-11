@@ -156,14 +156,17 @@ void patchStream(std::string patch_file, std::stringstream& prj_stream)
         {
             OGS_FATAL(
                 "Error while patching prj file with patch file {:}. Only "
-                "'add', 'replace' and 'remove' elements are allowed!",
-                patch_file);
+                "'add', 'replace' and 'remove' elements are allowed! Got an "
+                "element '{:s}' on line {:d}.",
+                patch_file, node->name, node->line);
         }
 
         if (rc)
         {
-            OGS_FATAL("Error while patching prj file with patch file {:}.",
-                      patch_file);
+            OGS_FATAL(
+                "Error while patching prj file with patch file {:}. Error in "
+                "element '{:s}' on line {:d}.",
+                patch_file, node->name, node->line);
         }
     }
 
@@ -211,11 +214,18 @@ void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
     }
 
     // read base prj file into stream
-    std::ifstream file(prj_file);
-    if (file)
+    if (std::ifstream file(prj_file); file)
     {
         prj_stream << file.rdbuf();
-        file.close();
+    }
+    else
+    {
+        if (!BaseLib::IsFileExisting(prj_file))
+        {
+            ERR("File {:s} does not exist.", prj_file);
+        }
+        DBUG("Stream state flags: {:b}.", file.rdstate());
+        OGS_FATAL("Could not open project file '{:s}' for reading.", prj_file);
     }
 
     // apply xml patches to stream

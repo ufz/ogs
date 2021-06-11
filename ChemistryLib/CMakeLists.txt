@@ -8,7 +8,7 @@ append_source_files(SOURCES Common)
 ogs_add_library(ChemistryLib ${SOURCES})
 
 target_link_libraries(
-    ChemistryLib PUBLIC iphreeqc PRIVATE NumLib spdlog::spdlog
+    ChemistryLib PUBLIC iphreeqc PRIVATE NumLib
 )
 
 # See https://github.com/ufz/ogs/pull/2982#issuecomment-641086788
