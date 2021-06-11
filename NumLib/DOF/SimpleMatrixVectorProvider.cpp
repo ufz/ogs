@@ -65,6 +65,7 @@ void SimpleMatrixVectorProvider::releaseMatrix(GlobalMatrix const& A)
     else
     {
         delete it->first;
+        _used_matrices.erase(it);
     }
 }
 
@@ -129,6 +130,7 @@ void SimpleMatrixVectorProvider::releaseVector(GlobalVector const& x)
     else
     {
         delete it->first;
+        _used_vectors.erase(it);
     }
 }
 
@@ -149,7 +151,6 @@ SimpleMatrixVectorProvider::~SimpleMatrixVectorProvider()
             _used_vectors.size());
     }
 
-    /*
     for (auto& ptr_id : _used_matrices)
     {
         delete ptr_id.first;
@@ -159,7 +160,6 @@ SimpleMatrixVectorProvider::~SimpleMatrixVectorProvider()
     {
         delete ptr_id.first;
     }
-    */
 }
 
 }  // namespace NumLib
