@@ -28,6 +28,7 @@
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
+#include "ProcessLib/Utils/TransposeInPlace.h"
 #include "TH2MProcessData.h"
 
 namespace ProcessLib
@@ -81,6 +82,12 @@ public:
                        TH2MProcessData<DisplacementDim>& process_data);
 
 private:
+    /// \return the number of read integration points.
+    std::size_t setIPDataInitialConditions(
+        std::string const& name,
+        double const* values,
+        int const integration_order) override;
+
     void setInitialConditionsConcrete(std::vector<double> const& local_x,
                                       double const t,
                                       bool const /*use_monolithic_scheme*/,
@@ -186,8 +193,15 @@ private:
     // There should be only one.
     std::vector<double> getSigma() const override
     {
-        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma_eff);
+        {
+            constexpr int kelvin_vector_size =
+                MathLib::KelvinVector::kelvin_vector_dimensions(
+                    DisplacementDim);
+
+            return transposeInPlace<kelvin_vector_size>(
+                [this](std::vector<double>& values)
+                { return getIntPtSigma(0, {}, {}, values); });
+        }
     }
 
     std::vector<double> const& getIntPtSigma(
@@ -198,6 +212,16 @@ private:
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
             _ip_data, &IpData::sigma_eff, cache);
+    }
+
+    std::vector<double> getEpsilon() const override
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtEpsilon(0, {}, {}, values); });
     }
 
     virtual std::vector<double> const& getIntPtEpsilon(
@@ -262,6 +286,13 @@ private:
     {
         return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::phi,
                                                          cache);
+    }
+
+    std::vector<double> getSaturation() const override
+    {
+        std::vector<double> result;
+        getIntPtSaturation(0, {}, {}, result);
+        return result;
     }
 
     virtual std::vector<double> const& getIntPtSaturation(
