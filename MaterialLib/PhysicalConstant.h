@@ -24,7 +24,7 @@ constexpr double CelsiusZeroInKelvin = 273.15;
 /**
   Ideal gas constant in SI standard units (J \per{mol} \per{K})
 
-  - Source:               http://physics.nist.gov/cgi-bin/cuu/Value?r
+  - Source:               https://web.archive.org/web/20210603224431/https://physics.nist.gov/cgi-bin/cuu/Value?r
   - Date visited:         2015-04-17
   - Standard uncertainty: 0.000 0075 J mol^-1 K^-1
 */
