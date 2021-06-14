@@ -21,6 +21,14 @@
 
 namespace GeoLib
 {
+namespace details
+{
+Eigen::Vector3d convertToEigen(MathLib::Point3d point3d)
+{
+    return Eigen::Vector3d{point3d[0], point3d[1], point3d[2]};
+}
+}  // namespace details
+
 PointVec::PointVec(
     const std::string& name, std::unique_ptr<std::vector<Point*>> points,
     std::unique_ptr<std::map<std::string, std::size_t>> name_id_map,
@@ -31,7 +39,8 @@ PointVec::PointVec(
       _rel_eps(rel_eps * std::sqrt(MathLib::sqrDist(_aabb.getMinPoint(),
                                                     _aabb.getMaxPoint()))),
       _oct_tree(OctTree<GeoLib::Point, 16>::createOctTree(
-          _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps))
+          details::convertToEigen(_aabb.getMinPoint()),
+          details::convertToEigen(_aabb.getMaxPoint()), _rel_eps))
 {
     assert(_data_vec);
     std::size_t const number_of_all_input_pnts(_data_vec->size());
@@ -180,7 +189,8 @@ std::size_t PointVec::uniqueInsert(Point* pnt)
         _aabb.update(*pnt);
         // recreate the (enlarged) OctTree
         _oct_tree.reset(GeoLib::OctTree<GeoLib::Point, 16>::createOctTree(
-            _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
+            details::convertToEigen(_aabb.getMinPoint()),
+            details::convertToEigen(_aabb.getMaxPoint()), _rel_eps));
         // add all points that are already in the _data_vec
         for (std::size_t k(0); k < _data_vec->size(); ++k)
         {
@@ -267,7 +277,8 @@ void PointVec::resetInternalDataStructures()
                                                     _aabb.getMaxPoint()));
 
     _oct_tree.reset(OctTree<GeoLib::Point, 16>::createOctTree(
-        _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
+        details::convertToEigen(_aabb.getMinPoint()),
+        details::convertToEigen(_aabb.getMaxPoint()), _rel_eps));
 
     GeoLib::Point* ret_pnt(nullptr);
     for (auto const p : *_data_vec)

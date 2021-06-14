@@ -14,12 +14,10 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <cstdint>
 #include <limits>
 #include <vector>
-
-#include "MathLib/MathTools.h"
-#include "MathLib/Point3d.h"
 
 namespace GeoLib
 {
@@ -45,9 +43,9 @@ public:
     /// the memory requirements for the OctTree may be lower but the search
     /// inside a OctTree leaf may be more expensive. The value should be
     /// chosen application dependent. [default 8]
-    template <typename T>
     static OctTree<POINT, MAX_POINTS>* createOctTree(
-        T ll, T ur, double eps = std::numeric_limits<double>::epsilon());
+        Eigen::Vector3d ll, Eigen::Vector3d ur,
+        double eps = std::numeric_limits<double>::epsilon());
 
     /// Destroys the children of this node. @attention Does not destroy the
     /// pointers to the managed objects.
@@ -76,8 +74,8 @@ public:
                           std::vector<POINT*>& pnts) const;
 
 #ifndef NDEBUG
-    MathLib::Point3d const& getLowerLeftCornerPoint() const { return _ll; }
-    MathLib::Point3d const& getUpperRightCornerPoint() const { return _ur; }
+    Eigen::Vector3d const& getLowerLeftCornerPoint() const { return _ll; }
+    Eigen::Vector3d const& getUpperRightCornerPoint() const { return _ur; }
     OctTree<POINT, MAX_POINTS> const* getChild(std::size_t i) const
     {
         return _children[i];
@@ -90,7 +88,7 @@ private:
     /// @param ll lower left point
     /// @param ur upper right point
     /// @param eps the euclidean distance as a threshold to make objects unique
-    OctTree(MathLib::Point3d const& ll, MathLib::Point3d const& ur, double eps);
+    OctTree(Eigen::Vector3d const& ll, Eigen::Vector3d const& ur, double eps);
 
     enum class Quadrant : std::int8_t
     {
@@ -140,9 +138,9 @@ private:
     ///   _children[7] is south east upper child
     std::array<OctTree<POINT, MAX_POINTS>*, 8> _children;
     /// lower left front face point of the cube
-    MathLib::Point3d const _ll;
+    Eigen::Vector3d const _ll;
     /// upper right back face point of the cube
-    MathLib::Point3d const _ur;
+    Eigen::Vector3d const _ur;
     /// vector of pointers to POINT objects
     std::vector<POINT*> _pnts;
     /// flag if this OctTree is a leaf

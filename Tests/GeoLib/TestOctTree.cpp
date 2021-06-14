@@ -17,6 +17,14 @@
 #include "GeoLib/OctTree.h"
 #include "GeoLib/Point.h"
 
+namespace
+{
+Eigen::Vector3d convertToEigen(MathLib::Point3d point3d)
+{
+    return Eigen::Vector3d{point3d[0], point3d[1], point3d[2]};
+}
+}  // namespace
+
 class GeoLibOctTree : public testing::Test
 {
 public:
@@ -89,12 +97,13 @@ TEST_F(GeoLibOctTree, TestWithEquidistantPoints3d)
     generateEquidistantPoints3d();
     double const eps(10 * std::numeric_limits<double>::epsilon());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(*ps_ptr.front(),
-                                                         *ps_ptr.back(), eps));
+        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
+            convertToEigen(*ps_ptr.front()), convertToEigen(*ps_ptr.back()),
+            eps));
 
 #ifndef NDEBUG
-    MathLib::Point3d const& ll(oct_tree->getLowerLeftCornerPoint());
-    MathLib::Point3d const& ur(oct_tree->getUpperRightCornerPoint());
+    Eigen::Vector3d const& ll(oct_tree->getLowerLeftCornerPoint());
+    Eigen::Vector3d const& ur(oct_tree->getUpperRightCornerPoint());
 
     EXPECT_EQ((*ps_ptr.front())[0], ll[0]);
     EXPECT_EQ((*ps_ptr.front())[1], ll[1]);
@@ -277,8 +286,8 @@ TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
     ps_ptr.push_back(new GeoLib::Point(5 * small_displacement, 1, 0, 6));
 
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
-    const MathLib::Point3d& min(aabb.getMinPoint());
-    const MathLib::Point3d& max(aabb.getMaxPoint());
+    auto const min(convertToEigen(aabb.getMinPoint()));
+    auto const max(convertToEigen(aabb.getMaxPoint()));
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 8>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 8>::createOctTree(min, max, eps));
 
@@ -332,8 +341,8 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 
     // create OctTree
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
-    const MathLib::Point3d& min(aabb.getMinPoint());
-    const MathLib::Point3d& max(aabb.getMaxPoint());
+    auto const min(convertToEigen(aabb.getMinPoint()));
+    auto const max(convertToEigen(aabb.getMaxPoint()));
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 
@@ -364,9 +373,10 @@ TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPoints)
     double const eps(0.0);
 
     GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
+    auto const min(convertToEigen(aabb.getMinPoint()));
+    auto const max(convertToEigen(aabb.getMaxPoint()));
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
-            aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 
     GeoLib::Point* ret_pnt(nullptr);
     ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
@@ -382,9 +392,10 @@ TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPointsOne)
     double const eps(0.0);
 
     GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
+    auto const min(convertToEigen(aabb.getMinPoint()));
+    auto const max(convertToEigen(aabb.getMaxPoint()));
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
-            aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 
     GeoLib::Point* ret_pnt(nullptr);
     ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
@@ -400,9 +411,10 @@ TEST_F(GeoLibOctTree, TestOctTreeOnCubicDomain)
     double const eps(0.0);
 
     GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
+    auto const min(convertToEigen(aabb.getMinPoint()));
+    auto const max(convertToEigen(aabb.getMaxPoint()));
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(
-            aabb.getMinPoint(), aabb.getMaxPoint(), eps));
+        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 
     GeoLib::Point* ret_pnt(nullptr);
     ASSERT_TRUE(oct_tree->addPoint(ps_ptr[0], ret_pnt));
