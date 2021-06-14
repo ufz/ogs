@@ -30,7 +30,7 @@
 namespace GeoLib
 {
 template <typename POINT>
-class Grid : public GeoLib::AABB
+class Grid final : public GeoLib::AABB
 {
 public:
     /**
