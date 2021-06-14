@@ -86,20 +86,8 @@ public:
 class MatrixProvider
 {
 public:
-    //! Get an uninitialized matrix.
-    virtual GlobalMatrix& getMatrix() = 0;
-
     //! Get an uninitialized matrix with the given \c id.
     virtual GlobalMatrix& getMatrix(std::size_t& id) = 0;
-
-    //! Get a copy of \c A.
-    virtual GlobalMatrix& getMatrix(GlobalMatrix const& A) = 0;
-
-    //! Get a copy of \c A in the storage of the matrix with the given \c id.
-    virtual GlobalMatrix& getMatrix(GlobalMatrix const& A, std::size_t& id) = 0;
-
-    //! Get a matrix according to the given specifications.
-    virtual GlobalMatrix& getMatrix(MathLib::MatrixSpecifications const& ms) = 0;
 
     //! Get a matrix according to the given specifications in the storage
     //! of the matrix with the given \c id.
