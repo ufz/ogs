@@ -25,8 +25,8 @@
 #include <vector>
 
 #include "BaseLib/Error.h"
-#include "MathLib/Point3d.h"
 #include "MathLib/MathTools.h"
+#include "MathLib/Point3d.h"
 
 namespace GeoLib
 {
@@ -54,11 +54,13 @@ public:
      * operator[]
      * */
     template <typename PNT_TYPE>
-    AABB(std::vector<PNT_TYPE*> const& pnts, std::vector<std::size_t> const& ids)
+    AABB(std::vector<PNT_TYPE*> const& pnts,
+         std::vector<std::size_t> const& ids)
     {
-        assert(! ids.empty());
+        assert(!ids.empty());
         init(pnts[ids[0]]);
-        for (std::size_t i=1; i<ids.size(); ++i) {
+        for (std::size_t i = 1; i < ids.size(); ++i)
+        {
             updateWithoutEnlarge(*(pnts[ids[i]]));
         }
         enlarge();
@@ -67,24 +69,28 @@ public:
     AABB(AABB const&) = default;
 
     /**
-     * Construction of object using input iterators. In contrast to give a vector
-     * this approach is more generic. You can use every (stl) container and
-     * C arrays as input for constructing the object.
+     * Construction of object using input iterators. In contrast to give a
+     * vector this approach is more generic. You can use every (stl) container
+     * and C arrays as input for constructing the object.
      * @attention{The constructor requires that std::distance(first, last) > 0.}
      * @param first the input iterator to the initial position in the sequence
-     * @param last the input iterator to the final position in a container, i.e. [first, last).
+     * @param last the input iterator to the final position in a container, i.e.
+     * [first, last).
      * @attention{The iterator last must be reachable from first.}
      */
     template <typename InputIterator>
     AABB(InputIterator first, InputIterator last)
     {
-        if (std::distance(first,last) <= 0)
+        if (std::distance(first, last) <= 0)
         {
-            OGS_FATAL("AABB::AABB(InputIterator first, InputIterator last): first > last");
+            OGS_FATAL(
+                "AABB::AABB(InputIterator first, InputIterator last): first > "
+                "last");
         }
         init(*first);
         InputIterator it(first);
-        while (it != last) {
+        while (it != last)
+        {
             updateWithoutEnlarge(*it);
             it++;
         }
@@ -94,27 +100,31 @@ public:
     /// Checks if the bounding box has to be updated.
     /// @return true if AABB is updated.
     template <typename PNT_TYPE>
-    bool update(PNT_TYPE const & p)
+    bool update(PNT_TYPE const& p)
     {
         // First component of the pair signals if the minimum point is changed
         // Second component signals not only if the max point is changed.
         // Furthermore it is signaled what coordinate (0,1,2) is changed.
         std::pair<bool, std::bitset<3>> updated(false, 0);
-        for (std::size_t k(0); k<3; k++) {
+        for (std::size_t k(0); k < 3; k++)
+        {
             // if the minimum point is updated pair.first==true
-            if (p[k] < _min_pnt[k]) {
+            if (p[k] < _min_pnt[k])
+            {
                 _min_pnt[k] = p[k];
                 updated.first = true;
             }
             // if the kth coordinate of the maximum point is updated
             // pair.second[k]==true
-            if (p[k] >= _max_pnt[k]) {
+            if (p[k] >= _max_pnt[k])
+            {
                 _max_pnt[k] = p[k];
                 updated.second[k] = true;
             }
         }
 
-        if (updated.second.any()) {
+        if (updated.second.any())
+        {
             enlarge(updated.second);
             return true;
         }
@@ -125,7 +135,7 @@ public:
      * check if point is in the axis aligned bounding box
      */
     template <typename T>
-    bool containsPoint(T const & pnt, double eps) const
+    bool containsPoint(T const& pnt, double eps) const
     {
         if (pnt[0] < _min_pnt[0] - eps || _max_pnt[0] + eps <= pnt[0])
         {
@@ -143,7 +153,7 @@ public:
     }
 
     template <typename T>
-    bool containsPointXY(T const & pnt) const
+    bool containsPointXY(T const& pnt) const
     {
         if (pnt[0] < _min_pnt[0] || _max_pnt[0] <= pnt[0])
         {
@@ -184,30 +194,32 @@ public:
     }
 
 protected:
-    MathLib::Point3d _min_pnt = MathLib::Point3d{std::array<double,3>{{
-        std::numeric_limits<double>::max(),
-        std::numeric_limits<double>::max(),
-        std::numeric_limits<double>::max()}}};
-    MathLib::Point3d _max_pnt = MathLib::Point3d{std::array<double,3>{{
-        std::numeric_limits<double>::lowest(),
-        std::numeric_limits<double>::lowest(),
-        std::numeric_limits<double>::lowest()}}};
+    MathLib::Point3d _min_pnt = MathLib::Point3d{std::array<double, 3>{
+        {std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),
+         std::numeric_limits<double>::max()}}};
+    MathLib::Point3d _max_pnt = MathLib::Point3d{
+        std::array<double, 3>{{std::numeric_limits<double>::lowest(),
+                               std::numeric_limits<double>::lowest(),
+                               std::numeric_limits<double>::lowest()}}};
+
 private:
     /// Enlarge the bounding box the smallest possible amount (modifying the
     /// unit in the last place). Only the coordinates of the maximum point are
     /// changed such that the half-open property will be preserved.
     void enlarge(std::bitset<3> to_update = 7)
     {
-        for (std::size_t k=0; k<3; ++k) {
-            if (to_update[k]) {
-                _max_pnt[k] = std::nextafter(_max_pnt[k],
-                    std::numeric_limits<double>::max());
+        for (std::size_t k = 0; k < 3; ++k)
+        {
+            if (to_update[k])
+            {
+                _max_pnt[k] = std::nextafter(
+                    _max_pnt[k], std::numeric_limits<double>::max());
             }
         }
     }
 
     template <typename PNT_TYPE>
-    void init(PNT_TYPE const & pnt)
+    void init(PNT_TYPE const& pnt)
     {
         _min_pnt[0] = _max_pnt[0] = pnt[0];
         _min_pnt[1] = _max_pnt[1] = pnt[1];
@@ -215,7 +227,7 @@ private:
     }
 
     template <typename PNT_TYPE>
-    void init(PNT_TYPE * const & pnt)
+    void init(PNT_TYPE* const& pnt)
     {
         init(*pnt);
     }
@@ -226,26 +238,29 @@ private:
     /// enlarged only once.
     /// @param p point that will possibly change the bounding box points
     template <typename PNT_TYPE>
-    void  updateWithoutEnlarge(PNT_TYPE const & p)
+    void updateWithoutEnlarge(PNT_TYPE const& p)
     {
-        for (std::size_t k(0); k<3; k++) {
-            if (p[k] < _min_pnt[k]) {
+        for (std::size_t k(0); k < 3; k++)
+        {
+            if (p[k] < _min_pnt[k])
+            {
                 _min_pnt[k] = p[k];
             }
-            if (p[k] >= _max_pnt[k]) {
+            if (p[k] >= _max_pnt[k])
+            {
                 _max_pnt[k] = p[k];
             }
         }
     }
 
     template <typename PNT_TYPE>
-    void updateWithoutEnlarge(PNT_TYPE * const & pnt)
+    void updateWithoutEnlarge(PNT_TYPE* const& pnt)
     {
         updateWithoutEnlarge(*pnt);
     }
 
     template <typename PNT_TYPE>
-    void update(PNT_TYPE const * pnt)
+    void update(PNT_TYPE const* pnt)
     {
         update(*pnt);
     }
