@@ -24,9 +24,9 @@
 #include <tuple>
 #include <vector>
 
+#include <Eigen/Eigen>
+
 #include "BaseLib/Error.h"
-#include "MathLib/MathTools.h"
-#include "MathLib/Point3d.h"
 
 namespace GeoLib
 {
