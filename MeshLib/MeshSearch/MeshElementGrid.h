@@ -69,10 +69,10 @@ public:
 
     /// Returns the min point of the internal AABB. The method is a wrapper for
     /// GeoLib::AABB::getMinPoint().
-    MathLib::Point3d const& getMinPoint() const;
+    Eigen::Vector3d const& getMinPoint() const;
     /// Returns the max point of the internal AABB. The method is a wrapper for
     /// AABB::getMaxPoint().
-    MathLib::Point3d const& getMaxPoint() const;
+    Eigen::Vector3d const& getMaxPoint() const;
 
 private:
     void sortElementsInGridCells(MeshLib::Mesh const& mesh);

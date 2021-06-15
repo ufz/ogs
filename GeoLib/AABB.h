@@ -171,14 +171,14 @@ public:
      * for the given point set
      * @return a point
      */
-    MathLib::Point3d const& getMinPoint() const { return _min_pnt; }
+    Eigen::Vector3d const& getMinPoint() const { return _min_pnt; }
 
     /**
      * returns a point that coordinates are maximal for each dimension
      * within the given point set
      * @return a point
      */
-    MathLib::Point3d const& getMaxPoint() const { return _max_pnt; }
+    Eigen::Vector3d const& getMaxPoint() const { return _max_pnt; }
 
     /**
      * Method checks if the given AABB object is contained within the
@@ -194,13 +194,12 @@ public:
     }
 
 private:
-    MathLib::Point3d _min_pnt = MathLib::Point3d{std::array<double, 3>{
-        {std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),
-         std::numeric_limits<double>::max()}}};
-    MathLib::Point3d _max_pnt = MathLib::Point3d{
-        std::array<double, 3>{std::numeric_limits<double>::lowest(),
-                              std::numeric_limits<double>::lowest(),
-                              std::numeric_limits<double>::lowest()}};
+    Eigen::Vector3d _min_pnt{std::numeric_limits<double>::max(),
+                             std::numeric_limits<double>::max(),
+                             std::numeric_limits<double>::max()};
+    Eigen::Vector3d _max_pnt{std::numeric_limits<double>::lowest(),
+                             std::numeric_limits<double>::lowest(),
+                             std::numeric_limits<double>::lowest()};
 
 private:
     /// Enlarge the bounding box the smallest possible amount (modifying the

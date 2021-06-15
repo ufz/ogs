@@ -142,7 +142,7 @@ void MeshElementRemovalDialog::accept()
             (aabb_edits[4]) ? this->zMinEdit->text().toDouble() : (minAABB[2]);
         maxAABB[2] =
             (aabb_edits[5]) ? this->zMaxEdit->text().toDouble() : (maxAABB[2]);
-        std::vector<MathLib::Point3d> extent;
+        std::vector<Eigen::Vector3d> extent;
         extent.push_back(minAABB);
         extent.push_back(maxAABB);
         const GeoLib::AABB updated_aabb(extent.begin(), extent.end());

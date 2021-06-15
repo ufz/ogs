@@ -286,8 +286,8 @@ TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
     ps_ptr.push_back(new GeoLib::Point(5 * small_displacement, 1, 0, 6));
 
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
-    auto const min(convertToEigen(aabb.getMinPoint()));
-    auto const max(convertToEigen(aabb.getMaxPoint()));
+    auto const& min(aabb.getMinPoint());
+    auto const& max(aabb.getMaxPoint());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 8>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 8>::createOctTree(min, max, eps));
 
@@ -341,8 +341,8 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 
     // create OctTree
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
-    auto const min(convertToEigen(aabb.getMinPoint()));
-    auto const max(convertToEigen(aabb.getMaxPoint()));
+    auto const& min(aabb.getMinPoint());
+    auto const& max(aabb.getMaxPoint());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 
@@ -373,8 +373,8 @@ TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPoints)
     double const eps(0.0);
 
     GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
-    auto const min(convertToEigen(aabb.getMinPoint()));
-    auto const max(convertToEigen(aabb.getMaxPoint()));
+    auto const& min(aabb.getMinPoint());
+    auto const& max(aabb.getMaxPoint());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 
@@ -392,8 +392,8 @@ TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPointsOne)
     double const eps(0.0);
 
     GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
-    auto const min(convertToEigen(aabb.getMinPoint()));
-    auto const max(convertToEigen(aabb.getMaxPoint()));
+    auto const& min(aabb.getMinPoint());
+    auto const& max(aabb.getMaxPoint());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 
@@ -411,8 +411,8 @@ TEST_F(GeoLibOctTree, TestOctTreeOnCubicDomain)
     double const eps(0.0);
 
     GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
-    auto const min(convertToEigen(aabb.getMinPoint()));
-    auto const max(convertToEigen(aabb.getMaxPoint()));
+    auto const& min(aabb.getMinPoint());
+    auto const& max(aabb.getMaxPoint());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
 

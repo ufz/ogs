@@ -26,8 +26,8 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& mesh)
     : _aabb{mesh.getNodes().cbegin(), mesh.getNodes().cend()},
       _n_steps({{1, 1, 1}})
 {
-    auto getDimensions = [](MathLib::Point3d const& min,
-                            MathLib::Point3d const& max) {
+    auto getDimensions = [](auto const& min, auto const& max)
+    {
         std::bitset<3> dim;  // all bits are set to zero.
         for (std::size_t k(0); k < 3; ++k)
         {
@@ -42,8 +42,8 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& mesh)
         return dim;
     };
 
-    MathLib::Point3d const& min_pnt(_aabb.getMinPoint());
-    MathLib::Point3d const& max_pnt(_aabb.getMaxPoint());
+    auto const& min_pnt(_aabb.getMinPoint());
+    auto const& max_pnt(_aabb.getMaxPoint());
     auto const dim = getDimensions(min_pnt, max_pnt);
 
     std::array<double, 3> delta{{max_pnt[0] - min_pnt[0],
@@ -119,12 +119,12 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& mesh)
     sortElementsInGridCells(mesh);
 }
 
-MathLib::Point3d const& MeshElementGrid::getMinPoint() const
+Eigen::Vector3d const& MeshElementGrid::getMinPoint() const
 {
     return _aabb.getMinPoint();
 }
 
-MathLib::Point3d const& MeshElementGrid::getMaxPoint() const
+Eigen::Vector3d const& MeshElementGrid::getMaxPoint() const
 {
     return _aabb.getMaxPoint();
 }

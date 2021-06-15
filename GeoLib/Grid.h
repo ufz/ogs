@@ -97,8 +97,8 @@ public:
                                           double half_len) const;
 
     void getPntVecsOfGridCellsIntersectingCuboid(
-        MathLib::Point3d const& min_pnt,
-        MathLib::Point3d const& max_pnt,
+        Eigen::Vector3d const& min_pnt,
+        Eigen::Vector3d const& max_pnt,
         std::vector<std::vector<POINT*> const*>& pnts) const;
 
 #ifndef NDEBUG
@@ -286,8 +286,8 @@ Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(P const& center,
 
 template <typename POINT>
 void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
-    MathLib::Point3d const& min_pnt,
-    MathLib::Point3d const& max_pnt,
+    Eigen::Vector3d const& min_pnt,
+    Eigen::Vector3d const& max_pnt,
     std::vector<std::vector<POINT*> const*>& pnts) const
 {
     std::array<std::size_t, 3> min_coords(getGridCoords(min_pnt));
@@ -479,7 +479,7 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
     auto const& min_point{getMinPoint()};
     auto const& max_point{getMaxPoint()};
 
-    double sqr_min_dist(MathLib::sqrDist(min_point, max_point));
+    double sqr_min_dist = (max_point - min_point).squaredNorm();
     POINT* nearest_pnt(nullptr);
 
     std::array<double, 6> dists(getPointCellBorderDistances(pnt, coords));
