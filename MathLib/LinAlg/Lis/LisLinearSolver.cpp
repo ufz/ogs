@@ -46,21 +46,21 @@ bool LisLinearSolver::solve(LisMatrix& A, LisVector& b, LisVector& x)
     lis_solver_set_option(const_cast<char*>(lis_option_.option_string_.c_str()),
                           solver);
 #ifdef _OPENMP
-    INFO("-> number of threads: {:i}", (int)omp_get_max_threads());
+    INFO("-> number of threads: {:d}", (int)omp_get_max_threads());
 #endif
     {
         int precon;
         ierr = lis_solver_get_precon(solver, &precon);
         if (!checkLisError(ierr))
             return false;
-        INFO("-> precon: {:i}", precon);
+        INFO("-> precon: {:d}", precon);
     }
     {
         int slv;
         ierr = lis_solver_get_solver(solver, &slv);
         if (!checkLisError(ierr))
             return false;
-        INFO("-> solver: {:i}", slv);
+        INFO("-> solver: {:d}", slv);
     }
 
     // solve
