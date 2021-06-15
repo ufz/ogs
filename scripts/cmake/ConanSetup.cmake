@@ -46,7 +46,8 @@ if(OGS_USE_PETSC)
 endif()
 
 if(OGS_USE_LIS)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} lis/1.7.9@bilke/stable)
+    list(APPEND CONAN_OPTIONS lis:with_omp=True)
+    set(CONAN_REQUIRES ${CONAN_REQUIRES} lis/1.7.37@bilke/stable)
 endif()
 
 if(OGS_USE_MFRONT)
