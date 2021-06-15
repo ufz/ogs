@@ -47,7 +47,7 @@ endif()
 target_compile_definitions(
     MathLib
     PUBLIC
-        $<$<BOOL:${USE_LIS}>:USE_LIS>
+        $<$<BOOL:${OGS_USE_LIS}>:USE_LIS>
         $<$<BOOL:${OGS_USE_CVODE}>:CVODE_FOUND>
         $<$<BOOL:${EIGEN_NO_DEBUG}>:EIGEN_NO_DEBUG>
         $<$<BOOL:${EIGEN_DONT_VECTORIZE}>:EIGEN_DONT_VECTORIZE>
