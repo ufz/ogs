@@ -23,6 +23,7 @@ set(_processes_list
     ThermoHydroMechanics
     ThermoMechanicalPhaseField
     ThermoMechanics
+    ThermoRichardsFlow
     TwoPhaseFlowWithPP
     TwoPhaseFlowWithPrho
 )
