@@ -68,6 +68,7 @@ enum PropertyType : int
     /// ion diffusivity in the porous medium with account of the effect of
     /// tortuosity and connectivity.
     pore_diffusion,
+    poissons_ratio,
     porosity,
     reference_density,
     reference_temperature,
@@ -84,9 +85,13 @@ enum PropertyType : int
     specific_heat_capacity,
     specific_latent_heat,
     storage,
+    storage_contribution,
     swelling_stress_rate,
     thermal_conductivity,
+    /// Thermal diffusion enhancement factor for water vapor flow
+    thermal_diffusion_enhancement_factor,
     thermal_expansivity,
+    thermal_expansivity_contribution,
     thermal_longitudinal_dispersivity,
     thermal_osmosis_coefficient,
     thermal_transversal_dispersivity,
@@ -98,6 +103,7 @@ enum PropertyType : int
     vapour_diffusion,
     viscosity,
     volume_fraction,
+    youngs_modulus,
     number_of_properties
 };
 
@@ -134,6 +140,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "permeability",
                              "phase_velocity",
                              "pore_diffusion",
+                             "poissons_ratio",
                              "porosity",
                              "reference_density",
                              "reference_temperature",
@@ -148,9 +155,12 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "specific_heat_capacity",
                              "specific_latent_heat",
                              "storage",
+                             "storage_contribution",
                              "swelling_stress_rate",
                              "thermal_conductivity",
+                             "thermal_diffusion_enhancement_factor",
                              "thermal_expansivity",
+                             "thermal_expansivity_contribution",
                              "thermal_longitudinal_dispersivity",
                              "thermal_osmosis_coefficient",
                              "thermal_transversal_dispersivity",
@@ -160,7 +170,8 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "vapour_density",
                              "vapour_diffusion",
                              "viscosity",
-                             "volume_fraction"}};
+                             "volume_fraction",
+                             "youngs_modulus"}};
 
 /// This function converts a string (e.g. a string from the configuration-tree)
 /// into one of the entries of the PropertyType enumerator.

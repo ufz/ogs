@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Float64" Name="TimeValue" NumberOfTuples="1" format="appended" RangeMin="0"                    RangeMax="0"                    offset="0"                   />
+    </FieldData>
+    <Piece NumberOfPoints="4"                    NumberOfCells="3"                   >
+      <PointData>
+        <DataArray type="UInt64" Name="bulk_node_ids" format="appended" RangeMin="2"                    RangeMax="45"                   offset="24"                  />
+        <DataArray type="Int64" Name="vtkOriginalPointIds" format="appended" RangeMin="0"                    RangeMax="3"                    offset="80"                  />
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="0"                    offset="136"                 />
+        <DataArray type="UInt64" Name="bulk_element_ids" format="appended" RangeMin="114"                  RangeMax="116"                  offset="164"                 />
+        <DataArray type="Int64" Name="vtkOriginalCellIds" format="appended" RangeMin="0"                    RangeMax="9"                    offset="208"                 />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="1"                    RangeMax="1.0049875623"         offset="252"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="392"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="468"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="512"                 />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _CAAAAAAAAAAAAAAAAAAAAA==IAAAAAAAAAACAAAAAAAAACwAAAAAAAAALQAAAAAAAAADAAAAAAAAAA==IAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAgAAAAAAAAADAAAAAAAAAA==DAAAAAAAAAAAAAAAAAAAAAAAAAA=GAAAAAAAAAByAAAAAAAAAHMAAAAAAAAAdAAAAAAAAAA=GAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAACQAAAAAAAAA=YAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAACAREaE/AAAAAAAAAAAAAAAAAADwPwAAACAREbE/AAAAAAAAAAAAAAAAAADwPwAAAKCZmbk/AAAAAAAAAAA=MAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAACAAAAAAAAAAMAAAAAAAAAAgAAAAAAAAA=GAAAAAAAAAACAAAAAAAAAAQAAAAAAAAABgAAAAAAAAA=AwAAAAAAAAADAwM=
+  </AppendedData>
+</VTKFile>

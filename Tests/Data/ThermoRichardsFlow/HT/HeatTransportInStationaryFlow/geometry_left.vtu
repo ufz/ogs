@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="7"                    NumberOfCells="3"                   >
+      <PointData>
+        <DataArray type="UInt64" Name="bulk_node_ids" format="appended" RangeMin="0"                    RangeMax="162"                  offset="0"                   />
+      </PointData>
+      <CellData>
+        <DataArray type="UInt64" Name="bulk_element_ids" format="appended" RangeMin="0"                    RangeMax="2"                    offset="80"                  />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="0.1"                  offset="120"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="352"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="456"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="496"                 />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _OAAAAKIAAAAAAAAAoQAAAAAAAAABAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAKAAAAAAAAAAGAAAAAAAAAAAAAAAAQAAAAAAAAACAAAAAAAAAA==qAAAAAAAAAAAAAAAUGJVVVVVtT8AAAAAAAAAAAAAAAAAAAAAyc2ZmZmZqT8AAAAAAAAAAAAAAAAAAAAAmpmZmZmZuT8AAAAAAAAAAAAAAAAAAAAABysRERERsT8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhEURERERoT8AAAAAAAAAAAAAAAAAAAAAhEURERERkT8AAAAAAAAAAA==SAAAAAQAAAAAAAAABQAAAAAAAAAGAAAAAAAAAAUAAAAAAAAAAwAAAAAAAAABAAAAAAAAAAMAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA==GAAAAAMAAAAAAAAABgAAAAAAAAAJAAAAAAAAAA==AwAAABUVFQ==
+  </AppendedData>
+</VTKFile>
