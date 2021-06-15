@@ -14,8 +14,6 @@
 
 #include "LisVector.h"
 
-#include <cassert>
-
 #include "LisCheck.h"
 
 namespace MathLib
@@ -57,7 +55,7 @@ std::size_t LisVector::size() const
 
 void LisVector::write(const std::string& filename) const
 {
-    lis_output_vector(vec_, LIS_FMT_PLAIN, const_cast<char*>(filename));
+    lis_output_vector(vec_, LIS_FMT_PLAIN, const_cast<char*>(filename.c_str()));
 }
 
 }  // namespace MathLib

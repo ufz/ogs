@@ -14,10 +14,11 @@
 
 #pragma once
 
+#include <lis.h>
+
+#include <cassert>
 #include <string>
 #include <vector>
-
-#include <lis.h>
 
 namespace MathLib
 {
