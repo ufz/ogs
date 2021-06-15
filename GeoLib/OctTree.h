@@ -15,18 +15,19 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 #include <limits>
+#include <vector>
 
 #include "MathLib/MathTools.h"
 #include "MathLib/Point3d.h"
 
-namespace GeoLib {
-
+namespace GeoLib
+{
 /// @tparam POINT point data type the OctTree will use
 /// @tparam MAX_POINTS maximum number of pointers of POINT in a leaf
 template <typename POINT, std::size_t MAX_POINTS>
-class OctTree {
+class OctTree
+{
 public:
     /// Create an OctTree object. The arguments ll and ur are used to compute a
     /// cube domain the OctTree will living in.
@@ -45,8 +46,8 @@ public:
     /// inside a OctTree leaf may be more expensive. The value should be
     /// chosen application dependent. [default 8]
     template <typename T>
-    static OctTree<POINT, MAX_POINTS>* createOctTree(T ll, T ur,
-        double eps = std::numeric_limits<double>::epsilon());
+    static OctTree<POINT, MAX_POINTS>* createOctTree(
+        T ll, T ur, double eps = std::numeric_limits<double>::epsilon());
 
     /// Destroys the children of this node. @attention Does not destroy the
     /// pointers to the managed objects.
@@ -64,14 +65,15 @@ public:
     /// (3) In case ret_pnt is neither equal to pnt nor equal to nullptr,
     /// another item within the eps distance is already in the OctTree and the
     /// pointer to this object is returned.
-    /// @return If the point can be inserted the method returns true, else false.
-    bool addPoint(POINT * pnt, POINT *& ret_pnt);
+    /// @return If the point can be inserted the method returns true, else
+    /// false.
+    bool addPoint(POINT* pnt, POINT*& ret_pnt);
 
     /// range query - returns all points inside the range [min[0], max[0]) x
     /// [min[1], max[1]) x [min[2], max[2])
     template <typename T>
-    void
-    getPointsInRange(T const& min, T const& max, std::vector<POINT*> &pnts) const;
+    void getPointsInRange(T const& min, T const& max,
+                          std::vector<POINT*>& pnts) const;
 
 #ifndef NDEBUG
     MathLib::Point3d const& getLowerLeftCornerPoint() const { return _ll; }
@@ -90,22 +92,24 @@ private:
     /// @param eps the euclidean distance as a threshold to make objects unique
     OctTree(MathLib::Point3d const& ll, MathLib::Point3d const& ur, double eps);
 
-    enum class Quadrant : std::int8_t {
-        NEL = 0, //!< north east lower
-        NWL, //!< north west lower
-        SWL, //!< south west lower
-        SEL, //!< south east lower
-        NEU, //!< south west upper
-        NWU, //!< south west upper
-        SWU, //!< south west upper
-        SEU //!< south east upper
+    enum class Quadrant : std::int8_t
+    {
+        NEL = 0,  //!< north east lower
+        NWL,      //!< north west lower
+        SWL,      //!< south west lower
+        SEL,      //!< south east lower
+        NEU,      //!< south west upper
+        NWU,      //!< south west upper
+        SWU,      //!< south west upper
+        SEU       //!< south east upper
     };
 
     /// This method tries to add the given point to the OctTree. If necessary
     /// for adding the point, new nodes will be inserted into the OctTree.
     /// @param pnt, ret_pnt see documentation of addPoint()
-    /// @return If the point can be inserted the method returns true, else false.
-    bool addPoint_(POINT * pnt, POINT *& ret_pnt);
+    /// @return If the point can be inserted the method returns true, else
+    /// false.
+    bool addPoint_(POINT* pnt, POINT*& ret_pnt);
 
     /**
      * This method adds the given point to the OctTree. If necessary,
@@ -118,12 +122,12 @@ private:
     /// Creates the child nodes of this leaf and distribute the points stored
     /// in _pnts to the children.
     /// @param pnt the pointer to the points that is responsible for the split
-    void splitNode(POINT * pnt);
+    void splitNode(POINT* pnt);
 
     /// checks if the given point pnt is outside of the OctTree node.
     /// @param pnt the point that check is performed on
     /// @return true if the point is outside of the OctTree node.
-    bool isOutside(POINT * pnt) const;
+    bool isOutside(POINT* pnt) const;
 
     /// children are sorted:
     ///   _children[0] is north east lower child
@@ -147,6 +151,6 @@ private:
     double const _eps;
 };
 
-} // end namespace GeoLib
+}  // end namespace GeoLib
 
 #include "OctTree-impl.h"
