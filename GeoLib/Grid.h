@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <array>
 #include <bitset>
 #include <vector>
 
@@ -21,11 +22,9 @@
 
 // GeoLib
 #include "AABB.h"
+#ifndef NDEBUG
 #include "GEOObjects.h"
-
-// MathLib
-#include "MathLib/MathTools.h"
-#include "MathLib/Point3d.h"
+#endif
 
 namespace GeoLib
 {
@@ -255,8 +254,8 @@ Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(P const& center,
                                                    double half_len) const
 {
     std::vector<std::vector<POINT*> const*> pnts;
-    MathLib::Point3d tmp_pnt{{{center[0] - half_len, center[1] - half_len,
-                               center[2] - half_len}}};  // min
+    POINT tmp_pnt{center[0] - half_len, center[1] - half_len,
+                  center[2] - half_len};  // min
     std::array<std::size_t, 3> min_coords(getGridCoords(tmp_pnt));
 
     tmp_pnt[0] = center[0] + half_len;
@@ -542,7 +541,10 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
         }  // end while
     }      // end else
 
-    double len(std::sqrt(MathLib::sqrDist(pnt, *nearest_pnt)));
+    auto to_eigen = [](auto const& point)
+    { return Eigen::Map<Eigen::Vector3d const>(point.getCoords()); };
+
+    double len((to_eigen(pnt) - to_eigen(*nearest_pnt)).norm());
     // search all other grid cells within the cube with the edge nodes
     std::vector<std::vector<POINT*> const*> vecs_of_pnts(
         getPntVecsOfGridCellsIntersectingCube(pnt, len));
@@ -554,7 +556,8 @@ POINT* Grid<POINT>::getNearestPoint(P const& pnt) const
         const std::size_t n_pnts(pnts.size());
         for (std::size_t k(0); k < n_pnts; k++)
         {
-            const double sqr_dist(MathLib::sqrDist(pnt, *pnts[k]));
+            const double sqr_dist(
+                (to_eigen(pnt) - to_eigen(*pnts[k])).squaredNorm());
             if (sqr_dist < sqr_min_dist)
             {
                 sqr_min_dist = sqr_dist;
@@ -658,12 +661,16 @@ bool Grid<POINT>::calcNearestPointInGridCell(
     if (pnts.empty())
         return false;
 
+    auto to_eigen = [](auto const& point)
+    { return Eigen::Map<Eigen::Vector3d const>(point.getCoords()); };
+
     const std::size_t n_pnts(pnts.size());
-    sqr_min_dist = MathLib::sqrDist(*pnts[0], pnt);
+    sqr_min_dist = (to_eigen(*pnts[0]) - to_eigen(pnt)).squaredNorm();
     nearest_pnt = pnts[0];
     for (std::size_t i(1); i < n_pnts; i++)
     {
-        const double sqr_dist(MathLib::sqrDist(*pnts[i], pnt));
+        const double sqr_dist(
+            (to_eigen(*pnts[i]) - to_eigen(pnt)).squaredNorm());
         if (sqr_dist < sqr_min_dist)
         {
             sqr_min_dist = sqr_dist;
@@ -683,12 +690,15 @@ std::vector<std::size_t> Grid<POINT>::getPointsInEpsilonEnvironment(
 
     double const sqr_eps(eps * eps);
 
+    auto to_eigen = [](auto const& point)
+    { return Eigen::Map<Eigen::Vector3d const>(point.getCoords()); };
+
     std::vector<std::size_t> pnts;
     for (auto vec : vec_pnts)
     {
         for (auto const p : *vec)
         {
-            if (MathLib::sqrDist(*p, pnt) <= sqr_eps)
+            if ((to_eigen(*p) - to_eigen(pnt)).squaredNorm() <= sqr_eps)
             {
                 pnts.push_back(p->getID());
             }
