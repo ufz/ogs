@@ -1,6 +1,6 @@
 /**
  * \file
- * \brief Tests for GeoLib::GEOOnjects::geoPointsToStations()
+ * \brief Tests for geoPointsToStations()
  *
  * \copyright
  * Copyright (c) 2012-2021, OpenGeoSys Community (http://www.opengeosys.org)
@@ -33,7 +33,7 @@ TEST(GeoLib, PointToStationConversion)
     // converting only unused points
     std::string stn_orphaned_pnts("Orphaned Points");
     int const res_orphaned_pnts =
-        geo_obj.geoPointsToStations(geo_name, stn_orphaned_pnts, true);
+        geoPointsToStations(geo_obj, geo_name, stn_orphaned_pnts, true);
     EXPECT_EQ(0, res_orphaned_pnts);
     auto const* const stns = geo_obj.getStationVec(stn_orphaned_pnts);
     assert(stns != nullptr);
@@ -49,7 +49,7 @@ TEST(GeoLib, PointToStationConversion)
     // converting all points
     std::string stn_all_pnts("All Points");
     int const res_all_pnts =
-        geo_obj.geoPointsToStations(geo_name, stn_all_pnts, false);
+        geoPointsToStations(geo_obj, geo_name, stn_all_pnts, false);
     EXPECT_EQ(0, res_all_pnts);
     EXPECT_EQ(exp_all_pnts, geo_obj.getStationVec(stn_all_pnts)->size());
 }

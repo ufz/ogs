@@ -253,15 +253,6 @@ public:
     void renameGeometry(std::string const& old_name,
                         std::string const& new_name);
 
-    /// Constructs a station-vector based on the points of a given geometry.
-    // @param geo_name name of the geometry
-    // @param stn_name name of the new station vector
-    // @param only_usused_pnts if true only points not in a line or surface are
-    // transferred, otherwise all points
-    int geoPointsToStations(std::string const& geo_name,
-                            std::string& stn_name,
-                            bool const only_unused_pnts = true);
-
     /// Returns the geo object for a geometric item of the given name and type for the associated geometry.
     const GeoLib::GeoObject* getGeoObject(const std::string &geo_name,
                                           GeoLib::GEOTYPE type,
@@ -372,4 +363,15 @@ private:
                        std::string const& merged_geo_name,
                        std::vector<std::size_t> const& pnt_offsets);
 };
+
+/// Constructs a station-vector based on the points of a given geometry.
+// @param geo_obj geometry manager object
+// @param geo_name name of the geometry
+// @param stn_name name of the new station vector
+// @param only_usused_pnts if true only points not in a line or surface are
+// transferred, otherwise all points
+int geoPointsToStations(GEOObjects& geo_objects, std::string const& geo_name,
+                        std::string& stn_name,
+                        bool const only_unused_pnts = true);
+
 }  // namespace GeoLib

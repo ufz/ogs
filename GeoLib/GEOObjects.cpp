@@ -693,11 +693,10 @@ void markUnusedPoints(GEOObjects const& geo_objects,
     }
 }
 
-int GEOObjects::geoPointsToStations(std::string const& geo_name,
-                                    std::string& stn_name,
-                                    bool const only_unused_pnts)
+int geoPointsToStations(GEOObjects& geo_objects, std::string const& geo_name,
+                        std::string& stn_name, bool const only_unused_pnts)
 {
-    GeoLib::PointVec const* const pnt_obj(getPointVecObj(geo_name));
+    GeoLib::PointVec const* const pnt_obj(geo_objects.getPointVecObj(geo_name));
     if (pnt_obj == nullptr)
     {
         ERR("Point vector {:s} not found.", geo_name);
@@ -713,7 +712,7 @@ int GEOObjects::geoPointsToStations(std::string const& geo_name,
     std::vector<bool> transfer_pnts(n_pnts, true);
     if (only_unused_pnts)
     {
-        markUnusedPoints(*this, geo_name, transfer_pnts);
+        markUnusedPoints(geo_objects, geo_name, transfer_pnts);
     }
 
     auto stations = std::make_unique<std::vector<GeoLib::Point*>>();
@@ -732,7 +731,7 @@ int GEOObjects::geoPointsToStations(std::string const& geo_name,
     }
     if (!stations->empty())
     {
-        addStationVec(std::move(stations), stn_name);
+        geo_objects.addStationVec(std::move(stations), stn_name);
     }
     else
     {
