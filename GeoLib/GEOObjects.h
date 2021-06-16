@@ -371,8 +371,5 @@ private:
     void mergeSurfaces(std::vector<std::string> const& geo_names,
                        std::string const& merged_geo_name,
                        std::vector<std::size_t> const& pnt_offsets);
-
-    void markUnusedPoints(std::string const& geo_name,
-                          std::vector<bool>& transfer_pnts) const;
 };
 }  // namespace GeoLib
