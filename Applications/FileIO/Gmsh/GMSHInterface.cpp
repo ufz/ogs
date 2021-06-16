@@ -25,6 +25,7 @@
 #include "GeoLib/Polygon.h"
 #include "GeoLib/PolygonWithSegmentMarker.h"
 #include "GeoLib/PolylineWithSegmentMarker.h"
+#include "GeoLib/Station.h"
 #include "InfoLib/GitInfo.h"
 
 namespace FileIO

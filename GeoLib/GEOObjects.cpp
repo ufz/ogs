@@ -18,6 +18,7 @@
 
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
+#include "Station.h"
 #include "Triangle.h"
 
 namespace GeoLib
