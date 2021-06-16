@@ -130,7 +130,7 @@ void TimeDiscretizedODESystem<
                                              GlobalVector& res) const
 {
     // TODO Maybe the duplicate calculation of xdot here and in assembleJacobian
-    //      can be optimuized. However, that would make the interface a bit more
+    //      can be optimized. However, that would make the interface a bit more
     //      fragile.
     auto& xdot = NumLib::GlobalVectorProvider::provider.getVector(_xdot_id);
     _time_disc.getXdot(x_new_timestep, x_prev, xdot);
