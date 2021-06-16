@@ -52,7 +52,7 @@ TEST(MeshLib, FlipTriMesh)
         ASSERT_EQ(mesh->getElement(i)->getNode(2)->getID(),
                   result->getElement(i)->getNode(2)->getID());
         ASSERT_EQ(
-            1.0, MeshLib::FaceRule::getSurfaceNormal(result->getElement(i))[2]);
+            1.0, MeshLib::FaceRule::getSurfaceNormal(*result->getElement(i))[2]);
     }
 }
 
@@ -75,7 +75,7 @@ TEST(MeshLib, FlipQuadMesh)
         ASSERT_EQ(mesh->getElement(i)->getNode(3)->getID(),
                   result->getElement(i)->getNode(2)->getID());
         ASSERT_EQ(
-            1.0, MeshLib::FaceRule::getSurfaceNormal(result->getElement(i))[2]);
+            1.0, MeshLib::FaceRule::getSurfaceNormal(*result->getElement(i))[2]);
     }
 }
 

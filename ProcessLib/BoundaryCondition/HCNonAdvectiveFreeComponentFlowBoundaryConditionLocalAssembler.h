@@ -107,7 +107,7 @@ private:
         // according to the right hand rule
         // for correct results it is necessary to multiply the normal with -1
         Eigen::Vector3d surface_normal =
-            -MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
+            -MeshLib::FaceRule::getSurfaceNormal(e).normalized();
         auto const zeros_size = 3 - _data.process.getMesh().getDimension();
         surface_normal.tail(zeros_size).setZero();
         return surface_normal;

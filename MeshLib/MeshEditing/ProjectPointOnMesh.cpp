@@ -60,7 +60,7 @@ double getElevation(Element const& element, Node const& node)
     Eigen::Vector3d const v =
         Eigen::Map<Eigen::Vector3d const>(node.getCoords()) -
         Eigen::Map<Eigen::Vector3d const>(element.getNode(0)->getCoords());
-    auto const n = FaceRule::getSurfaceNormal(&element).normalized();
+    auto const n = FaceRule::getSurfaceNormal(element).normalized();
     return node[2] - n.dot(v) * n[2];
 }
 

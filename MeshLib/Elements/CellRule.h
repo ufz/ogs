@@ -29,7 +29,7 @@ public:
      * (non-planar faces, non-convex geometry, possibly zero volume) which causes the calculated
      * center of gravity to lie outside of the actual element
      */
-    static bool testElementNodeOrder(const Element* /*e*/);
+    static bool testElementNodeOrder(Element const& e);
 }; /* class */
 
 }  // namespace MeshLib

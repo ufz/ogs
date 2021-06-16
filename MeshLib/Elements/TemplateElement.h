@@ -190,7 +190,7 @@ public:
     */
     bool testElementNodeOrder() const override
     {
-        return ELEMENT_RULE::testElementNodeOrder(this);
+        return ELEMENT_RULE::testElementNodeOrder(*this);
     }
 
 };

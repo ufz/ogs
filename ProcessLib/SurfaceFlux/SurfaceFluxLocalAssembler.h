@@ -114,7 +114,7 @@ public:
             if (surface_element.getGeomType() == MeshLib::MeshElemType::LINE)
             {
                 auto const bulk_normal = MeshLib::FaceRule::getSurfaceNormal(
-                    bulk_mesh.getElements()[_bulk_element_id]);
+                    *bulk_mesh.getElements()[_bulk_element_id]);
                 auto const l0 = Eigen::Map<Eigen::Vector3d const>(
                     _surface_element.getNode(0)->getCoords());
                 auto const l1 = Eigen::Map<Eigen::Vector3d const>(
@@ -125,7 +125,7 @@ public:
             else
             {
                 surface_element_normal =
-                    MeshLib::FaceRule::getSurfaceNormal(&surface_element);
+                    MeshLib::FaceRule::getSurfaceNormal(surface_element);
             }
             surface_element_normal.normalize();
             // At the moment (2016-09-28) the surface normal is not oriented
