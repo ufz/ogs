@@ -9,6 +9,10 @@
 
 #include "CreateMFront.h"
 
+#ifndef _WIN32
+#include <dlfcn.h>
+#endif
+
 #include "BaseLib/FileTools.h"
 #include "MFront.h"
 #include "ParameterLib/Utils.h"
@@ -93,6 +97,14 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
     {
         hypothesis = mgis::behaviour::Hypothesis::TRIDIMENSIONAL;
     }
+
+    // Fix for https://gitlab.opengeosys.org/ogs/ogs/-/issues/3073
+    // Pre-load dependencies of mfront lib
+#ifndef _WIN32
+    dlopen("libTFELNUMODIS.so", RTLD_NOW);
+    dlopen("libTFELUtilities.so", RTLD_NOW);
+    dlopen("libTFELException.so", RTLD_NOW);
+#endif
 
     auto behaviour =
         mgis::behaviour::load(lib_path, behaviour_name, hypothesis);
