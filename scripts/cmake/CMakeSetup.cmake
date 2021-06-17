@@ -13,7 +13,7 @@ endif()
 CPMAddPackage(
     NAME cmake-modules
     GITHUB_REPOSITORY bilke/cmake-modules
-    GIT_TAG d6d1a778e41cb114e5cdf279b8a659fa0ce9a0d4
+    GIT_TAG d98828f54f6974717798e63195cfbf08fe2daad0
     DOWNLOAD_ONLY YES
 )
 set(CMAKE_MODULE_PATH

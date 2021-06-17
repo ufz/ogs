@@ -38,6 +38,8 @@ endif()
 setup_target_for_coverage_fastcov(
     NAME
     testrunner_coverage
+    BASE_DIRECTORY
+    ${PROJECT_BINARY_DIR}
     EXECUTABLE
     $<TARGET_FILE:testrunner>
     -l
@@ -46,6 +48,7 @@ setup_target_for_coverage_fastcov(
     DEPENDENCIES
     testrunner
     FASTCOV_ARGS
+    --branch-coverage
     --include
     ${PROJECT_SOURCE_DIR}
     ${COVERAGE_ADDITIONAL_ARGS}
@@ -59,6 +62,8 @@ setup_target_for_coverage_fastcov(
 setup_target_for_coverage_fastcov(
     NAME
     ctest_coverage
+    BASE_DIRECTORY
+    ${PROJECT_BINARY_DIR}
     EXECUTABLE
     ctest
     -E
@@ -66,14 +71,27 @@ setup_target_for_coverage_fastcov(
     DEPENDENCIES
     all
     FASTCOV_ARGS
+    --branch-coverage
     --include
     ${PROJECT_SOURCE_DIR}
     ${COVERAGE_ADDITIONAL_ARGS}
     EXCLUDE
     Applications/CLI/
     Tests/
+    POST_CMD
+    perl
+    -i
+    -pe
+    s!${PROJECT_SOURCE_DIR}/!!g
+    ctest_coverage.json
+    NO_DEMANGLE
 )
 
 if(UNIX)
     add_custom_target(clean_coverage find . -name '*.gcda' -delete)
 endif()
+
+configure_file(
+    ${PROJECT_SOURCE_DIR}/scripts/test/generate_coverage_vis_data.in.py
+    ${PROJECT_BINARY_DIR}/generate_coverage_vis_data.py @ONLY
+)

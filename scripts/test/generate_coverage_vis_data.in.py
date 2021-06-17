@@ -2,7 +2,9 @@
 
 import os
 
-ctests = ["SurfaceComplexation", "EquilibriumPhase", "KineticReactant"]
+# need to increase OGS_CTEST_MAX_RUNTIME to enable these:
+# ctests = ["SurfaceComplexation", "EquilibriumPhase", "KineticReactant"]
+ctests = ["SteadyState", "ComponentTransport", "ThermoHydroMechanics"]
 report_path = "./coverage_reports"
 
 os.makedirs(report_path, exist_ok=True)
