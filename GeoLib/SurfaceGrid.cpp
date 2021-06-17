@@ -38,9 +38,7 @@ SurfaceGrid::SurfaceGrid(Surface const* const sfc)
         }
     }
 
-    std::array<double, 3> delta{{max_point[0] - min_point[0],
-                                 max_point[1] - min_point[1],
-                                 max_point[2] - min_point[2]}};
+    Eigen::Vector3d delta = max_point - min_point;
 
     if (delta[0] < std::numeric_limits<double>::epsilon())
     {
@@ -72,14 +70,8 @@ SurfaceGrid::SurfaceGrid(Surface const* const sfc)
     const std::size_t n_tris(sfc->getNumberOfTriangles());
     const std::size_t n_tris_per_cell(5);
 
-    std::bitset<3> dim;  // all bits are set to zero.
-    for (std::size_t k(0); k < 3; ++k)
-    {
-        if (delta[k] >= std::numeric_limits<double>::epsilon())
-        {
-            dim[k] = true;
-        }
-    }
+    Eigen::Matrix<bool, 3, 1> dim =
+        delta.array() >= std::numeric_limits<double>::epsilon();
 
     // *** condition: n_tris / n_cells < n_tris_per_cell
     //                where n_cells = _n_steps[0] * _n_steps[1] * _n_steps[2]
