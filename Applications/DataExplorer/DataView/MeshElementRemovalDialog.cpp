@@ -17,6 +17,7 @@
 #include <QList>
 #include <QListWidgetItem>
 #include <algorithm>
+#include<Eigen/StdVector>
 
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "Applications/DataHolderLib/Project.h"
@@ -142,9 +143,8 @@ void MeshElementRemovalDialog::accept()
             (aabb_edits[4]) ? this->zMinEdit->text().toDouble() : (minAABB[2]);
         maxAABB[2] =
             (aabb_edits[5]) ? this->zMaxEdit->text().toDouble() : (maxAABB[2]);
-        std::vector<Eigen::Vector3d> extent;
-        extent.push_back(minAABB);
-        extent.push_back(maxAABB);
+        std::vector<Eigen::Vector3d, Eigen::aligned_allocator<Eigen::Vector3d>>
+            extent{minAABB, maxAABB};
         const GeoLib::AABB updated_aabb(extent.begin(), extent.end());
         ex.searchByBoundingBox(updated_aabb);
         anything_checked = true;
