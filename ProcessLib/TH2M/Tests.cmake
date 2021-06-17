@@ -1,3 +1,10 @@
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_gas.prj RUNTIME 50)
+    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_liquid.prj RUNTIME 50)
+    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_gas.prj RUNTIME 55)
+    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_liquid.prj RUNTIME 55)
+endif()
+
 # TH2M 1d heat diffusion w/ Dirichlet-BC
 AddTest(
     NAME TH2M_T_1d_dirichlet
