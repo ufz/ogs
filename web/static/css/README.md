@@ -6,4 +6,4 @@
 - Build icon set
 - Extract zip
 - Copy `webfonts` to `static/`
-- Copy `css/all.min.css` to `css/`
+- Copy `css/all.min.css` to `css/fontawesome.css`

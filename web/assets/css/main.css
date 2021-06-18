@@ -2,8 +2,6 @@
 
 @tailwind components;
 
-@import 'https://fonts.googleapis.com/css?family=Roboto:400,500';
-@import 'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700';
 
 /* -- Header anchor on docs pages */
 .headerlink {
@@ -253,5 +251,3 @@ img[src$='#two-third'] {
 }
 
 @tailwind utilities;
-
-@import "https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css";
