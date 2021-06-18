@@ -572,7 +572,7 @@ void TH2MLocalAssembler<
             k_over_mu_G * ip.rhoGR * b - k_over_mu_G * gradpGR;
 
         GlobalDimVectorType const w_LS = k_over_mu_L * gradpCap +
-                                         k_over_mu_L * ip.rhoGR * b -
+                                         k_over_mu_L * ip.rhoLR * b -
                                          k_over_mu_L * gradpGR;
 
         // ---------------------------------------------------------------------
