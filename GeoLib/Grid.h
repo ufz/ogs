@@ -410,27 +410,21 @@ std::array<std::size_t, 3> Grid<POINT>::getGridCoords(T const& pnt) const
 {
     auto const& min_point{getMinPoint()};
     auto const& max_point{getMinPoint()};
-    std::array<std::size_t, 3> coords{};
+    std::array<std::size_t, 3> coords{0, 0, 0};
     for (std::size_t k(0); k < 3; k++)
     {
         if (pnt[k] < min_point[k])
         {
-            coords[k] = 0;
+            continue;
         }
-        else
+        if (pnt[k] >= max_point[k])
         {
-            if (pnt[k] >= max_point[k])
-            {
-                coords[k] = _n_steps[k] - 1;
-            }
-            else
-            {
-                coords[k] = static_cast<std::size_t>(
-                    std::floor((pnt[k] - min_point[k])) /
-                    std::nextafter(_step_sizes[k],
-                                   std::numeric_limits<double>::max()));
-            }
+            coords[k] = _n_steps[k] - 1;
+            continue;
         }
+        coords[k] = static_cast<std::size_t>(
+            std::floor((pnt[k] - min_point[k])) /
+            std::nextafter(_step_sizes[k], std::numeric_limits<double>::max()));
     }
     return coords;
 }
