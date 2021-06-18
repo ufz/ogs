@@ -35,9 +35,22 @@ The port tunneling with ssh is required as these ports are blocked from the fire
 
 ## `envinf1`
 
-`envinf1` has a NVidia K20m. Same instructions as for eve but port tunneling is not necessary:
+`envinf1` has a NVidia K20m. Simila instructions as for eve but port tunneling is not necessary:
 
 ```bash
 ssh 141.65.34.100
+pvserver
+# or with Singularity:
 singularity exec --nv /data/shared/container/pv-v5.8.0-egl-py2.sif /opt/paraview/bin/pvserver
+```
+
+## `envinf2`
+
+`envinf2` has a NVidia Quadro RTX 5000. Similar instructions as for eve but port tunneling is not necessary:
+
+```bash
+ssh 141.65.34.90
+pvserver
+# or with Singularity:
+singularity exec --nv /data/shared/container/pv-v5.9.0-egl-py3.sif /opt/paraview/bin/pvserver
 ```
