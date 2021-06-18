@@ -95,10 +95,9 @@ public:
     getPntVecsOfGridCellsIntersectingCube(P const& center,
                                           double half_len) const;
 
-    void getPntVecsOfGridCellsIntersectingCuboid(
-        Eigen::Vector3d const& min_pnt,
-        Eigen::Vector3d const& max_pnt,
-        std::vector<std::vector<POINT*> const*>& pnts) const;
+    std::vector<std::vector<POINT*> const*>
+    getPntVecsOfGridCellsIntersectingCuboid(
+        Eigen::Vector3d const& min_pnt, Eigen::Vector3d const& max_pnt) const;
 
 #ifndef NDEBUG
     /**
@@ -253,10 +252,15 @@ std::vector<std::vector<POINT*> const*>
 Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(P const& center,
                                                    double half_len) const
 {
-    std::vector<std::vector<POINT*> const*> pnts;
     Eigen::Vector3d const c{center[0], center[1], center[2]};
     std::array<std::size_t, 3> min_coords(getGridCoords(c.array() - half_len));
     std::array<std::size_t, 3> max_coords(getGridCoords(c.array() + half_len));
+
+    std::vector<std::vector<POINT*> const*> pnts;
+    pnts.reserve(
+        (Eigen::Map<Eigen::Matrix<std::size_t, 3, 1>>(max_coords.data()) -
+         Eigen::Map<Eigen::Matrix<std::size_t, 3, 1>>(min_coords.data()))
+            .prod());
 
     std::size_t const steps0_x_steps1(_n_steps[0] * _n_steps[1]);
     for (std::size_t c0 = min_coords[0]; c0 < max_coords[0] + 1; c0++)
@@ -276,13 +280,14 @@ Grid<POINT>::getPntVecsOfGridCellsIntersectingCube(P const& center,
 }
 
 template <typename POINT>
-void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
-    Eigen::Vector3d const& min_pnt,
-    Eigen::Vector3d const& max_pnt,
-    std::vector<std::vector<POINT*> const*>& pnts) const
+std::vector<std::vector<POINT*> const*>
+Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
+    Eigen::Vector3d const& min_pnt, Eigen::Vector3d const& max_pnt) const
 {
     std::array<std::size_t, 3> min_coords(getGridCoords(min_pnt));
     std::array<std::size_t, 3> max_coords(getGridCoords(max_pnt));
+
+    std::vector<std::vector<POINT*> const*> pnts;
 
     std::size_t const steps0_x_steps1(_n_steps[0] * _n_steps[1]);
     for (std::size_t c0 = min_coords[0]; c0 < max_coords[0] + 1; c0++)
@@ -298,6 +303,7 @@ void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
             }
         }
     }
+    return pnts;
 }
 
 #ifndef NDEBUG

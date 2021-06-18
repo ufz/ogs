@@ -116,9 +116,9 @@ void Mesh2MeshPropertyInterpolation::interpolatePropertiesForMesh(
             dest_element.getNodes() + dest_element.getNumberOfBaseNodes());
 
         // request "interesting" nodes from grid
-        std::vector<std::vector<MeshLib::Node*> const*> nodes;
-        src_grid.getPntVecsOfGridCellsIntersectingCuboid(
-            elem_aabb.getMinPoint(), elem_aabb.getMaxPoint(), nodes);
+        std::vector<std::vector<MeshLib::Node*> const*> const nodes =
+            src_grid.getPntVecsOfGridCellsIntersectingCuboid(
+                elem_aabb.getMinPoint(), elem_aabb.getMaxPoint());
 
         std::size_t cnt(0);
         double average_value(0.0);
