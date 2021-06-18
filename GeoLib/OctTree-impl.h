@@ -13,9 +13,8 @@
 namespace GeoLib
 {
 template <typename POINT, std::size_t MAX_POINTS>
-template <typename T>
 OctTree<POINT, MAX_POINTS>* OctTree<POINT, MAX_POINTS>::createOctTree(
-    T ll, T ur, double eps)
+    Eigen::Vector3d ll, Eigen::Vector3d ur, double eps)
 {
     // compute an axis aligned cube around the points ll and ur
     const double dx(ur[0] - ll[0]);
@@ -60,7 +59,9 @@ OctTree<POINT, MAX_POINTS>* OctTree<POINT, MAX_POINTS>::createOctTree(
             ur[k] += eps;
         }
     }
-    return new OctTree<POINT, MAX_POINTS>(ll, ur, eps);
+    Eigen::Vector3d lower_left{ll[0], ll[1], ll[2]};
+    Eigen::Vector3d upper_right{ur[0], ur[1], ur[2]};
+    return new OctTree<POINT, MAX_POINTS>(lower_left, upper_right, eps);
 }
 
 template <typename POINT, std::size_t MAX_POINTS>
@@ -77,15 +78,19 @@ bool OctTree<POINT, MAX_POINTS>::addPoint(POINT* pnt, POINT*& ret_pnt)
 {
     // first do a range query using a epsilon box around the point pnt
     std::vector<POINT*> query_pnts;
-    MathLib::Point3d min(std::array<double, 3>{
-        {(*pnt)[0] - _eps, (*pnt)[1] - _eps, (*pnt)[2] - _eps}});
-    MathLib::Point3d max(std::array<double, 3>{
-        {(*pnt)[0] + _eps, (*pnt)[1] + _eps, (*pnt)[2] + _eps}});
+    Eigen::Vector3d const min =
+        Eigen::Map<Eigen::Vector3d>(pnt->getCoords()).array() - _eps;
+    Eigen::Vector3d const max =
+        Eigen::Map<Eigen::Vector3d>(pnt->getCoords()).array() + _eps;
     getPointsInRange(min, max, query_pnts);
-    auto const it =
-        std::find_if(query_pnts.begin(), query_pnts.end(),
-                     [pnt, this](auto const* p)
-                     { return MathLib::sqrDist(*p, *pnt) < _eps * _eps; });
+    auto const it = std::find_if(
+        query_pnts.begin(), query_pnts.end(),
+        [pnt, this](auto const* p)
+        {
+            return (Eigen::Map<Eigen::Vector3d const>(p->getCoords()) -
+                    Eigen::Map<Eigen::Vector3d const>(pnt->getCoords()))
+                       .squaredNorm() < _eps * _eps;
+        });
     if (it != query_pnts.end())
     {
         ret_pnt = *it;
@@ -164,8 +169,8 @@ void OctTree<POINT, MAX_POINTS>::getPointsInRange(
 }
 
 template <typename POINT, std::size_t MAX_POINTS>
-OctTree<POINT, MAX_POINTS>::OctTree(MathLib::Point3d const& ll,
-                                    MathLib::Point3d const& ur, double eps)
+OctTree<POINT, MAX_POINTS>::OctTree(Eigen::Vector3d const& ll,
+                                    Eigen::Vector3d const& ur, double eps)
     : _ll(ll), _ur(ur), _is_leaf(true), _eps(eps)
 {
     _children.fill(nullptr);
@@ -235,8 +240,8 @@ void OctTree<POINT, MAX_POINTS>::splitNode(POINT* pnt)
     const double x_mid((_ur[0] + _ll[0]) / 2.0);
     const double y_mid((_ur[1] + _ll[1]) / 2.0);
     const double z_mid((_ur[2] + _ll[2]) / 2.0);
-    MathLib::Point3d p0(std::array<double, 3>{{x_mid, y_mid, _ll[2]}});
-    MathLib::Point3d p1(std::array<double, 3>{{_ur[0], _ur[1], z_mid}});
+    Eigen::Vector3d p0{x_mid, y_mid, _ll[2]};
+    Eigen::Vector3d p1{_ur[0], _ur[1], z_mid};
 
     // create child NEL
     _children[static_cast<std::int8_t>(Quadrant::NEL)] =

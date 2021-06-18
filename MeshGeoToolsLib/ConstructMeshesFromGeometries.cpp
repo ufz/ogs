@@ -10,6 +10,7 @@
 #include "ConstructMeshesFromGeometries.h"
 
 #include "BaseLib/Logging.h"
+#include "GeoLib/GEOObjects.h"
 #include "BoundaryElementsSearcher.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"

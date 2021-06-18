@@ -110,7 +110,7 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
         min_pnt[i] -= half_cell_size[i];
         max_pnt[i] += half_cell_size[i];
     }
-    std::array<MathLib::Point3d, 2> const fault_extent{{min_pnt, max_pnt}};
+    std::array<Eigen::Vector3d, 2> const fault_extent{{min_pnt, max_pnt}};
     GeoLib::AABB const fault_aabb_ext(fault_extent.cbegin(),
                                       fault_extent.cend());
 

@@ -28,8 +28,7 @@ PointVec::PointVec(
     : TemplateVec<Point>(name, std::move(points), std::move(name_id_map)),
       _type(type),
       _aabb(_data_vec->begin(), _data_vec->end()),
-      _rel_eps(rel_eps * std::sqrt(MathLib::sqrDist(_aabb.getMinPoint(),
-                                                    _aabb.getMaxPoint()))),
+      _rel_eps(rel_eps * (_aabb.getMaxPoint() - _aabb.getMinPoint()).norm()),
       _oct_tree(OctTree<GeoLib::Point, 16>::createOctTree(
           _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps))
 {
@@ -257,14 +256,13 @@ void PointVec::setNameForElement(std::size_t id, std::string const& name)
 
 void PointVec::resetInternalDataStructures()
 {
-    MathLib::Point3d const& min(_aabb.getMinPoint());
-    MathLib::Point3d const& max(_aabb.getMaxPoint());
-    double const rel_eps(_rel_eps / std::sqrt(MathLib::sqrDist(min, max)));
+    auto const& min(_aabb.getMinPoint());
+    auto const& max(_aabb.getMaxPoint());
+    double const rel_eps(_rel_eps / (max-min).norm());
 
     _aabb = GeoLib::AABB(_data_vec->begin(), _data_vec->end());
 
-    _rel_eps = rel_eps * std::sqrt(MathLib::sqrDist(_aabb.getMinPoint(),
-                                                    _aabb.getMaxPoint()));
+    _rel_eps = rel_eps * (_aabb.getMaxPoint() - _aabb.getMinPoint()).norm();
 
     _oct_tree.reset(OctTree<GeoLib::Point, 16>::createOctTree(
         _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));

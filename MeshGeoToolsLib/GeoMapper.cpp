@@ -479,8 +479,14 @@ getCandidateElementsForLineSegmentIntersection(
         {seg_deep_copy.getBeginPoint(), seg_deep_copy.getEndPoint()}};
     GeoLib::AABB aabb(pnts.cbegin(), pnts.cend());
 
-    auto candidate_elements = mesh_element_grid.getElementsInVolume(
-        aabb.getMinPoint(), aabb.getMaxPoint());
+    // TODO TF: remove after getElementsInVolume interface change
+    auto convert_to_Point3d = [](Eigen::Vector3d const& v) {
+        return MathLib::Point3d{std::array{v[0], v[1], v[2]}};
+    };
+
+    auto const min = convert_to_Point3d(aabb.getMinPoint());
+    auto const max = convert_to_Point3d(aabb.getMaxPoint());
+    auto candidate_elements = mesh_element_grid.getElementsInVolume(min, max);
 
     // make candidate elements unique
     BaseLib::makeVectorUnique(candidate_elements);

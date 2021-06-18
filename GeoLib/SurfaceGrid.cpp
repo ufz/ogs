@@ -25,56 +25,53 @@ namespace GeoLib
 SurfaceGrid::SurfaceGrid(Surface const* const sfc)
     : AABB(sfc->getAABB()), _n_steps({{1, 1, 1}})
 {
+    auto min_point{getMinPoint()};
+    auto max_point{getMaxPoint()};
     // enlarge the bounding, such that the points with maximal coordinates
     // fits into the grid
     for (std::size_t k(0); k < 3; ++k)
     {
-        _max_pnt[k] += std::abs(_max_pnt[k]) * 1e-6;
-        if (std::abs(_max_pnt[k]) < std::numeric_limits<double>::epsilon())
+        max_point[k] += std::abs(max_point[k]) * 1e-6;
+        if (std::abs(max_point[k]) < std::numeric_limits<double>::epsilon())
         {
-            _max_pnt[k] = (_max_pnt[k] - _min_pnt[k]) * (1.0 + 1e-6);
+            max_point[k] = (max_point[k] - min_point[k]) * (1.0 + 1e-6);
         }
     }
 
-    std::array<double, 3> delta{{_max_pnt[0] - _min_pnt[0],
-                                 _max_pnt[1] - _min_pnt[1],
-                                 _max_pnt[2] - _min_pnt[2]}};
+    Eigen::Vector3d delta = max_point - min_point;
 
     if (delta[0] < std::numeric_limits<double>::epsilon())
     {
         const double max_delta(std::max(delta[1], delta[2]));
-        _min_pnt[0] -= max_delta * 0.5e-3;
-        _max_pnt[0] += max_delta * 0.5e-3;
-        delta[0] = _max_pnt[0] - _min_pnt[0];
+        min_point[0] -= max_delta * 0.5e-3;
+        max_point[0] += max_delta * 0.5e-3;
+        delta[0] = max_point[0] - min_point[0];
     }
 
     if (delta[1] < std::numeric_limits<double>::epsilon())
     {
         const double max_delta(std::max(delta[0], delta[2]));
-        _min_pnt[1] -= max_delta * 0.5e-3;
-        _max_pnt[1] += max_delta * 0.5e-3;
-        delta[1] = _max_pnt[1] - _min_pnt[1];
+        min_point[1] -= max_delta * 0.5e-3;
+        max_point[1] += max_delta * 0.5e-3;
+        delta[1] = max_point[1] - min_point[1];
     }
 
     if (delta[2] < std::numeric_limits<double>::epsilon())
     {
         const double max_delta(std::max(delta[0], delta[1]));
-        _min_pnt[2] -= max_delta * 0.5e-3;
-        _max_pnt[2] += max_delta * 0.5e-3;
-        delta[2] = _max_pnt[2] - _min_pnt[2];
+        min_point[2] -= max_delta * 0.5e-3;
+        max_point[2] += max_delta * 0.5e-3;
+        delta[2] = max_point[2] - min_point[2];
     }
+
+    update(min_point);
+    update(max_point);
 
     const std::size_t n_tris(sfc->getNumberOfTriangles());
     const std::size_t n_tris_per_cell(5);
 
-    std::bitset<3> dim;  // all bits are set to zero.
-    for (std::size_t k(0); k < 3; ++k)
-    {
-        if (std::abs(delta[k]) >= std::numeric_limits<double>::epsilon())
-        {
-            dim[k] = true;
-        }
-    }
+    Eigen::Matrix<bool, 3, 1> dim =
+        delta.array() >= std::numeric_limits<double>::epsilon();
 
     // *** condition: n_tris / n_cells < n_tris_per_cell
     //                where n_cells = _n_steps[0] * _n_steps[1] * _n_steps[2]
@@ -83,9 +80,8 @@ SurfaceGrid::SurfaceGrid(Surface const* const sfc)
     // 1/3.)));
     //          _n_steps[1] = _n_steps[0] * delta[1]/delta[0],
     //          _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
-    auto sc_ceil = [](double v) {
-        return static_cast<std::size_t>(std::ceil(v));
-    };
+    auto sc_ceil = [](double v)
+    { return static_cast<std::size_t>(std::ceil(v)); };
     switch (dim.count())
     {
         case 3:  // 3d case
@@ -133,7 +129,14 @@ SurfaceGrid::SurfaceGrid(Surface const* const sfc)
     for (std::size_t k(0); k < 3; k++)
     {
         _step_sizes[k] = delta[k] / _n_steps[k];
-        _inverse_step_sizes[k] = 1.0 / _step_sizes[k];
+        if (delta[k] > std::numeric_limits<double>::epsilon())
+        {
+            _inverse_step_sizes[k] = 1.0 / _step_sizes[k];
+        }
+        else
+        {
+            _inverse_step_sizes[k] = 0;
+        }
     }
 
     _triangles_in_grid_box.resize(_n_steps[0] * _n_steps[1] * _n_steps[2]);
@@ -149,11 +152,14 @@ void SurfaceGrid::sortTrianglesInGridCells(Surface const* const sfc)
             Point const& p0(*((*sfc)[l]->getPoint(0)));
             Point const& p1(*((*sfc)[l]->getPoint(1)));
             Point const& p2(*((*sfc)[l]->getPoint(2)));
-            ERR("Sorting triangle {:d} [({:f},{:f},{:f}), ({:f},{:f},{:f}), "
-                "({:f},{:f},{:f}) into grid.",
+            auto const& min{getMinPoint()};
+            auto const& max{getMaxPoint()};
+            OGS_FATAL(
+                "Sorting triangle {:d} [({:f},{:f},{:f}), ({:f},{:f},{:f}), "
+                "({:f},{:f},{:f}) into grid. Bounding box is [{:f}, {:f}] x "
+                "[{:f}, {:f}] x [{:f}, {:f}].",
                 l, p0[0], p0[1], p0[2], p1[0], p1[1], p1[2], p2[0], p2[1],
-                p2[2]);
-            OGS_FATAL("");
+                p2[2], min[0], max[0], min[1], max[1], min[2], max[2]);
         }
     }
 }
@@ -215,12 +221,13 @@ bool SurfaceGrid::sortTriangleInGridCells(Triangle const* const triangle)
 std::optional<std::array<std::size_t, 3>> SurfaceGrid::getGridCellCoordinates(
     MathLib::Point3d const& p) const
 {
+    auto const& min_point{getMinPoint()};
     std::array<std::size_t, 3> coords{
-        {static_cast<std::size_t>((p[0] - _min_pnt[0]) *
+        {static_cast<std::size_t>((p[0] - min_point[0]) *
                                   _inverse_step_sizes[0]),
-         static_cast<std::size_t>((p[1] - _min_pnt[1]) *
+         static_cast<std::size_t>((p[1] - min_point[1]) *
                                   _inverse_step_sizes[1]),
-         static_cast<std::size_t>((p[2] - _min_pnt[2]) *
+         static_cast<std::size_t>((p[2] - min_point[2]) *
                                   _inverse_step_sizes[2])}};
 
     if (coords[0] >= _n_steps[0] || coords[1] >= _n_steps[1] ||

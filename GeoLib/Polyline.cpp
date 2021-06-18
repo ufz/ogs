@@ -20,6 +20,7 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/Logging.h"
 #include "MathLib/GeometricBasics.h"
+#include "MathLib/MathTools.h"
 
 namespace GeoLib
 {

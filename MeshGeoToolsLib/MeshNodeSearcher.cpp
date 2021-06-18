@@ -17,6 +17,7 @@
 #include "BaseLib/Logging.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polyline.h"
+#include "GeoLib/Surface.h"
 #include "HeuristicSearchLength.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
