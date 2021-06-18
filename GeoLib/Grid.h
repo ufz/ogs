@@ -284,20 +284,17 @@ void Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
     std::array<std::size_t, 3> min_coords(getGridCoords(min_pnt));
     std::array<std::size_t, 3> max_coords(getGridCoords(max_pnt));
 
-    std::size_t coords[3], steps0_x_steps1(_n_steps[0] * _n_steps[1]);
-    for (coords[0] = min_coords[0]; coords[0] < max_coords[0] + 1; coords[0]++)
+    std::size_t const steps0_x_steps1(_n_steps[0] * _n_steps[1]);
+    for (std::size_t c0 = min_coords[0]; c0 < max_coords[0] + 1; c0++)
     {
-        for (coords[1] = min_coords[1]; coords[1] < max_coords[1] + 1;
-             coords[1]++)
+        for (std::size_t c1 = min_coords[1]; c1 < max_coords[1] + 1; c1++)
         {
-            const std::size_t coords0_p_coords1_x_steps0(
-                coords[0] + coords[1] * _n_steps[0]);
-            for (coords[2] = min_coords[2]; coords[2] < max_coords[2] + 1;
-                 coords[2]++)
+            const std::size_t coords0_p_coords1_x_steps0(c0 + c1 * _n_steps[0]);
+            for (std::size_t c2 = min_coords[2]; c2 < max_coords[2] + 1; c2++)
             {
                 pnts.push_back(
                     &(_grid_cell_nodes_map[coords0_p_coords1_x_steps0 +
-                                           coords[2] * steps0_x_steps1]));
+                                           c2 * steps0_x_steps1]));
             }
         }
     }
