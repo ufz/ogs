@@ -288,6 +288,10 @@ Grid<POINT>::getPntVecsOfGridCellsIntersectingCuboid(
     std::array<std::size_t, 3> max_coords(getGridCoords(max_pnt));
 
     std::vector<std::vector<POINT*> const*> pnts;
+    pnts.reserve(
+        (Eigen::Map<Eigen::Matrix<std::size_t, 3, 1>>(max_coords.data()) -
+         Eigen::Map<Eigen::Matrix<std::size_t, 3, 1>>(min_coords.data()))
+            .prod());
 
     std::size_t const steps0_x_steps1(_n_steps[0] * _n_steps[1]);
     for (std::size_t c0 = min_coords[0]; c0 < max_coords[0] + 1; c0++)
