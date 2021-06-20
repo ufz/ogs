@@ -129,6 +129,10 @@ std::unique_ptr<Process> createStokesFlowProcess(
     }
     std::copy_n(b.data(), b.size(), specific_body_force.data());
 
+    bool const use_stokes_brinkman_form =
+        //! \ogs_file_param{prj__processes__process__StokesFlow__use_stokes_brinkman_form}
+        config.getConfigParameter<bool>("use_stokes_brinkman_form", false);
+
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
@@ -137,7 +141,8 @@ std::unique_ptr<Process> createStokesFlowProcess(
     DBUG("Media properties verified.");
 
     StokesFlowProcessData process_data{std::move(media_map),
-                                       std::move(specific_body_force)};
+                                       std::move(specific_body_force),
+                                       use_stokes_brinkman_form};
 
     SecondaryVariableCollection secondary_variables;
 
