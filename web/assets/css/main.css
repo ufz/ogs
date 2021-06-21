@@ -2,8 +2,6 @@
 
 @tailwind components;
 
-@import 'https://fonts.googleapis.com/css?family=Roboto:400,500';
-@import 'https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700';
 
 /* -- Header anchor on docs pages */
 .headerlink {
@@ -224,7 +222,7 @@ img[src$='#two-third'] {
 /* -------------------------------- Algolia---------------------------------- */
 .algolia-autocomplete .aa-input,
 .algolia-autocomplete .aa-hint {
-  /*width: 100%;*/
+  width: 100%;
 }
 
 .algolia-autocomplete .aa-hint {
@@ -234,8 +232,12 @@ img[src$='#two-third'] {
 .algolia-autocomplete .aa-dropdown-menu {
   @apply bg-gray-100;
   @apply border-2;
+  @apply border-t-0;
   @apply p-1;
   @apply text-sm;
+  right: 0px;
+  width: 100%;
+  margin-top: -1px;
 }
 
 .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
@@ -244,7 +246,7 @@ img[src$='#two-third'] {
 }
 
 .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
-  @apply bg-blue-200;
+  @apply bg-brand-200;
 }
 
 .algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
@@ -253,5 +255,3 @@ img[src$='#two-third'] {
 }
 
 @tailwind utilities;
-
-@import "https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css";
