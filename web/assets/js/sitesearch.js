@@ -11,6 +11,7 @@ $('#search-input').autocomplete({
   {
     source: $.fn.autocomplete.sources.hits(index, { hitsPerPage: 5 }),
     displayKey: 'title',
+    debug: true,
     templates: {
       suggestion: function (suggestion) {
         return suggestion._highlightResult.title.value;

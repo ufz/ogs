@@ -222,7 +222,7 @@ img[src$='#two-third'] {
 /* -------------------------------- Algolia---------------------------------- */
 .algolia-autocomplete .aa-input,
 .algolia-autocomplete .aa-hint {
-  /*width: 100%;*/
+  width: 100%;
 }
 
 .algolia-autocomplete .aa-hint {
@@ -232,8 +232,12 @@ img[src$='#two-third'] {
 .algolia-autocomplete .aa-dropdown-menu {
   @apply bg-gray-100;
   @apply border-2;
+  @apply border-t-0;
   @apply p-1;
   @apply text-sm;
+  right: 0px;
+  width: 100%;
+  margin-top: -1px;
 }
 
 .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
@@ -242,7 +246,7 @@ img[src$='#two-third'] {
 }
 
 .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
-  @apply bg-blue-200;
+  @apply bg-brand-200;
 }
 
 .algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {

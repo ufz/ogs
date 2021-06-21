@@ -15,7 +15,7 @@
   {{ partial "header.html" . }}
 </head>
 
-<body>
+<body class="selection:bg-yellow-200">
   {{ partialCached "nav-bar.html" . $section $subsection }}
 
   <div class="xl:container xl:mx-auto px-2">
@@ -47,8 +47,8 @@
             {{ range .Children }}
             <li
               class="p-1 mr-1 {{if $currentPage.IsMenuCurrent $subsection . }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
-              <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand-500"
-                {{end}}>{{ .Name }}
+              <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand-500" {{end}}>
+                {{ .Name }}
               </a>
             </li>
             {{ end }}
