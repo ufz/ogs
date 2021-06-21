@@ -95,11 +95,9 @@ public:
     /// Returns all the sensor data for this observation site
     const SensorData* getSensorData() const { return this->_sensor_data; }
 
-protected:
+private:
     std::string _name;
     StationType _type{Station::StationType::STATION};  // GeoSys Station Type
-
-private:
     double _station_value{0.0};
     SensorData* _sensor_data{nullptr};
 };
