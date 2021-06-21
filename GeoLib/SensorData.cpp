@@ -147,8 +147,7 @@ int SensorData::readDataFromFile(const std::string& file_name)
         this->_vec_names.push_back(
             SensorData::convertString2SensorDataType(*++it));
         this->_data_unit_string.emplace_back("");
-        auto* data = new std::vector<float>;
-        this->_data_vecs.push_back(data);
+        this->_data_vecs.push_back(new std::vector<float>);
     }
 
     while (std::getline(in, line))
