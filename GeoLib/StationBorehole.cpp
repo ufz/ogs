@@ -55,38 +55,6 @@ StationBorehole::~StationBorehole()
     }
 }
 
-StationBorehole* StationBorehole::createStation(const std::string& line)
-{
-    std::list<std::string> fields = BaseLib::splitString(line, '\t');
-
-    if (fields.size() < 5)
-    {
-        WARN("Station::createStation() - Unexpected file format.");
-        return nullptr;
-    }
-    auto name = fields.front();
-    fields.pop_front();
-    auto const x = strtod(
-        BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-    fields.pop_front();
-    auto const y = strtod(
-        BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-    fields.pop_front();
-    auto const z = strtod(
-        BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-    fields.pop_front();
-    auto const depth = strtod(
-        BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-    fields.pop_front();
-    int date = 0;
-    if (! fields.empty())
-    {
-        date = BaseLib::strDate2int(fields.front());
-        fields.pop_front();
-    }
-    return new StationBorehole(x, y, z, depth,  name, date);
-}
-
 StationBorehole* StationBorehole::createStation(const std::string& name,
                                                 double x,
                                                 double y,

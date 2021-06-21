@@ -40,9 +40,6 @@ public:
                              int date = 0);
     ~StationBorehole() override;
 
-    /// Creates a StationBorehole-object from a string (assuming the string has the right format)
-    static StationBorehole* createStation(const std::string &line);
-
     /// Creates a new borehole object based on the given parameters.
     static StationBorehole* createStation(const std::string &name,
                                           double x,
