@@ -33,9 +33,8 @@ StationBorehole::StationBorehole(double x,
                                  double y,
                                  double z,
                                  const std::string& name)
-    : Station(x, y, z, name)
+    : Station(x, y, z, name, Station::StationType::BOREHOLE)
 {
-    _type = Station::StationType::BOREHOLE;
 
     // add first point of borehole
     _profilePntVec.push_back(this);

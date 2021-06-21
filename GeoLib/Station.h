@@ -51,13 +51,15 @@ public:
      * \param y The y-coordinate of the station.
      * \param z The z-coordinate of the station.
      * \param name The name of the station.
+     * \param type The type of the station, see Station::StationType for
+     * possible values.
      */
-    explicit Station(double x = 0.0,
-                     double y = 0.0,
-                     double z = 0.0,
-                     std::string name = "");
+    explicit Station(double x = 0.0, double y = 0.0, double z = 0.0,
+                     std::string name = "",
+                     Station::StationType type = Station::StationType::STATION);
 
-    explicit Station(Point* coords, std::string name = "");
+    explicit Station(Point* coords, std::string name = "",
+                     Station::StationType type = Station::StationType::STATION);
 
     /**
      * Constructor copies the source object
