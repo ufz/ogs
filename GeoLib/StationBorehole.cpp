@@ -53,22 +53,23 @@ StationBorehole::~StationBorehole()
 
 StationBorehole* StationBorehole::createStation(const std::string& line)
 {
-    StationBorehole* borehole = new StationBorehole();
+    StationBorehole* borehole = nullptr;
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
     if (fields.size() >= 5)
     {
-        borehole->_name = fields.front();
+        auto name = fields.front();
         fields.pop_front();
-        (*borehole)[0] = strtod(
+        auto const x = strtod(
             BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
-        (*borehole)[1] = strtod(
+        auto const y = strtod(
             BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
-        (*borehole)[2] = strtod(
+        auto const z = strtod(
             BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
+        borehole = new StationBorehole(x, y, z, name);
         borehole->_depth = strtod(
             BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
         fields.pop_front();
@@ -98,11 +99,7 @@ StationBorehole* StationBorehole::createStation(const std::string& name,
                                                 double depth,
                                                 const std::string& date)
 {
-    StationBorehole* station = new StationBorehole();
-    station->_name = name;
-    (*station)[0] = x;
-    (*station)[1] = y;
-    (*station)[2] = z;
+    StationBorehole* station = new StationBorehole(x, y, z, name);
     station->_depth = depth;
     if (date != "0000-00-00")
     {
