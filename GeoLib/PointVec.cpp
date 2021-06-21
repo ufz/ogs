@@ -1,7 +1,5 @@
 /**
  * \file
- * \author Thomas Fischeror
- * \date   2010-06-11
  * \brief  Implementation of the PointVec class.
  *
  * \copyright
