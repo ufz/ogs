@@ -35,6 +35,7 @@ public:
     explicit StationBorehole(double x = 0.0,
                              double y = 0.0,
                              double z = 0.0,
+                             double const depth = 0.0,
                              const std::string& name = "");
     ~StationBorehole() override;
 

@@ -29,11 +29,9 @@ namespace GeoLib
 // The Borehole class //
 ////////////////////////
 
-StationBorehole::StationBorehole(double x,
-                                 double y,
-                                 double z,
-                                 const std::string& name)
-    : Station(x, y, z, name, Station::StationType::BOREHOLE)
+StationBorehole::StationBorehole(
+    double x, double y, double z, double const depth, const std::string& name)
+    : Station(x, y, z, name, Station::StationType::BOREHOLE), _depth(depth)
 {
 
     // add first point of borehole
@@ -71,9 +69,9 @@ StationBorehole* StationBorehole::createStation(const std::string& line)
     auto const z = strtod(
         BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
     fields.pop_front();
-    StationBorehole* borehole = new StationBorehole(x, y, z, name);
-    borehole->_depth = strtod(
+    auto const depth = strtod(
         BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+    StationBorehole* borehole = new StationBorehole(x, y, z, depth,  name);
     fields.pop_front();
     if (fields.empty())
     {
@@ -94,8 +92,7 @@ StationBorehole* StationBorehole::createStation(const std::string& name,
                                                 double depth,
                                                 const std::string& date)
 {
-    StationBorehole* station = new StationBorehole(x, y, z, name);
-    station->_depth = depth;
+    StationBorehole* station = new StationBorehole(x, y, z, depth,  name);
     if (date != "0000-00-00")
     {
         station->_date = BaseLib::xmlDate2int(date);
