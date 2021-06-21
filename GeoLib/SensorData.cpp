@@ -132,14 +132,14 @@ int SensorData::readDataFromFile(const std::string& file_name)
     std::getline(in, line);
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
     std::list<std::string>::const_iterator it(fields.begin());
-    std::size_t nFields = fields.size();
+    std::size_t const nFields = fields.size();
 
     if (nFields < 2)
     {
         return 0;
     }
 
-    std::size_t nDataArrays(nFields - 1);
+    std::size_t const nDataArrays(nFields - 1);
 
     // create vectors necessary to hold the data
     for (std::size_t i = 0; i < nDataArrays; i++)
