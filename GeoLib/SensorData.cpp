@@ -43,16 +43,6 @@ SensorData::SensorData(std::vector<std::size_t> time_steps)
     }
 }
 
-SensorData::SensorData(std::size_t first_timestep,
-                       std::size_t last_timestep,
-                       std::size_t step_size)
-    : _start(first_timestep),
-      _end(last_timestep),
-      _step_size(step_size),
-      _time_unit(TimeStepType::NONE)
-{
-}
-
 SensorData::~SensorData()
 {
     for (std::vector<float>* vec : _data_vecs)
