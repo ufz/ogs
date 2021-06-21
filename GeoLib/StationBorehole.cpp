@@ -29,9 +29,15 @@ namespace GeoLib
 // The Borehole class //
 ////////////////////////
 
-StationBorehole::StationBorehole(
-    double x, double y, double z, double const depth, const std::string& name)
-    : Station(x, y, z, name, Station::StationType::BOREHOLE), _depth(depth)
+StationBorehole::StationBorehole(double x,
+                                 double y,
+                                 double z,
+                                 double const depth,
+                                 const std::string& name,
+                                 int date)
+    : Station(x, y, z, name, Station::StationType::BOREHOLE),
+      _depth(depth),
+      _date(date)
 {
 
     // add first point of borehole
@@ -71,18 +77,14 @@ StationBorehole* StationBorehole::createStation(const std::string& line)
     fields.pop_front();
     auto const depth = strtod(
         BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-    StationBorehole* borehole = new StationBorehole(x, y, z, depth,  name);
     fields.pop_front();
-    if (fields.empty())
+    int date = 0;
+    if (! fields.empty())
     {
-        borehole->_date = 0;
-    }
-    else
-    {
-        borehole->_date = BaseLib::strDate2int(fields.front());
+        date = BaseLib::strDate2int(fields.front());
         fields.pop_front();
     }
-    return borehole;
+    return new StationBorehole(x, y, z, depth,  name, date);
 }
 
 StationBorehole* StationBorehole::createStation(const std::string& name,
@@ -92,12 +94,12 @@ StationBorehole* StationBorehole::createStation(const std::string& name,
                                                 double depth,
                                                 const std::string& date)
 {
-    StationBorehole* station = new StationBorehole(x, y, z, depth,  name);
+    int integer_date = 0;
     if (date != "0000-00-00")
     {
-        station->_date = BaseLib::xmlDate2int(date);
+        integer_date = BaseLib::xmlDate2int(date);
     }
-    return station;
+    return new StationBorehole(x, y, z, depth, name, integer_date);
 }
 
 void StationBorehole::addSoilLayer(double thickness,
@@ -120,7 +122,7 @@ void StationBorehole::addSoilLayer(double thickness,
     // KR - Bode
     if (_profilePntVec.empty())
     {
-        addSoilLayer((*this)[0], (*this)[1], (*this)[2], "");
+        addSoilLayer((*this)[0], (*this)[1], (*this)[2], soil_name);
     }
 
     std::size_t idx(_profilePntVec.size());

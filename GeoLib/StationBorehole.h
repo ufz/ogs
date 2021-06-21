@@ -36,7 +36,8 @@ public:
                              double y = 0.0,
                              double z = 0.0,
                              double const depth = 0.0,
-                             const std::string& name = "");
+                             const std::string& name = "",
+                             int date = 0);
     ~StationBorehole() override;
 
     /// Creates a StationBorehole-object from a string (assuming the string has the right format)
@@ -48,7 +49,7 @@ public:
                                           double y,
                                           double z,
                                           double depth,
-                                          const std::string &date = "");
+                                          const std::string& date = "");
 
     // Returns the depth of the borehole
     double getDepth() const { return _depth; }
