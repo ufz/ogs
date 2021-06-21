@@ -29,11 +29,8 @@ namespace GeoLib
 // The Borehole class //
 ////////////////////////
 
-StationBorehole::StationBorehole(double x,
-                                 double y,
-                                 double z,
-                                 double const depth,
-                                 const std::string& name,
+StationBorehole::StationBorehole(double x, double y, double z,
+                                 double const depth, const std::string& name,
                                  int date)
     : Station(x, y, z, name, Station::StationType::BOREHOLE),
       _depth(depth),
