@@ -154,24 +154,22 @@ int SensorData::readDataFromFile(const std::string& file_name)
     {
         fields = BaseLib::splitString(line, '\t');
 
-        if (nFields == fields.size())
-        {
-            it = fields.begin();
-            std::size_t pos(it->rfind("."));
-            std::size_t current_time_step = (pos == std::string::npos)
-                                                ? atoi((it++)->c_str())
-                                                : BaseLib::strDate2int(*it++);
-            this->_time_steps.push_back(current_time_step);
-
-            for (std::size_t i = 0; i < nDataArrays; i++)
-            {
-                this->_data_vecs[i]->push_back(
-                    static_cast<float>(strtod((it++)->c_str(), nullptr)));
-            }
-        }
-        else
+        if (nFields != fields.size())
         {
             return 0;
+        }
+
+        it = fields.begin();
+        std::size_t const pos(it->rfind("."));
+        std::size_t const current_time_step = (pos == std::string::npos)
+                                                  ? atoi((it++)->c_str())
+                                                  : BaseLib::strDate2int(*it++);
+        this->_time_steps.push_back(current_time_step);
+
+        for (std::size_t i = 0; i < nDataArrays; i++)
+        {
+            this->_data_vecs[i]->push_back(
+                static_cast<float>(strtod((it++)->c_str(), nullptr)));
         }
     }
 
