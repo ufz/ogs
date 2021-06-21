@@ -53,41 +53,36 @@ StationBorehole::~StationBorehole()
 
 StationBorehole* StationBorehole::createStation(const std::string& line)
 {
-    StationBorehole* borehole = nullptr;
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
-    if (fields.size() >= 5)
+    if (fields.size() < 5)
     {
-        auto name = fields.front();
-        fields.pop_front();
-        auto const x = strtod(
-            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-        fields.pop_front();
-        auto const y = strtod(
-            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-        fields.pop_front();
-        auto const z = strtod(
-            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-        fields.pop_front();
-        borehole = new StationBorehole(x, y, z, name);
-        borehole->_depth = strtod(
-            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-        fields.pop_front();
-        if (fields.empty())
-        {
-            borehole->_date = 0;
-        }
-        else
-        {
-            borehole->_date = BaseLib::strDate2int(fields.front());
-            fields.pop_front();
-        }
+        WARN("Station::createStation() - Unexpected file format.");
+        return nullptr;
+    }
+    auto name = fields.front();
+    fields.pop_front();
+    auto const x = strtod(
+        BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+    fields.pop_front();
+    auto const y = strtod(
+        BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+    fields.pop_front();
+    auto const z = strtod(
+        BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+    fields.pop_front();
+    StationBorehole* borehole = new StationBorehole(x, y, z, name);
+    borehole->_depth = strtod(
+        BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
+    fields.pop_front();
+    if (fields.empty())
+    {
+        borehole->_date = 0;
     }
     else
     {
-        WARN("Station::createStation() - Unexpected file format.");
-        delete borehole;
-        return nullptr;
+        borehole->_date = BaseLib::strDate2int(fields.front());
+        fields.pop_front();
     }
     return borehole;
 }
