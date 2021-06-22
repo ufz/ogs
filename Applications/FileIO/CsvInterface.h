@@ -164,7 +164,7 @@ public:
         }
 
         std::string line;
-        getline(in, line);
+        std::getline(in, line);
         std::size_t const column_idx =
             CsvInterface::findColumn(line, delim, column_name);
         if (column_idx == std::numeric_limits<std::size_t>::max())
