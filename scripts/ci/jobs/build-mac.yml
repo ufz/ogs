@@ -12,3 +12,4 @@ build mac:
     CMAKE_ARGS: >-
       -DOGS_INSTALL_DEPENDENCIES=ON
       -DOGS_USE_XDMF=ON
+      -DOGS_USE_MFRONT=ON
