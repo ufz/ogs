@@ -202,7 +202,6 @@ private:
         std::string line;
         std::size_t line_count(0);
         std::size_t error_count(0);
-        std::list<std::string>::const_iterator it;
         while (std::getline(in, line))
         {
             line_count++;
@@ -217,7 +216,7 @@ private:
                 error_count++;
                 continue;
             }
-            it = fields.begin();
+            auto it = fields.begin();
             std::advance(it, column_idx);
 
             std::istringstream stream(*it);
