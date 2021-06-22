@@ -39,7 +39,6 @@ StationBorehole::StationBorehole(double x,
       _depth(depth),
       _date(date)
 {
-
     // add first point of borehole
     _profilePntVec.push_back(this);
     _soilName.emplace_back("");

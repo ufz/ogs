@@ -22,11 +22,11 @@
 
 namespace GeoLib
 {
-
 /**
  * \brief A borehole as a geometric object.
  *
- * A borehole inherits Station but has some additional information such as a date, a borehole profile, etc.
+ * A borehole inherits Station but has some additional information such as a
+ * date, a borehole profile, etc.
  */
 class StationBorehole : public Station
 {
@@ -41,7 +41,7 @@ public:
     ~StationBorehole() override;
 
     /// Creates a new borehole object based on the given parameters.
-    static StationBorehole* createStation(const std::string &name,
+    static StationBorehole* createStation(const std::string& name,
                                           double x,
                                           double y,
                                           double z,
@@ -54,31 +54,36 @@ public:
     /// Returns the date entry for the borehole
     double getDate() const { return _date; }
 
-    /// Returns a reference to a vector of Points representing the stratigraphy of the borehole (incl. the station-point itself)
-    const std::vector<Point*> &getProfile() const { return _profilePntVec; }
+    /// Returns a reference to a vector of Points representing the stratigraphy
+    /// of the borehole (incl. the station-point itself)
+    const std::vector<Point*>& getProfile() const { return _profilePntVec; }
 
-    /// Returns a reference to a vector of soil names for the stratigraphy of the borehole
-    const std::vector<std::string> &getSoilNames() const { return _soilName; }
+    /// Returns a reference to a vector of soil names for the stratigraphy of
+    /// the borehole
+    const std::vector<std::string>& getSoilNames() const { return _soilName; }
 
     /// Sets the depth of the borehole
-    void setDepth( double depth ) { _depth = depth; }
+    void setDepth(double depth) { _depth = depth; }
 
     /// Add a soil layer to the boreholes stratigraphy.
-    void addSoilLayer ( double thickness, const std::string &soil_name);
+    void addSoilLayer(double thickness, const std::string& soil_name);
 
     /**
      * Add a soil layer to the boreholes stratigraphy.
-     * Note: The given coordinates always mark THE END of the soil layer. The reason behind this is
-     * that the beginning of the first layer is identical with the position of the borehole. For each
-     * layer following the beginning is already given by the end of the last layer. This also saves
-     * a separate entry in the profile vector for the end of the borehole which in the given notation
-     * is just the coordinate given for the last soil layer (i.e. the end of that layer).
+     * Note: The given coordinates always mark THE END of the soil layer. The
+     * reason behind this is that the beginning of the first layer is identical
+     * with the position of the borehole. For each layer following the beginning
+     * is already given by the end of the last layer. This also saves a separate
+     * entry in the profile vector for the end of the borehole which in the
+     * given notation is just the coordinate given for the last soil layer (i.e.
+     * the end of that layer).
      */
-    void addSoilLayer ( double x, double y, double z, const std::string &soil_name);
+    void addSoilLayer(double x,
+                      double y,
+                      double z,
+                      const std::string& soil_name);
 
 private:
-    //long profile_type;
-    //std::vector<long> _soilType;
     double _depth{0};  // depth of the borehole
     int _date{0};      // date when the borehole has been drilled
 
