@@ -735,7 +735,7 @@ void FEFLOWMeshInterface::setMaterialIDs(
                 }
 
                 GeoLib::Polygon polygon(*poly, true);
-                if (polygon.isPntInPolygon(gpt[0], gpt[1], gpt[2]))
+                if (polygon.isPntInPolygon(gpt))
                 {
                     matId = j;
                     break;

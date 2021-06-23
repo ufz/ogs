@@ -150,10 +150,10 @@ int main(int argc, char* argv[])
         std::vector<std::pair<std::size_t, double>> ids_and_areas;
         for (std::size_t k(0); k < all_sfc_nodes.size(); k++)
         {
-            MeshLib::Node const& pnt(*(all_sfc_nodes[k]));
-            if (polygon.isPntInPolygon(pnt[0], pnt[1], pnt[2]))
+            MeshLib::Node const& surface_node(*(all_sfc_nodes[k]));
+            if (polygon.isPntInPolygon(surface_node))
             {
-                ids_and_areas.emplace_back(pnt.getID(), areas[k]);
+                ids_and_areas.emplace_back(surface_node.getID(), areas[k]);
             }
         }
         if (ids_and_areas.empty())
