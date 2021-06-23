@@ -65,14 +65,6 @@ public:
      * @return if point is inside the polygon true, else false
      */
     bool isPntInPolygon(const MathLib::Point3d& pnt) const;
-    /**
-     * wrapper for method isPntInPolygon (const GeoLib::Point&)
-     * @param x x coordinate of point
-     * @param y y coordinate of point
-     * @param z z coordinate of point
-     * @return if point is inside the polygon true, else false
-     */
-    bool isPntInPolygon (double x, double y, double z) const;
 
     /**
      * Checks if the straight line segment is contained within the polygon.

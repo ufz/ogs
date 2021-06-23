@@ -125,12 +125,6 @@ bool Polygon::isPntInPolygon(MathLib::Point3d const& pnt) const
     return false;
 }
 
-bool Polygon::isPntInPolygon(double x, double y, double z) const
-{
-    const GeoLib::Point pnt(x, y, z);
-    return isPntInPolygon(pnt);
-}
-
 std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
     GeoLib::LineSegment const& segment) const
 {
