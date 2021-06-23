@@ -21,13 +21,14 @@ code coverage:
     - genhtml --demangle-cpp -o coverage_report coverage.info
     - wget https://raw.github.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
     - poetry run python lcov_cobertura.py coverage.info --base-dir $CI_PROJECT_DIR
+    - poetry run ./generate_coverage_vis_data.py
   artifacts:
-    expose_as: 'Coverage'
     paths:
       - Coverage.html
       - build/coverage/coverage_report
       - build/coverage/coverage.json
       - build/coverage/coverage.xml
+      - build/coverage/coverage_reports/*.json
     expire_in: 1 week
     reports:
       cobertura: build/coverage/coverage.xml
