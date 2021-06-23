@@ -199,13 +199,6 @@ public:
     std::vector<Point*> const& getPointsVec () const;
 
     /**
-     * returns the length of the polyline until the k-th line segment
-     * @param k the k-th line segment
-     * @return the length of the polyline until the k-th line segment
-     */
-    double getLength (std::size_t k) const;
-
-    /**
      * returns the distance along the polyline from the beginning of the polyline
      * @param pnt the point on the polyline
      * @param epsilon_radius the epsilon
@@ -232,10 +225,7 @@ protected:
     const std::vector<Point*> &_ply_pnts;
     /** position of pointers to the geometric points */
     std::vector<std::size_t> _ply_pnt_ids;
-    /**
-     * the k-th element of the vector contains the length of the polyline until the k-th segment
-     */
-    std::vector<double> _length;
+
 private:
     LineSegment getSegment(std::size_t i) const;
     LineSegment getSegment(std::size_t i);

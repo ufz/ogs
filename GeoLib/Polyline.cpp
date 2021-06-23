@@ -26,13 +26,11 @@ namespace GeoLib
 {
 Polyline::Polyline(const std::vector<Point*>& pnt_vec) : _ply_pnts(pnt_vec)
 {
-    _length.push_back(0.0);
 }
 
 Polyline::Polyline(const Polyline& ply)
     : _ply_pnts(ply._ply_pnts),
-      _ply_pnt_ids(ply._ply_pnt_ids),
-      _length(ply._length)
+      _ply_pnt_ids(ply._ply_pnt_ids)
 {
 }
 
@@ -50,18 +48,6 @@ bool Polyline::addPoint(std::size_t pnt_id)
 
     _ply_pnt_ids.push_back(pnt_id);
 
-    if (n_pnts > 0)
-    {
-        double const act_dist(std::sqrt(MathLib::sqrDist(
-            *_ply_pnts[_ply_pnt_ids[n_pnts - 1]], *_ply_pnts[pnt_id])));
-        double dist_until_now(0.0);
-        if (n_pnts > 1)
-        {
-            dist_until_now = _length[n_pnts - 1];
-        }
-
-        _length.push_back(dist_until_now + act_dist);
-    }
     return true;
 }
 
@@ -98,63 +84,6 @@ bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
     auto it(_ply_pnt_ids.begin() + pos_dt);
     _ply_pnt_ids.insert(it, pnt_id);
 
-    if (_ply_pnt_ids.size() > 1)
-    {
-        // update the _length vector
-        if (pos == 0)
-        {
-            // insert at first position
-            double const act_dist(std::sqrt(MathLib::sqrDist(
-                *_ply_pnts[_ply_pnt_ids[1]], *_ply_pnts[pnt_id])));
-            _length.insert(_length.begin() + 1, act_dist);
-            const std::size_t s(_length.size());
-            for (std::size_t k(2); k < s; k++)
-            {
-                _length[k] += _length[1];
-            }
-        }
-        else
-        {
-            if (pos == _ply_pnt_ids.size() - 1)
-            {
-                // insert at last position
-                double const act_dist(std::sqrt(MathLib::sqrDist(
-                    *_ply_pnts[_ply_pnt_ids[_ply_pnt_ids.size() - 2]],
-                    *_ply_pnts[pnt_id])));
-                double dist_until_now(0.0);
-                if (_ply_pnt_ids.size() > 2)
-                {
-                    dist_until_now = _length[_ply_pnt_ids.size() - 2];
-                }
-
-                _length.insert(_length.begin() + pos_dt,
-                               dist_until_now + act_dist);
-            }
-            else
-            {
-                // insert at arbitrary position within the vector
-                double dist_until_now(0.0);
-                if (pos > 1)
-                {
-                    dist_until_now = _length[pos - 1];
-                }
-                double len_seg0(std::sqrt(MathLib::sqrDist(
-                    *_ply_pnts[_ply_pnt_ids[pos - 1]], *_ply_pnts[pnt_id])));
-                double len_seg1(std::sqrt(MathLib::sqrDist(
-                    *_ply_pnts[_ply_pnt_ids[pos + 1]], *_ply_pnts[pnt_id])));
-                double update_dist(len_seg0 + len_seg1 -
-                                   (_length[pos] - dist_until_now));
-                _length[pos] = dist_until_now + len_seg0;
-                auto it1(_length.begin() + pos_dt + 1);
-                _length.insert(it1, _length[pos] + len_seg1);
-                for (it1 = _length.begin() + pos_dt + 2; it1 != _length.end();
-                     ++it1)
-                {
-                    *it1 += update_dist;
-                }
-            }
-        }
-    }
     return true;
 }
 
@@ -168,37 +97,6 @@ void Polyline::removePoint(std::size_t pos)
     auto const pos_dt(
         static_cast<std::vector<std::size_t>::difference_type>(pos));
     _ply_pnt_ids.erase(_ply_pnt_ids.begin() + pos_dt);
-
-    if (pos == _ply_pnt_ids.size())
-    {
-        _length.erase(_length.begin() + pos_dt);
-        return;
-    }
-
-    const std::size_t n_ply_pnt_ids(_ply_pnt_ids.size());
-    if (pos == 0)
-    {
-        double seg_length(_length[0]);
-        for (std::size_t k(0); k < n_ply_pnt_ids; k++)
-        {
-            _length[k] = _length[k + 1] - seg_length;
-        }
-        _length.pop_back();
-    }
-    else
-    {
-        const double len_seg0(_length[pos] - _length[pos - 1]);
-        const double len_seg1(_length[pos + 1] - _length[pos]);
-        _length.erase(_length.begin() + pos_dt);
-        const double len_new_seg(std::sqrt(MathLib::sqrDist(
-            *_ply_pnts[_ply_pnt_ids[pos - 1]], *_ply_pnts[_ply_pnt_ids[pos]])));
-        double seg_length_diff(len_new_seg - len_seg0 - len_seg1);
-
-        for (std::size_t k(pos); k < n_ply_pnt_ids; k++)
-        {
-            _length[k] += seg_length_diff;
-        }
-    }
 }
 
 std::size_t Polyline::getNumberOfPoints() const
@@ -287,12 +185,6 @@ const Point* Polyline::getPoint(std::size_t i) const
 std::vector<Point*> const& Polyline::getPointsVec() const
 {
     return _ply_pnts;
-}
-
-double Polyline::getLength(std::size_t k) const
-{
-    assert(k < _length.size());
-    return _length[k];
 }
 
 Polyline* Polyline::constructPolylineFromSegments(
@@ -467,9 +359,16 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
     double dist(-1.0);
     double lambda;
     bool found = false;
+    double act_length_of_ply = 0.0;
     // loop over all line segments of the polyline
     for (std::size_t k = 0; k < getNumberOfSegments(); k++)
     {
+        auto const a =
+            Eigen::Map<Eigen::Vector3d const>(getPoint(k)->getCoords());
+        auto const b =
+            Eigen::Map<Eigen::Vector3d const>(getPoint(k + 1)->getCoords());
+        double const seg_length((b - a).norm());
+        act_length_of_ply += seg_length;
         // is the orthogonal projection of the j-th node to the
         // line g(lambda) = _ply->getPoint(k) + lambda * (_ply->getPoint(k+1) -
         // _ply->getPoint(k)) at the k-th line segment of the polyline, i.e. 0
@@ -478,8 +377,6 @@ double Polyline::getDistanceAlongPolyline(const MathLib::Point3d& pnt,
                                                *getPoint(k + 1), lambda,
                                                dist) <= epsilon_radius)
         {
-            double const act_length_of_ply(getLength(k));
-            double const seg_length(getLength(k + 1) - getLength(k));
             double const lower_lambda(-epsilon_radius / seg_length);
             double const upper_lambda(1 + epsilon_radius / seg_length);
 
