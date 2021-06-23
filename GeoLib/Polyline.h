@@ -215,7 +215,6 @@ public:
     double getDistanceAlongPolyline(const MathLib::Point3d& pnt,
         const double epsilon_radius) const;
 
-    friend bool operator==(Polyline const& lhs, Polyline const& rhs);
 protected:
     /**
      * 2D method - ignores z coordinate. It calculates the location
