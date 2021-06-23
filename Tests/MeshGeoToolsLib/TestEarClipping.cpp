@@ -32,7 +32,8 @@ TEST(TestEarClipping, TestEarClippingPolygons)
     ASSERT_EQ(4, polygons.size());
     for (auto polygon : polygons)
     {
-        std::unique_ptr<GeoLib::Surface> sfc (FileIO::createSurfaceWithEarClipping(*polygon));
+        std::unique_ptr<GeoLib::Surface> sfc(
+            FileIO::createSurfaceWithEarClipping(*polygon));
         ASSERT_TRUE(sfc != nullptr);
         ASSERT_EQ(sfc->getNumberOfTriangles(),
                   polygon->getNumberOfPoints() - 3);

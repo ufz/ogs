@@ -109,8 +109,8 @@ void EarClippingTriangulation::ensureCWOrientation()
     {
         _original_orientation =
             GeoLib::getOrientation(*_pnts[min_x_max_y_idx - 1],
-                                                  *_pnts[min_x_max_y_idx],
-                                                  *_pnts[min_x_max_y_idx + 1]);
+                                   *_pnts[min_x_max_y_idx],
+                                   *_pnts[min_x_max_y_idx + 1]);
     }
     else
     {

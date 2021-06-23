@@ -100,7 +100,8 @@ public:
                                              GeoLib::Point& intersection_pnt,
                                              std::size_t& seg_num) const;
 
-    /// Subdivides a self-intersecting polygon into a list of non-intersecting shapes.
+    /// Subdivides a self-intersecting polygon into a list of non-intersecting
+    /// shapes.
     std::list<Polygon*> const& computeListOfSimplePolygons();
 
     friend bool operator==(Polygon const& lhs, Polygon const& rhs);

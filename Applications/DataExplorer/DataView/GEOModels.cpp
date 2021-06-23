@@ -211,7 +211,8 @@ void GEOModels::connectPolylineSegments(
                     INFO(
                         "Creating a surface by triangulation of the polyline "
                         "...");
-                    if (GeoLib::Surface* sfc = FileIO::createSurfaceWithEarClipping(*new_line))
+                    if (GeoLib::Surface* sfc =
+                            FileIO::createSurfaceWithEarClipping(*new_line))
                     {
                         std::vector<GeoLib::Surface*> new_sfc;
                         new_sfc.push_back(sfc);
