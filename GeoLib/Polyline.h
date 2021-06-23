@@ -105,8 +105,6 @@ public:
 
     /// return a geometry type
     GEOTYPE getGeoType() const override { return GEOTYPE::POLYLINE; }
-    /** write the points to the stream */
-    void write(std::ostream &os) const;
 
     /**
      * Adds an id of a point at the end of the polyline if and only if the
@@ -243,9 +241,6 @@ private:
     LineSegment getSegment(std::size_t i) const;
     LineSegment getSegment(std::size_t i);
 };
-
-/** overload the output operator for class Polyline */
-std::ostream& operator<< (std::ostream &os, Polyline const& pl);
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
 

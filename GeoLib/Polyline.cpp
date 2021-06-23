@@ -36,15 +36,6 @@ Polyline::Polyline(const Polyline& ply)
 {
 }
 
-void Polyline::write(std::ostream& os) const
-{
-    std::size_t size(_ply_pnt_ids.size());
-    for (std::size_t k(0); k < size; k++)
-    {
-        os << *(_ply_pnts[_ply_pnt_ids[k]]) << "\n";
-    }
-}
-
 bool Polyline::addPoint(std::size_t pnt_id)
 {
     assert(pnt_id < _ply_pnts.size());
@@ -620,12 +611,6 @@ Polyline::SegmentIterator Polyline::SegmentIterator::operator-(
     Polyline::SegmentIterator t(*this);
     t -= n;
     return t;
-}
-
-std::ostream& operator<<(std::ostream& os, const Polyline& pl)
-{
-    pl.write(os);
-    return os;
 }
 
 bool containsEdge(const Polyline& ply, std::size_t id0, std::size_t id1)
