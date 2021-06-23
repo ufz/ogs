@@ -31,8 +31,8 @@ struct StokesFlowProcessData
     /// an external force that applies in the bulk of the fluid, like gravity.
     Eigen::VectorXd const specific_body_force;
 
-    /// When this optional field is flagged on, the Darcy term will be
-    /// additionally included in the original momentum balance equation.
+    /// When true, the Darcy term will be
+    /// included in the momentum balance equation.
     bool const use_stokes_brinkman_form;
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
