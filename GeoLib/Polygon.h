@@ -64,7 +64,7 @@ public:
      * @param pnt the Point
      * @return if point is inside the polygon true, else false
      */
-    bool isPntInPolygon (const GeoLib::Point& pnt) const;
+    bool isPntInPolygon(const MathLib::Point3d& pnt) const;
     /**
      * wrapper for method isPntInPolygon (const GeoLib::Point&)
      * @param x x coordinate of point
@@ -125,7 +125,7 @@ private:
      * @param pnt point that is edge type computed for
      * @return a value of enum EdgeType
      */
-    EdgeType getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
+    EdgeType getEdgeType(std::size_t k, MathLib::Point3d const& pnt) const;
 
     void ensureCCWOrientation ();
 

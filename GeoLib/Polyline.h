@@ -228,7 +228,8 @@ protected:
      * @param pnt the point
      * @return a value of enum LOCATION
      */
-    Location getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const;
+    Location getLocationOfPoint(std::size_t k,
+                                MathLib::Point3d const& pnt) const;
 
     /** a reference to the vector of pointers to the geometric points */
     const std::vector<Point*> &_ply_pnts;
