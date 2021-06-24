@@ -77,6 +77,7 @@ include(CompilerSetup)
 include(JobPools)
 include(Find)
 include(CLCacheSetup)
+include(packaging/PackagingDependencies)
 include(Dependencies)
 include(DocumentationSetup)
 include(test/Test)
@@ -188,8 +189,7 @@ option(OGS_USE_MFRONT
        OFF
 )
 
-# Packaging
-include(scripts/cmake/packaging/Pack.cmake)
+include(packaging/Pack)
 
 # ---- Subdirectories ----
 include_directories(${PROJECT_SOURCE_DIR})
