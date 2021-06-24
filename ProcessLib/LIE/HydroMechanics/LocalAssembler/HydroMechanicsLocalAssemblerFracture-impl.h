@@ -387,7 +387,7 @@ void HydroMechanicsLocalAssemblerFracture<
     typename HMatricesType::ForceVectorType ele_w =
         HMatricesType::ForceVectorType::Zero(GlobalDim);
     double ele_Fs = -std::numeric_limits<double>::max();
-    Eigen::Vector3d ele_velocity = Eigen::Vector3d::Zero();
+    GlobalDimVector ele_velocity = GlobalDimVector::Zero();
     for (auto const& ip : _ip_data)
     {
         ele_b += ip.aperture;
@@ -421,9 +421,9 @@ void HydroMechanicsLocalAssemblerFracture<
             ele_sigma_eff[1];
     }
 
-    for (unsigned i = 0; i < 3; i++)
+    for (unsigned i = 0; i < GlobalDim; i++)
     {
-        (*_process_data.mesh_prop_velocity)[element_id * 3 + i] =
+        (*_process_data.mesh_prop_velocity)[element_id * GlobalDim + i] =
             ele_velocity[i];
     }
 }

@@ -29,9 +29,12 @@ struct IntegrationPointDataMatrix final
         MaterialLib::Solids::MechanicsBase<GlobalDim>& solid_material)
         : solid_material(solid_material),
           material_state_variables(
-              solid_material.createMaterialStateVariables())
+              solid_material.createMaterialStateVariables()),
+          darcy_velocity(GlobalDimVector::Zero())
     {
     }
+
+    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
@@ -52,7 +55,7 @@ struct IntegrationPointDataMatrix final
     typename BMatricesType::KelvinMatrixType C;
     double integration_weight;
 
-    Eigen::Vector3d darcy_velocity;
+    GlobalDimVector darcy_velocity;
 
     void pushBackState()
     {
