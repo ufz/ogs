@@ -128,7 +128,9 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
                 "Corresponding bulk mesh node ids are:",
                 e->getID());
             for (auto const i : element_node_ids_bulk)
+            {
                 ERR("\t{:d}", i);
+            }
             OGS_FATAL(
                 "Expect at least one element to be found in the bulk mesh.");
         }
