@@ -23,15 +23,24 @@ namespace
 {
 void checkMPLProperties(
     MeshLib::Mesh const& mesh,
-    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map,
+    bool const use_stokes_brinkman_form)
 {
     std::array const required_properties_liquid_phase = {
         MaterialPropertyLib::PropertyType::viscosity};
+
+    std::array const required_properties_medium = {
+        MaterialPropertyLib::PropertyType::permeability};
 
     for (auto const& element : mesh.getElements())
     {
         auto const element_id = element->getID();
         auto const& medium = *media_map.getMedium(element_id);
+
+        if (use_stokes_brinkman_form)
+        {
+            checkRequiredProperties(medium, required_properties_medium);
+        }
 
         // check if liquid phase definition and the corresponding properties
         // exist
@@ -129,15 +138,20 @@ std::unique_ptr<Process> createStokesFlowProcess(
     }
     std::copy_n(b.data(), b.size(), specific_body_force.data());
 
+    bool const use_stokes_brinkman_form =
+        //! \ogs_file_param{prj__processes__process__StokesFlow__use_stokes_brinkman_form}
+        config.getConfigParameter<bool>("use_stokes_brinkman_form", false);
+
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     DBUG("Check the media properties of StokesFlow process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(mesh, *media_map, use_stokes_brinkman_form);
     DBUG("Media properties verified.");
 
     StokesFlowProcessData process_data{std::move(media_map),
-                                       std::move(specific_body_force)};
+                                       std::move(specific_body_force),
+                                       use_stokes_brinkman_form};
 
     SecondaryVariableCollection secondary_variables;
 
