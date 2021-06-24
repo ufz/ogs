@@ -45,6 +45,18 @@ AddTest(
 )
 
 AddTest(
+    NAME postLIE3D
+    PATH LIE/PostProcessing
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing
+    EXECUTABLE postLIE
+    EXECUTABLE_ARGS -i single_joint_3D.pvd -o ${Data_BINARY_DIR}/LIE/PostProcessing/post_single_joint_3D.pvd
+    REQUIREMENTS NOT OGS_USE_MPI AND OGS_BUILD_PROCESS_LIE
+    TESTER vtkdiff
+    DIFF_DATA
+    post_single_joint_3D_ts_1_t_1.000000.vtu post_single_joint_3D_ts_1_t_1.000000.vtu u u 1e-14 1e-14
+)
+
+AddTest(
     NAME identifySubdomains_2D_Create
     PATH MeshGeoToolsLib/IdentifySubdomains
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
