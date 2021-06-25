@@ -190,15 +190,15 @@ TEST_F(CsvInterfaceTest, GetColumn)
         FileIO::CsvInterface::getColumnNames(_file_name, '\t');
     ASSERT_EQ(7, columns.size());
     std::vector<std::string> names;
-    _result = FileIO::CsvInterface::readColumn<std::string>(_file_name, '\t',
-                                                            names, columns[4]);
+    std::tie(_result, names) = FileIO::CsvInterface::readColumn<std::string>(
+        _file_name, '\t', columns[4]);
     ASSERT_EQ(0, _result);
     ASSERT_EQ(10, names.size());
     ASSERT_EQ("test_j", names[9]);
 
     std::vector<double> values;
-    _result = FileIO::CsvInterface::readColumn<double>(_file_name, '\t', values,
-                                                       columns[6]);
+    std::tie(_result, values) =
+        FileIO::CsvInterface::readColumn<double>(_file_name, '\t', columns[6]);
     ASSERT_EQ(2, _result);
     ASSERT_EQ(8, values.size());
     ASSERT_NEAR(135, values[1], std::numeric_limits<double>::epsilon());
@@ -208,8 +208,8 @@ TEST_F(CsvInterfaceTest, GetColumn)
 TEST_F(CsvInterfaceTest, NonExistingColumn)
 {
     std::vector<double> values;
-    _result = FileIO::CsvInterface::readColumn<double>(_file_name, '\t', values,
-                                                       "value2");
+    std::tie(_result, values) =
+        FileIO::CsvInterface::readColumn<double>(_file_name, '\t', "value2");
     ASSERT_EQ(-1, _result);
     ASSERT_TRUE(values.empty());
 }
@@ -218,14 +218,14 @@ TEST_F(CsvInterfaceTest, NonExistingColumn)
 TEST_F(CsvInterfaceTest, WrongDataType)
 {
     std::vector<double> values;
-    _result = FileIO::CsvInterface::readColumn<double>(_file_name, '\t', values,
-                                                       "name");
+    std::tie(_result, values) =
+        FileIO::CsvInterface::readColumn<double>(_file_name, '\t', "name");
     ASSERT_EQ(10, _result);
     ASSERT_TRUE(values.empty());
 
     std::vector<std::string> names;
-    _result = FileIO::CsvInterface::readColumn<std::string>(_file_name, '\t',
-                                                            names, "value1");
+    std::tie(_result, names) = FileIO::CsvInterface::readColumn<std::string>(
+        _file_name, '\t', "value1");
     ASSERT_EQ(2, _result);
     ASSERT_EQ(8, names.size());
 }
