@@ -32,9 +32,7 @@ namespace GeoLib
 StationBorehole::StationBorehole(double x, double y, double z,
                                  double const depth, const std::string& name,
                                  int date)
-    : Station(x, y, z, name, Station::StationType::BOREHOLE),
-      _depth(depth),
-      _date(date)
+    : Station(x, y, z, name), _depth(depth), _date(date)
 {
     // add first point of borehole
     _profilePntVec.push_back(this);

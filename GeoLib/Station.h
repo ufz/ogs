@@ -35,14 +35,6 @@ namespace GeoLib
 class Station : public Point
 {
 public:
-    /// Signals if the object is a "simple" Station or a Borehole (i.e. containing borehole-specific information).
-    enum class StationType
-    {
-        INVALID = 0,
-        STATION,
-        BOREHOLE
-    };
-
     /**
      * \brief Constructor
      *
@@ -51,15 +43,11 @@ public:
      * \param y The y-coordinate of the station.
      * \param z The z-coordinate of the station.
      * \param name The name of the station.
-     * \param type The type of the station, see Station::StationType for
-     * possible values.
      */
     explicit Station(double x = 0.0, double y = 0.0, double z = 0.0,
-                     std::string name = "",
-                     Station::StationType type = Station::StationType::STATION);
+                     std::string name = "");
 
-    explicit Station(Point* coords, std::string name = "",
-                     Station::StationType type = Station::StationType::STATION);
+    explicit Station(Point* coords, std::string name = "");
 
     /**
      * Constructor copies the source object
@@ -94,7 +82,6 @@ public:
 
 private:
     std::string _name;
-    StationType _type{Station::StationType::STATION};  // GeoSys Station Type
     double _station_value{0.0};
     SensorData* _sensor_data{nullptr};
 };
