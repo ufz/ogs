@@ -95,8 +95,7 @@ int VtkStationSource::RequestData(vtkInformation* request,
         }
     }
 
-    bool isBorehole = static_cast<GeoLib::Station*>((*_stations)[0])->type() ==
-                      GeoLib::Station::StationType::BOREHOLE;
+    bool isBorehole = dynamic_cast<GeoLib::StationBorehole*>((*_stations)[0]);
 
     vtkSmartPointer<vtkInformation> outInfo =
         outputVector->GetInformationObject(0);

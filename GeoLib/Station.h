@@ -74,9 +74,6 @@ public:
 
     void setName(std::string const& name) { _name = name; }
 
-    /// Returns the GeoSys-station-type for the station.
-    StationType type() const { return _type; }
-
     /// Creates a Station-object from information contained in a string (assuming the string has the right format)
     static Station* createStation(const std::string &line);
 
