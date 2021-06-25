@@ -46,30 +46,27 @@ Station::~Station()
 
 Station* Station::createStation(const std::string& line)
 {
-    Station* station = new Station();
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
 
-    if (fields.size() >= 3)
-    {
-        auto it = fields.begin();
-        station->_name = *it;
-        (*station)[0] = std::strtod(
-            (BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
-        (*station)[1] = std::strtod(
-            (BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
-        if (++it != fields.end())
-        {
-            (*station)[2] = std::strtod(
-                (BaseLib::replaceString(",", ".", *it)).c_str(), nullptr);
-        }
-    }
-    else
+    if (fields.size() < 3)
     {
         INFO("Station::createStation() - Unexpected file format.");
-        delete station;
         return nullptr;
     }
-    return station;
+
+    auto it = fields.begin();
+    std::string name = *it;
+    auto const x = std::strtod(
+        (BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
+    auto const y = std::strtod(
+        (BaseLib::replaceString(",", ".", *(++it))).c_str(), nullptr);
+    auto z = 0.0;
+    if (++it != fields.end())
+    {
+        z = std::strtod((BaseLib::replaceString(",", ".", *it)).c_str(),
+                        nullptr);
+    }
+    return new Station(x, y, z, name);
 }
 
 Station* Station::createStation(const std::string& name, double x, double y,
