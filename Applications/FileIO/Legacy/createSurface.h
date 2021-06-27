@@ -11,6 +11,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 namespace GeoLib
 {
@@ -35,5 +36,6 @@ bool createSurface(GeoLib::Polyline const& ply,
 /// Creates a plane surface from the given polyline. The polyline has to be
 /// closed, i.e. the first and the last point have to be the identical. The
 /// triangulation of the polyline is done via a simple ear clipping algorithm.
-GeoLib::Surface* createSurfaceWithEarClipping(GeoLib::Polyline const& line);
+std::unique_ptr<GeoLib::Surface> createSurfaceWithEarClipping(
+    GeoLib::Polyline const& line);
 }  // namespace FileIO

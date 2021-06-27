@@ -12,7 +12,6 @@
 
 #include <cstdio>
 #include <list>
-#include <memory>
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "BaseLib/Logging.h"
@@ -124,7 +123,8 @@ bool createSurface(GeoLib::Polyline const& ply,
     return true;
 }
 
-GeoLib::Surface* createSurfaceWithEarClipping(GeoLib::Polyline const& line)
+std::unique_ptr<GeoLib::Surface> createSurfaceWithEarClipping(
+    GeoLib::Polyline const& line)
 {
     if (!line.isClosed())
     {
@@ -141,8 +141,8 @@ GeoLib::Surface* createSurfaceWithEarClipping(GeoLib::Polyline const& line)
     }
 
     // create empty surface
-    GeoLib::Surface* sfc(new GeoLib::Surface(line.getPointsVec()));
-    GeoLib::Polygon* polygon(new GeoLib::Polygon(line));
+    auto sfc = std::make_unique<GeoLib::Surface>(line.getPointsVec());
+    auto polygon = std::make_unique<GeoLib::Polygon>(GeoLib::Polygon(line));
     std::list<GeoLib::Polygon*> const& list_of_simple_polygons =
         polygon->computeListOfSimplePolygons();
 
@@ -157,13 +157,11 @@ GeoLib::Surface* createSurfaceWithEarClipping(GeoLib::Polyline const& line)
             sfc->addTriangle(t[0], t[1], t[2]);
         }
     }
-    // delete polygon;
     if (sfc->getNumberOfTriangles() == 0)
     {
         WARN(
             "Surface::createSurface(): Triangulation does not contain any "
             "triangles.");
-        delete sfc;
         return nullptr;
     }
     return sfc;
