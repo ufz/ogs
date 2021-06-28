@@ -32,12 +32,12 @@ class StationBorehole : public Station
 {
 public:
     /** constructor initialises the borehole with the given coordinates */
-    explicit StationBorehole(double x = 0.0,
-                             double y = 0.0,
-                             double z = 0.0,
-                             double const depth = 0.0,
-                             const std::string& name = "",
-                             int date = 0);
+    explicit StationBorehole(double x,
+                             double y,
+                             double z,
+                             double const depth,
+                             const std::string& name,
+                             int date);
     ~StationBorehole() override;
 
     /// Creates a new borehole object based on the given parameters.
