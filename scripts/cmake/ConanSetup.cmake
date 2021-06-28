@@ -51,7 +51,7 @@ if(OGS_USE_LIS)
 endif()
 
 if(OGS_USE_MFRONT)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} tfel/3.3.0@bilke/testing)
+    set(CONAN_REQUIRES ${CONAN_REQUIRES} tfel/3.4@bilke/testing)
 endif()
 
 if(OGS_BUILD_GUI)
