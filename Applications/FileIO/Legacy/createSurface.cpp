@@ -12,16 +12,17 @@
 
 #include <cstdio>
 #include <list>
-#include <memory>
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
+#include "GeoLib/EarClippingTriangulation.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/Surface.h"
+#include "GeoLib/Triangle.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/convertMeshToGeo.h"
@@ -120,6 +121,50 @@ bool createSurface(GeoLib::Polyline const& ply,
     geometries.renameGeometry(merged_geometry_name, geometry_name);
 
     return true;
+}
+
+std::unique_ptr<GeoLib::Surface> createSurfaceWithEarClipping(
+    GeoLib::Polyline const& line)
+{
+    if (!line.isClosed())
+    {
+        WARN("Error in Surface::createSurface() - Polyline is not closed.");
+        return nullptr;
+    }
+
+    if (line.getNumberOfPoints() <= 2)
+    {
+        WARN(
+            "Error in Surface::createSurface() - Polyline consists of less "
+            "than three points and therefore cannot be triangulated.");
+        return nullptr;
+    }
+
+    // create empty surface
+    auto sfc = std::make_unique<GeoLib::Surface>(line.getPointsVec());
+    auto polygon = std::make_unique<GeoLib::Polygon>(GeoLib::Polygon(line));
+    std::list<GeoLib::Polygon*> const& list_of_simple_polygons =
+        polygon->computeListOfSimplePolygons();
+
+    for (auto const& simple_polygon : list_of_simple_polygons)
+    {
+        std::list<GeoLib::Triangle> triangles;
+        GeoLib::EarClippingTriangulation(*simple_polygon, triangles);
+
+        // add Triangles to Surface
+        for (auto const& t : triangles)
+        {
+            sfc->addTriangle(t[0], t[1], t[2]);
+        }
+    }
+    if (sfc->getNumberOfTriangles() == 0)
+    {
+        WARN(
+            "Surface::createSurface(): Triangulation does not contain any "
+            "triangles.");
+        return nullptr;
+    }
+    return sfc;
 }
 
 }  // namespace FileIO

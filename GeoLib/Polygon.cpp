@@ -615,4 +615,16 @@ bool operator==(Polygon const& lhs, Polygon const& rhs)
     return false;
 }
 
+std::list<Polygon*> const& Polygon::computeListOfSimplePolygons()
+{
+    splitPolygonAtPoint(_simple_polygon_list.begin());
+    splitPolygonAtIntersection(_simple_polygon_list.begin());
+
+    for (auto polygon : _simple_polygon_list)
+    {
+        polygon->initialise();
+    }
+    return _simple_polygon_list;
+}
+
 }  // end namespace GeoLib
