@@ -68,7 +68,7 @@ bool Polygon::initialise()
     return false;
 }
 
-bool Polygon::isPntInPolygon(GeoLib::Point const& pnt) const
+bool Polygon::isPntInPolygon(MathLib::Point3d const& pnt) const
 {
     auto const& min_aabb_pnt(_aabb.getMinPoint());
     auto const& max_aabb_pnt(_aabb.getMaxPoint());
@@ -123,12 +123,6 @@ bool Polygon::isPntInPolygon(GeoLib::Point const& pnt) const
         }
     }
     return false;
-}
-
-bool Polygon::isPntInPolygon(double x, double y, double z) const
-{
-    const GeoLib::Point pnt(x, y, z);
-    return isPntInPolygon(pnt);
 }
 
 std::vector<GeoLib::Point> Polygon::getAllIntersectionPoints(
@@ -285,7 +279,7 @@ bool Polygon::getNextIntersectionPointPolygonLine(
     return false;
 }
 
-EdgeType Polygon::getEdgeType(std::size_t k, GeoLib::Point const& pnt) const
+EdgeType Polygon::getEdgeType(std::size_t k, MathLib::Point3d const& pnt) const
 {
     switch (getLocationOfPoint(k, pnt))
     {

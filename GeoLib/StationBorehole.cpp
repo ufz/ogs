@@ -32,11 +32,13 @@ namespace GeoLib
 StationBorehole::StationBorehole(double x,
                                  double y,
                                  double z,
-                                 const std::string& name)
-    : Station(x, y, z, name)
+                                 double const depth,
+                                 const std::string& name,
+                                 int date)
+    : Station(x, y, z, name, Station::StationType::BOREHOLE),
+      _depth(depth),
+      _date(date)
 {
-    _type = Station::StationType::BOREHOLE;
-
     // add first point of borehole
     _profilePntVec.push_back(this);
     _soilName.emplace_back("");
@@ -52,46 +54,6 @@ StationBorehole::~StationBorehole()
     }
 }
 
-StationBorehole* StationBorehole::createStation(const std::string& line)
-{
-    StationBorehole* borehole = new StationBorehole();
-    std::list<std::string> fields = BaseLib::splitString(line, '\t');
-
-    if (fields.size() >= 5)
-    {
-        borehole->_name = fields.front();
-        fields.pop_front();
-        (*borehole)[0] = strtod(
-            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-        fields.pop_front();
-        (*borehole)[1] = strtod(
-            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-        fields.pop_front();
-        (*borehole)[2] = strtod(
-            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-        fields.pop_front();
-        borehole->_depth = strtod(
-            BaseLib::replaceString(",", ".", fields.front()).c_str(), nullptr);
-        fields.pop_front();
-        if (fields.empty())
-        {
-            borehole->_date = 0;
-        }
-        else
-        {
-            borehole->_date = BaseLib::strDate2int(fields.front());
-            fields.pop_front();
-        }
-    }
-    else
-    {
-        WARN("Station::createStation() - Unexpected file format.");
-        delete borehole;
-        return nullptr;
-    }
-    return borehole;
-}
-
 StationBorehole* StationBorehole::createStation(const std::string& name,
                                                 double x,
                                                 double y,
@@ -99,17 +61,12 @@ StationBorehole* StationBorehole::createStation(const std::string& name,
                                                 double depth,
                                                 const std::string& date)
 {
-    StationBorehole* station = new StationBorehole();
-    station->_name = name;
-    (*station)[0] = x;
-    (*station)[1] = y;
-    (*station)[2] = z;
-    station->_depth = depth;
+    int integer_date = 0;
     if (date != "0000-00-00")
     {
-        station->_date = BaseLib::xmlDate2int(date);
+        integer_date = BaseLib::xmlDate2int(date);
     }
-    return station;
+    return new StationBorehole(x, y, z, depth, name, integer_date);
 }
 
 void StationBorehole::addSoilLayer(double thickness,
@@ -132,7 +89,7 @@ void StationBorehole::addSoilLayer(double thickness,
     // KR - Bode
     if (_profilePntVec.empty())
     {
-        addSoilLayer((*this)[0], (*this)[1], (*this)[2], "");
+        addSoilLayer((*this)[0], (*this)[1], (*this)[2], soil_name);
     }
 
     std::size_t idx(_profilePntVec.size());

@@ -24,7 +24,7 @@
 SensorData::SensorData(const std::string& file_name)
     : _start(0), _end(0), _step_size(0), _time_unit(TimeStepType::NONE)
 {
-    this->readDataFromFile(file_name);
+    readDataFromFile(file_name);
 }
 
 SensorData::SensorData(std::vector<std::size_t> time_steps)
@@ -43,16 +43,6 @@ SensorData::SensorData(std::vector<std::size_t> time_steps)
     }
 }
 
-SensorData::SensorData(std::size_t first_timestep,
-                       std::size_t last_timestep,
-                       std::size_t step_size)
-    : _start(first_timestep),
-      _end(last_timestep),
-      _step_size(step_size),
-      _time_unit(TimeStepType::NONE)
-{
-}
-
 SensorData::~SensorData()
 {
     for (std::vector<float>* vec : _data_vecs)
@@ -65,9 +55,9 @@ void SensorData::addTimeSeries(const std::string& data_name,
                                std::vector<float>* data,
                                const std::string& data_unit_string)
 {
-    this->addTimeSeries(SensorData::convertString2SensorDataType(data_name),
-                        data,
-                        data_unit_string);
+    addTimeSeries(SensorData::convertString2SensorDataType(data_name),
+                  data,
+                  data_unit_string);
 }
 
 void SensorData::addTimeSeries(SensorDataType data_name,
@@ -132,54 +122,50 @@ int SensorData::readDataFromFile(const std::string& file_name)
     std::getline(in, line);
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
     std::list<std::string>::const_iterator it(fields.begin());
-    std::size_t nFields = fields.size();
+    std::size_t const nFields = fields.size();
 
     if (nFields < 2)
     {
         return 0;
     }
 
-    std::size_t nDataArrays(nFields - 1);
+    std::size_t const nDataArrays(nFields - 1);
 
     // create vectors necessary to hold the data
     for (std::size_t i = 0; i < nDataArrays; i++)
     {
-        this->_vec_names.push_back(
-            SensorData::convertString2SensorDataType(*++it));
-        this->_data_unit_string.emplace_back("");
-        auto* data = new std::vector<float>;
-        this->_data_vecs.push_back(data);
+        _vec_names.push_back(SensorData::convertString2SensorDataType(*++it));
+        _data_unit_string.emplace_back("");
+        _data_vecs.push_back(new std::vector<float>);
     }
 
     while (std::getline(in, line))
     {
         fields = BaseLib::splitString(line, '\t');
 
-        if (nFields == fields.size())
-        {
-            it = fields.begin();
-            std::size_t pos(it->rfind("."));
-            std::size_t current_time_step = (pos == std::string::npos)
-                                                ? atoi((it++)->c_str())
-                                                : BaseLib::strDate2int(*it++);
-            this->_time_steps.push_back(current_time_step);
-
-            for (std::size_t i = 0; i < nDataArrays; i++)
-            {
-                this->_data_vecs[i]->push_back(
-                    static_cast<float>(strtod((it++)->c_str(), nullptr)));
-            }
-        }
-        else
+        if (nFields != fields.size())
         {
             return 0;
+        }
+
+        it = fields.begin();
+        std::size_t const pos(it->rfind("."));
+        std::size_t const current_time_step = (pos == std::string::npos)
+                                                  ? atoi((it++)->c_str())
+                                                  : BaseLib::strDate2int(*it++);
+        _time_steps.push_back(current_time_step);
+
+        for (std::size_t i = 0; i < nDataArrays; i++)
+        {
+            _data_vecs[i]->push_back(
+                static_cast<float>(strtod((it++)->c_str(), nullptr)));
         }
     }
 
     in.close();
 
-    this->_start = this->_time_steps[0];
-    this->_end = this->_time_steps[this->_time_steps.size() - 1];
+    _start = _time_steps[0];
+    _end = _time_steps[_time_steps.size() - 1];
 
     return 1;
 }

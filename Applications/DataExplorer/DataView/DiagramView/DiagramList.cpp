@@ -279,14 +279,17 @@ int DiagramList::readList(const SensorData* data,
 
     for (int i = 0; i < nLists; i++)
     {
+        auto const* time_series = data->getTimeSeries(time_series_names[i]);
+        if (!time_series)
+        {
+            continue;
+        }
+
         auto* l = new DiagramList;
         l->setName(QString::fromStdString(
             SensorData::convertSensorDataType2String(time_series_names[i])));
         l->setXLabel("Time");
         lists.push_back(l);
-
-        const std::vector<float>* time_series =
-            data->getTimeSeries(time_series_names[i]);
 
         if (is_date)
         {

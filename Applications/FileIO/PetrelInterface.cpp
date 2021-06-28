@@ -217,8 +217,11 @@ void PetrelInterface::readPetrelWellTrace(std::istream& in)
              well_head_x,
              well_head_y,
              well_kb);
-        well_vec->push_back(
-            new GeoLib::StationBorehole(well_head_x, well_head_y, well_kb));
+        double const depth = 0.0;
+        std::string const borehole_name = "";
+        int const date = 0;
+        well_vec->push_back(new GeoLib::StationBorehole(
+            well_head_x, well_head_y, well_kb, depth, borehole_name, date));
 
         // read well type
         in.getline(buffer, MAX_COLS_PER_ROW);

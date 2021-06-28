@@ -105,8 +105,6 @@ public:
 
     /// return a geometry type
     GEOTYPE getGeoType() const override { return GEOTYPE::POLYLINE; }
-    /** write the points to the stream */
-    void write(std::ostream &os) const;
 
     /**
      * Adds an id of a point at the end of the polyline if and only if the
@@ -201,13 +199,6 @@ public:
     std::vector<Point*> const& getPointsVec () const;
 
     /**
-     * returns the length of the polyline until the k-th line segment
-     * @param k the k-th line segment
-     * @return the length of the polyline until the k-th line segment
-     */
-    double getLength (std::size_t k) const;
-
-    /**
      * returns the distance along the polyline from the beginning of the polyline
      * @param pnt the point on the polyline
      * @param epsilon_radius the epsilon
@@ -217,7 +208,6 @@ public:
     double getDistanceAlongPolyline(const MathLib::Point3d& pnt,
         const double epsilon_radius) const;
 
-    friend bool operator==(Polyline const& lhs, Polyline const& rhs);
 protected:
     /**
      * 2D method - ignores z coordinate. It calculates the location
@@ -228,23 +218,18 @@ protected:
      * @param pnt the point
      * @return a value of enum LOCATION
      */
-    Location getLocationOfPoint (std::size_t k, GeoLib::Point const & pnt) const;
+    Location getLocationOfPoint(std::size_t k,
+                                MathLib::Point3d const& pnt) const;
 
     /** a reference to the vector of pointers to the geometric points */
     const std::vector<Point*> &_ply_pnts;
     /** position of pointers to the geometric points */
     std::vector<std::size_t> _ply_pnt_ids;
-    /**
-     * the k-th element of the vector contains the length of the polyline until the k-th segment
-     */
-    std::vector<double> _length;
+
 private:
     LineSegment getSegment(std::size_t i) const;
     LineSegment getSegment(std::size_t i);
 };
-
-/** overload the output operator for class Polyline */
-std::ostream& operator<< (std::ostream &os, Polyline const& pl);
 
 bool containsEdge (const Polyline& ply, std::size_t id0, std::size_t id1);
 

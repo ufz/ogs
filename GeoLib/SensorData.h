@@ -67,9 +67,6 @@ public:
     /// Constructor using a time step vector valid for all time series that will be added later
     explicit SensorData(std::vector<std::size_t> time_steps);
 
-    /// Constructor using time step bounds for all time series that will be added later
-    SensorData(std::size_t first_timestep, std::size_t last_timestep, std::size_t step_size);
-
     ~SensorData();
 
     /// Adds a time series that needs to conform to the time step vector specified in the constructor.

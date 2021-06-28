@@ -64,15 +64,7 @@ public:
      * @param pnt the Point
      * @return if point is inside the polygon true, else false
      */
-    bool isPntInPolygon (const GeoLib::Point& pnt) const;
-    /**
-     * wrapper for method isPntInPolygon (const GeoLib::Point&)
-     * @param x x coordinate of point
-     * @param y y coordinate of point
-     * @param z z coordinate of point
-     * @return if point is inside the polygon true, else false
-     */
-    bool isPntInPolygon (double x, double y, double z) const;
+    bool isPntInPolygon(const MathLib::Point3d& pnt) const;
 
     /**
      * Checks if the straight line segment is contained within the polygon.
@@ -125,7 +117,7 @@ private:
      * @param pnt point that is edge type computed for
      * @return a value of enum EdgeType
      */
-    EdgeType getEdgeType (std::size_t k, GeoLib::Point const & pnt) const;
+    EdgeType getEdgeType(std::size_t k, MathLib::Point3d const& pnt) const;
 
     void ensureCCWOrientation ();
 
