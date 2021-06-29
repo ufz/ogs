@@ -10,19 +10,15 @@
 
 #pragma once
 
-#include <memory>
 #include <Eigen/Eigen>
-
-#include "MaterialLib/FractureModels/Permeability/Permeability.h"
+#include <memory>
 
 #include "BranchProperty.h"
 #include "JunctionProperty.h"
-#include "Utils.h"
+#include "MaterialLib/FractureModels/Permeability/Permeability.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
+#include "MeshLib/Elements/Element.h"
 
-namespace MeshLib
-{
-class Element;
-}
 namespace ParameterLib
 {
 template <typename T>
@@ -87,9 +83,16 @@ inline void setFractureProperty(int const dim, MeshLib::Element const& e,
     {
         frac_prop.point_on_fracture[j] = getCenterOfGravity(e).getCoords()[j];
     }
-    computeNormalVector(e, dim, n);
-    frac_prop.R.resize(dim, dim);
-    computeRotationMatrix(e, n, dim, frac_prop.R);
+
+    const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(e, dim);
+
+    // Global to local rotation matrix:
+    Eigen::MatrixXd const global2local_rotation =
+        ele_local_coord.getRotationMatrixToGlobal().transpose();
+    n = global2local_rotation.row(dim - 1);
+
+    frac_prop.R = global2local_rotation.topLeftCorner(dim, dim);
+
     DBUG("Normal vector of the fracture element {:d}: [{:g}, {:g}, {:g}]",
          e.getID(), n[0], n[1], n[2]);
 }

@@ -15,6 +15,7 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
+#include "ProcessLib/LIE/Common/Utils.h"
 #include "SmallDeformationLocalAssemblerFracture.h"
 
 namespace ProcessLib
