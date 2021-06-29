@@ -1,3 +1,8 @@
+set(_exec_process_args "")
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.18)
+    set(_exec_process_args ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE)
+endif()
+
 # Run vtk.js converter
 if(VIS_FILES AND VTKJS_CONVERTER)
     execute_process(COMMAND cmake -E make_directory ${VTKJS_OUTPUT_PATH})
@@ -55,13 +60,13 @@ foreach(cmd ${TESTER_COMMAND})
                 WORKING_DIRECTORY ${SOURCE_PATH}
                 RESULT_VARIABLE EXIT_CODE
                 OUTPUT_VARIABLE OUTPUT
-                ERROR_VARIABLE OUTPUT
-                ECHO_OUTPUT_VARIABLE
-                ECHO_ERROR_VARIABLE
+                ERROR_VARIABLE OUTPUT ${_exec_process_args}
             )
             if(NOT EXIT_CODE STREQUAL "0")
                 file(WRITE ${LOG_FILE} ${OUTPUT})
-                message(WARNING "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
+                message(
+                    WARNING "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}"
+                )
                 set(TEST_FAILED TRUE)
             endif()
         endforeach()
@@ -73,9 +78,7 @@ foreach(cmd ${TESTER_COMMAND})
             WORKING_DIRECTORY ${SOURCE_PATH}
             RESULT_VARIABLE EXIT_CODE
             OUTPUT_VARIABLE OUTPUT
-            ERROR_VARIABLE OUTPUT
-            ECHO_OUTPUT_VARIABLE
-            ECHO_ERROR_VARIABLE
+            ERROR_VARIABLE OUTPUT ${_exec_process_args}
         )
         if(NOT EXIT_CODE STREQUAL "0")
             file(WRITE ${LOG_FILE} ${OUTPUT})
