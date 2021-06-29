@@ -4,13 +4,22 @@ ci_images:
     CONTAINER_REGISTRY: ${CI_REGISTRY}/ogs/ogs
     CONTAINER_TAG: latest
   rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - ThirdParty/container-maker
+        - scripts/ci/jobs/ci_images.yml
+        - scripts/docker/saxon/**/*
+        - scripts/docker/Dockerfile.pre-commit
+        - scripts/docker/Dockerfile.web
+      variables:
+        BUILD_CONTAINER: "true"
     - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
       changes:
-      - ThirdParty/container-maker
-      - scripts/ci/jobs/build_image.yml
-      - scripts/docker/saxon/**/*
-      - scripts/docker/Dockerfile.pre-commit
-      - scripts/docker/Dockerfile.web
+        - ThirdParty/container-maker
+        - scripts/ci/jobs/ci_images.yml
+        - scripts/docker/saxon/**/*
+        - scripts/docker/Dockerfile.pre-commit
+        - scripts/docker/Dockerfile.web
       variables:
         BUILD_CONTAINER: "true"
         CONTAINER_TAG: ${CI_COMMIT_REF_SLUG}
