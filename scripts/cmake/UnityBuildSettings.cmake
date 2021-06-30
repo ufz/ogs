@@ -4,7 +4,9 @@ endif()
 
 set_target_properties(BaseLib PROPERTIES UNITY_BUILD_BATCH_SIZE 8)
 set_target_properties(GeoLib PROPERTIES UNITY_BUILD_BATCH_SIZE 40)
-set_target_properties(MaterialLib PROPERTIES UNITY_BUILD_BATCH_SIZE 20)
+if(TARGET MaterialLib)
+    set_target_properties(MaterialLib PROPERTIES UNITY_BUILD_BATCH_SIZE 20)
+endif()
 set_target_properties(MathLib PROPERTIES UNITY_BUILD_BATCH_SIZE 10)
 set_target_properties(MeshLib PROPERTIES UNITY_BUILD_BATCH_SIZE 20)
 # set_target_properties(ProcessLib PROPERTIES UNITY_BUILD_BATCH_SIZE 80) #
