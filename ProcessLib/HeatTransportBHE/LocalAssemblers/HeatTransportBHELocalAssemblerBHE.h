@@ -92,6 +92,7 @@ private:
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 
     Eigen::Vector3d _element_direction;
+    Eigen::Vector3d const _rotation_matrix_1D_to_3D;
 
     typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
                                                     bhe_unknowns_size>
