@@ -97,10 +97,15 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     }
 
     // Reference temperature
-    const auto& reference_temperature =
+    auto const reference_temperature = ParameterLib::findOptionalTagParameter<
+        double>(
         //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__reference_temperature}
-        config.getConfigParameter<double>(
-            "reference_temperature", std::numeric_limits<double>::quiet_NaN());
+        config, "reference_temperature", parameters, 1, &mesh);
+    if (reference_temperature)
+    {
+        DBUG("Use '{:s}' as reference temperature parameter.",
+             (*reference_temperature).name);
+    }
 
     // Initial stress conditions
     auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
