@@ -265,11 +265,6 @@ public:
 
         auto const& b = _process_data.specific_body_force;
 
-        double const T_ref =
-            _process_data.reference_temperature
-                ? (*_process_data.reference_temperature)(t, x_position)[0]
-                : std::numeric_limits<double>::quiet_NaN();
-
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
@@ -319,6 +314,12 @@ public:
                 .emplace<
                     MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                     eps_prev);
+
+            double const T_ref =
+                _process_data.reference_temperature
+                    ? (*_process_data.reference_temperature)(t, x_position)[0]
+                    : std::numeric_limits<double>::quiet_NaN();
+
             variables_prev[static_cast<int>(MPL::Variable::temperature)]
                 .emplace<double>(T_ref);
             variables[static_cast<int>(MPL::Variable::mechanical_strain)]
