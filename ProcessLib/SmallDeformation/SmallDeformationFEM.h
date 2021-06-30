@@ -262,6 +262,8 @@ public:
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
+        auto const& b = _process_data.specific_body_force;
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
@@ -332,7 +334,6 @@ public:
             std::tie(sigma, state, C) = std::move(*solution);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
-            auto const& b = _process_data.specific_body_force;
             local_b.noalias() -=
                 (B.transpose() * sigma - N_u_op.transpose() * rho * b) * w;
             local_Jac.noalias() += B.transpose() * C * B * w;
