@@ -28,18 +28,16 @@ SensorData::SensorData(const std::string& file_name)
 }
 
 SensorData::SensorData(std::vector<std::size_t> time_steps)
-    : _start(time_steps[0]),
-      _end(time_steps[time_steps.size() - 1]),
+    : _start(time_steps.front()),
+      _end(time_steps.back()),
       _step_size(0),
       _time_unit(TimeStepType::NONE),
       _time_steps(time_steps)
 {
-    for (std::size_t i = 1; i < time_steps.size(); i++)
+    if (!std::is_sorted(
+            time_steps.begin(), time_steps.end(), std::less_equal{}))
     {
-        if (time_steps[i - 1] >= time_steps[i])
-        {
-            ERR("Error in SensorData() - Time series has no order!");
-        }
+        ERR("Error in SensorData() - Time series has no order!");
     }
 }
 

@@ -1242,16 +1242,15 @@ void MainWindow::showDiagramPrefsDialog(QModelIndex& index)
     GeoLib::Station* stn =
         _geo_model->getStationModel()->stationFromIndex(index, listName);
 
-    if ((stn->type() == GeoLib::Station::StationType::STATION) &&
-        stn->getSensorData())
+    if (dynamic_cast<GeoLib::StationBorehole*>(stn))
+    {
+        OGSError::box("No time series data available for borehole.");
+    }
+    else if (dynamic_cast<GeoLib::Station*>(stn) && stn->getSensorData())
     {
         auto* prefs(new DiagramPrefsDialog(stn));
         prefs->setAttribute(Qt::WA_DeleteOnClose);
         prefs->show();
-    }
-    if (stn->type() == GeoLib::Station::StationType::BOREHOLE)
-    {
-        OGSError::box("No time series data available for borehole.");
     }
 }
 

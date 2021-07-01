@@ -121,9 +121,9 @@ void StationTreeView::contextMenuEvent(QContextMenuEvent* event)
         QAction* setNameAction = menu.addAction("Set name...");
         connect(setNameAction, SIGNAL(triggered()), this,
                 SLOT(setNameForElement()));
-        if (static_cast<StationTreeModel*>(model())
-                ->stationFromIndex(index, temp_name)
-                ->type() == GeoLib::Station::StationType::BOREHOLE)
+        if (dynamic_cast<GeoLib::StationBorehole*>(
+                static_cast<StationTreeModel*>(model())->stationFromIndex(
+                    index, temp_name)))
         {
             QAction* stratAction = menu.addAction("Display Stratigraphy...");
             QAction* exportAction = menu.addAction("Export to GMS...");

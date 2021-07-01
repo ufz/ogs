@@ -264,8 +264,7 @@ bool XmlStnInterface::write()
     const std::vector<GeoLib::Point*>* stations(
         _geo_objs.getStationVec(export_name));
     bool const is_borehole =
-        static_cast<GeoLib::Station*>((*stations)[0])->type() ==
-        GeoLib::Station::StationType::BOREHOLE;
+        dynamic_cast<GeoLib::StationBorehole*>((*stations)[0]);
 
     doc.appendChild(root);
     QDomElement stationListTag = doc.createElement("stationlist");

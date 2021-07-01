@@ -17,6 +17,7 @@
 #include <vtkPolyDataAlgorithm.h>
 
 #include "Applications/DataHolderLib/Color.h"
+#include "GeoLib/StationBorehole.h"
 #include "GeoLib/Station.h"
 #include "VtkAlgorithmProperties.h"
 
@@ -35,10 +36,6 @@ public:
     /// This method should only be called after the colour lookup table has actually been build (via RequestData() or setColorLookupTable()).
     const std::map<std::string, DataHolderLib::Color>& getColorLookupTable() const
         { return _colorLookupTable; }
-
-    /// Returns the type of observation site represented in this source object
-    GeoLib::Station::StationType getType() const
-        { return static_cast<GeoLib::Station*>((*_stations)[0])->type(); };
 
     /// Sets a predefined color lookup table for the colouring of borehole stratigraphies
 //    int setColorLookupTable(const std::string &filename)

@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include "Point.h"
@@ -35,14 +36,6 @@ namespace GeoLib
 class Station : public Point
 {
 public:
-    /// Signals if the object is a "simple" Station or a Borehole (i.e. containing borehole-specific information).
-    enum class StationType
-    {
-        INVALID = 0,
-        STATION,
-        BOREHOLE
-    };
-
     /**
      * \brief Constructor
      *
@@ -51,15 +44,11 @@ public:
      * \param y The y-coordinate of the station.
      * \param z The z-coordinate of the station.
      * \param name The name of the station.
-     * \param type The type of the station, see Station::StationType for
-     * possible values.
      */
     explicit Station(double x = 0.0, double y = 0.0, double z = 0.0,
-                     std::string name = "",
-                     Station::StationType type = Station::StationType::STATION);
+                     std::string name = "");
 
-    explicit Station(Point* coords, std::string name = "",
-                     Station::StationType type = Station::StationType::STATION);
+    explicit Station(Point* coords, std::string name = "");
 
     /**
      * Constructor copies the source object
@@ -67,15 +56,10 @@ public:
      */
     Station(Station const& src);
 
-    ~Station() override;
-
     /// Returns the name of the station.
     std::string const& getName() const { return _name; }
 
     void setName(std::string const& name) { _name = name; }
-
-    /// Returns the GeoSys-station-type for the station.
-    StationType type() const { return _type; }
 
     /// Creates a Station-object from information contained in a string (assuming the string has the right format)
     static Station* createStation(const std::string &line);
@@ -90,16 +74,18 @@ public:
     void setStationValue(double station_value) { this->_station_value = station_value; }
 
     /// Allows to add sensor data from a CSV file to the observation site
-    void addSensorDataFromCSV(const std::string &file_name) { this->_sensor_data = new SensorData(file_name); }
+    void addSensorDataFromCSV(const std::string& file_name)
+    {
+        _sensor_data.reset(new SensorData(file_name));
+    }
 
     /// Returns all the sensor data for this observation site
-    const SensorData* getSensorData() const { return this->_sensor_data; }
+    const SensorData* getSensorData() const { return _sensor_data.get(); }
 
 private:
     std::string _name;
-    StationType _type{Station::StationType::STATION};  // GeoSys Station Type
     double _station_value{0.0};
-    SensorData* _sensor_data{nullptr};
+    std::unique_ptr<SensorData> _sensor_data{nullptr};
 };
 
 bool isStation(GeoLib::Point const* pnt);
