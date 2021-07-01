@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>square_1x1_quad8_1e2.vtu</mesh>
-    <geometry>square_1x1.gml</geometry>
+    <meshes>
+        <mesh>square_1x1_quad8_1e2.vtu</mesh>
+        <mesh>square_1x1_quad8_1e2_bottom.vtu</mesh>
+        <mesh>square_1x1_quad8_1e2_left.vtu</mesh>
+        <mesh>square_1x1_quad8_1e2_right.vtu</mesh>
+        <mesh>square_1x1_quad8_1e2_top.vtu</mesh>
+    </meshes>
     <processes>
         <process>
             <name>TH2M</name>
@@ -300,29 +305,25 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>square_1x1_quad8_1e2_left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>square_1x1_quad8_1e2_right</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
+                    <mesh>square_1x1_quad8_1e2_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>top</geometry>
+                    <mesh>square_1x1_quad8_1e2_top</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
@@ -336,14 +337,12 @@
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>square_1x1_quad8_1e2_left</mesh>
                     <type>Dirichlet</type>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>square_1x1_quad8_1e2_right</mesh>
                     <type>Dirichlet</type>
                     <parameter>dirichlet1</parameter>
                 </boundary_condition>
@@ -356,14 +355,12 @@
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>square_1x1_quad8_1e2_left</mesh>
                     <type>Dirichlet</type>
                     <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>square_1x1_quad8_1e2_right</mesh>
                     <type>Dirichlet</type>
                     <parameter>pressure_ic</parameter>
                 </boundary_condition>
@@ -376,14 +373,12 @@
             <initial_condition>temperature_outside</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
+                    <mesh>square_1x1_quad8_1e2_left</mesh>
                     <type>Dirichlet</type>
                     <parameter>temperature_outside</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
+                    <mesh>square_1x1_quad8_1e2_right</mesh>
                     <type>Dirichlet</type>
                     <parameter>temperature_outside</parameter>
                 </boundary_condition>
