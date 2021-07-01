@@ -1,13 +1,14 @@
 include(BuildExternalProject)
 
 if(OGS_USE_MFRONT)
-    if(NOT _MFRONT_TFEL_FOUND)
+    find_program(MFRONT mfront)
+    if(NOT MFRONT)
         BuildExternalProject(
             TFEL GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
             rliv-${ogs.minimum_version.tfel-rliv}
         )
+        set(ENV{TFELHOME} ${PROJECT_BINARY_DIR}/external/build_TFEL)
     endif()
-    set(ENV{TFELHOME} ${PROJECT_BINARY_DIR}/external/build_TFEL)
     list(APPEND CMAKE_INSTALL_RPATH $ENV{TFELHOME}/${CMAKE_INSTALL_LIBDIR})
 endif()
 
