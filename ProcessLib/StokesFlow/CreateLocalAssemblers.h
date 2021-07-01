@@ -11,9 +11,8 @@
 
 #include <vector>
 
-#include "LocalDataInitializer.h"
-
 #include "BaseLib/Logging.h"
+#include "LocalDataInitializer.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib
@@ -82,6 +81,6 @@ void createLocalAssemblers(
         dof_table, shapefunction_order, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
-
 }  // namespace StokesFlow
+
 }  // namespace ProcessLib

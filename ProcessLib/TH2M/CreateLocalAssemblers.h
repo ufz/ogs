@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "BaseLib/Logging.h"
 #include "LocalDataInitializer.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 

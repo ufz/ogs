@@ -109,16 +109,16 @@ namespace ProcessLib::StokesFlow
 /// The LocalDataInitializer is a functor creating a local assembler data with
 /// corresponding to the mesh element type shape functions and calling
 /// initialization of the new local assembler data.
-/// For example for MeshLib::Line a local assembler data with template argument
-/// NumLib::ShapeLine2 is created.
+/// For example for MeshLib::Quad a local assembler data with template argument
+/// NumLib::ShapeQuad4 is created.
 ///
 /// \attention This is modified version of the ProcessLib::LocalDataInitializer
 /// class which does not include line or point elements. For the shape functions
 /// of order 2 (used for fluid velocity in StokesFlow) a shape function of order
-/// 1 will be used for the pressure.
+/// 1 will be used for the scalar variables.
 template <typename LocalAssemblerInterface,
           template <typename, typename, typename, int> class LocalAssemblerData,
-          unsigned GlobalDim, typename... ConstructorArgs>
+          int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -253,7 +253,7 @@ private:
     template <typename ShapeFunction>
     static LADataBuilder makeLocalAssemblerBuilder(std::true_type* /*unused*/)
     {
-        assert(ShapeFunction::ORDER == 2);
+        static_assert(ShapeFunction::ORDER == 2);
 
         using LowerOrderShapeFunction =
             typename NumLib::LowerDim<ShapeFunction>::type;
