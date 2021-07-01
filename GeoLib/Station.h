@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 
 #include "Point.h"
@@ -55,8 +56,6 @@ public:
      */
     Station(Station const& src);
 
-    ~Station() override;
-
     /// Returns the name of the station.
     std::string const& getName() const { return _name; }
 
@@ -75,15 +74,18 @@ public:
     void setStationValue(double station_value) { this->_station_value = station_value; }
 
     /// Allows to add sensor data from a CSV file to the observation site
-    void addSensorDataFromCSV(const std::string &file_name) { this->_sensor_data = new SensorData(file_name); }
+    void addSensorDataFromCSV(const std::string& file_name)
+    {
+        _sensor_data.reset(new SensorData(file_name));
+    }
 
     /// Returns all the sensor data for this observation site
-    const SensorData* getSensorData() const { return this->_sensor_data; }
+    const SensorData* getSensorData() const { return _sensor_data.get(); }
 
 private:
     std::string _name;
     double _station_value{0.0};
-    SensorData* _sensor_data{nullptr};
+    std::unique_ptr<SensorData> _sensor_data{nullptr};
 };
 
 bool isStation(GeoLib::Point const* pnt);

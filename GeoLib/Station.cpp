@@ -39,11 +39,6 @@ Station::Station(Station const& src)
 {
 }
 
-Station::~Station()
-{
-    delete this->_sensor_data;
-}
-
 Station* Station::createStation(const std::string& line)
 {
     std::list<std::string> fields = BaseLib::splitString(line, '\t');
