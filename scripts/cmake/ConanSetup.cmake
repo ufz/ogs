@@ -14,7 +14,6 @@ endif()
 if(NOT CONAN_CMD
    AND (OGS_USE_PETSC
         OR OGS_USE_LIS
-        OR OGS_USE_MFRONT
         OR OGS_BUILD_GUI
        )
 )
@@ -48,10 +47,6 @@ endif()
 if(OGS_USE_LIS)
     list(APPEND CONAN_OPTIONS lis:with_omp=True)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} lis/1.7.37@bilke/stable)
-endif()
-
-if(OGS_USE_MFRONT)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} tfel/${ogs.minimum_version.tfel-rliv}@bilke/testing)
 endif()
 
 if(OGS_BUILD_GUI)

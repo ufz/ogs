@@ -1,3 +1,16 @@
+include(BuildExternalProject)
+
+if(OGS_USE_MFRONT)
+    if(NOT _MFRONT_TFEL_FOUND)
+        BuildExternalProject(
+            TFEL GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
+            rliv-${ogs.minimum_version.tfel-rliv}
+        )
+    endif()
+    set(ENV{TFELHOME} ${PROJECT_BINARY_DIR}/external/build_TFEL)
+    list(APPEND CMAKE_INSTALL_RPATH $ENV{TFELHOME}/${CMAKE_INSTALL_LIBDIR})
+endif()
+
 set(CMAKE_FOLDER ThirdParty)
 
 # ccache
@@ -126,6 +139,7 @@ if(OGS_USE_MFRONT)
     if(MGIS_ADDED)
         set_target_properties(MFrontGenericInterface PROPERTIES CXX_STANDARD 11)
         list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
+        set(_MFRONT_TFEL_FOUND ON CACHE INTERNAL "")
     endif()
 endif()
 
