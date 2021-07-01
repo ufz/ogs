@@ -32,10 +32,7 @@ namespace MeshLib
 class
 NodeAdjacencyTable
 {
-
 public:
-    NodeAdjacencyTable() = default;
-
     explicit
     NodeAdjacencyTable(std::vector<Node*> const& nodes)
     {

@@ -36,8 +36,7 @@ GlobalSparsityPattern computeSparsityPatternPETSc(
 GlobalSparsityPattern computeSparsityPatternNonPETSc(
     NumLib::LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
 {
-    MeshLib::NodeAdjacencyTable node_adjacency_table;
-    node_adjacency_table.createTable(mesh.getNodes());
+    MeshLib::NodeAdjacencyTable const node_adjacency_table(mesh.getNodes());
 
     // A mapping   mesh node id -> global indices
     // It acts as a cache for dof table queries.
