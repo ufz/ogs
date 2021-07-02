@@ -92,6 +92,12 @@ option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
+if(OGS_USE_PETSC AND MSVC)
+    message(
+        FATAL_ERROR
+            "OGS_USE_PETSC=ON is not supported on Windows Visual Studio! Use Linux or macOS."
+    )
+endif()
 option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 option(OGS_USE_XDMF "Add Xdmf file IO support" OFF)
 
