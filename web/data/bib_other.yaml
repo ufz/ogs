@@ -231,3 +231,31 @@ entries:
             last: M{\"u}ller
         -   first: P
             last: Knabner
+
+    Bruns2011:
+        type: techreport
+        title: 'Glazigene Beeinflussung von Wirtsgesteinstypen Ton und Salz und
+                deren Einflüsse auf die Eignung zur Aufnahme eines HAW-Endlagers'
+        journal: Abschlussbericht
+        volume: '292'
+        number:
+        year: '2012'
+        author:
+        -   first: J.
+            last: Bruns
+        -   first: L.
+            last: Boetticher
+        -   first: H.
+            last: Doose
+        -   first: M.
+            last: Cottrell
+        -   first: P.
+            last: Wolff
+        -   first: R.M.
+            last: G{\"u}nther
+        -   first: D.
+            last: Naumann
+        -   first: T.
+            last: Popp
+        -   first: K.
+            last: Salzer
