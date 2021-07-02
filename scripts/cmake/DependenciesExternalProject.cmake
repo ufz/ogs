@@ -24,9 +24,14 @@ if(OGS_USE_PETSC)
         set(PETSC_EXECUTABLE_RUNS YES)
     endif()
 
-    find_package(PETSc ${ogs.minimum_version.petsc})
+    if(NOT OGS_PETSC_CONFIG_OPTIONS)
+        find_package(PETSc ${ogs.minimum_version.petsc})
+    endif()
     if(NOT PETSC_FOUND)
         set(_configure_opts "")
+        if(NOT "--download-fc=1" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
+            list(APPEND _configure_opts --with-fc=0)
+        endif()
         if(ENV{CC})
             list(APPEND _configure_opts --with-cc=$ENV{CC})
         endif()
@@ -39,9 +44,9 @@ if(OGS_USE_PETSC)
             GIT_REPOSITORY https://gitlab.com/petsc/petsc.git
             GIT_TAG v${ogs.minimum_version.petsc}
             CONFIGURE_COMMAND
-                ./configure --with-fc=0 --download-f2cblaslapack=1
-                --prefix=<INSTALL_DIR> --with-debugging=$<CONFIG:Debug>
-                ${_configure_opts}
+                ./configure --download-f2cblaslapack=1 --prefix=<INSTALL_DIR>
+                --with-debugging=$<CONFIG:Debug> ${_configure_opts}
+                ${OGS_PETSC_CONFIG_OPTIONS}
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j all
             INSTALL_COMMAND make -j install

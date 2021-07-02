@@ -53,6 +53,9 @@ endif()
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
+set(OGS_PETSC_CONFIG_OPTIONS "" CACHE STRING
+                                      "Additional PETSc configuration options."
+)
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
 option(OGS_BUILD_TESTING "Should the tests be built?" ON)
