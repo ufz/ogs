@@ -50,14 +50,6 @@ if(NOT WIN32 AND OGS_BUILD_SWMM)
     message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
 endif()
 
-# Third-party libraries, names come from Conan package names
-foreach(lib vtk qt petsc tfel)
-    set(OGS_LIB_${lib} "Default" CACHE STRING
-                                       "Which ${LIB} library should be used?"
-    )
-    set_property(CACHE OGS_LIB_${lib} PROPERTY STRINGS "Default" "System")
-endforeach()
-
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
