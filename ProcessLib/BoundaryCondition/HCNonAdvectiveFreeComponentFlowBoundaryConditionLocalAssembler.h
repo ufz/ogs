@@ -28,8 +28,7 @@ struct HCNonAdvectiveFreeComponentFlowBoundaryConditionData
     Process const& process;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class HCNonAdvectiveFreeComponentFlowBoundaryConditionLocalAssembler final
     : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>

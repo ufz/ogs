@@ -17,7 +17,7 @@ namespace ProcessLib
 {
 /// An implementation of B-Matrix policy using same matrix and vector types
 /// (fixed size or dynamic) as in the ShapeMatrixPolicyType.
-template <typename ShapeFunction, unsigned DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 class BMatrixPolicyType
 {
 private:

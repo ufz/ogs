@@ -33,7 +33,7 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <unsigned GlobalDim>
+template <int GlobalDim>
 struct HydroMechanicsProcessData
 {
     HydroMechanicsProcessData(

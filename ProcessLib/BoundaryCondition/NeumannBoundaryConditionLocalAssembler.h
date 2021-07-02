@@ -24,8 +24,7 @@ struct NeumannBoundaryConditionData final
     ParameterLib::Parameter<double> const* const integral_measure;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class NeumannBoundaryConditionLocalAssembler final
     : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>

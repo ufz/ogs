@@ -22,8 +22,7 @@ namespace LIE
 namespace HydroMechanics
 {
 template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
-          typename ShapeMatrixTypePressure, unsigned GlobalDim,
-          unsigned NPoints>
+          typename ShapeMatrixTypePressure, int GlobalDim, unsigned NPoints>
 struct IntegrationPointDataMatrix final
 {
     explicit IntegrationPointDataMatrix(

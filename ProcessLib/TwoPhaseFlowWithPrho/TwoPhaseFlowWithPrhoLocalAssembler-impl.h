@@ -20,8 +20,7 @@ namespace ProcessLib
 {
 namespace TwoPhaseFlowWithPrho
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 void TwoPhaseFlowWithPrhoLocalAssembler<
     ShapeFunction, IntegrationMethod,
     GlobalDim>::assemble(double const t, double const /*dt*/,

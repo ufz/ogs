@@ -28,8 +28,7 @@ struct LocalCoupledSolutions;
 
 namespace HT
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class StaggeredHTFEM : public HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;

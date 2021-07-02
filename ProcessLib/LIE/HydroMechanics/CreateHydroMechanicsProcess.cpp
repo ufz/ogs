@@ -28,7 +28,7 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <unsigned GlobalDim>
+template <int GlobalDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
     std::string name,
     MeshLib::Mesh& mesh,

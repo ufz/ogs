@@ -32,8 +32,7 @@ public:
     virtual ~VolumetricSourceTermLocalAssemblerInterface() = default;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class VolumetricSourceTermLocalAssembler final
     : public VolumetricSourceTermLocalAssemblerInterface
 {

@@ -31,8 +31,7 @@ namespace ThermoRichardsFlow
 {
 namespace MPL = MaterialPropertyLib;
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class ThermoRichardsFlowLocalAssembler : public LocalAssemblerInterface
 {
 public:

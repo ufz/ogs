@@ -17,9 +17,8 @@
 
 namespace ProcessLib
 {
-
-template <unsigned GlobalDim, template <typename, typename, unsigned>
-                              class LocalAssemblerImplementation,
+template <int GlobalDim,
+          template <typename, typename, int> class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -60,8 +59,7 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <template <typename, typename, unsigned>
-          class LocalAssemblerImplementation,
+template <template <typename, typename, int> class LocalAssemblerImplementation,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     const unsigned dimension,

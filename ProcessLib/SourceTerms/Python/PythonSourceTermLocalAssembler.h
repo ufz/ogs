@@ -46,8 +46,7 @@ struct IntegrationPointData final
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class PythonSourceTermLocalAssembler final
     : public PythonSourceTermLocalAssemblerInterface
 {

@@ -32,7 +32,7 @@ namespace detail
  *                  size will be determined at compile-time.
  * \tparam Dim      global spatial dimension
  */
-template<typename ShpPol, unsigned NNodes, unsigned NodalDOF, unsigned Dim>
+template <typename ShpPol, unsigned NNodes, unsigned NodalDOF, int Dim>
 struct LocalAssemblerTraitsFixed
 {
 private:
@@ -182,16 +182,18 @@ public:
 
 #ifndef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
 
-template<typename ShpPol, unsigned NNodes, unsigned NodalDOF, unsigned Dim>
-using LocalAssemblerTraits = detail::LocalAssemblerTraitsFixed<ShpPol, NNodes, NodalDOF, Dim>;
+template <typename ShpPol, unsigned NNodes, unsigned NodalDOF, int Dim>
+using LocalAssemblerTraits =
+    detail::LocalAssemblerTraitsFixed<ShpPol, NNodes, NodalDOF, Dim>;
 
 static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 0,
         "Inconsistent use of the macro OGS_EIGEN_DYNAMIC_SHAPE_MATRICES."
         " Maybe you forgot to include some header file.");
 #else
 
-template<typename ShpPol, unsigned NNodes, unsigned NodalDOF, unsigned Dim>
-using LocalAssemblerTraits = detail::LocalAssemblerTraitsFixed<ShapeMatrixPolicyType<void, 0>, 0, 0, 0>;
+template <typename ShpPol, unsigned NNodes, unsigned NodalDOF, int Dim>
+using LocalAssemblerTraits =
+    detail::LocalAssemblerTraitsFixed<ShapeMatrixPolicyType<void, 0>, 0, 0, 0>;
 
 static_assert(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG == 1,
         "Inconsistent use of the macro OGS_EIGEN_DYNAMIC_SHAPE_MATRICES."

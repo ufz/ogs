@@ -19,8 +19,7 @@ namespace ProcessLib
 {
 namespace RichardsComponentTransport
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     LocalAssemblerData(
         MeshLib::Element const& element,
@@ -60,8 +59,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
     double const t, double const dt, std::vector<double> const& local_x,
     std::vector<double> const& /*local_xdot*/,
@@ -231,8 +229,7 @@ void LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::assemble(
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 std::vector<double> const&
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     getIntPtDarcyVelocity(
@@ -316,8 +313,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     return cache;
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 Eigen::Map<const Eigen::RowVectorXd>
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::getShapeMatrix(
     const unsigned integration_point) const
@@ -328,8 +324,7 @@ LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::getShapeMatrix(
     return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 std::vector<double> const&
 LocalAssemblerData<ShapeFunction, IntegrationMethod, GlobalDim>::
     getIntPtSaturation(

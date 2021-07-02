@@ -29,8 +29,7 @@ public:
         GlobalMatrix& K, GlobalVector& b, GlobalMatrix* Jac) = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class GenericNaturalBoundaryConditionLocalAssembler
     : public GenericNaturalBoundaryConditionLocalAssemblerInterface
 {

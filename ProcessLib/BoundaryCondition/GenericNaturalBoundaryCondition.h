@@ -18,8 +18,7 @@ namespace ProcessLib
 class GenericNaturalBoundaryConditionLocalAssemblerInterface;
 
 template <typename BoundaryConditionData,
-          template <typename, typename, unsigned>
-          class LocalAssemblerImplementation>
+          template <typename, typename, int> class LocalAssemblerImplementation>
 class GenericNaturalBoundaryCondition final : public BoundaryCondition
 {
 public:

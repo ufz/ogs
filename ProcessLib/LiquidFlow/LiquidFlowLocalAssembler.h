@@ -62,8 +62,7 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;

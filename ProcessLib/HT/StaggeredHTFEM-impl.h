@@ -21,8 +21,7 @@ namespace ProcessLib
 {
 namespace HT
 {
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleForStaggeredScheme(double const t, double const dt,
                                Eigen::VectorXd const& local_x,
@@ -43,8 +42,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
                               local_K_data, local_b_data);
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleHydraulicEquation(double const t, double const dt,
                               Eigen::VectorXd const& local_x,
@@ -177,8 +175,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     assembleHeatTransportEquation(double const t,
                                   double const dt,
@@ -287,8 +284,7 @@ void StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     }
 }
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 std::vector<double> const&
 StaggeredHTFEM<ShapeFunction, IntegrationMethod, GlobalDim>::
     getIntPtDarcyVelocity(

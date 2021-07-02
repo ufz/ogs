@@ -49,7 +49,7 @@ public:
 };
 
 template <typename ShapeFunctionDisplacement, typename IntegrationMethod,
-          unsigned GlobalDim>
+          int GlobalDim>
 class NormalTractionBoundaryConditionLocalAssembler final
     : public NormalTractionBoundaryConditionLocalAssemblerInterface
 {
@@ -96,7 +96,7 @@ public:
         else
         {
             auto const n = MeshLib::FaceRule::getSurfaceNormal(e).normalized();
-            for (decltype(GlobalDim) i = 0; i < GlobalDim; ++i)
+            for (int i = 0; i < GlobalDim; ++i)
             {
                 element_normal[i] = n[i];
             }
@@ -140,7 +140,7 @@ public:
                 N_u = ShapeMatricesType::template MatrixType<
                     GlobalDim, displacement_size>::Zero(GlobalDim,
                                                         displacement_size);
-            for (int i = 0; i < static_cast<int>(GlobalDim); ++i)
+            for (int i = 0; i < GlobalDim; ++i)
             {
                 N_u.template block<1, displacement_size / GlobalDim>(
                        i, i * displacement_size / GlobalDim)
