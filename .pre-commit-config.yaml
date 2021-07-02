@@ -45,4 +45,4 @@ repos:
       exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|Tests.cmake'
     - id: cmake-lint
       additional_dependencies: ["cmakelang[YAML]"]
-      exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake'
+      exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|BuildExternalProject.cmake'

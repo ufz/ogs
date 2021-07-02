@@ -121,16 +121,16 @@ struct MaterialLib_SolidModelsMFront : public testing::Test
     MaterialLib_SolidModelsMFront()
     {
         variable_array_prev[static_cast<int>(MPL::Variable::stress)]
-            .emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
+            .template emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
         variable_array_prev[static_cast<int>(MPL::Variable::mechanical_strain)]
-            .emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
+            .template emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
         variable_array_prev[static_cast<int>(MPL::Variable::temperature)]
-            .emplace<double>(0);
+            .template emplace<double>(0);
 
         variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]
-            .emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
+            .template emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
         variable_array[static_cast<int>(MPL::Variable::temperature)]
-            .emplace<double>(0);
+            .template emplace<double>(0);
         constitutive_relation = TestBehaviour::createConstitutiveRelation();
     }
 

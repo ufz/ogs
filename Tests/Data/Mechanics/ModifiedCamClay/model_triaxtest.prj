@@ -88,7 +88,7 @@
         <parameter>
             <name>YoungModulus</name>
             <type>Constant</type>
-            <value>52e6</value><!--Pa-->
+            <value>52e6</value>            <!--Pa-->
         </parameter>
         <parameter>
             <name>PoissonRatio</name>
@@ -113,7 +113,7 @@
         <parameter>
             <name>InitialPreConsolidationPressure</name>
             <type>Constant</type>
-            <value>2.e5</value><!--Pa-->
+            <value>2.e5</value>            <!--Pa-->
         </parameter>
         <parameter>
             <name>InitialPorosity</name>
@@ -145,12 +145,12 @@
         <parameter>
             <name>loading_value_top</name>
             <type>Constant</type>
-            <value>-625.e3</value> <!--Pa-->
+            <value>-625.e3</value>            <!--Pa-->
         </parameter>
         <parameter>
             <name>confining_pressure_value</name>
             <type>Constant</type>
-            <values>-200.e3</values> <!--Pa-->
+            <values>-200.e3</values>            <!--Pa-->
         </parameter>
         <parameter>
             <name>confining_pressure</name>
@@ -250,7 +250,7 @@
         <vtkdiff>
             <file>triaxtest_output_ts_199_t_1.000000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>6e-8</absolute_tolerance>
+            <absolute_tolerance>9e-8</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <!--material-specific internal variable-->
