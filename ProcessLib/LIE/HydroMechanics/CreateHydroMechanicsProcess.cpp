@@ -43,11 +43,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HYDRO_MECHANICS_WITH_LIE");
     DBUG("Create HydroMechanicsProcess with LIE.");
-    auto const staggered_scheme =
+    auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(staggered_scheme && (*staggered_scheme == "staggered"));
+        !(coupling_scheme && (*coupling_scheme == "staggered"));
 
     // Process variables
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__process_variables}
