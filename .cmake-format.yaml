@@ -6,24 +6,24 @@ format:
   line_width: 80
 lint:
   disabled_codes:
-  - "C0301"
-  - "C0301"    # Line to long.
-  - "C0113"    # Missing COMMAND for optional dependencies.
+    - "C0301"
+    - "C0301" # Line to long.
+    - "C0113" # Missing COMMAND for optional dependencies.
 
 parse:
   vartags:
-  - !!python/tuple
-    - set_property
-    - - cmdline
+    - !!python/tuple
+      - set_property
+      - - cmdline
   additional_commands:
     ogs_add_library:
       pargs:
         nargs: 2+
     addtest:
       pargs:
-        nargs: '*'
+        nargs: "*"
         flags:
-        - DISABLED
+          - DISABLED
       spelling: AddTest
       kwargs:
         EXECUTABLE: 1
@@ -41,7 +41,7 @@ parse:
         DIFF_DATA:
           pargs:
             tags:
-            - cmdline
+              - cmdline
         WRAPPER_ARGS: +
         REQUIREMENTS: +
         PYTHON_PACKAGES: +
@@ -49,9 +49,9 @@ parse:
 
     ogstest:
       pargs:
-        nargs: '*'
+        nargs: "*"
         flags:
-        - DISABLED
+          - DISABLED
       spelling: OgsTest
       kwargs:
         PROJECTFILE: 1
@@ -60,9 +60,9 @@ parse:
 
     meshtest:
       pargs:
-        nargs: '*'
+        nargs: "*"
         flags:
-        - NONE
+          - NONE
       spelling: MeshTest
       kwargs:
         EXECUTABLE: 1
@@ -76,13 +76,13 @@ parse:
         DIFF_DATA:
           pargs:
             tags:
-            - cmdline
+              - cmdline
         WRAPPER_ARGS: +
         REQUIREMENTS: +
 
     cpmaddpackage:
       pargs:
-        nargs: '*'
+        nargs: "*"
         flags: []
       spelling: CPMAddPackage
       kwargs: &cpmaddpackagekwargs
@@ -112,19 +112,19 @@ parse:
         OPTIONS: +
     cpmfindpackage:
       pargs:
-        nargs: '*'
+        nargs: "*"
         flags: []
       spelling: CPMFindPackage
       kwargs: *cpmaddpackagekwargs
     cpmdeclarepackage:
       pargs:
-        nargs: '*'
+        nargs: "*"
         flags: []
       spelling: CPMDeclarePackage
       kwargs: *cpmaddpackagekwargs
     packageproject:
       pargs:
-        nargs: '*'
+        nargs: "*"
         flags: []
       spelling: packageProject
       kwargs:
@@ -145,3 +145,16 @@ parse:
     cpmgetpackageversion:
       pargs: 2
       spelling: CPMGetPackageVersion
+
+    buildexternalproject:
+      pargs:
+        nargs: "*"
+      spelling: BuildExternalProject
+      kwargs:
+        GIT_REPOSITORY: 1
+        GIT_TAG: 1
+        CONFIGURE_COMMAND: +
+        BUILD_COMMAND: +
+        INSTALL_COMMAND: +
+        BUILD_IN_SOURCE: 1
+        LOG_OUTPUT_ON_FAILURE: 1
