@@ -50,17 +50,12 @@ if(NOT WIN32 AND OGS_BUILD_SWMM)
     message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
 endif()
 
-# Third-party libraries, names come from Conan package names
-foreach(lib vtk qt petsc tfel)
-    set(OGS_LIB_${lib} "Default" CACHE STRING
-                                       "Which ${LIB} library should be used?"
-    )
-    set_property(CACHE OGS_LIB_${lib} PROPERTY STRINGS "Default" "System")
-endforeach()
-
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
 endif()
+set(OGS_PETSC_CONFIG_OPTIONS "" CACHE STRING
+                                      "Additional PETSc configuration options."
+)
 option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
 option(OGS_BUILD_TESTING "Should the tests be built?" ON)
@@ -78,6 +73,7 @@ include(JobPools)
 include(Find)
 include(CLCacheSetup)
 include(packaging/PackagingDependencies)
+include(DependenciesExternalProject)
 include(Dependencies)
 include(DocumentationSetup)
 include(test/Test)
@@ -96,10 +92,15 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
 endif() # GCC AND GPROF_PATH
 
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
-option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
+if(OGS_USE_PETSC AND MSVC)
+    message(
+        FATAL_ERROR
+            "OGS_USE_PETSC=ON is not supported on Windows Visual Studio! Use Linux or macOS."
+    )
+endif()
 option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 option(OGS_USE_XDMF "Add Xdmf file IO support" OFF)
 

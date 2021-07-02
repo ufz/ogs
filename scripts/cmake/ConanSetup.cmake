@@ -11,12 +11,7 @@ if(OGS_USE_CONAN_lower STREQUAL "auto" AND POETRY)
 else()
     find_program(CONAN_CMD conan)
 endif()
-if(NOT CONAN_CMD
-   AND (OGS_USE_PETSC
-        OR OGS_USE_LIS
-        OR OGS_BUILD_GUI
-       )
-)
+if(NOT CONAN_CMD AND (OGS_USE_LIS OR OGS_BUILD_GUI))
     message(WARNING "conan executable not found. Specify CMake option "
         "OGS_USE_CONAN=auto for automatic installation in the build directory "
         "OR install it system-wide (https://www.opengeosys.org/docs/devguide/"
@@ -36,13 +31,6 @@ endif()
 set(CONAN_SYSTEM_INCLUDES ON)
 
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
-
-if(OGS_USE_PETSC)
-    set(CONAN_REQUIRES ${CONAN_REQUIRES} petsc/${ogs.minimum_version.petsc}@bilke/testing)
-    if(OGS_CONAN_USE_SYSTEM_OPENMPI)
-        set(CONAN_OPTIONS ${CONAN_OPTIONS} petsc:skip_install_openmpi=True)
-    endif()
-endif()
 
 if(OGS_USE_LIS)
     list(APPEND CONAN_OPTIONS lis:with_omp=True)
@@ -92,14 +80,6 @@ endif()
 
 conan_check(VERSION ${ogs.minimum_version.conan})
 conan_config_install(ITEM ${PROJECT_SOURCE_DIR}/scripts/cmake/conan/config)
-
-message(STATUS "Third-party libraries:")
-foreach(LIB ${OGS_LIBS})
-    message(STATUS "  - OGS_LIB_${LIB} = ${OGS_LIB_${LIB}}")
-    if("${OGS_LIB_${LIB}}" STREQUAL System)
-        list(FILTER CONAN_REQUIRES EXCLUDE REGEX ${LIB})
-    endif()
-endforeach()
 
 set(CONAN_IMPORTS "")
 if(APPLE)
@@ -163,8 +143,4 @@ endif()
 if(NOT ${OGS_CONAN_BUILD} MATCHES "never|always|missing|outdated")
     message(STATUS "Warning: Resetting CMake variable OGS_CONAN_BUILD to its default value of 'missing'")
     set(OGS_CONAN_BUILD "missing" CACHE INTERNAL "")
-endif()
-
-if(OGS_USE_PETSC)
-    set(PETSC_DIR ${CONAN_PETSC_ROOT} CACHE INTERNAL "")
 endif()

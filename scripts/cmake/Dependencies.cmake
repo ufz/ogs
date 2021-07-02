@@ -1,17 +1,3 @@
-include(BuildExternalProject)
-
-if(OGS_USE_MFRONT)
-    find_program(MFRONT mfront)
-    if(NOT MFRONT)
-        BuildExternalProject(
-            TFEL GIT_REPOSITORY https://github.com/thelfer/tfel.git GIT_TAG
-            rliv-${ogs.minimum_version.tfel-rliv}
-        )
-        set(ENV{TFELHOME} ${PROJECT_BINARY_DIR}/external/build_TFEL)
-    endif()
-    list(APPEND CMAKE_INSTALL_RPATH $ENV{TFELHOME}/${CMAKE_INSTALL_LIBDIR})
-endif()
-
 set(CMAKE_FOLDER ThirdParty)
 
 # ccache
@@ -34,6 +20,7 @@ if(OGS_BUILD_TESTING)
         GITHUB_REPOSITORY google/googletest
         GIT_TAG 389cb68b87193358358ae87cc56d257fd0d80189
         OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt ON"
+                "BUILD_SHARED_LIBS OFF"
         EXCLUDE_FROM_ALL YES
     )
 

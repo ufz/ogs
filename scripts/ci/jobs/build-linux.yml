@@ -3,7 +3,7 @@ build linux:
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [ docker ]
+  tags: [docker]
   needs: [meta, ci_images]
   timeout: 2h
   variables:
@@ -23,7 +23,7 @@ linux ctest large:
   image: $CONTAINER_GCC_IMAGE
   extends:
     - .template-build-linux
-  tags: [ docker, envinf2 ]
+  tags: [docker, envinf2]
   needs: [meta, ci_images]
   rules:
     - when: manual
@@ -43,7 +43,7 @@ build linux (no unity):
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [ docker ]
+  tags: [docker]
   needs: [meta, ci_images]
   timeout: 1h
   variables:
@@ -62,11 +62,26 @@ build linux (no unity):
 build linux (no deps, no procs):
   image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
-  tags: [ docker ]
-  needs: [ meta, ci_images ]
+  tags: [docker]
+  needs: [meta, ci_images]
   timeout: 1h
   variables:
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
     BUILD_PROCESSES: "SteadyStateDiffusion"
     CMAKE_PRESET: ci-simplest
+
+build linux native:
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+  tags: [shell, envinf]
+  needs: [meta]
+  variables:
+    CMAKE_PRESET: release
+    CMAKE_ARGS: >-
+      -DBUILD_SHARED_LIBS=ON
+      -DOGS_USE_CONAN=OFF
+      -DOGS_USE_POETRY=OFF
+      -DOGS_USE_MFRONT=ON
+      -DOGS_USE_XDMF=ON

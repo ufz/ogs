@@ -1,7 +1,7 @@
 # Modified from
 # https://github.com/Sbte/BuildExternalProject/commit/ce1a70996aa538aac17a6faf07db487c3a238838
 macro(BuildExternalProject_find_package target)
-    set(build_dir ${CMAKE_BINARY_DIR}/external/build_${target})
+    set(build_dir ${PROJECT_BINARY_DIR}/_ext/${target})
 
     # Set CMake prefix path so we can look there for the module
     set(_CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH})
@@ -22,7 +22,7 @@ macro(BuildExternalProject_find_package target)
 endmacro()
 
 function(BuildExternalProject target)
-    set(build_dir ${CMAKE_BINARY_DIR}/external/build_${target})
+    set(build_dir ${PROJECT_BINARY_DIR}/_ext/${target})
 
     message(STATUS "Building ${target}")
 
@@ -64,8 +64,6 @@ function(BuildExternalProject target)
         BuildExternalProject_configure(${build_dir})
     endif()
 
-    BuildExternalProject_build(${build_dir})
-
     message(
         STATUS
             "Finished building ${target}. Logs in ${build_dir}/src/${target}-stamp"
@@ -80,6 +78,8 @@ function(BuildExternalProject_configure build_dir)
 
     if(result)
         message(FATAL_ERROR "CMake step for external project failed: ${result}")
+    else()
+        BuildExternalProject_build(${build_dir})
     endif()
 endfunction()
 
