@@ -227,3 +227,16 @@ AddTest(
     output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu displacement displacement 0 1e-12
     output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
 )
+
+AddTest(
+    NAME Mechanics_creep_with_heterogeneous_reference_temperature
+    PATH Mechanics/CreepWithHeterogeneousReferenceTemperature
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS arehs-salt-M_gravity_only_element_refT.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu displacement displacement 1.e-10 1.e-10
+    arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu sigma sigma 1.e-9 5.e-7
+)
