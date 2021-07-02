@@ -72,11 +72,6 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
-# Do not search for libs if this option is set
-if(OGS_NO_EXTERNAL_LIBS)
-    return()
-endif() # OGS_NO_EXTERNAL_LIBS
-
 find_package(OpenMP)
 if(OPENMP_FOUND)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")

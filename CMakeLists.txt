@@ -97,7 +97,6 @@ if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
 endif() # GCC AND GPROF_PATH
 
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
-option(OGS_NO_EXTERNAL_LIBS "Builds OGS without any external dependencies." OFF)
 option(OGS_INSITU "Builds OGS with insitu visualization capabilities." OFF)
 option(OGS_USE_LIS "Use Lis" OFF)
 option(OGS_USE_PETSC "Use PETSc routines" OFF)
