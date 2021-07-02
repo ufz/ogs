@@ -118,27 +118,6 @@ if(OGS_USE_MKL)
     find_package(MKL REQUIRED)
 endif()
 
-if(OGS_USE_PETSC)
-    message(STATUS "Configuring for PETSc")
-
-    option(FORCE_PETSC_EXECUTABLE_RUNS
-           "Force CMake to accept a given PETSc configuration" ON
-    )
-
-    # Force CMake to accept a given PETSc configuration in case the failure of
-    # MPI tests. This may cause the compilation broken.
-    if(FORCE_PETSC_EXECUTABLE_RUNS)
-        set(PETSC_EXECUTABLE_RUNS YES)
-    endif()
-
-    find_package(PETSc ${ogs.minimum_version.petsc} REQUIRED)
-
-    add_library(petsc SHARED IMPORTED)
-    target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
-    set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${PETSC_LIBRARIES})
-    target_compile_definitions(petsc INTERFACE USE_PETSC)
-endif()
-
 # Check MPI package
 if(OGS_USE_MPI)
     find_package(MPI REQUIRED)
