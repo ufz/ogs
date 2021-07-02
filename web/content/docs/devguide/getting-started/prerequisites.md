@@ -273,8 +273,6 @@ Make sure that `ninja` is in the path afterwards. See Conan install instructions
 
 You only need Conan if you intend to build with one of the following settings **and** do not want to install their dependencies manually:
 
-- `OGS_USE_PETSC` – For parallel processing, requires PETSc
-- `OGS_USE_MFRONT` – MFront material models, requires tfel
 - `OGS_BUILD_GUI` – Builds the Data Explorer, requires Qt
 - `OGS_USE_NETCDF` – NetCDF IO, requires netcdf-cxx
 
