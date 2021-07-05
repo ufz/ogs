@@ -71,17 +71,27 @@ build linux (no deps, no procs):
     BUILD_PROCESSES: "SteadyStateDiffusion"
     CMAKE_PRESET: ci-simplest
 
-build linux native:
+build linux arch:
   extends:
     - .template-build-linux
     - .test-artifacts
   tags: [shell, envinf]
   needs: [meta]
   variables:
-    CMAKE_PRESET: release
+    CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
       -DOGS_USE_CONAN=OFF
       -DOGS_USE_POETRY=OFF
-      -DOGS_USE_MFRONT=ON
-      -DOGS_USE_XDMF=ON
+
+build linux ubuntu:
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+    - .rules-master-manual
+  tags: [shell, ubuntu]
+  needs: [meta]
+  variables:
+    CMAKE_PRESET: release-all
+    CMAKE_ARGS: >-
+      -DOGS_USE_CONAN=OFF
