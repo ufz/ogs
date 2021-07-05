@@ -24,7 +24,7 @@
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
             <specific_body_force>0 0 0</specific_body_force>
-            <reference_temperature>293.15</reference_temperature>
+            <reference_temperature>T_ref</reference_temperature>
             <process_variables>
                 <process_variable>displacement</process_variable>
             </process_variables>
@@ -82,6 +82,11 @@
         <basis_vector_2>e0</basis_vector_2>
     </local_coordinate_system>
     <parameters>
+        <parameter>
+            <name>T_ref</name>
+            <type>Constant</type>
+            <values>293.15</values>
+        </parameter>
         <parameter>
             <name>e0</name>
             <type>Constant</type>

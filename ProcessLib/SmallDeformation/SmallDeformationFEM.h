@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <limits>
 #include <memory>
 #include <vector>
 
@@ -262,6 +263,8 @@ public:
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
+        auto const& b = _process_data.specific_body_force;
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
@@ -311,14 +314,20 @@ public:
                 .emplace<
                     MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                     eps_prev);
+
+            double const T_ref =
+                _process_data.reference_temperature
+                    ? (*_process_data.reference_temperature)(t, x_position)[0]
+                    : std::numeric_limits<double>::quiet_NaN();
+
             variables_prev[static_cast<int>(MPL::Variable::temperature)]
-                .emplace<double>(_process_data.reference_temperature);
+                .emplace<double>(T_ref);
             variables[static_cast<int>(MPL::Variable::mechanical_strain)]
                 .emplace<
                     MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                     eps);
             variables[static_cast<int>(MPL::Variable::temperature)]
-                .emplace<double>(_process_data.reference_temperature);
+                .emplace<double>(T_ref);
 
             auto&& solution = _ip_data[ip].solid_material.integrateStress(
                 variables_prev, variables, t, x_position, dt, *state);
@@ -332,7 +341,6 @@ public:
             std::tie(sigma, state, C) = std::move(*solution);
 
             auto const rho = _process_data.solid_density(t, x_position)[0];
-            auto const& b = _process_data.specific_body_force;
             local_b.noalias() -=
                 (B.transpose() * sigma - N_u_op.transpose() * rho * b) * w;
             local_Jac.noalias() += B.transpose() * C * B * w;
