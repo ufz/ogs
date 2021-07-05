@@ -451,7 +451,7 @@ static void mapPointOnSurfaceElement(MeshLib::Element const& elem,
     // create plane equation: n*p = d
     auto const p =
         Eigen::Map<Eigen::Vector3d const>(elem.getNode(0)->getCoords());
-    Eigen::Vector3d const n(MeshLib::FaceRule::getSurfaceNormal(&elem));
+    Eigen::Vector3d const n(MeshLib::FaceRule::getSurfaceNormal(elem));
     if (n[2] == 0.0)
     {  // vertical plane, z coordinate is arbitrary
         q[2] = p[2];

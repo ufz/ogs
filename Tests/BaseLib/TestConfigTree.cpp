@@ -360,11 +360,10 @@ TEST(BaseLibConfigTree, GetSubtreeList)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        for (auto p : conf.getConfigSubtreeList("nonexistent_list"))
-        {
-            (void)p;
-            FAIL() << "Expected empty list";
-        }
+        auto const expected_empty_list =
+            conf.getConfigParameterList("nonexistent_list");
+        ASSERT_TRUE(expected_empty_list.empty()) << "Expected empty list";
+
         EXPECT_ERR_WARN(cbs, false, false);
 
         int i = 0;
@@ -392,11 +391,10 @@ TEST(BaseLibConfigTree, GetParamList)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        for (auto p : conf.getConfigParameterList("nonexistent_list"))
-        {
-            (void)p;
-            FAIL() << "Expected empty list";
-        }
+        auto const expected_empty_list =
+            conf.getConfigParameterList("nonexistent_list");
+        ASSERT_TRUE(expected_empty_list.empty()) << "Expected empty list";
+
         EXPECT_ERR_WARN(cbs, false, false);
 
         int i = 0;
@@ -442,11 +440,10 @@ TEST(BaseLibConfigTree, GetValueList)
     {
         auto const conf = makeConfigTree(ptree, cbs);
 
-        for (auto p : conf.getConfigParameterList<int>("nonexistent_list"))
-        {
-            (void)p;
-            FAIL() << "Expected empty list";
-        }
+        auto const expected_empty_list =
+            conf.getConfigParameterList<int>("nonexistent_list");
+        ASSERT_TRUE(expected_empty_list.empty()) << "Expected empty list";
+
         EXPECT_ERR_WARN(cbs, false, false);
 
         int n = 0;

@@ -91,11 +91,11 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
 
     DBUG("Create RichardsComponentTransportProcess.");
 
-    auto const staggered_scheme =
+    auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(staggered_scheme && (*staggered_scheme == "staggered"));
+        !(coupling_scheme && (*coupling_scheme == "staggered"));
 
     // Process variable.
 
@@ -123,14 +123,6 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     else  // staggered scheme.
     {
         OGS_FATAL("The staggered coupling scheme is not implemented.");
-
-        using namespace std::string_literals;
-        for (auto const& variable_name : {"concentration"s, "pressure"s})
-        {
-            auto per_process_variables =
-                findProcessVariables(variables, pv_config, {variable_name});
-            process_variables.push_back(std::move(per_process_variables));
-        }
     }
 
     // Specific body force parameter.

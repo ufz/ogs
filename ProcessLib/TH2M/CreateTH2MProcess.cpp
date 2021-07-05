@@ -81,11 +81,11 @@ std::unique_ptr<Process> createTH2MProcess(
     WARN("  https://gitlab.opengeosys.org/ogs/ogs/-/issues ");
     WARN(" ");
 
-    auto const staggered_scheme =
+    auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__TH2M__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(staggered_scheme && (*staggered_scheme == "staggered"));
+        !(coupling_scheme && (*coupling_scheme == "staggered"));
 
     // Process variable.
     //! \ogs_file_param{prj__processes__process__TH2M__process_variables}

@@ -109,16 +109,16 @@ namespace ProcessLib::HydroMechanics
 /// The LocalDataInitializer is a functor creating a local assembler data with
 /// corresponding to the mesh element type shape functions and calling
 /// initialization of the new local assembler data.
-/// For example for MeshLib::Line a local assembler data with template argument
-/// NumLib::ShapeLine2 is created.
+/// For example for MeshLib::Quad a local assembler data with template argument
+/// NumLib::ShapeQuad4 is created.
 ///
 /// \attention This is modified version of the ProcessLib::LocalDataInitializer
 /// class which does not include line or point elements. For the shape functions
 /// of order 2 (used for displacement) a shape function of order 1 will be used
-/// for the pressure.
+/// for the scalar variables.
 template <typename LocalAssemblerInterface,
           template <typename, typename, typename, int> class LocalAssemblerData,
-          unsigned GlobalDim, typename... ConstructorArgs>
+          int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:
@@ -134,7 +134,7 @@ public:
 
         if (shapefunction_order == 1)
         {
- // /// Quads and Hexahedra ///////////////////////////////////
+            // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -162,7 +162,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapeHex8>();
 #endif
 
- // /// Simplices ////////////////////////////////////////////////
+            // /// Simplices ////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -188,7 +188,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapeTet4>();
 #endif
 
- // /// Prisms ////////////////////////////////////////////////////
+            // /// Prisms ////////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -202,7 +202,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapePrism6>();
 #endif
 
- // /// Pyramids //////////////////////////////////////////////////
+            // /// Pyramids //////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -218,7 +218,7 @@ public:
         }
         else if (shapefunction_order == 2)
         {
- // /// Quads and Hexahedra ///////////////////////////////////
+            // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -234,7 +234,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapeHex20>();
 #endif
 
- // /// Simplices ////////////////////////////////////////////////
+            // /// Simplices ////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_TRI) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -248,7 +248,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapeTet10>();
 #endif
 
- // /// Prisms ////////////////////////////////////////////////////
+            // /// Prisms ////////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PRISM) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -256,7 +256,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapePrism15>();
 #endif
 
- // /// Pyramids //////////////////////////////////////////////////
+            // /// Pyramids //////////////////////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_PYRAMID) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -304,9 +304,10 @@ private:
 
     template <typename ShapeFunctionDisplacement,
               typename ShapeFunctionPressure>
-    using LAData = LocalAssemblerData<
-        ShapeFunctionDisplacement, ShapeFunctionPressure,
-        IntegrationMethod<ShapeFunctionDisplacement>, GlobalDim>;
+    using LAData =
+        LocalAssemblerData<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                           IntegrationMethod<ShapeFunctionDisplacement>,
+                           GlobalDim>;
 
     /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
     /// depending whether the global dimension is less than the shape function's

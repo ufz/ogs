@@ -12,9 +12,9 @@
 
 #include <functional>
 #include <memory>
+#include <type_traits>
 #include <typeindex>
 #include <typeinfo>
-#include <type_traits>
 #include <unordered_map>
 
 #include "MeshLib/Elements/Elements.h"
@@ -212,8 +212,8 @@ public:
     /// The index \c id is not necessarily the mesh item's id. Especially when
     /// having multiple meshes it will differ from the latter.
     LADataIntfPtr operator()(std::size_t const id,
-                    MeshLib::Element const& mesh_item,
-                    ConstructorArgs&&... args) const
+                             MeshLib::Element const& mesh_item,
+                             ConstructorArgs&&... args) const
     {
         auto const type_idx = std::type_index(typeid(mesh_item));
         auto const it = _builder.find(type_idx);
@@ -256,7 +256,6 @@ private:
             static_cast<std::integral_constant<
                 bool, (GlobalDim >= ShapeFunction::DIM)>*>(nullptr));
     }
-
 
     /// Mapping of element types to local assembler constructors.
     std::unordered_map<std::type_index, LADataBuilder> _builder;

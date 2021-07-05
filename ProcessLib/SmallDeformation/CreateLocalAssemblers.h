@@ -12,10 +12,8 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-
 #include "LocalDataInitializer.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace ProcessLib
 {
@@ -46,9 +44,7 @@ void createLocalAssemblers(
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
-        initializer,
-        mesh_elements,
-        local_assemblers,
+        initializer, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 

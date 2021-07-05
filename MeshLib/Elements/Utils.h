@@ -49,7 +49,7 @@ inline Eigen::Vector3d calculateNormalizedSurfaceNormal(
     if (surface_element.getDimension() < 2)
     {
         auto const bulk_element_normal =
-            MeshLib::FaceRule::getSurfaceNormal(&bulk_element);
+            MeshLib::FaceRule::getSurfaceNormal(bulk_element);
         auto const v0 = Eigen::Map<Eigen::Vector3d const>(
             surface_element.getNode(0)->getCoords());
         auto const v1 = Eigen::Map<Eigen::Vector3d const>(
@@ -60,7 +60,7 @@ inline Eigen::Vector3d calculateNormalizedSurfaceNormal(
     else
     {
         surface_element_normal =
-            MeshLib::FaceRule::getSurfaceNormal(&surface_element);
+            MeshLib::FaceRule::getSurfaceNormal(surface_element);
     }
 
     surface_element_normal.normalize();

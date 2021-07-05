@@ -113,8 +113,9 @@ namespace ProcessLib::TH2M
 /// NumLib::ShapeQuad4 is created.
 ///
 /// \attention This is modified version of the ProcessLib::LocalDataInitializer
-/// class which does not include line elements, allows only shapefunction of
-/// order 2.
+/// class which does not include line or point elements. For the shape functions
+/// of order 2 (used for displacement) a shape function of order 1 will be used
+/// for the scalar variables.
 template <typename LocalAssemblerInterface,
           template <typename, typename, typename, int> class LocalAssemblerData,
           int GlobalDim, typename... ConstructorArgs>

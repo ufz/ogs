@@ -35,8 +35,7 @@ public:
 
     /// Checks if the node order of an element is correct by testing surface
     /// normals.  For 0D elements this always returns true.
-    static bool testElementNodeOrder(const Element* /*e*/) { return true; }
-
+    static bool testElementNodeOrder(Element const& /*e*/) { return true; }
 };
 
 }  // namespace MeshLib

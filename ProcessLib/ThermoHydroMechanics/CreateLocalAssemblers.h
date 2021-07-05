@@ -9,10 +9,9 @@
 
 #pragma once
 
-#include <spdlog/spdlog.h>
-
 #include <vector>
 
+#include "BaseLib/Logging.h"
 #include "LocalDataInitializer.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 

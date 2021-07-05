@@ -177,7 +177,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     std::vector<IndexType> ids;
     for (auto const& bc : *_known_solutions)
     {
-        std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
+        ids.insert(end(ids), begin(bc.ids), end(bc.ids));
     }
 
     // For the Newton method the values must be zero
@@ -280,9 +280,8 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     std::vector<double> values;
     for (auto const& bc : *_known_solutions)
     {
-        std::copy(bc.ids.cbegin(), bc.ids.cend(), std::back_inserter(ids));
-        std::copy(bc.values.cbegin(), bc.values.cend(),
-                  std::back_inserter(values));
+        ids.insert(end(ids), begin(bc.ids), end(bc.ids));
+        values.insert(end(values), begin(bc.values), end(bc.values));
     }
     MathLib::applyKnownSolution(A, rhs, x, ids, values);
 }

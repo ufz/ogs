@@ -31,16 +31,16 @@ public:
      * Checks if the node order of an element is correct by testing surface normals.
      * For 2D elements true is returned if the normal points (roughly) upwards.
      */
-    static bool testElementNodeOrder(const Element* /*e*/);
+    static bool testElementNodeOrder(Element const& e);
 
     /// \returns the first vector forming the surface' plane
-    static Eigen::Vector3d getFirstSurfaceVector(Element const* const e);
+    static Eigen::Vector3d getFirstSurfaceVector(Element const& e);
 
     /// \returns the second vector forming the surface' plane
-    static Eigen::Vector3d getSecondSurfaceVector(Element const* const e);
+    static Eigen::Vector3d getSecondSurfaceVector(Element const& e);
 
     /// Returns the surface normal of a 2D element.
-    static Eigen::Vector3d getSurfaceNormal(const Element* e);
+    static Eigen::Vector3d getSurfaceNormal(Element const& e);
 
 }; /* class */
 

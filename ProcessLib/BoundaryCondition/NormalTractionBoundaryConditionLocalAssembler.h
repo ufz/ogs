@@ -95,7 +95,7 @@ public:
         }
         else
         {
-            auto const n = MeshLib::FaceRule::getSurfaceNormal(&e).normalized();
+            auto const n = MeshLib::FaceRule::getSurfaceNormal(e).normalized();
             for (decltype(GlobalDim) i = 0; i < GlobalDim; ++i)
             {
                 element_normal[i] = n[i];

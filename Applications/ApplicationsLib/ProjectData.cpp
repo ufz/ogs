@@ -1169,7 +1169,7 @@ void ProjectData::parseLinearSolvers(BaseLib::ConfigTree const& config)
 
 void ProjectData::parseNonlinearSolvers(BaseLib::ConfigTree const& config)
 {
-    DBUG("Reading linear solver configuration.");
+    DBUG("Reading non-linear solver configuration.");
 
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver}
     for (auto conf : config.getConfigSubtreeList("nonlinear_solver"))
