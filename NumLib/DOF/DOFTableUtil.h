@@ -43,10 +43,9 @@ LocalToGlobalIndexMap::RowColumnIndices getRowColumnIndices(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<GlobalIndexType>& indices);
 
-//! Computes the specified norm of the given global component of the given vector x.
-//! \remark
-//! \c x is typically the solution vector of a monolithically coupled process
-//! with several primary variables.
+//! Computes the specified norm of the given global component of the given
+//! vector x. \remark \c x is typically the solution vector of a monolithically
+//! coupled process with several primary variables.
 double norm(GlobalVector const& x, unsigned const global_component,
             MathLib::VecNormType norm_type,
             LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);

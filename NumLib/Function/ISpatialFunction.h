@@ -18,9 +18,9 @@
 
 namespace NumLib
 {
-
 /**
- * \brief Interface class for any functions of spatial coordinates \f$f(x,y,z)\f$
+ * \brief Interface class for any functions of spatial coordinates
+ * \f$f(x,y,z)\f$
  */
 class ISpatialFunction
 {

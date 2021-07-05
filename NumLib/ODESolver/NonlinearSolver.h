@@ -212,8 +212,8 @@ private:
     const int _maxiter;  //!< maximum number of iterations
 
     GlobalVector* _r_neq = nullptr;  //!< non-equilibrium initial residuum.
-    std::size_t _A_id = 0u;      //!< ID of the \f$ A \f$ matrix.
-    std::size_t _rhs_id = 0u;    //!< ID of the right-hand side vector.
+    std::size_t _A_id = 0u;          //!< ID of the \f$ A \f$ matrix.
+    std::size_t _rhs_id = 0u;        //!< ID of the right-hand side vector.
     std::size_t _x_new_id = 0u;  //!< ID of the vector storing the solution of
                                  //! the linearized equation.
     std::size_t _r_neq_id = 0u;  //!< ID of the non-equilibrium initial
@@ -236,9 +236,8 @@ private:
  *         the Picard or Newton-Raphson method
  */
 std::pair<std::unique_ptr<NonlinearSolverBase>, NonlinearSolverTag>
-createNonlinearSolver(
-    GlobalLinearSolver& linear_solver,
-    BaseLib::ConfigTree const& config);
+createNonlinearSolver(GlobalLinearSolver& linear_solver,
+                      BaseLib::ConfigTree const& config);
 
 //! @}
 

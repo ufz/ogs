@@ -14,7 +14,6 @@
 
 namespace NumLib
 {
-
 /**
  *  Shape function for a 5-nodes pyramid element in natural coordinates
  *

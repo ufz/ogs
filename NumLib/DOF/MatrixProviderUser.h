@@ -16,7 +16,6 @@
 
 namespace NumLib
 {
-
 class MatrixSpecificationsProvider
 {
 public:
@@ -25,7 +24,6 @@ public:
 
     virtual ~MatrixSpecificationsProvider() = default;
 };
-
 
 /*! Manages storage for vectors.
  *
@@ -39,17 +37,17 @@ public:
  * later on. Thereby the implementation of this interface can decide, whether
  * the storage for the specific vector can be freed or reused in the meantime.
  *
- * All get-methods of this class come in two variants: One with an \c id argument,
- * and one without. The latter makes it possible to temporarily release a vector
- * during the program run and re-acquire it again. The former variant is intended
- * as a short-cut that simplifies vector acquisition for callers that will use
- * the same vector throughout all of their lifetime without releasing it
- * intermediately.
+ * All get-methods of this class come in two variants: One with an \c id
+ * argument, and one without. The latter makes it possible to temporarily
+ * release a vector during the program run and re-acquire it again. The former
+ * variant is intended as a short-cut that simplifies vector acquisition for
+ * callers that will use the same vector throughout all of their lifetime
+ * without releasing it intermediately.
  *
  * \attention
- * The first time a vector is acquired by a method with \c id argument, the \c id
- * has to be initialized with zero. The respective method then will set the \c id
- * to the specific \c id of the returned vector.
+ * The first time a vector is acquired by a method with \c id argument, the \c
+ * id has to be initialized with zero. The respective method then will set the
+ * \c id to the specific \c id of the returned vector.
  */
 class VectorProvider
 {
@@ -64,11 +62,13 @@ public:
     virtual GlobalVector& getVector(GlobalVector const& x, std::size_t& id) = 0;
 
     //! Get a vector according to the given specifications.
-    virtual GlobalVector& getVector(MathLib::MatrixSpecifications const& ms) = 0;
+    virtual GlobalVector& getVector(
+        MathLib::MatrixSpecifications const& ms) = 0;
 
     //! Get a vector according to the given specifications in the storage
     //! of the vector with the given \c id.
-    virtual GlobalVector& getVector(MathLib::MatrixSpecifications const& ms, std::size_t& id) = 0;
+    virtual GlobalVector& getVector(MathLib::MatrixSpecifications const& ms,
+                                    std::size_t& id) = 0;
 
     //! Release the given vector.
     //!
@@ -91,7 +91,8 @@ public:
 
     //! Get a matrix according to the given specifications in the storage
     //! of the matrix with the given \c id.
-    virtual GlobalMatrix& getMatrix(MathLib::MatrixSpecifications const& ms, std::size_t& id) = 0;
+    virtual GlobalMatrix& getMatrix(MathLib::MatrixSpecifications const& ms,
+                                    std::size_t& id) = 0;
 
     //! Release the given matrix.
     //!
@@ -102,4 +103,4 @@ public:
     virtual ~MatrixProvider() = default;
 };
 
-} // namespace NumLib
+}  // namespace NumLib

@@ -12,33 +12,31 @@
 
 #pragma once
 
-#include <ostream>
-
 #include <Eigen/Core>
+#include <ostream>
 
 namespace NumLib
 {
-
 /**
-  * \brief Shape matrix type to be calculated
-  */
+ * \brief Shape matrix type to be calculated
+ */
 enum class ShapeMatrixType
 {
-    N,      ///< calculates N
-    DNDR,   ///< calculates dNdr
-    N_J,    ///< calculates N, dNdr, J, and detJ
-    DNDR_J, ///< calculates dNdr, J, and detJ
-    DNDX,   ///< calculates dNdr, J, detJ, invJ, and dNdx
-    ALL     ///< calculates all
+    N,       ///< calculates N
+    DNDR,    ///< calculates dNdr
+    N_J,     ///< calculates N, dNdr, J, and detJ
+    DNDR_J,  ///< calculates dNdr, J, and detJ
+    DNDX,    ///< calculates dNdr, J, detJ, invJ, and dNdx
+    ALL      ///< calculates all
 };
 
 /**
  * \brief Coordinates mapping matrices at particular location
  *
  * \tparam T_N      Vector type for shape functions
- * \tparam T_DNDR   Matrix type for gradient of shape functions in natural coordinates
- * \tparam T_J      Jacobian matrix type
- * \tparam T_DNDX   Matrix type for gradient of shape functions in physical coordinates
+ * \tparam T_DNDR   Matrix type for gradient of shape functions in natural
+ * coordinates \tparam T_J      Jacobian matrix type \tparam T_DNDX   Matrix
+ * type for gradient of shape functions in physical coordinates
  */
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 struct ShapeMatrices
@@ -49,11 +47,13 @@ struct ShapeMatrices
     using DxShapeType = T_DNDX;
 
     ShapeType N;        ///< Vector of shape functions, N(r)
-    DrShapeType dNdr;   ///< Matrix of gradient of shape functions in natural coordinates, dN(r)/dr
+    DrShapeType dNdr;   ///< Matrix of gradient of shape functions in natural
+                        ///< coordinates, dN(r)/dr
     JacobianType J;     ///< Jacobian matrix, J=dx/dr
     double detJ;        ///< Determinant of the Jacobian
     JacobianType invJ;  ///< Inverse matrix of the Jacobian
-    DxShapeType dNdx;   ///< Matrix of gradient of shape functions in physical coordinates, dN(r)/dx
+    DxShapeType dNdx;   ///< Matrix of gradient of shape functions in physical
+                        ///< coordinates, dN(r)/dx
     double integralMeasure;
 
     /** Not default constructible, dimensions always must be given.
@@ -102,10 +102,10 @@ struct ShapeMatrices
      * writes the matrix entries into the output stream
      * @param out the output stream
      */
-    void write (std::ostream& out) const;
+    void write(std::ostream& out) const;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-}; // ShapeMatrices
+};  // ShapeMatrices
 
 }  // namespace NumLib
 

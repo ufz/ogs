@@ -10,9 +10,8 @@
 
 #pragma once
 
-#include "numlib_export.h"
-
 #include "MatrixProviderUser.h"
+#include "numlib_export.h"
 
 namespace NumLib
 {

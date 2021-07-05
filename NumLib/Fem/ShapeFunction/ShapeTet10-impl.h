@@ -10,9 +10,8 @@
 
 namespace NumLib
 {
-
 template <class T_X, class T_N>
-void ShapeTet10::computeShapeFunction(const T_X &r, T_N &N)
+void ShapeTet10::computeShapeFunction(const T_X& r, T_N& N)
 {
     N[0] = 2. * (1 - r[0] - r[1] - r[2]) * (0.5 - r[0] - r[1] - r[2]);
     N[1] = r[0] * (2. * r[0] - 1);
@@ -27,7 +26,7 @@ void ShapeTet10::computeShapeFunction(const T_X &r, T_N &N)
 }
 
 template <class T_X, class T_N>
-void ShapeTet10::computeGradShapeFunction(const T_X &r, T_N &dNdr)
+void ShapeTet10::computeGradShapeFunction(const T_X& r, T_N& dNdr)
 {
     dNdr[0] = 4.0 * (r[0] + r[1] + r[2]) - 3.0;
     dNdr[1] = 4. * r[0] - 1.;
@@ -40,7 +39,7 @@ void ShapeTet10::computeGradShapeFunction(const T_X &r, T_N &dNdr)
     dNdr[8] = 4.0 * r[2];
     dNdr[9] = 0.0;
 
-    dNdr[10] =  4. * (r[0] + r[1] + r[2]) - 3.;
+    dNdr[10] = 4. * (r[0] + r[1] + r[2]) - 3.;
     dNdr[11] = 0.0;
     dNdr[12] = 4. * r[1] - 1.;
     dNdr[13] = 0.;

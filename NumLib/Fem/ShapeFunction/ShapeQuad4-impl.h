@@ -12,9 +12,8 @@
 
 namespace NumLib
 {
-
 template <class T_X, class T_N>
-void ShapeQuad4::computeShapeFunction(const T_X &r, T_N &N)
+void ShapeQuad4::computeShapeFunction(const T_X& r, T_N& N)
 {
     N[0] = (1.0 + r[0]) * (1.0 + r[1]) / 4;
     N[1] = (1.0 - r[0]) * (1.0 + r[1]) / 4;
@@ -23,7 +22,7 @@ void ShapeQuad4::computeShapeFunction(const T_X &r, T_N &N)
 }
 
 template <class T_X, class T_N>
-void ShapeQuad4::computeGradShapeFunction(const T_X &r, T_N &dN)
+void ShapeQuad4::computeGradShapeFunction(const T_X& r, T_N& dN)
 {
     dN[0] = +(1.0 + r[1]) / 4;
     dN[1] = -(1.0 + r[1]) / 4;

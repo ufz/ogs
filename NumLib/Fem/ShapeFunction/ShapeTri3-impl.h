@@ -14,9 +14,8 @@
 
 namespace NumLib
 {
-
 template <class T_X, class T_N>
-void ShapeTri3::computeShapeFunction(const T_X &r, T_N &N)
+void ShapeTri3::computeShapeFunction(const T_X& r, T_N& N)
 {
     N[0] = 1. - r[0] - r[1];
     N[1] = r[0];
@@ -24,13 +23,13 @@ void ShapeTri3::computeShapeFunction(const T_X &r, T_N &N)
 }
 
 template <class T_X, class T_N>
-void ShapeTri3::computeGradShapeFunction(const T_X &/*r*/, T_N &dN)
+void ShapeTri3::computeGradShapeFunction(const T_X& /*r*/, T_N& dN)
 {
-    //dN/dr
+    // dN/dr
     dN[0] = -1.0;
-    dN[1] =  1.0;
-    dN[2] =  0.0;
-    //dN/ds
+    dN[1] = 1.0;
+    dN[2] = 0.0;
+    // dN/ds
     dN[3] = -1.0;
     dN[4] = 0.0;
     dN[5] = 1.0;

@@ -24,9 +24,7 @@ public:
     using WeightedPoint = MathLib::TemplateWeightedPoint<double, double, 1>;
 
     /// IntegrationPoint constructor for given order.
-    explicit IntegrationPoint(unsigned /* order */)
-    {
-    }
+    explicit IntegrationPoint(unsigned /* order */) {}
 
     /// Change the integration order.
     static void setIntegrationOrder(unsigned /* order */) {}
@@ -37,13 +35,15 @@ public:
     /// Return the number of sampling points.
     static constexpr unsigned getNumberOfPoints() { return 1; }
 
-    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
+    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned)
+    /// const
     static WeightedPoint getWeightedPoint(unsigned igp)
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
-    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
+    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned,
+    /// unsigned)
     static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
     {
         (void)order;

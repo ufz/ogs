@@ -13,9 +13,8 @@
 #include <functional>
 #include <vector>
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-
 #include "ExtrapolatableElement.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
 namespace NumLib
 {
@@ -136,6 +135,7 @@ public:
     }
 
     std::size_t size() const override { return _local_assemblers.size(); }
+
 private:
     LocalAssemblerCollection const& _local_assemblers;
     IntegrationPointValuesMethod const _integration_point_values_method;

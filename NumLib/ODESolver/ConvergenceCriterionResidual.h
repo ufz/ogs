@@ -45,7 +45,7 @@ private:
     double _residual_norm_0;
 };
 
-std::unique_ptr<ConvergenceCriterionResidual> createConvergenceCriterionResidual(
-    BaseLib::ConfigTree const& config);
+std::unique_ptr<ConvergenceCriterionResidual>
+createConvergenceCriterionResidual(BaseLib::ConfigTree const& config);
 
 }  // namespace NumLib

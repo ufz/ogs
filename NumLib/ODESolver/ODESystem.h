@@ -10,10 +10,9 @@
 
 #pragma once
 
+#include "EquationSystem.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/IndexValueVector.h"
-
-#include "EquationSystem.h"
 #include "Types.h"
 
 namespace NumLib

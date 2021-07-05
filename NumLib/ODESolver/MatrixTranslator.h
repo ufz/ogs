@@ -12,10 +12,9 @@
 
 #include <memory>
 
+#include "MathLib/LinAlg/LinAlg.h"
 #include "TimeDiscretization.h"
 #include "Types.h"
-
-#include "MathLib/LinAlg/LinAlg.h"
 
 namespace NumLib
 {
@@ -32,7 +31,8 @@ template <ODESystemTag ODETag>
 class MatrixTranslator;
 
 /*! Translates matrices assembled by a provided first order implicit
- * quasi-linear ODE to some other matrices suitable to be passed on to nonlinear solvers.
+ * quasi-linear ODE to some other matrices suitable to be passed on to nonlinear
+ * solvers.
  *
  * \see ODESystemTag::FirstOrderImplicitQuasilinear
  */
@@ -107,8 +107,7 @@ public:
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
-                         GlobalVector const& b,
-                         GlobalVector const& x_curr,
+                         GlobalVector const& b, GlobalVector const& x_curr,
                          GlobalVector const& xdot,
                          GlobalVector& res) const override;
 
@@ -118,8 +117,7 @@ public:
                          GlobalMatrix& Jac_out) const override;
 
 private:
-    TimeDiscretization const&
-        _time_disc;  //!< the time discretization used.
+    TimeDiscretization const& _time_disc;  //!< the time discretization used.
 
     //! ID of the vector storing intermediate computations.
     mutable std::size_t _tmp_id = 0u;

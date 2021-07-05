@@ -1,41 +1,57 @@
 /*! \defgroup ODESolver ODE Solver Library
 
-This ODE solver library has been designed with an implicit first-order quasilinear ODE in mind.
-However, it is in principle not restricted to such a kind of equation, but can be extended
-to also solve other equation types.
-In particular it is possible to introduce equation types that are no ODEs, but are nonlinear equations without time derivative terms.
+This ODE solver library has been designed with an implicit first-order
+quasilinear ODE in mind. However, it is in principle not restricted to such a
+kind of equation, but can be extended to also solve other equation types. In
+particular it is possible to introduce equation types that are no ODEs, but are
+nonlinear equations without time derivative terms.
 
-The aim of the library's design is being able to formulate FEM processes without having to care which time discretization scheme and which nonlinear iteration method will be used to solve it.
+The aim of the library's design is being able to formulate FEM processes without
+having to care which time discretization scheme and which nonlinear iteration
+method will be used to solve it.
 
-The library offers different time discretization schemes, cf. \ref concept_time_discretization "the conceputal remarks on them",
-namely the forward and backward Euler and Crank-Nicolson methods and Backward Differentiation Formulas.
-The design follows Gear's method, which also underlies the DASSL algorithm of
-Petzold et al., cf. Differential-algebraic equations article, section
-[Numerical methods/Direct discretization]
+The library offers different time discretization schemes, cf. \ref
+concept_time_discretization "the conceputal remarks on them", namely the forward
+and backward Euler and Crank-Nicolson methods and Backward Differentiation
+Formulas. The design follows Gear's method, which also underlies the DASSL
+algorithm of Petzold et al., cf. Differential-algebraic equations article,
+section [Numerical methods/Direct discretization]
 (http://www.scholarpedia.org/article/Differential-algebraic_equations#Numerical_methods.2FDirect_discretization)
 \cite Campbell:2008.
 
-A rough overview over the interplay between the various parts of this library is given in the image below.
-Therein red symbols indicate which classes \e own which matrices or vectors
-(for the meaning of the different symbols refer to the documentation of the respective classes).
-The word \e own should not be taken too strict in the sense of C++ member ownership, although currently it is implemented as such; but in the future this implementation detail might change.
-Rather \e own means that the class is in charge of the respective matrix or vector, i.e., it can read from and write to it or pass it on to functions;
-or in other words: The class knows about the meaning of that matrix/vector.
-Note that only matrices and vectors that describe some proper state of the respective classes are shown; those storing only intermediate computations have been omitted from the image.
+A rough overview over the interplay between the various parts of this library is
+given in the image below. Therein red symbols indicate which classes \e own
+which matrices or vectors (for the meaning of the different symbols refer to the
+documentation of the respective classes). The word \e own should not be taken
+too strict in the sense of C++ member ownership, although currently it is
+implemented as such; but in the future this implementation detail might change.
+Rather \e own means that the class is in charge of the respective matrix or
+vector, i.e., it can read from and write to it or pass it on to functions; or in
+other words: The class knows about the meaning of that matrix/vector. Note that
+only matrices and vectors that describe some proper state of the respective
+classes are shown; those storing only intermediate computations have been
+omitted from the image.
 
-\image html  ode-solver-concept.png "Interplay of the different parts of the ODE solver library at the example of a first-order implicit quasilinear ODE."
-\image latex ode-solver-concept.pdf "Interplay of the different parts of the ODE solver library at the example of a first-order implicit quasilinear ODE."
+\image html  ode-solver-concept.png "Interplay of the different parts of the ODE
+solver library at the example of a first-order implicit quasilinear ODE." \image
+latex ode-solver-concept.pdf "Interplay of the different parts of the ODE solver
+library at the example of a first-order implicit quasilinear ODE."
 
-In the ODE solver library the instances of some classes can work together with several instances of other classes throughout there lifetime, whereas they have a strict one-to-one correspondence to objects of some different type.
-Those relations are given in the following table.
+In the ODE solver library the instances of some classes can work together with
+several instances of other classes throughout there lifetime, whereas they have
+a strict one-to-one correspondence to objects of some different type. Those
+relations are given in the following table.
 
 Class 1                  | Class 2            | Relation | Remarks
 -----------------------: | :----------------- | :------: | :----------
-TimeDiscretizedODESystem | ODESystem          | 1:1      | the ODESystem represents part of the state of the TimeDiscretizedODESystem
-TimeDiscretizedODESystem | TimeDiscretization | 1:1      | analogous for the TimeDiscretization
-TimeDiscretizedODESystem | MatrixTranslator   | 1:1      | analogous for the MatrixTranslator
-NonlinearSolver          | NonlinearSystem    | 1:n      | a nonlinear solver can solve various equations, one after the other
-LinearSolver             | NonlinearSolver    | 1:n      | various NonlinearSolver's can share the same LinearSolver
+TimeDiscretizedODESystem | ODESystem          | 1:1      | the ODESystem
+represents part of the state of the TimeDiscretizedODESystem
+TimeDiscretizedODESystem | TimeDiscretization | 1:1      | analogous for the
+TimeDiscretization TimeDiscretizedODESystem | MatrixTranslator   | 1:1      |
+analogous for the MatrixTranslator NonlinearSolver          | NonlinearSystem |
+1:n      | a nonlinear solver can solve various equations, one after the other
+LinearSolver             | NonlinearSolver    | 1:n      | various
+NonlinearSolver's can share the same LinearSolver
 
 
 */

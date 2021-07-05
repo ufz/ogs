@@ -61,9 +61,8 @@ MeshComponentMap MeshComponentMap::getSubset(
        // all the bulk_mesh_subsets are equal.
         auto const first_mismatch =
             std::adjacent_find(begin(bulk_mesh_subsets), end(bulk_mesh_subsets),
-                               [](auto const& a, auto const& b) {
-                                   return a.getMeshID() != b.getMeshID();
-                               });
+                               [](auto const& a, auto const& b)
+                               { return a.getMeshID() != b.getMeshID(); });
         if (first_mismatch != end(bulk_mesh_subsets))
         {
             OGS_FATAL(
@@ -234,9 +233,8 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
         }
     }
 
-    auto CIPairLess = [](CIPair const& a, CIPair const& b) {
-        return a.first < b.first;
-    };
+    auto CIPairLess = [](CIPair const& a, CIPair const& b)
+    { return a.first < b.first; };
 
     // Create vector of global indices from sub dictionary sorting by component.
     if (!std::is_sorted(pairs.begin(), pairs.end(), CIPairLess))

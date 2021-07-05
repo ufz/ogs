@@ -12,12 +12,11 @@
 
 #pragma once
 
-#include <limits>
-
 #include <boost/multi_index/composite_key.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index_container.hpp>
+#include <limits>
 #include <utility>
 
 #include "MeshLib/Location.h"
@@ -25,11 +24,9 @@
 
 namespace NumLib
 {
-
 /// \internal
 namespace detail
 {
-
 struct Line
 {
     MeshLib::Location location;
@@ -42,19 +39,22 @@ struct Line
 
     Line(MeshLib::Location l, int c, GlobalIndexType i)
         : location(std::move(l)), comp_id(c), global_index(i)
-    {}
+    {
+    }
 
     Line(MeshLib::Location l, int c)
         : location(std::move(l)),
           comp_id(c),
           global_index(std::numeric_limits<GlobalIndexType>::max())
-    {}
+    {
+    }
 
     explicit Line(MeshLib::Location l)
         : location(std::move(l)),
           comp_id(std::numeric_limits<int>::max()),
           global_index(std::numeric_limits<GlobalIndexType>::max())
-    {}
+    {
+    }
 
     friend std::ostream& operator<<(std::ostream& os, Line const& l)
     {
@@ -88,10 +88,18 @@ struct LineByLocationAndComponentComparator
     }
 };
 
-struct ByLocation {};
-struct ByLocationAndComponent {};
-struct ByComponent {};
-struct ByGlobalIndex {};
+struct ByLocation
+{
+};
+struct ByLocationAndComponent
+{
+};
+struct ByComponent
+{
+};
+struct ByGlobalIndex
+{
+};
 
 using ComponentGlobalIndexDict = boost::multi_index::multi_index_container<
     Line, boost::multi_index::indexed_by<
@@ -110,5 +118,5 @@ using ComponentGlobalIndexDict = boost::multi_index::multi_index_container<
                   boost::multi_index::member<Line, GlobalIndexType,
                                              &Line::global_index>>>>;
 
-}    // namespace detail
-}    // namespace NumLib
+}  // namespace detail
+}  // namespace NumLib

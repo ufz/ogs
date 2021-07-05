@@ -27,7 +27,8 @@ class LocalToGlobalIndexMap;
  * @brief Computes a sparsity pattern for the given inputs.
  *
  * @param dof_table            maps mesh nodes to global indices
- * @param mesh                 mesh for which the two parameters above are defined
+ * @param mesh                 mesh for which the two parameters above are
+ * defined
  *
  * @return The computed sparsity pattern.
  */

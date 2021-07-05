@@ -38,6 +38,7 @@ public:
     void checkResidual(const GlobalVector& /*residual*/) override {}
 
     void reset() override { this->_satisfied = true; }
+
 private:
     const std::optional<double> _abstol;
     const std::optional<double> _reltol;

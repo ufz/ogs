@@ -10,9 +10,8 @@
 
 namespace NumLib
 {
-
 template <class T_X, class T_N>
-void ShapeHex8::computeShapeFunction(const T_X &r, T_N &N)
+void ShapeHex8::computeShapeFunction(const T_X& r, T_N& N)
 {
     N[0] = (1.0 - r[0]) * (1.0 - r[1]) * (1.0 - r[2]) * 0.125;
     N[1] = (1.0 + r[0]) * (1.0 - r[1]) * (1.0 - r[2]) * 0.125;
@@ -25,7 +24,7 @@ void ShapeHex8::computeShapeFunction(const T_X &r, T_N &N)
 }
 
 template <class T_X, class T_N>
-void ShapeHex8::computeGradShapeFunction(const T_X &r, T_N &dN)
+void ShapeHex8::computeGradShapeFunction(const T_X& r, T_N& dN)
 {
     // dN/dx
     dN[0] = -(1.0 - r[1]) * (1.0 - r[2]) * 0.125;
@@ -38,8 +37,8 @@ void ShapeHex8::computeGradShapeFunction(const T_X &r, T_N &dN)
     dN[7] = -dN[6];
 
     // dN/dy
-    dN[8]  = -(1.0 - r[0]) * (1.0 - r[2]) * 0.125;
-    dN[9]  = -(1.0 + r[0]) * (1.0 - r[2]) * 0.125;
+    dN[8] = -(1.0 - r[0]) * (1.0 - r[2]) * 0.125;
+    dN[9] = -(1.0 + r[0]) * (1.0 - r[2]) * 0.125;
     dN[10] = -dN[9];
     dN[11] = -dN[8];
     dN[12] = -(1.0 - r[0]) * (1.0 + r[2]) * 0.125;

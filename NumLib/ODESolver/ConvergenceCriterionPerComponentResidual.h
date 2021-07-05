@@ -11,8 +11,9 @@
 #pragma once
 
 #include <vector>
-#include "MathLib/LinAlg/LinAlgEnums.h"
+
 #include "ConvergenceCriterionPerComponent.h"
+#include "MathLib/LinAlg/LinAlgEnums.h"
 
 namespace NumLib
 {

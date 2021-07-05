@@ -107,7 +107,6 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
                                    _residual_norms_0[global_component]);
         _satisfied = _satisfied && (satisfied_abs || satisfied_rel);
     }
-
 }
 
 void ConvergenceCriterionPerComponentResidual::setDOFTable(

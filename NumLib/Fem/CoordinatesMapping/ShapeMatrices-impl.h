@@ -12,17 +12,16 @@
 
 namespace NumLib
 {
-
 namespace detail
 {
 /*
  * zero reset functions for Eigen
  */
-template<class T>
-void setMatrixZero(T &mat)
+template <class T>
+void setMatrixZero(T& mat)
 {
-    //mat.setZero();
-    const std::size_t n = mat.rows()*mat.cols();
+    // mat.setZero();
+    const std::size_t n = mat.rows() * mat.cols();
     auto* v = mat.data();
     for (std::size_t i = 0; i < n; i++)
     {
@@ -30,10 +29,10 @@ void setMatrixZero(T &mat)
     }
 }
 
-template<class T>
-void setVectorZero(T &vec)
+template <class T>
+void setVectorZero(T& vec)
 {
-    //vec.setZero();
+    // vec.setZero();
     const std::size_t n = vec.size();
     auto* v = vec.data();
     for (std::size_t i = 0; i < n; i++)
@@ -46,7 +45,10 @@ void setVectorZero(T &vec)
  * "tag dispatching" technique is used below to emulate explicit specialization
  * of a template function in a template class
  */
-template <ShapeMatrixType FIELD_TYPE> struct ShapeDataFieldType {};
+template <ShapeMatrixType FIELD_TYPE>
+struct ShapeDataFieldType
+{
+};
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 inline void setZero(ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>& shape,
@@ -124,9 +126,10 @@ void ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>::write(std::ostream& out) const
 }
 
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
-std::ostream& operator<< (std::ostream &os, const ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX> &shape)
+std::ostream& operator<<(std::ostream& os,
+                         const ShapeMatrices<T_N, T_DNDR, T_J, T_DNDX>& shape)
 {
-    shape.write (os);
+    shape.write(os);
     return os;
 }
 

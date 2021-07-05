@@ -23,4 +23,4 @@ namespace NumLib
 class TimeStepAlgorithm;
 std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     BaseLib::ConfigTree const& config);
-};
+};  // namespace NumLib

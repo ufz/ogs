@@ -14,12 +14,10 @@
 #include <iosfwd>
 #endif  // NDEBUG
 
+#include <Eigen/Dense>
 #include <vector>
 
-#include <Eigen/Dense>
-
 #include "MathLib/LinAlg/RowColumnIndices.h"
-
 #include "MeshComponentMap.h"
 
 namespace MeshLib
@@ -30,7 +28,6 @@ class Element;
 
 namespace NumLib
 {
-
 /// Row and column indices in global linear algebra objects for each mesh item.
 ///
 /// The row and column indices in global matrix and rhs vector for example,
@@ -59,7 +56,8 @@ public:
     /// each mesh element of the given mesh_subsets.
     ///
     /// \attention This constructor assumes the number of the given mesh subsets
-    /// is equal to the number of variables, i.e. every variable has a single component.
+    /// is equal to the number of variables, i.e. every variable has a single
+    /// component.
     LocalToGlobalIndexMap(std::vector<MeshLib::MeshSubset>&& mesh_subsets,
                           NumLib::ComponentOrder const order);
 
@@ -67,10 +65,10 @@ public:
     /// each mesh element of the given mesh_subsets.
     ///
     /// \param mesh_subsets  a vector of components
-    /// \param vec_var_n_components  a vector of the number of variable components.
-    /// The size of the vector should be equal to the number of variables. Sum of the entries
-    /// should be equal to the size of the mesh_subsets.
-    /// \param order  type of ordering values in a vector
+    /// \param vec_var_n_components  a vector of the number of variable
+    /// components. The size of the vector should be equal to the number of
+    /// variables. Sum of the entries should be equal to the size of the
+    /// mesh_subsets. \param order  type of ordering values in a vector
     LocalToGlobalIndexMap(std::vector<MeshLib::MeshSubset>&& mesh_subsets,
                           std::vector<int> const& vec_var_n_components,
                           NumLib::ComponentOrder const order);
@@ -79,11 +77,11 @@ public:
     /// the given mesh elements
     ///
     /// \param mesh_subsets  a vector of components
-    /// \param vec_var_n_components  a vector of the number of variable components.
-    /// The size of the vector should be equal to the number of variables. Sum of the entries
-    /// should be equal to the size of the mesh_subsets.
-    /// \param vec_var_elements  a vector of active mesh elements for each variable.
-    /// \param order  type of ordering values in a vector
+    /// \param vec_var_n_components  a vector of the number of variable
+    /// components. The size of the vector should be equal to the number of
+    /// variables. Sum of the entries should be equal to the size of the
+    /// mesh_subsets. \param vec_var_elements  a vector of active mesh elements
+    /// for each variable. \param order  type of ordering values in a vector
     LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubset>&& mesh_subsets,
         std::vector<int> const& vec_var_n_components,
@@ -128,7 +126,8 @@ public:
 
     std::size_t getNumberOfElementDOF(std::size_t const mesh_item_id) const;
 
-    std::size_t getNumberOfElementComponents(std::size_t const mesh_item_id) const;
+    std::size_t getNumberOfElementComponents(
+        std::size_t const mesh_item_id) const;
 
     std::vector<int> getElementVariableIDs(
         std::size_t const mesh_item_id) const;
@@ -195,10 +194,12 @@ private:
     std::vector<MeshLib::MeshSubset> _mesh_subsets;
     NumLib::MeshComponentMap _mesh_component_map;
 
-    using Table = Eigen::Matrix<LineIndex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+    using Table = Eigen::Matrix<LineIndex, Eigen::Dynamic, Eigen::Dynamic,
+                                Eigen::RowMajor>;
 
-    /// Table contains for each element (first index) and each component (second index)
-    /// a vector (\c LineIndex) of indices in the global stiffness matrix or vector
+    /// Table contains for each element (first index) and each component (second
+    /// index) a vector (\c LineIndex) of indices in the global stiffness matrix
+    /// or vector
     Table _rows;
 
     /// \see _rows
@@ -207,9 +208,9 @@ private:
     std::vector<int> const _variable_component_offsets;
 #ifndef NDEBUG
     /// Prints first rows of the table, every line, and the mesh component map.
-    friend std::ostream& operator<<(std::ostream& os, LocalToGlobalIndexMap const& map);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    LocalToGlobalIndexMap const& map);
 #endif  // NDEBUG
-
 };
 
-}   // namespace NumLib
+}  // namespace NumLib

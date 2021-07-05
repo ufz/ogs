@@ -11,7 +11,6 @@
 #include <cassert>
 
 #include "MathLib/Point3d.h"
-
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Elements/HexRule20.h"
 #include "MeshLib/Elements/HexRule8.h"
@@ -30,7 +29,6 @@
 #include "MeshLib/Elements/TetRule4.h"
 #include "MeshLib/Elements/TriRule3.h"
 #include "MeshLib/Elements/TriRule6.h"
-
 #include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
@@ -48,7 +46,6 @@
 #include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
 #include "NumLib/Fem/ShapeFunction/ShapeTri6.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-
 #include "ShapeMatrices.h"
 
 namespace NumLib

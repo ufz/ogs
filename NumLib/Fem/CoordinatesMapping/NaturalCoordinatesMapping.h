@@ -48,7 +48,8 @@ struct NaturalCoordinatesMapping
      *
      * @param ele               Mesh element object
      * @param natural_pt        Location in natural coordinates (r,s,t)
-     * @param shapemat          Shape matrix data where calculated shape functions are stored
+     * @param shapemat          Shape matrix data where calculated shape
+     * functions are stored
      * @param global_dim        Global dimension
      */
     static void computeShapeMatrices(const T_MESH_ELEMENT& ele,
@@ -56,7 +57,8 @@ struct NaturalCoordinatesMapping
                                      T_SHAPE_MATRICES& shapemat,
                                      const unsigned global_dim)
     {
-        computeShapeMatrices<ShapeMatrixType::ALL>(ele, natural_pt, shapemat, global_dim);
+        computeShapeMatrices<ShapeMatrixType::ALL>(
+            ele, natural_pt, shapemat, global_dim);
     }
 
     /**

@@ -12,9 +12,9 @@
 
 #include <map>
 
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "Extrapolator.h"
+#include "NumLib/DOF/GlobalMatrixProviders.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace NumLib
 {

@@ -10,11 +10,11 @@
 
 #pragma once
 
+#include <Eigen/Eigen>
 #include <vector>
 
-#include <Eigen/Eigen>
-#include "NumLib/NumericsConfig.h"
 #include "ExtrapolatableElementCollection.h"
+#include "NumLib/NumericsConfig.h"
 
 namespace NumLib
 {

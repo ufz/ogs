@@ -15,7 +15,6 @@
 #include "MeshLib/Elements/Pyramid.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
-
 #include "NumLib/Fem/Integration/IntegrationGaussLegendrePrism.h"
 #include "NumLib/Fem/Integration/IntegrationGaussLegendrePyramid.h"
 #include "NumLib/Fem/Integration/IntegrationGaussLegendreRegular.h"

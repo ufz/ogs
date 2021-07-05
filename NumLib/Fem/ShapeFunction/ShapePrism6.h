@@ -14,7 +14,6 @@
 
 namespace NumLib
 {
-
 /**
  *  Shape function for a 6-nodes prism element in natural coordinates
  *

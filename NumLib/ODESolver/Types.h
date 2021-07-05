@@ -12,12 +12,12 @@
 
 namespace NumLib
 {
-
 //! \addtogroup ODESolver
 //! @{
 
 //! Tag used to specify which nonlinear solver will be used.
-enum class NonlinearSolverTag : bool {
+enum class NonlinearSolverTag : bool
+{
     Picard /*!< Picard fixpoint iteration scheme */,
     Newton /*!< Newton-Raphson iteration scheme */
 };
@@ -32,9 +32,9 @@ enum class ODESystemTag : char
      *  =: r(\dot x, x, t) \stackrel{!}{=} 0 \f$
      */
     FirstOrderImplicitQuasilinear,
-    NeumannBC // Sure, that's misuse of this enum, so sue me!
+    NeumannBC  // Sure, that's misuse of this enum, so sue me!
 };
 
 //! @}
 
-} // namespace NumLib
+}  // namespace NumLib

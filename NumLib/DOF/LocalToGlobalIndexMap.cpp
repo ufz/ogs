@@ -254,9 +254,8 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
 
     transform(cbegin(component_ids), cend(component_ids),
               back_inserter(global_component_ids),
-              [&](auto const component_id) {
-                  return getGlobalComponent(variable_id, component_id);
-              });
+              [&](auto const component_id)
+              { return getGlobalComponent(variable_id, component_id); });
 
     auto mesh_component_map = _mesh_component_map.getSubset(
         _mesh_subsets, new_mesh_subset, global_component_ids);

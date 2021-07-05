@@ -23,17 +23,18 @@ namespace NumLib
 
 /*! Interface of time discretization schemes for first-order ODEs.
  *
- * The purpose of TimeDiscretization instances is to store the solution history of
- * an ODE, i. e., to keep the solution at as many timestamps as is required by the
- * respective time discretization scheme. Furthermore, TimeDiscretization instances
- * compute the discretized approximation of the time derivative \f$ \partial x/\partial t \f$.
+ * The purpose of TimeDiscretization instances is to store the solution history
+ * of an ODE, i. e., to keep the solution at as many timestamps as is required
+ * by the respective time discretization scheme. Furthermore, TimeDiscretization
+ * instances compute the discretized approximation of the time derivative \f$
+ * \partial x/\partial t \f$.
  *
- * \note The method documentation of this class uses quantities introduced in the
- *       following section.
+ * \note The method documentation of this class uses quantities introduced in
+ * the following section.
  *
  * \todo Currently this interface does not yet support adaptive timestepping.
- *       While implementing that will lead to no changes for single-step methods,
- *       for multi-step methods this interface will have to be extended.
+ *       While implementing that will lead to no changes for single-step
+ * methods, for multi-step methods this interface will have to be extended.
  *
  *
  * Discretizing first-order ODEs {#concept_time_discretization}
@@ -49,8 +50,9 @@ namespace NumLib
  *
  * \f[ F(\hat x, x_C, t_C) \stackrel{!}{=} 0. \f]
  *
- * This interface has been designed with first-order implicit quasi-linear ODEs in mind.
- * They can be expressed as follows and are given here only to serve as an example.
+ * This interface has been designed with first-order implicit quasi-linear ODEs
+ * in mind. They can be expressed as follows and are given here only to serve as
+ * an example.
  *
  * \f[ M(x,t)\cdot \dot x + K(x,t) \cdot x - b(x,t)
  *  =: r(\dot x, x, t) \stackrel{!}{=} 0. \f]
@@ -61,27 +63,30 @@ namespace NumLib
  *  =: r(\hat x, x_C, t_C) \stackrel{!}{=} 0. \f]
  *
  * The meaning of indices for \f$ x \f$ and \f$ t \f$ is as follows:
- *   * \f$ C \f$ -- "Current": The values of \f$ x \f$ and \f$ t \f$ at which the discretized
- *                             ODE is being assembled.
- *   * \f$ N \f$ -- "New": The values of \f$ x \f$ and \f$ t \f$ at the new timestep that is
- *                         being calculated right now by the ODE solver.
- *   * \f$ O \f$ -- "Old": The results from the preceding time step (or a linear combination of
- *                         results of the preceding time steps in the case of multistep methods)
- *                         weighted by a scalar factor.
+ *   * \f$ C \f$ -- "Current": The values of \f$ x \f$ and \f$ t \f$ at which
+ * the discretized ODE is being assembled.
+ *   * \f$ N \f$ -- "New": The values of \f$ x \f$ and \f$ t \f$ at the new
+ * timestep that is being calculated right now by the ODE solver.
+ *   * \f$ O \f$ -- "Old": The results from the preceding time step (or a linear
+ * combination of results of the preceding time steps in the case of multistep
+ * methods) weighted by a scalar factor.
  *   * \f$ n \f$ -- Numerical index indicating the timestep.
  *
- * \f$ \hat x \f$ is the discrete approximation of \f$ \dot x := \partial x/\partial t\f$.
- * It is assumed that \f$ \hat x \f$ can be written in the following form:
- * \f[ \hat x = \alpha \cdot x_N - x_O, \f]
- * where \f$ \alpha := \partial \hat x / \partial x_N \f$ is a scalar.
+ * \f$ \hat x \f$ is the discrete approximation of \f$ \dot x := \partial
+ * x/\partial t\f$. It is assumed that \f$ \hat x \f$ can be written in the
+ * following form: \f[ \hat x = \alpha \cdot x_N - x_O, \f] where \f$ \alpha :=
+ * \partial \hat x / \partial x_N \f$ is a scalar.
  *
- * For different time discretization schemes \f$ x_C \f$, \f$ t_C \f$, \f$ x_N \f$,
- * \f$ x_O \f$ and \f$ \alpha \f$ take different values.
- * Those for the time implemented schemes are given in the table below.
+ * For different time discretization schemes \f$ x_C \f$, \f$ t_C \f$, \f$ x_N
+ * \f$, \f$ x_O \f$ and \f$ \alpha \f$ take different values. Those for the time
+ * implemented schemes are given in the table below.
  *
- * Scheme         | \f$ x_C \f$     | \f$ t_C \f$     | \f$ \alpha \f$        | \f$ x_N \f$     | \f$ x_O \f$
- * -------------- | --------------- | --------------- | --------------------- | --------------- | ----------------------
- * Backward Euler | \f$ x_{n+1} \f$ | \f$ t_{n+1} \f$ | \f$ 1/\Delta t \f$    | \f$ x_{n+1} \f$ | \f$ x_n / \Delta t \f$
+ * Scheme         | \f$ x_C \f$     | \f$ t_C \f$     | \f$ \alpha \f$        |
+ * \f$ x_N \f$     | \f$ x_O \f$
+ * -------------- | --------------- | --------------- | --------------------- |
+ * --------------- | ---------------------- Backward Euler | \f$ x_{n+1} \f$ |
+ * \f$ t_{n+1} \f$ | \f$ 1/\Delta t \f$    | \f$ x_{n+1} \f$ | \f$ x_n / \Delta
+ * t \f$
  *
  */
 class TimeDiscretization

@@ -11,12 +11,14 @@
 #pragma once
 
 #include <memory>
+
 #include "MathLib/LinAlg/LinAlg.h"  // For MathLib::VecNormType
 #include "NumLib/NumericsConfig.h"
 
-namespace BaseLib {
+namespace BaseLib
+{
 class ConfigTree;
-}  // BaseLib
+}  // namespace BaseLib
 
 namespace NumLib
 {
@@ -78,7 +80,11 @@ public:
     //! to be done anew. This method will make the ConvergenceCriterion forget
     //! the result of all checks already done, s.t. all necessary checks will
     //! have to be repeated in order to satisfy the ConvergenceCriterion.
-    virtual void reset() { _satisfied = true; _is_first_iteration = false; };
+    virtual void reset()
+    {
+        _satisfied = true;
+        _is_first_iteration = false;
+    };
 
     //! Tell if the convergence criterion is satisfied.
     virtual bool isSatisfied() const { return _satisfied; };
@@ -104,4 +110,4 @@ bool checkRelativeTolerance(double const reltol,
                             double const numerator,
                             double const denominator);
 
-} // namespace NumLib
+}  // namespace NumLib

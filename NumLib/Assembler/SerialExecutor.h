@@ -45,8 +45,7 @@ struct SerialExecutor
     /// \param args additional arguments passed to \c f.
     ///
     template <typename F, typename C, typename... Args_>
-    static void
-    executeDereferenced(F const& f, C const& c, Args_&&... args)
+    static void executeDereferenced(F const& f, C const& c, Args_&&... args)
     {
         for (std::size_t i = 0; i < c.size(); i++)
         {

@@ -14,7 +14,6 @@
 
 namespace NumLib
 {
-
 template <typename IndexType>
 struct IndexValueVector final
 {

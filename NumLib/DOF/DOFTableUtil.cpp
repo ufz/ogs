@@ -75,9 +75,8 @@ double normInfinity(GlobalVector const& x, unsigned const global_component,
                     MeshLib::Mesh const& mesh)
 {
     double res = norm(x, global_component, dof_table, mesh,
-                      [](double res, double value) {
-                          return std::max(res, std::abs(value));
-                      });
+                      [](double res, double value)
+                      { return std::max(res, std::abs(value)); });
 
 #ifdef USE_PETSC
     double global_result = 0.0;

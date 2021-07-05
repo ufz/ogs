@@ -11,7 +11,6 @@
 #pragma once
 
 #include "ConvergenceCriterion.h"
-
 #include "MathLib/LinAlg/LinAlg.h"  // For MathLib::VecNormType
 
 namespace MeshLib
