@@ -8,6 +8,9 @@ if(OGS_USE_MFRONT)
         BuildExternalProject(
             TFEL GIT_REPOSITORY https://github.com/thelfer/tfel.git
             GIT_TAG rliv-${ogs.minimum_version.tfel-rliv}
+            CMAKE_ARGS
+                -DCMAKE_INSTALL_RPATH=<INSTALL_DIR>/lib
+                -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
         )
         set(ENV{TFELHOME} ${PROJECT_BINARY_DIR}/_ext/TFEL)
     endif()
