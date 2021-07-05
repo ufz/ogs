@@ -53,11 +53,12 @@ template <class TestFeType_, template <typename, int> class ShapeMatrixPolicy_>
 struct TestCase
 {
     using TestFeType = TestFeType_;
-    static const int GlobalDim = TestFeType::global_dim;
     using ShapeMatrixTypes =
-        ShapeMatrixPolicy_<typename TestFeType::ShapeFunction, GlobalDim>;
+        ShapeMatrixPolicy_<typename TestFeType::ShapeFunction,
+                           TestFeType::ShapeFunction::DIM>;
     template <typename X>
-    using ShapeMatrixPolicy = ShapeMatrixPolicy_<X, GlobalDim>;
+    using ShapeMatrixPolicy =
+        ShapeMatrixPolicy_<X, TestFeType::ShapeFunction::DIM>;
 };
 
 using TestTypes =
@@ -108,7 +109,7 @@ public:
     using ShapeMatrixPolicy = typename T::template ShapeMatrixPolicy<X>;
     using MeshElementType = typename TestFeType::MeshElementType;
 
-    static const int dim = TestFeType::dim;
+    static const unsigned dim = TestFeType::dim;
     static const unsigned e_nnodes = TestFeType::e_nnodes;
     static const unsigned n_sample_pt_order2 = TestFeType::n_sample_pt_order2;
     static const unsigned n_sample_pt_order3 = TestFeType::n_sample_pt_order3;
@@ -157,7 +158,7 @@ public:
 };  // NumLibFemIsoTest
 
 template <class T>
-const int GradShapeFunctionTest<T>::dim;
+const unsigned GradShapeFunctionTest<T>::dim;
 
 template <class T>
 const unsigned GradShapeFunctionTest<T>::e_nnodes;
