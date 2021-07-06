@@ -428,7 +428,6 @@ template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
 }
 
 
-#if !(VTK_MAJOR_VERSION < 7 || VTK_MAJOR_VERSION == 7 && VTK_MINOR_VERSION < 1)
 template <class Scalar> Scalar& VtkMeshNodalCoordinatesTemplate<Scalar>
 ::GetValueReference(vtkIdType idx) const
 {
@@ -474,41 +473,4 @@ vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>::InsertNextTypedTuple(
     vtkErrorMacro("Read only container.");
     return -1;
 }
-
-#else
-template <class Scalar> Scalar VtkMeshNodalCoordinatesTemplate<Scalar>
-::GetValue(vtkIdType idx)
-{
-    return this->GetValueReference(idx);
-}
-template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
-::GetTupleValue(vtkIdType tupleId, Scalar *tuple)
-{
-    tuple[0] = (*(*this->_nodes)[tupleId])[0];
-    tuple[1] = (*(*this->_nodes)[tupleId])[1];
-    tuple[2] = (*(*this->_nodes)[tupleId])[2];
-}
-
-template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
-::SetTupleValue(vtkIdType, const Scalar*)
-{
-    vtkErrorMacro("Read only container.");
-    return;
-}
-
-template <class Scalar> void VtkMeshNodalCoordinatesTemplate<Scalar>
-::InsertTupleValue(vtkIdType, const Scalar*)
-{
-    vtkErrorMacro("Read only container.");
-    return;
-}
-
-template <class Scalar> vtkIdType VtkMeshNodalCoordinatesTemplate<Scalar>
-::InsertNextTupleValue(const Scalar *)
-{
-    vtkErrorMacro("Read only container.");
-    return -1;
-}
-
-#endif  // vtk version
 }  // namespace MeshLib
