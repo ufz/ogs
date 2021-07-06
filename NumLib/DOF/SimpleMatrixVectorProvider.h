@@ -13,7 +13,8 @@
 #include <map>
 #include <memory>
 
-#include "MatrixProviderUser.h"
+#include "MatrixProvider.h"
+#include "VectorProvider.h"
 
 namespace NumLib
 {
