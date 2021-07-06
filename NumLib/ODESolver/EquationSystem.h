@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "NumLib/DOF/MatrixProviderUser.h"
+#include "MathLib/LinAlg/MatrixSpecifications.h"
 
 namespace NumLib
 {
@@ -27,7 +27,7 @@ enum class IterationResult : char
 
 /*! Collection of basic methods every equation system must provide.
  */
-class EquationSystem : public NumLib::MatrixSpecificationsProvider
+class EquationSystem
 {
 public:
     /*! Check whether this is actually a linear equation system.
@@ -61,6 +61,11 @@ public:
         (void)x;  // by default do nothing
         return IterationResult::SUCCESS;
     }
+
+    virtual MathLib::MatrixSpecifications getMatrixSpecifications(
+        const int process_id) const = 0;
+
+    virtual ~EquationSystem() = default;
 };
 
 //! @}

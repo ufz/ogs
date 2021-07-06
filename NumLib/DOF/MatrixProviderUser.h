@@ -16,15 +16,6 @@
 
 namespace NumLib
 {
-class MatrixSpecificationsProvider
-{
-public:
-    virtual MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int process_id) const = 0;
-
-    virtual ~MatrixSpecificationsProvider() = default;
-};
-
 /*! Manages storage for vectors.
  *
  * This interface provides storage management semantics for vectors, which
