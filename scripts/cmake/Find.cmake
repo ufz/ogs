@@ -104,11 +104,6 @@ find_package(LAPACK QUIET)
 # geotiff ##
 find_package(GEOTIFF)
 
-# lis ##
-if(OGS_USE_LIS)
-    find_package(LIS REQUIRED)
-endif()
-
 if(OGS_USE_MKL)
     find_package(MKL REQUIRED)
 endif()
