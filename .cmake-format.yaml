@@ -158,3 +158,4 @@ parse:
         INSTALL_COMMAND: +
         BUILD_IN_SOURCE: 1
         LOG_OUTPUT_ON_FAILURE: 1
+        CMAKE_ARGS: +
