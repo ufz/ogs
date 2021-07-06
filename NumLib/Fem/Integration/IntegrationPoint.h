@@ -35,15 +35,17 @@ public:
     /// Return the number of sampling points.
     static constexpr unsigned getNumberOfPoints() { return 1; }
 
-    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned)
-    /// const
+    // clang-format off
+    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
+    // clang-format on
     static WeightedPoint getWeightedPoint(unsigned igp)
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
-    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned,
-    /// unsigned)
+    // clang-format off
+    /// \copydoc IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
+    // clang-format on
     static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
     {
         (void)order;

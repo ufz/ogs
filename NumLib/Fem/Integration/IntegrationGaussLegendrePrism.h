@@ -47,17 +47,17 @@ public:
     /// return the number of sampling points
     unsigned getNumberOfPoints() const { return _n_sampl_pt; }
 
-    /// \copydoc
-    /// NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned)
-    /// const
+    // clang-format off
+    /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
+    // clang-format on
     WeightedPoint getWeightedPoint(unsigned igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
 
-    /// \copydoc
-    /// NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned,
-    /// unsigned)
+    // clang-format off
+    /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
+    // clang-format on
     static WeightedPoint getWeightedPoint(unsigned order, unsigned igp)
     {
         (void)order;
