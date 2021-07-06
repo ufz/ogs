@@ -5,7 +5,7 @@
     when: runner_system_failure
 
   before_script:
-    - "echo \"For debugging run: docker run --rm -it -v $CI_BUILDS_DIR:/builds -w=$CI_PROJECT_DIR $CI_JOB_IMAGE\""
+    - 'echo "For debugging run: docker run --rm -it -v $CI_BUILDS_DIR:/builds -w=$CI_PROJECT_DIR $CI_JOB_IMAGE"'
     - build_dir=${BUILD_DIR:-$CMAKE_PRESET}
     - build_dir_full=../build/${build_dir}
     - rm -rf $build_dir_full
@@ -20,17 +20,30 @@
     - cd $build_dir_full
     - |
       if [[ -z "$TARGETS" ]]; then
-          $BUILD_CMD_PREFIX cmake --build . --target package > >(tee make.output)
-          if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
-          if [ "$BUILD_CTEST" = true ] ; then $BUILD_CMD_PREFIX cmake --build . --target ctest ; fi
-            if [[ "$OSTYPE" == "darwin"* ]]; then alias date=gdate ; fi
-            ctest -T Test --no-compress-output -L "$ctest_labels" --repeat until-pass:2 --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'` || ctest_exit=$?
-          if [ "$BUILD_CTEST" = true ] ; then cp Testing/**/Test.xml Tests/ctest.xml ; fi
-            cp Testing/**/Test.xml Tests/ctest.xml
+
+        $BUILD_CMD_PREFIX cmake --build . --target package > >(tee make.output)
+
+        if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build . --target tests ; fi
+
+        if [ "$BUILD_CTEST" = true ]; then
+
+          ctest_labels="default"
+          ctest_timeout=15
+          if [ "$BUILD_CTEST_LARGE" = true ]; then
+            ctest_labels="large|$ctest_labels"
+            ctest_timeout=90
+          fi
+
+          if [[ "$OSTYPE" == "darwin"* ]]; then alias date=gdate ; fi
+
+          ctest -T Test --no-compress-output -L "$ctest_labels" --repeat until-pass:2 --stop-time `date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`
+          cp Testing/**/Test.xml Tests/ctest.xml
+
+        fi
       else
-          $BUILD_CMD_PREFIX cmake --build . --target ${TARGETS} > >(tee make.output)
+        $BUILD_CMD_PREFIX cmake --build . --target ${TARGETS} > >(tee make.output)
       fi
     - |
       if [[ "$CHECK_WARNINGS" = true ]] ; then
-          if [[ $(cat make.output | grep warning -i | grep -v 'WARNING: no license files found') ]]; then printf 'There were compiler warnings:\n\n'; cat make.output | grep warning -i | grep -v 'WARNING: no license files found'; exit 1; fi
+        if [[ $(cat make.output | grep warning -i | grep -v 'WARNING: no license files found') ]]; then printf 'There were compiler warnings:\n\n'; cat make.output | grep warning -i | grep -v 'WARNING: no license files found'; exit 1; fi
       fi
