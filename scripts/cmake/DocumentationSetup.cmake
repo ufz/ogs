@@ -68,6 +68,10 @@ set(DOXYGEN_PREDEFINED
     USE_MKL
     USE_PETSC
 )
+
+set(DOXYGEN_DOT_IMAGE_FORMAT "svg")
+set(DOXYGEN_INTERACTIVE_SVG YES)
+
 set(DOXYGEN_ALIASES
     "per{1} = \\1<sup>-1</sup>"
     "ogs_file_param{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_param__\\1 \\\"\\1\\\""
