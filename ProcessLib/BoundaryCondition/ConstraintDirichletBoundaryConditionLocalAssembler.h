@@ -53,8 +53,7 @@ public:
             std::vector<GlobalVector*> const&)> const& getFlux) = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class ConstraintDirichletBoundaryConditionLocalAssembler final
     : public ConstraintDirichletBoundaryConditionLocalAssemblerInterface
 {

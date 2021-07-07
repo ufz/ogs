@@ -29,8 +29,7 @@ struct VariableDependentNeumannBoundaryConditionData
     NumLib::LocalToGlobalIndexMap const& dof_table_boundary_other_variable;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class VariableDependentNeumannBoundaryConditionLocalAssembler final
     : public GenericNaturalBoundaryConditionLocalAssembler<
           ShapeFunction, IntegrationMethod, GlobalDim>

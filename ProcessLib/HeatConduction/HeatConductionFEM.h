@@ -54,8 +54,7 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class LocalAssemblerData : public HeatConductionLocalAssemblerInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
@@ -271,7 +270,7 @@ public:
             // heat flux only computed for output.
             GlobalDimVectorType const heat_flux = -k * sm.dNdx * local_x;
 
-            for (unsigned d = 0; d < GlobalDim; ++d)
+            for (int d = 0; d < GlobalDim; ++d)
             {
                 _heat_fluxes[d][ip] = heat_flux[d];
             }

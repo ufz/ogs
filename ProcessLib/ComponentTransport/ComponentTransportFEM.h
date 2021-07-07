@@ -144,8 +144,7 @@ protected:
     CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
 {
     // When monolithic scheme is adopted, nodal pressure and nodal concentration

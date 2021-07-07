@@ -115,8 +115,7 @@ namespace ProcessLib
 {
 namespace TES
 {
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     TESLocalAssembler(MeshLib::Element const& e,
                       std::size_t const /*local_matrix_size*/,
@@ -132,8 +131,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
 {
 }
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
 void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
     double const /*t*/, double const /*dt*/, std::vector<double> const& local_x,
     std::vector<double> const& /*local_xdot*/,
@@ -195,8 +193,7 @@ void TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::assemble(
     }
 }
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
 std::vector<double> const&
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     getIntPtSolidDensity(
@@ -208,8 +205,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     return _d.getData().solid_density;
 }
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
 std::vector<double> const&
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     getIntPtLoading(
@@ -230,8 +226,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     return cache;
 }
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
 std::vector<double> const&
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     getIntPtReactionDampingFactor(
@@ -248,8 +243,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     return cache;
 }
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
 std::vector<double> const&
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     getIntPtReactionRate(
@@ -261,8 +255,7 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     return _d.getData().reaction_rate;
 }
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
 std::vector<double> const&
 TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     getIntPtDarcyVelocity(
@@ -305,12 +298,10 @@ TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
     return cache;
 }
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
-bool TESLocalAssembler<
-    ShapeFunction_, IntegrationMethod_,
-    GlobalDim>::checkBounds(std::vector<double> const& local_x,
-                            std::vector<double> const& local_x_prev_ts)
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
+bool TESLocalAssembler<ShapeFunction_, IntegrationMethod_, GlobalDim>::
+    checkBounds(std::vector<double> const& local_x,
+                std::vector<double> const& local_x_prev_ts)
 {
     return _d.getReactionAdaptor().checkBounds(local_x, local_x_prev_ts);
 }

@@ -22,8 +22,8 @@ namespace ProcessLib
 {
 namespace NormalTractionBoundaryCondition
 {
-template <int GlobalDim, template <typename, typename, unsigned>
-                         class LocalAssemblerImplementation>
+template <int GlobalDim,
+          template <typename, typename, int> class LocalAssemblerImplementation>
 NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     NormalTractionBoundaryCondition(
         unsigned const integration_order, unsigned const shapefunction_order,
@@ -58,8 +58,8 @@ NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
         _pressure);
 }
 
-template <int GlobalDim, template <typename, typename, unsigned>
-                         class LocalAssemblerImplementation>
+template <int GlobalDim,
+          template <typename, typename, int> class LocalAssemblerImplementation>
 void NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
                    int const /*process_id*/, GlobalMatrix& K, GlobalVector& b,

@@ -37,8 +37,7 @@ public:
                                       std::vector<GlobalVector*> const&)>) = 0;
 };
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class SurfaceFluxLocalAssembler final
     : public SurfaceFluxLocalAssemblerInterface
 {

@@ -42,8 +42,7 @@ namespace TwoPhaseFlowWithPP
 {
 namespace MPL = MaterialPropertyLib;
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 void TwoPhaseFlowWithPPLocalAssembler<
     ShapeFunction, IntegrationMethod,
     GlobalDim>::assemble(double const t, double const dt,

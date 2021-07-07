@@ -37,12 +37,11 @@ using namespace FeTestData;
 namespace
 {
 // test cases
-template <class TestFeType_,
-          template <typename, unsigned> class ShapeMatrixPolicy_>
+template <class TestFeType_, template <typename, int> class ShapeMatrixPolicy_>
 struct TestCase
 {
     using TestFeType = TestFeType_;
-    static const unsigned GlobalDim = TestFeType::global_dim;
+    static const int GlobalDim = TestFeType::global_dim;
     using ShapeMatrixTypes =
         ShapeMatrixPolicy_<typename TestFeType::ShapeFunction, GlobalDim>;
     template <typename X>

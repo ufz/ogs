@@ -54,7 +54,7 @@ struct EigenMatrixType<0, 1>
 
 /// An implementation of ShapeMatrixPolicy using fixed size (compile-time) eigen
 /// matrices and vectors.
-template <typename ShapeFunction, unsigned GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 struct EigenFixedShapeMatrixPolicy
 {
     template <int N>
@@ -85,7 +85,7 @@ struct EigenFixedShapeMatrixPolicy
 
 /// An implementation of ShapeMatrixPolicy using dynamic size eigen matrices and
 /// vectors.
-template <typename ShapeFunction, unsigned GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 struct EigenDynamicShapeMatrixPolicy
 {
     // Dynamic size local matrices are much slower in allocation than their
@@ -116,13 +116,13 @@ struct EigenDynamicShapeMatrixPolicy
 };
 
 #ifdef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
-template <typename ShapeFunction, unsigned GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 using ShapeMatrixPolicyType =
     EigenDynamicShapeMatrixPolicy<ShapeFunction, GlobalDim>;
 
 const unsigned OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG = 1;
 #else
-template <typename ShapeFunction, unsigned GlobalDim>
+template <typename ShapeFunction, int GlobalDim>
 using ShapeMatrixPolicyType =
     EigenFixedShapeMatrixPolicy<ShapeFunction, GlobalDim>;
 

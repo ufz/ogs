@@ -70,8 +70,7 @@ using IntegrationPointValuesMethod = std::vector<double> const& (
                                     ,
                                     std::vector<double>& /*cache*/) const;
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class LocalAssemblerData : public LocalAssemblerDataInterface
 {
     using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;

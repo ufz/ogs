@@ -31,8 +31,7 @@ namespace HT
 {
 const unsigned NUM_NODAL_DOF = 2;
 
-template <typename ShapeFunction, typename IntegrationMethod,
-          unsigned GlobalDim>
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class MonolithicHTFEM
     : public HTFEM<ShapeFunction, IntegrationMethod, GlobalDim>
 {

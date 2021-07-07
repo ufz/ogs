@@ -120,8 +120,8 @@ namespace ProcessLib
 /// For example for MeshLib::Quad a local assembler data with template argument
 /// NumLib::ShapeQuad4 is created.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, unsigned> class LocalAssemblerData,
-          unsigned GlobalDim, typename... ConstructorArgs>
+          template <typename, typename, int> class LocalAssemblerData,
+          int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
 public:

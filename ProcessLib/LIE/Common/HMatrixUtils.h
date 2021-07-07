@@ -16,7 +16,7 @@ namespace ProcessLib
 {
 /// An implementation of H-Matrix policy using same matrix and vector types
 /// (fixed size or dynamic) as in the ShapeMatrixPolicyType.
-template <typename ShapeFunction, unsigned DisplacementDim>
+template <typename ShapeFunction, int DisplacementDim>
 class HMatrixPolicyType
 {
 private:
@@ -58,7 +58,7 @@ void computeHMatrix(N_Type const& N, HMatrixType& H)
 
     H.setZero();
 
-    for (unsigned j = 0; j < DisplacementDim; j++)
+    for (int j = 0; j < DisplacementDim; j++)
     {
         H.block(j, j * NPOINTS, 1, NPOINTS) = N;
     }

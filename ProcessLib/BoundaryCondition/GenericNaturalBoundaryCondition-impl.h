@@ -14,8 +14,7 @@
 namespace ProcessLib
 {
 template <typename BoundaryConditionData,
-          template <typename, typename, unsigned>
-          class LocalAssemblerImplementation>
+          template <typename, typename, int> class LocalAssemblerImplementation>
 template <typename Data>
 GenericNaturalBoundaryCondition<BoundaryConditionData,
                                 LocalAssemblerImplementation>::
@@ -73,8 +72,7 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
 }
 
 template <typename BoundaryConditionData,
-          template <typename, typename, unsigned>
-          class LocalAssemblerImplementation>
+          template <typename, typename, int> class LocalAssemblerImplementation>
 void GenericNaturalBoundaryCondition<BoundaryConditionData,
                                      LocalAssemblerImplementation>::
     applyNaturalBC(const double t,

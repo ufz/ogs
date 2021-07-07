@@ -64,10 +64,8 @@ public:
         std::vector<double>& cache) const = 0;
 };
 
-template <typename ShapeFunction_, typename IntegrationMethod_,
-          unsigned GlobalDim>
-class TESLocalAssembler final
-    : public TESLocalAssemblerInterface
+template <typename ShapeFunction_, typename IntegrationMethod_, int GlobalDim>
+class TESLocalAssembler final : public TESLocalAssemblerInterface
 {
 public:
     using ShapeFunction = ShapeFunction_;

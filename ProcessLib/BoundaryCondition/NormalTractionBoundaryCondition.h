@@ -27,8 +27,8 @@ class NormalTractionBoundaryConditionLocalAssemblerInterface;
 ///      \bar{t} := \sigma \mathbf{n} = p \mathbf{n},
 /// \f]
 /// where \f$p\f$ is the value on the boundary given by the parameter tag.
-template <int GlobalDim, template <typename, typename, unsigned>
-                         class LocalAssemblerImplementation>
+template <int GlobalDim,
+          template <typename, typename, int> class LocalAssemblerImplementation>
 class NormalTractionBoundaryCondition final : public BoundaryCondition
 {
 public:
