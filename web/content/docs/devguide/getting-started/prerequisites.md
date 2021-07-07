@@ -269,12 +269,52 @@ pip3 install --user ninja
 
 Make sure that `ninja` is in the path afterwards. See Conan install instructions above.
 
+
+## Optional: Install Qt for the Data Explorer
+
+
+Use [Another Qt installer(aqt)](https://github.com/miurahr/aqtinstall) for installing the Qt binaries to some path on your machine:
+
+<div class='win'>
+
+```bat
+pip install aqtinstall
+mkdir qt
+cd qt
+aqt install {{< dataFile "versions.tested_version.qt" >}} windows desktop win64_msvc2019_64 -m qtxmlpatterns
+```
+
+This will install Qt to `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64`.
+
+To finish add `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64/bin` bin to the `PATH` environment variable.
+
+</div>
+
+<div class='linux'>
+
+```bash
+pip install aqtinstall
+mkdir /opt/qt
+cd /opt/qt
+aqt install {{< dataFile "versions.tested_version.qt" >}} linux desktop -m xmlpatterns,x11extras
+```
+
+Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/bin` to the `PATH`.
+
+</div>
+
+<div class='mac'>
+
+See Linux-tab!
+
+</div>
+
 ## Optional: Install Conan package manager
 
 You only need Conan if you intend to build with one of the following settings **and** do not want to install their dependencies manually:
 
-- `OGS_BUILD_GUI` – Builds the Data Explorer, requires Qt
-- `OGS_USE_NETCDF` – NetCDF IO, requires netcdf-cxx
+- `OGS_USE_LIS`
+- `OGS_USE_NETCDF` – NetCDF IO, requires netcdf-cxx4
 
 Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
 

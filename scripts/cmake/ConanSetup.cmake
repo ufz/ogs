@@ -1,4 +1,4 @@
-if(NOT OGS_USE_CONAN)
+if(NOT OGS_USE_CONAN OR (NOT OGS_USE_LIS AND NOT OGS_USE_NETCDF))
     return()
 endif()
 string(TOLOWER ${OGS_USE_CONAN} OGS_USE_CONAN_lower)
@@ -11,7 +11,7 @@ if(OGS_USE_CONAN_lower STREQUAL "auto" AND POETRY)
 else()
     find_program(CONAN_CMD conan)
 endif()
-if(NOT CONAN_CMD AND (OGS_USE_LIS OR OGS_BUILD_GUI))
+if(NOT CONAN_CMD AND (OGS_USE_LIS OR OGS_USE_NETCDF))
     message(WARNING "conan executable not found. Specify CMake option "
         "OGS_USE_CONAN=auto for automatic installation in the build directory "
         "OR install it system-wide (https://www.opengeosys.org/docs/devguide/"
@@ -35,39 +35,6 @@ include(${PROJECT_SOURCE_DIR}/scripts/cmake/conan/conan.cmake)
 if(OGS_USE_LIS)
     list(APPEND CONAN_OPTIONS lis:with_omp=True)
     set(CONAN_REQUIRES ${CONAN_REQUIRES} lis/1.7.37@bilke/stable)
-endif()
-
-if(OGS_BUILD_GUI)
-    set(QT_VERSION ${ogs.minimum_version.qt})
-    if(UNIX)
-        set(QT_VERSION ${ogs.tested_version.qt})
-    endif()
-    set(CONAN_REQUIRES ${CONAN_REQUIRES}
-        # libgeotiff/1.4.2@bilke/stable # TODO
-        # Overrides for dependency mismatches
-        bzip2/1.0.8
-        zlib/1.2.11
-        qt/${QT_VERSION}@bincrafters/stable
-    )
-    set(CONAN_OPTIONS ${CONAN_OPTIONS}
-        qt:qtxmlpatterns=True
-        qt:openssl=False
-        qt:with_libalsa=False
-        qt:with_libjpeg=False
-        #qt:with_libpng=False
-        qt:with_mysql=False
-        qt:with_odbc=False
-        qt:with_openal=False
-        qt:with_pq=False
-        qt:with_sdl2=False
-        qt:with_sqlite3=False
-    )
-    if(MSVC)
-        set(CONAN_OPTIONS ${CONAN_OPTIONS} qt:with_harfbuzz=False)
-    endif()
-    if(UNIX AND NOT APPLE)
-        list(APPEND CONAN_OPTIONS qt:qtx11extras=True)
-    endif()
 endif()
 
 if(OGS_USE_NETCDF)
@@ -116,12 +83,6 @@ else()
     set(CONAN_BUILD_TYPE ${CMAKE_BUILD_TYPE})
 endif()
 
-if(MSVC)
-    set(CC_CACHE $ENV{CC})
-    set(CXX_CACHE $ENV{CXX})
-    unset(ENV{CC}) # Disable clcache, e.g. for building qt
-    unset(ENV{CXX})
-endif()
 # speed up conan_cmake_run
 set(ARGUMENTS_CONAN_COMMAND ${CONAN_CMD} CACHE INTERNAL "")
 conan_cmake_run(
@@ -135,10 +96,6 @@ conan_cmake_run(
     GENERATORS virtualrunenv
     BUILD_TYPE ${CONAN_BUILD_TYPE}
 )
-if(MSVC)
-    set(ENV{CC} ${CC_CACHE}) # Restore vars
-    set(ENV{CXX} ${CXX_CACHE})
-endif()
 
 if(NOT ${OGS_CONAN_BUILD} MATCHES "never|always|missing|outdated")
     message(STATUS "Warning: Resetting CMake variable OGS_CONAN_BUILD to its default value of 'missing'")
