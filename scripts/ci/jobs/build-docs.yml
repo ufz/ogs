@@ -15,7 +15,7 @@ build docs:
     max: 2
     when: runner_system_failure
   variables:
-    DOX_WARNINGS_THRESHOLD: 16
+    DOX_WARNINGS_THRESHOLD: 12
   before_script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html

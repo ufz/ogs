@@ -23,10 +23,13 @@ if("${OGS_GIT_BRANCH}" MATCHES "^v[0-9]\\.[0-9]\\.[0-9]")
 endif()
 set(DOXYGEN_EXTRACT_ALL YES)
 set(DOXYGEN_EXTRACT_PRIVATE YES)
+set(DOXYGEN_EXTRACT_PRIV_VIRTUAL YES)
 set(DOXYGEN_EXTRACT_PACKAGE YES)
 set(DOXYGEN_EXTRACT_STATIC YES)
 set(DOXYGEN_EXTRACT_ANON_NSPACES YES)
+set(DOXYGEN_INTERNAL_DOCS YES)
 set(DOXYGEN_SORT_BY_SCOPE_NAME YES)
+set(DOXYGEN_SORT_MEMBERS_CTORS_1ST YES)
 set(DOXYGEN_LAYOUT_FILE ${PROJECT_SOURCE_DIR}/Documentation/DoxygenLayout.xml)
 set(DOXYGEN_CITE_BIB_FILES
     ${PROJECT_SOURCE_DIR}/Documentation/bibliography/ogs
@@ -65,6 +68,10 @@ set(DOXYGEN_PREDEFINED
     USE_MKL
     USE_PETSC
 )
+
+set(DOXYGEN_DOT_IMAGE_FORMAT "svg")
+set(DOXYGEN_INTERACTIVE_SVG YES)
+
 set(DOXYGEN_ALIASES
     "per{1} = \\1<sup>-1</sup>"
     "ogs_file_param{1} = \\xrefitem ogs_file_param \\\"Input File Parameter\\\" \\\"List of all Input File Parameters\\\" \\ref ogs_file_param__\\1 \\\"\\1\\\""

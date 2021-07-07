@@ -99,7 +99,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     // Reference temperature
     auto const reference_temperature = ParameterLib::findOptionalTagParameter<
         double>(
-        //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__reference_temperature}
+        //! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__reference_temperature}
         config, "reference_temperature", parameters, 1, &mesh);
     if (reference_temperature)
     {
