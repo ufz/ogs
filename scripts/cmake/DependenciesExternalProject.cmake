@@ -63,3 +63,20 @@ if(OGS_USE_PETSC)
     set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${PETSC_LIBRARIES})
     target_compile_definitions(petsc INTERFACE USE_PETSC)
 endif()
+
+if(OGS_USE_LIS)
+    find_package(LIS)
+    if(NOT LIS_FOUND)
+        BuildExternalProject(
+            LIS
+            GIT_REPOSITORY https://github.com/anishida/lis.git
+            GIT_TAG ${ogs.minimum_version.lis}
+            CONFIGURE_COMMAND ./configure --enable-omp --prefix=<INSTALL_DIR>
+            BUILD_IN_SOURCE ON
+            BUILD_COMMAND make -j
+            INSTALL_COMMAND make -j install
+        )
+        set(ENV{LIS_ROOT_DIR} ${PROJECT_BINARY_DIR}/_ext/LIS)
+        find_package(LIS REQUIRED)
+    endif()
+endif()

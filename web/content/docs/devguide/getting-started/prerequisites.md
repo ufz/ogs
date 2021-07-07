@@ -313,7 +313,6 @@ See Linux-tab!
 
 You only need Conan if you intend to build with one of the following settings **and** do not want to install their dependencies manually:
 
-- `OGS_USE_LIS`
 - `OGS_USE_NETCDF` – NetCDF IO, requires netcdf-cxx4
 
 Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
