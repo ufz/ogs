@@ -98,7 +98,7 @@ public:
                                                                       N))};
             auto const st_val = _volumetric_source_term(t, pos)[0];
 
-            _local_rhs.noalias() += st_val * w * N;
+            _local_rhs.noalias() += N.transpose() * st_val * w;
         }
         auto const indices = NumLib::getIndices(id, source_term_dof_table);
         b.add(indices, _local_rhs);
