@@ -21,7 +21,7 @@ class Element;
 /**
  * \brief Coordinate system type
  */
-struct CoordinateSystemType
+struct CoordinateSystemType final
 {
     enum type
     {
@@ -36,7 +36,7 @@ struct CoordinateSystemType
  *
  *
  */
-class CoordinateSystem
+class CoordinateSystem final
 {
 public:
     /// User provided coordinate system
