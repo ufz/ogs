@@ -18,10 +18,6 @@
 #include "GeoLib/AABB.h"
 #include "MathLib/Point3d.h"
 
-namespace GeoLib {
-class GEOObjects;
-}
-
 namespace MeshLib {
 
 // forward declarations
