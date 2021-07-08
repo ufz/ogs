@@ -22,7 +22,7 @@ class Mesh;
 class Element;
 class Node;
 
-class ElementStatus
+class ElementStatus final
 {
 
 public:
