@@ -22,7 +22,7 @@ namespace MeshLib
 /**
  * Calculates the quality of mesh elements based on length/area/volume
  */
-class ElementSizeMetric : public ElementQualityMetric
+class ElementSizeMetric final : public ElementQualityMetric
 {
 public:
     explicit ElementSizeMetric(Mesh const& mesh);

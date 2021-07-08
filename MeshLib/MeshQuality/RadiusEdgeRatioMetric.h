@@ -23,7 +23,7 @@ namespace MeshLib
  * Calculates the quality of mesh elements based on the ratio between
  * radius of the smallest enclosing sphere and the shortest element edge
  */
-class RadiusEdgeRatioMetric : public ElementQualityMetric
+class RadiusEdgeRatioMetric final : public ElementQualityMetric
 {
 public:
     explicit RadiusEdgeRatioMetric(Mesh const& mesh);
