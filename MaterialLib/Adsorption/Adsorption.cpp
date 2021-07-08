@@ -14,6 +14,16 @@
 
 namespace
 {
+// Evaluate adsorbtion potential A
+double getPotential(const double p_Ads, const double T_Ads, const double M_Ads)
+{
+    return MaterialLib::PhysicalConstant::IdealGasConstant * T_Ads *
+           log(Adsorption::AdsorptionReaction::getEquilibriumVapourPressure(
+                   T_Ads) /
+               p_Ads) /
+           (M_Ads * 1.e3);  // in kJ/kg = J/g
+}
+
 const double k_rate = 6.0e-3;  // to be specified
 
 template <typename T>
@@ -107,16 +117,6 @@ double AdsorptionReaction::getReactionRate(const double p_Ads,
 
     return k_rate * (C_eq - loading);  // scaled with mass fraction
                                        // this the rate in terms of loading!
-}
-
-// Evaluate adsorbtion potential A
-double AdsorptionReaction::getPotential(const double p_Ads, double T_Ads,
-                                        const double M_Ads)
-{
-    double A = MaterialLib::PhysicalConstant::IdealGasConstant * T_Ads *
-               log(getEquilibriumVapourPressure(T_Ads) / p_Ads) /
-               (M_Ads * 1.e3);  // in kJ/kg = J/g
-    return A;
 }
 
 double AdsorptionReaction::getLoading(const double rho_curr,

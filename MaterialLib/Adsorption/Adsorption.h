@@ -45,8 +45,6 @@ protected:
     virtual double dCharacteristicCurve(const double A) const = 0;
 
 private:
-    static double getPotential(const double p_Ads, const double T_Ads,
-                               const double M_Ads);
     double getEntropy(const double T_Ads, const double A) const;
 };
 
