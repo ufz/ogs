@@ -43,7 +43,7 @@ public:
     std::optional<unsigned> addNeighbor(Element* e);
 
     /// Returns the length, area or volume of a 1D, 2D or 3D element
-    double getContent() const { return _content; }
+    virtual double getContent() const = 0;
 
     /**
      * Get node with local index i where i should be at most the number
@@ -194,8 +194,6 @@ protected:
 
     Node** _nodes;
     std::size_t _id;
-    /// Content corresponds to length for 1D, area for 2D, and volume for 3D elements
-    double _content;
 
     Element** _neighbors;
     /// Sets the neighbor over the face with \c face_id to the given \c

@@ -209,6 +209,7 @@ public:
         return ELEMENT_RULE::testElementNodeOrder(*this);
     }
 
+    double getContent() const override final;
 };
 
 }  // namespace MeshLib
