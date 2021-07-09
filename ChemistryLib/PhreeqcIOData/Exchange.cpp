@@ -16,11 +16,10 @@ namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-std::ostream& operator<<(std::ostream& os, ExchangeSite const& exchange_site)
+void ExchangeSite::print(std::ostream& os,
+                         std::size_t const chemical_system_id) const
 {
-    os << exchange_site.ion_exchanging_species << " " << exchange_site.molality << "\n";
-
-    return os;
+    os << name << " " << (*molality)[chemical_system_id] << "\n";
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

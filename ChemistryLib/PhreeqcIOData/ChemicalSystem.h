@@ -15,6 +15,7 @@
 
 #include "AqueousSolution.h"
 #include "EquilibriumReactant.h"
+#include "Exchange.h"
 #include "KineticReactant.h"
 
 namespace ChemistryLib
@@ -25,10 +26,12 @@ struct ChemicalSystem
 {
     ChemicalSystem(std::unique_ptr<AqueousSolution>&& aqueous_solution_,
                    std::vector<KineticReactant>&& kinetic_reactants_,
-                   std::vector<EquilibriumReactant>&& equilibrium_reactants_)
+                   std::vector<EquilibriumReactant>&& equilibrium_reactants_,
+                   std::vector<ExchangeSite>&& exchangers_)
         : aqueous_solution(std::move(aqueous_solution_)),
           kinetic_reactants(std::move(kinetic_reactants_)),
-          equilibrium_reactants(std::move(equilibrium_reactants_))
+          equilibrium_reactants(std::move(equilibrium_reactants_)),
+          exchangers(std::move(exchangers_))
     {
     }
 
@@ -37,6 +40,7 @@ struct ChemicalSystem
     std::unique_ptr<AqueousSolution> aqueous_solution;
     std::vector<KineticReactant> kinetic_reactants;
     std::vector<EquilibriumReactant> equilibrium_reactants;
+    std::vector<ExchangeSite> exchangers;
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

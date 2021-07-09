@@ -12,36 +12,36 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "Exchange.h"
+#include "MeshLib/Mesh.h"
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
 std::vector<ExchangeSite> createExchange(
-    std::optional<BaseLib::ConfigTree> const& config)
+    std::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh)
 {
     if (!config)
     {
         return {};
     }
 
-    std::vector<ExchangeSite> exchange;
+    std::vector<ExchangeSite> exchangers;
     for (auto const& site_config :
-         //! \ogs_file_param{prj__chemical_system__exchange__exchange_site}
+         //! \ogs_file_param{prj__chemical_system__exchangers__exchange_site}
          config->getConfigSubtreeList("exchange_site"))
     {
-        //! \ogs_file_param{prj__chemical_system__exchange__exchange_site__ion_exchanging_species}
+        //! \ogs_file_param{prj__chemical_system__exchangers__exchange_site__ion_exchanging_species}
         auto name = site_config.getConfigParameter<std::string>(
             "ion_exchanging_species");
 
-        auto const molality =
-            //! \ogs_file_param{prj__chemical_system__exchange__exchange_site__molality}
-            site_config.getConfigParameter<double>("molality");
+        auto const molality = MeshLib::getOrCreateMeshProperty<double>(
+            mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
-        exchange.emplace_back(std::move(name), molality);
+        exchangers.emplace_back(std::move(name), molality);
     }
 
-    return exchange;
+    return exchangers;
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
