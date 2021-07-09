@@ -52,8 +52,10 @@ private:
 inline double curvePolyfrac(const double* coeffs, const double x)
 {
     // TODO use Horner scheme
-    return ( coeffs[0] + coeffs[2] * x + coeffs[4] * pow(x,2) + coeffs[6] * pow(x,3) )
-            / ( 1.0 + coeffs[1] * x + coeffs[3] * pow(x,2) + coeffs[5] * pow(x,3) );
+    return (coeffs[0] + coeffs[2] * x + coeffs[4] * std::pow(x, 2) +
+            coeffs[6] * std::pow(x, 3)) /
+           (1.0 + coeffs[1] * x + coeffs[3] * std::pow(x, 2) +
+            coeffs[5] * std::pow(x, 3));
 }
 
 inline double dCurvePolyfrac(const double* coeffs, const double x)
