@@ -111,11 +111,8 @@ double AdsorptionReaction::getReactionRate(const double p_Ads,
                                            const double loading) const
 {
     const double A = getPotential(p_Ads, T_Ads, M_Ads);
-    double C_eq = getAdsorbateDensity(T_Ads) * characteristicCurve(A);
-    if (C_eq < 0.0)
-    {
-        C_eq = 0.0;
-    }
+    const double C_eq =
+        std::max(0., getAdsorbateDensity(T_Ads) * characteristicCurve(A));
 
     return k_rate * (C_eq - loading);  // scaled with mass fraction
                                        // this the rate in terms of loading!
