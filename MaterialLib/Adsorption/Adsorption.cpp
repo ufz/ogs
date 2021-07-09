@@ -24,7 +24,7 @@ double getPotential(const double p_Ads, const double T_Ads, const double M_Ads)
            (M_Ads * 1.e3);  // in kJ/kg = J/g
 }
 
-const double k_rate = 6.0e-3;  // to be specified
+constexpr double k_rate = 6.0e-3;  // to be specified
 
 template <typename T>
 T square(const T& v)
