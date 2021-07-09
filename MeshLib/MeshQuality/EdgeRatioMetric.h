@@ -23,9 +23,8 @@ namespace MeshLib
 /**
  * Calculates the quality of mesh elements based on the ratio between shortest and longest edge of an element
  */
-class EdgeRatioMetric final : public ElementQualityMetric
+struct EdgeRatioMetric final : public ElementQualityMetric
 {
-public:
     using ElementQualityMetric::ElementQualityMetric;
 
     void calculateQuality() override;

@@ -27,9 +27,8 @@ namespace MeshLib {
 /**
  * \brief A collection of methods for testing mesh quality and correctness
  */
-class MeshValidation final
+struct MeshValidation final
 {
-public:
     /// Constructor
     /// \warning This might change the mesh when removing unused mesh nodes.
     explicit MeshValidation(MeshLib::Mesh& mesh);

@@ -23,9 +23,8 @@ namespace MeshLib
  * Calculates the quality of mesh elements based on the ratio between
  * radius of the smallest enclosing sphere and the shortest element edge
  */
-class RadiusEdgeRatioMetric final : public ElementQualityMetric
+struct RadiusEdgeRatioMetric final : public ElementQualityMetric
 {
-public:
     using ElementQualityMetric::ElementQualityMetric;
 
     void calculateQuality() override;

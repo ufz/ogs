@@ -22,9 +22,8 @@ namespace MeshLib
 /**
  * Calculates the quality of mesh elements based on the EquiAngleSkew measure
  */
-class AngleSkewMetric final : public ElementQualityMetric
+struct AngleSkewMetric final : public ElementQualityMetric
 {
-public:
     using ElementQualityMetric::ElementQualityMetric;
 
     void calculateQuality() override;
