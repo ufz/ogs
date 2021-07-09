@@ -150,10 +150,6 @@ protected:
     /// Note: Using this implementation, an element e can only have neighbors that have the same dimensionality as e.
     void setElementNeighbors();
 
-    /// Computes the element-connectivity of nodes. Two nodes i and j are
-    /// connected if they are shared by an element.
-    void setNodesConnectedByElements();
-
     /// Check if all the nonlinear nodes are stored at the end of the node vector
     void checkNonlinearNodeIDs() const;
 
@@ -177,6 +173,10 @@ protected:
     bool _is_axially_symmetric = false;
 }; /* class */
 
+/// Computes the element-connectivity of nodes. Two nodes i and j are
+/// connected if they are shared by an element.
+std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
+    Mesh const& mesh);
 
 /// Meshes are equal if their id's are equal.
 inline bool operator==(Mesh const& a, Mesh const& b)
