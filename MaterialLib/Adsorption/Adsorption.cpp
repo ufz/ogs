@@ -14,7 +14,18 @@
 
 namespace
 {
-const double k_rate = 6.0e-3;  // to be specified
+// Evaluate adsorbtion potential A
+double getPotential(const double p_Ads, const double T_Ads, const double M_Ads)
+{
+    return MaterialLib::PhysicalConstant::IdealGasConstant * T_Ads *
+           std::log(
+               Adsorption::AdsorptionReaction::getEquilibriumVapourPressure(
+                   T_Ads) /
+               p_Ads) /
+           (M_Ads * 1.e3);  // in kJ/kg = J/g
+}
+
+constexpr double k_rate = 6.0e-3;  // to be specified
 
 template <typename T>
 T square(const T& v)
@@ -37,14 +48,14 @@ double AdsorptionReaction::getEquilibriumVapourPressure(const double T_Ads)
     // empirical constants
     const double c[] = {-7.69123, -26.08023, -168.17065, 64.23285, -118.96462,
                         4.16717,  20.97506,  1.0e9,      6.0};
-    const double K[] = {c[0] * theta + c[1] * pow(theta, 2) +
-                            c[2] * pow(theta, 3) + c[3] * pow(theta, 4) +
-                            c[4] * pow(theta, 5),
-                        1. + c[5] * theta + c[6] * pow(theta, 2)};
+    const double K[] = {
+        c[0] * theta + c[1] * std::pow(theta, 2) + c[2] * std::pow(theta, 3) +
+            c[3] * std::pow(theta, 4) + c[4] * std::pow(theta, 5),
+        1. + c[5] * theta + c[6] * std::pow(theta, 2)};
 
     const double exponent =
-        K[0] / (K[1] * Tr) - theta / (c[7] * pow(theta, 2) + c[8]);
-    return pc * exp(exponent);  // in Pa
+        K[0] / (K[1] * Tr) - theta / (c[7] * std::pow(theta, 2) + c[8]);
+    return pc * std::exp(exponent);  // in Pa
 }
 
 // Evaporation enthalpy of water from Nunez
@@ -59,7 +70,7 @@ double AdsorptionReaction::getEvaporationEnthalpy(double T_Ads)  // in kJ/kg
         double hv = 0.;
         for (size_t i = 0; i < sizeof(c) / sizeof(c[0]); i++)
         {
-            hv += c[i] * pow(T_Ads, i);
+            hv += c[i] * std::pow(T_Ads, i);
         }
         return hv;
     }
@@ -71,14 +82,15 @@ double AdsorptionReaction::getEvaporationEnthalpy(double T_Ads)  // in kJ/kg
         double hv = 0.;
         for (size_t i = 0; i < sizeof(c) / sizeof(c[0]); i++)
         {
-            hv += c[i] * pow(T_Ads, i);
+            hv += c[i] * std::pow(T_Ads, i);
         }
         return hv;
     }
     const double c[] = {2.99866e3, -3.1837e-3,  -1.566964e1,
                         -2.514e-6, 2.045933e-2, 1.0389e-8};
-    return ((c[0] + c[2] * T_Ads + c[4] * pow(T_Ads, 2)) /
-            (1. + c[1] * T_Ads + c[3] * pow(T_Ads, 2) + c[5] * pow(T_Ads, 3)));
+    return ((c[0] + c[2] * T_Ads + c[4] * std::pow(T_Ads, 2)) /
+            (1. + c[1] * T_Ads + c[3] * std::pow(T_Ads, 2) +
+             c[5] * std::pow(T_Ads, 3)));
 }
 
 double AdsorptionReaction::getMolarFraction(double xm, double M_this,
@@ -99,24 +111,11 @@ double AdsorptionReaction::getReactionRate(const double p_Ads,
                                            const double loading) const
 {
     const double A = getPotential(p_Ads, T_Ads, M_Ads);
-    double C_eq = getAdsorbateDensity(T_Ads) * characteristicCurve(A);
-    if (C_eq < 0.0)
-    {
-        C_eq = 0.0;
-    }
+    const double C_eq =
+        std::max(0., getAdsorbateDensity(T_Ads) * characteristicCurve(A));
 
     return k_rate * (C_eq - loading);  // scaled with mass fraction
                                        // this the rate in terms of loading!
-}
-
-// Evaluate adsorbtion potential A
-double AdsorptionReaction::getPotential(const double p_Ads, double T_Ads,
-                                        const double M_Ads)
-{
-    double A = MaterialLib::PhysicalConstant::IdealGasConstant * T_Ads *
-               log(getEquilibriumVapourPressure(T_Ads) / p_Ads) /
-               (M_Ads * 1.e3);  // in kJ/kg = J/g
-    return A;
 }
 
 double AdsorptionReaction::getLoading(const double rho_curr,
@@ -133,7 +132,7 @@ double AdsorptionReaction::getEntropy(const double T_Ads, const double A) const
     //* // This change will also change simulation results.
     const double W_p = characteristicCurve(A + epsilon);
     const double W_m = characteristicCurve(A - epsilon);
-    const double dAdlnW = 2.0 * epsilon / (log(W_p / W_m));
+    const double dAdlnW = 2.0 * epsilon / (std::log(W_p / W_m));
     // */
 
     if (W_p <= 0.0 || W_m <= 0.0)
