@@ -18,11 +18,6 @@
 
 namespace MeshLib
 {
-SizeDifferenceMetric::SizeDifferenceMetric(Mesh const& mesh)
-    : ElementQualityMetric(mesh)
-{
-}
-
 void SizeDifferenceMetric::calculateQuality()
 {
     std::vector<MeshLib::Element*> const& elements(_mesh.getElements());

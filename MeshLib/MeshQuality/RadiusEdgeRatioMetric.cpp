@@ -19,11 +19,6 @@
 
 namespace MeshLib
 {
-RadiusEdgeRatioMetric::RadiusEdgeRatioMetric(Mesh const& mesh)
-    : ElementQualityMetric(mesh)
-{
-}
-
 void RadiusEdgeRatioMetric::calculateQuality()
 {
     std::vector<MeshLib::Element*> const& elements(_mesh.getElements());

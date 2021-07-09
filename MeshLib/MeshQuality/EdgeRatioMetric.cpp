@@ -19,10 +19,6 @@
 
 namespace MeshLib
 {
-EdgeRatioMetric::EdgeRatioMetric(Mesh const& mesh) : ElementQualityMetric(mesh)
-{
-}
-
 void EdgeRatioMetric::calculateQuality()
 {
     auto const& elements(_mesh.getElements());

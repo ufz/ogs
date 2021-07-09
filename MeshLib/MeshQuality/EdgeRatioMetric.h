@@ -26,7 +26,7 @@ namespace MeshLib
 class EdgeRatioMetric final : public ElementQualityMetric
 {
 public:
-    explicit EdgeRatioMetric(Mesh const& mesh);
+    using ElementQualityMetric::ElementQualityMetric;
     ~EdgeRatioMetric() override = default;
 
     void calculateQuality() override;

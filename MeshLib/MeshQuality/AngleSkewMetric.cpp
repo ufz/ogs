@@ -142,10 +142,6 @@ double checkPrism(Element const& elem)
 
 }  // end unnamed namespace
 
-AngleSkewMetric::AngleSkewMetric(Mesh const& mesh) : ElementQualityMetric(mesh)
-{
-}
-
 void AngleSkewMetric::calculateQuality()
 {
     for (auto const e : _mesh.getElements())
