@@ -15,13 +15,12 @@
 
 namespace MeshLib
 {
-
 class Element;
 
 /**
  * \brief Coordinate system type
  */
-struct CoordinateSystemType
+struct CoordinateSystemType final
 {
     enum type
     {
@@ -36,23 +35,27 @@ struct CoordinateSystemType
  *
  *
  */
-class CoordinateSystem
+class CoordinateSystem final
 {
 public:
     /// User provided coordinate system
-    explicit CoordinateSystem(unsigned char coord) : _type (coord) {}
+    explicit CoordinateSystem(unsigned char coord) : _type(coord) {}
 
     /// Decides for a given element
-    explicit CoordinateSystem(const Element &ele);
+    explicit CoordinateSystem(const Element& ele);
 
     /// Decides a coordinate system from a bounding box
-    explicit CoordinateSystem(const GeoLib::AABB &bbox) : _type(getCoordinateSystem(bbox)) {}
+    explicit CoordinateSystem(const GeoLib::AABB& bbox)
+        : _type(getCoordinateSystem(bbox))
+    {
+    }
 
     /// get this coordinate type
     unsigned char getType() const { return _type; }
 
     /// get dimension size
-    unsigned getDimension() const {
+    unsigned getDimension() const
+    {
         if (hasZ())
         {
             return 3;
@@ -75,7 +78,7 @@ public:
     bool hasZ() const { return (_type & CoordinateSystemType::type::Z) != 0; }
 
 private:
-    unsigned char getCoordinateSystem(const GeoLib::AABB &bbox) const;
+    unsigned char getCoordinateSystem(const GeoLib::AABB& bbox) const;
 
     unsigned char _type;
 };

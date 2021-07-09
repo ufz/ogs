@@ -16,10 +16,11 @@
 
 #include <vector>
 
-namespace MeshLib {
-    class Mesh;
-    class Element;
-    class Node;
+namespace MeshLib
+{
+class Mesh;
+class Element;
+class Node;
 
 class ElementStatus
 {
@@ -51,7 +52,7 @@ public:
     /// Returns the total number of active elements
     std::size_t getNumberOfActiveElements() const;
 
-protected:
+private:
     /// Sets the status of element i
     void setElementStatus(std::size_t i, bool status);
 
@@ -65,7 +66,6 @@ protected:
     bool const _hasAnyInactive;
     std::vector<MeshLib::Node*> _vec_active_nodes;
     std::vector<MeshLib::Element*> _vec_active_eles;
-
 }; /* class */
 
 }  // namespace MeshLib

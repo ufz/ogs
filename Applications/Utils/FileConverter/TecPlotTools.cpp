@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "BaseLib/StringTools.h"
+#include "GeoLib/Point.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"

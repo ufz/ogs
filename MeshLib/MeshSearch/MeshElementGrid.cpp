@@ -15,7 +15,6 @@
 #include <cmath>
 #include <memory>
 
-#include "GeoLib/GEOObjects.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
