@@ -20,8 +20,7 @@
 
 namespace MeshLib
 {
-ElementQualityMetric::ElementQualityMetric(Mesh const& mesh)
-    : _min(std::numeric_limits<double>::max()), _max(0), _mesh(mesh)
+ElementQualityMetric::ElementQualityMetric(Mesh const& mesh) : _mesh(mesh)
 {
     _element_quality_metric.resize(_mesh.getNumberOfElements(), -1.0);
 }
