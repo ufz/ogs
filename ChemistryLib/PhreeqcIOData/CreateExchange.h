@@ -18,6 +18,11 @@ namespace BaseLib
 class ConfigTree;
 }
 
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
@@ -25,6 +30,6 @@ namespace PhreeqcIOData
 struct ExchangeSite;
 
 std::vector<ExchangeSite> createExchange(
-    std::optional<BaseLib::ConfigTree> const& config);
+    std::optional<BaseLib::ConfigTree> const& config, MeshLib::Mesh& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

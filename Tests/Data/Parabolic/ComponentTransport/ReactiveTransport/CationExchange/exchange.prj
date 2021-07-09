@@ -167,6 +167,21 @@
                         </property>
                     </properties>
                 </phase>
+                <phase>
+                    <type>Solid</type>
+                    <components>
+                        <component>
+                            <name>X</name>
+                            <properties>
+                                <property>
+                                    <name>molality</name>
+                                    <type>Constant</type>
+                                    <value>1.1e-3</value>
+                                </property>
+                            </properties>
+                        </component>
+                    </components>
+                </phase>
             </phases>
             <properties>
                 <property>
@@ -439,12 +454,11 @@
             </components>
             <charge_balance>pH</charge_balance>
         </solution>
-		<exchange>
-			<exchange_site>
-				<ion_exchanging_species>X</ion_exchanging_species>
-				<molality>1.1e-3</molality>
-			</exchange_site>
-		</exchange>
+        <exchangers>
+            <exchange_site>
+                <ion_exchanging_species>X</ion_exchanging_species>
+            </exchange_site>
+        </exchangers>
         <knobs>
             <max_iter>500</max_iter>
             <relative_convergence_tolerance>1e-12</relative_convergence_tolerance>

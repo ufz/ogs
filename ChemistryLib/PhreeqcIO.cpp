@@ -28,12 +28,12 @@
 #include "PhreeqcIOData/ChemicalSystem.h"
 #include "PhreeqcIOData/Dump.h"
 #include "PhreeqcIOData/EquilibriumReactant.h"
+#include "PhreeqcIOData/Exchange.h"
 #include "PhreeqcIOData/KineticReactant.h"
 #include "PhreeqcIOData/Knobs.h"
 #include "PhreeqcIOData/Output.h"
 #include "PhreeqcIOData/ReactionRate.h"
 #include "PhreeqcIOData/Surface.h"
-#include "PhreeqcIOData/Exchange.h"
 #include "PhreeqcIOData/UserPunch.h"
 
 namespace ChemistryLib
@@ -71,14 +71,13 @@ void setAqueousSolution(std::vector<double> const& concentrations,
 template <typename Reactant>
 void initializeReactantMolality(Reactant& reactant,
                                 GlobalIndexType const& chemical_system_id,
+                                MaterialPropertyLib::Phase const& solid_phase,
+                                MaterialPropertyLib::Phase const& liquid_phase,
                                 MaterialPropertyLib::Medium const& medium,
                                 ParameterLib::SpatialPosition const& pos,
                                 double const t)
 {
-    auto const& solid_phase = medium.phase("Solid");
     auto const& solid_constituent = solid_phase.component(reactant.name);
-
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
 
     if (solid_constituent.hasProperty(
             MaterialPropertyLib::PropertyType::molality))
@@ -124,12 +123,12 @@ void initializeReactantMolality(Reactant& reactant,
 template <typename Reactant>
 void setReactantMolality(Reactant& reactant,
                          GlobalIndexType const& chemical_system_id,
-                         MaterialPropertyLib::Medium const* medium,
+                         MaterialPropertyLib::Phase const& solid_phase,
+                         MaterialPropertyLib::Phase const& liquid_phase,
                          MaterialPropertyLib::VariableArray const& vars,
                          ParameterLib::SpatialPosition const& pos,
                          double const t, double const dt)
 {
-    auto const& solid_phase = medium->phase("Solid");
     auto const& solid_constituent = solid_phase.component(reactant.name);
 
     if (solid_constituent.hasProperty(
@@ -147,7 +146,6 @@ void setReactantMolality(Reactant& reactant,
     (*reactant.volume_fraction_prev)[chemical_system_id] =
         (*reactant.volume_fraction)[chemical_system_id];
 
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const fluid_density =
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template value<double>(vars, pos, t, dt);
@@ -164,6 +162,22 @@ void setReactantMolality(Reactant& reactant,
 
     (*reactant.molality_prev)[chemical_system_id] =
         (*reactant.molality)[chemical_system_id];
+}
+
+template <typename Exchanger>
+void initializeExchangerMolality(Exchanger& exchanger,
+                          GlobalIndexType const& chemical_system_id,
+                          MaterialPropertyLib::Phase const& solid_phase,
+                          ParameterLib::SpatialPosition const& pos,
+                          double const t)
+{
+    auto const& solid_constituent = solid_phase.component(exchanger.name);
+
+    auto const molality =
+        solid_constituent[MaterialPropertyLib::PropertyType::molality]
+            .template initialValue<double>(pos, t);
+
+    (*exchanger.molality)[chemical_system_id] = molality;
 }
 
 template <typename Reactant>
@@ -243,7 +257,6 @@ PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
                      std::unique_ptr<ChemicalSystem>&& chemical_system,
                      std::vector<ReactionRate>&& reaction_rates,
                      std::vector<SurfaceSite>&& surface,
-                     std::vector<ExchangeSite>&& exchange,
                      std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
@@ -253,7 +266,6 @@ PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
       _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
       _surface(std::move(surface)),
-      _exchange(std::move(exchange)),
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
@@ -314,16 +326,25 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
     setAqueousSolution(concentrations, chemical_system_id,
                        *_chemical_system->aqueous_solution);
 
+    auto const& solid_phase = medium.phase("Solid");
+    auto const& liquid_phase = medium.phase("AqueousLiquid");
+
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        initializeReactantMolality(kinetic_reactant, chemical_system_id, medium,
-                                   pos, t);
+        initializeReactantMolality(kinetic_reactant, chemical_system_id,
+                                   solid_phase, liquid_phase, medium, pos, t);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
         initializeReactantMolality(equilibrium_reactant, chemical_system_id,
-                                   medium, pos, t);
+                                   solid_phase, liquid_phase, medium, pos, t);
+    }
+
+    for (auto& exchanger : _chemical_system->exchangers)
+    {
+        initializeExchangerMolality(exchanger, chemical_system_id, solid_phase, pos,
+                             t);
     }
 }
 
@@ -337,16 +358,19 @@ void PhreeqcIO::setChemicalSystemConcrete(
     setAqueousSolution(concentrations, chemical_system_id,
                        *_chemical_system->aqueous_solution);
 
+    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        setReactantMolality(kinetic_reactant, chemical_system_id, medium, vars,
-                            pos, t, dt);
+        setReactantMolality(kinetic_reactant, chemical_system_id, solid_phase,
+                            liquid_phase, vars, pos, t, dt);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        setReactantMolality(equilibrium_reactant, chemical_system_id, medium,
-                            vars, pos, t, dt);
+        setReactantMolality(equilibrium_reactant, chemical_system_id,
+                            solid_phase, liquid_phase, vars, pos, t, dt);
     }
 }
 
@@ -508,8 +532,8 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
-        auto const& exchange = phreeqc_io._exchange;
-        if (!exchange.empty())
+        auto const& exchangers = phreeqc_io._chemical_system->exchangers;
+        if (!exchangers.empty())
         {
             os << "EXCHANGE " << chemical_system_id + 1 << "\n";
             std::size_t const aqueous_solution_id =
@@ -517,7 +541,10 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                     ? chemical_system_id + 1
                     : phreeqc_io._num_chemical_systems + chemical_system_id + 1;
             os << "-equilibrate with solution " << aqueous_solution_id << "\n";
-            os << exchange << "\n";
+            for (auto const& exchanger : exchangers)
+            {
+                exchanger.print(os, chemical_system_id);
+            }
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
@@ -581,16 +608,16 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     auto const& dropped_item_ids = output.dropped_item_ids;
 
     auto const& surface = phreeqc_io._surface;
-    auto const& exchange = phreeqc_io._exchange;
+    auto const& exchangers = phreeqc_io._chemical_system->exchangers;
 
-    if (!surface.empty() && !exchange.empty())
+    if (!surface.empty() && !exchangers.empty())
     {
         OGS_FATAL(
             "Using surface and exchange reactions simultaneously is not "
             "supported at the moment");
     }
 
-    int const num_skipped_lines = surface.empty() && exchange.empty() ? 1 : 2;
+    int const num_skipped_lines = surface.empty() && exchangers.empty() ? 1 : 2;
 
     auto& equilibrium_reactants =
         phreeqc_io._chemical_system->equilibrium_reactants;

@@ -12,6 +12,9 @@
 
 #include <iosfwd>
 #include <string>
+#include <vector>
+
+#include "MeshLib/PropertyVector.h"
 
 namespace BaseLib
 {
@@ -24,17 +27,16 @@ namespace PhreeqcIOData
 {
 struct ExchangeSite
 {
-    ExchangeSite(std::string ion_exchanging_species_, double const molality_)
-        : ion_exchanging_species(std::move(ion_exchanging_species_)),
-          molality(molality_)
+    ExchangeSite(std::string name_, MeshLib::PropertyVector<double>* molality_)
+        : name(std::move(name_)), molality(molality_)
     {
     }
 
-    std::string const ion_exchanging_species;
-    double const molality;
-};
+    void print(std::ostream& os, std::size_t const chemical_system_id) const;
 
-std::ostream& operator<<(std::ostream& os, ExchangeSite const& exchange_site);
+    std::string const name;
+    MeshLib::PropertyVector<double>* molality;
+};
 
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

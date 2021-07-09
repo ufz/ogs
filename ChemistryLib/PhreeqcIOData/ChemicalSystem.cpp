@@ -51,6 +51,11 @@ void ChemicalSystem::initialize(std::size_t const num_chemical_systems)
         equilibrium_reactant.volume_fraction->resize(num_chemical_systems);
         equilibrium_reactant.volume_fraction_prev->resize(num_chemical_systems);
     }
+
+    for (auto& exchanger : exchangers)
+    {
+        exchanger.molality->resize(num_chemical_systems);
+    }
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
