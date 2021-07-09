@@ -62,16 +62,6 @@ public:
      * @return The number of holes that have been found.
      */
     static unsigned detectHoles(MeshLib::Mesh const& mesh);
-
-private:
-    /** Finds all surface elements that can be reached from element. All elements that are found in this
-     * way are marked in the global sfc_idx vector using the current_index.
-     * @param element The mesh element from which the search is started
-     * @param sfc_idx The global index vector notifying to which surface elements belong
-     * @param current_index The index that all elements reachable from element will be assigned in sfc_idx
-     */
-    static void trackSurface(MeshLib::Element const*const element, std::vector<unsigned> &sfc_idx, unsigned const current_index);
-
 };
 
 } // end namespace MeshLib
