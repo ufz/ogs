@@ -18,11 +18,6 @@
 
 namespace MeshLib
 {
-ElementSizeMetric::ElementSizeMetric(Mesh const& mesh)
-    : ElementQualityMetric(mesh)
-{
-}
-
 void ElementSizeMetric::calculateQuality()
 {
     std::size_t error_count(0);

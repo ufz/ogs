@@ -28,6 +28,40 @@
 
 namespace MeshLib
 {
+
+/** Finds all surface elements that can be reached from element. All elements
+ * that are found in this way are marked in the global sfc_idx vector using the
+ * current_index.
+ * @param element The mesh element from which the search is started
+ * @param sfc_idx The global index vector notifying to which surface elements
+ * belong
+ * @param current_index The index that all elements reachable from element will
+ * be assigned in sfc_idx
+ */
+static void trackSurface(MeshLib::Element const* const element,
+                         std::vector<unsigned>& sfc_idx,
+                         unsigned const current_index)
+{
+    std::stack<MeshLib::Element const*> elem_stack;
+    elem_stack.push(element);
+    while (!elem_stack.empty())
+    {
+        MeshLib::Element const* const elem = elem_stack.top();
+        elem_stack.pop();
+        sfc_idx[elem->getID()] = current_index;
+        std::size_t const n_neighbors(elem->getNumberOfNeighbors());
+        for (std::size_t i = 0; i < n_neighbors; ++i)
+        {
+            MeshLib::Element const* neighbor(elem->getNeighbor(i));
+            if (neighbor != nullptr && sfc_idx[neighbor->getID()] ==
+                                           std::numeric_limits<unsigned>::max())
+            {
+                elem_stack.push(neighbor);
+            }
+        }
+    }
+}
+
 MeshValidation::MeshValidation(MeshLib::Mesh& mesh)
 {
     INFO("Mesh Quality Control:");
@@ -193,29 +227,4 @@ unsigned MeshValidation::detectHoles(MeshLib::Mesh const& mesh)
     // holes.
     return (--current_surface_id);
 }
-
-void MeshValidation::trackSurface(MeshLib::Element const* element,
-                                  std::vector<unsigned>& sfc_idx,
-                                  unsigned const current_index)
-{
-    std::stack<MeshLib::Element const*> elem_stack;
-    elem_stack.push(element);
-    while (!elem_stack.empty())
-    {
-        MeshLib::Element const* const elem = elem_stack.top();
-        elem_stack.pop();
-        sfc_idx[elem->getID()] = current_index;
-        std::size_t const n_neighbors(elem->getNumberOfNeighbors());
-        for (std::size_t i = 0; i < n_neighbors; ++i)
-        {
-            MeshLib::Element const* neighbor(elem->getNeighbor(i));
-            if (neighbor != nullptr && sfc_idx[neighbor->getID()] ==
-                                           std::numeric_limits<unsigned>::max())
-            {
-                elem_stack.push(neighbor);
-            }
-        }
-    }
-}
-
 }  // end namespace MeshLib

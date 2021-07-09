@@ -23,11 +23,9 @@ namespace MeshLib
  * Calculates the quality of mesh elements based on the difference of element
  * size in comparison to the size of its neighbors.
  */
-class SizeDifferenceMetric final : public ElementQualityMetric
+struct SizeDifferenceMetric final : public ElementQualityMetric
 {
-public:
-    explicit SizeDifferenceMetric(Mesh const& mesh);
-    ~SizeDifferenceMetric() override = default;
+    using ElementQualityMetric::ElementQualityMetric;
 
     void calculateQuality() override;
 };
