@@ -27,7 +27,6 @@ class EdgeRatioMetric final : public ElementQualityMetric
 {
 public:
     using ElementQualityMetric::ElementQualityMetric;
-    ~EdgeRatioMetric() override = default;
 
     void calculateQuality() override;
 };

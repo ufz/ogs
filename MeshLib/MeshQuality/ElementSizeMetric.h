@@ -26,7 +26,6 @@ class ElementSizeMetric final : public ElementQualityMetric
 {
 public:
     using ElementQualityMetric::ElementQualityMetric;
-    ~ElementSizeMetric() override = default;
 
     void calculateQuality() override;
 
