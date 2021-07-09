@@ -31,7 +31,8 @@ BaseLib::Histogram<double> ElementQualityMetric::getHistogram(
     if (n_bins == 0)
     {
         n_bins = static_cast<std::size_t>(
-            1 + 3.3 * log(static_cast<float>((_mesh.getNumberOfElements()))));
+            1 +
+            3.3 * std::log(static_cast<float>((_mesh.getNumberOfElements()))));
     }
 
     return BaseLib::Histogram<double>(getElementQuality(), n_bins, true);
