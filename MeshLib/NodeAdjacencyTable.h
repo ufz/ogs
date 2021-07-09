@@ -13,32 +13,27 @@
 #include <algorithm>
 #include <vector>
 
-#include "Node.h"
-
+#include "Mesh.h"
 
 namespace MeshLib
 {
-
 /// Representation of topological node adjacency.
 ///
-/// The topological sparsity pattern in the context of FEM is defined in terms of
-/// supports of the nodal functions. Especially, two nodes i and j are called
+/// The topological sparsity pattern in the context of FEM is defined in terms
+/// of supports of the nodal functions. Especially, two nodes i and j are called
 /// adjacent if and only if there is a mesh element E including nodes i and j.
 /// This information is represented by the NodeAdjacenceTable.
 ///
 /// The topological adjacency of nodes is created by
-/// Mesh::setNodesConnectedByElements() which is usually called upon mesh
-/// construction.
-class
-NodeAdjacencyTable
+/// MeshLib::calculateNodesConnectedByElements().
+class NodeAdjacencyTable final
 {
 public:
-    explicit
-    NodeAdjacencyTable(std::vector<Node*> const& nodes)
+    explicit NodeAdjacencyTable(Mesh const& mesh)
     {
-        _data.resize(nodes.size());
+        _data.resize(mesh.getNodes().size());
 
-        createTable(nodes);
+        createTable(mesh);
     }
 
     std::size_t size() const
@@ -51,22 +46,27 @@ public:
         return _data[node_id].size();
     }
 
-    std::vector<std::size_t> const& getAdjacentNodes(std::size_t const node_id) const
+    std::vector<std::size_t> const& getAdjacentNodes(
+        std::size_t const node_id) const
     {
         return _data[node_id];
     }
 
-    void createTable(std::vector<Node*> const& nodes)
+    void createTable(Mesh const& mesh)
     {
+        auto const& nodes = mesh.getNodes();
         if (_data.size() != nodes.size())
         {
             _data.resize(nodes.size());
         }
 
-        for (auto n_ptr : nodes)
+        auto const& connections =
+            MeshLib::calculateNodesConnectedByElements(mesh);
+        for (auto const* node : nodes)
         {
-            std::vector<Node*> const& connected_nodes = n_ptr->getConnectedNodes();
-            std::vector<std::size_t>& row = _data[n_ptr->getID()];
+            auto const node_id = node->getID();
+            auto const& connected_nodes = connections[node_id];
+            std::vector<std::size_t>& row = _data[node_id];
             row.reserve(connected_nodes.size());
             std::transform(connected_nodes.cbegin(), connected_nodes.cend(),
                 std::back_inserter(row),
@@ -76,7 +76,6 @@ public:
 
 private:
     std::vector<std::vector<std::size_t>> _data;
-
 };
 
 }   // namespace MeshLib
