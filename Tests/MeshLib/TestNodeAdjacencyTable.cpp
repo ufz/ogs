@@ -36,7 +36,8 @@ TEST(MeshLib, CreateNodeAdjacencyTable1D)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
 
-        std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
+        std::size_t const n_elements =
+            mesh->getElementsConnectedToNode(i).size();
         switch (n_elements)
         {
             case 1:  // a corner node has 2 adjacent nodes.
@@ -70,7 +71,8 @@ TEST(MeshLib, CreateNodeAdjacencyTable2D)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
 
-        std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
+        std::size_t const n_elements =
+            mesh->getElementsConnectedToNode(i).size();
         switch (n_elements)
         {
             case 1:  // a corner node has 4 adjacent nodes.
@@ -109,7 +111,8 @@ TEST(MeshLib, CreateNodeAdjacencyTable3D)
     {
         std::size_t const n_connections = table.getNodeDegree(i);
 
-        std::size_t const n_elements = mesh->getNode(i)->getNumberOfElements();
+        std::size_t const n_elements =
+            mesh->getElementsConnectedToNode(i).size();
         switch (n_elements)
         {
             case 1:  // a corner node has 8 adjacent nodes.

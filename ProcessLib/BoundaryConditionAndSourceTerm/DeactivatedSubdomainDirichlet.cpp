@@ -72,7 +72,8 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
                  back_inserter(inactive_nodes_in_bc_mesh),
                  [&](MeshLib::Node* const n)
                  {
-                     const auto& connected_elements = n->getElements();
+                     const auto& connected_elements =
+                         _subdomain.mesh->getElementsConnectedToNode(*n);
 
                      return std::all_of(begin(connected_elements),
                                         end(connected_elements), is_inactive);
@@ -84,7 +85,8 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
                      back_inserter(inactive_nodes_in_bc_mesh),
                      [&](MeshLib::Node* const n)
                      {
-                         const auto& connected_elements = n->getElements();
+                         const auto& connected_elements =
+                             _subdomain.mesh->getElementsConnectedToNode(*n);
 
                          return std::all_of(begin(connected_elements),
                                             end(connected_elements),

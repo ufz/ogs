@@ -25,10 +25,8 @@ namespace ApplicationUtils
     class NodeWiseMeshPartitioner;
 }
 
-namespace MeshLib {
-
-class Element;
-
+namespace MeshLib
+{
 /**
  * A mesh node with coordinates in 3D space.
  */
@@ -56,34 +54,10 @@ public:
     /// Copy constructor
     Node(const Node &node);
 
-    /// Get an element the node is part of.
-    const Element* getElement(std::size_t idx) const { return _elements[idx]; }
-
-    /// Get all elements the node is part of.
-    const std::vector<Element*>& getElements() const { return _elements; }
-
-    /// Get number of elements the node is part of.
-    std::size_t getNumberOfElements() const { return _elements.size(); }
-
 protected:
     /// Update coordinates of a node.
     /// This method automatically also updates the areas/volumes of all connected elements.
     void updateCoordinates(double x, double y, double z);
 
-    /**
-     * Add an element the node is part of.
-     * This method is called by Mesh::addElement(Element*), see friend definition.
-     */
-    void addElement(Element* elem) { _elements.push_back(elem); }
-
-    /// clear stored elements connecting to this node
-    void clearElements() { _elements.clear(); }
-
-    std::vector<Element*> _elements;
 }; /* class */
-
-/// Returns true if the given node is a base node of a (first) element, or if it
-/// is not connected to any element i.e. an unconnected node.
-bool isBaseNode(Node const& node);
-
 }  // namespace MeshLib

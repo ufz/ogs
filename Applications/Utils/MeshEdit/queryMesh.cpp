@@ -63,8 +63,10 @@ int main(int argc, char* argv[])
     {
         auto itr = std::max_element(
             mesh->getNodes().begin(), mesh->getNodes().end(),
-            [](MeshLib::Node* i, MeshLib::Node* j) {
-                return i->getNumberOfElements() < j->getNumberOfElements();
+            [&mesh](MeshLib::Node* i, MeshLib::Node* j)
+            {
+                return mesh->getElementsConnectedToNode(*i).size() <
+                       mesh->getElementsConnectedToNode(*j).size();
             });
         if (itr != mesh->getNodes().end())
         {
@@ -125,8 +127,9 @@ int main(int argc, char* argv[])
         MeshLib::Node const* node = mesh->getNode(node_id);
         out << "# Node " << node->getID() << std::endl;
         out << "Coordinates: " << *node << std::endl;
-        out << "Connected elements (" << node->getNumberOfElements() << "): ";
-        for (auto ele : node->getElements())
+        out << "Connected elements ("
+            << mesh->getElementsConnectedToNode(*node).size() << "): ";
+        for (auto ele : mesh->getElementsConnectedToNode(*node))
         {
             out << ele->getID() << " ";
         }

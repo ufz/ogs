@@ -115,6 +115,11 @@ public:
     /// Check if the mesh contains any nonlinear element.
     bool hasNonlinearElement() const;
 
+    std::vector<Element const*> const& getElementsConnectedToNode(
+        std::size_t node_id) const;
+    std::vector<Element const*> const& getElementsConnectedToNode(
+        Node const& node) const;
+
     Properties& getProperties() { return _properties; }
     Properties const& getProperties() const { return _properties; }
 
@@ -129,9 +134,6 @@ protected:
 
     /// Sets the dimension of the mesh.
     void setDimension();
-
-    /// Fills in the neighbor-information for nodes (i.e. which element each node belongs to).
-    void setElementsConnectedToNodes();
 
     /// Fills in the neighbor-information for elements.
     /// Note: Using this implementation, an element e can only have neighbors that have the same dimensionality as e.
@@ -149,6 +151,8 @@ protected:
     std::vector<Node*> _nodes;
     std::vector<Element*> _elements;
     Properties _properties;
+
+    std::vector<std::vector<Element const*>> _elements_connected_to_nodes;
 
     bool _is_axially_symmetric = false;
 }; /* class */
@@ -292,4 +296,8 @@ PropertyVector<int> const* materialIDs(Mesh const& mesh);
 std::unique_ptr<Mesh> createMeshFromElementSelection(
     std::string mesh_name, std::vector<Element*> const& elements);
 
+/// Returns true if the given node is a base node of a (first) element, or if it
+/// is not connected to any element i.e. an unconnected node.
+bool isBaseNode(Node const& node,
+                std::vector<Element const*> const& elements_connected_to_node);
 }  // namespace MeshLib

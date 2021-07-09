@@ -54,7 +54,8 @@ std::vector<double> getSurfaceIntegratedValuesForNodes(
     {
         double node_area(0);
         double integrated_node_area(0);
-        for (auto const& connected_elem : node->getElements())
+        for (auto const& connected_elem :
+             mesh.getElementsConnectedToNode(*node))
         {
             double const area = connected_elem->getContent() /
                                 connected_elem->getNumberOfBaseNodes();

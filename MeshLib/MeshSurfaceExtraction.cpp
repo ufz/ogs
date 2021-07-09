@@ -205,7 +205,7 @@ std::vector<double> MeshSurfaceExtraction::getSurfaceAreaForNodes(
     {
         double node_area(0);
 
-        std::vector<MeshLib::Element*> conn_elems = nodes[n]->getElements();
+        auto const conn_elems = mesh.getElementsConnectedToNode(*nodes[n]);
         const std::size_t nConnElems(conn_elems.size());
 
         for (std::size_t i = 0; i < nConnElems; ++i)

@@ -26,9 +26,9 @@ ElementStatus::ElementStatus(Mesh const* const mesh, bool hasAnyInactive)
       _hasAnyInactive(hasAnyInactive)
 {
     const std::vector<MeshLib::Node*>& nodes(_mesh->getNodes());
-    std::transform(
-        begin(nodes), end(nodes), back_inserter(_active_nodes),
-        [](Node const* const n) { return n->getNumberOfElements(); });
+    std::transform(begin(nodes), end(nodes), back_inserter(_active_nodes),
+                   [this](Node const* const n)
+                   { return _mesh->getElementsConnectedToNode(*n).size(); });
 }
 
 ElementStatus::ElementStatus(Mesh const* const mesh,

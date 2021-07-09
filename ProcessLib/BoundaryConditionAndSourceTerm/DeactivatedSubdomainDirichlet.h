@@ -33,10 +33,7 @@ struct Parameter;
 namespace ProcessLib
 {
 struct DeactivatedSubdomainMesh;
-}
 
-namespace ProcessLib
-{
 class DeactivatedSubdomainDirichlet final : public BoundaryCondition
 {
 public:

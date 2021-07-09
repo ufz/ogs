@@ -286,8 +286,9 @@ TEST_F(MeshLibQuadMesh, ElementToNodeConnectivity)
 TEST_F(MeshLibQuadMesh, NodeToElementConnectivity)
 {
     testCornerNodes(
-        [this](MeshLib::Node const* const node, std::size_t i, std::size_t j) {
-            EXPECT_EQ(1u, node->getNumberOfElements());
+        [this](MeshLib::Node const* const node, std::size_t i, std::size_t j)
+        {
+            EXPECT_EQ(1u, mesh->getElementsConnectedToNode(*node).size());
 
             if (i == nodes_stride)
             {
@@ -298,45 +299,60 @@ TEST_F(MeshLibQuadMesh, NodeToElementConnectivity)
                 j--;
             }
 
-            EXPECT_EQ(getElement(i, j), node->getElement(0));
+            EXPECT_EQ(getElement(i, j),
+                      mesh->getElementsConnectedToNode(*node)[0]);
         });
 
     testBoundaryNodes(
-        [this](MeshLib::Node const* const node, std::size_t i, std::size_t j) {
-            EXPECT_EQ(2u, node->getNumberOfElements());
+        [this](MeshLib::Node const* const node, std::size_t i, std::size_t j)
+        {
+            EXPECT_EQ(2u, mesh->getElementsConnectedToNode(*node).size());
 
             if (i == 0)
             {
-                EXPECT_EQ(getElement(i, j - 1), node->getElement(0));
-                EXPECT_EQ(getElement(i, j), node->getElement(1));
+                EXPECT_EQ(getElement(i, j - 1),
+                          mesh->getElementsConnectedToNode(*node)[0]);
+                EXPECT_EQ(getElement(i, j),
+                          mesh->getElementsConnectedToNode(*node)[1]);
             }
             if (i == nodes_stride)
             {
                 EXPECT_EQ(getElement(elements_stride, j - 1),
-                          node->getElement(0));
-                EXPECT_EQ(getElement(elements_stride, j), node->getElement(1));
+                          mesh->getElementsConnectedToNode(*node)[0]);
+                EXPECT_EQ(getElement(elements_stride, j),
+                          mesh->getElementsConnectedToNode(*node)[1]);
             }
             if (j == 0)
             {
-                EXPECT_EQ(getElement(i - 1, j), node->getElement(0));
-                EXPECT_EQ(getElement(i, j), node->getElement(1));
+                EXPECT_EQ(getElement(i - 1, j),
+                          mesh->getElementsConnectedToNode(*node)[0]);
+                EXPECT_EQ(getElement(i, j),
+                          mesh->getElementsConnectedToNode(*node)[1]);
             }
             if (j == nodes_stride)
             {
                 j--;
-                EXPECT_EQ(getElement(i - 1, j), node->getElement(0));
-                EXPECT_EQ(getElement(i, j), node->getElement(1));
+                EXPECT_EQ(getElement(i - 1, j),
+                          mesh->getElementsConnectedToNode(*node)[0]);
+                EXPECT_EQ(getElement(i, j),
+                          mesh->getElementsConnectedToNode(*node)[1]);
             }
         });
 
-    testInsideNodes([this](MeshLib::Node const* const node,
-                           std::size_t const i,
-                           std::size_t const j) {
-        EXPECT_EQ(4u, node->getNumberOfElements());
+    testInsideNodes(
+        [this](MeshLib::Node const* const node,
+               std::size_t const i,
+               std::size_t const j)
+        {
+            EXPECT_EQ(4u, mesh->getElementsConnectedToNode(*node).size());
 
-        EXPECT_EQ(getElement(i - 1, j - 1), node->getElement(0));
-        EXPECT_EQ(getElement(i - 1, j), node->getElement(1));
-        EXPECT_EQ(getElement(i, j - 1), node->getElement(2));
-        EXPECT_EQ(getElement(i, j), node->getElement(3));
-    });
+            EXPECT_EQ(getElement(i - 1, j - 1),
+                      mesh->getElementsConnectedToNode(*node)[0]);
+            EXPECT_EQ(getElement(i - 1, j),
+                      mesh->getElementsConnectedToNode(*node)[1]);
+            EXPECT_EQ(getElement(i, j - 1),
+                      mesh->getElementsConnectedToNode(*node)[2]);
+            EXPECT_EQ(getElement(i, j),
+                      mesh->getElementsConnectedToNode(*node)[3]);
+        });
 }

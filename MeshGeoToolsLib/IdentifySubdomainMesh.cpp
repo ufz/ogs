@@ -59,7 +59,8 @@ std::vector<std::size_t> findElementsInMesh(
 
     for (auto const node_id : node_ids)
     {
-        auto const& connected_elements = mesh.getNode(node_id)->getElements();
+        auto const& connected_elements =
+            mesh.getElementsConnectedToNode(node_id);
         std::transform(
             begin(connected_elements), end(connected_elements),
             back_inserter(common_element_ids),

@@ -44,10 +44,11 @@ TEST_F(MeshLibFindElementWithinRadius, ZeroRadius)
                            ac::make_arbitrary<std::size_t>(), gtest_reporter);
 }
 
-std::vector<std::size_t> findElementIdsConnectedToNode(Node const& node)
+std::vector<std::size_t> findElementIdsConnectedToNode(
+    Node const& node, MeshLib::Mesh const& mesh)
 {
     std::vector<std::size_t> connected_elements;
-    auto const& elements_of_node = node.getElements();
+    auto const& elements_of_node = mesh.getElementsConnectedToNode(node);
     std::transform(std::begin(elements_of_node),
                    std::end(elements_of_node),
                    std::back_inserter(connected_elements),
@@ -57,13 +58,13 @@ std::vector<std::size_t> findElementIdsConnectedToNode(Node const& node)
 
 // Find all elements connected through all nodes of the element
 std::vector<std::size_t> findNextNeighborsConnectedByNode(
-    Element const& element)
+    Element const& element, MeshLib::Mesh const& mesh)
 {
     std::vector<std::size_t> connected_elements;
     for (unsigned n = 0; n < element.getNumberOfBaseNodes(); ++n)
     {
         auto const& node = *element.getNode(n);
-        auto const& elements = findElementIdsConnectedToNode(node);
+        auto const& elements = findElementIdsConnectedToNode(node, mesh);
         std::copy(std::begin(elements), std::end(elements),
                   std::back_inserter(connected_elements));
     }
@@ -120,7 +121,7 @@ std::vector<std::size_t> bruteForceFindElementIdsWithinRadius(
     auto const nodes_in_radius = findNodesWithinRadius(mesh, element, radius);
     for (auto n : nodes_in_radius)
     {
-        auto const& elements = findElementIdsConnectedToNode(*n);
+        auto const& elements = findElementIdsConnectedToNode(*n, mesh);
         std::copy(std::begin(elements), std::end(elements),
                   std::back_inserter(connected_elements));
     }
@@ -137,13 +138,14 @@ TEST_F(MeshLibFindElementWithinRadius, VerySmallRadius)
         std::unique_ptr<Mesh>(MeshGenerator::generateRegularQuadMesh(10., 10));
 
     auto neighboring_elements_returned =
-        [&mesh](std::size_t& element_id) -> bool {
+        [&mesh](std::size_t& element_id) -> bool
+    {
         auto const& element = *mesh->getElement(element_id);
         auto result = findElementsWithinRadius(element, 1e-5);
 
         std::sort(std::begin(result), std::end(result));
         auto const expected_elements =
-            findNextNeighborsConnectedByNode(element);
+            findNextNeighborsConnectedByNode(element, *mesh);
 
         return result.size() == expected_elements.size() &&
                std::includes(std::begin(result), std::end(result),

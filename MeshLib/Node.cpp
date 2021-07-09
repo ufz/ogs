@@ -41,27 +41,5 @@ void Node::updateCoordinates(double x, double y, double z)
     (*this)[0] = x;
     (*this)[1] = y;
     (*this)[2] = z;
-
-    const std::size_t nElements(this->_elements.size());
-    for (std::size_t i = 0; i < nElements; i++)
-    {
-        _elements[i]->computeVolume();
-    }
-}
-
-bool isBaseNode(Node const& node)
-{
-    // Check if node is connected.
-    if (node.getNumberOfElements() == 0)
-    {
-        return true;
-    }
-
-    // In a mesh a node always belongs to at least one element.
-    auto const e = node.getElement(0);
-
-    auto const n_base_nodes = e->getNumberOfBaseNodes();
-    auto const local_index = getNodeIDinElement(*e, &node);
-    return local_index < n_base_nodes;
 }
 }  // namespace MeshLib

@@ -165,13 +165,16 @@ void Mesh2MeshPropertyInterpolation::
     const std::size_t n_src_nodes(src_nodes.size());
     for (std::size_t k(0); k < n_src_nodes; k++)
     {
-        const std::size_t n_con_elems(src_nodes[k]->getNumberOfElements());
-        interpolated_properties[k] =
-            (*elem_props)[(src_nodes[k]->getElement(0))->getID()];
+        const std::size_t n_con_elems(
+            _src_mesh.getElementsConnectedToNode(*src_nodes[k]).size());
+        interpolated_properties[k] = (*elem_props)
+            [_src_mesh.getElementsConnectedToNode(*src_nodes[k])[0]->getID()];
         for (std::size_t j(1); j < n_con_elems; j++)
         {
             interpolated_properties[k] +=
-                (*elem_props)[(src_nodes[k]->getElement(j))->getID()];
+                (*elem_props)[_src_mesh
+                                  .getElementsConnectedToNode(*src_nodes[k])[j]
+                                  ->getID()];
         }
         interpolated_properties[k] /= n_con_elems;
     }
