@@ -22,7 +22,7 @@
                 </nonlinear_solver>
             </constitutive_relation>
             <solid_density>rho_sr</solid_density>
-            <reference_temperature>273.15</reference_temperature>
+            <reference_temperature>T_ref</reference_temperature>
             <process_variables>
                 <process_variable>displacement</process_variable>
             </process_variables>
@@ -84,6 +84,11 @@
         </output>
     </time_loop>
     <parameters>
+        <parameter>
+            <name>T_ref</name>
+            <type>Constant</type>
+            <value>273.15</value>
+        </parameter>
         <parameter>
             <name>E</name>
             <type>Constant</type>
