@@ -413,7 +413,9 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
 
         if (!ppd.nonlinear_solver_status.error_norms_met)
         {
-            WARN("Time step will be rejected due to nonlinear solver diverged");
+            WARN(
+                "Time step will be rejected due to nonlinear solver "
+                "divergence.");
             all_process_steps_accepted = false;
         }
 
