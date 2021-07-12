@@ -18,11 +18,9 @@
 #include <vtkType.h>
 
 #include "BaseLib/Logging.h"
-
 #include "GeoLib/Raster.h"
 #include "MeshLib/Location.h"
 #include "MeshLib/MeshEnums.h"
-#include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
 
@@ -32,7 +30,8 @@ class vtkDataArray;         // For node/cell properties
 namespace MeshLib
 {
 class Mesh;
-class Properties;
+class Element;
+class Node;
 
 /**
  * \brief Converter for VtkUnstructured Grids to OGS meshes
