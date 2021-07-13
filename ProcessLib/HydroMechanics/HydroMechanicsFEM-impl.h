@@ -899,6 +899,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             local_x.data() + displacement_offset, displacement_size);
 
         MPL::VariableArray vars;
+        vars[static_cast<int>(MPL::Variable::temperature)] = T_ref;
 
         for (int ip = 0; ip < n_integration_points; ip++)
         {

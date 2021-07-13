@@ -10,7 +10,9 @@
 #include "MFront.h"
 
 #include <MGIS/Behaviour/Integrate.hxx>
+#include <variant>
 
+#include "BaseLib/Error.h"
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "NumLib/Exceptions.h"
@@ -300,6 +302,15 @@ MFront<DisplacementDim>::integrateStress(
     if (!behaviour_data.s0.external_state_variables.empty())
     {
         // assuming that there is only temperature
+        if (!std::holds_alternative<double>(
+                variable_array_prev[static_cast<int>(
+                    MPL::Variable::temperature)]))
+        {
+            OGS_FATAL(
+                "MPL::Variable::temperature is not set for variable_array_prev "
+                "before calling MFront::integrateStress.");
+        }
+
         behaviour_data.s1.external_state_variables[0] = std::get<double>(
             variable_array_prev[static_cast<int>(MPL::Variable::temperature)]);
     }
@@ -307,6 +318,14 @@ MFront<DisplacementDim>::integrateStress(
     if (!behaviour_data.s1.external_state_variables.empty())
     {
         // assuming that there is only temperature
+        if (!std::holds_alternative<double>(
+                variable_array[static_cast<int>(MPL::Variable::temperature)]))
+        {
+            OGS_FATAL(
+                "MPL::Variable::temperature is not set for variable_array "
+                "before calling MFront::integrateStress");
+        }
+
         behaviour_data.s1.external_state_variables[0] = std::get<double>(
             variable_array[static_cast<int>(MPL::Variable::temperature)]);
     }

@@ -467,6 +467,22 @@ AddTest(
 )
 
 AddTest(
+    NAME StaggeredInjectionProduction1D_MFront
+    PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS InjectionProduction1D_MFront.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI AND OGS_USE_MFRONT
+    DIFF_DATA
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu displacement displacement 1e-13 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu pressure pressure 1e-6 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu velocity velocity 1e-18 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu epsilon epsilon 1e-13 0
+    InjectionProduction1D_Reference_ts_1_t_86400.000000.vtu InjectionProduction1D_ts_1_t_86400.000000.vtu sigma sigma 1e-6 0
+)
+
+AddTest(
     NAME HydroMechanics_hm1_1Dbeam
     PATH HydroMechanics/Verification
     EXECUTABLE ogs
