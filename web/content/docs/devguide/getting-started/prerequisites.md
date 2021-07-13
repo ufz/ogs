@@ -296,16 +296,23 @@ To finish add `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}
 pip install aqtinstall
 mkdir /opt/qt
 cd /opt/qt
-aqt install {{< dataFile "versions.tested_version.qt" >}} linux desktop -m xmlpatterns,x11extras
+aqt install {{< dataFile "versions.tested_version.qt" >}} linux desktop gcc_64 -m xmlpatterns,x11extras
 ```
 
-Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/bin` to the `PATH`.
+Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/gcc_64/bin` to the `PATH`.
 
 </div>
 
 <div class='mac'>
 
-See Linux-tab!
+```bash
+pip install aqtinstall
+mkdir /opt/qt
+cd /opt/qt
+aqt install {{< dataFile "versions.tested_version.qt" >}} linux desktop clang_64 -m xmlpatterns,x11extras
+```
+
+Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/clang_64/bin` to the `PATH`.
 
 </div>
 
