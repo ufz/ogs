@@ -410,7 +410,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     int n = GlobalDim == 2 ? 4 : 6;
     Eigen::VectorXd ele_stress = Eigen::VectorXd::Zero(n);
     Eigen::VectorXd ele_strain = Eigen::VectorXd::Zero(n);
-    Eigen::Vector3d ele_velocity = Eigen::Vector3d::Zero();
+    GlobalDimVector ele_velocity = GlobalDimVector::Zero();
 
     for (auto const& ip_data : _ip_data)
     {
@@ -444,9 +444,9 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         (*_process_data.mesh_prop_strain_xz)[_element.getID()] = ele_strain[5];
     }
 
-    for (unsigned i = 0; i < 3; i++)
+    for (unsigned i = 0; i < GlobalDim; i++)
     {
-        (*_process_data.mesh_prop_velocity)[element_id * 3 + i] =
+        (*_process_data.mesh_prop_velocity)[element_id * GlobalDim + i] =
             ele_velocity[i];
     }
 

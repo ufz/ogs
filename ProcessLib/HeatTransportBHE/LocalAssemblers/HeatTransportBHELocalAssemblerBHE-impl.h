@@ -12,12 +12,23 @@
 
 #include "HeatTransportBHELocalAssemblerBHE.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 
 namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
+Eigen::Vector3d compute1Dto3DRotationMatrix(MeshLib::Element const& e)
+{
+    assert(e.getDimension() == 1);
+    const int global_dim = 3;
+    const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(e,
+                                                                  global_dim);
+    return ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
+        global_dim, e.getDimension());
+}
+
 template <typename ShapeFunction, typename IntegrationMethod, typename BHEType>
 HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     HeatTransportBHELocalAssemblerBHE(MeshLib::Element const& e,
@@ -28,7 +39,8 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod, BHEType>::
     : _process_data(process_data),
       _integration_method(integration_order),
       _bhe(bhe),
-      _element_id(e.getID())
+      _element_id(e.getID()),
+      _rotation_matrix_1D_to_3D(compute1Dto3DRotationMatrix(e))
 {
     // need to make sure that the BHE elements are one-dimensional
     assert(e.getDimension() == 1);
@@ -161,6 +173,11 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
             auto const& lambda = pipe_heat_conductions[idx_bhe_unknowns];
             auto const& advection_vector =
                 pipe_advection_vectors[idx_bhe_unknowns];
+
+            // R^T * v, 3D to 1D:
+            double const advection_coefficient =
+                _rotation_matrix_1D_to_3D.dot(advection_vector);
+
             auto const& A = cross_section_areas[idx_bhe_unknowns];
 
             int const single_bhe_unknowns_index =
@@ -181,12 +198,13 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
                     single_bhe_unknowns_index, single_bhe_unknowns_index)
                 .noalias() += dNdx.transpose() * dNdx * lambda * A * w;
             // advection part
+            int constexpr element_dim = 1;
             local_K
                 .template block<single_bhe_unknowns_size,
                                 single_bhe_unknowns_size>(
                     single_bhe_unknowns_index, single_bhe_unknowns_index)
-                .noalias() +=
-                N.transpose() * advection_vector.transpose() * dNdx * A * w;
+                .noalias() += advection_coefficient * N.transpose() *
+                              dNdx.topLeftCorner(element_dim, N.size()) * A * w;
         }
     }
 

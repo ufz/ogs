@@ -28,9 +28,12 @@ struct IntegrationPointDataFracture final
         MaterialLib::Fracture::FractureModelBase<GlobalDim>& fracture_material_)
         : fracture_material(fracture_material_),
           material_state_variables(
-              fracture_material.createMaterialStateVariables())
+              fracture_material.createMaterialStateVariables()),
+          darcy_velocity(GlobalDimVector::Zero())
     {
     }
+
+    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
 
     typename HMatricesType::HMatrixType H_u;
     typename HMatricesType::ForceVectorType sigma_eff, sigma_eff_prev;
@@ -55,7 +58,7 @@ struct IntegrationPointDataFracture final
     Eigen::MatrixXd C;
     double integration_weight;
 
-    Eigen::Vector3d darcy_velocity;
+    GlobalDimVector darcy_velocity;
 
     void pushBackState()
     {

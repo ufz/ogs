@@ -107,6 +107,8 @@ protected:
                                    GlobalDim,
                                    ShapeFunctionDisplacement::NPOINTS>;
 
+    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
+
     HydroMechanicsProcessData<GlobalDim>& _process_data;
 
     std::vector<IntegrationPointDataType,

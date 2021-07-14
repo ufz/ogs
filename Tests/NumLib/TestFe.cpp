@@ -41,11 +41,12 @@ template <class TestFeType_, template <typename, int> class ShapeMatrixPolicy_>
 struct TestCase
 {
     using TestFeType = TestFeType_;
-    static const int GlobalDim = TestFeType::global_dim;
     using ShapeMatrixTypes =
-        ShapeMatrixPolicy_<typename TestFeType::ShapeFunction, GlobalDim>;
+        ShapeMatrixPolicy_<typename TestFeType::ShapeFunction,
+                           TestFeType::ShapeFunction::DIM>;
     template <typename X>
-    using ShapeMatrixPolicy = ShapeMatrixPolicy_<X, GlobalDim>;
+    using ShapeMatrixPolicy =
+        ShapeMatrixPolicy_<X, TestFeType::ShapeFunction::DIM>;
     using ShapeFunction = typename TestFeType::ShapeFunction;
 };
 
@@ -105,8 +106,7 @@ public:
 
 public:
     NumLibFemIsoTest()
-        : D(dim, dim),
-          expectedM(e_nnodes, e_nnodes),
+        : expectedM(e_nnodes, e_nnodes),
           expectedK(e_nnodes, e_nnodes),
           integration_method(2)
     {
@@ -114,14 +114,20 @@ public:
         mesh_element = this->createMeshElement();
 
         // set a conductivity tensor
-        setIdentityMatrix(dim, D);
-        D *= conductivity;
+        globalD.resize(TestFeType::global_dim, TestFeType::global_dim);
+        setIdentityMatrix(TestFeType::global_dim, globalD);
+        globalD *= conductivity;
+
         MeshLib::ElementCoordinatesMappingLocal ele_local_coord(
             *mesh_element,
             MeshLib::CoordinateSystem(*mesh_element).getDimension());
-        auto R = ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
-            TestFeType::dim, TestFeType::global_dim);
-        globalD.noalias() = R.transpose() * (D * R);
+        Eigen::Matrix<double, ShapeFunction::DIM, TestFeType::global_dim> const
+            R = ele_local_coord.getRotationMatrixToGlobal()
+                    .transpose()
+                    .topLeftCorner(mesh_element->getDimension(),
+                                   TestFeType::global_dim);
+
+        localD = R * globalD * R.transpose();
 
         // set expected matrices
         this->setExpectedMassMatrix(expectedM);
@@ -152,11 +158,12 @@ public:
 
     static const double conductivity;
     static const double eps;
-    DimMatrix D;
+    Eigen::Matrix<double, TestFeType::global_dim, TestFeType::global_dim>
+        globalD;
     NodalMatrix expectedM;
     NodalMatrix expectedK;
     IntegrationMethod integration_method;
-    GlobalDimMatrixType globalD;
+    Eigen::Matrix<double, ShapeFunction::DIM, ShapeFunction::DIM> localD;
 
     std::vector<const MeshLib::Node*> vec_nodes;
     std::vector<const MeshElementType*> vec_eles;
@@ -234,7 +241,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckLaplaceMatrix)
     {
         auto const& shape = shape_matrices[i];
         auto wp = this->integration_method.getWeightedPoint(i);
-        K.noalias() += shape.dNdx.transpose() * this->globalD * shape.dNdx *
+        K.noalias() += shape.dNdx.transpose() * this->localD * shape.dNdx *
                        shape.detJ * wp.getWeight();
     }
     // std::cout << "K=\n" << K << std::endl;
@@ -263,7 +270,7 @@ TYPED_TEST(NumLibFemIsoTest, CheckMassLaplaceMatrices)
         auto wp = this->integration_method.getWeightedPoint(i);
         M.noalias() +=
             shape.N.transpose() * shape.N * shape.detJ * wp.getWeight();
-        K.noalias() += shape.dNdx.transpose() * (this->globalD * shape.dNdx) *
+        K.noalias() += shape.dNdx.transpose() * (this->localD * shape.dNdx) *
                        shape.detJ * wp.getWeight();
     }
 

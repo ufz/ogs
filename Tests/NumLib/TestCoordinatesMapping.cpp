@@ -330,7 +330,12 @@ TEST(NumLib, FemNaturalCoordinatesMappingLineY)
     ASSERT_ARRAY_NEAR(exp_J, shape.J.data(), shape.J.size(), eps);
     ASSERT_ARRAY_NEAR(exp_J, shape.invJ.data(), shape.invJ.size(), eps);
     ASSERT_NEAR(1.0, shape.detJ, eps);
-    double exp_dNdx[2 * e_nnodes] = {0, 0, -0.5, 0.5};
+    double exp_dNdx[2 * e_nnodes] = {
+        -0.5,
+        0.5,
+        0,
+        0,
+    };
     ASSERT_ARRAY_NEAR(exp_dNdx, shape.dNdx.data(), shape.dNdx.size(), eps);
 
     for (auto n = 0u; n < line->getNumberOfNodes(); ++n)
