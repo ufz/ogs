@@ -21,12 +21,14 @@ namespace HeatTransportBHE
 {
 Eigen::Vector3d compute1Dto3DRotationMatrix(MeshLib::Element const& e)
 {
-    assert(e.getDimension() == 1);
-    const int global_dim = 3;
+    constexpr int global_dim = 3;
+    constexpr int element_dim = 1;
+
+    assert(e.getDimension() == element_dim);
     const MeshLib::ElementCoordinatesMappingLocal ele_local_coord(e,
                                                                   global_dim);
-    return ele_local_coord.getRotationMatrixToGlobal().topLeftCorner(
-        global_dim, e.getDimension());
+    return ele_local_coord.getRotationMatrixToGlobal()
+        .template topLeftCorner<global_dim, element_dim>();
 }
 
 template <typename ShapeFunction, typename IntegrationMethod, typename BHEType>
@@ -203,8 +205,11 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, IntegrationMethod,
                 .template block<single_bhe_unknowns_size,
                                 single_bhe_unknowns_size>(
                     single_bhe_unknowns_index, single_bhe_unknowns_index)
-                .noalias() += advection_coefficient * N.transpose() *
-                              dNdx.topLeftCorner(element_dim, N.size()) * A * w;
+                .noalias() +=
+                advection_coefficient * N.transpose() *
+                dNdx.template topLeftCorner<element_dim,
+                                            ShapeFunction::NPOINTS>() *
+                A * w;
         }
     }
 

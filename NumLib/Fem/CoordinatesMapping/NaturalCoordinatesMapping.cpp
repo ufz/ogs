@@ -214,11 +214,10 @@ inline void computeMappingMatrices(
         // J^-1, dshape/dx
         shapemat.invJ.noalias() = shapemat.J.inverse();
 
-        auto const nnodes(shapemat.dNdr.cols());
-        auto const ele_dim(shapemat.dNdr.rows());
         assert(shapemat.dNdr.rows() == ele.getDimension());
-        shapemat.dNdx.topLeftCorner(ele_dim, nnodes).noalias() =
-            shapemat.invJ * shapemat.dNdr;
+        shapemat.dNdx
+            .template topLeftCorner<T_SHAPE_FUNC::DIM, T_SHAPE_FUNC::NPOINTS>()
+            .noalias() = shapemat.invJ * shapemat.dNdr;
     }
 }
 
