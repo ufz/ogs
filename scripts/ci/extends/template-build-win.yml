@@ -8,27 +8,24 @@
   needs: [meta]
   variables:
   script:
-    - $build_directory = if ($env:BUILD_DIR) { $env:BUILD_DIR } else { $env:CMAKE_PRESET }
-    - $build_directory_full = "..\build\" + $build_directory
+    - $build_directory_full = "..\build\" + $env:CMAKE_PRESET
+    - $log_file = $build_directory_full + "\make.output"
     - (rm -r -fo $build_directory_full)
     - cmd /c if not exist $build_directory_full mkdir $build_directory_full
     - mkdir build
     # Create symlink https://stackoverflow.com/a/34905638/80480
-    - cmd /c mklink /D build\$build_directory $env:CI_PROJECT_DIR\$build_directory_full
-    - $cmake_cmd = "cmake -S . -B $build_directory_full --preset=$env:CMAKE_PRESET
-      $env:CMAKE_ARGS
+    - cmd /c mklink /D build\$env:CMAKE_PRESET $env:CI_PROJECT_DIR\$build_directory_full
+    - $cmake_cmd = "cmake -S . --preset=$env:CMAKE_PRESET $env:CMAKE_ARGS
       -DOGS_BUILD_PROCESSES=$env:BUILD_PROCESSES"
     - $cmake_cmd
     - Invoke-Expression $cmake_cmd
-    - cd $build_directory_full
-    - cmake --build . --target package | Tee-Object -FilePath make.output
-    - if($env:BUILD_TESTS -eq "true") { cmake --build . --target tests }
-    - if($env:BUILD_CTEST -eq "true") { cmake --build . --target ctest }
-        cp Testing/**/Test.xml Tests/ctest.xml
+    - cmake --build --preset=$env:CMAKE_PRESET --target package | Tee-Object -FilePath $log_file
+    - if($env:BUILD_TESTS -eq "true") { cmake --build --preset=$env:CMAKE_PRESET --target tests }
+    - if($env:BUILD_CTEST -eq "true") { ctest --preset=$env:CMAKE_PRESET --output-junit Tests/ctest.xml }
     - |
-      if($env:CHECK_WARNINGS -eq "true" -and (cat make.output | Select-String -Pattern ': warning') )
+      if($env:CHECK_WARNINGS -eq "true" -and (cat $log_file | Select-String -Pattern ': warning') )
       {
           Write-Output 'There were compiler warnings:\n'
-          cat make.output | Select-String -Pattern ': warning'
+          cat $log_file | Select-String -Pattern ': warning'
           exit 1
       }
