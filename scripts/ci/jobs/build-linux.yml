@@ -8,10 +8,8 @@ build linux:
   timeout: 2h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
-    CMAKE_PRESET: release
+    CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=OFF
-      -DOGS_USE_MFRONT=ON
       -DOGS_$USE_PYTHON
       -DOGS_INSTALL_DEPENDENCIES=ON
   parallel:
@@ -30,10 +28,8 @@ linux ctest large:
   timeout: 2h
   variables:
     TARGETS: ctest-large
-    CMAKE_PRESET: release
+    CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=OFF
-      -DOGS_USE_MFRONT=ON
       -DOGS_USE_PYTHON=ON
 
 build linux (no unity):
@@ -72,7 +68,6 @@ build linux arch:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
-      -DOGS_USE_CONAN=OFF
       -DOGS_USE_POETRY=OFF
 
 build linux ubuntu:
@@ -84,5 +79,3 @@ build linux ubuntu:
   needs: [meta]
   variables:
     CMAKE_PRESET: release-all
-    CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=OFF

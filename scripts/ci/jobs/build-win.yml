@@ -7,13 +7,11 @@ build win:
     - when: manual
       allow_failure: true
   variables:
-    BUILD_DIR: win-release
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_$USE_PYTHON
-      -DOGS_USE_CONAN=AUTO
   parallel:
     matrix:
       - USE_PYTHON: ["USE_PYTHON=ON", "USE_PYTHON=OFF"]
