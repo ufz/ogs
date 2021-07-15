@@ -98,13 +98,12 @@ cs.setEntryName("ShearFactor");
     tan_3_lodeT = tan(3. * lodeT);
 
     auto Hill = Stensor4::Id();
-    const int step = sig.size() + 1;
-    Hill[0] = cn;
-    Hill[step] = Hill[step * 2] = 1. / cn;
-    Hill[step * 3] = cs;
-    if (step == 7)  // 3D case
+    Hill(0,0) = cn;
+    Hill(1,1) = Hill(2,2) = 1. / cn;
+    Hill(3,3) = cs;
+    if (sig.size() == 6)  // 3D case
     {
-        Hill[step * 5] = cs;
+        Hill(5,5) = cs;
     }
 
     // Compute initial elastic strain
@@ -159,13 +158,12 @@ cs.setEntryName("ShearFactor");
     constexpr auto isqrt3 = Cste<real>::isqrt3;
     constexpr auto id = Stensor::Id();
     auto Hill = Stensor4::Id();
-    const int step = sig.size() + 1;
-    Hill[0] = cn;
-    Hill[step] = Hill[step * 2] = 1. / cn;
-    Hill[step * 3] = cs;
-    if (step == 7)  // 3D case
+    Hill(0,0) = cn;
+    Hill(1,1) = Hill(2,2) = 1. / cn;
+    Hill(3,3) = cs;
+    if (sig.size() == 6)  // 3D case
     {
-        Hill[step * 5] = cs;
+        Hill(5,5) = cs;
     }
     if (F)
     {
