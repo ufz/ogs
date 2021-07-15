@@ -181,6 +181,16 @@
         "OGS_USE_CONAN": "OFF",
         "OGS_USE_POETRY": "OFF"
       }
+    },
+    {
+      "name": "ci-no-unity",
+      "inherits": "release-all",
+      "cacheVariables": {
+        "OGS_USE_PYTHON": "OFF",
+        "OGS_USE_CONAN": "OFF",
+        "OGS_USE_POETRY": "OFF",
+        "OGS_USE_UNITY_BUILDS": "OFF"
+      }
     }
   ],
   "buildPresets": [
