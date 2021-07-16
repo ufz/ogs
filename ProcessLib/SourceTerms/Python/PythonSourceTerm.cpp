@@ -16,7 +16,7 @@
 
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/ForBoundaryConditionOrSourceTerm/CreateLocalAssemblers.h"
 #include "PythonSourceTermLocalAssembler.h"
 
 namespace
@@ -71,7 +71,8 @@ PythonSourceTerm::PythonSourceTerm(
       _source_term_data(std::move(source_term_data)),
       _flush_stdout(flush_stdout)
 {
-    createLocalAssemblers<PythonSourceTermLocalAssembler>(
+    BoundaryConditionOrSourceTerm::createLocalAssemblers<
+        PythonSourceTermLocalAssembler>(
         global_dim, _source_term_data.source_term_mesh.getElements(),
         *_source_term_dof_table, shapefunction_order, _local_assemblers,
         _source_term_data.source_term_mesh.isAxiallySymmetric(),

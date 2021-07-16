@@ -17,6 +17,7 @@ append_source_files(SOURCES SurfaceFlux)
 append_source_files(SOURCES Output)
 append_source_files(SOURCES SourceTerms)
 append_source_files(SOURCES Utils)
+append_source_files(SOURCES Utils/ForBoundaryConditionOrSourceTerm)
 
 ogs_add_library(ProcessLib ${SOURCES})
 

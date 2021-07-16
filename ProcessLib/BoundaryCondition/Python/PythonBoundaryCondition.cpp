@@ -16,7 +16,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/ForBoundaryConditionOrSourceTerm/CreateLocalAssemblers.h"
 #include "PythonBoundaryConditionLocalAssembler.h"
 
 namespace
@@ -75,7 +75,8 @@ PythonBoundaryCondition::PythonBoundaryCondition(
     _dof_table_boundary = _bc_data.dof_table_bulk.deriveBoundaryConstrainedMap(
         std::move(bc_mesh_subset));
 
-    createLocalAssemblers<PythonBoundaryConditionLocalAssembler>(
+    BoundaryConditionOrSourceTerm::createLocalAssemblers<
+        PythonBoundaryConditionLocalAssembler>(
         global_dim, _bc_data.boundary_mesh.getElements(), *_dof_table_boundary,
         shapefunction_order, _local_assemblers,
         _bc_data.boundary_mesh.isAxiallySymmetric(), integration_order,

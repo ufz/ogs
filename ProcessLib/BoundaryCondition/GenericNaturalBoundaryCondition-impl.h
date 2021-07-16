@@ -9,7 +9,7 @@
  */
 
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/ForBoundaryConditionOrSourceTerm/CreateLocalAssemblers.h"
 
 namespace ProcessLib
 {
@@ -65,7 +65,8 @@ GenericNaturalBoundaryCondition<BoundaryConditionData,
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, {component_id}, std::move(bc_mesh_subset)));
 
-    createLocalAssemblers<LocalAssemblerImplementation>(
+    BoundaryConditionOrSourceTerm::createLocalAssemblers<
+        LocalAssemblerImplementation>(
         global_dim, _bc_mesh.getElements(), *_dof_table_boundary,
         shapefunction_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
         integration_order, _data);

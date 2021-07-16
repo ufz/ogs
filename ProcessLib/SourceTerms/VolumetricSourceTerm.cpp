@@ -10,7 +10,7 @@
 
 #include "VolumetricSourceTerm.h"
 
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/ForBoundaryConditionOrSourceTerm/CreateLocalAssemblers.h"
 
 namespace ProcessLib
 {
@@ -22,7 +22,8 @@ VolumetricSourceTerm::VolumetricSourceTerm(
     : SourceTerm(std::move(source_term_dof_table)),
       _source_term_parameter(source_term_parameter)
 {
-    ProcessLib::createLocalAssemblers<VolumetricSourceTermLocalAssembler>(
+    BoundaryConditionOrSourceTerm::createLocalAssemblers<
+        VolumetricSourceTermLocalAssembler>(
         bulk_mesh_dimension, source_term_mesh.getElements(),
         *_source_term_dof_table, shapefunction_order, _local_assemblers,
         source_term_mesh.isAxiallySymmetric(), integration_order,

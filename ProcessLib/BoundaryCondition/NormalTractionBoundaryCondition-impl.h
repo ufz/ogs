@@ -13,10 +13,9 @@
 #include <numeric>
 
 #include "MeshLib/MeshSearch/NodeSearch.h"
-#include "ParameterLib/Utils.h"
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
-
 #include "NormalTractionBoundaryConditionLocalAssembler.h"
+#include "ParameterLib/Utils.h"
+#include "ProcessLib/Utils/ForBoundaryConditionOrSourceTerm/CreateLocalAssemblers.h"
 
 namespace ProcessLib
 {
@@ -52,7 +51,8 @@ NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
         variable_id, component_ids, std::move(bc_mesh_subset)));
 
-    createLocalAssemblers<GlobalDim, LocalAssemblerImplementation>(
+    BoundaryConditionOrSourceTerm::detail::createLocalAssemblers<
+        GlobalDim, LocalAssemblerImplementation>(
         *_dof_table_boundary, shapefunction_order, _bc_mesh.getElements(),
         _local_assemblers, _bc_mesh.isAxiallySymmetric(), _integration_order,
         _pressure);

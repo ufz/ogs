@@ -17,7 +17,7 @@
 #include "MeshLib/MeshSearch/NodeSearch.h"  // for getUniqueNodes
 #include "MeshLib/Node.h"
 #include "ParameterLib/Utils.h"
-#include "ProcessLib/Utils/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/ForBoundaryConditionOrSourceTerm/CreateLocalAssemblers.h"
 
 namespace ProcessLib
 {
@@ -100,7 +100,7 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
 
     const int shape_function_order = 1;
 
-    ProcessLib::createLocalAssemblers<
+    BoundaryConditionOrSourceTerm::createLocalAssemblers<
         ConstraintDirichletBoundaryConditionLocalAssembler>(
         _bulk_mesh.getDimension(), _bc_mesh.getElements(), *_dof_table_boundary,
         shape_function_order, _local_assemblers, _bc_mesh.isAxiallySymmetric(),
