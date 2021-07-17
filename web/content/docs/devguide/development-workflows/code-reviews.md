@@ -30,3 +30,9 @@ If you do not want a reviewer to have a look, e.g. because you are currently wor
 
 - Set the merge request label to `workflow::please review`
 - Remove the [`Draft`-flag](https://docs.gitlab.com/ee/user/project/merge_requests/drafts.html#mark-merge-requests-as-ready) (if you have set it previously)
+
+### How to checkout a MR from another developer locally
+
+On the merge request page in the first box which contains information on the MR author and branch name there is button labelled `Check out branch` which will show you instructions on how to locally checkout this MR:
+
+![](../checkout-branch.png)
