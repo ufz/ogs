@@ -37,6 +37,11 @@ identifier = "testing"
 weight = 3
 
 [[menu.devguide]]
+name = "Third-party packages"
+identifier = "packages"
+weight = 4
+
+[[menu.devguide]]
 name = "Advanced"
 identifier = "advanced"
 weight = 5

@@ -4,9 +4,11 @@ title = "Python environment"
 author = "Lars Bilke"
 weight = 1030
 
+aliases = ["/docs/devguide/advanced/python-env"]
+
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "packages"
 +++
 
 In OGS we make use of Python packages at different stages, e.g.:
