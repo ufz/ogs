@@ -4,8 +4,8 @@ set(HEADERS StratBar.h StratScene.h StratView.h StratWindow.h)
 
 set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../../..)
 set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-file(GLOB_RECURSE UI_FILES CONFIGURE_DEPENDS *.ui)
-source_group("UI Files" FILES ${UI_FILES})
+file(GLOB UIS CONFIGURE_DEPENDS *.ui)
+source_group("UI Files" FILES ${UIS})
 
 ogs_add_library(QtStratView ${SOURCES} ${HEADERS} ${UIS})
 target_include_directories(QtStratView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
