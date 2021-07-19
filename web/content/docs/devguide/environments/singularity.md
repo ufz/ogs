@@ -2,7 +2,7 @@
 date = "2018-09-21T11:00:13+01:00"
 title = "Singularity"
 author = "Lars Bilke"
-weight = 1036
+weight = 1051
 
 aliases = ["/docs/devguide/advanced/singularity"]
 

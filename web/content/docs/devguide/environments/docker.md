@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Docker"
 author = "Lars Bilke"
-weight = 1035
+weight = 1050
 
 aliases = ["/docs/devguide/advanced/docker"]
 

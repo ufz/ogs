@@ -2,7 +2,7 @@
 date = "2020-09-28"
 title = "Get support"
 author = "Lars Bilke"
-weight = 1046
+weight = 1079
 
 [menu]
   [menu.devguide]

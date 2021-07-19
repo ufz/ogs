@@ -2,7 +2,7 @@
 date = "2020-10-05T15:16:13+01:00"
 title = "Python environment"
 author = "Lars Bilke"
-weight = 1030
+weight = 1040
 
 aliases = ["/docs/devguide/advanced/python-env"]
 

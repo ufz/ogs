@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Log and Debug Output"
 author = "Lars Bilke"
-weight = 1034
+weight = 1061
 
 [menu]
   [menu.devguide]

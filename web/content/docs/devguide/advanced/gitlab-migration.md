@@ -2,7 +2,7 @@
 date = "2020-05-29T11:00:13+01:00"
 title = "Migrate to GitLab"
 author = "Lars Bilke"
-weight = 1043
+weight = 1069
 
 [menu]
   [menu.devguide]

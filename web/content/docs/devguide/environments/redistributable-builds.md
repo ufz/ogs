@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Redistributable builds"
 author = "Lars Bilke"
-weight = 1037
+weight = 1052
 
 aliases = ["/docs/devguide/advanced/redistributable-builds"]
 

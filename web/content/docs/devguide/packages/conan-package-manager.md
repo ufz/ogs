@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Conan package manager"
 author = "Lars Bilke"
-weight = 1033
+weight = 1042
 
 aliases = ["/docs/devguide/advanced/conan-package-manager"]
 
