@@ -37,11 +37,6 @@ identifier = "testing"
 weight = 3
 
 [[menu.devguide]]
-name = "Documentation"
-identifier = "documentation"
-weight = 4
-
-[[menu.devguide]]
 name = "Advanced"
 identifier = "advanced"
 weight = 5
