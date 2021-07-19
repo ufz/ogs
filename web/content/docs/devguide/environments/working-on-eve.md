@@ -4,9 +4,11 @@ title = "Working on Eve"
 author = "Lars Bilke"
 weight = 1040
 
+aliases = ["/docs/devguide/advanced/working-on-eve"]
+
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "environments"
 +++
 
 ## Introduction
