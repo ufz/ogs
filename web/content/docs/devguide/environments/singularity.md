@@ -4,9 +4,11 @@ title = "Singularity"
 author = "Lars Bilke"
 weight = 1036
 
+aliases = ["/docs/devguide/advanced/singularity"]
+
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "environments"
 +++
 
 <div class='note'>
