@@ -4,9 +4,11 @@ title = "Docker"
 author = "Lars Bilke"
 weight = 1035
 
+aliases = ["/docs/devguide/advanced/docker"]
+
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "environments"
 +++
 
 ## Introduction
