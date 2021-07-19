@@ -4,9 +4,11 @@ title = "Redistributable builds"
 author = "Lars Bilke"
 weight = 1037
 
+aliases = ["/docs/devguide/advanced/redistributable-builds"]
+
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "environments"
 +++
 
 ## Introduction
