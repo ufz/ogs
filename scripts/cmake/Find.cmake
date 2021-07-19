@@ -10,6 +10,17 @@ if(${GIT_VERSION_STRING} VERSION_LESS ${ogs.minimum_version.git})
 endif()
 
 find_package(Doxygen OPTIONAL_COMPONENTS dot)
+if(TARGET Doxygen::dot)
+    # Create dependency graph in build dir with:
+    # ~~~
+    # cmake . --graphviz=cmake-dependencies.dot && \
+    #   dot -Tpng cmake-dependencies.dot -o cmake-dependencies.png
+    # ~~~
+    configure_file(
+        ${PROJECT_SOURCE_DIR}/scripts/cmake/CMakeGraphVizOptions.in.cmake
+        ${PROJECT_BINARY_DIR}/CMakeGraphVizOptions.cmake
+    )
+endif()
 
 # Find gnu profiler gprof
 find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
