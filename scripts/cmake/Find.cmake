@@ -90,6 +90,7 @@ if(OGS_BUILD_GUI)
     endif()
     find_package(Qt5 ${ogs.minimum_version.qt} REQUIRED ${QT_MODULES})
     cmake_policy(SET CMP0020 NEW)
+    list(APPEND CMAKE_INSTALL_RPATH ${Qt5_DIR}/../..)
 endif()
 
 if(OGS_USE_NETCDF)
