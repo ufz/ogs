@@ -43,12 +43,9 @@ option(OGS_USE_PYTHON "Interface with Python" ON)
 option(OGS_USE_POETRY
        "Enables automatic Python virtual environment handling with poetry." ON
 )
-if(WIN32)
-    option(OGS_BUILD_SWMM "Should the SWMM interface be built?" ON)
-endif()
-if(NOT WIN32 AND OGS_BUILD_SWMM)
-    message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
-endif()
+cmake_dependent_option(
+    OGS_BUILD_SWMM "Should the SWMM interface be built?" ON "WIN32" OFF
+)
 
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
