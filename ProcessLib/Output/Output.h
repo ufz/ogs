@@ -14,9 +14,7 @@
 #include <utility>
 
 #include "MeshLib/IO/VtkIO/PVDFile.h"
-#ifdef OGS_USE_XDMF
 #include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
-#endif
 #include "ProcessOutput.h"
 
 namespace ProcessLib
@@ -93,17 +91,17 @@ private:
                     MeshLib::IO::PVDFile* const pvd_file,
                     MeshLib::Mesh const& mesh,
                     double const t);
-#ifdef OGS_USE_XDMF
+
     void outputMeshXdmf(OutputFile const& output_file,
                         MeshLib::Mesh const& mesh,
                         int const timestep,
                         double const t);
-#endif
+
 
 private:
-#ifdef OGS_USE_XDMF
+
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> _mesh_xdmf_hdf_writer;
-#endif
+
     std::string const _output_directory;
     OutputType const _output_file_type;
     std::string const _output_file_prefix;

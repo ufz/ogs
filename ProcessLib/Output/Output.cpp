@@ -232,7 +232,6 @@ struct Output::OutputFile
     }
 };
 
-#ifdef OGS_USE_XDMF
 void Output::outputMeshXdmf(OutputFile const& output_file,
                             MeshLib::Mesh const& mesh,
                             int const timestep,
@@ -250,7 +249,7 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
     }
     _mesh_xdmf_hdf_writer->writeStep(timestep, t);
 }
-#endif
+
 
 void Output::outputMesh(OutputFile const& output_file,
                         MeshLib::IO::PVDFile* const pvd_file,
@@ -320,7 +319,7 @@ void Output::doOutputAlways(Process const& process,
         }
         else if (_output_file_type == ProcessLib::OutputType::xdmf)
         {
-#ifdef OGS_USE_XDMF
+
             OutputFile const file(
                 _output_directory, _output_file_type, _output_file_prefix, "",
                 mesh.getName(), timestep, t, iteration, _output_file_data_mode,
@@ -328,11 +327,9 @@ void Output::doOutputAlways(Process const& process,
                 _output_data_specification.output_variables);
 
             outputMeshXdmf(file, mesh, timestep, t);
-#else
-            OGS_FATAL(
-                "Trying to write Xdmf file but OGS was not built with "
-                "Xdmf-support.");
-#endif
+
+
+
         }
     };
 
