@@ -33,14 +33,15 @@ public:
      * attributes
      * @param variable_attributes vector of variable attributes (each attribute
      * is a OGS mesh property
-     * @param step number of the step (temporal collection)
+     * @param initial_step number of the step (temporal collection), usually 0,
+     * greater 0 with continuation of simulation
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param use_compression if true gzip compression is enabled
      */
     HdfWriter(std::vector<HdfData> constant_attributes,
               std::vector<HdfData>
                   variable_attributes,
-              int const step,
+              int const initial_step,
               std::filesystem::path const& filepath,
               bool const use_compression);
 
@@ -50,9 +51,8 @@ public:
      * the data holder to not change during writing and HdfData given to
      * constructor to be still valid
      * @param step number of the step (temporal collection)
-     * @return true = success, false = error
      */
-    bool writeStep(int step) const;
+    void writeStep();
     ~HdfWriter();
 
 private:
@@ -62,5 +62,6 @@ private:
     hid_t const _file;
     hid_t _group;
     std::map<std::string, hid_t> _datasets;
+    int _output_step;
 };
 }  // namespace MeshLib::IO
