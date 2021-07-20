@@ -23,11 +23,3 @@ if(OGS_USE_CONAN)
     file(GLOB MATCHED_FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dll")
     install(FILES ${MATCHED_FILES} DESTINATION bin)
 endif()
-
-if(OGS_BUILD_GUI)
-    install_qt5_plugin("Qt5::QWindowsIntegrationPlugin" QT_PLUGINS)
-    file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf"
-         "[Paths]\nPlugins = ../${_qt_plugin_dir}\n"
-    )
-    install(FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qt.conf" DESTINATION bin)
-endif()
