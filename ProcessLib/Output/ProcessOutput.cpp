@@ -139,7 +139,7 @@ void addProcessDataToMesh(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
     [[maybe_unused]] std::vector<NumLib::LocalToGlobalIndexMap const*> const&
-        bulk_dof_table,
+        bulk_dof_tables,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
         process_variables,
@@ -212,7 +212,7 @@ void addProcessDataToMesh(
             for (auto const* node : mesh_subset.getNodes())
             {
 #ifdef USE_PETSC
-                if (bulk_dof_table[process_id] != dof_table[process_id])
+                if (bulk_dof_tables[process_id] != dof_table[process_id])
                 {
                     if (!mesh.getProperties().existsPropertyVector<std::size_t>(
                             "bulk_node_ids"))
@@ -234,7 +234,7 @@ void addProcessDataToMesh(
                     {
                         auto const bulk_node_id =
                             bulk_node_id_map[node->getID()];
-                        // use bulk_dof_table to find information
+                        // use bulk_dof_tables to find information
                         std::size_t const bulk_mesh_id = 0;
                         MeshLib::Location const l(bulk_mesh_id,
                                                   MeshLib::MeshItemType::Node,
@@ -242,7 +242,7 @@ void addProcessDataToMesh(
                         auto const global_component_id =
                             global_component_offset + component_id;
                         auto const index =
-                            bulk_dof_table[process_id]->getLocalIndex(
+                            bulk_dof_tables[process_id]->getLocalIndex(
                                 l, global_component_id,
                                 x[process_id]->getRangeBegin(),
                                 x[process_id]->getRangeEnd());

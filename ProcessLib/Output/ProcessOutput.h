@@ -41,7 +41,7 @@ void addProcessDataToMesh(
     bool const output_secondary_variable,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const*
         integration_point_writer,
-    OutputDataSpecification const& output_data_specification);
+    OutputDataSpecification const& process_output);
 
 //! Writes output to the given \c file_name using the specified file format.
 ///

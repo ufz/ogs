@@ -93,8 +93,8 @@ bool Output::shallDoOutput(int timestep, double const t)
     return false;
 }
 
-Output::Output(std::string output_directory, OutputType output_file_type,
-               std::string output_file_prefix, std::string output_file_suffix,
+Output::Output(std::string directory, OutputType file_type,
+               std::string file_prefix, std::string file_suffix,
                bool const compress_output, std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
@@ -102,10 +102,10 @@ Output::Output(std::string output_directory, OutputType output_file_type,
                OutputDataSpecification&& output_data_specification,
                std::vector<std::string>&& mesh_names_for_output,
                std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
-    : _output_directory(std::move(output_directory)),
-      _output_file_type(output_file_type),
-      _output_file_prefix(std::move(output_file_prefix)),
-      _output_file_suffix(std::move(output_file_suffix)),
+    : _output_directory(std::move(directory)),
+      _output_file_type(file_type),
+      _output_file_prefix(std::move(file_prefix)),
+      _output_file_suffix(std::move(file_suffix)),
       _output_file_compression(compress_output),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
