@@ -247,7 +247,10 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
                 mesh, path, timestep, t,
                 _output_data_specification.output_variables, output_file.compression));
     }
+    else
+    {
     _mesh_xdmf_hdf_writer->writeStep(timestep, t);
+    };
 }
 
 
