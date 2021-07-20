@@ -16,17 +16,21 @@ build docs:
     when: runner_system_failure
   variables:
     DOX_WARNINGS_THRESHOLD: 12
-  before_script:
+  script:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
     - mkdir -p build
+    - NUM_CYCLES=`/opt/cppcheck/bin/cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
+    - echo "num_cycles $NUM_CYCLES" > metrics.txt
+    - /opt/cppcheck/bin/cpp-dependencies --graph cpp-dependencies.dot && dot -Tsvg cpp-dependencies.dot -o build/cpp-dependencies.svg
     - cd build
-  script:
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_USE_POETRY=OFF -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
+    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_USE_POETRY=OFF
+    - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot
+    - cmake . -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
     - cmake --build . --target doc > >(tee make-docs.output)
     - cat DoxygenWarnings.log|grep -v 'too many nodes'
     - NUM_DOX_WARNINGS=`cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'|wc -l|xargs`
-    - echo "doxygen_warnings $NUM_DOX_WARNINGS" > metrics.txt
+    - echo "doxygen_warnings $NUM_DOX_WARNINGS" >> metrics.txt
     - |
       if [[ ( "$NUM_DOX_WARNINGS" > "$DOX_WARNINGS_THRESHOLD" ) ]]; then
         echo "Error: Number of Doxygen warnings exceeded threshold –> $NUM_DOX_WARNINGS > $DOX_WARNINGS_THRESHOLD"
@@ -49,6 +53,7 @@ build docs:
     paths:
       - Doxygen.html
       - build/docs
+      - build/*-dependencies.svg
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
