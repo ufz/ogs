@@ -246,5 +246,4 @@ check_header_compilation()
 include(scripts/cmake/MarkVariablesAdvanced.cmake)
 unset(PRE_INSTALL_RUN CACHE)
 
-include(FeatureSummary)
-feature_summary(WHAT ALL)
+include(Features)
