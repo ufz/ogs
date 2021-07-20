@@ -38,14 +38,12 @@ target_link_libraries(
         $<$<TARGET_EXISTS:ProcessLibSourceTermPython>:ProcessLibSourceTermPython>
         $<$<TARGET_EXISTS:petsc>:petsc>
         nlohmann_json
-    PRIVATE ParameterLib GitInfoLib
-            $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+    PRIVATE ParameterLib GitInfoLib $<$<TARGET_EXISTS:InSituLib>:InSituLib>
 )
 
 target_compile_definitions(
     ProcessLib
-    PUBLIC $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
-           # Enabled elements
+    PUBLIC # Enabled elements
            OGS_MAX_ELEMENT_DIM=${OGS_MAX_ELEMENT_DIM}
            OGS_MAX_ELEMENT_ORDER=${OGS_MAX_ELEMENT_ORDER}
            $<$<BOOL:${OGS_ENABLE_ELEMENT_SIMPLEX}>:OGS_ENABLE_ELEMENT_SIMPLEX>

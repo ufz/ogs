@@ -423,7 +423,7 @@ AddTest(
     WRAPPER mpirun
     WRAPPER_ARGS -np 3
     TESTER xdmfdiff
-    REQUIREMENTS (OGS_USE_MPI AND OGS_USE_XDMF)
+    REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
     cube_1e3_np3.xdmf cube_1e3_np3.xdmf pressure pressure 1e-3 1e-3
     cube_1e3_np3.xdmf cube_1e3_np3.xdmf v v 1e-3 1e-3
@@ -437,7 +437,7 @@ AddTest(
     WRAPPER mpirun
     WRAPPER_ARGS -np 2
     TESTER xdmfdiff
-    REQUIREMENTS (OGS_USE_MPI AND OGS_USE_XDMF)
+    REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
     cube_1e3_np2.xdmf cube_1e3_np2.xdmf pressure pressure 1e-3 1e-3
     cube_1e3_np2.xdmf cube_1e3_np2.xdmf v v 1e-3 1e-3

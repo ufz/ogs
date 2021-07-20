@@ -102,7 +102,6 @@ if(OGS_USE_PETSC AND MSVC)
     )
 endif()
 option(OGS_USE_NETCDF "Add NetCDF support." OFF)
-option(OGS_USE_XDMF "Add Xdmf file IO support" OFF)
 
 # Eigen
 option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
@@ -195,7 +194,7 @@ include(packaging/Pack)
 # ---- Subdirectories ----
 include_directories(${PROJECT_SOURCE_DIR})
 # xdmfdiff
-if(OGS_USE_XDMF AND OGS_BUILD_TESTING)
+if(OGS_BUILD_TESTING)
     add_subdirectory(Tests/xdmfdiff)
 endif()
 
