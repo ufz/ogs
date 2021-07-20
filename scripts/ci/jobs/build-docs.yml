@@ -20,12 +20,20 @@ build docs:
     # HACK to easier linking to the generated pages
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/docs/index.html">' >> Doxygen.html
     - mkdir -p build
+    # cpp-dependencies
     - NUM_CYCLES=`/opt/cppcheck/bin/cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
     - /opt/cppcheck/bin/cpp-dependencies --graph cpp-dependencies.dot && dot -Tsvg cpp-dependencies.dot -o build/cpp-dependencies.svg
+    # lizard
+    - python /opt/lizard/lizard.py -l cpp -w -t 8 > lizard.txt || true
+    - cat lizard.txt
+    - NUM_LIZARD_ISSUES=`cat lizard.txt | wc -l`
+    - echo "lizard_issues $NUM_LIZARD_ISSUES" >> metrics.txt
+    - python /opt/lizard/lizard.py -l cpp -t 8 --html -o Lizard.html
+    # build
     - cd build
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_USE_POETRY=OFF
-    - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot
+    - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot -o cmake-dependencies.svg
     - cmake . -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
     - cmake --build . --target doc > >(tee make-docs.output)
     - cat DoxygenWarnings.log|grep -v 'too many nodes'
@@ -53,7 +61,10 @@ build docs:
     paths:
       - Doxygen.html
       - build/docs
-      - build/*-dependencies.svg
+      - build/cpp-dependencies.svg
+      - build/cmake-dependencies.svg
+      - Lizard.html
+      - lizard.txt
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
