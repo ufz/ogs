@@ -9,9 +9,6 @@
 
 #include "XdmfData.h"
 
-#include <XdmfArrayType.hpp>
-#include <XdmfAttributeCenter.hpp>
-#include <XdmfTopologyType.hpp>
 #include <cassert>
 #include <map>
 
@@ -20,38 +17,13 @@
 #include "partition.h"
 
 namespace MeshLib::IO
-
 {
-static boost::shared_ptr<XdmfArrayType const> MeshPropertyDataType2XdmfType(
-    MeshPropertyDataType const ogs_data_type)
-{
-    std::map<MeshPropertyDataType, boost::shared_ptr<XdmfArrayType const>> const
-        ogs_to_xdmf_type = {
-            {MeshPropertyDataType::float64, XdmfArrayType::Float64()},
-            {MeshPropertyDataType::float32, XdmfArrayType::Float32()},
-            {MeshPropertyDataType::int32, XdmfArrayType::Int32()},
-            // TODO (tm) XdmfLib does not support 64 bit data types so far
-            //{MeshPropertyDataType::int64, XdmfArrayType::Int64()},
-            {MeshPropertyDataType::uint32, XdmfArrayType::UInt32()},
-            // TODO (tm) XdmfLib does not support 64 bit data types so far
-            //{MeshPropertyDataType::uint64, XdmfArrayType::UInt64},
-            {MeshPropertyDataType::int8, XdmfArrayType::Int8()},
-            {MeshPropertyDataType::uint8, XdmfArrayType::UInt8()}};
-    try
-    {
-        return ogs_to_xdmf_type.at(ogs_data_type);
-    }
-    catch (const std::exception& e)
-    {
-        OGS_FATAL("No known HDF5 type for XDMF type. {:s}", e.what());
-    }
-}
-
 XdmfData::XdmfData(std::size_t const size_partitioned_dim,
                    std::size_t const size_tuple,
                    MeshPropertyDataType const mesh_property_data_type,
                    std::string const& name,
-                   std::optional<MeshLib::MeshItemType> const attribute_center)
+                   std::optional<MeshLib::MeshItemType> const attribute_center,
+                   unsigned int const index)
     : starts([&size_tuple]() {
           if (size_tuple > 1)
           {
@@ -65,15 +37,17 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
       strides([&size_tuple]() {
           if (size_tuple > 1)
           {
-              return std::vector<XdmfDimType>{1};
+              return std::vector<XdmfDimType>{1, 1};
           }
           else
           {
-              return std::vector<XdmfDimType>{1, 1};
+              return std::vector<XdmfDimType>{1};
           }
       }()),
+      data_type(mesh_property_data_type),
       name(name),
-      attribute_center(attribute_center)
+      attribute_center(attribute_center),
+      index(index)
 {
     auto partition_info = getPartitionInfo(size_partitioned_dim);
     // TODO (tm) XdmfLib does not support 64 bit data types so far
@@ -92,7 +66,6 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
         global_block_dims = {ui_global_components, ui_tuple_size};
     }
 
-    data_type = MeshPropertyDataType2XdmfType(mesh_property_data_type);
     DBUG(
         "XDMF: dataset name: {:s}, offset: {:d} "
         "global_blocks: {:d}, tuples: {:d}",

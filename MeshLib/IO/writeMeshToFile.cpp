@@ -48,9 +48,8 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
 #ifdef OGS_USE_XDMF
     if (file_path.extension().string() == ".xdmf")
     {
-        MeshLib::IO::XdmfHdfWriter(
-            mesh, file_path, 0, variable_output_names, true);
-
+        MeshLib::IO::XdmfHdfWriter(mesh, file_path, 0, 0.0,
+                                   variable_output_names, true);
         return 0;
     }
 #endif
@@ -58,5 +57,4 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
         file_path.string());
     return -1;
 }
-
 }  // namespace MeshLib::IO
