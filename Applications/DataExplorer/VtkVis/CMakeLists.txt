@@ -148,10 +148,11 @@ source_group("Source Source Files" REGULAR_EXPRESSION "[.]*Source.cpp")
 
 source_group("UI Files" FILES ${UIS})
 
-set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../..)
-set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/..)
+# TODO: Workaround for #3172.
+set(CMAKE_AUTOUIC NO)
+qt5_wrap_ui(genUiHeaders ${UIS})
 
-ogs_add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS})
+ogs_add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
 target_include_directories(VtkVis PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if(GEOTIFF_FOUND)
     target_compile_definitions(VtkVis PRIVATE GEOTIFF_FOUND)

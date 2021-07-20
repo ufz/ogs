@@ -118,7 +118,11 @@ if(GEOTIFF_FOUND)
     include_directories(${GEOTIFF_INCLUDE_DIRS})
 endif() # GEOTIFF_FOUND
 
-ogs_add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS})
+# TODO: Workaround for #3172.
+set(CMAKE_AUTOUIC NO)
+qt5_wrap_ui(genUiHeaders ${UIS})
+
+ogs_add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
 target_include_directories(QtDataView PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(
     QtDataView

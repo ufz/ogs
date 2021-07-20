@@ -19,12 +19,14 @@ set(HEADERS
     DiagramView.h
 )
 
-set(SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../../../..)
-set(GUI_SOURCE_DIR_REL ${CMAKE_CURRENT_SOURCE_DIR}/../..)
-file(GLOB_RECURSE UIS CONFIGURE_DEPENDS *.ui)
+file(GLOB UIS CONFIGURE_DEPENDS *.ui)
 source_group("UI Files" FILES ${UIS})
 
-ogs_add_library(QtDiagramView ${SOURCES} ${HEADERS} ${UIS})
+# TODO: Workaround for #3172.
+set(CMAKE_AUTOUIC NO)
+qt5_wrap_ui(genUiHeaders ${UIS})
+
+ogs_add_library(QtDiagramView ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
 target_include_directories(QtDiagramView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(
     QtDiagramView PRIVATE BaseLib GeoLib QtBase DataHolderLib Qt5::Gui
