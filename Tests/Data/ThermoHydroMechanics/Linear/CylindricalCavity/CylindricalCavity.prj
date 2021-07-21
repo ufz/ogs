@@ -13,7 +13,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <reference_temperature>T0</reference_temperature>
             <process_variables>
                 <displacement>displacement</displacement>
                 <pressure>pressure</pressure>
@@ -79,9 +78,19 @@
                             <value>2.7e-10 0 0 2.7e-10</value>
                         </property>
                         <property>
+                            <!-- rho_s= rho_0 exp(-alpha_T (T-T0))-->
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>2610</value>
+                            <type>Exponential</type>
+                            <!-- Reference density rho_0 -->
+                            <reference_value>2610</reference_value>
+                            <exponent>
+                                <variable_name>temperature</variable_name>
+                                <!-- Reference temeperature T0 -->
+                                <reference_condition>283.15</reference_condition>
+                                <!-- Volumetric thermal expansivity with sign-->
+                                <factor>-3.0e-6</factor>
+                            </exponent>
+                            <offset>0.0</offset>
                         </property>
                         <property>
                             <name>thermal_conductivity</name>
