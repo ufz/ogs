@@ -9,7 +9,7 @@
             <integration_order>2</integration_order>
             <dimension>2</dimension>
             <micro_porosity>
-                <mass_exchange_coefficient>1e-12</mass_exchange_coefficient>
+                <mass_exchange_coefficient>1e-13</mass_exchange_coefficient>
                 <nonlinear_solver>
                     <maximum_iterations>100</maximum_iterations>
                     <residuum_tolerance>1e-8</residuum_tolerance>
@@ -72,7 +72,7 @@
                             <name>swelling_stress_rate</name>
                             <type>SaturationDependentSwelling</type>
                             <swelling_pressures>1e7 1e7 1e7</swelling_pressures>
-                            <exponents>1 1 1</exponents>
+                            <exponents>2 2 2</exponents>
                             <lower_saturation_limit>0</lower_saturation_limit>
                             <upper_saturation_limit>1</upper_saturation_limit>
                         </property>
@@ -95,7 +95,7 @@
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>1e-21</value>
+                    <value>1e-16</value>
                 </property>
                 <property>
                     <name>porosity</name>
@@ -143,9 +143,11 @@
             <process ref="RM">
                 <nonlinear_solver>nonlinear_solver</nonlinear_solver>
                 <convergence_criterion>
-                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-3 1e-10 1e-10</abstols>
+                    <type>PerComponentDeltaX</type>
+                    <abstols>5e-8 1e-13 1e-13</abstols>
+                    <!--type>Residual</type>
+                    <abstol>1e-8</abstol-->
                 </convergence_criterion>
                 <compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
                 <time_discretization>
@@ -155,8 +157,8 @@
                     <type>IterationNumberBasedTimeStepping</type>
                     <t_initial>0.0</t_initial>
                     <t_end>1e5</t_end>
-                    <initial_dt>100</initial_dt>
-                    <minimum_dt>1</minimum_dt>
+                    <initial_dt>10</initial_dt>
+                    <minimum_dt>0.01</minimum_dt>
                     <maximum_dt>1e3</maximum_dt>
                     <!-- linear function m=1.25-0.025*n omitting m=1, because of stale situation -->
                     <number_iterations>1 2 3 4 5 6 7 8 9 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25</number_iterations>
@@ -171,7 +173,7 @@
             <timesteps>
                 <pair>
                     <repeat>200000</repeat>
-                    <each_steps>1</each_steps>
+                    <each_steps>300</each_steps>
                 </pair>
             </timesteps>
             <variables>
@@ -204,7 +206,7 @@
         <parameter>
             <name>E</name>
             <type>Constant</type>
-            <value>2e9</value>
+            <value>50e6</value>
         </parameter>
         <parameter>
             <name>nu</name>
@@ -253,7 +255,7 @@
         <curve>
             <name>pressure_ramp</name>
             <coords>0.0 1e3  2e4  6e4 8e4 1e5</coords>
-            <values>1e5 1e5 -1e6 -1e6 1e5 1e5</values>
+            <values>1e5 1e5 -1e7 -1e7 1e5 1e5</values>
         </curve>
     </curves>
     <process_variables>
@@ -316,56 +318,56 @@
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>1e-8</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <absolute_tolerance>1e3</absolute_tolerance>
+            <relative_tolerance>1e-2</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
             <field>saturation</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
+            <absolute_tolerance>2e-3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
             <field>displacement</field>
-            <absolute_tolerance>5e-11</absolute_tolerance>
+            <absolute_tolerance>1e-4</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>2e-8</absolute_tolerance>
+            <absolute_tolerance>5e3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
             <field>epsilon</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
+            <absolute_tolerance>1e-4</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
             <field>velocity</field>
-            <absolute_tolerance>5e-14</absolute_tolerance>
+            <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
             <field>porosity</field>
-            <absolute_tolerance>5e-14</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
+            <absolute_tolerance>2e-5</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
-            <field>porosity_avg</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
+            <field>micro_pressure</field>
+            <absolute_tolerance>5e4</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
-        <vtkdiff>
+       <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
-            <field>dry_density_solid</field>
-            <absolute_tolerance>2e-12</absolute_tolerance>
-            <relative_tolerance>2e-15</relative_tolerance>
+            <field>micro_saturation</field>
+            <absolute_tolerance>2e-4</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
