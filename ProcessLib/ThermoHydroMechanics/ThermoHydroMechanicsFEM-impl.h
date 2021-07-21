@@ -319,15 +319,6 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             dthermal_strain =
                 solid_linear_thermal_expansion_coefficient * dT_int_pt;
 
-        double const T_ref =
-            _process_data.reference_temperature(t, x_position)[0];
-        double const rho_s =
-            solid_density *
-            (1 -
-             Invariants::trace(solid_linear_thermal_expansion_coefficient) *
-                 T_int_pt -
-             T_ref);
-
         auto const K_pT_thermal_osmosis =
             (solid_phase.hasProperty(
                  MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
@@ -362,7 +353,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 displacement_index, displacement_index)
             .noalias() += B.transpose() * C * B * w;
 
-        auto const rho = rho_s * (1 - porosity) + porosity * fluid_density;
+        auto const rho =
+            solid_density * (1 - porosity) + porosity * fluid_density;
         local_rhs.template segment<displacement_size>(displacement_index)
             .noalias() -=
             (B.transpose() * sigma_eff - N_u_op.transpose() * rho * b) * w;
