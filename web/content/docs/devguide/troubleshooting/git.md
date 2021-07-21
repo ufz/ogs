@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Git"
 author = "Lars Bilke"
-weight = 1044
+weight = 1070
 
 [menu]
   [menu.devguide]

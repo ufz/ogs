@@ -2,7 +2,7 @@
 date = "2020-05-15T10:46"
 title = "Windows Subsystem for Linux"
 author = "Lars Bilke"
-weight = 1042
+weight = 1063
 
 [menu]
   [menu.devguide]

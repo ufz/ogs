@@ -37,24 +37,29 @@ identifier = "testing"
 weight = 3
 
 [[menu.devguide]]
-name = "Documentation"
-identifier = "documentation"
+name = "Third-party packages"
+identifier = "packages"
 weight = 4
+
+[[menu.devguide]]
+name = "Execution Environments"
+identifier = "environments"
+weight = 5
 
 [[menu.devguide]]
 name = "Advanced"
 identifier = "advanced"
-weight = 5
+weight = 6
 
 [[menu.devguide]]
 name = "Troubleshooting"
 identifier = "troubleshooting"
-weight = 6
+weight = 7
 
 [[menu.devguide]]
 name = "Procedures"
 identifier = "procedures"
-weight = 7
+weight = 8
 
 # Benchmarks sidebar top-level categories
 [[menu.benchmarks]]

@@ -2,7 +2,7 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Conan"
 author = "Lars Bilke"
-weight = 1042
+weight = 1071
 
 [menu]
   [menu.devguide]

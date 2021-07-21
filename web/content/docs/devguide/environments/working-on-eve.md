@@ -2,11 +2,13 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Working on Eve"
 author = "Lars Bilke"
-weight = 1040
+weight = 1053
+
+aliases = ["/docs/devguide/advanced/working-on-eve"]
 
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "environments"
 +++
 
 ## Introduction

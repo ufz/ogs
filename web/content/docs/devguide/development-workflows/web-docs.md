@@ -1,11 +1,14 @@
 +++
 date = "2018-02-23T15:28:13+01:00"
-title = "Introduction"
+title = "Writing web documentation"
 author = "Lars Bilke"
 weight = 1024
 
 [menu.devguide]
-parent = "documentation"
+parent = "development-workflows"
+
+aliases = ["/docs/devguide/documentation/introduction/"]
+
 +++
 
 ## The big picture
@@ -21,7 +24,7 @@ parent = "documentation"
 ## Getting started
 
 - Inside the source-directory `ogs/web`:
-  - Run `yarn` once (this will install required css and js packages)
+  - Run `yarn` **and** `yarn build` once (this will install required css and js packages)
   - Run `hugo server`
   - Open [http://localhost:1313](http://localhost:1313)
 

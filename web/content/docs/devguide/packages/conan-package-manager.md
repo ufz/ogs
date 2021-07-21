@@ -2,11 +2,13 @@
 date = "2018-02-26T11:00:13+01:00"
 title = "Conan package manager"
 author = "Lars Bilke"
-weight = 1032
+weight = 1042
+
+aliases = ["/docs/devguide/advanced/conan-package-manager"]
 
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "packages"
 +++
 
 <div class='note'>

@@ -2,11 +2,13 @@
 date = "2021-02-11T10:46"
 title = "CMake dependency management"
 author = "Lars Bilke"
-weight = 1033
+weight = 1041
+
+aliases = ["/docs/devguide/advanced/cpm"]
 
 [menu]
   [menu.devguide]
-    parent = "advanced"
+    parent = "packages"
 +++
 
 We employ [CPM](https://github.com/cpm-cmake/CPM.cmake#options), a CMake dependency management solution, to integrate third-party dependencies.
