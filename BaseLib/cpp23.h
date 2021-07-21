@@ -22,7 +22,8 @@ namespace BaseLib
  *  \return The integer value of the underlying type of Enum, converted from e.
  *
  * https://en.cppreference.com/w/cpp/utility/to_underlying
- * Implementation from Scott Meyers : Modern effective c++ , Item 10 Scoped enums
+ * Implementation from Scott Meyers : Modern effective c++ , Item 10 Scoped
+ * enums
  */
 
 template <typename E>

@@ -2,9 +2,9 @@
 
 #include <fstream>
 
-#include "writeXdmf.h"
-#include "BaseLib/RunTime.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/RunTime.h"
+#include "writeXdmf.h"
 
 namespace MeshLib::IO
 {

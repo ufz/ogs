@@ -38,8 +38,8 @@ public:
     };
 
 public:
-    Output(std::string directory, OutputType const type,
-           std::string prefix, std::string suffix, bool const compress_output,
+    Output(std::string directory, OutputType const type, std::string prefix,
+           std::string suffix, bool const compress_output,
            std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
@@ -97,9 +97,7 @@ private:
                         int const timestep,
                         double const t);
 
-
 private:
-
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> _mesh_xdmf_hdf_writer;
 
     std::string const _output_directory;

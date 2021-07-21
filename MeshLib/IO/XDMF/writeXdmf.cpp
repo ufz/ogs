@@ -110,8 +110,10 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     // return a unary function
     // _a suffix is a user defined literal for fmt named arguments
     auto const time_dataitem_genfn = [](int const time_step, int const max_step,
-                                        std::string const h5filename) {
-        return [time_step, max_step, h5filename](auto const& xdmfdata) {
+                                        std::string const h5filename)
+    {
+        return [time_step, max_step, h5filename](auto const& xdmfdata)
+        {
             return fmt::format(
                 "\n\t\t<DataItem DataType=\"{datatype}\" "
                 "Dimensions=\"{local_dimensions}\" "
@@ -137,13 +139,14 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     };
 
     // string_join could be moved to ogs lib if used more
-    auto const string_join_fn = [](auto const& collection) {
-        return fmt::to_string(fmt::join(collection, ""));
-    };
+    auto const string_join_fn = [](auto const& collection)
+    { return fmt::to_string(fmt::join(collection, "")); };
 
     // m_bind could be moved to ogs lib if used more
-    auto const m_bind_fn = [](auto const& transform, auto const& join) {
-        return [join, transform](auto const& collection) {
+    auto const m_bind_fn = [](auto const& transform, auto const& join)
+    {
+        return [join, transform](auto const& collection)
+        {
             std::vector<std::string> temp;
             temp.resize(collection.size());
             std::transform(collection.begin(), collection.end(),
@@ -155,7 +158,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     // XDMF if part of the data that is already written in any previous step
     // subsequent steps can refer to this data collection of elements navigates
     // the xml tree (take first child, then in child take 2nd child ...)
-    auto const pointer_transfrom = [](auto const& elements) {
+    auto const pointer_transfrom = [](auto const& elements)
+    {
         return fmt::format(
             "\n\t<xi:include xpointer=\"element(/{elements})\"/>",
             "elements"_a = fmt::join(elements, "/"));
@@ -163,8 +167,9 @@ std::function<std::string(std::vector<double>)> write_xdmf(
 
     // Defines content of <Attribute> in XDMF, child of Attribute is a single
     // <DataItem>
-    auto const attribute_transform = [](XdmfData const& attribute,
-                                        auto const& dataitem_transform) {
+    auto const attribute_transform =
+        [](XdmfData const& attribute, auto const& dataitem_transform)
+    {
         return fmt::format(
             "\n\t<Attribute Center=\"{center}\" ElementCell=\"\" "
             "ElementDegree=\"0\" "
@@ -176,16 +181,18 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     };
 
     // Define content of <Geometry> in XDMF, same as attribute_transform
-    auto const geometry_transform = [](XdmfData const& geometry,
-                                       auto const& dataitem_transform) {
+    auto const geometry_transform =
+        [](XdmfData const& geometry, auto const& dataitem_transform)
+    {
         return fmt::format(
             "\n\t<Geometry Origin=\"\" Type=\"XYZ\">{dataitem}\n\t</Geometry>",
             "dataitem"_a = dataitem_transform(geometry));
     };
 
     // Define content of <Topology> in XDMF, same as attribute_transform
-    auto const topology_transform = [](XdmfData const& topology,
-                                       auto const& dataitem_transform) {
+    auto const topology_transform =
+        [](XdmfData const& topology, auto const& dataitem_transform)
+    {
         return fmt::format(
             "\n\t<Topology Dimensions=\"{dimensions}\" "
             "Type=\"Mixed\">{dataitem}\n\t</Topology>",
@@ -195,10 +202,10 @@ std::function<std::string(std::vector<double>)> write_xdmf(
 
     // Defines content of <Grid> of a single time step, takes specific transform
     // functions for all of its child elements
-    auto const grid_transform = [](double const& time_value,
-                                   auto const& geometry, auto const& topology,
-                                   auto const& constant_attributes,
-                                   auto const& variable_attributes) {
+    auto const grid_transform =
+        [](double const& time_value, auto const& geometry, auto const& topology,
+           auto const& constant_attributes, auto const& variable_attributes)
+    {
         return fmt::format(
             "\n<Grid Name=\"Grid\">\n\t<Time "
             "Value=\"{time_value}\"/"
@@ -222,10 +229,11 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                                h5filename](auto const& component_transform,
                                            int const time_step,
                                            int const max_step,
-                                           time_attribute const variable) {
+                                           time_attribute const variable)
+    {
         return [component_transform, time_dataitem_genfn, pointer_transfrom,
-                variable, time_step, max_step,
-                h5filename](XdmfData const& attr) {
+                variable, time_step, max_step, h5filename](XdmfData const& attr)
+        {
             // new data arrived
             bool changed =
                 ((time_step > 0 && (variable == time_attribute::variable)) ||
@@ -253,29 +261,30 @@ std::function<std::string(std::vector<double>)> write_xdmf(
          geometry_transform, topology_transform, attribute_transform](
             double const time, int const step, int const max_step,
             auto const& geometry, auto const& topology,
-            auto const& constant_attributes, auto const& variable_attributes) {
-            auto const time_step_geometry_transform = time_step_fn(
-                geometry_transform, step, max_step, time_attribute::constant);
-            auto const time_step_topology_transform = time_step_fn(
-                topology_transform, step, max_step, time_attribute::constant);
-            auto const time_step_const_attribute_fn = time_step_fn(
-                attribute_transform, step, max_step, time_attribute::constant);
-            auto const time_step_variable_attribute_fn = time_step_fn(
-                attribute_transform, step, max_step, time_attribute::variable);
+            auto const& constant_attributes, auto const& variable_attributes)
+    {
+        auto const time_step_geometry_transform = time_step_fn(
+            geometry_transform, step, max_step, time_attribute::constant);
+        auto const time_step_topology_transform = time_step_fn(
+            topology_transform, step, max_step, time_attribute::constant);
+        auto const time_step_const_attribute_fn = time_step_fn(
+            attribute_transform, step, max_step, time_attribute::constant);
+        auto const time_step_variable_attribute_fn = time_step_fn(
+            attribute_transform, step, max_step, time_attribute::variable);
 
-            // lift both functions from handling single attributes to work with
-            // collection of attributes
-            auto const variable_attributes_transform =
-                m_bind_fn(time_step_variable_attribute_fn, string_join_fn);
-            auto const constant_attributes_transform =
-                m_bind_fn(time_step_const_attribute_fn, string_join_fn);
+        // lift both functions from handling single attributes to work with
+        // collection of attributes
+        auto const variable_attributes_transform =
+            m_bind_fn(time_step_variable_attribute_fn, string_join_fn);
+        auto const constant_attributes_transform =
+            m_bind_fn(time_step_const_attribute_fn, string_join_fn);
 
-            return grid_transform(
-                time, time_step_geometry_transform(geometry),
-                time_step_topology_transform(topology),
-                constant_attributes_transform(constant_attributes),
-                variable_attributes_transform(variable_attributes));
-        };
+        return grid_transform(
+            time, time_step_geometry_transform(geometry),
+            time_step_topology_transform(topology),
+            constant_attributes_transform(constant_attributes),
+            variable_attributes_transform(variable_attributes));
+    };
 
     // Function that combines all the data from spatial (geometry, topology,
     // attribute) and temporal domain (time) with the time domain
@@ -283,30 +292,31 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     auto const temporal_grid_collection_transform =
         [time_grid_transform](
             auto const& times, auto const& geometry, auto const& topology,
-            auto const& constant_attributes, auto const& variable_attributes) {
-            // c++20 ranges zip missing
-            auto const max_step = times.size();
-            std::vector<std::string> grids;
-            grids.resize(max_step);
-            for (size_t time_step = 0; time_step < max_step; ++time_step)
-            {
-                grids.push_back(time_grid_transform(
-                    times[time_step], time_step, max_step, geometry, topology,
-                    constant_attributes, variable_attributes));
-            }
-            return fmt::format(
-                "\n<Grid CollectionType=\"Temporal\" GridType=\"Collection\" "
-                "Name=\"Collection\">{grids}\n</Grid>\n",
-                "grids"_a = fmt::join(grids, ""));
-        };
+            auto const& constant_attributes, auto const& variable_attributes)
+    {
+        // c++20 ranges zip missing
+        auto const max_step = times.size();
+        std::vector<std::string> grids;
+        grids.resize(max_step);
+        for (size_t time_step = 0; time_step < max_step; ++time_step)
+        {
+            grids.push_back(time_grid_transform(
+                times[time_step], time_step, max_step, geometry, topology,
+                constant_attributes, variable_attributes));
+        }
+        return fmt::format(
+            "\n<Grid CollectionType=\"Temporal\" GridType=\"Collection\" "
+            "Name=\"Collection\">{grids}\n</Grid>\n",
+            "grids"_a = fmt::join(grids, ""));
+    };
 
     // Generator function that return a function that represents complete xdmf
     // structure
-    auto const xdmf_writer_fn = [temporal_grid_collection_transform](
-                                    auto const& ogs_version,
-                                    auto const& geometry, auto const& topology,
-                                    auto const& constant_attributes,
-                                    auto const& variable_attributes) {
+    auto const xdmf_writer_fn =
+        [temporal_grid_collection_transform](
+            auto const& ogs_version, auto const& geometry, auto const& topology,
+            auto const& constant_attributes, auto const& variable_attributes)
+    {
         // This function will be the return of the surrounding named function
         // capture by copy - it is the function that will survive this scope!!
         // Use generalized lambda capture to move for optimization
@@ -314,7 +324,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                 geometry = std::move(geometry), topology = std::move(topology),
                 constant_attributes = std::move(constant_attributes),
                 variable_attributes = std::move(variable_attributes)](
-                   std::vector<double> const& times) {
+                   std::vector<double> const& times)
+        {
             return fmt::format(
                 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Xdmf "
                 "xmlns:xi=\"http://www.w3.org/2001/XInclude\" "

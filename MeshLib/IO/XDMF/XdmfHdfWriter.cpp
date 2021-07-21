@@ -88,7 +88,8 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     std::vector<XdmfData> xdmf_attributes;
     std::transform(attributes.begin(), attributes.end(),
                    std::back_inserter(xdmf_attributes),
-                   [&attributes](AttributeMeta& att) -> XdmfData {
+                   [&attributes](AttributeMeta& att) -> XdmfData
+                   {
                        size_t const i = &att - &attributes.front();
                        // index 1 geo, index 2 topology, attributes start at
                        // index 3
