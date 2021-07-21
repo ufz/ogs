@@ -15,7 +15,7 @@
 // TODO (tm) If used on several other places move definition of propertyVector
 enum class MeshPropertyDataType
 {
-    unknown,
+    unknown=0,
     float64,
     float32,
     int32,
@@ -23,5 +23,6 @@ enum class MeshPropertyDataType
     uint32,
     uint64,
     int8,
-    uint8
+    uint8,
+    enum_length
 };

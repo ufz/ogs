@@ -169,85 +169,83 @@ CPMAddPackage(
     OPTIONS "BUILD_SHARED_LIBS OFF"
 )
 
-if(OGS_USE_XDMF)
-    # ZLIB is a HDF5 dependency
-    CPMFindPackage(
-        NAME ZLIB
-        GITHUB_REPOSITORY madler/zlib
-        VERSION 1.2.11
-        EXCLUDE_FROM_ALL YES
+# ZLIB is a HDF5 dependency
+CPMFindPackage(
+    NAME ZLIB
+    GITHUB_REPOSITORY madler/zlib
+    VERSION 1.2.11
+    EXCLUDE_FROM_ALL YES
+)
+if(ZLIB_ADDED)
+    add_library(ZLIB::ZLIB ALIAS zlibstatic)
+endif()
+
+if(OGS_USE_MPI)
+    set(_hdf5_options "HDF5_ENABLE_PARALLEL ON")
+endif()
+
+string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
+CPMFindPackage(
+    NAME HDF5
+    GITHUB_REPOSITORY HDFGroup/hdf5
+    GIT_TAG hdf5-${HDF5_TAG}
+    VERSION ${ogs.minimum_version.hdf5}
+    OPTIONS "HDF5_EXTERNALLY_CONFIGURED 1"
+            "HDF5_GENERATE_HEADERS OFF"
+            "HDF5_BUILD_TOOLS OFF"
+            "HDF5_BUILD_EXAMPLES OFF"
+            "HDF5_BUILD_HL_LIB OFF"
+            "HDF5_BUILD_FORTRAN OFF"
+            "HDF5_BUILD_CPP_LIB OFF"
+            "HDF5_BUILD_JAVA OFF"
+            ${_hdf5_options}
+    EXCLUDE_FROM_ALL YES
+)
+if(HDF5_ADDED)
+    target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR})
+    list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
+    set(HDF5_LIBRARIES hdf5-static)
+    set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+    set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+endif()
+
+set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
+CPMAddPackage(
+    NAME xdmf
+    VERSION 3.0.0
+    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
+    GIT_TAG 8d5ae1e1cbf506b8ca2160745fc914e25690c8a4
+    OPTIONS "XDMF_LIBNAME OgsXdmf"
+)
+if(xdmf_ADDED)
+    target_include_directories(
+        OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
     )
-    if(ZLIB_ADDED)
-        add_library(ZLIB::ZLIB ALIAS zlibstatic)
-    endif()
 
-    if(OGS_USE_MPI)
-        set(_hdf5_options "HDF5_ENABLE_PARALLEL ON")
-    endif()
-
-    string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
-    CPMFindPackage(
-        NAME HDF5
-        GITHUB_REPOSITORY HDFGroup/hdf5
-        GIT_TAG hdf5-${HDF5_TAG}
-        VERSION ${ogs.minimum_version.hdf5}
-        OPTIONS "HDF5_EXTERNALLY_CONFIGURED 1"
-                "HDF5_GENERATE_HEADERS OFF"
-                "HDF5_BUILD_TOOLS OFF"
-                "HDF5_BUILD_EXAMPLES OFF"
-                "HDF5_BUILD_HL_LIB OFF"
-                "HDF5_BUILD_FORTRAN OFF"
-                "HDF5_BUILD_CPP_LIB OFF"
-                "HDF5_BUILD_JAVA OFF"
-                ${_hdf5_options}
-        EXCLUDE_FROM_ALL YES
+    target_link_libraries(OgsXdmf Boost::boost ZLIB::ZLIB)
+    target_include_directories(
+        OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
+        PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
     )
-    if(HDF5_ADDED)
-        target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR})
-        list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
-        set(HDF5_LIBRARIES hdf5-static)
-        set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
-        set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
-    endif()
-
-    set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
-    CPMAddPackage(
-        NAME xdmf
-        VERSION 3.0.0
-        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
-        GIT_TAG 8d5ae1e1cbf506b8ca2160745fc914e25690c8a4
-        OPTIONS "XDMF_LIBNAME OgsXdmf"
+    target_link_libraries(
+        OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
     )
-    if(xdmf_ADDED)
-        target_include_directories(
-            OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
-        )
 
-        target_link_libraries(OgsXdmf Boost::boost ZLIB::ZLIB)
-        target_include_directories(
-            OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
-            PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
+    set_target_properties(
+        OgsXdmf OgsXdmfCore
+        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                    ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+                    LIBRARY_OUTPUT_DIRECTORY
+                    ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+                    ARCHIVE_OUTPUT_DIRECTORY
+                    ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+    )
+    if(BUILD_SHARED_LIBS)
+        install(TARGETS OgsXdmf OgsXdmfCore
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         )
-        target_link_libraries(
-            OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
-        )
-
-        set_target_properties(
-            OgsXdmf OgsXdmfCore
-            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
-                       LIBRARY_OUTPUT_DIRECTORY
-                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-                       ARCHIVE_OUTPUT_DIRECTORY
-                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-        )
-        if(BUILD_SHARED_LIBS)
-            install(TARGETS OgsXdmf OgsXdmfCore
-                    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            )
-        endif()
-        list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
     endif()
+    list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
 endif()
 
 if(OGS_BUILD_SWMM)

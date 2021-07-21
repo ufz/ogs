@@ -59,7 +59,8 @@ enum class CellType
     PRISM15 = 15,
     PRISM18 = 16,
     PYRAMID5 = 17,
-    PYRAMID13 = 18
+    PYRAMID13 = 18,
+    enum_length
 };
 
 /**

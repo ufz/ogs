@@ -19,7 +19,7 @@
 
 #include "HdfWriter.h"
 #include "MeshLib/Mesh.h"
-#include "Xdmf3Writer.h"
+#include "XdmfWriter.h"
 
 namespace MeshLib::IO
 {
@@ -31,6 +31,7 @@ public:
      * @param mesh Mesh or NodePartitionedMesh to be written to file(s)
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param time_step number of the step (temporal collection)
+     * @param initial_time time in seconds of the first time step
      * @param variable_output_names names of all process variables (attributes)
      * that change over time
      * @param use_compression if true, zlib compression in HDFWriter component
@@ -38,19 +39,20 @@ public:
      */
     XdmfHdfWriter(MeshLib::Mesh const& mesh,
                   std::filesystem::path const& filepath, int time_step,
-                  std::set<std::string> variable_output_names,
+                  double initial_time,
+                  std::set<std::string> const& variable_output_names,
                   bool use_compression);
+
     /**
-     * \brief Write attribute data that has modified to previous time step or
-     * initial
+     * \brief Adds data for either lazy (xdmf) or eager (hdf) writing algorithm
      * @param time_step number of the step (temporal collection)
      * @param time time value of the current time_step
      */
-    void writeStep(int time_step, double time) const;
+    void writeStep(int const& time_step, double const& time);
 
 private:
     // hdf_writer must be destructed before xdmf_writer
-    std::unique_ptr<Xdmf3Writer> _xdmf_writer;
     std::unique_ptr<HdfWriter> _hdf_writer;
+    std::unique_ptr<XdmfWriter> _xdmf_writer;
 };
 }  // namespace MeshLib::IO

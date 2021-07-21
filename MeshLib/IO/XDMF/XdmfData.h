@@ -26,7 +26,7 @@ namespace MeshLib::IO
 {
 using XdmfDimType = unsigned int;
 
-struct XdmfData
+struct XdmfData final
 {
     /**
      * \brief XdmfData contains meta data to be passed to the XdmfWriter - it
@@ -43,19 +43,25 @@ struct XdmfData
      * @param attribute_center XdmfData is used for topology, geometry and
      * attributes. Geometry and topology have never a attribute_center.
      * Attributes have always an  attribute_center
+     * @param index The position of the DataItem parents in a grid
+     * (representing a single step). Convention is: 1=Time, 2=
+     * Geometry, 3=Topology, 4>=Attribute
+     *
      */
     XdmfData(std::size_t size_partitioned_dim, std::size_t size_tuple,
              MeshPropertyDataType mesh_property_data_type,
              std::string const& name,
-             std::optional<MeshLib::MeshItemType> attribute_center);
+             std::optional<MeshLib::MeshItemType> attribute_center,
+             unsigned int const index);
     // a hyperslab is defined by starts and strides see
     // https://www.xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
     std::vector<XdmfDimType> const starts;
     std::vector<XdmfDimType> const strides;
     std::vector<XdmfDimType> global_block_dims;
-    boost::shared_ptr<const XdmfArrayType> data_type;
+    MeshPropertyDataType const data_type;
     std::string const name;
     std::optional<MeshLib::MeshItemType> const attribute_center;
+    unsigned int index;
 };
 
 }  // namespace MeshLib::IO

@@ -11,11 +11,13 @@
 
 #include "transformData.h"
 
-#include <XdmfTopologyType.hpp>
 #include <algorithm>
+#include <array>
 #include <optional>
 #include <string>
 
+
+#include "BaseLib/cpp23.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -24,37 +26,47 @@
 #include "MeshPropertyDataType.h"
 #include "partition.h"
 
+
+using namespace BaseLib;
 namespace MeshLib::IO
 {
-// \TODO (tm) constexpr by other function signature can not be transformed to
-// constexpr shared_ptr is not literal type / has non trivial destructor
-boost::shared_ptr<const XdmfTopologyType> cellTypeOGS2XDMF(
-    MeshLib::CellType const cell_type)
+struct XdmfTopology
 {
-    static std::map<MeshLib::CellType const,
-                    boost::shared_ptr<const XdmfTopologyType> const>
-        elem_type_ogs2xdmf = {
-            {MeshLib::CellType::POINT1, XdmfTopologyType::Polyvertex()},
-            {MeshLib::CellType::LINE2, XdmfTopologyType::Polyline(2)},
-            {MeshLib::CellType::LINE3, XdmfTopologyType::Polyline(3)},
-            {MeshLib::CellType::QUAD4, XdmfTopologyType::Quadrilateral()},
-            {MeshLib::CellType::QUAD8, XdmfTopologyType::Quadrilateral_8()},
-            {MeshLib::CellType::QUAD9, XdmfTopologyType::Quadrilateral_9()},
-            {MeshLib::CellType::TET4, XdmfTopologyType::Tetrahedron()},
-            {MeshLib::CellType::TET10, XdmfTopologyType::Tetrahedron_10()},
-            {MeshLib::CellType::TRI3, XdmfTopologyType::Triangle()},
-            {MeshLib::CellType::TRI6, XdmfTopologyType::Triangle_6()},
-            {MeshLib::CellType::PRISM6,
-             XdmfTopologyType::Wedge()},  // parallel triangle wedge
-            {MeshLib::CellType::PRISM15, XdmfTopologyType::Wedge_15()},
-            {MeshLib::CellType::PRISM18, XdmfTopologyType::Wedge_18()},
-            {MeshLib::CellType::PYRAMID13, XdmfTopologyType::Pyramid_13()},
-            {MeshLib::CellType::PYRAMID5, XdmfTopologyType::Pyramid()},
-            {MeshLib::CellType::HEX20, XdmfTopologyType::Hexahedron_20()},
-            {MeshLib::CellType::HEX27, XdmfTopologyType::Hexahedron_27()},
-            {MeshLib::CellType::HEX8, XdmfTopologyType::Hexahedron()}};
+    // https://www.xdmf.org/index.php/XDMF_Model_and_Format#Topology, Section
+    // Arbitrary
+    unsigned int id;
+    unsigned int number_of_nodes;
+};
 
-    return elem_type_ogs2xdmf.at(cell_type);
+constexpr auto elemOGSTypeToXDMFType()
+{
+    std::array<XdmfTopology, to_underlying(MeshLib::CellType::enum_length)> elem_type{};
+    elem_type[to_underlying(MeshLib::CellType::POINT1)] = {0x1, 1};
+    elem_type[to_underlying(MeshLib::CellType::LINE2)] = {0x2, 2};
+    elem_type[to_underlying(MeshLib::CellType::LINE3)] = {0x2, 3};
+    elem_type[to_underlying(MeshLib::CellType::TRI3)] = {0x4, 3};
+    elem_type[to_underlying(MeshLib::CellType::TRI6)] = {0x24, 6};
+    elem_type[to_underlying(MeshLib::CellType::QUAD4)] = {0x5, 4};
+    elem_type[to_underlying(MeshLib::CellType::QUAD8)] = {0x25, 8};
+    elem_type[to_underlying(MeshLib::CellType::QUAD9)] = {0x23, 9};
+    elem_type[to_underlying(MeshLib::CellType::TET4)] = {0x6, 4};
+    elem_type[to_underlying(MeshLib::CellType::TET10)] = {0x26, 10};
+    elem_type[to_underlying(MeshLib::CellType::HEX8)] = {0x9, 8};
+    elem_type[to_underlying(MeshLib::CellType::HEX20)] = {0x30, 20};
+    elem_type[to_underlying(MeshLib::CellType::HEX27)] = {0x32, 27};
+    elem_type[to_underlying(MeshLib::CellType::PRISM6)] = {
+        0x8, 6};  // parallel triangle wedge
+    elem_type[to_underlying(MeshLib::CellType::PRISM15)] = {0x28, 15};
+    elem_type[to_underlying(MeshLib::CellType::PRISM18)] = {0x29, 18};
+    elem_type[to_underlying(MeshLib::CellType::PYRAMID5)] = {0x7, 5};
+    elem_type[to_underlying(MeshLib::CellType::PYRAMID13)] = {0x27, 13};
+    return elem_type;
+}
+
+auto cellTypeOGS2XDMF(MeshLib::CellType const& cell_type)
+{
+    constexpr auto elem_type_ogs2xdmf = elemOGSTypeToXDMFType();
+    return elem_type_ogs2xdmf[to_underlying(cell_type)];
 }
 
 std::optional<AttributeMeta> transformAttribute(
@@ -106,33 +118,31 @@ std::optional<AttributeMeta> transformAttribute(
                           "Signed int has 32-1 bits");
             data_type = MeshPropertyDataType::int32;
         }
-        // \TODO (tm) Reimplement size checks
+        // ToDo (tm) These tests are platform specific and currently fail on Windows
         // else if constexpr (std::is_same_v<long, decltype(basic_type)>)
-        // {
-        //     static_assert((std::numeric_limits<long>::digits == 63),
-        //                   "Signed int has 64-1 bits");
-        //     data_type = XdmfArrayType::Int64();
-        // }
+        //{
+        //    static_assert((std::numeric_limits<long>::digits == 63),
+        //                  "Signed int has 64-1 bits");
+        //    data_type = MeshPropertyDataType::int64;
+        //}
+        // else if constexpr (std::is_same_v<unsigned long,
+        // decltype(basic_type)>)
+        //{
+        //    static_assert((std::numeric_limits<unsigned long>::digits == 64),
+        //                  "Unsigned long has 64 bits");
+        //    data_type = MeshPropertyDataType::uint64;
+        //}
         else if constexpr (std::is_same_v<unsigned int, decltype(basic_type)>)
         {
             static_assert((std::numeric_limits<unsigned int>::digits == 32),
                           "Unsigned int has 32 bits");
             data_type = MeshPropertyDataType::uint32;
         }
-        // else if constexpr (std::is_same_v<unsigned long,
-        // decltype(basic_type)>)
-        // {
-        //     static_assert((std::numeric_limits<unsigned long>::digits == 64),
-        //                   "Unsigned long has 64 bits");
-        //     // \TODO (tm) Extend XdmfLibrary with 64bit data types
-        //     data_type = XdmfArrayType::UInt32();
-        // }
         else if constexpr (std::is_same_v<std::size_t, decltype(basic_type)>)
         {
             static_assert((std::numeric_limits<std::size_t>::digits == 64),
                           "size_t has 64 bits");
-            // \TODO (tm) Extend XdmfLibrary with 64bit data types
-            data_type = MeshPropertyDataType::uint32;
+            data_type = MeshPropertyDataType::uint64;
         }
         else if constexpr (std::is_same_v<char, decltype(basic_type)>)
         {
@@ -182,7 +192,7 @@ std::optional<AttributeMeta> transformAttribute(
         HdfData(data_ptr, num_of_tuples, ui_global_components, name, data_type);
 
     XdmfData xdmf = XdmfData(num_of_tuples, ui_global_components, data_type,
-                             name, mesh_item_type);
+                             name, mesh_item_type, 0);
 
     return AttributeMeta{std::move(hdf), std::move(xdmf)};
 }
@@ -234,11 +244,9 @@ Geometry transformGeometry(MeshLib::Mesh const& mesh)
                           point_size,
                           name,
                           MeshPropertyDataType::float64);
-    XdmfData xdmf = XdmfData(partition_dim,
-                             point_size,
-                             MeshPropertyDataType::float64,
-                             name,
-                             std::nullopt);
+    XdmfData xdmf =
+        XdmfData(partition_dim, point_size, MeshPropertyDataType::float64, name,
+                 std::nullopt, 2);
 
     return Geometry{std::move(values), std::move(hdf), std::move(xdmf)};
 }
@@ -247,18 +255,18 @@ Topology transformTopology(MeshLib::Mesh const& mesh, std::size_t const offset)
 {
     std::string const name = "topology";
     std::vector<MeshLib::Element*> const& elements = mesh.getElements();
-    // \TODO (tm) Precalculate exact size
     std::vector<int> values;
     values.reserve(elements.size());
 
     for (auto const& cell : elements)
     {
-        auto const cell_type = cellTypeOGS2XDMF(cell->getCellType());
-        auto const cell_type_id = cell_type->getID();
-        values.push_back(cell_type_id);
-        if (cell_type_id == 2 || cell_type_id == 3)
+        auto const ogs_cell_type = cell->getCellType();
+        auto const xdmf_cell_id = cellTypeOGS2XDMF(ogs_cell_type).id;
+        values.push_back(xdmf_cell_id);
+        if (ogs_cell_type == MeshLib::CellType::LINE2 ||
+            ogs_cell_type == MeshLib::CellType::LINE3)
         {
-            values.push_back(cell_type->getNodesPerElement());
+            values.push_back(cellTypeOGS2XDMF(ogs_cell_type).number_of_nodes);
         }
 
         for (std::size_t i = 0; i < cell->getNumberOfNodes(); ++i)
@@ -271,7 +279,7 @@ Topology transformTopology(MeshLib::Mesh const& mesh, std::size_t const offset)
     HdfData hdf = HdfData(values.data(), values.size(), 1, name,
                           MeshPropertyDataType::int32);
     XdmfData xdmf = XdmfData(values.size(), 1, MeshPropertyDataType::int32,
-                             name, std::nullopt);
+                             name, std::nullopt, 3);
 
     return Topology{std::move(values), std::move(hdf), std::move(xdmf)};
 }

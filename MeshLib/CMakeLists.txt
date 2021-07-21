@@ -13,14 +13,13 @@ append_source_files(SOURCES IO)
 append_source_files(SOURCES IO/Legacy)
 append_source_files(SOURCES IO/VtkIO)
 append_source_files(SOURCES Utils)
-if(OGS_USE_XDMF)
-    append_source_files(SOURCES IO/XDMF)
-    if(OGS_USE_PETSC)
-        append_source_files(SOURCES IO/XDMF/mpi)
-    else()
-        append_source_files(SOURCES IO/XDMF/posix)
-    endif()
+append_source_files(SOURCES IO/XDMF)
+if(OGS_USE_PETSC)
+    append_source_files(SOURCES IO/XDMF/mpi)
+else()
+    append_source_files(SOURCES IO/XDMF/posix)
 endif()
+
 append_source_files(SOURCES MeshQuality)
 append_source_files(SOURCES Vtk)
 
@@ -50,5 +49,4 @@ target_compile_definitions(
     MeshLib
     PUBLIC
         $<$<AND:$<BOOL:$ENV{VTK_USE_64BIT_IDS}>,$<NOT:$<BOOL:VTK_ADDED>>>:VTK_USE_64BIT_IDS>
-    PRIVATE $<$<BOOL:${OGS_USE_XDMF}>:OGS_USE_XDMF>
 )

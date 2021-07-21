@@ -12,16 +12,17 @@
 #include <algorithm>
 #include <functional>
 
+#include "InfoLib/GitInfo.h"
 #include "partition.h"
 #include "transformData.h"
+#include "writeXdmf.h"
 
 namespace MeshLib::IO
 {
 XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
                              std::filesystem::path const& filepath,
-                             int const time_step,
-                             std::set<std::string>
-                                 variable_output_names,
+                             int const time_step, double const initial_time,
+                             std::set<std::string> const& variable_output_names,
                              bool const use_compression)
 {
     // transform Data into contiguous data and collect meta data
@@ -87,7 +88,13 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     std::vector<XdmfData> xdmf_attributes;
     std::transform(attributes.begin(), attributes.end(),
                    std::back_inserter(xdmf_attributes),
-                   [](AttributeMeta att) -> XdmfData { return att.xdmf; });
+                   [&attributes](AttributeMeta& att) -> XdmfData {
+                       size_t const i = &att - &attributes.front();
+                       // index 1 geo, index 2 topology, attributes start at
+                       // index 3
+                       att.xdmf.index = i + 4;
+                       return att.xdmf;
+                   });
 
     std::function<bool(XdmfData)> is_variable_xdmf_attribute =
         [&variable_output_names](XdmfData data) -> bool {
@@ -100,28 +107,33 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),
                  back_inserter(xdmf_variable_attributes),
                  is_variable_xdmf_attribute);
-
     std::vector<XdmfData> xdmf_constant_attributes;
     std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),
                  back_inserter(xdmf_constant_attributes),
                  std::not_fn(is_variable_xdmf_attribute));
 
-    _xdmf_writer = std::make_unique<Xdmf3Writer>(
-        geometry.xdmf, topology.xdmf, std::move(xdmf_constant_attributes),
-        std::move(xdmf_variable_attributes), xdmf_filepath, time_step);
+    if (isFileManager())
+    {
+        auto xdmf_writer_fn =
+            write_xdmf(geometry.xdmf, topology.xdmf, xdmf_constant_attributes,
+                       xdmf_variable_attributes, hdf_filepath.string(),
+                       GitInfoLib::GitInfo::ogs_version);
+        _xdmf_writer = std::make_unique<XdmfWriter>(xdmf_filepath.string(),
+                                                    xdmf_writer_fn);
+        _xdmf_writer->addTimeStep(initial_time);
+    }
 }
 
-void XdmfHdfWriter::writeStep(int const time_step, double const time) const
+void XdmfHdfWriter::writeStep([[maybe_unused]] int const& time_step,
+                              double const& time)
 {
-    _hdf_writer->writeStep(time_step);
-
-    // XDMF
+    // ToDo (tm) time_step will be used for simulation continuation (restart)
+    _hdf_writer->writeStep();
     // The light data is only written by just one process
-    if (!_xdmf_writer)
+    if (isFileManager())
     {
-        return;
+        _xdmf_writer->addTimeStep(time);
     }
-    _xdmf_writer->writeStep(time_step, time);
 }
 
 }  // namespace MeshLib::IO

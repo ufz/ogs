@@ -76,6 +76,9 @@ static hid_t createDataSet(
     std::vector<Hdf5DimType> time_data_global_dims =
         prependDimension(1, max_dims);
 
+    std::vector<Hdf5DimType> time_data_chunk_dims =
+        prependDimension(1, chunk_dims);
+
     hid_t fspace =
         H5Screate_simple(time_dim_local_size, time_data_global_dims.data(),
                          time_max_dims.data());
@@ -85,7 +88,7 @@ static hid_t createDataSet(
     assert(dcpl >= 0);
 
     hid_t status =
-        H5Pset_chunk(dcpl, time_dim_local_size, time_data_global_dims.data());
+        H5Pset_chunk(dcpl, chunk_dims.size() + 1, time_data_chunk_dims.data());
     if (status < 0)
     {
         OGS_FATAL("H5Pset_layout failed for data set: {:s}.", dataset_name);
@@ -163,13 +166,14 @@ namespace MeshLib::IO
 HdfWriter::HdfWriter(std::vector<HdfData> constant_attributes,
                      std::vector<HdfData>
                          variable_attributes,
-                     int const step,
+                     int const initial_step,
                      std::filesystem::path const& filepath,
                      bool const use_compression)
     : _variable_attributes(std::move(variable_attributes)),
       _hdf5_filepath(filepath),
       _use_compression(checkCompression() && use_compression),
-      _file(createFile(filepath))
+      _file(createFile(filepath)),
+      _output_step(initial_step)
 {
     _group = H5Gcreate2(_file, "data", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
@@ -183,7 +187,7 @@ HdfWriter::HdfWriter(std::vector<HdfData> constant_attributes,
         writeDataSet(attribute.data_start, attribute.data_type,
                      attribute.data_space, attribute.offsets,
                      attribute.file_space, attribute.chunk_space,
-                     attribute.name, step, dataset);
+                     attribute.name, _output_step, dataset);
         return dataset;
     };
 
@@ -199,6 +203,7 @@ HdfWriter::HdfWriter(std::vector<HdfData> constant_attributes,
         // datasets are kept open
         _datasets.insert({attribute.name, dataset});
     }
+    _output_step++;
 }
 
 HdfWriter::~HdfWriter()
@@ -211,7 +216,7 @@ HdfWriter::~HdfWriter()
     H5Fclose(_file);
 }
 
-bool HdfWriter::writeStep(int const step) const
+void HdfWriter::writeStep()
 {
     for (auto const& attribute : _variable_attributes)
     {
@@ -221,12 +226,11 @@ bool HdfWriter::writeStep(int const step) const
             OGS_FATAL("Writing HDF5 Dataset: {:s} failed.", attribute.name);
         }
 
-        writeDataSet(attribute.data_start, attribute.data_type,
-                     attribute.data_space, attribute.offsets,
-                     attribute.file_space, attribute.chunk_space,
-                     attribute.name, step, _datasets.at(attribute.name));
+        writeDataSet(
+            attribute.data_start, attribute.data_type, attribute.data_space,
+            attribute.offsets, attribute.file_space, attribute.chunk_space,
+            attribute.name, _output_step, _datasets.at(attribute.name));
     }
-
-    return true;
+    _output_step++;
 }
 }  // namespace MeshLib::IO

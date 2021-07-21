@@ -134,8 +134,7 @@
       "name": "_all",
       "hidden": true,
       "cacheVariables": {
-        "OGS_USE_MFRONT": "ON",
-        "OGS_USE_XDMF": "ON"
+        "OGS_USE_MFRONT": "ON"
       }
     },
     {

@@ -14,9 +14,7 @@
 #include "BaseLib/StringTools.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
-#ifdef OGS_USE_XDMF
 #include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
-#endif
 #include "MeshLib/Mesh.h"
 
 namespace MeshLib::IO
@@ -45,18 +43,15 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
         }
         return 0;
     }
-#ifdef OGS_USE_XDMF
     if (file_path.extension().string() == ".xdmf")
     {
-        MeshLib::IO::XdmfHdfWriter(
-            mesh, file_path, 0, variable_output_names, true);
-
+        MeshLib::IO::XdmfHdfWriter(mesh, file_path, 0, 0.0,
+                                   variable_output_names, true);
         return 0;
     }
-#endif
-    ERR("writeMeshToFile(): Unknown mesh file format in file {:s}.",
-        file_path.string());
-    return -1;
+    ERR("writeMeshToFile(): Unknown file extension '{:s}'. Can not write file "
+        "'{'s}'.",
+        file_path.extension().string(), file_path.string());
+    return 0;
 }
-
 }  // namespace MeshLib::IO
