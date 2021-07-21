@@ -16,7 +16,6 @@
 #include <optional>
 #include <string>
 
-
 #include "BaseLib/cpp23.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
@@ -25,7 +24,6 @@
 #include "MeshLib/Node.h"
 #include "MeshPropertyDataType.h"
 #include "partition.h"
-
 
 using namespace BaseLib;
 namespace MeshLib::IO
@@ -40,7 +38,8 @@ struct XdmfTopology
 
 constexpr auto elemOGSTypeToXDMFType()
 {
-    std::array<XdmfTopology, to_underlying(MeshLib::CellType::enum_length)> elem_type{};
+    std::array<XdmfTopology, to_underlying(MeshLib::CellType::enum_length)>
+        elem_type{};
     elem_type[to_underlying(MeshLib::CellType::POINT1)] = {0x1, 1};
     elem_type[to_underlying(MeshLib::CellType::LINE2)] = {0x2, 2};
     elem_type[to_underlying(MeshLib::CellType::LINE3)] = {0x2, 3};
@@ -118,8 +117,9 @@ std::optional<AttributeMeta> transformAttribute(
                           "Signed int has 32-1 bits");
             data_type = MeshPropertyDataType::int32;
         }
-        // ToDo (tm) These tests are platform specific and currently fail on Windows
-        // else if constexpr (std::is_same_v<long, decltype(basic_type)>)
+        // ToDo (tm) These tests are platform specific and currently fail on
+        // Windows else if constexpr (std::is_same_v<long,
+        // decltype(basic_type)>)
         //{
         //    static_assert((std::numeric_limits<long>::digits == 63),
         //                  "Signed int has 64-1 bits");

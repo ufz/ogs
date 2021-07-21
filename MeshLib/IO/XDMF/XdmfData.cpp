@@ -24,26 +24,30 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
                    std::string const& name,
                    std::optional<MeshLib::MeshItemType> const attribute_center,
                    unsigned int const index)
-    : starts([&size_tuple]() {
-          if (size_tuple > 1)
+    : starts(
+          [&size_tuple]()
           {
-              return std::vector<XdmfDimType>{0, 0};
-          }
-          else
+              if (size_tuple > 1)
+              {
+                  return std::vector<XdmfDimType>{0, 0};
+              }
+              else
+              {
+                  return std::vector<XdmfDimType>{0};
+              }
+          }()),
+      strides(
+          [&size_tuple]()
           {
-              return std::vector<XdmfDimType>{0};
-          }
-      }()),
-      strides([&size_tuple]() {
-          if (size_tuple > 1)
-          {
-              return std::vector<XdmfDimType>{1, 1};
-          }
-          else
-          {
-              return std::vector<XdmfDimType>{1};
-          }
-      }()),
+              if (size_tuple > 1)
+              {
+                  return std::vector<XdmfDimType>{1, 1};
+              }
+              else
+              {
+                  return std::vector<XdmfDimType>{1};
+              }
+          }()),
       data_type(mesh_property_data_type),
       name(name),
       attribute_center(attribute_center),
