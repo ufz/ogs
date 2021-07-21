@@ -37,7 +37,6 @@
                 <secondary_variable internal_name="velocity" output_name="velocity"/>
             </secondary_variables>
             <initial_stress>sigma0</initial_stress>
-            <reference_temperature>temperature_outside</reference_temperature>
         </process>
     </processes>
     <media>
