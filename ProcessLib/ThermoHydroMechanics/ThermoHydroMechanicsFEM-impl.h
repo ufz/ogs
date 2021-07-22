@@ -19,6 +19,7 @@
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ThermoHydroMechanicsFEM.h"
 
 namespace ProcessLib
@@ -89,6 +90,42 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
     }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::size_t ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::setIPDataInitialConditions(std::string const& name,
+                                                 double const* values,
+                                                 int const integration_order)
+{
+    if (integration_order !=
+        static_cast<int>(_integration_method.getIntegrationOrder()))
+    {
+        OGS_FATAL(
+            "Setting integration point initial conditions; The integration "
+            "order of the local assembler for element {:d} is different from "
+            "the integration order in the initial condition.",
+            _element.getID());
+    }
+
+    if (name == "sigma_ip")
+    {
+        if (_process_data.initial_stress != nullptr)
+        {
+            OGS_FATAL(
+                "Setting initial conditions for stress from integration "
+                "point data and from a parameter '{:s}' is not possible "
+                "simultaneously.",
+                _process_data.initial_stress->name);
+        }
+
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_eff);
+    }
+
+    return 0;
 }
 
 // Assembles the local Jacobian matrix. So far, the linearisation of HT part is
