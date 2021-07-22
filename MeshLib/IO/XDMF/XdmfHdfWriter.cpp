@@ -42,10 +42,12 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     // list
     std::function<bool(HdfData)> is_variable_hdf_attribute =
         [&variable_output_names](
-            bool outputnames) -> std::function<bool(HdfData)> {
+            bool outputnames) -> std::function<bool(HdfData)>
+    {
         if (outputnames)
         {
-            return [&variable_output_names](HdfData data) -> bool {
+            return [&variable_output_names](HdfData data) -> bool
+            {
                 return std::find(variable_output_names.begin(),
                                  variable_output_names.end(),
                                  data.name) != variable_output_names.end();
@@ -88,17 +90,19 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     std::vector<XdmfData> xdmf_attributes;
     std::transform(attributes.begin(), attributes.end(),
                    std::back_inserter(xdmf_attributes),
-                   [&attributes](AttributeMeta& att) -> XdmfData
-                   {
-                       size_t const i = &att - &attributes.front();
-                       // index 1 geo, index 2 topology, attributes start at
-                       // index 3
-                       att.xdmf.index = i + 4;
-                       return att.xdmf;
-                   });
+                   [](AttributeMeta const& att) -> XdmfData
+                   { return att.xdmf; });
+
+    for (size_t i = 0; i < attributes.size(); ++i)
+    {
+        // index 1 time,  index 2 geo, index 3 topology, attributes start at
+        // index 4
+        xdmf_attributes[i].index = i + 4;
+    }
 
     std::function<bool(XdmfData)> is_variable_xdmf_attribute =
-        [&variable_output_names](XdmfData data) -> bool {
+        [&variable_output_names](XdmfData data) -> bool
+    {
         return std::find(variable_output_names.begin(),
                          variable_output_names.end(),
                          data.name) != variable_output_names.end();
@@ -125,8 +129,8 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
     }
 }
 
-void XdmfHdfWriter::writeStep([[maybe_unused]] int const& time_step,
-                              double const& time)
+void XdmfHdfWriter::writeStep([[maybe_unused]] int const time_step,
+                              double const time)
 {
     // ToDo (tm) time_step will be used for simulation continuation (restart)
     _hdf_writer->writeStep();

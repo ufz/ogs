@@ -8,10 +8,10 @@
 
 namespace MeshLib::IO
 {
-XdmfWriter::XdmfWriter(std::string const& xdmf_filename,
+XdmfWriter::XdmfWriter(std::string xdmf_filename,
                        std::function<std::string(std::vector<double>)>
                            xdmf_writer_fn)
-    : filename(xdmf_filename), xdmf_writer(xdmf_writer_fn)
+    : filename(std::move(xdmf_filename)), xdmf_writer(xdmf_writer_fn)
 {
 }
 

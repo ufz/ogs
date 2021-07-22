@@ -6,6 +6,7 @@
 #include <spdlog/fmt/bundled/format.h>
 
 #include <algorithm>
+#include <array>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -15,6 +16,7 @@
 #include <string_view>
 #include <vector>
 
+#include "BaseLib/Error.h"
 #include "BaseLib/cpp23.h"
 #include "MeshLib/Location.h"
 
@@ -34,18 +36,14 @@ constexpr char const* mesh_item_type_strings[] = {"Node", "Edge", "Face",
                                                   "Cell", "IntegrationPoint"};
 
 // Transforms MeshItemType into string
-static std::string mesh_item_type_string(
+static std::string meshItemTypeString(
     std::optional<MeshItemType> const& item_type)
 {
-    /// Char array names for all of MeshItemType values.
     if (item_type)
     {
         return mesh_item_type_strings[static_cast<int>(item_type.value())];
     }
-    else
-    {
-        return "";
-    }
+    OGS_FATAL("Cannot convert an empty optional mesh item type.");
 }
 
 // Transforms MeshPropertyDataType into string
@@ -69,8 +67,7 @@ static auto meshPropertyDatatypeString()
 static std::string getPropertyDataTypeString(
     MeshPropertyDataType const& ogs_data_type)
 {
-    auto ogs_to_xdmf_type = meshPropertyDatatypeString();
-    return ogs_to_xdmf_type[to_underlying(ogs_data_type)];
+    return meshPropertyDatatypeString()[to_underlying(ogs_data_type)];
 }
 
 // Returns MeshPropertyDataType-to-Size (in bytes) lookup-table
@@ -89,11 +86,12 @@ static constexpr auto meshPropertyDatatypeSize()
     return property_sizes;
 }
 
+inline auto ogs_to_xdmf_type = meshPropertyDatatypeSize();
+
 // Transform MeshPropertyDataType into type_sizes (in bytes)
 static std::string getPropertyDataTypeSize(
     MeshPropertyDataType const& ogs_data_type)
 {
-    constexpr auto ogs_to_xdmf_type = meshPropertyDatatypeSize();
     return fmt::format("{}", ogs_to_xdmf_type[to_underlying(ogs_data_type)]);
 }
 
@@ -148,7 +146,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         return [join, transform](auto const& collection)
         {
             std::vector<std::string> temp;
-            temp.resize(collection.size());
+            temp.reserve(collection.size());
             std::transform(collection.begin(), collection.end(),
                            std::back_inserter(temp), transform);
             return join(temp);
@@ -175,7 +173,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
             "ElementDegree=\"0\" "
             "ElementFamily=\"\" ItemType=\"\" Name=\"{name}\" "
             "Type=\"None\">{dataitem}\n\t</Attribute>",
-            "center"_a = mesh_item_type_string(attribute.attribute_center),
+            "center"_a = meshItemTypeString(attribute.attribute_center),
             "name"_a = attribute.name,
             "dataitem"_a = dataitem_transform(attribute));
     };
@@ -235,7 +233,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                 variable, time_step, max_step, h5filename](XdmfData const& attr)
         {
             // new data arrived
-            bool changed =
+            bool const changed =
                 ((time_step > 0 && (variable == time_attribute::variable)) ||
                  time_step == 0);
             if (changed)
@@ -246,8 +244,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
             }
             else
             {
-                std::vector<unsigned int> d = {1, 1, 2, 1, attr.index};
-                return pointer_transfrom(d);
+                std::array<unsigned int, 5> position = {1, 1, 2, 1, attr.index};
+                return pointer_transfrom(position);
             };
         };
     };
@@ -297,7 +295,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         // c++20 ranges zip missing
         auto const max_step = times.size();
         std::vector<std::string> grids;
-        grids.resize(max_step);
+        grids.reserve(max_step);
         for (size_t time_step = 0; time_step < max_step; ++time_step)
         {
             grids.push_back(time_grid_transform(
@@ -312,15 +310,16 @@ std::function<std::string(std::vector<double>)> write_xdmf(
 
     // Generator function that return a function that represents complete xdmf
     // structure
-    auto const xdmf_writer_fn =
-        [temporal_grid_collection_transform](
-            auto const& ogs_version, auto const& geometry, auto const& topology,
-            auto const& constant_attributes, auto const& variable_attributes)
+    auto const xdmf_writer_fn = [temporal_grid_collection_transform](
+                                    auto ogs_version, auto geometry,
+                                    auto topology, auto constant_attributes,
+                                    auto variable_attributes)
     {
         // This function will be the return of the surrounding named function
         // capture by copy - it is the function that will survive this scope!!
         // Use generalized lambda capture to move for optimization
-        return [temporal_grid_collection_transform, ogs_version,
+        return [temporal_grid_collection_transform,
+                ogs_version = std::move(ogs_version),
                 geometry = std::move(geometry), topology = std::move(topology),
                 constant_attributes = std::move(constant_attributes),
                 variable_attributes = std::move(variable_attributes)](

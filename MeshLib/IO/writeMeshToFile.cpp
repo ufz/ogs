@@ -50,7 +50,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
         return 0;
     }
     ERR("writeMeshToFile(): Unknown file extension '{:s}'. Can not write file "
-        "'{'s}'.",
+        "'{:s}'.",
         file_path.extension().string(), file_path.string());
     return 0;
 }

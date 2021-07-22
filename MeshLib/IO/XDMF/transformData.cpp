@@ -36,7 +36,7 @@ struct XdmfTopology
     unsigned int number_of_nodes;
 };
 
-constexpr auto elemOGSTypeToXDMFType()
+static constexpr auto elemOGSTypeToXDMFType()
 {
     std::array<XdmfTopology, to_underlying(MeshLib::CellType::enum_length)>
         elem_type{};
@@ -62,9 +62,10 @@ constexpr auto elemOGSTypeToXDMFType()
     return elem_type;
 }
 
-auto cellTypeOGS2XDMF(MeshLib::CellType const& cell_type)
+constexpr auto elem_type_ogs2xdmf = elemOGSTypeToXDMFType();
+
+constexpr auto cellTypeOGS2XDMF(MeshLib::CellType const& cell_type)
 {
-    constexpr auto elem_type_ogs2xdmf = elemOGSTypeToXDMFType();
     return elem_type_ogs2xdmf[to_underlying(cell_type)];
 }
 
@@ -80,7 +81,8 @@ std::optional<AttributeMeta> transformAttribute(
     // (and overwrites) data that can only be collected via the typed property.
     // It has boolean return type to allow kind of pipe using || operator.
     auto f = [&data_type, &num_of_tuples, &data_ptr,
-              &property_pair](auto basic_type) -> bool {
+              &property_pair](auto basic_type) -> bool
+    {
         auto const property_base = property_pair.second;
         auto const typed_property =
             dynamic_cast<PropertyVector<decltype(basic_type)> const*>(
