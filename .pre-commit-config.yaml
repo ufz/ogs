@@ -1,48 +1,48 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
     hooks:
-    -   id: trailing-whitespace
+      - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
-        exclude: '^ThirdParty/.*|^Tests/Data/.*|^web/static/images/xsd'
-    -   id: check-added-large-files
+        exclude: "^ThirdParty/.*|^Tests/Data/.*|^web/static/images/xsd"
+      - id: check-added-large-files
         args: [--maxkb 1024]
-    -   id: check-merge-conflict
-    -   id: check-xml
-    -   id: check-yaml
-        exclude: '^scripts/ci/.*|.cmake-format.yaml'
-    -   id: check-toml
--   repo: local
+      - id: check-merge-conflict
+      - id: check-xml
+      - id: check-yaml
+        exclude: "^scripts/ci/.*|.cmake-format.yaml"
+      - id: check-toml
+  - repo: local
     hooks:
-    -   id: git-diff-check
+      - id: git-diff-check
         name: Run git diff --check
         entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
         language: system
-        exclude: 'ThirdParty/*|Tests/Data/*|web/static/images/xsd'
+        exclude: "ThirdParty/*|Tests/Data/*|web/static/images/xsd"
         stages: [commit, manual]
-    -   id: file-extensions
+      - id: file-extensions
         name: Check file extensions
         entry: scripts/hooks/pre-commit-file-extensions.sh
         language: system
         files: '.*\.cpp'
         stages: [commit, manual]
--   repo: https://github.com/ambv/black
+  - repo: https://github.com/ambv/black
     rev: 20.8b1
     hooks:
-    - id: black
-      exclude: 'ThirdParty|LinearMFront/generate_ref.py'
--   repo: https://github.com/codespell-project/codespell
+      - id: black
+        exclude: "ThirdParty|LinearMFront/generate_ref.py"
+  - repo: https://github.com/codespell-project/codespell
     rev: v2.0.0
     hooks:
-    -   id: codespell
+      - id: codespell
         exclude: 'ThirdParty/.*|Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp'
--   repo: https://github.com/cheshirekow/cmake-format-precommit
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: v0.6.13
     hooks:
-    - id: cmake-format
-      additional_dependencies: ["cmakelang[YAML]"]
-      args: [--config=.cmake-format.yaml]
-      exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|Tests.cmake'
-    - id: cmake-lint
-      additional_dependencies: ["cmakelang[YAML]"]
-      exclude: 'scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|BuildExternalProject.cmake'
+      - id: cmake-format
+        additional_dependencies: ["cmakelang[YAML]"]
+        args: [--config=.cmake-format.yaml]
+        exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|Tests.cmake"
+      - id: cmake-lint
+        additional_dependencies: ["cmakelang[YAML]"]
+        exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|BuildExternalProject.cmake"
