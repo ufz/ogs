@@ -750,6 +750,13 @@ public:
         auto const local_pdot =
             local_xdot.segment<pressure_size>(pressure_index);
 
+        NodalVectorType local_T;
+        if (_process_data.temperature)
+        {
+            local_T =
+                _process_data.temperature->getNodalValuesOnElement(_element, t);
+        }
+
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);
         auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
@@ -799,6 +806,13 @@ public:
                 MaterialPropertyLib::Variable::concentration)] = C_int_pt;
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+
+            if (_process_data.temperature)
+            {
+                vars[static_cast<int>(
+                    MaterialPropertyLib::Variable::temperature)] =
+                    N.dot(local_T);
+            }
 
             // porosity
             {
