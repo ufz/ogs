@@ -24,8 +24,8 @@ build docs:
     - NUM_CYCLES=`/opt/cppcheck/bin/cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
     - /opt/cppcheck/bin/cpp-dependencies --graph cpp-dependencies.dot && dot -Tsvg cpp-dependencies.dot -o build/cpp-dependencies.svg
-    # lizard
-    - python /opt/lizard/lizard.py -l cpp -w -t 8 > lizard.txt || true
+    # lizard, default code complexity number (15), function line length 100, max arguments 10
+    - python /opt/lizard/lizard.py -l cpp -w -t 8 --length 100 --arguments 10 > lizard.txt || true
     - cat lizard.txt
     - NUM_LIZARD_ISSUES=`cat lizard.txt | wc -l`
     - echo "lizard_issues $NUM_LIZARD_ISSUES" >> metrics.txt
@@ -57,7 +57,7 @@ build docs:
         sshpass -p $DOXYSEARCH_PW ssh webdev@doxysearch.opengeosys.org doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
       fi
   artifacts:
-    expose_as: 'Doxygen'
+    expose_as: "Doxygen"
     paths:
       - Doxygen.html
       - build/docs
@@ -71,12 +71,12 @@ build docs:
 
 check docs links:
   stage: check
-  tags: [ docker ]
+  tags: [docker]
   allow_failure: true
   image: $WEB_IMAGE
   needs: [meta, ci_images, "build docs"]
   extends:
-      - .rules-master-manual
+    - .rules-master-manual
   script:
     - cd build
     - >
