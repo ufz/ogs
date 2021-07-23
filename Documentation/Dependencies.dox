@@ -1,0 +1,6 @@
+/*! \defgroup Dependencies Library dependencies
+
+\image html cmake-dependencies.svg "cmake-dependencies" width=300%
+\image html cpp-dependencies.svg "cpp-dependencies" width=300%
+
+*/

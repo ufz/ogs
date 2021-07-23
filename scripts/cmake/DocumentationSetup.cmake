@@ -38,7 +38,9 @@ set(DOXYGEN_CITE_BIB_FILES
 set(DOXYGEN_QUIET YES)
 set(DOXYGEN_WARN_LOGFILE ${PROJECT_BINARY_DIR}/DoxygenWarnings.log)
 set(DOXYGEN_EXCLUDE_PATTERNS moc_* ui_* CMake*)
-set(DOXYGEN_IMAGE_PATH ${PROJECT_SOURCE_DIR}/Documentation/images)
+set(DOXYGEN_IMAGE_PATH ${PROJECT_SOURCE_DIR}
+                       ${PROJECT_SOURCE_DIR}/Documentation/images
+)
 set(DOXYGEN_SOURCE_BROWSER YES)
 set(DOXYGEN_INLINE_SOURCES YES)
 set(DOXYGEN_REFERENCED_BY_RELATION YES)
@@ -88,6 +90,9 @@ if($ENV{CI_COMMIT_BRANCH} MATCHES "master|^v[0-9]\.[0-9]\.[0-9]")
         "https://doxysearch.opengeosys.org/$ENV{CI_COMMIT_BRANCH}/doxysearch.cgi"
     )
     message(STATUS "Doxygen search server: ${DOXYGEN_SEARCHENGINE_URL}")
+endif()
+if(EXISTS ${PROJECT_BINARY_DIR}/cpp-dependencies.svg)
+    set(_subpage_dependencies "* \\subpage Dependencies")
 endif()
 configure_file(
     ${PROJECT_SOURCE_DIR}/Documentation/mainpage.dox.in

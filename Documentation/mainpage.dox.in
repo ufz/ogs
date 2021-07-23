@@ -31,9 +31,9 @@
  * - Data Explorer (GUI) manual: https://gitlab.opengeosys.org/ogs/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build
  * - Discussion forum: https://discourse.opengeosys.org
  *
- *
  * \section internal_modules Internal Modules
  *
+ * ${_subpage_dependencies}
  * * \subpage ODESolver
  * * \subpage ExternalODESolverInterface
  *
