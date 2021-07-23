@@ -15,6 +15,7 @@
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib
 {
@@ -38,6 +39,9 @@ struct ComponentTransportProcessData
     Eigen::VectorXd const specific_body_force;
     bool const has_gravity;
     bool const non_advective_form;
+    /// This optional tag provides a simple means of considering the temperature
+    /// effect on the solute transport process.
+    ParameterLib::Parameter<double> const* const temperature;
     /**
      * When this optional tag is on, the feedback of chemical reactions on the
      * porosity will be counted. The change of porosity equals to the summation
