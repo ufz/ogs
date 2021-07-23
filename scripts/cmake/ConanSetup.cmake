@@ -88,7 +88,7 @@ conan_cmake_run(
     OPTIONS ${CONAN_OPTIONS}
     BUILD ${OGS_CONAN_BUILD}
     IMPORTS ${CONAN_IMPORTS}
-    GENERATORS virtualrunenv
+    GENERATORS virtualrunenv cmake_find_package
     BUILD_TYPE ${CONAN_BUILD_TYPE}
 )
 

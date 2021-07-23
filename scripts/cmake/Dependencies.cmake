@@ -169,44 +169,49 @@ CPMAddPackage(
     OPTIONS "BUILD_SHARED_LIBS OFF"
 )
 
-# ZLIB is a HDF5 dependency
-CPMFindPackage(
-    NAME ZLIB
-    GITHUB_REPOSITORY madler/zlib
-    VERSION 1.2.11
-    EXCLUDE_FROM_ALL YES
-)
-if(ZLIB_ADDED)
-    add_library(ZLIB::ZLIB ALIAS zlibstatic)
-endif()
-
 if(OGS_USE_MPI)
     set(_hdf5_options "HDF5_ENABLE_PARALLEL ON")
 endif()
 
 string(REPLACE "." "_" HDF5_TAG ${ogs.minimum_version.hdf5})
-CPMFindPackage(
-    NAME HDF5
-    GITHUB_REPOSITORY HDFGroup/hdf5
-    GIT_TAG hdf5-${HDF5_TAG}
-    VERSION ${ogs.minimum_version.hdf5}
-    OPTIONS "HDF5_EXTERNALLY_CONFIGURED 1"
-            "HDF5_GENERATE_HEADERS OFF"
-            "HDF5_BUILD_TOOLS OFF"
-            "HDF5_BUILD_EXAMPLES OFF"
-            "HDF5_BUILD_HL_LIB OFF"
-            "HDF5_BUILD_FORTRAN OFF"
-            "HDF5_BUILD_CPP_LIB OFF"
-            "HDF5_BUILD_JAVA OFF"
-            ${_hdf5_options}
-    EXCLUDE_FROM_ALL YES
-)
-if(HDF5_ADDED)
-    target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR})
-    list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
-    set(HDF5_LIBRARIES hdf5-static)
-    set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
-    set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+if(OGS_USE_NETCDF)
+    list(APPEND CMAKE_MODULE_PATH ${PROJECT_BINARY_DIR})
+    find_package(HDF5 REQUIRED)
+else()
+    # ZLIB is a HDF5 dependency
+    CPMFindPackage(
+        NAME ZLIB
+        GITHUB_REPOSITORY madler/zlib
+        VERSION 1.2.11
+        EXCLUDE_FROM_ALL YES
+    )
+    if(ZLIB_ADDED)
+        add_library(ZLIB::ZLIB ALIAS zlibstatic)
+    endif()
+
+    CPMFindPackage(
+        NAME HDF5
+        GITHUB_REPOSITORY HDFGroup/hdf5
+        GIT_TAG hdf5-${HDF5_TAG}
+        VERSION ${ogs.minimum_version.hdf5}
+        OPTIONS "HDF5_EXTERNALLY_CONFIGURED 1"
+                "HDF5_GENERATE_HEADERS OFF"
+                "HDF5_BUILD_TOOLS OFF"
+                "HDF5_BUILD_EXAMPLES OFF"
+                "HDF5_BUILD_HL_LIB OFF"
+                "HDF5_BUILD_FORTRAN OFF"
+                "HDF5_BUILD_CPP_LIB OFF"
+                "HDF5_BUILD_JAVA OFF"
+                ${_hdf5_options}
+        EXCLUDE_FROM_ALL YES
+    )
+    if(HDF5_ADDED)
+        target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR})
+        list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
+        set(HDF5_LIBRARIES hdf5-static)
+        set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+        set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+    endif()
 endif()
 
 set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
