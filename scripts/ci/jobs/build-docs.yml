@@ -30,6 +30,7 @@ build docs:
     - NUM_LIZARD_ISSUES=`cat lizard.txt | wc -l`
     - echo "lizard_issues $NUM_LIZARD_ISSUES" >> metrics.txt
     - python /opt/lizard/lizard.py -l cpp -t 8 --html -o Lizard.html
+    - python /opt/lizard/lizard.py -EWordCount -x "./ThirdParty/*" -x "./Tests/*" || true # word-cloud
     # build
     - cd build
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_CONAN=OFF -DOGS_USE_POETRY=OFF
@@ -65,6 +66,7 @@ build docs:
       - build/cmake-dependencies.svg
       - Lizard.html
       - lizard.txt
+      - codecloud.html
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
