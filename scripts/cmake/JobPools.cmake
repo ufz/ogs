@@ -1,6 +1,6 @@
 # From https://www.youtube.com/watch?v=8y7UuAG3Z0g (minute 52)
 cmake_host_system_information(RESULT _memfree QUERY AVAILABLE_PHYSICAL_MEMORY)
-cmake_host_system_information(RESULT _cores QUERY NUMBER_OF_LOGICAL_CORES)
+cmake_host_system_information(RESULT _cores QUERY NUMBER_OF_PHYSICAL_CORES)
 message(
     STATUS "Number of (logical) cores: ${_cores}, Free memory: ${_memfree} MB"
 )

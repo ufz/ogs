@@ -9,7 +9,7 @@ weight = 1014
     parent = "development-workflows"
 +++
 
-We aim for a consistent and readable coding style. You do not need to worry about styling if you use the right tools we present in the following.
+We aim for a consistent and readable coding style. You do not need to worry about styling if you use the right tools we present in the following. Please also enable [pre-commit]({{< ref "setup-fork.md#optional-enable-git-commit-hooks" >}}) in your repository to have these check run automatically for you on every commit!
 
 ## C++
 
@@ -20,8 +20,6 @@ Use [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html). It can be ad
 - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format)
 
 The current style is defined in [.clang-format](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.clang-format).
-
-A pre-commit hook for git checking the code formatting can be found [here](https://gitlab.opengeosys.org/ogs/ogs-utils/-/tree/master/dev/code-formatting/clang-format-pre-commit-hook).
 
 ## Python
 

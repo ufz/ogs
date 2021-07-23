@@ -1,8 +1,10 @@
 pre commit:
   stage: preparation
   image: $PRECOMMIT_IMAGE
-  needs: [ ci_images ]
+  needs: [ci_images]
   script:
     - pre-commit install
-    - pre-commit run --all-files
+    - pre-commit run --from-ref `git merge-base origin/master HEAD` --to-ref HEAD
     - git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
+  after_script:
+    - git diff

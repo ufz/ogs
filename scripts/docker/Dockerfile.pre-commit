@@ -3,5 +3,5 @@ FROM python:slim
 RUN pip install pre-commit==2.7.1
 CMD ["bash"]
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git gcc g++ \
+    && apt-get install -y --no-install-recommends git gcc g++ clang-format \
     && rm -rf /var/lib/apt/lists/*
