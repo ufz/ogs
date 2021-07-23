@@ -185,9 +185,6 @@ else()
         VERSION 1.2.11
         EXCLUDE_FROM_ALL YES
     )
-    if(ZLIB_ADDED)
-        add_library(ZLIB::ZLIB ALIAS zlibstatic)
-    endif()
 
     CPMFindPackage(
         NAME HDF5
@@ -208,7 +205,7 @@ else()
     if(HDF5_ADDED)
         target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR})
         list(APPEND DISABLE_WARNINGS_TARGETS hdf5-static)
-        set(HDF5_LIBRARIES hdf5-static)
+        set(HDF5_LIBRARIES hdf5-static zlibstatic)
         set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
         set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
     endif()
@@ -227,7 +224,7 @@ if(xdmf_ADDED)
         OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
     )
 
-    target_link_libraries(OgsXdmf Boost::boost ZLIB::ZLIB)
+    target_link_libraries(OgsXdmf Boost::boost)
     target_include_directories(
         OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
         PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
@@ -239,11 +236,11 @@ if(xdmf_ADDED)
     set_target_properties(
         OgsXdmf OgsXdmfCore
         PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-                    ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
-                    LIBRARY_OUTPUT_DIRECTORY
-                    ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-                    ARCHIVE_OUTPUT_DIRECTORY
-                    ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+                   ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+                   LIBRARY_OUTPUT_DIRECTORY
+                   ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+                   ARCHIVE_OUTPUT_DIRECTORY
+                   ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
     )
     if(BUILD_SHARED_LIBS)
         install(TARGETS OgsXdmf OgsXdmfCore
