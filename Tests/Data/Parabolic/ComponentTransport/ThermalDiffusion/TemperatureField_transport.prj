@@ -16,6 +16,7 @@
                 <pressure>pressure</pressure>
             </process_variables>
             <specific_body_force>0 0</specific_body_force>
+            <temperature_field>T</temperature_field>
         </process>
     </processes>
     <media>
@@ -29,8 +30,10 @@
                             <properties>
                                 <property>
                                     <name>pore_diffusion</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>Dm</parameter_name>
+                                    <type>TemperatureDependentDiffusion</type>
+                                    <reference_diffusion>Dm0</reference_diffusion>
+                                    <activation_energy>17e3</activation_energy>
+                                    <reference_temperature>298.15</reference_temperature>
                                 </property>
                                 <property>
                                     <name>retardation_factor</name>
@@ -181,9 +184,14 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>Dm</name>
-            <type>MeshElement</type>
-            <field_name>Dm</field_name>
+            <name>Dm0</name>
+            <type>Constant</type>
+            <value>2e-11</value>
+        </parameter>
+        <parameter>
+            <name>T</name>
+            <type>MeshNode</type>
+            <field_name>T</field_name>
         </parameter>
         <parameter>
             <name>p0</name>
@@ -263,4 +271,18 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>TemperatureField_transport_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>TemperatureField_transport_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>Cs</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
