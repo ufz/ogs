@@ -238,7 +238,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
             p_int_pt;
 
-        vars[static_cast<int>(MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
+        vars[static_cast<int>(
+            MaterialPropertyLib::Variable::liquid_saturation)] = 1.0;
 
         auto const solid_density =
             solid_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -255,7 +256,8 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 ->property(MaterialPropertyLib::PropertyType::biot_coefficient)
                 .template value<double>(vars, x_position, t, dt);
 
-        auto const solid_skeleton_compressibility = 1 / solid_material.getBulkModulus(t, x_position);
+        auto const solid_skeleton_compressibility =
+            1 / solid_material.getBulkModulus(t, x_position);
 
         auto const beta_SR = (1 - alpha) * solid_skeleton_compressibility;
 
@@ -288,9 +290,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(vars, x_position, t, dt);
 
         auto const drho_dp =
-                liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::phase_pressure, x_position, t, dt);
+                    vars, MaterialPropertyLib::Variable::phase_pressure,
+                    x_position, t, dt);
 
         auto const fluid_compressibility = 1 / fluid_density * drho_dp;
 
@@ -370,7 +373,10 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         laplace_p.noalias() += dNdx_p.transpose() * K_over_mu * dNdx_p * w;
 
-        storage_p.noalias() += N_p.transpose() * (porosity * fluid_compressibility + (alpha - porosity) * beta_SR) * N_p * w;
+        storage_p.noalias() +=
+            N_p.transpose() *
+            (porosity * fluid_compressibility + (alpha - porosity) * beta_SR) *
+            N_p * w;
 
         laplace_T.noalias() +=
             dNdx_p.transpose() * K_pT_thermal_osmosis * dNdx_T * w;
@@ -402,13 +408,16 @@ void ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     MaterialPropertyLib::PropertyType::specific_heat_capacity)
                 .template value<double>(vars, x_position, t, dt);
         auto const effective_thermal_conductivity =
-            MaterialPropertyLib::formEigenTensor<DisplacementDim>(medium
-                    ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            MaterialPropertyLib::formEigenTensor<DisplacementDim>(
+                medium
+                    ->property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
                     .value(vars, x_position, t, dt));
 
         KTT.noalias() +=
             (dNdx_T.transpose() * effective_thermal_conductivity * dNdx_T +
-             N_T.transpose() * velocity.transpose() * dNdx_T * fluid_density * c_f) *
+             N_T.transpose() * velocity.transpose() * dNdx_T * fluid_density *
+                 c_f) *
                 w -
             fluid_density * c_f * N_T.transpose() * (dNdx_T * T).transpose() *
                 K_pT_thermal_osmosis * dNdx_T * w;
