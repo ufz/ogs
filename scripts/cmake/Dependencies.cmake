@@ -216,43 +216,47 @@ else()
     endif()
 endif()
 
-set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
-CPMAddPackage(
-    NAME xdmf
-    VERSION 3.0.0
-    GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
-    GIT_TAG 8d5ae1e1cbf506b8ca2160745fc914e25690c8a4
-    OPTIONS "XDMF_LIBNAME OgsXdmf"
-)
-if(xdmf_ADDED)
-    target_include_directories(
-        OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
+# Does not compile in Debug-mode, see #3175.
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
+    CPMAddPackage(
+        NAME xdmf
+        VERSION 3.0.0
+        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
+        GIT_TAG 8d5ae1e1cbf506b8ca2160745fc914e25690c8a4
+        OPTIONS "XDMF_LIBNAME OgsXdmf"
+        EXCLUDE_FROM_ALL YES
     )
-
-    target_link_libraries(OgsXdmf Boost::boost)
-    target_include_directories(
-        OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
-        PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
-    )
-    target_link_libraries(
-        OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
-    )
-
-    set_target_properties(
-        OgsXdmf OgsXdmfCore
-        PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-                   ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
-                   LIBRARY_OUTPUT_DIRECTORY
-                   ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-                   ARCHIVE_OUTPUT_DIRECTORY
-                   ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
-    )
-    if(BUILD_SHARED_LIBS)
-        install(TARGETS OgsXdmf OgsXdmfCore
-                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    if(xdmf_ADDED)
+        target_include_directories(
+            OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
         )
+
+        target_link_libraries(OgsXdmf Boost::boost)
+        target_include_directories(
+            OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
+            PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
+        )
+        target_link_libraries(
+            OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
+        )
+
+        set_target_properties(
+            OgsXdmf OgsXdmfCore
+            PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
+                       LIBRARY_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+                       ARCHIVE_OUTPUT_DIRECTORY
+                       ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
+        )
+        if(BUILD_SHARED_LIBS)
+            install(TARGETS OgsXdmf OgsXdmfCore
+                    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            )
+        endif()
+        list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
     endif()
-    list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
 endif()
 
 if(OGS_BUILD_SWMM)

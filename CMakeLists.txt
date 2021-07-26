@@ -194,7 +194,7 @@ include(packaging/Pack)
 # ---- Subdirectories ----
 include_directories(${PROJECT_SOURCE_DIR})
 # xdmfdiff
-if(OGS_BUILD_TESTING)
+if(OGS_BUILD_TESTING AND TARGET OgsXdmf)
     add_subdirectory(Tests/xdmfdiff)
 endif()
 
