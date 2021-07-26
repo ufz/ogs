@@ -211,6 +211,8 @@ else()
         endif()
         set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR})
         set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR})
+    else()
+        find_package(HDF5 REQUIRED)
     endif()
 endif()
 
