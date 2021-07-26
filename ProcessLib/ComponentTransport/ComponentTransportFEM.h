@@ -43,7 +43,8 @@ struct IntegrationPointData final
                          GlobalDimNodalMatrixType const& dNdx_,
                          double const& integration_weight_)
         : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
-    {}
+    {
+    }
 
     void pushBackState() { porosity_prev = porosity; }
 
@@ -236,10 +237,12 @@ public:
             _integration_method.getNumberOfPoints();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].chemical_system_id = chemical_system_index_map.empty()
-                                     ? 0
-                                     : chemical_system_index_map.back() + 1;
-            chemical_system_index_map.push_back(_ip_data[ip].chemical_system_id);
+            _ip_data[ip].chemical_system_id =
+                chemical_system_index_map.empty()
+                    ? 0
+                    : chemical_system_index_map.back() + 1;
+            chemical_system_index_map.push_back(
+                _ip_data[ip].chemical_system_id);
         }
     }
 
@@ -679,8 +682,8 @@ public:
                               .template value<double>(vars, vars_prev, pos, t,
                                                       dt);
 
-                vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                        porosity;
+                vars[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = porosity;
             }
 
             // Use the fluid density model to compute the density
@@ -809,8 +812,8 @@ public:
                               .template value<double>(vars, vars_prev, pos, t,
                                                       dt);
 
-                vars[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
-                        porosity;
+                vars[static_cast<int>(
+                    MaterialPropertyLib::Variable::porosity)] = porosity;
             }
 
             auto const& retardation_factor =

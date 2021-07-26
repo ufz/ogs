@@ -81,10 +81,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createDupuitPermeability(config, parameters);
     }
 
-    if (boost::iequals(property_type, "EffectiveThermalConductivityPorosityMixing"))
+    if (boost::iequals(property_type,
+                       "EffectiveThermalConductivityPorosityMixing"))
     {
         return createEffectiveThermalConductivityPorosityMixing(
-                geometry_dimension, config, local_coordinate_system);
+            geometry_dimension, config, local_coordinate_system);
     }
 
     if (boost::iequals(property_type, "IdealGasLaw"))
@@ -109,7 +110,8 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createEmbeddedFracturePermeability(geometry_dimension, config);
     }
 
-    if (boost::iequals(property_type, "OrthotropicEmbeddedFracturePermeability"))
+    if (boost::iequals(property_type,
+                       "OrthotropicEmbeddedFracturePermeability"))
     {
         return createOrthotropicEmbeddedFracturePermeability(
             geometry_dimension, config, parameters);
