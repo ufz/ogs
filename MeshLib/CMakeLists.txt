@@ -36,9 +36,9 @@ target_link_libraries(
     PUBLIC BaseLib
            GeoLib
            GitInfoLib
+           ${HDF5_LIBRARIES}
            MathLib
            ${VTK_LIBRARIES}
-           $<$<TARGET_EXISTS:OgsXdmf>:OgsXdmf>
            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
            $<$<TARGET_EXISTS:petsc>:petsc>
 )
