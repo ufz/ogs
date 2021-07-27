@@ -14,7 +14,7 @@
 
 #include "BoundaryConditions/BHEBottomDirichletBoundaryCondition.h"
 #include "BoundaryConditions/BHEInflowDirichletBoundaryCondition.h"
-#include "ProcessLib/BoundaryCondition/Python/BHEInflowPythonBoundaryCondition.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/Python/BHEInflowPythonBoundaryCondition.h"
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/CreateLocalAssemblers.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/HeatTransportBHELocalAssemblerBHE.h"

@@ -14,7 +14,7 @@
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MeshLib/PropertyVector.h"
-#include "ProcessLib/BoundaryCondition/Python/BHEInflowPythonBoundaryConditionPythonSideInterface.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/Python/BHEInflowPythonBoundaryConditionPythonSideInterface.h"
 #include "ProcessLib/HeatTransportBHE/BHE/BHETypes.h"
 namespace MeshLib
 {

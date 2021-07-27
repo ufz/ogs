@@ -19,12 +19,12 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "ParameterLib/Utils.h"
-#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
-#include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
-#include "ProcessLib/BoundaryCondition/DeactivatedSubdomainDirichlet.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/CreateBoundaryCondition.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/CreateSourceTerm.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/DeactivatedSubdomainDirichlet.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTerm.h"
 #include "ProcessLib/CreateDeactivatedSubdomain.h"
-#include "ProcessLib/SourceTerms/CreateSourceTerm.h"
-#include "ProcessLib/SourceTerms/SourceTerm.h"
 
 namespace
 {
@@ -305,8 +305,7 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
             return true;
         }
 
-        auto const& deactivated_materialIDs =
-            ds.materialIDs;
+        auto const& deactivated_materialIDs = ds.materialIDs;
 
         auto const& element_center = getCenterOfGravity(*_mesh.getElement(i));
         if (std::binary_search(deactivated_materialIDs.begin(),

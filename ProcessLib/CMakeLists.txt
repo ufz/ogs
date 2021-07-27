@@ -12,18 +12,16 @@ foreach(process ${_processes_list})
 endforeach()
 
 get_source_files(SOURCES)
-append_source_files(SOURCES BoundaryCondition)
+append_source_files(SOURCES BoundaryConditionAndSourceTerm)
+append_source_files(SOURCES BoundaryConditionAndSourceTerm/Utils)
 append_source_files(SOURCES SurfaceFlux)
 append_source_files(SOURCES Output)
-append_source_files(SOURCES SourceTerms)
 append_source_files(SOURCES Utils)
-append_source_files(SOURCES Utils/ForBoundaryConditionOrSourceTerm)
 
 ogs_add_library(ProcessLib ${SOURCES})
 
 if(OGS_USE_PYTHON)
-    add_subdirectory(BoundaryCondition/Python)
-    add_subdirectory(SourceTerms/Python)
+    add_subdirectory(BoundaryConditionAndSourceTerm/Python)
 endif()
 
 target_link_libraries(
@@ -35,8 +33,7 @@ target_link_libraries(
         MeshGeoToolsLib
         MeshLib
         NumLib
-        $<$<TARGET_EXISTS:ProcessLibBoundaryConditionPython>:ProcessLibBoundaryConditionPython>
-        $<$<TARGET_EXISTS:ProcessLibSourceTermPython>:ProcessLibSourceTermPython>
+        $<$<TARGET_EXISTS:ProcessLibBoundaryConditionAndSourceTermPython>:ProcessLibBoundaryConditionAndSourceTermPython>
         $<$<TARGET_EXISTS:petsc>:petsc>
         nlohmann_json
     PRIVATE ParameterLib GitInfoLib $<$<TARGET_EXISTS:InSituLib>:InSituLib>

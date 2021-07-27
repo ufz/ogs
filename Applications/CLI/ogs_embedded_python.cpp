@@ -12,9 +12,9 @@
 #include <pybind11/embed.h>
 
 #include "BaseLib/Logging.h"
-#include "ProcessLib/BoundaryCondition/Python/BHEInflowPythonBoundaryConditionModule.h"
-#include "ProcessLib/BoundaryCondition/Python/PythonBoundaryConditionModule.h"
-#include "ProcessLib/SourceTerms/Python/PythonSourceTermModule.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/Python/BHEInflowPythonBoundaryConditionModule.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/Python/PythonBoundaryConditionModule.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/Python/PythonSourceTermModule.h"
 
 PYBIND11_EMBEDDED_MODULE(OpenGeoSys, m)
 {

@@ -34,8 +34,7 @@ if(OGS_USE_PYTHON)
     # this is up to you). TODO: Enable further compiler/linker flags.
     target_link_libraries(
         ogs_embedded_python PUBLIC pybind11::embed
-        PRIVATE ProcessLibBoundaryConditionPythonModule
-                ProcessLibSourceTermPythonModule
+        PRIVATE ProcessLibBoundaryConditionAndSourceTermPythonModule
     )
     target_compile_definitions(
         ogs_embedded_python
