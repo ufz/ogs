@@ -87,6 +87,21 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         variable_u = &process_variables[2][0].get();
     }
 
+    if (variable_T->getShapeFunctionOrder() != 1)
+    {
+        OGS_FATAL(
+            "The shape function order of temperature must be 1 but its input "
+            "value in <process_variable><order> is {:d}. Please correct it.",
+            variable_T->getShapeFunctionOrder());
+    }
+    if (variable_p->getShapeFunctionOrder() != 1)
+    {
+        OGS_FATAL(
+            "The shape function order of pressure must be 1 but its input "
+            "value in <process_variable><order> is {:d}. Please correct it.",
+            variable_p->getShapeFunctionOrder());
+    }
+
     DBUG("Associate displacement with process variable '{:s}'.",
          variable_u->getName());
 
