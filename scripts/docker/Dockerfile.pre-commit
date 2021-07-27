@@ -1,7 +1,10 @@
-FROM python:slim
+FROM ubuntu:21.04
 
-RUN pip install pre-commit==2.7.1
-CMD ["bash"]
+ENV TZ=Europe/Berlin
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git gcc g++ clang-format \
+    && apt-get install -y --no-install-recommends git gcc g++ python3-pip clang-format-12 \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip install pre-commit==2.13.0
