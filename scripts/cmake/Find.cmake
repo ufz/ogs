@@ -36,13 +36,7 @@ find_program(CURL_TOOL_PATH curl DOC "The curl-tool")
 
 find_program(S3CMD_TOOL_PATH s3cmd DOC "S3cmd tool for uploading to Amazon S3")
 
-if(WIN32)
-    if(${CMAKE_GENERATOR} STREQUAL "Ninja")
-        find_program(CLCACHE_TOOL_PATH clcache)
-    endif()
-else()
-    find_program(CCACHE_TOOL_PATH ccache)
-endif()
+find_program(CCACHE_TOOL_PATH ccache)
 
 # Tools for web
 find_program(

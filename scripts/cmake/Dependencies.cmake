@@ -1,6 +1,6 @@
 set(CMAKE_FOLDER ThirdParty)
 
-# ccache
+# ccache, on Windows requires https://github.com/cristianadam/ccache/releases
 if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_COMPILER_CACHE)
     set(CCACHE_OPTIONS "CCACHE_SLOPPINESS=pch_defines,time_macros")
     if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang|AppleClang")
@@ -12,6 +12,15 @@ if(NOT WIN32 AND CCACHE_TOOL_PATH AND NOT OGS_DISABLE_COMPILER_CACHE)
         VERSION 1.2.2
         OPTIONS "USE_CCACHE ON"
     )
+elseif(
+    WIN32
+    AND CCACHE_TOOL_PATH
+    AND NOT OGS_DISABLE_COMPILER_CACHE
+    AND "${CMAKE_GENERATOR}" STREQUAL "Ninja"
+)
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_TOOL_PATH} CACHE STRING "" FORCE)
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_TOOL_PATH} CACHE STRING "" FORCE)
+    message(STATUS "Using ccache (${CCACHE_TOOL_PATH}).")
 endif()
 
 if(OGS_BUILD_TESTING)
