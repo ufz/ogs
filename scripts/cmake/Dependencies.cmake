@@ -49,9 +49,9 @@ if(exprtk_ADDED)
     target_include_directories(exprtk SYSTEM INTERFACE ${exprtk_SOURCE_DIR})
 endif()
 
-CPMAddPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.2)
+CPMFindPackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.2)
 
-CPMAddPackage(
+CPMFindPackage(
     NAME tclap
     GITHUB_REPOSITORY ufz/tclap
     VERSION 1.2.4
@@ -217,7 +217,7 @@ else()
 endif()
 
 # Does not compile in Debug-mode, see #3175.
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
+if(CMAKE_BUILD_TYPE STREQUAL "Release" AND OGS_BUILD_TESTING)
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf
@@ -272,7 +272,7 @@ if(OGS_BUILD_SWMM)
     endif()
 endif()
 
-CPMAddPackage(
+CPMFindPackage(
     NAME nlohmann_json
     VERSION 3.6.1
     # the git repo is incredibly large, so we download the archived include
