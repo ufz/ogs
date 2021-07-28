@@ -17,10 +17,9 @@
 #include <string>
 #include <vector>
 
+#include "MathLib/LinAlg/RowColumnIndices.h"
 #include "PETScMatrixOption.h"
 #include "PETScVector.h"
-
-#include "MathLib/LinAlg/RowColumnIndices.h"
 
 typedef Mat PETSc_Mat;
 
@@ -140,8 +139,8 @@ public:
        ghost rows of the global matrix are assembled and kept for linear solver.
 
        For the setting of Dirichlet boundary condition
-       in PETSc, please refer to
-       <a href="http://www.mcs.anl.gov/petsc/documentation/faq.html#redistribute">PETSc:Documentation:FAQ</a>
+       in PETSc, please refer to the
+       [PETSc:Documentation:FAQ](https://www.petsc.org/release/faq/#when-solving-a-system-with-dirichlet-boundary-conditions-i-can-use-matzerorows-to-eliminate-the-dirichlet-rows-but-this-results-in-a-non-symmetric-system-how-can-i-apply-dirichlet-boundary-conditions-but-keep-the-matrix-symmetric").
      */
     template <class T_DENSE_MATRIX>
     void add(RowColumnIndices<PetscInt> const& indices,

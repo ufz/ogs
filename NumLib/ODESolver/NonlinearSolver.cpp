@@ -312,7 +312,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         {
             // TODO could be solved in a better way
             // cf.
-            // http://www.mcs.anl.gov/petsc/petsc-current/docs/manualpages/Vec/VecWAXPY.html
+            // https://www.petsc.org/release/docs/manualpages/Vec/VecWAXPY.html
 
             // Copy pointers, replace the one for the given process id.
             std::vector<GlobalVector*> x_new{x};
