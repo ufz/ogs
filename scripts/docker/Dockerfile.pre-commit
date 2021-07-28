@@ -6,5 +6,5 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git gcc g++ python3-pip clang-format-12 \
     && rm -rf /var/lib/apt/lists/*
-
+RUN update-alternatives --install /usr/local/bin/clang-format clang-format /usr/bin/clang-format-12 10
 RUN pip install pre-commit==2.13.0
