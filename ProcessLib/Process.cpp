@@ -260,7 +260,7 @@ void Process::constructDofTable()
 
     // For staggered scheme:
     const int specified_process_id = 0;
-    constructDofTableOfSpecifiedProsessStaggeredScheme(specified_process_id);
+    constructDofTableOfSpecifiedProcessStaggeredScheme(specified_process_id);
 }
 
 void Process::constructMonolithicProcessDofTable()
@@ -298,7 +298,7 @@ void Process::constructMonolithicProcessDofTable()
     assert(_local_to_global_index_map);
 }
 
-void Process::constructDofTableOfSpecifiedProsessStaggeredScheme(
+void Process::constructDofTableOfSpecifiedProcessStaggeredScheme(
     const int specified_process_id)
 {
     // Create single component dof in every of the mesh nodes.
