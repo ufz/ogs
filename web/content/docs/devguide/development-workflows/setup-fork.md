@@ -104,6 +104,31 @@ cd ogs
 pre-commit install
 ```
 
+You will also need to install `clang-format`:
+
+<div class='win'>
+
+Install clang (which contains `clang-format`) with the [official installer](https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win64.exe)
+
+</div>
+
+<div class='linux'>
+
+```bash
+sudo apt-install clang-format
+```
+
+</div>
+
+<div class='mac'>
+
+```bash
+brew install clang-format
+```
+
+</div>
+
+
 ## Optional: Working on a new feature
 
 You only have to follow the above steps once. From then on, whenever you want to work on a new feature, you can more easily interact with the remote repositories.
