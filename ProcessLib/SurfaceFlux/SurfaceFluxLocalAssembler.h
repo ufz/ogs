@@ -181,8 +181,8 @@ private:
     std::vector<double> _detJ_times_integralMeasure;
 
     IntegrationMethod const _integration_method;
-    std::size_t _bulk_element_id;
-    std::size_t _bulk_face_id;
+    std::size_t const _bulk_element_id;
+    std::size_t const _bulk_face_id;
 };
 
 }  // namespace ProcessLib
