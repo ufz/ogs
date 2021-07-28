@@ -111,8 +111,8 @@ struct IntegrationPointData final
 
         using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
-        variable_array[static_cast<int>(MPL::Variable::stress)]
-            .emplace<KV>(KV::Zero());
+        variable_array[static_cast<int>(MPL::Variable::stress)].emplace<KV>(
+            KV::Zero());
         variable_array[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<KV>(KV::Zero());
         variable_array[static_cast<int>(MPL::Variable::temperature)]

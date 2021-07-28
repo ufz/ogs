@@ -33,16 +33,14 @@ namespace RichardsMechanics
 template <int DisplacementDim>
 struct RichardsMechanicsProcessData
 {
-
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     std::unique_ptr<MaterialPropertyLib::MaterialSpatialDistributionMap>
         media_map = nullptr;
 
     /// The constitutive relation for the mechanical part.
-    std::map<
-        int,
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+    std::map<int, std::unique_ptr<
+                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
     /// Optional, initial stress field. A symmetric tensor, short vector

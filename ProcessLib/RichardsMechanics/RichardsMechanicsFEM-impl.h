@@ -275,9 +275,8 @@ std::size_t RichardsMechanicsLocalAssembler<
             _ip_data[0].solid_material.getInternalVariables();
         if (auto const iv =
                 std::find_if(begin(internal_variables), end(internal_variables),
-                             [&variable_name](auto const& iv) {
-                                 return iv.name == variable_name;
-                             });
+                             [&variable_name](auto const& iv)
+                             { return iv.name == variable_name; });
             iv != end(internal_variables))
         {
             return ProcessLib::setIntegrationPointDataMaterialStateVariables(
@@ -513,10 +512,12 @@ void RichardsMechanicsLocalAssembler<
                                          x_position, t, dt);
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
-        double const DeltaS_L_Deltap_cap = (p_cap_dot_ip == 0) ? dS_L_dp_cap :
-            (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+        double const DeltaS_L_Deltap_cap =
+            (p_cap_dot_ip == 0) ? dS_L_dp_cap
+                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
 
-        auto const chi = [medium, x_position, t, dt](double const S_L) {
+        auto const chi = [medium, x_position, t, dt](double const S_L)
+        {
             MPL::VariableArray vs;
             vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
@@ -680,7 +681,8 @@ void RichardsMechanicsLocalAssembler<
         double const a0 = S_L * (alpha - phi) * beta_SR;
         // Volumetric average specific storage of the solid and fluid phases.
         double const specific_storage =
-            DeltaS_L_Deltap_cap * (p_cap_ip * a0 - phi) + S_L * (phi * beta_LR + a0);
+            DeltaS_L_Deltap_cap * (p_cap_ip * a0 - phi) +
+            S_L * (phi * beta_LR + a0);
         M.template block<pressure_size, pressure_size>(pressure_index,
                                                        pressure_index)
             .noalias() += N_p.transpose() * rho_LR * specific_storage * N_p * w;
@@ -881,10 +883,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                          x_position, t, dt);
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
-        double const DeltaS_L_Deltap_cap = (p_cap_dot_ip == 0) ? dS_L_dp_cap :
-            (S_L - S_L_prev) / (dt * p_cap_dot_ip);
+        double const DeltaS_L_Deltap_cap =
+            (p_cap_dot_ip == 0) ? dS_L_dp_cap
+                                : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
 
-        auto const chi = [medium, x_position, t, dt](double const S_L) {
+        auto const chi = [medium, x_position, t, dt](double const S_L)
+        {
             MPL::VariableArray vs;
             vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
@@ -1102,9 +1106,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             N_p.transpose() * rho_LR * specific_storage_a_p * N_p * w;
 
         storage_p_a_S.noalias() -= N_p.transpose() * rho_LR *
-                                       specific_storage_a_S *
-                                       DeltaS_L_Deltap_cap * N_p * w;
-
+                                   specific_storage_a_S * DeltaS_L_Deltap_cap *
+                                   N_p * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
@@ -1235,9 +1238,8 @@ std::vector<double> RichardsMechanicsLocalAssembler<
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
-        [this](std::vector<double>& values) {
-            return getIntPtSigma(0, {}, {}, values);
-        });
+        [this](std::vector<double>& values)
+        { return getIntPtSigma(0, {}, {}, values); });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1265,9 +1267,8 @@ std::vector<double> RichardsMechanicsLocalAssembler<
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
-        [this](std::vector<double>& values) {
-            return getIntPtSwellingStress(0, {}, {}, values);
-        });
+        [this](std::vector<double>& values)
+        { return getIntPtSwellingStress(0, {}, {}, values); });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1310,9 +1311,8 @@ std::vector<double> RichardsMechanicsLocalAssembler<
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
-        [this](std::vector<double>& values) {
-            return getIntPtEpsilon(0, {}, {}, values);
-        });
+        [this](std::vector<double>& values)
+        { return getIntPtEpsilon(0, {}, {}, values); });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1661,7 +1661,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L_prev;
 
-        auto const chi = [medium, x_position, t, dt](double const S_L) {
+        auto const chi = [medium, x_position, t, dt](double const S_L)
+        {
             MPL::VariableArray vs;
             vs.fill(std::numeric_limits<double>::quiet_NaN());
             vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;

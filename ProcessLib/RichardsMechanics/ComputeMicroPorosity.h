@@ -27,7 +27,7 @@ struct MicroPorosityStateSpace
     double p_L_m;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> sigma_sw;
 
-    MicroPorosityStateSpace& operator += (MicroPorosityStateSpace const& state)
+    MicroPorosityStateSpace& operator+=(MicroPorosityStateSpace const& state)
     {
         phi_m += state.phi_m;
         e_sw += state.e_sw;
@@ -106,7 +106,8 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
     double const alpha_bar =
         micro_porosity_parameters.mass_exchange_coefficient;
 
-    auto const update_residual = [&](ResidualVectorType& residual) {
+    auto const update_residual = [&](ResidualVectorType& residual)
+    {
         double const delta_phi_m = solution[i_phi_m];
         double const delta_e_sw = solution[i_e_sw];
         auto const& delta_sigma_sw =
@@ -129,7 +130,6 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L_m;
         double const delta_S_L_m = S_L_m - S_L_m_prev;
 
-
         auto const sigma_sw_dot =
             MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
                 swelling_stress_rate.template value<Eigen::Matrix3d>(
@@ -148,7 +148,8 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
                 (p_L - p_L_m) * dt;
     };
 
-    auto const update_jacobian = [&](JacobianMatrix& jacobian) {
+    auto const update_jacobian = [&](JacobianMatrix& jacobian)
+    {
         jacobian = JacobianMatrix::Identity();
 
         double const delta_phi_m = solution[i_phi_m];
@@ -183,8 +184,8 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
         jacobian.template block<1, kelvin_vector_size>(i_e_sw, i_sigma_sw) =
             I_2_C_el_inverse.transpose();
 
-        jacobian.template block<kelvin_vector_size, 1>(
-            i_sigma_sw, i_p_L_m) = -dsigma_sw_dS_L_m * dS_L_m_dp_cap_m;
+        jacobian.template block<kelvin_vector_size, 1>(i_sigma_sw, i_p_L_m) =
+            -dsigma_sw_dS_L_m * dS_L_m_dp_cap_m;
 
         jacobian(i_p_L_m, i_phi_m) =
             rho_LR_m * (delta_S_L_m + S_L_m * delta_e_sw);
@@ -197,9 +198,8 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
                 dS_L_m_dp_cap_m;
     };
 
-    auto const update_solution = [&](ResidualVectorType const& increment) {
-        solution += increment;
-    };
+    auto const update_solution = [&](ResidualVectorType const& increment)
+    { solution += increment; };
 
     auto newton_solver =
         NumLib::NewtonRaphson<decltype(linear_solver), JacobianMatrix,

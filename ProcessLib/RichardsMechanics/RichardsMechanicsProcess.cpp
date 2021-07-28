@@ -53,7 +53,9 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, [this]() {
+            integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -70,7 +72,9 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
-            "saturation_ip", 1 /*n components*/, integration_order, [this]() {
+            "saturation_ip", 1 /*n components*/, integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -87,7 +91,9 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
-            "porosity_ip", 1 /*n components*/, integration_order, [this]() {
+            "porosity_ip", 1 /*n components*/, integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -105,7 +111,8 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "transport_porosity_ip", 1 /*n components*/, integration_order,
-            [this]() {
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -124,7 +131,9 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "swelling_stress_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, [this]() {
+            integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -143,7 +152,9 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, [this]() {
+            integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -284,7 +295,8 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
-                                      auto get_ip_values_function) {
+                                      auto get_ip_values_function)
+    {
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
@@ -307,8 +319,8 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerIF::getIntPtEpsilon);
 
-    add_secondary_variable(
-        "velocity", DisplacementDim, &LocalAssemblerIF::getIntPtDarcyVelocity);
+    add_secondary_variable("velocity", DisplacementDim,
+                           &LocalAssemblerIF::getIntPtDarcyVelocity);
 
     add_secondary_variable("saturation", 1,
                            &LocalAssemblerIF::getIntPtSaturation);
@@ -335,12 +347,13 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                           add_secondary_variable);
 
     auto add_integration_point_writer =
-        [&](std::string const& name, int const n_components, auto function) {
-            _integration_point_writer.emplace_back(
-                std::make_unique<IntegrationPointWriter>(
-                    "material_state_variable_" + name + "_ip", n_components,
-                    integration_order, function));
-        };
+        [&](std::string const& name, int const n_components, auto function)
+    {
+        _integration_point_writer.emplace_back(
+            std::make_unique<IntegrationPointWriter>(
+                "material_state_variable_" + name + "_ip", n_components,
+                integration_order, function));
+    };
 
     // Assume all materials have same internal variables.
     ProcessLib::Deformation::
@@ -532,7 +545,8 @@ void RichardsMechanicsProcess<DisplacementDim>::
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
-    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
         if (_use_monolithic_scheme)
         {
             transformVariableFromGlobalVector(b, variable_id, dof_tables[0],

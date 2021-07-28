@@ -340,7 +340,8 @@ private:
         {
             return [](MeshLib::Element const& e,
                       std::size_t const local_matrix_size,
-                      ConstructorArgs&&... args) {
+                      ConstructorArgs&&... args)
+            {
                 return LADataIntfPtr{new LAData<ShapeFunction, ShapeFunction>{
                     e, local_matrix_size,
                     std::forward<ConstructorArgs>(args)...}};
@@ -352,7 +353,8 @@ private:
                 typename NumLib::LowerDim<ShapeFunction>::type;
             return [](MeshLib::Element const& e,
                       std::size_t const local_matrix_size,
-                      ConstructorArgs&&... args) {
+                      ConstructorArgs&&... args)
+            {
                 return LADataIntfPtr{
                     new LAData<ShapeFunction, LowerOrderShapeFunction>{
                         e, local_matrix_size,
