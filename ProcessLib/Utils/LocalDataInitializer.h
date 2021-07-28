@@ -136,8 +136,7 @@ public:
 
         if (shapefunction_order == 1)
         {
-// /// Lines and points ///////////////////////////////////
-
+            // /// Lines and points ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 1 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -151,7 +150,7 @@ public:
                 makeLocalAssemblerBuilder<NumLib::ShapeLine2>();
 #endif
 
-// /// Quads and Hexahedra ///////////////////////////////////
+            // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -235,14 +234,13 @@ public:
         }
         else if (shapefunction_order == 2)
         {
-
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 1 && OGS_MAX_ELEMENT_ORDER >= 2
             _builder[std::type_index(typeid(MeshLib::Line3))] =
                 makeLocalAssemblerBuilder<NumLib::ShapeLine3>();
 #endif
 
-// /// Quads and Hexahedra ///////////////////////////////////
+            // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
@@ -359,7 +357,8 @@ private:
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
-                  ConstructorArgs&&... args) {
+                  ConstructorArgs&&... args)
+        {
             return LADataIntfPtr{new LAData<ShapeFunction>{
                 e, local_matrix_size, std::forward<ConstructorArgs>(args)...}};
         };

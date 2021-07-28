@@ -76,7 +76,8 @@ MeshLib::Mesh const& findMeshInConfig(
     //
     auto const& mesh = *BaseLib::findElementOrError(
         begin(meshes), end(meshes),
-        [&mesh_name](auto const& mesh) {
+        [&mesh_name](auto const& mesh)
+        {
             assert(mesh != nullptr);
             return mesh->getName() == mesh_name;
         },
@@ -299,7 +300,8 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
     auto const* const material_ids = MeshLib::materialIDs(_mesh);
 
     auto is_active_in_subdomain = [&](std::size_t const i,
-                                      DeactivatedSubdomain const& ds) -> bool {
+                                      DeactivatedSubdomain const& ds) -> bool
+    {
         if (!ds.isInTimeSupportInterval(time))
         {
             return true;
@@ -339,7 +341,9 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
     std::vector<std::unique_ptr<SourceTerm>> source_terms;
 
     transform(cbegin(_source_term_configs), cend(_source_term_configs),
-              back_inserter(source_terms), [&](auto const& config) {
+              back_inserter(source_terms),
+              [&](auto const& config)
+              {
                   return createSourceTerm(config, dof_table, config.mesh,
                                           variable_id, integration_order,
                                           _shapefunction_order, parameters);

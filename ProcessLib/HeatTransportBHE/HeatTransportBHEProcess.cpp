@@ -107,12 +107,12 @@ void HeatTransportBHEProcess::constructDofTable()
         _mesh_subset_BHE_nodes.push_back(
             std::make_unique<MeshLib::MeshSubset const>(_mesh, bhe_nodes));
 
-        std::generate_n(
-            std::back_inserter(all_mesh_subsets),
-            // Here the number of components equals to the
-            // number of unknowns on the BHE
-            number_of_unknowns,
-            [&ms = _mesh_subset_BHE_nodes.back()]() { return *ms; });
+        std::generate_n(std::back_inserter(all_mesh_subsets),
+                        // Here the number of components equals to the
+                        // number of unknowns on the BHE
+                        number_of_unknowns,
+                        [&ms = _mesh_subset_BHE_nodes.back()]()
+                        { return *ms; });
 
         vec_n_components.push_back(number_of_unknowns);
         vec_var_elements.push_back(&bhe_elements);
@@ -284,9 +284,8 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             // Count number of 1d elements connected with every BHE node.
             const std::size_t n_line_elements = std::count_if(
                 bhe_node->getElements().begin(), bhe_node->getElements().end(),
-                [](MeshLib::Element const* elem) {
-                    return (elem->getDimension() == 1);
-                });
+                [](MeshLib::Element const* elem)
+                { return (elem->getDimension() == 1); });
 
             if (n_line_elements == 1)
             {
@@ -331,8 +330,9 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             }
         }
 
-        auto get_global_index = [&](std::size_t const node_id,
-                                    int const component) {
+        auto get_global_index =
+            [&](std::size_t const node_id, int const component)
+        {
             return _local_to_global_index_map->getGlobalIndex(
                 {_mesh.getID(), MeshLib::MeshItemType::Node, node_id},
                 variable_id, component);
@@ -341,17 +341,19 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         auto get_global_bhe_bc_indices =
             [&](std::array<
                 std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
-                    nodes_and_components) {
-                return std::make_pair(
-                    get_global_index(nodes_and_components[0].first,
-                                     nodes_and_components[0].second),
-                    get_global_index(nodes_and_components[1].first,
-                                     nodes_and_components[1].second));
-            };
+                    nodes_and_components)
+        {
+            return std::make_pair(
+                get_global_index(nodes_and_components[0].first,
+                                 nodes_and_components[0].second),
+                get_global_index(nodes_and_components[1].first,
+                                 nodes_and_components[1].second));
+        };
 
-        auto createBCs = [&, bc_top_node_id = bhe_boundary_nodes[0]->getID(),
-                          bc_bottom_node_id =
-                              bhe_boundary_nodes[1]->getID()](auto& bhe) {
+        auto createBCs =
+            [&, bc_top_node_id = bhe_boundary_nodes[0]->getID(),
+             bc_bottom_node_id = bhe_boundary_nodes[1]->getID()](auto& bhe)
+        {
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
