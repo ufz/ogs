@@ -306,7 +306,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
-    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
         if (_use_monolithic_scheme)
         {
             transformVariableFromGlobalVector(b, variable_id, dof_tables[0],

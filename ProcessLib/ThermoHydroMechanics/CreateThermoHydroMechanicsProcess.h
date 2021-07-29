@@ -35,7 +35,7 @@ namespace ParameterLib
 {
 struct CoordinateSystem;
 struct ParameterBase;
-}
+}  // namespace ParameterLib
 namespace ProcessLib
 {
 class AbstractJacobianAssembler;

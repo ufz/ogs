@@ -157,10 +157,8 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         &mesh);
 
     ThermoHydroMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),
-        std::move(media_map),
-        std::move(solid_constitutive_relations),
-        initial_stress,
+        materialIDs(mesh), std::move(media_map),
+        std::move(solid_constitutive_relations), initial_stress,
         specific_body_force};
 
     SecondaryVariableCollection secondary_variables;

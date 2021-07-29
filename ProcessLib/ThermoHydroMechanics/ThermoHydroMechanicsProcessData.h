@@ -10,14 +10,12 @@
 
 #pragma once
 
-#include "ParameterLib/Parameter.h"
-
+#include <Eigen/Dense>
 #include <memory>
 #include <utility>
 
-#include <Eigen/Dense>
-
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -41,9 +39,8 @@ struct ThermoHydroMechanicsProcessData
 
     /// The constitutive relation for the mechanical part.
     /// \note Linear elasticity is the only supported one in the moment.
-    std::map<
-        int,
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+    std::map<int, std::unique_ptr<
+                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
     /// Optional, initial stress field. A symmetric tensor, short vector
