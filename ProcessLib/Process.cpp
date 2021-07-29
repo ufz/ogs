@@ -272,8 +272,6 @@ void Process::constructMonolithicProcessDofTable()
     // Vector of mesh subsets.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
 
-    // Vector of the number of variable components
-    std::vector<int> vec_var_n_components;
     // Collect the mesh subsets in a vector for the components of each
     // variables.
     for (ProcessVariable const& pv : _process_variables[0])
@@ -284,6 +282,7 @@ void Process::constructMonolithicProcessDofTable()
     }
 
     // Create a vector of the number of variable components
+    std::vector<int> vec_var_n_components;
     transform(cbegin(_process_variables[0]), cend(_process_variables[0]),
               back_inserter(vec_var_n_components),
               [](ProcessVariable const& pv) {
