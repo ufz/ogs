@@ -79,6 +79,12 @@ public:
         unsigned const integration_order,
         ThermoHydroMechanicsProcessData<DisplacementDim>& process_data);
 
+    /// Returns number of read integration points.
+    std::size_t setIPDataInitialConditions(
+        std::string const& name,
+        double const* values,
+        int const integration_order) override;
+
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
                   std::vector<double> const& /*local_xdot*/,
@@ -121,10 +127,13 @@ public:
 
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*_process_data.initial_stress)(
-                        std::numeric_limits<
-                            double>::quiet_NaN() /* time independent */,
-                        x_position));
+                        DisplacementDim>(
+                        (*_process_data
+                              .initial_stress)(std::numeric_limits<double>::
+                                                   quiet_NaN() /* time
+                                                                  independent */
+                                               ,
+                                               x_position));
             }
 
             ip_data.pushBackState();
@@ -169,13 +178,6 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
-private:
-    std::size_t setSigma(double const* values)
-    {
-        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_eff);
-    }
-
     // TODO (naumov) This method is same as getIntPtSigma but for arguments and
     // the ordering of the cache_mat.
     // There should be only one.
@@ -183,6 +185,13 @@ private:
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
             _ip_data, &IpData::sigma_eff);
+    }
+
+private:
+    std::size_t setSigma(double const* values)
+    {
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_eff);
     }
 
     std::vector<double> const& getIntPtSigma(

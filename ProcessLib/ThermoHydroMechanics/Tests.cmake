@@ -218,3 +218,20 @@ AddTest(
     expected_CylindricalCavity_ts_68_t_7200000.000000.vtu CylindricalCavity_ts_68_t_7200000.000000.vtu epsilon epsilon 1e-5 1e-5
     expected_CylindricalCavity_ts_68_t_7200000.000000.vtu CylindricalCavity_ts_68_t_7200000.000000.vtu sigma sigma 1e-5 1e-5
 )
+
+AddTest(
+    NAME ThermoHydroMechanics_BRGaCreepAndInitialStressAtIP_AREHS
+    PATH ThermoHydroMechanics/BRGaCreepAndInitialStressAtIP_AREHS
+    RUNTIME 60
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS arehs-salt-THM01_0.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu displacement displacement 1e-8 1e-8
+    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu pressure pressure 1e-8 1e-8
+    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu temperature temperature 1e-8 1e-8
+    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu epsilon epsilon 1e-8 1e-8
+    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu sigma sigma 1.0e-5 1e-6
+)

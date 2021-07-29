@@ -45,6 +45,28 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
 
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<IntegrationPointWriter>(
+            "sigma_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            integration_order,
+            [this]()
+            {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+
+                    result[i] = local_asm.getSigma();
+                }
+
+                return result;
+            }));
 }
 
 template <int DisplacementDim>
@@ -205,6 +227,57 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::initialize, _local_assemblers,
         *_local_to_global_index_map);
+
+    // Set initial conditions for integration point data.
+    for (auto const& ip_writer : _integration_point_writer)
+    {
+        // Find the mesh property with integration point writer's name.
+        auto const& name = ip_writer->name();
+        if (!mesh.getProperties().existsPropertyVector<double>(name))
+        {
+            continue;
+        }
+        auto const& mesh_property =
+            *mesh.getProperties().template getPropertyVector<double>(name);
+
+        // The mesh property must be defined on integration points.
+        if (mesh_property.getMeshItemType() !=
+            MeshLib::MeshItemType::IntegrationPoint)
+        {
+            continue;
+        }
+
+        auto const ip_meta_data = getIntegrationPointMetaData(mesh, name);
+
+        // Check the number of components.
+        if (ip_meta_data.n_components !=
+            mesh_property.getNumberOfGlobalComponents())
+        {
+            OGS_FATAL(
+                "Different number of components in meta data ({:d}) than in "
+                "the integration point field data for '{:s}': {:d}.",
+                ip_meta_data.n_components, name,
+                mesh_property.getNumberOfGlobalComponents());
+        }
+
+        // Now we have a properly named vtk's field data array and the
+        // corresponding meta data.
+        std::size_t position = 0;
+        for (auto& local_asm : _local_assemblers)
+        {
+            std::size_t const integration_points_read =
+                local_asm->setIPDataInitialConditions(
+                    name, &mesh_property[position],
+                    ip_meta_data.integration_order);
+            if (integration_points_read == 0)
+            {
+                OGS_FATAL(
+                    "No integration points read in the integration point "
+                    "initial conditions set function.");
+            }
+            position += integration_points_read * ip_meta_data.n_components;
+        }
+    }
 }
 
 template <int DisplacementDim>
