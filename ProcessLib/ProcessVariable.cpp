@@ -19,12 +19,12 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "ParameterLib/Utils.h"
-#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
-#include "ProcessLib/BoundaryCondition/CreateBoundaryCondition.h"
-#include "ProcessLib/BoundaryCondition/DeactivatedSubdomainDirichlet.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/CreateBoundaryCondition.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/CreateSourceTerm.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/DeactivatedSubdomainDirichlet.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTerm.h"
 #include "ProcessLib/CreateDeactivatedSubdomain.h"
-#include "ProcessLib/SourceTerms/CreateSourceTerm.h"
-#include "ProcessLib/SourceTerms/SourceTerm.h"
 
 namespace
 {
@@ -76,7 +76,8 @@ MeshLib::Mesh const& findMeshInConfig(
     //
     auto const& mesh = *BaseLib::findElementOrError(
         begin(meshes), end(meshes),
-        [&mesh_name](auto const& mesh) {
+        [&mesh_name](auto const& mesh)
+        {
             assert(mesh != nullptr);
             return mesh->getName() == mesh_name;
         },
@@ -299,14 +300,14 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
     auto const* const material_ids = MeshLib::materialIDs(_mesh);
 
     auto is_active_in_subdomain = [&](std::size_t const i,
-                                      DeactivatedSubdomain const& ds) -> bool {
+                                      DeactivatedSubdomain const& ds) -> bool
+    {
         if (!ds.isInTimeSupportInterval(time))
         {
             return true;
         }
 
-        auto const& deactivated_materialIDs =
-            ds.materialIDs;
+        auto const& deactivated_materialIDs = ds.materialIDs;
 
         auto const& element_center = getCenterOfGravity(*_mesh.getElement(i));
         if (std::binary_search(deactivated_materialIDs.begin(),
@@ -340,7 +341,9 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
     std::vector<std::unique_ptr<SourceTerm>> source_terms;
 
     transform(cbegin(_source_term_configs), cend(_source_term_configs),
-              back_inserter(source_terms), [&](auto const& config) {
+              back_inserter(source_terms),
+              [&](auto const& config)
+              {
                   return createSourceTerm(config, dof_table, config.mesh,
                                           variable_id, integration_order,
                                           _shapefunction_order, parameters);

@@ -18,11 +18,11 @@
 #include "NumLib/ODESolver/ODESystem.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "ParameterLib/Parameter.h"
-#include "ProcessLib/BoundaryCondition/BoundaryConditionCollection.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionCollection.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTermCollection.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/IntegrationPointWriter.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
-#include "ProcessLib/SourceTerms/SourceTermCollection.h"
 #include "ProcessVariable.h"
 #include "VectorMatrixAssembler.h"
 

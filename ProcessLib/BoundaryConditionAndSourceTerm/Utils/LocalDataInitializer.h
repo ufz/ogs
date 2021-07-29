@@ -78,6 +78,7 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine3.h"
+#include "NumLib/Fem/ShapeFunction/ShapePoint1.h"
 #endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_SIMPLEX) != 0
@@ -113,6 +114,8 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 
 namespace ProcessLib
 {
+namespace BoundaryConditionAndSourceTerm
+{
 /// The LocalDataInitializer is a functor creating a local assembler data with
 /// corresponding to the mesh element type shape functions and calling
 /// initialization of the new local assembler data.
@@ -137,6 +140,12 @@ public:
         if (shapefunction_order == 1)
         {
             // /// Lines and points ///////////////////////////////////
+
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 0 && OGS_MAX_ELEMENT_ORDER >= 1
+            _builder[std::type_index(typeid(MeshLib::Point))] =
+                makeLocalAssemblerBuilder<NumLib::ShapePoint1>();
+#endif
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 1 && OGS_MAX_ELEMENT_ORDER >= 1
@@ -234,6 +243,13 @@ public:
         }
         else if (shapefunction_order == 2)
         {
+// /// Lines and points ///////////////////////////////////
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 0 && OGS_MAX_ELEMENT_ORDER >= 1
+            _builder[std::type_index(typeid(MeshLib::Point))] =
+                makeLocalAssemblerBuilder<NumLib::ShapePoint1>();
+#endif
+
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_LINE) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 1 && OGS_MAX_ELEMENT_ORDER >= 2
             _builder[std::type_index(typeid(MeshLib::Line3))] =
@@ -373,8 +389,8 @@ private:
     }
 };
 
+}  // namespace BoundaryConditionAndSourceTerm
 }  // namespace ProcessLib
-
 #undef ENABLED_ELEMENT_TYPE_SIMPLEX
 #undef ENABLED_ELEMENT_TYPE_CUBOID
 #undef ENABLED_ELEMENT_TYPE_PYRAMID

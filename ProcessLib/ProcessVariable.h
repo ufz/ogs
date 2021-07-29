@@ -11,10 +11,9 @@
 #pragma once
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-
 #include "ParameterLib/Parameter.h"
-#include "ProcessLib/BoundaryCondition/BoundaryConditionConfig.h"
-#include "ProcessLib/SourceTerms/SourceTermConfig.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionConfig.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTermConfig.h"
 
 // DeactivatedSubdomain cannot be forwardly declared because that
 // std::unique_ptr<DeactivatedSubdomain> type member requires its full
@@ -26,7 +25,7 @@ namespace MeshLib
 class Mesh;
 template <typename T>
 class PropertyVector;
-}
+}  // namespace MeshLib
 namespace NumLib
 {
 class LocalToGlobalIndexMap;
@@ -96,6 +95,7 @@ public:
     }
 
     unsigned getShapeFunctionOrder() const { return _shapefunction_order; }
+
 private:
     std::string const _name;
     MeshLib::Mesh& _mesh;

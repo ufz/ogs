@@ -11,7 +11,7 @@
 #pragma once
 
 #include "NumLib/IndexValueVector.h"
-#include "ProcessLib/BoundaryCondition/BoundaryCondition.h"
+#include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
 
 namespace ProcessLib::HeatTransportBHE
 {
