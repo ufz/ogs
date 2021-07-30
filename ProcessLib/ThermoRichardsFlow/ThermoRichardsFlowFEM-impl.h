@@ -537,7 +537,7 @@ void ThermoRichardsFlowLocalAssembler<
             double const D_pv = D_v * drho_wv_dp;
 
             if (gas_phase &&
-                gas_phase->hasProperty(MPL::PropertyType::heat_capacity))
+                gas_phase->hasProperty(MPL::PropertyType::specific_heat_capacity))
             {
                 GlobalDimVectorType const grad_T = dNdx * T;
                 // Vapour velocity
@@ -999,7 +999,7 @@ void ThermoRichardsFlowLocalAssembler<
             double const D_pv = D_v * drho_wv_dp;
 
             if (gas_phase &&
-                gas_phase->hasProperty(MPL::PropertyType::heat_capacity))
+                gas_phase->hasProperty(MPL::PropertyType::specific_heat_capacity))
             {
                 GlobalDimVectorType const grad_T = dNdx * T;
                 GlobalDimVectorType const grad_p_cap = -dNdx * p_L;
