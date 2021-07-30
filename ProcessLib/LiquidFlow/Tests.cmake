@@ -576,3 +576,17 @@ AddTest(
     fractures_in_3D_ts_100_t_8640000.000000.vtu fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
     fractures_in_3D_ts_100_t_8640000.000000.vtu fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
 )
+
+AddTest(
+    NAME LiquidFlow_line_fractures_in_3D
+    PATH Parabolic/LiquidFlow/InclinedMeshElements/1Din3D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS line_fractures_in_3D.prj
+    RUNTIME 4
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
+    line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
+)
