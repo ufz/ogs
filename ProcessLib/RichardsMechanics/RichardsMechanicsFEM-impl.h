@@ -941,16 +941,19 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         if (medium->hasProperty(MPL::PropertyType::transport_porosity))
         {
-            variables_prev[static_cast<int>(
-                MPL::Variable::transport_porosity)] =
-                _ip_data[ip].transport_porosity_prev;
+            if (!medium->hasProperty(MPL::PropertyType::saturation_micro))
+            {
+                variables_prev[static_cast<int>(
+                    MPL::Variable::transport_porosity)] =
+                    _ip_data[ip].transport_porosity_prev;
 
-            _ip_data[ip].transport_porosity =
-                medium->property(MPL::PropertyType::transport_porosity)
-                    .template value<double>(variables, variables_prev,
-                                            x_position, t, dt);
-            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                _ip_data[ip].transport_porosity;
+                _ip_data[ip].transport_porosity =
+                    medium->property(MPL::PropertyType::transport_porosity)
+                        .template value<double>(variables, variables_prev,
+                                                x_position, t, dt);
+                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                    _ip_data[ip].transport_porosity;
+            }
         }
         else
         {
@@ -1722,16 +1725,19 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         if (medium->hasProperty(MPL::PropertyType::transport_porosity))
         {
-            variables_prev[static_cast<int>(
-                MPL::Variable::transport_porosity)] =
-                _ip_data[ip].transport_porosity_prev;
+            if (!medium->hasProperty(MPL::PropertyType::saturation_micro))
+            {
+                variables_prev[static_cast<int>(
+                    MPL::Variable::transport_porosity)] =
+                    _ip_data[ip].transport_porosity_prev;
 
-            _ip_data[ip].transport_porosity =
-                medium->property(MPL::PropertyType::transport_porosity)
-                    .template value<double>(variables, variables_prev,
-                                            x_position, t, dt);
-            variables[static_cast<int>(MPL::Variable::transport_porosity)] =
-                _ip_data[ip].transport_porosity;
+                _ip_data[ip].transport_porosity =
+                    medium->property(MPL::PropertyType::transport_porosity)
+                        .template value<double>(variables, variables_prev,
+                                                x_position, t, dt);
+                variables[static_cast<int>(MPL::Variable::transport_porosity)] =
+                    _ip_data[ip].transport_porosity;
+            }
         }
         else
         {
