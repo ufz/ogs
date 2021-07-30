@@ -13,13 +13,15 @@ aliases = ["/docs/devguide/advanced/using-ccache"]
 
 ## Introduction
 
-A compiler cache speeds up compilation times by caching object files and reusing them on subsequent builds. This even works for complete rebuilds (i.e. deleting the full build-directory). A compiler cache is automatically used when it is found by CMake.
+A compiler cache speeds up compilation times by caching object files and reusing them on subsequent builds. This even works for complete rebuilds (i.e. deleting the full build-directory). The compiler cache [ccache](https://ccache.samba.org) is automatically used when it is found by CMake.
 
 <div class='linux'>
 
-For Linux and macOS you can use [ccache](https://ccache.samba.org). You may want to change the cache directory (environment variable `CCACHE_DIR`) or increase the cache size (`CCACHE_MAXSIZE`). See the [ccache docs](https://ccache.dev/manual/4.2.html#_configuration) for configuration instructions.
+Install it with your package manager, e.g.:
 
-You can check cache hits with `ccache -s`.
+```bash
+sudo apt install ccache
+```
 
 ## Usage on eve
 
@@ -33,28 +35,23 @@ module load /global/apps/modulefiles/ccache/3.3.3
 
 <div class='mac'>
 
-See Linux-tab!
+```bash
+brew install ccache
+```
 
 </div>
 
 <div class='win'>
 
-On Windows you can use [clcache](https://github.com/frerich/clcache). Install it with [Chocolatey](https://github.com/frerich/clcache/wiki/Installation#installing-an-executable-file-via-chocolatey):
+Windows support in ccache is not yet in the main ccache development line. Please install ccache from https://github.com/cristianadam/ccache/releases.
 
-```bash
-curl -L https://github.com/frerich/clcache/releases/download/v4.2.0/clcache.4.2.0.nupkg --output clcache.4.2.0.nupkg
-choco install clcache --source=.
-```
-
-You may want to increase the cache size (to 10 GB in this case):
-
-```bash
-clcache -M 10000000000
-```
-
-You can check cache hits with `clcache -s`.
+Just extract the archive and put the `ccache.exe` into the `PATH`.
 
 </div>
+
+You may want to change the cache directory (environment variable `CCACHE_DIR`) or increase the cache size (e.g. `ccache -M 10G` or `CCACHE_MAXSIZE`). See the [ccache docs](https://ccache.dev/manual/4.3.html#_configuration) for configuration instructions.
+
+You can check cache hit statistics with `ccache -s`.
 
 To disable caching:
 
