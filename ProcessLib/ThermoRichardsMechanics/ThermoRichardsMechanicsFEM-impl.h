@@ -819,8 +819,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             double const f_Tv_D_Tv = f_Tv * D_v * drho_wv_dT;
             double const D_pv = D_v * drho_wv_dp;
 
-            if (gas_phase &&
-                gas_phase->hasProperty(MPL::PropertyType::heat_capacity))
+            if (gas_phase && gas_phase->hasProperty(
+                                 MPL::PropertyType::specific_heat_capacity))
             {
                 // Vapour velocity
                 GlobalDimVectorType const q_v =
