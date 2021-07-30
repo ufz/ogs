@@ -223,11 +223,6 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "temperature_interpolated",
             MeshLib::MeshItemType::Node, 1);
 
-    // Initialize local assemblers after all variables have been set.
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
-        *_local_to_global_index_map);
-
     // Set initial conditions for integration point data.
     for (auto const& ip_writer : _integration_point_writer)
     {
@@ -278,6 +273,11 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             position += integration_points_read * ip_meta_data.n_components;
         }
     }
+
+    // Initialize local assemblers after all variables have been set.
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::initialize, _local_assemblers,
+        *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
