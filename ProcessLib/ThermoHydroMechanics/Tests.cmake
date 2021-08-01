@@ -2,6 +2,7 @@
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj RUNTIME 60)
     OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2.prj RUNTIME 23)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2_heating.prj RUNTIME 23)
 endif()
 
 AddTest(
