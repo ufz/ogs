@@ -27,6 +27,7 @@
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
+#include "ProcessLib/Utils/TransposeInPlace.h"
 #include "ThermoHydroMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -182,8 +183,12 @@ public:
     // There should be only one.
     std::vector<double> getSigma() const override
     {
-        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma_eff);
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtSigma(0, {}, {}, values); });
     }
 
 private:
