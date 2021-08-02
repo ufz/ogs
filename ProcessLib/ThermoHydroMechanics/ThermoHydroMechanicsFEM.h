@@ -208,6 +208,16 @@ private:
             _ip_data, &IpData::sigma_eff, cache);
     }
 
+    std::vector<double> getEpsilon() const override
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtEpsilon(0, {}, {}, values); });
+    }
+
     virtual std::vector<double> const& getIntPtEpsilon(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
