@@ -1203,10 +1203,10 @@ public:
 
             std::vector<GlobalIndexType> chemical_system_indices;
             chemical_system_indices.reserve(n_integration_points);
-            std::transform(
-                _ip_data.begin(), _ip_data.end(),
-                std::back_inserter(chemical_system_indices),
-                [](auto const& ip_data) { return ip_data.chemical_system_id; });
+            std::transform(_ip_data.begin(), _ip_data.end(),
+                           std::back_inserter(chemical_system_indices),
+                           [](auto const& ip_data)
+                           { return ip_data.chemical_system_id; });
 
             _process_data.chemical_solver_interface->computeSecondaryVariable(
                 ele_id, chemical_system_indices);

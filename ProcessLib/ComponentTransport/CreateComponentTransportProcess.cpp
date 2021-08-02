@@ -118,9 +118,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
     auto it = std::find_if(
         collected_process_variables.cbegin(),
         collected_process_variables.cend(),
-        [](std::reference_wrapper<ProcessLib::ProcessVariable> const& pv) {
-            return pv.get().getNumberOfGlobalComponents() != 1;
-        });
+        [](std::reference_wrapper<ProcessLib::ProcessVariable> const& pv)
+        { return pv.get().getNumberOfGlobalComponents() != 1; });
 
     if (it != collected_process_variables.end())
     {
@@ -155,14 +154,14 @@ std::unique_ptr<Process> createComponentTransportProcess(
         }
         else
         {
-            auto sort_by_component = [&per_process_variable,
-                                      collected_process_variables](
-                                         auto const& c_name) {
+            auto sort_by_component =
+                [&per_process_variable,
+                 collected_process_variables](auto const& c_name)
+            {
                 auto pv = std::find_if(collected_process_variables.begin(),
                                        collected_process_variables.end(),
-                                       [&c_name](auto const& v) -> bool {
-                                           return v.get().getName() == c_name;
-                                       });
+                                       [&c_name](auto const& v) -> bool
+                                       { return v.get().getName() == c_name; });
 
                 if (pv == collected_process_variables.end())
                 {
