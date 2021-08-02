@@ -127,13 +127,12 @@ public:
 
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>(
-                        (*_process_data
-                              .initial_stress)(std::numeric_limits<double>::
-                                                   quiet_NaN() /* time
-                                                                  independent */
-                                               ,
-                                               x_position));
+                        DisplacementDim>((*_process_data.initial_stress)(
+                        std::numeric_limits<double>::quiet_NaN() /* time
+                                                                    independent
+                                                                  */
+                        ,
+                        x_position));
             }
 
             ip_data.pushBackState();
