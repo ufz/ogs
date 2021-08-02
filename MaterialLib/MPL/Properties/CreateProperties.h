@@ -40,6 +40,7 @@
 #include "CreateSaturationDependentSwelling.h"
 #include "CreateSaturationDependentThermalConductivity.h"
 #include "CreateStrainDependentPermeability.h"
+#include "CreateTemperatureDependentDiffusion.h"
 #include "CreateTransportPorosityFromMassBalance.h"
 #include "Density/CreateWaterVapourDensity.h"
 #include "Enthalpy/CreateLinearWaterVapourLatentHeat.h"

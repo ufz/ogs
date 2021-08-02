@@ -270,6 +270,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createWaterVapourLatentHeatWithCriticalTemperature(config);
     }
 
+    if (boost::iequals(property_type, "TemperatureDependentDiffusion"))
+    {
+        return createTemperatureDependentDiffusion(config, parameters);
+    }
+
     // If none of the above property types are found, OGS throws an error.
     OGS_FATAL("The specified component property type '{:s}' was not recognized",
               property_type);

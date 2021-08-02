@@ -750,6 +750,13 @@ public:
         auto const local_pdot =
             local_xdot.segment<pressure_size>(pressure_index);
 
+        NodalVectorType local_T;
+        if (_process_data.temperature)
+        {
+            local_T =
+                _process_data.temperature->getNodalValuesOnElement(_element, t);
+        }
+
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);
         auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
@@ -799,6 +806,13 @@ public:
                 MaterialPropertyLib::Variable::concentration)] = C_int_pt;
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::phase_pressure)] = p_int_pt;
+
+            if (_process_data.temperature)
+            {
+                vars[static_cast<int>(
+                    MaterialPropertyLib::Variable::temperature)] =
+                    N.dot(local_T);
+            }
 
             // porosity
             {
@@ -1189,10 +1203,10 @@ public:
 
             std::vector<GlobalIndexType> chemical_system_indices;
             chemical_system_indices.reserve(n_integration_points);
-            std::transform(
-                _ip_data.begin(), _ip_data.end(),
-                std::back_inserter(chemical_system_indices),
-                [](auto const& ip_data) { return ip_data.chemical_system_id; });
+            std::transform(_ip_data.begin(), _ip_data.end(),
+                           std::back_inserter(chemical_system_indices),
+                           [](auto const& ip_data)
+                           { return ip_data.chemical_system_id; });
 
             _process_data.chemical_solver_interface->computeSecondaryVariable(
                 ele_id, chemical_system_indices);

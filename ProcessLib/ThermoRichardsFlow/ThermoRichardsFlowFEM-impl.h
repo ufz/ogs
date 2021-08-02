@@ -12,6 +12,7 @@
 #include <cassert>
 
 #include "HydrostaticElasticityModel.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -19,7 +20,6 @@
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
-#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "RigidElasticityModel.h"
@@ -70,12 +70,9 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         ip_data.dNdx = sm.dNdx;
 
         // Initial porosity. Could be read from integration point data or mesh.
-        ip_data.porosity =
-            medium[MPL::porosity]
-                .template initialValue<double>(
-                    x_position,
-                    std::numeric_limits<
-                        double>::quiet_NaN() /* t independent */);
+        ip_data.porosity = medium[MPL::porosity].template initialValue<double>(
+            x_position,
+            std::numeric_limits<double>::quiet_NaN() /* t independent */);
     }
 }
 
@@ -147,10 +144,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
         // Note: temperature dependent saturation model is not considered so
         // far.
         _ip_data[ip].saturation_prev =
-            medium[MPL::PropertyType::saturation]
-                .template value<double>(
-                    variables, x_position, t,
-                    std::numeric_limits<double>::quiet_NaN());
+            medium[MPL::PropertyType::saturation].template value<double>(
+                variables, x_position, t,
+                std::numeric_limits<double>::quiet_NaN());
     }
 }
 
@@ -224,8 +220,8 @@ void ThermoRichardsFlowLocalAssembler<
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
-    MPL::Phase const* gas_phase = medium.hasPhase("Gas") ?
-        &medium.phase("Gas") : nullptr;
+    MPL::Phase const* gas_phase =
+        medium.hasPhase("Gas") ? &medium.phase("Gas") : nullptr;
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
@@ -261,8 +257,8 @@ void ThermoRichardsFlowLocalAssembler<
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
         auto const alpha =
-            medium[MPL::PropertyType::biot_coefficient]
-                .template value<double>(variables, x_position, t, dt);
+            medium[MPL::PropertyType::biot_coefficient].template value<double>(
+                variables, x_position, t, dt);
 
         auto& solid_elasticity = *_process_data.simplified_elasticity;
         // TODO (buchwaldj)
@@ -275,28 +271,26 @@ void ThermoRichardsFlowLocalAssembler<
             beta_SR;
 
         auto const rho_LR =
-            liquid_phase[MPL::PropertyType::density]
-                .template value<double>(variables, x_position, t, dt);
+            liquid_phase[MPL::PropertyType::density].template value<double>(
+                variables, x_position, t, dt);
         auto const& b = _process_data.specific_body_force;
 
         double const drho_LR_dp =
-            liquid_phase[MPL::PropertyType::density]
-                .template dValue<double>(variables,
-                                         MPL::Variable::phase_pressure,
-                                         x_position, t, dt);
+            liquid_phase[MPL::PropertyType::density].template dValue<double>(
+                variables, MPL::Variable::phase_pressure, x_position, t, dt);
         auto const beta_LR = drho_LR_dp / rho_LR;
 
-        S_L = medium[MPL::PropertyType::saturation]
-                  .template value<double>(variables, x_position, t, dt);
+        S_L = medium[MPL::PropertyType::saturation].template value<double>(
+            variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
         variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L_prev;
 
         // tangent derivative for Jacobian
-        double const dS_L_dp_cap = medium[MPL::PropertyType::saturation]
-                .template dValue<double>(variables,
-                                         MPL::Variable::capillary_pressure,
-                                         x_position, t, dt);
+        double const dS_L_dp_cap =
+            medium[MPL::PropertyType::saturation].template dValue<double>(
+                variables, MPL::Variable::capillary_pressure, x_position, t,
+                dt);
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
         double const DeltaS_L_Deltap_cap =
@@ -308,7 +302,8 @@ void ThermoRichardsFlowLocalAssembler<
         auto dchi_dS_L = 1.0;
         if (medium.hasProperty(MPL::PropertyType::bishops_effective_stress))
         {
-            auto const chi = [&medium, x_position, t, dt](double const S_L) {
+            auto const chi = [&medium, x_position, t, dt](double const S_L)
+            {
                 MPL::VariableArray variables;
                 variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
                     S_L;
@@ -319,9 +314,9 @@ void ThermoRichardsFlowLocalAssembler<
             chi_S_L_prev = chi(S_L_prev);
 
             dchi_dS_L = medium[MPL::PropertyType::bishops_effective_stress]
-                .template dValue<double>(variables,
-                                         MPL::Variable::liquid_saturation,
-                                         x_position, t, dt);
+                            .template dValue<double>(
+                                variables, MPL::Variable::liquid_saturation,
+                                x_position, t, dt);
         }
         // TODO (buchwaldj)
         // should solid_grain_pressure or effective_pore_pressure remain?
@@ -340,9 +335,8 @@ void ThermoRichardsFlowLocalAssembler<
 
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            phi = medium[MPL::PropertyType::porosity]
-                      .template value<double>(variables, variables_prev,
-                                              x_position, t, dt);
+            phi = medium[MPL::PropertyType::porosity].template value<double>(
+                variables, variables_prev, x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
         }
 
@@ -358,12 +352,12 @@ void ThermoRichardsFlowLocalAssembler<
             medium[MPL::PropertyType::relative_permeability]
                 .template value<double>(variables, x_position, t, dt);
         auto const mu =
-            liquid_phase[MPL::PropertyType::viscosity]
-                .template value<double>(variables, x_position, t, dt);
+            liquid_phase[MPL::PropertyType::viscosity].template value<double>(
+                variables, x_position, t, dt);
 
         auto const K_intrinsic = MPL::formEigenTensor<GlobalDim>(
-            medium[MPL::PropertyType::permeability]
-                .value(variables, x_position, t, dt));
+            medium[MPL::PropertyType::permeability].value(variables, x_position,
+                                                          t, dt));
 
         GlobalDimMatrixType const Ki_over_mu = K_intrinsic / mu;
         GlobalDimMatrixType const rho_Ki_over_mu = rho_LR * Ki_over_mu;
@@ -371,16 +365,16 @@ void ThermoRichardsFlowLocalAssembler<
         // Consider anisotropic thermal expansion.
         // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
         // component.
-        Eigen::Matrix<double, 3,
-                      3> const solid_linear_thermal_expansion_coefficient =
-            MaterialPropertyLib::formEigenTensor<3>(
-                solid_phase[
-                        MaterialPropertyLib::PropertyType::thermal_expansivity]
-                    .value(variables, x_position, t, dt));
+        Eigen::Matrix<double, 3, 3> const
+            solid_linear_thermal_expansion_coefficient =
+                MaterialPropertyLib::formEigenTensor<3>(
+                    solid_phase
+                        [MaterialPropertyLib::PropertyType::thermal_expansivity]
+                            .value(variables, x_position, t, dt));
 
         auto const rho_SR =
-            solid_phase[MPL::PropertyType::density]
-                .template value<double>(variables, x_position, t, dt);
+            solid_phase[MPL::PropertyType::density].template value<double>(
+                variables, x_position, t, dt);
 
         //
         // pressure equation, pressure part.
@@ -410,8 +404,8 @@ void ThermoRichardsFlowLocalAssembler<
             N.transpose() * rho_LR * specific_storage_a_p * N * w;
 
         storage_p_a_S.noalias() -= N.transpose() * rho_LR *
-                                       specific_storage_a_S * DeltaS_L_Deltap_cap *
-                                       N * w;
+                                   specific_storage_a_S * DeltaS_L_Deltap_cap *
+                                   N * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
@@ -472,9 +466,8 @@ void ThermoRichardsFlowLocalAssembler<
 
             auto const specific_heat_capacity_solid =
                 solid_phase
-                    [MaterialPropertyLib::PropertyType::
-                                  specific_heat_capacity]
-                    .template value<double>(variables, x_position, t, dt);
+                    [MaterialPropertyLib::PropertyType::specific_heat_capacity]
+                        .template value<double>(variables, x_position, t, dt);
 
             M_TT.noalias() +=
                 w *
@@ -484,18 +477,17 @@ void ThermoRichardsFlowLocalAssembler<
 
             auto const thermal_conductivity =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                            medium[MaterialPropertyLib::PropertyType::
-                                               thermal_conductivity]
-                                .value(variables, x_position, t, dt));
+                    medium[MaterialPropertyLib::PropertyType::
+                               thermal_conductivity]
+                        .value(variables, x_position, t, dt));
 
             GlobalDimVectorType const velocity_L =
                 GlobalDimVectorType(-Ki_over_mu * (dNdx * p_L - rho_LR * b));
 
-            K_TT.noalias() +=
-                (dNdx.transpose() * thermal_conductivity * dNdx +
-                 N.transpose() * velocity_L.transpose() * dNdx * rho_LR *
-                     specific_heat_capacity_fluid) *
-                w;
+            K_TT.noalias() += (dNdx.transpose() * thermal_conductivity * dNdx +
+                               N.transpose() * velocity_L.transpose() * dNdx *
+                                   rho_LR * specific_heat_capacity_fluid) *
+                              w;
 
             //
             // temperature equation, pressure part
@@ -524,9 +516,9 @@ void ThermoRichardsFlowLocalAssembler<
                                              MPL::Variable::phase_pressure,
                                              x_position, t, dt);
             auto const f_Tv =
-                liquid_phase[
-                    MPL::PropertyType::thermal_diffusion_enhancement_factor]
-                    .template value<double>(variables, x_position, t, dt);
+                liquid_phase
+                    [MPL::PropertyType::thermal_diffusion_enhancement_factor]
+                        .template value<double>(variables, x_position, t, dt);
 
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
             double const D_v =
@@ -536,15 +528,16 @@ void ThermoRichardsFlowLocalAssembler<
             double const f_Tv_D_Tv = f_Tv * D_v * drho_wv_dT;
             double const D_pv = D_v * drho_wv_dp;
 
-            if (gas_phase &&
-                gas_phase->hasProperty(MPL::PropertyType::specific_heat_capacity))
+            if (gas_phase && gas_phase->hasProperty(
+                                 MPL::PropertyType::specific_heat_capacity))
             {
                 GlobalDimVectorType const grad_T = dNdx * T;
                 // Vapour velocity
                 GlobalDimVectorType const q_v =
                     -(f_Tv_D_Tv * grad_T - D_pv * grad_p_cap) / rho_LR;
                 double const specific_heat_capacity_vapour =
-                    gas_phase->property(MaterialPropertyLib::PropertyType::
+                    gas_phase
+                        ->property(MaterialPropertyLib::PropertyType::
                                        specific_heat_capacity)
                         .template value<double>(variables, x_position, t, dt);
 
@@ -704,13 +697,13 @@ void ThermoRichardsFlowLocalAssembler<
         local_xdot.data() + pressure_index, pressure_size);
 
     auto local_K = MathLib::createZeroedMatrix<
-        typename ShapeMatricesType::template MatrixType<
-            local_matrix_dim, local_matrix_dim>>(
+        typename ShapeMatricesType::template MatrixType<local_matrix_dim,
+                                                        local_matrix_dim>>(
         local_K_data, local_matrix_dim, local_matrix_dim);
 
     auto local_M = MathLib::createZeroedMatrix<
-        typename ShapeMatricesType::template MatrixType<
-            local_matrix_dim, local_matrix_dim>>(
+        typename ShapeMatricesType::template MatrixType<local_matrix_dim,
+                                                        local_matrix_dim>>(
         local_M_data, local_matrix_dim, local_matrix_dim);
 
     auto local_rhs = MathLib::createZeroedVector<
@@ -720,8 +713,8 @@ void ThermoRichardsFlowLocalAssembler<
     auto const& medium = *_process_data.media_map->getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
-    MPL::Phase const* gas_phase = medium.hasPhase("Gas") ?
-        &medium.phase("Gas") : nullptr;
+    MPL::Phase const* gas_phase =
+        medium.hasPhase("Gas") ? &medium.phase("Gas") : nullptr;
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
@@ -757,8 +750,8 @@ void ThermoRichardsFlowLocalAssembler<
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
         auto const alpha =
-            medium[MPL::PropertyType::biot_coefficient]
-                .template value<double>(variables, x_position, t, dt);
+            medium[MPL::PropertyType::biot_coefficient].template value<double>(
+                variables, x_position, t, dt);
 
         auto& solid_elasticity = *_process_data.simplified_elasticity;
         // TODO (buchwaldj)
@@ -771,28 +764,26 @@ void ThermoRichardsFlowLocalAssembler<
             beta_SR;
 
         auto const rho_LR =
-            liquid_phase[MPL::PropertyType::density]
-                .template value<double>(variables, x_position, t, dt);
+            liquid_phase[MPL::PropertyType::density].template value<double>(
+                variables, x_position, t, dt);
         auto const& b = _process_data.specific_body_force;
 
         double const drho_LR_dp =
-            liquid_phase[MPL::PropertyType::density]
-                .template dValue<double>(variables,
-                                         MPL::Variable::phase_pressure,
-                                         x_position, t, dt);
+            liquid_phase[MPL::PropertyType::density].template dValue<double>(
+                variables, MPL::Variable::phase_pressure, x_position, t, dt);
         auto const beta_LR = drho_LR_dp / rho_LR;
 
-        S_L = medium[MPL::PropertyType::saturation]
-                  .template value<double>(variables, x_position, t, dt);
+        S_L = medium[MPL::PropertyType::saturation].template value<double>(
+            variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
         variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L_prev;
 
         // tangent derivative for Jacobian
-        double const dS_L_dp_cap = medium[MPL::PropertyType::saturation]
-                .template dValue<double>(variables,
-                                         MPL::Variable::capillary_pressure,
-                                         x_position, t, dt);
+        double const dS_L_dp_cap =
+            medium[MPL::PropertyType::saturation].template dValue<double>(
+                variables, MPL::Variable::capillary_pressure, x_position, t,
+                dt);
         // secant derivative from time discretization for storage
         // use tangent, if secant is not available
         double const DeltaS_L_Deltap_cap =
@@ -803,7 +794,8 @@ void ThermoRichardsFlowLocalAssembler<
         auto chi_S_L_prev = S_L_prev;
         if (medium.hasProperty(MPL::PropertyType::bishops_effective_stress))
         {
-            auto const chi = [&medium, x_position, t, dt](double const S_L) {
+            auto const chi = [&medium, x_position, t, dt](double const S_L)
+            {
                 MPL::VariableArray variables;
                 variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
                     S_L;
@@ -812,7 +804,6 @@ void ThermoRichardsFlowLocalAssembler<
             };
             chi_S_L = chi(S_L);
             chi_S_L_prev = chi(S_L_prev);
-
         }
         // TODO (buchwaldj)
         // should solid_grain_pressure or effective_pore_pressure remain?
@@ -831,9 +822,8 @@ void ThermoRichardsFlowLocalAssembler<
 
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            phi = medium[MPL::PropertyType::porosity]
-                      .template value<double>(variables, variables_prev,
-                                              x_position, t, dt);
+            phi = medium[MPL::PropertyType::porosity].template value<double>(
+                variables, variables_prev, x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
         }
 
@@ -849,12 +839,12 @@ void ThermoRichardsFlowLocalAssembler<
             medium[MPL::PropertyType::relative_permeability]
                 .template value<double>(variables, x_position, t, dt);
         auto const mu =
-            liquid_phase[MPL::PropertyType::viscosity]
-                .template value<double>(variables, x_position, t, dt);
+            liquid_phase[MPL::PropertyType::viscosity].template value<double>(
+                variables, x_position, t, dt);
 
         auto const K_intrinsic = MPL::formEigenTensor<GlobalDim>(
-            medium[MPL::PropertyType::permeability]
-                .value(variables, x_position, t, dt));
+            medium[MPL::PropertyType::permeability].value(variables, x_position,
+                                                          t, dt));
 
         GlobalDimMatrixType const Ki_over_mu = K_intrinsic / mu;
         GlobalDimMatrixType const rho_Ki_over_mu = rho_LR * Ki_over_mu;
@@ -862,22 +852,23 @@ void ThermoRichardsFlowLocalAssembler<
         // Consider anisotropic thermal expansion.
         // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
         // component.
-        Eigen::Matrix<double, 3,
-                      3> const solid_linear_thermal_expansion_coefficient =
-            MaterialPropertyLib::formEigenTensor<3>(
-                solid_phase[
-                        MaterialPropertyLib::PropertyType::thermal_expansivity]
-                    .value(variables, x_position, t, dt));
+        Eigen::Matrix<double, 3, 3> const
+            solid_linear_thermal_expansion_coefficient =
+                MaterialPropertyLib::formEigenTensor<3>(
+                    solid_phase
+                        [MaterialPropertyLib::PropertyType::thermal_expansivity]
+                            .value(variables, x_position, t, dt));
 
         auto const rho_SR =
-            solid_phase[MPL::PropertyType::density]
-                .template value<double>(variables, x_position, t, dt);
+            solid_phase[MPL::PropertyType::density].template value<double>(
+                variables, x_position, t, dt);
 
         //
         // pressure equation, pressure part.
         //
-        local_K.template block<pressure_size, pressure_size>(pressure_index,
-                                                       pressure_index)
+        local_K
+            .template block<pressure_size, pressure_size>(pressure_index,
+                                                          pressure_index)
             .noalias() += dNdx.transpose() * k_rel * rho_Ki_over_mu * dNdx * w;
 
         const double alphaB_minus_phi = alpha - phi;
@@ -889,12 +880,13 @@ void ThermoRichardsFlowLocalAssembler<
                            solid_phase, variables, x_position, t, dt));
         double const specific_storage_a_S = phi - p_cap_ip * S_L * a0;
 
-
-        local_M.template block<pressure_size, pressure_size>(pressure_index,
-                                                       pressure_index)
-            .noalias() += N.transpose() * rho_LR * (specific_storage_a_p -
-                    specific_storage_a_S * DeltaS_L_Deltap_cap) * N * w;
-
+        local_M
+            .template block<pressure_size, pressure_size>(pressure_index,
+                                                          pressure_index)
+            .noalias() += N.transpose() * rho_LR *
+                          (specific_storage_a_p -
+                           specific_storage_a_S * DeltaS_L_Deltap_cap) *
+                          N * w;
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx.transpose() * rho_LR * k_rel * rho_Ki_over_mu * b * w;
@@ -913,8 +905,9 @@ void ThermoRichardsFlowLocalAssembler<
                                solid_linear_thermal_expansion_coefficient,
                                solid_phase, variables, x_position, t, dt));
 
-        local_M.template block<pressure_size, temperature_size>(pressure_index,
-                                                       temperature_index)
+        local_M
+            .template block<pressure_size, temperature_size>(pressure_index,
+                                                             temperature_index)
             .noalias() -=
             N.transpose() * rho_LR * eff_thermal_expansion * N * w;
 
@@ -927,42 +920,43 @@ void ThermoRichardsFlowLocalAssembler<
                     .template value<double>(variables, x_position, t, dt);
 
             auto const specific_heat_capacity_solid =
-                solid_phase[MaterialPropertyLib::PropertyType::
-                                  specific_heat_capacity]
-                    .template value<double>(variables, x_position, t, dt);
+                solid_phase
+                    [MaterialPropertyLib::PropertyType::specific_heat_capacity]
+                        .template value<double>(variables, x_position, t, dt);
 
-            local_M.template block<temperature_size, temperature_size>(temperature_index,
-                                                       temperature_index)
-            .noalias() +=
+            local_M
+                .template block<temperature_size, temperature_size>(
+                    temperature_index, temperature_index)
+                .noalias() +=
                 w *
                 (rho_SR * specific_heat_capacity_solid * (1 - phi) +
                  (S_L * rho_LR * specific_heat_capacity_fluid) * phi) *
                 N.transpose() * N;
 
             auto const thermal_conductivity =
-                        MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                            medium[MaterialPropertyLib::PropertyType::
-                                               thermal_conductivity]
-                                .value(variables, x_position, t, dt));
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    medium[MaterialPropertyLib::PropertyType::
+                               thermal_conductivity]
+                        .value(variables, x_position, t, dt));
 
             GlobalDimVectorType const velocity_L =
                 GlobalDimVectorType(-Ki_over_mu * (dNdx * p_L - rho_LR * b));
 
-            local_K.template block<temperature_size, temperature_size>(temperature_index,
-                                                       temperature_index)
-            .noalias() +=
-                (dNdx.transpose() * thermal_conductivity * dNdx +
-                 N.transpose() * velocity_L.transpose() * dNdx * rho_LR *
-                     specific_heat_capacity_fluid) *
-                w;
+            local_K
+                .template block<temperature_size, temperature_size>(
+                    temperature_index, temperature_index)
+                .noalias() += (dNdx.transpose() * thermal_conductivity * dNdx +
+                               N.transpose() * velocity_L.transpose() * dNdx *
+                                   rho_LR * specific_heat_capacity_fluid) *
+                              w;
 
             //
             // temperature equation, pressure part
             //
-            local_K.template block<temperature_size, pressure_size>(temperature_index,
-                                                       pressure_index)
-                .noalias() -=
-                rho_LR * specific_heat_capacity_fluid *
+            local_K
+                .template block<temperature_size, pressure_size>(
+                    temperature_index, pressure_index)
+                .noalias() -= rho_LR * specific_heat_capacity_fluid *
                               N.transpose() * (dNdx * T).transpose() *
                               Ki_over_mu * dNdx * w;
         }
@@ -986,9 +980,9 @@ void ThermoRichardsFlowLocalAssembler<
                                              MPL::Variable::phase_pressure,
                                              x_position, t, dt);
             auto const f_Tv =
-                liquid_phase[
-                        MPL::PropertyType::thermal_diffusion_enhancement_factor]
-                    .template value<double>(variables, x_position, t, dt);
+                liquid_phase
+                    [MPL::PropertyType::thermal_diffusion_enhancement_factor]
+                        .template value<double>(variables, x_position, t, dt);
 
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
             double const D_v =
@@ -998,8 +992,8 @@ void ThermoRichardsFlowLocalAssembler<
             double const f_Tv_D_Tv = f_Tv * D_v * drho_wv_dT;
             double const D_pv = D_v * drho_wv_dp;
 
-            if (gas_phase &&
-                gas_phase->hasProperty(MPL::PropertyType::specific_heat_capacity))
+            if (gas_phase && gas_phase->hasProperty(
+                                 MPL::PropertyType::specific_heat_capacity))
             {
                 GlobalDimVectorType const grad_T = dNdx * T;
                 GlobalDimVectorType const grad_p_cap = -dNdx * p_L;
@@ -1007,42 +1001,47 @@ void ThermoRichardsFlowLocalAssembler<
                 GlobalDimVectorType const q_v =
                     -(f_Tv_D_Tv * grad_T - D_pv * grad_p_cap) / rho_LR;
                 double const specific_heat_capacity_vapour =
-                    gas_phase->property(
-                        MaterialPropertyLib::PropertyType::
+                    gas_phase
+                        ->property(MaterialPropertyLib::PropertyType::
                                        specific_heat_capacity)
                         .template value<double>(variables, x_position, t, dt);
 
-                local_M.template block<temperature_size, temperature_size>(temperature_index,
-                                                       temperature_index)
-                .noalias() +=
+                local_M
+                    .template block<temperature_size, temperature_size>(
+                        temperature_index, temperature_index)
+                    .noalias() +=
                     w *
                     (rho_wv * specific_heat_capacity_vapour * (1 - S_L) * phi) *
                     N.transpose() * N;
 
-                local_K.template block<temperature_size, temperature_size>(temperature_index,
-                                                       temperature_index)
-                .noalias() += N.transpose() * q_v.transpose() * dNdx *
+                local_K
+                    .template block<temperature_size, temperature_size>(
+                        temperature_index, temperature_index)
+                    .noalias() += N.transpose() * q_v.transpose() * dNdx *
                                   rho_wv * specific_heat_capacity_vapour * w;
             }
 
             double const storage_coefficient_by_water_vapor =
                 phi * (rho_wv * dS_L_dp_cap + (1 - S_L) * drho_wv_dp);
-            local_M.template block<pressure_size, pressure_size>(pressure_index,
-                                                       pressure_index)
-            .noalias() +=
+            local_M
+                .template block<pressure_size, pressure_size>(pressure_index,
+                                                              pressure_index)
+                .noalias() +=
                 N.transpose() * storage_coefficient_by_water_vapor * N * w;
 
             double const vapor_expansion_factor = phi * (1 - S_L) * drho_wv_dT;
-            local_M.template block<pressure_size, temperature_size>(pressure_index,
-                                                       temperature_index)
-            .noalias() += N.transpose() * vapor_expansion_factor * N * w;
+            local_M
+                .template block<pressure_size, temperature_size>(
+                    pressure_index, temperature_index)
+                .noalias() += N.transpose() * vapor_expansion_factor * N * w;
 
             local_rhs.template segment<pressure_size>(pressure_index)
                 .noalias() -= f_Tv_D_Tv * dNdx.transpose() * (dNdx * T) * w;
 
-            local_K.template block<pressure_size, pressure_size>(pressure_index,
-                                                       pressure_index)
-            .noalias() += dNdx.transpose() * D_pv * dNdx * w;
+            local_K
+                .template block<pressure_size, pressure_size>(pressure_index,
+                                                              pressure_index)
+                .noalias() += dNdx.transpose() * D_pv * dNdx * w;
 
             //
             // Latent heat term
@@ -1063,30 +1062,34 @@ void ThermoRichardsFlowLocalAssembler<
                                                  x_position, t, dt);
 
                 double const rho_wv_over_rho_L = rho_wv / rho_LR;
-                local_M.template block<temperature_size, temperature_size>(temperature_index,
-                                                       temperature_index)
-                .noalias() +=
+                local_M
+                    .template block<temperature_size, temperature_size>(
+                        temperature_index, temperature_index)
+                    .noalias() +=
                     factor * L0 *
                     (drho_wv_dT - rho_wv_over_rho_L * drho_LR_dT) *
                     N.transpose() * N * w;
 
-                local_M.template block<temperature_size, pressure_size>(temperature_index,
-                                                       pressure_index)
-                .noalias() +=
+                local_M
+                    .template block<temperature_size, pressure_size>(
+                        temperature_index, pressure_index)
+                    .noalias() +=
                     (factor * L0 *
                          (drho_wv_dp - rho_wv_over_rho_L * drho_LR_dp) +
                      L0 * phi * rho_wv_over_rho_L * dS_L_dp_cap) *
                     N.transpose() * N * w;
 
                 // temperature equation, temperature part
-                local_K.template block<temperature_size, temperature_size>(temperature_index,
-                                                       temperature_index)
-                .noalias() +=
+                local_K
+                    .template block<temperature_size, temperature_size>(
+                        temperature_index, temperature_index)
+                    .noalias() +=
                     L0 * f_Tv_D_Tv * dNdx.transpose() * dNdx * w / rho_LR;
                 // temperature equation, pressure part
-                local_K.template block<temperature_size, pressure_size>(temperature_index,
-                                                       pressure_index)
-                .noalias() +=
+                local_K
+                    .template block<temperature_size, pressure_size>(
+                        temperature_index, pressure_index)
+                    .noalias() +=
                     L0 * D_pv * dNdx.transpose() * dNdx * w / rho_LR;
             }
         }
@@ -1098,8 +1101,6 @@ void ThermoRichardsFlowLocalAssembler<
             pressure_index, pressure_index);
         Mpp = Mpp.colwise().sum().eval().asDiagonal();
     }
-
-
 }
 
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
@@ -1240,8 +1241,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
 
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
-        S_L = medium[MPL::PropertyType::saturation]
-                  .template value<double>(variables, x_position, t, dt);
+        S_L = medium[MPL::PropertyType::saturation].template value<double>(
+            variables, x_position, t, dt);
         variables[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
         variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L_prev;
@@ -1250,7 +1251,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
         auto chi_S_L_prev = S_L_prev;
         if (medium.hasProperty(MPL::PropertyType::bishops_effective_stress))
         {
-            auto const chi = [&medium, x_position, t, dt](double const S_L) {
+            auto const chi = [&medium, x_position, t, dt](double const S_L)
+            {
                 MPL::VariableArray variables;
                 variables[static_cast<int>(MPL::Variable::liquid_saturation)] =
                     S_L;
@@ -1267,8 +1269,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
             -chi_S_L_prev * (p_cap_ip - p_cap_dot_ip * dt);
 
         auto const alpha =
-            medium[MPL::PropertyType::biot_coefficient]
-                .template value<double>(variables, x_position, t, dt);
+            medium[MPL::PropertyType::biot_coefficient].template value<double>(
+                variables, x_position, t, dt);
 
         auto& solid_elasticity = *_process_data.simplified_elasticity;
         auto const beta_S =
@@ -1282,22 +1284,21 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
         {  // Porosity update
             variables_prev[static_cast<int>(MPL::Variable::porosity)] =
                 _ip_data[ip].porosity_prev;
-            phi = medium[MPL::PropertyType::porosity]
-                      .template value<double>(variables, variables_prev,
-                                              x_position, t, dt);
+            phi = medium[MPL::PropertyType::porosity].template value<double>(
+                variables, variables_prev, x_position, t, dt);
             variables[static_cast<int>(MPL::Variable::porosity)] = phi;
         }
 
         auto const mu =
-            liquid_phase[MPL::PropertyType::viscosity]
-                .template value<double>(variables, x_position, t, dt);
+            liquid_phase[MPL::PropertyType::viscosity].template value<double>(
+                variables, x_position, t, dt);
         auto const rho_LR =
-            liquid_phase[MPL::PropertyType::density]
-                .template value<double>(variables, x_position, t, dt);
+            liquid_phase[MPL::PropertyType::density].template value<double>(
+                variables, x_position, t, dt);
 
         auto const K_intrinsic = MPL::formEigenTensor<GlobalDim>(
-            medium[MPL::PropertyType::permeability]
-                .value(variables, x_position, t, dt));
+            medium[MPL::PropertyType::permeability].value(variables, x_position,
+                                                          t, dt));
 
         double const k_rel =
             medium[MPL::PropertyType::relative_permeability]
@@ -1306,8 +1307,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, IntegrationMethod,
         GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
 
         auto const rho_SR =
-            solid_phase[MPL::PropertyType::density]
-                .template value<double>(variables, x_position, t, dt);
+            solid_phase[MPL::PropertyType::density].template value<double>(
+                variables, x_position, t, dt);
         _ip_data[ip].dry_density_solid = (1 - phi) * rho_SR;
 
         auto const& b = _process_data.specific_body_force;

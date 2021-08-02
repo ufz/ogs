@@ -15,6 +15,7 @@
 #include "ComponentTransportProcessData.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -117,9 +118,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
     auto it = std::find_if(
         collected_process_variables.cbegin(),
         collected_process_variables.cend(),
-        [](std::reference_wrapper<ProcessLib::ProcessVariable> const& pv) {
-            return pv.get().getNumberOfGlobalComponents() != 1;
-        });
+        [](std::reference_wrapper<ProcessLib::ProcessVariable> const& pv)
+        { return pv.get().getNumberOfGlobalComponents() != 1; });
 
     if (it != collected_process_variables.end())
     {
@@ -154,14 +154,14 @@ std::unique_ptr<Process> createComponentTransportProcess(
         }
         else
         {
-            auto sort_by_component = [&per_process_variable,
-                                      collected_process_variables](
-                                         auto const& c_name) {
+            auto sort_by_component =
+                [&per_process_variable,
+                 collected_process_variables](auto const& c_name)
+            {
                 auto pv = std::find_if(collected_process_variables.begin(),
                                        collected_process_variables.end(),
-                                       [&c_name](auto const& v) -> bool {
-                                           return v.get().getName() == c_name;
-                                       });
+                                       [&c_name](auto const& v) -> bool
+                                       { return v.get().getName() == c_name; });
 
                 if (pv == collected_process_variables.end())
                 {
@@ -221,6 +221,10 @@ std::unique_ptr<Process> createComponentTransportProcess(
         config.getConfigParameter<bool>("chemically_induced_porosity_change",
                                         false);
 
+    auto const temperature = ParameterLib::findOptionalTagParameter<double>(
+        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__temperature_field}
+        config, "temperature_field", parameters, 1, &mesh);
+
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
@@ -233,6 +237,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         specific_body_force,
         has_gravity,
         non_advective_form,
+        temperature,
         chemically_induced_porosity_change,
         chemical_solver_interface.get(),
         hydraulic_process_id,
