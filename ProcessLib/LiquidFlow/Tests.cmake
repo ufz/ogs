@@ -482,7 +482,9 @@ AddTest(
     WRAPPER time
     TESTER xdmfdiff
     # See https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/3184#note_85104
-    REQUIREMENTS NOT OGS_USE_MPI AND NOT COMPILER_IS_APPLE_CLANG
+    # TODO: re-enable this, see #3177.
+    # REQUIREMENTS NOT OGS_USE_MPI AND NOT COMPILER_IS_APPLE_CLANG
+    REQUIREMENTS OFF
     DIFF_DATA
     square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
     square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf HydraulicFlow HydraulicFlow 1e-7 1e-13
