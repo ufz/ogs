@@ -15,7 +15,7 @@
     - ([ "${CONAN_USER_HOME}" == "${CI_PROJECT_DIR}/.conan" ]) && conan remove --system-reqs '*'
     - ([[ $BUILD_CTEST_LARGE_ON_MASTER && "${CI_COMMIT_BRANCH}" == "master" && "${CMAKE_ARGS}" == *"USE_PYTHON=ON"* ]]) && export BUILD_CTEST_LARGE=true
   script:
-    - cmake -S . --preset=$CMAKE_PRESET $CMAKE_ARGS -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
+    - cmake -S . --preset=$CMAKE_PRESET -Wno-dev $CMAKE_ARGS -DOGS_BUILD_PROCESSES=$BUILD_PROCESSES
     - |
       if [[ -z "$TARGETS" ]]; then
 
