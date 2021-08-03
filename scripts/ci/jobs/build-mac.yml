@@ -6,7 +6,6 @@ build mac:
     - .test-artifacts
   needs: [meta]
   variables:
-    BUILD_DIR: "mac-release"
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-

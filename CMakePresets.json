@@ -1,8 +1,8 @@
 {
-  "version": 2,
+  "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 20,
+    "minor": 21,
     "patch": 0
   },
   "configurePresets": [
@@ -35,7 +35,12 @@
     {
       "name": "_msvc",
       "hidden": true,
-      "generator": "Visual Studio 16 2019"
+      "generator": "Visual Studio 16 2019",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
     },
     {
       "name": "_gui",
@@ -52,12 +57,16 @@
       "cacheVariables": {
         "OGS_USE_PYTHON": "OFF",
         "BUILD_SHARED_LIBS": "ON",
-        "OGS_USE_CONAN": "OFF",
         "OGS_USE_PETSC": "ON"
       },
       "environment": {
         "CC": "mpicc",
         "CXX": "mpic++"
+      },
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
       }
     },
     {
@@ -168,12 +177,29 @@
       "cacheVariables": {
         "OGS_BUILD_UTILS": "OFF",
         "OGS_USE_PYTHON": "OFF",
-        "OGS_USE_CONAN": "OFF",
         "OGS_USE_POETRY": "OFF"
+      }
+    },
+    {
+      "name": "ci-no-unity",
+      "inherits": "release-all",
+      "cacheVariables": {
+        "OGS_USE_PYTHON": "OFF",
+        "OGS_USE_POETRY": "OFF",
+        "OGS_USE_UNITY_BUILDS": "OFF"
       }
     }
   ],
   "buildPresets": [
+    {
+      "name": "_win",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
     {
       "name": "release",
       "configurePreset": "release"
@@ -206,14 +232,17 @@
     },
     {
       "name": "msvc-release",
+      "inherits": "_win",
       "configurePreset": "msvc-release"
     },
     {
       "name": "msvc-debug",
+      "inherits": "_win",
       "configurePreset": "msvc-debug"
     },
     {
       "name": "msvc-release-gui",
+      "inherits": "_win",
       "configurePreset": "msvc-release-gui",
       "targets": [
         "DataExplorer"
@@ -221,42 +250,65 @@
     },
     {
       "name": "msvc-debug-gui",
+      "inherits": "_win",
       "configurePreset": "msvc-debug-gui",
       "targets": [
         "DataExplorer"
       ]
+    },
+    {
+      "name": "release-all",
+      "configurePreset": "release-all"
+    },
+    {
+      "name": "coverage",
+      "configurePreset": "coverage"
+    },
+    {
+      "name": "ci-simplest",
+      "configurePreset": "ci-simplest"
+    },
+    {
+      "name": "ci-no-unity",
+      "configurePreset": "ci-no-unity"
     }
   ],
   "testPresets": [
     {
-      "name": "_release",
+      "name": "release",
       "configurePreset": "release",
-      "hidden": true,
       "output": {
         "outputOnFailure": true
-      }
-    },
-    {
-      "name": "release",
-      "inherits": [
-        "_release"
-      ],
+      },
       "filter": {
-        "exclude": {
-          "label": "large"
+        "include": {
+          "label": "default"
+        }
+      },
+      "execution": {
+        "repeat": {
+          "mode": "until-pass",
+          "count": 2
         }
       }
     },
     {
       "name": "release-large",
       "inherits": [
-        "_release"
+        "release"
       ],
       "filter": {
         "include": {
-          "label": "large"
+          "label": "default|large"
         }
       }
+    },
+    {
+      "name": "release-all-large",
+      "configurePreset": "release-all",
+      "inherits": [
+        "release-large"
+      ]
     },
     {
       "name": "release-petsc",
@@ -284,6 +336,20 @@
       "configurePreset": "msvc-release",
       "inherits": [
         "release-large"
+      ]
+    },
+    {
+      "name": "release-gui",
+      "configurePreset": "release-gui",
+      "inherits": [
+        "release"
+      ]
+    },
+    {
+      "name": "release-all",
+      "configurePreset": "release-all",
+      "inherits": [
+        "release"
       ]
     }
   ]

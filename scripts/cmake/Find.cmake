@@ -71,10 +71,6 @@ if(OGS_USE_MFRONT)
         set(HAVE_PTHREADS TRUE)
         add_definitions(-DHAVE_PTHREADS)
     endif()
-    if(OGS_USE_CONAN)
-        # cmake-lint: disable=C0103
-        set(TFELHOME ${CONAN_TFEL_ROOT} CACHE INTERNAL "")
-    endif()
 endif()
 
 find_package(OpenMP)
@@ -94,6 +90,7 @@ if(OGS_BUILD_GUI)
     endif()
     find_package(Qt5 ${ogs.minimum_version.qt} REQUIRED ${QT_MODULES})
     cmake_policy(SET CMP0020 NEW)
+    list(APPEND CMAKE_INSTALL_RPATH ${Qt5_DIR}/../..)
 endif()
 
 if(OGS_USE_NETCDF)

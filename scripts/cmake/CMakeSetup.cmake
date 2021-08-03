@@ -37,6 +37,7 @@ include(GNUInstallDirs)
 include(ProcessorCount)
 ProcessorCount(NUM_PROCESSORS)
 set(NUM_PROCESSORS ${NUM_PROCESSORS} CACHE STRING "Processor count")
+include(CMakeDependentOption)
 
 # Check if this project is included in another
 if(NOT PROJECT_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)

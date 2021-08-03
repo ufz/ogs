@@ -43,12 +43,9 @@ option(OGS_USE_PYTHON "Interface with Python" ON)
 option(OGS_USE_POETRY
        "Enables automatic Python virtual environment handling with poetry." ON
 )
-if(WIN32)
-    option(OGS_BUILD_SWMM "Should the SWMM interface be built?" ON)
-endif()
-if(NOT WIN32 AND OGS_BUILD_SWMM)
-    message(FATAL_ERROR "OGS_BUILD_SWMM requires Windows!")
-endif()
+cmake_dependent_option(
+    OGS_BUILD_SWMM "Should the SWMM interface be built?" ON "WIN32" OFF
+)
 
 if(OGS_USE_PETSC)
     set(OGS_USE_MPI ON CACHE BOOL "Use MPI" FORCE)
@@ -228,12 +225,8 @@ include(UnityBuildSettings)
 if(POETRY)
     file(STRINGS ${PROJECT_BINARY_DIR}/.python_packages OGS_PYTHON_PACKAGES)
     list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
-    # Hack for tespy requirement
-    if(${Python3_VERSION} VERSION_LESS 3.10)
-        set(_python_arg --python <3.9)
-    endif()
     execute_process(
-        COMMAND ${_CMD_COMMAND} poetry add ${_python_arg} ${OGS_PYTHON_PACKAGES}
+        COMMAND ${_CMD_COMMAND} poetry add ${OGS_PYTHON_PACKAGES}
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     )
 endif()
@@ -246,5 +239,4 @@ check_header_compilation()
 include(scripts/cmake/MarkVariablesAdvanced.cmake)
 unset(PRE_INSTALL_RUN CACHE)
 
-include(FeatureSummary)
-feature_summary(WHAT ALL)
+include(Features)

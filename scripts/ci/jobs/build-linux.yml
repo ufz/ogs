@@ -8,10 +8,8 @@ build linux:
   timeout: 2h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
-    CMAKE_PRESET: release
+    CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=OFF
-      -DOGS_USE_MFRONT=ON
       -DOGS_$USE_PYTHON
       -DOGS_INSTALL_DEPENDENCIES=ON
   parallel:
@@ -29,11 +27,10 @@ linux ctest large:
       allow_failure: true
   timeout: 2h
   variables:
-    TARGETS: ctest-large
-    CMAKE_PRESET: release
+    BUILD_TESTS: "false"
+    BUILD_CTEST_LARGE: "true"
+    CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=OFF
-      -DOGS_USE_MFRONT=ON
       -DOGS_USE_PYTHON=ON
 
 build linux (no unity):
@@ -45,16 +42,10 @@ build linux (no unity):
   needs: [meta, ci_images]
   timeout: 1h
   variables:
-    BUILD_DIR: "no-unity"
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
     CHECK_WARNINGS: "true"
-    CMAKE_PRESET: release
-    CMAKE_ARGS: >-
-      -DOGS_USE_PYTHON=OFF
-      -DOGS_USE_CONAN=OFF
-      -DOGS_USE_MFRONT=ON
-      -DOGS_USE_UNITY_BUILDS=OFF
+    CMAKE_PRESET: ci-no-unity
 
 build linux (no deps, no procs):
   image: $CONTAINER_GCC_IMAGE
@@ -78,7 +69,6 @@ build linux arch:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DBUILD_SHARED_LIBS=ON
-      -DOGS_USE_CONAN=OFF
       -DOGS_USE_POETRY=OFF
 
 build linux ubuntu:
@@ -90,5 +80,3 @@ build linux ubuntu:
   needs: [meta]
   variables:
     CMAKE_PRESET: release-all
-    CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=OFF

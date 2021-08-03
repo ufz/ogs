@@ -1,7 +1,14 @@
 # cmake-lint: disable=C0103
+
+# prefer unix location over frameworks (Apple-only)
+set(Python3_FIND_FRAMEWORK LAST)
 if(OGS_USE_POETRY)
     find_program(POETRY poetry)
     if(POETRY)
+        find_package(
+            Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter
+            REQUIRED
+        )
         configure_file(
             ${PROJECT_SOURCE_DIR}/scripts/python/poetry.in.toml
             ${PROJECT_BINARY_DIR}/poetry.toml COPYONLY

@@ -3,7 +3,7 @@
     when: always
     paths:
       - build/*/logs/*.log
-      - build/*/Tests/ctest.xml
+      - build/*/Tests/ctest-junit.xml
       - build/*/Tests/testrunner.xml
       - build/*/make.output
       - build/*/*.zip
@@ -12,3 +12,4 @@
     reports:
       junit:
         - build/*/Tests/testrunner.xml
+        - build/*/Tests/ctest.xml
