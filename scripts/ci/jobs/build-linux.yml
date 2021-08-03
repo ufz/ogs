@@ -27,7 +27,8 @@ linux ctest large:
       allow_failure: true
   timeout: 2h
   variables:
-    TARGETS: ctest-large
+    BUILD_TESTS: "false"
+    BUILD_CTEST_LARGE: "true"
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DOGS_USE_PYTHON=ON

@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "ogs-build"
-version = "@OGS_VERSION@" # is written just once, maybe outdated
+version = "@OGS_VERSION@"            # is written just once, maybe outdated
 description = "CMake auto-generated"
 authors = [""]
 
 [tool.poetry.dependencies]
-python = ">=@ogs.minimum_version.python@"
+python = "@Python3_VERSION@"
 
 [tool.poetry.dev-dependencies]
 
