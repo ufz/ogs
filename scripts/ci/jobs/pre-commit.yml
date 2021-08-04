@@ -2,10 +2,20 @@ pre commit:
   stage: preparation
   image: $PRECOMMIT_IMAGE
   needs: [ci_images]
-  allow_failure: true
+  variables:
+    SKIP: clang-format
   script:
     - pre-commit install
     - pre-commit run --from-ref `git merge-base origin/master HEAD` --to-ref HEAD
     - git diff --check `git merge-base origin/master HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
+
+clang-format:
+  stage: check
+  image: $PRECOMMIT_IMAGE
+  needs: [ci_images]
+  allow_failure: true
+  script:
+    - pre-commit install
+    - pre-commit run clang-format --from-ref `git merge-base origin/master HEAD` --to-ref HEAD
   after_script:
     - git diff
