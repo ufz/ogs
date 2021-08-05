@@ -89,7 +89,7 @@ public:
     virtual unsigned getNumberOfFaces() const = 0;
 
     /// Get the specified neighbor.
-    const Element* getNeighbor(unsigned i) const;
+    virtual const Element* getNeighbor(unsigned i) const = 0;
 
     /// Get the number of neighbors for this element.
     virtual unsigned getNumberOfNeighbors() const = 0;
