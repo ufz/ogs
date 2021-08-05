@@ -768,7 +768,6 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
     {
         // TODO(wenqing): use process name
         coupling_iteration_converged = true;
-        int const last_process_id = _per_process_data.size() - 1;
         _xdot_vector_ids.resize(_per_process_data.size());
         std::size_t cnt = 0;
         for (auto& process_data : _per_process_data)
@@ -815,17 +814,14 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             if (global_coupling_iteration > 0)
             {
                 MathLib::LinAlg::axpy(x_old, -1.0, x);  // save dx to x_old
-                if (process_id == last_process_id)
-                {
-                    INFO(
-                        "------- Checking convergence criterion for coupled "
-                        "solution  -------");
-                    _global_coupling_conv_crit[process_id]->checkDeltaX(x_old,
-                                                                        x);
-                    coupling_iteration_converged =
-                        coupling_iteration_converged &&
-                        _global_coupling_conv_crit[process_id]->isSatisfied();
-                }
+                INFO(
+                    "------- Checking convergence criterion for coupled "
+                    "solution of process #{:d} -------",
+                    process_id);
+                _global_coupling_conv_crit[process_id]->checkDeltaX(x_old, x);
+                coupling_iteration_converged =
+                    coupling_iteration_converged &&
+                    _global_coupling_conv_crit[process_id]->isSatisfied();
             }
             MathLib::LinAlg::copy(x, x_old);
         }  // end of for (auto& process_data : _per_process_data)
