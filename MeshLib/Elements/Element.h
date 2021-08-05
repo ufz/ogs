@@ -102,9 +102,6 @@ public:
     /// Returns the number of all nodes including both linear and nonlinear nodes
     virtual unsigned getNumberOfNodes() const = 0;
 
-    /// Returns the position of the given node in the node array of this element.
-    virtual unsigned getNodeIDinElement(const MeshLib::Node* node) const;
-
     /**
      * Get the global index for the Node with local index i.
      * The index i should be at most the number of nodes of the element.
@@ -231,5 +228,8 @@ std::pair<double, double> computeSqrEdgeLengthRange(Element const& element);
 /// @param e the element that is used for the request
 /// @return true if the \f$p' \in e'\f$ and false if \f$p' \notin e'\f$
 bool isPointInElementXY(MathLib::Point3d const& p, Element const& e);
+
+/// Returns the position of the given node in the node array of this element.
+unsigned getNodeIDinElement(Element const& element, const Node* node);
 
 }  // namespace MeshLib

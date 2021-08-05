@@ -96,19 +96,6 @@ const Element* Element::getNeighbor(unsigned i) const
 #endif
 }
 
-unsigned Element::getNodeIDinElement(const MeshLib::Node* node) const
-{
-    const unsigned nNodes(this->getNumberOfNodes());
-    for (unsigned i(0); i < nNodes; i++)
-    {
-        if (node == _nodes[i])
-        {
-            return i;
-        }
-    }
-    return std::numeric_limits<unsigned>::max();
-}
-
 const Node* Element::getNode(unsigned i) const
 {
 #ifndef NDEBUG
@@ -277,5 +264,18 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e)
     WARN("isPointInElementXY: element type '{:s}' is not supported.",
          MeshLib::MeshElemType2String(e.getGeomType()));
     return false;
+}
+
+unsigned getNodeIDinElement(Element const& element, const MeshLib::Node* node)
+{
+    const unsigned nNodes(element.getNumberOfNodes());
+    for (unsigned i(0); i < nNodes; i++)
+    {
+        if (node == element.getNode(i))
+        {
+            return i;
+        }
+    }
+    return std::numeric_limits<unsigned>::max();
 }
 }  // namespace MeshLib
