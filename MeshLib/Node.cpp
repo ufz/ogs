@@ -61,7 +61,7 @@ bool isBaseNode(Node const& node)
     auto const e = node.getElement(0);
 
     auto const n_base_nodes = e->getNumberOfBaseNodes();
-    auto const local_index = e->getNodeIDinElement(&node);
+    auto const local_index = getNodeIDinElement(*e, &node);
     return local_index < n_base_nodes;
 }
 }  // namespace MeshLib
