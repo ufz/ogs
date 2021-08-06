@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormKelvinVectorFromThermalExpansivity.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
+#include "ProcessLib/Utils/TransposeInPlace.h"
 
 namespace ProcessLib
 {
@@ -579,8 +580,12 @@ template <typename ShapeFunction, typename IntegrationMethod,
 std::vector<double> ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::getSigma() const
 {
-    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::sigma);
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values)
+        { return getIntPtSigma(0, {}, {}, values); });
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
@@ -612,8 +617,12 @@ template <typename ShapeFunction, typename IntegrationMethod,
 std::vector<double> ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod, DisplacementDim>::getEpsilon() const
 {
-    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::eps);
+    constexpr int kelvin_vector_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values)
+        { return getIntPtEpsilon(0, {}, {}, values); });
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
