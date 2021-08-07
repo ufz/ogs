@@ -15,7 +15,7 @@ Two methods allow you to modularize your project files and avoid repetition:
 
 ## Option 1: Include XML-content from other files
 
-The `<include filename="other_file.xml" />`-tag allows to include the content of another XML into the current project file.
+The `<include file="other_file.xml" />`-tag allows to include the content of another XML into the current project file.
 
 **Limitation:** Only one child `include`-element per (regular) XML-element is allowed.
 
