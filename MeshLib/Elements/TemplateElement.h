@@ -124,6 +124,22 @@ public:
         return ELEMENT_RULE::n_neighbors;
     }
 
+    const Element* getNeighbor(unsigned i) const override
+    {
+#ifndef NDEBUG
+        if (i < ELEMENT_RULE::n_neighbors)
+#endif
+        {
+            return _neighbors[i];
+        }
+#ifndef NDEBUG
+        ERR("Error in MeshLib::TemplateElement::getNeighbor() - Index {:d} "
+            "does not exist.",
+            i);
+        return nullptr;
+#endif
+    }
+
     /// Get the number of linear nodes for this element.
     unsigned getNumberOfBaseNodes() const override { return n_base_nodes; }
     /// Get the number of all nodes for this element.

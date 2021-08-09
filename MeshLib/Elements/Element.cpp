@@ -82,20 +82,6 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
     return std::optional<unsigned>();
 }
 
-const Element* Element::getNeighbor(unsigned i) const
-{
-#ifndef NDEBUG
-    if (i < getNumberOfNeighbors())
-#endif
-    {
-        return _neighbors[i];
-    }
-#ifndef NDEBUG
-    ERR("Error in MeshLib::Element::getNeighbor() - Index does not exist.");
-    return nullptr;
-#endif
-}
-
 const Node* Element::getNode(unsigned i) const
 {
 #ifndef NDEBUG
