@@ -641,28 +641,26 @@ std::vector<double> const& ThermoMechanicsLocalAssembler<
 
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
+std::vector<double> const& ThermoMechanicsLocalAssembler<
+    ShapeFunction, IntegrationMethod, DisplacementDim>::
+    getIntPtEpsilonMechanical(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::eps_m, cache);
+}
+
+template <typename ShapeFunction, typename IntegrationMethod,
+          int DisplacementDim>
 std::size_t ThermoMechanicsLocalAssembler<
     ShapeFunction, IntegrationMethod,
     DisplacementDim>::setEpsilonMechanical(double const* values)
 {
-    auto const kelvin_vector_size =
-        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
-
-    auto epsilon_m_values =
-        Eigen::Map<Eigen::Matrix<double, kelvin_vector_size, Eigen::Dynamic,
-                                 Eigen::ColMajor> const>(
-            values, kelvin_vector_size, n_integration_points);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        _ip_data[ip].eps_m =
-            MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                epsilon_m_values.col(ip));
-    }
-
-    return n_integration_points;
+    return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+        values, _ip_data, &IpData::eps_m);
 }
 template <typename ShapeFunction, typename IntegrationMethod,
           int DisplacementDim>
@@ -670,24 +668,12 @@ std::vector<double>
 ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::getEpsilonMechanical() const
 {
-    auto const kelvin_vector_size =
+    constexpr int kelvin_vector_size =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-    unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
 
-    std::vector<double> ip_epsilon_m_values;
-    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
-        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
-        ip_epsilon_m_values, n_integration_points, kelvin_vector_size);
-
-    for (unsigned ip = 0; ip < n_integration_points; ++ip)
-    {
-        auto const& eps_m = _ip_data[ip].eps_m;
-        cache_mat.row(ip) =
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps_m);
-    }
-
-    return ip_epsilon_m_values;
+    return transposeInPlace<kelvin_vector_size>(
+        [this](std::vector<double>& values)
+        { return getIntPtEpsilonMechanical(0, {}, {}, values); });
 }
 
 template <typename ShapeFunction, typename IntegrationMethod,
