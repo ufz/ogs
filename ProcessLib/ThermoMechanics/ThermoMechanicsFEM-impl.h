@@ -138,6 +138,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
     auto u = Eigen::Map<typename ShapeMatricesType::template VectorType<
         displacement_size> const>(local_x.data() + displacement_index,
                                   displacement_size);
+    bool const is_u_non_zero = u.norm() > 0.0;
 
     auto T_dot = Eigen::Map<typename ShapeMatricesType::template VectorType<
         temperature_size> const>(local_xdot.data() + temperature_index,
@@ -216,7 +217,13 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         //
         // displacement equation, displacement part
         //
-        eps.noalias() = B * u;
+        // For the restart computation, the displacement may not be
+        // reloaded but the initial strains are always available. For such case,
+        // the following computation is skipped.
+        if (is_u_non_zero)
+        {
+            eps.noalias() = B * u;
+        }
 
         eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
 
@@ -371,6 +378,7 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
 
     auto const local_u =
         local_x.template segment<displacement_size>(displacement_index);
+    bool const is_u_non_zero = local_u.norm() > 0.0;
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesType::template MatrixType<displacement_size,
@@ -426,7 +434,13 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, IntegrationMethod,
         //
         // displacement equation, displacement part
         //
-        eps.noalias() = B * local_u;
+        // For the restart computation, the displacement may not be
+        // reloaded but the initial strains are always available. For such case,
+        // the following computation is skipped.
+        if (is_u_non_zero)
+        {
+            eps.noalias() = B * local_u;
+        }
 
         // Consider also anisotropic thermal expansion.
         auto const solid_linear_thermal_expansivity_vector =
