@@ -79,7 +79,8 @@ bool PyramidRule5::isPntInElement(Node const* const* nodes,
                 pnt, *nodes[0], *nodes[2], *nodes[3], *nodes[4], eps));
 }
 
-unsigned PyramidRule5::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned PyramidRule5::identifyFace(Node const* const* _nodes,
+                                    Node const* nodes[3])
 {
     for (unsigned i = 0; i < 5; i++)
     {

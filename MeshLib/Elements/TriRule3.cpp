@@ -33,7 +33,7 @@ bool TriRule3::isPntInElement(Node const* const* nodes,
                                       eps);
 }
 
-unsigned TriRule3::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned TriRule3::identifyFace(Node const* const* _nodes, Node const* nodes[3])
 {
     for (unsigned i = 0; i < 3; i++)
     {

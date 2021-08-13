@@ -177,7 +177,7 @@ public:
     }
 
     /// Returns the ID of a face given an array of nodes.
-    unsigned identifyFace(Node* nodes[3]) const override
+    unsigned identifyFace(Node const* nodes[3]) const override
     {
         return ELEMENT_RULE::identifyFace(this->_nodes, nodes);
     }

@@ -64,7 +64,7 @@ bool TetRule4::isPntInElement(Node const* const* nodes,
                                          *nodes[3], eps);
 }
 
-unsigned TetRule4::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned TetRule4::identifyFace(Node const* const* _nodes, Node const* nodes[3])
 {
     for (unsigned i = 0; i < 4; i++)
     {

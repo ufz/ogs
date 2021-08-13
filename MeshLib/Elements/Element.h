@@ -167,7 +167,7 @@ public:
     virtual double computeVolume() = 0;
 
     /// Returns the ID of a face given an array of nodes.
-    virtual unsigned identifyFace(Node* nodes[3]) const = 0;
+    virtual unsigned identifyFace(Node const* nodes[3]) const = 0;
 
     /**
      * Checks if the node order of an element is correct by testing surface normals.

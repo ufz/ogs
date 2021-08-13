@@ -82,7 +82,7 @@ ConstraintDirichletBoundaryCondition::ConstraintDirichletBoundaryCondition(
         [&](auto const bulk_element_id, MeshLib::Element const* bc_elem)
     {
         auto const* bulk_elem = _bulk_mesh.getElement(bulk_element_id);
-        std::array<MeshLib::Node*, 3> nodes{
+        std::array<MeshLib::Node const*, 3> nodes{
             {bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(0)->getID()]],
              bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(1)->getID()]],
              bulk_nodes[(*bulk_node_ids)[bc_elem->getNode(2)->getID()]]}};

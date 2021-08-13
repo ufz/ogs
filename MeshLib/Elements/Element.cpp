@@ -55,7 +55,7 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
         return std::optional<unsigned>();
     }
 
-    Node* face_nodes[3];
+    Node const* face_nodes[3];
     const unsigned nNodes(this->getNumberOfBaseNodes());
     const unsigned eNodes(e->getNumberOfBaseNodes());
     const Node* const* e_nodes = e->getNodes();
@@ -65,9 +65,9 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
     {
         for (unsigned j(0); j < eNodes; j++)
         {
-            if (_nodes[i] == e_nodes[j])
+            if (getNode(i) == e_nodes[j])
             {
-                face_nodes[count] = _nodes[i];
+                face_nodes[count] = getNode(i);
                 // increment shared nodes counter and check if enough nodes are
                 // similar to be sure e is a neighbour of this
                 if ((++count) >= dim)
