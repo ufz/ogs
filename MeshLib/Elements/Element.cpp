@@ -82,21 +82,6 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
     return std::optional<unsigned>();
 }
 
-const Node* Element::getNode(unsigned i) const
-{
-#ifndef NDEBUG
-    if (i < getNumberOfNodes())
-#endif
-    {
-        return _nodes[i];
-    }
-#ifndef NDEBUG
-    ERR("Error in MeshLib::Element::getNode() - Index {:d} in {:s}", i,
-        MeshElemType2String(getGeomType()));
-    return nullptr;
-#endif
-}
-
 void Element::setNode(unsigned idx, Node* node)
 {
 #ifndef NDEBUG

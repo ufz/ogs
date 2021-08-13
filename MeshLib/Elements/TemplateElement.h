@@ -188,6 +188,10 @@ public:
         return ELEMENT_RULE::computeVolume(this->_nodes);
     }
 
+    const Node* getNode(unsigned i) const override;
+    void setNode(unsigned idx, Node* node) override;
+    Node* const* getNodes() const override { return _nodes; }
+
     /// Return a specific edge node.
     inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const override
     {

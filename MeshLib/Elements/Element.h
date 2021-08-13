@@ -54,7 +54,7 @@ public:
      * modifiable by the user) instance of class Node or a nullptr
      * @sa Element::getNodeIndex()
      */
-    const Node* getNode(unsigned i) const;
+    virtual const Node* getNode(unsigned i) const = 0;
 
     /**
      * (Re)Sets the node of the element.
