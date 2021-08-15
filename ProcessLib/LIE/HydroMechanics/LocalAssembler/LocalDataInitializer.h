@@ -220,7 +220,8 @@ public:
                 "You are trying to build a local assembler for an unknown mesh "
                 "element type ({:s})."
                 " Maybe you have disabled this mesh element type in your build "
-                "configuration or this process requires higher order elements.",
+                "configuration, or a mesh element order does not match shape "
+                "function order given in the project file.",
                 type_idx.name());
         }
 
