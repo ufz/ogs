@@ -559,4 +559,36 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+   <test_definition>
+        <vtkdiff>
+            <regex>DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>Si</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>Al</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>Cl</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>DiffusionAndStorageAndAdvectionAndDispersion_3Components_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>darcy_velocity</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
