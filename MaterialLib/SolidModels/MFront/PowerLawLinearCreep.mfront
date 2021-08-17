@@ -1,0 +1,73 @@
+@DSL Implicit;
+@Behaviour PowerLawLinearCreep;
+@Author Thomas Nagel;
+@Description {Combined power-law (dislocation creep) and linear (pressure-solution creep)
+model for salt creep. Bérest et al. (2019). Rock Mech Rock Eng.
+};
+
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 100;
+
+@Epsilon 1.e-14;
+@Theta 1.0;
+
+@ModellingHypotheses{".+"};
+@Brick StandardElasticity;
+
+// Intercept of yield function
+@MaterialProperty real A1;
+A1.setEntryName("PowerLawFactor");
+@MaterialProperty real Q1;
+Q1.setEntryName("PowerLawEnergy");
+@MaterialProperty real m;
+m.setEntryName("PowerLawExponent");
+@MaterialProperty real A2;
+A2.setEntryName("LinearLawFactor");
+@MaterialProperty real Q2;
+Q2.setEntryName("LinearLawEnergy");
+@MaterialProperty real sig0;
+sig0.setEntryName("ReferenceStress");
+@MaterialProperty real Dgrain;
+Dgrain.setEntryName("SaltGrainSize");
+
+@Parameter real Ru = 8.314472;  // J/(Kmol)
+Ru.setEntryName("UniversalGasConstant");
+
+//! increment of the power-law strain
+@LocalVariable Stensor depsPL;
+//! increment of the linear-law strain
+@LocalVariable Stensor depsL;
+
+//! Second Lamé coefficient
+@LocalVariable stress mu;
+
+@InitLocalVariables
+{
+    mu = computeMu(young, nu);
+    // Compute initial elastic strain
+    eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+}
+
+@Integrator
+{
+    const auto s = deviator(sig);
+    const auto norm_s = sigmaeq(sig) / std::sqrt(3. / 2.);
+    constexpr auto Pdev = Stensor4::K();
+
+    const auto bPL = std::pow(3. / 2., (m + 1) / 2) * A1 *
+                     std::exp(-Q1 / Ru / (T + dT)) / std::pow(sig0, m);
+    const auto bL = 3. / 2. * A2 / std::pow(Dgrain, 3) *
+                    std::exp(-Q2 / Ru / (T + dT)) / sig0;
+
+    if (norm_s > 1e-14 * mu)
+    {
+        const auto norm_s_pow = std::pow(norm_s, m - 1);
+        depsPL = dt * bPL * norm_s_pow * s;
+        depsL = dt * bL * s;
+        feel += depsPL + depsL;
+        dfeel_ddeel +=
+            2. * mu * dt *
+            (bPL * norm_s_pow * (Pdev + (((m - 1) / norm_s / norm_s) * s ^ s)) +
+             bL * Pdev);
+    }
+}

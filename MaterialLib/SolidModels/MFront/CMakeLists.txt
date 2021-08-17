@@ -18,6 +18,7 @@ mfront_behaviours_check_library(
     MohrCoulombAbboSloanOrtho
     MohrCoulombAbboSloanUBI
     MohrCoulombAbboSloanUBIOrtho
+    PowerLawLinearCreep
     StandardElasticityBrick
     StandardElasticityBrickOrtho
 )
