@@ -215,6 +215,12 @@ void ComponentTransportProcess::solveReactionEquation(
     std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
     double const t, double const dt)
 {
+    if (_process_data.lookup_table)
+    {
+        INFO("Update process solutions via the look-up table approach");
+        _process_data.lookup_table->lookup(x, x_prev, _mesh.getNumberOfNodes());
+    }
+
     if (!_chemical_solver_interface)
     {
         return;
