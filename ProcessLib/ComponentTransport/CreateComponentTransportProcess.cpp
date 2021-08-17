@@ -247,6 +247,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         temperature,
         chemically_induced_porosity_change,
         chemical_solver_interface.get(),
+        std::move(lookup_table),
         hydraulic_process_id,
         first_transport_process_id};
 

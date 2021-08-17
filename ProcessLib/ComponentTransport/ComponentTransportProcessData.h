@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "ChemistryLib/ChemicalSolverInterface.h"
+#include "LookupTable.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "ParameterLib/Parameter.h"
@@ -66,6 +67,7 @@ struct ComponentTransportProcessData
      */
     bool const chemically_induced_porosity_change;
     ChemistryLib::ChemicalSolverInterface* const chemical_solver_interface;
+    std::unique_ptr<LookupTable> lookup_table;
 
     const int hydraulic_process_id;
     // TODO (renchao-lu): This variable is used in the calculation of the
