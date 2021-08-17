@@ -212,7 +212,8 @@ void ComponentTransportProcess::
 }
 
 void ComponentTransportProcess::solveReactionEquation(
-    std::vector<GlobalVector*>& x, double const t, double const dt)
+    std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
+    double const t, double const dt)
 {
     if (!_chemical_solver_interface)
     {

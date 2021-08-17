@@ -173,8 +173,10 @@ public:
         return Eigen::Vector3d{};
     }
 
-    virtual void solveReactionEquation(std::vector<GlobalVector*>& /*x*/,
-                                       double const /*t*/, double const /*dt*/)
+    virtual void solveReactionEquation(
+        std::vector<GlobalVector*>& /*x*/,
+        std::vector<GlobalVector*> const& /*x_prev*/, double const /*t*/,
+        double const /*dt*/)
     {
     }
 
