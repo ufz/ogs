@@ -64,7 +64,7 @@ public:
     virtual void setNode(unsigned idx, Node* node) = 0;
 
     /// Get array of element nodes.
-    Node* const* getNodes() const { return _nodes; }
+    virtual Node* const* getNodes() const = 0;
 
     /// Get dimension of the mesh element.
     virtual unsigned getDimension() const = 0;
