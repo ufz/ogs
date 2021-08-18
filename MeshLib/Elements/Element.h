@@ -61,7 +61,7 @@ public:
      * @param idx the index of the pointer to a node within the element
      * @param node a pointer to a node
      */
-    void setNode(unsigned idx, Node* node);
+    virtual void setNode(unsigned idx, Node* node) = 0;
 
     /// Get array of element nodes.
     Node* const* getNodes() const { return _nodes; }

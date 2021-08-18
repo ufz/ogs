@@ -110,10 +110,21 @@ const Node* TemplateElement<ELEMENT_RULE>::getNode(unsigned i) const
         return _nodes[i];
     }
 #ifndef NDEBUG
-    ERR("Error in MeshLib::Element::getNode() - Index {:d} in {:s}", i,
+    ERR("Error in MeshLib::TemplateElement::getNode() - Index {:d} in {:s}", i,
         MeshElemType2String(getGeomType()));
     return nullptr;
 #endif
+}
+
+template <class ELEMENT_RULE>
+void TemplateElement<ELEMENT_RULE>::setNode(unsigned idx, Node* node)
+{
+#ifndef NDEBUG
+    if (idx < getNumberOfNodes())
+#endif
+    {
+        _nodes[idx] = node;
+    }
 }
 
 }  // namespace MeshLib

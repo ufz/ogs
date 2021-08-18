@@ -82,16 +82,6 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
     return std::optional<unsigned>();
 }
 
-void Element::setNode(unsigned idx, Node* node)
-{
-#ifndef NDEBUG
-    if (idx < getNumberOfNodes())
-#endif
-    {
-        _nodes[idx] = node;
-    }
-}
-
 bool Element::isBoundaryElement() const
 {
     return std::any_of(
