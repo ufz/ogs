@@ -124,8 +124,8 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
             // edges found on a bottom line
             auto* edge = found_edges_ply_bottom[i];
             ASSERT_EQ(2u, edge->getNumberOfBaseNodes());
-            ASSERT_EQ(i, edge->getNodeIndex(0));
-            ASSERT_EQ(i + 1, edge->getNodeIndex(1));
+            ASSERT_EQ(i, getNodeIndex(*edge, 0));
+            ASSERT_EQ(i + 1, getNodeIndex(*edge, 1));
         }
     }
 
@@ -144,8 +144,8 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
             // edges found on a right line
             auto* edge = found_edges_ply_right[i];
             ASSERT_EQ(2u, edge->getNumberOfBaseNodes());
-            ASSERT_EQ((i + 1) * n_nodes_per_dir - 1, edge->getNodeIndex(0));
-            ASSERT_EQ((i + 2) * n_nodes_per_dir - 1, edge->getNodeIndex(1));
+            ASSERT_EQ((i + 1) * n_nodes_per_dir - 1, getNodeIndex(*edge, 0));
+            ASSERT_EQ((i + 2) * n_nodes_per_dir - 1, getNodeIndex(*edge, 1));
         }
     }
 
@@ -165,9 +165,9 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
             auto* edge = found_edges_ply_top[i];
             ASSERT_EQ(2u, edge->getNumberOfBaseNodes());
             ASSERT_EQ(n_nodes_per_dir * n_nodes_per_dir - 1 - i,
-                      edge->getNodeIndex(0));
+                      getNodeIndex(*edge, 0));
             ASSERT_EQ(n_nodes_per_dir * n_nodes_per_dir - 2 - i,
-                      edge->getNodeIndex(1));
+                      getNodeIndex(*edge, 1));
         }
     }
 
@@ -187,9 +187,9 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
             auto* edge = found_edges_ply_left[i];
             ASSERT_EQ(2u, edge->getNumberOfBaseNodes());
             ASSERT_EQ(n_nodes_per_dir * (n_nodes_per_dir - 1 - i),
-                      edge->getNodeIndex(0));
+                      getNodeIndex(*edge, 0));
             ASSERT_EQ(n_nodes_per_dir * (n_nodes_per_dir - 2 - i),
-                      edge->getNodeIndex(1));
+                      getNodeIndex(*edge, 1));
         }
     }
 }

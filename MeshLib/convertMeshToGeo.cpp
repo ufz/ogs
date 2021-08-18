@@ -53,19 +53,19 @@ void addElementToSurface(MeshLib::Element const& e,
 {
     if (e.getGeomType() == MeshLib::MeshElemType::TRIANGLE)
     {
-        surface.addTriangle(id_map[e.getNodeIndex(0)],
-                            id_map[e.getNodeIndex(1)],
-                            id_map[e.getNodeIndex(2)]);
+        surface.addTriangle(id_map[getNodeIndex(e, 0)],
+                            id_map[getNodeIndex(e, 1)],
+                            id_map[getNodeIndex(e, 2)]);
         return;
     }
     if (e.getGeomType() == MeshLib::MeshElemType::QUAD)
     {
-        surface.addTriangle(id_map[e.getNodeIndex(0)],
-                            id_map[e.getNodeIndex(1)],
-                            id_map[e.getNodeIndex(2)]);
-        surface.addTriangle(id_map[e.getNodeIndex(0)],
-                            id_map[e.getNodeIndex(2)],
-                            id_map[e.getNodeIndex(3)]);
+        surface.addTriangle(id_map[getNodeIndex(e, 0)],
+                            id_map[getNodeIndex(e, 1)],
+                            id_map[getNodeIndex(e, 2)]);
+        surface.addTriangle(id_map[getNodeIndex(e, 0)],
+                            id_map[getNodeIndex(e, 2)],
+                            id_map[getNodeIndex(e, 3)]);
         return;
     }
     // all other element types are ignored (i.e. lines)

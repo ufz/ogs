@@ -105,7 +105,7 @@ std::vector<bool> markUnusedNodes(std::vector<Element*> const& elements,
     {
         for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
         {
-            unused_nodes[e->getNodeIndex(i)] = false;
+            unused_nodes[getNodeIndex(*e, i)] = false;
         }
     }
 

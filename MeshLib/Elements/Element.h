@@ -52,7 +52,7 @@ public:
      * element that you can obtain with Element::getNumberOfBaseNodes()
      * @return a pointer to the appropriate (and constant, i.e. not
      * modifiable by the user) instance of class Node or a nullptr
-     * @sa Element::getNodeIndex()
+     * @sa getNodeIndex()
      */
     virtual const Node* getNode(unsigned i) const = 0;
 
@@ -101,16 +101,6 @@ public:
 
     /// Returns the number of all nodes including both linear and nonlinear nodes
     virtual unsigned getNumberOfNodes() const = 0;
-
-    /**
-     * Get the global index for the Node with local index i.
-     * The index i should be at most the number of nodes of the element.
-     * @param i local index of Node, at most the number of nodes of the
-     * element that you can obtain with Element::getNumberOfBaseNodes()
-     * @return the global index or std::numeric_limits<unsigned>::max()
-     * @sa Element::getNode()
-     */
-    virtual std::size_t getNodeIndex(unsigned i) const = 0;
 
     /**
      * Get the type of the mesh element in geometric context (as a MeshElemType-enum).
@@ -229,5 +219,18 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e);
 
 /// Returns the position of the given node in the node array of this element.
 unsigned getNodeIDinElement(Element const& element, const Node* node);
+
+/**
+ * Get the global node index of the node with the local index idx within the
+ * element. The index should be at most the number of nodes of the element.
+ * @param element The element object that will be searched for the index.
+ * @param idx Local index of Node, at most the number of nodes of the
+ * element that you can obtain with Element::getNumberOfBaseNodes().
+ * @return the global index if idx < Element::getNumberOfBaseNodes. Otherwise in
+ * debug mode the value std::numeric_limits<unsigned>::max(). In release mode
+ * the behaviour is undefined.
+ * @sa Element::getNode()
+ */
+std::size_t getNodeIndex(Element const& element, unsigned idx);
 
 }  // namespace MeshLib

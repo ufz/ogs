@@ -120,7 +120,7 @@ void interpolateToHigherOrderNodes(
     // Copy the values for linear nodes.
     for (int n = 0; n < number_base_nodes; ++n)
     {
-        std::size_t const global_index = element.getNodeIndex(n);
+        std::size_t const global_index = getNodeIndex(element, n);
         interpolated_values_global_vector[global_index] = node_values[n];
     }
 
@@ -147,7 +147,7 @@ void interpolateToHigherOrderNodes(
     for (int n = 0; n < number_higher_order_nodes; ++n)
     {
         std::size_t const global_index =
-            element.getNodeIndex(number_base_nodes + n);
+            getNodeIndex(element, number_base_nodes + n);
         interpolated_values_global_vector[global_index] =
             shape_matrices[n].N * node_values;
     }

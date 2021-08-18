@@ -116,20 +116,4 @@ const Node* TemplateElement<ELEMENT_RULE>::getNode(unsigned i) const
 #endif
 }
 
-template <class ELEMENT_RULE>
-std::size_t TemplateElement<ELEMENT_RULE>::getNodeIndex(unsigned i) const
-{
-#ifndef NDEBUG
-    if (i < getNumberOfNodes())
-#endif
-    {
-        return _nodes[i]->getID();
-    }
-#ifndef NDEBUG
-    ERR("Error in MeshLib::TemplateElement::getNodeIndex() - Index does not "
-        "exist.");
-    return std::numeric_limits<std::size_t>::max();
-#endif
-}
-
 }  // namespace MeshLib

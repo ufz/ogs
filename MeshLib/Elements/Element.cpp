@@ -235,4 +235,18 @@ unsigned getNodeIDinElement(Element const& element, const MeshLib::Node* node)
     }
     return std::numeric_limits<unsigned>::max();
 }
+
+std::size_t getNodeIndex(Element const& element, unsigned const idx)
+{
+#ifndef NDEBUG
+    if (idx >= element.getNumberOfNodes())
+    {
+        ERR("Error in MeshLib::getNodeIndex() - Index does not "
+            "exist.");
+        return std::numeric_limits<std::size_t>::max();
+    }
+#endif
+    return element.getNode(idx)->getID();
+}
+
 }  // namespace MeshLib

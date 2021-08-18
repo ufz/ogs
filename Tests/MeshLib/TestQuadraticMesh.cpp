@@ -40,12 +40,12 @@ TEST(MeshLib, QuadraticOrderMesh_Line)
 
         for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
         {
-            ASSERT_TRUE(mesh->isBaseNode(e->getNodeIndex(i)));
+            ASSERT_TRUE(mesh->isBaseNode(getNodeIndex(*e, i)));
         }
         for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
              i++)
         {
-            ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
+            ASSERT_FALSE(mesh->isBaseNode(getNodeIndex(*e, i)));
         }
     }
 
@@ -84,12 +84,12 @@ TEST(MeshLib, QuadraticOrderMesh_Quad8)
 
         for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
         {
-            ASSERT_TRUE(mesh->isBaseNode(e->getNodeIndex(i)));
+            ASSERT_TRUE(mesh->isBaseNode(getNodeIndex(*e, i)));
         }
         for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
              i++)
         {
-            ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
+            ASSERT_FALSE(mesh->isBaseNode(getNodeIndex(*e, i)));
         }
     }
 
@@ -139,12 +139,12 @@ TEST(MeshLib, QuadraticOrderMesh_Quad9)
 
         for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
         {
-            ASSERT_TRUE(mesh->isBaseNode(e->getNodeIndex(i)));
+            ASSERT_TRUE(mesh->isBaseNode(getNodeIndex(*e, i)));
         }
         for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
              i++)
         {
-            ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
+            ASSERT_FALSE(mesh->isBaseNode(getNodeIndex(*e, i)));
         }
     }
 
@@ -229,12 +229,12 @@ TEST(MeshLib, QuadraticOrderMesh_LineQuad)
 
         for (unsigned i = 0; i < e->getNumberOfBaseNodes(); i++)
         {
-            ASSERT_TRUE(mesh->isBaseNode(e->getNodeIndex(i)));
+            ASSERT_TRUE(mesh->isBaseNode(getNodeIndex(*e, i)));
         }
         for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
              i++)
         {
-            ASSERT_FALSE(mesh->isBaseNode(e->getNodeIndex(i)));
+            ASSERT_FALSE(mesh->isBaseNode(getNodeIndex(*e, i)));
         }
     }
 

@@ -191,7 +191,6 @@ public:
     const Node* getNode(unsigned i) const override;
     void setNode(unsigned idx, Node* node) override;
     Node* const* getNodes() const override { return _nodes; }
-    std::size_t getNodeIndex(unsigned i) const override;
 
     /// Return a specific edge node.
     inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const override

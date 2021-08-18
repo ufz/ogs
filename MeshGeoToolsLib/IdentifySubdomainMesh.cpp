@@ -110,7 +110,7 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
         std::vector<std::size_t> element_node_ids(e->getNumberOfBaseNodes());
         for (unsigned n = 0; n < e->getNumberOfBaseNodes(); ++n)
         {
-            element_node_ids[n] = e->getNodeIndex(n);
+            element_node_ids[n] = MeshLib::getNodeIndex(*e, n);
         }
         std::vector<std::size_t> element_node_ids_bulk(
             e->getNumberOfBaseNodes());

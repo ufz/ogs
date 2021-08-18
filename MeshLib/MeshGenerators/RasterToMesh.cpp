@@ -220,12 +220,12 @@ std::unique_ptr<MeshLib::Mesh> RasterToMesh::convert(
                     }
                     for (std::size_t n = 0; n < n_nodes; ++n)
                     {
-                        (*(nodes[elems[m * (idx + j)]->getNodeIndex(n)]))[2] =
+                        (*(nodes[getNodeIndex(*elems[m * (idx + j)], n)]))[2] =
                             val;
                         if (double_idx)
                         {
-                            (*(nodes[elems[m * (idx + j) + 1]->getNodeIndex(
-                                n)]))[2] = val;
+                            (*(nodes[getNodeIndex(*elems[m * (idx + j) + 1],
+                                                  n)]))[2] = val;
                         }
                     }
                 }

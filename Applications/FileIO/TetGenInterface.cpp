@@ -848,19 +848,19 @@ void TetGenInterface::writeElementToFacets(std::ofstream& out,
     element_count++;
     if (element.getGeomType() == MeshLib::MeshElemType::TRIANGLE)
     {
-        out << "3  " << element.getNodeIndex(0) << " "
-            << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " "
-            << matId << " # " << element_count << "\n";
+        out << "3  " << getNodeIndex(element, 0) << " "
+            << getNodeIndex(element, 1) << " " << getNodeIndex(element, 2)
+            << " " << matId << " # " << element_count << "\n";
     }
     else if (element.getGeomType() == MeshLib::MeshElemType::QUAD)
     {
-        out << "3  " << element.getNodeIndex(0) << " "
-            << element.getNodeIndex(1) << " " << element.getNodeIndex(2) << " "
-            << matId << " # " << element_count << "\n";
+        out << "3  " << getNodeIndex(element, 0) << " "
+            << getNodeIndex(element, 1) << " " << getNodeIndex(element, 2)
+            << " " << matId << " # " << element_count << "\n";
         element_count++;
-        out << "3  " << element.getNodeIndex(0) << " "
-            << element.getNodeIndex(2) << " " << element.getNodeIndex(3) << " "
-            << matId << " # " << element_count << "\n";
+        out << "3  " << getNodeIndex(element, 0) << " "
+            << getNodeIndex(element, 2) << " " << getNodeIndex(element, 3)
+            << " " << matId << " # " << element_count << "\n";
     }
 }
 
