@@ -119,10 +119,10 @@ XdmfHdfWriter::XdmfHdfWriter(MeshLib::Mesh const& mesh,
 
     if (isFileManager())
     {
-        auto xdmf_writer_fn =
-            write_xdmf(geometry.xdmf, topology.xdmf, xdmf_constant_attributes,
-                       xdmf_variable_attributes, hdf_filepath.string(),
-                       GitInfoLib::GitInfo::ogs_version);
+        auto xdmf_writer_fn = write_xdmf(
+            geometry.xdmf, topology.xdmf, xdmf_constant_attributes,
+            xdmf_variable_attributes, hdf_filepath.filename().string(),
+            GitInfoLib::GitInfo::ogs_version);
         _xdmf_writer = std::make_unique<XdmfWriter>(xdmf_filepath.string(),
                                                     xdmf_writer_fn);
         _xdmf_writer->addTimeStep(initial_time);
