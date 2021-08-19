@@ -10,41 +10,14 @@
 
 #pragma once
 
-#include "ProcessLib/Process.h"
-
 #include "LocalAssemblerInterface.h"
 #include "PhaseFieldProcessData.h"
+#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
 namespace PhaseField
 {
-/**
- * \brief A class to simulate mechanical fracturing process
- * using phase-field approach in solids described by
- *
- * \f[
- *     \mathrm{div} \left[ \left(d^2 + k \right) \boldsymbol{\sigma}_0^+
- *      + \boldsymbol{\sigma}_0^- \right] +
- *        \varrho \boldsymbol{b} = \boldsymbol{0}
- * \f]
- * \f[
- *     2d H(\boldsymbol{\epsilon}_\mathrm{el})
- *      - \frac{1 - d}{2 \varepsilon} g_\mathrm{c}
- *      - 2 \varepsilon g_\mathrm{c} \mathrm{div}(\mathrm{grad} d) = 0
- * \f]
- * where
- *    \f{eqnarray*}{
- *       &d:&                    \mbox{order parameter,}\\
- *       &\varrho:&              \mbox{density,}\\
- *       &H:&                    \mbox{history field,}\\
- *       &g_\mathrm{c}:&         \mbox{fracture energy,}\\
- *       &\varepsilon:&          \mbox{length scale}\\
- *    \f}
- *
- * Detailed model description can refer
- * <a href="Miao_Biot2017.pdff" target="_blank"><b>Phase field method</b></a>
- */
 template <int DisplacementDim>
 class PhaseFieldProcess final : public Process
 {
@@ -111,6 +84,9 @@ private:
                                             const double t, double const dt,
                                             int const process_id) override;
 
+    void updateConstraints(GlobalVector& lower, GlobalVector& upper,
+                           int const process_id) override;
+
 private:
     PhaseFieldProcessData<DisplacementDim> _process_data;
 
@@ -124,6 +100,8 @@ private:
     /// Sparsity pattern for the phase field equation, and it is initialized
     ///  only if the staggered scheme is used.
     GlobalSparsityPattern _sparsity_pattern_with_single_component;
+
+    std::unique_ptr<GlobalVector> _x_previous_timestep;
 
     /// Check whether the process represented by \c process_id is/has
     /// mechanical process. In the present implementation, the mechanical

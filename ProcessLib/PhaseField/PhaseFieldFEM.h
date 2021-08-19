@@ -88,6 +88,9 @@ struct IntegrationPointData final
                  strain_energy_tensile, elastic_energy) =
             MaterialLib::Solids::Phasefield::calculateDegradedStress<
                 DisplacementDim>(degradation, bulk_modulus, mu, eps);
+
+        history_variable =
+            std::max(history_variable_prev, strain_energy_tensile);
     }
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
@@ -194,10 +197,6 @@ public:
                                           kelvin_vector_size);
             ip_data.sigma_tensile.setZero(kelvin_vector_size);
             ip_data.sigma_compressive.setZero(kelvin_vector_size);
-            ip_data.history_variable =
-                _process_data.history_field(0, x_position)[0];
-            ip_data.history_variable_prev =
-                _process_data.history_field(0, x_position)[0];
             ip_data.sigma.setZero(kelvin_vector_size);
             ip_data.strain_energy_tensile = 0.0;
             ip_data.elastic_energy = 0.0;

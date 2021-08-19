@@ -243,6 +243,9 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     _process_data.injected_volume = t;
 
+    _x_previous_timestep =
+        MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*x[process_id]);
+
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
@@ -311,7 +314,7 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 
         INFO("Integral of crack: {:g}", _process_data.crack_volume);
 
-        if (_process_data.propagating_crack)
+        if (_process_data.hydro_crack)
         {
             _process_data.pressure_old = _process_data.pressure;
             _process_data.pressure =
@@ -328,11 +331,31 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     }
     else
     {
-        if (_process_data.propagating_crack)
+        if (_process_data.hydro_crack)
         {
             auto& u = *_coupled_solutions->coupled_xs[0];
             MathLib::LinAlg::scale(const_cast<GlobalVector&>(u),
                                    1 / _process_data.pressure);
+        }
+    }
+}
+
+template <int DisplacementDim>
+void PhaseFieldProcess<DisplacementDim>::updateConstraints(
+    GlobalVector& lower, GlobalVector& upper, int const /*process_id*/)
+{
+    lower.setZero();
+    MathLib::LinAlg::setLocalAccessibleVector(*_x_previous_timestep);
+    MathLib::LinAlg::copy(*_x_previous_timestep, upper);
+
+    GlobalIndexType const x_begin = _x_previous_timestep->getRangeBegin();
+    GlobalIndexType const x_end = _x_previous_timestep->getRangeEnd();
+
+    for (GlobalIndexType i = x_begin; i < x_end; i++)
+    {
+        if ((*_x_previous_timestep)[i] > _process_data.irreversible_threshold)
+        {
+            upper.set(i, 1.0);
         }
     }
 }

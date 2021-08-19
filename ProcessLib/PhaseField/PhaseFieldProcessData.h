@@ -11,9 +11,11 @@
 #pragma once
 
 #include <Eigen/Eigen>
-
 #include <memory>
 #include <utility>
+
+#include "MeshLib/PropertyVector.h"
+#include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
 {
@@ -41,12 +43,11 @@ struct PhaseFieldProcessData
     ParameterLib::Parameter<double> const& residual_stiffness;
     ParameterLib::Parameter<double> const& crack_resistance;
     ParameterLib::Parameter<double> const& crack_length_scale;
-    ParameterLib::Parameter<double> const& kinetic_coefficient;
     ParameterLib::Parameter<double> const& solid_density;
-    ParameterLib::Parameter<double> const& history_field;
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
-    bool propagating_crack = false;
+    bool hydro_crack = false;
     bool crack_pressure = false;
+    double irreversible_threshold = 0.05;
 
     double const unity_pressure = 1.0;
     double pressure = 0.0;
