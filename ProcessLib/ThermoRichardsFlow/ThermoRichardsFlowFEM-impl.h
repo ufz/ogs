@@ -481,8 +481,8 @@ void ThermoRichardsFlowLocalAssembler<
                                thermal_conductivity]
                         .value(variables, x_position, t, dt));
 
-            GlobalDimVectorType const velocity_L =
-                GlobalDimVectorType(-Ki_over_mu * (dNdx * p_L - rho_LR * b));
+            GlobalDimVectorType const velocity_L = GlobalDimVectorType(
+                -Ki_over_mu * k_rel * (dNdx * p_L - rho_LR * b));
 
             K_TT.noalias() += (dNdx.transpose() * thermal_conductivity * dNdx +
                                N.transpose() * velocity_L.transpose() * dNdx *
@@ -493,8 +493,12 @@ void ThermoRichardsFlowLocalAssembler<
             // temperature equation, pressure part
             //
             K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
-                              N.transpose() * (dNdx * T).transpose() *
+                              N.transpose() * (dNdx * T).transpose() * k_rel *
                               Ki_over_mu * dNdx * w;
+
+            K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
+                              N.transpose() * velocity_L.dot(dNdx * T) / k_rel *
+                              dk_rel_dS_L * dS_L_dp_cap * N * w;
         }
         if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
             S_L < 1.0)
@@ -939,8 +943,8 @@ void ThermoRichardsFlowLocalAssembler<
                                thermal_conductivity]
                         .value(variables, x_position, t, dt));
 
-            GlobalDimVectorType const velocity_L =
-                GlobalDimVectorType(-Ki_over_mu * (dNdx * p_L - rho_LR * b));
+            GlobalDimVectorType const velocity_L = GlobalDimVectorType(
+                -Ki_over_mu * k_rel * (dNdx * p_L - rho_LR * b));
 
             local_K
                 .template block<temperature_size, temperature_size>(
@@ -949,16 +953,6 @@ void ThermoRichardsFlowLocalAssembler<
                                N.transpose() * velocity_L.transpose() * dNdx *
                                    rho_LR * specific_heat_capacity_fluid) *
                               w;
-
-            //
-            // temperature equation, pressure part
-            //
-            local_K
-                .template block<temperature_size, pressure_size>(
-                    temperature_index, pressure_index)
-                .noalias() -= rho_LR * specific_heat_capacity_fluid *
-                              N.transpose() * (dNdx * T).transpose() *
-                              Ki_over_mu * dNdx * w;
         }
         if (liquid_phase.hasProperty(MPL::PropertyType::vapour_diffusion) &&
             S_L < 1.0)

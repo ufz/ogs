@@ -691,7 +691,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .noalias() -= N.transpose() * rho_LR * dS_L_dp_cap * alpha *
                           identity2.transpose() * B * u_dot * N * w;
 
-        double const dk_rel_dS_l =
+        double const dk_rel_dS_L =
             medium->property(MPL::PropertyType::relative_permeability)
                 .template dValue<double>(variables,
                                          MPL::Variable::liquid_saturation,
@@ -701,13 +701,13 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
             .noalias() += dNdx.transpose() * rho_Ki_over_mu * grad_p_cap *
-                          dk_rel_dS_l * dS_L_dp_cap * N * w;
+                          dk_rel_dS_L * dS_L_dp_cap * N * w;
 
         local_Jac
             .template block<pressure_size, pressure_size>(pressure_index,
                                                           pressure_index)
             .noalias() += dNdx.transpose() * rho_LR * rho_Ki_over_mu * b *
-                          dk_rel_dS_l * dS_L_dp_cap * N * w;
+                          dk_rel_dS_L * dS_L_dp_cap * N * w;
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx.transpose() * rho_LR * k_rel * rho_Ki_over_mu * b * w;
@@ -756,11 +756,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                        thermal_conductivity)
                         .value(variables, x_position, t, dt));
 
-            GlobalDimVectorType const velocity_l =
-                GlobalDimVectorType(-Ki_over_mu * (dNdx * p_L - rho_LR * b));
+            GlobalDimVectorType const velocity_L = GlobalDimVectorType(
+                -Ki_over_mu * k_rel * (dNdx * p_L - rho_LR * b));
 
             K_TT.noalias() += (dNdx.transpose() * thermal_conductivity * dNdx +
-                               N.transpose() * velocity_l.transpose() * dNdx *
+                               N.transpose() * velocity_L.transpose() * dNdx *
                                    rho_LR * specific_heat_capacity_fluid) *
                               w;
 
@@ -768,8 +768,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             // temperature equation, pressure part
             //
             K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
-                              N.transpose() * (dNdx * T).transpose() *
+                              N.transpose() * (dNdx * T).transpose() * k_rel *
                               Ki_over_mu * dNdx * w;
+            K_Tp.noalias() -= rho_LR * specific_heat_capacity_fluid *
+                              N.transpose() * velocity_L.dot(dNdx * T) / k_rel *
+                              dk_rel_dS_L * dS_L_dp_cap * N * w;
         }
     }
 
