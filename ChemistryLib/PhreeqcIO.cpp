@@ -166,10 +166,10 @@ void setReactantMolality(Reactant& reactant,
 
 template <typename Exchanger>
 void initializeExchangerMolality(Exchanger& exchanger,
-                          GlobalIndexType const& chemical_system_id,
-                          MaterialPropertyLib::Phase const& solid_phase,
-                          ParameterLib::SpatialPosition const& pos,
-                          double const t)
+                                 GlobalIndexType const& chemical_system_id,
+                                 MaterialPropertyLib::Phase const& solid_phase,
+                                 ParameterLib::SpatialPosition const& pos,
+                                 double const t)
 {
     auto const& solid_constituent = solid_phase.component(exchanger.name);
 
@@ -182,11 +182,11 @@ void initializeExchangerMolality(Exchanger& exchanger,
 
 template <typename Reactant>
 void updateReactantVolumeFraction(Reactant& reactant,
-                               GlobalIndexType const& chemical_system_id,
-                               MaterialPropertyLib::Medium const& medium,
-                               ParameterLib::SpatialPosition const& pos,
-                               double const porosity, double const t,
-                               double const dt)
+                                  GlobalIndexType const& chemical_system_id,
+                                  MaterialPropertyLib::Medium const& medium,
+                                  ParameterLib::SpatialPosition const& pos,
+                                  double const porosity, double const t,
+                                  double const dt)
 {
     auto const& solid_phase = medium.phase("Solid");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
@@ -197,8 +197,7 @@ void updateReactantVolumeFraction(Reactant& reactant,
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template value<double>(vars, pos, t, dt);
 
-    auto const& solid_constituent =
-        solid_phase.component(reactant.name);
+    auto const& solid_constituent = solid_phase.component(reactant.name);
 
     if (solid_constituent.hasProperty(
             MaterialPropertyLib::PropertyType::molality))
@@ -212,7 +211,7 @@ void updateReactantVolumeFraction(Reactant& reactant,
 
     (*reactant.volume_fraction)[chemical_system_id] +=
         ((*reactant.molality)[chemical_system_id] -
-            (*reactant.molality_prev)[chemical_system_id]) *
+         (*reactant.molality_prev)[chemical_system_id]) *
         liquid_density * porosity * molar_volume;
 }
 
@@ -224,8 +223,7 @@ void setPorosityPostReaction(Reactant& reactant,
 {
     auto const& solid_phase = medium.phase("Solid");
 
-    auto const& solid_constituent =
-        solid_phase.component(reactant.name);
+    auto const& solid_constituent = solid_phase.component(reactant.name);
 
     if (solid_constituent.hasProperty(
             MaterialPropertyLib::PropertyType::molality))
@@ -233,9 +231,8 @@ void setPorosityPostReaction(Reactant& reactant,
         return;
     }
 
-    porosity -=
-        ((*reactant.volume_fraction)[chemical_system_id] -
-            (*reactant.volume_fraction_prev)[chemical_system_id]);
+    porosity -= ((*reactant.volume_fraction)[chemical_system_id] -
+                 (*reactant.volume_fraction_prev)[chemical_system_id]);
 }
 
 template <typename Reactant>
@@ -343,8 +340,8 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
 
     for (auto& exchanger : _chemical_system->exchangers)
     {
-        initializeExchangerMolality(exchanger, chemical_system_id, solid_phase, pos,
-                             t);
+        initializeExchangerMolality(exchanger, chemical_system_id, solid_phase,
+                                    pos, t);
     }
 }
 
@@ -786,14 +783,14 @@ void PhreeqcIO::updateVolumeFractionPostReaction(
 {
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        updateReactantVolumeFraction(kinetic_reactant, chemical_system_id, medium,
-                            pos, porosity, t, dt);
+        updateReactantVolumeFraction(kinetic_reactant, chemical_system_id,
+                                     medium, pos, porosity, t, dt);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        updateReactantVolumeFraction(equilibrium_reactant, chemical_system_id, medium,
-                            pos, porosity, t, dt);
+        updateReactantVolumeFraction(equilibrium_reactant, chemical_system_id,
+                                     medium, pos, porosity, t, dt);
     }
 }
 
@@ -804,12 +801,14 @@ void PhreeqcIO::updatePorosityPostReaction(
 {
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
-        setPorosityPostReaction(kinetic_reactant, chemical_system_id, medium, porosity);
+        setPorosityPostReaction(kinetic_reactant, chemical_system_id, medium,
+                                porosity);
     }
 
     for (auto& equilibrium_reactant : _chemical_system->equilibrium_reactants)
     {
-        setPorosityPostReaction(equilibrium_reactant, chemical_system_id, medium, porosity);
+        setPorosityPostReaction(equilibrium_reactant, chemical_system_id,
+                                medium, porosity);
     }
 }
 
