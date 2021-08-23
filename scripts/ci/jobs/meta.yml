@@ -1,6 +1,7 @@
 meta:
-  stage: .pre
+  stage: preparation
   tags: [shell]
+  needs: []
   variables:
     GIT_DEPTH: 1000
   script:
