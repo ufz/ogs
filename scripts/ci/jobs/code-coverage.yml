@@ -3,10 +3,7 @@ code coverage:
   extends:
     - .template-build-linux
   tags: [shell, envinf]
-  needs:
-    - job: "build linux: [USE_PYTHON=OFF]"
-      artifacts: false
-    - meta
+  needs: [meta]
   variables:
     CMAKE_PRESET: coverage
     TARGETS: "testrunner_coverage ctest_coverage"
