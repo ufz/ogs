@@ -242,9 +242,8 @@ static double averageReactantMolality(
 {
     double const sum = std::accumulate(
         chemical_system_indices.begin(), chemical_system_indices.end(), 0.0,
-        [&](double const s, GlobalIndexType const id) {
-            return s + (*reactant.molality)[id];
-        });
+        [&](double const s, GlobalIndexType const id)
+        { return s + (*reactant.molality)[id]; });
     return sum / chemical_system_indices.size();
 }
 }  // namespace
@@ -687,9 +686,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
             auto const& accepted_item = output.accepted_items[item_id];
             auto const& item_name = accepted_item.name;
 
-            auto compare_by_name = [&item_name](auto const& item) {
-                return item.name == item_name;
-            };
+            auto compare_by_name = [&item_name](auto const& item)
+            { return item.name == item_name; };
 
             switch (accepted_item.item_type)
             {
