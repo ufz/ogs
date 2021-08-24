@@ -7,16 +7,24 @@ ogs_add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(
     ApplicationsLib
-    PUBLIC BaseLib GeoLib NumLib Processes
+    PUBLIC BaseLib GeoLib NumLib
     PRIVATE CMakeInfoLib
             MathLib
             MeshLib
             MeshGeoToolsLib
-            ParameterLib
-            ProcessLib
             $<$<BOOL:${OGS_USE_PYTHON}>:pybind11::pybind11>
             $<$<BOOL:${OGS_USE_PETSC}>:petsc>
 )
+
+if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
+    target_link_libraries(
+        ApplicationsLib
+        PUBLIC Processes
+        PRIVATE ParameterLib ProcessLib
+    )
+elseif(OGS_BUILD_GUI)
+    target_link_libraries(ApplicationsLib PRIVATE nlohmann_json)
+endif()
 
 if(OGS_USE_LIS)
     target_include_directories(ApplicationsLib PUBLIC ${LIS_INCLUDE_DIR})
