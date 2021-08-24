@@ -46,13 +46,15 @@ struct XdmfData final
      * @param index The position of the DataItem parents in a grid
      * (representing a single step). Convention is: 1=Time, 2=
      * Geometry, 3=Topology, 4>=Attribute
+     * @param num_of_files If greater than 1 it groups the data of each process.
+     * The num_of_files specifies the number of groups
      *
      */
     XdmfData(std::size_t size_partitioned_dim, std::size_t size_tuple,
              MeshPropertyDataType mesh_property_data_type,
              std::string const& name,
              std::optional<MeshLib::MeshItemType> attribute_center,
-             unsigned int const index);
+             unsigned int const index, unsigned int num_of_files);
     // a hyperslab is defined by starts and strides see
     // https://www.xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
     std::vector<XdmfDimType> starts;

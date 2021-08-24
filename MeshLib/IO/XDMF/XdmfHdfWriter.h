@@ -36,12 +36,13 @@ public:
      * that change over time
      * @param use_compression if true, zlib compression in HDFWriter component
      * is used
+     * @param num_of_files number of hdf5 output files
      */
     XdmfHdfWriter(
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes,
         std::filesystem::path const& filepath, unsigned long long time_step,
         double initial_time, std::set<std::string> const& variable_output_names,
-        bool use_compression);
+        bool use_compression, unsigned int num_of_files);
 
     /**
      * \brief Adds data for either lazy (xdmf) or eager (hdf) writing algorithm

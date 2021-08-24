@@ -28,7 +28,8 @@ std::unique_ptr<Output> createOutput(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
 {
     DBUG("Parse output configuration:");
-    OutputType const output_type = [](auto output_type) {
+    OutputType const output_type = [](auto output_type)
+    {
         try
         {
             const std::map<std::string, OutputType> outputType_to_enum = {
@@ -59,6 +60,23 @@ std::unique_ptr<Output> createOutput(
     auto const compress_output =
         //! \ogs_file_param{prj__time_loop__output__compress_output}
         config.getConfigParameter("compress_output", true);
+
+    auto const hdf =
+        //! \ogs_file_param{prj__time_loop__output__hdf}
+        config.getConfigSubtreeOptional("hdf");
+
+    auto number_of_files = [&hdf]() -> unsigned int
+    {
+        if (hdf)
+        {
+            //! \ogs_file_param{prj__time_loop__output__hdf__number_of_files}
+            return hdf->getConfigParameter<unsigned int>("number_of_files");
+        }
+        else
+        {
+            return 1;
+        }
+    }();
 
     auto const data_mode =
         //! \ogs_file_param{prj__time_loop__output__data_mode}
@@ -156,9 +174,10 @@ std::unique_ptr<Output> createOutput(
 
     return std::make_unique<Output>(
         output_directory, output_type, prefix, suffix, compress_output,
-        data_mode, output_iteration_results, std::move(repeats_each_steps),
-        std::move(fixed_output_times), std::move(output_data_specification),
-        std::move(mesh_names_for_output), meshes);
+        number_of_files, data_mode, output_iteration_results,
+        std::move(repeats_each_steps), std::move(fixed_output_times),
+        std::move(output_data_specification), std::move(mesh_names_for_output),
+        meshes);
 }
 
 }  // namespace ProcessLib

@@ -65,6 +65,9 @@
                 <variable> v      </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <hdf>
+                <num_of_files>1</num_of_files>
+            </hdf>
         </output>
     </time_loop>
     <parameters>

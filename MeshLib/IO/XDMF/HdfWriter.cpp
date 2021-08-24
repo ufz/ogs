@@ -213,9 +213,10 @@ HdfWriter::HdfWriter(std::vector<MeshHdfData> meshes,
                      unsigned long long const initial_step,
                      std::filesystem::path const& filepath,
                      bool const use_compression,
-                     bool const is_file_manager)
+                     bool const is_file_manager,
+                     unsigned int const num_of_files)
     : _hdf5_filepath(filepath),
-      _file(createFile(filepath)),
+      _file(createFile(filepath, num_of_files)),
       _meshes_group(
           H5Gcreate2(_file, "/meshes", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)),
       _step_times{0},  // ToDo need to be initial time

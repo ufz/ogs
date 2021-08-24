@@ -24,6 +24,7 @@ struct PartitionInfo
     std::size_t global_length;
 };
 
-PartitionInfo getPartitionInfo(std::size_t const size);
+PartitionInfo getPartitionInfo(std::size_t const size,
+                               unsigned int const num_of_files);
 bool isFileManager();
 }  // namespace MeshLib::IO

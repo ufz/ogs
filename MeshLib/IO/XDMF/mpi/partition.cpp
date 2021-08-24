@@ -15,11 +15,11 @@
 
 #include <mpi.h>
 
-#include <deque>
 #include <numeric>
 
 #include "BaseLib/Logging.h"
 #include "MeshLib/IO/XDMF/fileIO.h"
+#include "getCommunicator.h"
 
 namespace MeshLib::IO
 {
@@ -30,9 +30,10 @@ bool isFileManager()
     return mpi_rank == 0;
 }
 
-PartitionInfo getPartitionInfo(std::size_t const size)
+PartitionInfo getPartitionInfo(std::size_t const size,
+                               unsigned int const num_of_files)
 {
-    MPI_Comm const mpi_comm = MPI_COMM_WORLD;
+    MPI_Comm const mpi_comm = getCommunicator(num_of_files).mpi_communicator;
     int mpi_size;
     int mpi_rank;
     MPI_Comm_size(mpi_comm, &mpi_size);

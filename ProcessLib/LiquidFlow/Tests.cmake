@@ -483,16 +483,16 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf HydraulicFlow HydraulicFlow 1e-7 1e-13
-    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13
-    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf v v 1e-7 1e-13
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_right_boundary.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_right_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_right_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_left_boundary.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_left_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_left_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf HydraulicFlow HydraulicFlow 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf v v 1e-7 1e-13
+    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13
+    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13
+    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13
+    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13
 )
 
 AddTest(
@@ -504,16 +504,16 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf HydraulicFlow HydraulicFlow 1e-7 1e-13
-    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13
-    square_5x5_tris_32.xdmf square_5x5_tris_32.xdmf v v 1e-7 1e-13
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_right_boundary.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_right_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_right_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_left_boundary.xdmf pressure pressure 1e-7 1e-13
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_left_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_left_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf HydraulicFlow HydraulicFlow 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13
+    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf v v 1e-7 1e-13
+    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13
+    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13
+    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf pressure pressure 1e-7 1e-13
+    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13
+    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13
 )
 
 
