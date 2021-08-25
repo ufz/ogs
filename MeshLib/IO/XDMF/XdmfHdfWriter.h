@@ -48,7 +48,7 @@ public:
      * @param time_step number of the step (temporal collection)
      * @param time time value of the current time_step
      */
-    void writeStep(int const& time_step, double const& time);
+    void writeStep(int time_step, double time);
 
 private:
     // hdf_writer must be destructed before xdmf_writer

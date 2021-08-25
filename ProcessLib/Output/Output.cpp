@@ -179,7 +179,8 @@ struct Output::OutputFile
                std::string const& prefix, std::string const& suffix,
                std::string const& mesh_name, int const timestep, double const t,
                int const iteration, int const data_mode_,
-               bool const compression_, std::set<std::string> const& outputnames)
+               bool const compression_,
+               std::set<std::string> const& outputnames)
         : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
                                  iteration)),
           path(BaseLib::joinPaths(directory, name)),
@@ -307,7 +308,8 @@ void Output::doOutputAlways(Process const& process,
         return;
     }
 
-    auto output_bulk_mesh = [&](MeshLib::Mesh const& mesh) {
+    auto output_bulk_mesh = [&](MeshLib::Mesh const& mesh)
+    {
         MeshLib::IO::PVDFile* pvd_file = nullptr;
         if (_output_file_type == ProcessLib::OutputType::vtk)
         {
@@ -322,7 +324,6 @@ void Output::doOutputAlways(Process const& process,
         }
         else if (_output_file_type == ProcessLib::OutputType::xdmf)
         {
-
             OutputFile const file(
                 _output_directory, _output_file_type, _output_file_prefix, "",
                 mesh.getName(), timestep, t, iteration, _output_file_data_mode,
@@ -330,9 +331,6 @@ void Output::doOutputAlways(Process const& process,
                 _output_data_specification.output_variables);
 
             outputMeshXdmf(file, mesh, timestep, t);
-
-
-
         }
     };
 
@@ -347,9 +345,8 @@ void Output::doOutputAlways(Process const& process,
         // mesh related output
         auto& non_bulk_mesh = *BaseLib::findElementOrError(
             begin(_meshes), end(_meshes),
-            [&mesh_output_name](auto const& m) {
-                return m->getName() == mesh_output_name;
-            },
+            [&mesh_output_name](auto const& m)
+            { return m->getName() == mesh_output_name; },
             "Need mesh '" + mesh_output_name + "' for the output.");
 
         std::vector<MeshLib::Node*> const& nodes = non_bulk_mesh.getNodes();
@@ -370,9 +367,8 @@ void Output::doOutputAlways(Process const& process,
         mesh_dof_table_pointers.reserve(mesh_dof_tables.size());
         transform(cbegin(mesh_dof_tables), cend(mesh_dof_tables),
                   back_inserter(mesh_dof_table_pointers),
-                  [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p) {
-                      return p.get();
-                  });
+                  [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p)
+                  { return p.get(); });
 
         output_secondary_variable = false;
         addProcessDataToMesh(

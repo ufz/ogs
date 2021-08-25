@@ -25,7 +25,7 @@ public:
      * @param xdmf_filename absolute or relative filepath to the xdmf file
      * @param xdmf_writer_fn function that generates xdmf string
      */
-    XdmfWriter(std::string const& xdmf_filename,
+    XdmfWriter(std::string xdmf_filename,
                std::function<std::string(std::vector<double>)>
                    xdmf_writer_fn);
     XdmfWriter(XdmfWriter&&) = default;
