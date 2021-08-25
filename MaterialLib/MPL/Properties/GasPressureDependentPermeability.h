@@ -41,6 +41,10 @@ namespace MaterialPropertyLib
  *  where \f$\mathbf{k}\f$ is the permeability, \f$\mathbf{k}_0\f$ is the
  * initial intrinsic permeability, \f$p_g\f$ is the gas pressure, \f$a_1\f$,
  * \f$a_2\f$ and \f$p_\text{thr}\f$ are three parameters.
+ * The threshold pressure and gas pressure, \f$p_g\f$ , \f$p_\text{thr}\f$, are
+ * in Pascal, and the \f$a_1\f$ and \f$a_2\f$ are dimensionless, representing
+ * the values reported in \cite xu2013coupled, and
+ * permeabilities,\f$\mathbf{k}\f$ and \f$\mathbf{k}_0\f$ are in \f$m^2\f$.
  *
  */
 template <int DisplacementDim>
