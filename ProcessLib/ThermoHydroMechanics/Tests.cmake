@@ -221,8 +221,8 @@ AddTest(
 )
 
 AddTest(
-    NAME ThermoHydroMechanics_BRGaCreepAndInitialStressAtIP_AREHS
-    PATH ThermoHydroMechanics/BRGaCreepAndInitialStressAtIP_AREHS
+    NAME ThermoHydroMechanics_BGRaCreepAndInitialStressAtIP_AREHS
+    PATH ThermoHydroMechanics/BGRaCreepAndInitialStressAtIP_AREHS
     RUNTIME 60
     EXECUTABLE ogs
     EXECUTABLE_ARGS arehs-salt-THM01_0.prj
