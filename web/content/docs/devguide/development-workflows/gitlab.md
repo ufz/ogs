@@ -22,8 +22,8 @@ weight = 1012
 
 ## Setup a password for cloning over https
 
-To clone a repository via `https://`-protocol you need to [set up an account password](https://gitlab.opengeosys.org/profile/password/edit) and use this during `git clone https://...`.
+To clone a repository via `https://`-protocol you need to [set up an account password](https://gitlab.opengeosys.org/-/profile/password/edit) and use this during `git clone https://...`.
 
 ## Upload a SSH key for cloning over SSH
 
-To clone a repository via SSH-protocol (`git clone git@gitlab...`) you need to [upload your SSH public key](https://gitlab.opengeosys.org/profile/keys).
+To clone a repository via SSH-protocol (`git clone git@gitlab...`) you need to [upload your SSH public key](https://gitlab.opengeosys.org/-/profile/keys).
