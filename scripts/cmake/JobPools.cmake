@@ -24,4 +24,8 @@ setup_job_pool(light_tasks 800) # MB per task
 set(CMAKE_JOB_POOL_COMPILE light_tasks)
 set(CMAKE_JOB_POOL_LINK light_tasks)
 
-setup_job_pool(heavy_tasks 4000)
+if(APPLE_ARM)
+    setup_job_pool(heavy_tasks 2500)
+else()
+    setup_job_pool(heavy_tasks 4000)
+endif()
