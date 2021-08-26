@@ -176,11 +176,7 @@ git config --global http.proxy http://yourproxy.example.com
 
 <div class='mac'>
 
-Install Git with Homebrew:
-
-```bash
-brew install git
-```
+Git is already installed.
 
 Let Git know who you are:
 
@@ -199,7 +195,61 @@ git config --global http.proxy http://yourproxy.example.com
 
 </div>
 
-## Step: Install Python 3
+## Step: Install CMake
+
+<div class='win'>
+
+- Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
+- Execute the installer, please check the **Add CMake to the system path for all users**-option
+</div>
+
+<div class='linux'>
+
+Install CMake via Kitware's APT Repository by [following their instructions](https://apt.kitware.com/).
+
+For other linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
+</div>
+
+<div class='mac'>
+
+Install CMake with Homebrew:
+
+```bash
+brew install cmake
+```
+
+</div>
+
+
+## Optional: Install Ninja
+
+We recommend [`ninja`](https://ninja-build.org) as a cross-platform build tool (`make`-replacement).
+
+<div class='win'>
+
+Download the [binary from GitHub](https://github.com/ninja-build/ninja/releases) and put the extracted `ninja.exe` in the `PATH`.
+
+</div>
+
+<div class='linux'>
+
+```bash
+sudo apt-get install ninja-build
+```
+
+</div>
+
+<div class='mac'>
+
+Install Ninja with Homebrew:
+
+```bash
+brew install ninja
+```
+
+</div>
+
+## Optional: Install Python 3
 
 <div class='win'>
 
@@ -232,46 +282,7 @@ brew install python
 
 </div>
 
-## Step: Install CMake
-
-<div class='win'>
-
-- Download the installer, at the [CMake download page](http://www.cmake.org/cmake/resources/software.html) choose the **Windows (Win32 Installer)**.
-- Execute the installer, please check the **Add CMake to the system path for all users**-option
-</div>
-
-<div class='linux'>
-
-Install CMake via Kitware's APT Repository by [following their instructions](https://apt.kitware.com/).
-
-For other linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
-</div>
-
-<div class='mac'>
-
-Install CMake with Homebrew:
-
-```bash
-brew install cmake
-```
-
-</div>
-
-## Optional: Install Ninja
-
-We recommend [`ninja`](https://ninja-build.org) as a cross-platform build tool (`make`-replacement).
-
-Install Ninja with Python's pip:
-
-```bash
-pip3 install --user ninja
-```
-
-Make sure that `ninja` is in the path afterwards. See Conan install instructions above.
-
-
 ## Optional: Install Qt for the Data Explorer
-
 
 Use [Another Qt installer(aqt)](https://github.com/miurahr/aqtinstall) for installing the Qt binaries to some path on your machine:
 
