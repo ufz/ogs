@@ -1,0 +1,112 @@
+@DSL Implicit;
+@Behaviour GuentherSalzer;
+@Author Thomas Nagel;
+@Description {
+Günther Salzer model for rock salt.
+Günther, R., & Salzer, K. (2012). Advanced strain-hardening approach.
+In Mechanical Behaviour of Salt VII (Issue December 2016).
+CRC Press. https://doi.org/10.1201/b12041-4
+
+Günther, R.-M., Salzer, K., Popp, T., & Lüdeling, C. (2015).
+Steady-State Creep of Rock Salt: Improved Approaches for Lab Determination
+and Modelling. Rock Mechanics and Rock Engineering,
+48(6), 2603–2613. https://doi.org/10.1007/s00603-015-0839-2
+};
+
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 100;
+
+@Epsilon 1.e-14;
+@Theta 1.0;
+
+@ModellingHypotheses{".+"};
+@Brick StandardElasticity;
+
+@MaterialProperty real Ap;
+Ap.setEntryName("PrimaryPowerLawFactor");
+@MaterialProperty real np;
+np.setEntryName("PrimaryPowerLawExponent");
+@MaterialProperty real As1;
+As1.setEntryName("SecondaryPowerLawFactor1");
+@MaterialProperty real ns1;
+ns1.setEntryName("SecondaryPowerLawExponent1");
+@MaterialProperty real Q1;
+Q1.setEntryName("SecondaryActivationEnergy1");
+@MaterialProperty real As2;
+As2.setEntryName("SecondaryPowerLawFactor2");
+@MaterialProperty real ns2;
+ns2.setEntryName("SecondaryPowerLawExponent2");
+@MaterialProperty real Q2;
+Q2.setEntryName("SecondaryActivationEnergy2");
+@MaterialProperty real mup;
+mup.setEntryName("HardeningExponent");
+@MaterialProperty real epsV0;
+epsV0.setEntryName("InitialHardening");
+@PhysicalBounds epsV0 in [1e-6:*[; //practical limit
+@MaterialProperty real sig0;
+sig0.setEntryName("ReferenceStress");
+
+@Parameter real Ru = 8.314472; // J/(Kmol)
+Ru.setEntryName("UniversalGasConstant");
+
+//Hardening strain
+@StateVariable real epsCrV;
+epsCrV.setEntryName("HardeningStrain");
+
+//Recovery strain increment
+@LocalVariable real deps_cr_E;
+//Creep strain increment
+@LocalVariable Stensor deps_cr;
+
+//! Second Lamé coefficient
+@LocalVariable stress mu;
+
+@LocalVariable real As1T, As2T;
+
+@InitLocalVariables {
+    mu = computeMu(young, nu);
+    // Compute initial elastic strain
+    eel = 1. / (2. * mu) * sig - nu / young * trace(sig) * Stensor::Id();
+    As1T = As1 * std::exp(-Q1 / (Ru * (T + dT)));
+    As2T = As2 * std::exp(-Q2 / (Ru * (T + dT)));
+}
+
+@Integrator {
+    const auto eeps = real(1e-14);
+    const auto seps = eeps * young;
+    const auto s = deviator(sig);
+    const auto seq = sigmaeq(s);
+    const auto norm_s = seq / std::sqrt(3. / 2.);
+
+    if (norm_s > seps)
+    {
+        constexpr auto Pdev = Stensor4::K();
+        // secondary (recovery)
+        const auto b =
+            As1T * std::pow(seq / sig0, ns1) + As2T * std::pow(seq / sig0, ns2);
+        const auto db_dseq = ns1 / sig0 * As1T * std::pow(seq / sig0, ns1 - 1) +
+                             ns2 / sig0 * As2T * std::pow(seq / sig0, ns2 - 1);
+
+        deps_cr_E = b * dt;
+        const auto epsCrV_new = epsCrV + depsCrV;
+        const auto seq_to_np = std::pow(seq / sig0, np);
+
+        fepsCrV = depsCrV -
+                  dt * (Ap * seq_to_np / std::pow(epsV0 + epsCrV_new, mup)) +
+                  deps_cr_E;
+        dfepsCrV_ddepsCrV = 1. + dt * mup * Ap * seq_to_np /
+                                     std::pow(epsV0 + epsCrV_new, mup + 1);
+        const auto dfepsCrV_dseq =
+            -dt * (Ap * np * std::pow(seq / sig0, np - 1) /
+                   std::pow(epsV0 + epsCrV_new, mup)) +
+            db_dseq * dt;
+        dfepsCrV_ddeel = dfepsCrV_dseq * 3. * s / (2. * seq) * 2. * mu;
+        deps_cr = eval(std::sqrt(3. / 2.) * (depsCrV + deps_cr_E) * s / norm_s);
+        feel += deps_cr;
+        dfeel_ddepsCrV = std::sqrt(3. / 2.) / norm_s * s;
+        dfeel_ddeel +=
+            2. * mu * std::sqrt(3. / 2.) / norm_s *
+            ((depsCrV + deps_cr_E) * (Pdev - (s ^ s) / norm_s / norm_s) +
+             db_dseq * dt * 3. / (2. * seq) * (s ^ s));
+    }
+  }
