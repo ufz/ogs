@@ -23,6 +23,10 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     set(COMPILER_IS_MSVC TRUE CACHE BOOL "")
 endif() # CMAKE_CXX_COMPILER_ID
 
+if(APPLE AND "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "arm64")
+    set(APPLE_ARM TRUE CACHE BOOL "Apple M processors" FORCE)
+endif()
+
 # GNU-like compiler
 if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -71,7 +75,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         set(CPU_FLAGS -mavx2 -march=core-avx2)
     elseif(OGS_CPU_ARCHITECTURE STREQUAL "generic")
         set(CPU_FLAGS -mtune=generic)
-    else()
+    elseif(NOT APPLE_ARM)
         set(CPU_FLAGS -march=${OGS_CPU_ARCHITECTURE})
     endif()
 
