@@ -667,7 +667,8 @@ void TH2MLocalAssembler<
             (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpLR).eval();
         auto const diffusion_W_G_T =
             (phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dT).eval();
-        auto const diffusion_W_L_T = (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT).eval();
+        auto const diffusion_W_L_T =
+            (phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT).eval();
 
         auto const advection_W = (advection_W_G + advection_W_L).eval();
         auto const diffusion_W_p = (diffusion_W_G_p + diffusion_W_L_p).eval();
@@ -935,7 +936,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         vars[static_cast<int>(MPL::Variable::molar_fraction)] = 1.0;
 
-        auto const cCL = [&]() {
+        auto const cCL = [&]()
+        {
             if (liquid_phase.hasProperty(MPL::PropertyType::concentration))
             {
                 return liquid_phase.property(MPL::PropertyType::concentration)

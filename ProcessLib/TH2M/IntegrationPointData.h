@@ -157,7 +157,6 @@ struct IntegrationPointData final
         rho_L_h_L_prev = rho_L_h_L;
         rho_S_h_S_prev = rho_S_h_S;
 
-
         rhoCGR_prev = rhoCGR;
         rhoWGR_prev = rhoWGR;
         rhoCLR_prev = rhoCLR;

@@ -66,9 +66,9 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
     variables[static_cast<int>(MaterialPropertyLib::Variable::molar_mass)] = M;
 
     cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(variables, pos, t, dt);
+                   .template value<double>(variables, pos, t, dt);
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-               .template value<double>(variables, pos, t, dt);
+                  .template value<double>(variables, pos, t, dt);
     cv.lambdaGR =
         gas_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
@@ -80,10 +80,11 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
     cv.xmWL = 1.;
 
     cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(variables, pos, t, dt);
+                   .template value<double>(variables, pos, t, dt);
 
-    cv.muLR = liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-               .template value<double>(variables, pos, t, dt);
+    cv.muLR =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            .template value<double>(variables, pos, t, dt);
 
     cv.lambdaLR =
         liquid_phase
