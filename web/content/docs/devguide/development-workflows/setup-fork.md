@@ -163,6 +163,19 @@ git rebase ufz/master feature-name
 
 This can potentially lead to conflicts, which have to be resolved.
 
+<div class='note'>
+
+You may want to streamline the updating workflow a bit using the [`git pull --rebase --autostash`](https://cscheng.info/2017/01/26/git-tip-autostash-with-git-pull-rebase.html)-functionality. Enable it with:
+
+```bash
+git config pull.rebase true
+git config rebase.autoStash true
+```
+
+Then simply use `git pull upstream master`.
+
+</div>
+
 ----
 
 Now after you implemented the feature and committed your work you can push the new commits to the `feature-name`-branch on your GitLab fork:

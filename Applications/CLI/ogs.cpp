@@ -18,7 +18,9 @@
 
 #ifndef _WIN32
 #ifdef __APPLE__
+#ifdef __SSE__
 #include <xmmintrin.h>
+#endif  // __SSE__
 #else
 #include <cfenv>
 #endif  // __APPLE__
@@ -133,10 +135,12 @@ int main(int argc, char* argv[])
 
     BaseLib::setConsoleLogLevel(log_level_arg.getValue());
     spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler([](const std::string& msg) {
-        std::cerr << "spdlog error: " << msg << std::endl;
-        OGS_FATAL("spdlog logger error occurred.");
-    });
+    spdlog::set_error_handler(
+        [](const std::string& msg)
+        {
+            std::cerr << "spdlog error: " << msg << std::endl;
+            OGS_FATAL("spdlog logger error occurred.");
+        });
 
     INFO("This is OpenGeoSys-6 version {:s}.",
          GitInfoLib::GitInfo::ogs_version);
@@ -146,7 +150,9 @@ int main(int argc, char* argv[])
     if (enable_fpe_arg.isSet())
     {
 #ifdef __APPLE__
+#ifdef __SSE__
         _MM_SET_EXCEPTION_MASK(_MM_GET_EXCEPTION_MASK() & ~_MM_MASK_INVALID);
+#endif  // __SSE__
 #else
         feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
 #endif  // __APPLE__
