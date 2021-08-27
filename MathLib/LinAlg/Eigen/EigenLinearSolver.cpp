@@ -18,7 +18,6 @@
 #include <Eigen/PardisoSupport>
 #endif
 
-
 #ifdef USE_EIGEN_UNSUPPORTED
 #include <unsupported/Eigen/src/IterativeSolvers/GMRES.h>
 #include <unsupported/Eigen/src/IterativeSolvers/Scaling.h>

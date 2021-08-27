@@ -10,18 +10,16 @@
 
 #pragma once
 
+#include <Eigen/Sparse>
 #include <fstream>
 #include <string>
 
-#include <Eigen/Sparse>
-
+#include "EigenVector.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
-#include "EigenVector.h"
 
 namespace MathLib
 {
-
 /**
  * Global matrix based on Eigen sparse matrix
  *
@@ -33,7 +31,8 @@ public:
     using RawMatrixType = Eigen::SparseMatrix<double, Eigen::RowMajor>;
     using IndexType = RawMatrixType::Index;
 
-    // TODO The matrix constructor should take num_rows and num_cols as arguments
+    // TODO The matrix constructor should take num_rows and num_cols as
+    // arguments
     //      that is left for a later refactoring.
     /**
      * constructor
@@ -60,7 +59,7 @@ public:
     static constexpr IndexType getRangeBegin() { return 0; }
 
     /// return an end index of the active data range
-    IndexType getRangeEnd() const  { return getNumberOfRows(); }
+    IndexType getRangeEnd() const { return getNumberOfRows(); }
 
     /// reset data entries to zero.
     void setZero()
@@ -77,7 +76,8 @@ public:
     /// dynamically allocates it.
     int setValue(IndexType row, IndexType col, double val)
     {
-        assert(row < (IndexType) getNumberOfRows() && col < (IndexType) getNumberOfColumns());
+        assert(row < (IndexType)getNumberOfRows() &&
+               col < (IndexType)getNumberOfColumns());
         mat_.coeffRef(row, col) = val;
         return 0;
     }
@@ -92,36 +92,40 @@ public:
 
     /// Add sub-matrix at positions \c row_pos and same column positions as the
     /// given row positions. If the entry doesn't exist, the value is inserted.
-    template<class T_DENSE_MATRIX>
+    template <class T_DENSE_MATRIX>
     void add(std::vector<IndexType> const& row_pos,
-            const T_DENSE_MATRIX &sub_matrix,
-            double fkt = 1.0)
+             const T_DENSE_MATRIX& sub_matrix,
+             double fkt = 1.0)
     {
         this->add(row_pos, row_pos, sub_matrix, fkt);
     }
 
-    /// Add sub-matrix at positions given by \c indices. If the entry doesn't exist,
-    /// this class inserts the value.
-    template<class T_DENSE_MATRIX>
+    /// Add sub-matrix at positions given by \c indices. If the entry doesn't
+    /// exist, this class inserts the value.
+    template <class T_DENSE_MATRIX>
     void add(RowColumnIndices<IndexType> const& indices,
-            const T_DENSE_MATRIX &sub_matrix,
-            double fkt = 1.0)
+             const T_DENSE_MATRIX& sub_matrix,
+             double fkt = 1.0)
     {
         this->add(indices.rows, indices.columns, sub_matrix, fkt);
     }
 
-    /// Add sub-matrix at positions \c row_pos and \c col_pos. If the entries doesn't
-    /// exist in the matrix, the values are inserted.
-    /// @param row_pos     a vector of row position indices. The vector size should
+    /// Add sub-matrix at positions \c row_pos and \c col_pos. If the entries
+    /// doesn't exist in the matrix, the values are inserted.
+    /// @param row_pos     a vector of row position indices. The vector size
+    /// should
     ///                    equal to the number of rows in the given sub-matrix.
-    /// @param col_pos     a vector of column position indices. The vector size should
-    ///                    equal to the number of columns in the given sub-matrix.
+    /// @param col_pos     a vector of column position indices. The vector size
+    /// should
+    ///                    equal to the number of columns in the given
+    ///                    sub-matrix.
     /// @param sub_matrix  a sub-matrix to be added
-    /// @param fkt         a scaling factor applied to all entries in the sub-matrix
+    /// @param fkt         a scaling factor applied to all entries in the
+    /// sub-matrix
     template <class T_DENSE_MATRIX>
     void add(std::vector<IndexType> const& row_pos,
-            std::vector<IndexType> const& col_pos, const T_DENSE_MATRIX &sub_matrix,
-            double fkt = 1.0);
+             std::vector<IndexType> const& col_pos,
+             const T_DENSE_MATRIX& sub_matrix, double fkt = 1.0);
 
     /// get value. This function returns zero if the element doesn't exist.
     double get(IndexType row, IndexType col) const
@@ -133,7 +137,7 @@ public:
     static constexpr bool isAssembled() { return true; }
 
     /// printout this matrix for debugging
-    void write(const std::string &filename) const
+    void write(const std::string& filename) const
     {
         std::ofstream of(filename);
         if (of)
@@ -143,7 +147,7 @@ public:
     }
 
     /// printout this matrix for debugging
-    void write(std::ostream &os) const
+    void write(std::ostream& os) const
     {
         for (int k = 0; k < mat_.outerSize(); ++k)
         {
@@ -169,9 +173,11 @@ void EigenMatrix::add(std::vector<IndexType> const& row_pos,
 {
     auto const n_rows = row_pos.size();
     auto const n_cols = col_pos.size();
-    for (auto i = decltype(n_rows){0}; i < n_rows; i++) {
+    for (auto i = decltype(n_rows){0}; i < n_rows; i++)
+    {
         auto const row = row_pos[i];
-        for (auto j = decltype(n_cols){0}; j < n_cols; j++) {
+        for (auto j = decltype(n_cols){0}; j < n_cols; j++)
+        {
             auto const col = col_pos[j];
             add(row, col, fkt * sub_matrix(i, j));
         }
@@ -182,21 +188,20 @@ void EigenMatrix::add(std::vector<IndexType> const& row_pos,
 template <typename SPARSITY_PATTERN>
 struct SetMatrixSparsity<EigenMatrix, SPARSITY_PATTERN>
 {
+    /// \note This operator relies on row-major storage order of the underlying
+    /// eigen matrix i.e. of the RawMatrixType.
+    void operator()(EigenMatrix& matrix,
+                    SPARSITY_PATTERN const& sparsity_pattern) const
+    {
+        static_assert(EigenMatrix::RawMatrixType::IsRowMajor,
+                      "Set matrix sparsity relies on the EigenMatrix to be in "
+                      "row-major storage order.");
 
-/// \note This operator relies on row-major storage order of the underlying
-/// eigen matrix i.e. of the RawMatrixType.
-void operator()(EigenMatrix& matrix,
-                SPARSITY_PATTERN const& sparsity_pattern) const
-{
-    static_assert(EigenMatrix::RawMatrixType::IsRowMajor,
-                  "Set matrix sparsity relies on the EigenMatrix to be in "
-                  "row-major storage order.");
+        assert(matrix.getNumberOfRows() ==
+               static_cast<EigenMatrix::IndexType>(sparsity_pattern.size()));
 
-    assert(matrix.getNumberOfRows()
-               == static_cast<EigenMatrix::IndexType>(sparsity_pattern.size()));
-
-    matrix.getRawMatrix().reserve(sparsity_pattern);
-}
+        matrix.getRawMatrix().reserve(sparsity_pattern);
+    }
 };
 
-} // end namespace MathLib
+}  // end namespace MathLib

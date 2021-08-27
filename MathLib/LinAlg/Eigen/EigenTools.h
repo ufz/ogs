@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "BaseLib/Error.h"
-#include "EigenMatrix.h" // for EigenMatrix::IndexType
+#include "EigenMatrix.h"  // for EigenMatrix::IndexType
 
 namespace MathLib
 {
@@ -30,8 +30,9 @@ class EigenVector;
  * entries to enforce some conditions, value ignored in the current
  * implementation
  */
-void applyKnownSolution(EigenMatrix &A, EigenVector &b, EigenVector &/*x*/,
-        const std::vector<EigenMatrix::IndexType> &vec_knownX_id,
-        const std::vector<double> &vec_knownX_x, double penalty_scaling = 1e+10);
+void applyKnownSolution(
+    EigenMatrix& A, EigenVector& b, EigenVector& /*x*/,
+    const std::vector<EigenMatrix::IndexType>& vec_knownX_id,
+    const std::vector<double>& vec_knownX_x, double penalty_scaling = 1e+10);
 
 }  // namespace MathLib

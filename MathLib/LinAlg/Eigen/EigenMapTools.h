@@ -10,9 +10,9 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <cassert>
 #include <vector>
-#include <Eigen/Core>
 
 namespace MathLib
 {
@@ -204,8 +204,7 @@ inline Eigen::Map<const Eigen::VectorXd> toVector(
  * This is a convenience method which makes the specification of dynamically
  * allocated Eigen vectors as return type easier.
  */
-inline Eigen::Map<Eigen::VectorXd> toVector(
-    std::vector<double>& data)
+inline Eigen::Map<Eigen::VectorXd> toVector(std::vector<double>& data)
 {
     return {data.data(), static_cast<Eigen::VectorXd::Index>(data.size())};
 }

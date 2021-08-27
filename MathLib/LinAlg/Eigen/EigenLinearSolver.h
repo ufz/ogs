@@ -22,7 +22,6 @@ class ConfigTree;
 
 namespace MathLib
 {
-
 class EigenMatrix;
 class EigenVector;
 
@@ -40,7 +39,7 @@ public:
      *                    LisOption struct.
      */
     EigenLinearSolver(const std::string& solver_name,
-                      BaseLib::ConfigTree const*const option);
+                      BaseLib::ConfigTree const* const option);
 
     ~EigenLinearSolver();
 
@@ -59,7 +58,7 @@ public:
      */
     EigenOption& getOption() { return option_; }
 
-    bool solve(EigenMatrix &A, EigenVector& b, EigenVector &x);
+    bool solve(EigenMatrix& A, EigenVector& b, EigenVector& x);
 
 protected:
     EigenOption option_;

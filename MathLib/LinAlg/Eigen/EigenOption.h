@@ -14,7 +14,6 @@
 
 namespace MathLib
 {
-
 /// \brief Option for Eigen sparse solver
 struct EigenOption final
 {
@@ -63,23 +62,21 @@ struct EigenOption final
     /// @return a linear solver type
     ///      If there is no solver type matched with the given name, INVALID
     ///      is returned.
-    static SolverType getSolverType(const std::string &solver_name);
+    static SolverType getSolverType(const std::string& solver_name);
 
     /// return a preconditioner type from the name
     ///
     /// @param precon_name
     /// @return a preconditioner type
-    ///      If there is no preconditioner type matched with the given name, NONE
-    ///      is returned.
-    static PreconType getPreconType(const std::string &precon_name);
-
+    ///      If there is no preconditioner type matched with the given name,
+    ///      NONE is returned.
+    static PreconType getPreconType(const std::string& precon_name);
 
     /// return a linear solver name from the solver type
     static std::string getSolverName(SolverType const solver_type);
 
     /// return a preconditioner name from the preconditioner type
     static std::string getPreconName(PreconType const precon_type);
-
 };
 
 }  // namespace MathLib
