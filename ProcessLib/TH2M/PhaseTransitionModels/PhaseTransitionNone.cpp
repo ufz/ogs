@@ -93,7 +93,7 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
 
     cv.rhoWLR = cv.rhoLR;
 
-    // specifi heat capacities
+    // specific heat capacities
     auto const cpG =
         gas_phase
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
