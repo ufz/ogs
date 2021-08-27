@@ -13,12 +13,10 @@
 #include <functional>
 #include <memory>
 
-
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
-#include "ProcessLib/Output/Output.h"
-
 #include "Process.h"
+#include "ProcessLib/Output/Output.h"
 
 namespace NumLib
 {

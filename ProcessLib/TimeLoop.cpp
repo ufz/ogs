@@ -300,10 +300,11 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     time_disc.nextTimestep(t, delta_t);
 
     auto const post_iteration_callback =
-        [&](int iteration, std::vector<GlobalVector*> const& x) {
-            output_control.doOutputNonlinearIteration(
-                process, process_id, timestep, t, iteration, x);
-        };
+        [&](int iteration, std::vector<GlobalVector*> const& x)
+    {
+        output_control.doOutputNonlinearIteration(process, process_id, timestep,
+                                                  t, iteration, x);
+    };
 
     auto const nonlinear_solver_status =
         nonlinear_solver.solve(x, x_prev, post_iteration_callback, process_id);
@@ -753,7 +754,8 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             conv_crit->preFirstIteration();
         }
     }
-    auto resetCouplingConvergenceCriteria = [&]() {
+    auto resetCouplingConvergenceCriteria = [&]()
+    {
         for (auto& conv_crit : _global_coupling_conv_crit)
         {
             conv_crit->reset();
