@@ -62,10 +62,11 @@ PropertyDataType GasPressureDependentPermeability<DisplacementDim>::value(
 
     auto k_data = k0_(t, pos);
 
-    double const factor = (gas_pressure <= pressure_threshold_)
-                              ? (1.0 + a1_ * gas_pressure)
-                              : (a2_ * (gas_pressure - pressure_threshold_) +
-                                 1.0 + a1_ * pressure_threshold_);
+    double const factor =
+        (gas_pressure <= pressure_threshold_)
+            ? (1.0 + a1_ * gas_pressure / 1.0e6)
+            : (a2_ * (gas_pressure - pressure_threshold_) / 1.0e6 + 1.0 +
+               a1_ * pressure_threshold_ / 1.0e6);
 
     for (auto& k_i : k_data)
     {

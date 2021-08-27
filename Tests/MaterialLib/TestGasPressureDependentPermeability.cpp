@@ -27,7 +27,7 @@ TEST(MaterialPropertyLib, GasPressureDependentPermeability)
     ParameterLib::ConstantParameter<double> const k0("k0", 1.e-20);
     double const a1 = 0.125;
     double const a2 = 152.0;
-    double const pressure_threshold = 3.2;
+    double const pressure_threshold = 3.2e6;
     double const min_permeability = 1.e-22;
     double const max_permeability = 1.e-10;
 
@@ -42,7 +42,7 @@ TEST(MaterialPropertyLib, GasPressureDependentPermeability)
 
     /// For gas pressure smaller than threshold value.
     {
-        double const p_gas = 2.5;
+        double const p_gas = 2.5e6;
 
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = p_gas;
         auto const k = MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
@@ -58,7 +58,7 @@ TEST(MaterialPropertyLib, GasPressureDependentPermeability)
     }
     /// For gas pressure bigger than threshold value.
     {
-        double const p_gas = 4.5;
+        double const p_gas = 4.5e6;
 
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = p_gas;
         auto const k = MPL::formEigenTensor<3>(k_model.value(vars, pos, t, dt));
