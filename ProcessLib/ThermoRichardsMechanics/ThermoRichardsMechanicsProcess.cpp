@@ -54,7 +54,9 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, [this]() {
+            integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -71,7 +73,9 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
-            "saturation_ip", 1 /*n components*/, integration_order, [this]() {
+            "saturation_ip", 1 /*n components*/, integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -88,7 +92,9 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
-            "porosity_ip", 1 /*n components*/, integration_order, [this]() {
+            "porosity_ip", 1 /*n components*/, integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -106,7 +112,8 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "transport_porosity_ip", 1 /*n components*/, integration_order,
-            [this]() {
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -125,7 +132,9 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "swelling_stress_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, [this]() {
+            integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -144,7 +153,9 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, [this]() {
+            integration_order,
+            [this]()
+            {
                 // Result containing integration point data for each local
                 // assembler.
                 std::vector<std::vector<double>> result;
@@ -241,7 +252,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
-                                      auto get_ip_values_function) {
+                                      auto get_ip_values_function)
+    {
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
@@ -424,7 +436,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
         local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
-    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
         transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
                                           output_vector, std::negate<double>());
     };

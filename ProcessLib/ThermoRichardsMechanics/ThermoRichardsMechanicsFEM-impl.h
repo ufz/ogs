@@ -427,7 +427,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             (p_cap_dot_ip == 0) ? dS_L_dp_cap
                                 : (S_L - S_L_prev) / (dt * p_cap_dot_ip);
 
-        auto const chi = [medium, x_position, t, dt](double const S_L) {
+        auto const chi = [medium, x_position, t, dt](double const S_L)
+        {
             MPL::VariableArray vs;
             vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
             return medium->property(MPL::PropertyType::bishops_effective_stress)
@@ -745,8 +746,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     .template value<double>(variables, x_position, t, dt);
 
             M_TT.noalias() +=
-                w * (rho_SR * specific_heat_capacity_solid * (1 - phi) +
-                     (S_L * rho_LR * specific_heat_capacity_fluid) * phi) *
+                w *
+                (rho_SR * specific_heat_capacity_solid * (1 - phi) +
+                 (S_L * rho_LR * specific_heat_capacity_fluid) * phi) *
                 N.transpose() * N;
 
             auto const thermal_conductivity =
@@ -859,9 +861,8 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
-        [this](std::vector<double>& values) {
-            return getIntPtSigma(0, {}, {}, values);
-        });
+        [this](std::vector<double>& values)
+        { return getIntPtSigma(0, {}, {}, values); });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
@@ -889,9 +890,8 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
-        [this](std::vector<double>& values) {
-            return getIntPtSwellingStress(0, {}, {}, values);
-        });
+        [this](std::vector<double>& values)
+        { return getIntPtSwellingStress(0, {}, {}, values); });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
@@ -934,9 +934,8 @@ std::vector<double> ThermoRichardsMechanicsLocalAssembler<
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     return transposeInPlace<kelvin_vector_size>(
-        [this](std::vector<double>& values) {
-            return getIntPtEpsilon(0, {}, {}, values);
-        });
+        [this](std::vector<double>& values)
+        { return getIntPtEpsilon(0, {}, {}, values); });
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
@@ -1167,7 +1166,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables_prev[static_cast<int>(MPL::Variable::liquid_saturation)] =
             S_L_prev;
 
-        auto const chi = [medium, x_position, t, dt](double const S_L) {
+        auto const chi = [medium, x_position, t, dt](double const S_L)
+        {
             MPL::VariableArray vs;
             vs.fill(std::numeric_limits<double>::quiet_NaN());
             vs[static_cast<int>(MPL::Variable::liquid_saturation)] = S_L;
@@ -1321,8 +1321,8 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
-            eps_m.noalias() -= -C_el.inverse() * (ip_data.sigma_sw -
-                                                  ip_data.sigma_sw_prev);
+            eps_m.noalias() -=
+                -C_el.inverse() * (ip_data.sigma_sw - ip_data.sigma_sw_prev);
         }
 
         variables[static_cast<int>(
