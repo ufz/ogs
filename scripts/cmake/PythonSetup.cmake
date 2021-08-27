@@ -5,6 +5,7 @@ set(Python3_FIND_FRAMEWORK LAST)
 if(OGS_USE_POETRY)
     find_program(POETRY poetry)
     if(POETRY)
+        set(Python3_FIND_STRATEGY VERSION)
         find_package(
             Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter
             REQUIRED
