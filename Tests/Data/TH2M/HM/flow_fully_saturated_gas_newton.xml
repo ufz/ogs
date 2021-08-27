@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="flow_fully_saturated_gas.prj">
+    <remove msel="/*/*/process/jacobian_assembler"/>
+    <replace sel="/*/time_loop/output/prefix/text()">flow_fully_saturated_gas_newton</replace>
+    <replace msel="/*/test_definition/vtkdiff/regex/text()">flow_fully_saturated_gas_newton_ts_.*.vtu</replace>
+</OpenGeoSysProjectDiff>

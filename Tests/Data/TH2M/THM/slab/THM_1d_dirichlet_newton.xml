@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="THM_1d_dirichlet.prj">
+    <remove msel="/*/*/process/jacobian_assembler"/>
+    <replace sel="/*/time_loop/output/prefix/text()">THM_1d_dirichlet_newton</replace>
+</OpenGeoSysProjectDiff>
