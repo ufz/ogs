@@ -218,6 +218,7 @@ private:
 
     MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
     MeshLib::PropertyVector<double>* hydraulic_flow_ = nullptr;
+    MeshLib::PropertyVector<double>* heat_flux_ = nullptr;
 };
 
 extern template class ThermoRichardsMechanicsProcess<2>;

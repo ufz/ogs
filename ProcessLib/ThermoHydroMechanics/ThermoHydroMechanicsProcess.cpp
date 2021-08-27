@@ -46,6 +46,9 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HydraulicFlow", MeshLib::MeshItemType::Node, 1);
 
+    _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
+        mesh, "HeatFlux", MeshLib::MeshItemType::Node, 1);
+
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
@@ -386,13 +389,17 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
                                               std::negate<double>());
         }
     };
+    if (_use_monolithic_scheme || process_id == 0)
+    {
+        copyRhs(0, *_heat_flux);
+    }
     if (_use_monolithic_scheme || process_id == 1)
     {
-        copyRhs(0, *_hydraulic_flow);
+        copyRhs(1, *_hydraulic_flow);
     }
     if (_use_monolithic_scheme || process_id == 2)
     {
-        copyRhs(1, *_nodal_forces);
+        copyRhs(2, *_nodal_forces);
     }
 }
 
