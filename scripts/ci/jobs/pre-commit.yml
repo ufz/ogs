@@ -8,7 +8,7 @@ pre commit:
     SKIP: clang-format
   script:
     - pre-commit install
-    - TARGET_SHA1=$(git show-ref -s ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME})
+    - TARGET_SHA1=$(git show-ref -s ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} | tail -1)
     - pre-commit run --from-ref `git merge-base ${TARGET_SHA1} HEAD` --to-ref HEAD
     - echo "Target branch is ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}, target sha is ${TARGET_SHA1}."
     - git diff --check `git merge-base ${TARGET_SHA1} HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
