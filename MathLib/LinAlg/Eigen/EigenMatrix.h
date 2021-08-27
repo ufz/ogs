@@ -34,12 +34,12 @@ public:
     // TODO The matrix constructor should take num_rows and num_cols as
     // arguments
     //      that is left for a later refactoring.
-    /**
-     * constructor
-     * @param n the number of rows (that is equal to the number of columns)
-     * @param n_nonzero_columns the number of non-zero columns used for preallocation
-     */
-    explicit EigenMatrix(IndexType n, IndexType n_nonzero_columns = 0)
+
+    /// @param n the number of rows (that is equal to the number of columns).
+    /// @param n_nonzero_columns the number of non-zero columns used for
+    ///        preallocation.
+    explicit EigenMatrix(IndexType const n,
+                         IndexType const n_nonzero_columns = 0)
         : mat_(n, n)
     {
         if (n_nonzero_columns > 0)

@@ -30,11 +30,8 @@ namespace Fluid
  *  Coefficients \f$n_i\f$, \f$j_i\f$ and \f$l_i\f$ are given in three static
  *  arrays in the cpp file.
  */
-class DimensionLessGibbsFreeEnergyRegion1
+struct DimensionLessGibbsFreeEnergyRegion1
 {
-public:
-    DimensionLessGibbsFreeEnergyRegion1() = default;
-
     /**
      * Get the value
      * @param pi  Dimension less temperature

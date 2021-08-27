@@ -61,7 +61,14 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::value(
 
     // The formula gives the value in kJ/kg, and the return value is in the
     // units of J/kg.
-    return 1000.0 * std::transform_reduce(begin(c), end(c), begin(v), 0.);
+
+    return 1000.0 *
+#if __GNUC__ < 9 || (__GNUC__ == 9 && (__GNUC_MINOR__ < 3))
+           std::inner_product
+#else
+           std::transform_reduce
+#endif
+           (begin(c), end(c), begin(v), 0.);
 }
 
 PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::dValue(
@@ -109,7 +116,13 @@ PropertyDataType WaterVapourLatentHeatWithCriticalTemperature::dValue(
 
     // The formula gives the value in kJ/kg/K, and the value is return in
     // the unit of J/kg/K.
-    return -1000.0 * std::transform_reduce(begin(dc), end(dc), begin(v), 0.) /
+    return -1000.0 *
+#if __GNUC__ < 9 || (__GNUC__ == 9 && (__GNUC_MINOR__ < 3))
+           std::inner_product
+#else
+           std::transform_reduce
+#endif
+           (begin(dc), end(dc), begin(v), 0.) /
            T_c;
 }
 

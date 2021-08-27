@@ -63,10 +63,12 @@ PropertyDataType SaturationExponential::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)primary_variable;
-    assert((primary_variable == Variable::capillary_pressure) &&
-           "SaturationExponential::dValue is implemented for derivatives with "
-           "respect to capillary pressure only.");
+    if (primary_variable != Variable::capillary_pressure)
+    {
+        OGS_FATAL(
+            "SaturationExponential::dValue is implemented for derivatives with "
+            "respect to capillary pressure only.");
+    }
 
     const double p_cap = std::get<double>(
         variable_array[static_cast<int>(Variable::capillary_pressure)]);
