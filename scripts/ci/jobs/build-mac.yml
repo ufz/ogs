@@ -1,6 +1,7 @@
 build mac:
   tags:
     - mac
+    - ${ARCHITECTURE}
   extends:
     - .template-build-linux
     - .test-artifacts
@@ -11,3 +12,6 @@ build mac:
     CMAKE_ARGS: >-
       -DOGS_INSTALL_DEPENDENCIES=ON
       -DOGS_USE_MFRONT=ON
+  parallel:
+    matrix:
+      - ARCHITECTURE: ["amd64", "arm64"]
