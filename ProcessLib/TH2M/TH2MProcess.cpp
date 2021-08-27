@@ -265,11 +265,10 @@ void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
 
     DBUG("Set initial conditions of TH2MProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
+    GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface::setInitialConditions, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
-        _use_monolithic_scheme, process_id);
+        getDOFTable(process_id), *x[process_id], t, _use_monolithic_scheme,
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -282,10 +281,13 @@ void TH2MProcess<DisplacementDim>::assembleConcreteProcess(
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeMemberDereferenced(
+
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        dof_table, t, dt, x, xdot, process_id, M, K, b);
+        pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
+        b);
 }
 
 template <int DisplacementDim>
@@ -309,10 +311,12 @@ void TH2MProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
         OGS_FATAL("A Staggered version of TH2M is not implemented.");
     }
 
-    GlobalExecutor::executeMemberDereferenced(
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, dof_tables, t, dt, x, xdot, dxdot_dx, dx_dx,
-        process_id, M, K, b, Jac);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
+        dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
@@ -348,22 +352,27 @@ void TH2MProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     if (hasMechanicalProcess(process_id))
     {
-        GlobalExecutor::executeMemberOnDereferenced(
+        ProcessLib::ProcessVariable const& pv =
+            getProcessVariables(process_id)[0];
+
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            *_local_to_global_index_map, *x[process_id], t, dt);
+            pv.getActiveElementIDs(), *_local_to_global_index_map,
+            *x[process_id], t, dt);
     }
 }
 
 template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, double const dt,
-    const int /*process_id*/)
+    const int process_id)
 {
     DBUG("PostTimestep TH2MProcess.");
     auto const dof_tables = getDOFTables(x.size());
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::postTimestep, _local_assemblers, dof_tables,
-        x, t, dt);
+    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerInterface::postTimestep, _local_assemblers,
+        pv.getActiveElementIDs(), dof_tables, x, t, dt);
 }
 
 template <int DisplacementDim>
