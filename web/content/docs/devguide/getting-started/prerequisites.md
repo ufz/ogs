@@ -309,7 +309,7 @@ Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/gcc_64/b
 pip install aqtinstall
 mkdir /opt/qt
 cd /opt/qt
-aqt install {{< dataFile "versions.tested_version.qt" >}} linux desktop clang_64 -m xmlpatterns,x11extras
+aqt install {{< dataFile "versions.tested_version.qt" >}} mac desktop clang_64 -m xmlpatterns,x11extras
 ```
 
 Make sure to add `/opt/qt/{{< dataFile "versions.tested_version.qt" >}}/clang_64/bin` to the `PATH`.
