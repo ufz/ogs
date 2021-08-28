@@ -23,6 +23,11 @@
 namespace BaseLib
 {
 /**
+ * \brief Returns true if the project directory is set.
+ */
+bool isProjectDirectorySet();
+
+/**
  * \brief Returns true if given file exists.
  *
  * \param strFilename         the file name

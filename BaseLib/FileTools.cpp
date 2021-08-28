@@ -32,6 +32,11 @@ bool project_directory_is_set = false;
 
 namespace BaseLib
 {
+bool isProjectDirectorySet()
+{
+    return project_directory_is_set;
+}
+
 /**
  * Returns true if given file exists.
  */
