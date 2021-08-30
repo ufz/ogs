@@ -264,6 +264,45 @@ EigenLinearSolver::EigenLinearSolver(const std::string& /*solver_name*/,
     OGS_FATAL("Invalid Eigen linear solver type. Aborting.");
 }
 
+EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
+                                     EigenOption const& option)
+    : option_(option)
+{
+    using Matrix = EigenMatrix::RawMatrixType;
+
+    switch (option_.solver_type)
+    {
+        case EigenOption::SolverType::SparseLU:
+        {
+            using SolverType =
+                Eigen::SparseLU<Matrix, Eigen::COLAMDOrdering<int>>;
+            solver_ = std::make_unique<
+                details::EigenDirectLinearSolver<SolverType>>();
+            return;
+        }
+        case EigenOption::SolverType::BiCGSTAB:
+        case EigenOption::SolverType::CG:
+        case EigenOption::SolverType::GMRES:
+            solver_ = details::createIterativeSolver(option_.solver_type,
+                                                     option_.precon_type);
+            return;
+        case EigenOption::SolverType::PardisoLU:
+        {
+#ifdef USE_MKL
+            using SolverType = Eigen::PardisoLU<EigenMatrix::RawMatrixType>;
+            solver_.reset(new details::EigenDirectLinearSolver<SolverType>);
+            return;
+#else
+            OGS_FATAL(
+                "The code is not compiled with Intel MKL. Linear solver type "
+                "PardisoLU is not available.");
+#endif
+        }
+    }
+
+    OGS_FATAL("Invalid Eigen linear solver type. Aborting.");
+}
+
 EigenLinearSolver::~EigenLinearSolver() = default;
 
 void EigenLinearSolver::setOption(BaseLib::ConfigTree const& option)

@@ -41,6 +41,13 @@ public:
     EigenLinearSolver(const std::string& solver_name,
                       BaseLib::ConfigTree const* const option);
 
+    /**
+     * Constructor
+     * @param option Eigen linear solver options.
+     */
+    explicit EigenLinearSolver(std::string const& solver_name,
+                               EigenOption const& option);
+
     ~EigenLinearSolver();
 
     /**
