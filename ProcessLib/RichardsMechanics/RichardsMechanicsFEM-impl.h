@@ -22,6 +22,7 @@
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
+#include "ProcessLib/Utils/TransposeInPlace.h"
 
 namespace ProcessLib
 {
@@ -1209,26 +1210,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // displacement equation
     local_rhs.template segment<displacement_size>(displacement_index)
         .noalias() += Kup * p_L;
-}
-
-template <int Components, typename StoreValuesFunction>
-std::vector<double> transposeInPlace(
-    StoreValuesFunction const& store_values_function)
-{
-    std::vector<double> result;
-    store_values_function(result);
-    // Transpose. For time being Eigen's transposeInPlace doesn't work for
-    // non-square mapped matrices.
-    MathLib::toMatrix<
-        Eigen::Matrix<double, Eigen::Dynamic, Components, Eigen::RowMajor>>(
-        result, result.size() / Components, Components) =
-        MathLib::toMatrix<
-            Eigen::Matrix<double, Components, Eigen::Dynamic, Eigen::RowMajor>>(
-            result, Components, result.size() / Components)
-            .transpose()
-            .eval();
-
-    return result;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
