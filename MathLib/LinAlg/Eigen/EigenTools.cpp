@@ -40,6 +40,12 @@ void applyKnownSolution(
 
     SpMat AT = A_eigen.transpose();
 
+    // Reserve space for at least one value (on the diagonal). For deactivated
+    // subdomains some rows and columns might end empty (in the A matrix) and so
+    // no space is reserved for the Dirichlet conditions in the transposed
+    // matrix. Then the coeffRef call will do costly reallocations.
+    AT.reserve(Eigen::VectorXi::Constant(A_eigen.rows(), 1));
+
     for (std::size_t ix = 0; ix < vec_knownX_id.size(); ix++)
     {
         SpMat::Index const row_id = vec_knownX_id[ix];
