@@ -20,7 +20,6 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], std::si
     this->_nodes = nodes;
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
-    this->_content = ELEMENT_RULE::computeVolume(this->_nodes);
 
     this->space_dimension_ = ELEMENT_RULE::dimension;
 }
@@ -33,7 +32,6 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> co
     std::copy(nodes.begin(), nodes.end(), this->_nodes);
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
-    this->_content = ELEMENT_RULE::computeVolume(this->_nodes);
 
     this->space_dimension_ = ELEMENT_RULE::dimension;
 }
@@ -52,11 +50,15 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
     {
         this->_neighbors[i] = e._neighbors[i];
     }
-    this->_content = e.getContent();
 
     this->space_dimension_ = e.space_dimension_;
 }
 
+template <class ELEMENT_RULE>
+double TemplateElement<ELEMENT_RULE>::getContent() const
+{
+    return ELEMENT_RULE::computeVolume(this->_nodes);
+}
 
 namespace details
 {
