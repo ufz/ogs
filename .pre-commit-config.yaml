@@ -46,7 +46,11 @@ repos:
       - id: cmake-lint
         additional_dependencies: ["cmakelang[YAML]"]
         exclude: "scripts/cmake/jedbrown/.*|PackagingMacros.cmake|conan.cmake|CPM.cmake|FindFilesystem.cmake|ConanSetup.cmake|BuildExternalProject.cmake"
-  - repo: git://github.com/doublify/pre-commit-clang-format
-    rev: 62302476d0da01515660132d76902359bed0f782
+  - repo: local
     hooks:
-      - id: clang-format
+      - id: git-clang-format
+        name: git-clang-format
+        entry: bash -c 'if command -v git-clang-format &> /dev/null; then git clang-format; else exit 0; fi'
+        language: system
+        pass_filenames: false
+        files: \.(h|cpp)$
