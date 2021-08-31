@@ -22,14 +22,10 @@
 
 namespace MeshLib
 {
-Element::Element(std::size_t id)
-    : _nodes(nullptr), _id(id), _neighbors(nullptr)
-{
-}
+Element::Element(std::size_t id) : _id(id), _neighbors(nullptr) {}
 
 Element::~Element()
 {
-    delete[] this->_nodes;
     delete[] this->_neighbors;
 }
 

@@ -182,7 +182,6 @@ protected:
     /// Sets the element ID.
     virtual void setID(std::size_t id) final { _id = id; }
 
-    Node** _nodes;
     std::size_t _id;
 
     Element** _neighbors;

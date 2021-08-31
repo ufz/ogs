@@ -94,7 +94,7 @@ Mesh::Mesh(const Mesh& mesh)
         _elements[i] = elements[i]->clone();
         for (unsigned j = 0; j < nElemNodes; ++j)
         {
-            _elements[i]->_nodes[j] = _nodes[elements[i]->getNode(j)->getID()];
+            _elements[i]->setNode(j, _nodes[elements[i]->getNode(j)->getID()]);
         }
     }
 
@@ -130,7 +130,7 @@ void Mesh::addElement(Element* elem)
     unsigned nNodes(elem->getNumberOfNodes());
     for (unsigned i = 0; i < nNodes; ++i)
     {
-        elem->_nodes[i]->addElement(elem);
+        const_cast<Node*>(elem->getNode(i))->addElement(elem);
     }
 }
 
@@ -184,7 +184,7 @@ void Mesh::setElementsConnectedToNodes()
         const unsigned nNodes(element->getNumberOfNodes());
         for (unsigned j = 0; j < nNodes; ++j)
         {
-            element->_nodes[j]->addElement(element);
+            const_cast<Node*>(element->getNode(j))->addElement(element);
         }
     }
 }

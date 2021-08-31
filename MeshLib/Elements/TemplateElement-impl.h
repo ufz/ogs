@@ -12,12 +12,11 @@
 
 namespace MeshLib
 {
-
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], std::size_t id)
-: Element(id)
+TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes],
+                                               std::size_t id)
+    : Element(id), _nodes(nodes)
 {
-    this->_nodes = nodes;
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
 
@@ -25,10 +24,10 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], std::si
 }
 
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> const& nodes, std::size_t id)
-: Element(id)
+TemplateElement<ELEMENT_RULE>::TemplateElement(
+    std::array<Node*, n_all_nodes> const& nodes, std::size_t id)
+    : Element(id), _nodes(new Node*[n_all_nodes])
 {
-    this->_nodes = new Node*[n_all_nodes];
     std::copy(nodes.begin(), nodes.end(), this->_nodes);
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
@@ -37,10 +36,9 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> co
 }
 
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
-: Element(e.getID())
+TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement& e)
+    : Element(e.getID()), _nodes(new Node*[n_all_nodes])
 {
-    this->_nodes = new Node*[n_all_nodes];
     for (unsigned i = 0; i < n_all_nodes; i++)
     {
         this->_nodes[i] = e._nodes[i];

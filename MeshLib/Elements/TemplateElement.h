@@ -65,6 +65,7 @@ public:
 
     /// Copy constructor
     TemplateElement(const TemplateElement &e);
+    ~TemplateElement() { delete[] _nodes; }
 
     /// Returns a copy of this object.
     Element* clone() const override { return new TemplateElement(*this); }
