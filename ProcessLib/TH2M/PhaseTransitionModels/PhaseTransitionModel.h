@@ -24,6 +24,23 @@ struct PhaseTransitionModelVariables
     double rhoCGR = 0.;
     double rhoWGR = 0.;
 
+    double drho_GR_dp_GR = 0.;
+    double drho_GR_dT = 0.;
+    double drho_C_GR_dp_GR = 0.;
+    double drho_C_GR_dT = 0.;
+    double drho_LR_dp_GR = 0.;
+    double drho_LR_dp_LR = 0.;
+    double drho_C_LR_dp_GR = 0.;
+    double drho_C_LR_dp_LR = 0.;
+    double drho_C_LR_dT = 0.;
+
+    double drho_W_LR_dp_LR = 0.;
+    double drho_W_LR_dp_GR = 0.;
+    double drho_W_GR_dT = 0.;
+    double drho_W_LR_dT = 0.;
+    double drho_W_GR_dp_GR = 0.;
+    double drho_W_GR_dp_cap = 0.;
+
     // liquid phase density
     double rhoLR = 0.;
     double rhoWLR = 0.;
@@ -71,9 +88,18 @@ struct PhaseTransitionModelVariables
     double hWG = 0;
     double hL = 0;
 
+    double dh_G_dT = 0;
+    double dh_L_dT = 0;
+
     // specific inner energies
     double uG = 0;
     double uL = 0;
+
+    double du_G_dT = 0;
+    double du_L_dT = 0;
+    double du_G_dp_GR = 0;
+    double du_L_dp_GR = 0;
+    double du_L_dp_cap = 0;
 };
 
 struct PhaseTransitionModel
