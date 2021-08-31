@@ -137,9 +137,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& Nu = ip_data.N_u;
         auto const& gradNu = ip_data.dNdx_u;
 
-        auto const& m = Invariants::identity2;
-        auto const mT = m.transpose();
-
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -238,17 +235,30 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const phi_0 = medium.property(MPL::PropertyType::porosity)
                                .template value<double>(vars, pos, t, dt);
 
-        // solid phase volume fraction
-        double const div_u = mT * eps;
         auto const phi_S_0 = 1. - phi_0;
+
+#define NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+        auto const& m = Invariants::identity2;
+        double const div_u = m.transpose() * eps;
+
         const double phi_S = phi_S_0 * (1. + ip_data.thermal_volume_strain -
                                         ip_data.alpha_B * div_u);
+#else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+        const double phi_S = phi_S_0;
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+
         // porosity
         ip_data.phi = 1. - phi_S;
 
         // solid phase density
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         auto const rhoSR = rho_ref_SR * (1. - ip_data.thermal_volume_strain +
                                          (ip_data.alpha_B - 1.) * div_u);
+#else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+        auto const rhoSR = rho_ref_SR;
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
         ip_data.updateConstitutiveRelation(vars, t, pos, dt, T - T_dot * dt);
 
