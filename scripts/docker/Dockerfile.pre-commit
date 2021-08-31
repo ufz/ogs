@@ -13,3 +13,5 @@ RUN wget https://github.com/llvm/llvm-project/releases/download/llvmorg-${clang_
     && tar xf clang+llvm-${clang_version}-x86_64-linux-gnu-ubuntu-16.04.tar.xz \
     && rm clang+llvm-${clang_version}-x86_64-linux-gnu-ubuntu-16.04.tar.xz
 ENV PATH="/clang+llvm-${clang_version}-x86_64-linux-gnu-ubuntu-/bin:${PATH}"
+
+RUN ln -s /usr/bin/python3 /usr/bin/python
