@@ -93,8 +93,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           typename IntegrationMethod, int DisplacementDim>
-void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                        IntegrationMethod, DisplacementDim>::
+std::vector<ConstitutiveVariables<DisplacementDim>>
+TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                   IntegrationMethod, DisplacementDim>::
     updateConstitutiveVariables(Eigen::VectorXd const& local_x,
                                 Eigen::VectorXd const& local_x_dot,
                                 double const t, double const dt)
@@ -127,10 +128,15 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
+
+    std::vector<ConstitutiveVariables<DisplacementDim>>
+        ip_constitutive_variables(n_integration_points);
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         pos.setIntegrationPoint(ip);
         auto& ip_data = _ip_data[ip];
+        auto& ip_cv = ip_constitutive_variables[ip];
 
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
@@ -260,7 +266,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        ip_data.updateConstitutiveRelation(vars, t, pos, dt, T - T_dot * dt);
+        ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt,
+                                                     T - T_dot * dt);
 
         // constitutive model object as specified in process creation
         auto& ptm = *_process_data.phase_transition_model_;
@@ -330,6 +337,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.h_L = c.hL;
         ip_data.pWGR = c.pWGR;
     }
+
+    return ip_constitutive_variables;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

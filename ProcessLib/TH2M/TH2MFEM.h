@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "ConstitutiveVariables.h"
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/PhysicalConstant.h"
@@ -169,9 +170,10 @@ private:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
-    void updateConstitutiveVariables(Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_dot,
-                                     double const t, double const dt);
+    std::vector<ConstitutiveVariables<DisplacementDim>>
+    updateConstitutiveVariables(Eigen::VectorXd const& local_x,
+                                Eigen::VectorXd const& local_x_dot,
+                                double const t, double const dt);
 
     std::size_t setSigma(double const* values)
     {
