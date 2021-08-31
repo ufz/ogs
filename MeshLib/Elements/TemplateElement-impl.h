@@ -15,8 +15,9 @@ namespace MeshLib
 template <class ELEMENT_RULE>
 TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes],
                                                std::size_t id)
-    : Element(id), _nodes(nodes)
+    : Element(id)
 {
+    std::copy_n(nodes, n_all_nodes, std::begin(_nodes));
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
 
@@ -26,9 +27,8 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes],
 template <class ELEMENT_RULE>
 TemplateElement<ELEMENT_RULE>::TemplateElement(
     std::array<Node*, n_all_nodes> const& nodes, std::size_t id)
-    : Element(id), _nodes(new Node*[n_all_nodes])
+    : Element(id), _nodes{nodes}
 {
-    std::copy(nodes.begin(), nodes.end(), this->_nodes);
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
 
@@ -36,13 +36,10 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(
 }
 
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement& e)
-    : Element(e.getID()), _nodes(new Node*[n_all_nodes])
+TemplateElement<ELEMENT_RULE>::TemplateElement(
+    TemplateElement<ELEMENT_RULE> const& e)
+    : Element(e.getID()), _nodes{e._nodes}
 {
-    for (unsigned i = 0; i < n_all_nodes; i++)
-    {
-        this->_nodes[i] = e._nodes[i];
-    }
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     for (unsigned i = 0; i < getNumberOfNeighbors(); i++)
     {
@@ -55,7 +52,7 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement& e)
 template <class ELEMENT_RULE>
 double TemplateElement<ELEMENT_RULE>::getContent() const
 {
-    return ELEMENT_RULE::computeVolume(this->_nodes);
+    return ELEMENT_RULE::computeVolume(_nodes.data());
 }
 
 namespace details
