@@ -266,8 +266,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt,
-                                                     T - T_dot * dt);
+        auto const T_prev = T - T_dot * dt;
+        ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt, T_prev);
 
         // constitutive model object as specified in process creation
         auto& ptm = *_process_data.phase_transition_model_;
