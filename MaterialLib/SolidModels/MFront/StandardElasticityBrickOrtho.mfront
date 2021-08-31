@@ -23,6 +23,13 @@
 
 @RequireStiffnessTensor<UnAltered>;
 
+@InitLocalVariables
+{
+    // Compute initial elastic strain
+    const auto S = invert(D);
+    eel = S * sig;
+}
+
 @Integrator
 {
 }
