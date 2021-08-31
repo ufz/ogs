@@ -2,27 +2,25 @@ pre commit:
   stage: preparation
   image: $PRECOMMIT_IMAGE
   rules:
-    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_MERGE_REQUEST_EVENT_TYPE == "merged_result"
   needs: [ci_images]
   variables:
     SKIP: clang-format
   script:
     - pre-commit install
-    - TARGET_SHA1=$(git show-ref -s ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME} | tail -1)
-    - pre-commit run --from-ref `git merge-base ${TARGET_SHA1} HEAD` --to-ref HEAD
-    - echo "Target branch is ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}, target sha is ${TARGET_SHA1}."
-    - git diff --check `git merge-base ${TARGET_SHA1} HEAD` HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
+    - echo "Target target sha is ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}."
+    - pre-commit run --from-ref ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA} --to-ref HEAD
+    - git diff --check ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA} HEAD -- . ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
 
 clang-format:
   stage: check
   image: $PRECOMMIT_IMAGE
   rules:
-    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_MERGE_REQUEST_EVENT_TYPE == "merged_result"
   needs: [ci_images]
   allow_failure: true
   script:
-    - pre-commit install
-    - TARGET_SHA1=$(git show-ref -s ${CI_MERGE_REQUEST_TARGET_BRANCH_NAME})
-    - pre-commit run clang-format --from-ref `git merge-base ${TARGET_SHA1} HEAD` --to-ref HEAD
+    - git clang-format ${CI_MERGE_REQUEST_TARGET_BRANCH_SHA}
+    - if [[ $(git diff) ]]; then exit 1; fi
   after_script:
     - git diff
