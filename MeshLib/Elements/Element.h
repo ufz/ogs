@@ -55,6 +55,7 @@ public:
      * @sa getNodeIndex()
      */
     virtual const Node* getNode(unsigned idx) const = 0;
+    virtual Node* getNode(unsigned idx) = 0;
 
     /**
      * (Re)Sets the node of the element.

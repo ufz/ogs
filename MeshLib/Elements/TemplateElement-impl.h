@@ -110,6 +110,20 @@ const Node* TemplateElement<ELEMENT_RULE>::getNode(unsigned const idx) const
 }
 
 template <class ELEMENT_RULE>
+Node* TemplateElement<ELEMENT_RULE>::getNode(unsigned const idx)
+{
+#ifndef NDEBUG
+    if (idx >= getNumberOfNodes())
+    {
+        ERR("Error in MeshLib::TemplateElement::getNode() - Index {:d} in {:s}",
+            idx, MeshElemType2String(getGeomType()));
+        return nullptr;
+    }
+#endif
+    return _nodes[idx];
+}
+
+template <class ELEMENT_RULE>
 void TemplateElement<ELEMENT_RULE>::setNode(unsigned idx, Node* node)
 {
 #ifndef NDEBUG

@@ -189,6 +189,7 @@ public:
     }
 
     const Node* getNode(unsigned idx) const override;
+    Node* getNode(unsigned idx) override;
     void setNode(unsigned idx, Node* node) override;
     Node* const* getNodes() const override { return _nodes.data(); }
 
