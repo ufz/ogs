@@ -11,63 +11,6 @@
 
 #include "MaterialLib/PhysicalConstant.h"
 
-namespace
-{
-int numberOfGasComponents(
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
-{
-    // It is always the first (begin) medium that holds fluid phases.
-    auto const medium = media.begin()->second;
-    auto const& gas_phase = medium->phase("Gas");
-
-    int const n_components_gas = gas_phase.numberOfComponents();
-
-    if (n_components_gas > 2)
-    {
-        OGS_FATAL(
-            "More than two gas phase components are defined. Gaseous mixtures "
-            "of more than two components are currently not provided.");
-    }
-    if (n_components_gas < 2)
-    {
-        OGS_FATAL(
-            "MPL::PhaseTransitionEvaporation() requires at least two "
-            "components in the gas phase.");
-    }
-
-    return n_components_gas;
-}
-
-int findVapourComponentIndex(
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
-{
-    // It is always the first (begin) medium that holds fluid phases.
-    auto const medium = media.begin()->second;
-    auto const& gas_phase = medium->phase("Gas");
-    int const n_components_gas = gas_phase.numberOfComponents();
-
-    // find the component for which the property 'vapour pressure' is defined,
-    // using it as the evaporating component.
-    for (int c = 0; c < n_components_gas; c++)
-    {
-        if (gas_phase.component(c).hasProperty(
-                MaterialPropertyLib::PropertyType::vapour_pressure))
-        {
-            return c;
-        }
-    }
-
-    // A lot of checks can (and should) be done to make sure that the right
-    // components with the right properties are used. For example, the names of
-    // the components can be compared to check that the name of the evaporable
-    // component does not also correspond to the name of the solvate.
-
-    OGS_FATAL(
-        "MPL::PhaseTransitionEvaporation(); none of the gas phase components "
-        "has a required property vapour_pressure.");
-}
-}  // namespace
-
 namespace ProcessLib
 {
 namespace TH2M
@@ -75,12 +18,21 @@ namespace TH2M
 PhaseTransitionEvaporation::PhaseTransitionEvaporation(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
     : PhaseTransitionModel(media),
-      n_components_gas_{numberOfGasComponents(media)},
-      gas_phase_vapour_component_index_{findVapourComponentIndex(media)},
+      n_components_gas_{numberOfComponents(media, "Gas")},
+      gas_phase_vapour_component_index_{findComponentIndex(
+          media, "Gas", MaterialPropertyLib::PropertyType::vapour_pressure)},
       // dry air component is complement of vapour component index
       gas_phase_dry_air_component_index_{gas_phase_vapour_component_index_ ^ 1}
 {
     DBUG("Create PhaseTransitionEvaporation constitutive model.");
+
+    if (n_components_gas_ != 2)
+    {
+        OGS_FATAL(
+            "The current implementation of PhaseTransitionModelEvaporation "
+            "requires the specification of exactly two components in the gas "
+            "phase.");
+    }
 
     // It is always the first (begin) medium that holds fluid phases.
     auto const medium = media.begin()->second;

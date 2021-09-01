@@ -118,6 +118,45 @@ struct PhaseTransitionModel
         ParameterLib::SpatialPosition pos, double const t,
         double const dt) const = 0;
 
+    int numberOfComponents(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media,
+        std::string phase_name)
+    {
+        // Always the first (begin) medium that holds fluid phases.
+        auto const medium = media.begin()->second;
+        return medium->phase(phase_name).numberOfComponents();
+    }
+
+    int findComponentIndex(
+        std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
+            media,
+        std::string phase_name, MaterialPropertyLib::PropertyType property_type)
+    {
+        // It is always the first (begin) medium that holds fluid phases.
+        auto const medium = media.begin()->second;
+        auto const& phase = medium->phase(phase_name);
+
+        // find the component for which the property 'property_type' is defined
+        for (std::size_t c = 0; c < phase.numberOfComponents(); c++)
+        {
+            if (phase.component(c).hasProperty(property_type))
+            {
+                return c;
+            }
+        }
+
+        // A lot of checks can (and should) be done to make sure that the right
+        // components with the right properties are used. For example, the names
+        // of the components can be compared to check that the name of the
+        // evaporable component does not also correspond to the name of the
+        // solvate.
+
+        OGS_FATAL(
+            "PhaseTransitionModel::findComponentIndex could not find the "
+            "specified property type in the phase.");
+    }
+
     // constitutive variables
     PhaseTransitionModelVariables cv;
 };
