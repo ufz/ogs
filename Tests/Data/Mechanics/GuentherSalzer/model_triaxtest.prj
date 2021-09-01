@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- units: kg, m, s, N -->
+<OpenGeoSysProject>
+    <meshes>
+        <mesh axially_symmetric="true">model.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_left.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_right.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_top.vtu</mesh>
+        <mesh axially_symmetric="true">geometry_bottom.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>GuentherSalzer</behaviour>
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="YoungModulus"/>
+                    <material_property name="PoissonRatio" parameter="PoissonRatio"/>
+                    <material_property name="PrimaryPowerLawFactor" parameter="Ap"/>
+                    <material_property name="PrimaryPowerLawExponent" parameter="np"/>
+                    <material_property name="SecondaryPowerLawFactor1" parameter="As1"/>
+                    <material_property name="SecondaryPowerLawExponent1" parameter="ns1"/>
+                    <material_property name="SecondaryActivationEnergy1" parameter="Q1"/>
+                    <material_property name="SecondaryPowerLawFactor2" parameter="As2"/>
+                    <material_property name="SecondaryPowerLawExponent2" parameter="ns2"/>
+                    <material_property name="SecondaryActivationEnergy2" parameter="Q2"/>
+                    <material_property name="HardeningExponent" parameter="mup"/>
+                    <material_property name="InitialHardening" parameter="epsV0"/>
+                    <material_property name="ReferenceStress" parameter="sref"/>
+                </material_properties>
+            </constitutive_relation>
+            <solid_density>rho_sr</solid_density>
+            <specific_body_force>0 0</specific_body_force>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <secondary_variable internal_name="HardeningStrain" output_name="HardeningStrain"/>
+            </secondary_variables>
+            <reference_temperature>T_ref</reference_temperature>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-12</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>IterationNumberBasedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>200</t_end>
+                    <initial_dt>1</initial_dt>
+                    <minimum_dt>1.e-3</minimum_dt>
+                    <maximum_dt>10.</maximum_dt>
+                    <number_iterations>1   5   10   15</number_iterations>
+                    <multiplier>1.2 1.0 0.8 0.6</multiplier>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>triaxtest_output</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>10000</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+            </variables>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>YoungModulus</name>
+            <type>Constant</type>
+            <value>1e5</value>
+        </parameter>
+        <parameter>
+            <name>PoissonRatio</name>
+            <type>Constant</type>
+            <value>0.27</value>
+        </parameter>
+        <parameter>
+            <name>Ap</name>
+            <type>Constant</type>
+            <value>6.5e-24</value>
+        </parameter>
+        <parameter>
+            <name>np</name>
+            <type>Constant</type>
+            <value>11.88</value>
+        </parameter>
+        <parameter>
+            <name>As1</name>
+            <type>Constant</type>
+            <value>0.001</value>
+        </parameter>
+        <parameter>
+            <name>ns1</name>
+            <type>Constant</type>
+            <value>2.7</value>
+        </parameter>
+        <parameter>
+            <name>Q1</name>
+            <type>Constant</type>
+            <value>40e3</value>
+        </parameter>
+        <parameter>
+            <name>As2</name>
+            <type>Constant</type>
+            <value>0.001</value>
+        </parameter>
+        <parameter>
+            <name>ns2</name>
+            <type>Constant</type>
+            <value>6.8</value>
+        </parameter>
+        <parameter>
+            <name>Q2</name>
+            <type>Constant</type>
+            <value>65e3</value>
+        </parameter>
+        <parameter>
+            <name>mup</name>
+            <type>Constant</type>
+            <value>2.95</value>
+        </parameter>
+        <parameter>
+            <name>sref</name>
+            <type>Constant</type>
+            <value>1.0</value>
+        </parameter>
+        <parameter>
+            <name>epsV0</name>
+            <type>Constant</type>
+            <value>1.e-4</value>
+        </parameter>
+        <parameter>
+            <name>T_ref</name>
+            <type>Constant</type>
+            <value>293.15</value>
+        </parameter>
+        <!-- Initial and boundary values -->
+        <parameter>
+            <name>rho_sr</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </parameter>
+        <parameter>
+            <name>axial_pressure</name>
+            <type>CurveScaled</type>
+            <curve>ax_loading_curve</curve>
+            <parameter>loading_value_top</parameter>
+        </parameter>
+        <parameter>
+            <name>loading_value_top</name>
+            <type>Constant</type>
+            <value>-1</value>            <!--Pa-->
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>ax_loading_curve</name>
+            <coords>0.0 0.1  60.0 60.1 200</coords>
+            <values>0.0 16.0 16.0 25.0 25.0</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <!--fix left in radial direction-->
+                <boundary_condition>
+                    <mesh>geometry_left</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!--fix bottom in axial direction-->
+                <boundary_condition>
+                    <mesh>geometry_bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!--compression in axial direction -->
+                <boundary_condition>
+                    <mesh>geometry_top</mesh>
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>axial_pressure</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>60</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <!--primary field-->
+        <vtkdiff>
+            <file>triaxtest_output_ts_199_t_199.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>2e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <!--secondary field-->
+        <vtkdiff>
+            <file>triaxtest_output_ts_199_t_199.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>9e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>

@@ -9,6 +9,7 @@ mfront_behaviours_check_library(
     BDT
     DruckerPrager
     Elasticity
+    GuentherSalzer
     Lubby2
     Lubby2mod
     ModCamClay_semiExplParaInit
