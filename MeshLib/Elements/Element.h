@@ -46,15 +46,15 @@ public:
     virtual double getContent() const = 0;
 
     /**
-     * Get node with local index i where i should be at most the number
-     * of nodes of the element
-     * @param i local index of node, at most the number of nodes of the
+     * Get node with local index where the local index should be at most the
+     * number of nodes of the element.
+     * @param idx local index of node, at most the number of nodes of the
      * element that you can obtain with Element::getNumberOfBaseNodes()
      * @return a pointer to the appropriate (and constant, i.e. not
      * modifiable by the user) instance of class Node or a nullptr
      * @sa getNodeIndex()
      */
-    virtual const Node* getNode(unsigned i) const = 0;
+    virtual const Node* getNode(unsigned idx) const = 0;
 
     /**
      * (Re)Sets the node of the element.

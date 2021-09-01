@@ -188,7 +188,7 @@ public:
         return ELEMENT_RULE::computeVolume(_nodes.data());
     }
 
-    const Node* getNode(unsigned i) const override;
+    const Node* getNode(unsigned idx) const override;
     void setNode(unsigned idx, Node* node) override;
     Node* const* getNodes() const override { return _nodes.data(); }
 

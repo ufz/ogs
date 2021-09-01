@@ -96,19 +96,17 @@ bool TemplateElement<ELEMENT_RULE>::isEdge(unsigned idx1, unsigned idx2) const
 }
 
 template <class ELEMENT_RULE>
-const Node* TemplateElement<ELEMENT_RULE>::getNode(unsigned i) const
+const Node* TemplateElement<ELEMENT_RULE>::getNode(unsigned const idx) const
 {
 #ifndef NDEBUG
-    if (i < getNumberOfNodes())
-#endif
+    if (idx >= getNumberOfNodes())
     {
-        return _nodes[i];
+        ERR("Error in MeshLib::TemplateElement::getNode() - Index {:d} in {:s}",
+            idx, MeshElemType2String(getGeomType()));
+        return nullptr;
     }
-#ifndef NDEBUG
-    ERR("Error in MeshLib::TemplateElement::getNode() - Index {:d} in {:s}", i,
-        MeshElemType2String(getGeomType()));
-    return nullptr;
 #endif
+    return _nodes[idx];
 }
 
 template <class ELEMENT_RULE>
