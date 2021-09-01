@@ -130,7 +130,7 @@ void Mesh::addElement(Element* elem)
     unsigned nNodes(elem->getNumberOfNodes());
     for (unsigned i = 0; i < nNodes; ++i)
     {
-        const_cast<Node*>(elem->getNode(i))->addElement(elem);
+        elem->getNode(i)->addElement(elem);
     }
 }
 
@@ -184,7 +184,7 @@ void Mesh::setElementsConnectedToNodes()
         const unsigned nNodes(element->getNumberOfNodes());
         for (unsigned j = 0; j < nNodes; ++j)
         {
-            const_cast<Node*>(element->getNode(j))->addElement(element);
+            element->getNode(j)->addElement(element);
         }
     }
 }
