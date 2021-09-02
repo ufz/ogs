@@ -293,7 +293,7 @@ AddTest(
     REQUIREMENTS OGS_USE_MFRONT AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 22
     DIFF_DATA
-    SimpleAxisymmetricCreepWithAnalyticSolutionMFront.vtu SimpleAxisymmetricCreepWithAnalyticalSolutionMFront_ts_1000_t_100.000000.vtu analytic_strain epsilon 1e-7 0
+    SimpleAxisymmetricCreepWithAnalyticSolutionMFront.vtu SimpleAxisymmetricCreepWithAnalyticalSolutionMFront_ts_1000_t_100.000000.vtu analytic_strain epsilon 2e-6 0
 )
 
 AddTest(
