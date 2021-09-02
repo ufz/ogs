@@ -170,7 +170,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
     // copy previous state before modification.
     PhaseTransitionModelVariables cv = phase_transition_model_variables;
     cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(variables, pos, t, dt);
+                   .template value<double>(variables, pos, t, dt);
     cv.rhoWLR = cv.rhoLR;
 
     // Kelvin-Laplace correction for menisci
@@ -192,7 +192,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
 
     // gas phase mixture density
     cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
-                .template value<double>(variables, pos, t, dt);
+                   .template value<double>(variables, pos, t, dt);
 
     auto const drhoGR_dpGR =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -261,7 +261,7 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
 
     // gas phase viscosity
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-               .template value<double>(variables, pos, t, dt);
+                  .template value<double>(variables, pos, t, dt);
 
     // gas phase thermal conductivity
     cv.lambdaGR =
@@ -270,8 +270,9 @@ PhaseTransitionEvaporation::updateConstitutiveVariables(
             .template value<double>(variables, pos, t, dt);
 
     // liquid phase viscosity
-    cv.muLR = liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-               .template value<double>(variables, pos, t, dt);
+    cv.muLR =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            .template value<double>(variables, pos, t, dt);
 
     // liquid phase thermal conductivity
     cv.lambdaLR =
