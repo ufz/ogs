@@ -22,8 +22,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
 
-namespace MeshLib {
-
+namespace MeshLib
+{
 class Node;
 
 /**
@@ -100,11 +100,13 @@ public:
      */
     virtual unsigned getNumberOfBaseNodes() const = 0;
 
-    /// Returns the number of all nodes including both linear and nonlinear nodes
+    /// Returns the number of all nodes including both linear and nonlinear
+    /// nodes
     virtual unsigned getNumberOfNodes() const = 0;
 
     /**
-     * Get the type of the mesh element in geometric context (as a MeshElemType-enum).
+     * Get the type of the mesh element in geometric context (as a
+     * MeshElemType-enum).
      */
     virtual MeshElemType getGeomType() const = 0;
 
@@ -114,7 +116,8 @@ public:
      */
     virtual CellType getCellType() const = 0;
 
-    /// Returns true if the element is located at a boundary (i.e. has at least one face without neighbour)
+    /// Returns true if the element is located at a boundary (i.e. has at least
+    /// one face without neighbour)
     virtual bool isBoundaryElement() const;
 
     /// Returns true if these two indices form an edge and false otherwise
@@ -123,10 +126,13 @@ public:
     /**
      * Checks if a point is inside the element.
      * @param pnt a 3D MathLib::Point3d object
-     * @param eps tolerance for numerical algorithm used or computing the property
+     * @param eps tolerance for numerical algorithm used or computing the
+     * property
      * @return true if the point is not outside the element, false otherwise
      */
-    virtual bool isPntInElement(MathLib::Point3d const& pnt, double eps = std::numeric_limits<double>::epsilon()) const = 0;
+    virtual bool isPntInElement(
+        MathLib::Point3d const& pnt,
+        double eps = std::numeric_limits<double>::epsilon()) const = 0;
 
     /**
      * Tests if the element is geometrically valid.
@@ -138,7 +144,8 @@ public:
 
     /**
      * Method clone is a pure virtual method in the abstract base class Element.
-     * It has to be implemented in the derived classes (for instance in class Hex).
+     * It has to be implemented in the derived classes (for instance in class
+     * Hex).
      * @return an exact copy of the object
      */
     virtual Element* clone() const = 0;
@@ -152,8 +159,9 @@ public:
     virtual Element* clone(Node** nodes, std::size_t id) const = 0;
 
     /**
-     * Computes the length / area / volumen of this element. This is automatically
-     * done at initialisation time but can be repeated by calling this function at any time.
+     * Computes the length / area / volumen of this element. This is
+     * automatically done at initialisation time but can be repeated by calling
+     * this function at any time.
      */
     virtual double computeVolume() = 0;
 
@@ -161,7 +169,8 @@ public:
     virtual unsigned identifyFace(Node const* nodes[3]) const = 0;
 
     /**
-     * Checks if the node order of an element is correct by testing surface normals.
+     * Checks if the node order of an element is correct by testing surface
+     * normals.
      */
     virtual bool testElementNodeOrder() const = 0;
 

@@ -80,9 +80,9 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
 
 bool Element::isBoundaryElement() const
 {
-    return std::any_of(
-        _neighbors, _neighbors + this->getNumberOfNeighbors(),
-        [](MeshLib::Element const* const e) { return e == nullptr; });
+    return std::any_of(_neighbors, _neighbors + this->getNumberOfNeighbors(),
+                       [](MeshLib::Element const* const e)
+                       { return e == nullptr; });
 }
 
 #ifndef NDEBUG
