@@ -14,15 +14,16 @@
 
 #pragma once
 
-namespace BaseLib {
-
-class MemWatch {
+namespace BaseLib
+{
+class MemWatch
+{
 public:
-    MemWatch ();
-    unsigned long getVirtMemUsage ();
+    MemWatch();
+    unsigned long getVirtMemUsage();
 
 private:
-    unsigned updateMemUsage ();
+    unsigned updateMemUsage();
     unsigned long vmem_size_ = 0;
 };
 

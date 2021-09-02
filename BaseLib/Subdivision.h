@@ -14,7 +14,6 @@
 
 namespace BaseLib
 {
-
 /**
  * Interface class for subdivision operators
  */
@@ -74,11 +73,10 @@ public:
      * @param max_dL      maximum cell length
      * @param multiplier  multiplier to cell length
      */
-    GradualSubdivision(
-            const double L,
-            const double dL0,
-            const double max_dL,
-            const double multiplier);
+    GradualSubdivision(const double L,
+                       const double dL0,
+                       const double max_dL,
+                       const double multiplier);
 
     /// Returns a vector of subdivided points
     std::vector<double> operator()() const override;

@@ -18,22 +18,21 @@
 
 namespace BaseLib
 {
-
 /// Count CPU time
 class CPUTime
 {
-    public:
-        /// Start the timer.
-        void start() { start_time_ = clock(); }
+public:
+    /// Start the timer.
+    void start() { start_time_ = clock(); }
 
-        /// Get the elapsed time after started.
-        double elapsed() const
-        {
-            return (clock() - start_time_) /
-                   static_cast<double>(CLOCKS_PER_SEC);
-        }
-    private:
-        double start_time_ = 0.;
+    /// Get the elapsed time after started.
+    double elapsed() const
+    {
+        return (clock() - start_time_) / static_cast<double>(CLOCKS_PER_SEC);
+    }
+
+private:
+    double start_time_ = 0.;
 };
 
-} // end namespace BaseLib
+}  // end namespace BaseLib

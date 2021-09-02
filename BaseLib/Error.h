@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cstdlib>
+
 #include "Logging.h"
 
 #ifdef OGS_FATAL_ABORT
@@ -29,4 +30,3 @@
         throw std::runtime_error(fmt::format(__VA_ARGS__));                 \
     }
 #endif  // OGS_FATAL_ABORT
-

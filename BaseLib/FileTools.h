@@ -27,7 +27,7 @@ namespace BaseLib
  *
  * \param strFilename         the file name
  */
-bool IsFileExisting(const std::string &strFilename);
+bool IsFileExisting(const std::string& strFilename);
 
 /**
  * Returns the begin and end position of the string enclosed in open_char and
@@ -54,7 +54,8 @@ std::string constructFormattedFileName(std::string const& format_specification,
  * \param out   output stream, have to be opened in binary mode
  * \param val   value
  */
-template <typename T> void writeValueBinary(std::ostream &out, T const& val)
+template <typename T>
+void writeValueBinary(std::ostream& out, T const& val)
 {
     out.write(reinterpret_cast<const char*>(&val), sizeof(T));
 }
@@ -79,7 +80,6 @@ T swapEndianness(T const& v)
 
 double swapEndianness(double const& v);
 
-
 template <typename T>
 T readBinaryValue(std::istream& in)
 {
@@ -92,7 +92,8 @@ template <typename T>
 std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
 {
     std::ifstream in(filename.c_str());
-    if (!in) {
+    if (!in)
+    {
         ERR("readBinaryArray(): Error while reading from file '{:s}'.",
             filename);
         ERR("Could not open file '{:s}' for input.", filename);
@@ -158,8 +159,8 @@ bool hasFileExtension(std::string const& extension,
  * Checks if file_name already contains a qualified path and if not copies the
  * path from source.
  */
-std::string copyPathToFileName(const std::string &file_name,
-                               const std::string &source);
+std::string copyPathToFileName(const std::string& file_name,
+                               const std::string& source);
 
 /** Returns a string with file extension as found by getFileExtension()
  * dropped.

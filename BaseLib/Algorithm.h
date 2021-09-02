@@ -21,7 +21,6 @@
 
 namespace BaseLib
 {
-
 /// excludeObjectCopy copies only those objects that position within the source
 /// vector is not in the exclude_positions vector. The implementation of the
 /// algorithm requires that the given positions in exclude_positions are sorted
@@ -122,9 +121,8 @@ template <typename Map, typename Key, typename Value>
 void insertIfKeyValueUniqueElseError(Map& map, Key const& key, Value&& value,
                                      std::string const& error_message)
 {
-    auto value_compare = [&value](typename Map::value_type const& elem) {
-        return value == elem.second;
-    };
+    auto value_compare = [&value](typename Map::value_type const& elem)
+    { return value == elem.second; };
 
     if (std::find_if(map.cbegin(), map.cend(), value_compare) != map.cend())
     {
@@ -237,7 +235,7 @@ void reorderVector(std::vector<ValueType>& v,
     std::vector<ValueType> temp_v(v.size());
     temp_v.swap(v);
 
-    for (std::size_t i=0; i<order.size(); i++)
+    for (std::size_t i = 0; i < order.size(); i++)
     {
         std::swap(v[i], temp_v[order[i]]);
     }
@@ -275,9 +273,8 @@ std::optional<typename Container::value_type> findFirstNotEqualElement(
 {
     auto const it =
         std::find_if_not(container.begin(), container.end(),
-                         [&element](typename Container::value_type const& e) {
-                             return e == element;
-                         });
+                         [&element](typename Container::value_type const& e)
+                         { return e == element; });
     return it == container.end() ? std::nullopt : std::make_optional(*it);
 }
 

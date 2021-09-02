@@ -9,21 +9,20 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-#include <list>
-#include <iosfwd>
-#include <algorithm>
-
+#include <tclap/Arg.h>
 #include <tclap/CmdLineInterface.h>
 #include <tclap/CmdLineOutput.h>
 #include <tclap/StdOutput.h>
 #include <tclap/XorHandler.h>
-#include <tclap/Arg.h>
+
+#include <algorithm>
+#include <iosfwd>
+#include <list>
+#include <string>
+#include <vector>
 
 namespace BaseLib
 {
-
 /**
  * TCLAP standard output modified as follows
  * - Print arguments in the order of added to Command object
@@ -74,7 +73,6 @@ inline void TCLAPCustomOutput::usage(TCLAP::CmdLineInterface& cmd_)
     longUsage_(cmd_, std::cout);
 
     std::cout << std::endl;
-
 }
 
 inline void TCLAPCustomOutput::failure(TCLAP::CmdLineInterface& cmd_,
@@ -83,7 +81,8 @@ inline void TCLAPCustomOutput::failure(TCLAP::CmdLineInterface& cmd_,
     std::string progName = cmd_.getProgramName();
 
     std::cerr << "PARSE ERROR: " << e.argId() << std::endl
-              << "             " << e.error() << std::endl << std::endl;
+              << "             " << e.error() << std::endl
+              << std::endl;
 
     if (cmd_.hasHelpAndVersion())
     {
@@ -110,32 +109,32 @@ inline void TCLAPCustomOutput::shortUsage_(TCLAP::CmdLineInterface& cmd_,
     std::list<TCLAP::Arg*> argList = cmd_.getArgList();
     std::string progName = cmd_.getProgramName();
     TCLAP::XorHandler xorHandler = cmd_.getXorHandler();
-    std::vector< std::vector<TCLAP::Arg*> > xorList = xorHandler.getXorList();
+    std::vector<std::vector<TCLAP::Arg*>> xorList = xorHandler.getXorList();
 
     std::string s = progName + " ";
 
     // first the xor
-    for ( int i = 0; static_cast<unsigned int>(i) < xorList.size(); i++ )
+    for (int i = 0; static_cast<unsigned int>(i) < xorList.size(); i++)
+    {
+        s += " {";
+        for (TCLAP::ArgVectorIterator it = xorList[i].begin();
+             it != xorList[i].end();
+             it++)
         {
-            s += " {";
-            for (TCLAP::ArgVectorIterator it = xorList[i].begin();
-                 it != xorList[i].end();
-                 it++)
-            {
-                s += (*it)->shortID() + "|";
-            }
-
-            s[s.length()-1] = '}';
+            s += (*it)->shortID() + "|";
         }
+
+        s[s.length() - 1] = '}';
+    }
 
     // then the rest
-        for (auto it = argList.rbegin(); it != argList.rend(); ++it)
-        {  // here modified
-            if (!xorHandler.contains((*it)))
-            {
-                s += " " + (*it)->shortID();
-            }
+    for (auto it = argList.rbegin(); it != argList.rend(); ++it)
+    {  // here modified
+        if (!xorHandler.contains((*it)))
+        {
+            s += " " + (*it)->shortID();
         }
+    }
 
     // if the program name is too long, then adjust the second line offset
     int secondLineOffset = static_cast<int>(progName.length()) + 2;
@@ -144,7 +143,7 @@ inline void TCLAPCustomOutput::shortUsage_(TCLAP::CmdLineInterface& cmd_,
         secondLineOffset = static_cast<int>(75 / 2);
     }
 
-    spacePrint( os, s, 75, 3, secondLineOffset );
+    spacePrint(os, s, 75, 3, secondLineOffset);
 }
 
 inline void TCLAPCustomOutput::longUsage_(TCLAP::CmdLineInterface& cmd_,
@@ -153,40 +152,40 @@ inline void TCLAPCustomOutput::longUsage_(TCLAP::CmdLineInterface& cmd_,
     std::list<TCLAP::Arg*> argList = cmd_.getArgList();
     std::string message = cmd_.getMessage();
     TCLAP::XorHandler xorHandler = cmd_.getXorHandler();
-    std::vector< std::vector<TCLAP::Arg*> > xorList = xorHandler.getXorList();
+    std::vector<std::vector<TCLAP::Arg*>> xorList = xorHandler.getXorList();
 
     // first the xor
-    for ( int i = 0; static_cast<unsigned int>(i) < xorList.size(); i++ )
+    for (int i = 0; static_cast<unsigned int>(i) < xorList.size(); i++)
+    {
+        for (TCLAP::ArgVectorIterator it = xorList[i].begin();
+             it != xorList[i].end();
+             it++)
         {
-            for ( TCLAP::ArgVectorIterator it = xorList[i].begin();
-                  it != xorList[i].end();
-                  it++ )
-                {
-                    this->spacePrint( os, (*it)->longID(), 75, 3, 3 );
-                    spacePrint( os, (*it)->getDescription(), 75, 5, 0 );
+            this->spacePrint(os, (*it)->longID(), 75, 3, 3);
+            spacePrint(os, (*it)->getDescription(), 75, 5, 0);
 
-                    if (it + 1 != xorList[i].end())
-                    {
-                        spacePrint(os, "-- OR --", 75, 9, 0);
-                    }
-                }
-            os << std::endl << std::endl;
-        }
-
-    // then the rest
-        for (auto it = argList.rbegin(); it != argList.rend(); it++)
-        {  // here modified
-            if (!xorHandler.contains((*it)))
+            if (it + 1 != xorList[i].end())
             {
-                spacePrint( os, (*it)->longID(), 75, 3, 3 );
-                spacePrint( os, (*it)->getDescription(), 75, 5, 0 );
-                os << std::endl;
+                spacePrint(os, "-- OR --", 75, 9, 0);
             }
         }
+        os << std::endl << std::endl;
+    }
+
+    // then the rest
+    for (auto it = argList.rbegin(); it != argList.rend(); it++)
+    {  // here modified
+        if (!xorHandler.contains((*it)))
+        {
+            spacePrint(os, (*it)->longID(), 75, 3, 3);
+            spacePrint(os, (*it)->getDescription(), 75, 5, 0);
+            os << std::endl;
+        }
+    }
 
     os << std::endl;
 
-    spacePrint( os, message, 75, 3, 0 );
+    spacePrint(os, message, 75, 3, 0);
 }
 
-} //namespace BaseLib
+}  // namespace BaseLib

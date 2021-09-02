@@ -57,8 +57,8 @@ public:
     /** Creates histogram from \c std::vector.
      * \param data Input vector.
      * \param nr_bins Number of bins in histogram.
-     * \param computeHistogram Compute histogram if set. If not set user must call
-     * \c update() before accessing data.
+     * \param computeHistogram Compute histogram if set. If not set user must
+     * call \c update() before accessing data.
      */
     explicit Histogram(std::vector<T> data, const unsigned int nr_bins = 16,
                        const bool computeHistogram = true)
@@ -115,8 +115,7 @@ public:
     const T& getMaximum() const { return max_; }
     const T& getBinWidth() const { return bin_width_; }
 
-    void
-    prettyPrint(std::ostream& os, const unsigned int line_width = 16) const
+    void prettyPrint(std::ostream& os, const unsigned int line_width = 16) const
     {
         const std::size_t count_max =
             *std::max_element(histogram_.begin(), histogram_.end());
@@ -136,32 +135,34 @@ public:
         }
     }
 
-    int write(std::string const& file_name, std::string const& data_set_name, std::string const& param_name) const
+    int write(std::string const& file_name, std::string const& data_set_name,
+              std::string const& param_name) const
     {
         if (file_name.empty())
         {
-            ERR ("No file name specified.");
+            ERR("No file name specified.");
             return 1;
         }
 
-        std::ofstream out (file_name);
+        std::ofstream out(file_name);
         if (!out)
         {
             ERR("Error writing histogram: Could not open file.");
             return 1;
         }
 
-        out << "# Histogram for parameter " << param_name << " of data set " << data_set_name << "\n";
+        out << "# Histogram for parameter " << param_name << " of data set "
+            << data_set_name << "\n";
         std::size_t const n_bins = this->getNumberOfBins();
         std::vector<std::size_t> const& bin_cnts(this->getBinCounts());
-        double const min (this->getMinimum());
-        double const bin_width (this->getBinWidth());
+        double const min(this->getMinimum());
+        double const bin_width(this->getBinWidth());
 
         for (std::size_t k(0); k < n_bins; k++)
         {
             out << min + k * bin_width << " " << bin_cnts[k] << "\n";
         }
-        out.close ();
+        out.close();
         return 0;
     }
 
@@ -199,14 +200,12 @@ private:
  * number of bins, minimum, maximum, bin0 count, ..., binN-1 count.
  */
 template <typename T>
-std::ostream&
-operator<<(std::ostream& os, const Histogram<T>& h)
+std::ostream& operator<<(std::ostream& os, const Histogram<T>& h)
 {
-    os << h.getNumberOfBins() << " "
-       << h.getMinimum() << " "
-       << h.getMaximum() << " ";
+    os << h.getNumberOfBins() << " " << h.getMinimum() << " " << h.getMaximum()
+       << " ";
     std::copy(h.getBinCounts().begin(), h.getBinCounts().end(),
               std::ostream_iterator<T>(os, " "));
     return os << std::endl;
 }
-}   // namespace BaseLib
+}  // namespace BaseLib

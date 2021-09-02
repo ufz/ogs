@@ -19,7 +19,6 @@
 
 namespace BaseLib
 {
-
 /**
  * Converts three integers representing a date into a double.
  * Note: It is not really checked if the date actually makes sense.
@@ -46,15 +45,16 @@ std::string date2string(double ddate);
  * \param s String containing the date, the expected format is "dd.mm.yyyy".
  * \return A number representing the date as dd.mm.yyyy.
  */
-int strDate2int(const std::string &s);
+int strDate2int(const std::string& s);
 
 /**
  * Converts a string containing a date into a double.
  * Note: It is not really checked if the date actually makes sense.
- * \param s String containing the date, the expected format is conform to the xml date type, i.e. "yyyy-mm-dd".
- * \return A number representing the date as yyyymmdd.
+ * \param s String containing the date, the expected format is conform to the
+ * xml date type, i.e. "yyyy-mm-dd". \return A number representing the date as
+ * yyyymmdd.
  */
-int xmlDate2int(const std::string &s);
+int xmlDate2int(const std::string& s);
 
 /**
  * Formats the given time point according to RFC 3339 (cf. man-page of the unix
@@ -65,4 +65,4 @@ int xmlDate2int(const std::string &s);
 std::string formatDate(
     std::chrono::time_point<std::chrono::system_clock> const& time);
 
-} // namespace BaseLib
+}  // namespace BaseLib

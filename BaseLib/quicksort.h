@@ -30,9 +30,9 @@ void quicksort(It1 first1, It1 last1, It2 first2, Comparator compare)
 
     std::vector<std::pair<T1, T2>> data;
     data.reserve(std::distance(first1, last1));
-    std::transform(
-        first1, last1, first2, std::back_inserter(data),
-        [](T1 const& t1, T2 const& t2) { return std::make_pair(t1, t2); });
+    std::transform(first1, last1, first2, std::back_inserter(data),
+                   [](T1 const& t1, T2 const& t2)
+                   { return std::make_pair(t1, t2); });
 
     // Sort data using first element of the pair.
     std::sort(begin(data), end(data), compare);
@@ -55,9 +55,8 @@ void quicksort(It1 first1, It1 last1, It2 first2)
     using T2 = typename std::iterator_traits<It2>::value_type;
 
     quicksort(first1, last1, first2,
-              [](std::pair<T1, T2> const& a, std::pair<T1, T2> const& b) {
-                  return a.first < b.first;
-              });
+              [](std::pair<T1, T2> const& a, std::pair<T1, T2> const& b)
+              { return a.first < b.first; });
 }
 
 /// @pre {end<=array.size() and perm.size()==array.size()}
@@ -70,45 +69,43 @@ void quicksort(T1* array, std::size_t beg, std::size_t end, T2* perm)
 }
 
 template <typename T1, typename T2 = std::size_t>
-void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
+void quicksort(std::vector<T1>& array, std::size_t beg, std::size_t end,
+               std::vector<T2>& perm)
 {
-    assert (beg<=end);
-    assert (end<=array.size());
-    assert (perm.size()==array.size());
+    assert(beg <= end);
+    assert(end <= array.size());
+    assert(perm.size() == array.size());
 
     quicksort(array.data(), beg, end, perm.data());
 }
 
 template <typename T1, typename T2 = std::size_t>
-void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end, std::vector<T2>& perm)
+void quicksort(std::vector<T1*>& array, std::size_t beg, std::size_t end,
+               std::vector<T2>& perm)
 {
-    assert (beg<=end);
-    assert (end<=array.size());
-    assert (perm.size()==array.size());
+    assert(beg <= end);
+    assert(end <= array.size());
+    assert(perm.size() == array.size());
 
     // Zip input arrays.
     std::vector<std::pair<T1*, T2>> data;
-    data.reserve(end-beg);
-    std::transform(array.begin()+beg, array.begin()+end, perm.begin()+beg,
-        std::back_inserter(data),
-        [](T1* const& t1, T2 const& t2)
-        {
-            return std::make_pair(t1, t2);
-        });
+    data.reserve(end - beg);
+    std::transform(array.begin() + beg, array.begin() + end, perm.begin() + beg,
+                   std::back_inserter(data),
+                   [](T1* const& t1, T2 const& t2)
+                   { return std::make_pair(t1, t2); });
 
     // Sort data using first element of the pair.
     std::sort(data.begin(), data.end(),
-        [](std::pair<T1*, T2> const& a, std::pair<T1*, T2> const& b)
-        {
-            return (*a.first < *b.first);
-        });
+              [](std::pair<T1*, T2> const& a, std::pair<T1*, T2> const& b)
+              { return (*a.first < *b.first); });
 
     // Unzip sorted data.
     for (std::size_t i = 0; i < data.size(); i++)
     {
-        array[beg+i] = data[i].first;
-        perm[beg+i] = data[i].second;
+        array[beg + i] = data[i].first;
+        perm[beg + i] = data[i].second;
     }
 }
 
-} // end namespace BaseLib
+}  // end namespace BaseLib
