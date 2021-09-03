@@ -122,5 +122,13 @@ struct PhaseTransitionModel
     PhaseTransitionModelVariables cv;
 };
 
+int numberOfComponents(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
+    std::string phase_name);
+
+int findComponentIndex(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
+    std::string phase_name, MaterialPropertyLib::PropertyType property_type);
+
 }  // namespace TH2M
 }  // namespace ProcessLib
