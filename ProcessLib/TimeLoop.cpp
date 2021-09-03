@@ -851,7 +851,8 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
     {
         auto& pcs = _per_process_data[0]->process;
-        pcs.solveReactionEquation(_process_solutions, t, dt);
+        pcs.solveReactionEquation(_process_solutions, _process_solutions_prev,
+                                  t, dt);
     }
 
     return nonlinear_solver_status;

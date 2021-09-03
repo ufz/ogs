@@ -13,6 +13,8 @@
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "ComponentTransportProcess.h"
 #include "ComponentTransportProcessData.h"
+#include "CreateLookupTable.h"
+#include "LookupTable.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "ParameterLib/Utils.h"
@@ -228,6 +230,11 @@ std::unique_ptr<Process> createComponentTransportProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
+    auto lookup_table = ComponentTransport::createLookupTable(
+        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__tabular_file}
+        config.getConfigParameterOptional<std::string>("tabular_file"),
+        process_variables);
+
     DBUG("Check the media properties of ComponentTransport process ...");
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
@@ -240,6 +247,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         temperature,
         chemically_induced_porosity_change,
         chemical_solver_interface.get(),
+        std::move(lookup_table),
         hydraulic_process_id,
         first_transport_process_id};
 
