@@ -33,10 +33,10 @@ void writeMETIS(std::vector<MeshLib::Element*> const& elements,
     os << elements.size() << " \n";
     for (const auto* elem : elements)
     {
-        os << elem->getNodeIndex(0) + 1;
+        os << getNodeIndex(*elem, 0) + 1;
         for (unsigned j = 1; j < elem->getNumberOfNodes(); j++)
         {
-            os << " " << elem->getNodeIndex(j) + 1;
+            os << " " << getNodeIndex(*elem, j) + 1;
         }
         os << "\n";
     }

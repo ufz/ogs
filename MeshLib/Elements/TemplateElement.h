@@ -64,7 +64,7 @@ public:
         std::size_t id = std::numeric_limits<std::size_t>::max());
 
     /// Copy constructor
-    TemplateElement(const TemplateElement &e);
+    explicit TemplateElement(const TemplateElement& e);
 
     /// Returns a copy of this object.
     Element* clone() const override { return new TemplateElement(*this); }
@@ -165,7 +165,7 @@ public:
         MathLib::Point3d const& pnt,
         double eps = std::numeric_limits<double>::epsilon()) const override
     {
-        return ELEMENT_RULE::isPntInElement(this->_nodes, pnt, eps);
+        return ELEMENT_RULE::isPntInElement(_nodes.data(), pnt, eps);
     }
 
     /**
@@ -177,16 +177,21 @@ public:
     }
 
     /// Returns the ID of a face given an array of nodes.
-    unsigned identifyFace(Node* nodes[3]) const override
+    unsigned identifyFace(Node const* nodes[3]) const override
     {
-        return ELEMENT_RULE::identifyFace(this->_nodes, nodes);
+        return ELEMENT_RULE::identifyFace(_nodes.data(), nodes);
     }
 
     /// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
     double computeVolume() override
     {
-        return ELEMENT_RULE::computeVolume(this->_nodes);
+        return ELEMENT_RULE::computeVolume(_nodes.data());
     }
+
+    const Node* getNode(unsigned idx) const override;
+    Node* getNode(unsigned idx) override;
+    void setNode(unsigned idx, Node* node) override;
+    Node* const* getNodes() const override { return _nodes.data(); }
 
     /// Return a specific edge node.
     inline Node* getEdgeNode(unsigned edge_id, unsigned node_id) const override
@@ -194,7 +199,7 @@ public:
         if (getNumberOfEdges() > 0)
         {
             return const_cast<Node*>(
-                this->_nodes[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
+                _nodes[ELEMENT_RULE::edge_nodes[edge_id][node_id]]);
         }
 
         return nullptr;
@@ -210,6 +215,8 @@ public:
     }
 
     double getContent() const override final;
+
+    std::array<Node*, n_all_nodes> _nodes;
 };
 
 }  // namespace MeshLib

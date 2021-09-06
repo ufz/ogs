@@ -22,8 +22,8 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
 
-namespace MeshLib {
-
+namespace MeshLib
+{
 class Node;
 
 /**
@@ -46,25 +46,26 @@ public:
     virtual double getContent() const = 0;
 
     /**
-     * Get node with local index i where i should be at most the number
-     * of nodes of the element
-     * @param i local index of node, at most the number of nodes of the
+     * Get node with local index where the local index should be at most the
+     * number of nodes of the element.
+     * @param idx local index of node, at most the number of nodes of the
      * element that you can obtain with Element::getNumberOfBaseNodes()
      * @return a pointer to the appropriate (and constant, i.e. not
      * modifiable by the user) instance of class Node or a nullptr
-     * @sa Element::getNodeIndex()
+     * @sa getNodeIndex()
      */
-    const Node* getNode(unsigned i) const;
+    virtual const Node* getNode(unsigned idx) const = 0;
+    virtual Node* getNode(unsigned idx) = 0;
 
     /**
      * (Re)Sets the node of the element.
      * @param idx the index of the pointer to a node within the element
      * @param node a pointer to a node
      */
-    void setNode(unsigned idx, Node* node);
+    virtual void setNode(unsigned idx, Node* node) = 0;
 
     /// Get array of element nodes.
-    Node* const* getNodes() const { return _nodes; }
+    virtual Node* const* getNodes() const = 0;
 
     /// Get dimension of the mesh element.
     virtual unsigned getDimension() const = 0;
@@ -99,21 +100,13 @@ public:
      */
     virtual unsigned getNumberOfBaseNodes() const = 0;
 
-    /// Returns the number of all nodes including both linear and nonlinear nodes
+    /// Returns the number of all nodes including both linear and nonlinear
+    /// nodes
     virtual unsigned getNumberOfNodes() const = 0;
 
     /**
-     * Get the global index for the Node with local index i.
-     * The index i should be at most the number of nodes of the element.
-     * @param i local index of Node, at most the number of nodes of the
-     * element that you can obtain with Element::getNumberOfBaseNodes()
-     * @return the global index or std::numeric_limits<unsigned>::max()
-     * @sa Element::getNode()
-     */
-    std::size_t getNodeIndex(unsigned i) const;
-
-    /**
-     * Get the type of the mesh element in geometric context (as a MeshElemType-enum).
+     * Get the type of the mesh element in geometric context (as a
+     * MeshElemType-enum).
      */
     virtual MeshElemType getGeomType() const = 0;
 
@@ -123,7 +116,8 @@ public:
      */
     virtual CellType getCellType() const = 0;
 
-    /// Returns true if the element is located at a boundary (i.e. has at least one face without neighbour)
+    /// Returns true if the element is located at a boundary (i.e. has at least
+    /// one face without neighbour)
     virtual bool isBoundaryElement() const;
 
     /// Returns true if these two indices form an edge and false otherwise
@@ -132,10 +126,13 @@ public:
     /**
      * Checks if a point is inside the element.
      * @param pnt a 3D MathLib::Point3d object
-     * @param eps tolerance for numerical algorithm used or computing the property
+     * @param eps tolerance for numerical algorithm used or computing the
+     * property
      * @return true if the point is not outside the element, false otherwise
      */
-    virtual bool isPntInElement(MathLib::Point3d const& pnt, double eps = std::numeric_limits<double>::epsilon()) const = 0;
+    virtual bool isPntInElement(
+        MathLib::Point3d const& pnt,
+        double eps = std::numeric_limits<double>::epsilon()) const = 0;
 
     /**
      * Tests if the element is geometrically valid.
@@ -147,7 +144,8 @@ public:
 
     /**
      * Method clone is a pure virtual method in the abstract base class Element.
-     * It has to be implemented in the derived classes (for instance in class Hex).
+     * It has to be implemented in the derived classes (for instance in class
+     * Hex).
      * @return an exact copy of the object
      */
     virtual Element* clone() const = 0;
@@ -161,16 +159,18 @@ public:
     virtual Element* clone(Node** nodes, std::size_t id) const = 0;
 
     /**
-     * Computes the length / area / volumen of this element. This is automatically
-     * done at initialisation time but can be repeated by calling this function at any time.
+     * Computes the length / area / volumen of this element. This is
+     * automatically done at initialisation time but can be repeated by calling
+     * this function at any time.
      */
     virtual double computeVolume() = 0;
 
     /// Returns the ID of a face given an array of nodes.
-    virtual unsigned identifyFace(Node* nodes[3]) const = 0;
+    virtual unsigned identifyFace(Node const* nodes[3]) const = 0;
 
     /**
-     * Checks if the node order of an element is correct by testing surface normals.
+     * Checks if the node order of an element is correct by testing surface
+     * normals.
      */
     virtual bool testElementNodeOrder() const = 0;
 
@@ -192,7 +192,6 @@ protected:
     /// Sets the element ID.
     virtual void setID(std::size_t id) final { _id = id; }
 
-    Node** _nodes;
     std::size_t _id;
 
     Element** _neighbors;
@@ -229,5 +228,18 @@ bool isPointInElementXY(MathLib::Point3d const& p, Element const& e);
 
 /// Returns the position of the given node in the node array of this element.
 unsigned getNodeIDinElement(Element const& element, const Node* node);
+
+/**
+ * Get the global node index of the node with the local index idx within the
+ * element. The index should be at most the number of nodes of the element.
+ * @param element The element object that will be searched for the index.
+ * @param idx Local index of Node, at most the number of nodes of the
+ * element that you can obtain with Element::getNumberOfBaseNodes().
+ * @return the global index if idx < Element::getNumberOfBaseNodes. Otherwise in
+ * debug mode the value std::numeric_limits<unsigned>::max(). In release mode
+ * the behaviour is undefined.
+ * @sa Element::getNode()
+ */
+std::size_t getNodeIndex(Element const& element, unsigned idx);
 
 }  // namespace MeshLib

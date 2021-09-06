@@ -46,7 +46,7 @@ BoundaryElementsOnSurface::BoundaryElementsOnSurface(
             for (std::size_t j = 0; j < face->getNumberOfBaseNodes(); j++)
             {
                 if (std::find(node_ids_on_sfc.begin(), node_ids_on_sfc.end(),
-                              face->getNodeIndex(j)) != node_ids_on_sfc.end())
+                              getNodeIndex(*face, j)) != node_ids_on_sfc.end())
                 {
                     cnt_match++;
                 }

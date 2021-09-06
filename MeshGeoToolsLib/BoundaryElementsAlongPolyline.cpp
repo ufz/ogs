@@ -79,15 +79,16 @@ BoundaryElementsAlongPolyline::BoundaryElementsAlongPolyline(
     // sort picked edges according to a distance of their first node along the
     // polyline
     std::sort(begin(_boundary_elements), end(_boundary_elements),
-              [&](MeshLib::Element* e1, MeshLib::Element* e2) {
+              [&](MeshLib::Element* e1, MeshLib::Element* e2)
+              {
                   std::size_t dist1 = std::distance(
                       node_ids_on_poly.begin(),
                       std::find(node_ids_on_poly.begin(),
-                                node_ids_on_poly.end(), e1->getNodeIndex(0)));
+                                node_ids_on_poly.end(), getNodeIndex(*e1, 0)));
                   std::size_t dist2 = std::distance(
                       node_ids_on_poly.begin(),
                       std::find(node_ids_on_poly.begin(),
-                                node_ids_on_poly.end(), e2->getNodeIndex(0)));
+                                node_ids_on_poly.end(), getNodeIndex(*e2, 0)));
                   return (dist1 < dist2);
               });
 }
@@ -108,7 +109,7 @@ bool BoundaryElementsAlongPolyline::includesAllEdgeNodeIDs(
     for (; j < edge.getNumberOfBaseNodes(); j++)
     {
         auto itr = std::find(vec_node_ids.begin(), vec_node_ids.end(),
-                             edge.getNodeIndex(j));
+                             getNodeIndex(edge, j));
         if (itr != vec_node_ids.end())
         {
             edge_node_distances.push_back(

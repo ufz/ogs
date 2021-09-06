@@ -34,7 +34,8 @@ bool LineRule2::isPntInElement(Node const* const* nodes,
     return (dist < eps);
 }
 
-unsigned LineRule2::identifyFace(Node const* const* _nodes, Node* nodes[1])
+unsigned LineRule2::identifyFace(Node const* const* _nodes,
+                                 Node const* nodes[1])
 {
     if (nodes[0] == _nodes[0])
     {

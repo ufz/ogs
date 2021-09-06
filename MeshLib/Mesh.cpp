@@ -94,7 +94,7 @@ Mesh::Mesh(const Mesh& mesh)
         _elements[i] = elements[i]->clone();
         for (unsigned j = 0; j < nElemNodes; ++j)
         {
-            _elements[i]->_nodes[j] = _nodes[elements[i]->getNode(j)->getID()];
+            _elements[i]->setNode(j, _nodes[elements[i]->getNode(j)->getID()]);
         }
     }
 
@@ -130,7 +130,7 @@ void Mesh::addElement(Element* elem)
     unsigned nNodes(elem->getNumberOfNodes());
     for (unsigned i = 0; i < nNodes; ++i)
     {
-        elem->_nodes[i]->addElement(elem);
+        elem->getNode(i)->addElement(elem);
     }
 }
 
@@ -150,7 +150,7 @@ void Mesh::recalculateMaxBaseNodeId()
     {
         for (std::size_t i = 0; i < e->getNumberOfBaseNodes(); i++)
         {
-            max_basenode_ID = std::max(max_basenode_ID, e->getNodeIndex(i));
+            max_basenode_ID = std::max(max_basenode_ID, getNodeIndex(*e, i));
         }
     }
     _n_base_nodes = max_basenode_ID + 1;
@@ -184,7 +184,7 @@ void Mesh::setElementsConnectedToNodes()
         const unsigned nNodes(element->getNumberOfNodes());
         for (unsigned j = 0; j < nNodes; ++j)
         {
-            element->_nodes[j]->addElement(element);
+            element->getNode(j)->addElement(element);
         }
     }
 }
@@ -277,7 +277,7 @@ void Mesh::checkNonlinearNodeIDs() const
         for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
              i++)
         {
-            if (e->getNodeIndex(i) >= getNumberOfBaseNodes())
+            if (getNodeIndex(*e, i) >= getNumberOfBaseNodes())
             {
                 continue;
             }
@@ -286,7 +286,7 @@ void Mesh::checkNonlinearNodeIDs() const
                 "Found a nonlinear node whose ID ({:d}) is smaller than the "
                 "number of base node IDs ({:d}). Some functions may not work "
                 "properly.",
-                e->getNodeIndex(i), getNumberOfBaseNodes());
+                getNodeIndex(*e, i), getNumberOfBaseNodes());
             return;
         }
     }

@@ -157,7 +157,7 @@ std::unique_ptr<Mesh> createQuadraticOrderMesh(Mesh const& linear_mesh,
         for (int i = 0; i < number_base_nodes; ++i)
         {
             quadratic_element->setNode(
-                i, quadratic_mesh_nodes[quadratic_element->getNodeIndex(i)]);
+                i, quadratic_mesh_nodes[getNodeIndex(*quadratic_element, i)]);
         }
 
         // Make the new (middle-edge) nodes unique.

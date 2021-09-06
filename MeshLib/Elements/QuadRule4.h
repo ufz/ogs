@@ -74,7 +74,8 @@ public:
     static ElementErrorCode validate(const Element* e);
 
     /// Returns the ID of a face given an array of nodes.
-    static unsigned identifyFace(Node const* const* /*_nodes*/, Node* nodes[3]);
+    static unsigned identifyFace(Node const* const* /*_nodes*/,
+                                 Node const* nodes[3]);
 
     /// Calculates the volume of a convex hexahedron by partitioning it into six tetrahedra.
     static double computeVolume(Node const* const* _nodes);

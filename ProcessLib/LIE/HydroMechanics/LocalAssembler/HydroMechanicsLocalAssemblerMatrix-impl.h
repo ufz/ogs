@@ -473,7 +473,7 @@ void HydroMechanicsLocalAssemblerMatrix<
         {
             continue;
         }
-        x_position.setNodeID(_element.getNodeIndex(i));
+        x_position.setNodeID(getNodeIndex(_element, i));
         auto const p0 = (*_process_data.p0)(t, x_position)[0];
         p[i] = p0;
     }

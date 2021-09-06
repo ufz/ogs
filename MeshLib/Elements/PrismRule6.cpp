@@ -84,7 +84,8 @@ bool PrismRule6::isPntInElement(Node const* const* nodes,
                 pnt, *nodes[2], *nodes[4], *nodes[5], *nodes[3], eps));
 }
 
-unsigned PrismRule6::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned PrismRule6::identifyFace(Node const* const* _nodes,
+                                  Node const* nodes[3])
 {
     for (unsigned i = 0; i < 5; i++)
     {

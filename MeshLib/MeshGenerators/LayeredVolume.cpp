@@ -110,19 +110,19 @@ void LayeredVolume::addLayerToMesh(const MeshLib::Mesh& dem_mesh,
         if (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE)
         {
             std::array<MeshLib::Node*, 3> tri_nodes = {
-                {_nodes[node_id_offset + elem->getNodeIndex(0)],
-                 _nodes[node_id_offset + elem->getNodeIndex(1)],
-                 _nodes[node_id_offset + elem->getNodeIndex(2)]}};
+                {_nodes[node_id_offset + getNodeIndex(*elem, 0)],
+                 _nodes[node_id_offset + getNodeIndex(*elem, 1)],
+                 _nodes[node_id_offset + getNodeIndex(*elem, 2)]}};
             _elements.push_back(new MeshLib::Tri(tri_nodes));
             _materials.push_back(layer_id);
         }
         else if (elem->getGeomType() == MeshLib::MeshElemType::QUAD)
         {
             std::array<MeshLib::Node*, 4> quad_nodes = {
-                {_nodes[node_id_offset + elem->getNodeIndex(0)],
-                 _nodes[node_id_offset + elem->getNodeIndex(1)],
-                 _nodes[node_id_offset + elem->getNodeIndex(2)],
-                 _nodes[node_id_offset + elem->getNodeIndex(3)]}};
+                {_nodes[node_id_offset + getNodeIndex(*elem, 0)],
+                 _nodes[node_id_offset + getNodeIndex(*elem, 1)],
+                 _nodes[node_id_offset + getNodeIndex(*elem, 2)],
+                 _nodes[node_id_offset + getNodeIndex(*elem, 3)]}};
             _elements.push_back(new MeshLib::Quad(quad_nodes));
             _materials.push_back(layer_id);
         }
@@ -145,15 +145,15 @@ void LayeredVolume::addLayerBoundaries(const MeshLib::Mesh& layer,
                 for (unsigned j = 0; j < nLayerBoundaries; ++j)
                 {
                     const std::size_t offset(j * nNodes);
-                    MeshLib::Node* n0 = _nodes[offset + elem->getNodeIndex(i)];
+                    MeshLib::Node* n0 = _nodes[offset + getNodeIndex(*elem, i)];
                     MeshLib::Node* n1 =
                         _nodes[offset +
-                               elem->getNodeIndex((i + 1) % nElemNodes)];
+                               getNodeIndex(*elem, (i + 1) % nElemNodes)];
                     MeshLib::Node* n2 =
                         _nodes[offset + nNodes +
-                               elem->getNodeIndex((i + 1) % nElemNodes)];
+                               getNodeIndex(*elem, (i + 1) % nElemNodes)];
                     MeshLib::Node* n3 =
-                        _nodes[offset + nNodes + elem->getNodeIndex(i)];
+                        _nodes[offset + nNodes + getNodeIndex(*elem, i)];
 
                     auto const v0 =
                         Eigen::Map<Eigen::Vector3d const>(n0->getCoords());
@@ -199,9 +199,9 @@ void LayeredVolume::removeCongruentElements(std::size_t nLayers,
             const std::size_t nElemNodes(low->getNumberOfBaseNodes());
             for (std::size_t k = 0; k < nElemNodes; ++k)
             {
-                if (high->getNodeIndex(k) == low->getNodeIndex(k))
+                if (getNodeIndex(*high, k) == getNodeIndex(*low, k))
                 {
-                    low->setNode(k, _nodes[high->getNodeIndex(k)]);
+                    low->setNode(k, _nodes[getNodeIndex(*high, k)]);
                     count++;
                 }
             }

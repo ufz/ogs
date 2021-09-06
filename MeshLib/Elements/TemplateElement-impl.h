@@ -12,12 +12,12 @@
 
 namespace MeshLib
 {
-
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], std::size_t id)
-: Element(id)
+TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes],
+                                               std::size_t id)
+    : Element(id)
 {
-    this->_nodes = nodes;
+    std::copy_n(nodes, n_all_nodes, std::begin(_nodes));
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
 
@@ -25,11 +25,10 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes], std::si
 }
 
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> const& nodes, std::size_t id)
-: Element(id)
+TemplateElement<ELEMENT_RULE>::TemplateElement(
+    std::array<Node*, n_all_nodes> const& nodes, std::size_t id)
+    : Element(id), _nodes{nodes}
 {
-    this->_nodes = new Node*[n_all_nodes];
-    std::copy(nodes.begin(), nodes.end(), this->_nodes);
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
 
@@ -37,14 +36,10 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(std::array<Node*, n_all_nodes> co
 }
 
 template <class ELEMENT_RULE>
-TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
-: Element(e.getID())
+TemplateElement<ELEMENT_RULE>::TemplateElement(
+    TemplateElement<ELEMENT_RULE> const& e)
+    : Element(e.getID()), _nodes{e._nodes}
 {
-    this->_nodes = new Node*[n_all_nodes];
-    for (unsigned i = 0; i < n_all_nodes; i++)
-    {
-        this->_nodes[i] = e._nodes[i];
-    }
     this->_neighbors = new Element*[getNumberOfNeighbors()];
     for (unsigned i = 0; i < getNumberOfNeighbors(); i++)
     {
@@ -57,7 +52,7 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(const TemplateElement &e)
 template <class ELEMENT_RULE>
 double TemplateElement<ELEMENT_RULE>::getContent() const
 {
-    return ELEMENT_RULE::computeVolume(this->_nodes);
+    return ELEMENT_RULE::computeVolume(_nodes.data());
 }
 
 namespace details
@@ -98,6 +93,45 @@ bool TemplateElement<ELEMENT_RULE>::isEdge(unsigned idx1, unsigned idx2) const
         }
     }
     return false;
+}
+
+template <class ELEMENT_RULE>
+const Node* TemplateElement<ELEMENT_RULE>::getNode(unsigned const idx) const
+{
+#ifndef NDEBUG
+    if (idx >= getNumberOfNodes())
+    {
+        ERR("Error in MeshLib::TemplateElement::getNode() - Index {:d} in {:s}",
+            idx, MeshElemType2String(getGeomType()));
+        return nullptr;
+    }
+#endif
+    return _nodes[idx];
+}
+
+template <class ELEMENT_RULE>
+Node* TemplateElement<ELEMENT_RULE>::getNode(unsigned const idx)
+{
+#ifndef NDEBUG
+    if (idx >= getNumberOfNodes())
+    {
+        ERR("Error in MeshLib::TemplateElement::getNode() - Index {:d} in {:s}",
+            idx, MeshElemType2String(getGeomType()));
+        return nullptr;
+    }
+#endif
+    return _nodes[idx];
+}
+
+template <class ELEMENT_RULE>
+void TemplateElement<ELEMENT_RULE>::setNode(unsigned idx, Node* node)
+{
+#ifndef NDEBUG
+    if (idx < getNumberOfNodes())
+#endif
+    {
+        _nodes[idx] = node;
+    }
 }
 
 }  // namespace MeshLib

@@ -754,7 +754,7 @@ void FEFLOWMeshInterface::setMaterialIDs(
             std::size_t e_min_nodeID = std::numeric_limits<std::size_t>::max();
             for (std::size_t j = 0; j < e->getNumberOfBaseNodes(); j++)
             {
-                e_min_nodeID = std::min(e_min_nodeID, e->getNodeIndex(j));
+                e_min_nodeID = std::min(e_min_nodeID, getNodeIndex(*e, j));
             }
             std::size_t layer_id = e_min_nodeID / no_nodes_per_layer;
             material_ids[i] = layer_id;

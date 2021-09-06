@@ -120,7 +120,7 @@ PostProcessTool::PostProcessTool(
             MeshLib::Element* e = new_eles[eid];
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
             {
-                const auto node_id = e->getNodeIndex(i);
+                const auto node_id = getNodeIndex(*e, i);
                 if (!includesNodeID(vec_fracture_nodes, node_id))
                 {
                     continue;
@@ -408,7 +408,7 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
 
             for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
             {
-                nodal_levelset[e->getNodeIndex(i)] = e_levelset;
+                nodal_levelset[getNodeIndex(*e, i)] = e_levelset;
             }
         }
 

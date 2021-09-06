@@ -93,7 +93,7 @@ bool HexRule8::isPntInElement(Node const* const* nodes,
                 pnt, *nodes[3], *nodes[7], *nodes[5], *nodes[2], eps));
 }
 
-unsigned HexRule8::identifyFace(Node const* const* _nodes, Node* nodes[3])
+unsigned HexRule8::identifyFace(Node const* const* _nodes, Node const* nodes[3])
 {
     for (unsigned i = 0; i < 6; i++)
     {

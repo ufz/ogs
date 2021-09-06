@@ -1318,8 +1318,8 @@ bool SwmmInterface::getLinkPointIds(std::vector<std::size_t>& inlets,
             ERR("Non line-element found in mesh.");
             return false;
         }
-        inlets.push_back(elem->getNodeIndex(0));
-        outlets.push_back(elem->getNodeIndex(1));
+        inlets.push_back(getNodeIndex(*elem, 0));
+        outlets.push_back(getNodeIndex(*elem, 1));
     }
     return true;
 }

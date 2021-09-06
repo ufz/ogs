@@ -277,7 +277,7 @@ public:
                     {
                         MeshLib::Location l(mesh_id,
                                             MeshLib::MeshItemType::Node,
-                                            mesh_item.getNodeIndex(k));
+                                            getNodeIndex(mesh_item, k));
                         auto global_index = _dof_table.getGlobalIndex(l, i, j);
                         if (global_index != NumLib::MeshComponentMap::nop)
                         {

@@ -22,14 +22,10 @@
 
 namespace MeshLib
 {
-Element::Element(std::size_t id)
-    : _nodes(nullptr), _id(id), _neighbors(nullptr)
-{
-}
+Element::Element(std::size_t id) : _id(id), _neighbors(nullptr) {}
 
 Element::~Element()
 {
-    delete[] this->_nodes;
     delete[] this->_neighbors;
 }
 
@@ -55,7 +51,7 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
         return std::optional<unsigned>();
     }
 
-    Node* face_nodes[3];
+    Node const* face_nodes[3];
     const unsigned nNodes(this->getNumberOfBaseNodes());
     const unsigned eNodes(e->getNumberOfBaseNodes());
     const Node* const* e_nodes = e->getNodes();
@@ -65,9 +61,9 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
     {
         for (unsigned j(0); j < eNodes; j++)
         {
-            if (_nodes[i] == e_nodes[j])
+            if (getNode(i) == e_nodes[j])
             {
-                face_nodes[count] = _nodes[i];
+                face_nodes[count] = getNode(i);
                 // increment shared nodes counter and check if enough nodes are
                 // similar to be sure e is a neighbour of this
                 if ((++count) >= dim)
@@ -82,50 +78,11 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
     return std::optional<unsigned>();
 }
 
-const Node* Element::getNode(unsigned i) const
-{
-#ifndef NDEBUG
-    if (i < getNumberOfNodes())
-#endif
-    {
-        return _nodes[i];
-    }
-#ifndef NDEBUG
-    ERR("Error in MeshLib::Element::getNode() - Index {:d} in {:s}", i,
-        MeshElemType2String(getGeomType()));
-    return nullptr;
-#endif
-}
-
-void Element::setNode(unsigned idx, Node* node)
-{
-#ifndef NDEBUG
-    if (idx < getNumberOfNodes())
-#endif
-    {
-        _nodes[idx] = node;
-    }
-}
-
-std::size_t Element::getNodeIndex(unsigned i) const
-{
-#ifndef NDEBUG
-    if (i < getNumberOfNodes())
-#endif
-    {
-        return _nodes[i]->getID();
-    }
-#ifndef NDEBUG
-    ERR("Error in MeshLib::Element::getNodeIndex() - Index does not exist.");
-    return std::numeric_limits<std::size_t>::max();
-#endif
-}
-
 bool Element::isBoundaryElement() const
 {
-    return std::any_of(
-        _neighbors, _neighbors + this->getNumberOfNeighbors(),
-        [](MeshLib::Element const* const e) { return e == nullptr; });
+    return std::any_of(_neighbors, _neighbors + this->getNumberOfNeighbors(),
+                       [](MeshLib::Element const* const e)
+                       { return e == nullptr; });
 }
 
 #ifndef NDEBUG
@@ -264,4 +221,18 @@ unsigned getNodeIDinElement(Element const& element, const MeshLib::Node* node)
     }
     return std::numeric_limits<unsigned>::max();
 }
+
+std::size_t getNodeIndex(Element const& element, unsigned const idx)
+{
+#ifndef NDEBUG
+    if (idx >= element.getNumberOfNodes())
+    {
+        ERR("Error in MeshLib::getNodeIndex() - Index does not "
+            "exist.");
+        return std::numeric_limits<std::size_t>::max();
+    }
+#endif
+    return element.getNode(idx)->getID();
+}
+
 }  // namespace MeshLib
