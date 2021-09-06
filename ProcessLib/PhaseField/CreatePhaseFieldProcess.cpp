@@ -130,26 +130,12 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         "crack_length_scale", parameters, 1);
     DBUG("Use '{:s}' as crack length scale.", crack_length_scale.name);
 
-    // Kinetic coefficient
-    auto const& kinetic_coefficient = ParameterLib::findParameter<double>(
-        phasefield_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__kinetic_coefficient}
-        "kinetic_coefficient", parameters, 1);
-    DBUG("Use '{:s}' as kinetic coefficient.", kinetic_coefficient.name);
-
     // Solid density
     auto const& solid_density = ParameterLib::findParameter<double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__solid_density}
         "solid_density", parameters, 1);
     DBUG("Use '{:s}' as solid density parameter.", solid_density.name);
-
-    // History field
-    auto const& history_field = ParameterLib::findParameter<double>(
-        phasefield_parameters_config,
-        //! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__phasefield_parameters__history_field}
-        "history_field", parameters, 1);
-    DBUG("Use '{:s}' as history field.", history_field.name);
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
@@ -177,24 +163,30 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         ((*crack_scheme != "propagating") && (*crack_scheme != "static")))
     {
         OGS_FATAL(
-            "hydro_crack_scheme must be 'propagating' or 'static' but '{:s}' "
+            "crack_scheme must be 'propagating' or 'static' but '{:s}' "
             "was given",
             crack_scheme->c_str());
     }
 
-    const bool propagating_crack =
-        (crack_scheme && (*crack_scheme == "propagating"));
-    const bool crack_pressure =
-        (crack_scheme &&
-         ((*crack_scheme == "propagating") || (*crack_scheme == "static")));
+    const bool hydro_crack = (crack_scheme && (*crack_scheme == "propagating"));
+    const bool crack_pressure = crack_scheme.has_value();
+
+    auto pf_irrv_read =
+        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__irreversible_threshold}
+        config.getConfigParameterOptional<double>("irreversible_threshold");
+
+    double irreversible_threshold = 0.05;
+    if (pf_irrv_read)
+    {
+        irreversible_threshold = *pf_irrv_read;
+    }
 
     PhaseFieldProcessData<DisplacementDim> process_data{
         materialIDs(mesh),   std::move(solid_constitutive_relations),
         residual_stiffness,  crack_resistance,
-        crack_length_scale,  kinetic_coefficient,
-        solid_density,       history_field,
-        specific_body_force, propagating_crack,
-        crack_pressure};
+        crack_length_scale,  solid_density,
+        specific_body_force, hydro_crack,
+        crack_pressure,      irreversible_threshold};
 
     SecondaryVariableCollection secondary_variables;
 

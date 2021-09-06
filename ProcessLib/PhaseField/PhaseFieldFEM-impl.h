@@ -154,7 +154,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     {
         local_pressure = _process_data.unity_pressure;
     }
-    else if (_process_data.propagating_crack)
+    else if (_process_data.hydro_crack)
     {
         local_pressure = _process_data.pressure;
     }
@@ -170,8 +170,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         double const gc = _process_data.crack_resistance(t, x_position)[0];
         double const ls = _process_data.crack_length_scale(t, x_position)[0];
 
-        // for propagating crack, u is rescaled.
-        if (_process_data.propagating_crack)
+        // for hydro crack, u is rescaled.
+        if (_process_data.hydro_crack)
         {
             double const k = _process_data.residual_stiffness(t, x_position)[0];
             double const d_ip = N.dot(d);
@@ -239,9 +239,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     indices_of_processes.reserve(dof_tables.size());
     std::transform(dof_tables.begin(), dof_tables.end(),
                    std::back_inserter(indices_of_processes),
-                   [&](NumLib::LocalToGlobalIndexMap const& dof_table) {
-                       return NumLib::getIndices(mesh_item_id, dof_table);
-                   });
+                   [&](NumLib::LocalToGlobalIndexMap const& dof_table)
+                   { return NumLib::getIndices(mesh_item_id, dof_table); });
 
     auto local_coupled_xs =
         getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);
@@ -298,9 +297,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     indices_of_processes.reserve(dof_tables.size());
     std::transform(dof_tables.begin(), dof_tables.end(),
                    std::back_inserter(indices_of_processes),
-                   [&](NumLib::LocalToGlobalIndexMap const& dof_table) {
-                       return NumLib::getIndices(mesh_item_id, dof_table);
-                   });
+                   [&](NumLib::LocalToGlobalIndexMap const& dof_table)
+                   { return NumLib::getIndices(mesh_item_id, dof_table); });
 
     auto const local_coupled_xs =
         getCoupledLocalSolutions(cpl_xs->coupled_xs, indices_of_processes);

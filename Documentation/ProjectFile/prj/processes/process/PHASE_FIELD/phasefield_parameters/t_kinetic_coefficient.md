@@ -1,1 +1,0 @@
-A kinetic coefficient which is defined to address rate-dependent cases.

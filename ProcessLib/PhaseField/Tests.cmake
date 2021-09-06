@@ -1,27 +1,14 @@
 AddTest(
-    NAME PhaseField_2D_StaticHydraulicFracture
-    PATH PhaseField
+    NAME PhaseField_3D_beam_tens_AT2_iso
+    PATH PhaseField/beam
     EXECUTABLE ogs
-    EXECUTABLE_ARGS 2D_static.prj
-    WRAPPER time
+    EXECUTABLE_ARGS AT2_iso_tensile.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 9
-    DIFF_DATA
-        expected_2D_StaticCrack_ts_1_t_1.000000.vtu 2D_StaticCrack_ts_1_t_1.000000.vtu displacement displacement 1e-15 0
-        expected_2D_StaticCrack_ts_1_t_1.000000.vtu 2D_StaticCrack_ts_1_t_1.000000.vtu phasefield phasefield 5e-15 0
-)
-
-AddTest(
-    NAME PhaseField_3D_beam
-    PATH PhaseField
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS beam3d_stag_1pcs.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS OGS_USE_MPI
     RUNTIME 18
     DIFF_DATA
-        expected_beam3_stag1pcsAT2_ts_10_t_1.000000.vtu beam3_stag1pcsAT2_ts_10_t_1.000000.vtu displacement displacement 1e-5 0
-        expected_beam3_stag1pcsAT2_ts_10_t_1.000000.vtu beam3_stag1pcsAT2_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
+        expected_AT2_iso_tension_ts_10_t_1_000000_0.vtu AT2_iso_tension_ts_10_t_1_000000_0.vtu displacement displacement 1e-5 0
+        expected_AT2_iso_tension_ts_10_t_1_000000_0.vtu AT2_iso_tension_ts_10_t_1_000000_0.vtu phasefield phasefield 1e-6 0
 )
