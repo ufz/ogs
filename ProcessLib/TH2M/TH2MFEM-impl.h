@@ -18,6 +18,7 @@
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
 {
@@ -339,6 +340,51 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     }
 
     return ip_constitutive_variables;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          typename IntegrationMethod, int DisplacementDim>
+std::size_t TH2MLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, IntegrationMethod,
+    DisplacementDim>::setIPDataInitialConditions(std::string const& name,
+                                                 double const* values,
+                                                 int const integration_order)
+{
+    if (integration_order !=
+        static_cast<int>(_integration_method.getIntegrationOrder()))
+    {
+        OGS_FATAL(
+            "Setting integration point initial conditions; The integration "
+            "order of the local assembler for element {:d} is different "
+            "from the integration order in the initial condition.",
+            _element.getID());
+    }
+
+    if (name == "sigma_ip")
+    {
+        if (_process_data.initial_stress != nullptr)
+        {
+            OGS_FATAL(
+                "Setting initial conditions for stress from integration "
+                "point data and from a parameter '{:s}' is not possible "
+                "simultaneously.",
+                _process_data.initial_stress->name);
+        }
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma_eff);
+    }
+
+    if (name == "saturation_ip")
+    {
+        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
+                                                         &IpData::s_L);
+    }
+    if (name == "epsilon_ip")
+    {
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::eps);
+    }
+    return 0;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
