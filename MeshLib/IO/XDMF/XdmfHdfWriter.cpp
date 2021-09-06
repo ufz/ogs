@@ -88,8 +88,8 @@ XdmfHdfWriter::XdmfHdfWriter(
         auto const flattened_topology_values =
             transformToXDMFTopology(mesh, geometry.hdf.offsets[0]);
         return std::make_unique<TransformedMeshData>(
-            TransformedMeshData(std::move(flattened_geometry_values),
-                                std::move(flattened_topology_values)));
+            TransformedMeshData{std::move(flattened_geometry_values),
+                                std::move(flattened_topology_values)});
     };
 
     // create metadata for transformed data and original ogs mesh data
@@ -98,7 +98,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     {
         // important: transformed data must survive and be unique, raw pointer
         // to its memory!
-        auto xdmf_conforming_data =
+        std::unique_ptr<TransformedMeshData> xdmf_conforming_data =
             transform_ogs_mesh_data_to_xdmf_conforming_data(mesh);
         auto const geometry = transformGeometry(
             mesh, xdmf_conforming_data->flattened_geometry_values.data());

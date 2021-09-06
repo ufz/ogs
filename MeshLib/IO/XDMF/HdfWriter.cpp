@@ -280,8 +280,8 @@ HdfWriter::~HdfWriter()
 
 void HdfWriter::writeStep(double const time)
 {
-    _step_times.push_back(time);
     auto const output_step = _step_times.size();
+    _step_times.push_back(time);
 
     for (auto const& mesh : _hdf_meshes)
     {

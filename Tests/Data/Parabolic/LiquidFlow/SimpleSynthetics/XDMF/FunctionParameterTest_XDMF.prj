@@ -116,11 +116,11 @@ boundary meshes will be written as well -->
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0 </t_initial>
-                    <t_end> 1 </t_end>
+                    <t_end> 2 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>1</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>2</repeat>
+                            <delta_t>0.3</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -132,6 +132,8 @@ boundary meshes will be written as well -->
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <meshes>
                 <mesh>square_5x5_tris_32</mesh>
+                <mesh>square_5x5_tris_32_left_boundary</mesh>
+                <mesh>square_5x5_tris_32_right_boundary</mesh>
             </meshes>
             <timesteps>
                 <pair>
