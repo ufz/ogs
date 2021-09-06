@@ -9,6 +9,8 @@
 
 #include "writeMeshToFile.h"
 
+#include <vector>
+
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
@@ -45,7 +47,10 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     }
     if (file_path.extension().string() == ".xdmf")
     {
-        MeshLib::IO::XdmfHdfWriter(mesh, file_path, 0, 0.0,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes;
+        const std::reference_wrapper<const MeshLib::Mesh> mr = mesh;
+        meshes.push_back(mr);
+        MeshLib::IO::XdmfHdfWriter(std::move(meshes), file_path, 0, 0.0,
                                    variable_output_names, true);
         return 0;
     }

@@ -55,12 +55,12 @@ struct XdmfData final
              unsigned int const index);
     // a hyperslab is defined by starts and strides see
     // https://www.xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
-    std::vector<XdmfDimType> const starts;
-    std::vector<XdmfDimType> const strides;
+    std::vector<XdmfDimType> starts;
+    std::vector<XdmfDimType> strides;
     std::vector<XdmfDimType> global_block_dims;
-    MeshPropertyDataType const data_type;
-    std::string const name;
-    std::optional<MeshLib::MeshItemType> const attribute_center;
+    MeshPropertyDataType data_type;
+    std::string name;
+    std::optional<MeshLib::MeshItemType> attribute_center;
     unsigned int index;
 };
 

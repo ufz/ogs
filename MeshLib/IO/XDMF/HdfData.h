@@ -21,7 +21,7 @@ namespace MeshLib::IO
 {
 using Hdf5DimType = unsigned long long;
 
-struct HdfData
+struct HdfData final
 {
     HdfData(void const* data_start, std::size_t size_partitioned_dim,
             std::size_t size_tuple, std::string const& name,
@@ -31,7 +31,7 @@ struct HdfData
     std::vector<Hdf5DimType> offsets;
     std::vector<Hdf5DimType> file_space;
     std::vector<Hdf5DimType> chunk_space;
-    std::string const name;
+    std::string name;
     int64_t data_type;
 };
 

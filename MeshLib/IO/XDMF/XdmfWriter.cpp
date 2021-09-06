@@ -20,10 +20,12 @@ XdmfWriter::~XdmfWriter()
     BaseLib::RunTime time_output;
     time_output.start();
     std::ofstream fout;
-    fout.open(this->filename);
+    fout.open(filename);
     fout << xdmf_writer(times);
 
-    INFO("[time] Output of XDMF took {:g} s.", time_output.elapsed());
+    INFO("[time] Output of XDMF to {:s} took {:g} s.",
+         filename,
+         time_output.elapsed());
 }
 
 void XdmfWriter::addTimeStep(double const& time_step)
