@@ -36,7 +36,7 @@
                 <nonlinear_solver>
                     <maximum_iterations>4000</maximum_iterations>
                     <residuum_tolerance>3.0e-5</residuum_tolerance>
-                    <increment_tolerance>4.0e-7</increment_tolerance>
+                    <increment_tolerance>4.0e-6</increment_tolerance>
                 </nonlinear_solver>
             </constitutive_relation>
             <constitutive_relation id="3">
