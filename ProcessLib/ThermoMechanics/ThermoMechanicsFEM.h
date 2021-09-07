@@ -323,6 +323,12 @@ private:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    std::vector<double> const& getIntPtEpsilonMechanical(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
     std::size_t setEpsilonMechanical(double const* values);
 
     std::vector<double> getEpsilonMechanical() const override;
