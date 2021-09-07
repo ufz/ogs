@@ -23,18 +23,37 @@ namespace ProcessLib
 {
 struct IntegrationPointWriter final
 {
-    IntegrationPointWriter(std::string const& name,
-                           int const n_components,
-                           int const integration_order,
-                           std::function<std::vector<std::vector<double>>()>
-                               callback)
+    template <typename LocalAssemblerInterface, typename... Args>
+    IntegrationPointWriter(
+        std::string const& name,
+        int const n_components,
+        int const integration_order,
+        std::vector<std::unique_ptr<LocalAssemblerInterface>> const&
+            local_assemblers,
+        std::vector<double> (LocalAssemblerInterface::*getIpData)(Args...)
+            const,
+        Args&&... args)
         : _name(name),
           _n_components(n_components),
-          _integration_order(integration_order),
-          _callback(callback)
+          _integration_order(integration_order)
     {
-    }
+        _callback = [&local_assemblers,
+                     getIpData,
+                     ... f_args = std::forward<Args>(args)]
+        {
+            // Result containing integration point data for each local
+            // assembler.
+            std::vector<std::vector<double>> result;
+            result.reserve(local_assemblers.size());
 
+            std::transform(begin(local_assemblers), end(local_assemblers),
+                           std::back_inserter(result),
+                           [&](auto const& la)
+                           { return (*la.*getIpData)(f_args...); });
+
+            return result;
+        };
+    }
     int numberOfComponents() const { return _n_components; }
     int integrationOrder() const { return _integration_order; }
     std::string name() const { return _name; }
