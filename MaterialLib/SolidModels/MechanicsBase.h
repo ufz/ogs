@@ -104,7 +104,7 @@ struct MechanicsBase
         std::string const name;
 
         /// number of components of the internal variable
-        unsigned const num_components;
+        int const num_components;
 
         /// function accessing the internal variable
         Getter const getter;
