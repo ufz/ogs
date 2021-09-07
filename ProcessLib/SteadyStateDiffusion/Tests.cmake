@@ -425,8 +425,8 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_np3.xdmf cube_1e3_np3.xdmf pressure pressure 1e-3 1e-3
-    cube_1e3_np3.xdmf cube_1e3_np3.xdmf v v 1e-3 1e-3
+    cube_1e3_np3.xdmf cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3
+    cube_1e3_np3.xdmf cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3
 )
 
 AddTest(
@@ -439,8 +439,8 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_np2.xdmf cube_1e3_np2.xdmf pressure pressure 1e-3 1e-3
-    cube_1e3_np2.xdmf cube_1e3_np2.xdmf v v 1e-3 1e-3
+    cube_1e3_np2.xdmf cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3
+    cube_1e3_np2.xdmf cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3
 )
 
 AddTest(

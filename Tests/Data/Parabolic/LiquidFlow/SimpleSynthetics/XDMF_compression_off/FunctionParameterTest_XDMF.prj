@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Almost same as FunctionParameterTest - changed XDMF output and
+boundary meshes will be written as well -->
 <OpenGeoSysProject>
     <meshes>
         <mesh>square_5x5_tris_32.vtu</mesh>
@@ -114,20 +116,21 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0 </t_initial>
-                    <t_end> 1 </t_end>
+                    <t_end> 2 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>1</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>2</repeat>
+                            <delta_t>0.3</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
             </process>
         </processes>
         <output>
-            <type>VTK</type>
+            <type>XDMF</type>
             <prefix>{:meshname}</prefix>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <compress_output>false</compress_output>
             <meshes>
                 <mesh>square_5x5_tris_32</mesh>
                 <mesh>square_5x5_tris_32_left_boundary</mesh>

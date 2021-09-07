@@ -69,7 +69,7 @@ constexpr auto cellTypeOGS2XDMF(MeshLib::CellType const& cell_type)
     return elem_type_ogs2xdmf[to_underlying(cell_type)];
 }
 
-std::optional<AttributeMeta> transformAttribute(
+std::optional<XdmfHdfData> transformAttribute(
     std::pair<std::string, PropertyVectorBase*> const& property_pair)
 {
     // 3 data that will be captured and written by lambda f below
@@ -80,8 +80,8 @@ std::optional<AttributeMeta> transformAttribute(
     // lambda f : Collects properties from the propertyVectorBase. It captures
     // (and overwrites) data that can only be collected via the typed property.
     // It has boolean return type to allow kind of pipe using || operator.
-    auto f = [&data_type, &num_of_tuples, &data_ptr,
-              &property_pair](auto basic_type) -> bool
+    auto f = [&data_type, &num_of_tuples, &data_ptr, &property_pair](
+                 auto basic_type) -> bool
     {
         auto const property_base = property_pair.second;
         auto const typed_property =
@@ -190,30 +190,31 @@ std::optional<AttributeMeta> transformAttribute(
 
     std::string const& name = property_base->getPropertyName();
 
-    HdfData hdf =
-        HdfData(data_ptr, num_of_tuples, ui_global_components, name, data_type);
+    HdfData hdf = {data_ptr, num_of_tuples, ui_global_components, name,
+                   data_type};
 
-    XdmfData xdmf = XdmfData(num_of_tuples, ui_global_components, data_type,
-                             name, mesh_item_type, 0);
+    XdmfData xdmf = {num_of_tuples, ui_global_components, data_type,
+                     name,          mesh_item_type,       0};
 
-    return AttributeMeta{std::move(hdf), std::move(xdmf)};
+    return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
 
-std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh)
+std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh)
 {
     MeshLib::Properties const& properties = mesh.getProperties();
 
     // \TODO (tm) use c++20 ranges
     // a = p | filter (first!=OGS_VERSION) | filter null_opt | transformAttr |
-    std::vector<AttributeMeta> attributes;
-    for (auto [name, property_base] : properties)
+    std::vector<XdmfHdfData> attributes;
+    for (auto const& [name, property_base] : properties)
     {
         if (name == GitInfoLib::GitInfo::OGS_VERSION)
         {
             continue;
         }
 
-        if (auto attribute = transformAttribute(std::pair(name, property_base)))
+        if (auto const attribute =
+                transformAttribute(std::pair(name, property_base)))
         {
             attributes.push_back(attribute.value());
         }
@@ -225,9 +226,8 @@ std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh)
     return attributes;
 }
 
-Geometry transformGeometry(MeshLib::Mesh const& mesh)
+std::vector<double> transformToXDMFGeometry(MeshLib::Mesh const& mesh)
 {
-    std::string const name = "geometry";
     std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
 
     int const point_size = 3;
@@ -239,23 +239,29 @@ Geometry transformGeometry(MeshLib::Mesh const& mesh)
         values.insert(values.cend(), x, x + point_size);
     }
 
-    auto const& partition_dim = nodes.size();
-
-    HdfData hdf = HdfData(values.data(),
-                          partition_dim,
-                          point_size,
-                          name,
-                          MeshPropertyDataType::float64);
-    XdmfData xdmf =
-        XdmfData(partition_dim, point_size, MeshPropertyDataType::float64, name,
-                 std::nullopt, 2);
-
-    return Geometry{std::move(values), std::move(hdf), std::move(xdmf)};
+    return values;
 }
 
-Topology transformTopology(MeshLib::Mesh const& mesh, std::size_t const offset)
+XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr)
 {
-    std::string const name = "topology";
+    std::string const name = "geometry";
+    std::vector<MeshLib::Node*> const& nodes = mesh.getNodes();
+
+    int const point_size = 3;
+    auto const& partition_dim = nodes.size();
+
+    HdfData const hdf = {data_ptr, partition_dim, point_size, name,
+                         MeshPropertyDataType::float64};
+    XdmfData const xdmf = {
+        partition_dim, point_size,   MeshPropertyDataType::float64,
+        name,          std::nullopt, 2};
+
+    return XdmfHdfData{std::move(hdf), std::move(xdmf)};
+}
+
+std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
+                                         std::size_t const offset)
+{
     std::vector<MeshLib::Element*> const& elements = mesh.getElements();
     std::vector<int> values;
     values.reserve(elements.size());
@@ -277,12 +283,17 @@ Topology transformTopology(MeshLib::Mesh const& mesh, std::size_t const offset)
             values.push_back(node->getID() + offset);
         }
     }
+    return values;
+}
 
-    HdfData hdf = HdfData(values.data(), values.size(), 1, name,
-                          MeshPropertyDataType::int32);
-    XdmfData xdmf = XdmfData(values.size(), 1, MeshPropertyDataType::int32,
-                             name, std::nullopt, 3);
+XdmfHdfData transformTopology(std::vector<int> const& values)
+{
+    std::string const name = "topology";
+    HdfData const hdf = {values.data(), values.size(), 1, name,
+                         MeshPropertyDataType::int32};
+    XdmfData const xdmf = {values.size(), 1, MeshPropertyDataType::int32, name,
+                           std::nullopt,  3};
 
-    return Topology{std::move(values), std::move(hdf), std::move(xdmf)};
+    return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
 }  // namespace MeshLib::IO

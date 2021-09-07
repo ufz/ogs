@@ -233,10 +233,12 @@ struct Output::OutputFile
     }
 };
 
-void Output::outputMeshXdmf(OutputFile const& output_file,
-                            MeshLib::Mesh const& mesh,
-                            int const timestep,
-                            double const t)
+void Output::outputMeshXdmf(
+    OutputFile const& output_file,
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>>
+        meshes,
+    int const timestep,
+    double const t)
 {
     // \TODO (tm) Refactor to a dedicated VTKOutput and XdmfOutput
     // The XdmfOutput will create on construction the XdmfHdfWriter
@@ -244,14 +246,13 @@ void Output::outputMeshXdmf(OutputFile const& output_file,
     {
         std::filesystem::path path(output_file.path);
         _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
-            MeshLib::IO::XdmfHdfWriter(
-                mesh, path, timestep, t,
-                _output_data_specification.output_variables,
-                output_file.compression));
+            std::move(meshes), path, timestep, t,
+            _output_data_specification.output_variables,
+            output_file.compression);
     }
     else
     {
-        _mesh_xdmf_hdf_writer->writeStep(timestep, t);
+        _mesh_xdmf_hdf_writer->writeStep(t);
     };
 }
 
@@ -308,38 +309,45 @@ void Output::doOutputAlways(Process const& process,
         return;
     }
 
-    auto output_bulk_mesh = [&](MeshLib::Mesh const& mesh)
+    auto output_bulk_mesh =
+        [&](std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
     {
         MeshLib::IO::PVDFile* pvd_file = nullptr;
         if (_output_file_type == ProcessLib::OutputType::vtk)
         {
-            OutputFile const file(
-                _output_directory, _output_file_type, _output_file_prefix,
-                _output_file_suffix, mesh.getName(), timestep, t, iteration,
-                _output_file_data_mode, _output_file_compression,
-                _output_data_specification.output_variables);
+            for (auto const& mesh : meshes)
+            {
+                OutputFile const file(
+                    _output_directory, _output_file_type, _output_file_prefix,
+                    _output_file_suffix, mesh.get().getName(), timestep, t,
+                    iteration, _output_file_data_mode, _output_file_compression,
+                    _output_data_specification.output_variables);
 
-            pvd_file = findPVDFile(process, process_id, mesh.getName());
-            outputMesh(file, pvd_file, mesh, t);
+                pvd_file =
+                    findPVDFile(process, process_id, mesh.get().getName());
+                outputMesh(file, pvd_file, mesh, t);
+            }
         }
         else if (_output_file_type == ProcessLib::OutputType::xdmf)
         {
-            OutputFile const file(
-                _output_directory, _output_file_type, _output_file_prefix, "",
-                mesh.getName(), timestep, t, iteration, _output_file_data_mode,
-                _output_file_compression,
-                _output_data_specification.output_variables);
+            std::string name = meshes[0].get().getName();
+            OutputFile const file(_output_directory, _output_file_type,
+                                  _output_file_prefix, "", name, timestep, t,
+                                  iteration, _output_file_data_mode,
+                                  _output_file_compression,
+                                  _output_data_specification.output_variables);
 
-            outputMeshXdmf(file, mesh, timestep, t);
+            outputMeshXdmf(std::move(file), std::move(meshes), timestep, t);
         }
     };
 
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> output_meshes;
     for (auto const& mesh_output_name : _mesh_names_for_output)
     {
         // process related output
         if (process.getMesh().getName() == mesh_output_name)
         {
-            output_bulk_mesh(process.getMesh());
+            output_meshes.push_back(process.getMesh());
             continue;
         }
         // mesh related output
@@ -378,8 +386,10 @@ void Output::doOutputAlways(Process const& process,
             process.getIntegrationPointWriter(non_bulk_mesh),
             _output_data_specification);
 
-        output_bulk_mesh(non_bulk_mesh);
+        output_meshes.push_back(non_bulk_mesh);
     }
+
+    output_bulk_mesh(std::move(output_meshes));
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
 }

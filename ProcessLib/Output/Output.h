@@ -88,12 +88,13 @@ private:
     struct OutputFile;
 
     static void outputMesh(OutputFile const& output_file,
-                    MeshLib::IO::PVDFile* const pvd_file,
-                    MeshLib::Mesh const& mesh,
-                    double const t);
+                           MeshLib::IO::PVDFile* const pvd_file,
+                           MeshLib::Mesh const& mesh,
+                           double const t);
 
     void outputMeshXdmf(OutputFile const& output_file,
-                        MeshLib::Mesh const& mesh,
+                        std::vector<std::reference_wrapper<const MeshLib::Mesh>>
+                            meshes,
                         int const timestep,
                         double const t);
 

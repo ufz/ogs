@@ -15,12 +15,21 @@
 #include <hdf5.h>
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "HdfData.h"
 
 namespace MeshLib::IO
 {
+using HDFAttributes = std::vector<HdfData>;
+struct MeshHdfData
+{
+    HDFAttributes constant_attributes;
+    HDFAttributes variable_attributes;
+    std::string name;
+};
+
 class HdfWriter final
 {
 public:
@@ -28,40 +37,39 @@ public:
      * \brief Write file with geometry and topology data. The data
      * itself is held by a structure outside of this class. The writer assumes
      * the data holder to not change during writing
-     * @param constant_attributes vector of constant attributes (each attribute
-     * is a OGS mesh property), geometry and topology are considered as constant
-     * attributes
-     * @param variable_attributes vector of variable attributes (each attribute
-     * is a OGS mesh property
+     * @param meshes meta data of meshes to be written
      * @param initial_step number of the step (temporal collection), usually 0,
      * greater 0 with continuation of simulation
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param use_compression if true gzip compression is enabled
+     * @param is_file_manager True if process (in parallel execution) is
+     * File_Manager
      */
-    HdfWriter(std::vector<HdfData> constant_attributes,
-              std::vector<HdfData>
-                  variable_attributes,
-              int const initial_step,
+    HdfWriter(std::vector<MeshHdfData> meshes,
+              unsigned long long initial_step,
               std::filesystem::path const& filepath,
-              bool const use_compression);
-
+              bool use_compression,
+              bool is_file_manager);
     /**
      * \brief Writes attributes. The data
      * itself is hold by a structure outside of this class. The writer assumes
      * the data holder to not change during writing and HdfData given to
      * constructor to be still valid
-     * @param step number of the step (temporal collection)
+     * @param time time_value of step to be written to temporal collection
      */
-    void writeStep();
+    void writeStep(double time);
     ~HdfWriter();
 
 private:
-    std::vector<HdfData> const _variable_attributes;
+    // internal data holder
+    struct HdfMesh;
+
     std::filesystem::path const _hdf5_filepath;
-    bool const _use_compression;
     hid_t const _file;
-    hid_t _group;
-    std::map<std::string, hid_t> _datasets;
-    int _output_step;
+    hid_t const _meshes_group;
+    std::vector<std::unique_ptr<HdfMesh>> _hdf_meshes;
+    std::vector<double> _step_times;
+    bool const _use_compression;
+    bool const _is_file_manager;
 };
 }  // namespace MeshLib::IO

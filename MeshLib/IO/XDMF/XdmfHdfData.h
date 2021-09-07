@@ -18,25 +18,9 @@
 #include "HdfData.h"
 #include "XdmfData.h"
 
-// TODO (tm) This structs are the result of transformData.cpp. This structures
-// can be eliminated.
 namespace MeshLib::IO
 {
-struct Geometry final
-{
-    std::vector<double> flattened_values;
-    HdfData hdf;
-    XdmfData xdmf;
-};
-
-struct Topology final
-{
-    std::vector<int> flattened_values;
-    HdfData hdf;
-    XdmfData xdmf;
-};
-
-struct AttributeMeta final
+struct XdmfHdfData final
 {
     HdfData hdf;
     XdmfData xdmf;

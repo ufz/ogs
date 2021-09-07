@@ -86,13 +86,13 @@ static constexpr auto meshPropertyDatatypeSize()
     return property_sizes;
 }
 
-inline auto ogs_to_xdmf_type = meshPropertyDatatypeSize();
+inline auto ogs_to_xdmf_type_fn = meshPropertyDatatypeSize();
 
 // Transform MeshPropertyDataType into type_sizes (in bytes)
 static std::string getPropertyDataTypeSize(
     MeshPropertyDataType const& ogs_data_type)
 {
-    return fmt::format("{}", ogs_to_xdmf_type[to_underlying(ogs_data_type)]);
+    return fmt::format("{}", ogs_to_xdmf_type_fn[to_underlying(ogs_data_type)]);
 }
 
 // Collects all known data and return a function that takes all unknown data
@@ -101,22 +101,26 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     XdmfData const& geometry, XdmfData const& topology,
     std::vector<XdmfData> const& constant_attributes,
     std::vector<XdmfData> const& variable_attributes,
-    std::string const& h5filename, std::string const& ogs_version)
+    std::string const& h5filename, std::string const& ogs_version,
+    std::string const& mesh_name)
 {
     // Generates function that writes <DataItem>. Late binding needed because
     // maximum number of steps unknown. Time step and h5filename are captured to
     // return a unary function
     // _a suffix is a user defined literal for fmt named arguments
-    auto const time_dataitem_genfn = [](int const time_step, int const max_step,
-                                        std::string const h5filename)
+    auto const time_dataitem_genfn =
+        [](unsigned long long const time_step, int const max_step,
+           std::string const& h5filename, std::string const& mesh_name)
     {
-        return [time_step, max_step, h5filename](auto const& xdmfdata)
+        return
+            [time_step, max_step, h5filename, mesh_name](auto const& xdmfdata)
         {
             return fmt::format(
                 "\n\t\t<DataItem DataType=\"{datatype}\" "
                 "Dimensions=\"{local_dimensions}\" "
                 "Format=\"HDF\" "
-                "Precision=\"{precision}\">{filename}:data/{datasetname}|"
+                "Precision=\"{precision}\">"
+                "{filename}:meshes/{meshname}/{datasetname}|"
                 "{time_step} {starts}:1 {strides}:1 "
                 "{local_dimensions}:{max_step} "
                 "{global_dimensions}</"
@@ -126,6 +130,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                     fmt::join(xdmfdata.global_block_dims, " "),
                 "precision"_a = getPropertyDataTypeSize(xdmfdata.data_type),
                 "filename"_a = h5filename,
+                "meshname"_a = mesh_name,
                 "datasetname"_a = xdmfdata.name,
                 "starts"_a = fmt::join(xdmfdata.starts, " "),
                 "strides"_a = fmt::join(xdmfdata.strides, " "),
@@ -224,13 +229,15 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     // Generates a function that either writes the data or points to existing
     // data
     auto const time_step_fn = [time_dataitem_genfn, pointer_transfrom,
-                               h5filename](auto const& component_transform,
-                                           int const time_step,
-                                           int const max_step,
-                                           time_attribute const variable)
+                               h5filename,
+                               mesh_name](auto const& component_transform,
+                                          unsigned long long const time_step,
+                                          int const max_step,
+                                          time_attribute const variable)
     {
         return [component_transform, time_dataitem_genfn, pointer_transfrom,
-                variable, time_step, max_step, h5filename](XdmfData const& attr)
+                variable, time_step, max_step, h5filename,
+                mesh_name](XdmfData const& attr)
         {
             // new data arrived
             bool const changed =
@@ -238,8 +245,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                  time_step == 0);
             if (changed)
             {
-                auto dataitem =
-                    time_dataitem_genfn(time_step, max_step, h5filename);
+                auto dataitem = time_dataitem_genfn(time_step, max_step,
+                                                    h5filename, mesh_name);
                 return component_transform(attr, dataitem);
             }
             else

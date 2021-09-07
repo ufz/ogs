@@ -71,23 +71,23 @@ static hid_t createDataSet(
 {
     int const time_dim_local_size = data_dims.size() + 1;
 
-    std::vector<Hdf5DimType> time_max_dims =
+    std::vector<Hdf5DimType> const time_max_dims =
         prependDimension(H5S_UNLIMITED, max_dims);
-    std::vector<Hdf5DimType> time_data_global_dims =
+    std::vector<Hdf5DimType> const time_data_global_dims =
         prependDimension(1, max_dims);
 
-    std::vector<Hdf5DimType> time_data_chunk_dims =
+    std::vector<Hdf5DimType> const time_data_chunk_dims =
         prependDimension(1, chunk_dims);
 
-    hid_t fspace =
+    hid_t const fspace =
         H5Screate_simple(time_dim_local_size, time_data_global_dims.data(),
                          time_max_dims.data());
     assert(fspace >= 0);
 
-    hid_t dcpl = H5Pcreate(H5P_DATASET_CREATE);
+    hid_t const dcpl = H5Pcreate(H5P_DATASET_CREATE);
     assert(dcpl >= 0);
 
-    hid_t status =
+    hid_t const status =
         H5Pset_chunk(dcpl, chunk_dims.size() + 1, time_data_chunk_dims.data());
     if (status < 0)
     {
@@ -99,8 +99,8 @@ static hid_t createDataSet(
         H5Pset_deflate(dcpl, default_compression_factor);
     }
 
-    hid_t dataset = H5Dcreate2(section, dataset_name.c_str(), data_type, fspace,
-                               H5P_DEFAULT, dcpl, H5P_DEFAULT);
+    hid_t const dataset = H5Dcreate2(section, dataset_name.c_str(), data_type,
+                                     fspace, H5P_DEFAULT, dcpl, H5P_DEFAULT);
 
     assert(dataset >= 0);
     H5Pclose(dcpl);
@@ -121,17 +121,18 @@ static void writeDataSet(
     std::vector<Hdf5DimType> const& offset_dims,
     std::vector<Hdf5DimType> const& max_dims,
     [[maybe_unused]] std::vector<Hdf5DimType> const& chunk_dims,
-    std::string const& dataset_name, int step, hid_t dataset)  // where
+    std::string const& dataset_name, Hdf5DimType const step,
+    hid_t const dataset)  // where
 {
-    Hdf5DimType hdf_step = step;
-    Hdf5DimType time_steps = hdf_step + 1;
+    Hdf5DimType const time_steps = step + 1;
 
-    std::vector<Hdf5DimType> time_data_local_dims = data_dims;
-    std::vector<Hdf5DimType> time_max_dims =
+    std::vector<Hdf5DimType> const time_data_local_dims = data_dims;
+    std::vector<Hdf5DimType> const time_max_dims =
         prependDimension(time_steps, max_dims);
-    std::vector<Hdf5DimType> time_offsets =
-        prependDimension(hdf_step, offset_dims);
-    std::vector<hsize_t> count = prependDimension(1, time_data_local_dims);
+    std::vector<Hdf5DimType> const time_offsets =
+        prependDimension(step, offset_dims);
+    std::vector<hsize_t> const count =
+        prependDimension(1, time_data_local_dims);
 
     hid_t const io_transfer_property = createHDF5TransferPolicy();
 
@@ -144,7 +145,7 @@ static void writeDataSet(
     {
         OGS_FATAL("H5D set extent failed dataset '{:s}'.", dataset_name);
     }
-    hid_t fspace = H5Dget_space(dataset);
+    hid_t const fspace = H5Dget_space(dataset);
 
     H5Sselect_hyperslab(fspace, H5S_SELECT_SET, time_offsets.data(), NULL,
                         count.data(), NULL);
@@ -161,76 +162,142 @@ static void writeDataSet(
 
     return;
 }
+
+/**
+ * \brief Write vector with time values into open hdf file
+ * \details In contrast to all other hdf write methods writing is only performed
+ * by one process (is_file_manager_true). file handle is to an already opened
+ * file
+ */
+static void writeTimeSeries(hid_t const file,
+                            std::vector<double> const& step_times,
+                            bool const is_file_manager)
+{
+    hsize_t const size = step_times.size();
+    hid_t const memspace = H5Screate_simple(1, &size, NULL);
+    hid_t const filespace = H5Screate_simple(1, &size, NULL);
+
+    if (is_file_manager)
+    {
+        H5Sselect_all(memspace);
+        H5Sselect_all(filespace);
+    }
+    else
+    {
+        H5Sselect_none(memspace);
+        H5Sselect_none(filespace);
+    }
+
+    hid_t const dataset =
+        H5Dcreate2(file, "/times", H5T_NATIVE_DOUBLE, filespace, H5P_DEFAULT,
+                   H5P_DEFAULT, H5P_DEFAULT);
+
+    H5Dwrite(dataset, H5T_NATIVE_DOUBLE, memspace, filespace, H5P_DEFAULT,
+             step_times.data());
+
+    H5Dclose(dataset);
+    H5Sclose(memspace);
+    H5Sclose(filespace);
+};
 namespace MeshLib::IO
 {
-HdfWriter::HdfWriter(std::vector<HdfData> constant_attributes,
-                     std::vector<HdfData>
-                         variable_attributes,
-                     int const initial_step,
-                     std::filesystem::path const& filepath,
-                     bool const use_compression)
-    : _variable_attributes(std::move(variable_attributes)),
-      _hdf5_filepath(filepath),
-      _use_compression(checkCompression() && use_compression),
-      _file(createFile(filepath)),
-      _output_step(initial_step)
+struct HdfWriter::HdfMesh final
 {
-    _group = H5Gcreate2(_file, "data", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    hid_t const group;
+    std::string const name;
+    std::map<std::string, hid_t> const datasets;
+    std::vector<HdfData> const variable_attributes;
+};
 
-    auto createAndWriteDataSet = [&](auto const& attribute) -> hid_t {
-        hid_t dataset = createDataSet(
-            attribute.data_type, attribute.data_space, attribute.file_space,
-            attribute.chunk_space, _use_compression, _group, attribute.name);
-
-        checkHdfStatus(dataset, "Creating HDF5 Dataset: {:s} failed.",
-                       attribute.name);
-        writeDataSet(attribute.data_start, attribute.data_type,
-                     attribute.data_space, attribute.offsets,
-                     attribute.file_space, attribute.chunk_space,
-                     attribute.name, _output_step, dataset);
-        return dataset;
-    };
-
-    for (auto const& attribute : constant_attributes)
+HdfWriter::HdfWriter(std::vector<MeshHdfData> meshes,
+                     unsigned long long const initial_step,
+                     std::filesystem::path const& filepath,
+                     bool const use_compression,
+                     bool const is_file_manager)
+    : _hdf5_filepath(filepath),
+      _file(createFile(filepath)),
+      _meshes_group(
+          H5Gcreate2(_file, "/meshes", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)),
+      _step_times{0},  // ToDo need to be initial time
+      _use_compression(checkCompression() && use_compression),
+      _is_file_manager(is_file_manager)
+{
+    for (auto const& mesh : meshes)
     {
-        hid_t dataset = createAndWriteDataSet(attribute);
-        H5Dclose(dataset);
-    }
+        hid_t const group = H5Gcreate2(_meshes_group, mesh.name.c_str(),
+                                       H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
-    for (auto const& attribute : _variable_attributes)
-    {
-        hid_t dataset = createAndWriteDataSet(attribute);
-        // datasets are kept open
-        _datasets.insert({attribute.name, dataset});
+        auto const createAndWriteDataSet = [&](auto const& attribute) -> hid_t
+        {
+            hid_t const dataset = createDataSet(
+                attribute.data_type, attribute.data_space, attribute.file_space,
+                attribute.chunk_space, _use_compression, group, attribute.name);
+
+            checkHdfStatus(dataset, "Creating HDF5 Dataset: {:s} failed.",
+                           attribute.name);
+
+            writeDataSet(attribute.data_start, attribute.data_type,
+                         attribute.data_space, attribute.offsets,
+                         attribute.file_space, attribute.chunk_space,
+                         attribute.name, initial_step, dataset);
+            return dataset;
+        };
+
+        for (auto const& attribute : mesh.constant_attributes)
+        {
+            hid_t const dataset = createAndWriteDataSet(attribute);
+            H5Dclose(dataset);
+        }
+
+        std::map<std::string, hid_t> datasets;
+        for (auto const& attribute : mesh.variable_attributes)
+        {
+            hid_t const dataset = createAndWriteDataSet(attribute);
+            // datasets are kept open
+            datasets.insert({attribute.name, dataset});
+        }
+
+        _hdf_meshes.push_back(std::make_unique<HdfMesh>(
+            HdfMesh{group, mesh.name, datasets, mesh.variable_attributes}));
     }
-    _output_step++;
 }
 
 HdfWriter::~HdfWriter()
 {
-    for (auto& dataset : _datasets)
+    writeTimeSeries(_file, _step_times, _is_file_manager);
+
+    for (auto const& mesh : _hdf_meshes)
     {
-        H5Dclose(dataset.second);
+        for (auto const& dataset : mesh->datasets)
+        {
+            H5Dclose(dataset.second);
+        }
+        H5Gclose(mesh->group);
     }
-    H5Gclose(_group);
+    H5Gclose(_meshes_group);
     H5Fclose(_file);
 }
 
-void HdfWriter::writeStep()
+void HdfWriter::writeStep(double const time)
 {
-    for (auto const& attribute : _variable_attributes)
-    {
-        auto const& dataset_hid = _datasets.find(attribute.name);
-        if (dataset_hid == _datasets.end())
-        {
-            OGS_FATAL("Writing HDF5 Dataset: {:s} failed.", attribute.name);
-        }
+    auto const output_step = _step_times.size();
+    _step_times.push_back(time);
 
-        writeDataSet(
-            attribute.data_start, attribute.data_type, attribute.data_space,
-            attribute.offsets, attribute.file_space, attribute.chunk_space,
-            attribute.name, _output_step, _datasets.at(attribute.name));
+    for (auto const& mesh : _hdf_meshes)
+    {
+        for (auto const& attribute : mesh->variable_attributes)
+        {
+            auto const& dataset_hid = mesh->datasets.find(attribute.name);
+            if (dataset_hid == mesh->datasets.end())
+            {
+                OGS_FATAL("Writing HDF5 Dataset: {:s} failed.", attribute.name);
+            }
+
+            writeDataSet(
+                attribute.data_start, attribute.data_type, attribute.data_space,
+                attribute.offsets, attribute.file_space, attribute.chunk_space,
+                attribute.name, output_step, mesh->datasets.at(attribute.name));
+        }
     }
-    _output_step++;
 }
 }  // namespace MeshLib::IO

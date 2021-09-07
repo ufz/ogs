@@ -28,14 +28,29 @@ namespace MeshLib::IO
  * @param mesh OGS mesh can be mesh or partitionedMesh
  * @return vector of meta data
  */
-std::vector<AttributeMeta> transformAttributes(MeshLib::Mesh const& mesh);
+std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh);
+/**
+ * \brief Create meta data for geometry used for hdf5 and xdmf
+ * @param mesh OGS mesh can be mesh or partitionedMesh
+ * @param data_ptr Memory location of geometry values.
+ * @return Geometry meta data
+ */
+XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh,
+                              double const* data_ptr);
+/**
+ * \brief  Create meta data for topology used for HDF5 and XDMF
+ * @param values actual topology values to get size and memory location
+ * @return Topology meta data
+ */
+XdmfHdfData transformTopology(std::vector<int> const& values);
 /**
  * \brief Copies all node points into a new vector. Contiguous data used for
- * writing.
+ * writing. Conform with XDMF standard in
+ * https://www.xdmf.org/index.php/XDMF_Model_and_Format
  * @param mesh OGS mesh can be mesh or partitionedMesh
- * @return Geometry containing a copy of the data and the geometry meta data
+ * @return vector containing a copy of the data
  */
-Geometry transformGeometry(MeshLib::Mesh const& mesh);
+std::vector<double> transformToXDMFGeometry(MeshLib::Mesh const& mesh);
 /**
  * \brief Copies all cells into a new vector. Contiguous data used for writing.
  * The topology is specific to xdmf because it contains the xdmf cell types!!
@@ -43,8 +58,8 @@ Geometry transformGeometry(MeshLib::Mesh const& mesh);
  * @param mesh OGS mesh can be mesh or partitionedMesh
  * @param offset Local offset to transform local to global cell ID. Offset must
  * be zero in serial and must be defined for each process in parallel execution.
-
- * @return Topology containing a copy of the data and the topology meta data
+ * @return vector containing a copy of the data
  */
-Topology transformTopology(MeshLib::Mesh const& mesh, std::size_t offset);
+std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
+                                         std::size_t const offset);
 }  // namespace MeshLib::IO
