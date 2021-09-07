@@ -67,6 +67,27 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
 
                 return result;
             }));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<IntegrationPointWriter>(
+            "epsilon_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            integration_order,
+            [this]()
+            {
+                // Result containing integration point data for each local
+                // assembler.
+                std::vector<std::vector<double>> result;
+                result.resize(_local_assemblers.size());
+
+                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
+                {
+                    auto const& local_asm = *_local_assemblers[i];
+                    result[i] = local_asm.getEpsilon();
+                }
+
+                return result;
+            }));
 }
 
 template <int DisplacementDim>
@@ -223,11 +244,6 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "temperature_interpolated",
             MeshLib::MeshItemType::Node, 1);
 
-    // Initialize local assemblers after all variables have been set.
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
-        *_local_to_global_index_map);
-
     // Set initial conditions for integration point data.
     for (auto const& ip_writer : _integration_point_writer)
     {
@@ -278,6 +294,11 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             position += integration_points_read * ip_meta_data.n_components;
         }
     }
+
+    // Initialize local assemblers after all variables have been set.
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::initialize, _local_assemblers,
+        *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
