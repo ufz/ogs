@@ -395,6 +395,18 @@ std::vector<GlobalVector*> PhreeqcIO::getIntPtProcessSolutions() const
     return int_pt_process_solutions;
 }
 
+double PhreeqcIO::getConcentration(
+    int const component_id, GlobalIndexType const chemical_system_id) const
+{
+    auto const& aqueous_solution = *_chemical_system->aqueous_solution;
+    auto& components = aqueous_solution.components;
+    auto const& pH = *aqueous_solution.pH;
+
+    return component_id < static_cast<int>(components.size())
+               ? components[component_id].amount->get(chemical_system_id)
+               : pH.get(chemical_system_id);
+}
+
 void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
 {
     if (!_dump)

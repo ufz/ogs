@@ -54,6 +54,13 @@ public:
 
     virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const = 0;
 
+    virtual double getConcentration(
+        int const /*component_id*/,
+        GlobalIndexType const /*chemical_system_id*/) const
+    {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
     virtual std::vector<std::string> const getComponentList() const
     {
         return {};
