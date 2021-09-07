@@ -146,7 +146,7 @@ void ThermoMechanicsProcess<DisplacementDim>::constructDofTable()
         constructMonolithicProcessDofTable();
         return;
     }
-    constructDofTableOfSpecifiedProsessStaggeredScheme(
+    constructDofTableOfSpecifiedProcessStaggeredScheme(
         _process_data.mechanics_process_id);
 
     // TODO move the two data members somewhere else.

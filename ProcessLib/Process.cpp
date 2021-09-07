@@ -260,7 +260,7 @@ void Process::constructDofTable()
 
     // For staggered scheme:
     const int specified_process_id = 0;
-    constructDofTableOfSpecifiedProsessStaggeredScheme(specified_process_id);
+    constructDofTableOfSpecifiedProcessStaggeredScheme(specified_process_id);
 }
 
 void Process::constructMonolithicProcessDofTable()
@@ -272,8 +272,6 @@ void Process::constructMonolithicProcessDofTable()
     // Vector of mesh subsets.
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
 
-    // Vector of the number of variable components
-    std::vector<int> vec_var_n_components;
     // Collect the mesh subsets in a vector for the components of each
     // variables.
     for (ProcessVariable const& pv : _process_variables[0])
@@ -284,6 +282,7 @@ void Process::constructMonolithicProcessDofTable()
     }
 
     // Create a vector of the number of variable components
+    std::vector<int> vec_var_n_components;
     transform(cbegin(_process_variables[0]), cend(_process_variables[0]),
               back_inserter(vec_var_n_components),
               [](ProcessVariable const& pv) {
@@ -298,7 +297,7 @@ void Process::constructMonolithicProcessDofTable()
     assert(_local_to_global_index_map);
 }
 
-void Process::constructDofTableOfSpecifiedProsessStaggeredScheme(
+void Process::constructDofTableOfSpecifiedProcessStaggeredScheme(
     const int specified_process_id)
 {
     // Create single component dof in every of the mesh nodes.

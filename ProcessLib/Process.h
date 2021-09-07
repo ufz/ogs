@@ -287,8 +287,7 @@ protected:
     virtual void constructDofTable();
 
     /**
-     * Construct the DOF table for the monolithic scheme,
-     * which is stored in the
+     * Construct the DOF table for the monolithic scheme, which is stored in the
      * member of this class, @c _local_to_global_index_map.
      */
     void constructMonolithicProcessDofTable();
@@ -298,7 +297,7 @@ protected:
      * which is stored in the
      * member of this class, @c _local_to_global_index_map.
      */
-    void constructDofTableOfSpecifiedProsessStaggeredScheme(
+    void constructDofTableOfSpecifiedProcessStaggeredScheme(
         const int specified_prosess_id);
 
     /**
