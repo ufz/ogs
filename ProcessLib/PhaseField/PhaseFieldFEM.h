@@ -135,6 +135,8 @@ public:
     using PhaseFieldMatrix =
         typename ShapeMatricesType::template MatrixType<phasefield_size,
                                                         phasefield_size>;
+    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
+    using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using IpData =
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>;
 
