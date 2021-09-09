@@ -244,8 +244,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const phi_S_0 = 1. - phi_0;
 
-#define NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         auto const& m = Invariants::identity2;
         double const div_u = m.transpose() * eps;

@@ -430,8 +430,8 @@
         <vtkdiff>
             <regex>flow_fully_saturated_gas_ts_.*.vtu</regex>
             <field>gas_pressure</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
+            <absolute_tolerance>2e-15</absolute_tolerance>
+            <relative_tolerance>2e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>flow_fully_saturated_gas_ts_.*.vtu</regex>
