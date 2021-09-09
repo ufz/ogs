@@ -50,41 +50,14 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, [this]() {
-                // Result containing integration point data for each local
-                // assembler.
-                std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
-
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
-                {
-                    auto const& local_asm = *_local_assemblers[i];
-
-                    result[i] = local_asm.getSigma();
-                }
-
-                return result;
-            }));
+            integration_order, _local_assemblers, &LocalAssemblerIF::getSigma));
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, [this]() {
-                // Result containing integration point data for each local
-                // assembler.
-                std::vector<std::vector<double>> result;
-                result.resize(_local_assemblers.size());
-
-                for (std::size_t i = 0; i < _local_assemblers.size(); ++i)
-                {
-                    auto const& local_asm = *_local_assemblers[i];
-
-                    result[i] = local_asm.getEpsilon();
-                }
-
-                return result;
-            }));
+            integration_order, _local_assemblers,
+            &LocalAssemblerIF::getEpsilon));
 }
 
 template <int DisplacementDim>

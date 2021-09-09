@@ -104,10 +104,9 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
     virtual std::vector<double> getMaterialStateVariableInternalState(
         std::function<BaseLib::DynamicSpan<double>(
-            typename MaterialLib::Solids::MechanicsBase<
-                DisplacementDim>::MaterialStateVariables&)>
-            get_values_span,
-        int n_components) const = 0;
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables&)> const& get_values_span,
+        int const& n_components) const = 0;
 
     // TODO move to NumLib::ExtrapolatableElement
     virtual unsigned getNumberOfIntegrationPoints() const = 0;

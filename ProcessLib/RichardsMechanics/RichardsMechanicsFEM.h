@@ -239,10 +239,9 @@ public:
 
     std::vector<double> getMaterialStateVariableInternalState(
         std::function<BaseLib::DynamicSpan<double>(
-            typename MaterialLib::Solids::MechanicsBase<
-                DisplacementDim>::MaterialStateVariables&)>
-            get_values_span,
-        int n_components) const override;
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables&)> const& get_values_span,
+        int const& n_components) const override;
 
     std::vector<double> const& getIntPtDryDensitySolid(
         const double t,

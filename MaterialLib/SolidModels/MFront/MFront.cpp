@@ -434,11 +434,12 @@ MFront<DisplacementDim>::getInternalVariables() const
         // MFront stores the variables in local coordinate system.
         // The `size` variable could be used to find out the type of variable.
         typename MechanicsBase<DisplacementDim>::InternalVariable new_variable{
-            name, static_cast<unsigned>(size),
+            name, static_cast<int>(size),
             [offset, size](
                 typename MechanicsBase<
                     DisplacementDim>::MaterialStateVariables const& state,
-                std::vector<double>& cache) -> std::vector<double> const& {
+                std::vector<double>& cache) -> std::vector<double> const&
+            {
                 assert(dynamic_cast<MaterialStateVariables const*>(&state) !=
                        nullptr);
                 auto const& internal_state_variables =
@@ -453,7 +454,8 @@ MFront<DisplacementDim>::getInternalVariables() const
             },
             [offset, size](
                 typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double> {
+                    state) -> BaseLib::DynamicSpan<double>
+            {
                 assert(dynamic_cast<MaterialStateVariables const*>(&state) !=
                        nullptr);
                 auto& internal_state_variables =

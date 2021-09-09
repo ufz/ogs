@@ -1321,10 +1321,9 @@ std::vector<double> RichardsMechanicsLocalAssembler<
     DisplacementDim>::
     getMaterialStateVariableInternalState(
         std::function<BaseLib::DynamicSpan<double>(
-            typename MaterialLib::Solids::MechanicsBase<
-                DisplacementDim>::MaterialStateVariables&)>
-            get_values_span,
-        int const n_components) const
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables&)> const& get_values_span,
+        int const& n_components) const
 {
     return ProcessLib::getIntegrationPointDataMaterialStateVariables(
         _ip_data, &IpData::material_state_variables, get_values_span,

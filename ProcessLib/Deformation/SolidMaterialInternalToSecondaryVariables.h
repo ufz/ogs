@@ -67,7 +67,8 @@ void solidMaterialInternalToSecondaryVariables(
                 auto const& state = loc_asm.getMaterialStateVariablesAt(i);
 
                 auto const& int_pt_values = fct(state, cache_column);
-                assert(int_pt_values.size() == num_components);
+                assert(int_pt_values.size() ==
+                       static_cast<std::size_t>(num_components));
                 auto const int_pt_values_vec = MathLib::toVector(int_pt_values);
 
                 cache_mat.col(i).noalias() = int_pt_values_vec;
@@ -80,14 +81,16 @@ void solidMaterialInternalToSecondaryVariables(
     }
 }
 
-template <typename LocalAssemblerInterface, typename AddIntegrationPointWriter,
+template <typename LocalAssemblerInterface, typename IntegrationPointWriter,
           int DisplacementDim>
 void solidMaterialInternalVariablesToIntegrationPointWriter(
     std::map<int, std::unique_ptr<MaterialLib::Solids::MechanicsBase<
                       DisplacementDim>>> const& solid_materials,
     std::vector<std::unique_ptr<LocalAssemblerInterface>> const&
         local_assemblers,
-    AddIntegrationPointWriter const& add_integration_point_writer)
+    std::vector<std::unique_ptr<IntegrationPointWriter>>&
+        integration_point_writer,
+    int const integration_order)
 {
     // Collect the internal variables for all solid materials.
     std::vector<typename MaterialLib::Solids::MechanicsBase<
@@ -100,34 +103,17 @@ void solidMaterialInternalVariablesToIntegrationPointWriter(
     }
 
     // Create integration point writers for each of the internal variables.
-    for (auto const& internal_variable : internal_variables)
+    for (auto const& iv : internal_variables)
     {
-        auto const& name = internal_variable.name;
-        auto const& fct = internal_variable.reference;
-        auto const n_components = internal_variable.num_components;
         DBUG("Creating integration point writer for  internal variable {:s}.",
-             name);
+             iv.name);
 
-        auto get_integration_point_data = [fct, n_components,
-                                           &local_assemblers]() {
-            // Result containing integration point data for each local
-            // assembler.
-            std::vector<std::vector<double>> result;
-            result.reserve(local_assemblers.size());
-
-            std::transform(begin(local_assemblers), end(local_assemblers),
-                           back_inserter(result),
-                           [fct, n_components](auto const& local_assembler) {
-                               return local_assembler
-                                   ->getMaterialStateVariableInternalState(
-                                       fct, n_components);
-                           });
-
-            return result;
-        };
-
-        add_integration_point_writer(name, n_components,
-                                     get_integration_point_data);
+        integration_point_writer.emplace_back(
+            std::make_unique<IntegrationPointWriter>(
+                "material_state_variable_" + iv.name + "_ip", iv.num_components,
+                integration_order, local_assemblers,
+                &LocalAssemblerInterface::getMaterialStateVariableInternalState,
+                iv.reference, iv.num_components));
     }
 }
 }  // namespace ProcessLib::Deformation

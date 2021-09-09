@@ -54,121 +54,36 @@ ThermoRichardsMechanicsProcess<DisplacementDim>::ThermoRichardsMechanicsProcess(
         std::make_unique<IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order,
-            [this]()
-            {
-                // Result containing integration point data for each local
-                // assembler.
-                std::vector<std::vector<double>> result;
-                result.resize(local_assemblers_.size());
-
-                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
-                {
-                    auto const& local_asm = *local_assemblers_[i];
-                    result[i] = local_asm.getSigma();
-                }
-
-                return result;
-            }));
+            integration_order, local_assemblers_, &LocalAssemblerIF::getSigma));
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "saturation_ip", 1 /*n components*/, integration_order,
-            [this]()
-            {
-                // Result containing integration point data for each local
-                // assembler.
-                std::vector<std::vector<double>> result;
-                result.resize(local_assemblers_.size());
-
-                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
-                {
-                    auto const& local_asm = *local_assemblers_[i];
-                    result[i] = local_asm.getSaturation();
-                }
-
-                return result;
-            }));
+            local_assemblers_, &LocalAssemblerIF::getSaturation));
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "porosity_ip", 1 /*n components*/, integration_order,
-            [this]()
-            {
-                // Result containing integration point data for each local
-                // assembler.
-                std::vector<std::vector<double>> result;
-                result.resize(local_assemblers_.size());
-
-                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
-                {
-                    auto const& local_asm = *local_assemblers_[i];
-                    result[i] = local_asm.getPorosity();
-                }
-
-                return result;
-            }));
+            local_assemblers_, &LocalAssemblerIF::getPorosity));
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "transport_porosity_ip", 1 /*n components*/, integration_order,
-            [this]()
-            {
-                // Result containing integration point data for each local
-                // assembler.
-                std::vector<std::vector<double>> result;
-                result.resize(local_assemblers_.size());
-
-                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
-                {
-                    auto const& local_asm = *local_assemblers_[i];
-                    result[i] = local_asm.getTransportPorosity();
-                }
-
-                return result;
-            }));
+            local_assemblers_, &LocalAssemblerIF::getTransportPorosity));
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "swelling_stress_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order,
-            [this]()
-            {
-                // Result containing integration point data for each local
-                // assembler.
-                std::vector<std::vector<double>> result;
-                result.resize(local_assemblers_.size());
-
-                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
-                {
-                    auto const& local_asm = *local_assemblers_[i];
-                    result[i] = local_asm.getSwellingStress();
-                }
-
-                return result;
-            }));
+            integration_order, local_assemblers_,
+            &LocalAssemblerIF::getSwellingStress));
 
     _integration_point_writer.emplace_back(
         std::make_unique<IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order,
-            [this]()
-            {
-                // Result containing integration point data for each local
-                // assembler.
-                std::vector<std::vector<double>> result;
-                result.resize(local_assemblers_.size());
-
-                for (std::size_t i = 0; i < local_assemblers_.size(); ++i)
-                {
-                    auto const& local_asm = *local_assemblers_[i];
-                    result[i] = local_asm.getEpsilon();
-                }
-
-                return result;
-            }));
+            integration_order, local_assemblers_,
+            &LocalAssemblerIF::getEpsilon));
 }
 
 template <int DisplacementDim>
