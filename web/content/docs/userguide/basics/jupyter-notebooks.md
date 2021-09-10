@@ -28,6 +28,9 @@ You can use a pre-defined container environment which currently contains:
   - [scipy](https://docs.scipy.org/doc/scipy/reference/) — Scientific computing
   - [vtk](https://pypi.org/project/vtk/) — Visualization
   - [PyVista][pyvista] — Visualization
+- Jupyter-related tools:
+  - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
+  - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
 ### Usage
 
 With [Docker]({{< ref "container.md#with-docker" >}}):
