@@ -43,11 +43,11 @@ static hid_t meshPropertyType2HdfType(MeshPropertyDataType const ogs_data_type)
 HdfData::HdfData(void const* data_start, std::size_t const size_partitioned_dim,
                  std::size_t const size_tuple, std::string const& name,
                  MeshPropertyDataType const mesh_property_data_type,
-                 unsigned int const num_of_files)
+                 unsigned int const n_files)
     : data_start(data_start), name(name)
 {
     auto const& partition_info =
-        getPartitionInfo(size_partitioned_dim, num_of_files);
+        getPartitionInfo(size_partitioned_dim, n_files);
     auto const& offset_partitioned_dim = partition_info.local_offset;
     offsets = {offset_partitioned_dim, 0};
 

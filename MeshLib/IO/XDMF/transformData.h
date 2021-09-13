@@ -26,31 +26,31 @@ namespace MeshLib::IO
 /**
  * \brief Create meta data for attributes used for hdf5 and xdmf
  * @param mesh OGS mesh can be mesh or partitionedMesh
- * @param num_of_files If greater than 1 it groups the data of each process. The
- * num_of_files specifies the number of groups
+ * @param n_files specifies the number of files. If greater than 1 it groups the
+ * data of each process to n_files
  * @return vector of meta data
  */
 std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
-                                             unsigned int num_of_files);
+                                             unsigned int n_files);
 /**
  * \brief Create meta data for geometry used for hdf5 and xdmf
  * @param mesh OGS mesh can be mesh or partitionedMesh
  * @param data_ptr Memory location of geometry values.
- * @param num_of_files If greater than 1 it groups the data of each process. The
- * num_of_files specifies the number of groups
+ * @param n_files specifies the number of files. If greater than 1 it groups the
+ * data of each process to n_files
  * @return Geometry meta data
  */
 XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
-                              unsigned int num_of_files);
+                              unsigned int n_files);
 /**
  * \brief  Create meta data for topology used for HDF5 and XDMF
  * @param values actual topology values to get size and memory location
- * @param num_of_files If greater than 1 it groups the data of each process. The
- * num_of_files specifies the number of groups
+ * @param n_files specifies the number of files. If greater than 1 it groups the
+ * data of each process to n_files
  * @return Topology meta data
  */
 XdmfHdfData transformTopology(std::vector<int> const& values,
-                              unsigned int num_of_files);
+                              unsigned int n_files);
 /**
  * \brief Copies all node points into a new vector. Contiguous data used for
  * writing. Conform with XDMF standard in

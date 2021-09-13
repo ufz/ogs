@@ -23,7 +23,7 @@ using namespace std::string_literals;
 namespace MeshLib::IO
 {
 std::filesystem::path partitionFilename(
-    std::filesystem::path const& basic_filepath, int file_group)
+    std::filesystem::path const& basic_filepath, int const file_group)
 {
     std::string const filename = (file_group > 0)
                                      ? basic_filepath.stem().string() + "_"s +
@@ -37,9 +37,9 @@ std::filesystem::path partitionFilename(
 };
 
 hid_t createFile(std::filesystem::path const& filepath,
-                 unsigned int const num_of_files)
+                 unsigned int const n_files)
 {
-    auto const communicator = getCommunicator(num_of_files);
+    auto const communicator = getCommunicator(n_files);
     MPI_Comm const comm = communicator.mpi_communicator;
     MPI_Info const info = MPI_INFO_NULL;
     hid_t const plist_id = H5Pcreate(H5P_FILE_ACCESS);
@@ -55,9 +55,9 @@ hid_t createFile(std::filesystem::path const& filepath,
 }
 
 hid_t openHDF5File(std::filesystem::path const& filepath,
-                   unsigned int const num_of_files)
+                   unsigned int const n_files)
 {
-    MPI_Comm const comm = getCommunicator(num_of_files).mpi_communicator;
+    MPI_Comm const comm = getCommunicator(n_files).mpi_communicator;
     MPI_Info info = MPI_INFO_NULL;
     hid_t const plist_id = H5Pcreate(H5P_FILE_ACCESS);
     H5Pset_fapl_mpio(plist_id, comm, info);

@@ -31,9 +31,9 @@ bool isFileManager()
 }
 
 PartitionInfo getPartitionInfo(std::size_t const size,
-                               unsigned int const num_of_files)
+                               unsigned int const n_files)
 {
-    MPI_Comm const mpi_comm = getCommunicator(num_of_files).mpi_communicator;
+    MPI_Comm const mpi_comm = getCommunicator(n_files).mpi_communicator;
     int mpi_size;
     int mpi_rank;
     MPI_Comm_size(mpi_comm, &mpi_size);

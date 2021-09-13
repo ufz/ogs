@@ -95,7 +95,7 @@ bool Output::shallDoOutput(int timestep, double const t)
 
 Output::Output(std::string directory, OutputType file_type,
                std::string file_prefix, std::string file_suffix,
-               bool const compress_output, unsigned int const num_of_files,
+               bool const compress_output, unsigned int const n_files,
                std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
@@ -108,7 +108,7 @@ Output::Output(std::string directory, OutputType file_type,
       _output_file_prefix(std::move(file_prefix)),
       _output_file_suffix(std::move(file_suffix)),
       _output_file_compression(compress_output),
-      _num_of_files(num_of_files),
+      _n_files(n_files),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
@@ -183,7 +183,7 @@ struct Output::OutputFile
                int const iteration, int const data_mode_,
                bool const compression_,
                std::set<std::string> const& outputnames,
-               unsigned int const num_of_files)
+               unsigned int const n_files)
         : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
                                  iteration)),
           path(BaseLib::joinPaths(directory, name)),
@@ -191,7 +191,7 @@ struct Output::OutputFile
           data_mode(data_mode_),
           compression(compression_),
           outputnames(outputnames),
-          num_of_files(num_of_files)
+          n_files(n_files)
     {
     }
 
@@ -206,7 +206,7 @@ struct Output::OutputFile
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
     std::set<std::string> outputnames;
-    unsigned int num_of_files;
+    unsigned int n_files;
     static std::string constructFilename(OutputType const type,
                                          std::string prefix, std::string suffix,
                                          std::string mesh_name,
@@ -250,7 +250,7 @@ void Output::outputMeshXdmf(
         _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
             std::move(meshes), path, timestep, t,
             _output_data_specification.output_variables,
-            output_file.compression, output_file.num_of_files);
+            output_file.compression, output_file.n_files);
     }
     else
     {
@@ -337,7 +337,7 @@ void Output::doOutputAlways(Process const& process,
                 _output_directory, _output_file_type, _output_file_prefix, "",
                 name, timestep, t, iteration, _output_file_data_mode,
                 _output_file_compression,
-                _output_data_specification.output_variables, _num_of_files);
+                _output_data_specification.output_variables, _n_files);
 
             outputMeshXdmf(std::move(file), std::move(meshes), timestep, t);
         }

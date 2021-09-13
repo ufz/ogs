@@ -416,7 +416,7 @@ AddTest(
 )
 
 AddTest(
-    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np3
+    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np3_1file
     PATH EllipticPETSc
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3_XDMF_np3.prj
@@ -431,9 +431,9 @@ AddTest(
 
 AddTest(
     NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np3_2files
-    PATH EllipticPETSc
+    PATH EllipticPETSc/XDMF_NP3_2
     EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e3_XDMF_np3_2files.prj
+    EXECUTABLE_ARGS ../cube_1e3_XDMF_np3_2files.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 3
     TESTER xdmfdiff
@@ -445,9 +445,9 @@ AddTest(
 
 AddTest(
     NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np3_3files
-    PATH EllipticPETSc
+    PATH EllipticPETSc/XDMF_NP3_3
     EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e3_XDMF_np3_3files.prj
+    EXECUTABLE_ARGS ../cube_1e3_XDMF_np3_3files.prj
     WRAPPER mpirun
     WRAPPER_ARGS -np 3
     TESTER xdmfdiff

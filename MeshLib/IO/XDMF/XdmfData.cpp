@@ -24,7 +24,7 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
                    std::string const& name,
                    std::optional<MeshLib::MeshItemType> const attribute_center,
                    unsigned int const index,
-                   unsigned int const num_of_files)
+                   unsigned int const n_files)
     : starts(
           [&size_tuple]()
           {
@@ -54,7 +54,7 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
       attribute_center(attribute_center),
       index(index)
 {
-    auto partition_info = getPartitionInfo(size_partitioned_dim, num_of_files);
+    auto partition_info = getPartitionInfo(size_partitioned_dim, n_files);
     // TODO (tm) XdmfLib does not support 64 bit data types so far
     assert(partition_info.local_length <
            std::numeric_limits<unsigned int>::max());

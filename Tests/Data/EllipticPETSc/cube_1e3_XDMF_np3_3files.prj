@@ -66,7 +66,7 @@
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <hdf>
-                <number_of_files>1</number_of_files>
+                <number_of_files>3</number_of_files>
             </hdf>
         </output>
     </time_loop>

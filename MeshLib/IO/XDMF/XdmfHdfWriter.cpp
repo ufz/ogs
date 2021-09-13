@@ -39,7 +39,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     std::filesystem::path const& filepath, unsigned long long const time_step,
     double const initial_time,
     std::set<std::string> const& variable_output_names,
-    bool const use_compression, unsigned int const num_of_files)
+    bool const use_compression, unsigned int const n_files)
 {
     // ogs meshes to vector of Xdmf/HDF meshes (we keep Xdmf and HDF together
     // because XDMF depends on HDF) to meta
@@ -79,12 +79,12 @@ XdmfHdfWriter::XdmfHdfWriter(
     // Transform the data to be written into a format conforming with the rules
     // of xdmf topology and geometry
     auto const transform_ogs_mesh_data_to_xdmf_conforming_data =
-        [&num_of_files](auto const& mesh)
+        [&n_files](auto const& mesh)
     {
         auto flattened_geometry_values = transformToXDMFGeometry(mesh);
         // actually this line is only needed to calculate the offset
-        XdmfHdfData const& geometry = transformGeometry(
-            mesh, flattened_geometry_values.data(), num_of_files);
+        XdmfHdfData const& geometry =
+            transformGeometry(mesh, flattened_geometry_values.data(), n_files);
         auto const flattened_topology_values =
             transformToXDMFTopology(mesh, geometry.hdf.offsets[0]);
         return std::make_unique<TransformedMeshData>(
@@ -95,7 +95,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     // create metadata for transformed data and original ogs mesh data
     auto const transform_to_meta_data =
         [&transform_ogs_mesh_data_to_xdmf_conforming_data,
-         &num_of_files](auto const& mesh)
+         &n_files](auto const& mesh)
     {
         // important: transformed data must survive and be unique, raw pointer
         // to its memory!
@@ -103,10 +103,10 @@ XdmfHdfWriter::XdmfHdfWriter(
             transform_ogs_mesh_data_to_xdmf_conforming_data(mesh);
         auto const geometry = transformGeometry(
             mesh, xdmf_conforming_data->flattened_geometry_values.data(),
-            num_of_files);
+            n_files);
         auto const topology = transformTopology(
-            xdmf_conforming_data->flattened_topology_values, num_of_files);
-        auto const attributes = transformAttributes(mesh, num_of_files);
+            xdmf_conforming_data->flattened_topology_values, n_files);
+        auto const attributes = transformAttributes(mesh, n_files);
         return XdmfHdfMesh{std::move(geometry), std::move(topology),
                            std::move(attributes), mesh.get().getName(),
                            std::move(xdmf_conforming_data)};
@@ -159,7 +159,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     auto const is_file_manager = isFileManager();
     _hdf_writer = std::make_unique<HdfWriter>(std::move(hdf_meshes), time_step,
                                               hdf_filepath, use_compression,
-                                              is_file_manager, num_of_files);
+                                              is_file_manager, n_files);
 
     // --------------- XDMF ---------------------
     // The light data is only written by just one process
