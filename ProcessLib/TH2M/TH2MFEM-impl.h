@@ -329,6 +329,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.dxmWL_dpLR = c.dxmWL_dpLR;
         ip_data.dxmWL_dT = c.dxmWL_dT;
 
+        // for variable output
+        ip_data.xnCG = c.xnCG;
+        ip_data.xmCG = c.xmCG;
+        ip_data.xmWL = c.xmWL;
+
         ip_data.diffusion_coefficient_vapour = c.diffusion_coefficient_vapour;
         ip_data.diffusion_coefficient_solvate = c.diffusion_coefficient_solvate;
 
