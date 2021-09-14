@@ -31,6 +31,7 @@ You can use a pre-defined container environment which currently contains:
 - Jupyter-related tools:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
+  - [nb2hugo](https://github.com/bilke/nb2hugo/tree/ogs) — Notebook to www.opengeosys.org markdown
 ### Usage
 
 With [Docker]({{< ref "container.md#with-docker" >}}):
