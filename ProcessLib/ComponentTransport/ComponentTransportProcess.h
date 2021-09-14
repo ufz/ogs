@@ -126,7 +126,9 @@ public:
 
     void solveReactionEquation(std::vector<GlobalVector*>& x,
                                std::vector<GlobalVector*> const& x_prev,
-                               double const t, double const dt) override;
+                               double const t, double const dt,
+                               NumLib::EquationSystem& ode_sys,
+                               int const process_id) override;
 
     void extrapolateIntegrationPointValuesToNodes(
         const double t,
