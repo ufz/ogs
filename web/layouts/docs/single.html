@@ -20,6 +20,18 @@
       {{.TableOfContents}}
       <hr>
       {{ end }}
+      {{ if .Params.notebook }}
+      <div class="note">
+        <p style="margin-top: 0; margin-bottom: 0%;"><img style="margin-top: 0; margin-bottom: 0; height: 2em;"
+            class="inline-block mr-2" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
+          This benchmark is available as a Jupyter notebook:
+          <a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Notebooks/{{ .Params.notebook }}">
+            {{ .Params.notebook }}.
+          </a>
+        </p>
+      </div>
+
+      {{ end }}
       {{ .Content }}
     </div>
 

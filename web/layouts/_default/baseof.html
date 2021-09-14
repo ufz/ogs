@@ -47,6 +47,11 @@
             {{ range .Children }}
             <li
               class="p-1 mr-1 {{if $currentPage.IsMenuCurrent $subsection . }}bg-gray-100 rounded-lg{{ else }}text-gray-700 hover:text-gray-900{{ end }}">
+
+              {{ if .Page.Params.notebook }}
+              <img style="margin-top: 0; margin-bottom: 0; height: 1em;" class="inline-block mr-1"
+                src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
+              {{ end }}
               <a href="{{ .URL }}" {{if $currentPage.IsMenuCurrent $subsection . }} class="text-brand-500" {{end}}>
                 {{ .Name }}
               </a>
