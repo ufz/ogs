@@ -34,14 +34,6 @@ container:
       --cvode --ccache
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
       --base_image 'centos:8' --ompi 4.0.5 --mpi_benchmarks
-    # Jupyter container
-    - >
-      poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -C -R --ogs ../..
-      --build_args ' --progress=plain'
-      --cvode --ccache --mfront
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'jupyter/base-notebook'
-      $DOCKER_TAG_JUPYTER
     # test ogs can run in container
     - |
       for sif in _out/images/*.sif; do
