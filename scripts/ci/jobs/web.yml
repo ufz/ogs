@@ -26,7 +26,7 @@ preview web site:
     - echo '<meta http-equiv="REFRESH" content="0;URL=web/public/index.html">' >> WebPreview.html
     - cd web
     - yarn
-    - yarn build
+    - yarn build-with-nb
   rules:
     - if: $CI_MERGE_REQUEST_ID
       changes:
@@ -58,7 +58,7 @@ deploy web site:
   script:
     - cd web
     - yarn
-    - yarn build
+    - yarn build-with-nb
     - netlify deploy --prod --dir=public --site=$OGS_NETLIFY_SITE_ID
     - yarn upload-index
   cache:
