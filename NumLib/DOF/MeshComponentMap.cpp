@@ -359,11 +359,11 @@ void MeshComponentMap::createParallelMeshComponentMap(
         // mesh items are ordered first by node, cell, ....
         for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
         {
+            const auto node_id = c.getNodeID(j);
             GlobalIndexType global_index = static_cast<GlobalIndexType>(
-                components.size() * partitioned_mesh.getGlobalNodeID(j) +
+                components.size() * partitioned_mesh.getGlobalNodeID(node_id) +
                 comp_id);
-            const bool is_ghost = partitioned_mesh.isGhostNode(
-                partitioned_mesh.getNode(j)->getID());
+            const bool is_ghost = partitioned_mesh.isGhostNode(node_id);
             if (is_ghost)
             {
                 _ghosts_indices.push_back(global_index);
