@@ -21,7 +21,7 @@ if(OGS_USE_POETRY)
         endif()
         if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
             execute_process(
-                COMMAND ${_CMD_COMMAND} poetry install
+                COMMAND ${CMD_COMMAND} poetry install
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
             )
         endif()
