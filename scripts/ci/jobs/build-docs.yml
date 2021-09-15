@@ -37,6 +37,7 @@ build docs:
     - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot -o cmake-dependencies.svg
     - cmake . -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
     - cmake --build . --target doc > >(tee make-docs.output)
+    - grep 'warning:' make-docs.output >> DoxygenWarnings.log || true
     - cat DoxygenWarnings.log|grep -v 'too many nodes'
     - NUM_DOX_WARNINGS=`cat DoxygenWarnings.log|grep warning:|grep -v 'too many nodes'|wc -l|xargs`
     - echo "doxygen_warnings $NUM_DOX_WARNINGS" >> metrics.txt
@@ -70,6 +71,7 @@ build docs:
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
+    when: always
 
 check docs links:
   stage: check
