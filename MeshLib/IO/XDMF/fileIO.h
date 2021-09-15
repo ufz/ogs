@@ -18,7 +18,8 @@
 
 namespace MeshLib::IO
 {
-int64_t createFile(std::filesystem::path const& filepath);
-int64_t openHDF5File(std::filesystem::path const& filepath);
+int64_t createFile(std::filesystem::path const& filepath, unsigned int n_files);
+int64_t openHDF5File(std::filesystem::path const& filepath,
+                     unsigned int n_files);
 int64_t createHDF5TransferPolicy();
 }  // namespace MeshLib::IO

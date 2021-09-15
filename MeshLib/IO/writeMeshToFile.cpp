@@ -51,7 +51,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
         const std::reference_wrapper<const MeshLib::Mesh> mr = mesh;
         meshes.push_back(mr);
         MeshLib::IO::XdmfHdfWriter(std::move(meshes), file_path, 0, 0.0,
-                                   variable_output_names, true);
+                                   variable_output_names, true, 1);
         return 0;
     }
     ERR("writeMeshToFile(): Unknown file extension '{:s}'. Can not write file "

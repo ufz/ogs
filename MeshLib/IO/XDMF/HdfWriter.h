@@ -43,13 +43,14 @@ public:
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param use_compression if true gzip compression is enabled
      * @param is_file_manager True if process (in parallel execution) is
-     * File_Manager
+     * @param n_files Number of output files
      */
     HdfWriter(std::vector<MeshHdfData> meshes,
               unsigned long long initial_step,
               std::filesystem::path const& filepath,
               bool use_compression,
-              bool is_file_manager);
+              bool is_file_manager,
+              unsigned int n_files);
     /**
      * \brief Writes attributes. The data
      * itself is hold by a structure outside of this class. The writer assumes

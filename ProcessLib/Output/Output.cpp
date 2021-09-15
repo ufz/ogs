@@ -95,7 +95,8 @@ bool Output::shallDoOutput(int timestep, double const t)
 
 Output::Output(std::string directory, OutputType file_type,
                std::string file_prefix, std::string file_suffix,
-               bool const compress_output, std::string const& data_mode,
+               bool const compress_output, unsigned int const n_files,
+               std::string const& data_mode,
                bool const output_nonlinear_iteration_results,
                std::vector<PairRepeatEachSteps> repeats_each_steps,
                std::vector<double>&& fixed_output_times,
@@ -107,6 +108,7 @@ Output::Output(std::string directory, OutputType file_type,
       _output_file_prefix(std::move(file_prefix)),
       _output_file_suffix(std::move(file_suffix)),
       _output_file_compression(compress_output),
+      _n_files(n_files),
       _output_file_data_mode(convertVtkDataMode(data_mode)),
       _output_nonlinear_iteration_results(output_nonlinear_iteration_results),
       _repeats_each_steps(std::move(repeats_each_steps)),
@@ -180,14 +182,16 @@ struct Output::OutputFile
                std::string const& mesh_name, int const timestep, double const t,
                int const iteration, int const data_mode_,
                bool const compression_,
-               std::set<std::string> const& outputnames)
+               std::set<std::string> const& outputnames,
+               unsigned int const n_files)
         : name(constructFilename(type, prefix, suffix, mesh_name, timestep, t,
                                  iteration)),
           path(BaseLib::joinPaths(directory, name)),
           type(type),
           data_mode(data_mode_),
           compression(compression_),
-          outputnames(outputnames)
+          outputnames(outputnames),
+          n_files(n_files)
     {
     }
 
@@ -199,12 +203,10 @@ struct Output::OutputFile
     /// documentation
     /// http://www.vtk.org/doc/nightly/html/classvtkXMLWriter.html
     int const data_mode;
-
     //! Enables or disables zlib-compression of the output files.
     bool const compression;
-
     std::set<std::string> outputnames;
-
+    unsigned int n_files;
     static std::string constructFilename(OutputType const type,
                                          std::string prefix, std::string suffix,
                                          std::string mesh_name,
@@ -248,7 +250,7 @@ void Output::outputMeshXdmf(
         _mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
             std::move(meshes), path, timestep, t,
             _output_data_specification.output_variables,
-            output_file.compression);
+            output_file.compression, output_file.n_files);
     }
     else
     {
@@ -321,7 +323,7 @@ void Output::doOutputAlways(Process const& process,
                     _output_directory, _output_file_type, _output_file_prefix,
                     _output_file_suffix, mesh.get().getName(), timestep, t,
                     iteration, _output_file_data_mode, _output_file_compression,
-                    _output_data_specification.output_variables);
+                    _output_data_specification.output_variables, 1);
 
                 pvd_file =
                     findPVDFile(process, process_id, mesh.get().getName());
@@ -331,11 +333,11 @@ void Output::doOutputAlways(Process const& process,
         else if (_output_file_type == ProcessLib::OutputType::xdmf)
         {
             std::string name = meshes[0].get().getName();
-            OutputFile const file(_output_directory, _output_file_type,
-                                  _output_file_prefix, "", name, timestep, t,
-                                  iteration, _output_file_data_mode,
-                                  _output_file_compression,
-                                  _output_data_specification.output_variables);
+            OutputFile const file(
+                _output_directory, _output_file_type, _output_file_prefix, "",
+                name, timestep, t, iteration, _output_file_data_mode,
+                _output_file_compression,
+                _output_data_specification.output_variables, _n_files);
 
             outputMeshXdmf(std::move(file), std::move(meshes), timestep, t);
         }

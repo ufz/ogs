@@ -39,7 +39,7 @@ public:
 
 public:
     Output(std::string directory, OutputType const type, std::string prefix,
-           std::string suffix, bool const compress_output,
+           std::string suffix, bool const compress_output, unsigned int n_files,
            std::string const& data_mode,
            bool const output_nonlinear_iteration_results,
            std::vector<PairRepeatEachSteps> repeats_each_steps,
@@ -108,6 +108,8 @@ private:
 
     //! Enables or disables zlib-compression of the output files.
     bool const _output_file_compression;
+    //! Specifies the number of hdf5 output files.
+    unsigned int const _n_files;
 
     //! Chooses vtk's data mode for output following the enumeration given in
     /// the vtkXMLWriter: {Ascii, Binary, Appended}.  See vtkXMLWriter
