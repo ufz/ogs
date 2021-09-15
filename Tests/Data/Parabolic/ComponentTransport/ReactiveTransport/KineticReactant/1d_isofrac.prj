@@ -314,6 +314,7 @@
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
         <mesh>1d_isofrac_ReactiveDomain</mesh>
+        <linear_solver>general_linear_solver</linear_solver>
         <database>1d_isofrac_database.dat</database>
         <solution>
             <temperature>25</temperature>

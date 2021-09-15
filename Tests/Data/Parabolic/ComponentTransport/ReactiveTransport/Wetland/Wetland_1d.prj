@@ -2071,6 +2071,7 @@
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
         <mesh>Wetland_1d_ReactiveDomain</mesh>
+        <linear_solver>general_linear_solver</linear_solver>
         <database>cwm1.dat</database>
         <solution>
             <temperature>10</temperature>
