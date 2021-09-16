@@ -171,22 +171,37 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     const bool hydro_crack = (crack_scheme && (*crack_scheme == "propagating"));
     const bool crack_pressure = crack_scheme.has_value();
 
-    auto pf_irrv_read =
+    auto const irreversible_threshold =
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__irreversible_threshold}
-        config.getConfigParameterOptional<double>("irreversible_threshold");
+        config.getConfigParameter<double>("irreversible_threshold", 0.05);
 
-    double irreversible_threshold = 0.05;
-    if (pf_irrv_read)
+    auto const phasefield_model = [&]
     {
-        irreversible_threshold = *pf_irrv_read;
-    }
+        auto const phasefield_model_string =
+            //! \ogs_file_param{prj__processes__process__PHASE_FIELD__phasefield_model}
+            config.getConfigParameter<std::string>("phasefield_model");
+
+        if (phasefield_model_string == "AT1")
+        {
+            return PhaseFieldModel::AT1;
+        }
+        else if (phasefield_model_string == "AT2")
+        {
+            return PhaseFieldModel::AT2;
+        }
+        OGS_FATAL(
+            "phasefield_model must be 'AT1' or 'AT2' but '{:s}' "
+            "was given",
+            phasefield_model_string.c_str());
+    }();
 
     PhaseFieldProcessData<DisplacementDim> process_data{
         materialIDs(mesh),   std::move(solid_constitutive_relations),
         residual_stiffness,  crack_resistance,
         crack_length_scale,  solid_density,
         specific_body_force, hydro_crack,
-        crack_pressure,      irreversible_threshold};
+        crack_pressure,      irreversible_threshold,
+        phasefield_model};
 
     SecondaryVariableCollection secondary_variables;
 

@@ -32,6 +32,12 @@ struct Parameter;
 
 namespace PhaseField
 {
+enum class PhaseFieldModel
+{
+    AT1,
+    AT2
+};
+
 template <int DisplacementDim>
 struct PhaseFieldProcessData
 {
@@ -47,7 +53,8 @@ struct PhaseFieldProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     bool hydro_crack = false;
     bool crack_pressure = false;
-    double irreversible_threshold = 0.05;
+    double irreversible_threshold;
+    PhaseFieldModel phasefield_model;
 
     double const unity_pressure = 1.0;
     double pressure = 0.0;

@@ -12,7 +12,7 @@
             <type>PHASE_FIELD</type>
             <coupling_scheme>staggered</coupling_scheme>
             <integration_order>2</integration_order>
-            <phasefield_model>AT2</phasefield_model>
+            <phasefield_model>AT1</phasefield_model>
             <irreversible_threshold>0.05</irreversible_threshold>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
@@ -110,7 +110,7 @@
                 <variable>epsilon</variable>
             </variables>
             <type>VTK</type>
-            <prefix>AT2_iso_tension</prefix>
+            <prefix>AT1_iso_tension</prefix>
             <timesteps>
                 <pair>
                     <repeat>10</repeat>
@@ -196,7 +196,7 @@
         <curve>
             <name>dirichlet_time</name>
             <coords>0  1.0</coords>
-            <values>0  0.8</values>
+            <values>0  0.9</values>
         </curve>
     </curves>
     <process_variables>
