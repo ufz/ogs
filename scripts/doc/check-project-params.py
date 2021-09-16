@@ -137,6 +137,10 @@ if undocumented:
                 + "| [&rarr; ufz/ogs/master]({6}/{0}#L{1})"
             ).format(*u2)
         )
+        print(
+            "warning: undocumented parameter in {0}, line {1}: {3}".format(*u2),
+            file=sys.stderr,
+        )
 
 if unneeded_comments:
     qa_status_succeeded = False
