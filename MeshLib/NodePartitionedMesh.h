@@ -40,23 +40,9 @@ public:
           _n_active_nodes(mesh.getNumberOfNodes()),
           _is_single_thread(true)
     {
-        const auto& mesh_nodes = mesh.getNodes();
         for (std::size_t i = 0; i < _nodes.size(); i++)
         {
             _global_node_ids[i] = _nodes[i]->getID();
-
-            // TODO To add copying of the connected nodes (and elements)
-            //      in the copy constructor of class Node in order to
-            //      drop the following lines.
-            auto node = _nodes[i];
-            // Copy constructor of Mesh does not copy the connected
-            // nodes to node.
-            if (node->_connected_nodes.size() == 0)
-            {
-                std::copy(mesh_nodes[i]->_connected_nodes.begin(),
-                          mesh_nodes[i]->_connected_nodes.end(),
-                          std::back_inserter(node->_connected_nodes));
-            }
         }
     }
 
@@ -141,14 +127,15 @@ public:
     /// Get the maximum number of connected nodes to node.
     std::size_t getMaximumNConnectedNodesToNode() const
     {
-        std::vector<Node*>::const_iterator it_max_ncn = std::max_element(
-            _nodes.cbegin(), _nodes.cend(),
-            [](Node const* const node_a, Node const* const node_b) {
-                return (node_a->getConnectedNodes().size() <
-                        node_b->getConnectedNodes().size());
+        auto const& nodes_connections =
+            MeshLib::calculateNodesConnectedByElements(*this);
+        auto const max_connections = std::max_element(
+            nodes_connections.cbegin(), nodes_connections.cend(),
+            [](auto const& connections_node_a, auto const& connections_node_b) {
+                return (connections_node_a.size() < connections_node_b.size());
             });
         // Return the number of connected nodes +1 for the node itself.
-        return (*it_max_ncn)->getConnectedNodes().size() + 1;
+        return max_connections->size() + 1;
     }
 
     bool isForSingleThread() const { return _is_single_thread; }
