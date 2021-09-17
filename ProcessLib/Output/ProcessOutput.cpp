@@ -18,7 +18,6 @@
 
 #include "InfoLib/GitInfo.h"
 #include "IntegrationPointWriter.h"
-#include "MathLib/LinAlg/LinAlg.h"
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
