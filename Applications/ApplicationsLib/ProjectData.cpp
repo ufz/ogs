@@ -554,8 +554,8 @@ ProjectData::parseChemicalSolverInterface(
             "using file-based approach.");
 
         chemical_solver_interface = ChemistryLib::createChemicalSolverInterface<
-            ChemistryLib::ChemicalSolver::Phreeqc>(_mesh_vec, *config,
-                                                   output_directory);
+            ChemistryLib::ChemicalSolver::Phreeqc>(_mesh_vec, _linear_solvers,
+                                                   *config, output_directory);
     }
     else if (boost::iequals(chemical_solver, "PhreeqcKernel"))
     {

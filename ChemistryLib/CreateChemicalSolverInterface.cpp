@@ -64,6 +64,8 @@ template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> const&
+        linear_solvers,
     BaseLib::ConfigTree const& config, std::string const& output_directory)
 {
     auto mesh_name =
@@ -145,6 +147,8 @@ template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> const&
+        linear_solvers,
     BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
 {
     auto mesh = *meshes[0];
