@@ -353,6 +353,9 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     //! \ogs_file_param{prj__media}
     parseMedia(project_config.getConfigSubtreeOptional("media"));
 
+    //! \ogs_file_param{prj__linear_solvers}
+    parseLinearSolvers(project_config.getConfigSubtree("linear_solvers"));
+
     auto chemical_solver_interface = parseChemicalSolverInterface(
         //! \ogs_file_param{prj__chemical_system}
         project_config.getConfigSubtreeOptional("chemical_system"),
@@ -362,9 +365,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
     parseProcesses(project_config.getConfigSubtree("processes"),
                    project_directory, output_directory,
                    std::move(chemical_solver_interface));
-
-    //! \ogs_file_param{prj__linear_solvers}
-    parseLinearSolvers(project_config.getConfigSubtree("linear_solvers"));
 
     //! \ogs_file_param{prj__nonlinear_solvers}
     parseNonlinearSolvers(project_config.getConfigSubtree("nonlinear_solvers"));
