@@ -84,6 +84,13 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     assert(mesh.getID() != 0);
     DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName(), mesh.getID());
 
+    auto const ls_name =
+        //! \ogs_file_param{prj__chemical_system__linear_solver}
+        config.getConfigParameter<std::string>("linear_solver");
+    auto& linear_solver = BaseLib::getOrError(
+        linear_solvers, ls_name,
+        "A linear solver with the given name does not exist.");
+
     auto path_to_database = parseDatabasePath(config);
 
     // chemical system
@@ -152,6 +159,14 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
     BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
 {
     auto mesh = *meshes[0];
+
+    auto const ls_name =
+        //! \ogs_file_param{prj__chemical_system__linear_solver}
+        config.getConfigParameter<std::string>("linear_solver");
+    auto& linear_solver = BaseLib::getOrError(
+        linear_solvers, ls_name,
+        "A linear solver with the given name does not exist.");
+
     auto path_to_database = parseDatabasePath(config);
 
     // TODO (renchao): remove mapping process id to component name.
