@@ -256,6 +256,13 @@ void Mesh::checkNonlinearNodeIDs() const
     }
 }
 
+std::size_t Mesh::getNumberOfBaseNodes() const
+{
+    return std::count_if(begin(_nodes), end(_nodes),
+                         [](auto const* const node)
+                         { return isBaseNode(*node); });
+}
+
 bool Mesh::hasNonlinearElement() const
 {
     return std::any_of(
