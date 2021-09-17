@@ -59,7 +59,6 @@ public:
         \param properties    Mesh property.
         \param n_global_base_nodes Number of the base nodes of the global mesh.
         \param n_global_nodes      Number of all nodes of the global mesh.
-        \param n_base_nodes        Number of the base nodes.
         \param n_active_base_nodes Number of the active base nodes.
         \param n_active_nodes      Number of all active nodes.
     */
@@ -70,10 +69,9 @@ public:
                         Properties properties,
                         const std::size_t n_global_base_nodes,
                         const std::size_t n_global_nodes,
-                        const std::size_t n_base_nodes,
                         const std::size_t n_active_base_nodes,
                         const std::size_t n_active_nodes)
-        : Mesh(name, nodes, elements, properties, n_base_nodes),
+        : Mesh(name, nodes, elements, properties),
           _global_node_ids(glb_node_ids),
           _n_global_base_nodes(n_global_base_nodes),
           _n_global_nodes(n_global_nodes),
