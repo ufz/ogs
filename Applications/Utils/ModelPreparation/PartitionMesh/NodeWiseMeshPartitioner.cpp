@@ -166,13 +166,13 @@ findRegularNodesInPartition(
              // order mesh, and realloc needed for higher order element meshes.
 
     // Split the nodes into base nodes and extra nodes.
-    partition_copy(begin(partition_nodes), end(partition_nodes),
-                   std::back_inserter(base_nodes),
-                   std::back_inserter(higher_order_nodes),
-                   [&](MeshLib::Node* const n) {
-                       return !is_mixed_high_order_linear_elems ||
-                              node_id(*n) > n_base_nodes;
-                   });
+    std::partition_copy(begin(partition_nodes), end(partition_nodes),
+                        std::back_inserter(base_nodes),
+                        std::back_inserter(higher_order_nodes),
+                        [&](MeshLib::Node* const n) {
+                            return !is_mixed_high_order_linear_elems ||
+                                   node_id(*n) > n_base_nodes;
+                        });
 
     return {base_nodes, higher_order_nodes};
 }
