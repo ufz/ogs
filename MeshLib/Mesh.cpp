@@ -56,7 +56,7 @@ Mesh::Mesh(std::string name,
     {
         recalculateMaxBaseNodeId();
     }
-    if ((_n_base_nodes == 0 && hasNonlinearElement()) || isNonlinear())
+    if (_n_base_nodes == 0 && hasNonlinearElement())
     {
         this->checkNonlinearNodeIDs();
     }

@@ -32,7 +32,7 @@ void postVTU(std::string const& int_vtu_filename,
     // read VTU with simulation results
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(int_vtu_filename));
-    if (mesh->isNonlinear())
+    if (mesh->hasNonlinearElement())
     {
         mesh = MeshLib::convertToLinearMesh(*mesh, mesh->getName());
     }

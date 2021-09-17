@@ -44,9 +44,9 @@ int main(int argc, char* argv[])
     {
         return EXIT_FAILURE;
     }
-    if (!mesh->isNonlinear())
+    if (!mesh->hasNonlinearElement())
     {
-        ERR("The input mesh is not non-linear. Exit.");
+        ERR("The input mesh is linear. Exit.");
         return EXIT_FAILURE;
     }
 

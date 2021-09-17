@@ -122,8 +122,8 @@ public:
     /// Get the number of base nodes
     std::size_t getNumberOfBaseNodes() const { return _n_base_nodes; }
 
-    /// Return true if the mesh has any nonlinear nodes
-    bool isNonlinear() const { return (getNumberOfNodes() != getNumberOfBaseNodes()); }
+    /// Check if the mesh contains any nonlinear element.
+    bool hasNonlinearElement() const;
 
     Properties& getProperties() { return _properties; }
     Properties const& getProperties() const { return _properties; }
@@ -149,9 +149,6 @@ protected:
 
     /// Check if all the nonlinear nodes are stored at the end of the node vector
     void checkNonlinearNodeIDs() const;
-
-    /// Check if the mesh contains any nonlinear element
-    bool hasNonlinearElement() const;
 
     std::size_t const _id;
     unsigned _mesh_dimension;
