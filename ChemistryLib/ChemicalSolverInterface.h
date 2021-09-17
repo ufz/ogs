@@ -28,6 +28,11 @@ namespace ChemistryLib
 class ChemicalSolverInterface
 {
 public:
+    ChemicalSolverInterface(GlobalLinearSolver& linear_solver_)
+        : linear_solver(linear_solver_)
+    {
+    }
+
     virtual void initialize() {}
 
     virtual void initializeChemicalSystemConcrete(
@@ -91,5 +96,6 @@ public:
 
 public:
     std::vector<GlobalIndexType> chemical_system_index_map;
+    GlobalLinearSolver& linear_solver;
 };
 }  // namespace ChemistryLib

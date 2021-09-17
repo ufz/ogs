@@ -144,9 +144,9 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         *chemical_system, user_punch, use_high_precision, project_file_name);
 
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
-        std::move(project_file_name), std::move(path_to_database),
-        std::move(chemical_system), std::move(reaction_rates),
-        std::move(surface), std::move(user_punch),
+        *linear_solver, std::move(project_file_name),
+        std::move(path_to_database), std::move(chemical_system),
+        std::move(reaction_rates), std::move(surface), std::move(user_punch),
         std::move(output), std::move(dump), std::move(knobs));
 }
 
@@ -193,9 +193,9 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         config.getConfigSubtreeOptional("equilibrium_reactants"), mesh);
 
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
-        mesh.getNumberOfBaseNodes(), process_id_to_component_name_map,
-        std::move(path_to_database), std::move(aqueous_solution),
-        std::move(equilibrium_reactants), std::move(kinetic_reactants),
-        std::move(reaction_rates));
+        *linear_solver, mesh.getNumberOfBaseNodes(),
+        process_id_to_component_name_map, std::move(path_to_database),
+        std::move(aqueous_solution), std::move(equilibrium_reactants),
+        std::move(kinetic_reactants), std::move(reaction_rates));
 }
 }  // namespace ChemistryLib

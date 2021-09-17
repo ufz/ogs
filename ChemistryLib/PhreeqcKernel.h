@@ -32,11 +32,11 @@ class ReactionRate;
 class PhreeqcKernel final : public ChemicalSolverInterface, private Phreeqc
 {
 public:
-    PhreeqcKernel(std::size_t const num_chemical_systems,
+    PhreeqcKernel(GlobalLinearSolver& linear_solver,
+                  std::size_t const num_chemical_systems,
                   std::vector<std::pair<int, std::string>> const&
                       process_id_to_component_name_map,
-                  std::string const& database,
-                  AqueousSolution aqueous_solution,
+                  std::string const& database, AqueousSolution aqueous_solution,
                   std::unique_ptr<EquilibriumReactants>&& equilibrium_reactants,
                   std::unique_ptr<Kinetics>&& kinetic_reactants,
                   std::vector<ReactionRate>&& reaction_rates);
