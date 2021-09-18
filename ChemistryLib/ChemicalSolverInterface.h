@@ -96,6 +96,8 @@ public:
 
 public:
     std::vector<GlobalIndexType> chemical_system_index_map;
+    /// specify the linear solver used to solve the linearized reaction
+    /// equation.
     GlobalLinearSolver& linear_solver;
 };
 }  // namespace ChemistryLib
