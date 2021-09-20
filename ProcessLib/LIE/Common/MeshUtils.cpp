@@ -29,7 +29,7 @@ class IsCrackTip
 {
 public:
     explicit IsCrackTip(MeshLib::Mesh const& mesh)
-        : _mesh(mesh), _fracture_element_dim(mesh.getDimension() - 1)
+        : _fracture_element_dim(mesh.getDimension() - 1)
     {
         _is_internal_node.resize(mesh.getNumberOfNodes(), true);
 
@@ -43,7 +43,7 @@ public:
 
     bool operator()(MeshLib::Node const& node) const
     {
-        if (!_is_internal_node[node.getID()] || !_mesh.isBaseNode(node.getID()))
+        if (!_is_internal_node[node.getID()] || !isBaseNode(node))
         {
             return false;
         }
@@ -59,7 +59,6 @@ public:
     }
 
 private:
-    MeshLib::Mesh const& _mesh;
     unsigned const _fracture_element_dim;
     std::vector<bool> _is_internal_node;
 };

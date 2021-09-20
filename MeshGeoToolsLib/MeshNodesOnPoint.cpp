@@ -30,7 +30,7 @@ MeshNodesOnPoint::MeshNodesOnPoint(MeshLib::Mesh const& mesh,
     {
         for (auto id : vec_ids)
         {
-            if (mesh.isBaseNode(id))
+            if (isBaseNode(*mesh.getNode(id)))
             {
                 _msh_node_ids.push_back(id);
             }

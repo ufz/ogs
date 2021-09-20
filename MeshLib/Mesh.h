@@ -122,9 +122,6 @@ public:
     /// Get the number of base nodes
     std::size_t getNumberOfBaseNodes() const { return _n_base_nodes; }
 
-    /// Return true if the given node is a basic one (i.e. linear order node)
-    bool isBaseNode(std::size_t node_idx) const {return node_idx < _n_base_nodes; }
-
     /// Return true if the mesh has any nonlinear nodes
     bool isNonlinear() const { return (getNumberOfNodes() != getNumberOfBaseNodes()); }
 
