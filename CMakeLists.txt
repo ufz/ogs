@@ -57,9 +57,13 @@ option(OGS_USE_CVODE "Use the Sundials CVODE module?" OFF)
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
 option(OGS_BUILD_TESTING "Should the tests be built?" ON)
 
+if(MSVC)
+    set(CMD_COMMAND "cmd;/c")
+endif()
+
 # ---- CMake includes ----
-include(GitSetup)
 include(Versions)
+include(GitSetup)
 include(PythonSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
@@ -226,7 +230,7 @@ if(POETRY)
     file(STRINGS ${PROJECT_BINARY_DIR}/.python_packages OGS_PYTHON_PACKAGES)
     list(REMOVE_DUPLICATES OGS_PYTHON_PACKAGES)
     execute_process(
-        COMMAND ${_CMD_COMMAND} poetry add ${OGS_PYTHON_PACKAGES}
+        COMMAND ${CMD_COMMAND} poetry add ${OGS_PYTHON_PACKAGES}
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     )
 endif()

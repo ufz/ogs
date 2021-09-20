@@ -1,12 +1,25 @@
-# Git detection
-find_package(Git REQUIRED)
-
 # cmake-lint: disable=W0106
 if(DEFINED ENV{OGS_VERSION})
     set(OGS_VERSION $ENV{OGS_VERSION})
-    message(STATUS "OGS VERSION: ${OGS_VERSION} (set via environment)")
+    message(STATUS "Using user-provided OGS_VERSION=${OGS_VERSION} (set via environment).")
+    return()
 elseif(DEFINED OGS_VERSION)
-    message(STATUS "Using user-provided OGS_VERSION=${OGS_VERSION}")
+    message(STATUS "Using user-provided OGS_VERSION=${OGS_VERSION}.")
+    return()
+endif()
+
+# Git detection
+find_package(Git)
+if(NOT Git_FOUND)
+    message(FATAL_ERROR "Git was not found. Either install Git or provide an \
+        OGS_VERSION as an environment- or CMake-variable!"
+)
+endif()
+string(REPLACE ".windows.1" "" GIT_VERSION_STRING ${GIT_VERSION_STRING})
+if(${GIT_VERSION_STRING} VERSION_LESS ${ogs.minimum_version.git})
+    message(FATAL_ERROR "Git version ${ogs.minimum_version.git} is required. \
+        Found version ${GIT_VERSION_STRING}."
+    )
 endif()
 
 if(NOT _IS_GIT_REPO)
@@ -117,8 +130,4 @@ if(_IS_GIT_REPO AND NOT OGS_VERSION)
         OUTPUT_VARIABLE GIT_SHA1_SHORT
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-endif()
-
-if(MSVC)
-    set(_CMD_COMMAND "cmd" "/c" CACHE INTERNAL "")
 endif()
