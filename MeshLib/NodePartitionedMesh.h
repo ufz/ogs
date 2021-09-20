@@ -109,18 +109,21 @@ public:
     bool isGhostNode(const std::size_t node_id) const
     {
         if (node_id < _n_active_base_nodes)
+        {
             return false;
-        else if (node_id >= _n_base_nodes && node_id < getLargestActiveNodeID())
+        }
+        if (!isBaseNode(*_nodes[node_id]) && node_id < getLargestActiveNodeID())
+        {
             return false;
-        else
-            return true;
+        }
+        return true;
     }
 
     /// Get the largest ID of active nodes for higher order elements in a
     /// partition.
     std::size_t getLargestActiveNodeID() const
     {
-        return _n_base_nodes + _n_active_nodes - _n_active_base_nodes;
+        return getNumberOfBaseNodes() + _n_active_nodes - _n_active_base_nodes;
     }
 
     // TODO I guess that is a simplified version of computeSparsityPattern()
