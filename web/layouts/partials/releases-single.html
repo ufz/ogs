@@ -58,9 +58,10 @@
                 </td>
                 <td>
                   <a style="text-decoration: none" href=" {{$gh_download}}/{{$file_prefix}}-{{.}}">
-                    OpenGeoSys
                     {{ if in . "de" }}
-                    + DataExplorer
+                    DataExplorer
+                    {{ else }}
+                    OpenGeoSys
                     {{ end }}
                     {{ if in . "utils" }}
                     + Utilities
