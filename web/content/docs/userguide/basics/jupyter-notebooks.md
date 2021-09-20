@@ -22,6 +22,7 @@ You can use a pre-defined container environment which currently contains:
 - A set of Python packages:
   - [ogs6py](https://github.com/joergbuchwald/ogs6py) — OGS model manipulation
   - [VTUInterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
+  - [h5py](https://docs.h5py.org/en/latest/index.html) — HDF5 IO
   - [matplotlib](https://matplotlib.org) — Plotting
   - [numpy](https://numpy.org) — Scientific computing
   - [pandas](https://pandas.pydata.org) — Data analysis
