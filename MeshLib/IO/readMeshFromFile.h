@@ -26,7 +26,6 @@ class Mesh;
 
 namespace IO
 {
-MeshLib::Mesh* readMeshFromFileSerial(const std::string &file_name);
 MeshLib::Mesh* readMeshFromFile(const std::string &file_name);
 }
 }
