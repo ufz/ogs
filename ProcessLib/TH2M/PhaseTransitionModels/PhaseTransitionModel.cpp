@@ -46,8 +46,10 @@ int findComponentIndex(
     // solvate.
 
     OGS_FATAL(
-        "PhaseTransitionModel::findComponentIndex could not find the "
-        "specified property type in the phase.");
+        "PhaseTransitionModel: findComponentIndex() could not find the "
+        "specified property type '{:s}' in phase '{:s}'.",
+        MaterialPropertyLib::property_enum_to_string[property_type],
+        phase_name);
 }
 }  // namespace TH2M
 }  // namespace ProcessLib
