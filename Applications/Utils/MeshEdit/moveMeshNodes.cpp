@@ -180,10 +180,11 @@ int main(int argc, char* argv[])
             elevation[i] = (*nodes[i])[2];
         }
 
+        auto const& connections =
+            MeshLib::calculateNodesConnectedByElements(*mesh);
         for (std::size_t i = 0; i < nNodes; i++)
         {
-            const std::vector<MeshLib::Node*> conn_nodes(
-                nodes[i]->getConnectedNodes());
+            auto const& conn_nodes(connections[nodes[i]->getID()]);
             const unsigned nConnNodes(conn_nodes.size());
             elevation[i] = (2 * (*nodes[i])[2]);
             for (std::size_t j = 0; j < nConnNodes; ++j)

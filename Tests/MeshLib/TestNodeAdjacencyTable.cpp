@@ -24,7 +24,7 @@ TEST(MeshLib, CreateNodeAdjacencyTable1D)
     std::unique_ptr<Mesh> mesh(
         MeshGenerator::generateLineMesh(double(1), std::size_t(10)));
 
-    NodeAdjacencyTable table(mesh->getNodes());
+    NodeAdjacencyTable table(*mesh);
 
     // There must be as many entries as there are nodes in the mesh.
     ASSERT_EQ(mesh->getNumberOfNodes(), table.size());
@@ -60,7 +60,7 @@ TEST(MeshLib, CreateNodeAdjacencyTable2D)
     std::unique_ptr<Mesh> mesh(MeshGenerator::generateRegularQuadMesh(
         1, 1, std::size_t(10), std::size_t(10)));
 
-    NodeAdjacencyTable table(mesh->getNodes());
+    NodeAdjacencyTable table(*mesh);
 
     // There must be as many entries as there are nodes in the mesh.
     ASSERT_EQ(mesh->getNumberOfNodes(), table.size());
@@ -99,7 +99,7 @@ TEST(MeshLib, CreateNodeAdjacencyTable3D)
     // double(1), double(1), double(1), std::size_t(10), std::size_t(10),
     // std::size_t(10)));
 
-    NodeAdjacencyTable table(mesh->getNodes());
+    NodeAdjacencyTable table(*mesh);
 
     // There must be as many entries as there are nodes in the mesh.
     ASSERT_EQ(mesh->getNumberOfNodes(), table.size());

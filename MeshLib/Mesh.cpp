@@ -62,7 +62,6 @@ Mesh::Mesh(std::string name,
     }
     this->setDimension();
     this->setElementsConnectedToNodes();
-    this->setNodesConnectedByElements();
     this->setElementNeighbors();
 
     this->calcEdgeLengthRange();
@@ -103,7 +102,6 @@ Mesh::Mesh(const Mesh& mesh)
         this->setDimension();
     }
     this->setElementsConnectedToNodes();
-    // this->setNodesConnectedByElements();
     this->setElementNeighbors();
 }
 
@@ -236,40 +234,6 @@ void Mesh::setElementNeighbors()
     }
 }
 
-void Mesh::setNodesConnectedByElements()
-{
-    // Allocate temporary space for adjacent nodes.
-    std::vector<Node*> adjacent_nodes;
-    for (Node* const node : _nodes)
-    {
-        adjacent_nodes.clear();
-
-        // Get all elements, to which this node is connected.
-        std::vector<Element*> const& conn_elems = node->getElements();
-
-        // And collect all elements' nodes.
-        for (Element const* const element : conn_elems)
-        {
-            Node* const* const single_elem_nodes = element->getNodes();
-            std::size_t const nnodes = element->getNumberOfNodes();
-            for (std::size_t n = 0; n < nnodes; n++)
-            {
-                adjacent_nodes.push_back(single_elem_nodes[n]);
-            }
-        }
-
-        // Make nodes unique and sorted by their ids.
-        // This relies on the node's id being equivalent to it's address.
-        std::sort(adjacent_nodes.begin(), adjacent_nodes.end(),
-                  [](Node* a, Node* b) { return a->getID() < b->getID(); });
-        auto const last =
-            std::unique(adjacent_nodes.begin(), adjacent_nodes.end());
-        adjacent_nodes.erase(last, adjacent_nodes.end());
-
-        node->setConnectedNodes(adjacent_nodes);
-    }
-}
-
 void Mesh::checkNonlinearNodeIDs() const
 {
     for (MeshLib::Element const* e : _elements)
@@ -386,4 +350,41 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
 
     return mesh;
 }
+
+std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
+    Mesh const& mesh)
+{
+    std::vector<std::vector<Node*>> nodes_connected_by_elements;
+    auto const& nodes = mesh.getNodes();
+    nodes_connected_by_elements.resize(nodes.size());
+    for (std::size_t i = 0; i < nodes.size(); ++i)
+    {
+        auto& adjacent_nodes = nodes_connected_by_elements[i];
+        auto const* node = nodes[i];
+
+        // Get all elements, to which this node is connected.
+        auto const& connected_elements = node->getElements();
+
+        // And collect all elements' nodes.
+        for (Element const* const element : connected_elements)
+        {
+            Node* const* const single_elem_nodes = element->getNodes();
+            std::size_t const nnodes = element->getNumberOfNodes();
+            for (std::size_t n = 0; n < nnodes; n++)
+            {
+                adjacent_nodes.push_back(single_elem_nodes[n]);
+            }
+        }
+
+        // Make nodes unique and sorted by their ids.
+        // This relies on the node's id being equivalent to it's address.
+        std::sort(adjacent_nodes.begin(), adjacent_nodes.end(),
+                  [](Node* a, Node* b) { return a->getID() < b->getID(); });
+        auto const last =
+            std::unique(adjacent_nodes.begin(), adjacent_nodes.end());
+        adjacent_nodes.erase(last, adjacent_nodes.end());
+    }
+    return nodes_connected_by_elements;
+}
+
 }  // namespace MeshLib

@@ -114,6 +114,7 @@ int main(int argc, char* argv[])
         INFO("{:s}", out.str());
     }
 
+    auto const& connections = MeshLib::calculateNodesConnectedByElements(*mesh);
     for (auto node_id : selected_node_ids)
     {
         std::stringstream out;
@@ -130,8 +131,9 @@ int main(int argc, char* argv[])
             out << ele->getID() << " ";
         }
         out << std::endl;
-        out << "Connected nodes (" << node->getConnectedNodes().size() << "): ";
-        for (auto nd : node->getConnectedNodes())
+        out << "Connected nodes (" << connections[node->getID()].size()
+            << "): ";
+        for (auto nd : connections[node->getID()])
         {
             out << nd->getID() << " ";
         }
