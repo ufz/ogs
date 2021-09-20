@@ -16,8 +16,6 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "ParameterLib/Parameter.h"
-#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
