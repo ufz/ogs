@@ -64,6 +64,8 @@ template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> const&
+        linear_solvers,
     BaseLib::ConfigTree const& config, std::string const& output_directory)
 {
     auto mesh_name =
@@ -81,6 +83,13 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
 
     assert(mesh.getID() != 0);
     DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName(), mesh.getID());
+
+    auto const ls_name =
+        //! \ogs_file_param{prj__chemical_system__linear_solver}
+        config.getConfigParameter<std::string>("linear_solver");
+    auto& linear_solver = BaseLib::getOrError(
+        linear_solvers, ls_name,
+        "A linear solver with the given name does not exist.");
 
     auto path_to_database = parseDatabasePath(config);
 
@@ -135,9 +144,9 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         *chemical_system, user_punch, use_high_precision, project_file_name);
 
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
-        std::move(project_file_name), std::move(path_to_database),
-        std::move(chemical_system), std::move(reaction_rates),
-        std::move(surface), std::move(user_punch),
+        *linear_solver, std::move(project_file_name),
+        std::move(path_to_database), std::move(chemical_system),
+        std::move(reaction_rates), std::move(surface), std::move(user_punch),
         std::move(output), std::move(dump), std::move(knobs));
 }
 
@@ -145,9 +154,19 @@ template <>
 std::unique_ptr<ChemicalSolverInterface>
 createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> const&
+        linear_solvers,
     BaseLib::ConfigTree const& config, std::string const& /*output_directory*/)
 {
     auto mesh = *meshes[0];
+
+    auto const ls_name =
+        //! \ogs_file_param{prj__chemical_system__linear_solver}
+        config.getConfigParameter<std::string>("linear_solver");
+    auto& linear_solver = BaseLib::getOrError(
+        linear_solvers, ls_name,
+        "A linear solver with the given name does not exist.");
+
     auto path_to_database = parseDatabasePath(config);
 
     // TODO (renchao): remove mapping process id to component name.
@@ -174,9 +193,9 @@ createChemicalSolverInterface<ChemicalSolver::PhreeqcKernel>(
         config.getConfigSubtreeOptional("equilibrium_reactants"), mesh);
 
     return std::make_unique<PhreeqcKernelData::PhreeqcKernel>(
-        mesh.getNumberOfBaseNodes(), process_id_to_component_name_map,
-        std::move(path_to_database), std::move(aqueous_solution),
-        std::move(equilibrium_reactants), std::move(kinetic_reactants),
-        std::move(reaction_rates));
+        *linear_solver, mesh.getNumberOfBaseNodes(),
+        process_id_to_component_name_map, std::move(path_to_database),
+        std::move(aqueous_solution), std::move(equilibrium_reactants),
+        std::move(kinetic_reactants), std::move(reaction_rates));
 }
 }  // namespace ChemistryLib

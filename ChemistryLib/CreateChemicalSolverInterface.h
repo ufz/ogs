@@ -10,11 +10,13 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "ChemicalSolverType.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
 namespace BaseLib
 {
@@ -33,5 +35,7 @@ class ChemicalSolverInterface;
 template <ChemicalSolver chemical_solver>
 std::unique_ptr<ChemicalSolverInterface> createChemicalSolverInterface(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::map<std::string, std::unique_ptr<GlobalLinearSolver>> const&
+        linear_solvers,
     BaseLib::ConfigTree const& config, std::string const& output_directory);
 }  // namespace ChemistryLib

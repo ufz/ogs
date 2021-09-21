@@ -14,6 +14,11 @@
 
 #include "BaseLib/RunTime.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
+#include "MathLib/LinAlg/Eigen/EigenTools.h"
+#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
+#include "MathLib/LinAlg/LinAlg.h"
+#include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -213,12 +218,16 @@ void ComponentTransportProcess::
 
 void ComponentTransportProcess::solveReactionEquation(
     std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
-    double const t, double const dt)
+    double const t, double const dt, NumLib::EquationSystem& ode_sys,
+    int const process_id)
 {
-    if (_process_data.lookup_table)
+    // todo (renchao): move chemical calculation to elsewhere.
+    if (_process_data.lookup_table && process_id == 0)
     {
         INFO("Update process solutions via the look-up table approach");
         _process_data.lookup_table->lookup(x, x_prev, _mesh.getNumberOfNodes());
+
+        return;
     }
 
     if (!_chemical_solver_interface)
@@ -226,12 +235,9 @@ void ComponentTransportProcess::solveReactionEquation(
         return;
     }
 
-    // Sequential non-iterative approach applied here to perform water
-    // chemistry calculation followed by resolving component transport
-    // process.
-    // TODO: move into a global loop to consider both mass balance over
-    // space and localized chemical equilibrium between solutes.
-    const int process_id = 0;
+    // Sequential non-iterative approach applied here to split the reactive
+    // transport process into the transport stage followed by the reaction
+    // stage.
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -239,21 +245,63 @@ void ComponentTransportProcess::solveReactionEquation(
     std::generate_n(std::back_inserter(dof_tables), x.size(),
                     [&]() { return _local_to_global_index_map.get(); });
 
+    if (process_id == 0)
+    {
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
+            &ComponentTransportLocalAssemblerInterface::setChemicalSystem,
+            _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
+
+        BaseLib::RunTime time_phreeqc;
+        time_phreeqc.start();
+
+        _chemical_solver_interface->setAqueousSolutionsPrevFromDumpFile();
+
+        _chemical_solver_interface->executeSpeciationCalculation(dt);
+
+        INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
+
+        return;
+    }
+
+    auto const matrix_specification =
+        ode_sys.getMatrixSpecifications(process_id);
+
+    std::size_t matrix_id = 0u;
+    auto& M = NumLib::GlobalMatrixProvider::provider.getMatrix(
+        matrix_specification, matrix_id);
+    auto& b =
+        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
+    auto& rhs =
+        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
+
+    M.setZero();
+    b.setZero();
+    rhs.setZero();
+
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &ComponentTransportLocalAssemblerInterface::setChemicalSystem,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt);
+        &ComponentTransportLocalAssemblerInterface::assembleReactionEquation,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt, M, b,
+        process_id);
 
-    BaseLib::RunTime time_phreeqc;
-    time_phreeqc.start();
+    // todo (renchao): incorporate Neumann boundary condition
+    MathLib::finalizeMatrixAssembly(M);
+    MathLib::finalizeVectorAssembly(b);
 
-    _chemical_solver_interface->setAqueousSolutionsPrevFromDumpFile();
+    MathLib::LinAlg::scale(M, 1.0 / dt);
+    MathLib::LinAlg::matMultAdd(M, *x[process_id], b, rhs);
 
-    _chemical_solver_interface->executeSpeciationCalculation(dt);
+    using Tag = NumLib::NonlinearSolverTag;
+    using EqSys = NumLib::NonlinearSystem<Tag::Picard>;
+    auto& equation_system = static_cast<EqSys&>(ode_sys);
+    equation_system.applyKnownSolutionsPicard(M, rhs, *x[process_id]);
 
-    extrapolateIntegrationPointValuesToNodes(
-        t, _chemical_solver_interface->getIntPtProcessSolutions(), x);
+    auto& linear_solver =
+        _process_data.chemical_solver_interface->linear_solver;
+    linear_solver.solve(M, rhs, *x[process_id]);
 
-    INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(M);
+    NumLib::GlobalVectorProvider::provider.releaseVector(b);
+    NumLib::GlobalVectorProvider::provider.releaseVector(rhs);
 }
 
 void ComponentTransportProcess::extrapolateIntegrationPointValuesToNodes(

@@ -24,6 +24,7 @@ namespace ChemistryLib
 namespace PhreeqcKernelData
 {
 PhreeqcKernel::PhreeqcKernel(
+    GlobalLinearSolver& linear_solver,
     std::size_t const num_chemical_systems,
     std::vector<std::pair<int, std::string>> const&
         process_id_to_component_name_map,
@@ -32,7 +33,8 @@ PhreeqcKernel::PhreeqcKernel(
     std::unique_ptr<EquilibriumReactants>&& equilibrium_reactants,
     std::unique_ptr<Kinetics>&& kinetic_reactants,
     std::vector<ReactionRate>&& reaction_rates)
-    : _initial_aqueous_solution(aqueous_solution.getInitialAqueousSolution()),
+    : ChemicalSolverInterface(linear_solver),
+      _initial_aqueous_solution(aqueous_solution.getInitialAqueousSolution()),
       _aqueous_solution(aqueous_solution.castToBaseClassNoninitialized()),
       _reaction_rates(std::move(reaction_rates))
 {

@@ -34,7 +34,8 @@ struct UserPunch;
 class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:
-    PhreeqcIO(std::string const& project_file_name,
+    PhreeqcIO(GlobalLinearSolver& linear_solver,
+              std::string const& project_file_name,
               std::string&& database,
               std::unique_ptr<ChemicalSystem>&& chemical_system,
               std::vector<ReactionRate>&& reaction_rates,
@@ -66,6 +67,10 @@ public:
     void executeSpeciationCalculation(double const dt) override;
 
     std::vector<GlobalVector*> getIntPtProcessSolutions() const override;
+
+    double getConcentration(
+        int const component_id,
+        GlobalIndexType const chemical_system_id) const override;
 
     friend std::ostream& operator<<(std::ostream& os,
                                     PhreeqcIO const& phreeqc_io);

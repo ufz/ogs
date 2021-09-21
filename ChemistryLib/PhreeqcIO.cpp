@@ -248,7 +248,8 @@ static double averageReactantMolality(
 }
 }  // namespace
 
-PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
+PhreeqcIO::PhreeqcIO(GlobalLinearSolver& linear_solver,
+                     std::string const& project_file_name,
                      std::string&& database,
                      std::unique_ptr<ChemicalSystem>&& chemical_system,
                      std::vector<ReactionRate>&& reaction_rates,
@@ -257,7 +258,8 @@ PhreeqcIO::PhreeqcIO(std::string const& project_file_name,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
                      Knobs&& knobs)
-    : _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
+    : ChemicalSolverInterface(linear_solver),
+      _phreeqc_input_file(project_file_name + "_phreeqc.inp"),
       _database(std::move(database)),
       _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
@@ -393,6 +395,18 @@ std::vector<GlobalVector*> PhreeqcIO::getIntPtProcessSolutions() const
     int_pt_process_solutions.push_back(aqueous_solution->pH.get());
 
     return int_pt_process_solutions;
+}
+
+double PhreeqcIO::getConcentration(
+    int const component_id, GlobalIndexType const chemical_system_id) const
+{
+    auto const& aqueous_solution = *_chemical_system->aqueous_solution;
+    auto& components = aqueous_solution.components;
+    auto const& pH = *aqueous_solution.pH;
+
+    return component_id < static_cast<int>(components.size())
+               ? components[component_id].amount->get(chemical_system_id)
+               : pH.get(chemical_system_id);
 }
 
 void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()

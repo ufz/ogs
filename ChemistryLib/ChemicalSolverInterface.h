@@ -28,6 +28,11 @@ namespace ChemistryLib
 class ChemicalSolverInterface
 {
 public:
+    ChemicalSolverInterface(GlobalLinearSolver& linear_solver_)
+        : linear_solver(linear_solver_)
+    {
+    }
+
     virtual void initialize() {}
 
     virtual void initializeChemicalSystemConcrete(
@@ -53,6 +58,13 @@ public:
     virtual void executeSpeciationCalculation(double const dt) = 0;
 
     virtual std::vector<GlobalVector*> getIntPtProcessSolutions() const = 0;
+
+    virtual double getConcentration(
+        int const /*component_id*/,
+        GlobalIndexType const /*chemical_system_id*/) const
+    {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
 
     virtual std::vector<std::string> const getComponentList() const
     {
@@ -84,5 +96,8 @@ public:
 
 public:
     std::vector<GlobalIndexType> chemical_system_index_map;
+    /// specify the linear solver used to solve the linearized reaction
+    /// equation.
+    GlobalLinearSolver& linear_solver;
 };
 }  // namespace ChemistryLib
