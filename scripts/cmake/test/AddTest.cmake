@@ -218,6 +218,9 @@ function(AddTest)
         return()
     endif()
 
+    set(FILES_TO_DELETE "")
+    list(APPEND FILES_TO_DELETE "${AddTest_STDOUT_FILE_PATH}")
+
     if(AddTest_DIFF_DATA)
         string(LENGTH "${AddTest_DIFF_DATA}" DIFF_DATA_LENGTH)
         if(${DIFF_DATA_LENGTH} GREATER 7500)
@@ -250,6 +253,8 @@ function(AddTest)
                 ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${AddTest_BINARY_PATH}/${FILE}"
             )
+            list(APPEND FILES_TO_DELETE "${FILE}")
+
         endforeach()
     elseif(AddTest_TESTER STREQUAL "vtkdiff" OR AddTest_TESTER STREQUAL
                                                 "xdmfdiff"
@@ -289,6 +294,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                 -a ${NAME_A} -b ${NAME_B} \
                 ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
                 )
+                list(APPEND FILES_TO_DELETE "${VTK_FILE}")
             endforeach()
         elseif(${DiffDataLengthMod6} EQUAL 0)
             if(${AddTest_ABSTOL} OR ${AddTest_RELTOL})
@@ -330,6 +336,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                     ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
                     )
                 endif()
+                list(APPEND FILES_TO_DELETE "${VTK_FILE}")
             endforeach()
         else()
             message(
@@ -362,6 +369,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                 ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${AddTest_BINARY_PATH}/${GML_FILE}"
             )
+            list(APPEND FILES_TO_DELETE "${GML_FILE}")
         endforeach()
     elseif(AddTest_TESTER STREQUAL "memcheck")
         set(TESTER_COMMAND
@@ -375,14 +383,6 @@ Use six arguments version of AddTest with absolute and relative tolerances"
     else()
         set(AddTest_EXECUTABLE_PARSED ${AddTest_EXECUTABLE})
     endif()
-
-    set(FILES_TO_DELETE "")
-    list(APPEND FILES_TO_DELETE "${AddTest_STDOUT_FILE_PATH}")
-    foreach(ITEM ${AddTest_DIFF_DATA})
-        if(ITEM MATCHES "^.*\.(vtu|vtk)$")
-            list(APPEND FILES_TO_DELETE "${ITEM}")
-        endif()
-    endforeach()
 
     # Run the wrapper
     if(DEFINED AddTest_WRAPPER)

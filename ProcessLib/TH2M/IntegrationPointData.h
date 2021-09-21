@@ -122,6 +122,7 @@ struct IntegrationPointData final
 
     // porosity
     double phi = std::numeric_limits<double>::quiet_NaN();
+    double dphi_dT = std::numeric_limits<double>::quiet_NaN();
 
     double muGR = std::numeric_limits<double>::quiet_NaN();
     double muLR = std::numeric_limits<double>::quiet_NaN();

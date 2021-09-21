@@ -107,11 +107,61 @@ PhaseTransitionModelVariables PhaseTransitionNone::updateConstitutiveVariables(
     // specific phase enthalpies
     cv.hG = cpG * T;
     cv.hL = cpL * T;
+    cv.dh_G_dT = cpG;
+    cv.dh_L_dT = cpL;
 
     // specific inner energies
     cv.uG = cv.hG - pGR / cv.rhoGR;
     cv.uL = cv.hL;
 
+    auto const drho_GR_dT =
+        gas_phase[MaterialPropertyLib::PropertyType::density]
+            .template dValue<double>(variables,
+                                     MaterialPropertyLib::Variable::temperature,
+                                     pos, t, dt);
+    cv.du_G_dT = cpG + pGR * drho_GR_dT / cv.rhoGR / cv.rhoGR;
+
+    cv.du_L_dT = cpL;
+
+    cv.drho_GR_dp_GR =
+        gas_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template dValue<double>(
+                variables, MaterialPropertyLib::Variable::phase_pressure, pos,
+                t, dt);
+    cv.drho_LR_dp_LR =
+        liquid_phase[MaterialPropertyLib::PropertyType::density]
+            .template dValue<double>(
+                variables, MaterialPropertyLib::Variable::liquid_phase_pressure,
+                pos, t, dt);
+    cv.drho_LR_dp_GR = cv.drho_LR_dp_LR;
+
+    cv.du_G_dp_GR =
+        -1 / cv.rhoGR + pGR * cv.drho_GR_dp_GR / cv.rhoGR / cv.rhoGR;
+
+    cv.drho_C_GR_dp_GR = cv.drho_GR_dp_GR;
+    cv.drho_C_LR_dp_LR = 0;
+    cv.drho_C_LR_dp_GR = 0;
+    cv.drho_C_GR_dT = drho_GR_dT;
+
+    auto const drho_LR_dT =
+        liquid_phase[MaterialPropertyLib::PropertyType::density]
+            .template dValue<double>(variables,
+                                     MaterialPropertyLib::Variable::temperature,
+                                     pos, t, dt);
+    cv.drho_C_LR_dT = 0;
+
+    cv.du_L_dp_GR = 0;
+    cv.du_L_dp_cap = 0;
+    /* TODO update to the following when uL has same structure as the uG:
+        +-1 / cv.rhoLR + pLR * cv.drho_LR_dp_cap / cv.rhoLR / cv.rhoLR;
+    */
+
+    cv.drho_W_LR_dp_LR = cv.drho_LR_dp_LR;
+    cv.drho_W_LR_dp_GR = cv.drho_LR_dp_GR;
+    cv.drho_W_LR_dT = drho_LR_dT;
+    cv.drho_W_GR_dT = 0;
+    cv.drho_W_GR_dp_GR = 0;
+    cv.drho_W_GR_dp_cap = 0;
     return cv;
 }
 }  // namespace TH2M

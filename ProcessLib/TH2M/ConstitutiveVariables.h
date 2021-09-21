@@ -20,8 +20,58 @@ struct ConstitutiveVariables
 {
     using KelvinMatrixType =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+    using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
+    using DisplacementDimMatrix =
+        Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
 
     KelvinMatrixType C;
+
+    DisplacementDimMatrix dlambda_dp_GR;
+    DisplacementDimMatrix dlambda_dp_cap;
+    DisplacementDimMatrix dlambda_dT;
+    DisplacementDimVector drho_GR_h_w_eff_dp_GR_Npart;
+    DisplacementDimMatrix drho_GR_h_w_eff_dp_GR_gradNpart;
+    DisplacementDimVector drho_LR_h_w_eff_dp_cap_Npart;
+    DisplacementDimMatrix drho_LR_h_w_eff_dp_cap_gradNpart;
+    DisplacementDimVector drho_GR_h_w_eff_dT;
+    DisplacementDimMatrix dfW_4a_dp_GR;
+    DisplacementDimMatrix dfW_4a_dp_cap;
+    DisplacementDimMatrix dfW_4a_dT;
+    DisplacementDimMatrix dfW_4d_dp_GR;
+    DisplacementDimMatrix dfW_4d_dp_cap;
+    DisplacementDimMatrix dfW_4d_dT;
+    DisplacementDimMatrix dfC_4_LCpG_dT;
+    DisplacementDimMatrix dadvection_C_dp_GR;
+    double drho_LR_dT = std::numeric_limits<double>::quiet_NaN();
+    double drho_SR_dT = std::numeric_limits<double>::quiet_NaN();
+    double drho_u_eff_dT = std::numeric_limits<double>::quiet_NaN();
+    double drho_u_eff_dp_GR = std::numeric_limits<double>::quiet_NaN();
+    double drho_u_eff_dp_cap = std::numeric_limits<double>::quiet_NaN();
+    double drho_h_eff_dT = std::numeric_limits<double>::quiet_NaN();
+    double drho_h_eff_dp_GR = std::numeric_limits<double>::quiet_NaN();
+    double drho_h_eff_dp_cap = std::numeric_limits<double>::quiet_NaN();
+    double dh_G_dT = std::numeric_limits<double>::quiet_NaN();
+    double dh_L_dT = std::numeric_limits<double>::quiet_NaN();
+    double dfC_4_MCpG_dp_GR = std::numeric_limits<double>::quiet_NaN();
+    double dfC_4_MCpG_dT = std::numeric_limits<double>::quiet_NaN();
+    double dfC_4_MCT_dT = std::numeric_limits<double>::quiet_NaN();
+    double dfC_4_MCu_dT = std::numeric_limits<double>::quiet_NaN();
+    double dfC_3a_dp_GR = std::numeric_limits<double>::quiet_NaN();
+    double dfC_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
+    double dfC_3a_dT = std::numeric_limits<double>::quiet_NaN();
+    double dfC_2a_dp_GR = std::numeric_limits<double>::quiet_NaN();
+    double dfC_2a_dp_cap = std::numeric_limits<double>::quiet_NaN();
+    double dfC_2a_dT = std::numeric_limits<double>::quiet_NaN();
+    double dfW_2a_dp_GR = std::numeric_limits<double>::quiet_NaN();
+    double dfW_2b_dp_GR = std::numeric_limits<double>::quiet_NaN();
+    double dfW_2a_dp_cap = std::numeric_limits<double>::quiet_NaN();
+    double dfW_2b_dp_cap = std::numeric_limits<double>::quiet_NaN();
+    double dfW_2a_dT = std::numeric_limits<double>::quiet_NaN();
+    double dfW_2b_dT = std::numeric_limits<double>::quiet_NaN();
+    double dfW_3a_dp_GR = std::numeric_limits<double>::quiet_NaN();
+    double dfW_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
+    double dfW_3a_dT = std::numeric_limits<double>::quiet_NaN();
+    double ds_L_dp_cap = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
