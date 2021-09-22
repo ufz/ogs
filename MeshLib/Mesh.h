@@ -48,22 +48,15 @@ class Mesh
 public:
     /// Constructor using a mesh name and an array of nodes and elements
     /// @param name          Mesh name.
-    /// @param nodes         A vector of mesh nodes. In case nonlinear nodes are
-    ///                      involved, one should put them after line ones in
-    ///                      the vector and set "n_base_nodes" argument.
+    /// @param nodes         A vector of mesh nodes.
     /// @param elements      An array of mesh elements.
     /// @param properties    Mesh properties.
-    /// @param n_base_nodes  The number of base nodes. This is an optional
-    ///                      parameter for nonlinear case.  If the parameter is
-    ///                      set to zero, we consider there are no nonlinear
-    ///                      nodes.
     Mesh(std::string name,
          std::vector<Node*>
              nodes,
          std::vector<Element*>
              elements,
-         Properties const& properties = Properties(),
-         const std::size_t n_base_nodes = 0);
+         Properties const& properties = Properties());
 
     /// Copy constructor
     Mesh(const Mesh &mesh);
@@ -110,9 +103,6 @@ public:
     /// Resets the IDs of all mesh-nodes to their position in the node vector
     void resetNodeIDs();
 
-    /// Finds the maximum id among all of the base nodes.
-    void recalculateMaxBaseNodeId();
-
     /// Changes the name of the mesh.
     void setName(const std::string &name) { this->_name = name; }
 
@@ -120,10 +110,10 @@ public:
     std::size_t getID() const {return _id; }
 
     /// Get the number of base nodes
-    std::size_t getNumberOfBaseNodes() const { return _n_base_nodes; }
+    std::size_t getNumberOfBaseNodes() const;
 
-    /// Return true if the mesh has any nonlinear nodes
-    bool isNonlinear() const { return (getNumberOfNodes() != getNumberOfBaseNodes()); }
+    /// Check if the mesh contains any nonlinear element.
+    bool hasNonlinearElement() const;
 
     Properties& getProperties() { return _properties; }
     Properties const& getProperties() const { return _properties; }
@@ -147,12 +137,6 @@ protected:
     /// Note: Using this implementation, an element e can only have neighbors that have the same dimensionality as e.
     void setElementNeighbors();
 
-    /// Check if all the nonlinear nodes are stored at the end of the node vector
-    void checkNonlinearNodeIDs() const;
-
-    /// Check if the mesh contains any nonlinear element
-    bool hasNonlinearElement() const;
-
     std::size_t const _id;
     unsigned _mesh_dimension;
     /// The minimal and maximal edge length over all elements in the mesh
@@ -164,7 +148,6 @@ protected:
     std::string _name;
     std::vector<Node*> _nodes;
     std::vector<Element*> _elements;
-    std::size_t _n_base_nodes;
     Properties _properties;
 
     bool _is_axially_symmetric = false;

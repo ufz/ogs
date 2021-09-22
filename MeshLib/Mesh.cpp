@@ -37,8 +37,7 @@ Mesh::Mesh(std::string name,
                nodes,
            std::vector<Element*>
                elements,
-           Properties const& properties,
-           const std::size_t n_base_nodes)
+           Properties const& properties)
     : _id(global_mesh_counter++),
       _mesh_dimension(0),
       _edge_length(std::numeric_limits<double>::max(), 0),
@@ -46,20 +45,10 @@ Mesh::Mesh(std::string name,
       _name(std::move(name)),
       _nodes(std::move(nodes)),
       _elements(std::move(elements)),
-      _n_base_nodes(n_base_nodes),
       _properties(properties)
 {
-    assert(_n_base_nodes <= _nodes.size());
     this->resetNodeIDs();
     this->resetElementIDs();
-    if (_n_base_nodes == 0)
-    {
-        recalculateMaxBaseNodeId();
-    }
-    if ((_n_base_nodes == 0 && hasNonlinearElement()) || isNonlinear())
-    {
-        this->checkNonlinearNodeIDs();
-    }
     this->setDimension();
     this->setElementsConnectedToNodes();
     this->setElementNeighbors();
@@ -75,7 +64,6 @@ Mesh::Mesh(const Mesh& mesh)
       _name(mesh.getName()),
       _nodes(mesh.getNumberOfNodes()),
       _elements(mesh.getNumberOfElements()),
-      _n_base_nodes(mesh.getNumberOfBaseNodes()),
       _properties(mesh._properties)
 {
     const std::vector<Node*>& nodes(mesh.getNodes());
@@ -139,19 +127,6 @@ void Mesh::resetNodeIDs()
     {
         _nodes[i]->setID(i);
     }
-}
-
-void Mesh::recalculateMaxBaseNodeId()
-{
-    std::size_t max_basenode_ID = 0;
-    for (Element const* e : _elements)
-    {
-        for (std::size_t i = 0; i < e->getNumberOfBaseNodes(); i++)
-        {
-            max_basenode_ID = std::max(max_basenode_ID, getNodeIndex(*e, i));
-        }
-    }
-    _n_base_nodes = max_basenode_ID + 1;
 }
 
 void Mesh::resetElementIDs()
@@ -234,26 +209,11 @@ void Mesh::setElementNeighbors()
     }
 }
 
-void Mesh::checkNonlinearNodeIDs() const
+std::size_t Mesh::getNumberOfBaseNodes() const
 {
-    for (MeshLib::Element const* e : _elements)
-    {
-        for (unsigned i = e->getNumberOfBaseNodes(); i < e->getNumberOfNodes();
-             i++)
-        {
-            if (getNodeIndex(*e, i) >= getNumberOfBaseNodes())
-            {
-                continue;
-            }
-
-            WARN(
-                "Found a nonlinear node whose ID ({:d}) is smaller than the "
-                "number of base node IDs ({:d}). Some functions may not work "
-                "properly.",
-                getNodeIndex(*e, i), getNumberOfBaseNodes());
-            return;
-        }
-    }
+    return std::count_if(begin(_nodes), end(_nodes),
+                         [](auto const* const node)
+                         { return isBaseNode(*node); });
 }
 
 bool Mesh::hasNonlinearElement() const
