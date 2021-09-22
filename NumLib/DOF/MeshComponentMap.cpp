@@ -14,6 +14,7 @@
 
 #include "BaseLib/Error.h"
 #include "MeshLib/MeshSubset.h"
+#include "MeshLib/Node.h"
 
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
@@ -322,6 +323,68 @@ void MeshComponentMap::createSerialMeshComponentMap(
 }
 
 #ifdef USE_PETSC
+
+GlobalIndexType getGlobalIndexWithTaylorHoodElement(
+    MeshLib::NodePartitionedMesh const& partitioned_mesh,
+    std::size_t const global_node_id,
+    int const number_of_components_at_base_node,
+    int const number_of_components_at_high_order_node,
+    int const component_id_at_base_node,
+    int const component_id_at_high_order_node,
+    bool const is_base_node)
+{
+    int const partition_id = partitioned_mesh.getPartitionID(global_node_id);
+
+    auto const n_total_active_base_nodes_before_this_rank =
+        partitioned_mesh.getNumberOfActiveBaseNodesAtRank(partition_id);
+
+    auto const n_total_active_high_order_nodes_before_this_rank =
+        partitioned_mesh.getNumberOfActiveHighOrderNodesAtRank(partition_id);
+
+    auto const node_id_offset =
+        n_total_active_base_nodes_before_this_rank +
+        n_total_active_high_order_nodes_before_this_rank;
+
+    auto const index_offset = n_total_active_base_nodes_before_this_rank *
+                                  number_of_components_at_base_node +
+                              n_total_active_high_order_nodes_before_this_rank *
+                                  number_of_components_at_high_order_node;
+
+    if (is_base_node)
+    {
+        return static_cast<GlobalIndexType>(
+                   index_offset + (global_node_id - node_id_offset) *
+                                      number_of_components_at_base_node) +
+               component_id_at_base_node;
+    }
+
+    int const n_active_base_nodes_of_this_partition =
+        partitioned_mesh.getNumberOfActiveBaseNodesAtRank(partition_id + 1) -
+        n_total_active_base_nodes_before_this_rank;
+
+    /*
+        The global indices of components are numbered as what depicted below by
+        assuming that the base node has three components and the high order node
+        has two components:
+
+        Partition    |       0       |      1       |   ...
+                     --------------------------------
+        Active nodes | Base | higher | Base | higher|   ...
+                     --------------------------------
+                 c0  x      x         x      x          ...
+                 c1  x      x         x      x          ...
+                 c2  x                x                 ...
+    */
+    return static_cast<GlobalIndexType>(
+               index_offset +
+               n_active_base_nodes_of_this_partition *
+                   number_of_components_at_base_node +
+               (global_node_id - node_id_offset -
+                n_active_base_nodes_of_this_partition) *
+                   number_of_components_at_high_order_node) +
+           component_id_at_high_order_node;
+}
+
 void MeshComponentMap::createParallelMeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
@@ -335,17 +398,34 @@ void MeshComponentMap::createParallelMeshComponentMap(
             "the order type of ComponentOrder::BY_LOCATION");
     }
 
-    // get number of unknowns
+    const MeshLib::NodePartitionedMesh& partitioned_mesh =
+        static_cast<const MeshLib::NodePartitionedMesh&>(
+            components[0].getMesh());
+
+    //
+    // get the number of unknowns and the number of components at extra node
+    //
     GlobalIndexType num_unknowns = 0;
+    int components_at_high_order_nodes = 0;
     for (auto const& c : components)
     {
-        const MeshLib::NodePartitionedMesh& partitioned_mesh =
-            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
-        num_unknowns += partitioned_mesh.getNumberOfGlobalNodes();
+        if (partitioned_mesh.getNumberOfNodes() == c.getNumberOfNodes())
+        {
+            components_at_high_order_nodes++;
+            num_unknowns += partitioned_mesh.getNumberOfGlobalNodes();
+        }
+        else
+        {
+            num_unknowns += partitioned_mesh.getNumberOfGlobalBaseNodes();
+        }
     }
 
     // construct dict (and here we number global_index by component type)
+    //
+    int const n_components = components.size();
+
     int comp_id = 0;
+    int comp_id_at_high_order_node = 0;
     _num_global_dof = 0;
     _num_local_dof = 0;
     for (auto const& c : components)
@@ -355,14 +435,27 @@ void MeshComponentMap::createParallelMeshComponentMap(
         std::size_t const mesh_id = c.getMeshID();
         const MeshLib::NodePartitionedMesh& partitioned_mesh =
             static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
+        const auto& sub_mesh_nodes = c.getNodes();
 
         // mesh items are ordered first by node, cell, ....
         for (std::size_t j = 0; j < c.getNumberOfNodes(); j++)
         {
             const auto node_id = c.getNodeID(j);
-            GlobalIndexType global_index = static_cast<GlobalIndexType>(
-                components.size() * partitioned_mesh.getGlobalNodeID(node_id) +
-                comp_id);
+            const bool is_base_node =
+                MeshLib::isBaseNode(*sub_mesh_nodes[j],
+                                    partitioned_mesh.getElementsConnectedToNode(
+                                        *sub_mesh_nodes[j]));
+
+            const auto global_node_id =
+                partitioned_mesh.getGlobalNodeID(node_id);
+            GlobalIndexType global_index =
+                (!c.useTaylorHoodElements())
+                    ? static_cast<GlobalIndexType>(
+                          n_components * global_node_id + comp_id)
+                    : getGlobalIndexWithTaylorHoodElement(
+                          partitioned_mesh, global_node_id, n_components,
+                          components_at_high_order_nodes, comp_id,
+                          comp_id_at_high_order_node, is_base_node);
             const bool is_ghost = partitioned_mesh.isGhostNode(node_id);
             if (is_ghost)
             {
@@ -380,11 +473,23 @@ void MeshComponentMap::createParallelMeshComponentMap(
                 _num_local_dof++;
             }
 
-            _dict.insert(Line(Location(mesh_id, MeshLib::MeshItemType::Node, j),
-                              comp_id, global_index));
+            _dict.insert(
+                Line(Location(mesh_id, MeshLib::MeshItemType::Node, node_id),
+                     comp_id, global_index));
         }
 
-        _num_global_dof += partitioned_mesh.getNumberOfGlobalNodes();
+        bool const use_whole_nodes =
+            (partitioned_mesh.getNumberOfNodes() == c.getNumberOfNodes());
+        if (use_whole_nodes)
+        {
+            _num_global_dof += partitioned_mesh.getNumberOfGlobalNodes();
+            comp_id_at_high_order_node++;
+        }
+        else
+        {
+            _num_global_dof += partitioned_mesh.getNumberOfGlobalBaseNodes();
+        }
+
         comp_id++;
     }
 }
