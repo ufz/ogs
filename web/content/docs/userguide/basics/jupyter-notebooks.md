@@ -18,11 +18,12 @@ weight = 5
 You can use a pre-defined container environment which currently contains:
 
 - The Jupyter Notebook / Lab application
-- The latest OpenGeoSys application and tools
+- The latest OpenGeoSys application (with MFront support) and tools
 - A set of Python packages:
   - [ogs6py](https://github.com/joergbuchwald/ogs6py) — OGS model manipulation
   - [VTUInterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
   - [h5py](https://docs.h5py.org/en/latest/index.html) — HDF5 IO
+  - [MFront python bindings](http://tfel.sourceforge.net/mfront-python.html) – Material model manipulation
   - [matplotlib](https://matplotlib.org) — Plotting
   - [numpy](https://numpy.org) — Scientific computing
   - [pandas](https://pandas.pydata.org) — Data analysis
