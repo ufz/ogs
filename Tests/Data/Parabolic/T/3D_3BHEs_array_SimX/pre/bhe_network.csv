@@ -1,0 +1,4 @@
+data_index;BHE_id;Tin_val;Tout_val;Tout_node_id;flowrate
+BHE1;1;305.36;305.13;0;2.32E-04
+BHE2;2;305.36;305.13;0;2.32E-04
+BHE3;3;305.36;305.13;0;2.32E-04
