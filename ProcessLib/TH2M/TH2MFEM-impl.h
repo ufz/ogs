@@ -411,14 +411,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_cv.ds_L_dp_cap =
             medium[MPL::PropertyType::saturation].template dValue<double>(
                 vars, MPL::Variable::capillary_pressure, pos, t, dt);
-        // TODO (naumov) Extend for partially saturated media.
-        constexpr double ds_L_dp_GR = 0;
-        double const ds_G_dp_GR = -ds_L_dp_GR;
+
+        // ds_L_dp_GR = 0;
+        // ds_G_dp_GR = -ds_L_dp_GR;
         double const ds_G_dp_cap = -ip_cv.ds_L_dp_cap;
 
-        double const dphi_G_dp_GR = -ds_L_dp_GR * ip_data.phi;
+        // dphi_G_dp_GR = -ds_L_dp_GR * ip_data.phi = 0;
         double const dphi_G_dp_cap = -ip_cv.ds_L_dp_cap * ip_data.phi;
-        double const dphi_L_dp_GR = ds_L_dp_GR * ip_data.phi;
+        // dphi_L_dp_GR = ds_L_dp_GR * ip_data.phi = 0;
         double const dphi_L_dp_cap = ip_cv.ds_L_dp_cap * ip_data.phi;
 
         auto const dlambda_GR_dT = MPL::formEigenTensor<DisplacementDim>(
@@ -430,8 +430,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const dlambda_SR_dT = MPL::formEigenTensor<DisplacementDim>(
             solid_phase[MPL::PropertyType::thermal_conductivity].dValue(
                 vars, MPL::Variable::temperature, pos, t, dt));
-
-        ip_cv.dlambda_dp_GR = dphi_G_dp_GR * lambdaGR + dphi_L_dp_GR * lambdaLR;
 
         ip_cv.dlambda_dp_cap =
             dphi_G_dp_cap * lambdaGR + dphi_L_dp_cap * lambdaLR;
@@ -445,15 +443,17 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         //               = drho_LR/dp_LR * (1 - 0)
         double const drho_LR_dp_GR = c.drho_LR_dp_LR;
         double const drho_LR_dp_cap = -c.drho_LR_dp_LR;
-        // And also for drho_GR/dp_LR = drho_GR/dp_GR * dp_GR/dp_LR:
-        double const drho_GR_dp_cap = 0;
+        // drho_GR_dp_cap = 0;
 
         ip_cv.drho_h_eff_dp_GR =
-            dphi_G_dp_GR * c.rhoGR * c.hG + phi_G * c.drho_GR_dp_GR * c.hG +
-            dphi_L_dp_GR * c.rhoLR * c.hL + phi_L * drho_LR_dp_GR * c.hL;
-        ip_cv.drho_h_eff_dp_cap =
-            dphi_G_dp_cap * c.rhoGR * c.hG + phi_G * drho_GR_dp_cap * c.hG +
-            dphi_L_dp_cap * c.rhoLR * c.hL + phi_L * drho_LR_dp_cap * c.hL;
+            /*(dphi_G_dp_GR = 0) * c.rhoGR * c.hG +*/ phi_G * c.drho_GR_dp_GR *
+                c.hG +
+            /*(dphi_L_dp_GR = 0) * c.rhoLR * c.hL +*/ phi_L * drho_LR_dp_GR *
+                c.hL;
+        ip_cv.drho_h_eff_dp_cap = dphi_G_dp_cap * c.rhoGR * c.hG +
+                                  /*phi_G * (drho_GR_dp_cap = 0) * c.hG +*/
+                                  dphi_L_dp_cap * c.rhoLR * c.hL +
+                                  phi_L * drho_LR_dp_cap * c.hL;
 
         // TODO (naumov) Extend for temperature dependent porosities.
         constexpr double dphi_G_dT = 0;
@@ -466,14 +466,16 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_S * ip_cv.drho_SR_dT * ip_data.h_S + phi_S * rhoSR * cpS;
 
         ip_cv.drho_u_eff_dp_GR =
-            dphi_G_dp_GR * c.rhoGR * c.uG + phi_G * c.drho_GR_dp_GR * c.uG +
-            phi_G * c.rhoGR * c.du_G_dp_GR + dphi_L_dp_GR * c.rhoLR * c.uL +
+            /*(dphi_G_dp_GR = 0) * c.rhoGR * c.uG +*/
+            phi_G * c.drho_GR_dp_GR * c.uG + phi_G * c.rhoGR * c.du_G_dp_GR +
+            /*(dphi_L_dp_GR = 0) * c.rhoLR * c.uL +*/
             phi_L * drho_LR_dp_GR * c.uL + phi_L * c.rhoLR * c.du_L_dp_GR;
 
-        ip_cv.drho_u_eff_dp_cap =
-            dphi_G_dp_cap * c.rhoGR * c.uG + phi_G * drho_GR_dp_cap * c.uG +
-            dphi_L_dp_cap * c.rhoLR * c.uL + phi_L * drho_LR_dp_cap * c.uL +
-            phi_L * c.rhoLR * c.du_L_dp_cap;
+        ip_cv.drho_u_eff_dp_cap = dphi_G_dp_cap * c.rhoGR * c.uG +
+                                  /*phi_G * (drho_GR_dp_cap = 0) * c.uG +*/
+                                  dphi_L_dp_cap * c.rhoLR * c.uL +
+                                  phi_L * drho_LR_dp_cap * c.uL +
+                                  phi_L * c.rhoLR * c.du_L_dp_cap;
 
         auto const& b = _process_data.specific_body_force;
         auto const k_over_mu_G =
@@ -516,16 +518,16 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // TODO (naumov) Extend for partially saturated media.
         constexpr double drho_C_GR_dp_cap = 0;
         ip_cv.dfC_3a_dp_GR =
-            ds_G_dp_GR * rho_C_GR_dot + s_G * c.drho_C_GR_dp_GR / dt +
-            ds_L_dp_GR * rho_C_LR_dot + s_L * c.drho_C_LR_dp_GR / dt;
+            /*(ds_G_dp_GR = 0) * rho_C_GR_dot +*/ s_G * c.drho_C_GR_dp_GR / dt +
+            /*(ds_L_dp_GR = 0) * rho_C_LR_dot +*/ s_L * c.drho_C_LR_dp_GR / dt;
         ip_cv.dfC_3a_dp_cap =
             ds_G_dp_cap * rho_C_GR_dot + s_G * drho_C_GR_dp_cap / dt +
             ip_cv.ds_L_dp_cap * rho_C_LR_dot - s_L * c.drho_C_LR_dp_LR / dt;
         ip_cv.dfC_3a_dT = s_G * c.drho_C_GR_dT / dt + s_L * c.drho_C_LR_dT / dt;
 
         double const drho_C_FR_dp_GR =
-            ds_G_dp_GR * ip_data.rhoCGR + s_G * c.drho_C_GR_dp_GR +
-            ds_L_dp_GR * ip_data.rhoCLR + s_L * c.drho_C_LR_dp_GR;
+            /*(ds_G_dp_GR = 0) * ip_data.rhoCGR +*/ s_G * c.drho_C_GR_dp_GR +
+            /*(ds_L_dp_GR = 0) * ip_data.rhoCLR +*/ s_L * c.drho_C_LR_dp_GR;
         ip_cv.dfC_4_MCpG_dp_GR = drho_C_FR_dp_GR *
                                  (ip_data.alpha_B - ip_data.phi) *
                                  ip_data.beta_p_SR;
@@ -583,8 +585,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ;
 
         double const drho_W_FR_dp_GR =
-            ds_G_dp_GR * ip_data.rhoWGR + s_G * c.drho_W_GR_dp_GR +
-            ds_L_dp_GR * ip_data.rhoWLR + s_L * c.drho_W_LR_dp_GR;
+            /*(ds_G_dp_GR = 0) * ip_data.rhoWGR +*/ s_G * c.drho_W_GR_dp_GR +
+            /*(ds_L_dp_GR = 0) * ip_data.rhoWLR +*/ s_L * c.drho_W_LR_dp_GR;
         double const drho_W_FR_dp_cap =
             ds_G_dp_cap * ip_data.rhoWGR + s_G * c.drho_W_GR_dp_cap +
             ip_cv.ds_L_dp_cap * ip_data.rhoWLR - s_L * c.drho_W_LR_dp_LR;
@@ -619,8 +621,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const rho_W_LR_dot = (ip_data.rhoWLR - ip_data.rhoWLR_prev) / dt;
 
         ip_cv.dfW_3a_dp_GR =
-            ds_G_dp_GR * rho_W_GR_dot + s_G * c.drho_W_GR_dp_GR / dt +
-            ds_L_dp_GR * rho_W_LR_dot + s_L * c.drho_W_LR_dp_GR / dt;
+            /*(ds_G_dp_GR = 0) * rho_W_GR_dot +*/ s_G * c.drho_W_GR_dp_GR / dt +
+            /*(ds_L_dp_GR = 0) * rho_W_LR_dot +*/ s_L * c.drho_W_LR_dp_GR / dt;
         ip_cv.dfW_3a_dp_cap =
             ds_G_dp_cap * rho_W_GR_dot + s_G * c.drho_W_GR_dp_cap / dt +
             ip_cv.ds_L_dp_cap * rho_W_LR_dot - s_L * c.drho_W_LR_dp_LR / dt;
@@ -1438,11 +1440,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                            rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR;
             fC.noalias() -= NpT * a * s_L_dot * w;
 
-            // TODO (naumov) Extend for partially saturated media.
-            constexpr double ds_L_dp_GR = 0;
             local_Jac.template block<C_size, C_size>(C_index, C_index)
                 .noalias() +=
-                NpT * (ip_cv.dfC_2a_dp_GR * s_L_dot - a * ds_L_dp_GR / dt) *
+                NpT *
+                (ip_cv.dfC_2a_dp_GR * s_L_dot /*- a * (ds_L_dp_GR = 0) / dt*/) *
                 Np * w;
 
             local_Jac.template block<C_size, W_size>(C_index, W_index)
@@ -1621,10 +1622,18 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         KTT.noalias() += gradNTT * ip.lambda * gradNT * w;
 
         // d KTT/dp_GR * T
-        local_Jac
-            .template block<temperature_size, C_size>(temperature_index,
-                                                      C_index)
-            .noalias() += gradNTT * ip_cv.dlambda_dp_GR * gradT * Np * w;
+        // TODO (naumov) always zero if lambda_xR have no derivatives wrt. p_GR.
+        // dlambda_dp_GR =
+        //      (dphi_G_dp_GR = 0) * lambdaGR + phi_G * dlambda_GR_dp_GR +
+        //      (dphi_L_dp_GR = 0) * lambdaLR + phi_L * dlambda_LR_dp_GR +
+        //      (dphi_S_dp_GR = 0) * lambdaSR + phi_S * dlambda_SR_dp_GR +
+        //      = 0
+        //
+        // Since dlambda/dp_GR is 0 the derivative is omitted:
+        // local_Jac
+        //    .template block<temperature_size, C_size>(temperature_index,
+        //                                              C_index)
+        //    .noalias() += gradNTT * dlambda_dp_GR * gradT * Np * w;
 
         // d KTT/dp_cap * T
         local_Jac
