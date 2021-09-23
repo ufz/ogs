@@ -17,6 +17,9 @@ TEST(BaseLibStringTools, SplitString)
     using namespace testing;
     using namespace std;
 
+    // empty string
+    EXPECT_THAT(BaseLib::splitString("", ';'), ContainerEq(list<string>{}));
+
     // no delimiter
     EXPECT_THAT(BaseLib::splitString("a", ';'), ContainerEq(list<string>{"a"}));
 
@@ -35,4 +38,7 @@ TEST(BaseLibStringTools, SplitString)
     // trailing delimiters are ignored
     EXPECT_THAT(BaseLib::splitString("a,b,c,", ','),
                 ContainerEq(list<string>{"a", "b", "c"}));
+
+    // ... and behave like this if they are on their own:
+    EXPECT_THAT(BaseLib::splitString(",", ','), ContainerEq(list<string>{""}));
 }

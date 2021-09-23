@@ -77,6 +77,9 @@ TEST(ApplicationsLib_ProjectData_SplitIntegerList, IntList)
 
 TEST(ApplicationsLib_ProjectData_SplitIntegerList, IntListFail)
 {
+    // only delimiter
+    EXPECT_THROW(splitMaterialIdString(","), std::runtime_error);
+
     // empty element
     EXPECT_THROW(splitMaterialIdString("5,,6"), std::runtime_error);
 
