@@ -66,6 +66,7 @@ target_link_libraries(
     PRIVATE ApplicationsLib
             ApplicationsFileIO
             autocheck
+            gmock
             gtest
             MeshGeoToolsLib
             MaterialLib
