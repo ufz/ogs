@@ -497,7 +497,7 @@ void ProjectData::parseMedia(
             else
             {
                 // This medium has multiple material IDs assigned and this is
-                // not the first material ID. Therfore we can reuse the medium
+                // not the first material ID. Therefore we can reuse the medium
                 // we created before.
                 _media[id] = _media[material_ids_of_this_medium[0]];
             }
