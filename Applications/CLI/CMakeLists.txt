@@ -45,6 +45,20 @@ if(OGS_USE_PYTHON)
                $<$<BOOL:${BUILD_SHARED_LIBS}>:PRIVATE
                OGS_BUILD_SHARED_LIBS>
     )
+
+    # Create OpenGeoSys python module
+    # https://pybind11.readthedocs.io/en/stable/compiling.html#building-with-cmake
+    pybind11_add_module(OpenGeoSys SHARED ogs_python_module.cpp
+                                          CommandLineArgumentParser.cpp)
+
+    target_link_libraries(
+        OpenGeoSys
+        PRIVATE ApplicationsLib
+                BaseLib
+                GitInfoLib
+                tclap
+                pybind11::pybind11
+    )
 endif()
 
 ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
