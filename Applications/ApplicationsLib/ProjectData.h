@@ -141,3 +141,8 @@ private:
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;
 };
+
+/// Parses a comma separated list of integers.
+/// Such lists occur in the medium definition in the OGS prj file.
+/// Error messages in this function refer to this specific purpose.
+std::vector<int> splitMaterialIdString(std::string const& material_id_string);
