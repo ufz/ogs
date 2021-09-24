@@ -5,6 +5,7 @@ set(Python3_FIND_FRAMEWORK LAST)
 if(OGS_USE_POETRY)
     find_program(POETRY poetry)
     if(POETRY)
+        set(Python3_FIND_STRATEGY VERSION)
         find_package(
             Python3 ${ogs.minimum_version.python} COMPONENTS Interpreter
             REQUIRED
@@ -20,6 +21,10 @@ if(OGS_USE_POETRY)
             )
         endif()
         if(NOT EXISTS ${PROJECT_BINARY_DIR}/.venv)
+            execute_process(
+                COMMAND ${CMD_COMMAND} poetry env use ${Python3_EXECUTABLE}
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            )
             execute_process(
                 COMMAND ${CMD_COMMAND} poetry install
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
