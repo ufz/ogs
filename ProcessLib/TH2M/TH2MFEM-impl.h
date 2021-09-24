@@ -373,11 +373,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian
         // ---------------------------------------------------------------------
-        ip_cv.drho_LR_dT =
+        auto const drho_LR_dT =
             liquid_phase.property(MPL::PropertyType::density)
                 .template dValue<double>(vars, MPL::Variable::temperature, pos,
                                          t, dt);
-        ip_cv.drho_SR_dT =
+        auto const drho_SR_dT =
             solid_phase.property(MPL::PropertyType::density)
                     .template dValue<double>(vars, MPL::Variable::temperature,
                                              pos, t, dt)
@@ -404,8 +404,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         ip_cv.drho_u_eff_dT =
             phi_G * c.drho_GR_dT * c.uG + phi_G * c.rhoGR * c.du_G_dT +
-            phi_L * ip_cv.drho_LR_dT * c.uL + phi_L * c.rhoLR * c.du_L_dT +
-            phi_S * ip_cv.drho_SR_dT * u_S + phi_S * rhoSR * cpS +
+            phi_L * drho_LR_dT * c.uL + phi_L * c.rhoLR * c.du_L_dT +
+            phi_S * drho_SR_dT * u_S + phi_S * rhoSR * cpS +
             dphi_S_dT * rhoSR * u_S;
 
         ip_cv.ds_L_dp_cap =
@@ -461,9 +461,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_cv.drho_h_eff_dT =
             dphi_G_dT * c.rhoGR * c.hG + phi_G * c.drho_GR_dT * c.hG +
             phi_G * c.rhoGR * c.dh_G_dT + dphi_L_dT * c.rhoLR * c.hL +
-            phi_L * ip_cv.drho_LR_dT * c.hL + phi_L * c.rhoLR * c.dh_L_dT +
-            dphi_S_dT * rhoSR * ip_data.h_S +
-            phi_S * ip_cv.drho_SR_dT * ip_data.h_S + phi_S * rhoSR * cpS;
+            phi_L * drho_LR_dT * c.hL + phi_L * c.rhoLR * c.dh_L_dT +
+            dphi_S_dT * rhoSR * ip_data.h_S + phi_S * drho_SR_dT * ip_data.h_S +
+            phi_S * rhoSR * cpS;
 
         ip_cv.drho_u_eff_dp_GR =
             /*(dphi_G_dp_GR = 0) * c.rhoGR * c.uG +*/
@@ -503,7 +503,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         ip_cv.drho_GR_h_w_eff_dT =
             c.drho_GR_dT * c.hG * w_GS + c.rhoGR * c.dh_G_dT * w_GS +
-            ip_cv.drho_LR_dT * c.hL * w_LS + c.rhoLR * c.dh_L_dT * w_LS;
+            drho_LR_dT * c.hL * w_LS + c.rhoLR * c.dh_L_dT * w_LS;
         // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
         // drho_LR_dT * b
 

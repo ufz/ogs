@@ -42,8 +42,6 @@ struct ConstitutiveVariables
     DisplacementDimMatrix dfW_4d_dT;
     DisplacementDimMatrix dfC_4_LCpG_dT;
     DisplacementDimMatrix dadvection_C_dp_GR;
-    double drho_LR_dT = std::numeric_limits<double>::quiet_NaN();
-    double drho_SR_dT = std::numeric_limits<double>::quiet_NaN();
     double drho_u_eff_dT = std::numeric_limits<double>::quiet_NaN();
     double drho_u_eff_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double drho_u_eff_dp_cap = std::numeric_limits<double>::quiet_NaN();
