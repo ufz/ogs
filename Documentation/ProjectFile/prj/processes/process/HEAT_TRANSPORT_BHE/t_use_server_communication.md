@@ -1,0 +1,1 @@
+Enables the server communication feature. The default setting is false.
