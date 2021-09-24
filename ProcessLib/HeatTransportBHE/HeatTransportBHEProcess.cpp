@@ -217,7 +217,7 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     GlobalVector const& x)
 {
     // if the process use python boundary condition
-    if (_process_data.py_bc_object == nullptr)
+    if (_process_data.py_bc_object == nullptr || !(_process_data._use_tespy))
         return NumLib::IterationResult::SUCCESS;
 
     // Here the task is to get current time flowrate and flow temperature from
@@ -234,9 +234,9 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     }
     // Transfer Tin and Tout to TESPy and return the results
     auto const tespy_result = _process_data.py_bc_object->tespySolver(
-        std::get<0>(_process_data.py_bc_object->dataframe_network),
-        std::get<1>(_process_data.py_bc_object->dataframe_network),
-        std::get<2>(_process_data.py_bc_object->dataframe_network));
+        std::get<0>(_process_data.py_bc_object->dataframe_network),   // t
+        std::get<1>(_process_data.py_bc_object->dataframe_network),   // T_in
+        std::get<2>(_process_data.py_bc_object->dataframe_network));  // T_out
     if (!_process_data.py_bc_object->isOverriddenTespy())
     {
         DBUG("Method `tespySolver' not overridden in Python script.");
@@ -255,6 +255,51 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
         return NumLib::IterationResult::SUCCESS;
 
     return NumLib::IterationResult::REPEAT_ITERATION;
+}
+
+void HeatTransportBHEProcess::postTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& x, const double t, const double dt,
+    int const process_id)
+{
+    if (_process_data.py_bc_object == nullptr ||
+        !_process_data._use_server_communication)
+    {
+        return;
+    }
+
+    auto& [time, Tin_value, Tout_value, Tout_nodes_ids, flowrate] =
+        _process_data.py_bc_object->dataframe_network;
+
+    auto const& solution = *x[process_id];
+
+    // Iterate through each BHE
+    const std::size_t n_bc_nodes = Tout_nodes_ids.size();
+    for (std::size_t i = 0; i < n_bc_nodes; i++)
+    {
+        // read the T_out and store them in dataframe
+        Tout_value[i] = solution[Tout_nodes_ids[i]];
+    }
+
+    assert(time == t);
+
+    // Transfer T_out to server_Communication and get back T_in and flowrate
+    auto const server_communication_result =
+        _process_data.py_bc_object->serverCommunication(t, dt, Tin_value,
+                                                        Tout_value, flowrate);
+    if (!_process_data.py_bc_object->isOverriddenServerCommunication())
+    {
+        DBUG("Method `serverCommunication' not overridden in Python script.");
+    }
+
+    auto const& [server_communication_Tin_value,
+                 server_communication_flowrate] = server_communication_result;
+
+    std::copy(begin(server_communication_Tin_value),
+              end(server_communication_Tin_value),
+              begin(Tin_value));
+    std::copy(begin(server_communication_flowrate),
+              end(server_communication_flowrate),
+              begin(flowrate));
 }
 #endif  // OGS_USE_PYTHON
 
@@ -357,7 +402,8 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
             {
-                if (bhe.use_python_bcs)
+                if (bhe.use_python_bcs ||
+                    _process_data._use_server_communication)
                 // call BHEPythonBoundarycondition
                 {
 #ifdef OGS_USE_PYTHON
