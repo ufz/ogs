@@ -471,33 +471,11 @@ void ProjectData::parseMedia(
         auto material_id_string =
             //! \ogs_file_attr{prj__media__medium__id}
             medium_config.getConfigAttribute<std::string>("id", "0");
-        material_id_string.erase(
-            remove_if(begin(material_id_string), end(material_id_string),
-                      [](unsigned char const c) { return std::isspace(c); }),
-            end(material_id_string));
-        auto const material_ids_strings =
-            BaseLib::splitString(material_id_string, ',');
 
-        // Convert strings to ints;
-        std::vector<int> material_ids;
-        std::transform(
-            begin(material_ids_strings), end(material_ids_strings),
-            std::back_inserter(material_ids), [](std::string const& m_id) {
-                if (auto const it = std::find_if_not(
-                        begin(m_id), end(m_id),
-                        [](unsigned char const c) { return std::isdigit(c); });
-                    it != end(m_id))
-                {
-                    OGS_FATAL(
-                        "Could not parse material ID's from '{:s}'. Please "
-                        "separate multiple material ID's by comma only. "
-                        "Invalid character: '%c'",
-                        m_id, *it);
-                }
-                return std::stoi(m_id);
-            });
+        auto const material_ids_of_this_medium =
+            splitMaterialIdString(material_id_string);
 
-        for (auto const& id : material_ids)
+        for (auto const& id : material_ids_of_this_medium)
         {
             if (_media.find(id) != end(_media))
             {
@@ -508,15 +486,21 @@ void ProjectData::parseMedia(
                     id);
             }
 
-            _media[id] =
-                (id == material_ids[0])
-                    ? MaterialPropertyLib::createMedium(
-                          _mesh_vec[0]->getDimension(), medium_config,
-                          _parameters,
-                          _local_coordinate_system ? &*_local_coordinate_system
-                                                   : nullptr,
-                          _curves)
-                    : _media[material_ids[0]];
+            if (id == material_ids_of_this_medium[0])
+            {
+                _media[id] = MaterialPropertyLib::createMedium(
+                    _mesh_vec[0]->getDimension(), medium_config, _parameters,
+                    _local_coordinate_system ? &*_local_coordinate_system
+                                             : nullptr,
+                    _curves);
+            }
+            else
+            {
+                // This medium has multiple material IDs assigned and this is
+                // not the first material ID. Therefore we can reuse the medium
+                // we created before.
+                _media[id] = _media[material_ids_of_this_medium[0]];
+            }
         }
     }
 
@@ -1212,4 +1196,55 @@ void ProjectData::parseCurves(std::optional<BaseLib::ConfigTree> const& config)
                 MathLib::PiecewiseLinearInterpolation>(conf),
             "The curve name is not unique.");
     }
+}
+
+std::vector<int> splitMaterialIdString(std::string const& material_id_string)
+{
+    auto const material_ids_strings =
+        BaseLib::splitString(material_id_string, ',');
+
+    std::vector<int> material_ids;
+    for (auto& mid_str : material_ids_strings)
+    {
+        std::size_t num_chars_processed = 0;
+        int material_id;
+        try
+        {
+            material_id = std::stoi(mid_str, &num_chars_processed);
+        }
+        catch (std::invalid_argument&)
+        {
+            OGS_FATAL(
+                "Could not parse material ID from '{}' to a valid "
+                "integer.",
+                mid_str);
+        }
+        catch (std::out_of_range&)
+        {
+            OGS_FATAL(
+                "Could not parse material ID from '{}'. The integer value "
+                "of the given string exceeds the permitted range.",
+                mid_str);
+        }
+
+        if (num_chars_processed != mid_str.size())
+        {
+            // Not the whole string has been parsed. Check the rest.
+            if (auto const it = std::find_if_not(
+                    begin(mid_str) + num_chars_processed, end(mid_str),
+                    [](unsigned char const c) { return std::isspace(c); });
+                it != end(mid_str))
+            {
+                OGS_FATAL(
+                    "Could not parse material ID from '{}'. Please "
+                    "separate multiple material IDs by comma only. "
+                    "Invalid character: '{}' at position {}.",
+                    mid_str, *it, distance(begin(mid_str), it));
+            }
+        }
+
+        material_ids.push_back(material_id);
+    };
+
+    return material_ids;
 }

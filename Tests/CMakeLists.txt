@@ -24,6 +24,7 @@ append_source_files(TEST_SOURCES GeoLib/IO)
 append_source_files(TEST_SOURCES MaterialLib)
 append_source_files(TEST_SOURCES MathLib)
 append_source_files(TEST_SOURCES MeshLib)
+append_source_files(TEST_SOURCES ApplicationsLib)
 append_source_files(TEST_SOURCES MeshGeoToolsLib)
 append_source_files(TEST_SOURCES_NUMLIB NumLib)
 # Disable Unity build for NumLib tests
@@ -62,8 +63,10 @@ ogs_add_executable(testrunner ${TEST_SOURCES})
 
 target_link_libraries(
     testrunner
-    PRIVATE ApplicationsFileIO
+    PRIVATE ApplicationsLib
+            ApplicationsFileIO
             autocheck
+            gmock
             gtest
             MeshGeoToolsLib
             MaterialLib
