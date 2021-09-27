@@ -443,7 +443,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                            "${AddTest_PYTHON_PACKAGES}"
             )
             file(APPEND ${PROJECT_BINARY_DIR}/.python_packages
-                 ${PYTHON_PACKAGES}
+                 "${PYTHON_PACKAGES}\n"
             )
         else()
             message(

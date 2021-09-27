@@ -60,6 +60,27 @@ public:
             false, false, {}, {}};
     }
 
+    /*!
+     * transfer BHE network dataframe to python script where function
+     * serverCommunication takes t, dt, Tin_val, Tout_val, BHE_flowrate as
+     * arguments and returns updated Tin_val and flowrate after each time step
+     * specific use case: interface between OGS and SimulationX via TCP/IP
+     * where OGS is connected as one client
+     *
+     * \return a tuple (BHE Tin value, BHE flow rate for all BHEs from
+     * serverCommunication)
+     */
+    virtual std::tuple<std::vector<double>, std::vector<double>>
+    serverCommunication(double /*t*/,
+                        double /*dt*/,
+                        std::vector<double> const& /*Tin_val*/,
+                        std::vector<double> const& /*Tout_val*/,
+                        std::vector<double> const& /*BHE_flowrate*/) const
+    {
+        _overridden_server_communication = false;
+        return {};
+    }
+
     //! Tells if initializeDataContainer() has been overridden in the derived
     //! class in Python.
     //!
@@ -72,6 +93,15 @@ public:
     //!
     //! \pre tespySolver() must already have been called once.
     bool isOverriddenTespy() const { return _overridden_tespy; }
+
+    //! Tells if serverCommunication() has been overridden in the derived class
+    //! in Python.
+    //!
+    //! \pre serverCommunication() must already have been called once.
+    bool isOverriddenServerCommunication() const
+    {
+        return _overridden_server_communication;
+    }
 
     // BHE network dataframe container
     std::tuple<double,
@@ -90,5 +120,8 @@ private:
     //! Tells if tespySolver() has been overridden in the derived class
     //! in Python.
     mutable bool _overridden_tespy = true;
+    //! Tells if serverCommunication() has been overridden in the derived class
+    //! in Python.
+    mutable bool _overridden_server_communication = true;
 };
 }  // namespace ProcessLib

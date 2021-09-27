@@ -98,6 +98,10 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers}
         config.getConfigSubtree("borehole_heat_exchangers");
 
+    auto const using_server_communication =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__use_server_communication}
+        config.getConfigParameter<bool>("use_server_communication", false);
+
     for (
         auto const& bhe_config :
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
@@ -150,13 +154,13 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     // find if bhe uses python boundary condition
-    auto const using_python_bcs =
+    auto const using_tespy =
         visit([](auto const& bhe) { return bhe.use_python_bcs; }, bhes[0]);
 
     //! Python object computing BC values.
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_object = nullptr;
     // create a pythonBoundaryCondition object
-    if (using_python_bcs)
+    if (using_tespy || using_server_communication)
     {
 #ifdef OGS_USE_PYTHON
         // Evaluate Python code in scope of main module
@@ -218,7 +222,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     }
 
     HeatTransportBHEProcessData process_data(
-        std::move(media_map), std::move(bhes), py_object);
+        std::move(media_map), std::move(bhes), py_object, using_tespy,
+        using_server_communication);
 
     SecondaryVariableCollection secondary_variables;
 

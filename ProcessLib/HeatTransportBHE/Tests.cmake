@@ -99,6 +99,38 @@ if("${Python3_VERSION}" VERSION_LESS 3.9)
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 1e-10 1e-13
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 1e-10 1e-13
     )
+	
+	AddTest(
+		NAME HeatTransportBHE_1U_3D_beier_sandbox_server_communication
+		PATH Parabolic/T/3D_Beier_sandbox_SimX
+		EXECUTABLE ogs
+		EXECUTABLE_ARGS beier_sandbox.prj
+		WRAPPER time
+		TESTER vtkdiff
+		REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+		RUNTIME 50
+		PYTHON_PACKAGES "pandas"
+		DIFF_DATA
+		beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
+		beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
+	)
+	
+    AddTest(
+        NAME HeatTransportBHE_3D_3BHEs_array_server_communication
+        PATH Parabolic/T/3D_3BHEs_array_SimX
+        RUNTIME 50
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS 3bhes_1U.prj
+        WRAPPER time
+        TESTER vtkdiff
+        REQUIREMENTS OGS_USE_PYTHON AND NOT OGS_USE_MPI
+        PYTHON_PACKAGES "TESPy=0.3.2"
+        DIFF_DATA
+        3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+        3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-9 1e-12
+        3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 1e-9 1e-12
+        3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 1e-9 1e-12
+    )	
 endif()
 
 AddTest(

@@ -48,6 +48,17 @@ public:
                           BHEInflowPythonBoundaryConditionPythonSideInterface,
                           tespySolver, t, Tin_val, Tout_val);
     }
+
+    std::tuple<std::vector<double>, std::vector<double>> serverCommunication(
+        double const t, double const dt, std::vector<double> const& Tin_val,
+        std::vector<double> const& Tout_val,
+        std::vector<double> const& flowrate) const override
+    {
+        using Ret = std::tuple<std::vector<double>, std::vector<double>>;
+        PYBIND11_OVERLOAD(
+            Ret, BHEInflowPythonBoundaryConditionPythonSideInterface,
+            serverCommunication, t, dt, Tin_val, Tout_val, flowrate);
+    }
 };
 
 void bheInflowpythonBindBoundaryCondition(pybind11::module& m)
@@ -65,6 +76,10 @@ void bheInflowpythonBindBoundaryCondition(pybind11::module& m)
                  initializeDataContainer);
     pybc.def("tespySolver",
              &BHEInflowPythonBoundaryConditionPythonSideInterface::tespySolver);
+
+    pybc.def("serverCommunication",
+             &BHEInflowPythonBoundaryConditionPythonSideInterface::
+                 serverCommunication);
 }
 
 }  // namespace ProcessLib
