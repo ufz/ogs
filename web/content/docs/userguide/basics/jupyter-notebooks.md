@@ -79,6 +79,18 @@ http://127.0.0.1:8888/lab?token=xxx
 
 You may have to modify the IP address if this is running on a remote machine.
 
+### Browsing notebooks on GitLab
+
+In the file browser on the left-hand side of the Jupyter Lab interface there is a GitLab-tab which allows for browsing and opening notebooks from the [ogs/ogs](https://gitlab.opengeosys.org/ogs/ogs)-repository. You can directly modify and execute a notebook, but the notebook is not saved back to GitLab. You can change the browsed repository by typing into the top text field.
+
+If you would like to us this with private repositories you have to supply an [access token](https://gitlab.opengeosys.org/-/profile/personal_access_tokens) at container start-up:
+
+```bash
+docker run --rm -p 8888:8888 -v $PWD:/home/jovyan/work --user `id -u $USER` \
+    --group-add users registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter \
+    --GitLabConfig.access_token="< YOUR_ACCESS_TOKEN >"
+```
+
 ### Adding additional Python packages
 
 In a running container you can install additional Python packages with the Jupyter [magic command `%pip`](https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-pip):
