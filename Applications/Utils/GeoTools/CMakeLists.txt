@@ -1,12 +1,8 @@
-if(NOT OGS_BUILD_GUI)
-    return()
-endif()
-
 set(TOOLS MoveGeometry TriangulatePolyline)
 foreach(tool ${TOOLS})
     ogs_add_executable(${tool} ${tool}.cpp)
     target_link_libraries(
-        ${tool} GeoLib GitInfoLib ApplicationsFileIO tclap Qt5::Core
+        ${tool} GeoLib GitInfoLib ApplicationsFileIO tclap
     )
 endforeach()
 install(TARGETS ${TOOLS} RUNTIME DESTINATION bin)
