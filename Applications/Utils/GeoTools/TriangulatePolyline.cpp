@@ -13,13 +13,12 @@
 
 #include <tclap/CmdLine.h>
 
-#include <QCoreApplication>
 #include <string>
 
 #include "Applications/FileIO/Legacy/createSurface.h"
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
-#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "GeoLib/Polyline.h"
 #include "InfoLib/GitInfo.h"
 
@@ -34,8 +33,6 @@ std::string output_question()
 
 int main(int argc, char* argv[])
 {
-    QCoreApplication app(argc, argv, false);
-
     TCLAP::CmdLine cmd(
         "Triangulates the specified polyline in the given geometry file.\n\n"
         "OpenGeoSys-6 software, version " +
@@ -63,7 +60,7 @@ int main(int argc, char* argv[])
     std::string const& polyline_name(name_arg.getValue());
 
     GeoLib::GEOObjects geo_objects;
-    GeoLib::IO::XmlGmlInterface xml(geo_objects);
+    GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
     try
     {
         if (!xml.readFile(file_name))
