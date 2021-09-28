@@ -182,7 +182,41 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             medium.property(MPL::PropertyType::permeability)
                 .value(vars, pos, t, dt));
 
+        auto const Bu =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                gradNu, Nu, x_coord, _is_axially_symmetric);
+
+        auto& eps = ip_data.eps;
+        eps.noalias() = Bu * displacement;
+
         // relative permeability
+        // Set mechanical variables for the intrinsic permeability model
+        // For stress dependent permeability.
+        {
+            // Note: if Bishop model is available, ip_data.s_L in the following
+            // computation should be replaced with the Bishop value.
+            auto const sigma_total =
+                (_ip_data[ip].sigma_eff - ip_data.alpha_B *
+                                              (pGR - ip_data.s_L * pCap) *
+                                              Invariants::identity2)
+                    .eval();
+
+            vars[static_cast<int>(MPL::Variable::total_stress)]
+                .emplace<SymmetricTensor>(
+                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                        sigma_total));
+        }
+        // For strain dependent permeability
+        vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
+            Invariants::trace(eps);
+        vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
+            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
+        vars[static_cast<int>(MPL::Variable::mechanical_strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
+
         ip_data.k_rel_G =
             medium
                 .property(
@@ -210,15 +244,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const T_dot = NT.dot(temperature_dot);
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = ip_data.alpha_T_SR * T_dot * dt;
-
-        auto const Bu =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                gradNu, Nu, x_coord, _is_axially_symmetric);
-
-        auto& eps = ip_data.eps;
-        eps.noalias() = Bu * displacement;
 
         auto& eps_prev = ip_data.eps_prev;
         auto& eps_m = ip_data.eps_m;
