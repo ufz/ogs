@@ -104,10 +104,12 @@ PropertyDataType SaturationDependentSwelling::dValue(
     ParameterLib::SpatialPosition const& pos, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)primary_variable;
-    assert((primary_variable == Variable::liquid_saturation) &&
-           "SaturationDependentSwelling::dValue is implemented for  "
-           "derivatives with respect to liquid saturation only.");
+    if (primary_variable != Variable::liquid_saturation)
+    {
+        OGS_FATAL(
+            "SaturationDependentSwelling::dValue is implemented for "
+            "derivatives with respect to liquid saturation only.");
+    }
 
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);

@@ -90,7 +90,7 @@ PropertyDataType WaterVapourDensity::dValue(
     }
 
     OGS_FATAL(
-        "WaterVapourDensity::dvalue is implemented for derivatives with "
+        "WaterVapourDensity::dValue is implemented for derivatives with "
         "respect to temperature or phase_pressure only.");
 }
 

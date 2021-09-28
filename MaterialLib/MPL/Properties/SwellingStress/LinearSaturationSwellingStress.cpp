@@ -61,10 +61,12 @@ PropertyDataType LinearSaturationSwellingStress::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)variable;
-    assert((variable == Variable::liquid_saturation) &&
-           "LinearSaturationSwellingStress::dValue is implemented for "
-           "derivatives with respect to liquid saturation only.");
+    if (variable != Variable::liquid_saturation)
+    {
+        OGS_FATAL(
+            "LinearSaturationSwellingStress::dValue is implemented for "
+            "derivatives with respect to liquid saturation only.");
+    }
 
     // Sl <= S_max is guaranteed by the saturation property or
     // the saturation calculation.

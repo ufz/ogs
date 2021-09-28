@@ -91,10 +91,12 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)primary_variable;
-    assert((primary_variable == Variable::total_strain) &&
-           "PermeabilityOrthotropicPowerLaw::dValue is implemented for  "
-           "derivatives with respect to total strain only.");
+    if (primary_variable != Variable::total_strain)
+    {
+        OGS_FATAL(
+            "PermeabilityOrthotropicPowerLaw::dValue is implemented for "
+            "derivatives with respect to total strain only.");
+    }
 
     return 0.;
 }

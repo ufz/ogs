@@ -46,10 +46,12 @@ PropertyDataType SaturationDependentThermalConductivity::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)variable;
-    assert((variable == Variable::liquid_saturation) &&
-           "SaturationDependentThermalConductivity::dvalue is implemented for "
-           "derivatives with respect to liquid saturation only.");
+    if (variable != Variable::liquid_saturation)
+    {
+        OGS_FATAL(
+            "SaturationDependentThermalConductivity::dValue is implemented for "
+            "derivatives with respect to liquid saturation only.");
+    }
 
     return K_wet_ - K_dry_;
 }

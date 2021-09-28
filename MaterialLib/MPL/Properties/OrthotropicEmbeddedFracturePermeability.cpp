@@ -88,10 +88,12 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::dValue(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    (void)primary_variable;
-    assert((primary_variable == Variable::mechanical_strain) &&
-           "OrthotropicEmbeddedFracturePermeability::dValue is implemented for "
-           " derivatives with respect to strain only.");
+    if (primary_variable != Variable::mechanical_strain)
+    {
+        OGS_FATAL(
+            "OrthotropicEmbeddedFracturePermeability::dValue is implemented "
+            "for derivatives with respect to strain only.");
+    }
 
     auto const eps = formEigenTensor<3>(std::get<SymmetricTensor>(
         variable_array[static_cast<int>(Variable::mechanical_strain)]));

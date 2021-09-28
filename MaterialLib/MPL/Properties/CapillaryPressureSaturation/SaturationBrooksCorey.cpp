@@ -61,10 +61,12 @@ PropertyDataType SaturationBrooksCorey::dValue(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    (void)primary_variable;
-    assert((primary_variable == Variable::capillary_pressure) &&
-           "SaturationBrooksCorey::dValue is implemented for "
-           " derivatives with respect to capillary pressure only.");
+    if (primary_variable != Variable::capillary_pressure)
+    {
+        OGS_FATAL(
+            "SaturationBrooksCorey::dValue is implemented for derivatives with "
+            "respect to capillary pressure only.");
+    }
 
     const double s_L_res = residual_liquid_saturation_;
     const double s_L_max = 1.0 - residual_gas_saturation_;
@@ -93,12 +95,13 @@ PropertyDataType SaturationBrooksCorey::d2Value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)primary_variable1;
-    (void)primary_variable2;
-    assert((primary_variable1 == Variable::capillary_pressure) &&
-           (primary_variable2 == Variable::capillary_pressure) &&
-           "SaturationBrooksCorey::d2Value is implemented for "
-           " derivatives with respect to capillary pressure only.");
+    if ((primary_variable1 != Variable::capillary_pressure) &&
+        (primary_variable2 != Variable::capillary_pressure))
+    {
+        OGS_FATAL(
+            "SaturationBrooksCorey::d2Value is implemented for derivatives "
+            "with respect to capillary pressure only.");
+    }
 
     const double p_b = entry_pressure_;
     const double p_cap = std::max(

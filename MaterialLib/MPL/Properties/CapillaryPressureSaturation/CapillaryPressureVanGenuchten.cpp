@@ -112,10 +112,12 @@ PropertyDataType CapillaryPressureVanGenuchten::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)primary_variable;
-    assert((primary_variable == Variable::liquid_saturation) &&
-           "CapillaryPressureVanGenuchten::dValue is implemented for "
-           "derivatives with respect to liquid saturation only.");
+    if (primary_variable != Variable::liquid_saturation)
+    {
+        OGS_FATAL(
+            "CapillaryPressureVanGenuchten::dValue is implemented for "
+            "derivatives with respect to liquid saturation only.");
+    }
 
     double const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
