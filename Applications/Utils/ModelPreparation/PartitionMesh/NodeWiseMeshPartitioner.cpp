@@ -164,10 +164,7 @@ findRegularNodesInPartition(
         begin(partition_nodes), end(partition_nodes),
         std::back_inserter(base_nodes), std::back_inserter(higher_order_nodes),
         [&](MeshLib::Node* const n)
-        {
-            return !is_mixed_high_order_linear_elems ||
-                   isBaseNode(*n, mesh.getElementsConnectedToNode(*n));
-        });
+        { return isBaseNode(*n, mesh.getElementsConnectedToNode(*n)); });
 
     return {base_nodes, higher_order_nodes};
 }
@@ -254,8 +251,7 @@ findGhostNodesInPartition(
 
             if (partitionLookup(*n, partition_ids, node_id_mapping) != part_id)
             {
-                if (!is_mixed_high_order_linear_elems ||
-                    isBaseNode(*n, mesh.getElementsConnectedToNode(*n)))
+                if (isBaseNode(*n, mesh.getElementsConnectedToNode(*n)))
                 {
                     base_nodes.push_back(nodes[n->getID()]);
                 }
@@ -282,8 +278,11 @@ void NodeWiseMeshPartitioner::processPartition(
                                     *_mesh);
 
     partition.number_of_regular_base_nodes = partition.nodes.size();
-    partition.number_of_regular_nodes = partition.number_of_regular_base_nodes +
-                                        higher_order_regular_nodes.size();
+    std::copy(begin(higher_order_regular_nodes),
+              end(higher_order_regular_nodes),
+              std::back_inserter(partition.nodes));
+
+    partition.number_of_regular_nodes = partition.nodes.size();
 
     std::tie(partition.regular_elements, partition.ghost_elements) =
         findElementsInPartition(part_id, _mesh->getElements(),
@@ -298,17 +297,12 @@ void NodeWiseMeshPartitioner::processPartition(
     std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
               std::back_inserter(partition.nodes));
 
-    partition.number_of_base_nodes = partition.nodes.size();
+    partition.number_of_base_nodes =
+        partition.number_of_regular_base_nodes + base_ghost_nodes.size();
 
-    if (is_mixed_high_order_linear_elems)
-    {
-        std::copy(begin(higher_order_regular_nodes),
-                  end(higher_order_regular_nodes),
-                  std::back_inserter(partition.nodes));
-        std::copy(begin(higher_order_ghost_nodes),
-                  end(higher_order_ghost_nodes),
-                  std::back_inserter(partition.nodes));
-    }
+    std::copy(begin(higher_order_ghost_nodes),
+              end(higher_order_ghost_nodes),
+              std::back_inserter(partition.nodes));
 
     // Set the node numbers of base and all mesh nodes.
     partition.number_of_mesh_base_nodes = _mesh->getNumberOfBaseNodes();
@@ -685,9 +679,11 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
                 _nodes_partition_ids, mesh, bulk_node_ids);
 
         partition.number_of_regular_base_nodes = partition.nodes.size();
-        partition.number_of_regular_nodes =
-            partition.number_of_regular_base_nodes +
-            higher_order_regular_nodes.size();
+        std::copy(begin(higher_order_regular_nodes),
+                  end(higher_order_regular_nodes),
+                  std::back_inserter(partition.nodes));
+
+        partition.number_of_regular_nodes = partition.nodes.size();
 
         std::tie(partition.regular_elements, partition.ghost_elements) =
             findElementsInPartition(part_id, mesh.getElements(),
@@ -704,17 +700,12 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
         std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
                   std::back_inserter(partition.nodes));
 
-        partition.number_of_base_nodes = partition.nodes.size();
+        partition.number_of_base_nodes =
+            partition.number_of_regular_base_nodes + base_ghost_nodes.size();
 
-        if (is_mixed_high_order_linear_elems)
-        {
-            std::copy(begin(higher_order_regular_nodes),
-                      end(higher_order_regular_nodes),
-                      std::back_inserter(partition.nodes));
-            std::copy(begin(higher_order_ghost_nodes),
-                      end(higher_order_ghost_nodes),
-                      std::back_inserter(partition.nodes));
-        }
+        std::copy(begin(higher_order_ghost_nodes),
+                  end(higher_order_ghost_nodes),
+                  std::back_inserter(partition.nodes));
     }
 
     markDuplicateGhostCells(mesh, partitions);
@@ -726,33 +717,14 @@ void NodeWiseMeshPartitioner::renumberNodeIndices(
 {
     std::size_t node_global_id_offset = 0;
     // Renumber the global indices.
-    // -- Base nodes
     for (auto& partition : _partitions)
     {
-        for (std::size_t i = 0; i < partition.number_of_regular_base_nodes; i++)
+        INFO("Partition");
+
+        for (std::size_t i = 0; i < partition.number_of_regular_nodes; i++)
         {
             _nodes_global_ids[partition.nodes[i]->getID()] =
-                node_global_id_offset;
-            node_global_id_offset++;
-        }
-    }
-
-    if (!is_mixed_high_order_linear_elems)
-    {
-        return;
-    }
-
-    // -- Nodes for high order elements.
-    for (auto& partition : _partitions)
-    {
-        const std::size_t end_id = partition.number_of_base_nodes +
-                                   partition.number_of_regular_nodes -
-                                   partition.number_of_regular_base_nodes;
-        for (std::size_t i = partition.number_of_base_nodes; i < end_id; i++)
-        {
-            _nodes_global_ids[partition.nodes[i]->getID()] =
-                node_global_id_offset;
-            node_global_id_offset++;
+                node_global_id_offset++;
         }
     }
 }
