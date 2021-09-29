@@ -15,23 +15,31 @@ container:
     - .container-maker-setup
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - if [[ "$CI_COMMIT_BRANCH" == "master" ]] ;then export DOCKER_TAG="--tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest" ; fi
+    - >
+      if [[ "$CI_COMMIT_BRANCH" == "master" ]] ; then
+        export DOCKER_TAG_SERIAL="--tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest"
+        export DOCKER_TAG_JUPYTER="--upload --tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial-jupyter:latest"
+      fi
+    # serial container
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache --mfront
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
-      $DOCKER_TAG
+      $DOCKER_TAG_SERIAL
+    # petsc container
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
       --base_image 'centos:8' --ompi 4.0.5 --mpi_benchmarks
+    # test ogs can run in container
     - |
       for sif in _out/images/*.sif; do
         singularity exec $sif ogs --version
       done
+    # Data Explorer container
     - >
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'

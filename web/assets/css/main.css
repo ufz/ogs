@@ -254,4 +254,22 @@ img[src$='#two-third'] {
   @apply text-yellow-500;
 }
 
+/* ------------------------------- Jupyter --------------------------------- */
+.jupyter-input pre {
+  @apply border-l-4;
+  @apply border-blue-500;
+}
+
+.jupyter-output pre {
+  @apply border-l-4;
+  @apply border-red-500;
+}
+
+.jupyter-output img {
+  @apply border-l-4;
+  @apply border-red-500;
+  @apply rounded-md;
+}
+
+/* ------------------------------------------------------------------------- */
 @tailwind utilities;

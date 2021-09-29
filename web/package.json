@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "build": "npx tailwindcss -o static/css/all.css --jit -i assets/css/main.css -m && hugo",
+    "build-with-nb": "find ../Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 nb2hugo --site-dir . --section docs/benchmarks/notebooks --template ../Tests/Notebooks/nbconvert_templates/collapsed.md.j2 && npx tailwindcss -o static/css/all.css --jit -i assets/css/main.css -m && hugo",
     "server": "hugo server",
     "index": "hugo-algolia -toml",
     "upload-index": "hugo-algolia --toml -s"
@@ -10,6 +11,6 @@
     "@tailwindcss/line-clamp": "^0.2.1",
     "@tailwindcss/typography": "^0.4.1",
     "hugo-algolia": "^1.2.13",
-    "tailwindcss": "^2.2.0"
+    "tailwindcss": "^2.2.15"
   }
 }

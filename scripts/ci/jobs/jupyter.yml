@@ -1,0 +1,41 @@
+# Built for Sandy Bridge (envinf1) and newer
+build jupyter:
+  stage: build
+  tags: [envinf2-shell]
+  needs: [meta]
+  extends:
+    - .container-maker-setup
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - >
+      if [[ "$CI_COMMIT_BRANCH" == "master" ]] ; then
+        export DOCKER_TAG_JUPYTER="$CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial-jupyter:latest"
+        export ON_MASTER_ARGS="--upload -C"
+      else
+        export DOCKER_TAG_JUPYTER="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-jupyter"
+      fi
+    # Jupyter container
+    - >
+      poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
+      --build_args ' --progress=plain'
+      --cvode --ccache --mfront
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
+      --runtime_base_image 'jupyter/base-notebook'
+      --tag $DOCKER_TAG_JUPYTER
+      $ON_MASTER_ARGS
+    - cd $CI_PROJECT_DIR
+    # execute notebooks in container
+    - >
+      docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
+      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER
+      bash -c "find Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 jupyter nbconvert --execute --inplace"
+    - >
+      docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
+      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER
+      bash -c "find Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 nb2hugo --site-dir web --section docs/benchmarks/notebooks --template Tests/Notebooks/nbconvert_templates/collapsed.md.j2"
+  artifacts:
+    name: container
+    paths:
+      - ThirdParty/container-maker/_out/images/*.sif
+      - web/content/docs/benchmarks/notebooks
+      - web/static/docs/benchmarks/notebooks
