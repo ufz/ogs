@@ -26,14 +26,13 @@
 
 namespace GeoLib
 {
-
 /**
  * \ingroup GeoLib
  *
- * \brief This class manages pointers to Points in a std::vector along with a name.
- * It also handles the deleting of points. Additionally, each vector of points is identified by
- * a unique name from class GEOObject. For this reason PointVec should have
- * a name.
+ * \brief This class manages pointers to Points in a std::vector along with a
+ * name. It also handles the deleting of points. Additionally, each vector of
+ * points is identified by a unique name from class GEOObject. For this reason
+ * PointVec should have a name.
  * */
 class PointVec final : public TemplateVec<Point>
 {
@@ -41,8 +40,8 @@ public:
     /// Signals if the vector contains object of type Point or Station
     enum class PointType
     {
-        POINT    = 0,
-        STATION  = 1
+        POINT = 0,
+        STATION = 1
     };
 
     /**
@@ -60,10 +59,10 @@ public:
      * @attention{PointVec will take the ownership of the vector, i.e. it
      * deletes the names.}
      * @param type the type of the point, \sa enum PointType
-     * @param rel_eps This is a relative error tolerance value for the test of identical points.
-     * The size of the axis aligned bounding box multiplied with the value of rel_eps gives the
-     * real tolerance \f$tol\f$. Two points \f$p_0, p_1 \f$ are identical iff
-     * \f$|p_1 - p_0| \le tol.\f$
+     * @param rel_eps This is a relative error tolerance value for the test of
+     * identical points. The size of the axis aligned bounding box multiplied
+     * with the value of rel_eps gives the real tolerance \f$tol\f$. Two points
+     * \f$p_0, p_1 \f$ are identical iff \f$|p_1 - p_0| \le tol.\f$
      */
     PointVec(const std::string& name,
              std::unique_ptr<std::vector<Point*>>
@@ -74,29 +73,30 @@ public:
              double rel_eps = std::numeric_limits<double>::epsilon());
 
     /**
-     * Method adds a Point to the (internal) standard vector and takes the ownership.
-     * If the given point is already included in the vector, the point will be destroyed and
-     * the id of the existing point will be returned.
+     * Method adds a Point to the (internal) standard vector and takes the
+     * ownership. If the given point is already included in the vector, the
+     * point will be destroyed and the id of the existing point will be
+     * returned.
      * @param pnt the pointer to the Point
      * @return the id of the point within the internal vector
      */
-    std::size_t push_back (Point* pnt);
+    std::size_t push_back(Point* pnt);
 
     /**
      * push_back adds new elements at the end of the vector _data_vec.
      * @param pnt a pointer to the point, PointVec takes ownership of the point
      * @param name the name of the point
      */
-    void push_back (Point* pnt, std::string const*const name) override;
+    void push_back(Point* pnt, std::string const* const name) override;
 
     /**
      * get the type of Point, this can be either POINT or STATION
      */
     PointType getType() const { return _type; }
 
-    const std::vector<std::size_t>& getIDMap () const { return _pnt_id_map; }
+    const std::vector<std::size_t>& getIDMap() const { return _pnt_id_map; }
 
-    const GeoLib::AABB& getAABB () const;
+    const GeoLib::AABB& getAABB() const;
 
     std::string const& getItemNameByID(std::size_t id) const;
 
@@ -108,35 +108,38 @@ public:
     /// \note This method have to be called if the coordinates of a point stored
     /// by the PointVec is modified from outside.
     void resetInternalDataStructures();
+
 private:
     /**
-     * After the point set is modified (for example by makePntsUnique()) the mapping has to be corrected.
+     * After the point set is modified (for example by makePntsUnique()) the
+     * mapping has to be corrected.
      */
     void correctNameIDMapping();
 
     /** copy constructor doesn't have an implementation */
     // compiler does not create a (possible unwanted) copy constructor
-    PointVec (const PointVec &);
+    PointVec(const PointVec&);
     /** standard constructor doesn't have an implementation */
     // compiler does not create a (possible unwanted) standard constructor
-    PointVec ();
+    PointVec();
 
     /** assignment operator doesn't have an implementation */
-    // this way the compiler does not create a (possible unwanted) assignment operator
-    PointVec& operator= (const PointVec& rhs);
+    // this way the compiler does not create a (possible unwanted) assignment
+    // operator
+    PointVec& operator=(const PointVec& rhs);
 
-	/**
-	 * Inserts the instance of the Point into internal data structures
-	 * (@see TemplateVec::_data_vec, _pnt_id_map) if and only if there
-	 * does not exist a point with the same coordinates (up to
-	 * std::numeric_limits<double>::epsilon()). In case there exists
-	 * already a point with the same coordinates the given pnt-object
-	 * will be deleted!
-	 * @param pnt  Pointer to GeooLib::Point instance
-	 * @return either the new id or the id of the existing point with
-	 * the same coordinates
-	 */
-    std::size_t uniqueInsert (Point* pnt);
+    /**
+     * Inserts the instance of the Point into internal data structures
+     * (@see TemplateVec::_data_vec, _pnt_id_map) if and only if there
+     * does not exist a point with the same coordinates (up to
+     * std::numeric_limits<double>::epsilon()). In case there exists
+     * already a point with the same coordinates the given pnt-object
+     * will be deleted!
+     * @param pnt  Pointer to GeooLib::Point instance
+     * @return either the new id or the id of the existing point with
+     * the same coordinates
+     */
+    std::size_t uniqueInsert(Point* pnt);
 
     /** the type of the point (\sa enum PointType) */
     PointType _type;
