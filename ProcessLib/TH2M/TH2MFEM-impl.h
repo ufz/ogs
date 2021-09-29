@@ -650,10 +650,18 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_cv.ds_L_dp_cap * rho_W_LR_dot - s_L * c.drho_W_LR_dp_LR / dt;
         ip_cv.dfW_3a_dT = s_G * c.drho_W_GR_dT / dt + s_L * c.drho_W_LR_dT / dt;
 
-        ip_cv.dfW_4_LWpG_a_dp_GR = c.drho_W_GR_dp_GR * k_over_mu_G;
+        ip_cv.dfW_4_LWpG_a_dp_GR = c.drho_W_GR_dp_GR * k_over_mu_G
+                                   // + rhoWGR * (dk_over_mu_G_dp_GR = 0)
+                                   + c.drho_W_LR_dp_GR * k_over_mu_L
+            // + rhoWLR * (dk_over_mu_L_dp_GR = 0)
+            ;
         ip_cv.dfW_4_LWpG_a_dp_cap = -c.drho_W_LR_dp_LR * k_over_mu_L;
         ip_cv.dfW_4_LWpG_a_dT =
-            c.drho_W_GR_dT * k_over_mu_G + c.drho_W_LR_dT * k_over_mu_L;
+            c.drho_W_GR_dT * k_over_mu_G
+            //+ rhoWGR * (dk_over_mu_G_dT != 0 TODO for mu_G(T))
+            + c.drho_W_LR_dT * k_over_mu_L
+            //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_G(T))
+            ;
 
         // TODO (naumov) for dxmW*/d* != 0
         ip_cv.dfW_4_LWpG_d_dp_GR =
