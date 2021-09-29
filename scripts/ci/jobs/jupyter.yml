@@ -38,3 +38,4 @@ build jupyter:
     paths:
       - web/content/docs/benchmarks/notebooks
       - web/static/docs/benchmarks/notebooks
+      - Tests/Notebooks/**/*.ipynb
