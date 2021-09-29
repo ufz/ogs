@@ -344,7 +344,6 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
         auto const& dNdx = _ip_data[ip].dNdx;
         double const d_ip = N.dot(d);
         auto pressure_ip = _process_data.pressure;
-        auto u_corrected = pressure_ip * u;
         double const gc = _process_data.crack_resistance(t, x_position)[0];
         double const ls = _process_data.crack_length_scale(t, x_position)[0];
 
@@ -363,15 +362,29 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
 
         elastic_energy += _ip_data[ip].elastic_energy * w;
 
-        surface_energy +=
-            0.5 * gc *
-            ((1 - d_ip) * (1 - d_ip) / ls + (dNdx * d).dot((dNdx * d)) * ls) *
-            w;
+        switch (_process_data.phasefield_model)
+        {
+            case PhaseFieldModel::AT1:
+            {
+                surface_energy +=
+                    gc * 0.375 *
+                    ((1 - d_ip) / ls + (dNdx * d).dot((dNdx * d)) * ls) * w;
+
+                break;
+            }
+            case PhaseFieldModel::AT2:
+            {
+                surface_energy += 0.5 * gc *
+                                  ((1 - d_ip) * (1 - d_ip) / ls +
+                                   (dNdx * d).dot((dNdx * d)) * ls) *
+                                  w;
+                break;
+            }
+        }
 
         if (_process_data.crack_pressure)
         {
-            pressure_work +=
-                pressure_ip * (N_u * u_corrected).dot(dNdx * d) * w;
+            pressure_work += pressure_ip * (N_u * u).dot(dNdx * d) * w;
         }
     }
 }
