@@ -223,9 +223,19 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     MPL::PropertyType::relative_permeability_nonwetting_phase)
                 .template value<double>(vars, pos, t, dt);
 
+        auto const dk_rel_G_ds_L =
+            medium[MPL::PropertyType::relative_permeability_nonwetting_phase]
+                .template dValue<double>(vars, MPL::Variable::liquid_saturation,
+                                         pos, t, dt);
+
         ip_data.k_rel_L =
             medium.property(MPL::PropertyType::relative_permeability)
                 .template value<double>(vars, pos, t, dt);
+
+        auto const dk_rel_L_ds_L =
+            medium[MPL::PropertyType::relative_permeability]
+                .template dValue<double>(vars, MPL::Variable::liquid_saturation,
+                                         pos, t, dt);
 
         // solid phase compressibility
         ip_data.beta_p_SR = (1. - ip_data.alpha_B) / K_S;
@@ -482,6 +492,18 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             (ip_data.k_S * ip_data.k_rel_G / ip_data.muGR).eval();
         auto const k_over_mu_L =
             (ip_data.k_S * ip_data.k_rel_L / ip_data.muLR).eval();
+
+        // dk_over_mu_G_dp_GR =
+        //    ip_data.k_S * dk_rel_G_ds_L * (ds_L_dp_GR = 0) / ip_data.muGR =
+        //    0;
+        // dk_over_mu_L_dp_GR =
+        //     ip_data.k_S * dk_rel_L_ds_L * (ds_L_dp_GR = 0) / ip_data.muLR =
+        //     0;
+        ip_cv.dk_over_mu_G_dp_cap =
+            ip_data.k_S * dk_rel_G_ds_L * ip_cv.ds_L_dp_cap / ip_data.muGR;
+        ip_cv.dk_over_mu_L_dp_cap =
+            ip_data.k_S * dk_rel_L_ds_L * ip_cv.ds_L_dp_cap / ip_data.muLR;
+
         GlobalDimVectorType const w_GS =
             k_over_mu_G * c.rhoGR * b - k_over_mu_G * gradpGR;
         GlobalDimVectorType const w_LS = k_over_mu_L * gradpCap +
