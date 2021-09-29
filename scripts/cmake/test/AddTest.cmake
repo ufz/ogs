@@ -87,7 +87,7 @@ function(AddTest)
     file(MAKE_DIRECTORY ${AddTest_BINARY_PATH})
     file(TO_NATIVE_PATH "${AddTest_BINARY_PATH}" AddTest_BINARY_PATH_NATIVE)
     set(AddTest_STDOUT_FILE_PATH
-        "${AddTest_BINARY_PATH}/${AddTest_NAME}_stdout.log"
+        "${AddTest_BINARY_PATH}/${AddTest_NAME}_stdout.txt"
     )
 
     # set defaults
@@ -157,7 +157,7 @@ function(AddTest)
     elseif(AddTest_WRAPPER STREQUAL "memcheck")
         if(VALGRIND_TOOL_PATH)
             set(WRAPPER_COMMAND
-                "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff"
+                "${VALGRIND_TOOL_PATH} --tool=memcheck --log-file=${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.txt -v --leak-check=full --show-reachable=yes --track-origins=yes --malloc-fill=0xff --free-fill=0xff"
             )
             set(tester memcheck)
         else()
@@ -373,7 +373,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         endforeach()
     elseif(AddTest_TESTER STREQUAL "memcheck")
         set(TESTER_COMMAND
-            "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.log"
+            "! ${GREP_TOOL_PATH} definitely ${AddTest_SOURCE_PATH}/${AddTest_NAME}_memcheck.txt"
         )
     endif()
 
@@ -403,7 +403,7 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
             "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
             -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.log
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt
             -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )

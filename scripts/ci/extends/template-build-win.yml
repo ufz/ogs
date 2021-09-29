@@ -9,7 +9,7 @@
   variables:
   script:
     - $build_directory_full = "..\build\" + $env:CMAKE_PRESET
-    - $log_file = $build_directory_full + "\make.output"
+    - $log_file = $build_directory_full + "\make.txt"
     - (rm -r -fo $build_directory_full)
     - cmd /c if not exist $build_directory_full mkdir $build_directory_full
     - mkdir build
