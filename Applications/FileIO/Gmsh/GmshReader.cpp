@@ -9,8 +9,11 @@
 
 #include "GmshReader.h"
 
+#include <algorithm>
+#include <array>
 #include <fstream>
 #include <map>
+#include <type_traits>
 #include <vector>
 
 #include "BaseLib/FileTools.h"
@@ -101,6 +104,83 @@ std::pair<MeshLib::Element*, int> createElement<MeshLib::Tri>(
     return std::make_pair(new MeshLib::Tri(element_nodes), mat_id);
 }
 
+template <>
+std::pair<MeshLib::Element*, int> createElement<MeshLib::Tet10>(
+    std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
+    int const mat_id, std::map<unsigned, unsigned> const& id_map)
+{
+    std::vector<unsigned> node_ids;
+    readNodeIDs(in, MeshLib::Tet10::n_all_nodes, node_ids, id_map);
+
+    std::swap(node_ids[8], node_ids[9]);
+
+    std::array<MeshLib::Node*, MeshLib::Tet10::n_all_nodes> element_nodes;
+
+    std::transform(begin(node_ids), end(node_ids), begin(element_nodes),
+                   [&nodes](auto const id) { return nodes[id]; });
+
+    return std::make_pair(new MeshLib::Tet10(element_nodes), mat_id);
+}
+
+template <>
+std::pair<MeshLib::Element*, int> createElement<MeshLib::Hex20>(
+    std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
+    int const mat_id, std::map<unsigned, unsigned> const& id_map)
+{
+    std::vector<unsigned> node_ids;
+    readNodeIDs(in, MeshLib::Hex20::n_all_nodes, node_ids, id_map);
+
+    std::array<MeshLib::Node*, MeshLib::Hex20::n_all_nodes> element_nodes;
+
+    constexpr std::array node_order = {0,  1, 2,  3,  4,  5,  6,  7,  8,  11,
+                                       13, 9, 16, 18, 19, 17, 10, 12, 14, 15};
+
+    std::transform(begin(node_order), end(node_order), begin(element_nodes),
+                   [&node_ids, &nodes](auto const id)
+                   { return nodes[node_ids[id]]; });
+
+    return std::make_pair(new MeshLib::Hex20(element_nodes), mat_id);
+}
+
+template <>
+std::pair<MeshLib::Element*, int> createElement<MeshLib::Prism15>(
+    std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
+    int const mat_id, std::map<unsigned, unsigned> const& id_map)
+{
+    std::vector<unsigned> node_ids;
+    readNodeIDs(in, MeshLib::Prism15::n_all_nodes, node_ids, id_map);
+
+    std::array<MeshLib::Node*, MeshLib::Prism15::n_all_nodes> element_nodes;
+
+    constexpr std::array node_order = {0, 1,  2,  3,  4, 5,  6, 9,
+                                       7, 12, 14, 13, 8, 10, 11};
+
+    std::transform(begin(node_order), end(node_order), begin(element_nodes),
+                   [&node_ids, &nodes](auto const id)
+                   { return nodes[node_ids[id]]; });
+
+    return std::make_pair(new MeshLib::Prism15(element_nodes), mat_id);
+}
+
+template <>
+std::pair<MeshLib::Element*, int> createElement<MeshLib::Pyramid13>(
+    std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
+    int const mat_id, std::map<unsigned, unsigned> const& id_map)
+{
+    std::vector<unsigned> node_ids;
+    readNodeIDs(in, MeshLib::Pyramid13::n_all_nodes, node_ids, id_map);
+    std::array<MeshLib::Node*, MeshLib::Pyramid13::n_all_nodes> element_nodes;
+
+    constexpr std::array node_order = {0,  1, 2, 3, 4,  5, 8,
+                                       10, 6, 7, 9, 11, 12};
+
+    std::transform(begin(node_order), end(node_order), begin(element_nodes),
+                   [&node_ids, &nodes](auto const id)
+                   { return nodes[node_ids[id]]; });
+
+    return std::make_pair(new MeshLib::Pyramid13(element_nodes), mat_id);
+}
+
 std::pair<MeshLib::Element*, int> readElement(
     std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
     std::map<unsigned, unsigned> const& id_map)
@@ -110,7 +190,6 @@ std::pair<MeshLib::Element*, int> readElement(
     unsigned n_tags;
     unsigned dummy;
     int mat_id;
-    std::vector<unsigned> node_ids;
 
     // element format is structured like this:
     // element-id element-type n-tags physical-entity elementary entity node-ids
@@ -146,13 +225,37 @@ std::pair<MeshLib::Element*, int> readElement(
         {
             return createElement<MeshLib::Pyramid>(in, nodes, mat_id, id_map);
         }
-        case 10:  // 9-node second order quadrangle
+        case 8:  // 3-node second order line.
+        {
+            return createElement<MeshLib::Line3>(in, nodes, mat_id, id_map);
+        }
+        case 9:  // 6-node second order triangle.
+        {
+            return createElement<MeshLib::Tri6>(in, nodes, mat_id, id_map);
+        }
+        case 10:  // 9-node second order quadrangle.
         {
             return createElement<MeshLib::Quad9>(in, nodes, mat_id, id_map);
         }
-        case 16:  // 8-node second order quadrangle
+        case 11:  // 10-node second order tetrahedron.
+        {
+            return createElement<MeshLib::Tet10>(in, nodes, mat_id, id_map);
+        }
+        case 16:  // 8-node second order quadrangle.
         {
             return createElement<MeshLib::Quad8>(in, nodes, mat_id, id_map);
+        }
+        case 17:  // 20-node second order hexahedron.
+        {
+            return createElement<MeshLib::Hex20>(in, nodes, mat_id, id_map);
+        }
+        case 18:  // 15-node second order prism.
+        {
+            return createElement<MeshLib::Prism15>(in, nodes, mat_id, id_map);
+        }
+        case 19:  // 13-node second order pyramid.
+        {
+            return createElement<MeshLib::Pyramid13>(in, nodes, mat_id, id_map);
         }
         case 15:
             in >> dummy;  // skip rest of line
