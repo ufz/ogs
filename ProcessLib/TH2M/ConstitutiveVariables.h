@@ -40,6 +40,12 @@ struct ConstitutiveVariables
     DisplacementDimMatrix dfW_4_LWpG_d_dp_GR;
     DisplacementDimMatrix dfW_4_LWpG_d_dp_cap;
     DisplacementDimMatrix dfW_4_LWpG_d_dT;
+    DisplacementDimMatrix dfW_4_LWpC_a_dp_GR;
+    DisplacementDimMatrix dfW_4_LWpC_a_dp_cap;
+    DisplacementDimMatrix dfW_4_LWpC_a_dT;
+    DisplacementDimMatrix dfW_4_LWpC_d_dp_GR;
+    DisplacementDimMatrix dfW_4_LWpC_d_dp_cap;
+    DisplacementDimMatrix dfW_4_LWpC_d_dT;
     DisplacementDimMatrix dfC_4_LCpG_dT;
     DisplacementDimMatrix dadvection_C_dp_GR;
     DisplacementDimMatrix dk_over_mu_G_dp_cap;

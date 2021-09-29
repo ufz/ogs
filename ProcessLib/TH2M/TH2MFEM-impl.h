@@ -662,6 +662,23 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
         ip_cv.dfW_4_LWpG_d_dT =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+
+        ip_cv.dfW_4_LWpC_a_dp_GR = c.drho_W_LR_dp_GR * k_over_mu_L
+            //+ rhoWLR * (dk_over_mu_L_dp_GR = 0)
+            ;
+        ip_cv.dfW_4_LWpC_a_dp_cap = -c.drho_W_LR_dp_LR * k_over_mu_L +
+                                    ip_data.rhoWLR * ip_cv.dk_over_mu_L_dp_cap;
+        ip_cv.dfW_4_LWpC_a_dT = c.drho_W_LR_dT * k_over_mu_L
+            //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
+            ;
+
+        // TODO (naumov) for dxmW*/d* != 0
+        ip_cv.dfW_4_LWpC_d_dp_GR =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+        ip_cv.dfW_4_LWpC_d_dp_cap =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+        ip_cv.dfW_4_LWpC_d_dT =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
     }
 
     return ip_constitutive_variables;
@@ -1556,6 +1573,22 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         LWpC.noalias() -=
             gradNpT * (advection_W_L + diffusion_W_L_p) * gradNp * w;
+
+        // fW_4 LWp_cap' parts; LWpC = \int grad (a + d) grad
+        local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() -=
+            gradNpT * (ip_cv.dfW_4_LWpC_a_dp_GR + ip_cv.dfW_4_LWpC_d_dp_GR) *
+            gradpCap * Np * w;
+
+        local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() -=
+            gradNpT * (ip_cv.dfW_4_LWpC_a_dp_cap + ip_cv.dfW_4_LWpC_d_dp_cap) *
+            gradpCap * Np * w;
+
+        local_Jac
+            .template block<W_size, temperature_size>(W_index,
+                                                      temperature_index)
+            .noalias() -= gradNpT *
+                          (ip_cv.dfW_4_LWpC_a_dT + ip_cv.dfW_4_LWpC_d_dT) *
+                          gradpCap * NT * w;
 
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 
