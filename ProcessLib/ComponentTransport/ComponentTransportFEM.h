@@ -194,8 +194,8 @@ private:
 
     virtual void assembleReactionEquationConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double>& local_M_data, std::vector<double>& local_b_data,
-        int const transport_process_id) = 0;
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, int const transport_process_id) = 0;
 
 protected:
     CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
@@ -1015,7 +1015,8 @@ public:
 
     void assembleReactionEquationConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double>& local_M_data, std::vector<double>& local_b_data,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data,
         int const transport_process_id) override
     {
         auto const local_C = local_x.template segment<concentration_size>(
@@ -1024,6 +1025,8 @@ public:
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);
+        auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
+            local_K_data, concentration_size, concentration_size);
         auto local_b = MathLib::createZeroedVector<LocalVectorType>(
             local_b_data, concentration_size);
 
@@ -1056,6 +1059,8 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::concentration)] = C_int_pt;
 
+            auto const porosity_dot = (porosity - porosity_prev) / dt;
+
             // porosity
             {
                 vars_prev[static_cast<int>(
@@ -1070,6 +1075,8 @@ public:
             }
 
             local_M.noalias() += w * N.transpose() * porosity * N;
+
+            local_K.noalias() += w * N.transpose() * porosity_dot * N;
 
             auto const C_post_int_pt =
                 _process_data.chemical_solver_interface->getConcentration(
