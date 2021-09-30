@@ -36,6 +36,6 @@ build jupyter:
   artifacts:
     name: container
     paths:
-      - ThirdParty/container-maker/_out/images/*.sif
       - web/content/docs/benchmarks/notebooks
       - web/static/docs/benchmarks/notebooks
+      - Tests/Notebooks/**/*.ipynb
