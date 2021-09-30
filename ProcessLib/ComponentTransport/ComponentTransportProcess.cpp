@@ -274,22 +274,26 @@ void ComponentTransportProcess::solveReactionEquation(
     std::size_t matrix_id = 0u;
     auto& M = NumLib::GlobalMatrixProvider::provider.getMatrix(
         matrix_specification, matrix_id);
+    auto& K = NumLib::GlobalMatrixProvider::provider.getMatrix(
+        matrix_specification, matrix_id);
     auto& b =
         NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
     auto& rhs =
         NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
 
     M.setZero();
+    K.setZero();
     b.setZero();
     rhs.setZero();
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::assembleReactionEquation,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt, M, b,
-        process_id);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt, M, K,
+        b, process_id);
 
     // todo (renchao): incorporate Neumann boundary condition
     MathLib::finalizeMatrixAssembly(M);
+    MathLib::finalizeMatrixAssembly(K);
     MathLib::finalizeVectorAssembly(b);
 
     MathLib::LinAlg::scale(M, 1.0 / dt);
@@ -305,6 +309,7 @@ void ComponentTransportProcess::solveReactionEquation(
     linear_solver.solve(M, rhs, *x[process_id]);
 
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(M);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(K);
     NumLib::GlobalVectorProvider::provider.releaseVector(b);
     NumLib::GlobalVectorProvider::provider.releaseVector(rhs);
 }

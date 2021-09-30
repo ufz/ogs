@@ -125,7 +125,7 @@ public:
         std::size_t const mesh_item_id,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         std::vector<GlobalVector*> const& x, double const t, double const dt,
-        GlobalMatrix& M, GlobalVector& b, int const process_id)
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, int const process_id)
     {
         std::vector<double> local_x_vec;
 
@@ -148,11 +148,14 @@ public:
 
         std::vector<double> local_M_data;
         local_M_data.reserve(num_r_c * num_r_c);
+        std::vector<double> local_K_data;
+        local_K_data.reserve(num_r_c * num_r_c);
         std::vector<double> local_b_data;
         local_b_data.reserve(num_r_c);
 
         assembleReactionEquationConcrete(t, dt, local_x, local_M_data,
-                                         local_b_data, process_id);
+                                         local_K_data, local_b_data,
+                                         process_id);
 
         auto const r_c_indices =
             NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
@@ -162,7 +165,12 @@ public:
                 MathLib::toMatrix(local_M_data, num_r_c, num_r_c);
             M.add(r_c_indices, local_M);
         }
-
+        if (!local_K_data.empty())
+        {
+            auto const local_K =
+                MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
+            K.add(r_c_indices, local_K);
+        }
         if (!local_b_data.empty())
         {
             b.add(indices, local_b_data);
