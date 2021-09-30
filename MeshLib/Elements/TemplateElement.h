@@ -74,7 +74,7 @@ public:
     }
 
     /// Get dimension of the mesh element.
-    unsigned getDimension() const override { return dimension; }
+    constexpr unsigned getDimension() const override { return dimension; }
     /// Returns the edge i of the element.
     const Element* getEdge(unsigned i) const override
     {

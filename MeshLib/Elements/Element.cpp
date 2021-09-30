@@ -41,7 +41,8 @@ void Element::setNeighbor(Element* neighbor, unsigned const face_id)
 
 std::optional<unsigned> Element::addNeighbor(Element* e)
 {
-    if (e == this || e == nullptr || e->getDimension() != this->getDimension())
+    const unsigned dim(this->getDimension());
+    if (e == this || e == nullptr || e->getDimension() != dim)
     {
         return std::optional<unsigned>();
     }
@@ -56,7 +57,6 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
     const unsigned eNodes(e->getNumberOfBaseNodes());
     const Node* const* e_nodes = e->getNodes();
     unsigned count(0);
-    const unsigned dim(this->getDimension());
     for (unsigned i(0); i < nNodes; i++)
     {
         for (unsigned j(0); j < eNodes; j++)

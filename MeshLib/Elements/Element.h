@@ -68,7 +68,7 @@ public:
     virtual Node* const* getNodes() const = 0;
 
     /// Get dimension of the mesh element.
-    virtual unsigned getDimension() const = 0;
+    virtual constexpr unsigned getDimension() const = 0;
 
     /// Returns the i-th edge of the element.
     virtual const Element* getEdge(unsigned i) const = 0;
