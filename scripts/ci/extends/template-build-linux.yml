@@ -7,7 +7,7 @@
   before_script:
     - 'echo "For debugging run: docker run --rm -it -v $CI_BUILDS_DIR:/builds -w=$CI_PROJECT_DIR $CI_JOB_IMAGE"'
     - build_dir_full=../build/${CMAKE_PRESET}
-    - log_file=$build_dir_full/make.output
+    - log_file=$build_dir_full/make.txt
     - rm -rf $build_dir_full
     - mkdir -p $build_dir_full build
     - if [[ "$OSTYPE" == "darwin"* ]] ; then readlink_cmd=greadlink; else readlink_cmd=readlink; fi

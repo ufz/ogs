@@ -2,10 +2,10 @@
   artifacts:
     when: always
     paths:
-      - build/*/logs/*.log
+      - build/*/logs/*.txt
       - build/*/Tests/ctest-junit.xml
       - build/*/Tests/testrunner.xml
-      - build/*/make.output
+      - build/*/make.txt
       - build/*/*.zip
       - build/*/*.tar.gz
     expire_in: 1 week

@@ -45,7 +45,7 @@ foreach(cmd ${TESTER_COMMAND})
         endif()
         foreach(file ${FILES})
             math(EXPR _counter "${_counter}+1")
-            set(LOG_FILE ${LOG_FILE_BASE}-${_counter}.log)
+            set(LOG_FILE ${LOG_FILE_BASE}-${_counter}.txt)
             if("$ENV{HOSTNAME}" MATCHES "frontend.*")
                 string(REPLACE "gpfs1" "../.." file ${file})
             endif()
@@ -72,7 +72,7 @@ foreach(cmd ${TESTER_COMMAND})
         endforeach()
     else()
         math(EXPR _counter "${_counter}+1")
-        set(LOG_FILE ${LOG_FILE_BASE}-${_counter}.log)
+        set(LOG_FILE ${LOG_FILE_BASE}-${_counter}.txt)
         execute_process(
             COMMAND ${TERMINAL_CMD} "${cmd}"
             WORKING_DIRECTORY ${SOURCE_PATH}

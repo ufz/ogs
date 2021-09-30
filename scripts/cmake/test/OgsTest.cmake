@@ -63,7 +63,7 @@ function(OgsTest)
             "-DEXECUTABLE_ARGS=${_exe_args}"
             "-DWRAPPER_COMMAND=${OgsTest_WRAPPER}"
             -DWORKING_DIRECTORY=${OgsTest_BINARY_DIR}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME_UNDERSCORE}.log
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME_UNDERSCORE}.txt
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
     )
 
