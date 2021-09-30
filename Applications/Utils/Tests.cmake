@@ -228,6 +228,32 @@ AddTest(
               quad_q_partitioned_cell_properties_val2.bin
 )
 
+AddTest(
+    NAME partmesh_mesh_for_QuadraticElements_quad9_ogs2metis
+    PATH NodePartitionedMesh/QuadraticElements/Quad9
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad9
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -i quad_9node.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad9
+    REQUIREMENTS NOT (OGS_USE_MPI)
+)
+
+AddTest(
+    NAME partmesh_mesh_for_QuadraticElements_quad9
+    PATH NodePartitionedMesh/QuadraticElements/Quad9
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad9
+    EXECUTABLE partmesh
+    EXECUTABLE_ARGS -m -n 2 -i quad_9node.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad9
+    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+    DEPENDS partmesh-partmesh_mesh_for_QuadraticElements_quad9_ogs2metis
+    TESTER diff
+    DIFF_DATA  quad_9node_partitioned_msh_ele2.bin
+               quad_9node_partitioned_msh_ele_g2.bin
+               quad_9node_partitioned_msh_nod2.bin
+               quad_9node_partitioned_msh_cfg2.bin
+               quad_9node_partitioned_cell_properties_cfg2.bin
+               quad_9node_partitioned_cell_properties_val2.bin
+)
+
 # Regression test for https://github.com/ufz/ogs/issues/1845 fixed in
 # https://github.com/ufz/ogs/pull/2237
 # checkMesh crashed when encountered Line3 element.
