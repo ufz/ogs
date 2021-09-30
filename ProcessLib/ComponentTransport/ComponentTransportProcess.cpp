@@ -260,6 +260,11 @@ void ComponentTransportProcess::solveReactionEquation(
 
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
 
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
+            &ComponentTransportLocalAssemblerInterface::
+                postSpeciationCalculation,
+            _local_assemblers, pv.getActiveElementIDs(), t, dt);
+
         return;
     }
 

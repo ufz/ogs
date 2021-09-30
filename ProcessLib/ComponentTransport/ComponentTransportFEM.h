@@ -169,6 +169,9 @@ public:
         }
     }
 
+    virtual void postSpeciationCalculation(std::size_t const ele_id,
+                                           double const t, double const dt) = 0;
+
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -399,6 +402,33 @@ public:
 
             _process_data.chemical_solver_interface->setChemicalSystemConcrete(
                 C_int_pt, chemical_system_id, medium, vars, pos, t, dt);
+        }
+    }
+
+    void postSpeciationCalculation(std::size_t const ele_id, double const t,
+                                   double const dt) override
+    {
+        if (!_process_data.chemically_induced_porosity_change)
+        {
+            return;
+        }
+
+        auto const& medium = *_process_data.media_map->getMedium(ele_id);
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(ele_id);
+
+        for (auto& ip_data : _ip_data)
+        {
+            ip_data.porosity = ip_data.porosity_prev;
+
+            _process_data.chemical_solver_interface
+                ->updateVolumeFractionPostReaction(ip_data.chemical_system_id,
+                                                   medium, pos,
+                                                   ip_data.porosity, t, dt);
+
+            _process_data.chemical_solver_interface->updatePorosityPostReaction(
+                ip_data.chemical_system_id, medium, ip_data.porosity);
         }
     }
 
@@ -1273,7 +1303,7 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const t,
-        double const dt,
+        double const /*dt*/,
         Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& /*local_x_dot*/) override
     {
@@ -1309,11 +1339,6 @@ public:
                 for (auto& ip_data : _ip_data)
                 {
                     ip_data.porosity = ip_data.porosity_prev;
-
-                    _process_data.chemical_solver_interface
-                        ->updateVolumeFractionPostReaction(
-                            ip_data.chemical_system_id, medium, pos,
-                            ip_data.porosity, t, dt);
 
                     _process_data.chemical_solver_interface
                         ->updatePorosityPostReaction(ip_data.chemical_system_id,
