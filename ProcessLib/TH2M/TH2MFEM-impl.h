@@ -177,11 +177,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         vars[static_cast<int>(MPL::Variable::liquid_saturation)] = ip_data.s_L;
 
-        // intrinsic permeability
-        ip_data.k_S = MPL::formEigenTensor<DisplacementDim>(
-            medium.property(MPL::PropertyType::permeability)
-                .value(vars, pos, t, dt));
-
         auto const Bu =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -216,6 +211,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars[static_cast<int>(MPL::Variable::mechanical_strain)]
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
+
+        // intrinsic permeability
+        ip_data.k_S = MPL::formEigenTensor<DisplacementDim>(
+            medium.property(MPL::PropertyType::permeability)
+                .value(vars, pos, t, dt));
 
         ip_data.k_rel_G =
             medium
