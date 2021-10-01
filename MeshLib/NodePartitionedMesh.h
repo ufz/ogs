@@ -101,20 +101,7 @@ public:
     /// Get the number of all active nodes of the partition.
     std::size_t getNumberOfActiveNodes() const { return _n_active_nodes; }
     /// Check whether a node with ID of node_id is a ghost node
-    bool isGhostNode(const std::size_t node_id) const
-    {
-        if (node_id < _n_active_base_nodes)
-        {
-            return false;
-        }
-        if (!isBaseNode(*_nodes[node_id],
-                        getElementsConnectedToNode(node_id)) &&
-            node_id < getLargestActiveNodeID())
-        {
-            return false;
-        }
-        return true;
-    }
+    bool isGhostNode(const std::size_t node_id) const;
 
     /// Get the largest ID of active nodes for higher order elements in a
     /// partition.
@@ -125,18 +112,7 @@ public:
 
     // TODO I guess that is a simplified version of computeSparsityPattern()
     /// Get the maximum number of connected nodes to node.
-    std::size_t getMaximumNConnectedNodesToNode() const
-    {
-        auto const& nodes_connections =
-            MeshLib::calculateNodesConnectedByElements(*this);
-        auto const max_connections = std::max_element(
-            nodes_connections.cbegin(), nodes_connections.cend(),
-            [](auto const& connections_node_a, auto const& connections_node_b) {
-                return (connections_node_a.size() < connections_node_b.size());
-            });
-        // Return the number of connected nodes +1 for the node itself.
-        return max_connections->size() + 1;
-    }
+    std::size_t getMaximumNConnectedNodesToNode() const;
 
     int getPartitionID(const int global_node_id) const;
 

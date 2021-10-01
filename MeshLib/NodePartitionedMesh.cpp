@@ -55,6 +55,32 @@ NodePartitionedMesh::NodePartitionedMesh(
 {
 }
 
+bool NodePartitionedMesh::isGhostNode(const std::size_t node_id) const
+{
+    if (node_id < _n_active_base_nodes)
+    {
+        return false;
+    }
+    if (!isBaseNode(*_nodes[node_id], getElementsConnectedToNode(node_id)) &&
+        node_id < getLargestActiveNodeID())
+    {
+        return false;
+    }
+    return true;
+}
+
+std::size_t NodePartitionedMesh::getMaximumNConnectedNodesToNode() const
+{
+    auto const& nodes_connections =
+        MeshLib::calculateNodesConnectedByElements(*this);
+    auto const max_connections = std::max_element(
+        nodes_connections.cbegin(), nodes_connections.cend(),
+        [](auto const& connections_node_a, auto const& connections_node_b)
+        { return (connections_node_a.size() < connections_node_b.size()); });
+    // Return the number of connected nodes +1 for the node itself.
+    return static_cast<std::size_t>(max_connections->size() + 1);
+}
+
 int NodePartitionedMesh::getPartitionID(const int global_node_id) const
 {
     return std::upper_bound(std::cbegin(_end_node_id_ranks),
