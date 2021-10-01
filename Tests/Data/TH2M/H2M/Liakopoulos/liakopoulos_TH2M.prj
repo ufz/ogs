@@ -434,7 +434,7 @@
         <vtkdiff>
             <regex>result_liakopoulos_t_.*.vtu</regex>
             <field>gas_pressure_interpolated</field>
-            <absolute_tolerance>1e-08</absolute_tolerance>
+            <absolute_tolerance>2e-08</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
