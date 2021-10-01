@@ -136,9 +136,9 @@ void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
     MatCreate(PETSC_COMM_WORLD, &A_);
     MatSetSizes(A_, n_loc_rows_, n_loc_cols_, nrows_, ncols_);
 
+    MatSetType(A_, MATMPIAIJ);
     MatSetFromOptions(A_);
 
-    MatSetType(A_, MATMPIAIJ);
     MatSeqAIJSetPreallocation(A_, d_nz, PETSC_NULL);
     MatMPIAIJSetPreallocation(A_, d_nz, PETSC_NULL, o_nz, PETSC_NULL);
     // If pre-allocation does not work one can use MatSetUp(A_), which is much
