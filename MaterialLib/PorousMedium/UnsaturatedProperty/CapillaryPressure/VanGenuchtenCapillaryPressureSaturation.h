@@ -35,7 +35,7 @@ namespace PorousMedium
  *    \f}
  *
  *    Note:
- *     \f[m=1/(1-n)\f].
+ *     \f[n=1/(1-m)\f].
  *
  *    If \f$\alpha\f$ instead of \f$p_b\f$ is available, \f$p_b\f$ can be
  * calculated
