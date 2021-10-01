@@ -83,10 +83,12 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)primary_variable;
-    assert((primary_variable == Variable::mechanical_strain) &&
-           "EmbeddedFracturePermeability::dValue is implemented for "
-           "derivatives with respect to strain only.");
+    if (primary_variable != Variable::mechanical_strain)
+    {
+        OGS_FATAL(
+            "EmbeddedFracturePermeability::dValue is implemented for "
+            "derivatives with respect to strain only.");
+    }
 
     Eigen::Matrix<double, 3, 1> const n = [&] {
         if (_n_const)

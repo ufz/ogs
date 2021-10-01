@@ -56,11 +56,12 @@ PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)variable;
-    assert(
-        (variable == Variable::liquid_saturation) &&
-        "RelPermNonWettingPhaseVanGenuchtenMualem::dValue is implemented for "
-        "the derivative with respect to liquid saturation only.");
+    if (variable != Variable::liquid_saturation)
+    {
+        OGS_FATAL(
+            "RelPermNonWettingPhaseVanGenuchtenMualem::dValue is implemented "
+            "for the derivative with respect to liquid saturation only.");
+    }
 
     const double S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);

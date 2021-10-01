@@ -87,11 +87,13 @@ PropertyDataType AverageMolarMass::dValue(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    (void)primary_variable;
-    assert(((primary_variable == Variable::phase_pressure) ||
-            (primary_variable == Variable::temperature)) &&
-           "AverageMolarMass::dValue is implemented for derivatives with "
-           "respect to phase_pressure or temperature only.");
+    if ((primary_variable != Variable::phase_pressure) &&
+        (primary_variable != Variable::temperature))
+    {
+        OGS_FATAL(
+            "AverageMolarMass::dValue is implemented for derivatives with "
+            "respect to phase_pressure or temperature only.");
+    }
 
     auto phase = std::get<Phase*>(scale_);
 
@@ -103,7 +105,7 @@ PropertyDataType AverageMolarMass::dValue(
     else if (numberOfComponents > 2)
     {
         OGS_FATAL(
-            "AverageMolarMass::dvalue is currently implemented two or less "
+            "AverageMolarMass::dValue is currently implemented two or less "
             "phase components only.");
     }
 

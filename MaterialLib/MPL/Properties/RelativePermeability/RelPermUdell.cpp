@@ -67,10 +67,12 @@ PropertyDataType RelPermUdell::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)variable;
-    assert((variable == Variable::liquid_saturation) &&
-           "RelPermUdell::dValue is implemented for "
-           " derivatives with respect to liquid saturation only.");
+    if (variable != Variable::liquid_saturation)
+    {
+        OGS_FATAL(
+            "RelPermUdell::dValue is implemented for derivatives with respect "
+            "to liquid saturation only.");
+    }
 
     const double S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);

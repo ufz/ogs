@@ -77,10 +77,13 @@ PropertyDataType RelPermBrooksCorey::dValue(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    (void)variable;
-    assert((variable == Variable::liquid_saturation) &&
-           "RelPermBrooksCorey::dValue is implemented for "
-           " derivatives with respect to liquid saturation only.");
+    if (variable != Variable::liquid_saturation)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCorey::dValue is implemented for derivatives with "
+            "respect to liquid saturation only.");
+    }
+
     /// here, an extra computation of saturation is forced, guaranteeing a
     /// correct value. In order to speed up the computing time, saturation could
     /// be inserted into the primary variable array after it is computed in the

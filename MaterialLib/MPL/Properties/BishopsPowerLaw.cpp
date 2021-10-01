@@ -43,10 +43,12 @@ PropertyDataType BishopsPowerLaw::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    (void)variable;
-    assert((variable == Variable::liquid_saturation) &&
-           "BishopsPowerLaw::dvalue is implemented for derivatives with "
-           "respect to liquid saturation only.");
+    if (variable != Variable::liquid_saturation)
+    {
+        OGS_FATAL(
+            "BishopsPowerLaw::dValue is implemented for derivatives with "
+            "respect to liquid saturation only.");
+    }
 
     auto const S_L = std::get<double>(
         variable_array[static_cast<int>(Variable::liquid_saturation)]);
