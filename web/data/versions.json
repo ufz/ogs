@@ -27,7 +27,8 @@
   },
   "tested_version": {
     "ubuntu": "20.04",
-    "qt": "5.15.2"
+    "qt": "5.15.2",
+    "cmake": "3.21.0"
   },
   "ctest": {
     "large_runtime": 60
