@@ -136,7 +136,7 @@ void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
     MatCreate(PETSC_COMM_WORLD, &A_);
     MatSetSizes(A_, n_loc_rows_, n_loc_cols_, nrows_, ncols_);
 
-    MatSetType(A_, MATMPIAIJ);
+    MatSetType(A_, MATAIJ);
     MatSetFromOptions(A_);
 
     MatSeqAIJSetPreallocation(A_, d_nz, PETSC_NULL);
