@@ -96,7 +96,6 @@ PETScVector::PETScVector(PETScVector&& other)
 void PETScVector::config()
 {
     VecSetFromOptions(v_);
-    // VecSetUp(v_); // for petsc ver.>3.3
     VecGetOwnershipRange(v_, &start_rank_, &end_rank_);
 
     VecGetLocalSize(v_, &size_loc_);
