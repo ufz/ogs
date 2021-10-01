@@ -15,13 +15,12 @@
 
 #include "NodePartitionedMeshReader.h"
 
-#include "BaseLib/Logging.h"
-
-#ifdef USE_PETSC
 #include <mpi.h>
-#endif
+
+#include <numeric>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/MeshEnums.h"
@@ -381,10 +380,44 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
     std::vector<MeshLib::Element*> const& mesh_elems,
     MeshLib::Properties const& properties) const
 {
+    std::vector<std::size_t> gathered_n_active_base_nodes(_mpi_comm_size);
+
+    MPI_Allgather(&_mesh_info.active_base_nodes,
+                  1,
+                  MPI_UNSIGNED_LONG,
+                  gathered_n_active_base_nodes.data(),
+                  1,
+                  MPI_UNSIGNED_LONG,
+                  _mpi_comm);
+
+    std::vector<std::size_t> n_active_base_nodes_at_rank;
+    n_active_base_nodes_at_rank.push_back(0);
+    std::partial_sum(begin(gathered_n_active_base_nodes),
+                     end(gathered_n_active_base_nodes),
+                     back_inserter(n_active_base_nodes_at_rank));
+
+    std::vector<std::size_t> gathered_n_active_high_order_nodes(_mpi_comm_size);
+    std::size_t const n_active_high_order_nodes =
+        _mesh_info.active_nodes - _mesh_info.active_base_nodes;
+    MPI_Allgather(&n_active_high_order_nodes,
+                  1,
+                  MPI_UNSIGNED_LONG,
+                  gathered_n_active_high_order_nodes.data(),
+                  1,
+                  MPI_UNSIGNED_LONG,
+                  _mpi_comm);
+
+    std::vector<std::size_t> n_active_high_order_nodes_at_rank;
+    n_active_high_order_nodes_at_rank.push_back(0);
+    std::partial_sum(begin(gathered_n_active_high_order_nodes),
+                     end(gathered_n_active_high_order_nodes),
+                     back_inserter(n_active_high_order_nodes_at_rank));
+
     return new MeshLib::NodePartitionedMesh(
         mesh_name, mesh_nodes, glb_node_ids, mesh_elems, properties,
-        _mesh_info.global_nodes, _mesh_info.active_base_nodes,
-        _mesh_info.active_nodes);
+        _mesh_info.global_base_nodes, _mesh_info.global_nodes,
+        _mesh_info.active_nodes, std::move(n_active_base_nodes_at_rank),
+        std::move(n_active_high_order_nodes_at_rank));
 }
 
 void NodePartitionedMeshReader::setNodes(
