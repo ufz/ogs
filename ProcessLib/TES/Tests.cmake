@@ -35,10 +35,10 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_ts_32_t_0.100000.vtu pressure pressure 1.5e-3 1.5e-3
-    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_ts_32_t_0.100000.vtu temperature temperature 1.5e-3 1.5e-3
-    # tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_ts_32_t_0.100000.vtu vapour_partial_pressure vapour_partial_pressure 1.5e-3 1.5e-3
-    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_ts_32_t_0.100000.vtu solid_density solid_density 1.5e-3 1.5e-3
+    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_t_0.100000.vtu pressure pressure 1.5e-3 1.5e-3
+    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_t_0.100000.vtu temperature temperature 1.5e-3 1.5e-3
+    # tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_t_0.100000.vtu vapour_partial_pressure vapour_partial_pressure 1.5e-3 1.5e-3
+    tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_t_0.100000.vtu solid_density solid_density 1.5e-3 1.5e-3
 )
 
 
