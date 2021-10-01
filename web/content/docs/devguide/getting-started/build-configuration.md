@@ -24,7 +24,7 @@ To separate source code from generated files such as compiled libraries, executa
 
 For configuring a build the open source tool [CMake](http://www.cmake.org) is used. `CMakeLists.txt` files replace traditional Makefiles or IDE project files.
 
-We provide CMake configuration presets defined in [CMakePresets.json](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CMakePresets.json) for simple build configuration (**Note:** Requires CMake $\geq$ 3.20! Otherwise see [Configure manually](#option-configure-manually)). See the following table for commonly used presets:
+We provide CMake configuration presets defined in [CMakePresets.json](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CMakePresets.json) for simple build configuration (**Note:** Requires CMake $\geq$ {{< dataFile "versions.tested_version.cmake" >}}! Otherwise see [Configure manually](#option-configure-manually)). See the following table for commonly used presets:
 
 ### Available CMake presets
 
