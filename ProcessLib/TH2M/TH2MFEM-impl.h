@@ -203,7 +203,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                         sigma_total));
         }
-        // For strain dependent permeability
         vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
             Invariants::trace(eps);
         vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
@@ -1929,13 +1928,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     {
         pos.setIntegrationPoint(ip);
 
-        auto const& N_p = _ip_data[ip].N_p;
+        auto& ip_data = _ip_data[ip];
+        auto const& N_p = ip_data.N_p;
 
         vars[static_cast<int>(MPL::Variable::temperature)] =
             N_p.dot(T);  // N_p = N_T
-        vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(pGR);
-        vars[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            N_p.dot(pCap);
+        double const pGR_int_p = N_p.dot(pGR);
+        vars[static_cast<int>(MPL::Variable::phase_pressure)] = pGR_int_p;
+        double const pCap_int_p = N_p.dot(pCap);
+        vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap_int_p;
 
         // TODO (naumov) Temporary value not used by current material
         // models. Need extension of secondary variables interface.
@@ -1943,6 +1944,31 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const mu_GR = gas_phase.property(MPL::PropertyType::viscosity)
                                .template value<double>(vars, pos, t, dt);
+
+        auto& eps = ip_data.eps;
+
+        {
+            // Note: if Bishop model is available, ip_data.s_L in the following
+            // computation should be replaced with the Bishop value.
+            auto const sigma_total =
+                (ip_data.sigma_eff -
+                 ip_data.alpha_B * (pGR_int_p - ip_data.s_L * pCap_int_p) *
+                     Invariants::identity2)
+                    .eval();
+
+            vars[static_cast<int>(MPL::Variable::total_stress)]
+                .emplace<SymmetricTensor>(
+                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                        sigma_total));
+        }
+
+        vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
+            Invariants::trace(eps);
+        vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
+            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
+        vars[static_cast<int>(MPL::Variable::mechanical_strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
         GlobalDimMatrixType k_S = MPL::formEigenTensor<DisplacementDim>(
             medium.property(MPL::PropertyType::permeability)
@@ -2028,14 +2054,18 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     {
         pos.setIntegrationPoint(ip);
 
-        auto const& N_p = _ip_data[ip].N_p;
+        auto& ip_data = _ip_data[ip];
+        auto const& N_p = ip_data.N_p;
 
         vars[static_cast<int>(MPL::Variable::temperature)] = N_p.dot(T);
         vars[static_cast<int>(MPL::Variable::phase_pressure)] = N_p.dot(pGR);
+
+        double const pGR_int_p = N_p.dot(pGR);
+        double const pCap_int_p = N_p.dot(pCap);
+        vars[static_cast<int>(MPL::Variable::capillary_pressure)] = pCap_int_p;
+
         vars[static_cast<int>(MPL::Variable::liquid_phase_pressure)] =
             N_p.dot(pLR);
-        vars[static_cast<int>(MPL::Variable::capillary_pressure)] =
-            N_p.dot(pCap);
 
         // TODO (naumov) Temporary value not used by current material
         // models. Need extension of secondary variables interface.
@@ -2043,6 +2073,31 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const mu_LR = liquid_phase.property(MPL::PropertyType::viscosity)
                                .template value<double>(vars, pos, t, dt);
+
+        auto& eps = ip_data.eps;
+
+        {
+            // Note: if Bishop model is available, ip_data.s_L in the following
+            // computation should be replaced with the Bishop value.
+            auto const sigma_total =
+                (ip_data.sigma_eff -
+                 ip_data.alpha_B * (pGR_int_p - ip_data.s_L * pCap_int_p) *
+                     Invariants::identity2)
+                    .eval();
+
+            vars[static_cast<int>(MPL::Variable::total_stress)]
+                .emplace<SymmetricTensor>(
+                    MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                        sigma_total));
+        }
+        vars[static_cast<int>(MPL::Variable::volumetric_strain)] =
+            Invariants::trace(eps);
+        vars[static_cast<int>(MPL::Variable::equivalent_plastic_strain)] =
+            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
+        vars[static_cast<int>(MPL::Variable::mechanical_strain)]
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
+
         GlobalDimMatrixType k_S = MPL::formEigenTensor<DisplacementDim>(
             medium.property(MPL::PropertyType::permeability)
                 .value(vars, pos, t, dt));
