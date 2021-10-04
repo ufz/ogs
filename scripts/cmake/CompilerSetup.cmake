@@ -75,7 +75,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         set(CPU_FLAGS -mavx2 -march=core-avx2)
     elseif(OGS_CPU_ARCHITECTURE STREQUAL "generic")
         set(CPU_FLAGS -mtune=generic)
-    elseif(NOT APPLE_ARM)
+    elseif(NOT APPLE_ARM AND OGS_CPU_ARCHITECTURE)
         set(CPU_FLAGS -march=${OGS_CPU_ARCHITECTURE})
     endif()
 
