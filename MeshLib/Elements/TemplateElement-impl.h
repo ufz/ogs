@@ -18,8 +18,10 @@ TemplateElement<ELEMENT_RULE>::TemplateElement(Node* nodes[n_all_nodes],
     : Element(id)
 {
     std::copy_n(nodes, n_all_nodes, std::begin(_nodes));
+    delete[] nodes;
     this->_neighbors = new Element*[getNumberOfNeighbors()];
-    std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(), nullptr);
+    std::fill(this->_neighbors, this->_neighbors + getNumberOfNeighbors(),
+              nullptr);
 
     this->space_dimension_ = ELEMENT_RULE::dimension;
 }
