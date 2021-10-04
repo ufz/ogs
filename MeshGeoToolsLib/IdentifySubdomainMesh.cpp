@@ -61,10 +61,10 @@ std::vector<std::size_t> findElementsInMesh(
     {
         auto const& connected_elements =
             mesh.getElementsConnectedToNode(node_id);
-        std::transform(
-            begin(connected_elements), end(connected_elements),
-            back_inserter(common_element_ids),
-            [](MeshLib::Element const* const e) { return e->getID(); });
+        std::transform(begin(connected_elements), end(connected_elements),
+                       back_inserter(common_element_ids),
+                       [](MeshLib::Element const* const e)
+                       { return e->getID(); });
     }
 
     //
@@ -117,9 +117,8 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
             e->getNumberOfBaseNodes());
         std::transform(begin(element_node_ids), end(element_node_ids),
                        begin(element_node_ids_bulk),
-                       [&bulk_node_ids](std::size_t const id) {
-                           return bulk_node_ids[id];
-                       });
+                       [&bulk_node_ids](std::size_t const id)
+                       { return bulk_node_ids[id]; });
         std::vector<std::size_t> bulk_element_ids =
             findElementsInMesh(bulk_mesh, element_node_ids_bulk);
 
