@@ -110,7 +110,9 @@ public:
         {
             return false;
         }
-        if (!isBaseNode(*_nodes[node_id]) && node_id < getLargestActiveNodeID())
+        if (!isBaseNode(*_nodes[node_id],
+                        getElementsConnectedToNode(node_id)) &&
+            node_id < getLargestActiveNodeID())
         {
             return false;
         }

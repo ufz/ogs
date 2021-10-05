@@ -104,16 +104,18 @@ TEST_F(MeshLibLineMesh, NodeToElementConnectivity)
 
     // Each node n of the line mesh is connected to two elements n-1 and n,
     // except the first and last nodes.
-    ASSERT_EQ(1u, nodes.front()->getNumberOfElements());
-    ASSERT_EQ(elements[0], nodes.front()->getElement(0));
+    ASSERT_EQ(1u, mesh->getElementsConnectedToNode(*nodes.front()).size());
+    ASSERT_EQ(elements[0], mesh->getElementsConnectedToNode(*nodes.front())[0]);
 
-    ASSERT_EQ(1u, nodes.back()->getNumberOfElements());
-    ASSERT_EQ(elements.back(), nodes.back()->getElement(0));
+    ASSERT_EQ(1u, mesh->getElementsConnectedToNode(*nodes.back()).size());
+    ASSERT_EQ(elements.back(),
+              mesh->getElementsConnectedToNode(*nodes.back())[0]);
 
     for (std::size_t i = 1; i < nodes.size() - 1; ++i)
     {
-        ASSERT_EQ(2u, nodes[i]->getNumberOfElements());
-        ASSERT_EQ(elements[i - 1], nodes[i]->getElement(0));
-        ASSERT_EQ(elements[i], nodes[i]->getElement(1));
+        ASSERT_EQ(2u, mesh->getElementsConnectedToNode(*nodes[i]).size());
+        ASSERT_EQ(elements[i - 1],
+                  mesh->getElementsConnectedToNode(*nodes[i])[0]);
+        ASSERT_EQ(elements[i], mesh->getElementsConnectedToNode(*nodes[i])[1]);
     }
 }

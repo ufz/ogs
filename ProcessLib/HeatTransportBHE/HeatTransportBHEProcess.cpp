@@ -327,8 +327,10 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         for (auto const& bhe_node : bhe_nodes)
         {
             // Count number of 1d elements connected with every BHE node.
+            auto const& connected_elements =
+                _mesh.getElementsConnectedToNode(*bhe_node);
             const std::size_t n_line_elements = std::count_if(
-                bhe_node->getElements().begin(), bhe_node->getElements().end(),
+                connected_elements.begin(), connected_elements.end(),
                 [](MeshLib::Element const* elem)
                 { return (elem->getDimension() == 1); });
 

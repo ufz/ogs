@@ -44,7 +44,8 @@ std::size_t NodeSearch::searchNodesConnectedToOnlyGivenElements(
     std::vector<std::size_t> connected_nodes;
     for (std::size_t i = 0; i < node_marked_counts.size(); i++)
     {
-        if (node_marked_counts[i] == _mesh.getNode(i)->getElements().size())
+        if (node_marked_counts[i] ==
+            _mesh.getElementsConnectedToNode(*_mesh.getNode(i)).size())
         {
             connected_nodes.push_back(i);
         }
@@ -62,7 +63,7 @@ std::size_t NodeSearch::searchUnused()
 
     for (unsigned i = 0; i < nNodes; ++i)
     {
-        if (nodes[i]->getNumberOfElements() == 0)
+        if (_mesh.getElementsConnectedToNode(*nodes[i]).empty())
         {
             del_node_idx.push_back(i);
         }
@@ -79,7 +80,7 @@ std::size_t NodeSearch::searchBoundaryNodes()
     {
         for (MeshLib::Node const* n : _mesh.getNodes())
         {
-            if (n->getElements().size() == 1)
+            if (_mesh.getElementsConnectedToNode(*n).size() == 1)
             {
                 vec_boundary_nodes.push_back(n->getID());
             }

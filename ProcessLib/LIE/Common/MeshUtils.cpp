@@ -29,9 +29,9 @@ class IsCrackTip
 {
 public:
     explicit IsCrackTip(MeshLib::Mesh const& mesh)
-        : _fracture_element_dim(mesh.getDimension() - 1)
+        : _mesh(mesh), _fracture_element_dim(_mesh.getDimension() - 1)
     {
-        _is_internal_node.resize(mesh.getNumberOfNodes(), true);
+        _is_internal_node.resize(_mesh.getNumberOfNodes(), true);
 
         MeshLib::NodeSearch nodeSearch(mesh);
         nodeSearch.searchBoundaryNodes();
@@ -43,29 +43,32 @@ public:
 
     bool operator()(MeshLib::Node const& node) const
     {
-        if (!_is_internal_node[node.getID()] || !isBaseNode(node))
+        if (!_is_internal_node[node.getID()] ||
+            !isBaseNode(node, _mesh.getElementsConnectedToNode(node)))
         {
             return false;
         }
 
+        auto const elements_connected_to_node =
+            _mesh.getElementsConnectedToNode(node);
         auto const n_connected_fracture_elements =
-            count_if(cbegin(node.getElements()), cend(node.getElements()),
-                     [&](auto* const e) {
-                         return e->getDimension() == _fracture_element_dim;
-                     });
+            count_if(cbegin(elements_connected_to_node),
+                     cend(elements_connected_to_node),
+                     [&](auto* const e)
+                     { return e->getDimension() == _fracture_element_dim; });
         assert(n_connected_fracture_elements > 0);
 
         return (n_connected_fracture_elements == 1);
     }
 
 private:
+    MeshLib::Mesh const& _mesh;
     unsigned const _fracture_element_dim;
     std::vector<bool> _is_internal_node;
 };
 
 void findFracutreIntersections(
-    MeshLib::Mesh const& mesh,
-    std::vector<int> const& vec_fracture_mat_IDs,
+    MeshLib::Mesh const& mesh, std::vector<int> const& vec_fracture_mat_IDs,
     std::vector<std::vector<MeshLib::Node*>> const& vec_fracture_nodes,
     std::vector<std::vector<MeshLib::Element*>>& intersected_fracture_elements,
     std::vector<std::pair<std::size_t, std::vector<int>>>&
@@ -113,9 +116,11 @@ void findFracutreIntersections(
             continue;  // no intersection
         }
 
+        auto const elements_connected_to_node =
+            mesh.getElementsConnectedToNode(*node);
         std::vector<MeshLib::Element*> conn_fracture_elements;
         {
-            for (auto const* e : node->getElements())
+            for (auto const* e : elements_connected_to_node)
             {
                 if (e->getDimension() == (mesh.getDimension() - 1))
                 {
@@ -315,16 +320,18 @@ void getFractureMatrixDataInMesh(
                 {
                     continue;
                 }
-                for (unsigned j = 0; j < node->getNumberOfElements(); j++)
+                auto const& elements_connected_to_node =
+                    mesh.getElementsConnectedToNode(*node);
+                for (unsigned j = 0; j < elements_connected_to_node.size(); j++)
                 {
                     // only matrix elements
-                    if (node->getElement(j)->getDimension() <
+                    if (elements_connected_to_node[j]->getDimension() <
                         mesh.getDimension())
                     {
                         continue;
                     }
-                    vec_ele.push_back(
-                        const_cast<MeshLib::Element*>(node->getElement(j)));
+                    vec_ele.push_back(const_cast<MeshLib::Element*>(
+                        elements_connected_to_node[j]));
                 }
             }
         }

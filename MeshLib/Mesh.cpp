@@ -32,6 +32,25 @@ static std::size_t global_mesh_counter = 0;
 
 namespace MeshLib
 {
+std::vector<std::vector<Element const*>> findElementsConnectedToNodes(
+    Mesh const& mesh)
+{
+    std::vector<std::vector<Element const*>> elements_connected_to_nodes;
+    auto const& nodes = mesh.getNodes();
+    elements_connected_to_nodes.resize(nodes.size());
+
+    for (auto const* element : mesh.getElements())
+    {
+        unsigned const number_nodes(element->getNumberOfNodes());
+        for (unsigned j = 0; j < number_nodes; ++j)
+        {
+            auto const node_id = element->getNode(j)->getID();
+            elements_connected_to_nodes[node_id].push_back(element);
+        }
+    }
+    return elements_connected_to_nodes;
+}
+
 Mesh::Mesh(std::string name,
            std::vector<Node*>
                nodes,
@@ -50,9 +69,10 @@ Mesh::Mesh(std::string name,
     this->resetNodeIDs();
     this->resetElementIDs();
     this->setDimension();
-    this->setElementsConnectedToNodes();
-    this->setElementNeighbors();
 
+    _elements_connected_to_nodes = findElementsConnectedToNodes(*this);
+
+    this->setElementNeighbors();
     this->calcEdgeLengthRange();
 }
 
@@ -89,7 +109,7 @@ Mesh::Mesh(const Mesh& mesh)
     {
         this->setDimension();
     }
-    this->setElementsConnectedToNodes();
+    _elements_connected_to_nodes = findElementsConnectedToNodes(*this);
     this->setElementNeighbors();
 }
 
@@ -111,13 +131,6 @@ Mesh::~Mesh()
 void Mesh::addElement(Element* elem)
 {
     _elements.push_back(elem);
-
-    // add element information to nodes
-    unsigned nNodes(elem->getNumberOfNodes());
-    for (unsigned i = 0; i < nNodes; ++i)
-    {
-        elem->getNode(i)->addElement(elem);
-    }
 }
 
 void Mesh::resetNodeIDs()
@@ -150,18 +163,6 @@ void Mesh::setDimension()
     }
 }
 
-void Mesh::setElementsConnectedToNodes()
-{
-    for (auto& element : _elements)
-    {
-        const unsigned nNodes(element->getNumberOfNodes());
-        for (unsigned j = 0; j < nNodes; ++j)
-        {
-            element->getNode(j)->addElement(element);
-        }
-    }
-}
-
 void Mesh::calcEdgeLengthRange()
 {
     const std::size_t nElems(getNumberOfElements());
@@ -178,7 +179,7 @@ void Mesh::calcEdgeLengthRange()
 
 void Mesh::setElementNeighbors()
 {
-    std::vector<Element*> neighbors;
+    std::vector<Element const*> neighbors;
     for (auto element : _elements)
     {
         // create vector with all elements connected to current element
@@ -186,8 +187,8 @@ void Mesh::setElementNeighbors()
         const std::size_t nNodes(element->getNumberOfBaseNodes());
         for (unsigned n(0); n < nNodes; ++n)
         {
-            std::vector<Element*> const& conn_elems(
-                (element->getNode(n)->getElements()));
+            auto const& conn_elems(
+                _elements_connected_to_nodes[element->getNode(n)->getID()]);
             neighbors.insert(neighbors.end(), conn_elems.begin(),
                              conn_elems.end());
         }
@@ -199,10 +200,11 @@ void Mesh::setElementNeighbors()
              ++neighbor)
         {
             std::optional<unsigned> const opposite_face_id =
-                element->addNeighbor(*neighbor);
+                element->addNeighbor(const_cast<Element*>(*neighbor));
             if (opposite_face_id)
             {
-                (*neighbor)->setNeighbor(element, *opposite_face_id);
+                const_cast<Element*>(*neighbor)->setNeighbor(element,
+                                                             *opposite_face_id);
             }
         }
         neighbors.clear();
@@ -212,16 +214,31 @@ void Mesh::setElementNeighbors()
 std::size_t Mesh::getNumberOfBaseNodes() const
 {
     return std::count_if(begin(_nodes), end(_nodes),
-                         [](auto const* const node)
-                         { return isBaseNode(*node); });
+                         [this](auto const* const node) {
+                             return isBaseNode(
+                                 *node,
+                                 _elements_connected_to_nodes[node->getID()]);
+                         });
 }
 
 bool Mesh::hasNonlinearElement() const
 {
     return std::any_of(
-        std::begin(_elements), std::end(_elements), [](Element const* const e) {
-            return e->getNumberOfNodes() != e->getNumberOfBaseNodes();
-        });
+        std::begin(_elements), std::end(_elements),
+        [](Element const* const e)
+        { return e->getNumberOfNodes() != e->getNumberOfBaseNodes(); });
+}
+
+std::vector<MeshLib::Element const*> const& Mesh::getElementsConnectedToNode(
+    std::size_t const node_id) const
+{
+    return _elements_connected_to_nodes[node_id];
+}
+
+std::vector<MeshLib::Element const*> const& Mesh::getElementsConnectedToNode(
+    Node const& node) const
+{
+    return _elements_connected_to_nodes[node.getID()];
 }
 
 void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
@@ -314,6 +331,8 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
 std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
     Mesh const& mesh)
 {
+    auto const elements_connected_to_nodes = findElementsConnectedToNodes(mesh);
+
     std::vector<std::vector<Node*>> nodes_connected_by_elements;
     auto const& nodes = mesh.getNodes();
     nodes_connected_by_elements.resize(nodes.size());
@@ -323,7 +342,8 @@ std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
         auto const* node = nodes[i];
 
         // Get all elements, to which this node is connected.
-        auto const& connected_elements = node->getElements();
+        auto const& connected_elements =
+            elements_connected_to_nodes[node->getID()];
 
         // And collect all elements' nodes.
         for (Element const* const element : connected_elements)
@@ -347,4 +367,20 @@ std::vector<std::vector<Node*>> calculateNodesConnectedByElements(
     return nodes_connected_by_elements;
 }
 
+bool isBaseNode(Node const& node,
+                std::vector<Element const*> const& elements_connected_to_node)
+{
+    // Check if node is connected.
+    if (elements_connected_to_node.empty())
+    {
+        return true;
+    }
+
+    // In a mesh a node always belongs to at least one element.
+    auto const e = elements_connected_to_node[0];
+
+    auto const n_base_nodes = e->getNumberOfBaseNodes();
+    auto const local_index = getNodeIDinElement(*e, &node);
+    return local_index < n_base_nodes;
+}
 }  // namespace MeshLib

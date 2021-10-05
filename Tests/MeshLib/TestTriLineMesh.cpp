@@ -64,9 +64,9 @@ public:
 
     bool isConnectedToNode(std::size_t const n, std::size_t const e) const
     {
-        return std::find(nodes[n]->getElements().cbegin(),
-                         nodes[n]->getElements().cend(),
-                         elements[e]) != nodes[n]->getElements().cend();
+        auto const& node_elements = mesh->getElementsConnectedToNode(n);
+        return std::find(node_elements.cbegin(), node_elements.cend(),
+                         elements[e]) != node_elements.cend();
     }
 };
 
@@ -83,18 +83,18 @@ TEST_F(MeshLibTriLineMesh, Construction)
 TEST_F(MeshLibTriLineMesh, NodeToElementConnectivity)
 {
     // Nodes 0 and 3 are connected only to triangles.
-    EXPECT_EQ(1u, nodes[0]->getNumberOfElements());
-    EXPECT_EQ(1u, nodes[3]->getNumberOfElements());
-    EXPECT_EQ(elements[0], nodes[0]->getElement(0));
-    EXPECT_EQ(elements[1], nodes[3]->getElement(0));
+    EXPECT_EQ(1u, mesh->getElementsConnectedToNode(*nodes[0]).size());
+    EXPECT_EQ(1u, mesh->getElementsConnectedToNode(*nodes[3]).size());
+    EXPECT_EQ(elements[0], mesh->getElementsConnectedToNode(*nodes[0])[0]);
+    EXPECT_EQ(elements[1], mesh->getElementsConnectedToNode(*nodes[3])[0]);
 
     // Nodes 1 and 2 are connected to all elements.
-    EXPECT_EQ(3u, nodes[1]->getNumberOfElements());
+    EXPECT_EQ(3u, mesh->getElementsConnectedToNode(*nodes[1]).size());
     EXPECT_TRUE(isConnectedToNode(1, 0));
     EXPECT_TRUE(isConnectedToNode(1, 1));
     EXPECT_TRUE(isConnectedToNode(1, 2));
 
-    EXPECT_EQ(3u, nodes[2]->getNumberOfElements());
+    EXPECT_EQ(3u, mesh->getElementsConnectedToNode(*nodes[2]).size());
     EXPECT_TRUE(isConnectedToNode(2, 0));
     EXPECT_TRUE(isConnectedToNode(2, 1));
     EXPECT_TRUE(isConnectedToNode(2, 2));

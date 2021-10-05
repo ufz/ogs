@@ -31,7 +31,8 @@ std::vector<std::size_t> getNodes(
     GeoLib::Point const& pnt, std::vector<MeshLib::Node*> const& nodes,
     MeshLib::PropertyVector<int> const& mat_ids,
     std::pair<int, int> const& mat_limits,
-    std::pair<double, double> const& elevation_limits)
+    std::pair<double, double> const& elevation_limits,
+    MeshLib::Mesh const& mesh)
 {
     std::vector<std::size_t> pnt_nodes;
     for (auto node : nodes)
@@ -40,7 +41,7 @@ std::vector<std::size_t> getNodes(
         if (std::abs((*node)[0] - pnt[0]) < eps &&
             std::abs((*node)[1] - pnt[1]) < eps)
         {
-            auto const& elems = node->getElements();
+            auto const& elems = mesh.getElementsConnectedToNode(*node);
             for (auto e : elems)
             {
                 if (mat_ids[e->getID()] >= mat_limits.first &&
@@ -207,8 +208,8 @@ int main(int argc, char* argv[])
 
     for (std::size_t i = 0; i < n_points; ++i)
     {
-        std::vector<std::size_t> const& line_nodes =
-            getNodes(*points[i], nodes, *mat_ids, mat_limits, elevation_limits);
+        std::vector<std::size_t> const& line_nodes = getNodes(
+            *points[i], nodes, *mat_ids, mat_limits, elevation_limits, *mesh);
         std::size_t const n_line_nodes = line_nodes.size();
         if (n_line_nodes < 2)
         {

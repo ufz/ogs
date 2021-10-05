@@ -220,8 +220,8 @@ double GeoMapper::getMeshElevation(double x, double y, double min_val,
 {
     const MeshLib::Node* pnt =
         _grid->getNearestPoint(MathLib::Point3d{{{x, y, 0}}});
-    const std::vector<MeshLib::Element*> elements(
-        _surface_mesh->getNode(pnt->getID())->getElements());
+    auto const elements(
+        _surface_mesh->getElementsConnectedToNode(pnt->getID()));
     std::unique_ptr<GeoLib::Point> intersection;
 
     for (auto const& element : elements)

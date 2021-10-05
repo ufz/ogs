@@ -78,7 +78,7 @@ std::size_t ElementSearch::searchByNodeIDs(
     std::vector<std::size_t> connected_elements;
     for (std::size_t node_id : nodes)
     {
-        auto const& elements = _mesh.getNode(node_id)->getElements();
+        auto const& elements = _mesh.getElementsConnectedToNode(node_id);
         std::transform(begin(elements), end(elements),
                        back_inserter(connected_elements),
                        [](Element const* const e) { return e->getID(); });

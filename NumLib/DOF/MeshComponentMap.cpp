@@ -96,7 +96,9 @@ MeshComponentMap MeshComponentMap::getSubset(
     for (auto* const node : new_mesh_subset.getNodes())
     {
         auto const node_id = node->getID();
-        bool const is_base_node = isBaseNode(*node);
+        bool const is_base_node = MeshLib::isBaseNode(
+            *node,
+            new_mesh_subset.getMesh().getElementsConnectedToNode(node_id));
 
         MeshLib::Location const new_location{
             new_mesh_id, MeshLib::MeshItemType::Node, node_id};

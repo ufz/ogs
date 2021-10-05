@@ -144,7 +144,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     for (unsigned i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
         auto node = mesh.getNode(vec_junction_nodeID_matIDs[i].first);
-        for (auto e : node->getElements())
+        for (auto e : mesh.getElementsConnectedToNode(*node))
         {
             _process_data._vec_ele_connected_junctionIDs[e->getID()].push_back(
                 i);
@@ -157,9 +157,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     for (unsigned i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
         auto node = mesh.getNode(vec_junction_nodeID_matIDs[i].first);
-        for (auto e : node->getElements())
+        for (auto e : mesh.getElementsConnectedToNode(*node))
         {
-            _vec_junction_fracture_matrix_elements[i].push_back(e);
+            _vec_junction_fracture_matrix_elements[i].push_back(
+                const_cast<MeshLib::Element*>(e));
         }
     }
 
