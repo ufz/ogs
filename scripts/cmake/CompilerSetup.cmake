@@ -71,11 +71,9 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         add_compile_options(${PROFILE_ARGS})
     endif()
 
-    if(OGS_ENABLE_AVX2)
-        set(CPU_FLAGS -mavx2 -march=core-avx2)
-    elseif(OGS_CPU_ARCHITECTURE STREQUAL "generic")
+    if(OGS_CPU_ARCHITECTURE STREQUAL "generic")
         set(CPU_FLAGS -mtune=generic)
-    elseif(NOT APPLE_ARM)
+    elseif(NOT APPLE_ARM AND OGS_CPU_ARCHITECTURE)
         set(CPU_FLAGS -march=${OGS_CPU_ARCHITECTURE})
     endif()
 
@@ -151,9 +149,6 @@ if(MSVC)
         set(CPU_FLAGS /favor:blend)
     else()
         set(CPU_FLAGS /favor:${OGS_CPU_ARCHITECTURE})
-    endif()
-    if(OGS_ENABLE_AVX2)
-        set(CPU_FLAGS ${CPU_FLAGS} /arch:AVX2)
     endif()
     add_compile_options(
         /MP # multi-core compilation

@@ -25,14 +25,16 @@ container:
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache --mfront
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
+      --cpu-target $CPU_TARGET
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       $DOCKER_TAG_SERIAL
     # petsc container
     - >
       poetry run ogscm compiler.py mpi.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
+      --cpu-target $CPU_TARGET
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --base_image 'centos:8' --ompi 4.0.5 --mpi_benchmarks
     # test ogs can run in container
     - |
@@ -44,7 +46,8 @@ container:
       poetry run ogscm compiler.py ogs.py -B -C -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_CLI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_BUILD_TESTING=OFF'
+      --cpu-target $CPU_TARGET
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_CLI=OFF -DOGS_BUILD_UTILS=OFF -DOGS_BUILD_TESTING=OFF'
       --gui
   artifacts:
     name: container

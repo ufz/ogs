@@ -11,6 +11,7 @@ variables:
   BUILD_PROCESSES: "" # Empty string: builds all processes
   BUILD_TESTS: "true"
   BUILD_CTEST: "true"
+  CPU_TARGET: ivybridge # envinf2 has oldest cpu
 
 workflow:
   rules:

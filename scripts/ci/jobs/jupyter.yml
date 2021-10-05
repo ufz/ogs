@@ -19,7 +19,8 @@ build jupyter:
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain'
       --cvode --ccache --mfront
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=sandybridge -DOGS_BUILD_TESTING=OFF'
+      --cpu-target $CPU_TARGET
+      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'jupyter/base-notebook'
       --tag $DOCKER_TAG_JUPYTER
       $ON_MASTER_ARGS
