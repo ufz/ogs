@@ -640,3 +640,27 @@ AddTest(
     DIFF_DATA
     square_1x1_homogeneous.geo
 )
+
+AddTest(
+    NAME ResetPropertiesInPolygonalRegion_AllElementNodesInPolygon
+    PATH MeshGeoToolsLib/ResetPropertiesInPolygonalRegion/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion
+    EXECUTABLE ResetPropertiesInPolygonalRegion
+    EXECUTABLE_ARGS -m Cube.vtu -n ValidCells -i 1 -g Polylines.gml -p Back -o ${Data_BINARY_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion/Cube-BackPolylinePropertyChange_all_element_nodes_inside.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    Cube-BackPolylinePropertyChange_all_element_nodes_inside.vtu Cube-BackPolylinePropertyChange_all_element_nodes_inside.vtu ValidCells ValidCells 0 0
+)
+
+AddTest(
+    NAME ResetPropertiesInPolygonalRegion_AtLeastOneElementNodeInPolygon
+    PATH MeshGeoToolsLib/ResetPropertiesInPolygonalRegion/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion
+    EXECUTABLE ResetPropertiesInPolygonalRegion
+    EXECUTABLE_ARGS -m Cube.vtu -n ValidCells -i 1 -g Polylines.gml -p Back --any_of -o ${Data_BINARY_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion/Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu
+    REQUIREMENTS NOT OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu ValidCells ValidCells 0 0
+)
