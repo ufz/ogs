@@ -335,6 +335,10 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    double element_elastic_energy = 0.0;
+    double element_surface_energy = 0.0;
+    double element_pressure_work = 0.0;
+
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -360,13 +364,13 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                 .noalias() = N;
         }
 
-        elastic_energy += _ip_data[ip].elastic_energy * w;
+        element_elastic_energy += _ip_data[ip].elastic_energy * w;
 
         switch (_process_data.phasefield_model)
         {
             case PhaseFieldModel::AT1:
             {
-                surface_energy +=
+                element_surface_energy +=
                     gc * 0.375 *
                     ((1 - d_ip) / ls + (dNdx * d).dot((dNdx * d)) * ls) * w;
 
@@ -374,19 +378,38 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
             }
             case PhaseFieldModel::AT2:
             {
-                surface_energy += 0.5 * gc *
-                                  ((1 - d_ip) * (1 - d_ip) / ls +
-                                   (dNdx * d).dot((dNdx * d)) * ls) *
-                                  w;
+                element_surface_energy += 0.5 * gc *
+                                          ((1 - d_ip) * (1 - d_ip) / ls +
+                                           (dNdx * d).dot((dNdx * d)) * ls) *
+                                          w;
                 break;
             }
         }
 
         if (_process_data.crack_pressure)
         {
-            pressure_work += pressure_ip * (N_u * u).dot(dNdx * d) * w;
+            element_pressure_work += pressure_ip * (N_u * u).dot(dNdx * d) * w;
         }
     }
+
+#ifdef USE_PETSC
+    int const n_all_nodes = indices_of_processes[1].size();
+    int const n_regular_nodes = std::count_if(
+        begin(indices_of_processes[1]), end(indices_of_processes[1]),
+        [](GlobalIndexType const& index) { return index >= 0; });
+    if (n_all_nodes != n_regular_nodes)
+    {
+        element_elastic_energy *=
+            static_cast<double>(n_regular_nodes) / n_all_nodes;
+        element_surface_energy *=
+            static_cast<double>(n_regular_nodes) / n_all_nodes;
+        element_pressure_work *=
+            static_cast<double>(n_regular_nodes) / n_all_nodes;
+    }
+#endif  // USE_PETSC
+    elastic_energy += element_elastic_energy;
+    surface_energy += element_surface_energy;
+    pressure_work += element_pressure_work;
 }
 }  // namespace PhaseField
 }  // namespace ProcessLib
