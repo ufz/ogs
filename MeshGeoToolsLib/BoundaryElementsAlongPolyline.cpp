@@ -135,25 +135,24 @@ MeshLib::Element* BoundaryElementsAlongPolyline::modifyEdgeNodeOrdering(
         (ply.isClosed() &&
          edge_node_distances_along_ply.back() == node_ids_on_poly.size() - 1))
     {  // Create a new element with reversed local node index
-        auto new_nodes = new MeshLib::Node*[edge.getNumberOfNodes()];
         if (auto const* e = dynamic_cast<MeshLib::Line const*>(&edge))
         {
-            new_nodes[0] = const_cast<MeshLib::Node*>(e->getNode(1));
-            new_nodes[1] = const_cast<MeshLib::Node*>(e->getNode(0));
+            std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
+                                const_cast<MeshLib::Node*>(e->getNode(0))};
+            return new MeshLib::Line(nodes);
         }
         else if (auto const* e = dynamic_cast<MeshLib::Line3 const*>(&edge))
         {
-            new_nodes[0] = const_cast<MeshLib::Node*>(e->getNode(1));
-            new_nodes[1] = const_cast<MeshLib::Node*>(e->getNode(0));
-            new_nodes[2] = const_cast<MeshLib::Node*>(e->getNode(2));
+            std::array nodes = {const_cast<MeshLib::Node*>(e->getNode(1)),
+                                const_cast<MeshLib::Node*>(e->getNode(0)),
+                                const_cast<MeshLib::Node*>(e->getNode(2))};
+            return new MeshLib::Line3(nodes);
         }
         else
         {
             OGS_FATAL("Not implemented for element type {:s}",
                       typeid(edge).name());
         }
-
-        return edge.clone(new_nodes, edge.getID());
     }
 
     // Return the original edge otherwise.
