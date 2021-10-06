@@ -14,18 +14,18 @@
 namespace MeshLib
 {
 std::vector<int> getEndNodeIDRanks(
-    std::vector<std::size_t> const& n_active_nodes_at_rank)
+    std::size_t const n_global_nodes,
+    std::vector<std::size_t> const& n_active_base_nodes_at_rank,
+    std::vector<std::size_t> const& n_active_high_order_nodes_at_rank)
 {
     std::vector<int> data;
-    int id_of_end_node_of_partition = 0;
-    std::transform(
-        n_active_nodes_at_rank.begin(), n_active_nodes_at_rank.end(),
-        std::back_inserter(data),
-        [&id_of_end_node_of_partition](std::size_t const n_active_node)
-        {
-            id_of_end_node_of_partition += n_active_node;
-            return id_of_end_node_of_partition;
-        });
+
+    std::transform(n_active_base_nodes_at_rank.begin() + 1,
+                   n_active_base_nodes_at_rank.end(),
+                   n_active_high_order_nodes_at_rank.begin() + 1,
+                   std::back_inserter(data), std::plus<int>());
+
+    data.push_back(n_global_nodes);
 
     return data;
 }
@@ -41,7 +41,7 @@ NodePartitionedMesh::NodePartitionedMesh(
     const std::size_t n_active_base_nodes,
     const std::size_t n_active_nodes,
     std::vector<std::size_t>&& n_active_base_nodes_at_rank,
-    std::vector<std::size_t>&& n_active_nodes_at_rank)
+    std::vector<std::size_t>&& n_active_high_order_nodes_at_rank)
     : Mesh(name, nodes, elements, properties),
       _global_node_ids(glb_node_ids),
       _n_global_base_nodes(n_global_base_nodes),
@@ -49,8 +49,11 @@ NodePartitionedMesh::NodePartitionedMesh(
       _n_active_base_nodes(n_active_base_nodes),
       _n_active_nodes(n_active_nodes),
       _n_active_base_nodes_at_rank(std::move(n_active_base_nodes_at_rank)),
-      _n_active_nodes_at_rank(std::move(n_active_nodes_at_rank)),
-      _end_node_id_ranks(getEndNodeIDRanks(_n_active_nodes_at_rank)),
+      _n_active_high_order_nodes_at_rank(
+          std::move(n_active_high_order_nodes_at_rank)),
+      _end_node_id_at_rank(
+          getEndNodeIDRanks(n_global_nodes, _n_active_base_nodes_at_rank,
+                            _n_active_high_order_nodes_at_rank)),
       _is_single_thread(false)
 {
 }
@@ -81,10 +84,12 @@ std::size_t NodePartitionedMesh::getMaximumNConnectedNodesToNode() const
     return static_cast<std::size_t>(max_connections->size() + 1);
 }
 
-int NodePartitionedMesh::getPartitionID(const int global_node_id) const
+std::size_t NodePartitionedMesh::getPartitionID(
+    const std::size_t global_node_id) const
 {
-    return std::upper_bound(std::cbegin(_end_node_id_ranks),
-                            std::cend(_end_node_id_ranks), global_node_id) -
-           _end_node_id_ranks.begin();
+    return std::upper_bound(std::cbegin(_end_node_id_at_rank),
+                            std::cend(_end_node_id_at_rank),
+                            global_node_id) -
+           _end_node_id_at_rank.begin();
 }
 }  // namespace MeshLib

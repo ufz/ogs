@@ -61,22 +61,24 @@ public:
         \param n_global_nodes      Number of all nodes of the global mesh.
         \param n_active_base_nodes Number of the active base nodes.
         \param n_active_nodes      Number of all active nodes.
-        \param n_active_base_nodes_at_rank Gathered \c n_active_base_nodes of
-       all partitions.
-        \param n_active_nodes_at_rank Gathered \c n_active_nodes
-       of all partitions.
+        \param n_active_base_nodes_at_rank Numbers of the active base nodes of
+                                           all previous ranks.
+        \param n_active_high_order_nodes_at_rank Numbers of the active high
+                                                 order nodes of all previous
+                                                 ranks.
     */
-    NodePartitionedMesh(const std::string& name,
-                        const std::vector<Node*>& nodes,
-                        const std::vector<std::size_t>& glb_node_ids,
-                        const std::vector<Element*>& elements,
-                        Properties properties,
-                        const std::size_t n_global_base_nodes,
-                        const std::size_t n_global_nodes,
-                        const std::size_t n_active_base_nodes,
-                        const std::size_t n_active_nodes,
-                        std::vector<std::size_t>&& n_active_base_nodes_at_rank,
-                        std::vector<std::size_t>&& n_active_nodes_at_rank);
+    NodePartitionedMesh(
+        const std::string& name,
+        const std::vector<Node*>& nodes,
+        const std::vector<std::size_t>& glb_node_ids,
+        const std::vector<Element*>& elements,
+        Properties properties,
+        const std::size_t n_global_base_nodes,
+        const std::size_t n_global_nodes,
+        const std::size_t n_active_base_nodes,
+        const std::size_t n_active_nodes,
+        std::vector<std::size_t>&& n_active_base_nodes_at_rank,
+        std::vector<std::size_t>&& n_active_high_order_nodes_at_rank);
 
     /// Get the number of nodes of the global mesh for linear elements.
     std::size_t getNumberOfGlobalBaseNodes() const
@@ -110,11 +112,27 @@ public:
         return getNumberOfBaseNodes() + _n_active_nodes - _n_active_base_nodes;
     }
 
+    std::size_t getNumberOfActiveBaseNodesAtRank(int const partition_id) const
+    {
+        return _n_active_base_nodes_at_rank[partition_id];
+    }
+
+    std::size_t getNumberOfActiveHighOrderNodesAtRank(
+        int const partition_id) const
+    {
+        return _n_active_high_order_nodes_at_rank[partition_id];
+    }
+
     // TODO I guess that is a simplified version of computeSparsityPattern()
     /// Get the maximum number of connected nodes to node.
     std::size_t getMaximumNConnectedNodesToNode() const;
 
-    int getPartitionID(const int global_node_id) const;
+    std::size_t getPartitionID(const std::size_t global_node_id) const;
+
+    int getNumberOfPartitions() const
+    {
+        return _n_active_base_nodes_at_rank.size();
+    }
 
     bool isForSingleThread() const { return _is_single_thread; }
 
@@ -138,11 +156,11 @@ private:
     /// partitions.
     std::vector<std::size_t> _n_active_base_nodes_at_rank;
 
-    /// Gathered numbers of the all active nodes of all partitions.
-    std::vector<std::size_t> _n_active_nodes_at_rank;
+    /// Gathered numbers of the all active high order nodes of all partitions.
+    std::vector<std::size_t> _n_active_high_order_nodes_at_rank;
 
-    /// Gathered end node id ranks of all partitions.
-    std::vector<int> _end_node_id_ranks;
+    /// Gathered the end node id of each rank.
+    std::vector<int> _end_node_id_at_rank;
 
     const bool _is_single_thread;
 };
