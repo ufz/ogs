@@ -482,9 +482,15 @@
         </vtkdiff>
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
-            <field>NodalForces</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <field>HeatFlux</field>
+            <absolute_tolerance>5e-13</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>A2_ts_.*.vtu</regex>
+            <field>NodalForces</field>
+            <absolute_tolerance>5e-10</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
