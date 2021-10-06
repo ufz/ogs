@@ -64,9 +64,14 @@ void resetMeshElementProperty(MeshLib::Mesh& mesh,
                (*material_ids)[element_id] == restrict_to_material_id;
     };
 
+    using func =
+        std::function<bool(MeshLib::Node* const*, MeshLib::Node* const*,
+                           decltype(is_node_outside))>;
     auto is_element_outside =
-        any_of ? std::all_of<MeshLib::Node* const*, decltype(is_node_outside)>
-               : std::any_of<MeshLib::Node* const*, decltype(is_node_outside)>;
+        any_of ? (func)(std::all_of<MeshLib::Node* const*,
+                                    decltype(is_node_outside)>)
+               : (func)(std::any_of<MeshLib::Node* const*,
+                                    decltype(is_node_outside)>);
 
     for (std::size_t j(0); j < mesh.getElements().size(); ++j)
     {
