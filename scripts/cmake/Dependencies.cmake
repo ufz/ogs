@@ -225,7 +225,7 @@ else()
     endif()
 endif()
 
-if(OGS_USE_PETSC)
+if(OGS_USE_PETSC AND NOT HDF5_ADDED)
     include(CheckCXXSymbolExists)
     set(CMAKE_REQUIRED_INCLUDES "${HDF5_INCLUDE_DIR}" "${HDF5_BINARY_DIR}")
     set(CMAKE_REQUIRED_LIBRARIES "${HDF5_LIBRARIES}")
