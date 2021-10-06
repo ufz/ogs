@@ -5,6 +5,6 @@ foreach(lib Git CMake Test)
     )
 
     ogs_add_library(
-        ${lib}InfoLib ${CMAKE_CURRENT_BINARY_DIR}/${lib}Info.cpp ${lib}Info.h
+        ${lib}InfoLib GENERATE_EXPORT_HEADER ${CMAKE_CURRENT_BINARY_DIR}/${lib}Info.cpp ${lib}Info.h
     )
 endforeach(lib)

@@ -14,7 +14,7 @@ append_source_files(SOURCES ODESolver)
 append_source_files(SOURCES Extrapolation)
 
 # Create the library
-ogs_add_library(NumLib ${SOURCES})
+ogs_add_library(NumLib GENERATE_EXPORT_HEADER ${SOURCES})
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(

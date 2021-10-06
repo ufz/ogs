@@ -6,7 +6,7 @@ if(OGS_BUILD_GUI)
 endif()
 
 # Create the library
-ogs_add_library(BaseLib ${SOURCES})
+ogs_add_library(BaseLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 target_link_libraries(
     BaseLib

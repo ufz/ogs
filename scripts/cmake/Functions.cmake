@@ -80,7 +80,7 @@ endfunction()
 
 # Replacement for add_library() for ogs libraries
 function(ogs_add_library targetName)
-    set(options STATIC SHARED)
+    set(options STATIC SHARED GENERATE_EXPORT_HEADER)
     cmake_parse_arguments(ogs_add_library "${options}" "" "" ${ARGN})
 
     foreach(file ${ogs_add_library_UNPARSED_ARGUMENTS})
@@ -117,9 +117,11 @@ function(ogs_add_library targetName)
         )
     endif()
 
-    include(GenerateExportHeader)
-    generate_export_header(${targetName})
-    target_include_directories(${targetName} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+    if(ogs_add_library_GENERATE_EXPORT_HEADER)
+        include(GenerateExportHeader)
+        generate_export_header(${targetName})
+        target_include_directories(${targetName} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
 
     if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.16)
         set_target_properties(
