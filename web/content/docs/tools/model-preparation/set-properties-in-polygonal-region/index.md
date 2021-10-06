@@ -32,8 +32,13 @@ ResetPropertiesInPolygonalRegion
     -b [new_boolean_value, optional]
     -g [geometry]
     -p [polygon_name]
+    --any_of
     -o [modified_mesh.vtu]
 ```
+By default all nodes of an element have to be inside the polygon to set the
+property on the element. By specifying the boolean switch `any_of` at the
+command line the criterion for element selection changes to 'at least one
+node has to be inside the polygon'.
 
 ## Examples
 

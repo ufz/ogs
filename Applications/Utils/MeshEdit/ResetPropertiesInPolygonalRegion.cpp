@@ -55,6 +55,13 @@ int main(int argc, char* argv[])
         "format)",
         true, "", "file name");
     cmd.add(geometry_fname);
+    TCLAP::SwitchArg any_of_arg(
+        "", "any_of",
+        "all nodes of an element has to be inside the polygon (default "
+        "behaviour without switch) or any node of an element has to be inside "
+        "(switch is given)",
+        false);
+    cmd.add(any_of_arg);
     TCLAP::ValueArg<char> char_property_arg(
         "c", "char-property-value", "new property value (data type char)",
         false, 'A', "character");
@@ -135,23 +142,23 @@ int main(int argc, char* argv[])
 
     if (char_property_arg.isSet())
     {
-        MeshGeoToolsLib::resetMeshElementProperty(*mesh, polygon, property_name,
-                                                  char_property_arg.getValue(),
-                                                  restrict_arg.getValue());
+        MeshGeoToolsLib::resetMeshElementProperty(
+            *mesh, polygon, property_name, char_property_arg.getValue(),
+            restrict_arg.getValue(), any_of_arg.getValue());
     }
 
     if (int_property_arg.isSet())
     {
-        MeshGeoToolsLib::resetMeshElementProperty(*mesh, polygon, property_name,
-                                                  int_property_arg.getValue(),
-                                                  restrict_arg.getValue());
+        MeshGeoToolsLib::resetMeshElementProperty(
+            *mesh, polygon, property_name, int_property_arg.getValue(),
+            restrict_arg.getValue(), any_of_arg.getValue());
     }
 
     if (bool_property_arg.isSet())
     {
-        MeshGeoToolsLib::resetMeshElementProperty(*mesh, polygon, property_name,
-                                                  bool_property_arg.getValue(),
-                                                  restrict_arg.getValue());
+        MeshGeoToolsLib::resetMeshElementProperty(
+            *mesh, polygon, property_name, bool_property_arg.getValue(),
+            restrict_arg.getValue(), any_of_arg.getValue());
     }
 
     MeshLib::MeshInformation::writePropertyVectorInformation(*mesh);
