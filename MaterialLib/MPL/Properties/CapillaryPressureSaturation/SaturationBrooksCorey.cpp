@@ -106,6 +106,11 @@ PropertyDataType SaturationBrooksCorey::d2Value(
         std::get<double>(
             variable_array[static_cast<int>(Variable::capillary_pressure)]));
 
+    if (p_cap <= p_b)
+    {
+        return 0.;
+    }
+
     const double s_L_res = residual_liquid_saturation_;
     const double s_L_max = 1.0 - residual_gas_saturation_;
 
