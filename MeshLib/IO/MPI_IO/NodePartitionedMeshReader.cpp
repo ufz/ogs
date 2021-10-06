@@ -383,8 +383,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
 {
     return new MeshLib::NodePartitionedMesh(
         mesh_name, mesh_nodes, glb_node_ids, mesh_elems, properties,
-        _mesh_info.global_base_nodes, _mesh_info.global_nodes,
-        _mesh_info.active_base_nodes, _mesh_info.active_nodes);
+        _mesh_info.global_nodes, _mesh_info.active_base_nodes,
+        _mesh_info.active_nodes);
 }
 
 void NodePartitionedMeshReader::setNodes(

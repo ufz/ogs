@@ -34,7 +34,7 @@ namespace HydroMechanics
 {
 namespace MPL = MaterialPropertyLib;
 
-template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
+template <typename BMatricesType, typename ShapeMatricesTypeDisplacement,
           typename ShapeMatricesTypePressure, int DisplacementDim, int NPoints>
 struct IntegrationPointData final
 {
@@ -47,14 +47,15 @@ struct IntegrationPointData final
     {
     }
 
-    typename ShapeMatrixTypeDisplacement::template MatrixType<
+    typename ShapeMatricesTypeDisplacement::template MatrixType<
         DisplacementDim, NPoints * DisplacementDim>
-        N_u_op; /**< for interpolation of the displacement vector, whereas N_u interpolates one component (scalar) */
+        N_u_op; /**< for interpolation of the displacement vector, whereas N_u
+                   interpolates one component (scalar) */
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
 
-    typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
-    typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
+    typename ShapeMatricesTypeDisplacement::NodalRowVectorType N_u;
+    typename ShapeMatricesTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
 
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
@@ -335,7 +336,6 @@ public:
     }
 
 private:
-
     /**
      * Assemble local matrices and vectors arise from the linearized discretized
      * weak form of the residual of the momentum balance equation,

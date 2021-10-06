@@ -89,8 +89,9 @@ private:
                                           /// linear element of a partition,
         unsigned long
             active_nodes;  ///< 5: Number of all active nodes a partition,
-        unsigned long global_base_nodes;  ///< 6: Number of nodes for linear
-                                          /// element of global mesh,
+        unsigned long global_base_nodes;  ///< 6: unused, previously number of
+                                          /// nodes for linear element of global
+                                          /// mesh,
         unsigned long global_nodes;  ///< 7: Number of all nodes of global mesh,
         unsigned long offset[5];   ///< 8~12: Offsets of positions of partitions
                                    /// in the data arrays.

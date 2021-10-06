@@ -35,6 +35,32 @@
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 
+namespace
+{
+MeshLib::Mesh* readMeshFromFileSerial(const std::string& file_name)
+{
+    if (BaseLib::hasFileExtension(".msh", file_name))
+    {
+        MeshLib::IO::Legacy::MeshIO meshIO;
+        return meshIO.loadMeshFromFile(file_name);
+    }
+
+    if (BaseLib::hasFileExtension(".vtu", file_name))
+    {
+        return MeshLib::IO::VtuInterface::readVTUFile(file_name);
+    }
+
+    if (BaseLib::hasFileExtension(".vtk", file_name))
+    {
+        return MeshLib::IO::VtuInterface::readVTKFile(file_name);
+    }
+
+    ERR("readMeshFromFile(): Unknown mesh file format in file {:s}.",
+        file_name);
+    return nullptr;
+}
+}  // namespace
+
 namespace MeshLib
 {
 namespace IO
@@ -63,29 +89,6 @@ MeshLib::Mesh* readMeshFromFile(const std::string& file_name)
 #else
     return readMeshFromFileSerial(file_name);
 #endif
-}
-
-MeshLib::Mesh* readMeshFromFileSerial(const std::string& file_name)
-{
-    if (BaseLib::hasFileExtension(".msh", file_name))
-    {
-        MeshLib::IO::Legacy::MeshIO meshIO;
-        return meshIO.loadMeshFromFile(file_name);
-    }
-
-    if (BaseLib::hasFileExtension(".vtu", file_name))
-    {
-        return MeshLib::IO::VtuInterface::readVTUFile(file_name);
-    }
-
-    if (BaseLib::hasFileExtension(".vtk", file_name))
-    {
-        return MeshLib::IO::VtuInterface::readVTKFile(file_name);
-    }
-
-    ERR("readMeshFromFile(): Unknown mesh file format in file {:s}.",
-        file_name);
-    return nullptr;
 }
 
 }  // end namespace IO
