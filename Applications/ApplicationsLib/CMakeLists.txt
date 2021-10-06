@@ -30,7 +30,10 @@ if(OGS_USE_LIS)
     target_include_directories(ApplicationsLib PUBLIC ${LIS_INCLUDE_DIR})
 endif()
 
-target_compile_definitions(ApplicationsLib PUBLIC $<$<BOOL:${USE_LIS}>:USE_LIS>)
+target_compile_definitions(
+    ApplicationsLib PUBLIC $<$<BOOL:${USE_LIS}>:USE_LIS>
+                           $<$<BOOL:${OGS_USE_PYTHON}>:OGS_USE_PYTHON>
+)
 
 # Set cpp definitions if the cmake option is enabled for the given process.
 foreach(process ${_processes_list})
