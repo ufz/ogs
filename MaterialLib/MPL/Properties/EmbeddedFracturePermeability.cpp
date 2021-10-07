@@ -111,9 +111,11 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
     double const b_f = _b0 + H_de * _a * (e_n - _e0);
 
     Eigen::Matrix3d const M = n * n.transpose();
-    return (H_de * (b_f * b_f / 4 - _k) * (Eigen::Matrix3d::Identity() - M) * M)
-        .template topLeftCorner<DisplacementDim, DisplacementDim>()
-        .eval();
+    return Eigen::MatrixXd(
+        H_de * (b_f * b_f / 4 - _k) *
+        MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+            Eigen::Matrix3d::Identity() - M) *
+        MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(M).transpose());
 }
 
 template class EmbeddedFracturePermeability<2>;
