@@ -219,7 +219,9 @@ else()
         endif()
         set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR}/src)
         set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR}/src)
-        target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR} ${HDF5_INCLUDE_DIR})
+        target_include_directories(
+            hdf5-static INTERFACE ${HDF5_BINARY_DIR} ${HDF5_INCLUDE_DIR}
+        )
     else()
         find_package(HDF5 REQUIRED)
     endif()
@@ -233,7 +235,8 @@ if(OGS_USE_PETSC AND NOT HDF5_ADDED)
     unset(CMAKE_REQUIRED_INCLUDES)
     if(NOT HAVE_H5Pset_fapl_mpio)
         message(FATAL_ERROR "HDF5 was not build with MPI support! "
-            "(Enable with HDF5_ENABLE_PARALLEL)")
+                            "(Enable with HDF5_ENABLE_PARALLEL)"
+        )
     endif()
 endif()
 
@@ -244,7 +247,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND OGS_BUILD_TESTING)
         NAME xdmf
         VERSION 3.0.0
         GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
-        GIT_TAG 8d5ae1e1cbf506b8ca2160745fc914e25690c8a4
+        GIT_TAG de122a702f604ec4d96177930d3115fe6de17275
         OPTIONS "XDMF_LIBNAME OgsXdmf"
         EXCLUDE_FROM_ALL YES
     )
