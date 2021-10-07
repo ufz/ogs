@@ -219,7 +219,9 @@ else()
         endif()
         set(HDF5_C_INCLUDE_DIR ${HDF5_SOURCE_DIR}/src)
         set(HDF5_INCLUDE_DIR ${HDF5_SOURCE_DIR}/src)
-        target_include_directories(hdf5-static INTERFACE ${HDF5_BINARY_DIR} ${HDF5_INCLUDE_DIR})
+        target_include_directories(
+            hdf5-static INTERFACE ${HDF5_BINARY_DIR} ${HDF5_INCLUDE_DIR}
+        )
     else()
         find_package(HDF5 REQUIRED)
     endif()
@@ -233,7 +235,8 @@ if(OGS_USE_PETSC AND NOT HDF5_ADDED)
     unset(CMAKE_REQUIRED_INCLUDES)
     if(NOT HAVE_H5Pset_fapl_mpio)
         message(FATAL_ERROR "HDF5 was not build with MPI support! "
-            "(Enable with HDF5_ENABLE_PARALLEL)")
+                            "(Enable with HDF5_ENABLE_PARALLEL)"
+        )
     endif()
 endif()
 
