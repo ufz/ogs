@@ -126,6 +126,22 @@ AddTest(
     expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu epsilon epsilon 1e-8 1e-8
 )
 AddTest(
+    NAME ThermoHydroMechanics_cube_ortho-thermal-expansion_petsc
+    PATH ThermoHydroMechanics/Linear/anisotropic_thermal_expansivity
+    RUNTIME 5
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_ortho_phi0.183_petsc.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_183_ts_10_t_1_000000_0.vtu displacement displacement 1e-8 1e-8
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_183_ts_10_t_1_000000_0.vtu pressure pressure 1e-5 1e-5
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_183_ts_10_t_1_000000_0.vtu temperature temperature 1e-8 1e-8
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_183_ts_10_t_1_000000_0.vtu sigma sigma 1e-5 1e-5
+    expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_183_ts_10_t_1_000000_0.vtu epsilon epsilon 1e-8 1e-8
+)
+AddTest(
      NAME ThermoHydroMechanics_square_ortho-thermal-expansion-phi0
      PATH ThermoHydroMechanics/Linear/anisotropic_thermal_expansivity
      RUNTIME 5
