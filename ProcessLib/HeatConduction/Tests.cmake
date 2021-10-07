@@ -166,6 +166,23 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# test the source term on a subdomain - parallel version
+AddTest(
+    NAME 1D_HeatConduction_dirichlet_SourceTerm_Parallel2
+    PATH Parabolic/T/1D_dirichlet_source-term/2
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS line_1_line_1e2_source_term.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    REQUIREMENTS OGS_USE_MPI
+    TESTER vtkdiff
+    DIFF_DATA
+    line_1_line_1e2_ts_0_t_0_000000_0.vtu line_1_line_1e2_ts_0_t_0_000000_0.vtu temperature temperature 1e-15 0.0
+    line_1_line_1e2_ts_0_t_0_000000_1.vtu line_1_line_1e2_ts_0_t_0_000000_1.vtu temperature temperature 1e-15 0.0
+    line_1_line_1e2_ts_500_t_39062500_000000_0.vtu line_1_line_1e2_ts_500_t_39062500_000000_0.vtu temperature temperature 1.4e-9 0.0
+    line_1_line_1e2_ts_500_t_39062500_000000_1.vtu line_1_line_1e2_ts_500_t_39062500_000000_1.vtu temperature temperature 1.4e-9 0.0
+)
+
 # test the source term on a subdomain with the PETSc embedded executable file
 AddTest(
     NAME 1D_HeatConduction_dirichlet_SourceTerm_PETSc

@@ -12,6 +12,8 @@
 
 #include <cassert>
 
+#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -91,6 +93,10 @@ void HeatConductionProcess::assembleConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         pv.getActiveElementIDs(), dof_table, t, dt, x, xdot, process_id, M, K,
         b);
+
+    MathLib::finalizeMatrixAssembly(M);
+    MathLib::finalizeMatrixAssembly(K);
+    MathLib::finalizeVectorAssembly(b);
 
     auto const residuum = computeResiduum(*x[0], *xdot[0], M, K, b);
     transformVariableFromGlobalVector(residuum, 0 /*variable id*/,
