@@ -244,7 +244,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND OGS_BUILD_TESTING)
         NAME xdmf
         VERSION 3.0.0
         GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
-        GIT_TAG 8d5ae1e1cbf506b8ca2160745fc914e25690c8a4
+        GIT_TAG de122a702f604ec4d96177930d3115fe6de17275
         OPTIONS "XDMF_LIBNAME OgsXdmf"
         EXCLUDE_FROM_ALL YES
     )
