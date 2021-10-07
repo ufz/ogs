@@ -181,6 +181,63 @@ kelvinVectorToSymmetricTensor(Eigen::Matrix<double,
 }
 
 template <>
+Eigen::Matrix<double, 2, 4> liftVectorToKelvin<2>(
+    Eigen::Matrix<double, 2, 1> const& v)
+{
+    Eigen::Matrix<double, 2, 4> m;
+    m << v[0], 0, 0, v[1] / std::sqrt(2.), 0, v[1], 0, v[0] / std::sqrt(2.);
+    return m;
+}
+
+template <>
+Eigen::Matrix<double, 3, 6> liftVectorToKelvin<3>(
+    Eigen::Matrix<double, 3, 1> const& v)
+{
+    Eigen::Matrix<double, 3, 6> m;
+    m << v[0], 0, 0, v[1] / std::sqrt(2.), 0, v[2] / std::sqrt(2.), 0, v[1], 0,
+        v[0] / std::sqrt(2.), v[2] / std::sqrt(2.), 0, 0, 0, v[2], 0,
+        v[1] / std::sqrt(2.), v[0] / std::sqrt(2.);
+    return m;
+}
+
+template <>
+Eigen::Matrix<double, 2, 1> reduceKelvinToVector<2>(
+    Eigen::Matrix<double, 2, 4> const& m)
+{
+    assert(m(0, 1) == 0);
+    assert(m(0, 2) == 0);
+    assert(m(1, 0) == 0);
+    assert(m(1, 2) == 0);
+    Eigen::Matrix<double, 2, 1> v;
+    v << m(0, 0), m(1, 1);
+    return v;
+}
+
+template <>
+Eigen::Matrix<double, 3, 1> reduceKelvinToVector<3>(
+    Eigen::Matrix<double, 3, 6> const& m)
+{
+    assert(m(0, 1) == 0);
+    assert(m(0, 2) == 0);
+    assert(m(0, 4) == 0);
+    assert(m(1, 0) == 0);
+    assert(m(1, 2) == 0);
+    assert(m(1, 5) == 0);
+    assert(m(2, 0) == 0);
+    assert(m(2, 1) == 0);
+    assert(m(2, 3) == 0);
+    assert(std::abs(m(0, 3) - m(2, 4)) <
+           std::numeric_limits<double>::epsilon());
+    assert(std::abs(m(0, 5) - m(1, 4)) <
+           std::numeric_limits<double>::epsilon());
+    assert(std::abs(m(1, 3) - m(2, 5)) <
+           std::numeric_limits<double>::epsilon());
+    Eigen::Matrix<double, 3, 1> v;
+    v << m(0, 0), m(1, 1), m(2, 2);
+    return v;
+}
+
+template <>
 KelvinMatrixType<2> fourthOrderRotationMatrix<2>(
     Eigen::Matrix<double, 2, 2, Eigen::ColMajor, 2, 2> const& transformation)
 {
