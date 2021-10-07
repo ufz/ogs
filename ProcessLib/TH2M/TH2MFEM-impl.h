@@ -602,6 +602,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    // + rhoCLR * (dk_over_mu_L_dp_GR = 0)
                                    + c.drho_C_LR_dp_GR * k_over_mu_L;
 
+        ip_cv.dadvection_C_dp_cap =
+            //(drho_C_GR_dp_cap = 0) * k_over_mu_G
+            ip_data.rhoCGR * ip_cv.dk_over_mu_G_dp_cap +
+            (-c.drho_C_LR_dp_LR) * k_over_mu_L +
+            ip_data.rhoCLR * ip_cv.dk_over_mu_L_dp_cap;
+
         ip_cv.dfC_4_LCpG_dT =
             c.drho_C_GR_dT * k_over_mu_G + c.drho_C_LR_dT * k_over_mu_L
             // + ip_cv.ddiffusion_C_p_dT TODO (naumov)
@@ -1451,6 +1457,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
             gradNpT *
             (ip_cv.dadvection_C_dp_GR
+             // + ip_cv.ddiffusion_C_p_dp_GR TODO (naumov)
+             ) *
+            gradpGR * Np * w;
+
+        // d (fC_4_LCpG * grad p_GR)/d p_cap
+        local_Jac.template block<C_size, W_size>(C_index, W_index).noalias() +=
+            gradNpT *
+            (ip_cv.dadvection_C_dp_cap
              // + ip_cv.ddiffusion_C_p_dp_GR TODO (naumov)
              ) *
             gradpGR * Np * w;
