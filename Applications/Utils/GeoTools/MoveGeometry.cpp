@@ -14,16 +14,12 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#include <QCoreApplication>
-
 #include "GeoLib/GEOObjects.h"
-#include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
+#include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
 
 int main(int argc, char* argv[])
 {
-    QCoreApplication app(argc, argv);
-
     TCLAP::CmdLine cmd(
         "Moves the points of a geometry by a given displacement vector\n\n"
         "OpenGeoSys-6 software, version " +
@@ -50,7 +46,7 @@ int main(int argc, char* argv[])
     cmd.parse(argc, argv);
 
     GeoLib::GEOObjects geo_objects;
-    GeoLib::IO::XmlGmlInterface xml(geo_objects);
+    GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
     try
     {
         if (!xml.readFile(geo_input_arg.getValue()))
