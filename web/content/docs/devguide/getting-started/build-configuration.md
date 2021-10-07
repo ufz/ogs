@@ -126,6 +126,18 @@ cd ../build/release
 cmake ../../ogs -G Ninja -DCMAKE_BUILD_TYPE=Release
 ```
 
+<div class='note'>
+
+### Using a different compiler
+
+Set the `CC` and `CXX` environment variables, e.g.:
+
+```bash
+CC=mpicc CXX=mpic++ cmake ../ogs -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_PETSC=ON
+```
+
+</div>
+
 ## Option: Configure with a visual tool
 
 <div class='win'>
