@@ -597,8 +597,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #endif
             ;
 
-        ip_cv.dadvection_C_dp_GR =
-            c.drho_C_GR_dp_GR * k_over_mu_G + c.drho_C_LR_dp_GR * k_over_mu_L;
+        ip_cv.dadvection_C_dp_GR = c.drho_C_GR_dp_GR * k_over_mu_G
+                                   // + rhoCGR * (dk_over_mu_G_dp_GR = 0)
+                                   // + rhoCLR * (dk_over_mu_L_dp_GR = 0)
+                                   + c.drho_C_LR_dp_GR * k_over_mu_L;
 
         ip_cv.dfC_4_LCpG_dT =
             c.drho_C_GR_dT * k_over_mu_G + c.drho_C_LR_dT * k_over_mu_L
