@@ -698,6 +698,23 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
         ip_cv.dfW_4_LWpC_d_dT =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+
+        ip_cv.dfC_4_LCpC_a_dp_GR = c.drho_C_LR_dp_GR * k_over_mu_L
+            //+ rhoCLR * (dk_over_mu_L_dp_GR = 0)
+            ;
+        ip_cv.dfC_4_LCpC_a_dp_cap = -c.drho_C_LR_dp_LR * k_over_mu_L +
+                                    ip_data.rhoCLR * ip_cv.dk_over_mu_L_dp_cap;
+        ip_cv.dfC_4_LCpC_a_dT = c.drho_W_LR_dT * k_over_mu_L
+            //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
+            ;
+
+        // TODO (naumov) for dxmW*/d* != 0
+        ip_cv.dfC_4_LCpC_d_dp_GR =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+        ip_cv.dfC_4_LCpC_d_dp_cap =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+        ip_cv.dfC_4_LCpC_d_dT =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
     }
 
     return ip_constitutive_variables;
@@ -1491,6 +1508,32 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         LCpC.noalias() -=
             gradNpT * (advection_C_L + diffusion_C_L_p) * gradNp * w;
+
+        /* TODO (naumov) This part is not tested by any of the current ctests.
+        // d (fC_4_LCpC * grad p_cap)/d p_GR
+        local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
+            gradNpT *
+            (ip_cv.dfC_4_LCpC_a_dp_GR
+             // + ip_cv.dfC_4_LCpC_d_dp_GR TODO (naumov)
+             ) *
+            gradpCap * Np * w;
+        // d (fC_4_LCpC * grad p_cap)/d p_cap
+        local_Jac.template block<C_size, W_size>(C_index, W_index).noalias() +=
+            gradNpT *
+            (ip_cv.dfC_4_LCpC_a_dp_cap
+             // + ip_cv.dfC_4_LCpC_d_dp_cap TODO (naumov)
+             ) *
+            gradpCap * Np * w;
+
+        local_Jac
+            .template block<C_size, temperature_size>(C_index,
+                                                      temperature_index)
+            .noalias() += gradNpT *
+                          (ip_cv.dfC_4_LCpC_a_dT
+                           // + ip_cv.dfC_4_LCpC_d_dT TODO (naumov)
+                           ) *
+                          gradpCap * Np * w;
+        */
 
         LCT.noalias() += gradNpT * diffusion_C_T * gradNp * w;
 
