@@ -21,6 +21,7 @@
 #include "BaseLib/Logging.h"
 #include "MathLib/GeometricBasics.h"
 #include "MathLib/MathTools.h"
+#include "PointVec.h"
 
 namespace GeoLib
 {
@@ -573,5 +574,23 @@ bool pointsAreIdentical(const std::vector<Point*>& pnt_vec,
         return true;
     }
     return MathLib::sqrDist(*pnt_vec[i], *pnt_vec[j]) < prox;
+}
+
+std::unique_ptr<Polyline> createPolyline(GeoLib::PointVec const& points_vec,
+                                         std::vector<std::size_t>&& point_ids)
+{
+    auto const& point_id_map = points_vec.getIDMap();
+    auto polyline = std::make_unique<Polyline>(*(points_vec.getVector()));
+    for (auto point_id : point_ids)
+    {
+        if (point_id >= point_id_map.size())
+        {
+            WARN("The point id {} doesn't exist in the underlying PointVec.",
+                 point_id);
+            continue;
+        }
+        polyline->addPoint(point_id_map[point_id]);
+    }
+    return polyline;
 }
 }  // end namespace GeoLib
