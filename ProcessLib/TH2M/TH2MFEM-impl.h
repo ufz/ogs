@@ -662,7 +662,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    + c.drho_W_LR_dp_GR * k_over_mu_L
             // + rhoWLR * (dk_over_mu_L_dp_GR = 0)
             ;
-        ip_cv.dfW_4_LWpG_a_dp_cap = -c.drho_W_LR_dp_LR * k_over_mu_L;
+        ip_cv.dfW_4_LWpG_a_dp_cap = c.drho_W_GR_dp_cap * k_over_mu_G +
+                                    ip_data.rhoWGR * ip_cv.dk_over_mu_G_dp_cap +
+                                    -c.drho_W_LR_dp_LR * k_over_mu_L +
+                                    ip_data.rhoWLR * ip_cv.dk_over_mu_L_dp_cap;
+
         ip_cv.dfW_4_LWpG_a_dT =
             c.drho_W_GR_dT * k_over_mu_G
             //+ rhoWGR * (dk_over_mu_G_dT != 0 TODO for mu_G(T))
