@@ -260,6 +260,11 @@ void ComponentTransportProcess::solveReactionEquation(
 
         INFO("[time] Phreeqc took {:g} s.", time_phreeqc.elapsed());
 
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
+            &ComponentTransportLocalAssemblerInterface::
+                postSpeciationCalculation,
+            _local_assemblers, pv.getActiveElementIDs(), t, dt);
+
         return;
     }
 
@@ -269,37 +274,52 @@ void ComponentTransportProcess::solveReactionEquation(
     std::size_t matrix_id = 0u;
     auto& M = NumLib::GlobalMatrixProvider::provider.getMatrix(
         matrix_specification, matrix_id);
+    auto& K = NumLib::GlobalMatrixProvider::provider.getMatrix(
+        matrix_specification, matrix_id);
     auto& b =
-        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
-    auto& rhs =
         NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
 
     M.setZero();
+    K.setZero();
     b.setZero();
-    rhs.setZero();
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::assembleReactionEquation,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt, M, b,
-        process_id);
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt, M, K,
+        b, process_id);
 
     // todo (renchao): incorporate Neumann boundary condition
     MathLib::finalizeMatrixAssembly(M);
+    MathLib::finalizeMatrixAssembly(K);
     MathLib::finalizeVectorAssembly(b);
 
-    MathLib::LinAlg::scale(M, 1.0 / dt);
-    MathLib::LinAlg::matMultAdd(M, *x[process_id], b, rhs);
+    auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(
+        matrix_specification, matrix_id);
+    auto& rhs =
+        NumLib::GlobalVectorProvider::provider.getVector(matrix_specification);
+
+    A.setZero();
+    rhs.setZero();
+
+    // compute A
+    MathLib::LinAlg::copy(M, A);
+    MathLib::LinAlg::aypx(A, 1.0 / dt, K);
+
+    // compute rhs
+    MathLib::LinAlg::matMult(M, *x[process_id], rhs);
+    MathLib::LinAlg::aypx(rhs, 1.0 / dt, b);
 
     using Tag = NumLib::NonlinearSolverTag;
     using EqSys = NumLib::NonlinearSystem<Tag::Picard>;
     auto& equation_system = static_cast<EqSys&>(ode_sys);
-    equation_system.applyKnownSolutionsPicard(M, rhs, *x[process_id]);
+    equation_system.applyKnownSolutionsPicard(A, rhs, *x[process_id]);
 
     auto& linear_solver =
         _process_data.chemical_solver_interface->linear_solver;
-    linear_solver.solve(M, rhs, *x[process_id]);
+    linear_solver.solve(A, rhs, *x[process_id]);
 
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(M);
+    NumLib::GlobalMatrixProvider::provider.releaseMatrix(K);
     NumLib::GlobalVectorProvider::provider.releaseVector(b);
     NumLib::GlobalVectorProvider::provider.releaseVector(rhs);
 }

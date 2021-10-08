@@ -125,7 +125,7 @@ public:
         std::size_t const mesh_item_id,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         std::vector<GlobalVector*> const& x, double const t, double const dt,
-        GlobalMatrix& M, GlobalVector& b, int const process_id)
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, int const process_id)
     {
         std::vector<double> local_x_vec;
 
@@ -148,11 +148,14 @@ public:
 
         std::vector<double> local_M_data;
         local_M_data.reserve(num_r_c * num_r_c);
+        std::vector<double> local_K_data;
+        local_K_data.reserve(num_r_c * num_r_c);
         std::vector<double> local_b_data;
         local_b_data.reserve(num_r_c);
 
         assembleReactionEquationConcrete(t, dt, local_x, local_M_data,
-                                         local_b_data, process_id);
+                                         local_K_data, local_b_data,
+                                         process_id);
 
         auto const r_c_indices =
             NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
@@ -162,12 +165,20 @@ public:
                 MathLib::toMatrix(local_M_data, num_r_c, num_r_c);
             M.add(r_c_indices, local_M);
         }
-
+        if (!local_K_data.empty())
+        {
+            auto const local_K =
+                MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
+            K.add(r_c_indices, local_K);
+        }
         if (!local_b_data.empty())
         {
             b.add(indices, local_b_data);
         }
     }
+
+    virtual void postSpeciationCalculation(std::size_t const ele_id,
+                                           double const t, double const dt) = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
@@ -191,8 +202,8 @@ private:
 
     virtual void assembleReactionEquationConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double>& local_M_data, std::vector<double>& local_b_data,
-        int const transport_process_id) = 0;
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data, int const transport_process_id) = 0;
 
 protected:
     CoupledSolutionsForStaggeredScheme* _coupled_solutions{nullptr};
@@ -399,6 +410,33 @@ public:
 
             _process_data.chemical_solver_interface->setChemicalSystemConcrete(
                 C_int_pt, chemical_system_id, medium, vars, pos, t, dt);
+        }
+    }
+
+    void postSpeciationCalculation(std::size_t const ele_id, double const t,
+                                   double const dt) override
+    {
+        if (!_process_data.chemically_induced_porosity_change)
+        {
+            return;
+        }
+
+        auto const& medium = *_process_data.media_map->getMedium(ele_id);
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(ele_id);
+
+        for (auto& ip_data : _ip_data)
+        {
+            ip_data.porosity = ip_data.porosity_prev;
+
+            _process_data.chemical_solver_interface
+                ->updateVolumeFractionPostReaction(ip_data.chemical_system_id,
+                                                   medium, pos,
+                                                   ip_data.porosity, t, dt);
+
+            _process_data.chemical_solver_interface->updatePorosityPostReaction(
+                ip_data.chemical_system_id, medium, ip_data.porosity);
         }
     }
 
@@ -985,7 +1023,8 @@ public:
 
     void assembleReactionEquationConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        std::vector<double>& local_M_data, std::vector<double>& local_b_data,
+        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+        std::vector<double>& local_b_data,
         int const transport_process_id) override
     {
         auto const local_C = local_x.template segment<concentration_size>(
@@ -994,6 +1033,8 @@ public:
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);
+        auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
+            local_K_data, concentration_size, concentration_size);
         auto local_b = MathLib::createZeroedVector<LocalVectorType>(
             local_b_data, concentration_size);
 
@@ -1026,6 +1067,8 @@ public:
             vars[static_cast<int>(
                 MaterialPropertyLib::Variable::concentration)] = C_int_pt;
 
+            auto const porosity_dot = (porosity - porosity_prev) / dt;
+
             // porosity
             {
                 vars_prev[static_cast<int>(
@@ -1040,6 +1083,8 @@ public:
             }
 
             local_M.noalias() += w * N.transpose() * porosity * N;
+
+            local_K.noalias() += w * N.transpose() * porosity_dot * N;
 
             auto const C_post_int_pt =
                 _process_data.chemical_solver_interface->getConcentration(
@@ -1273,7 +1318,7 @@ public:
 
     void computeSecondaryVariableConcrete(
         double const t,
-        double const dt,
+        double const /*dt*/,
         Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& /*local_x_dot*/) override
     {
@@ -1309,11 +1354,6 @@ public:
                 for (auto& ip_data : _ip_data)
                 {
                     ip_data.porosity = ip_data.porosity_prev;
-
-                    _process_data.chemical_solver_interface
-                        ->updateVolumeFractionPostReaction(
-                            ip_data.chemical_system_id, medium, pos,
-                            ip_data.porosity, t, dt);
 
                     _process_data.chemical_solver_interface
                         ->updatePorosityPostReaction(ip_data.chemical_system_id,
