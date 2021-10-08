@@ -33,7 +33,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 12
     DIFF_DATA
-    mcwt_1000.vtu twophaseflow_ts_519_t_1000.000000.vtu SATURATION1 saturation 1e-2 1e-4
-    mcwt_1000.vtu twophaseflow_ts_519_t_1000.000000.vtu PRESSURE1 capillary_pressure 10 1e-3
-    mcwt_1000.vtu twophaseflow_ts_519_t_1000.000000.vtu PRESSURE2 gas_pressure 10 1e-3
+    twophaseflow_ts_627_t_1000.000000.vtu twophaseflow_ts_627_t_1000.000000.vtu saturation saturation 1e-3 1e-4
+    twophaseflow_ts_627_t_1000.000000.vtu twophaseflow_ts_627_t_1000.000000.vtu capillary_pressure capillary_pressure 1e-3 1e-4
+    twophaseflow_ts_627_t_1000.000000.vtu twophaseflow_ts_627_t_1000.000000.vtu gas_pressure gas_pressure 1e-3 1e-4
 )

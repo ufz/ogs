@@ -58,8 +58,8 @@ PropertyDataType SaturationBrooksCorey::value(
 
 PropertyDataType SaturationBrooksCorey::dValue(
     VariableArray const& variable_array, Variable const primary_variable,
-    ParameterLib::SpatialPosition const& pos, double const t,
-    double const dt) const
+    ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
+    double const /*dt*/) const
 {
     if (primary_variable != Variable::capillary_pressure)
     {
@@ -68,25 +68,22 @@ PropertyDataType SaturationBrooksCorey::dValue(
             "respect to capillary pressure only.");
     }
 
+    const double p_b = entry_pressure_;
+    const double p_cap = std::get<double>(
+        variable_array[static_cast<int>(Variable::capillary_pressure)]);
+
+    if (p_cap <= p_b)
+    {
+        return 0.;
+    }
+
     const double s_L_res = residual_liquid_saturation_;
     const double s_L_max = 1.0 - residual_gas_saturation_;
-    const double p_b = entry_pressure_;
-    const double p_cap = std::max(
-        p_b,
-        std::get<double>(
-            variable_array[static_cast<int>(Variable::capillary_pressure)]));
-
-    auto const s_L = std::visit(
-        [&variable_array, &pos, t, dt](auto&& scale) -> double {
-            return scale->property(PropertyType::saturation)
-                .template value<double>(variable_array, pos, t, dt);
-        },
-        scale_);
-
     const double lambda = exponent_;
-    const double ds_L_d_s_eff = 1. / (s_L_max - s_L_res);
 
-    return -lambda / p_cap * s_L * ds_L_d_s_eff;
+    const double ds_eff_dp_cap =
+        -lambda * std::pow(p_b, lambda) / std::pow(p_cap, lambda + 1);
+    return ds_eff_dp_cap * (s_L_max - s_L_res);
 }
 
 PropertyDataType SaturationBrooksCorey::d2Value(
@@ -108,6 +105,11 @@ PropertyDataType SaturationBrooksCorey::d2Value(
         p_b,
         std::get<double>(
             variable_array[static_cast<int>(Variable::capillary_pressure)]));
+
+    if (p_cap <= p_b)
+    {
+        return 0.;
+    }
 
     const double s_L_res = residual_liquid_saturation_;
     const double s_L_max = 1.0 - residual_gas_saturation_;
