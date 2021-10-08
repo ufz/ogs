@@ -370,13 +370,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     local_Jac
         .template block<pressure_size, pressure_size>(pressure_index,
                                                       pressure_index)
-        .noalias() = laplace_p + storage_p / dt + add_p_derivative;
+        .noalias() += laplace_p + storage_p / dt + add_p_derivative;
 
     // pressure equation, displacement part.
     local_Jac
         .template block<pressure_size, displacement_size>(pressure_index,
                                                           displacement_index)
-        .noalias() = Kpu / dt + Kpu_k;
+        .noalias() += Kpu / dt + Kpu_k;
 
     // pressure equation
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
