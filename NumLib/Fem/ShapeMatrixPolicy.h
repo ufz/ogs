@@ -69,6 +69,7 @@ struct EigenFixedShapeMatrixPolicy
     using NodalMatrixType =
         MatrixType<ShapeFunction::NPOINTS, ShapeFunction::NPOINTS>;
     using NodalVectorType = VectorType<ShapeFunction::NPOINTS>;
+    using DimVectorType = VectorType<ShapeFunction::DIM>;
     using NodalRowVectorType = RowVectorType<ShapeFunction::NPOINTS>;
     using DimNodalMatrixType =
         MatrixType<ShapeFunction::DIM, ShapeFunction::NPOINTS>;
@@ -103,6 +104,7 @@ struct EigenDynamicShapeMatrixPolicy
 
     using NodalMatrixType = MatrixType<0, 0>;
     using NodalVectorType = VectorType<0>;
+    using DimVectorType = VectorType<0>;
     using NodalRowVectorType = RowVectorType<0>;
     using DimNodalMatrixType = MatrixType<0, 0>;
     using DimMatrixType = MatrixType<0, 0>;
@@ -116,13 +118,13 @@ struct EigenDynamicShapeMatrixPolicy
 };
 
 #ifdef OGS_EIGEN_DYNAMIC_SHAPE_MATRICES
-template <typename ShapeFunction, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim = ShapeFunction::DIM>
 using ShapeMatrixPolicyType =
     EigenDynamicShapeMatrixPolicy<ShapeFunction, GlobalDim>;
 
 const unsigned OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_FLAG = 1;
 #else
-template <typename ShapeFunction, int GlobalDim>
+template <typename ShapeFunction, int GlobalDim = ShapeFunction::DIM>
 using ShapeMatrixPolicyType =
     EigenFixedShapeMatrixPolicy<ShapeFunction, GlobalDim>;
 

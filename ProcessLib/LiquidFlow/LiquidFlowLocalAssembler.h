@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <Eigen/Dense>
 #include <vector>
 
 #include "LiquidFlowData.h"
@@ -65,20 +66,21 @@ public:
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
 {
-    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
+    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
-        ShapeMatricesType, ShapeFunction::NPOINTS, NUM_NODAL_DOF, GlobalDim>;
+    using LocalAssemblerTraits =
+        ProcessLib::LocalAssemblerTraits<ShapeMatricesType,
+                                         ShapeFunction::NPOINTS, NUM_NODAL_DOF,
+                                         ShapeFunction::DIM>;
 
     using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
     using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
+    using DimVectorType = typename ShapeMatricesType::DimVectorType;
+    using DimMatrixType = typename ShapeMatricesType::DimMatrixType;
     using GlobalDimNodalMatrixType =
         typename ShapeMatricesType::GlobalDimNodalMatrixType;
-
-    using MatrixOfVelocityAtIntegrationPoints = Eigen::Map<
-        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>;
 
 public:
     LiquidFlowLocalAssembler(MeshLib::Element const& element,
@@ -158,17 +160,17 @@ private:
             Eigen::Map<NodalVectorType>& local_b,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
-            Eigen::MatrixXd const& permeability, double const mu,
-            double const rho_L, const LiquidFlowData& process_data);
+            DimMatrixType const& permeability, double const mu,
+            double const rho_L, DimVectorType const& specific_body_force,
+            bool const has_gravity);
 
-        static void calculateVelocity(
-            unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
+        static Eigen::Matrix<double, ShapeFunction::DIM, 1> calculateVelocity(
+            Eigen::Map<const NodalVectorType> const& local_p,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
-            Eigen::MatrixXd const& permeability, double const mu,
-            double const rho_L,
-            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips,
-            const LiquidFlowData& process_data);
+            DimMatrixType const& permeability, double const mu,
+            double const rho_L, DimVectorType const& specific_body_force,
+            bool const has_gravity);
     };
 
     /**
@@ -182,17 +184,17 @@ private:
             Eigen::Map<NodalVectorType>& local_b,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
-            Eigen::MatrixXd const& permeability, double const mu,
-            double const rho_L, const LiquidFlowData& process_data);
+            DimMatrixType const& permeability, double const mu,
+            double const rho_L, DimVectorType const& specific_body_force,
+            bool const has_gravity);
 
-        static void calculateVelocity(
-            unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
+        static Eigen::Matrix<double, ShapeFunction::DIM, 1> calculateVelocity(
+            Eigen::Map<const NodalVectorType> const& local_p,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
-            Eigen::MatrixXd const& permeability, double const mu,
-            double const rho_L,
-            MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips,
-            const LiquidFlowData& process_data);
+            DimMatrixType const& permeability, double const mu,
+            double const rho_L, DimVectorType const& specific_body_force,
+            bool const has_gravity);
     };
 
     template <typename LaplacianGravityVelocityCalculator>
@@ -202,11 +204,19 @@ private:
                                  std::vector<double>& local_K_data,
                                  std::vector<double>& local_b_data);
 
-    template <typename LaplacianGravityVelocityCalculator>
-    void computeDarcyVelocityLocal(
+    template <typename LaplacianGravityVelocityCalculator,
+              typename VelocityCacheType>
+    void computeProjectedDarcyVelocity(
         const double t, const double dt, std::vector<double> const& local_x,
         ParameterLib::SpatialPosition const& pos,
-        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const;
+        VelocityCacheType& darcy_velocity_at_ips) const;
+
+    template <typename VelocityCacheType>
+    void computeDarcyVelocity(bool const is_scalar_permeability, const double t,
+                              const double dt,
+                              std::vector<double> const& local_x,
+                              ParameterLib::SpatialPosition const& pos,
+                              VelocityCacheType& darcy_velocity_at_ips) const;
 
     const LiquidFlowData& _process_data;
 };

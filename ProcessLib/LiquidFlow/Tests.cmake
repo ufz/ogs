@@ -535,3 +535,58 @@ if (NOT (OGS_USE_MPI))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_3.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/FunctionParameterTest.prj)
 endif()
+
+# inclined mesh
+AddTest(
+    NAME LiquidFlow_HydrostaticFlowInInclined_2D_Plane
+    PATH Parabolic/LiquidFlow/InclinedMeshElements/Inclined2DMesh
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS hydrostatic_flow_in_inclined_2D_plane.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu pressure pressure 1e-07 1e-13
+    hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu v v 1e-14 1e-14
+)
+
+AddTest(
+    NAME LiquidFlow_TransientFlowInInclined_2D_Plane
+    PATH Parabolic/LiquidFlow/InclinedMeshElements/Inclined2DMesh
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS transient_flow_in_inclined_2D_plane.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu pressure pressure 1e-14 1e-11
+    transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu v v 1e-14 1e-14
+)
+
+AddTest(
+    NAME LiquidFlow_fractures_in_3D
+    PATH Parabolic/LiquidFlow/InclinedMeshElements/FractureIn3D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS fractures_in_3D.prj
+    RUNTIME 10
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    fractures_in_3D_ts_100_t_8640000.000000.vtu fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
+    fractures_in_3D_ts_100_t_8640000.000000.vtu fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
+)
+
+AddTest(
+    NAME LiquidFlow_line_fractures_in_3D
+    PATH Parabolic/LiquidFlow/InclinedMeshElements/1Din3D
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS line_fractures_in_3D.prj
+    RUNTIME 4
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
+    line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
+)

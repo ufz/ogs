@@ -13,7 +13,6 @@
 #pragma once
 
 #include "LiquidFlowLocalAssembler.h"
-
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/VariableType.h"
@@ -42,13 +41,15 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             .template value<double>(vars, pos, t, dt);
     vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
         std::numeric_limits<double>::quiet_NaN();
-    auto const permeability = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-        medium[MaterialPropertyLib::PropertyType::permeability].value(vars, pos,
-                                                                      t, dt));
+    DimMatrixType const permeability =
+        MaterialPropertyLib::formEigenTensor<ShapeFunction::DIM>(
+            medium[MaterialPropertyLib::PropertyType::permeability].value(
+                vars, pos, t, dt));
     // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
     //  the assert must be changed to permeability.rows() ==
     //  _element->getDimension()
-    assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
+    assert(permeability.rows() == ShapeFunction::DIM ||
+           permeability.rows() == 1);
 
     if (permeability.size() == 1)
     {  // isotropic or 1D problem.
@@ -76,9 +77,10 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     // here, which is not affected by axial symmetry.
     auto const shape_matrices =
         NumLib::computeShapeMatrices<ShapeFunction, ShapeMatricesType,
-                                     GlobalDim>(_element,
-                                                false /*is_axially_symmetric*/,
-                                                std::array{p_local_coords})[0];
+                                     ShapeFunction::DIM>(
+            _element,
+            false /*is_axially_symmetric*/,
+            std::array{p_local_coords})[0];
 
     // create pos object to access the correct media property
     ParameterLib::SpatialPosition pos;
@@ -94,8 +96,8 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
     vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
         pressure;
 
-    auto const intrinsic_permeability =
-        MaterialPropertyLib::formEigenTensor<GlobalDim>(
+    DimMatrixType const intrinsic_permeability =
+        MaterialPropertyLib::formEigenTensor<ShapeFunction::DIM>(
             medium[MaterialPropertyLib::PropertyType::permeability].value(
                 vars, pos, t, dt));
     auto const viscosity =
@@ -103,9 +105,13 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::getFlux(
             .template value<double>(vars, pos, t, dt);
 
     Eigen::Vector3d flux(0.0, 0.0, 0.0);
+    auto const flux_local =
+        (-intrinsic_permeability / viscosity * shape_matrices.dNdx *
+         Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size()))
+            .eval();
+
     flux.head<GlobalDim>() =
-        -intrinsic_permeability / viscosity * shape_matrices.dNdx *
-        Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size());
+        _process_data.element_rotation_matrices[_element.getID()] * flux_local;
 
     return flux;
 }
@@ -142,6 +148,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
+
+    DimVectorType const projected_body_force_vector =
+        _process_data.element_rotation_matrices[_element.getID()].transpose() *
+        _process_data.specific_body_force;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -180,15 +190,35 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
                 .template value<double>(vars, pos, t, dt);
 
         pos.setIntegrationPoint(ip);
-        auto const permeability =
-            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+        DimMatrixType const permeability =
+            MaterialPropertyLib::formEigenTensor<ShapeFunction::DIM>(
                 medium[MaterialPropertyLib::PropertyType::permeability].value(
                     vars, pos, t, dt));
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
             local_K, local_b, ip_data, permeability, viscosity, fluid_density,
-            _process_data);
+            projected_body_force_vector, _process_data.has_gravity);
+    }
+}
+
+template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
+template <typename VelocityCacheType>
+void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+    computeDarcyVelocity(bool const is_scalar_permeability, const double t,
+                         const double dt, std::vector<double> const& local_x,
+                         ParameterLib::SpatialPosition const& pos,
+                         VelocityCacheType& darcy_velocity_at_ips) const
+{
+    if (is_scalar_permeability)
+    {  // isotropic or 1D problem.
+        computeProjectedDarcyVelocity<IsotropicCalculator>(
+            t, dt, local_x, pos, darcy_velocity_at_ips);
+    }
+    else
+    {
+        computeProjectedDarcyVelocity<AnisotropicCalculator>(
+            t, dt, local_x, pos, darcy_velocity_at_ips);
     }
 }
 
@@ -211,9 +241,6 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     auto const local_x = x[process_id]->get(indices);
     auto const n_integration_points = _integration_method.getNumberOfPoints();
     velocity_cache.clear();
-    auto velocity_cache_vectors = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-        velocity_cache, GlobalDim, n_integration_points);
 
     ParameterLib::SpatialPosition pos;
     pos.setElementID(_element.getID());
@@ -225,35 +252,35 @@ LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             .template value<double>(vars, pos, t, dt);
     vars[static_cast<int>(MaterialPropertyLib::Variable::phase_pressure)] =
         std::numeric_limits<double>::quiet_NaN();
-    auto const permeability = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-        medium[MaterialPropertyLib::PropertyType::permeability].value(vars, pos,
-                                                                      t, dt));
-    // Note: For Inclined 1D in 2D/3D or 2D element in 3D, the first item in
-    //  the assert must be changed to perm.rows() == _element->getDimension()
-    assert(permeability.rows() == GlobalDim || permeability.rows() == 1);
 
-    // evaluate the permeability to distinguish which computeDarcyVelocity
-    // method should be used
-    if (permeability.size() == 1)
-    {  // isotropic or 1D problem.
-        computeDarcyVelocityLocal<IsotropicCalculator>(t, dt, local_x, pos,
-                                                       velocity_cache_vectors);
-    }
-    else
-    {
-        computeDarcyVelocityLocal<AnisotropicCalculator>(
-            t, dt, local_x, pos, velocity_cache_vectors);
-    }
+    DimMatrixType const permeability =
+        MaterialPropertyLib::formEigenTensor<ShapeFunction::DIM>(
+            medium[MaterialPropertyLib::PropertyType::permeability].value(
+                vars, pos, t, dt));
+
+    assert(permeability.rows() == _element.getDimension() ||
+           permeability.rows() == 1);
+
+    bool const is_scalar_permeability = (permeability.size() == 1);
+
+    auto velocity_cache_vectors = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        velocity_cache, GlobalDim, n_integration_points);
+
+    computeDarcyVelocity(is_scalar_permeability, t, dt, local_x, pos,
+                         velocity_cache_vectors);
+
     return velocity_cache;
 }
 
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-template <typename LaplacianGravityVelocityCalculator>
+template <typename LaplacianGravityVelocityCalculator,
+          typename VelocityCacheType>
 void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
-    computeDarcyVelocityLocal(
+    computeProjectedDarcyVelocity(
         const double t, const double dt, std::vector<double> const& local_x,
         ParameterLib::SpatialPosition const& pos,
-        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips) const
+        VelocityCacheType& darcy_velocity_at_ips) const
 {
     auto const local_matrix_size = local_x.size();
     assert(local_matrix_size == ShapeFunction::NPOINTS);
@@ -271,6 +298,11 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
+
+    DimVectorType const projected_body_force_vector =
+        _process_data.element_rotation_matrices[_element.getID()].transpose() *
+        _process_data.specific_body_force;
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
@@ -288,13 +320,19 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
             liquid_phase[MaterialPropertyLib::PropertyType::viscosity]
                 .template value<double>(vars, pos, t, dt);
 
-        auto const permeability =
-            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+        DimMatrixType const permeability =
+            MaterialPropertyLib::formEigenTensor<ShapeFunction::DIM>(
                 medium[MaterialPropertyLib::PropertyType::permeability].value(
                     vars, pos, t, dt));
-        LaplacianGravityVelocityCalculator::calculateVelocity(
-            ip, local_p_vec, ip_data, permeability, viscosity, fluid_density,
-            darcy_velocity_at_ips, _process_data);
+
+        Eigen::VectorXd const velocity_at_ip =
+            LaplacianGravityVelocityCalculator::calculateVelocity(
+                local_p_vec, ip_data, permeability, viscosity, fluid_density,
+                projected_body_force_vector, _process_data.has_gravity);
+
+        Eigen::MatrixXd const& rotation_matrix =
+            _process_data.element_rotation_matrices[_element.getID()];
+        darcy_velocity_at_ips.col(ip) = rotation_matrix * velocity_at_ip;
     }
 }
 
@@ -305,40 +343,39 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         Eigen::Map<NodalVectorType>& local_b,
         IntegrationPointData<NodalRowVectorType,
                              GlobalDimNodalMatrixType> const& ip_data,
-        Eigen::MatrixXd const& permeability, double const mu,
-        double const rho_L, const LiquidFlowData& process_data)
+        DimMatrixType const& permeability, double const mu, double const rho_L,
+        DimVectorType const& specific_body_force, bool const has_gravity)
 {
     const double K = permeability(0, 0) / mu;
     const double fac = K * ip_data.integration_weight;
     local_K.noalias() += fac * ip_data.dNdx.transpose() * ip_data.dNdx;
 
-    if (process_data.has_gravity)
+    if (has_gravity)
     {
-        local_b.noalias() += (fac * rho_L) * ip_data.dNdx.transpose() *
-                             process_data.specific_body_force;
+        local_b.noalias() +=
+            (fac * rho_L) * ip_data.dNdx.transpose() * specific_body_force;
     }
 }
 
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+Eigen::Matrix<double, ShapeFunction::DIM, 1>
+LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     IsotropicCalculator::calculateVelocity(
-        unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
+        Eigen::Map<const NodalVectorType> const& local_p,
         IntegrationPointData<NodalRowVectorType,
                              GlobalDimNodalMatrixType> const& ip_data,
-        Eigen::MatrixXd const& permeability, double const mu,
-        double const rho_L,
-        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips,
-        const LiquidFlowData& process_data)
+        DimMatrixType const& permeability, double const mu, double const rho_L,
+        DimVectorType const& specific_body_force, bool const has_gravity)
 {
     const double K = permeability(0, 0) / mu;
     // Compute the velocity
-    darcy_velocity_at_ips.col(ip).noalias() = -K * ip_data.dNdx * local_p;
+    DimVectorType velocity = -K * ip_data.dNdx * local_p;
     // gravity term
-    if (process_data.has_gravity)
+    if (has_gravity)
     {
-        darcy_velocity_at_ips.col(ip).noalias() +=
-            (K * rho_L) * process_data.specific_body_force;
+        velocity += (K * rho_L) * specific_body_force;
     }
+    return velocity;
 }
 
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
@@ -348,40 +385,39 @@ void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
         Eigen::Map<NodalVectorType>& local_b,
         IntegrationPointData<NodalRowVectorType,
                              GlobalDimNodalMatrixType> const& ip_data,
-        Eigen::MatrixXd const& permeability, double const mu,
-        double const rho_L, const LiquidFlowData& process_data)
+        DimMatrixType const& permeability, double const mu, double const rho_L,
+        DimVectorType const& specific_body_force, bool const has_gravity)
 {
     const double fac = ip_data.integration_weight / mu;
     local_K.noalias() +=
         fac * ip_data.dNdx.transpose() * permeability * ip_data.dNdx;
 
-    if (process_data.has_gravity)
+    if (has_gravity)
     {
         local_b.noalias() += (fac * rho_L) * ip_data.dNdx.transpose() *
-                             permeability * process_data.specific_body_force;
+                             permeability * specific_body_force;
     }
 }
 
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
-void LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
+Eigen::Matrix<double, ShapeFunction::DIM, 1>
+LiquidFlowLocalAssembler<ShapeFunction, IntegrationMethod, GlobalDim>::
     AnisotropicCalculator::calculateVelocity(
-        unsigned const ip, Eigen::Map<const NodalVectorType> const& local_p,
+        Eigen::Map<const NodalVectorType> const& local_p,
         IntegrationPointData<NodalRowVectorType,
                              GlobalDimNodalMatrixType> const& ip_data,
-        Eigen::MatrixXd const& permeability, double const mu,
-        double const rho_L,
-        MatrixOfVelocityAtIntegrationPoints& darcy_velocity_at_ips,
-        const LiquidFlowData& process_data)
+        DimMatrixType const& permeability, double const mu, double const rho_L,
+        DimVectorType const& specific_body_force, bool const has_gravity)
 {
     // Compute the velocity
-    darcy_velocity_at_ips.col(ip).noalias() =
-        -permeability * ip_data.dNdx * local_p / mu;
+    DimVectorType velocity = -permeability * ip_data.dNdx * local_p / mu;
+
     // gravity term
-    if (process_data.has_gravity)
+    if (has_gravity)
     {
-        darcy_velocity_at_ips.col(ip).noalias() +=
-            (rho_L / mu) * permeability * process_data.specific_body_force;
+        velocity += (rho_L / mu) * permeability * specific_body_force;
     }
+    return velocity;
 }
 
 }  // namespace LiquidFlow
