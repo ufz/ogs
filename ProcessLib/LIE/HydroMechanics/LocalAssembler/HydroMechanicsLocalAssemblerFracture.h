@@ -80,14 +80,16 @@ private:
 
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =
-        ShapeMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
+        ShapeMatrixPolicyType<ShapeFunctionDisplacement,
+                              ShapeFunctionDisplacement::DIM>;
     using HMatricesType =
         HMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
     using HMatrixType = typename HMatricesType::HMatrixType;
 
     // Types for pressure.
     using ShapeMatricesTypePressure =
-        ShapeMatrixPolicyType<ShapeFunctionPressure, GlobalDim>;
+        ShapeMatrixPolicyType<ShapeFunctionPressure,
+                              ShapeFunctionPressure::DIM>;
 
     // Types for the integration point data
     using IntegrationPointDataType =
