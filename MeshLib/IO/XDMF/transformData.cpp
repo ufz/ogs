@@ -30,7 +30,7 @@ namespace MeshLib::IO
 {
 struct XdmfTopology
 {
-    // https://www.xdmf.org/index.php/XDMF_Model_and_Format#Topology, Section
+    // https://xdmf.org/index.php/XDMF_Model_and_Format#Topology, Section
     // Arbitrary
     unsigned int id;
     unsigned int number_of_nodes;

@@ -56,7 +56,7 @@ struct XdmfData final
              std::optional<MeshLib::MeshItemType> attribute_center,
              unsigned int const index, unsigned int n_files);
     // a hyperslab is defined by starts and strides see
-    // https://www.xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
+    // https://xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
     std::vector<XdmfDimType> starts;
     std::vector<XdmfDimType> strides;
     std::vector<XdmfDimType> global_block_dims;
