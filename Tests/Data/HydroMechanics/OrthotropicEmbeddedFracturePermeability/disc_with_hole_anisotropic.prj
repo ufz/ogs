@@ -84,6 +84,7 @@
                     <fracture_normals> 1 0 0    0 1 0 </fracture_normals>
                     <fracture_rotation_xy>phi</fracture_rotation_xy>
                     <fracture_rotation_yz>zero</fracture_rotation_yz>
+                    <jacobian_factor>0.707</jacobian_factor>
                 </property>
             </properties>
         </medium>
@@ -264,10 +265,8 @@
             <name>general_linear_solver</name>
             <lis>-i bicgstab -p ilu -tol 1e-12 -maxiter 10000</lis>
             <eigen>
-                <solver_type>BiCGSTAB</solver_type>
-                <precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-12</error_tolerance>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
             </eigen>
         </linear_solver>
     </linear_solvers>
