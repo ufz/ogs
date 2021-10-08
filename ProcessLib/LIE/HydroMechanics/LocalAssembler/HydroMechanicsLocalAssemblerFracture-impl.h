@@ -294,7 +294,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         Eigen::Matrix<double, 1, displacement_size> const mT_R_Hg =
             identity2.transpose() * R * H_g;
         // velocity in global coordinates
-        ip_data.darcy_velocity.head(GlobalDim).noalias() =
+        ip_data.darcy_velocity =
             -global2local_rotation.transpose() * k * grad_head_over_mu;
         J_pg.noalias() += N_p.transpose() * S * N_p * p_dot * mT_R_Hg * ip_w;
         J_pg.noalias() +=
