@@ -99,6 +99,7 @@ private:
                                      GlobalDim>;
 
     using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
+    using DimVectorType = typename ShapeMatricesTypePressure::DimVectorType;
 
     HydroMechanicsProcessData<GlobalDim>& _process_data;
 

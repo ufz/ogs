@@ -196,8 +196,8 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     Eigen::MatrixXd const global2local_rotation =
         R.template topLeftCorner<ShapeFunctionPressure::DIM, GlobalDim>();
 
-    auto const& gravity_vec =
-        (global2local_rotation * _process_data.specific_body_force).eval();
+    DimVectorType const gravity_vec =
+        global2local_rotation * _process_data.specific_body_force;
 
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
