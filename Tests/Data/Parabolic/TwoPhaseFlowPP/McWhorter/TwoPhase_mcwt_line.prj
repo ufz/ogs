@@ -143,9 +143,10 @@
             <process ref="GW23">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1.e-6</abstol>
+                    <abstols>1e-05 1e-05</abstols>
+                    <reltols>1e-08 1e-08</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -165,6 +166,10 @@
                         </pair>
                         <pair>
                             <repeat>100</repeat>
+                            <delta_t>0.5</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>100</repeat>
                             <delta_t>1</delta_t>
                         </pair>
                         <pair>
@@ -174,10 +179,6 @@
                         <pair>
                             <repeat>100</repeat>
                             <delta_t>5</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>100</repeat>
-                            <delta_t>10</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
