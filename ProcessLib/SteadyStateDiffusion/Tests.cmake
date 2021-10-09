@@ -487,6 +487,21 @@ AddTest(
     square_1e1_neumann_ts_1_t_1_000000_1.vtu square_1e1_neumann_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
 )
 
+AddTest(
+    NAME ParallelFEM_SteadyStateDiffusion_cube_2
+    PATH EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/2
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e4_anisotropic.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    cube_1e4_anisotropic_ts_1_t_1_000000_0.vtu cube_1e4_anisotropic_ts_1_t_1_000000_0.vtu pressure pressure 1e-14 0
+    cube_1e4_anisotropic_ts_1_t_1_000000_1.vtu cube_1e4_anisotropic_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
+)
+#OgsTest(PROJECTFILE "EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/2/cube_1e4_anisotropic.prj")
+
 # Single core
 # CUBE 1x1x1 GROUNDWATER FLOW TESTS
 foreach(mesh_size 1e0 1e1 1e2 1e3)

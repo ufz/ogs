@@ -34,8 +34,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
 
     // parse mapping data
     using Values = std::vector<double>;
-    using Index_Values = std::pair<int, Values>;
-    std::vector<Index_Values> vec_index_values;
+    std::map<int, Values> vec_index_values;
     //! \ogs_file_param{prj__parameters__parameter__Group__index_values}
     for (auto p : config.getConfigSubtreeList("index_values"))
     {
@@ -48,7 +47,7 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
             if (value)
             {
                 Values values(1, *value);
-                vec_index_values.emplace_back(index, values);
+                vec_index_values.emplace(index, values);
                 continue;
             }
         }
@@ -62,53 +61,46 @@ std::unique_ptr<ParameterBase> createGroupBasedParameter(
             OGS_FATAL("No value available for constant parameter.");
         }
 
-        vec_index_values.emplace_back(index, values);
+        vec_index_values.emplace(index, values);
     }
 
     // check the input
-    unsigned n_values = vec_index_values.front().second.size();
     for (auto p : vec_index_values)
     {
-        auto itr = std::find(group_id_property->begin(),
-                             group_id_property->end(), p.first);
-        if (itr == group_id_property->end())
+#ifndef USE_PETSC  // In case of partitioned meshes not all of the material ids
+                   // might be available in the particular partition, therefore
+                   // the check is omitted.
+        if (std::find(group_id_property->begin(), group_id_property->end(),
+                      p.first) == group_id_property->end())
         {
             OGS_FATAL(
                 "Specified property index {:d} does not exist in the property "
                 "vector {:s}",
                 p.first, group_id_property_name);
         }
+#endif
 
+        auto const n_values = vec_index_values.begin()->second.size();
         if (p.second.size() != n_values)
         {
             OGS_FATAL(
                 "The length of some values ({:d}) is different from the first "
-                "one ({:d}). "
-                "The length should be same for all index_values.",
+                "one ({:d}). The length should be same for all index_values.",
                 p.second.size(), n_values);
         }
-    }
-
-    // create a mapping table
-    const int max_index =
-        *std::max_element(group_id_property->begin(), group_id_property->end());
-    std::vector<Values> vec_values(max_index + 1);
-    for (auto p : vec_index_values)
-    {
-        vec_values[p.first] = p.second;
     }
 
     if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Node)
     {
         return std::make_unique<
             GroupBasedParameter<double, MeshLib::MeshItemType::Node>>(
-            name, mesh, *group_id_property, vec_values);
+            name, mesh, *group_id_property, vec_index_values);
     }
     if (group_id_property->getMeshItemType() == MeshLib::MeshItemType::Cell)
     {
         return std::make_unique<
             GroupBasedParameter<double, MeshLib::MeshItemType::Cell>>(
-            name, mesh, *group_id_property, vec_values);
+            name, mesh, *group_id_property, vec_index_values);
     }
 
     OGS_FATAL("Mesh item type of the specified property is not supported.");
