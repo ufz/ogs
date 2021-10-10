@@ -40,9 +40,8 @@ bool PiecewiseLinearMonotonicCurve::isStrongMonotonic() const
     }
 
     return std::none_of(supp_pnts_.begin(), supp_pnts_.end(),
-                        [&](const double p) {
-                            return this->getDerivative(p) * gradient0 <= 0.;
-                        });
+                        [&](const double p)
+                        { return this->getDerivative(p) * gradient0 <= 0.; });
 }
 
 double PiecewiseLinearMonotonicCurve::getInverseVariable(const double y) const
