@@ -12,7 +12,6 @@
 
 #include "Constant.h"
 
-
 namespace MaterialPropertyLib
 {
 struct ZeroInitPropertyDataType

@@ -20,9 +20,10 @@ namespace MaterialPropertyLib
 // For 1D problems
 //
 template <>
-EffectiveThermalConductivityPorosityMixing<1>::EffectiveThermalConductivityPorosityMixing(
-    std::string name,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system)
+EffectiveThermalConductivityPorosityMixing<1>::
+    EffectiveThermalConductivityPorosityMixing(
+        std::string name,
+        ParameterLib::CoordinateSystem const* const local_coordinate_system)
     : local_coordinate_system_(local_coordinate_system)
 {
     name_ = std::move(name);
@@ -52,9 +53,10 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .template value<double>(variable_array, pos, t, dt);
-    auto const solid_thermal_conductivity = solid_phase.property(
-                        MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .template value<double>(variable_array, pos, t, dt);
+    auto const solid_thermal_conductivity =
+        solid_phase
+            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template value<double>(variable_array, pos, t, dt);
 
     auto const porosity =
         std::get<double>(variable_array[static_cast<int>(Variable::porosity)]);
@@ -69,19 +71,21 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
 }
 template <>
 PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::dValue(
-    VariableArray const&, Variable const,
-    ParameterLib::SpatialPosition const&, double const,
-    double const) const
+    VariableArray const&, Variable const, ParameterLib::SpatialPosition const&,
+    double const, double const) const
 {
-    OGS_FATAL("dValue is not implemented for EffectiveThermalConductivityPorosityMixing");
+    OGS_FATAL(
+        "dValue is not implemented for "
+        "EffectiveThermalConductivityPorosityMixing");
 }
 //
 // For 2D and 3D problems
 //
 template <int GlobalDim>
-EffectiveThermalConductivityPorosityMixing<GlobalDim>::EffectiveThermalConductivityPorosityMixing(
-    std::string name,
-    ParameterLib::CoordinateSystem const* const local_coordinate_system)
+EffectiveThermalConductivityPorosityMixing<GlobalDim>::
+    EffectiveThermalConductivityPorosityMixing(
+        std::string name,
+        ParameterLib::CoordinateSystem const* const local_coordinate_system)
     : local_coordinate_system_(local_coordinate_system)
 {
     name_ = std::move(name);
@@ -124,12 +128,14 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
 
     // Local coordinate transformation is only applied for the case that the
     // initial solid thermal conductivity is given with orthotropic assumption.
-    if (local_coordinate_system_ && (solid_thermal_conductivity.cols() == GlobalDim))
+    if (local_coordinate_system_ &&
+        (solid_thermal_conductivity.cols() == GlobalDim))
     {
         Eigen::Matrix<double, GlobalDim, GlobalDim> const e =
             local_coordinate_system_->transformation<GlobalDim>(pos);
 
-        solid_thermal_conductivity = e.transpose() * solid_thermal_conductivity * e;
+        solid_thermal_conductivity =
+            e.transpose() * solid_thermal_conductivity * e;
     }
     Eigen::Matrix<double, GlobalDim, GlobalDim> const
         effective_thermal_conductivity =
@@ -141,11 +147,12 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
 
 template <int GlobalDim>
 PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::dValue(
-    VariableArray const&, Variable const,
-    ParameterLib::SpatialPosition const&, double const,
-    double const) const
+    VariableArray const&, Variable const, ParameterLib::SpatialPosition const&,
+    double const, double const) const
 {
-    OGS_FATAL("dValue is not implemented for EffectiveThermalConductivityPorosityMixing");
+    OGS_FATAL(
+        "dValue is not implemented for "
+        "EffectiveThermalConductivityPorosityMixing");
 }
 template class EffectiveThermalConductivityPorosityMixing<2>;
 template class EffectiveThermalConductivityPorosityMixing<3>;

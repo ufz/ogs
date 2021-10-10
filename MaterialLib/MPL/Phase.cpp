@@ -43,9 +43,8 @@ Component const& Phase::component(std::string const& name) const
 {
     return *BaseLib::findElementOrError(
         components_.begin(), components_.end(),
-        [&name](std::unique_ptr<Component> const& component) {
-            return component->name == name;
-        },
+        [&name](std::unique_ptr<Component> const& component)
+        { return component->name == name; },
         "Could not find component name '" + name + "'.");
 }
 

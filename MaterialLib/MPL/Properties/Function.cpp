@@ -49,7 +49,8 @@ static void updateVariableValues(
 
         double* value_ptr = index_value_ptr_pair.second;
         std::visit(
-            [&value_ptr, &index](auto&& v) {
+            [&value_ptr, &index](auto&& v)
+            {
                 using T = std::decay_t<decltype(v)>;
                 if constexpr (std::is_same_v<T, std::monostate>)
                 {
@@ -126,7 +127,8 @@ static std::vector<std::string> collectVariables(
 {
     std::vector<std::string> variables;
 
-    auto collect_variables = [&](auto string_expressions) {
+    auto collect_variables = [&](auto string_expressions)
+    {
         for (auto const& string_expression : string_expressions)
         {
             if (!exprtk::collect_variables(string_expression, variables))
@@ -198,9 +200,8 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
 {
     auto const it = std::find_if(begin(dvalue_expressions_),
                                  end(dvalue_expressions_),
-                                 [&primary_variable](auto const& v) {
-                                     return v.first == primary_variable;
-                                 });
+                                 [&primary_variable](auto const& v)
+                                 { return v.first == primary_variable; });
 
     if (it == end(dvalue_expressions_))
     {

@@ -134,20 +134,23 @@ Lubby2<DisplacementDim>::integrateStress(
         using LocalResidualVector =
             Eigen::Matrix<double, KelvinVectorSize * 3, 1>;
 
-        auto const update_residual = [&](LocalResidualVector& residual) {
+        auto const update_residual = [&](LocalResidualVector& residual)
+        {
             calculateResidualBurgers(dt, eps_m_d_i, eps_m_d_t, sigd_j, sigd_t,
                                      state.eps_K_j, state.eps_K_t,
                                      state.eps_M_j, state.eps_M_t, residual,
                                      local_lubby2_properties);
         };
 
-        auto const update_jacobian = [&](LocalJacobianMatrix& jacobian) {
+        auto const update_jacobian = [&](LocalJacobianMatrix& jacobian)
+        {
             calculateJacobianBurgers(
                 t, x, dt, jacobian, sig_eff, sigd_j, state.eps_K_j,
                 local_lubby2_properties);  // for solution dependent Jacobians
         };
 
-        auto const update_solution = [&](LocalResidualVector const& increment) {
+        auto const update_solution = [&](LocalResidualVector const& increment)
+        {
             // increment solution vectors
             sigd_j.noalias() += increment.template segment<KelvinVectorSize>(
                 KelvinVectorSize * 0);

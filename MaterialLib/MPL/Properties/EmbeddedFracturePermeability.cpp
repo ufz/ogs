@@ -52,7 +52,8 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    Eigen::Matrix<double, 3, 1> const n = [&] {
+    Eigen::Matrix<double, 3, 1> const n = [&]
+    {
         if (_n_const)
         {
             return _n;
@@ -90,7 +91,8 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
             "derivatives with respect to strain only.");
     }
 
-    Eigen::Matrix<double, 3, 1> const n = [&] {
+    Eigen::Matrix<double, 3, 1> const n = [&]
+    {
         if (_n_const)
         {
             return _n;

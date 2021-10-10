@@ -36,18 +36,16 @@ Phase const& Medium::phase(std::string const& phase_name) const
 {
     return *BaseLib::findElementOrError(
         phases_.begin(), phases_.end(),
-        [&phase_name](
-            std::unique_ptr<MaterialPropertyLib::Phase> const& phase) {
-            return phase->name == phase_name;
-        },
+        [&phase_name](std::unique_ptr<MaterialPropertyLib::Phase> const& phase)
+        { return phase->name == phase_name; },
         "Could not find phase name '" + phase_name + "'.");
 }
 
 bool Medium::hasPhase(std::string const& phase_name) const
 {
-    return std::any_of(
-        begin(phases_), end(phases_),
-        [&phase_name](auto const& phase) { return phase->name == phase_name; });
+    return std::any_of(begin(phases_), end(phases_),
+                       [&phase_name](auto const& phase)
+                       { return phase->name == phase_name; });
 }
 
 Property const& Medium::property(PropertyType const& p) const

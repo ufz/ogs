@@ -48,9 +48,8 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
 
     if (std::none_of(allowed_phase_types.begin(),
                      allowed_phase_types.end(),
-                     [&phase_type](std::string const& type) {
-                         return phase_type == type;
-                     }))
+                     [&phase_type](std::string const& type)
+                     { return phase_type == type; }))
     {
         ERR("Phase type should be one of:");
         for (auto const& type : allowed_phase_types)
@@ -114,9 +113,8 @@ std::vector<std::unique_ptr<Phase>> createPhases(
 
         if (std::find_if(phases.begin(),
                          phases.end(),
-                         [phase_name = phase->name](auto const& p) {
-                             return p->name == phase_name;
-                         }) != phases.end())
+                         [phase_name = phase->name](auto const& p)
+                         { return p->name == phase_name; }) != phases.end())
         {
             OGS_FATAL("Found duplicates with the same phase name tag '{:s}'.",
                       phase->name);

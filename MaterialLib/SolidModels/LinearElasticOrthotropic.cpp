@@ -79,7 +79,8 @@ LinearElasticOrthotropic<DisplacementDim>::getElasticTensor(
     // clang-format on
 
     KelvinMatrixType<3> const C_ortho = S_ortho.inverse();
-    auto const Q = [this, &x]() -> KelvinMatrixType<3> {
+    auto const Q = [this, &x]() -> KelvinMatrixType<3>
+    {
         if (!_local_coordinate_system)
         {
             return KelvinMatrixType<3>::Identity();
