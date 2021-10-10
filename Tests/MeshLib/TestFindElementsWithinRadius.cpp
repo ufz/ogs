@@ -34,7 +34,8 @@ TEST_F(MeshLibFindElementWithinRadius, ZeroRadius)
     auto mesh =
         std::unique_ptr<Mesh>(MeshGenerator::generateRegularQuadMesh(10., 10));
 
-    auto same_element_returned = [&mesh](std::size_t& element_id) -> bool {
+    auto same_element_returned = [&mesh](std::size_t& element_id) -> bool
+    {
         auto result =
             findElementsWithinRadius(*mesh->getElement(element_id), 0.);
         return (result.size() == 1) && (result[0] == element_id);
@@ -164,7 +165,8 @@ TEST_F(MeshLibFindElementWithinRadius, VeryLargeRadius)
     auto mesh =
         std::unique_ptr<Mesh>(MeshGenerator::generateRegularQuadMesh(10., 10));
 
-    auto all_elements_returned = [&mesh](std::size_t& element_id) -> bool {
+    auto all_elements_returned = [&mesh](std::size_t& element_id) -> bool
+    {
         auto result =
             findElementsWithinRadius(*mesh->getElement(element_id), 1e5);
         BaseLib::makeVectorUnique(result);
@@ -211,9 +213,8 @@ TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius2d)
         compare_to_brute_force_search, 100,
         ac::make_arbitrary(ac::generator<std::size_t>(),
                            ac::map(&ac::absoluteValue, ac::generator<double>()))
-            .discard_if([](std::size_t /*unused*/, double const r) {
-                return (r < 1e-16);
-            }),
+            .discard_if([](std::size_t /*unused*/, double const r)
+                        { return (r < 1e-16); }),
         gtest_reporter);
 }
 
@@ -230,8 +231,7 @@ TEST_F(MeshLibFindElementWithinRadius, RandomPositiveRadius3d)
         compare_to_brute_force_search, 100,
         ac::make_arbitrary(ac::generator<std::size_t>(),
                            ac::map(&ac::absoluteValue, ac::generator<double>()))
-            .discard_if([](std::size_t /*unused*/, double const r) {
-                return (r < 1e-16);
-            }),
+            .discard_if([](std::size_t /*unused*/, double const r)
+                        { return (r < 1e-16); }),
         gtest_reporter);
 }

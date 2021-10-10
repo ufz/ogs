@@ -153,9 +153,8 @@ MeshLib::Mesh createMeshFromSelectedNodes(
     std::vector<MeshLib::Node*> some_nodes;
     std::transform(begin(selected_nodes), end(selected_nodes),
                    back_inserter(some_nodes),
-                   [&mesh](std::size_t const node_id) {
-                       return new MeshLib::Node(*mesh.getNode(node_id));
-                   });
+                   [&mesh](std::size_t const node_id)
+                   { return new MeshLib::Node(*mesh.getNode(node_id)); });
 
     // The resulting mesh without elements containing the selected nodes.
     MeshLib::Mesh result("boundary_mesh", some_nodes, {});

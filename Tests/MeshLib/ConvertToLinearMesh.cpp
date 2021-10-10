@@ -55,8 +55,11 @@ std::variant<std::vector<std::size_t>, std::string> compareNodes(
     for (std::size_t i = 0; i < nnodes; ++i)
     {
         Node* a_node = a_nodes[i];
-        auto const b_it =
-            std::find_if(begin(b_nodes), end(b_nodes), [&](Node* const b_node) {
+        auto const b_it = std::find_if(
+            begin(b_nodes),
+            end(b_nodes),
+            [&](Node* const b_node)
+            {
                 return *a_node ==
                        *b_node;  // coordinate comparison up to epsilon
             });
@@ -220,7 +223,8 @@ TEST_F(ConvertToLinearMesh, GeneratedHexMeshRandomizedNodes)
             << "Quadratic mesh nodes permutation test failed: " << *result;
     }
 
-    auto clone_element_using_permuted_nodes = [&](Element* const e) {
+    auto clone_element_using_permuted_nodes = [&](Element* const e)
+    {
         Node** nodes = new Node*[e->getNumberOfNodes()];
         for (std::size_t i = 0; i < e->getNumberOfNodes(); ++i)
         {

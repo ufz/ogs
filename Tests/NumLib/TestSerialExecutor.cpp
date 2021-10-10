@@ -61,9 +61,8 @@ public:
     static bool referenceIsZero(Container const& reference)
     {
         return std::all_of(reference.begin(), reference.end(),
-                           [](ContainerElement const reference_value) {
-                               return reference_value == 0;
-                           });
+                           [](ContainerElement const reference_value)
+                           { return reference_value == 0; });
     }
 
     static std::size_t const size = 100;
@@ -79,18 +78,23 @@ TYPED_TEST(NumLibSerialExecutor, ContainerArgument)
     using Container = typename TestFixture::Container;
     using PtrContainer = typename TestFixture::PtrContainer;
 
-    TestFixture::test([](PtrContainer const& ctnr, Container& ref) {
-        auto cb_static = [](Elem const value, std::size_t const index,
-                            Container& ref_inner) {
-            TestFixture::subtractFromReferenceStatic(value, index, ref_inner);
-        };
+    TestFixture::test(
+        [](PtrContainer const& ctnr, Container& ref)
+        {
+            auto cb_static = [](Elem const value, std::size_t const index,
+                                Container& ref_inner) {
+                TestFixture::subtractFromReferenceStatic(value, index,
+                                                         ref_inner);
+            };
 
-        NumLib::SerialExecutor::executeDereferenced(cb_static, ctnr, ref);
-    });
+            NumLib::SerialExecutor::executeDereferenced(cb_static, ctnr, ref);
+        });
 
-    TestFixture::test([this](PtrContainer const& ctnr, Container& ref) {
-        NumLib::SerialExecutor::executeMemberDereferenced(
-            *static_cast<TestFixture*>(this),
-            &TestFixture::subtractFromReference, ctnr, ref);
-    });
+    TestFixture::test(
+        [this](PtrContainer const& ctnr, Container& ref)
+        {
+            NumLib::SerialExecutor::executeMemberDereferenced(
+                *static_cast<TestFixture*>(this),
+                &TestFixture::subtractFromReference, ctnr, ref);
+        });
 }

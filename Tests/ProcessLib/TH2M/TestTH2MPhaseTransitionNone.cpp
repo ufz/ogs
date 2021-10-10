@@ -97,7 +97,8 @@ TEST(ProcessLib, TH2MPhaseTransitionNone)
     variable_array[static_cast<int>(
         MaterialPropertyLib::Variable::temperature)] = T;
 
-    ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time, dt);
+    ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time,
+                                      dt);
     auto const& cv = ptm->cv;
 
     // reference values

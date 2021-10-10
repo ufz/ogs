@@ -201,11 +201,10 @@ TEST(MeshLib, MeshGeneratorRegularPyramid)
     ASSERT_DOUBLE_EQ(L, node_n1[2]);
 
     // check if the domain volume equals the volume of the elements
-    long double const element_volumes =
-        std::accumulate(cbegin(msh->getElements()), cend(msh->getElements()),
-                        0., [](double const volume, auto* const element) {
-                            return volume + element->computeVolume();
-                        });
+    long double const element_volumes = std::accumulate(
+        cbegin(msh->getElements()), cend(msh->getElements()), 0.,
+        [](double const volume, auto* const element)
+        { return volume + element->computeVolume(); });
 
     EXPECT_NEAR(L * L * L, element_volumes, 1e-10);
 

@@ -64,8 +64,9 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixing)
     variable_array[static_cast<int>(MaterialPropertyLib::Variable::porosity)] =
         0.12;
     auto const eff_th_cond = MaterialPropertyLib::formEigenTensor<3>(
-            medium->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .value(variable_array, pos, time, dt));
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 2.481, 1.e-10);
 }
 

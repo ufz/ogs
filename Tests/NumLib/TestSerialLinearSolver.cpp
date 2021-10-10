@@ -75,7 +75,8 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
 
     auto local_asm_builder =
         [&](std::size_t const id,
-            MeshLib::Element const& item) -> LocalAssembler* {
+            MeshLib::Element const& item) -> LocalAssembler*
+    {
         assert(local_to_global_index_map.size() > id);
 
         auto const num_local_dof =

@@ -174,9 +174,8 @@ public:
 
     LocalAssemblerDataInterface::Function getClosure() const
     {
-        return [this](std::array<double, 3> const& coords) {
-            return this->operator()(coords);
-        };
+        return [this](std::array<double, 3> const& coords)
+        { return this->operator()(coords); };
     }
 
     virtual ~FBase() = default;

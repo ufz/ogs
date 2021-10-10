@@ -34,7 +34,8 @@ TEST(NumLib, FemShapeMatricesWithEigen)
     using ShapeMatricesType =
         ShapeMatrices<NodalVector, DimNodalMatrix, DimMatrix, DimNodalMatrix>;
 
-    auto setShapeDataToOnes = [](ShapeMatricesType& shape) {
+    auto setShapeDataToOnes = [](ShapeMatricesType& shape)
+    {
         shape.N.setOnes();
         shape.dNdr.setOnes();
         shape.dNdx.setOnes();

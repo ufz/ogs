@@ -29,18 +29,14 @@ TEST(NumLibNewtonRaphson, Sqrt3)
     // Initial value
     double state = 1;
 
-    auto const update_jacobian = [&state](LocalJacobianMatrix& jacobian) {
-        jacobian(0, 0) = 2 * state;
-    };
+    auto const update_jacobian = [&state](LocalJacobianMatrix& jacobian)
+    { jacobian(0, 0) = 2 * state; };
 
-    auto const update_residual = [&state](LocalResidualVector& residual) {
-        residual[0] = state * state - 3;
-    };
+    auto const update_residual = [&state](LocalResidualVector& residual)
+    { residual[0] = state * state - 3; };
 
-    auto const update_solution =
-        [&state](LocalResidualVector const& increment) {
-            state += increment[0];
-        };
+    auto const update_solution = [&state](LocalResidualVector const& increment)
+    { state += increment[0]; };
 
     auto const newton_solver =
         NumLib::NewtonRaphson<decltype(linear_solver), LocalJacobianMatrix,

@@ -55,13 +55,15 @@ TEST_F(MaterialPropertyLibExponentialProperty, TestNumericalDerivatives)
     double const time = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
 
-    auto y = [&](double const T) {
+    auto y = [&](double const T)
+    {
         MPL::VariableArray variable_array;
         variable_array[static_cast<int>(MPL::Variable::temperature)] = T;
         return p->template value<double>(variable_array, pos, time, dt);
     };
 
-    auto f = [&](double const T) {
+    auto f = [&](double const T)
+    {
         MPL::VariableArray variable_array;
         variable_array[static_cast<int>(MPL::Variable::temperature)] = T;
         double const v =

@@ -197,9 +197,11 @@ TEST_F(MeshLibBoundaryElementSearchInSimpleQuadMesh, PolylineSearch)
 template <typename ElementIterator>
 double computeAreaOfFaceElements(ElementIterator first, ElementIterator last)
 {
-    return std::accumulate(first, last, 0.0, [](double v, MeshLib::Element* e) {
-        return v + e->getContent();
-    });
+    return std::accumulate(first,
+                           last,
+                           0.0,
+                           [](double v, MeshLib::Element* e)
+                           { return v + e->getContent(); });
 }
 
 void MeshLibBoundaryElementSearchInSimpleHexMesh::

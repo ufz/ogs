@@ -27,9 +27,11 @@ protected:
     void generateRandomPoints(VectorOfPoints& ps, std::size_t const n = 1000)
     {
         std::uniform_real_distribution<double> rnd(-1, 1);
-        std::generate_n(std::back_inserter(ps), n, [&]() {
-            return new GeoLib::Point(rnd(gen), rnd(gen), rnd(gen), ps.size());
-        });
+        std::generate_n(std::back_inserter(ps), n,
+                        [&]() {
+                            return new GeoLib::Point(rnd(gen), rnd(gen),
+                                                     rnd(gen), ps.size());
+                        });
     }
 
 protected:

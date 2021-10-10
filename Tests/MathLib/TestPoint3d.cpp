@@ -35,7 +35,8 @@ struct MathLibPoint3d : public ::testing::Test
 TEST_F(MathLibPoint3d, ComparisonOperatorLessEqSamePoint)
 {
     // A point is always less or equal to itself and its copy.
-    auto samePointLessEqualCompare = [](MathLib::Point3d const& p) {
+    auto samePointLessEqualCompare = [](MathLib::Point3d const& p)
+    {
         const auto& q = p;
         return lessEq(p, p) && lessEq(p, q) && lessEq(q, p);
     };
@@ -52,7 +53,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualLargePerturbation)
     // And the original point is always smaller or equal to the perturbed point.
     auto pointWithLargeAddedValue = [](MathLib::Point3d const& p,
                                        double const perturbation,
-                                       unsigned const coordinate) {
+                                       unsigned const coordinate)
+    {
         auto q = p;
         q[coordinate] = q[coordinate] + perturbation;
         return !lessEq(q, p) && lessEq(p, q);
@@ -65,9 +67,9 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualLargePerturbation)
         ac::make_arbitrary(pointGenerator,
                            ac::map(&ac::absoluteValue, ac::generator<double>()),
                            coordGenerator)
-            .discard_if(
-                [&eps](MathLib::Point3d const& /*unused*/, double const v,
-                       unsigned const /*unused*/) { return !(v > eps); }),
+            .discard_if([&eps](MathLib::Point3d const& /*unused*/,
+                               double const v, unsigned const /*unused*/)
+                        { return !(v > eps); }),
         gtest_reporter);
 }
 
@@ -78,7 +80,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualSmallPerturbation)
     // coordinates is always less or equal to the original point.
     auto pointWithSmallAddedValue = [](MathLib::Point3d const& p,
                                        double const perturbation,
-                                       unsigned const coordinate) {
+                                       unsigned const coordinate)
+    {
         auto q = p;
         q[coordinate] = q[coordinate] + perturbation;
         return lessEq(p, q) && lessEq(q, p);
@@ -97,7 +100,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessEqualSmallPerturbation)
 TEST_F(MathLibPoint3d, ComparisonOperatorEqualSamePoint)
 {
     // A point is always equal to itself and its copy.
-    auto samePointEqualCompare = [](MathLib::Point3d const& p) {
+    auto samePointEqualCompare = [](MathLib::Point3d const& p)
+    {
         const auto& q = p;
         return (p == p) && (p == q) && (q == p);
     };
@@ -113,7 +117,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualLargePerturbation)
     // never equal to the original point.
     auto pointWithLargeAddedValue = [](MathLib::Point3d const& p,
                                        double const perturbation,
-                                       unsigned const coordinate) {
+                                       unsigned const coordinate)
+    {
         auto q = p;
         q[coordinate] = q[coordinate] + perturbation;
         return !(p == q) && !(q == p);
@@ -125,9 +130,9 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualLargePerturbation)
         pointWithLargeAddedValue, 10000,
         ac::make_arbitrary(pointGenerator, ac::generator<double>(),
                            coordGenerator)
-            .discard_if(
-                [&eps](MathLib::Point3d const& /*unused*/, double const v,
-                       unsigned const /*unused*/) { return !(v > eps); }),
+            .discard_if([&eps](MathLib::Point3d const& /*unused*/,
+                               double const v, unsigned const /*unused*/)
+                        { return !(v > eps); }),
         gtest_reporter);
 }
 
@@ -138,7 +143,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualSmallPerturbation)
     // coordinates is always equal to the original point.
     auto pointWithSmallAddedValue = [](MathLib::Point3d const& p,
                                        double const perturbation,
-                                       unsigned const coordinate) {
+                                       unsigned const coordinate)
+    {
         auto q = p;
         q[coordinate] = q[coordinate] + perturbation;
         return (p == q) && (q == p);
@@ -158,7 +164,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorEqualSmallPerturbation)
 TEST_F(MathLibPoint3d, ComparisonOperatorLessSamePoint)
 {
     // A point is never less than itself or its copy.
-    auto samePointLessCompare = [](MathLib::Point3d const& p) {
+    auto samePointLessCompare = [](MathLib::Point3d const& p)
+    {
         const auto& q = p;
         return !(p < p) && !(p < q) && !(q < p);
     };
@@ -173,7 +180,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessLargePerturbation)
     // A point with any positive value added to one of its coordinates is
     // always larger then the original point.
     auto pointWithAddedValue = [](MathLib::Point3d const& p, double const eps,
-                                  unsigned const coordinate) {
+                                  unsigned const coordinate)
+    {
         auto q = p;
         q[coordinate] = q[coordinate] + eps;
         return (p < q) && !(q < p);
@@ -195,7 +203,8 @@ TEST_F(MathLibPoint3d, ComparisonOperatorLessSmallPerturbation)
     // always smaller then the original point.
     auto pointWithSubtractedValue = [](MathLib::Point3d const& p,
                                        double const eps,
-                                       unsigned const coordinate) {
+                                       unsigned const coordinate)
+    {
         auto q = p;
         q[coordinate] = q[coordinate] - eps;
         return (q < p) && !(p < q);

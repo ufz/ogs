@@ -8,6 +8,7 @@
  *
  */
 #include <gtest/gtest.h>
+
 #include <iomanip>
 
 #include "MaterialLib/MPL/Medium.h"

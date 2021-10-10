@@ -49,7 +49,8 @@ struct MeshGeoToolsLibGeoMapper : public ::testing::Test
 TEST_F(MeshGeoToolsLibGeoMapper, PointsOnSurfaceMesh)
 {
     auto testMapPointsOnMeshSurface =
-        [this](std::vector<GeoLib::Point>& pnts) -> bool {
+        [this](std::vector<GeoLib::Point>& pnts) -> bool
+    {
         GeoLib::GEOObjects geo_obj;
         std::string geo_name("TestGeoMapperPoints");
         auto points = std::make_unique<std::vector<GeoLib::Point*>>();
