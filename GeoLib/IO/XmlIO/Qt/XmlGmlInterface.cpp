@@ -238,7 +238,8 @@ void XmlGmlInterface::readPolylines(
         }
 
         QDomElement point = polyline.firstChildElement();
-        auto accessOrError = [this, &polyline](auto pt_idx) {
+        auto accessOrError = [this, &polyline](auto pt_idx)
+        {
             auto search = _idx_map.find(pt_idx);
             if (search == _idx_map.end())
             {
@@ -284,7 +285,8 @@ void XmlGmlInterface::readSurfaces(
                 surface.attribute("name").toStdString(), surfaces->size() - 1));
         }
 
-        auto accessOrError = [this, &surface](auto pt_idx) {
+        auto accessOrError = [this, &surface](auto pt_idx)
+        {
             auto search = _idx_map.find(pt_idx);
             if (search == _idx_map.end())
             {

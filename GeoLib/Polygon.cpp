@@ -174,9 +174,8 @@ bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
     // Sorting the intersection with respect to the distance to the point a.
     // This induces a partition of the line segment into sub segments.
     std::sort(s.begin(), s.end(),
-              [&a](GeoLib::Point const& p0, GeoLib::Point const& p1) {
-                  return MathLib::sqrDist(a, p0) < MathLib::sqrDist(a, p1);
-              });
+              [&a](GeoLib::Point const& p0, GeoLib::Point const& p1)
+              { return MathLib::sqrDist(a, p0) < MathLib::sqrDist(a, p1); });
 
     // remove sub segments with almost zero length
     for (std::size_t k(0); k < s.size() - 1;)
@@ -215,9 +214,9 @@ bool Polygon::containsSegment(GeoLib::LineSegment const& segment) const
 
 bool Polygon::isPolylineInPolygon(const Polyline& ply) const
 {
-    return std::all_of(ply.begin(), ply.end(), [this](auto const& segment) {
-        return containsSegment(segment);
-    });
+    return std::all_of(ply.begin(), ply.end(),
+                       [this](auto const& segment)
+                       { return containsSegment(segment); });
 }
 
 bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
@@ -232,7 +231,8 @@ bool Polygon::isPartOfPolylineInPolygon(const Polyline& ply) const
         }
     }
 
-    auto polygon_segment_intersects_line = [&](auto const& polygon_seg) {
+    auto polygon_segment_intersects_line = [&](auto const& polygon_seg)
+    {
         GeoLib::Point s;
         return std::any_of(ply.begin(), ply.end(),
                            [&polygon_seg, &s](auto const& polyline_seg) {

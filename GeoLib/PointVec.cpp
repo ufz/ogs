@@ -256,7 +256,7 @@ void PointVec::resetInternalDataStructures()
 {
     auto const& min(_aabb.getMinPoint());
     auto const& max(_aabb.getMaxPoint());
-    double const rel_eps(_rel_eps / (max-min).norm());
+    double const rel_eps(_rel_eps / (max - min).norm());
 
     _aabb = GeoLib::AABB(_data_vec->begin(), _data_vec->end());
 

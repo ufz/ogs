@@ -181,8 +181,9 @@ bool lineSegmentIntersect(GeoLib::LineSegment const& s0,
         return true;
     }
 
-    auto isLineSegmentIntersectingAB = [&v](Eigen::Vector3d const& ap,
-                                            std::size_t i) {
+    auto isLineSegmentIntersectingAB =
+        [&v](Eigen::Vector3d const& ap, std::size_t i)
+    {
         // check if p is located at v=(a,b): (ap = t*v, t in [0,1])
         return 0.0 <= ap[i] / v[i] && ap[i] / v[i] <= 1.0;
     };
@@ -411,8 +412,9 @@ std::unique_ptr<GeoLib::Point> triangleLineIntersection(
 void computeAndInsertAllIntersectionPoints(GeoLib::PointVec& pnt_vec,
                                            std::vector<GeoLib::Polyline*>& plys)
 {
-    auto computeSegmentIntersections = [&pnt_vec](GeoLib::Polyline& poly0,
-                                                  GeoLib::Polyline& poly1) {
+    auto computeSegmentIntersections =
+        [&pnt_vec](GeoLib::Polyline& poly0, GeoLib::Polyline& poly1)
+    {
         for (auto seg0_it(poly0.begin()); seg0_it != poly0.end(); ++seg0_it)
         {
             for (auto seg1_it(poly1.begin()); seg1_it != poly1.end(); ++seg1_it)
@@ -504,7 +506,8 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
 
         // Since orient_ab and orient_abd vanish, a, b, c, d are on the same
         // line and for this reason it is enough to check the x-component.
-        auto isPointOnSegment = [](double q, double p0, double p1) {
+        auto isPointOnSegment = [](double q, double p0, double p1)
+        {
             double const t((q - p0) / (p1 - p0));
             return 0 <= t && t <= 1;
         };
@@ -580,7 +583,8 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
     // the function checks if the point c is onto the line segment (a,b)
     auto isCollinearPointOntoLineSegment = [](MathLib::Point3d const& a,
                                               MathLib::Point3d const& b,
-                                              MathLib::Point3d const& c) {
+                                              MathLib::Point3d const& c)
+    {
         if (b[0] - a[0] != 0)
         {
             double const t = (c[0] - a[0]) / (b[0] - a[0]);
@@ -655,39 +659,40 @@ void sortSegments(MathLib::Point3d const& seg_beg_pnt,
     auto findNextSegment =
         [&eps](MathLib::Point3d const& seg_beg_pnt,
                std::vector<GeoLib::LineSegment>& sub_segments,
-               std::vector<GeoLib::LineSegment>::iterator& sub_seg_it) {
-            if (sub_seg_it == sub_segments.end())
+               std::vector<GeoLib::LineSegment>::iterator& sub_seg_it)
+    {
+        if (sub_seg_it == sub_segments.end())
+        {
+            return;
+        }
+        // find appropriate segment for the given segment begin point
+        auto act_beg_seg_it = std::find_if(
+            sub_seg_it, sub_segments.end(),
+            [&seg_beg_pnt, &eps](GeoLib::LineSegment const& seg)
             {
-                return;
-            }
-            // find appropriate segment for the given segment begin point
-            auto act_beg_seg_it = std::find_if(
-                sub_seg_it, sub_segments.end(),
-                [&seg_beg_pnt, &eps](GeoLib::LineSegment const& seg) {
-                    return MathLib::sqrDist(seg_beg_pnt, seg.getBeginPoint()) <
-                               eps ||
-                           MathLib::sqrDist(seg_beg_pnt, seg.getEndPoint()) <
-                               eps;
-                });
-            if (act_beg_seg_it == sub_segments.end())
-            {
-                return;
-            }
-            // if necessary correct orientation of segment, i.e. swap beg and
-            // end
-            if (MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getEndPoint()) <
-                MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getBeginPoint()))
-            {
-                std::swap(act_beg_seg_it->getBeginPoint(),
-                          act_beg_seg_it->getEndPoint());
-            }
-            assert(sub_seg_it != sub_segments.end());
-            // exchange segments within the container
-            if (sub_seg_it != act_beg_seg_it)
-            {
-                std::swap(*sub_seg_it, *act_beg_seg_it);
-            }
-        };
+                return MathLib::sqrDist(seg_beg_pnt, seg.getBeginPoint()) <
+                           eps ||
+                       MathLib::sqrDist(seg_beg_pnt, seg.getEndPoint()) < eps;
+            });
+        if (act_beg_seg_it == sub_segments.end())
+        {
+            return;
+        }
+        // if necessary correct orientation of segment, i.e. swap beg and
+        // end
+        if (MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getEndPoint()) <
+            MathLib::sqrDist(seg_beg_pnt, act_beg_seg_it->getBeginPoint()))
+        {
+            std::swap(act_beg_seg_it->getBeginPoint(),
+                      act_beg_seg_it->getEndPoint());
+        }
+        assert(sub_seg_it != sub_segments.end());
+        // exchange segments within the container
+        if (sub_seg_it != act_beg_seg_it)
+        {
+            std::swap(*sub_seg_it, *act_beg_seg_it);
+        }
+    };
 
     // find start segment
     auto seg_it = sub_segments.begin();

@@ -24,13 +24,10 @@
 
 namespace GeoLib
 {
-Polyline::Polyline(const std::vector<Point*>& pnt_vec) : _ply_pnts(pnt_vec)
-{
-}
+Polyline::Polyline(const std::vector<Point*>& pnt_vec) : _ply_pnts(pnt_vec) {}
 
 Polyline::Polyline(const Polyline& ply)
-    : _ply_pnts(ply._ply_pnts),
-      _ply_pnt_ids(ply._ply_pnt_ids)
+    : _ply_pnts(ply._ply_pnts), _ply_pnt_ids(ply._ply_pnt_ids)
 {
 }
 

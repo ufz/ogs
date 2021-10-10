@@ -131,11 +131,13 @@ void GEOObjects::addStationVec(std::unique_ptr<std::vector<Point*>> stations,
 const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
     const std::string& name) const
 {
-    auto const it = std::find_if(
-        begin(_pnt_vecs), end(_pnt_vecs), [&name](PointVec const* const p) {
-            return p->getName() == name &&
-                   p->getType() == PointVec::PointType::STATION;
-        });
+    auto const it =
+        std::find_if(begin(_pnt_vecs), end(_pnt_vecs),
+                     [&name](PointVec const* const p)
+                     {
+                         return p->getName() == name &&
+                                p->getType() == PointVec::PointType::STATION;
+                     });
     if (it != end(_pnt_vecs))
     {
         return (*it)->getVector();
