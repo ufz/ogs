@@ -21,9 +21,9 @@
 #include <QRadioButton>
 #include <QVBoxLayout>
 
-#include "GeoLib/GEOObjects.h"
-#include "Base/OGSError.h"
 #include "Applications/FileIO/SHPInterface.h"
+#include "Base/OGSError.h"
+#include "GeoLib/GEOObjects.h"
 
 SHPImportDialog::SHPImportDialog(std::string filename,
                                  GeoLib::GEOObjects& geo_objects,

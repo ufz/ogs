@@ -45,7 +45,8 @@ public:
     BaseLib::ConfigTree::Callback get_error_cb()
     {
         return [this](std::string const& filename, std::string const& path,
-                      std::string const& message) {
+                      std::string const& message)
+        {
             (void)path;
             (void)message;
 
@@ -62,7 +63,8 @@ public:
     BaseLib::ConfigTree::Callback get_warning_cb()
     {
         return [this](std::string const& filename, std::string const& path,
-                      std::string const& message) {
+                      std::string const& message)
+        {
             (void)path;
             (void)message;
 

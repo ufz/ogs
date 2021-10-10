@@ -18,10 +18,10 @@
 #include <QSettings>
 
 #include "Base/LastSavedFileDirectory.h"
+#include "Base/OGSError.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
-#include "Base/OGSError.h"
 
 SaveMeshDialog::SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent)
     : QDialog(parent), _mesh(mesh)

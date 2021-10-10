@@ -141,7 +141,8 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
-                                      auto get_ip_values_function) {
+                                      auto get_ip_values_function)
+    {
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
@@ -324,7 +325,8 @@ void ThermoMechanicsProcess<DisplacementDim>::
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
     // TODO (naumov): Refactor the copy rhs part. This is copy from HM.
-    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
         if (_use_monolithic_scheme)
         {
             transformVariableFromGlobalVector(b, variable_id, dof_tables[0],

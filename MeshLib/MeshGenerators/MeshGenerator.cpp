@@ -29,8 +29,9 @@ std::vector<MeshLib::Node*> MeshGenerator::generateRegularNodes(
     const std::vector<const std::vector<double>*>& vec_xyz_coords,
     const MathLib::Point3d& origin)
 {
-    auto const shift_coordinates = [](auto const& in, auto& out,
-                                      auto const& shift) {
+    auto const shift_coordinates =
+        [](auto const& in, auto& out, auto const& shift)
+    {
         std::transform(in.begin(), in.end(), std::back_inserter(out),
                        [&shift](auto const& v) { return v + shift; });
     };

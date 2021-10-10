@@ -28,7 +28,6 @@
 
 namespace MeshLib
 {
-
 /** Finds all surface elements that can be reached from element. All elements
  * that are found in this way are marked in the global sfc_idx vector using the
  * current_index.

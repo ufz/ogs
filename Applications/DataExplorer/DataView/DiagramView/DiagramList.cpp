@@ -18,11 +18,11 @@
 #include <QTextStream>
 #include <limits>
 
-#include "BaseLib/Logging.h"
 #include "BaseLib/DateTools.h"
-#include "GetDateTime.h"
-#include "GeoLib/SensorData.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
+#include "GeoLib/SensorData.h"
+#include "GetDateTime.h"
 
 DiagramList::DiagramList() : _xLabel(""), _yLabel(""), _xUnit(""), _yUnit("") {}
 
@@ -30,9 +30,9 @@ DiagramList::~DiagramList() = default;
 
 float DiagramList::calcMinXValue()
 {
-    auto min = std::min_element(
-        _coords.begin(), _coords.end(),
-        [](auto const& c0, auto const& c1) { return c0.first < c1.first; });
+    auto min = std::min_element(_coords.begin(), _coords.end(),
+                                [](auto const& c0, auto const& c1)
+                                { return c0.first < c1.first; });
     if (min != _coords.end())
     {
         return min->first;
@@ -340,12 +340,11 @@ void DiagramList::truncateToRange(QDateTime const& start, QDateTime const& end)
         return;
     }
 
-    _coords.erase(
-        std::remove_if(_coords.begin(), _coords.end(),
-                       [&](std::pair<float, float> const& c) {
-                           return (c.first < start_secs || c.first > end_secs);
-                       }),
-        _coords.end());
+    _coords.erase(std::remove_if(
+                      _coords.begin(), _coords.end(),
+                      [&](std::pair<float, float> const& c)
+                      { return (c.first < start_secs || c.first > end_secs); }),
+                  _coords.end());
     _startDate = start;
     for (auto& c : _coords)
     {
@@ -364,7 +363,8 @@ void DiagramList::setList(
 
     _startDate = coords[0].first;
     std::transform(coords.begin(), coords.end(), std::back_inserter(_coords),
-                   [this](auto const& p) {
+                   [this](auto const& p)
+                   {
                        return std::make_pair(
                            static_cast<float>(_startDate.daysTo(p.first)),
                            p.second);

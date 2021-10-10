@@ -28,7 +28,8 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> geo_output_arg(
-        "o", "output", "output gmsh geometry file (*.geo)", true, "", "output file");
+        "o", "output", "output gmsh geometry file (*.geo)", true, "",
+        "output file");
     cmd.add(geo_output_arg);
     TCLAP::MultiArg<std::string> geo_input_arg(
         "i", "input", "input geometry file (*.gml)", true, "input file name");

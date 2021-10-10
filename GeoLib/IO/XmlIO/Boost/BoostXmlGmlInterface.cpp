@@ -172,7 +172,8 @@ void BoostXmlGmlInterface::readPolylines(
                 ply_names, *p_name, polylines.size() - 1,
                 "The polyline name is not unique.");
 
-            auto accessOrError = [this, &p_name](auto pt_idx) {
+            auto accessOrError = [this, &p_name](auto pt_idx)
+            {
                 auto search = _idx_map.find(pt_idx);
                 if (search == _idx_map.end())
                 {
@@ -244,7 +245,8 @@ void BoostXmlGmlInterface::readSurfaces(
                     //! \ogs_file_attr{gml__surfaces__surface__element__p3}
                     element.getConfigAttribute<std::size_t>("p3");
 
-                auto accessOrError = [this, &s_name](std::size_t pt_idx) {
+                auto accessOrError = [this, &s_name](std::size_t pt_idx)
+                {
                     auto search = _idx_map.find(pt_idx);
                     if (search == _idx_map.end())
                     {

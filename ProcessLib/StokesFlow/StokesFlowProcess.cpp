@@ -8,11 +8,11 @@
  *
  */
 
+#include "StokesFlowProcess.h"
+
 #include <cassert>
 
 #include "CreateLocalAssemblers.h"
-#include "StokesFlowProcess.h"
-
 #include "MeshLib/Elements/Utils.h"
 
 namespace ProcessLib

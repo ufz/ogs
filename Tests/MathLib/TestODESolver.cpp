@@ -183,9 +183,8 @@ TEST(MathLibCVodeTest, ExponentialExtraData)
     ExtraData data;
     auto f_lambda = [&](double t,
                         MathLib::ODE::MappedConstVector<1> const& y,
-                        MathLib::ODE::MappedVector<1>& ydot) {
-        return f_extra(t, y, ydot, data);
-    };
+                        MathLib::ODE::MappedVector<1>& ydot)
+    { return f_extra(t, y, ydot, data); };
 
     ode_solver->setFunction(f_lambda, nullptr);
 

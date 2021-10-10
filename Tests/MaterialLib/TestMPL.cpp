@@ -14,14 +14,14 @@
 
 #include "TestMPL.h"
 
+#include <sstream>
+
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/CreateMedium.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/Parameter.h"
 #include "Tests/TestTools.h"
-
-#include <sstream>
 
 namespace Tests
 {

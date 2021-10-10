@@ -44,7 +44,8 @@ PropertyDataType RelPermBrooksCorey::value(
     /// be inserted into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = std::visit(
-        [&variable_array, &pos, t, dt](auto&& scale) -> double {
+        [&variable_array, &pos, t, dt](auto&& scale) -> double
+        {
             return scale->property(PropertyType::saturation)
                 .template value<double>(variable_array, pos, t, dt);
         },
@@ -89,7 +90,8 @@ PropertyDataType RelPermBrooksCorey::dValue(
     /// be inserted into the primary variable array after it is computed in the
     /// FEM assembly.
     auto const s_L = std::visit(
-        [&variable_array, &pos, t, dt](auto&& scale) -> double {
+        [&variable_array, &pos, t, dt](auto&& scale) -> double
+        {
             return scale->property(PropertyType::saturation)
                 .template value<double>(variable_array, pos, t, dt);
         },

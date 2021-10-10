@@ -109,7 +109,8 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
         return;
     }
 
-    auto yield_function = [&mat](Eigen::VectorXd const& s) {
+    auto yield_function = [&mat](Eigen::VectorXd const& s)
+    {
         double const sigma_n = s[DisplacementDim - 1];
         Eigen::VectorXd const sigma_s = s.head(DisplacementDim - 1);
         double const mag_tau = sigma_s.norm();  // magnitude
@@ -128,7 +129,8 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
         }
     }
 
-    auto yield_function_derivative = [&mat](Eigen::VectorXd const& s) {
+    auto yield_function_derivative = [&mat](Eigen::VectorXd const& s)
+    {
         Eigen::Matrix<double, DisplacementDim, 1> dFs_dS;
         dFs_dS.template head<DisplacementDim - 1>().noalias() =
             s.template head<DisplacementDim - 1>().normalized();
@@ -137,7 +139,8 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
     };
 
     // plastic potential function: Qs = |tau| + Sn * tan da
-    auto plastic_potential_derivative = [&mat](Eigen::VectorXd const& s) {
+    auto plastic_potential_derivative = [&mat](Eigen::VectorXd const& s)
+    {
         Eigen::Matrix<double, DisplacementDim, 1> dQs_dS;
         dQs_dS.template head<DisplacementDim - 1>().noalias() =
             s.template head<DisplacementDim - 1>().normalized();
@@ -156,16 +159,17 @@ void Coulomb<DisplacementDim>::computeConstitutiveRelation(
         ResidualVectorType solution;
         solution << 0;
 
-        auto const update_residual = [&](ResidualVectorType& residual) {
-            residual[0] = yield_function(sigma);
-        };
+        auto const update_residual = [&](ResidualVectorType& residual)
+        { residual[0] = yield_function(sigma); };
 
-        auto const update_jacobian = [&](JacobianMatrix& jacobian) {
+        auto const update_jacobian = [&](JacobianMatrix& jacobian)
+        {
             jacobian(0, 0) = -yield_function_derivative(sigma).transpose() *
                              Ke * plastic_potential_derivative(sigma);
         };
 
-        auto const update_solution = [&](ResidualVectorType const& increment) {
+        auto const update_solution = [&](ResidualVectorType const& increment)
+        {
             solution += increment;
             /*DBUG("analytical = {:g}",
                  Fs / (mat.Ks + mat.Kn * std::tan(mat.psi) * std::tan(mat.phi)))

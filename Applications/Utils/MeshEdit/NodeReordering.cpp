@@ -126,13 +126,11 @@ void reorderNonlinearNodes(MeshLib::Mesh& mesh)
     }
 
     BaseLib::makeVectorUnique(base_nodes,
-                              [](MeshLib::Node* a, MeshLib::Node* b) {
-                                  return a->getID() < b->getID();
-                              });
+                              [](MeshLib::Node* a, MeshLib::Node* b)
+                              { return a->getID() < b->getID(); });
     BaseLib::makeVectorUnique(nonlinear_nodes,
-                              [](MeshLib::Node* a, MeshLib::Node* b) {
-                                  return a->getID() < b->getID();
-                              });
+                              [](MeshLib::Node* a, MeshLib::Node* b)
+                              { return a->getID() < b->getID(); });
 
     std::vector<MeshLib::Node*>& allnodes =
         const_cast<std::vector<MeshLib::Node*>&>(mesh.getNodes());

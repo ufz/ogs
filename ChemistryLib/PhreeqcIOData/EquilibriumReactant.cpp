@@ -20,7 +20,8 @@ void EquilibriumReactant::print(std::ostream& os,
                                 std::size_t const chemical_system_id) const
 {
     os << name << " " << saturation_index << " "
-       << (*molality)[chemical_system_id] << " " << reaction_irreversibility << "\n";
+       << (*molality)[chemical_system_id] << " " << reaction_irreversibility
+       << "\n";
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

@@ -56,10 +56,12 @@ int main(int argc, char* argv[])
 
     BaseLib::setConsoleLogLevel(logLevel);
     spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler([](const std::string& msg) {
-        std::cerr << "spdlog error: " << msg << std::endl;
-        OGS_FATAL("spdlog logger error occurred.");
-    });
+    spdlog::set_error_handler(
+        [](const std::string& msg)
+        {
+            std::cerr << "spdlog error: " << msg << std::endl;
+            OGS_FATAL("spdlog logger error occurred.");
+        });
 #ifdef USE_PETSC
     {  // Can be called only after MPI_INIT.
         int mpi_rank;

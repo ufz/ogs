@@ -55,7 +55,8 @@ TEST_F(MeshLibLineMesh, Construction)
 
 TEST_F(MeshLibLineMesh, ElementNeigbors)
 {
-    auto count_neighbors = [](MeshLib::Element const* const e) {
+    auto count_neighbors = [](MeshLib::Element const* const e)
+    {
         unsigned count = 0;
         for (int i = 0; i < 2; i++)
         {

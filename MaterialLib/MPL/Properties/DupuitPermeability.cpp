@@ -30,7 +30,8 @@ PropertyDataType DupuitPermeability::value(
 
     auto const& permeability_variant = fromVector(permeability_values);
     PropertyDataType dupuit_permeability = std::visit(
-        [&pressure](auto const& permeability_variant) -> PropertyDataType {
+        [&pressure](auto const& permeability_variant) -> PropertyDataType
+        {
             using T = std::decay_t<decltype(permeability_variant)>;
             if constexpr (std::is_same_v<T, double>)
             {

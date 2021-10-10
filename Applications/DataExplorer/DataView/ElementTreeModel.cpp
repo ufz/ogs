@@ -14,13 +14,13 @@
 
 #include "ElementTreeModel.h"
 
+#include "Base/TreeItem.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshInformation.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
-#include "Base/TreeItem.h"
 
 namespace
 {

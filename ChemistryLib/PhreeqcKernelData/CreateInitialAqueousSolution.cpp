@@ -43,9 +43,8 @@ InitialAqueousSolution createInitialAqueousSolution(
         auto process_id_to_component_name_pair =
             std::find_if(process_id_to_component_name_map.begin(),
                          process_id_to_component_name_map.end(),
-                         [&component](auto const& pair) {
-                             return pair.second == component.first;
-                         });
+                         [&component](auto const& pair)
+                         { return pair.second == component.first; });
 
         if (process_id_to_component_name_pair ==
             process_id_to_component_name_map.end())

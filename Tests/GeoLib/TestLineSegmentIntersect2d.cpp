@@ -43,14 +43,14 @@ public:
         [&](auto p) { return ac::reflect(point_generator2.center, p); }};
 
     Eigen::Vector3d const translation_vector1 = {2, 2, 0};
-    PairSegmentGenerator pair_segment_generator1 = PairSegmentGenerator{
-        segment_generator1,
-        [&](auto p) { return ac::translate(translation_vector1, p); }};
+    PairSegmentGenerator pair_segment_generator1 =
+        PairSegmentGenerator{segment_generator1, [&](auto p)
+                             { return ac::translate(translation_vector1, p); }};
 
     Eigen::Vector3d const translation_vector2 = {0, 0, 0};
-    PairSegmentGenerator pair_segment_generator2 = PairSegmentGenerator{
-        segment_generator1,
-        [&](auto p) { return ac::translate(translation_vector2, p); }};
+    PairSegmentGenerator pair_segment_generator2 =
+        PairSegmentGenerator{segment_generator1, [&](auto p)
+                             { return ac::translate(translation_vector2, p); }};
 
     ac::gtest_reporter gtest_reporter;
 };
@@ -60,8 +60,9 @@ public:
 // consequence the center of the circle is the intersection point.
 TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
 {
-    auto intersect = [](GeoLib::LineSegment const& s0,
-                        GeoLib::LineSegment const& s1) {
+    auto intersect =
+        [](GeoLib::LineSegment const& s0, GeoLib::LineSegment const& s1)
+    {
         auto ipnts = GeoLib::lineSegmentIntersect2d(s0, s1);
         if (ipnts.size() == 1)
         {
@@ -84,8 +85,9 @@ TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationIntersecting)
 // chords of non-intersecting circles.
 TEST_F(LineSegmentIntersect2dTest, RandomSegmentOrientationNonIntersecting)
 {
-    auto intersect = [](GeoLib::LineSegment const& s0,
-                        GeoLib::LineSegment const& s1) {
+    auto intersect =
+        [](GeoLib::LineSegment const& s0, GeoLib::LineSegment const& s1)
+    {
         auto ipnts = GeoLib::lineSegmentIntersect2d(s0, s1);
         return ipnts.empty();
     };
@@ -103,11 +105,12 @@ TEST_F(LineSegmentIntersect2dTest, ParallelNonIntersectingSegmentOrientation)
 {
     auto intersect =
         [](std::pair<GeoLib::LineSegment const&,
-                     GeoLib::LineSegment const&> const& segment_pair) {
-            auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
-                                                        segment_pair.second);
-            return ipnts.empty();
-        };
+                     GeoLib::LineSegment const&> const& segment_pair)
+    {
+        auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
+                                                    segment_pair.second);
+        return ipnts.empty();
+    };
 
     // generate non-intersecting segments
     ac::check<std::pair<GeoLib::LineSegment, GeoLib::LineSegment>>(
@@ -120,11 +123,12 @@ TEST_F(LineSegmentIntersect2dTest, ParallelIntersectingSegmentOrientation)
 {
     auto intersect =
         [](std::pair<GeoLib::LineSegment const&,
-                     GeoLib::LineSegment const&> const& segment_pair) {
-            auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
-                                                        segment_pair.second);
-            return ipnts.size() == 2;
-        };
+                     GeoLib::LineSegment const&> const& segment_pair)
+    {
+        auto ipnts = GeoLib::lineSegmentIntersect2d(segment_pair.first,
+                                                    segment_pair.second);
+        return ipnts.size() == 2;
+    };
 
     // generate non-intersecting segments
     ac::check<std::pair<GeoLib::LineSegment, GeoLib::LineSegment>>(

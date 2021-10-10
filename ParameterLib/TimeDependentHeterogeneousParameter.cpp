@@ -93,9 +93,8 @@ void TimeDependentHeterogeneousParameter::initialize(
         _time_parameter_mapping[0].second->getNumberOfGlobalComponents();
     if (!std::all_of(_time_parameter_mapping.begin(),
                      _time_parameter_mapping.end(),
-                     [n](auto const p) {
-                         return n == p.second->getNumberOfGlobalComponents();
-                     }))
+                     [n](auto const p)
+                     { return n == p.second->getNumberOfGlobalComponents(); }))
     {
         OGS_FATAL(
             "All referenced parameters in time dependent heterogeneous "

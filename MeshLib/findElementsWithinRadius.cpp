@@ -43,8 +43,9 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
 
     // Returns true if the test node is inside the radius of any of the
     // element's nodes.
-    auto node_inside_radius = [&start_element_nodes,
-                               radius_squared](Node const* test_node) {
+    auto node_inside_radius =
+        [&start_element_nodes, radius_squared](Node const* test_node)
+    {
         for (auto const& n : start_element_nodes)
         {
             if (MathLib::sqrDist(*test_node, n) <= radius_squared)
@@ -57,7 +58,8 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
 
     // Returns true if any of the test element's nodes is inside the start
     // element's radius.
-    auto element_in_radius = [&node_inside_radius](Element const& element) {
+    auto element_in_radius = [&node_inside_radius](Element const& element)
+    {
         auto const n_nodes = element.getNumberOfNodes();
         for (unsigned i = 0; i < n_nodes; ++i)
         {
@@ -75,28 +77,29 @@ std::vector<std::size_t> findElementsWithinRadius(Element const& start_element,
 
     auto mark_visited_and_add_neighbors =
         [&found_elements, &neighbors_to_visit, &visited_elements](
-            Element const& element) {
-            found_elements.insert(element.getID());
-            visited_elements.insert(element.getID());
-            auto const n_neighbors = element.getNumberOfNeighbors();
-            for (unsigned n = 0; n < n_neighbors; ++n)
+            Element const& element)
+    {
+        found_elements.insert(element.getID());
+        visited_elements.insert(element.getID());
+        auto const n_neighbors = element.getNumberOfNeighbors();
+        for (unsigned n = 0; n < n_neighbors; ++n)
+        {
+            auto neighbor = element.getNeighbor(n);
+            if (neighbor == nullptr)
             {
-                auto neighbor = element.getNeighbor(n);
-                if (neighbor == nullptr)
-                {
-                    continue;
-                }
-                auto x = visited_elements.find(neighbor->getID());
-                if (x != visited_elements.end())
-                {
-                    continue;
-                }
-
-                neighbors_to_visit.push_back(neighbor);
-
-                visited_elements.insert(neighbor->getID());
+                continue;
             }
-        };
+            auto x = visited_elements.find(neighbor->getID());
+            if (x != visited_elements.end())
+            {
+                continue;
+            }
+
+            neighbors_to_visit.push_back(neighbor);
+
+            visited_elements.insert(neighbor->getID());
+        }
+    };
 
     // The result always contains the starting element.
     mark_visited_and_add_neighbors(start_element);

@@ -21,9 +21,8 @@ ProcessLib::ProcessVariable& findVariableByName(
 {
     // Find corresponding variable by name.
     auto variable = std::find_if(variables.cbegin(), variables.cend(),
-                                 [&name](ProcessLib::ProcessVariable const& v) {
-                                     return v.getName() == name;
-                                 });
+                                 [&name](ProcessLib::ProcessVariable const& v)
+                                 { return v.getName() == name; });
 
     if (variable == variables.end())
     {

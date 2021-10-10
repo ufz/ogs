@@ -14,11 +14,11 @@
 
 #include "GeoTreeModel.h"
 
+#include "Base/OGSError.h"
 #include "BaseLib/Logging.h"
 #include "GeoLib/Triangle.h"
 #include "GeoObjectListItem.h"
 #include "GeoTreeItem.h"
-#include "Base/OGSError.h"
 
 /**
  * Constructor.
@@ -417,9 +417,10 @@ void GeoTreeModel::setNameForItem(const std::string& name,
             geo_type_str = "";
     }
 
-    auto it = find_if(_lists.begin(), _lists.end(), [&name](GeoTreeItem* geo) {
-        return (name == geo->data(0).toString().toStdString());
-    });
+    auto it =
+        find_if(_lists.begin(), _lists.end(),
+                [&name](GeoTreeItem* geo)
+                { return (name == geo->data(0).toString().toStdString()); });
 
     for (int i = 0; i < (*it)->childCount(); i++)
     {

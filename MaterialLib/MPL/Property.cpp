@@ -140,8 +140,8 @@ PropertyDataType Property::d2Value(VariableArray const& /*variable_array*/,
 std::string Property::description() const
 {
     return "property '" + name_ + "' defined for " +
-           std::visit(
-               [](auto&& scale) -> std::string { return scale->description(); },
-               scale_);
+           std::visit([](auto&& scale) -> std::string
+                      { return scale->description(); },
+                      scale_);
 }
 }  // namespace MaterialPropertyLib

@@ -162,7 +162,8 @@ TESFEMReactionAdaptorAdsorption::initReaction_slowDownUndershootStrategy(
 double TESFEMReactionAdaptorAdsorption::estimateAdsorptionEquilibrium(
     const double p_V0, const double C0) const
 {
-    auto f = [this, p_V0, C0](double pV) -> double {
+    auto f = [this, p_V0, C0](double pV) -> double
+    {
         // pV0 := _p_V
         const double C_eq =
             _d.ap.react_sys->getEquilibriumLoading(pV, _d.T, _d.ap.M_react);
@@ -310,7 +311,8 @@ TESFEMReactionAdaptorCaOH2::TESFEMReactionAdaptorCaOH2(
     auto f = [this](const double /*t*/,
                     MathLib::ODE::MappedConstVector<1> const y,
                     MathLib::ODE::MappedVector<1>
-                        ydot) -> bool {
+                        ydot) -> bool
+    {
         ydot[0] = _react.getReactionRate(y[0]);
         return true;
     };

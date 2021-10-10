@@ -16,7 +16,8 @@ std::unique_ptr<SaturationDependentThermalConductivity>
 createSaturationDependentThermalConductivity(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{properties__property__type}
-    config.checkConfigParameter("type", "SaturationDependentThermalConductivity");
+    config.checkConfigParameter("type",
+                                "SaturationDependentThermalConductivity");
 
     // Second access for storage.
     //! \ogs_file_param{properties__property__name}

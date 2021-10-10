@@ -188,16 +188,17 @@ bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
         LocalJacobianMatrix J_loc;
 
         Eigen::PartialPivLU<LocalJacobianMatrix> linear_solver(2);
-        auto const update_residual = [&](LocalResidualVector& residual) {
-            calculateResidual(material_id, pg, X, T, Sw, X_m, residual);
-        };
+        auto const update_residual = [&](LocalResidualVector& residual)
+        { calculateResidual(material_id, pg, X, T, Sw, X_m, residual); };
 
-        auto const update_jacobian = [&](LocalJacobianMatrix& jacobian) {
+        auto const update_jacobian = [&](LocalJacobianMatrix& jacobian)
+        {
             calculateJacobian(material_id, t, x, pg, X, T, jacobian, Sw,
                               X_m);  // for solution dependent Jacobians
         };
 
-        auto const update_solution = [&](LocalUnknownVector const& increment) {
+        auto const update_solution = [&](LocalUnknownVector const& increment)
+        {
             // increment solution vectors
             Sw += increment[0];
             X_m += increment[1];

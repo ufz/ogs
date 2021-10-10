@@ -27,9 +27,9 @@ PropertyDataType Linear::value(VariableArray const& variable_array,
                                ParameterLib::SpatialPosition const& /*pos*/,
                                double const /*t*/, double const /*dt*/) const
 {
-    auto calculate_linearized_ratio = [&variable_array](
-                                          double const initial_linearized_ratio,
-                                          auto const& iv) {
+    auto calculate_linearized_ratio =
+        [&variable_array](double const initial_linearized_ratio, auto const& iv)
+    {
         return initial_linearized_ratio +
                std::get<double>(iv.slope) *
                    (std::get<double>(
@@ -54,9 +54,8 @@ PropertyDataType Linear::dValue(VariableArray const& /*variable_array*/,
     auto const independent_variable =
         std::find_if(independent_variables_.begin(),
                      independent_variables_.end(),
-                     [&primary_variable](auto const& iv) -> bool {
-                         return iv.type == primary_variable;
-                     });
+                     [&primary_variable](auto const& iv) -> bool
+                     { return iv.type == primary_variable; });
 
     return independent_variable != independent_variables_.end()
                ? std::get<double>(value_) *

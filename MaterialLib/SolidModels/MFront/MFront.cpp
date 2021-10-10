@@ -331,7 +331,8 @@ MFront<DisplacementDim>::integrateStress(
     }
 
     // rotation tensor
-    auto const Q = [this, &x]() -> KelvinMatrixType<DisplacementDim> {
+    auto const Q = [this, &x]() -> KelvinMatrixType<DisplacementDim>
+    {
         if (!_local_coordinate_system)
         {
             return KelvinMatrixType<DisplacementDim>::Identity();

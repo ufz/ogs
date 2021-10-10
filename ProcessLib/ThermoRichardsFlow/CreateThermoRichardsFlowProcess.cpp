@@ -34,16 +34,15 @@ void checkMPLProperties(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     std::array const required_medium_properties = {
-        MaterialPropertyLib::permeability,
-        MaterialPropertyLib::porosity, MaterialPropertyLib::biot_coefficient,
+        MaterialPropertyLib::permeability, MaterialPropertyLib::porosity,
+        MaterialPropertyLib::biot_coefficient,
         MaterialPropertyLib::relative_permeability,
         MaterialPropertyLib::saturation};
     std::array const required_liquid_properties = {
         MaterialPropertyLib::viscosity,
         MaterialPropertyLib::density,
     };
-    std::array const required_solid_properties = {
-        MaterialPropertyLib::density};
+    std::array const required_solid_properties = {MaterialPropertyLib::density};
 
     // Thermal properties are not checked because they can be phase property or
     // meduim property (will be enabled later).
@@ -146,15 +145,16 @@ std::unique_ptr<Process> createThermoRichardsFlowProcess(
     checkMPLProperties(media);
     DBUG("Media properties verified.");
 
-    //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_FLOW__mass_lumping}
-    bool const mass_lumping = config.getConfigParameter<bool>("mass_lumping", false);
+    bool const mass_lumping =
+        //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_FLOW__mass_lumping}
+        config.getConfigParameter<bool>("mass_lumping", false);
 
     std::unique_ptr<SimplifiedElasticityModel> simplified_elasticity =
         createElasticityModel(config);
 
     ThermoRichardsFlowProcessData process_data{
-        std::move(media_map), std::move(specific_body_force),
-        mass_lumping, std::move(simplified_elasticity)};
+        std::move(media_map), std::move(specific_body_force), mass_lumping,
+        std::move(simplified_elasticity)};
 
     SecondaryVariableCollection secondary_variables;
 

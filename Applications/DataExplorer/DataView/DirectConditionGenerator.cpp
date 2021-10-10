@@ -21,10 +21,10 @@
 
 #include "Applications/FileIO/AsciiRasterInterface.h"
 #include "BaseLib/Logging.h"
-#include "MeshLib/Mesh.h"
-#include "MeshLib/Node.h"
-#include "MeshLib/MeshSurfaceExtraction.h"
 #include "GeoLib/Raster.h"
+#include "MeshLib/Mesh.h"
+#include "MeshLib/MeshSurfaceExtraction.h"
+#include "MeshLib/Node.h"
 
 const std::vector<std::pair<std::size_t, double>>&
 DirectConditionGenerator::directToSurfaceNodes(const MeshLib::Mesh& mesh,

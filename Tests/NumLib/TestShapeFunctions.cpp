@@ -112,7 +112,8 @@ TYPED_TEST(ShapeFunctionTest, PartitionOfUnity)
 {
     auto isPartitionOfUnity =
         [](std::array<double, TypeParam::DIM>& natural_coordinates_point)
-        -> bool {
+        -> bool
+    {
         // compute shape functions
         std::array<double, TypeParam::NPOINTS> N;
         TypeParam::computeShapeFunction(natural_coordinates_point, N);
@@ -132,7 +133,8 @@ TYPED_TEST(ShapeFunctionTest, SumOfGradientsIsZero)
 {
     auto isSumOfGradientsZero =
         [](std::array<double, TypeParam::DIM>& natural_coordinates_point)
-        -> bool {
+        -> bool
+    {
         // compute shape functions
         std::array<double, TypeParam::DIM * TypeParam::NPOINTS> dNdr;
         TypeParam::computeGradShapeFunction(natural_coordinates_point, dNdr);

@@ -54,9 +54,8 @@ std::vector<MeshLib::Element*> const& getBoundaryElements(
     [[maybe_unused]] bool const multiple_nodes_allowed)
 {
     if (auto const it = find_if(cbegin(cached_elements), cend(cached_elements),
-                                [&](auto const& element) {
-                                    return getCachedItem(*element) == item;
-                                });
+                                [&](auto const& element)
+                                { return getCachedItem(*element) == item; });
         it != cend(cached_elements))
     {
         return (*it)->getBoundaryElements();

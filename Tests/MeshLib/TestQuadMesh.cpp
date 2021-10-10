@@ -183,14 +183,14 @@ TEST_F(MeshLibQuadMesh, Construction)
     ASSERT_EQ(n_nodes * n_nodes, mesh->getNumberOfNodes());
 
     // All elements have maximum four neighbors.
-    testAllElements([](MeshLib::Element const* const e, ...) {
-        ASSERT_EQ(4u, e->getNumberOfNeighbors());
-    });
+    testAllElements([](MeshLib::Element const* const e, ...)
+                    { ASSERT_EQ(4u, e->getNumberOfNeighbors()); });
 }
 
 TEST_F(MeshLibQuadMesh, ElementNeighbors)
 {
-    auto count_neighbors = [](MeshLib::Element const* const e) {
+    auto count_neighbors = [](MeshLib::Element const* const e)
+    {
         unsigned count = 0;
         for (int i = 0; i < 4; i++)
         {
@@ -202,14 +202,14 @@ TEST_F(MeshLibQuadMesh, ElementNeighbors)
         return count;
     };
 
-    auto getNeighborIndices = [this](std::size_t const i, std::size_t const j) {
-        return std::make_pair(getNeighbor(i), getNeighbor(j));
-    };
+    auto getNeighborIndices = [this](std::size_t const i, std::size_t const j)
+    { return std::make_pair(getNeighbor(i), getNeighbor(j)); };
 
     auto testNeighbors = [this](MeshLib::Element const* const e,
                                 std::size_t const i,
                                 std::size_t const j,
-                                std::pair<Indices, Indices> const& neighbors) {
+                                std::pair<Indices, Indices> const& neighbors)
+    {
         for (auto i_neighbor : neighbors.first)
         {
             ASSERT_TRUE(areNeighbors(e, getElement(i_neighbor, j)));
@@ -222,63 +222,72 @@ TEST_F(MeshLibQuadMesh, ElementNeighbors)
     };
 
     // Two neighbors for corner elements.
-    testCornerElements([&](MeshLib::Element const* const e, std::size_t const i,
-                           std::size_t const j) {
-        EXPECT_EQ(2u, count_neighbors(e));
+    testCornerElements(
+        [&](MeshLib::Element const* const e, std::size_t const i,
+            std::size_t const j)
+        {
+            EXPECT_EQ(2u, count_neighbors(e));
 
-        std::pair<Indices, Indices> const ij_neighbors =
-            getNeighborIndices(i, j);
-        // Test the test
-        EXPECT_EQ(1u, ij_neighbors.first.size());
-        EXPECT_EQ(1u, ij_neighbors.second.size());
-        ASSERT_TRUE(e->isBoundaryElement());
+            std::pair<Indices, Indices> const ij_neighbors =
+                getNeighborIndices(i, j);
+            // Test the test
+            EXPECT_EQ(1u, ij_neighbors.first.size());
+            EXPECT_EQ(1u, ij_neighbors.second.size());
+            ASSERT_TRUE(e->isBoundaryElement());
 
-        testNeighbors(e, i, j, ij_neighbors);
-    });
+            testNeighbors(e, i, j, ij_neighbors);
+        });
 
     // Three neighbors for boundary elements.
-    testBoundaryElements([&](MeshLib::Element const* const e,
-                             std::size_t const i, std::size_t const j) {
-        EXPECT_EQ(3u, count_neighbors(e));
+    testBoundaryElements(
+        [&](MeshLib::Element const* const e, std::size_t const i,
+            std::size_t const j)
+        {
+            EXPECT_EQ(3u, count_neighbors(e));
 
-        std::pair<Indices, Indices> const ij_neighbors =
-            getNeighborIndices(i, j);
-        // Test the test
-        EXPECT_EQ(3u, ij_neighbors.first.size() + ij_neighbors.second.size());
-        ASSERT_TRUE(e->isBoundaryElement());
+            std::pair<Indices, Indices> const ij_neighbors =
+                getNeighborIndices(i, j);
+            // Test the test
+            EXPECT_EQ(3u,
+                      ij_neighbors.first.size() + ij_neighbors.second.size());
+            ASSERT_TRUE(e->isBoundaryElement());
 
-        testNeighbors(e, i, j, ij_neighbors);
-    });
+            testNeighbors(e, i, j, ij_neighbors);
+        });
 
     // Four neighbors inside mesh.
-    testInsideElements([&](MeshLib::Element const* const e, std::size_t const i,
-                           std::size_t const j) {
-        EXPECT_EQ(4u, count_neighbors(e));
+    testInsideElements(
+        [&](MeshLib::Element const* const e, std::size_t const i,
+            std::size_t const j)
+        {
+            EXPECT_EQ(4u, count_neighbors(e));
 
-        std::pair<Indices, Indices> const ij_neighbors =
-            getNeighborIndices(i, j);
-        // Test the test
-        EXPECT_EQ(2u, ij_neighbors.first.size());
-        EXPECT_EQ(2u, ij_neighbors.second.size());
-        ASSERT_FALSE(e->isBoundaryElement());
+            std::pair<Indices, Indices> const ij_neighbors =
+                getNeighborIndices(i, j);
+            // Test the test
+            EXPECT_EQ(2u, ij_neighbors.first.size());
+            EXPECT_EQ(2u, ij_neighbors.second.size());
+            ASSERT_FALSE(e->isBoundaryElement());
 
-        testNeighbors(e, i, j, ij_neighbors);
-    });
+            testNeighbors(e, i, j, ij_neighbors);
+        });
 }
 
 TEST_F(MeshLibQuadMesh, ElementToNodeConnectivity)
 {
     // An element (i,j) consists of four nodes (i,j), (i+1,j), (i+1, j+1),
     // and (i, j+1).
-    testAllElements([this](MeshLib::Element const* const e,
-                           std::size_t const i,
-                           std::size_t const j) {
-        EXPECT_EQ(4u, e->getNumberOfBaseNodes());
-        EXPECT_EQ(getNode(i, j), e->getNode(0));
-        EXPECT_EQ(getNode(i, j + 1), e->getNode(1));
-        EXPECT_EQ(getNode(i + 1, j + 1), e->getNode(2));
-        EXPECT_EQ(getNode(i + 1, j), e->getNode(3));
-    });
+    testAllElements(
+        [this](MeshLib::Element const* const e,
+               std::size_t const i,
+               std::size_t const j)
+        {
+            EXPECT_EQ(4u, e->getNumberOfBaseNodes());
+            EXPECT_EQ(getNode(i, j), e->getNode(0));
+            EXPECT_EQ(getNode(i, j + 1), e->getNode(1));
+            EXPECT_EQ(getNode(i + 1, j + 1), e->getNode(2));
+            EXPECT_EQ(getNode(i + 1, j), e->getNode(3));
+        });
 }
 
 // A node is connected to four elements inside the mesh, two on the boundary,

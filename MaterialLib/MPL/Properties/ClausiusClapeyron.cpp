@@ -55,7 +55,8 @@ double ClausiusClapeyron::molarMass(
     double const dt) const
 {
     return std::visit(
-        [&variable_array, &pos, t, dt](auto&& s) -> double {
+        [&variable_array, &pos, t, dt](auto&& s) -> double
+        {
             return s->property(PropertyType::molar_mass)
                 .template value<double>(variable_array, pos, t, dt);
         },
@@ -69,7 +70,8 @@ double ClausiusClapeyron::dMolarMass(
     double const dt) const
 {
     return std::visit(
-        [&variable_array, &primary_variable, &pos, t, dt](auto&& s) -> double {
+        [&variable_array, &primary_variable, &pos, t, dt](auto&& s) -> double
+        {
             return s->property(PropertyType::molar_mass)
                 .template dValue<double>(variable_array, primary_variable, pos,
                                          t, dt);

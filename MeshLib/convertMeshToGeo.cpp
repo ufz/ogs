@@ -37,9 +37,8 @@ std::string convertMeshNodesToGeoPoints(MeshLib::Mesh const& mesh,
 
     std::transform(begin(mesh.getNodes()), end(mesh.getNodes()),
                    std::back_inserter(*points),
-                   [](MeshLib::Node const* node_ptr) {
-                       return new GeoLib::Point(*node_ptr, node_ptr->getID());
-                   });
+                   [](MeshLib::Node const* node_ptr)
+                   { return new GeoLib::Point(*node_ptr, node_ptr->getID()); });
 
     auto geoobject_name = mesh.getName();  // Possibly modified when adding
                                            // points to the geo objects.
@@ -86,9 +85,9 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
     }
 
     // Special handling of the bounds in case there are no materialIDs present.
-    auto get_material_ids_and_bounds =
-        [&]() -> std::tuple<MeshLib::PropertyVector<int> const*,
-                            std::pair<int, int>> {
+    auto get_material_ids_and_bounds = [&]()
+        -> std::tuple<MeshLib::PropertyVector<int> const*, std::pair<int, int>>
+    {
         auto const materialIds = materialIDs(mesh);
         if (!materialIds)
         {
@@ -130,13 +129,15 @@ bool convertMeshToGeo(const MeshLib::Mesh& mesh,
         addElementToSurface(*elements[i], id_map, *(*sfcs)[surfaceId]);
     }
 
-    std::for_each(sfcs->begin(), sfcs->end(), [](GeoLib::Surface*& sfc) {
-        if (sfc->getNumberOfTriangles() == 0)
-        {
-            delete sfc;
-            sfc = nullptr;
-        }
-    });
+    std::for_each(sfcs->begin(), sfcs->end(),
+                  [](GeoLib::Surface*& sfc)
+                  {
+                      if (sfc->getNumberOfTriangles() == 0)
+                      {
+                          delete sfc;
+                          sfc = nullptr;
+                      }
+                  });
     auto sfcs_end = std::remove(sfcs->begin(), sfcs->end(), nullptr);
     sfcs->erase(sfcs_end, sfcs->end());
 

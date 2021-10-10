@@ -19,11 +19,11 @@
 #include <QStringList>
 #include <QStringListModel>
 
-#include "GeoLib/GEOObjects.h"
-#include "GMSHPrefsDialog.h"
 #include "Base/OGSError.h"
 #include "Base/StrictDoubleValidator.h"
 #include "Base/StrictIntValidator.h"
+#include "GMSHPrefsDialog.h"
+#include "GeoLib/GEOObjects.h"
 
 GMSHPrefsDialog::GMSHPrefsDialog(GeoLib::GEOObjects const& geoObjects,
                                  QDialog* parent)

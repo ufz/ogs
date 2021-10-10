@@ -13,8 +13,9 @@
 
 #include "GeoLib/AnalyticalGeometry.h"
 
-auto test3equal = [](double a, double b, double c,
-                     Eigen::Vector3d const& result) {
+auto test3equal =
+    [](double a, double b, double c, Eigen::Vector3d const& result)
+{
     EXPECT_EQ(a, result[0]);
     EXPECT_EQ(b, result[1]);
     EXPECT_EQ(c, result[2]);

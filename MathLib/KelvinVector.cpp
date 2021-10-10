@@ -185,9 +185,8 @@ KelvinMatrixType<2> fourthOrderRotationMatrix<2>(
     Eigen::Matrix<double, 2, 2, Eigen::ColMajor, 2, 2> const& transformation)
 {
     // 1-based index access for convenience.
-    auto Q = [&](int const i, int const j) {
-        return transformation(i - 1, j - 1);
-    };
+    auto Q = [&](int const i, int const j)
+    { return transformation(i - 1, j - 1); };
 
     MathLib::KelvinVector::KelvinMatrixType<2> R;
     R << Q(1, 1) * Q(1, 1), Q(1, 2) * Q(1, 2), 0,
@@ -203,9 +202,8 @@ KelvinMatrixType<3> fourthOrderRotationMatrix<3>(
     Eigen::Matrix<double, 3, 3, Eigen::ColMajor, 3, 3> const& transformation)
 {
     // 1-based index access for convenience.
-    auto Q = [&](int const i, int const j) {
-        return transformation(i - 1, j - 1);
-    };
+    auto Q = [&](int const i, int const j)
+    { return transformation(i - 1, j - 1); };
 
     MathLib::KelvinVector::KelvinMatrixType<3> R;
     R << Q(1, 1) * Q(1, 1), Q(1, 2) * Q(1, 2), Q(1, 3) * Q(1, 3),

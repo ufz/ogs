@@ -87,8 +87,8 @@ CreepBGRa<DisplacementDim>::integrateStress(
 
     double const G2b = 2.0 * b * this->_mp.mu(t, x);
 
-    auto const update_jacobian = [&solution, &G2b,
-                                  &n](JacobianMatrix& jacobian) {
+    auto const update_jacobian = [&solution, &G2b, &n](JacobianMatrix& jacobian)
+    {
         auto const& D = Invariants::deviatoric_projection;
         KelvinVector const s_n1 = D * solution;
         double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);
@@ -100,8 +100,9 @@ CreepBGRa<DisplacementDim>::integrateStress(
                         s_n1.transpose());
     };
 
-    auto const update_residual = [&solution, &G2b, &n,
-                                  &sigma_try](ResidualVectorType& r) {
+    auto const update_residual =
+        [&solution, &G2b, &n, &sigma_try](ResidualVectorType& r)
+    {
         KelvinVector const s_n1 = Invariants::deviatoric_projection * solution;
         double const norm_s_n1 = Invariants::FrobeniusNorm(s_n1);
         double const pow_norm_s_n1_n_minus_one_2b_G =
@@ -109,9 +110,8 @@ CreepBGRa<DisplacementDim>::integrateStress(
         r = solution - sigma_try + pow_norm_s_n1_n_minus_one_2b_G * s_n1;
     };
 
-    auto const update_solution = [&](ResidualVectorType const& increment) {
-        solution += increment;
-    };
+    auto const update_solution = [&](ResidualVectorType const& increment)
+    { solution += increment; };
 
     auto newton_solver =
         NumLib::NewtonRaphson<decltype(linear_solver), JacobianMatrix,

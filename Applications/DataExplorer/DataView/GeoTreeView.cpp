@@ -18,12 +18,12 @@
 #include <QMenu>
 #include <QSettings>
 
-#include "GeoObjectListItem.h"
-#include "GeoTreeItem.h"
-#include "GeoTreeModel.h"
 #include "Base/ImportFileTypes.h"
 #include "Base/LastSavedFileDirectory.h"
 #include "Base/OGSError.h"
+#include "GeoObjectListItem.h"
+#include "GeoTreeItem.h"
+#include "GeoTreeModel.h"
 
 GeoTreeView::GeoTreeView(QWidget* parent) : QTreeView(parent) {}
 

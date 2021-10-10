@@ -75,7 +75,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // Find and extract mesh from the list of meshes.
     auto const& mesh = *BaseLib::findElementOrError(
         std::begin(meshes), std::end(meshes),
-        [&mesh_name](auto const& mesh) {
+        [&mesh_name](auto const& mesh)
+        {
             assert(mesh != nullptr);
             return mesh->getName() == mesh_name;
         },

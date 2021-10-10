@@ -133,7 +133,8 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     ++_counter;
 
     auto const num_dof = local_x.size();
-    auto to_mat = [num_dof](std::vector<double> const& data) {
+    auto to_mat = [num_dof](std::vector<double> const& data)
+    {
         if (data.empty())
         {
             return Eigen::Map<Eigen::Matrix<
@@ -222,7 +223,8 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     }
 
     // basic consistency check if something went terribly wrong
-    auto check_equality = [&fatal_error](auto mat_or_vec1, auto mat_or_vec2) {
+    auto check_equality = [&fatal_error](auto mat_or_vec1, auto mat_or_vec2)
+    {
         if (mat_or_vec1.size() == 0 || mat_or_vec2.size() == 0)
         {
             return;

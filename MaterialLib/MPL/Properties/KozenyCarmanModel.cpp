@@ -27,7 +27,8 @@ PropertyDataType KozenyCarmanModel::value(
     std::vector<double> k;
     k.reserve(k0.size());
     std::transform(k0.cbegin(), k0.cend(), std::back_inserter(k),
-                   [&](auto const& k_component) {
+                   [&](auto const& k_component)
+                   {
                        return k_component *
                               std::pow((1 - _phi0(t, pos)[0]) / (1 - phi), 2) *
                               std::pow(phi / _phi0(t, pos)[0], 3);

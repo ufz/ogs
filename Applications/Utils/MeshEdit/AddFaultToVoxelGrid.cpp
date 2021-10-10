@@ -161,9 +161,11 @@ void markFaults(MeshLib::Mesh& mesh, MeshLib::Mesh const& fault,
 bool isVoxelGrid(MeshLib::Mesh const& mesh)
 {
     auto const& elements = mesh.getElements();
-    if (std::any_of(elements.cbegin(), elements.cend(), [&](auto const& e) {
-            return (e->getGeomType() != MeshLib::MeshElemType::HEXAHEDRON);
-        }))
+    if (std::any_of(elements.cbegin(), elements.cend(),
+                    [&](auto const& e) {
+                        return (e->getGeomType() !=
+                                MeshLib::MeshElemType::HEXAHEDRON);
+                    }))
     {
         ERR("Input mesh needs to be voxel grid (i.e. equally sized axis "
             "aligned hexahedra).");

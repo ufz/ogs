@@ -79,9 +79,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         per_process_data.begin(),
         per_process_data.end(),
         [](std::unique_ptr<ProcessData> const& a,
-           std::unique_ptr<ProcessData> const& b) {
-            return (a->timestepper->end() < b->timestepper->end());
-        });
+           std::unique_ptr<ProcessData> const& b)
+        { return (a->timestepper->end() < b->timestepper->end()); });
     const double start_time =
         per_process_data[minmax_iter.first - per_process_data.begin()]
             ->timestepper->begin();

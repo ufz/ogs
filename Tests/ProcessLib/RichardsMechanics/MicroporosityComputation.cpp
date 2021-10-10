@@ -128,7 +128,8 @@ TEST(RichardsMechanics, computeMicroPorosity)
     double const alpha_B = 1;
     double const phi_M = 0.45;
 
-    auto saturation = [&](double const p_L) {
+    auto saturation = [&](double const p_L)
+    {
         MPL::VariableArray v;
         v[static_cast<int>(MPL::Variable::capillary_pressure)] = -p_L;
         return saturation_micro.template value<double>(v, pos, t0, dt);
@@ -185,9 +186,10 @@ TEST(RichardsMechanics, computeMicroPorosity)
         // update
         state += state_increment;
 
-        if (std::find_if(begin(t_coords), end(t_coords), [&](auto const value) {
-                return std::abs(t - value) < eps;
-            }) != end(t_coords))
+        if (std::find_if(begin(t_coords), end(t_coords),
+                         [&](auto const value) {
+                             return std::abs(t - value) < eps;
+                         }) != end(t_coords))
         {
             results.push_back(state);
             /* Keep for possible result updates
@@ -234,13 +236,13 @@ TEST(RichardsMechanics, computeMicroPorosity)
             {-10063.017103021764, -10063.017103021764, -10063.017103021764,
              0}}};
 
-    auto eps_equal = [](double const a, double const b) {
-        return std::abs(a - b) < eps;
-    };
+    auto eps_equal = [](double const a, double const b)
+    { return std::abs(a - b) < eps; };
 
     auto const [mismatch_it_expected, mismatch_it_results] = std::mismatch(
         begin(expected_results), end(expected_results), begin(results),
-        [&](auto const& a, auto const& b) {
+        [&](auto const& a, auto const& b)
+        {
             EXPECT_TRUE(eps_equal(a.phi_m, b.phi_m)) << "with eps = " << eps;
             EXPECT_TRUE(eps_equal(a.e_sw, b.e_sw)) << "with eps = " << eps;
             EXPECT_TRUE(eps_equal(a.p_L_m / 1e9, b.p_L_m / 1e9))

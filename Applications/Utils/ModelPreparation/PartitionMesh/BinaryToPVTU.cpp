@@ -10,10 +10,9 @@
 
 */
 
+#include <mpi.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
-#include <mpi.h>
-
 #include <vtkMPIController.h>
 #include <vtkSmartPointer.h>
 
@@ -21,10 +20,9 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/MPI_IO/NodePartitionedMeshReader.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
-
-#include "MeshLib/IO/MPI_IO/NodePartitionedMeshReader.h"
 #include "MeshLib/NodePartitionedMesh.h"
 
 int main(int argc, char* argv[])
@@ -68,10 +66,12 @@ int main(int argc, char* argv[])
 
     BaseLib::setConsoleLogLevel(log_level_arg.getValue());
     spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler([](const std::string& msg) {
-        std::cerr << "spdlog error: " << msg << std::endl;
-        OGS_FATAL("spdlog logger error occurred.");
-    });
+    spdlog::set_error_handler(
+        [](const std::string& msg)
+        {
+            std::cerr << "spdlog error: " << msg << std::endl;
+            OGS_FATAL("spdlog logger error occurred.");
+        });
 
     // init MPI
     MPI_Init(&argc, &argv);

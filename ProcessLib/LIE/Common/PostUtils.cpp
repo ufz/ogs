@@ -22,9 +22,9 @@ namespace
 bool includesNodeID(std::vector<MeshLib::Node*> const& vec_nodes,
                     std::size_t node_id)
 {
-    return std::any_of(
-        vec_nodes.begin(), vec_nodes.end(),
-        [&](MeshLib::Node const* node) { return node->getID() == node_id; });
+    return std::any_of(vec_nodes.begin(), vec_nodes.end(),
+                       [&](MeshLib::Node const* node)
+                       { return node->getID() == node_id; });
 }
 
 std::vector<int> const& getMaterialIdsForNode(
@@ -32,11 +32,10 @@ std::vector<int> const& getMaterialIdsForNode(
         vec_nodeID_matIDs,
     std::size_t nodeID)
 {
-    auto itr = std::find_if(
-        vec_nodeID_matIDs.begin(), vec_nodeID_matIDs.end(),
-        [&](std::pair<std::size_t, std::vector<int>> const& entry) {
-            return entry.first == nodeID;
-        });
+    auto itr =
+        std::find_if(vec_nodeID_matIDs.begin(), vec_nodeID_matIDs.end(),
+                     [&](std::pair<std::size_t, std::vector<int>> const& entry)
+                     { return entry.first == nodeID; });
     assert(itr != vec_nodeID_matIDs.end());
     return itr->second;
 };

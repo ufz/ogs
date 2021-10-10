@@ -16,10 +16,10 @@
 #include "GEOModels.h"
 
 #include "Applications/FileIO/Legacy/createSurface.h"
+#include "Base/OGSError.h"
 #include "BaseLib/Logging.h"
 #include "GeoLib/Triangle.h"
 #include "GeoTreeModel.h"
-#include "Base/OGSError.h"
 #include "StationTreeModel.h"
 
 GEOModels::GEOModels(GeoLib::GEOObjects& geo_objects, QObject* parent /*= 0*/)
@@ -44,7 +44,8 @@ void GEOModels::updateGeometry(const std::string& geo_name)
     {
         emit stationVectorRemoved(_stationModel, geo_name);
         _stationModel->removeStationList(geo_name);
-        _stationModel->addStationList(QString::fromStdString(geo_name), stations);
+        _stationModel->addStationList(QString::fromStdString(geo_name),
+                                      stations);
         emit stationVectorAdded(_stationModel, geo_name);
         return;
     }
@@ -184,9 +185,8 @@ void GEOModels::connectPolylineSegments(
         std::vector<GeoLib::Polyline*> ply_list;
         std::transform(indexlist.begin(), indexlist.end(),
                        std::back_inserter(ply_list),
-                       [polylines](auto const& ply_index) {
-                           return polylines[ply_index];
-                       });
+                       [polylines](auto const& ply_index)
+                       { return polylines[ply_index]; });
 
         // connect polylines
         GeoLib::Polyline* new_line =

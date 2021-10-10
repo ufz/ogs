@@ -593,7 +593,8 @@ SolidEhlers<DisplacementDim>::integrateStress(
             ResidualVectorType solution;
             solution << sigma, state.eps_p.D, state.eps_p.V, state.eps_p.eff, 0;
 
-            auto const update_residual = [&](ResidualVectorType& residual) {
+            auto const update_residual = [&](ResidualVectorType& residual)
+            {
                 auto const& eps_p_D =
                     solution.template segment<KelvinVectorSize>(
                         KelvinVectorSize);
@@ -619,17 +620,19 @@ SolidEhlers<DisplacementDim>::integrateStress(
                     k_hardening, mp);
             };
 
-            auto const update_jacobian = [&](JacobianMatrix& jacobian) {
+            auto const update_jacobian = [&](JacobianMatrix& jacobian)
+            {
                 jacobian = calculatePlasticJacobian<DisplacementDim>(
                     dt, s, solution[KelvinVectorSize * 2 + 2], mp);
             };
 
             auto const update_solution =
-                [&](ResidualVectorType const& increment) {
-                    solution += increment;
-                    s = PhysicalStressWithInvariants<DisplacementDim>{
-                        mp.G * solution.template segment<KelvinVectorSize>(0)};
-                };
+                [&](ResidualVectorType const& increment)
+            {
+                solution += increment;
+                s = PhysicalStressWithInvariants<DisplacementDim>{
+                    mp.G * solution.template segment<KelvinVectorSize>(0)};
+            };
 
             auto newton_solver = NumLib::NewtonRaphson<
                 decltype(linear_solver), JacobianMatrix,
@@ -711,7 +714,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
     return {{"damage.kappa_d", 1,
              [](typename MechanicsBase<
                     DisplacementDim>::MaterialStateVariables const& state,
-                std::vector<double>& cache) -> std::vector<double> const& {
+                std::vector<double>& cache) -> std::vector<double> const&
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto const& ehlers_state =
@@ -722,7 +726,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double> {
+                    state) -> BaseLib::DynamicSpan<double>
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto& ehlers_state =
@@ -733,7 +738,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
             {"damage.value", 1,
              [](typename MechanicsBase<
                     DisplacementDim>::MaterialStateVariables const& state,
-                std::vector<double>& cache) -> std::vector<double> const& {
+                std::vector<double>& cache) -> std::vector<double> const&
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto const& ehlers_state =
@@ -744,7 +750,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double> {
+                    state) -> BaseLib::DynamicSpan<double>
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto& ehlers_state =
@@ -755,7 +762,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
             {"eps_p.D", KelvinVector::RowsAtCompileTime,
              [](typename MechanicsBase<
                     DisplacementDim>::MaterialStateVariables const& state,
-                std::vector<double>& cache) -> std::vector<double> const& {
+                std::vector<double>& cache) -> std::vector<double> const&
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto const& ehlers_state =
@@ -770,7 +778,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double> {
+                    state) -> BaseLib::DynamicSpan<double>
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto& ehlers_state =
@@ -783,7 +792,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
             {"eps_p.V", 1,
              [](typename MechanicsBase<
                     DisplacementDim>::MaterialStateVariables const& state,
-                std::vector<double>& cache) -> std::vector<double> const& {
+                std::vector<double>& cache) -> std::vector<double> const&
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto const& ehlers_state =
@@ -794,7 +804,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double> {
+                    state) -> BaseLib::DynamicSpan<double>
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto& ehlers_state =
@@ -805,7 +816,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
             {"eps_p.eff", 1,
              [](typename MechanicsBase<
                     DisplacementDim>::MaterialStateVariables const& state,
-                std::vector<double>& cache) -> std::vector<double> const& {
+                std::vector<double>& cache) -> std::vector<double> const&
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto const& ehlers_state =
@@ -816,7 +828,8 @@ SolidEhlers<DisplacementDim>::getInternalVariables() const
                  return cache;
              },
              [](typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
-                    state) -> BaseLib::DynamicSpan<double> {
+                    state) -> BaseLib::DynamicSpan<double>
+             {
                  assert(dynamic_cast<StateVariables<DisplacementDim> const*>(
                             &state) != nullptr);
                  auto& ehlers_state =

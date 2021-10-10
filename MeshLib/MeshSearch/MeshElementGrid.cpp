@@ -59,9 +59,8 @@ MeshElementGrid::MeshElementGrid(MeshLib::Mesh const& mesh)
     // 1/3.)));
     //          _n_steps[1] = _n_steps[0] * delta[1]/delta[0],
     //          _n_steps[2] = _n_steps[0] * delta[2]/delta[0]
-    auto sc_ceil = [](double v) {
-        return static_cast<std::size_t>(std::ceil(v));
-    };
+    auto sc_ceil = [](double v)
+    { return static_cast<std::size_t>(std::ceil(v)); };
 
     switch (dim.count())
     {

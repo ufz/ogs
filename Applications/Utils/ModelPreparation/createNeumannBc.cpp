@@ -132,7 +132,8 @@ int main(int argc, char* argv[])
         MeshLib::IO::readMeshFromFile(in_mesh.getValue()));
 
     auto const* const node_id_pv =
-        [&]() -> MeshLib::PropertyVector<std::size_t>* {
+        [&]() -> MeshLib::PropertyVector<std::size_t>*
+    {
         try
         {
             return surface_mesh->getProperties().getPropertyVector<std::size_t>(

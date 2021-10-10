@@ -44,7 +44,8 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
         const_cast<std::vector<MeshLib::Node*>&>(mesh.getNodes());
     std::size_t const nearest_node_id =
         *std::min_element(node_ids.begin(), node_ids.end(),
-                          [&mesh_nodes, &point](auto id0, auto id1) {
+                          [&mesh_nodes, &point](auto id0, auto id1)
+                          {
                               return MathLib::sqrDist(*mesh_nodes[id0], point) <
                                      MathLib::sqrDist(*mesh_nodes[id1], point);
                           });

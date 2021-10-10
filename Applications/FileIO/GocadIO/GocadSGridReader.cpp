@@ -177,9 +177,8 @@ std::unique_ptr<MeshLib::Mesh> GocadSGridReader::getMesh() const
 {
     std::vector<MeshLib::Node*> nodes;
     std::transform(_nodes.cbegin(), _nodes.cend(), std::back_inserter(nodes),
-                   [](MeshLib::Node const* const node) {
-                       return new MeshLib::Node(*node);
-                   });
+                   [](MeshLib::Node const* const node)
+                   { return new MeshLib::Node(*node); });
 
     std::vector<MeshLib::Element*> elements(createElements(nodes));
     applySplitInformation(nodes, elements);
@@ -511,9 +510,9 @@ void GocadSGridReader::readElementPropertiesBinary()
             _index_calculator._n_cells);
 
         std::transform(float_properties.cbegin(), float_properties.cend(),
-                       float_properties.begin(), [](float const& val) {
-                           return BaseLib::swapEndianness(val);
-                       });
+                       float_properties.begin(),
+                       [](float const& val)
+                       { return BaseLib::swapEndianness(val); });
 
         property._property_data.resize(float_properties.size());
         std::copy(float_properties.begin(), float_properties.end(),
@@ -734,9 +733,8 @@ Gocad::Property const* GocadSGridReader::getProperty(
 {
     auto const it(std::find_if(_property_meta_data_vecs.begin(),
                                _property_meta_data_vecs.end(),
-                               [&name](Gocad::Property const& p) {
-                                   return p._property_name == name;
-                               }));
+                               [&name](Gocad::Property const& p)
+                               { return p._property_name == name; }));
     if (it == _property_meta_data_vecs.end())
     {
         return nullptr;

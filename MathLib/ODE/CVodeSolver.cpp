@@ -188,7 +188,8 @@ CVodeSolverImpl::CVodeSolverImpl(const BaseLib::ConfigTree& config,
     }
 
     auto f_wrapped = [](const realtype t, const N_Vector y, N_Vector ydot,
-                        void* function_handles) -> int {
+                        void* function_handles) -> int
+    {
         bool successful =
             static_cast<detail::FunctionHandles*>(function_handles)
                 ->call(t, NV_DATA_S(y), NV_DATA_S(ydot));
@@ -258,7 +259,8 @@ void CVodeSolverImpl::preSolve()
                              const N_Vector ydot, const DlsMat jac,
                              void* function_handles, N_Vector /*tmp1*/,
                              N_Vector /*tmp2*/, N_Vector /*tmp3*/
-                             ) -> int {
+                             ) -> int
+        {
             (void)N;  // prevent warnings during non-debug build
             auto* fh = static_cast<detail::FunctionHandles*>(function_handles);
             assert(N == fh->getNumberOfEquations());

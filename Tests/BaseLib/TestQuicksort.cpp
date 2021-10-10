@@ -33,9 +33,8 @@ struct BaseLibQuicksort : public ::testing::Test
     {
         cls.trivial([](const std::vector<int>& xs) { return xs.size() < 2; });
 
-        cls.collect([](std::vector<int> const& xs) {
-            return xs.size() < 10 ? "short" : "long";
-        });
+        cls.collect([](std::vector<int> const& xs)
+                    { return xs.size() < 10 ? "short" : "long"; });
     }
 
     ac::gtest_reporter gtest_reporter;
@@ -45,13 +44,12 @@ struct BaseLibQuicksort : public ::testing::Test
 // Quicksort result is sorted.
 TEST_F(BaseLibQuicksort, SortsAsSTLSort)
 {
-    cls.classify(
-        [](std::vector<int> const& xs) {
-            return std::is_sorted(xs.begin(), xs.end());
-        },
-        "sorted");
+    cls.classify([](std::vector<int> const& xs)
+                 { return std::is_sorted(xs.begin(), xs.end()); },
+                 "sorted");
 
-    auto quicksortSortsAsSTLSort = [](std::vector<int>& xs) -> bool {
+    auto quicksortSortsAsSTLSort = [](std::vector<int>& xs) -> bool
+    {
         std::vector<std::size_t> perm(xs.size());
         if (!xs.empty())
         {
@@ -88,7 +86,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutations)
 {
     auto gen = ac::make_arbitrary(OrderedUniqueListGen<int>());
 
-    auto quicksortCheckPermutations = [](std::vector<int>& xs) {
+    auto quicksortCheckPermutations = [](std::vector<int>& xs)
+    {
         std::vector<std::size_t> perm(xs.size());
         std::iota(perm.begin(), perm.end(), 0);
 
@@ -116,7 +115,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsWithPointer)
 {
     auto gen = ac::make_arbitrary(OrderedUniqueListGen<int>());
 
-    auto quicksortCheckPermutations = [](std::vector<int>& xs) {
+    auto quicksortCheckPermutations = [](std::vector<int>& xs)
+    {
         std::vector<std::size_t> perm(xs.size());
         std::iota(perm.begin(), perm.end(), 0);
 
@@ -149,7 +149,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsWithPointer)
 TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
 {
     auto reverse = [](std::vector<int>&& xs,
-                      std::size_t /*unused*/) -> std::vector<int> {
+                      std::size_t /*unused*/) -> std::vector<int>
+    {
         std::reverse(xs.begin(), xs.end());
         return std::move(xs);
     };
@@ -157,7 +158,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
     auto gen =
         ac::make_arbitrary(ac::map(reverse, OrderedUniqueListGen<int>()));
 
-    auto quicksortCheckPermutations = [](std::vector<int>& xs) {
+    auto quicksortCheckPermutations = [](std::vector<int>& xs)
+    {
         std::vector<std::size_t> perm(xs.size());
         std::iota(perm.begin(), perm.end(), 0);
 
@@ -183,7 +185,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverse)
 TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverseWithPointer)
 {
     auto reverse = [](std::vector<int>&& xs,
-                      std::size_t /*unused*/) -> std::vector<int> {
+                      std::size_t /*unused*/) -> std::vector<int>
+    {
         std::reverse(xs.begin(), xs.end());
         return std::move(xs);
     };
@@ -191,7 +194,8 @@ TEST_F(BaseLibQuicksort, ReportCorrectPermutationsReverseWithPointer)
     auto gen =
         ac::make_arbitrary(ac::map(reverse, OrderedUniqueListGen<int>()));
 
-    auto quicksortCheckPermutations = [](std::vector<int>& xs) {
+    auto quicksortCheckPermutations = [](std::vector<int>& xs)
+    {
         std::vector<std::size_t> perm(xs.size());
         std::iota(perm.begin(), perm.end(), 0);
 
@@ -241,7 +245,8 @@ TEST_F(BaseLibQuicksort, SortsRangeAsSTLSort)
 {
     auto quicksortSortsRangeAsSTLSort =
         [](std::vector<int>& xs,
-           std::tuple<std::size_t, std::size_t> const& range) -> bool {
+           std::tuple<std::size_t, std::size_t> const& range) -> bool
+    {
         if (xs.empty())
         {
             return true;
@@ -263,8 +268,7 @@ TEST_F(BaseLibQuicksort, SortsRangeAsSTLSort)
         ac::make_arbitrary(ac::generator<std::vector<int>>(),
                            randomSortedPairGenerator<std::size_t>())
             .discard_if([](std::vector<int> const& xs,
-                           std::tuple<std::size_t, std::size_t> const& range) {
-                return std::get<1>(range) >= xs.size();
-            }),
+                           std::tuple<std::size_t, std::size_t> const& range)
+                        { return std::get<1>(range) >= xs.size(); }),
         gtest_reporter);
 }

@@ -183,9 +183,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         auto const configs = optional_meshes->getConfigParameterList("mesh");
         std::transform(
             configs.begin(), configs.end(), std::back_inserter(meshes),
-            [&project_directory](auto const& mesh_config) {
-                return readSingleMesh(mesh_config, project_directory);
-            });
+            [&project_directory](auto const& mesh_config)
+            { return readSingleMesh(mesh_config, project_directory); });
     }
     else
     {  // Read single mesh with geometry.
@@ -1110,9 +1109,8 @@ void ProjectData::parseProcesses(
 
         if (BaseLib::containsIf(
                 _processes,
-                [&name](std::unique_ptr<ProcessLib::Process> const& p) {
-                    return p->name == name;
-                }))
+                [&name](std::unique_ptr<ProcessLib::Process> const& p)
+                { return p->name == name; }))
         {
             OGS_FATAL("The process name '{:s}' is not unique.", name);
         }

@@ -170,7 +170,8 @@ public:
     {
         auto cb = [](std::size_t id, LocalAssembler& loc_asm,
                      NumLib::LocalToGlobalIndexMap const& dof_table,
-                     GlobalVector const& x) {
+                     GlobalVector const& x)
+        {
             auto const indices = NumLib::getIndices(id, dof_table);
             auto const local_x = x.get(indices);
 

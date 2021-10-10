@@ -96,9 +96,9 @@ void addIntegrationPointWriter(
     std::vector<IntegrationPointMetaData> meta_data;
     meta_data.reserve(size(integration_point_writer));
     transform(cbegin(integration_point_writer), cend(integration_point_writer),
-              back_inserter(meta_data), [&](auto const& ip_writer) {
-                  return addIntegrationPointData(mesh, *ip_writer);
-              });
+              back_inserter(meta_data),
+              [&](auto const& ip_writer)
+              { return addIntegrationPointData(mesh, *ip_writer); });
     if (!meta_data.empty())
     {
         addIntegrationPointMetaData(mesh, meta_data);

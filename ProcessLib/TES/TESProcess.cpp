@@ -155,10 +155,9 @@ void TESProcess::initializeConcreteProcess(
 void TESProcess::initializeSecondaryVariables()
 {
     // adds a secondary variables to the collection of all secondary variables.
-    auto add2nd = [&](std::string const& var_name,
-                      SecondaryVariableFunctions&& fcts) {
-        _secondary_variables.addSecondaryVariable(var_name, std::move(fcts));
-    };
+    auto add2nd =
+        [&](std::string const& var_name, SecondaryVariableFunctions&& fcts)
+    { _secondary_variables.addSecondaryVariable(var_name, std::move(fcts)); };
 
     // creates an extrapolator
     auto makeEx =
@@ -169,7 +168,8 @@ void TESProcess::initializeSecondaryVariables()
                 std::vector<
                     NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
                 std::vector<double>& /*cache*/)
-                const) -> SecondaryVariableFunctions {
+                const) -> SecondaryVariableFunctions
+    {
         return ProcessLib::makeExtrapolator(n_components, getExtrapolator(),
                                             _local_assemblers, method);
     };
@@ -284,8 +284,9 @@ NumLib::IterationResult TESProcess::postIterationConcreteProcess(
 
         MathLib::LinAlg::setLocalAccessibleVector(*_x_previous_timestep);
 
-        auto check_variable_bounds = [&](std::size_t id,
-                                         TESLocalAssemblerInterface& loc_asm) {
+        auto check_variable_bounds =
+            [&](std::size_t id, TESLocalAssemblerInterface& loc_asm)
+        {
             auto const r_c_indices = NumLib::getRowColumnIndices(
                 id, *this->_local_to_global_index_map, indices_cache);
             local_x_cache = x.get(r_c_indices.rows);
