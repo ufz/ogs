@@ -48,7 +48,8 @@ extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
     std::partition_copy(
         begin(sub_mesh.getNodes()), end(sub_mesh.getNodes()),
         back_inserter(inner_nodes), back_inserter(outer_nodes),
-        [&](MeshLib::Node* const n) {
+        [&](MeshLib::Node* const n)
+        {
             auto const bulk_node = mesh.getNode((*bulk_node_ids)[n->getID()]);
             const auto& connected_elements =
                 mesh.getElementsConnectedToNode(*bulk_node);
@@ -65,9 +66,8 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
 {
     // An element is active if its material id matches the selected material id.
     auto is_active = [material_id, material_ids = *materialIDs(mesh)](
-                         MeshLib::Element const* const e) {
-        return material_id == material_ids[e->getID()];
-    };
+                         MeshLib::Element const* const e)
+    { return material_id == material_ids[e->getID()]; };
 
     auto const& elements = mesh.getElements();
     std::vector<MeshLib::Element*> deactivated_elements;
@@ -255,9 +255,8 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     std::transform(begin(deactivated_subdomain_material_ids),
                    end(deactivated_subdomain_material_ids),
                    back_inserter(deactivated_subdomain_meshes),
-                   [&](std::size_t const id) {
-                       return createDeactivatedSubdomainMesh(mesh, id);
-                   });
+                   [&](std::size_t const id)
+                   { return createDeactivatedSubdomainMesh(mesh, id); });
 
     return std::make_unique<DeactivatedSubdomain const>(
         std::move(time_interval),
@@ -288,12 +287,13 @@ createDeactivatedSubdomains(
         auto const deactivated_subdomain_configs =
             //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain}
             subdomains_config->getConfigSubtreeList("deactivated_subdomain");
-        std::transform(
-            begin(deactivated_subdomain_configs),
-            end(deactivated_subdomain_configs),
-            back_inserter(deactivated_subdomains), [&](auto const& config) {
-                return createDeactivatedSubdomain(config, mesh, parameters, curves);
-            });
+        std::transform(begin(deactivated_subdomain_configs),
+                       end(deactivated_subdomain_configs),
+                       back_inserter(deactivated_subdomains),
+                       [&](auto const& config) {
+                           return createDeactivatedSubdomain(
+                               config, mesh, parameters, curves);
+                       });
     }
     return deactivated_subdomains;
 }

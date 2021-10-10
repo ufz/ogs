@@ -38,9 +38,8 @@ std::vector<int> getUniqueMaterialIds(
     std::set<int> unique_material_ids;
     std::transform(begin(elements), end(elements),
                    inserter(unique_material_ids, end(unique_material_ids)),
-                   [&material_ids](MeshLib::Element const* const e) {
-                       return material_ids[e->getID()];
-                   });
+                   [&material_ids](MeshLib::Element const* const e)
+                   { return material_ids[e->getID()]; });
     return {begin(unique_material_ids), end(unique_material_ids)};
 }
 }  // namespace
@@ -80,9 +79,9 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
         const auto bhe_mat_id = bhe_material_ids[bhe_id];
         std::vector<MeshLib::Element*>& vec_elements = bhe_elements[bhe_id];
         copy_if(begin(all_bhe_elements), end(all_bhe_elements),
-                back_inserter(vec_elements), [&](MeshLib::Element* e) {
-                    return material_ids[e->getID()] == bhe_mat_id;
-                });
+                back_inserter(vec_elements),
+                [&](MeshLib::Element* e)
+                { return material_ids[e->getID()] == bhe_mat_id; });
         DBUG("-> found {:d} elements on the BHE_{:d}", vec_elements.size(),
              bhe_id);
     }
@@ -100,10 +99,9 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
                 vec_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
             }
         }
-        BaseLib::makeVectorUnique(
-            vec_nodes, [](MeshLib::Node* node1, MeshLib::Node* node2) {
-                return node1->getID() < node2->getID();
-            });
+        BaseLib::makeVectorUnique(vec_nodes,
+                                  [](MeshLib::Node* node1, MeshLib::Node* node2)
+                                  { return node1->getID() < node2->getID(); });
         DBUG("-> found {:d} nodes on the BHE_{:d}", vec_nodes.size(), bhe_id);
     }
 

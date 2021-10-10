@@ -37,26 +37,30 @@ Process::Process(
       _coupled_solutions(nullptr),
       _integration_order(integration_order),
       _process_variables(std::move(process_variables)),
-      _boundary_conditions([&](const std::size_t number_of_process_variables)
-                               -> std::vector<BoundaryConditionCollection> {
-          std::vector<BoundaryConditionCollection> pcs_BCs;
-          pcs_BCs.reserve(number_of_process_variables);
-          for (std::size_t i = 0; i < number_of_process_variables; i++)
+      _boundary_conditions(
+          [&](const std::size_t number_of_process_variables)
+              -> std::vector<BoundaryConditionCollection>
           {
-              pcs_BCs.emplace_back(BoundaryConditionCollection(parameters));
-          }
-          return pcs_BCs;
-      }(_process_variables.size())),
-      _source_term_collections([&](const std::size_t number_of_processes)
-                                   -> std::vector<SourceTermCollection> {
-          std::vector<SourceTermCollection> pcs_sts;
-          pcs_sts.reserve(number_of_processes);
-          for (std::size_t i = 0; i < number_of_processes; i++)
+              std::vector<BoundaryConditionCollection> pcs_BCs;
+              pcs_BCs.reserve(number_of_process_variables);
+              for (std::size_t i = 0; i < number_of_process_variables; i++)
+              {
+                  pcs_BCs.emplace_back(BoundaryConditionCollection(parameters));
+              }
+              return pcs_BCs;
+          }(_process_variables.size())),
+      _source_term_collections(
+          [&](const std::size_t number_of_processes)
+              -> std::vector<SourceTermCollection>
           {
-              pcs_sts.emplace_back(SourceTermCollection(parameters));
-          }
-          return pcs_sts;
-      }(_process_variables.size()))
+              std::vector<SourceTermCollection> pcs_sts;
+              pcs_sts.reserve(number_of_processes);
+              for (std::size_t i = 0; i < number_of_processes; i++)
+              {
+                  pcs_sts.emplace_back(SourceTermCollection(parameters));
+              }
+              return pcs_sts;
+          }(_process_variables.size()))
 {
 }
 
@@ -285,9 +289,8 @@ void Process::constructMonolithicProcessDofTable()
     std::vector<int> vec_var_n_components;
     transform(cbegin(_process_variables[0]), cend(_process_variables[0]),
               back_inserter(vec_var_n_components),
-              [](ProcessVariable const& pv) {
-                  return pv.getNumberOfGlobalComponents();
-              });
+              [](ProcessVariable const& pv)
+              { return pv.getNumberOfGlobalComponents(); });
 
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(

@@ -38,14 +38,13 @@ std::vector<double> getCoupledLocalSolutions(
         return {};
     }
 
-    std::size_t const local_solutions_size = std::accumulate(
-        cbegin(indices),
-        cend(indices),
-        std::size_t(0),
-        [](GlobalIndexType const size,
-           std::vector<GlobalIndexType> const& process_indices) {
-            return size + process_indices.size();
-        });
+    std::size_t const local_solutions_size =
+        std::accumulate(cbegin(indices),
+                        cend(indices),
+                        std::size_t(0),
+                        [](GlobalIndexType const size,
+                           std::vector<GlobalIndexType> const& process_indices)
+                        { return size + process_indices.size(); });
     std::vector<double> local_solutions;
     local_solutions.reserve(local_solutions_size);
 

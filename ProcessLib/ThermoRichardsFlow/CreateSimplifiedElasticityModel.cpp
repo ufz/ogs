@@ -14,9 +14,9 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
-#include "SimplifiedElasticityModel.h"
 #include "HydrostaticElasticityModel.h"
 #include "RigidElasticityModel.h"
+#include "SimplifiedElasticityModel.h"
 #include "UniaxialElasticityModel.h"
 #include "UserDefinedElasticityModel.h"
 

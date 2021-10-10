@@ -183,7 +183,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
-                                      auto get_ip_values_function) {
+                                      auto get_ip_values_function)
+    {
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
@@ -201,8 +202,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                                DisplacementDim>::RowsAtCompileTime,
                            &LocalAssemblerIF::getIntPtEpsilon);
 
-    add_secondary_variable(
-        "velocity", DisplacementDim, &LocalAssemblerIF::getIntPtDarcyVelocity);
+    add_secondary_variable("velocity", DisplacementDim,
+                           &LocalAssemblerIF::getIntPtDarcyVelocity);
 
     //
     // enable output of internal variables defined by material models
@@ -388,7 +389,8 @@ void HydroMechanicsProcess<DisplacementDim>::
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
-    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
         if (_use_monolithic_scheme)
         {
             transformVariableFromGlobalVector(b, variable_id, dof_tables[0],

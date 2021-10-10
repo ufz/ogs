@@ -70,9 +70,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 "'displacement' or 'displacement_jumpN' or 'pressure'");
         }
         auto variable = std::find_if(variables.cbegin(), variables.cend(),
-                                     [&pv_name](ProcessVariable const& v) {
-                                         return v.getName() == pv_name;
-                                     });
+                                     [&pv_name](ProcessVariable const& v)
+                                     { return v.getName() == pv_name; });
 
         if (variable == variables.end())
         {

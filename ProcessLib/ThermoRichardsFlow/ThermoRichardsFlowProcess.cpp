@@ -78,7 +78,8 @@ void ThermoRichardsFlowProcess::initializeConcreteProcess(
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
-                                      auto get_ip_values_function) {
+                                      auto get_ip_values_function)
+    {
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
@@ -178,8 +179,7 @@ void ThermoRichardsFlowProcess::setInitialConditionsConcreteProcess(
 }
 
 void ThermoRichardsFlowProcess::assembleConcreteProcess(
-    const double t, double const dt,
-    std::vector<GlobalVector*> const& x,
+    const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& xdot, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
@@ -217,7 +217,8 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
-    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
         transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
                                           output_vector, std::negate<double>());
     };
@@ -264,18 +265,15 @@ void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
         pv.getActiveElementIDs(), dof_tables, t, dt, x, x_dot, process_id);
 }
 
-
 std::vector<NumLib::LocalToGlobalIndexMap const*>
-ThermoRichardsFlowProcess::getDOFTables(
-    int const number_of_processes) const
+ThermoRichardsFlowProcess::getDOFTables(int const number_of_processes) const
 {
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     dof_tables.reserve(number_of_processes);
     std::generate_n(std::back_inserter(dof_tables), number_of_processes,
-           [&]() { return _local_to_global_index_map.get(); });
+                    [&]() { return _local_to_global_index_map.get(); });
     return dof_tables;
 }
-
 
 }  // namespace ThermoRichardsFlow
 }  // namespace ProcessLib

@@ -78,9 +78,8 @@ std::vector<std::unique_ptr<ProcessData>> createPerProcessData(
         auto const pcs_name = pcs_config.getConfigAttribute<std::string>("ref");
         auto& pcs = *BaseLib::getIfOrError(
             processes,
-            [&pcs_name](std::unique_ptr<Process> const& p) {
-                return p->name == pcs_name;
-            },
+            [&pcs_name](std::unique_ptr<Process> const& p)
+            { return p->name == pcs_name; },
             "A process with the given name has not been defined.");
 
         auto const nl_slv_name =

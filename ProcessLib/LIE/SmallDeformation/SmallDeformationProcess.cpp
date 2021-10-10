@@ -120,7 +120,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     transform(cbegin(vec_junction_nodeID_matIDs),
               cend(vec_junction_nodeID_matIDs),
               back_inserter(_vec_junction_nodes),
-              [&](auto& vec_junction_nodeID_matID) {
+              [&](auto& vec_junction_nodeID_matID)
+              {
                   return const_cast<MeshLib::Node*>(
                       _mesh.getNode(vec_junction_nodeID_matID.first));
               });

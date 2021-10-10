@@ -9,11 +9,11 @@
  */
 
 #include "CreateStokesFlowProcess.h"
-#include "StokesFlowProcess.h"
 
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
+#include "StokesFlowProcess.h"
 
 namespace ProcessLib
 {

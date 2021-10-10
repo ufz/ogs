@@ -134,9 +134,8 @@ std::array<double, 3> thermalResistancesGroutSoil(double const chi,
         compute_R_gg(chi, R_gs, R_ar, R_g);  // Resulting thermal resistances.
     double new_chi = chi;
 
-    auto constraint = [&]() {
-        return 1.0 / ((1.0 / R_gg) + (1.0 / (2.0 * R_gs)));
-    };
+    auto constraint = [&]()
+    { return 1.0 / ((1.0 / R_gg) + (1.0 / (2.0 * R_gs))); };
 
     std::array<double, 3> const multiplier{chi * 2.0 / 3.0, chi * 1.0 / 3.0,
                                            0.0};

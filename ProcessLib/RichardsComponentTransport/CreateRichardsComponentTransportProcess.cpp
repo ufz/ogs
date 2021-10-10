@@ -154,9 +154,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     DBUG("Media properties verified.");
 
     RichardsComponentTransportProcessData process_data{
-        std::move(media_map),
-        specific_body_force,
-        has_gravity};
+        std::move(media_map), specific_body_force, has_gravity};
 
     SecondaryVariableCollection secondary_variables;
 

@@ -247,10 +247,10 @@ void getFractureMatrixDataInMesh(
     {
         OGS_FATAL("Could not access MaterialIDs property from mesh.");
     }
-    transform(
-        cbegin(all_fracture_elements), cend(all_fracture_elements),
-        back_inserter(vec_fracture_mat_IDs),
-        [&material_ids](auto const* e) { return (*material_ids)[e->getID()]; });
+    transform(cbegin(all_fracture_elements), cend(all_fracture_elements),
+              back_inserter(vec_fracture_mat_IDs),
+              [&material_ids](auto const* e)
+              { return (*material_ids)[e->getID()]; });
 
     BaseLib::makeVectorUnique(vec_fracture_mat_IDs);
     DBUG("-> found {:d} fracture material groups", vec_fracture_mat_IDs.size());
@@ -264,9 +264,8 @@ void getFractureMatrixDataInMesh(
             vec_fracture_elements[frac_id];
         std::copy_if(all_fracture_elements.begin(), all_fracture_elements.end(),
                      std::back_inserter(vec_elements),
-                     [&](MeshLib::Element* e) {
-                         return (*material_ids)[e->getID()] == frac_mat_id;
-                     });
+                     [&](MeshLib::Element* e)
+                     { return (*material_ids)[e->getID()] == frac_mat_id; });
         DBUG("-> found {:d} elements on the fracture {:d}", vec_elements.size(),
              frac_id);
     }
@@ -287,10 +286,9 @@ void getFractureMatrixDataInMesh(
                 vec_nodes.push_back(const_cast<MeshLib::Node*>(e->getNode(i)));
             }
         }
-        BaseLib::makeVectorUnique(
-            vec_nodes, [](MeshLib::Node* node1, MeshLib::Node* node2) {
-                return node1->getID() < node2->getID();
-            });
+        BaseLib::makeVectorUnique(vec_nodes,
+                                  [](MeshLib::Node* node1, MeshLib::Node* node2)
+                                  { return node1->getID() < node2->getID(); });
         DBUG("-> found {:d} nodes on the fracture {:d}", vec_nodes.size(),
              frac_id);
     }
@@ -335,10 +333,9 @@ void getFractureMatrixDataInMesh(
                 }
             }
         }
-        BaseLib::makeVectorUnique(
-            vec_ele, [](MeshLib::Element* e1, MeshLib::Element* e2) {
-                return e1->getID() < e2->getID();
-            });
+        BaseLib::makeVectorUnique(vec_ele,
+                                  [](MeshLib::Element* e1, MeshLib::Element* e2)
+                                  { return e1->getID() < e2->getID(); });
 
         // second, append fracture elements
         std::copy(fracture_elements.begin(), fracture_elements.end(),

@@ -59,11 +59,11 @@ std::vector<double> uGlobalEnrichments(
     for (std::size_t i = 0; i < frac_props.size(); i++)
     {
         auto const* frac = frac_props[i];
-        enrichments[i] = Heaviside(std::accumulate(
-            cbegin(frac->branches_slave), cend(frac->branches_slave),
-            levelsets[i], [&](bool const enrich, auto const& branch) {
-                return enrich & levelsetBranch(branch, x);
-            }));
+        enrichments[i] = Heaviside(
+            std::accumulate(cbegin(frac->branches_slave),
+                            cend(frac->branches_slave), levelsets[i],
+                            [&](bool const enrich, auto const& branch)
+                            { return enrich & levelsetBranch(branch, x); }));
     }
 
     // junctions

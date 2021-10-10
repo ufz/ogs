@@ -488,9 +488,9 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
         const int monolithic_process_id = 0;
         auto const& pvs = getProcessVariables(monolithic_process_id);
         auto const it =
-            std::find_if(pvs.begin(), pvs.end(), [](ProcessVariable const& pv) {
-                return pv.getName() == "displacement_jump1";
-            });
+            std::find_if(pvs.begin(), pvs.end(),
+                         [](ProcessVariable const& pv)
+                         { return pv.getName() == "displacement_jump1"; });
         if (it == pvs.end())
         {
             OGS_FATAL(
@@ -530,8 +530,9 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
     MeshLib::PropertyVector<double>& vec_w = *_process_data.mesh_prop_nodal_w;
     MeshLib::PropertyVector<double>& vec_b = *_process_data.mesh_prop_nodal_b;
 
-    auto compute_nodal_aperture = [&](std::size_t const node_id,
-                                      double const w_n) {
+    auto compute_nodal_aperture =
+        [&](std::size_t const node_id, double const w_n)
+    {
         // skip aperture computation for element-wise defined b0 because there
         // are jumps on the nodes between the element's values.
         if (dynamic_cast<ParameterLib::MeshElementParameter<double> const*>(
@@ -607,7 +608,8 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
         _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x, xdot,
         dxdot_dx, dx_dx, process_id, M, K, b, Jac);
 
-    auto copyRhs = [&](int const variable_id, auto& output_vector) {
+    auto copyRhs = [&](int const variable_id, auto& output_vector)
+    {
         transformVariableFromGlobalVector(b, variable_id,
                                           *_local_to_global_index_map,
                                           output_vector, std::negate<double>());
