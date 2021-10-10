@@ -77,9 +77,8 @@ static std::vector<std::unique_ptr<MeshLib::Mesh>> extractBoundaryMeshes(
         int const material_id = (*material_ids)[selected_element_ids.back()];
         auto split = std::partition(
             begin(selected_element_ids), end(selected_element_ids),
-            [&material_id, &material_ids](int const id) {
-                return (*material_ids)[id] != material_id;
-            });
+            [&material_id, &material_ids](int const id)
+            { return (*material_ids)[id] != material_id; });
 
         // Add elements with same material id to the mesh.
         std::vector<MeshLib::Element*> single_material_elements;

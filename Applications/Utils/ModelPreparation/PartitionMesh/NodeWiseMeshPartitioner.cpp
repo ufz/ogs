@@ -82,9 +82,8 @@ NodeWiseMeshPartitioner::IntegerType getNumberOfIntegerVariablesOfElements(
 {
     return 3 * elements.size() +
            std::accumulate(begin(elements), end(elements), 0,
-                           [](auto const nnodes, auto const* e) {
-                               return nnodes + e->getNumberOfNodes();
-                           });
+                           [](auto const nnodes, auto const* e)
+                           { return nnodes + e->getNumberOfNodes(); });
 }
 
 std::ostream& Partition::writeConfig(std::ostream& os) const
@@ -119,9 +118,8 @@ std::size_t partitionLookup(
     std::vector<std::size_t> const& partition_ids,
     std::vector<std::size_t> const* node_id_mapping = nullptr)
 {
-    auto node_id = [&node_id_mapping](MeshLib::Node const& n) {
-        return nodeIdBulkMesh(n, node_id_mapping);
-    };
+    auto node_id = [&node_id_mapping](MeshLib::Node const& n)
+    { return nodeIdBulkMesh(n, node_id_mapping); };
 
     return partition_ids[node_id(node)];
 }
@@ -393,8 +391,9 @@ bool copyPropertyVector(
     partitioned_pv->resize(total_number_of_tuples.at(item_type) *
                            pv->getNumberOfGlobalComponents());
 
-    auto copy_property_vector_values = [&](Partition const& p,
-                                           std::size_t offset) {
+    auto copy_property_vector_values =
+        [&](Partition const& p, std::size_t offset)
+    {
         if (item_type == MeshLib::MeshItemType::Node)
         {
             return copyNodePropertyVectorValues(p, offset, *pv,
@@ -486,12 +485,12 @@ MeshLib::Properties partitionProperties(
 
     Properties partitioned_properties;
 
-    auto count_tuples = [&](MeshItemType const mesh_item_type) {
-        return std::accumulate(begin(partitions), end(partitions), 0,
-                               [&](std::size_t const sum, Partition const& p) {
-                                   return sum +
-                                          p.numberOfMeshItems(mesh_item_type);
-                               });
+    auto count_tuples = [&](MeshItemType const mesh_item_type)
+    {
+        return std::accumulate(
+            begin(partitions), end(partitions), 0,
+            [&](std::size_t const sum, Partition const& p)
+            { return sum + p.numberOfMeshItems(mesh_item_type); });
     };
     std::map<MeshItemType, std::size_t> const total_number_of_tuples = {
         {MeshItemType::Cell, count_tuples(MeshItemType::Cell)},
@@ -506,12 +505,15 @@ MeshLib::Properties partitionProperties(
     // 1 create new PV
     // 2 resize the PV with total_number_of_tuples
     // 3 copy the values according to the partition info
-    applyToPropertyVectors(properties, [&](auto type, auto const property) {
-        return copyPropertyVector<decltype(type)>(
-            partitioned_properties, partitions,
-            dynamic_cast<PropertyVector<decltype(type)> const*>(property),
-            total_number_of_tuples);
-    });
+    applyToPropertyVectors(
+        properties,
+        [&](auto type, auto const property)
+        {
+            return copyPropertyVector<decltype(type)>(
+                partitioned_properties, partitions,
+                dynamic_cast<PropertyVector<decltype(type)> const*>(property),
+                total_number_of_tuples);
+        });
 
     addVtkGhostTypeProperty(partitioned_properties,
                             partitions,
@@ -626,13 +628,14 @@ void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
         auto map_elements =
             [&global_to_local](
                 std::vector<MeshLib::Element const*> const& elements,
-                std::size_t const offset) {
-                auto const n_elements = elements.size();
-                for (std::size_t e = 0; e < n_elements; ++e)
-                {
-                    global_to_local[elements[e]->getID()] = offset + e;
-                }
-            };
+                std::size_t const offset)
+        {
+            auto const n_elements = elements.size();
+            for (std::size_t e = 0; e < n_elements; ++e)
+            {
+                global_to_local[elements[e]->getID()] = offset + e;
+            }
+        };
 
         map_elements(bulk_partition.regular_elements, 0);
         map_elements(bulk_partition.ghost_elements,
@@ -642,15 +645,16 @@ void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
         auto renumber_elements =
             [&bulk_element_ids, &global_to_local](
                 std::vector<MeshLib::Element const*> const& elements,
-                std::size_t const offset) {
-                auto const n_elements = elements.size();
-                for (std::size_t e = 0; e < n_elements; ++e)
-                {
-                    bulk_element_ids[offset + e] =
-                        global_to_local[bulk_element_ids[offset + e]];
-                }
-                return n_elements;
-            };
+                std::size_t const offset)
+        {
+            auto const n_elements = elements.size();
+            for (std::size_t e = 0; e < n_elements; ++e)
+            {
+                bulk_element_ids[offset + e] =
+                    global_to_local[bulk_element_ids[offset + e]];
+            }
+            return n_elements;
+        };
 
         offset += renumber_elements(local_partition.regular_elements, offset);
         offset += renumber_elements(local_partition.ghost_elements, offset);
@@ -821,7 +825,9 @@ void writeProperties(const std::string& file_name_base,
     BaseLib::writeValueBinary(out, number_of_properties);
 
     applyToPropertyVectors(
-        partitioned_properties, [&](auto type, auto const& property) {
+        partitioned_properties,
+        [&](auto type, auto const& property)
+        {
             return writePropertyVector<decltype(type)>(
                 dynamic_cast<MeshLib::PropertyVector<decltype(type)> const*>(
                     property),
@@ -1021,22 +1027,22 @@ void writeElements(std::string const& file_name_base,
             [&local_node_ids](
                 std::vector<MeshLib::Element const*> const& elements,
                 long const element_offsets,
-                std::ofstream& output_stream) {
-                long counter = elements.size();
-                std::vector<long> ele_info(element_offsets);
+                std::ofstream& output_stream)
+        {
+            long counter = elements.size();
+            std::vector<long> ele_info(element_offsets);
 
-                for (std::size_t j = 0; j < elements.size(); j++)
-                {
-                    const auto* elem = elements[j];
-                    ele_info[j] = counter;
-                    getElementIntegerVariables(*elem, local_node_ids, ele_info,
-                                               counter);
-                }
-                // Write vector data of regular elements
-                output_stream.write(
-                    reinterpret_cast<const char*>(ele_info.data()),
-                    ele_info.size() * sizeof(long));
-            };
+            for (std::size_t j = 0; j < elements.size(); j++)
+            {
+                const auto* elem = elements[j];
+                ele_info[j] = counter;
+                getElementIntegerVariables(*elem, local_node_ids, ele_info,
+                                           counter);
+            }
+            // Write vector data of regular elements
+            output_stream.write(reinterpret_cast<const char*>(ele_info.data()),
+                                ele_info.size() * sizeof(long));
+        };
 
         // regular elements.
         writeElementData(partition.regular_elements, regular_element_offsets[i],

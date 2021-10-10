@@ -57,7 +57,8 @@ int XmlPrjInterface::readFile(const QString& fileName)
         return 0;
     }
 
-    auto read_single_mesh = [&](QString const& mesh_str) {
+    auto read_single_mesh = [&](QString const& mesh_str)
+    {
         std::unique_ptr<MeshLib::Mesh> mesh{
             MeshLib::IO::readMeshFromFile(mesh_str.toStdString())};
         if (mesh != nullptr)

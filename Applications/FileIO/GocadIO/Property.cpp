@@ -59,13 +59,14 @@ Property parseGocadPropertyMetaData(std::string& line, std::istream& in,
     auto checkPropertyID =
         [](boost::tokenizer<boost::char_separator<char>>::iterator const&
                tok_it,
-           Property const& prop) {
-            if (!prop.checkID(*tok_it))
-            {
-                throw std::runtime_error(
-                    "parseGocadPropertyMetaData(): id mismatch.");
-            }
-        };
+           Property const& prop)
+    {
+        if (!prop.checkID(*tok_it))
+        {
+            throw std::runtime_error(
+                "parseGocadPropertyMetaData(): id mismatch.");
+        }
+    };
 
     while (std::getline(in, line))
     {

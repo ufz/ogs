@@ -14,8 +14,8 @@
 
 #include "MeshFromRasterDialog.h"
 
-#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 #include "Base/OGSError.h"
+#include "MeshLib/MeshGenerators/VtkMeshConverter.h"
 
 MeshFromRasterDialog::MeshFromRasterDialog(QDialog* parent)
     : QDialog(parent), _mesh_name("mesh"), _array_name("MaterialIDs")

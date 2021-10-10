@@ -81,14 +81,14 @@
 #ifdef OGS_USE_NETCDF
 #include "VtkVis/NetCdfConfigureDialog.h"
 #endif  // OGS_USE_NETCDF
-#include "DataView/GeoTreeModel.h"
 #include "Base/LastSavedFileDirectory.h"
 #include "Base/OGSError.h"
 #include "Base/RecentFiles.h"
+#include "Base/TreeModelIterator.h"
+#include "DataView/GeoTreeModel.h"
 #include "DataView/SHPImportDialog.h"
 #include "DataView/SetNameDialog.h"
 #include "DataView/StationTreeModel.h"
-#include "Base/TreeModelIterator.h"
 #include "VtkVis/VtkAddFilterDialog.h"
 #include "VtkVis/VtkBGImageSource.h"
 #include "VtkVis/VtkGeoImageSource.h"

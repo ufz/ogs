@@ -199,8 +199,8 @@ vtkImageAlgorithm* VtkRaster::loadImageFromTIFF(const std::string& fileName)
             // read colormap
             uint16 *cmap_red = nullptr, *cmap_green = nullptr,
                    *cmap_blue = nullptr;
-            int colormap_used = TIFFGetField(
-                tiff, TIFFTAG_COLORMAP, &cmap_red, &cmap_green, &cmap_blue);
+            int colormap_used = TIFFGetField(tiff, TIFFTAG_COLORMAP, &cmap_red,
+                                             &cmap_green, &cmap_blue);
 
             auto* data = new float[imgWidth * imgHeight * 4];
             auto* pxl(new int[4]);
@@ -331,9 +331,8 @@ std::string VtkRaster::findWorldFile(std::string const& filename)
 
     auto const res =
         std::find_if(supported_extensions.begin(), supported_extensions.end(),
-                     [&no_ext](auto const& ext) -> bool {
-                         return BaseLib::IsFileExisting(no_ext + ext);
-                     });
+                     [&no_ext](auto const& ext) -> bool
+                     { return BaseLib::IsFileExisting(no_ext + ext); });
     if (res != supported_extensions.end())
     {
         return no_ext + *res;

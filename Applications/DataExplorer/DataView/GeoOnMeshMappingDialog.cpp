@@ -14,8 +14,8 @@
 
 #include "GeoOnMeshMappingDialog.h"
 
-#include "MeshLib/Mesh.h"
 #include "Base/OGSError.h"
+#include "MeshLib/Mesh.h"
 
 GeoOnMeshMappingDialog::GeoOnMeshMappingDialog(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& mesh_vec,

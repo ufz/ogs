@@ -19,7 +19,6 @@
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 
-
 namespace FileIO
 {
 GeoLib::Raster* AsciiRasterInterface::readRaster(std::string const& fname)
@@ -299,9 +298,9 @@ std::optional<std::vector<GeoLib::Raster const*>> readRasters(
     std::vector<GeoLib::Raster const*> rasters;
     rasters.reserve(raster_paths.size());
     std::transform(raster_paths.begin(), raster_paths.end(),
-                   std::back_inserter(rasters), [](auto const& path) {
-                       return FileIO::AsciiRasterInterface::readRaster(path);
-                   });
+                   std::back_inserter(rasters),
+                   [](auto const& path)
+                   { return FileIO::AsciiRasterInterface::readRaster(path); });
     return std::make_optional(rasters);
 }
 }  // end namespace FileIO

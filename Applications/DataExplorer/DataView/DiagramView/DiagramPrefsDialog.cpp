@@ -18,11 +18,11 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+#include "Base/OGSError.h"
 #include "DetailWindow.h"
 #include "DiagramList.h"
-#include "GetDateTime.h"
-#include "Base/OGSError.h"
 #include "GeoLib/Station.h"
+#include "GetDateTime.h"
 
 DiagramPrefsDialog::DiagramPrefsDialog(const GeoLib::Station* stn,
                                        const QString& listName,

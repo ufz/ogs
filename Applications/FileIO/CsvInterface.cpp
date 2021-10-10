@@ -173,9 +173,8 @@ int CsvInterface::readPoints(std::ifstream& in, char delim,
 {
     std::array<std::size_t, 3> order = {{0, 1, 2}};
     std::sort(order.begin(), order.end(),
-              [&column_idx](std::size_t idx1, std::size_t idx2) {
-                  return column_idx[idx1] < column_idx[idx2];
-              });
+              [&column_idx](std::size_t idx1, std::size_t idx2)
+              { return column_idx[idx1] < column_idx[idx2]; });
     std::array<std::size_t, 3> const column_advance = {
         {column_idx[order[0]], column_idx[order[1]] - column_idx[order[0]],
          column_idx[order[2]] - column_idx[order[1]]}};

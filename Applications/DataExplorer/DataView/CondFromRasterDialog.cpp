@@ -18,10 +18,10 @@
 #include <QSettings>
 #include <utility>
 
-#include "DirectConditionGenerator.h"
-#include "MeshLib/Mesh.h"
 #include "Base/OGSError.h"
 #include "Base/StrictDoubleValidator.h"
+#include "DirectConditionGenerator.h"
+#include "MeshLib/Mesh.h"
 
 CondFromRasterDialog::CondFromRasterDialog(std::vector<MeshLib::Mesh*> msh_vec,
                                            QDialog* parent)

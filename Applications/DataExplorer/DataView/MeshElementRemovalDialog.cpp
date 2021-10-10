@@ -14,15 +14,15 @@
 
 #include "MeshElementRemovalDialog.h"
 
+#include <Eigen/StdVector>
 #include <QList>
 #include <QListWidgetItem>
 #include <algorithm>
-#include<Eigen/StdVector>
 
 #include "Applications/DataExplorer/Base/OGSError.h"
 #include "Applications/DataHolderLib/Project.h"
-#include "MeshLib/Elements/Element.h"
 #include "GeoLib/AABB.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"

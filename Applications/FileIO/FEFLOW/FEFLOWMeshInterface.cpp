@@ -82,9 +82,9 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             vec_nodes.resize(fem_dim.n_nodes);
             std::size_t count = 0;
             double dummy_coords[3] = {};
-            std::generate(vec_nodes.begin(), vec_nodes.end(), [&]() {
-                return new MeshLib::Node(dummy_coords, count++);
-            });
+            std::generate(vec_nodes.begin(), vec_nodes.end(),
+                          [&]()
+                          { return new MeshLib::Node(dummy_coords, count++); });
             line_stream.clear();
         }
         //....................................................................
@@ -605,7 +605,8 @@ MeshLib::Element* FEFLOWMeshInterface::readElement(
 void FEFLOWMeshInterface::readELEMENTALSETS(
     std::ifstream& in, std::vector<std::vector<std::size_t>>& vec_elementsets)
 {
-    auto compressSpaces = [](std::string const& str) {
+    auto compressSpaces = [](std::string const& str)
+    {
         std::stringstream ss(str);
         std::string new_str;
         std::string word;

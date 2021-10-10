@@ -63,9 +63,8 @@ std::vector<std::size_t> getNodes(
     {
         // sort found nodes from top to bottom (required for BHE simulations)
         std::sort(pnt_nodes.begin(), pnt_nodes.end(),
-                  [nodes](std::size_t a, std::size_t b) {
-                      return (*nodes[a])[2] > (*nodes[b])[2];
-                  });
+                  [nodes](std::size_t a, std::size_t b)
+                  { return (*nodes[a])[2] > (*nodes[b])[2]; });
     }
     return pnt_nodes;
 }

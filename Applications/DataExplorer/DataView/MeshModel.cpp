@@ -20,12 +20,12 @@
 #include <QString>
 
 #include "Applications/DataHolderLib/Project.h"
+#include "Base/TreeItem.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
-#include "MeshLib/Elements/Element.h"
 #include "MeshItem.h"
+#include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
-#include "Base/TreeItem.h"
 
 const QVariant MeshModel::element_str = "Element";
 const std::map<MeshLib::MeshElemType, QVariant> MeshModel::elem_type_map =

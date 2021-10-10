@@ -260,12 +260,14 @@ MeshLib::Mesh* removeLineElements(MeshLib::Mesh const& mesh)
 {
     std::vector<std::size_t> line_idx;
     std::vector<MeshLib::Element*> const& elems = mesh.getElements();
-    std::for_each(elems.begin(), elems.end(), [&](auto e) {
-        if (e->getGeomType() == MeshLib::MeshElemType::LINE)
-        {
-            line_idx.push_back(e->getID());
-        }
-    });
+    std::for_each(elems.begin(), elems.end(),
+                  [&](auto e)
+                  {
+                      if (e->getGeomType() == MeshLib::MeshElemType::LINE)
+                      {
+                          line_idx.push_back(e->getID());
+                      }
+                  });
     if (line_idx.size() == mesh.getNumberOfElements())
     {
         return nullptr;

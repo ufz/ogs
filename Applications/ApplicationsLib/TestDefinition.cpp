@@ -121,16 +121,18 @@ std::string findVtkdiff()
 
     std::string const vtkdiff_exe{"vtkdiff"};
     std::vector<std::string> const paths = {"", "bin"};
-    auto const path = find_if(
-        begin(paths), end(paths), [&vtkdiff_exe](std::string const& path) {
-            int const return_value =
-                // TODO (naumov) replace system call with output consuming call
-                // as in an above todo comment.
-                std::system(
-                    (BaseLib::joinPaths(path, vtkdiff_exe) + " --version")
-                        .c_str());
-            return return_value == 0;
-        });
+    auto const path =
+        find_if(begin(paths), end(paths),
+                [&vtkdiff_exe](std::string const& path)
+                {
+                    int const return_value =
+                        // TODO (naumov) replace system call with output
+                        // consuming call as in an above todo comment.
+                        std::system((BaseLib::joinPaths(path, vtkdiff_exe) +
+                                     " --version")
+                                        .c_str());
+                    return return_value == 0;
+                });
     if (path == end(paths))
     {
         OGS_FATAL("vtkdiff not found.");
@@ -271,7 +273,8 @@ bool TestDefinition::runTests() const
     std::vector<int> return_values;
     transform(begin(_command_lines), end(_command_lines),
               back_inserter(return_values),
-              [](std::string const& command_line) {
+              [](std::string const& command_line)
+              {
                   int const return_value = std::system(command_line.c_str());
                   if (return_value != 0)
                   {

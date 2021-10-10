@@ -16,8 +16,8 @@
 
 #include <QDebug>
 
-#include "BaseItem.h"
 #include "Base/OGSError.h"
+#include "BaseItem.h"
 #include "GeoLib/Station.h"
 
 /**
@@ -116,9 +116,10 @@ void StationTreeModel::setNameForItem(const std::string& stn_vec_name,
                                       std::string const& item_name)
 {
     auto const stn_list = find_if(
-        _lists.begin(), _lists.end(), [&stn_vec_name](ModelTreeItem* item) {
-            return (stn_vec_name == item->data(0).toString().toStdString());
-        });
+        _lists.begin(),
+        _lists.end(),
+        [&stn_vec_name](ModelTreeItem* item)
+        { return (stn_vec_name == item->data(0).toString().toStdString()); });
 
     if (stn_list == _lists.end() ||
         id >= static_cast<std::size_t>((*stn_list)->childCount()))

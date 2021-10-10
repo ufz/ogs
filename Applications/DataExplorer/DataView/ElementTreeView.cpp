@@ -17,8 +17,8 @@
 
 #include <QModelIndex>
 
-#include "ElementTreeModel.h"
 #include "Base/TreeItem.h"
+#include "ElementTreeModel.h"
 
 ElementTreeView::ElementTreeView(QWidget* parent) : QTreeView(parent) {}
 

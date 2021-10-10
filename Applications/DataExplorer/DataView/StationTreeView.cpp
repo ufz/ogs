@@ -17,15 +17,15 @@
 #include <QFileDialog>
 #include <QMenu>
 
-#include "DiagramView/DiagramPrefsDialog.h"
 #include "Applications/FileIO/GMSInterface.h"
 #include "Base/ImportFileTypes.h"
 #include "Base/LastSavedFileDirectory.h"
-#include "ModelTreeItem.h"
 #include "Base/OGSError.h"
-#include "GeoLib/Station.h"
-#include "StationTreeModel.h"
 #include "DataView/StratView/StratWindow.h"
+#include "DiagramView/DiagramPrefsDialog.h"
+#include "GeoLib/Station.h"
+#include "ModelTreeItem.h"
+#include "StationTreeModel.h"
 
 StationTreeView::StationTreeView(QWidget* parent) : QTreeView(parent)
 {

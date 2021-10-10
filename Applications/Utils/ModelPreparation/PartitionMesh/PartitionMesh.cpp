@@ -104,10 +104,12 @@ int main(int argc, char* argv[])
 
     BaseLib::setConsoleLogLevel(log_level_arg.getValue());
     spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler([](const std::string& msg) {
-        std::cerr << "spdlog error: " << msg << std::endl;
-        OGS_FATAL("spdlog logger error occurred.");
-    });
+    spdlog::set_error_handler(
+        [](const std::string& msg)
+        {
+            std::cerr << "spdlog error: " << msg << std::endl;
+            OGS_FATAL("spdlog logger error occurred.");
+        });
 
     BaseLib::RunTime run_timer;
     run_timer.start();

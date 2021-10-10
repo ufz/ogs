@@ -114,12 +114,13 @@ int main(int argc, char* argv[])
     double angle(90);
 
     auto computeElementTopSurfaceAreas =
-        [](MeshLib::Mesh const& mesh, Eigen::Vector3d const& d, double angle) {
-            std::unique_ptr<MeshLib::Mesh> surface_mesh(
-                MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, d, angle));
-            return MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
-                *surface_mesh);
-        };
+        [](MeshLib::Mesh const& mesh, Eigen::Vector3d const& d, double angle)
+    {
+        std::unique_ptr<MeshLib::Mesh> surface_mesh(
+            MeshLib::MeshSurfaceExtraction::getMeshSurface(mesh, d, angle));
+        return MeshLib::MeshSurfaceExtraction::getSurfaceAreaForNodes(
+            *surface_mesh);
+    };
 
     std::vector<double> areas(computeElementTopSurfaceAreas(*mesh, dir, angle));
     std::vector<MeshLib::Node*> all_sfc_nodes(

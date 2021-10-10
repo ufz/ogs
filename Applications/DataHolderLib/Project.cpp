@@ -36,9 +36,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>>::iterator Project::findMeshByName(
     std::string const& name)
 {
     return std::find_if(_mesh_vec.begin(), _mesh_vec.end(),
-                        [&name](std::unique_ptr<MeshLib::Mesh>& mesh) {
-                            return mesh && (name == mesh->getName());
-                        });
+                        [&name](std::unique_ptr<MeshLib::Mesh>& mesh)
+                        { return mesh && (name == mesh->getName()); });
 }
 
 const MeshLib::Mesh* Project::getMesh(const std::string& name) const

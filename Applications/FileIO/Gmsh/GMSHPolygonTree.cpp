@@ -338,8 +338,8 @@ void GMSHPolygonTree::writeLineLoop(std::size_t& line_offset,
                                     bool const write_physical) const
 {
     const std::size_t n_pnts(polygon().getNumberOfPoints());
-    for (std::size_t k(1), first_pnt_id(polygon().getPointID(0));
-         k < n_pnts; k++)
+    for (std::size_t k(1), first_pnt_id(polygon().getPointID(0)); k < n_pnts;
+         k++)
     {
         std::size_t const second_pnt_id = polygon().getPointID(k);
         out << "Line(" << line_offset + k - 1 << ") = {" << first_pnt_id << ","

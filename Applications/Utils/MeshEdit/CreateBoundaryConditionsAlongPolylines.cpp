@@ -260,9 +260,8 @@ int main(int argc, char* argv[])
     }
 
     std::sort(pnts_with_id.begin(), pnts_with_id.end(),
-              [](GeoLib::Point const& p0, GeoLib::Point const& p1) {
-                  return p0 < p1;
-              });
+              [](GeoLib::Point const& p0, GeoLib::Point const& p1)
+              { return p0 < p1; });
 
     double const eps(std::numeric_limits<double>::epsilon());
     auto surface_pnts = std::make_unique<std::vector<GeoLib::Point*>>();

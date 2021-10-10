@@ -79,9 +79,9 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    bool const is_keyword = std::any_of(
-        keywords.begin(), keywords.end(),
-        [current_key](auto const& keyword) { return current_key == keyword; });
+    bool const is_keyword = std::any_of(keywords.begin(), keywords.end(),
+                                        [current_key](auto const& keyword)
+                                        { return current_key == keyword; });
 
     if (!is_keyword)
     {
