@@ -35,9 +35,8 @@ std::unique_ptr<Output> createOutput(
     std::vector<OutputItem> accepted_items{{"pH", ItemType::pH},
                                            {"pe", ItemType::pe}};
 
-    auto accepted_item = [](auto const& item) {
-        return OutputItem(item.name, item.item_type);
-    };
+    auto accepted_item = [](auto const& item)
+    { return OutputItem(item.name, item.item_type); };
     std::transform(components.begin(), components.end(),
                    std::back_inserter(accepted_items), accepted_item);
     std::transform(equilibrium_reactants.begin(), equilibrium_reactants.end(),
