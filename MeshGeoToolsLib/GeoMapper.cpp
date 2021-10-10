@@ -418,7 +418,8 @@ static std::vector<GeoLib::LineSegment> mapLineSegment(
         auto min_dist_segment = std::min_element(
             sub_segments.begin(), sub_segments.end(),
             [&beg_pnt](GeoLib::LineSegment const& seg0,
-                       GeoLib::LineSegment const& seg1) {
+                       GeoLib::LineSegment const& seg1)
+            {
                 // min dist for segment 0
                 const double d0(
                     std::min(MathLib::sqrDist(beg_pnt, seg0.getBeginPoint()),
@@ -559,7 +560,8 @@ static void mapPolylineOnSurfaceMesh(
         auto candidate_elements(getCandidateElementsForLineSegmentIntersection(
             mesh_element_grid, *segment_it));
 
-        auto mapPoint = [&candidate_elements](MathLib::Point3d& p) {
+        auto mapPoint = [&candidate_elements](MathLib::Point3d& p)
+        {
             auto const* elem(
                 findElementContainingPointXY(candidate_elements, p));
             if (elem)

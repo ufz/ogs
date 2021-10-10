@@ -69,9 +69,8 @@ std::vector<std::size_t> const& getMeshNodeIDs(
     SearchAllNodes const search_all_nodes)
 {
     if (auto const it = find_if(cbegin(cached_elements), cend(cached_elements),
-                                [&](auto const& element) {
-                                    return getCachedItem(*element) == item;
-                                });
+                                [&](auto const& element)
+                                { return getCachedItem(*element) == item; });
         it != cend(cached_elements))
     {
         return (*it)->getNodeIDs();

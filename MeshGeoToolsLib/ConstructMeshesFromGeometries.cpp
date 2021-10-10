@@ -10,8 +10,8 @@
 #include "ConstructMeshesFromGeometries.h"
 
 #include "BaseLib/Logging.h"
-#include "GeoLib/GEOObjects.h"
 #include "BoundaryElementsSearcher.h"
+#include "GeoLib/GEOObjects.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/MeshEditing/DuplicateMeshComponents.h"
 #include "MeshLib/Node.h"
@@ -120,9 +120,8 @@ constructAdditionalMeshesFromGeoObjects(GeoLib::GEOObjects const& geo_objects,
     // Set axial symmetry for the additional meshes to the same value as the
     // "bulk" mesh.
     std::for_each(begin(additional_meshes), end(additional_meshes),
-                  [axial_symmetry = mesh.isAxiallySymmetric()](auto& m) {
-                      m->setAxiallySymmetric(axial_symmetry);
-                  });
+                  [axial_symmetry = mesh.isAxiallySymmetric()](auto& m)
+                  { m->setAxiallySymmetric(axial_symmetry); });
     return additional_meshes;
 }
 }  // namespace MeshGeoToolsLib
