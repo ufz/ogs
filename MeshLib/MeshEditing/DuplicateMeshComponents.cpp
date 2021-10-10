@@ -40,9 +40,8 @@ std::vector<Element*> copyElementVector(
     new_elements.reserve(elements.size());
     std::transform(elements.begin(), elements.end(),
                    std::back_inserter(new_elements),
-                   [&new_nodes, &node_id_map](auto const& element) {
-                       return copyElement(element, new_nodes, node_id_map);
-                   });
+                   [&new_nodes, &node_id_map](auto const& element)
+                   { return copyElement(element, new_nodes, node_id_map); });
     return new_elements;
 }
 

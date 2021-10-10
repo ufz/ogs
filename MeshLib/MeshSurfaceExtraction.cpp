@@ -340,9 +340,8 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
                     std::unique_ptr<MeshLib::Element const>{elem->getFace(j)};
                 if (!complete_surface)
                 {
-                    if (FaceRule::getSurfaceNormal(*face)
-                            .normalized()
-                            .dot(norm_dir) < cos_theta)
+                    if (FaceRule::getSurfaceNormal(*face).normalized().dot(
+                            norm_dir) < cos_theta)
                     {
                         continue;
                     }

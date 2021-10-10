@@ -36,9 +36,8 @@ bool is2DMeshOnRotatedVerticalPlane(Mesh const& mesh)
 
     bool const has_inclined_element =
         std::any_of(elements.begin(), elements.end(),
-                    [&mesh_dimension](auto const& element) {
-                        return element->space_dimension_ != mesh_dimension;
-                    });
+                    [&mesh_dimension](auto const& element)
+                    { return element->space_dimension_ != mesh_dimension; });
 
     if (!has_inclined_element)
     {
@@ -46,7 +45,9 @@ bool is2DMeshOnRotatedVerticalPlane(Mesh const& mesh)
     }
 
     const bool is_rotated_around_y_axis = std::all_of(
-        elements.cbegin(), elements.cend(), [](auto const& element) {
+        elements.cbegin(), elements.cend(),
+        [](auto const& element)
+        {
             // 3 nodes are enough to make up a plane.
             auto const x1 = element->getNode(0)->getCoords();
             auto const x2 = element->getNode(1)->getCoords();
@@ -63,7 +64,9 @@ bool is2DMeshOnRotatedVerticalPlane(Mesh const& mesh)
         });
 
     const bool is_rotated_around_z_axis = std::all_of(
-        elements.cbegin(), elements.cend(), [](auto const& element) {
+        elements.cbegin(), elements.cend(),
+        [](auto const& element)
+        {
             // 3 nodes are enough to make up a plane.
             auto const x1 = element->getNode(0)->getCoords();
             auto const x2 = element->getNode(1)->getCoords();

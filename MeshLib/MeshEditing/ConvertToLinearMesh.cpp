@@ -37,7 +37,8 @@ T_ELEMENT* createLinearElement(MeshLib::Element const* e,
     {
         auto const it = find_if(
             begin(vec_new_nodes), end(vec_new_nodes),
-            [node_i = e->getNode(i)](Node* const new_node) {
+            [node_i = e->getNode(i)](Node* const new_node)
+            {
                 return *node_i ==
                        *new_node;  // coordinate comparison up to epsilon
             });

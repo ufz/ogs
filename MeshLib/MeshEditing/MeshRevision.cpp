@@ -444,9 +444,10 @@ unsigned MeshRevision::subdividePyramid(
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element*>& new_elements) const
 {
-    auto addTetrahedron = [&pyramid, &nodes, &new_elements](
-                              std::size_t id0, std::size_t id1, std::size_t id2,
-                              std::size_t id3) {
+    auto addTetrahedron =
+        [&pyramid, &nodes, &new_elements](std::size_t id0, std::size_t id1,
+                                          std::size_t id2, std::size_t id3)
+    {
         auto** tet_nodes = new MeshLib::Node*[4];
         tet_nodes[0] = nodes[pyramid->getNode(id0)->getID()];
         tet_nodes[1] = nodes[pyramid->getNode(id1)->getID()];
@@ -467,9 +468,10 @@ unsigned MeshRevision::subdividePrism(
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element*>& new_elements) const
 {
-    auto addTetrahedron = [&prism, &nodes, &new_elements](
-                              std::size_t id0, std::size_t id1, std::size_t id2,
-                              std::size_t id3) {
+    auto addTetrahedron =
+        [&prism, &nodes, &new_elements](std::size_t id0, std::size_t id1,
+                                        std::size_t id2, std::size_t id3)
+    {
         auto** tet_nodes = new MeshLib::Node*[4];
         tet_nodes[0] = nodes[prism->getNode(id0)->getID()];
         tet_nodes[1] = nodes[prism->getNode(id1)->getID()];
@@ -803,9 +805,10 @@ unsigned MeshRevision::reducePrism(MeshLib::Element const* const org_elem,
                                    std::vector<MeshLib::Element*>& new_elements,
                                    unsigned min_elem_dim) const
 {
-    auto addTetrahedron = [&org_elem, &nodes, &new_elements](
-                              std::size_t id0, std::size_t id1, std::size_t id2,
-                              std::size_t id3) {
+    auto addTetrahedron =
+        [&org_elem, &nodes, &new_elements](std::size_t id0, std::size_t id1,
+                                           std::size_t id2, std::size_t id3)
+    {
         auto** tet_nodes = new MeshLib::Node*[4];
         tet_nodes[0] = nodes[org_elem->getNode(id0)->getID()];
         tet_nodes[1] = nodes[org_elem->getNode(id1)->getID()];

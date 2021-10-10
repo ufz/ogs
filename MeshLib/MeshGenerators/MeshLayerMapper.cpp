@@ -58,9 +58,8 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(
     // count number of 2d elements in the original mesh
     const std::size_t nElems(
         std::count_if(mesh.getElements().begin(), mesh.getElements().end(),
-                      [](MeshLib::Element const* elem) {
-                          return (elem->getDimension() == 2);
-                      }));
+                      [](MeshLib::Element const* elem)
+                      { return (elem->getDimension() == 2); }));
 
     const std::size_t nOrgElems(mesh.getNumberOfElements());
     const std::vector<MeshLib::Node*>& nodes = mesh.getNodes();
@@ -177,9 +176,8 @@ bool MeshLayerMapper::createRasterLayers(
     // number of triangles in the original mesh
     std::size_t const nElems(std::count_if(
         mesh.getElements().begin(), mesh.getElements().end(),
-        [](MeshLib::Element const* elem) {
-            return (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE);
-        }));
+        [](MeshLib::Element const* elem)
+        { return (elem->getGeomType() == MeshLib::MeshElemType::TRIANGLE); }));
     _elements.reserve(nElems * (nLayers - 1));
     _materials.reserve(nElems * (nLayers - 1));
 
