@@ -17,11 +17,10 @@ ParameterBase* findParameterByName(
     std::vector<std::unique_ptr<ParameterBase>> const& parameters)
 {
     // Find corresponding parameter by name.
-    auto const it = std::find_if(
-        parameters.cbegin(), parameters.cend(),
-        [&parameter_name](std::unique_ptr<ParameterBase> const& p) {
-            return p->name == parameter_name;
-        });
+    auto const it =
+        std::find_if(parameters.cbegin(), parameters.cend(),
+                     [&parameter_name](std::unique_ptr<ParameterBase> const& p)
+                     { return p->name == parameter_name; });
 
     if (it == parameters.end())
     {
