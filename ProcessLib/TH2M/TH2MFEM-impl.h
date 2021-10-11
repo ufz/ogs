@@ -1565,18 +1565,18 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         LWpG.noalias() += gradNpT * (advection_W + diffusion_W_p) * gradNp * w;
 
         // fW_4 LWpG' parts; LWpG = \int grad (a + d) grad
-        local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() -=
+        local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() +=
             gradNpT * (ip_cv.dfW_4_LWpG_a_dp_GR + ip_cv.dfW_4_LWpG_d_dp_GR) *
             gradpGR * Np * w;
 
-        local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() -=
+        local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() +=
             gradNpT * (ip_cv.dfW_4_LWpG_a_dp_cap + ip_cv.dfW_4_LWpG_d_dp_cap) *
             gradpGR * Np * w;
 
         local_Jac
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
-            .noalias() -= gradNpT *
+            .noalias() += gradNpT *
                           (ip_cv.dfW_4_LWpG_a_dT + ip_cv.dfW_4_LWpG_d_dT) *
                           gradpGR * NT * w;
 
