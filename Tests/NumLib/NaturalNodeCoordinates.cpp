@@ -25,7 +25,8 @@ using Node = MeshLib::Node;
 template <typename ShapeFunction, int GlobalDim>
 bool test(MeshLib::Element const& element)
 {
-    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
+    using ShapeMatricesType =
+        ShapeMatrixPolicyType<ShapeFunction, ShapeFunction::DIM>;
 
     // Test if the cast is possible.
     bool const dynamic_cast_failed =
