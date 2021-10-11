@@ -10,7 +10,10 @@ set(CMAKE_AUTOUIC NO)
 qt5_wrap_ui(genUiHeaders ${UIS})
 
 ogs_add_library(QtStratView ${SOURCES} ${HEADERS} ${UIS})
-target_include_directories(QtStratView PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(
+    QtStratView PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+)
 target_link_libraries(
     QtStratView PRIVATE BaseLib GeoLib DataHolderLib QtBase Qt5::Gui
 )

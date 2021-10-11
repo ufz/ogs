@@ -36,7 +36,7 @@ append_source_files(
 )
 append_source_files(SOURCES TwoPhaseModels)
 
-ogs_add_library(MaterialLib ${SOURCES})
+ogs_add_library(MaterialLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 target_link_libraries(
     MaterialLib PUBLIC MaterialLib_SolidModels MaterialLib_FractureModels

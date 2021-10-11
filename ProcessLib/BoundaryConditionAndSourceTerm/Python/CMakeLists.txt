@@ -16,8 +16,7 @@ ogs_add_library(
 
 target_compile_definitions(
     ProcessLibBoundaryConditionAndSourceTermPython
-    PUBLIC OGS_USE_PYTHON
-           # Enabled elements
+    PUBLIC # Enabled elements
            OGS_MAX_ELEMENT_DIM=${OGS_MAX_ELEMENT_DIM}
            OGS_MAX_ELEMENT_ORDER=${OGS_MAX_ELEMENT_ORDER}
            $<$<BOOL:${OGS_ENABLE_ELEMENT_SIMPLEX}>:OGS_ENABLE_ELEMENT_SIMPLEX>

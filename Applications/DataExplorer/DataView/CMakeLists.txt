@@ -123,7 +123,9 @@ set(CMAKE_AUTOUIC NO)
 qt5_wrap_ui(genUiHeaders ${UIS})
 
 ogs_add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
-target_include_directories(QtDataView PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(
+    QtDataView PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+)
 target_link_libraries(
     QtDataView
     PUBLIC GeoLib MeshGeoToolsLib MeshLib QtBase VtkVis

@@ -36,7 +36,9 @@ if(OGS_USE_NETCDF)
 endif()
 
 ogs_add_library(VtkVisFilter ${FILTER_SOURCES})
-target_include_directories(VtkVisFilter PUBLIC ${VTK_INCLUDE_DIRS})
+target_include_directories(
+    VtkVisFilter PUBLIC ${VTK_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR}
+)
 target_link_libraries(VtkVisFilter PRIVATE GeoLib Qt5::Core Qt5::Widgets)
 
 if(OGS_USE_NETCDF)

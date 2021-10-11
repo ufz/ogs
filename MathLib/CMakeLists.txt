@@ -21,7 +21,7 @@ if(OGS_USE_PETSC)
 endif()
 
 # Create the library
-ogs_add_library(MathLib ${SOURCES})
+ogs_add_library(MathLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 

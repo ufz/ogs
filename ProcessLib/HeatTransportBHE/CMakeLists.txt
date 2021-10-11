@@ -10,6 +10,9 @@ target_link_libraries(
     PRIVATE ParameterLib
             $<$<TARGET_EXISTS:pybind11::pybind11>:pybind11::pybind11>
 )
+target_compile_definitions(
+    HeatTransportBHE PRIVATE $<$<BOOL:${OGS_USE_PYTHON}>:OGS_USE_PYTHON>
+)
 
 if(OGS_BUILD_TESTING)
     include(Tests.cmake)
