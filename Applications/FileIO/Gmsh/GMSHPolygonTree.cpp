@@ -10,6 +10,8 @@
 
 #include "GMSHPolygonTree.h"
 
+#include <sstream>
+
 #include "GMSHAdaptiveMeshDensity.h"
 #include "GMSHFixedMeshDensity.h"
 #include "GeoLib/AnalyticalGeometry.h"
@@ -305,6 +307,8 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*>& gmsh_pnts) const
     }
 
     const std::size_t n_plys(_plys.size());
+    std::stringstream error_messages;
+    error_messages.precision(std::numeric_limits<double>::digits10);
     for (std::size_t k(0); k < n_plys; k++)
     {
         const std::size_t n_pnts_in_ply(_plys[k]->getNumberOfPoints());
@@ -323,6 +327,22 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*>& gmsh_pnts) const
                     *pnt, id,
                     _mesh_density_strategy.getMeshDensityAtPoint(pnt));
             }
+            else
+            {
+                auto const& p = *(_plys[k]->getPoint(j));
+                error_messages << "\n\tpoint with id " << p.getID()
+                               << " and coordinates (" << p[0] << ", " << p[1]
+                               << ", " << p[2]
+                               << ") is outside of the polygon.";
+            }
+        }
+    }
+    if (!parent())
+    {
+        auto const error_message = error_messages.str();
+        if (!error_message.empty())
+        {
+            OGS_FATAL(error_message);
         }
     }
 
