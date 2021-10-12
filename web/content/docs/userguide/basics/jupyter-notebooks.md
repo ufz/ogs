@@ -73,11 +73,25 @@ singularity run docker://registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter
 
 Open the specified URL shown in the command output in your browser, e.g.
 
-```
+```bash
 http://127.0.0.1:8888/lab?token=xxx
 ```
 
 You may have to modify the IP address if this is running on a remote machine.
+
+<div class="note">
+
+#### <i class="fab fa-windows"></i> Specific OGS version
+
+You can append a version number to the image name (applies both to Docker and Singularity) to get an image for a specific OGS release (starting with 6.4.1):
+
+```
+singularity run docker://registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter:6.4.1
+```
+
+Available images are [listed on GitLab](https://gitlab.opengeosys.org/ogs/ogs/container_registry/79).
+
+</div>
 
 ### Browsing notebooks on GitLab
 
