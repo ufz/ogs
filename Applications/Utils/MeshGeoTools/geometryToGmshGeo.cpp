@@ -57,6 +57,12 @@ int main(int argc, char* argv[])
     TCLAP::SwitchArg homogeneous_flag(
         "", "homogeneous", "Use Gmsh homogeneous meshing method.", false);
     cmd.add(homogeneous_flag);
+    TCLAP::ValueArg<std::string> merged_geometries_output(
+        "", "write_merged_geometries",
+        "file name for the output of the internal created geometry (*.gml) "
+        "(useful for debugging the data)",
+        false, "", "output file name");
+    cmd.add(merged_geometries_output);
 
     cmd.parse(argc, argv);
 
@@ -120,7 +126,20 @@ int main(int argc, char* argv[])
     catch (std::runtime_error& error)
     {
         ERR("{}", error.what());
-        INFO("Please cleanup the input data.");
+        if (merged_geometries_output.isSet())
+        {
+            GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
+            xml.export_name = geo_objects.getGeometryNames().back();
+            BaseLib::IO::writeStringToFile(xml.writeToString(),
+                                           merged_geometries_output.getValue());
+        }
+        else
+        {
+            INFO(
+                "Hint: Using the command line flag "
+                "'--write_merged_geometries buggy_geometry.gml' allows "
+                "for better analysis of the problem.");
+        }
         ERR("An error has occurred - programme will be terminated.");
         return EXIT_FAILURE;
     }
