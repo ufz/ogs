@@ -151,7 +151,6 @@ option(OGS_FATAL_ABORT "Abort in OGS_FATAL" OFF)
 
 # Compiler flags
 set(OGS_CXX_FLAGS "" CACHE STRING "Additional C++ compiler flags.")
-option(STL_NO_DEBUG "Disable STL debug in debug build" OFF)
 
 # Print CMake variable values
 if(OGS_CMAKE_DEBUG)

@@ -29,14 +29,6 @@ endif()
 
 # GNU-like compiler
 if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT STL_NO_DEBUG)
-        # Enable assertions in STL in debug mode.
-        add_compile_options(
-            -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_ASSERT -D_GLIBCXX_DEBUG_PEDASSERT
-            -D_GLIBCXX_DEBUG_VERIFY
-        )
-    endif()
-
     # Coloring output
     option(FORCE_COLORED_OUTPUT
            "Always produce ANSI-colored output (GNU/Clang only)." ON
