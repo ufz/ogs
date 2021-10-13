@@ -104,9 +104,9 @@ static_assert(false, "The macro OGS_MAX_ELEMENT_ORDER is undefined.");
 #include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
 #endif
 
-namespace ProcessLib::TH2M
+namespace ProcessLib
 {
-/// The LocalDataInitializer is a functor creating a local assembler data with
+/// The LocalDataInitializerHM is a functor creating a local assembler data with
 /// corresponding to the mesh element type shape functions and calling
 /// initialization of the new local assembler data.
 /// For example for MeshLib::Quad a local assembler data with template argument
@@ -119,13 +119,13 @@ namespace ProcessLib::TH2M
 template <typename LocalAssemblerInterface,
           template <typename, typename, typename, int> class LocalAssemblerData,
           int GlobalDim, typename... ConstructorArgs>
-class LocalDataInitializer final
+class LocalDataInitializerHM final
 {
 public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
-    LocalDataInitializer(NumLib::LocalToGlobalIndexMap const& dof_table,
-                         const unsigned shapefunction_order)
+    LocalDataInitializerHM(NumLib::LocalToGlobalIndexMap const& dof_table,
+                           const unsigned shapefunction_order)
         : _dof_table(dof_table)
     {
         if (shapefunction_order < 1 || 2 < shapefunction_order)
@@ -341,8 +341,7 @@ private:
         {
             return [](MeshLib::Element const& e,
                       std::size_t const local_matrix_size,
-                      ConstructorArgs&&... args)
-            {
+                      ConstructorArgs&&... args) {
                 return LADataIntfPtr{new LAData<ShapeFunction, ShapeFunction>{
                     e, local_matrix_size,
                     std::forward<ConstructorArgs>(args)...}};
@@ -354,8 +353,7 @@ private:
                 typename NumLib::LowerDim<ShapeFunction>::type;
             return [](MeshLib::Element const& e,
                       std::size_t const local_matrix_size,
-                      ConstructorArgs&&... args)
-            {
+                      ConstructorArgs&&... args) {
                 return LADataIntfPtr{
                     new LAData<ShapeFunction, LowerOrderShapeFunction>{
                         e, local_matrix_size,
@@ -379,7 +377,7 @@ private:
     }
 };
 
-}  // namespace ProcessLib::TH2M
+}  // namespace ProcessLib::HydroMechanics
 
 #undef ENABLED_ELEMENT_TYPE_SIMPLEX
 #undef ENABLED_ELEMENT_TYPE_CUBOID
