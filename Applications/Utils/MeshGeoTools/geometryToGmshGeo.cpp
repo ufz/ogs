@@ -85,35 +85,44 @@ int main(int argc, char* argv[])
     bool const rotate = false;
     bool const keep_preprocessed_geometry = false;
 
-    if (homogeneous_flag.getValue())
-    {  // homogeneous meshing
-        double const average_mesh_density =
-            average_point_density_arg.getValue();
-        FileIO::GMSH::GMSHInterface gmsh_io(
-            geo_objects, true,
-            FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
-            average_mesh_density, 0.0, 0, geo_names, rotate,
-            keep_preprocessed_geometry);
-        BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
-                                       geo_output_arg.getValue());
+    try
+    {
+        if (homogeneous_flag.getValue())
+        {  // homogeneous meshing
+            double const average_mesh_density =
+                average_point_density_arg.getValue();
+            FileIO::GMSH::GMSHInterface gmsh_io(
+                geo_objects, true,
+                FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
+                average_mesh_density, 0.0, 0, geo_names, rotate,
+                keep_preprocessed_geometry);
+            BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
+                                           geo_output_arg.getValue());
+        }
+        else
+        {  // adaptive meshing
+            unsigned const max_number_of_points_in_quadtree_leaf =
+                max_number_of_points_in_quadtree_leaf_arg.getValue();
+            double const mesh_density_scaling_points =
+                mesh_density_scaling_points_arg.getValue();
+            double const mesh_density_scaling_stations =
+                mesh_density_scaling_stations_arg.getValue();
+            FileIO::GMSH::GMSHInterface gmsh_io(
+                geo_objects, true,
+                FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
+                mesh_density_scaling_points, mesh_density_scaling_stations,
+                max_number_of_points_in_quadtree_leaf, geo_names, rotate,
+                keep_preprocessed_geometry);
+            BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
+                                           geo_output_arg.getValue());
+        }
     }
-    else
-    {  // adaptive meshing
-        unsigned const max_number_of_points_in_quadtree_leaf =
-            max_number_of_points_in_quadtree_leaf_arg.getValue();
-        double const mesh_density_scaling_points =
-            mesh_density_scaling_points_arg.getValue();
-        double const mesh_density_scaling_stations =
-            mesh_density_scaling_stations_arg.getValue();
-        FileIO::GMSH::GMSHInterface gmsh_io(
-            geo_objects, true,
-            FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
-            mesh_density_scaling_points, mesh_density_scaling_stations,
-            max_number_of_points_in_quadtree_leaf, geo_names, rotate,
-            keep_preprocessed_geometry);
-        BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
-                                       geo_output_arg.getValue());
+    catch (std::runtime_error& error)
+    {
+        ERR("{}", error.what());
+        INFO("Please cleanup the input data.");
+        ERR("An error has occurred - programme will be terminated.");
+        return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }
