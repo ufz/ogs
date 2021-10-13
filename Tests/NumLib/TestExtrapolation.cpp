@@ -161,7 +161,7 @@ public:
 
         // createAssemblers(mesh);
         ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-            mesh.getDimension(), mesh.getElements(), *_dof_table, 1,
+            mesh.getDimension(), mesh.getElements(), *_dof_table,
             _local_assemblers, mesh.isAxiallySymmetric(), _integration_order);
     }
 

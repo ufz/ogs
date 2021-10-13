@@ -47,7 +47,7 @@ SurfaceFlux::SurfaceFlux(MeshLib::Mesh& boundary_mesh,
 
     ProcessLib::createLocalAssemblers<SurfaceFluxLocalAssembler>(
         boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
-        boundary_mesh.getElements(), *dof_table, 1, _local_assemblers,
+        boundary_mesh.getElements(), *dof_table, _local_assemblers,
         boundary_mesh.isAxiallySymmetric(), integration_order,
         *bulk_element_ids, *bulk_face_ids);
 }

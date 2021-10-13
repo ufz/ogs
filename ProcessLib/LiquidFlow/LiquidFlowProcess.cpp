@@ -53,13 +53,9 @@ void LiquidFlowProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    const int process_id = 0;
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     int const mesh_space_dimension = _process_data.mesh_space_dimension;
     ProcessLib::createLocalAssemblers<LiquidFlowLocalAssembler>(
-        mesh_space_dimension, mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
+        mesh_space_dimension, mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(

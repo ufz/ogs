@@ -46,8 +46,7 @@ void RichardsComponentTransportProcess::initializeConcreteProcess(
         getProcessVariables(monolithic_process_id)[0];
 
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data, pv);
 
     _secondary_variables.addSecondaryVariable(
