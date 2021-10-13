@@ -136,9 +136,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     else
     {
         // project data on the x-y-plane
-        _inverse_rot_mat(0, 0) = 1.0;
-        _inverse_rot_mat(1, 1) = 1.0;
-        _inverse_rot_mat(2, 2) = 1.0;
+        _inverse_rot_mat = Eigen::Matrix3d::Identity();
         for (auto pnt : *merged_pnts)
         {
             (*pnt)[2] = 0.0;
