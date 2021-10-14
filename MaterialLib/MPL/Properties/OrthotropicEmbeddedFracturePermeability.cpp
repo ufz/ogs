@@ -11,7 +11,6 @@
 #include "MaterialLib/MPL/Properties/OrthotropicEmbeddedFracturePermeability.h"
 
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 
 namespace MaterialPropertyLib
 {
@@ -95,8 +94,9 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::dValue(
             "for derivatives with respect to strain only.");
     }
 
-    auto const eps = formEigenTensor<3>(std::get<SymmetricTensor>(
-        variable_array[static_cast<int>(Variable::mechanical_strain)]));
+    auto const eps = MathLib::KelvinVector::kelvinVectorToTensor(
+        std::get<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+            variable_array[static_cast<int>(Variable::mechanical_strain)]));
     double const k = std::get<double>(fromVector(_k(t, pos)));
     double const _b0 = std::sqrt(12.0 * k);
 
@@ -105,7 +105,9 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::dValue(
     auto const rotMat_xy = Eigen::AngleAxisd(phi_xy, Eigen::Vector3d::UnitZ());
     auto const rotMat_yz = Eigen::AngleAxisd(phi_yz, Eigen::Vector3d::UnitX());
 
-    Eigen::Matrix3d result = Eigen::Matrix3d::Zero();
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> result =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>::Zero();
+    // Eigen::MatrixXd result = Eigen::MatrixXd::Zero();
 
     for (int i = 0; i < 3; i++)
     {
@@ -116,10 +118,13 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::dValue(
         double const b_f = _b0 + H_de * _a[i] * (e_n - _e0[i]);
 
         result += H_de * (b_f * b_f / 4.0 - k) *
-                  (Eigen::Matrix3d::Identity() - M) * M;
+                  MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
+                      Eigen::Matrix3d::Identity() - M) *
+                  MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(M)
+                      .transpose();
     }
-    return result.template topLeftCorner<DisplacementDim, DisplacementDim>()
-        .eval();
+    // return result.eval();
+    return Eigen::MatrixXd(result);
 }
 
 template class OrthotropicEmbeddedFracturePermeability<2>;
