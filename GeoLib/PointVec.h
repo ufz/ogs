@@ -116,17 +116,11 @@ private:
      */
     void correctNameIDMapping();
 
-    /** copy constructor doesn't have an implementation */
-    // compiler does not create a (possible unwanted) copy constructor
-    PointVec(const PointVec&);
-    /** standard constructor doesn't have an implementation */
-    // compiler does not create a (possible unwanted) standard constructor
-    PointVec();
-
-    /** assignment operator doesn't have an implementation */
-    // this way the compiler does not create a (possible unwanted) assignment
-    // operator
-    PointVec& operator=(const PointVec& rhs);
+    PointVec(PointVec&&) = delete;
+    PointVec(const PointVec&) = delete;
+    PointVec() = delete;
+    PointVec& operator=(const PointVec& rhs) = delete;
+    PointVec& operator=(PointVec&& rhs) = delete;
 
     /**
      * Inserts the instance of the Point into internal data structures
