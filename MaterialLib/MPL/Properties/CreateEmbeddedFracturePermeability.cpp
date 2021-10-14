@@ -74,12 +74,16 @@ std::unique_ptr<Property> createEmbeddedFracturePermeability(
             "determined as the third principal stress vector.");
     }
 
+    auto const jf =
+        //! \ogs_file_param{properties__property__EmbeddedFracturePermeability__jacobian_factor}
+        config.getConfigParameter<double>("jacobian_factor", 0.);
+
     if (geometry_dimension == 2)
     {
         return std::make_unique<EmbeddedFracturePermeability<2>>(
-            std::move(property_name), n, n_const, k, b0, a, e0);
+            std::move(property_name), n, n_const, k, b0, a, e0, jf);
     }
     return std::make_unique<EmbeddedFracturePermeability<3>>(
-        std::move(property_name), n, n_const, k, b0, a, e0);
+        std::move(property_name), n, n_const, k, b0, a, e0, jf);
 }
 }  // namespace MaterialPropertyLib

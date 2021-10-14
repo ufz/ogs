@@ -23,13 +23,15 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::
         Eigen::Matrix<double, 3, 3> const fracture_normals,
         ParameterLib::Parameter<double> const& intrinsic_permeability,
         ParameterLib::Parameter<double> const& fracture_rotation_xy,
-        ParameterLib::Parameter<double> const& fracture_rotation_yz)
+        ParameterLib::Parameter<double> const& fracture_rotation_yz,
+        double const jacobian_factor)
     : _a(mean_fracture_distances),
       _e0(threshold_strains),
       _n(fracture_normals),
       _k(intrinsic_permeability),
       _phi_xy(fracture_rotation_xy),
-      _phi_yz(fracture_rotation_yz)
+      _phi_yz(fracture_rotation_yz),
+      _jf(jacobian_factor)
 {
     name_ = std::move(name);
 }
@@ -73,6 +75,8 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::value(
         double const H_de = (e_n > _e0[i]) ? 1.0 : 0.0;
         double const b_f = _b0 + H_de * _a[i] * (e_n - _e0[i]);
 
+        // The H_de factor is only valid as long as _b0 equals
+        // std::sqrt(12.0 * k), else it has to be dropped.
         result += H_de * (b_f / _a[i]) * ((b_f * b_f / 12.0) - k) *
                   (Eigen::Matrix3d::Identity() - n_i * n_i.transpose());
     }
@@ -107,7 +111,6 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::dValue(
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> result =
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>::Zero();
-    // Eigen::MatrixXd result = Eigen::MatrixXd::Zero();
 
     for (int i = 0; i < 3; i++)
     {
@@ -123,8 +126,7 @@ OrthotropicEmbeddedFracturePermeability<DisplacementDim>::dValue(
                   MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(M)
                       .transpose();
     }
-    // return result.eval();
-    return Eigen::MatrixXd(result);
+    return Eigen::MatrixXd(_jf * result);
 }
 
 template class OrthotropicEmbeddedFracturePermeability<2>;

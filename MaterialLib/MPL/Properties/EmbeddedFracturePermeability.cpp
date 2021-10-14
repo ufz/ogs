@@ -24,13 +24,15 @@ EmbeddedFracturePermeability<DisplacementDim>::EmbeddedFracturePermeability(
     double const intrinsic_permeability,
     double const initial_aperture,
     double const mean_fracture_distance,
-    double const threshold_strain)
+    double const threshold_strain,
+    double const jacobian_factor)
     : _n(fracture_normal),
       _n_const(fracture_normal_is_constant),
       _k(intrinsic_permeability),
       _b0(initial_aperture),
       _a(mean_fracture_distance),
-      _e0(threshold_strain)
+      _e0(threshold_strain),
+      _jf(jacobian_factor)
 {
     name_ = std::move(name);
 }
@@ -112,7 +114,7 @@ PropertyDataType EmbeddedFracturePermeability<DisplacementDim>::dValue(
 
     Eigen::Matrix3d const M = n * n.transpose();
     return Eigen::MatrixXd(
-        H_de * (b_f * b_f / 4 - _k) *
+        _jf * H_de * (b_f * b_f / 4 - _k) *
         MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
             Eigen::Matrix3d::Identity() - M) *
         MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(M).transpose());

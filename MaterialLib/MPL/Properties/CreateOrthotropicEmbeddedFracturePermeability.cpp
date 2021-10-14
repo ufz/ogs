@@ -100,12 +100,16 @@ std::unique_ptr<Property> createOrthotropicEmbeddedFracturePermeability(
     auto const& phi_yz = ParameterLib::findParameter<double>(
         fracture_rotation_yz_param_name, parameters, 0, nullptr);
 
+    auto const jf =
+        //! \ogs_file_param{properties__property__OrthotropicEmbeddedFracturePermeability__jacobian_factor}
+        config.getConfigParameter<double>("jacobian_factor", 0.);
+
     if (geometry_dimension == 2)
     {
         return std::make_unique<OrthotropicEmbeddedFracturePermeability<2>>(
-            std::move(property_name), a_i, e_i0, n_i, k, phi_xy, phi_yz);
+            std::move(property_name), a_i, e_i0, n_i, k, phi_xy, phi_yz, jf);
     }
     return std::make_unique<OrthotropicEmbeddedFracturePermeability<3>>(
-        std::move(property_name), a_i, e_i0, n_i, k, phi_xy, phi_yz);
+        std::move(property_name), a_i, e_i0, n_i, k, phi_xy, phi_yz, jf);
 }
 }  // namespace MaterialPropertyLib
