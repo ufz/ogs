@@ -403,6 +403,21 @@ AddTest(
 )
 
 AddTest(
+    NAME HydroMechanics_Permeability_OrthotropicEmbeddedFracture_unconfined_biot
+    PATH HydroMechanics/OrthotropicEmbeddedFracturePermeability
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS unconfined_biot.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    unconfined_biot_ts_10_t_10000000.000000.vtu unconfined_biot_ts_10_t_10000000.000000.vtu pressure pressure 0 1e-14
+    unconfined_biot_ts_10_t_10000000.000000.vtu unconfined_biot_ts_10_t_10000000.000000.vtu permeability permeability 0 1e-14
+    unconfined_biot_ts_10_t_10000000.000000.vtu unconfined_biot_ts_10_t_10000000.000000.vtu displacement displacement 1e-15 0
+    unconfined_biot_ts_10_t_10000000.000000.vtu unconfined_biot_ts_10_t_10000000.000000.vtu epsilon epsilon 1e-16 0
+)
+
+AddTest(
     NAME FailureIndexDependentPermeability
     PATH HydroMechanics/FailureIndexDependentPermeability
     EXECUTABLE ogs
