@@ -46,6 +46,11 @@ struct ZeroInitPropertyDataType
     {
         return Eigen::Matrix<double, 6, 1>::Zero().eval();
     }
+
+    PropertyDataType operator()(Eigen::MatrixXd) const
+    {
+        return Eigen::MatrixXd(0, 0);
+    }
 };
 
 Constant::Constant(std::string name, PropertyDataType const& v)

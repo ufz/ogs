@@ -32,7 +32,7 @@ using PropertyDataType =
     std::variant<double, Eigen::Matrix<double, 2, 1>,
                  Eigen::Matrix<double, 3, 1>, Eigen::Matrix<double, 2, 2>,
                  Eigen::Matrix<double, 3, 3>, Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>;
+                 Eigen::Matrix<double, 6, 1>, Eigen::MatrixXd>;
 
 /// Conversion of a vector to PropertyDataType for different sizes of the
 /// vector.
@@ -300,8 +300,9 @@ private:
 private:
     /// Corresponds to the PropertyDataType
     static constexpr std::array property_data_type_names_ = {
-        "scalar",     "2-vector",         "3-vector",        "2x2-matrix",
-        "3x3-matrix", "2D-Kelvin vector", "3D-Kelvin vector"};
+        "scalar",           "2-vector",           "3-vector",
+        "2x2-matrix",       "3x3-matrix",         "2D-Kelvin vector",
+        "3D-Kelvin vector", "dynamic matrix type"};
     static_assert(property_data_type_names_.size() ==
                       std::variant_size_v<PropertyDataType>,
                   "The array of property data type names has different size "

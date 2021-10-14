@@ -76,6 +76,13 @@ struct FormEigenVector
     {
         OGS_FATAL("Cannot convert a 6d vector to a {:d}d vector.", GlobalDim);
     }
+
+    Eigen::Matrix<double, GlobalDim, 1> operator()(
+        Eigen::MatrixXd const& /*values*/) const
+    {
+        OGS_FATAL("Cannot convert dynamic Eigen matrix to a {:d}d vector ",
+                  GlobalDim);
+    }
 };
 
 template <int GlobalDim>
