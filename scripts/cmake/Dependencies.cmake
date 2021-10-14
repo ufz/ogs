@@ -27,7 +27,8 @@ if(OGS_BUILD_TESTING)
     CPMAddPackage(
         NAME googletest
         GITHUB_REPOSITORY google/googletest
-        GIT_TAG 389cb68b87193358358ae87cc56d257fd0d80189
+        VERSION ${ogs.minimum_version.gtest}
+        GIT_TAG release-${ogs.minimum_version.gtest}
         OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt ON"
                 "BUILD_SHARED_LIBS OFF"
         EXCLUDE_FROM_ALL YES
