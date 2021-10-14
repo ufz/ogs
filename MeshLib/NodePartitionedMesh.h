@@ -36,7 +36,6 @@ public:
           _global_node_ids(mesh.getNumberOfNodes()),
           _n_global_base_nodes(mesh.getNumberOfBaseNodes()),
           _n_global_nodes(mesh.getNumberOfNodes()),
-          _n_active_base_nodes(mesh.getNumberOfBaseNodes()),
           _n_active_nodes(mesh.getNumberOfNodes()),
           _is_single_thread(true)
     {
@@ -59,7 +58,6 @@ public:
         \param properties    Mesh property.
         \param n_global_base_nodes Number of the base nodes of the global mesh.
         \param n_global_nodes      Number of all nodes of the global mesh.
-        \param n_active_base_nodes Number of the active base nodes.
         \param n_active_nodes      Number of all active nodes.
         \param n_active_base_nodes_at_rank Numbers of the active base nodes of
                                            all previous ranks.
@@ -75,7 +73,6 @@ public:
         Properties properties,
         const std::size_t n_global_base_nodes,
         const std::size_t n_global_nodes,
-        const std::size_t n_active_base_nodes,
         const std::size_t n_active_nodes,
         std::vector<std::size_t>&& n_active_base_nodes_at_rank,
         std::vector<std::size_t>&& n_active_high_order_nodes_at_rank);
@@ -94,23 +91,10 @@ public:
         return _global_node_ids[node_id];
     }
 
-    /// Get the number of the active nodes of the partition for linear elements.
-    std::size_t getNumberOfActiveBaseNodes() const
-    {
-        return _n_active_base_nodes;
-    }
-
     /// Get the number of all active nodes of the partition.
     std::size_t getNumberOfActiveNodes() const { return _n_active_nodes; }
     /// Check whether a node with ID of node_id is a ghost node
     bool isGhostNode(const std::size_t node_id) const;
-
-    /// Get the largest ID of active nodes for higher order elements in a
-    /// partition.
-    std::size_t getLargestActiveNodeID() const
-    {
-        return getNumberOfBaseNodes() + _n_active_nodes - _n_active_base_nodes;
-    }
 
     std::size_t getNumberOfActiveBaseNodesAtRank(int const partition_id) const
     {
@@ -145,9 +129,6 @@ private:
 
     /// Number of all nodes of the global mesh.
     std::size_t _n_global_nodes;
-
-    /// Number of the active nodes for linear interpolations
-    std::size_t _n_active_base_nodes;
 
     /// Number of the all active nodes.
     std::size_t _n_active_nodes;

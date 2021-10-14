@@ -38,7 +38,6 @@ NodePartitionedMesh::NodePartitionedMesh(
     Properties properties,
     const std::size_t n_global_base_nodes,
     const std::size_t n_global_nodes,
-    const std::size_t n_active_base_nodes,
     const std::size_t n_active_nodes,
     std::vector<std::size_t>&& n_active_base_nodes_at_rank,
     std::vector<std::size_t>&& n_active_high_order_nodes_at_rank)
@@ -46,7 +45,6 @@ NodePartitionedMesh::NodePartitionedMesh(
       _global_node_ids(glb_node_ids),
       _n_global_base_nodes(n_global_base_nodes),
       _n_global_nodes(n_global_nodes),
-      _n_active_base_nodes(n_active_base_nodes),
       _n_active_nodes(n_active_nodes),
       _n_active_base_nodes_at_rank(std::move(n_active_base_nodes_at_rank)),
       _n_active_high_order_nodes_at_rank(
@@ -60,16 +58,7 @@ NodePartitionedMesh::NodePartitionedMesh(
 
 bool NodePartitionedMesh::isGhostNode(const std::size_t node_id) const
 {
-    if (node_id < _n_active_base_nodes)
-    {
-        return false;
-    }
-    if (!isBaseNode(*_nodes[node_id], getElementsConnectedToNode(node_id)) &&
-        node_id < getLargestActiveNodeID())
-    {
-        return false;
-    }
-    return true;
+    return node_id >= _n_active_nodes;
 }
 
 std::size_t NodePartitionedMesh::getMaximumNConnectedNodesToNode() const
