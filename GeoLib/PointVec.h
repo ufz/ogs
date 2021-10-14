@@ -30,9 +30,9 @@ namespace GeoLib
  * \ingroup GeoLib
  *
  * \brief This class manages pointers to Points in a std::vector along with a
- * name. It also handles the deleting of points. Additionally, each vector of
- * points is identified by a unique name from class GEOObject. For this reason
- * PointVec should have a name.
+ * name. It also handles the deletion of points. Furthermore, typically,
+ * PointVec objects are managed by GEOObjects using the instance name for
+ * identification. For this reason PointVec must have a unique name.
  * */
 class PointVec final : public TemplateVec<Point>
 {
