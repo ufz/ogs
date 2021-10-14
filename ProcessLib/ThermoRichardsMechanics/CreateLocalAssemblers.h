@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
-#include "LocalDataInitializer.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "ProcessLib/Utils/LocalDataInitializerHM.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -32,9 +32,9 @@ void createLocalAssemblers(
 {
     // Shape matrices initializer
     using LocalDataInitializer =
-        LocalDataInitializer<LocalAssemblerInterface,
-                             LocalAssemblerImplementation, GlobalDim,
-                             ExtraCtorArgs...>;
+        LocalDataInitializerHM<LocalAssemblerInterface,
+                               LocalAssemblerImplementation, GlobalDim,
+                               ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
     // Populate the vector of local assemblers.
