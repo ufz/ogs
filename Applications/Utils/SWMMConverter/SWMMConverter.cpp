@@ -8,7 +8,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include "Applications/FileIO/CsvInterface.h"
 #include "Applications/FileIO/SWMM/SWMMInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/StringTools.h"

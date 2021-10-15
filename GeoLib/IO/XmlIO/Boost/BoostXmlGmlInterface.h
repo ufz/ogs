@@ -42,7 +42,6 @@ public:
     bool readFile(const std::string& fname) override;
 
 protected:
-    /// Required method for writing geometry. This is not implemented here, use the Qt class for writing.
     bool write() override;
 
 private:
