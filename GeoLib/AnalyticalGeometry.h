@@ -214,10 +214,10 @@ void computeAndInsertAllIntersectionPoints(PointVec &pnt_vec,
  * \see getNewellPlane()
  * @param polygon_in a copy of the polygon_in polygon will be rotated
  * @param plane_normal the normal of the original Newell plane
- * @return a rotated polygon
+ * @return a vector of rotated points
  */
-Polygon rotatePolygonToXY(Polygon const& polygon_in,
-                                  Eigen::Vector3d& plane_normal);
+std::unique_ptr<std::vector<GeoLib::Point*>> rotatePolygonPointsToXY(
+    GeoLib::Polygon const& polygon_in, Eigen::Vector3d& plane_normal);
 
 /// Sorts the vector of segments such that the \f$i\f$-th segment is connected
 /// with the \f$i+1\f$st segment, i.e. the end point of the \f$i\f$-th segment

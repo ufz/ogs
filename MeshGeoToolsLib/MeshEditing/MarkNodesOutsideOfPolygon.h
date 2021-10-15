@@ -23,9 +23,10 @@ namespace MeshGeoToolsLib
 std::vector<bool> markNodesOutSideOfPolygon(
     std::vector<MeshLib::Node*> const& nodes, GeoLib::Polygon const& polygon)
 {
-    // *** rotate polygon to xy_plane
+    // *** rotate polygon points to xy-plane
     Eigen::Vector3d normal;
-    GeoLib::Polygon rot_polygon(GeoLib::rotatePolygonToXY(polygon, normal));
+    auto rotated_polygon_points =
+        GeoLib::rotatePolygonPointsToXY(polygon, normal);
 
     // *** rotate mesh nodes to xy-plane
     // 1 copy all mesh nodes to GeoLib::Points
@@ -41,13 +42,24 @@ std::vector<bool> markNodesOutSideOfPolygon(
     std::for_each(rotated_nodes.begin(), rotated_nodes.end(),
                   [](GeoLib::Point* p) { (*p)[2] = 0.0; });
 
-    // *** mark rotated nodes
     std::vector<bool> outside(rotated_nodes.size(), true);
-    for (std::size_t k(0); k < rotated_nodes.size(); k++)
+    // *** mark rotated nodes inside rotated polygon
     {
-        if (rot_polygon.isPntInPolygon(*(rotated_nodes[k])))
+        // create new polygon using the rotated points
+        GeoLib::Polyline rotated_polyline(*rotated_polygon_points);
+        for (std::size_t k(0); k < polygon.getNumberOfPoints(); k++)
         {
-            outside[k] = false;
+            rotated_polyline.addPoint(k);
+        }
+        rotated_polyline.addPoint(0);
+        GeoLib::Polygon const rotated_polygon(rotated_polyline);
+
+        for (std::size_t k(0); k < rotated_nodes.size(); k++)
+        {
+            if (rotated_polygon.isPntInPolygon(*(rotated_nodes[k])))
+            {
+                outside[k] = false;
+            }
         }
     }
 
@@ -56,9 +68,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
         delete rotated_node;
     }
 
-    std::vector<GeoLib::Point*>& rot_polygon_pnts(
-        const_cast<std::vector<GeoLib::Point*>&>(rot_polygon.getPointsVec()));
-    for (auto& rot_polygon_pnt : rot_polygon_pnts)
+    for (auto& rot_polygon_pnt : *rotated_polygon_points)
     {
         delete rot_polygon_pnt;
     }

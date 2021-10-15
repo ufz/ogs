@@ -442,11 +442,12 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec& pnt_vec,
     }
 }
 
-GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
-                                  Eigen::Vector3d& plane_normal)
+std::unique_ptr<std::vector<GeoLib::Point*>> rotatePolygonPointsToXY(
+    GeoLib::Polygon const& polygon_in, Eigen::Vector3d& plane_normal)
 {
     // 1 copy all points
-    auto* polygon_pnts(new std::vector<GeoLib::Point*>);
+    auto polygon_pnts = std::make_unique<std::vector<GeoLib::Point*>>();
+    polygon_pnts->reserve(polygon_in.getNumberOfPoints());
     for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
     {
         polygon_pnts->push_back(new GeoLib::Point(*(polygon_in.getPoint(k))));
@@ -463,14 +464,7 @@ GeoLib::Polygon rotatePolygonToXY(GeoLib::Polygon const& polygon_in,
     std::for_each(polygon_pnts->begin(), polygon_pnts->end(),
                   [](GeoLib::Point* p) { (*p)[2] = 0.0; });
 
-    // 4 create new polygon
-    GeoLib::Polyline rot_polyline(*polygon_pnts);
-    for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
-    {
-        rot_polyline.addPoint(k);
-    }
-    rot_polyline.addPoint(0);
-    return GeoLib::Polygon(rot_polyline);
+    return polygon_pnts;
 }
 
 std::vector<MathLib::Point3d> lineSegmentIntersect2d(
