@@ -74,8 +74,8 @@ createVariableDependentNeumannBoundaryCondition(
 
     std::vector<MeshLib::Node*> const& bc_nodes = bc_mesh.getNodes();
     MeshLib::MeshSubset bc_mesh_subset(bc_mesh, bc_nodes);
-    auto const& dof_table_boundary_other_variable =
-        *dof_table.deriveBoundaryConstrainedMap(
+    auto dof_table_boundary_other_variable =
+        dof_table.deriveBoundaryConstrainedMap(
             (variable_id + 1) % 2, {component_id}, std::move(bc_mesh_subset));
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
@@ -97,7 +97,8 @@ createVariableDependentNeumannBoundaryCondition(
         component_id, global_dim, bc_mesh,
         VariableDependentNeumannBoundaryConditionData{
             constant, coefficient_current_variable, coefficient_other_variable,
-            coefficient_mixed_variables, dof_table_boundary_other_variable});
+            coefficient_mixed_variables,
+            std::move(dof_table_boundary_other_variable)});
 }
 
 }  // namespace ProcessLib

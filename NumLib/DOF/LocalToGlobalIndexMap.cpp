@@ -233,7 +233,8 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     }
 }
 
-LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
+std::unique_ptr<LocalToGlobalIndexMap>
+LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     int const variable_id,
     std::vector<int> const& component_ids,
     MeshLib::MeshSubset&& new_mesh_subset) const
@@ -269,7 +270,7 @@ LocalToGlobalIndexMap* LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     }
     all_mesh_subsets.emplace_back(std::move(new_mesh_subset));
 
-    return new LocalToGlobalIndexMap(
+    return std::make_unique<LocalToGlobalIndexMap>(
         std::move(all_mesh_subsets), global_component_ids,
         _variable_component_offsets, elements, std::move(mesh_component_map),
         ConstructorTag{});

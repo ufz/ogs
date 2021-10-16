@@ -41,8 +41,8 @@ DirichletBoundaryCondition::DirichletBoundaryCondition(
 
     // Create local DOF table from the BC mesh subset for the given variable
     // and component id.
-    _dof_table_boundary.reset(dof_table_bulk.deriveBoundaryConstrainedMap(
-        variable_id, {component_id}, std::move(bc_mesh_subset)));
+    _dof_table_boundary = dof_table_bulk.deriveBoundaryConstrainedMap(
+        variable_id, {component_id}, std::move(bc_mesh_subset));
 }
 
 void DirichletBoundaryCondition::getEssentialBCValues(
