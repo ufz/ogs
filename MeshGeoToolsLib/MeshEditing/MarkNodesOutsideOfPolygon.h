@@ -45,7 +45,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
     // *** mark rotated nodes inside rotated polygon
     {
         // create new polygon using the rotated points
-        GeoLib::Polyline rotated_polyline(*rotated_polygon_points);
+        GeoLib::Polyline rotated_polyline(rotated_polygon_points);
         for (std::size_t k(0); k < polygon.getNumberOfPoints(); k++)
         {
             rotated_polyline.addPoint(k);
@@ -67,7 +67,7 @@ std::vector<bool> markNodesOutSideOfPolygon(
         delete rotated_node;
     }
 
-    for (auto& rot_polygon_pnt : *rotated_polygon_points)
+    for (auto& rot_polygon_pnt : rotated_polygon_points)
     {
         delete rot_polygon_pnt;
     }

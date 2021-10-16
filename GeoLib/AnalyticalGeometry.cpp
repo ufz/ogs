@@ -442,28 +442,28 @@ void computeAndInsertAllIntersectionPoints(GeoLib::PointVec& pnt_vec,
     }
 }
 
-std::tuple<std::unique_ptr<std::vector<GeoLib::Point*>>, Eigen::Vector3d>
+std::tuple<std::vector<GeoLib::Point*>, Eigen::Vector3d>
 rotatePolygonPointsToXY(GeoLib::Polygon const& polygon_in)
 {
     // 1 copy all points
-    auto polygon_points = std::make_unique<std::vector<GeoLib::Point*>>();
-    polygon_points->reserve(polygon_in.getNumberOfPoints());
+    std::vector<GeoLib::Point*> polygon_points;
+    polygon_points.reserve(polygon_in.getNumberOfPoints());
     for (std::size_t k(0); k < polygon_in.getNumberOfPoints(); k++)
     {
-        polygon_points->push_back(new GeoLib::Point(*(polygon_in.getPoint(k))));
+        polygon_points.push_back(new GeoLib::Point(*(polygon_in.getPoint(k))));
     }
 
     // 2 rotate points
-    auto [plane_normal, d_polygon] = GeoLib::getNewellPlane(*polygon_points);
+    auto [plane_normal, d_polygon] = GeoLib::getNewellPlane(polygon_points);
     Eigen::Matrix3d const rot_mat =
         GeoLib::computeRotationMatrixToXY(plane_normal);
-    GeoLib::rotatePoints(rot_mat, *polygon_points);
+    GeoLib::rotatePoints(rot_mat, polygon_points);
 
     // 3 set z coord to zero
-    std::for_each(polygon_points->begin(), polygon_points->end(),
+    std::for_each(polygon_points.begin(), polygon_points.end(),
                   [](GeoLib::Point* p) { (*p)[2] = 0.0; });
 
-    return {std::move(polygon_points), plane_normal};
+    return {polygon_points, plane_normal};
 }
 
 std::vector<MathLib::Point3d> lineSegmentIntersect2d(
