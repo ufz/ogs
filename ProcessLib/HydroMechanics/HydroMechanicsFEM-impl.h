@@ -291,7 +291,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const K = MPL::formEigenTensor<DisplacementDim>(
             medium->property(MPL::PropertyType::permeability)
                 .value(vars, x_position, t, dt));
-        auto const dkde = std::get<Eigen::MatrixXd>(
+        auto const dkde = MPL::formEigenTensor<
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim)>(
             (*medium)[MPL::PropertyType::permeability].dValue(
                 vars, MPL::Variable::mechanical_strain, x_position, t, dt));
 
@@ -345,7 +346,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         Kpu_k.noalias() +=
             dNdx_p.transpose() *
-            MathLib::KelvinVector::LiftVectorToKelvin<DisplacementDim>(
+            MathLib::KelvinVector::liftVectorToKelvin<DisplacementDim>(
                 dNdx_p * p - rho_fr * b) *
             dkde * B * rho_fr / mu * w;
     }
