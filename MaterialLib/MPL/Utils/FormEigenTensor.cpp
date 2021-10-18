@@ -101,32 +101,14 @@ struct FormEigenTensor
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
         Eigen::MatrixXd const& values) const
     {
-        if constexpr (GlobalDim == 3)
+        if (GlobalDim == values.rows() && GlobalDim == values.cols())
         {
-            if (values.rows() != 6 && values.cols() != 1)
-            {
-                OGS_FATAL("Input wrong size.");
-            }
-            Eigen::Matrix<double, GlobalDim, GlobalDim> result;
-            result << values(0, 0), values(3, 0), values(5, 0), values(3, 0),
-                values(1, 0), values(4, 0), values(5, 0), values(4, 0),
-                values(2, 0);
-            return result;
-        }
-        if constexpr (GlobalDim == 2)
-        {
-            if (values.rows() != 4 && values.cols() != 1)
-            {
-                OGS_FATAL("Input wrong size.");
-            }
-            // skip the z-direction in this case
-            Eigen::Matrix<double, GlobalDim, GlobalDim> result;
-            result << values(0, 0), values(3, 0), values(3, 0), values(1, 0);
-            return result;
+            return values;
         }
 
-        OGS_FATAL("Cannot convert something TODO  to {:d}x{:d} matrix",
-                  GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a dynamic {:d}x{:d} matrix to a {:d}x{:d} matrix",
+            values.rows(), values.cols(), GlobalDim, GlobalDim);
     }
 };
 
