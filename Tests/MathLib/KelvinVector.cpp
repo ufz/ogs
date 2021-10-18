@@ -32,6 +32,22 @@ struct MaterialLibSolidsKelvinVector6 : public ::testing::Test
     ac::gtest_reporter gtest_reporter;
 };
 
+struct MaterialLibSolidsVector2 : public ::testing::Test
+{
+    static const int size = 2;
+    ac::randomEigenMatrixGenerator<double, size, 1> VectorGenerator;
+
+    ac::gtest_reporter gtest_reporter;
+};
+
+struct MaterialLibSolidsVector3 : public ::testing::Test
+{
+    static const int size = 3;
+    ac::randomEigenMatrixGenerator<double, size, 1> VectorGenerator;
+
+    ac::gtest_reporter gtest_reporter;
+};
+
 //
 // Self-test of Kelvin to tensor and back conversion, which should be identity
 // up to numerical errors.
@@ -143,6 +159,35 @@ TEST_F(MaterialLibSolidsKelvinVector6, Inverse)
                             0);
                 }),
         gtest_reporter);
+}
+
+//
+// Self-test of LiftVectorToKelvin and back conversion, which should be identity
+// up to numerical errors.
+//
+
+TEST_F(MaterialLibSolidsVector2, SelfTestLiftVectorToKelvin)
+{
+    auto f = [](Eigen::Vector2d const& v)
+    {
+        return (v - reduceKelvinToVector<2>(liftVectorToKelvin<2>(v))).norm() <=
+               2 * std::numeric_limits<double>::epsilon() * v.norm();
+    };
+
+    ac::check<Eigen::Vector2d>(f, 1000, ac::make_arbitrary(VectorGenerator),
+                               gtest_reporter);
+}
+
+TEST_F(MaterialLibSolidsVector3, SelfTestLiftVectorToKelvin)
+{
+    auto f = [](Eigen::Vector3d const& v)
+    {
+        return (v - reduceKelvinToVector<3>(liftVectorToKelvin<3>(v))).norm() <=
+               2 * std::numeric_limits<double>::epsilon() * v.norm();
+    };
+
+    ac::check<Eigen::Vector3d>(f, 1000, ac::make_arbitrary(VectorGenerator),
+                               gtest_reporter);
 }
 
 //
