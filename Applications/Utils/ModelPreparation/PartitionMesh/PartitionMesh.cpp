@@ -77,10 +77,6 @@ int main(int argc, char* argv[])
         false);
     cmd.add(exe_metis_flag);
 
-    TCLAP::SwitchArg lh_elems_flag(
-        "q", "lh_elements", "Mixed linear and high order elements.", false);
-    cmd.add(lh_elems_flag);
-
     TCLAP::ValueArg<std::string> log_level_arg(
         "l", "log-level",
         "the verbosity of logging messages: none, error, warn, info, debug, "
@@ -196,8 +192,7 @@ int main(int argc, char* argv[])
     }
 
     INFO("Partitioning the mesh in the node wise way ...");
-    bool const is_mixed_high_order_linear_elems = lh_elems_flag.getValue();
-    mesh_partitioner.partitionByMETIS(is_mixed_high_order_linear_elems);
+    mesh_partitioner.partitionByMETIS();
 
     INFO("Partitioning other meshes according to the main mesh partitions.");
     for (auto const& filename : other_meshes_filenames_arg.getValue())
@@ -212,8 +207,7 @@ int main(int argc, char* argv[])
             BaseLib::joinPaths(
                 output_directory_arg.getValue(),
                 BaseLib::extractBaseNameWithoutExtension(filename));
-        auto const partitions = mesh_partitioner.partitionOtherMesh(
-            *mesh, is_mixed_high_order_linear_elems);
+        auto const partitions = mesh_partitioner.partitionOtherMesh(*mesh);
 
         auto partitioned_properties =
             partitionProperties(mesh->getProperties(), partitions);

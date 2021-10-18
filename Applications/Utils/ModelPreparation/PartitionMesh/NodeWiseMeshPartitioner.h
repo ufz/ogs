@@ -76,14 +76,9 @@ public:
     }
 
     /// Partition by node.
-    /// \param is_mixed_high_order_linear_elems Flag to indicate whether the
-    /// elements of a mesh can be used for both linear and high order
-    /// interpolation
-    void partitionByMETIS(const bool is_mixed_high_order_linear_elems);
+    void partitionByMETIS();
 
-    std::vector<Partition> partitionOtherMesh(
-        MeshLib::Mesh const& mesh,
-        bool const is_mixed_high_order_linear_elems) const;
+    std::vector<Partition> partitionOtherMesh(MeshLib::Mesh const& mesh) const;
 
     /// Renumber the bulk_node_ids property for each partition to match the
     /// partitioned bulk mesh nodes.
@@ -131,13 +126,9 @@ private:
     std::vector<std::size_t> _nodes_partition_ids;
 
     // Renumber the global indices of nodes,
-    /// \param is_mixed_high_order_linear_elems Flag to indicate whether the
-    /// elements of a mesh can be used for both linear and high order
-    /// interpolation
-    void renumberNodeIndices(const bool is_mixed_high_order_linear_elems);
+    void renumberNodeIndices();
 
-    void processPartition(std::size_t const part_id,
-                          const bool is_mixed_high_order_linear_elems);
+    void processPartition(std::size_t const part_id);
 };
 
 }  // namespace ApplicationUtils
