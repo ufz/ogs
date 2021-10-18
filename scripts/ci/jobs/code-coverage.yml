@@ -26,6 +26,7 @@ code coverage:
       - build/coverage/coverage.json
       - build/coverage/coverage.xml
       - build/coverage/coverage_reports/*.json
+      - build/coverage/logs/*.txt
     expire_in: 1 week
     reports:
       cobertura: build/coverage/coverage.xml
