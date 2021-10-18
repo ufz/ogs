@@ -23,7 +23,7 @@ if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
         PRIVATE ParameterLib ProcessLib
     )
 elseif(OGS_BUILD_GUI)
-    target_link_libraries(ApplicationsLib PRIVATE nlohmann_json)
+    target_link_libraries(ApplicationsLib PRIVATE nlohmann_json::nlohmann_json)
 endif()
 
 if(OGS_USE_LIS)
