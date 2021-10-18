@@ -202,22 +202,21 @@ std::unique_ptr<Point> triangleLineIntersection(
  * pnt_vec. For each intersection an id is returned.  This id is used to split the two
  * intersecting straight line segments in four straight line segments.
  */
-void computeAndInsertAllIntersectionPoints(PointVec &pnt_vec,
-    std::vector<Polyline*> & plys);
+void computeAndInsertAllIntersectionPoints(PointVec& pnt_vec,
+                                           std::vector<Polyline*>& plys);
 
 /**
- * Function rotates a polygon to the xy plane. For this reason, (1) the points of
- * the given polygon are copied, (2) a so called Newell plane is computed
- * (getNewellPlane()) and the points are rotated, (3) for security the
- * \f$z\f$ coordinates of the rotated points are set to zero and finally, (4) a
- * new polygon is constructed using the rotated points.
+ * Function rotates a polygon to the xy plane. For this reason, (1) the points
+ * of the given polygon are copied, (2) a so called Newell plane is computed
+ * (getNewellPlane()) and the points are rotated, (3) for accuracy reasons the
+ * \f$z\f$ coordinates of the rotated points are set to zero
  * \see getNewellPlane()
  * @param polygon_in a copy of the polygon_in polygon will be rotated
- * @param plane_normal the normal of the original Newell plane
- * @return a rotated polygon
+ * @return vector of rotated points and normal based on the original Newell
+ * plane
  */
-Polygon rotatePolygonToXY(Polygon const& polygon_in,
-                                  Eigen::Vector3d& plane_normal);
+std::tuple<std::vector<GeoLib::Point*>, Eigen::Vector3d>
+rotatePolygonPointsToXY(GeoLib::Polygon const& polygon_in);
 
 /// Sorts the vector of segments such that the \f$i\f$-th segment is connected
 /// with the \f$i+1\f$st segment, i.e. the end point of the \f$i\f$-th segment
