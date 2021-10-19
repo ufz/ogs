@@ -25,8 +25,8 @@ The current style is defined in [.clang-format](https://gitlab.opengeosys.org/og
 
 Use [`black`](https://black.readthedocs.io/en/stable/). It can be added to be automatically run on save in your editor / IDE:
 
-- [Vim](https://black.readthedocs.io/en/stable/editor_integration.html#vim)
-- [PyCharm](https://black.readthedocs.io/en/stable/editor_integration.html#pycharm-intellij-idea)
+- [Vim](https://black.readthedocs.io/en/stable/integrations/editors.html#vim)
+- [PyCharm](https://black.readthedocs.io/en/stable/integrations/editors.html#pycharm-intellij-idea)
 - [Visual Studio Code](https://code.visualstudio.com/docs/python/editing#_formatting)
 
 `black` is also run by our `pre-commit`-hooks. To run manually:
@@ -51,7 +51,7 @@ pip install cmakelang[YAML]
 
 ## Build targets
 
-You can run `clang-format` and `cmake-format` on the OGS code base by building the following targets:
+You can run `clang-format` and `cmake-format` on the full OGS code base by building the following targets:
 
 | Language | Shows formatting | Applies formatting |
 | -------- | ---------------- | ------------------ |
