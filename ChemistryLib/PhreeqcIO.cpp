@@ -42,6 +42,14 @@ namespace PhreeqcIOData
 {
 namespace
 {
+template <class... Ts>
+struct overloaded : Ts...
+{
+    using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...)->overloaded<Ts...>;
+
 template <typename DataBlock>
 std::ostream& operator<<(std::ostream& os,
                          std::vector<DataBlock> const& data_blocks)
@@ -544,9 +552,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                     ? chemical_system_id + 1
                     : phreeqc_io._num_chemical_systems + chemical_system_id + 1;
             os << "-equilibrate with solution " << aqueous_solution_id << "\n";
-            os << "-sites_units DENSITY"
-               << "\n";
-            os << surface << "\n";
+
             // print unit
             if (std::holds_alternative<DensityBasedSurfaceSite>(
                     surface.front()))
@@ -559,6 +565,24 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                 os << "-sites_units absolute"
                    << "\n";
             }
+
+            for (auto const& surface_site : surface)
+            {
+                std::visit(
+                    overloaded{[&os](DensityBasedSurfaceSite const& s) {
+                                   os << s.name << " " << s.site_density << " "
+                                      << s.specific_surface_area << " "
+                                      << s.mass << "\n";
+                               },
+                               [&os, chemical_system_id](
+                                   MoleBasedSurfaceSite const& s) {
+                                   os << s.name << " "
+                                      << (*s.molality)[chemical_system_id]
+                                      << "\n";
+                               }},
+                    surface_site);
+            }
+
             // overlook the effect of the buildup of charges onto the surface
             if (std::holds_alternative<MoleBasedSurfaceSite>(surface.front()))
             {
