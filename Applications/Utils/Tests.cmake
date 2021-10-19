@@ -694,6 +694,23 @@ AddTest(
 )
 
 AddTest(
+    NAME LineIntersectingDomainBoundary
+    PATH MeshGeoToolsLib/geometryToGmshGeo/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/geometryToGmshGeo
+    EXECUTABLE geometryToGmshGeo
+    EXECUTABLE_ARGS -i square_1x1.gml -i line_intersecting_square.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1_with_intersecting_line.geo
+    REQUIREMENTS NOT OGS_USE_MPI
+)
+if (NOT OGS_USE_MPI)
+    set_tests_properties(
+        geometryToGmshGeo-LineIntersectingDomainBoundary
+        PROPERTIES
+            PASS_REGULAR_EXPRESSION
+            "ogs.*;ogs.*error.*\n\tpoint with id 5 and coordinates (1.001000000001, 0.6, 0) is outside of the polygon."
+    )
+endif()
+
+AddTest(
     NAME ResetPropertiesInPolygonalRegion_AllElementNodesInPolygon
     PATH MeshGeoToolsLib/ResetPropertiesInPolygonalRegion/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion

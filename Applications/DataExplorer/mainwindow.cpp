@@ -1145,76 +1145,90 @@ void MainWindow::callGMSH(std::vector<std::string>& selectedGeometries,
 
         if (!fileName.isEmpty())
         {
-            if (param4 == -1)
-            {  // adaptive meshing selected
-                FileIO::GMSH::GMSHInterface gmsh_io(
-                    _project.getGEOObjects(), true,
-                    FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
-                    param2, param3, param1, selectedGeometries, false, false);
-                BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
-                                               fileName.toStdString());
-            }
-            else
-            {  // homogeneous meshing selected
-                FileIO::GMSH::GMSHInterface gmsh_io(
-                    _project.getGEOObjects(), true,
-                    FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
-                    param4, param3, param1, selectedGeometries, false, false);
-                BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
-                                               fileName.toStdString());
-            }
-
-            if (system(nullptr) != 0)  // command processor available
+            try
             {
-                QSettings settings;
-                std::string gmsh_path = settings.value("DataExplorerGmshPath")
-                                            .toString()
-                                            .toStdString();
+                if (param4 == -1)
+                {  // adaptive meshing selected
+                    FileIO::GMSH::GMSHInterface gmsh_io(
+                        _project.getGEOObjects(), true,
+                        FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
+                        param2, param3, param1, selectedGeometries, false,
+                        false);
+                    BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
+                                                   fileName.toStdString());
+                }
+                else
+                {  // homogeneous meshing selected
+                    FileIO::GMSH::GMSHInterface gmsh_io(
+                        _project.getGEOObjects(), true,
+                        FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
+                        param4, param3, param1, selectedGeometries, false,
+                        false);
+                    BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
+                                                   fileName.toStdString());
+                }
 
-                if (!gmsh_path.empty())
+                if (system(nullptr) != 0)  // command processor available
                 {
-                    std::string fname(fileName.toStdString());
-                    std::string gmsh_command =
-                        "\"" + gmsh_path + "\" -2 -algo meshadapt " + fname;
-                    std::size_t pos(fname.rfind("."));
-                    if (pos != std::string::npos)
+                    QSettings settings;
+                    std::string gmsh_path =
+                        settings.value("DataExplorerGmshPath")
+                            .toString()
+                            .toStdString();
+
+                    if (!gmsh_path.empty())
                     {
-                        fname = fname.substr(0, pos);
-                    }
-                    gmsh_command += " -o " + fname + ".msh";
-                    // Newer gmsh versions write a newer file format for meshes
-                    // per default. At the moment we can't read this new format.
-                    // This is a switch for gmsh to write the 'old' file format.
-                    gmsh_command += " -format msh22";
-                    auto const return_value = std::system(gmsh_command.c_str());
-                    if (return_value != 0)
-                    {
-                        QString const message =
-                            "Execution of gmsh command returned non-zero "
-                            "status, " +
-                            QString::number(return_value);
-                        OGSError::box(message, "Error");
+                        std::string fname(fileName.toStdString());
+                        std::string gmsh_command =
+                            "\"" + gmsh_path + "\" -2 -algo meshadapt " + fname;
+                        std::size_t pos(fname.rfind("."));
+                        if (pos != std::string::npos)
+                        {
+                            fname = fname.substr(0, pos);
+                        }
+                        gmsh_command += " -o " + fname + ".msh";
+                        // Newer gmsh versions write a newer file format for
+                        // meshes per default. At the moment we can't read this
+                        // new format. This is a switch for gmsh to write the
+                        // 'old' file format.
+                        gmsh_command += " -format msh22";
+                        auto const return_value =
+                            std::system(gmsh_command.c_str());
+                        if (return_value != 0)
+                        {
+                            QString const message =
+                                "Execution of gmsh command returned non-zero "
+                                "status, " +
+                                QString::number(return_value);
+                            OGSError::box(message, "Error");
+                        }
+                        else
+                        {
+                            this->loadFile(ImportFileType::GMSH,
+                                           fileName.left(fileName.length() - 3)
+                                               .append("msh"));
+                        }
                     }
                     else
                     {
-                        this->loadFile(
-                            ImportFileType::GMSH,
-                            fileName.left(fileName.length() - 3).append("msh"));
+                        OGSError::box("Location of GMSH not specified.",
+                                      "Error");
                     }
                 }
                 else
                 {
-                    OGSError::box("Location of GMSH not specified.", "Error");
+                    OGSError::box(
+                        "Error executing command gmsh - no command processor "
+                        "available",
+                        "Error");
                 }
             }
-            else
+            catch (std::runtime_error& error)
             {
-                OGSError::box(
-                    "Error executing command gmsh - no command processor "
-                    "available",
-                    "Error");
+                OGSError::box(QString(error.what()) +
+                                  QString("\n Please cleanup the input data."),
+                              "ERROR");
             }
-
             if (delete_geo_file)
             {
                 BaseLib::removeFile(fileName.toStdString());

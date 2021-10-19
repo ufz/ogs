@@ -57,6 +57,12 @@ int main(int argc, char* argv[])
     TCLAP::SwitchArg homogeneous_flag(
         "", "homogeneous", "Use Gmsh homogeneous meshing method.", false);
     cmd.add(homogeneous_flag);
+    TCLAP::ValueArg<std::string> merged_geometries_output(
+        "", "write_merged_geometries",
+        "file name for the output of the internal created geometry (*.gml) "
+        "(useful for debugging the data)",
+        false, "", "output file name");
+    cmd.add(merged_geometries_output);
 
     cmd.parse(argc, argv);
 
@@ -85,35 +91,57 @@ int main(int argc, char* argv[])
     bool const rotate = false;
     bool const keep_preprocessed_geometry = false;
 
-    if (homogeneous_flag.getValue())
-    {  // homogeneous meshing
-        double const average_mesh_density =
-            average_point_density_arg.getValue();
-        FileIO::GMSH::GMSHInterface gmsh_io(
-            geo_objects, true,
-            FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
-            average_mesh_density, 0.0, 0, geo_names, rotate,
-            keep_preprocessed_geometry);
-        BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
-                                       geo_output_arg.getValue());
+    try
+    {
+        if (homogeneous_flag.getValue())
+        {  // homogeneous meshing
+            double const average_mesh_density =
+                average_point_density_arg.getValue();
+            FileIO::GMSH::GMSHInterface gmsh_io(
+                geo_objects, true,
+                FileIO::GMSH::MeshDensityAlgorithm::FixedMeshDensity,
+                average_mesh_density, 0.0, 0, geo_names, rotate,
+                keep_preprocessed_geometry);
+            BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
+                                           geo_output_arg.getValue());
+        }
+        else
+        {  // adaptive meshing
+            unsigned const max_number_of_points_in_quadtree_leaf =
+                max_number_of_points_in_quadtree_leaf_arg.getValue();
+            double const mesh_density_scaling_points =
+                mesh_density_scaling_points_arg.getValue();
+            double const mesh_density_scaling_stations =
+                mesh_density_scaling_stations_arg.getValue();
+            FileIO::GMSH::GMSHInterface gmsh_io(
+                geo_objects, true,
+                FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
+                mesh_density_scaling_points, mesh_density_scaling_stations,
+                max_number_of_points_in_quadtree_leaf, geo_names, rotate,
+                keep_preprocessed_geometry);
+            BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
+                                           geo_output_arg.getValue());
+        }
     }
-    else
-    {  // adaptive meshing
-        unsigned const max_number_of_points_in_quadtree_leaf =
-            max_number_of_points_in_quadtree_leaf_arg.getValue();
-        double const mesh_density_scaling_points =
-            mesh_density_scaling_points_arg.getValue();
-        double const mesh_density_scaling_stations =
-            mesh_density_scaling_stations_arg.getValue();
-        FileIO::GMSH::GMSHInterface gmsh_io(
-            geo_objects, true,
-            FileIO::GMSH::MeshDensityAlgorithm::AdaptiveMeshDensity,
-            mesh_density_scaling_points, mesh_density_scaling_stations,
-            max_number_of_points_in_quadtree_leaf, geo_names, rotate,
-            keep_preprocessed_geometry);
-        BaseLib::IO::writeStringToFile(gmsh_io.writeToString(),
-                                       geo_output_arg.getValue());
+    catch (std::runtime_error& error)
+    {
+        ERR("{}", error.what());
+        if (merged_geometries_output.isSet())
+        {
+            GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);
+            xml.export_name = geo_objects.getGeometryNames().back();
+            BaseLib::IO::writeStringToFile(xml.writeToString(),
+                                           merged_geometries_output.getValue());
+        }
+        else
+        {
+            INFO(
+                "Hint: Using the command line flag "
+                "'--write_merged_geometries buggy_geometry.gml' allows "
+                "for better analysis of the problem.");
+        }
+        ERR("An error has occurred - programme will be terminated.");
+        return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }
