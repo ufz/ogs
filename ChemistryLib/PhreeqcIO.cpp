@@ -559,6 +559,13 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                 os << "-sites_units absolute"
                    << "\n";
             }
+            // overlook the effect of the buildup of charges onto the surface
+            if (std::holds_alternative<MoleBasedSurfaceSite>(surface.front()))
+            {
+                os << "-no_edl"
+                   << "\n";
+            }
+
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
