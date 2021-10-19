@@ -253,7 +253,6 @@ PhreeqcIO::PhreeqcIO(GlobalLinearSolver& linear_solver,
                      std::string&& database,
                      std::unique_ptr<ChemicalSystem>&& chemical_system,
                      std::vector<ReactionRate>&& reaction_rates,
-                     std::vector<SurfaceSite>&& surface,
                      std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
@@ -263,7 +262,6 @@ PhreeqcIO::PhreeqcIO(GlobalLinearSolver& linear_solver,
       _database(std::move(database)),
       _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
-      _surface(std::move(surface)),
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
@@ -527,7 +525,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                << "\n";
         }
 
-        auto const& surface = phreeqc_io._surface;
+        auto const& surface = phreeqc_io._chemical_system->surface;
         if (!surface.empty())
         {
             os << "SURFACE " << chemical_system_id + 1 << "\n";
@@ -617,7 +615,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     auto const& output = *phreeqc_io._output;
     auto const& dropped_item_ids = output.dropped_item_ids;
 
-    auto const& surface = phreeqc_io._surface;
+    auto const& surface = phreeqc_io._chemical_system->surface;
     auto const& exchangers = phreeqc_io._chemical_system->exchangers;
 
     if (!surface.empty() && !exchangers.empty())

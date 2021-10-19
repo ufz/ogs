@@ -16,9 +16,11 @@
 #include "CreateEquilibriumReactants.h"
 #include "CreateExchange.h"
 #include "CreateKineticReactant.h"
+#include "CreateSurface.h"
 #include "EquilibriumReactant.h"
 #include "Exchange.h"
 #include "KineticReactant.h"
+#include "Surface.h"
 
 namespace ChemistryLib
 {
@@ -47,10 +49,16 @@ std::unique_ptr<ChemicalSystem> createChemicalSystem(
         //! \ogs_file_param{prj__chemical_system__exchangers}
         config.getConfigSubtreeOptional("exchangers"), mesh);
 
+    // surface
+    auto surface = createSurface(
+        //! \ogs_file_param{prj__chemical_system__surface}
+        config.getConfigSubtreeOptional("surface"), mesh);
+
     return std::make_unique<ChemicalSystem>(std::move(aqueous_solution),
                                             std::move(kinetic_reactants),
                                             std::move(equilibrium_reactants),
-                                            std::move(exchangers));
+                                            std::move(exchangers),
+                                            std::move(surface));
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
