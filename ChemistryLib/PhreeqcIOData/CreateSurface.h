@@ -11,6 +11,7 @@
 #pragma once
 
 #include <optional>
+#include <variant>
 #include <vector>
 
 namespace BaseLib
@@ -18,13 +19,20 @@ namespace BaseLib
 class ConfigTree;
 }
 
+namespace MeshLib
+{
+class Mesh;
+}
+
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct SurfaceSite;
+struct DensityBasedSurfaceSite;
+struct MoleBasedSurfaceSite;
 
-std::vector<SurfaceSite> createSurface(
-    std::optional<BaseLib::ConfigTree> const& config);
+std::vector<std::variant<DensityBasedSurfaceSite, MoleBasedSurfaceSite>>
+createSurface(std::optional<BaseLib::ConfigTree> const& config,
+              MeshLib::Mesh& mesh);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
