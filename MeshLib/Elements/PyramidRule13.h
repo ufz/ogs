@@ -17,21 +17,21 @@
 
 namespace MeshLib
 {
-
 /**
- * This class represents a 3d pyramid element. The following sketch shows the node and edge numbering.
- * @anchor PyramidNodeAndEdgeNumbering
+ * This class represents a 3d pyramid element. The following sketch shows the
+ node numbering.
+ * @anchor Pyramid13NodeNumbering
  * @code
  *
  *               4
  *             //|\
  *            // | \
- *         11//  |  \10
- *          //   |9  \
+ *        12 //  |  \11
+ *          //   |10 \
  *         //    |    \
  *        3/.... |.....2
  *       ./      |  7 /
- *      ./12     |   /
+ *      ./9      |   /
  *    8./        |  /6
  *    ./         | /
  *   ./          |/
