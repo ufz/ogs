@@ -547,6 +547,18 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             os << "-sites_units DENSITY"
                << "\n";
             os << surface << "\n";
+            // print unit
+            if (std::holds_alternative<DensityBasedSurfaceSite>(
+                    surface.front()))
+            {
+                os << "-sites_units density"
+                   << "\n";
+            }
+            else
+            {
+                os << "-sites_units absolute"
+                   << "\n";
+            }
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
