@@ -56,6 +56,15 @@ void ChemicalSystem::initialize(std::size_t const num_chemical_systems)
     {
         exchanger.molality->resize(num_chemical_systems);
     }
+
+    for (auto& surface_site : surface)
+    {
+        if (auto const surface_site_ptr =
+                std::get_if<MoleBasedSurfaceSite>(&surface_site))
+        {
+            surface_site_ptr->molality->resize(num_chemical_systems);
+        }
+    }
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

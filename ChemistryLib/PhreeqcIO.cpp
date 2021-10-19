@@ -164,20 +164,20 @@ void setReactantMolality(Reactant& reactant,
         (*reactant.molality)[chemical_system_id];
 }
 
-template <typename Exchanger>
-void initializeExchangerMolality(Exchanger& exchanger,
-                                 GlobalIndexType const& chemical_system_id,
-                                 MaterialPropertyLib::Phase const& solid_phase,
-                                 ParameterLib::SpatialPosition const& pos,
-                                 double const t)
+template <typename Site>
+void initializeSiteMolality(Site& site,
+                            GlobalIndexType const& chemical_system_id,
+                            MaterialPropertyLib::Phase const& solid_phase,
+                            ParameterLib::SpatialPosition const& pos,
+                            double const t)
 {
-    auto const& solid_constituent = solid_phase.component(exchanger.name);
+    auto const& solid_constituent = solid_phase.component(site.name);
 
     auto const molality =
         solid_constituent[MaterialPropertyLib::PropertyType::molality]
             .template initialValue<double>(pos, t);
 
-    (*exchanger.molality)[chemical_system_id] = molality;
+    (*site.molality)[chemical_system_id] = molality;
 }
 
 template <typename Reactant>
@@ -339,8 +339,18 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
 
     for (auto& exchanger : _chemical_system->exchangers)
     {
-        initializeExchangerMolality(exchanger, chemical_system_id, solid_phase,
-                                    pos, t);
+        initializeSiteMolality(exchanger, chemical_system_id, solid_phase, pos,
+                               t);
+    }
+
+    for (auto& surface_site : _chemical_system->surface)
+    {
+        if (auto const surface_site_ptr =
+                std::get_if<MoleBasedSurfaceSite>(&surface_site))
+        {
+            initializeSiteMolality(*surface_site_ptr, chemical_system_id,
+                                   solid_phase, pos, t);
+        }
     }
 }
 
