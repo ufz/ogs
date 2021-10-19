@@ -10,33 +10,25 @@
 
 #pragma once
 
-#include <iosfwd>
 #include <string>
 
-namespace BaseLib
-{
-class ConfigTree;
-}
 
 namespace ChemistryLib
 {
 namespace PhreeqcIOData
 {
-struct SurfaceSite
+struct DensityBasedSurfaceSite
 {
-    SurfaceSite(std::string name_,
-                double const site_density_,
-                double const specific_surface_area_,
-                double const mass_)
+    DensityBasedSurfaceSite(std::string name_,
+                            double const site_density_,
+                            double const specific_surface_area_,
+                            double const mass_)
         : name(std::move(name_)),
           site_density(site_density_),
           specific_surface_area(specific_surface_area_),
           mass(mass_)
     {
     }
-
-    friend std::ostream& operator<<(std::ostream& os,
-                                    SurfaceSite const& surface_site);
 
     std::string const name;
     double const site_density;
