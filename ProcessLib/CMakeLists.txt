@@ -35,7 +35,7 @@ target_link_libraries(
         NumLib
         $<$<TARGET_EXISTS:ProcessLibBoundaryConditionAndSourceTermPython>:ProcessLibBoundaryConditionAndSourceTermPython>
         $<$<TARGET_EXISTS:petsc>:petsc>
-        nlohmann_json
+        nlohmann_json::nlohmann_json
     PRIVATE ParameterLib GitInfoLib $<$<TARGET_EXISTS:InSituLib>:InSituLib>
 )
 
