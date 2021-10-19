@@ -587,3 +587,30 @@ AddTest(
 
     results_heatpipe_slab_ts_19_t_100000.000000.vtu results_heatpipe_slab_ts_19_t_100000.000000.vtu k_rel_L k_rel_L 1e-8 1e-8
 )
+
+AddTest(
+    NAME TH2M_StrainDependentPermeability
+    PATH TH2M/StrainDependentPermeability
+    RUNTIME 50
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Strain_Dependent_Permeability_Test.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    # primary variables
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu gas_pressure_interpolated gas_pressure_interpolated 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu temperature_interpolated temperature_interpolated 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu displacement displacement 1e-14 1e-12
+    # secondary variables
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu liquid_pressure_interpolated liquid_pressure_interpolated 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu velocity_gas velocity_gas 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu velocity_liquid velocity_liquid 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu sigma sigma 5.0e-7 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu epsilon epsilon 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu liquid_density liquid_density 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu gas_density gas_density 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu porosity porosity 1e-14 1e-12
+    IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu saturation saturation 1e-14 1e-12
+)
