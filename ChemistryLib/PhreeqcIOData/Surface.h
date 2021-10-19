@@ -12,6 +12,7 @@
 
 #include <string>
 
+#include "MeshLib/PropertyVector.h"
 
 namespace ChemistryLib
 {
@@ -34,6 +35,18 @@ struct DensityBasedSurfaceSite
     double const site_density;
     double const specific_surface_area;
     double const mass;
+};
+
+struct MoleBasedSurfaceSite
+{
+    MoleBasedSurfaceSite(std::string name_,
+                         MeshLib::PropertyVector<double>* const molality_)
+        : name(std::move(name_)), molality(molality_)
+    {
+    }
+
+    std::string const name;
+    MeshLib::PropertyVector<double>* molality;
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
