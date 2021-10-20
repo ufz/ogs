@@ -104,9 +104,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         config.getConfigSubtreeOptional("rates"));
 
     // surface
-    auto surface = PhreeqcIOData::createSurface(
-        //! \ogs_file_param{prj__chemical_system__surface}
-        config.getConfigSubtreeOptional("surface"));
+    auto const& surface = chemical_system->surface;
 
     // exchange
     auto const& exchangers = chemical_system->exchangers;
@@ -147,8 +145,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
         *linear_solver, std::move(project_file_name),
         std::move(path_to_database), std::move(chemical_system),
-        std::move(reaction_rates), std::move(surface), std::move(user_punch),
-        std::move(output), std::move(dump), std::move(knobs));
+        std::move(reaction_rates), std::move(user_punch), std::move(output),
+        std::move(dump), std::move(knobs));
 }
 
 template <>

@@ -181,6 +181,66 @@
                                 </property>
                             </properties>
                         </component>
+                        <component>
+                            <name>AlbOH</name>
+                            <properties>
+                                <property>
+                                    <name>molality</name>
+                                    <type>Constant</type>
+                                    <value>8.538e-04</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>GibbOH</name>
+                            <properties>
+                                <property>
+                                    <name>molality</name>
+                                    <type>Constant</type>
+                                    <value>2.236e-05</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>HemOH</name>
+                            <properties>
+                                <property>
+                                    <name>molality</name>
+                                    <type>Constant</type>
+                                    <value>5.285e-05</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>KaoOH</name>
+                            <properties>
+                                <property>
+                                    <name>molality</name>
+                                    <type>Constant</type>
+                                    <value>4.269e-05</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>MusOH</name>
+                            <properties>
+                                <property>
+                                    <name>molality</name>
+                                    <type>Constant</type>
+                                    <value>3.497e-04</value>
+                                </property>
+                            </properties>
+                        </component>
+                        <component>
+                            <name>QzOH</name>
+                            <properties>
+                                <property>
+                                    <name>molality</name>
+                                    <type>Constant</type>
+                                    <value>2.419e-04</value>
+                                </property>
+                            </properties>
+                        </component>
                     </components>
                 </phase>
             </phases>
@@ -464,48 +524,30 @@
                 <saturation_index>0.0</saturation_index>
             </phase_component>
         </equilibrium_reactants>
-        <surface site_unit="density">
+        <surface site_unit="mole">
             <site>
                 <!--Qz  = Mineral phase: Quartz, amorphous Silica-->
 		        <name>QzOH</name>
-                <site_density>2.31</site_density>
-                <specific_surface_area>0.007</specific_surface_area>
-                <mass>9010</mass>
             </site>
             <site>
                 <!--Alb = Mineral group: Feldspar (albite)-->
 		        <name>AlbOH</name>
-                <site_density>2.31</site_density>
-                <specific_surface_area>0.21</specific_surface_area>
-                <mass>1060</mass>
             </site>
             <site>
                 <!--Mus  = Mineral group: Mica (muscovite)-->
 		        <name>MusOH</name>
-                <site_density>2.31</site_density>
-                <specific_surface_area>1.72</specific_surface_area>
-                <mass>53</mass>
             </site>
             <site>
                 <!--Hem  = Mineral group: Fe(III)-oxids/-hydroxids (hematite)-->
 		        <name>HemOH</name>
-                <site_density>2.31</site_density>
-                <specific_surface_area>0.26</specific_surface_area>
-                <mass>53</mass>
             </site>
             <site>
                 <!--Gibb  = Mineral group: Al-hydroxids (gibbsite)-->
 		        <name>GibbOH</name>
-                <site_density>2.31</site_density>
-                <specific_surface_area>0.11</specific_surface_area>
-                <mass>53</mass>
             </site>
             <site>
                 <!--Kao = Mineral group: 2-layer-clay minerals (kaolinite)-->
 		        <name>KaoOH</name>
-                <site_density>2.31</site_density>
-                <specific_surface_area>0.07</specific_surface_area>
-                <mass>159</mass>
             </site>
         </surface>
         <user_punch>
@@ -815,4 +857,3 @@
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
-

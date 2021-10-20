@@ -42,6 +42,14 @@ namespace PhreeqcIOData
 {
 namespace
 {
+template <class... Ts>
+struct overloaded : Ts...
+{
+    using Ts::operator()...;
+};
+template <class... Ts>
+overloaded(Ts...)->overloaded<Ts...>;
+
 template <typename DataBlock>
 std::ostream& operator<<(std::ostream& os,
                          std::vector<DataBlock> const& data_blocks)
@@ -164,20 +172,20 @@ void setReactantMolality(Reactant& reactant,
         (*reactant.molality)[chemical_system_id];
 }
 
-template <typename Exchanger>
-void initializeExchangerMolality(Exchanger& exchanger,
-                                 GlobalIndexType const& chemical_system_id,
-                                 MaterialPropertyLib::Phase const& solid_phase,
-                                 ParameterLib::SpatialPosition const& pos,
-                                 double const t)
+template <typename Site>
+void initializeSiteMolality(Site& site,
+                            GlobalIndexType const& chemical_system_id,
+                            MaterialPropertyLib::Phase const& solid_phase,
+                            ParameterLib::SpatialPosition const& pos,
+                            double const t)
 {
-    auto const& solid_constituent = solid_phase.component(exchanger.name);
+    auto const& solid_constituent = solid_phase.component(site.name);
 
     auto const molality =
         solid_constituent[MaterialPropertyLib::PropertyType::molality]
             .template initialValue<double>(pos, t);
 
-    (*exchanger.molality)[chemical_system_id] = molality;
+    (*site.molality)[chemical_system_id] = molality;
 }
 
 template <typename Reactant>
@@ -253,7 +261,6 @@ PhreeqcIO::PhreeqcIO(GlobalLinearSolver& linear_solver,
                      std::string&& database,
                      std::unique_ptr<ChemicalSystem>&& chemical_system,
                      std::vector<ReactionRate>&& reaction_rates,
-                     std::vector<SurfaceSite>&& surface,
                      std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
@@ -263,7 +270,6 @@ PhreeqcIO::PhreeqcIO(GlobalLinearSolver& linear_solver,
       _database(std::move(database)),
       _chemical_system(std::move(chemical_system)),
       _reaction_rates(std::move(reaction_rates)),
-      _surface(std::move(surface)),
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
@@ -341,8 +347,18 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
 
     for (auto& exchanger : _chemical_system->exchangers)
     {
-        initializeExchangerMolality(exchanger, chemical_system_id, solid_phase,
-                                    pos, t);
+        initializeSiteMolality(exchanger, chemical_system_id, solid_phase, pos,
+                               t);
+    }
+
+    for (auto& surface_site : _chemical_system->surface)
+    {
+        if (auto const surface_site_ptr =
+                std::get_if<MoleBasedSurfaceSite>(&surface_site))
+        {
+            initializeSiteMolality(*surface_site_ptr, chemical_system_id,
+                                   solid_phase, pos, t);
+        }
     }
 }
 
@@ -527,7 +543,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                << "\n";
         }
 
-        auto const& surface = phreeqc_io._surface;
+        auto const& surface = phreeqc_io._chemical_system->surface;
         if (!surface.empty())
         {
             os << "SURFACE " << chemical_system_id + 1 << "\n";
@@ -536,9 +552,44 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
                     ? chemical_system_id + 1
                     : phreeqc_io._num_chemical_systems + chemical_system_id + 1;
             os << "-equilibrate with solution " << aqueous_solution_id << "\n";
-            os << "-sites_units DENSITY"
-               << "\n";
-            os << surface << "\n";
+
+            // print unit
+            if (std::holds_alternative<DensityBasedSurfaceSite>(
+                    surface.front()))
+            {
+                os << "-sites_units density"
+                   << "\n";
+            }
+            else
+            {
+                os << "-sites_units absolute"
+                   << "\n";
+            }
+
+            for (auto const& surface_site : surface)
+            {
+                std::visit(
+                    overloaded{[&os](DensityBasedSurfaceSite const& s) {
+                                   os << s.name << " " << s.site_density << " "
+                                      << s.specific_surface_area << " "
+                                      << s.mass << "\n";
+                               },
+                               [&os, chemical_system_id](
+                                   MoleBasedSurfaceSite const& s) {
+                                   os << s.name << " "
+                                      << (*s.molality)[chemical_system_id]
+                                      << "\n";
+                               }},
+                    surface_site);
+            }
+
+            // overlook the effect of the buildup of charges onto the surface
+            if (std::holds_alternative<MoleBasedSurfaceSite>(surface.front()))
+            {
+                os << "-no_edl"
+                   << "\n";
+            }
+
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 
@@ -617,7 +668,7 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     auto const& output = *phreeqc_io._output;
     auto const& dropped_item_ids = output.dropped_item_ids;
 
-    auto const& surface = phreeqc_io._surface;
+    auto const& surface = phreeqc_io._chemical_system->surface;
     auto const& exchangers = phreeqc_io._chemical_system->exchangers;
 
     if (!surface.empty() && !exchangers.empty())
