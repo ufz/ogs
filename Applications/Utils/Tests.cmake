@@ -376,6 +376,9 @@ if(SNAKEMAKE AND NOT OGS_USE_MPI AND TEE_TOOL_PATH)
             --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
             -s ${CMAKE_CURRENT_SOURCE_DIR}/VoxelGridFromLayers.smk
     )
+    set_tests_properties(snakemake_ExtractBoundary snakemake_VoxelGridFromLayers
+        PROPERTIES LABELS "default"
+    )
     add_dependencies(ctest ExtractBoundary Layers2Grid AddFaultToVoxelGrid generateStructuredMesh)
 endif()
 
@@ -555,6 +558,7 @@ if(TARGET GMSH2OGS AND SNAKEMAKE AND NOT OGS_USE_MPI AND TEE_TOOL_PATH)
         --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
         -s ${CMAKE_CURRENT_SOURCE_DIR}/GMSH2OGS_ExtractBoundary.smk
     )
+    set_tests_properties(snakemake_GMSH2OGS_ExtractBoundary PROPERTIES LABELS "default")
     add_dependencies(ctest GMSH2OGS)
 endif()
 

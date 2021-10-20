@@ -68,7 +68,7 @@ target_compile_definitions(ogs PRIVATE $<$<BOOL:${USE_INSITU}>:USE_INSITU>)
 
 # ---- Tests ----
 add_test(NAME ogs_no_args COMMAND ogs)
-set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE)
+set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE LABELS "default")
 
 # ---- Installation ----
 install(TARGETS ogs RUNTIME DESTINATION bin)
