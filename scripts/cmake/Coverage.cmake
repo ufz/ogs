@@ -25,7 +25,7 @@ if(NOT FASTCOV_PATH)
     find_program(
         FASTCOV_PATH
         NAMES fastcov
-        HINTS ${LOCAL_VIRTUALENV_BIN_DIRS} REQUIRED
+        HINTS ${LOCAL_VIRTUALENV_BIN_DIR} REQUIRED
         NO_DEFAULT_PATH
     )
 endif()

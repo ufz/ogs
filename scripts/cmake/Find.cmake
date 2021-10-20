@@ -44,7 +44,7 @@ find_program(PANDOC_CITEPROC pandoc-citeproc)
 
 find_program(MODULE_CMD lmod PATHS /software/lmod/lmod/libexec)
 
-find_program(SNAKEMAKE snakemake HINTS ${LOCAL_VIRTUALENV_BIN_DIRS})
+find_program(SNAKEMAKE snakemake)
 find_program(TEE_TOOL_PATH tee)
 if(OGS_BUILD_TESTING AND SNAKEMAKE AND NOT TEE_TOOL_PATH)
     message(WARNING "tee tool was not found. Snakemake tests are disabled!")
