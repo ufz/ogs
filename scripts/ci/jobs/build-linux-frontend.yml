@@ -3,6 +3,8 @@ build linux frontend:
     - .template-build-linux
     - .test-artifacts
     - .rules-master-manual
+  rules:
+    - when: never # TODO: remove after October 29th
   tags:
     - frontend2
   needs: [meta]
