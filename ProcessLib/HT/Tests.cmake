@@ -419,3 +419,17 @@ AddTest(
     TemperatureFieldts_292_t_25228800.000000_expected.vtu TemperatureField_ts_292_t_25228800.000000.vtu p p 1e-10 1e-10
     TemperatureFieldts_365_t_31536000.000000_expected.vtu TemperatureField_ts_365_t_31536000.000000.vtu p p 1e-10 1e-10
 )
+
+AddTest(
+    NAME HT_HeatTransportInStationaryFlow_Staggered_Scheme
+    PATH Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS HeatTransportInStationaryFlow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5.e-5 1.0e-4
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 2e-5 1e-5
+)
