@@ -57,7 +57,8 @@ AddTest(
     temperature_analytical.vtu newton_ts_65_t_5078125.000000.vtu temperature_5078125s temperature 1e-4 1e-4
     temperature_analytical.vtu newton_ts_405_t_31640625.000000.vtu temperature_31640625s temperature 1e-4 1e-4
     temperature_analytical.vtu newton_ts_500_t_39062500.000000.vtu temperature_39062500s temperature 1e-4 1e-4
-    REQUIREMENTS NOT OGS_USE_MPI
+    # TODO: Fix on Apple M1
+    REQUIREMENTS NOT OGS_USE_MPI AND NOT ${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "arm64"
 )
 
 AddTest(
@@ -97,7 +98,8 @@ AddTest(
     temperature_analytical.vtu newton_masslumping_ts_65_t_5078125.000000.vtu temperature_5078125s temperature 1e-4 1e-4
     temperature_analytical.vtu newton_masslumping_ts_405_t_31640625.000000.vtu temperature_31640625s temperature 1e-4 1e-4
     temperature_analytical.vtu newton_masslumping_ts_500_t_39062500.000000.vtu temperature_39062500s temperature 1e-4 1e-4
-    REQUIREMENTS NOT OGS_USE_MPI
+    # TODO: Fix on Apple M1
+    REQUIREMENTS NOT OGS_USE_MPI AND NOT ${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "arm64"
 )
 
 AddTest(

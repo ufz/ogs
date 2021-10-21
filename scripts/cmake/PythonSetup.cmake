@@ -34,12 +34,16 @@ if(OGS_USE_POETRY)
         set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/bin/python)
         if(MSVC)
             set(Python3_EXECUTABLE ${Python3_ROOT_DIR}/Scripts/python.exe)
+            set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/Scripts CACHE INTERNAL "")
+        else()
+            set(LOCAL_VIRTUALENV_BIN_DIR ${PROJECT_BINARY_DIR}/.venv/bin CACHE INTERNAL "")
         endif()
         file(WRITE ${PROJECT_BINARY_DIR}/.python_packages "")
         if(OGS_BUILD_TESTING)
             file(WRITE ${PROJECT_BINARY_DIR}/.python_packages
                  "snakemake=${ogs.minimum_version.snakemake}\n"
             )
+            set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH "" FORCE)
         endif()
     endif()
 endif()
@@ -66,8 +70,3 @@ if(POETRY)
         )
     endif()
 endif()
-
-set(LOCAL_VIRTUALENV_BIN_DIRS ${PROJECT_BINARY_DIR}/.venv/bin
-                              ${PROJECT_BINARY_DIR}/.venv/Scripts CACHE INTERNAL
-                                                                        ""
-)
