@@ -428,8 +428,28 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 4
     DIFF_DATA
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5.e-5 1.0e-4
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 2e-5 1e-5
+)
+
+#MPI/PETSc
+AddTest(
+    NAME HT_ParallelComputing_HeatTransportInStationaryFlow_Staggered_Scheme
+    PATH Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    RUNTIME 2
+    EXECUTABLE_ARGS HeatTransportInStationaryFlow.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu temperature temperature 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu pressure pressure 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu temperature temperature 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu pressure pressure 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu temperature temperature 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu pressure pressure 1.e-9 1.0e-8
 )
