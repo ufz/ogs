@@ -13,6 +13,7 @@
             <coupling_scheme>staggered</coupling_scheme>
             <integration_order>2</integration_order>
             <phasefield_model>AT2</phasefield_model>
+            <energy_split_model>Isotropic</energy_split_model>
             <irreversible_threshold>0.05</irreversible_threshold>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
