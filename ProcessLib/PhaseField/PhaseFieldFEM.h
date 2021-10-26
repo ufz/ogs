@@ -74,7 +74,8 @@ struct IntegrationPointData final
                                     ParameterLib::SpatialPosition const& x,
                                     double const /*dt*/,
                                     DisplacementVectorType const& /*u*/,
-                                    double const degradation)
+                                    double const degradation,
+                                    EnergySplitModel const energy_split_model)
     {
         auto linear_elastic_mp =
             static_cast<MaterialLib::Solids::LinearElasticIsotropic<
@@ -84,22 +85,35 @@ struct IntegrationPointData final
         auto const bulk_modulus = linear_elastic_mp.bulk_modulus(t, x);
         auto const mu = linear_elastic_mp.mu(t, x);
 
-        std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
-                 strain_energy_tensile, elastic_energy) =
-            MaterialLib::Solids::Phasefield::calculateDegradedStress<
-                DisplacementDim>(degradation, bulk_modulus, mu, eps);
+        switch (energy_split_model)
+        {
+            case EnergySplitModel::Isotropic:
+            {
+                std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
+                         strain_energy_tensile, elastic_energy) =
+                    MaterialLib::Solids::Phasefield::
+                        calculateIsotropicDegradedStress<DisplacementDim>(
+                            degradation, bulk_modulus, mu, eps);
+                break;
+            }
+            case EnergySplitModel::VolDev:
+            {
+                std::tie(sigma, sigma_tensile, C_tensile, C_compressive,
+                         strain_energy_tensile, elastic_energy) =
+                    MaterialLib::Solids::Phasefield::
+                        calculateVolDevDegradedStress<DisplacementDim>(
+                            degradation, bulk_modulus, mu, eps);
+                break;
+            }
+        }
 
         history_variable =
             std::max(history_variable_prev, strain_energy_tensile);
     }
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
-
-    static constexpr int kelvin_vector_size =
-        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 };
 
-/// Used for the extrapolation of the integration point values. It is ordered
-/// (and stored) by integration points.
+/// Used for the extrapolation of the integration point values. It is
+/// ordered (and stored) by integration points.
 template <typename ShapeMatrixType>
 struct SecondaryData
 {
@@ -242,7 +256,8 @@ public:
     }
 
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              double const /*t*/, double const /*dt*/) override
+                              double const /*t*/,
+                              double const /*dt*/) override
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();

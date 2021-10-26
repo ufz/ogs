@@ -195,13 +195,33 @@ std::unique_ptr<Process> createPhaseFieldProcess(
             phasefield_model_string.c_str());
     }();
 
+    auto const energy_split_model = [&]
+    {
+        auto const energy_split_model_string =
+            //! \ogs_file_param{prj__processes__process__PHASE_FIELD__energy_split_model}
+            config.getConfigParameter<std::string>("energy_split_model");
+
+        if (energy_split_model_string == "Isotropic")
+        {
+            return EnergySplitModel::Isotropic;
+        }
+        else if (energy_split_model_string == "VolumetricDeviatoric")
+        {
+            return EnergySplitModel::VolDev;
+        }
+        OGS_FATAL(
+            "energy_split_model must be 'Isotropic' or 'VolumetricDeviatoric' "
+            "but '{:s}' was given",
+            energy_split_model_string);
+    }();
+
     PhaseFieldProcessData<DisplacementDim> process_data{
         materialIDs(mesh),   std::move(solid_constitutive_relations),
         residual_stiffness,  crack_resistance,
         crack_length_scale,  solid_density,
         specific_body_force, hydro_crack,
         crack_pressure,      irreversible_threshold,
-        phasefield_model};
+        phasefield_model,    energy_split_model};
 
     SecondaryVariableCollection secondary_variables;
 
