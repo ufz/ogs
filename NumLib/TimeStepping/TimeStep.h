@@ -54,13 +54,7 @@ public:
     }
 
     /// copy a time step
-    TimeStep(const TimeStep& src)
-        : _previous(src._previous),
-          _current(src._current),
-          _dt(_current - _previous),
-          _steps(src._steps)
-    {
-    }
+    TimeStep(const TimeStep& src) = default;
 
     /// copy a time step
     TimeStep& operator=(const TimeStep& src) = default;
