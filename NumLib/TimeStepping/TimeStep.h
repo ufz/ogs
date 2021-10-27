@@ -35,7 +35,7 @@ public:
         : _previous(current_time),
           _current(current_time),
           _dt(_current - _previous),
-          _steps(0)
+          _time_step_number(0)
     {
     }
 
@@ -49,7 +49,7 @@ public:
         : _previous(previous_time),
           _current(current_time),
           _dt(_current - _previous),
-          _steps(n)
+          _time_step_number(n)
     {
     }
 
@@ -73,7 +73,7 @@ public:
         _previous = _current;
         _current += dt;
         _dt = dt;
-        _steps++;
+        _time_step_number++;
         return *this;
     }
 
@@ -103,8 +103,8 @@ public:
     double current() const { return _current; }
     /// time step size from _previous
     double dt() const { return _dt; }
-    /// the number of time _steps
-    std::size_t steps() const { return _steps; }
+    /// the time step number
+    std::size_t steps() const { return _time_step_number; }
 
 private:
     /// previous time step
@@ -114,7 +114,7 @@ private:
     /// time step size
     double _dt;
     /// the number of time steps
-    std::size_t _steps;
+    std::size_t _time_step_number;
 };
 
 }  // namespace NumLib
