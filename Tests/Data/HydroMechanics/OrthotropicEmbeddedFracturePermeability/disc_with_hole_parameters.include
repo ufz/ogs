@@ -1,0 +1,55 @@
+<parameter>
+    <name>zero</name>
+    <type>Constant</type>
+    <value>0.0</value>
+</parameter>
+<parameter>
+    <name>k</name>
+    <type>Constant</type>
+    <value>1e-18</value>
+</parameter>
+<parameter>
+    <name>E</name>
+    <type>Constant</type>
+    <value>1e9</value>
+</parameter>
+<parameter>
+    <name>nu</name>
+    <type>Constant</type>
+    <value>.3</value>
+</parameter>
+<parameter>
+    <name>displacement0</name>
+    <type>Constant</type>
+    <values>0 0</values>
+</parameter>
+<parameter>
+    <name>dirichlet0</name>
+    <type>Constant</type>
+    <value>0</value>
+</parameter>
+<parameter>
+    <name>p_edge</name>
+    <type>Constant</type>
+    <value>0.1e6</value>
+</parameter>
+<parameter>
+    <name>normal_traction_edge</name>
+    <type>Constant</type>
+    <value>0.1e6</value>
+</parameter>
+<parameter>
+    <name>normal_traction_hole</name>
+    <type>Constant</type>
+    <value>1e6</value>
+</parameter>
+<parameter>
+    <name>pressure_ic</name>
+    <type>Constant</type>
+    <values>0.1e6</values>
+</parameter>
+<parameter>
+    <name>p_hole</name>
+    <type>Constant</type>
+    <values>1e6</values>
+</parameter>

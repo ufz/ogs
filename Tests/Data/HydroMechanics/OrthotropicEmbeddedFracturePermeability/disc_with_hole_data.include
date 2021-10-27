@@ -1,0 +1,159 @@
+<meshes>
+    <mesh>disc_with_hole_quad8.vtu</mesh>
+    <mesh>disc_with_hole_quad8_left.vtu</mesh>
+    <mesh>disc_with_hole_quad8_bottom.vtu</mesh>
+    <mesh>disc_with_hole_quad8_hole.vtu</mesh>
+    <mesh>disc_with_hole_quad8_edge.vtu</mesh>
+</meshes>
+<processes>
+    <process>
+        <name>HM</name>
+        <type>HYDRO_MECHANICS</type>
+        <integration_order>3</integration_order>
+        <dimension>2</dimension>
+        <constitutive_relation>
+            <type>LinearElasticIsotropic</type>
+            <youngs_modulus>E</youngs_modulus>
+            <poissons_ratio>nu</poissons_ratio>
+        </constitutive_relation>
+        <process_variables>
+            <displacement>displacement</displacement>
+            <pressure>pressure</pressure>
+        </process_variables>
+        <secondary_variables>
+            <secondary_variable internal_name="sigma" output_name="sigma"/>
+            <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+            <secondary_variable internal_name="velocity" output_name="velocity"/>
+        </secondary_variables>
+        <specific_body_force>0 0</specific_body_force>
+    </process>
+</processes>
+<media>
+    <medium>
+        <phases>
+            <phase>
+                <type>Gas</type>
+                <properties>
+                    <property>
+                        <name>viscosity</name>
+                        <type>Constant</type>
+                        <value>1e-3</value>
+                    </property>
+                    <property>
+                        <name>density</name>
+                        <type>Constant</type>
+                        <value>1</value>
+                    </property>
+                </properties>
+            </phase>
+            <phase>
+                <type>Solid</type>
+                <properties>
+                    <property>
+                        <name>density</name>
+                        <type>Constant</type>
+                        <value>2000</value>
+                    </property>
+                </properties>
+            </phase>
+        </phases>
+        <properties>
+            <property>
+                <name>porosity</name>
+                <type>Constant</type>
+                <value>0.01</value>
+            </property>
+            <property>
+                <name>biot_coefficient</name>
+                <type>Constant</type>
+                <value>1</value>
+            </property>
+            <property>
+                <name>reference_temperature</name>
+                <type>Constant</type>
+                <value>293.15</value>
+            </property>
+            <property>
+                <name>permeability</name>
+                <type>OrthotropicEmbeddedFracturePermeability</type>
+                <intrinsic_permeability>k</intrinsic_permeability>
+                <mean_frac_distances>1e-2 1e-2 1e-2</mean_frac_distances>
+                <threshold_strains>1e-5 1e-5 1e-5</threshold_strains>
+                <fracture_normals> 1 0 0    0 1 0 </fracture_normals>
+                <fracture_rotation_xy>phi</fracture_rotation_xy>
+                <fracture_rotation_yz>zero</fracture_rotation_yz>
+                <jacobian_factor>1</jacobian_factor>
+            </property>
+        </properties>
+    </medium>
+</media>
+<process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>2</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>disc_with_hole_quad8_left</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>disc_with_hole_quad8_bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>disc_with_hole_quad8_edge</mesh>
+                    <type>NormalTraction</type>
+                    <parameter>normal_traction_edge</parameter>
+                </boundary_condition>
+				<boundary_condition>
+                    <mesh>disc_with_hole_quad8_hole</mesh>
+                    <type>NormalTraction</type>
+                    <parameter>normal_traction_hole</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+		<process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>pressure_ic</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>disc_with_hole_quad8_hole</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>p_hole</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>disc_with_hole_quad8_edge</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>p_edge</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>50</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i bicgstab -p ilu -tol 1e-12 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
