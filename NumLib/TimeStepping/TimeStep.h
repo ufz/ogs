@@ -24,7 +24,7 @@ namespace NumLib
  * time step length (\f$\Delta t_{n+1}\f$), and the number of time steps
  * (\f$n+1\f$).
  */
-class TimeStep
+class TimeStep final
 {
 public:
     /**
