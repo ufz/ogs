@@ -79,14 +79,14 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
             // time step was rejected, keep dt for the next dt computation.
             _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
                 TimeStep{_ts_prev.previous(), _ts_prev.previous() + dt,
-                         _ts_prev.steps()};
+                         _ts_prev.timeStepNumber()};
             dt = getNextTimeStepSize();
         }
 
         // time step was rejected, keep dt for the next dt computation.
         _ts_prev =  // essentially equal to _ts_prev.dt = _ts_current.dt.
             TimeStep{_ts_prev.previous(), _ts_prev.previous() + dt,
-                     _ts_prev.steps()};
+                     _ts_prev.timeStepNumber()};
 
         _previous_time_step_accepted = false;
 
@@ -121,7 +121,7 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize() const
     double dt = 0.0;
 
     // In first time step and first non-linear iteration take the initial dt.
-    if (_ts_prev.steps() == 0 && _iter_times == 0)
+    if (_ts_prev.timeStepNumber() == 0 && _iter_times == 0)
     {
         dt = _initial_dt;
     }

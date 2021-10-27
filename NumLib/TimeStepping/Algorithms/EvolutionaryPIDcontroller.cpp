@@ -53,7 +53,7 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
     // step accepted.
     _is_accepted = true;
 
-    if (_ts_current.steps() == 0)
+    if (_ts_current.timeStepNumber() == 0)
     {
         _e_n_minus1 = e_n;
 

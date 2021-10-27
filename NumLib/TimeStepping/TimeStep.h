@@ -104,7 +104,7 @@ public:
     /// time step size from _previous
     double dt() const { return _dt; }
     /// the time step number
-    std::size_t steps() const { return _time_step_number; }
+    std::size_t timeStepNumber() const { return _time_step_number; }
 
 private:
     /// previous time step
