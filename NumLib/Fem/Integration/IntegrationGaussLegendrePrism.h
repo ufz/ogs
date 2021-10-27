@@ -33,9 +33,9 @@ public:
     }
 
     /// Change the integration order.
-    void setIntegrationOrder(unsigned /*order*/)
+    void setIntegrationOrder(unsigned const order)
     {
-        _order = 2;  // fixed
+        _order = order;
         _n_sampl_pt = getNumberOfPoints(_order);
     }
 
@@ -48,7 +48,7 @@ public:
     // clang-format off
     /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned) const
     // clang-format on
-    MathLib::WeightedPoint getWeightedPoint(unsigned igp) const
+    MathLib::WeightedPoint getWeightedPoint(unsigned const igp) const
     {
         return getWeightedPoint(getIntegrationOrder(), igp);
     }
@@ -56,24 +56,37 @@ public:
     // clang-format off
     /// \copydoc NumLib::IntegrationGaussLegendreRegular::getWeightedPoint(unsigned, unsigned)
     // clang-format on
-    static MathLib::WeightedPoint getWeightedPoint(unsigned const order, unsigned const igp)
+    static MathLib::WeightedPoint getWeightedPoint(unsigned const order,
+                                                   unsigned const igp)
     {
-        (void)order;
-        const unsigned gp_r = igp % 3;
-        const auto gp_t = (unsigned)(igp / 3);
+        if (order < 3)
+        {
+            const unsigned gp_r = igp % 3;
+            const auto gp_t = (unsigned)(igp / 3);
+            std::array<double, 3> rst;
+            rst[0] = MathLib::GaussLegendreTri<2>::X[gp_r][0];
+            rst[1] = MathLib::GaussLegendreTri<2>::X[gp_r][1];
+            rst[2] = MathLib::GaussLegendre<2>::X[gp_t];
+            double w = MathLib::GaussLegendreTri<2>::W[gp_r] * 0.5 *
+                       MathLib::GaussLegendre<2>::W[gp_t];
+            return MathLib::WeightedPoint(rst, w);
+        }
+        const unsigned gp_r = igp % MathLib::GaussLegendreTri<4>::NPoints;
+        const auto gp_t =
+            (unsigned)(igp / MathLib::GaussLegendreTri<4>::NPoints);
         std::array<double, 3> rst;
-        rst[0] = MathLib::GaussLegendreTri<2>::X[gp_r][0];
-        rst[1] = MathLib::GaussLegendreTri<2>::X[gp_r][1];
-        rst[2] = MathLib::GaussLegendre<2>::X[gp_t];
-        double w = MathLib::GaussLegendreTri<2>::W[gp_r] * 0.5 *
-                   MathLib::GaussLegendre<2>::W[gp_t];
+        rst[0] = MathLib::GaussLegendreTri<4>::X[gp_r][0];
+        rst[1] = MathLib::GaussLegendreTri<4>::X[gp_r][1];
+        rst[2] = MathLib::GaussLegendre<3>::X[gp_t];
+        double w = MathLib::GaussLegendreTri<4>::W[gp_r] * 0.5 *
+                   MathLib::GaussLegendre<3>::W[gp_t];
         return MathLib::WeightedPoint(rst, w);
     }
 
     template <typename Method>
     static MathLib::WeightedPoint getWeightedPoint(unsigned const igp)
     {
-        return WeightedPoint(Method::X[igp], Method::W[igp]);
+        return MathLib::WeightedPoint(Method::X[igp], Method::W[igp]);
     }
 
     /**
@@ -82,11 +95,9 @@ public:
      * @param order    the number of integration points
      * @return the number of points
      */
-    static unsigned getNumberOfPoints(unsigned order)
+    static unsigned getNumberOfPoints(unsigned const order)
     {
-        if (order == 2)
-            return 6;
-        return 0;
+        return (order < 3) ? 6 : 21;
     }
 
 private:
