@@ -38,6 +38,12 @@ enum class PhaseFieldModel
     AT2
 };
 
+enum class EnergySplitModel
+{
+    Isotropic,
+    VolDev
+};
+
 template <int DisplacementDim>
 struct PhaseFieldProcessData
 {
@@ -55,6 +61,7 @@ struct PhaseFieldProcessData
     bool crack_pressure = false;
     double irreversible_threshold;
     PhaseFieldModel phasefield_model;
+    EnergySplitModel energy_split_model;
 
     double const unity_pressure = 1.0;
     double pressure = 0.0;
