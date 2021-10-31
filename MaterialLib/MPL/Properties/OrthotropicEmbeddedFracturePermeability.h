@@ -64,6 +64,7 @@ private:
     ParameterLib::Parameter<double> const& _k;
     ParameterLib::Parameter<double> const& _phi_xy;
     ParameterLib::Parameter<double> const& _phi_yz;
+    double const _jf;
 
 public:
     OrthotropicEmbeddedFracturePermeability(
@@ -73,7 +74,8 @@ public:
         Eigen::Matrix<double, 3, 3> const fracture_normals,
         ParameterLib::Parameter<double> const& intrinsic_permeability,
         ParameterLib::Parameter<double> const& fracture_rotation_xy,
-        ParameterLib::Parameter<double> const& fracture_rotation_yz);
+        ParameterLib::Parameter<double> const& fracture_rotation_yz,
+        double const jacobian_factor);
 
     using SymmetricTensor = Eigen::Matrix<
         double,

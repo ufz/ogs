@@ -70,6 +70,12 @@ struct FormKelvinVectorFromThermalExpansivity
     {
         OGS_FATAL(error_info);
     }
+
+    MathLib::KelvinVector::KelvinVectorType<GlobalDim> operator()(
+        Eigen::MatrixXd const& /*values*/) const
+    {
+        OGS_FATAL(error_info);
+    }
 };
 
 template <int GlobalDim>

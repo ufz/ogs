@@ -1,0 +1,132 @@
+<mesh>cube_1x1x1_quad.vtu</mesh>
+<geometry>cube_1x1x1.gml</geometry>
+<processes>
+    <process>
+        <name>HM</name>
+        <type>HYDRO_MECHANICS</type>
+        <integration_order>3</integration_order>
+        <dimension>3</dimension>
+        <constitutive_relation>
+            <type>LinearElasticIsotropic</type>
+            <youngs_modulus>E</youngs_modulus>
+            <poissons_ratio>nu</poissons_ratio>
+        </constitutive_relation>
+        <process_variables>
+            <displacement>displacement</displacement>
+            <pressure>pressure</pressure>
+        </process_variables>
+        <secondary_variables>
+            <secondary_variable internal_name="sigma" output_name="sigma"/>
+            <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+            <secondary_variable internal_name="velocity" output_name="velocity"/>
+        </secondary_variables>
+        <specific_body_force>0 0 0</specific_body_force>
+    </process>
+</processes>
+<media>
+    <medium>
+        <phases>
+            <phase>
+                <type>Gas</type>
+                <properties>
+                    <property>
+                        <name>viscosity</name>
+                        <type>Constant</type>
+                        <value>1e-3</value>
+                    </property>
+                    <property>
+                        <name>density</name>
+                        <type>Constant</type>
+                        <value>1</value>
+                    </property>
+                </properties>
+            </phase>
+            <phase>
+                <type>Solid</type>
+                <properties>
+                    <property>
+                        <name>density</name>
+                        <type>Constant</type>
+                        <value>2000</value>
+                    </property>
+                </properties>
+            </phase>
+        </phases>
+        <properties>
+            <property>
+                <name>porosity</name>
+                <type>Constant</type>
+                <value>0.01</value>
+            </property>
+            <property>
+                <name>biot_coefficient</name>
+                <type>Constant</type>
+                <value>0</value>
+            </property>
+            <property>
+                <name>reference_temperature</name>
+                <type>Constant</type>
+                <value>293.15</value>
+            </property>
+            <property>
+                <name>permeability</name>
+                <type>OrthotropicEmbeddedFracturePermeability</type>
+                <intrinsic_permeability>k</intrinsic_permeability>
+                <mean_frac_distances>1e-4 2e-4 3e-4</mean_frac_distances>
+                <threshold_strains>10e-5 5e-5 1e-5</threshold_strains>
+                <fracture_normals> 1 0 0    0 1 0 </fracture_normals>
+                <fracture_rotation_xy>zero</fracture_rotation_xy>
+                <fracture_rotation_yz>zero</fracture_rotation_yz>
+            </property>
+        </properties>
+    </medium>
+</media>
+<parameters>
+    <!-- Mechanics -->
+    <parameter>
+        <name>E</name>
+        <type>Constant</type>
+        <value>1e9</value>
+    </parameter>
+    <parameter>
+        <name>nu</name>
+        <type>Constant</type>
+        <value>.3</value>
+    </parameter>
+    <!-- Model parameters -->
+    <parameter>
+        <name>k</name>
+        <type>Constant</type>
+        <value>1e-19</value>
+    </parameter>
+    <parameter>
+        <name>displacement0</name>
+        <type>Constant</type>
+        <values>0 0 0</values>
+    </parameter>
+    <parameter>
+        <name>pressure_ic</name>
+        <type>Constant</type>
+        <values>1e5</values>
+    </parameter>
+    <parameter>
+        <name>flow_in</name>
+        <type>Constant</type>
+        <values>1e-10</values>
+    </parameter>
+    <parameter>
+        <name>dirichlet0</name>
+        <type>Constant</type>
+        <value>0</value>
+    </parameter>
+    <parameter>
+        <name>disp</name>
+        <type>Constant</type>
+        <value>5e-4</value>
+    </parameter>
+    <parameter>
+        <name>zero</name>
+        <type>Constant</type>
+        <value>0</value>
+    </parameter>
+</parameters>

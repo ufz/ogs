@@ -228,6 +228,21 @@ KelvinVectorType<DisplacementDim> symmetricTensorToKelvinVector(
             values.data(), kelvin_vector_dimensions(DisplacementDim), 1));
 }
 
+/// Lifting of a vector to a Kelvin matrix.
+/// \f$ a -> A\f$ s.t. \f$k_{ij} a_{j} = A_[\alpha\beta} k_{\beta} \f$.
+/// Conversion for 2D -> 4D and 3D -> 6D are implemented.
+template <int DisplacementDim>
+Eigen::Matrix<double, DisplacementDim,
+              kelvin_vector_dimensions(DisplacementDim)>
+liftVectorToKelvin(Eigen::Matrix<double, DisplacementDim, 1> const& v);
+
+/// Reducing a Kelvin matrix to a vector.
+/// Conversion for 4D -> 2D and 6D -> 3D are implemented.
+template <int DisplacementDim>
+Eigen::Matrix<double, DisplacementDim, 1> reduceKelvinToVector(
+    Eigen::Matrix<double, DisplacementDim,
+                  kelvin_vector_dimensions(DisplacementDim)> const& m);
+
 /// Rotation tensor for Kelvin mapped vectors and tensors. It is meant to be
 /// used for rotation of stress/strain tensors epsilon:Q and tangent stiffness
 /// tensors Q*C*Q^t.

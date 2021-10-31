@@ -97,6 +97,19 @@ struct FormEigenTensor
         OGS_FATAL("Cannot convert a symmetric 3d tensor to {:d}x{:d} matrix",
                   GlobalDim);
     }
+
+    Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
+        Eigen::MatrixXd const& values) const
+    {
+        if (GlobalDim == values.rows() && GlobalDim == values.cols())
+        {
+            return values;
+        }
+
+        OGS_FATAL(
+            "Cannot convert a dynamic {:d}x{:d} matrix to a {:d}x{:d} matrix",
+            values.rows(), values.cols(), GlobalDim, GlobalDim);
+    }
 };
 
 template <int GlobalDim>
@@ -113,6 +126,12 @@ template Eigen::Matrix<double, 2, 2> formEigenTensor<2>(
     MaterialPropertyLib::PropertyDataType const& values);
 
 template Eigen::Matrix<double, 3, 3> formEigenTensor<3>(
+    MaterialPropertyLib::PropertyDataType const& values);
+
+template Eigen::Matrix<double, 4, 4> formEigenTensor<4>(
+    MaterialPropertyLib::PropertyDataType const& values);
+
+template Eigen::Matrix<double, 6, 6> formEigenTensor<6>(
     MaterialPropertyLib::PropertyDataType const& values);
 
 }  // namespace MaterialPropertyLib

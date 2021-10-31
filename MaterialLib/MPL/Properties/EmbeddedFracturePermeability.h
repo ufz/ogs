@@ -56,6 +56,7 @@ private:
     double const _b0;
     double const _a;
     double const _e0;
+    double const _jf;
 
 public:
     EmbeddedFracturePermeability(
@@ -65,7 +66,8 @@ public:
         double const intrinsic_permeability,
         double const initial_aperture,
         double const mean_fracture_distance,
-        double const threshold_strain);
+        double const threshold_strain,
+        double const jacobian_factor);
 
     static int const KelvinVectorSize =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);

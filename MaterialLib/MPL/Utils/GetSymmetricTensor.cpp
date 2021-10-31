@@ -81,6 +81,14 @@ struct GetSymmetricTensor
         }
         OGS_FATAL("Cannot convert 2d symmetric tensor to 3d symmetric tensor.");
     }
+
+    SymmetricTensor<GlobalDim> operator()(
+        Eigen::MatrixXd const& /*values*/) const
+    {
+        OGS_FATAL(
+            "Cannot convert dynamic Eigen matrix to {:d}d symmetric tensor.",
+            GlobalDim);
+    }
 };
 
 template <int GlobalDim>
