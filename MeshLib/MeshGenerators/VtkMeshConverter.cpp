@@ -342,9 +342,9 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
     }
 
     WARN(
-        "Array '{:s}' in VTU file uses unsupported data type '{:s}'. The data "
-        "array will not be available.",
-        array.GetName(), array.GetDataTypeAsString());
+        "Array '{:s}' in VTU file uses unsupported data type '{:s}' of size "
+        "{:d}. The data array will not be available.",
+        array.GetName(), array.GetDataTypeAsString(), array.GetDataTypeSize());
 }
 
 }  // end namespace MeshLib
