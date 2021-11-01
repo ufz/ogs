@@ -737,3 +737,14 @@ AddTest(
     DIFF_DATA
     Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu ValidCells ValidCells 0 0
 )
+
+MeshTest(
+    NAME GMSH2OGS_linearElements
+    PATH Utils/GMSH2OGS
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/GMSH2OGS
+    EXECUTABLE GMSH2OGS
+    EXECUTABLE_ARGS -i linear_mesh.msh
+                    -o ${Data_BINARY_DIR}/Utils/GMSH2OGS/linear_mesh.vtu
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    DIFF_DATA linear_mesh.vtu linear_mesh.vtu 1.e-16
+)
