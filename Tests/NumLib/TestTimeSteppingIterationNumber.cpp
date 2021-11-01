@@ -37,7 +37,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
                          : timestepper_dt;
     alg.resetCurrentTimeStep(timestepper_dt);
     NumLib::TimeStep ts = alg.getTimeStep();
-    ASSERT_EQ(1u, ts.steps());
+    ASSERT_EQ(1u, ts.timeStepNumber());
     ASSERT_EQ(1., ts.previous());
     ASSERT_EQ(2., ts.current());
     ASSERT_EQ(1., ts.dt());
@@ -57,7 +57,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
                           : timestepper_dt2;
     alg.resetCurrentTimeStep(timestepper_dt2);
     ts = alg.getTimeStep();
-    ASSERT_EQ(3u, ts.steps());
+    ASSERT_EQ(3u, ts.timeStepNumber());
     ASSERT_EQ(4., ts.previous());
     ASSERT_EQ(6., ts.current());
     ASSERT_EQ(2., ts.dt());
@@ -70,7 +70,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
                           : timestepper_dt3;
     alg.resetCurrentTimeStep(timestepper_dt3);
     ts = alg.getTimeStep();
-    ASSERT_EQ(4u, ts.steps());
+    ASSERT_EQ(4u, ts.timeStepNumber());
     ASSERT_EQ(6., ts.previous());
     ASSERT_EQ(7., ts.current());
     ASSERT_EQ(1., ts.dt());
@@ -83,7 +83,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
                           : timestepper_dt4;
     alg.resetCurrentTimeStep(timestepper_dt4);
     ts = alg.getTimeStep();
-    ASSERT_EQ(5u, ts.steps());
+    ASSERT_EQ(5u, ts.timeStepNumber());
     ASSERT_EQ(7., ts.previous());
     ASSERT_EQ(8., ts.current());
     ASSERT_EQ(1., ts.dt());
@@ -96,7 +96,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
                           : timestepper_dt5;
     alg.resetCurrentTimeStep(timestepper_dt5);
     ts = alg.getTimeStep();
-    ASSERT_EQ(6u, ts.steps());
+    ASSERT_EQ(6u, ts.timeStepNumber());
     ASSERT_EQ(8., ts.previous());
     ASSERT_EQ(9, ts.current());
     ASSERT_EQ(1., ts.dt());
@@ -109,7 +109,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
                           : timestepper_dt6;
     alg.resetCurrentTimeStep(timestepper_dt6);
     ts = alg.getTimeStep();
-    ASSERT_EQ(7u, ts.steps());
+    ASSERT_EQ(7u, ts.timeStepNumber());
     ASSERT_EQ(9., ts.previous());
     ASSERT_EQ(10, ts.current());
     ASSERT_EQ(1., ts.dt());
