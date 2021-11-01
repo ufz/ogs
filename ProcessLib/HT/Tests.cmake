@@ -179,44 +179,6 @@ AddTest(
 
 # Staggered scheme
 AddTest(
-    NAME 2D_ThermalConvection_constviscosityStaggeredScheme
-    PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_5500x5500_staggered_scheme.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 59
-    DIFF_DATA
-    square_5500x5500.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu T_ref T 1e-1  1.e-3
-    square_5500x5500.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu p_ref p  2e+4  1.e-2
-    square_5500x5500.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu darcy_velocity_ref darcy_velocity  1e-1  1.e-3
-    VIS ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu
-)
-
-AddTest(
-    NAME 2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
-    PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_5500x5500_staggered_scheme_adaptive_dt.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 59
-    DIFF_DATA
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_t_50000000000.000000.vtu T_ref T 1e-3  1.e-3
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_t_50000000000.000000.vtu p_ref p  1e-3  2.e-3
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_t_50000000000.000000.vtu darcy_velocity_ref darcy_velocity  1e-3  1.e-3
-    VIS ConstViscosityThermalConvectionStaggeredAdaptive_dt_t_50000000000.000000.vtu
-)
-# Workaround sporadic timeouts on macOS
-if(APPLE AND TEST ogs-2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme-time)
-    set_tests_properties(
-        ogs-2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme-time
-        PROPERTIES TIMEOUT 1800)
-endif()
-
-AddTest(
     NAME HT_a_DECOVALEX_THMC_based_Example
     PATH Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
     EXECUTABLE ogs
@@ -357,64 +319,6 @@ AddTest(
     CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolicStaggered_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
 )
 
-# MPI/PETSc tests
-AddTest(
-    DISABLED
-    NAME Parallel_2D_ThermalConvection_constviscosity
-    PATH Parabolic/HT/ConstViscosity
-    RUNTIME 61 # Actual RUNTIME?
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_5500x5500.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 4
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_0.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_0.vtu p p 1e-15 1e-14
-    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_1.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_1.vtu p p 1e-15 1e-14
-    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_2.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_2.vtu p p 1e-15 1e-14
-    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_3.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_3.vtu p p 1e-15 1e-14
-    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_0.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_0.vtu T T 1e-15 1e-14
-    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_1.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_1.vtu T T 1e-15 1e-14
-    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_2.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_2.vtu T T 1e-15 1e-14
-    ConstViscosityThermalConvection_ts_149_t_50000000000_000000_3.vtu ConstViscosityThermalConvection_ts_149_t_50000000000_000000_3.vtu T T 1e-15 1e-14
-)
-
-AddTest(
-    DISABLED
-    NAME Parallel_2D_ThermalConvection_constviscosityStaggeredScheme
-    PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
-    EXECUTABLE ogs
-    RUNTIME 61 # Actual RUNTIME?
-    EXECUTABLE_ARGS square_5500x5500_staggered_scheme.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 1
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000_000000_0.vtu T_ref T  1e-14  1.e-14
-    square_5500x5500.vtu ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000_000000_0.vtu p_ref p  1e-14  1.e-14
-    VIS ConstViscosityThermalConvection_pcs_1_ts_149_t_50000000000.000000_0.vtu
-)
-
-AddTest(
-    DISABLED
-    NAME 2D_Adaptive_dt_ThermalConvection_constviscosityStaggeredScheme
-    PATH Parabolic/HT/StaggeredCoupling/ConstViscosity
-    EXECUTABLE ogs
-    RUNTIME 61 # Actual RUNTIME?
-    EXECUTABLE_ARGS square_5500x5500_staggered_scheme_adaptive_dt.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 1
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_t_50000000000_000000_0.vtu T_ref T 1e-3  1.e-3
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_t_50000000000_000000_0.vtu p_ref p  1e-3  1.e-3
-    square_5500x5500.vtu ConstViscosityThermalConvectionStaggeredAdaptive_dt_t_50000000000_000000_0.vtu darcy_velocity_ref darcy_velocity  1e-3  1.e-3
-    VIS ConstViscosityThermalConvectionStaggeredAdaptive_dt_t_50000000000_000000_0.vtu
-)
-
 # 2019-05-09 TF disable the test until the MPL can deal with parameters as properties
 # AddTest(
 #     NAME HT_a_DECOVALEX_THMC_based_Example
@@ -514,4 +418,38 @@ AddTest(
     TemperatureFieldts_219_t_18921600.000000_expected.vtu TemperatureField_ts_219_t_18921600.000000.vtu p p 1e-10 1e-10
     TemperatureFieldts_292_t_25228800.000000_expected.vtu TemperatureField_ts_292_t_25228800.000000.vtu p p 1e-10 1e-10
     TemperatureFieldts_365_t_31536000.000000_expected.vtu TemperatureField_ts_365_t_31536000.000000.vtu p p 1e-10 1e-10
+)
+
+AddTest(
+    NAME HT_HeatTransportInStationaryFlow_Staggered_Scheme
+    PATH Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS HeatTransportInStationaryFlow.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 4
+    DIFF_DATA
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5.e-5 1.0e-4
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 2e-5 1e-5
+)
+
+#MPI/PETSc
+AddTest(
+    NAME HT_ParallelComputing_HeatTransportInStationaryFlow_Staggered_Scheme
+    PATH Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    RUNTIME 2
+    EXECUTABLE_ARGS HeatTransportInStationaryFlow.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 3
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu temperature temperature 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu pressure pressure 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu temperature temperature 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu pressure pressure 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu temperature temperature 1.e-9 1.0e-8
+    HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu pressure pressure 1.e-9 1.0e-8
 )
