@@ -146,6 +146,14 @@ std::pair<MeshLib::Element*, int> readElement(
         {
             return createElement<MeshLib::Pyramid>(in, nodes, mat_id, id_map);
         }
+        case 10:  // 9-node second order quadrangle
+        {
+            return createElement<MeshLib::Quad9>(in, nodes, mat_id, id_map);
+        }
+        case 16:  // 8-node second order quadrangle
+        {
+            return createElement<MeshLib::Quad8>(in, nodes, mat_id, id_map);
+        }
         case 15:
             in >> dummy;  // skip rest of line
             break;
