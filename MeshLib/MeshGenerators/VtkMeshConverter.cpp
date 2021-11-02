@@ -336,25 +336,42 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
         return;
     }
 
-    // Ensure, vtkTypeInt64Array and vtkLongLongArray are using the same type.
-    static_assert(sizeof(std::int64_t) == sizeof(long long));
-
-    if constexpr (sizeof(long long) == sizeof(long))
+    // This is not a unique conversion depending on the sizes of int, long, and
+    // long long. Converting to the apparently smaller type.
+    if (vtkLongArray::SafeDownCast(&array))
     {
-        // This also covers the vtkTypeInt64Array type, which is derived from
-        // the vtkLongLongArray type.
-        if (vtkLongLongArray::SafeDownCast(&array) ||
-            vtkLongArray::SafeDownCast(&array))
+        if constexpr (sizeof(long) == sizeof(int))
+        {
+            VtkMeshConverter::convertTypedArray<int>(array, properties, type);
+            return;
+        }
+        if constexpr (sizeof(long long) == sizeof(long))
         {
             VtkMeshConverter::convertTypedArray<long>(array, properties, type);
             return;
         }
+
+        OGS_FATAL(
+            "Array '{:s}' in VTU file uses unsupported data type '{:s}' ({:d}) "
+            "not convertible to int ({:d}), or long ({:d}) types.",
+            array.GetName(), array.GetDataTypeAsString(),
+            array.GetDataTypeSize(), sizeof(int), sizeof(long));
     }
-    else
+
+    // Ensure, vtkTypeInt64Array and vtkLongLongArray are using the same type.
+    static_assert(sizeof(std::int64_t) == sizeof(long long));
+
+    // This also covers the vtkTypeInt64Array type, which is derived from the
+    // vtkLongLongArray type.
+    // Converting to the apparently smaller type.
+    if (vtkLongLongArray::SafeDownCast(&array))
     {
-        // This also covers the vtkTypeInt64Array type, which is derived from
-        // the vtkLongLongArray type.
-        if (vtkLongLongArray::SafeDownCast(&array))
+        if constexpr (sizeof(long long) == sizeof(long))
+        {
+            VtkMeshConverter::convertTypedArray<long>(array, properties, type);
+            return;
+        }
+        else  // ll > l. Other cases are not possible because ll >= l in c++.
         {
             VtkMeshConverter::convertTypedArray<long long>(array, properties,
                                                            type);
@@ -420,27 +437,49 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
         return;
     }
 
-    // Ensure, vtkTypeUInt64Array and vtkUnsignedLongLongArray are using the
-    // same type.
-    static_assert(sizeof(std::uint64_t) == sizeof(unsigned long long));
-
-    if constexpr (sizeof(unsigned long long) == sizeof(unsigned long))
+    // This is not a unique conversion depending on the sizes of unsigned,
+    // unsigned long, and unsigned long long. Converting to the apparently
+    // smaller type.
+    if (vtkUnsignedLongArray::SafeDownCast(&array))
     {
-        // This also covers the vtkTypeUInt64Array type, which is derived from
-        // the vtkUnsignedLongLongArray type.
-        if (vtkUnsignedLongLongArray::SafeDownCast(&array) ||
-            vtkUnsignedLongArray::SafeDownCast(&array))
+        if constexpr (sizeof(unsigned long) == sizeof(unsigned))
+        {
+            VtkMeshConverter::convertTypedArray<unsigned>(array, properties,
+                                                          type);
+            return;
+        }
+        if constexpr (sizeof(unsigned long long) == sizeof(unsigned long))
         {
             VtkMeshConverter::convertTypedArray<unsigned long>(
                 array, properties, type);
             return;
         }
+
+        OGS_FATAL(
+            "Array '{:s}' in VTU file uses unsupported data type '{:s}' ({:d}) "
+            "not convertible to unsigned ({:d}), or unsigned long ({:d}) "
+            "types.",
+            array.GetName(), array.GetDataTypeAsString(),
+            array.GetDataTypeSize(), sizeof(unsigned), sizeof(unsigned long));
     }
-    else
+
+    // Ensure, vtkTypeUInt64Array and vtkUnsignedLongLongArray are using the
+    // same type.
+    static_assert(sizeof(std::uint64_t) == sizeof(unsigned long long));
+
+    // This also covers the vtkTypeUInt64Array type, which is derived from the
+    // vtkUnsignedLongLongArray type.
+    // Converting to the apparently smaller type.
+    if (vtkUnsignedLongLongArray::SafeDownCast(&array))
     {
-        // This also covers the vtkTypeUInt64Array type, which is derived from
-        // the vtkUnsignedLongLongArray type.
-        if (vtkUnsignedLongLongArray::SafeDownCast(&array))
+        if constexpr (sizeof(unsigned long long) == sizeof(unsigned long))
+        {
+            VtkMeshConverter::convertTypedArray<unsigned long>(
+                array, properties, type);
+            return;
+        }
+        else  // ull > ul. Other cases are not possible because ull >= ul in
+              // c++.
         {
             VtkMeshConverter::convertTypedArray<unsigned long long>(
                 array, properties, type);
