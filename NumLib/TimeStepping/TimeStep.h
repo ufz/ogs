@@ -24,7 +24,7 @@ namespace NumLib
  * time step length (\f$\Delta t_{n+1}\f$), and the number of time steps
  * (\f$n+1\f$).
  */
-class TimeStep
+class TimeStep final
 {
 public:
     /**
@@ -35,7 +35,7 @@ public:
         : _previous(current_time),
           _current(current_time),
           _dt(_current - _previous),
-          _steps(0)
+          _time_step_number(0)
     {
     }
 
@@ -49,29 +49,15 @@ public:
         : _previous(previous_time),
           _current(current_time),
           _dt(_current - _previous),
-          _steps(n)
+          _time_step_number(n)
     {
     }
 
     /// copy a time step
-    TimeStep(const TimeStep& src)
-        : _previous(src._previous),
-          _current(src._current),
-          _dt(_current - _previous),
-          _steps(src._steps)
-    {
-    }
+    TimeStep(const TimeStep& src) = default;
 
     /// copy a time step
     TimeStep& operator=(const TimeStep& src) = default;
-
-    /// return a time step incremented by the given time step size
-    TimeStep operator+(const double dt) const
-    {
-        TimeStep t(*this);
-        t += dt;
-        return t;
-    }
 
     /// increment time step
     TimeStep& operator+=(const double dt)
@@ -79,38 +65,33 @@ public:
         _previous = _current;
         _current += dt;
         _dt = dt;
-        _steps++;
+        _time_step_number++;
         return *this;
     }
 
     /// compare current time
-    bool operator<(const TimeStep& t) const { return (_current < t._current); }
-    /// compare current time
-    bool operator<(const double& t) const { return (_current < t); }
-    /// compare current time
-    bool operator<=(const TimeStep& t) const
+    bool operator<(TimeStep const& ts) const
     {
-        return (_current <= t._current);
+        return (_current < ts._current);
     }
-
     /// compare current time
-    bool operator<=(const double& t) const { return (_current <= t); }
-    /// compare current time
-    bool operator==(const TimeStep& t) const
+    bool operator<=(TimeStep const& ts) const
     {
-        return (_current == t._current);
+        return (_current <= ts._current);
     }
-
     /// compare current time
-    bool operator==(const double& t) const { return (_current == t); }
+    bool operator==(TimeStep const& ts) const
+    {
+        return (_current == ts._current);
+    }
     /// return previous time step
     double previous() const { return _previous; }
     /// return current time step
     double current() const { return _current; }
     /// time step size from _previous
     double dt() const { return _dt; }
-    /// the number of time _steps
-    std::size_t steps() const { return _steps; }
+    /// the time step number
+    std::size_t timeStepNumber() const { return _time_step_number; }
 
 private:
     /// previous time step
@@ -120,7 +101,7 @@ private:
     /// time step size
     double _dt;
     /// the number of time steps
-    std::size_t _steps;
+    std::size_t _time_step_number;
 };
 
 }  // namespace NumLib

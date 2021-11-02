@@ -59,7 +59,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     NumLib::TimeStep ts = PIDStepper->getTimeStep();
     double h_new = 0.01;
     double t_previous = 0.;
-    ASSERT_EQ(1u, ts.steps());
+    ASSERT_EQ(1u, ts.timeStepNumber());
     ASSERT_EQ(t_previous, ts.previous());
     ASSERT_EQ(t_previous + h_new, ts.current());
     ASSERT_EQ(h_new, ts.dt());
@@ -74,7 +74,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     PIDStepper->resetCurrentTimeStep(timestepper_dt1);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
-    ASSERT_EQ(2u, ts.steps());
+    ASSERT_EQ(2u, ts.timeStepNumber());
     const double tol = 1.e-16;
     ASSERT_NEAR(t_previous, ts.previous(), tol);
     ASSERT_NEAR(t_previous + h_new, ts.current(), tol);
@@ -89,7 +89,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     PIDStepper->resetCurrentTimeStep(timestepper_dt2);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
-    ASSERT_EQ(3u, ts.steps());
+    ASSERT_EQ(3u, ts.timeStepNumber());
     ASSERT_NEAR(t_previous, ts.previous(), tol);
     ASSERT_NEAR(t_previous + h_new, ts.current(), tol);
     ASSERT_TRUE(PIDStepper->accepted());
@@ -101,8 +101,8 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_TRUE(!step_accepted3);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
-    // No change in ts.steps
-    ASSERT_EQ(3u, ts.steps());
+    // No change in ts.timeStepNumber
+    ASSERT_EQ(3u, ts.timeStepNumber());
     // No change in ts.previous(), which is the same as that of the previous
     // step.
     ASSERT_NEAR(t_previous, ts.previous(), tol);
@@ -118,7 +118,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     PIDStepper->resetCurrentTimeStep(timestepper_dt4);
     ts = PIDStepper->getTimeStep();
     h_new = ts.dt();
-    ASSERT_EQ(4u, ts.steps());
+    ASSERT_EQ(4u, ts.timeStepNumber());
     ASSERT_NEAR(t_previous, ts.previous(), tol);
     ASSERT_NEAR(t_previous + h_new, ts.current(), tol);
     ASSERT_TRUE(PIDStepper->accepted());

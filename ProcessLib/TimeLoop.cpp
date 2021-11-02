@@ -18,7 +18,6 @@
 #include "NumLib/ODESolver/PETScNonlinearSolver.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "ProcessData.h"
-#include "ProcessLib/CreateProcessData.h"
 #include "ProcessLib/Output/CreateOutput.h"
 namespace
 {
@@ -368,7 +367,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     {
         auto& ppd = *_per_process_data[i];
         const auto& timestepper = ppd.timestepper;
-        if (timestepper->getTimeStep().steps() == 0)
+        if (timestepper->getTimeStep().timeStepNumber() == 0)
         {
             is_initial_step = true;
         }
