@@ -13,9 +13,9 @@ code coverage:
     - echo '<meta http-equiv="REFRESH" content="0;URL=build/coverage/coverage_report/index.html">' >> Coverage.html
   after_script:
     - cd ../build/coverage
-    - poetry run fastcov -C testrunner_coverage.info ctest_coverage.info --lcov -o coverage.info
-    - poetry run fastcov -C testrunner_coverage.info ctest_coverage.info -o coverage.json
-    - genhtml --demangle-cpp -o coverage_report coverage.info
+    - poetry run fastcov --branch-coverage -C testrunner_coverage.info ctest_coverage.info --lcov -o coverage.info
+    - poetry run fastcov --branch-coverage -C testrunner_coverage.info ctest_coverage.info -o coverage.json
+    - genhtml --branch-coverage --demangle-cpp -o coverage_report coverage.info
     - wget https://raw.github.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
     - poetry run python lcov_cobertura.py coverage.info --base-dir $CI_PROJECT_DIR
     - poetry run ./generate_coverage_vis_data.py
