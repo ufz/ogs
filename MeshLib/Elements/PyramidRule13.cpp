@@ -29,7 +29,7 @@ const unsigned PyramidRule13::edge_nodes[8][3] = {
     {0, 1, 5},   // Edge 0
     {1, 2, 6},   // Edge 1
     {2, 3, 7},   // Edge 2
-    {0, 3, 8},   // Edge 3
+    {3, 0, 8},   // Edge 3
     {0, 4, 9},   // Edge 4
     {1, 4, 10},  // Edge 5
     {2, 4, 11},  // Edge 6
