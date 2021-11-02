@@ -59,14 +59,6 @@ public:
     /// copy a time step
     TimeStep& operator=(const TimeStep& src) = default;
 
-    /// return a time step incremented by the given time step size
-    TimeStep operator+(const double dt) const
-    {
-        TimeStep t(*this);
-        t += dt;
-        return t;
-    }
-
     /// increment time step
     TimeStep& operator+=(const double dt)
     {
@@ -78,25 +70,20 @@ public:
     }
 
     /// compare current time
-    bool operator<(const TimeStep& t) const { return (_current < t._current); }
-    /// compare current time
-    bool operator<(const double& t) const { return (_current < t); }
-    /// compare current time
-    bool operator<=(const TimeStep& t) const
+    bool operator<(TimeStep const& ts) const
     {
-        return (_current <= t._current);
+        return (_current < ts._current);
     }
-
     /// compare current time
-    bool operator<=(const double& t) const { return (_current <= t); }
-    /// compare current time
-    bool operator==(const TimeStep& t) const
+    bool operator<=(TimeStep const& ts) const
     {
-        return (_current == t._current);
+        return (_current <= ts._current);
     }
-
     /// compare current time
-    bool operator==(const double& t) const { return (_current == t); }
+    bool operator==(TimeStep const& ts) const
+    {
+        return (_current == ts._current);
+    }
     /// return previous time step
     double previous() const { return _previous; }
     /// return current time step
