@@ -68,6 +68,39 @@ void readNodeIDs(std::ifstream& in, unsigned n_nodes,
     }
 }
 
+template <typename ElementType>
+std::pair<MeshLib::Element*, int> createElement(
+    std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
+    int const mat_id, std::map<unsigned, unsigned> const& id_map)
+{
+    std::vector<unsigned> node_ids;
+    readNodeIDs(in, ElementType::n_all_nodes, node_ids, id_map);
+
+    std::array<MeshLib::Node*, ElementType::n_all_nodes> element_nodes;
+
+    std::transform(begin(node_ids), end(node_ids), begin(element_nodes),
+                   [&nodes](auto const id) { return nodes[id]; });
+
+    return std::make_pair(new ElementType(element_nodes), mat_id);
+}
+
+template <>
+std::pair<MeshLib::Element*, int> createElement<MeshLib::Tri>(
+    std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
+    int const mat_id, std::map<unsigned, unsigned> const& id_map)
+{
+    std::vector<unsigned> node_ids;
+    readNodeIDs(in, 3, node_ids, id_map);
+
+    std::array<MeshLib::Node*, 3> element_nodes;
+
+    std::transform(std::rbegin(node_ids), std::rend(node_ids),
+                   begin(element_nodes),
+                   [&nodes](auto const id) { return nodes[id]; });
+
+    return std::make_pair(new MeshLib::Tri(element_nodes), mat_id);
+}
+
 std::pair<MeshLib::Element*, int> readElement(
     std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
     std::map<unsigned, unsigned> const& id_map)
@@ -87,71 +120,31 @@ std::pair<MeshLib::Element*, int> readElement(
     {
         case 1:
         {
-            readNodeIDs(in, 2, node_ids, id_map);
-            // edge_nodes array will be deleted from Line object
-            auto edge_nodes = new MeshLib::Node*[2];
-            edge_nodes[0] = nodes[node_ids[0]];
-            edge_nodes[1] = nodes[node_ids[1]];
-            return std::make_pair(new MeshLib::Line(edge_nodes), mat_id);
+            return createElement<MeshLib::Line>(in, nodes, mat_id, id_map);
         }
         case 2:
         {
-            readNodeIDs(in, 3, node_ids, id_map);
-            auto tri_nodes = new MeshLib::Node*[3];
-            tri_nodes[0] = nodes[node_ids[2]];
-            tri_nodes[1] = nodes[node_ids[1]];
-            tri_nodes[2] = nodes[node_ids[0]];
-            return std::make_pair(new MeshLib::Tri(tri_nodes), mat_id);
+            return createElement<MeshLib::Tri>(in, nodes, mat_id, id_map);
         }
         case 3:
         {
-            readNodeIDs(in, 4, node_ids, id_map);
-            auto quad_nodes = new MeshLib::Node*[4];
-            for (unsigned k(0); k < 4; k++)
-            {
-                quad_nodes[k] = nodes[node_ids[k]];
-            }
-            return std::make_pair(new MeshLib::Quad(quad_nodes), mat_id);
+            return createElement<MeshLib::Quad>(in, nodes, mat_id, id_map);
         }
         case 4:
         {
-            readNodeIDs(in, 4, node_ids, id_map);
-            auto tet_nodes = new MeshLib::Node*[5];
-            for (unsigned k(0); k < 4; k++)
-            {
-                tet_nodes[k] = nodes[node_ids[k]];
-            }
-            return std::make_pair(new MeshLib::Tet(tet_nodes), mat_id);
+            return createElement<MeshLib::Tet>(in, nodes, mat_id, id_map);
         }
         case 5:
         {
-            readNodeIDs(in, 8, node_ids, id_map);
-            auto hex_nodes = new MeshLib::Node*[8];
-            for (unsigned k(0); k < 8; k++)
-            {
-                hex_nodes[k] = nodes[node_ids[k]];
-            }
-            return std::make_pair(new MeshLib::Hex(hex_nodes), mat_id);
+            return createElement<MeshLib::Hex>(in, nodes, mat_id, id_map);
         }
         case 6:
         {
-            readNodeIDs(in, 6, node_ids, id_map);
-            auto prism_nodes = new MeshLib::Node*[6];
-            for (unsigned k(0); k < 6; k++)
-            {
-                prism_nodes[k] = nodes[node_ids[k]];
-            }
-            return std::make_pair(new MeshLib::Prism(prism_nodes), mat_id);
+            return createElement<MeshLib::Prism>(in, nodes, mat_id, id_map);
         }
         case 7:
         {
-            readNodeIDs(in, 5, node_ids, id_map);
-            auto pyramid_nodes = new MeshLib::Node*[5];
-            for (unsigned k(0); k < 5; k++)
-            {
-                pyramid_nodes[k] = nodes[node_ids[k]];
-            }
-            return std::make_pair(new MeshLib::Pyramid(pyramid_nodes), mat_id);
+            return createElement<MeshLib::Pyramid>(in, nodes, mat_id, id_map);
         }
         case 15:
             in >> dummy;  // skip rest of line
