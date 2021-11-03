@@ -148,10 +148,8 @@ const std::vector<GeoLib::Point*>* GEOObjects::getStationVec(
 }
 
 void GEOObjects::addPolylineVec(
-    std::unique_ptr<std::vector<Polyline*>> lines,
-    const std::string& name,
-    std::unique_ptr<std::map<std::string, std::size_t>>
-        ply_names)
+    std::unique_ptr<std::vector<Polyline*>> lines, const std::string& name,
+    std::unique_ptr<std::map<std::string, std::size_t>> ply_names)
 {
     assert(lines);
     auto lines_end = std::remove_if(
