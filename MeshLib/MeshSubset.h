@@ -19,7 +19,6 @@
 #include "Node.h"
 #include "Elements/Element.h"
 
-
 namespace MeshLib
 {
 /// A subset of nodes on a single mesh.
@@ -48,8 +47,9 @@ public:
             sort(begin(sorted_nodes), end(sorted_nodes));
 
             // Then proceed with the search function.
-            auto node_is_part_of_mesh = [& mesh_nodes = sorted_nodes](
-                                            MeshLib::Node* const& n) {
+            auto node_is_part_of_mesh =
+                [&mesh_nodes = sorted_nodes](MeshLib::Node* const& n)
+            {
                 auto it = lower_bound(begin(mesh_nodes), end(mesh_nodes), n);
                 if (it == end(mesh_nodes))
                 {
@@ -68,16 +68,10 @@ public:
     }
 
     /// return this mesh ID
-    std::size_t getMeshID() const
-    {
-        return _msh.getID();
-    }
+    std::size_t getMeshID() const { return _msh.getID(); }
 
     /// return the number of registered nodes
-    std::size_t getNumberOfNodes() const
-    {
-        return _nodes.size();
-    }
+    std::size_t getNumberOfNodes() const { return _nodes.size(); }
 
     /// Returns the global node id Node::getID() of i-th node in the mesh
     /// subset.
@@ -98,18 +92,12 @@ public:
         return _msh.getElements().cend();
     }
 
-    std::vector<Node*> const& getNodes() const
-    {
-        return _nodes;
-    }
+    std::vector<Node*> const& getNodes() const { return _nodes; }
 
-    Mesh const& getMesh() const
-    {
-        return _msh;
-    }
+    Mesh const& getMesh() const { return _msh; }
 
 private:
     Mesh const& _msh;
     std::vector<Node*> const& _nodes;
 };
-}   // namespace MeshLib
+}  // namespace MeshLib
