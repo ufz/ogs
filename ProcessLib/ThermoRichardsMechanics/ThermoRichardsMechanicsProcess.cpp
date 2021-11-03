@@ -154,19 +154,10 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    using nlohmann::json;
-
-    const int mechanical_process_id = 0;
-    const int deformation_variable_id = 2;
     createLocalAssemblers<DisplacementDim,
                           ThermoRichardsMechanicsLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        // use displacement process variable to set shape function order
-        getProcessVariables(mechanical_process_id)[deformation_variable_id]
-            .get()
-            .getShapeFunctionOrder(),
-        local_assemblers_, mesh.isAxiallySymmetric(), integration_order,
-        process_data_);
+        mesh.getDimension(), mesh.getElements(), dof_table, local_assemblers_,
+        mesh.isAxiallySymmetric(), integration_order, process_data_);
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,

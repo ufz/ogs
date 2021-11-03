@@ -124,8 +124,8 @@ class LocalDataInitializerHM final
 public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
-    LocalDataInitializerHM(NumLib::LocalToGlobalIndexMap const& dof_table,
-                           const unsigned shapefunction_order /* TODO remove */)
+    explicit LocalDataInitializerHM(
+        NumLib::LocalToGlobalIndexMap const& dof_table)
         : _dof_table(dof_table)
     {
         // /// Quads and Hexahedra ///////////////////////////////////

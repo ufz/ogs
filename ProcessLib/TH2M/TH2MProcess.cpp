@@ -158,19 +158,10 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    const int mechanical_process_id =
-        _use_monolithic_scheme ? 0 : deformation_process_id;
-    const int deformation_variable_id =
-        _use_monolithic_scheme ? deformation_process_id : 0;
     ProcessLib::TH2M::createLocalAssemblers<DisplacementDim,
                                             TH2MLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        // use displacement process variable to set shape function order
-        getProcessVariables(mechanical_process_id)[deformation_variable_id]
-            .get()
-            .getShapeFunctionOrder(),
-        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-        _process_data);
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
