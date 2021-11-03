@@ -16,91 +16,145 @@
 
 #include "GeoLib/Polyline.h"
 
-TEST(GeoLib, PolylineTest)
+struct GeoLibPolyline : public testing::Test
 {
-    std::vector<GeoLib::Point*> ply_pnts;
-    GeoLib::Polyline ply(ply_pnts);
+public:
+    GeoLibPolyline() : polyline(points)
+    {
+        points.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
+        points.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
+        points.push_back(new GeoLib::Point(0.5, 0.5, 0.0));
+        points.push_back(new GeoLib::Point(1.0, 0.5, 0.0));
+        points.push_back(new GeoLib::Point(-1.0, 0.0, 0.0));
+        points.push_back(new GeoLib::Point(0.0, 0.5, 0.0));
+    }
 
-    // checking properties of empty polyline
-    ASSERT_EQ(std::size_t(0), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_FALSE(ply.isPointIDInPolyline(0));
+    ~GeoLibPolyline() override
+    {
+        for (auto& point : points)
+        {
+            delete point;
+        }
+    }
 
-    ply_pnts.push_back(new GeoLib::Point(0.0, 0.0, 0.0));
-    ply.addPoint(0);
+protected:
+    std::vector<GeoLib::Point*> points;
+    GeoLib::Polyline polyline;
+};
+
+TEST_F(GeoLibPolyline, Empty)
+{
+    ASSERT_EQ(std::size_t(0), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_FALSE(polyline.isPointIDInPolyline(0));
+}
+
+TEST_F(GeoLibPolyline, TryToAddPointWithToLargeID)
+{
+    ASSERT_FALSE(polyline.addPoint(points.size()));
+    ASSERT_EQ(std::size_t(0), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_FALSE(polyline.isPointIDInPolyline(points.size()));
+}
+
+TEST_F(GeoLibPolyline, OnePoint)
+{
+    ASSERT_TRUE(polyline.addPoint(0));
     // checking properties of polyline with one point
-    ASSERT_EQ(std::size_t(1), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_TRUE(ply.isPointIDInPolyline(0));
+    ASSERT_EQ(std::size_t(1), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(0));
+}
 
-    ply_pnts.push_back(new GeoLib::Point(1.0, 0.0, 0.0));
-    ply.addPoint(1);
-    // checking properties of polyline with two points
-    ASSERT_EQ(std::size_t(2), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_TRUE(ply.isPointIDInPolyline(1));
+TEST_F(GeoLibPolyline, TwoIdenticalPoints)
+{
+    ASSERT_TRUE(polyline.addPoint(0));
+    ASSERT_FALSE(polyline.addPoint(0));
+    ASSERT_EQ(std::size_t(1), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(0));
+    ASSERT_FALSE(polyline.isPointIDInPolyline(1));
+}
+
+TEST_F(GeoLibPolyline, TwoPoints)
+{
+    ASSERT_TRUE(polyline.addPoint(0));
+    ASSERT_TRUE(polyline.addPoint(1));
 
     // checking properties of polyline with two points
-    ply_pnts.push_back(new GeoLib::Point(0.5, 0.5, 0.0));
-    ply.addPoint(2);
-    ASSERT_EQ(std::size_t(3), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_TRUE(ply.isPointIDInPolyline(2));
+    ASSERT_EQ(std::size_t(2), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(1));
+}
+
+TEST_F(GeoLibPolyline, RemoveInsert)
+{
+    ASSERT_TRUE(polyline.addPoint(0));
+    ASSERT_TRUE(polyline.addPoint(1));
+    ASSERT_TRUE(polyline.addPoint(2));
+
+    // checking properties of polyline with three points
+    ASSERT_EQ(std::size_t(3), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(2));
 
     // checking remove
-    ply.removePoint(1);
-    ASSERT_EQ(std::size_t(2), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_FALSE(ply.isPointIDInPolyline(1));
+    polyline.removePoint(1);
+    ASSERT_EQ(std::size_t(2), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(0));
+    ASSERT_FALSE(polyline.isPointIDInPolyline(1));
+    ASSERT_TRUE(polyline.isPointIDInPolyline(2));
 
     // inserting point in the middle
-    ply.insertPoint(1, 1);
-    ASSERT_EQ(std::size_t(3), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_TRUE(ply.isPointIDInPolyline(2));
+    ASSERT_TRUE(polyline.insertPoint(1, 1));
+    ASSERT_EQ(std::size_t(3), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(2));
+    ASSERT_TRUE(polyline.isPointIDInPolyline(0));
+    ASSERT_TRUE(polyline.isPointIDInPolyline(1));
 
     // inserting point at the end
-    ply_pnts.push_back(new GeoLib::Point(1.0, 0.5, 0.0));
-    ply.insertPoint(3, 3);
-    ASSERT_EQ(std::size_t(4), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_TRUE(ply.isPointIDInPolyline(3));
+    ASSERT_TRUE(polyline.insertPoint(3, 3));
+    ASSERT_EQ(std::size_t(4), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(3));
 
     // inserting point at the beginning
-    ply_pnts.push_back(new GeoLib::Point(-1.0, 0.0, 0.0));
-    ply.insertPoint(0, 4);
-    ASSERT_EQ(std::size_t(5), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_TRUE(ply.isPointIDInPolyline(4));
+    ASSERT_TRUE(polyline.insertPoint(0, 4));
+    ASSERT_EQ(std::size_t(5), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(4));
 
     // inserting point in the middle
-    ply_pnts.push_back(new GeoLib::Point(0.0, 0.5, 0.0));
-    ply.insertPoint(2, 5);
-    ASSERT_EQ(std::size_t(6), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ASSERT_TRUE(ply.isPointIDInPolyline(5));
+    ASSERT_TRUE(polyline.insertPoint(2, 5));
+    ASSERT_EQ(std::size_t(6), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(5));
 
     // close polyline
-    ply.closePolyline();
-    ASSERT_EQ(std::size_t(7), ply.getNumberOfPoints());
-    ASSERT_TRUE(ply.isClosed());
+    polyline.closePolyline();
+    ASSERT_EQ(std::size_t(7), polyline.getNumberOfPoints());
+    ASSERT_TRUE(polyline.isClosed());
 
     // remove last point -> polyline is not closed!
-    ply.removePoint(6);
-    ASSERT_EQ(std::size_t(6), ply.getNumberOfPoints());
-    ASSERT_FALSE(ply.isClosed());
-    ply.closePolyline();
-    ASSERT_TRUE(ply.isClosed());
+    polyline.removePoint(6);
+    ASSERT_EQ(std::size_t(6), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    polyline.closePolyline();
+    ASSERT_TRUE(polyline.isClosed());
+}
+
+TEST_F(GeoLibPolyline, CountSegments)
+{
+    polyline.addPoint(0);
+    polyline.addPoint(1);
+    polyline.addPoint(2);
 
     std::size_t segment_cnt(0);
-    for (auto seg_it(ply.begin()); seg_it != ply.end(); ++seg_it)
+    for (auto seg_it(polyline.begin()); seg_it != polyline.end(); ++seg_it)
     {
         ++segment_cnt;
     }
-    ASSERT_EQ(ply.getNumberOfSegments(), segment_cnt);
-
-    for (auto& ply_pnt : ply_pnts)
-    {
-        delete ply_pnt;
-    }
+    ASSERT_EQ(polyline.getNumberOfSegments(), segment_cnt);
 }
