@@ -180,31 +180,22 @@ void GEOObjects::addPolylineVec(
 bool GEOObjects::appendPolylineVec(const std::vector<Polyline*>& polylines,
                                    const std::string& name)
 {
-    // search vector
-    std::size_t idx(0);
-    bool nfound(true);
-    for (idx = 0; idx < _ply_vecs.size() && nfound; idx++)
+    // find an already existing PolylineVec object the given polylines will be
+    // appended to
+    auto polyline_vec_it =
+        std::find_if(_ply_vecs.begin(), _ply_vecs.end(),
+                     [&name](auto* const polyline_vec)
+                     { return polyline_vec->getName() == name; });
+    if (polyline_vec_it == _ply_vecs.end())
     {
-        if (_ply_vecs[idx]->getName() == name)
-        {
-            nfound = false;
-        }
+        return false;
     }
-
-    if (!nfound)
+    for (auto* polyline : polylines)
     {
-        idx--;
-        std::size_t n_plys(polylines.size());
-        // append lines
-        for (std::size_t k(0); k < n_plys; k++)
-        {
-            _ply_vecs[idx]->push_back(polylines[k]);
-        }
-        _callbacks->appendPolylineVec(name);
-        return true;
+        (*polyline_vec_it)->push_back(polyline);
     }
-
-    return false;
+    _callbacks->appendPolylineVec(name);
+    return true;
 }
 
 const std::vector<Polyline*>* GEOObjects::getPolylineVec(
