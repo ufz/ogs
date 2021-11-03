@@ -46,7 +46,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    // Process variable.
+    /// \section processvariablespf Process Variables
 
     //! \ogs_file_param{prj__processes__process__PHASE_FIELD__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -63,6 +63,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     {
         using namespace std::string_literals;
         for (
+            /// Primary process variables as they appear in the global component vector:
             auto const& variable_name :
             {//! \ogs_file_param_special{prj__processes__process__PHASE_FIELD__process_variables__displacement}
              "displacement"s,
@@ -100,7 +101,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
             variable_ph->getName(),
             variable_ph->getNumberOfGlobalComponents());
     }
-
+    /// \section parameterspf Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);

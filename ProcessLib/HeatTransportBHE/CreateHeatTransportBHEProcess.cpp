@@ -46,7 +46,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     DBUG("Create HeatTransportBHE Process.");
 
-    // Process variable.
+    /// \section processvariablesbhe Process Variables
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -55,6 +55,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     // reading primary variables for each
     // BHE----------------------------------------------------------
+    /// Primary process variables as they appear in the global component vector:
     auto range =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__process_variables__process_variable}
         pv_config.getConfigParameterList<std::string>("process_variable");
@@ -90,6 +91,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     // end of reading primary variables for each
     // BHE----------------------------------------------------------
 
+    /// \section parametersbhe Process Parameters
     // reading BHE parameters --------------------------------------------------
     std::vector<BHE::BHETypes> bhes;
 

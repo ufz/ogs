@@ -87,7 +87,8 @@ std::unique_ptr<Process> createTH2MProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    // Process variable.
+    /// \section processvariablesth2m Process Variables
+
     //! \ogs_file_param{prj__processes__process__TH2M__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
@@ -99,6 +100,7 @@ std::unique_ptr<Process> createTH2MProcess(
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
     {
+        /// Primary process variables as they appear in the global component vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__TH2M__process_variables__gas_pressure}
@@ -182,6 +184,7 @@ std::unique_ptr<Process> createTH2MProcess(
             variable_T->getNumberOfGlobalComponents());
     }
 
+    /// \section parametersth2m Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);

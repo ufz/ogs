@@ -39,10 +39,12 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "THERMAL_TWOPHASE_WITH_PP");
 
+    /// \section processvariables Process Variables
     DBUG("Create nonisothermal two-phase flow model.");
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__gas_pressure}
@@ -58,6 +60,7 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     SecondaryVariableCollection secondary_variables;
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
+    /// \section parameters Process Parameters
     // Specific body force
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__specific_body_force}

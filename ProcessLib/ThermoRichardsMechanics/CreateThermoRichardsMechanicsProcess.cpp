@@ -91,7 +91,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    // Process variable.
+    /// \section processvariablestrm Process Variables
 
     //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -103,6 +103,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
     {
+        /// Primary process variables as they appear in the global component vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__THERMO_RICHARDS_MECHANICS__process_variables__temperature}
@@ -127,6 +128,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
     checkProcessVariableComponents(*variable_p, 1);
     checkProcessVariableComponents(*variable_u, DisplacementDim);
 
+    /// \section parameterstrm Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);

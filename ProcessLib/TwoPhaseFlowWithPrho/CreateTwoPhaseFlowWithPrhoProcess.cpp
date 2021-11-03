@@ -39,9 +39,13 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PRHO");
 
     DBUG("Create TwoPhaseFlowProcess with Prho model.");
+
+    /// \section processvariablestpfwprho Process Variables
+
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PRHO__process_variables__liquid_pressure}
@@ -55,6 +59,7 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPrhoProcess(
     SecondaryVariableCollection secondary_variables;
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
+    /// \section parameterstpfwprho Process Parameters
     // Specific body force
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PRHO__specific_body_force}

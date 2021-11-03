@@ -61,7 +61,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    // Process variable.
+    /// \section processvariableshm Process Variables
 
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -76,6 +76,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     if (use_monolithic_scheme)  // monolithic scheme.
     {
+        /// Primary process variables as they appear in the global component vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__process_variables__pressure}
@@ -128,6 +129,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
 
+    /// \section parametershm Process Parameters
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {

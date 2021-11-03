@@ -97,7 +97,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    // Process variable.
+    /// \section processvariablesrct Process Variables
 
     //! \ogs_file_param{prj__processes__process__RichardsComponentTransport__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -106,6 +106,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
     {
+        /// Primary process variables as they appear in the global component vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__RichardsComponentTransport__process_variables__concentration}
@@ -125,6 +126,7 @@ std::unique_ptr<Process> createRichardsComponentTransportProcess(
         OGS_FATAL("The staggered coupling scheme is not implemented.");
     }
 
+    /// \section parametersrct Process Parameters
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
     std::vector<double> const b =

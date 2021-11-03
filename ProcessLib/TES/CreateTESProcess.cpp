@@ -32,9 +32,12 @@ std::unique_ptr<Process> createTESProcess(
 
     DBUG("Create TESProcess.");
 
+    /// \section processvariablestes Process Variables
+
     //! \ogs_file_param{prj__processes__process__TES__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__TES__process_variables__fluid_pressure}

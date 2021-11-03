@@ -49,9 +49,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    // Process variables
+    /// \section processvariablesliehm Process Variables
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__process_variables}
     auto const pv_conf = config.getConfigSubtree("process_variables");
+    /// Primary process variables as they appear in the global component vector:
     auto range =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__process_variables__process_variable}
         pv_conf.getConfigParameterList<std::string>("process_variable");
@@ -130,6 +131,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         process_variables.push_back(std::move(p_u_process_variables));
     }
 
+    /// \section parametersliehm Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<GlobalDim>(
             parameters, local_coordinate_system, config);

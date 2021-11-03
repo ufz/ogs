@@ -72,15 +72,15 @@ std::unique_ptr<Process> createStokesFlowProcess(
                                                "monolithic_scheme");
     const bool use_monolithic_scheme = (coupling_scheme != "staggered");
 
-    // Process variable.
+    /// \section processvariablessf Process Variables
+
     //! \ogs_file_param{prj__processes__process__StokesFlow__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
 
-    // Collect all process variables in a vector before allocation
-    // liquid_velocity first, pressure then
+    /// Primary process variables as they appear in the global component vector:
     auto const collected_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__StokesFlow__process_variables__liquid_velocity}
@@ -123,6 +123,7 @@ std::unique_ptr<Process> createStokesFlowProcess(
             "implemented.");
     }
 
+    /// \section parameterssf Process Parameters
     // Specific body force
     Eigen::VectorXd specific_body_force = Eigen::VectorXd::Zero(GlobalDim);
     auto const b =

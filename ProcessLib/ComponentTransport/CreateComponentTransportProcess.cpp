@@ -98,7 +98,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
                                                "monolithic_scheme");
     const bool use_monolithic_scheme = (coupling_scheme != "staggered");
 
-    // Process variable.
+    /// \section processvariablescomponenttransport Process Variables
 
     //! \ogs_file_param{prj__processes__process__ComponentTransport__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -106,8 +106,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
 
-    // Collect all process variables in a vector before allocation
-    // pressure first, concentration then
+    /// Primary process variables as they appear in the global component vector:
     auto const collected_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__pressure}
@@ -193,6 +192,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         }
     }
 
+    /// \section parameterscomponenttransport Process Parameters
     // Specific body force parameter.
     Eigen::VectorXd specific_body_force;
     std::vector<double> const b =

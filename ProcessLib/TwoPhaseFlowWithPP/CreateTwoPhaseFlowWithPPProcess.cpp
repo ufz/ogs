@@ -38,10 +38,13 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "TWOPHASE_FLOW_PP");
 
+    /// \section processvariablestpfwpp Process Variables
+
     DBUG("Create TwoPhaseFlowProcess with PP model.");
     //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_PP__process_variables__gas_pressure}
@@ -55,6 +58,8 @@ std::unique_ptr<Process> createTwoPhaseFlowWithPPProcess(
     SecondaryVariableCollection secondary_variables;
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
+
+    /// \section parameterstpfwpp Process Parameters
     // Specific body force
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_PP__specific_body_force}
