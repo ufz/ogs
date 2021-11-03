@@ -154,18 +154,10 @@ void GEOObjects::addPolylineVec(
         ply_names)
 {
     assert(lines);
-    for (auto it(lines->begin()); it != lines->end();)
-    {
-        if ((*it)->getNumberOfPoints() < 2)
-        {
-            auto it_erase(it);
-            it = lines->erase(it_erase);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+    auto lines_end = std::remove_if(
+        lines->begin(), lines->end(),
+        [](auto const* polyline) { return polyline->getNumberOfPoints() < 2; });
+    lines->erase(lines_end, lines->end());
 
     if (lines->empty())
     {
