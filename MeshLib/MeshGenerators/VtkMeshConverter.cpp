@@ -209,24 +209,9 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
             }
             case VTK_QUADRATIC_WEDGE:
             {
-                auto** prism_nodes = new MeshLib::Node*[15];
-                for (unsigned j = 0; j < 3; ++j)
-                {
-                    prism_nodes[j] = nodes[node_ids->GetId(j + 3)];
-                    prism_nodes[j + 3] = nodes[node_ids->GetId(j)];
-                }
-                for (unsigned j = 0; j < 3; ++j)
-                {
-                    prism_nodes[6 + j] = nodes[node_ids->GetId(8 - j)];
-                }
-                prism_nodes[9] = nodes[node_ids->GetId(12)];
-                prism_nodes[10] = nodes[node_ids->GetId(14)];
-                prism_nodes[11] = nodes[node_ids->GetId(13)];
-                for (unsigned j = 0; j < 3; ++j)
-                {
-                    prism_nodes[12 + j] = nodes[node_ids->GetId(11 - j)];
-                }
-                elem = new MeshLib::Prism15(prism_nodes, i);
+                elem = detail::createElementWithSameNodeOrder<MeshLib::Prism15>(
+                    nodes, node_ids, i);
+
                 break;
             }
             default:
