@@ -88,15 +88,12 @@ void StokesFlowProcess<GlobalDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    int const process_id = 0;
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     // Todo: may move LocalDataInitializer.h and CreateLocalAssemblers.h which
     // are identical to those in such processes as HydroMechanics,
     // RichardsMechanics, and etc, into a common place.
     ProcessLib::StokesFlow::createLocalAssemblers<GlobalDim,
                                                   LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _process_data.pressure_interpolated =
