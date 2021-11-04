@@ -203,18 +203,12 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
 {
     assert(mesh.getDimension() == GlobalDim);
     INFO("[LIE/HM] creating local assemblers");
-    const int monolithic_process_id = 0;
     ProcessLib::LIE::HydroMechanics::createLocalAssemblers<
         GlobalDim, HydroMechanicsLocalAssemblerMatrix,
         HydroMechanicsLocalAssemblerMatrixNearFracture,
         HydroMechanicsLocalAssemblerFracture>(
-        mesh.getElements(), dof_table,
-        // use displacement process variable for shapefunction order
-        getProcessVariables(monolithic_process_id)[1]
-            .get()
-            .getShapeFunctionOrder(),
-        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-        _process_data);
+        mesh.getElements(), dof_table, _local_assemblers,
+        mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     auto mesh_prop_sigma_xx = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_xx",
