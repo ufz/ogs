@@ -88,7 +88,7 @@ TEST_F(GeoLibPolyline, TwoPoints)
     ASSERT_TRUE(polyline.isPointIDInPolyline(1));
 }
 
-TEST_F(GeoLibPolyline, RemoveInsert)
+TEST_F(GeoLibPolyline, Remove)
 {
     ASSERT_TRUE(polyline.addPoint(0));
     ASSERT_TRUE(polyline.addPoint(1));
@@ -96,16 +96,24 @@ TEST_F(GeoLibPolyline, RemoveInsert)
 
     // checking properties of polyline with three points
     ASSERT_EQ(std::size_t(3), polyline.getNumberOfPoints());
-    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(0));
+    ASSERT_TRUE(polyline.isPointIDInPolyline(1));
     ASSERT_TRUE(polyline.isPointIDInPolyline(2));
 
-    // checking remove
+    // check removing an existing point
     polyline.removePoint(1);
     ASSERT_EQ(std::size_t(2), polyline.getNumberOfPoints());
-    ASSERT_FALSE(polyline.isClosed());
     ASSERT_TRUE(polyline.isPointIDInPolyline(0));
     ASSERT_FALSE(polyline.isPointIDInPolyline(1));
     ASSERT_TRUE(polyline.isPointIDInPolyline(2));
+
+    // check removing a non-existing point
+    polyline.removePoint(polyline.getNumberOfPoints() + 1);
+    ASSERT_EQ(std::size_t(2), polyline.getNumberOfPoints());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(0));
+    ASSERT_FALSE(polyline.isPointIDInPolyline(1));
+    ASSERT_TRUE(polyline.isPointIDInPolyline(2));
+}
 
     // inserting point in the middle
     ASSERT_TRUE(polyline.insertPoint(1, 1));
