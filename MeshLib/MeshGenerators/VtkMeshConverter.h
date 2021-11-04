@@ -104,6 +104,23 @@ private:
                                   MeshLib::Properties& properties,
                                   MeshLib::MeshItemType type)
     {
+        // Keep for debugging purposes, since the vtk array type and the end
+        // type T are not always the same.
+        INFO(
+            "Converting a vtk array '{:s}' with data type '{:s}' of "
+            "size {:d} to a type '{:s}' of size {:d}.",
+            array.GetName(), array.GetDataTypeAsString(),
+            array.GetDataTypeSize(), typeid(T).name(), sizeof(T));
+
+        if (sizeof(T) != array.GetDataTypeSize())
+        {
+            OGS_FATAL(
+                "Trying to convert a vtk array '{:s}' with data type '{:s}' of "
+                "size {:d} to a different sized type '{:s}' of size {:d}.",
+                array.GetName(), array.GetDataTypeAsString(),
+                array.GetDataTypeSize(), typeid(T).name(), sizeof(T));
+        }
+
         vtkIdType const nTuples(array.GetNumberOfTuples());
         int const nComponents(array.GetNumberOfComponents());
         char const* const array_name(array.GetName());
