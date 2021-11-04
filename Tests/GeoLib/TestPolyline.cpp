@@ -115,6 +115,11 @@ TEST_F(GeoLibPolyline, Remove)
     ASSERT_TRUE(polyline.isPointIDInPolyline(2));
 }
 
+TEST_F(GeoLibPolyline, Insert)
+{
+    ASSERT_TRUE(polyline.addPoint(0));
+    ASSERT_TRUE(polyline.addPoint(2));
+
     // inserting point in the middle
     ASSERT_TRUE(polyline.insertPoint(1, 1));
     ASSERT_EQ(std::size_t(3), polyline.getNumberOfPoints());
@@ -141,6 +146,25 @@ TEST_F(GeoLibPolyline, Remove)
     ASSERT_FALSE(polyline.isClosed());
     ASSERT_TRUE(polyline.isPointIDInPolyline(5));
 
+    // insert point at non-existing position
+    ASSERT_FALSE(polyline.insertPoint(polyline.getNumberOfPoints() + 1, 0));
+    ASSERT_EQ(std::size_t(6), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(5));
+
+    // insert non-existing point at existing position
+    ASSERT_FALSE(
+        polyline.insertPoint(polyline.getNumberOfPoints() - 1, points.size()));
+    ASSERT_EQ(std::size_t(6), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(5));
+
+    // insert non-existing point at non-existing position
+    ASSERT_FALSE(
+        polyline.insertPoint(polyline.getNumberOfPoints() + 1, points.size()));
+    ASSERT_EQ(std::size_t(6), polyline.getNumberOfPoints());
+    ASSERT_FALSE(polyline.isClosed());
+    ASSERT_TRUE(polyline.isPointIDInPolyline(5));
 }
 
 TEST_F(GeoLibPolyline, Close)
