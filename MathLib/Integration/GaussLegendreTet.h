@@ -44,6 +44,15 @@ struct GaussLegendreTet<3> {
     static MATHLIB_EXPORT const double W[NPoints];
 };
 
+template <>
+struct GaussLegendreTet<4>
+{
+    static MATHLIB_EXPORT const unsigned Order = 4;
+    static MATHLIB_EXPORT const unsigned NPoints = 20;
+    static MATHLIB_EXPORT const std::array<std::array<double, 3>, NPoints> X;
+    static MATHLIB_EXPORT const double W[NPoints];
+};
+
 #ifndef _MSC_VER  // The following explicit instantatiation declaration does not
                   // compile on that particular compiler but is necessary.
 template <>

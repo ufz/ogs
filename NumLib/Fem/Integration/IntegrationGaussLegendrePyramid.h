@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "BaseLib/Error.h"
 #include "MathLib/Integration/GaussLegendrePyramid.h"
 #include "MathLib/TemplateWeightedPoint.h"
 

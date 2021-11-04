@@ -447,7 +447,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreTet)
         MeshLib::IO::VtuInterface::readVTUFile(
             TestInfoLib::TestInfo::data_path + "/MathLib/unit_cube_tet.vtu"));
 
-    for (unsigned integration_order : {1, 2, 3})
+    for (unsigned integration_order : {1, 2, 3, 4})
     {
         DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
@@ -508,7 +508,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(
         MeshLib::IO::VtuInterface::readVTUFile(
             TestInfoLib::TestInfo::data_path + "/MathLib/unit_cube_tet.vtu"));
 
-    for (unsigned integration_order : {1, 2, 3})
+    for (unsigned integration_order : {1, 2, 3, 4})
     {
         DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
@@ -564,7 +564,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
         MeshLib::IO::VtuInterface::readVTUFile(
             TestInfoLib::TestInfo::data_path + "/MathLib/unit_cube_tet.vtu"));
 
-    for (unsigned integration_order : {1, 2, 3})
+    for (unsigned integration_order : {1, 2, 3, 4})
     {
         DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,

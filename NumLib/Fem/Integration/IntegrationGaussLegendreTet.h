@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "BaseLib/Error.h"
 #include "MathLib/Integration/GaussLegendreTet.h"
 #include "MathLib/TemplateWeightedPoint.h"
 
@@ -74,6 +75,8 @@ public:
                 return getWeightedPoint<MathLib::GaussLegendreTet<2>>(igp);
             case 3:
                 return getWeightedPoint<MathLib::GaussLegendreTet<3>>(igp);
+            case 4:
+                return getWeightedPoint<MathLib::GaussLegendreTet<4>>(igp);
         }
         OGS_FATAL("Integration order {:d} not implemented for tetrahedrals.",
                   order);
@@ -101,6 +104,8 @@ public:
                 return MathLib::GaussLegendreTet<2>::NPoints;
             case 3:
                 return MathLib::GaussLegendreTet<3>::NPoints;
+            case 4:
+                return MathLib::GaussLegendreTet<4>::NPoints;
         }
         OGS_FATAL("Integration order {:d} not implemented for tetrahedrals.",
                   order);

@@ -15,6 +15,7 @@
 #include <array>
 #include <cmath>
 
+#include "BaseLib/Error.h"
 #include "MathLib/Integration/GaussLegendre.h"
 #include "MathLib/TemplateWeightedPoint.h"
 
