@@ -136,6 +136,12 @@ public:
             makeLocalAssemblerBuilder<NumLib::ShapeQuad4>();
 #endif
 
+#if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_CUBOID) != 0 && \
+    OGS_MAX_ELEMENT_DIM >= 3 && OGS_MAX_ELEMENT_ORDER >= 1
+        _builder[std::type_index(typeid(MeshLib::Hex))] =
+            makeLocalAssemblerBuilder<NumLib::ShapeHex8>();
+#endif
+
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
         _builder[std::type_index(typeid(MeshLib::Quad8))] =
