@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 
 #include <ctime>
+#include <numeric>
 
 #include "GeoLib/Polyline.h"
 
@@ -132,14 +133,26 @@ TEST_F(GeoLibPolyline, RemoveInsert)
     ASSERT_FALSE(polyline.isClosed());
     ASSERT_TRUE(polyline.isPointIDInPolyline(5));
 
-    // close polyline
+}
+
+TEST_F(GeoLibPolyline, Close)
+{
+    std::vector<std::size_t> point_ids(points.size());
+    std::iota(point_ids.begin(), point_ids.end(), 0);
+
+    for (auto point_id : point_ids)
+    {
+        ASSERT_TRUE(polyline.addPoint(point_id));
+    }
+
+    // close polyline; this adds the first polyline point to the end
     polyline.closePolyline();
-    ASSERT_EQ(std::size_t(7), polyline.getNumberOfPoints());
+    ASSERT_EQ(points.size() + 1, polyline.getNumberOfPoints());
     ASSERT_TRUE(polyline.isClosed());
 
     // remove last point -> polyline is not closed!
-    polyline.removePoint(6);
-    ASSERT_EQ(std::size_t(6), polyline.getNumberOfPoints());
+    polyline.removePoint(polyline.getNumberOfPoints() - 1);
+    ASSERT_EQ(point_ids.size(), polyline.getNumberOfPoints());
     ASSERT_FALSE(polyline.isClosed());
     polyline.closePolyline();
     ASSERT_TRUE(polyline.isClosed());
