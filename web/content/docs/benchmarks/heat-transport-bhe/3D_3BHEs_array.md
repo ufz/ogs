@@ -35,6 +35,10 @@ For the subsurface domain, a 50 $\times$ 50 $\times$ 72 $m$ mesh was constructed
 The BHE \#1 and BHE \#3 are located at the left and right side, while the BHE \#2 is installed in the centre.
 The initial soil temperature of the domain is set with 12 $^\circ$C.
 The top surface is assumed as Dirichlet boundary condition with a fixed temperature of 12 $^\circ$C over the entire simulation.
+To be noticed is that in this benchmark project file, the initial soil temperature and all boundary conditions are set to be 42 $^\circ$C, which is 30 $^\circ$C higher than they are described in the documentation.
+The reason for this is to prevent the circulation fluid (water) from freezing when calculating the TESPy pipe network model.
+The freezing of circulation fluid will actually lead to unexpected results in the TESPy solver (causing an enthalpy calculation error by the CoolProp library).
+Therefore all simulated temperature values are subtracted by 30 $^\circ$C before they are plotted and illustrated in the figures here.
 The detailed input parameters can be found in the 3bhes\_1U.prj file, they are also listed in the following table.
 
 | Parameter                              | Symbol             |  Value              | Unit                        |
@@ -52,7 +56,6 @@ The detailed input parameters can be found in the 3bhes\_1U.prj file, they are a
 | Circulating fluid density              | $\rho_{f}$         | $992.92$            | $\mathrm{Kg m^{-3}}$        |
 | Circulating fluid thermal conductivity | $\lambda_{f}$      | $0.62863$           | $\mathrm{W m^{-1} K^{-1}}$  |
 | Circulating fluid heat capacity        | $(\rho c)_{f}$     | $4.16\times10^{6}$  | $\mathrm{J m^{-3}K^{-1}}$   |
-| Circulating fluid flow rate            | $\mathbf{u}$       | $0.0002$            | $\mathrm{m^{3} s^{-1}}$     |
 | Length of the BHE U-pipe in network    | $l$                | $100$               | $\mathrm{m}$                |
 | Roughness coefficient of the pipe      | $k_s$              | $0.00001$           | $\mathrm{m}$                |
 
@@ -62,18 +65,20 @@ Here, the TESPy software developed by Francesco Witte is employed to simulate th
 Interested readers may refer to the online documentation of TESPy for the detailed introduction of the software.
 The TESPy version 0.3.2 is used in this benchmark.
 
-Two different pipe network setup were constructed for this benchmakr.
+Two different pipe network setup were constructed for this benchmark.
 
 *   A one-way pipe network (see Figure 1a)
 
-In this setup, the refrigerant flow rate in the network is pre-defined by the user.
+In this setup, the refrigerant mass flow rate is given in $kg/s$, as this is the default setting in the TESPy model (see ./pre/3bhes.py).
 After being lifted by the pump, the refrigerant inflow will be divided into 3 branches by the splitter and then flow into each BHEs.
 Because of this configuration, the inflow temperature on each BHE will be the same.
 The refrigerant flowing out of the BHEs array will be firstly mixed at the merging point and then extracted for the heat extraction through the heat pump.
 After that, the refrigerant will flow out from the network.
-For the boundary condition, a constant thermal load of 3750 $W$ is imposed on the heat pump for the entire simulation period. which means an average specific heat extraction rate on each BHE with 25 $W/m$.
-The fluid enthalpy value at the splitter point is set to be equal to the sink point enthalpy, that means all the consumed heat on the heat pump is supplied by the BHEs array.
-The total simulation time is 6 months.
+For the boundary condition, a constant thermal load of 3750 $W$ is imposed on the heat pump over the entire simulation period.
+In this case, the fluid enthalpy value at the splitter point is set to be equal to the sink point enthalpy, that means all the consumed heat on the heat pump is supplied by the BHEs array.
+During the calculation of the TESPy solver, the flow density and the related specific heat capacity in the pipe network are automatically adjusted by calling the CoolProp library.
+To check their concrete value under specific temperature and pressure conditions, interested readers may refer to e.g. the 'PropsSI' function introduced in the webpage of CoolProp.
+For the fast execution of this benchmark, the total simulation time is shorten to 600 seconds. If the reader wishes to reproduce the same results, a full simulation of 6 months needs to be performed.
 
 {{< img src="../3D_3BHEs_array_figures/BHE_network.png" width="200">}}
 
@@ -95,9 +100,11 @@ Figure 1b: Closed-loop pipeline network model
 The evolution of the soil temperature at 1 m distance away from the 3 BHEs are shown in Figure 2.
 Compared with the BHE \#1 and BHE \#3, the soil temperature near the BHE located at the centre (BHE \#2) shows a deeper draw-down.
 It indicates that a thermal imbalance is occurring in the center of the BHE array.
-This imbalance leads to a lower outflow temperature from the BHE \#2, which is shown in Figure 3. Figure 4 depicts the evolution of the heat extraction rate of each BHE over the time.
+This imbalance leads to a lower outflow temperature from the BHE \#2, which is shown in Figure 3.
+Figure 4 depicts the evolution of the heat extraction rate of each BHE over the time.
 Compared to the decrease of the heat extraction rate on the centre BHE \#2, the rates on the other two BHEs located at the out sides was gradually increasing.
 It indicates that the heat extraction rate is shifting from the centre BHE towards the outer BHEs over the heating season.
+In this figure, the difference between the total heat extraction rate of all BHEs and the preset 3750 $W$ imposed on the heat pump is due to the hydraulic loss within each pipe in the pipe network.
 
 In comparison to the one-way setup, the closed-loop network shows a slightly different behaviour.
 The evolution of inflow refrigerant temperature and flow rate entering the BHE array is shown in Figure 5.
@@ -132,3 +139,5 @@ Figure 6: Evolution of the heat extraction rate of each BHE with close loop netw
 [1] Diersch, H. J., Bauer, D., Heidemann, W., Rühaak, W., & Schätzl, P. (2011). Finite element modeling of borehole heat exchanger systems: Part 1. Fundamentals. Computers & Geosciences, 37(8), 1122-1135.
 
 [2] Francesco Witte, Ilja Tuschy, TESPy: Thermal Engineering Systems in Python, 2019. URL: <https://doi.org/10.21105/joss.02178>. doi:10.21105/joss.02178.
+
+[3] Webpage of the High-Level Interface in CoolProp. URL: <http://www.coolprop.org/coolprop/HighLevelAPI.html>.
