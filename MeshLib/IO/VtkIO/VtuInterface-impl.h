@@ -24,13 +24,20 @@
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "VtuInterface.h"
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
+class vtkXMLPUnstructuredGridWriter;
+
 namespace MeshLib
 {
 namespace IO
 {
 template <typename UnstructuredGridWriter>
 bool VtuInterface::writeVTU(std::string const& file_name,
-                            const int num_partitions, const int rank)
+                            [[maybe_unused]] const int num_partitions,
+                            [[maybe_unused]] const int rank)
 {
     if (!_mesh)
     {
@@ -71,16 +78,15 @@ bool VtuInterface::writeVTU(std::string const& file_name,
     }
 
     vtuWriter->SetFileName(file_name.c_str());
-#ifdef USE_PETSC
-    vtuWriter->SetGhostLevel(1);
-    vtuWriter->SetNumberOfPieces(num_partitions);
-    vtuWriter->SetStartPiece(rank);
-    vtuWriter->SetEndPiece(rank);
-#else
-    // avoid unused parameter warnings.
-    (void)num_partitions;
-    (void)rank;
-#endif
+
+    if constexpr (std::is_same_v<UnstructuredGridWriter,
+                                 vtkXMLPUnstructuredGridWriter>)
+    {
+        vtuWriter->SetGhostLevel(1);
+        vtuWriter->SetNumberOfPieces(num_partitions);
+        vtuWriter->SetStartPiece(rank);
+        vtuWriter->SetEndPiece(rank);
+    }
 
 #ifdef VTK_USE_64BIT_IDS
     vtuWriter->SetHeaderTypeToUInt64();

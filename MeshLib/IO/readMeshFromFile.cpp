@@ -68,27 +68,28 @@ namespace IO
 MeshLib::Mesh* readMeshFromFile(const std::string& file_name)
 {
 #ifdef USE_PETSC
-    int world_size;
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-    if (world_size > 1)
+    int mpi_init;
+    MPI_Initialized(&mpi_init);
+    if (mpi_init == 1)
     {
-        MeshLib::IO::NodePartitionedMeshReader read_pmesh(MPI_COMM_WORLD);
-        const std::string file_name_base =
-            BaseLib::dropFileExtension(file_name);
-        return read_pmesh.read(file_name_base);
+        int world_size;
+        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+        if (world_size > 1)
+        {
+            MeshLib::IO::NodePartitionedMeshReader read_pmesh(MPI_COMM_WORLD);
+            const std::string file_name_base =
+                BaseLib::dropFileExtension(file_name);
+            return read_pmesh.read(file_name_base);
+        }
+        if (world_size == 1)
+        {
+            std::unique_ptr<Mesh> mesh{readMeshFromFileSerial(file_name)};
+            return new MeshLib::NodePartitionedMesh(*mesh);
+        }
+        return nullptr;
     }
-    else if (world_size == 1)
-    {
-        MeshLib::Mesh* mesh = readMeshFromFileSerial(file_name);
-        MeshLib::NodePartitionedMesh* part_mesh =
-            new MeshLib::NodePartitionedMesh(*mesh);
-        delete mesh;
-        return part_mesh;
-    }
-    return nullptr;
-#else
-    return readMeshFromFileSerial(file_name);
 #endif
+    return readMeshFromFileSerial(file_name);
 }
 
 }  // end namespace IO
