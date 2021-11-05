@@ -134,7 +134,7 @@ public:
      * be removed and the length of the polyline will be changed.
      * @param pos a valid position within the polyline
      */
-    virtual void removePoint(std::size_t pos);
+    void removePoint(std::size_t pos);
 
     /**
      * Closes a polyline by adding a line segment that connects start- and end-point.

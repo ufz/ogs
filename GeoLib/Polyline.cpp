@@ -33,7 +33,10 @@ Polyline::Polyline(const Polyline& ply)
 
 bool Polyline::addPoint(std::size_t pnt_id)
 {
-    assert(pnt_id < _ply_pnts.size());
+    if (pnt_id >= _ply_pnts.size())
+    {
+        return false;
+    }
     std::size_t const n_pnts(_ply_pnt_ids.size());
 
     // don't insert point if this would result in identical IDs for two adjacent
@@ -50,8 +53,14 @@ bool Polyline::addPoint(std::size_t pnt_id)
 
 bool Polyline::insertPoint(std::size_t pos, std::size_t pnt_id)
 {
-    assert(pnt_id < _ply_pnts.size());
-    assert(pos <= _ply_pnt_ids.size());
+    if (pnt_id >= _ply_pnts.size())
+    {
+        return false;
+    }
+    if (pos > _ply_pnt_ids.size())
+    {
+        return false;
+    }
 
     if (pos == _ply_pnt_ids.size())
     {
