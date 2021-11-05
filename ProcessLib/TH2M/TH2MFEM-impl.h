@@ -597,8 +597,16 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #endif
             ;
 
-        ip_cv.dadvection_C_dp_GR =
-            c.drho_C_GR_dp_GR * k_over_mu_G + c.drho_C_LR_dp_GR * k_over_mu_L;
+        ip_cv.dadvection_C_dp_GR = c.drho_C_GR_dp_GR * k_over_mu_G
+                                   // + rhoCGR * (dk_over_mu_G_dp_GR = 0)
+                                   // + rhoCLR * (dk_over_mu_L_dp_GR = 0)
+                                   + c.drho_C_LR_dp_GR * k_over_mu_L;
+
+        ip_cv.dadvection_C_dp_cap =
+            //(drho_C_GR_dp_cap = 0) * k_over_mu_G
+            ip_data.rhoCGR * ip_cv.dk_over_mu_G_dp_cap +
+            (-c.drho_C_LR_dp_LR) * k_over_mu_L +
+            ip_data.rhoCLR * ip_cv.dk_over_mu_L_dp_cap;
 
         ip_cv.dfC_4_LCpG_dT =
             c.drho_C_GR_dT * k_over_mu_G + c.drho_C_LR_dT * k_over_mu_L
@@ -654,7 +662,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    + c.drho_W_LR_dp_GR * k_over_mu_L
             // + rhoWLR * (dk_over_mu_L_dp_GR = 0)
             ;
-        ip_cv.dfW_4_LWpG_a_dp_cap = -c.drho_W_LR_dp_LR * k_over_mu_L;
+        ip_cv.dfW_4_LWpG_a_dp_cap = c.drho_W_GR_dp_cap * k_over_mu_G +
+                                    ip_data.rhoWGR * ip_cv.dk_over_mu_G_dp_cap +
+                                    -c.drho_W_LR_dp_LR * k_over_mu_L +
+                                    ip_data.rhoWLR * ip_cv.dk_over_mu_L_dp_cap;
+
         ip_cv.dfW_4_LWpG_a_dT =
             c.drho_W_GR_dT * k_over_mu_G
             //+ rhoWGR * (dk_over_mu_G_dT != 0 TODO for mu_G(T))
@@ -685,6 +697,23 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_cv.dfW_4_LWpC_d_dp_cap =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
         ip_cv.dfW_4_LWpC_d_dT =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+
+        ip_cv.dfC_4_LCpC_a_dp_GR = c.drho_C_LR_dp_GR * k_over_mu_L
+            //+ rhoCLR * (dk_over_mu_L_dp_GR = 0)
+            ;
+        ip_cv.dfC_4_LCpC_a_dp_cap = -c.drho_C_LR_dp_LR * k_over_mu_L +
+                                    ip_data.rhoCLR * ip_cv.dk_over_mu_L_dp_cap;
+        ip_cv.dfC_4_LCpC_a_dT = c.drho_W_LR_dT * k_over_mu_L
+            //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
+            ;
+
+        // TODO (naumov) for dxmW*/d* != 0
+        ip_cv.dfC_4_LCpC_d_dp_GR =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+        ip_cv.dfC_4_LCpC_d_dp_cap =
+            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+        ip_cv.dfC_4_LCpC_d_dT =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
     }
 
@@ -1453,6 +1482,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
              ) *
             gradpGR * Np * w;
 
+        // d (fC_4_LCpG * grad p_GR)/d p_cap
+        local_Jac.template block<C_size, W_size>(C_index, W_index).noalias() +=
+            gradNpT *
+            (ip_cv.dadvection_C_dp_cap
+             // + ip_cv.ddiffusion_C_p_dp_GR TODO (naumov)
+             ) *
+            gradpGR * Np * w;
+
         // d (fC_4_LCpG * grad p_GR)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
@@ -1471,6 +1508,32 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         LCpC.noalias() -=
             gradNpT * (advection_C_L + diffusion_C_L_p) * gradNp * w;
+
+        /* TODO (naumov) This part is not tested by any of the current ctests.
+        // d (fC_4_LCpC * grad p_cap)/d p_GR
+        local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
+            gradNpT *
+            (ip_cv.dfC_4_LCpC_a_dp_GR
+             // + ip_cv.dfC_4_LCpC_d_dp_GR TODO (naumov)
+             ) *
+            gradpCap * Np * w;
+        // d (fC_4_LCpC * grad p_cap)/d p_cap
+        local_Jac.template block<C_size, W_size>(C_index, W_index).noalias() +=
+            gradNpT *
+            (ip_cv.dfC_4_LCpC_a_dp_cap
+             // + ip_cv.dfC_4_LCpC_d_dp_cap TODO (naumov)
+             ) *
+            gradpCap * Np * w;
+
+        local_Jac
+            .template block<C_size, temperature_size>(C_index,
+                                                      temperature_index)
+            .noalias() += gradNpT *
+                          (ip_cv.dfC_4_LCpC_a_dT
+                           // + ip_cv.dfC_4_LCpC_d_dT TODO (naumov)
+                           ) *
+                          gradpCap * Np * w;
+        */
 
         LCT.noalias() += gradNpT * diffusion_C_T * gradNp * w;
 
@@ -1563,18 +1626,18 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         LWpG.noalias() += gradNpT * (advection_W + diffusion_W_p) * gradNp * w;
 
         // fW_4 LWpG' parts; LWpG = \int grad (a + d) grad
-        local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() -=
+        local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() +=
             gradNpT * (ip_cv.dfW_4_LWpG_a_dp_GR + ip_cv.dfW_4_LWpG_d_dp_GR) *
             gradpGR * Np * w;
 
-        local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() -=
+        local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() +=
             gradNpT * (ip_cv.dfW_4_LWpG_a_dp_cap + ip_cv.dfW_4_LWpG_d_dp_cap) *
             gradpGR * Np * w;
 
         local_Jac
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
-            .noalias() -= gradNpT *
+            .noalias() += gradNpT *
                           (ip_cv.dfW_4_LWpG_a_dT + ip_cv.dfW_4_LWpG_d_dT) *
                           gradpGR * NT * w;
 
