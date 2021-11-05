@@ -22,6 +22,7 @@
 #include <memory>
 #include <sstream>
 
+#include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
@@ -375,6 +376,15 @@ void MeshIO::writeElements(
     out << ele_vector_size << "\n";
     for (std::size_t i(0); i < ele_vector_size; ++i)
     {
+        auto const& element = *ele_vec[i];
+        if (element.getNumberOfBaseNodes() != element.getNumberOfNodes())
+        {
+            OGS_FATAL(
+                "Found high order element in the mesh that is not required by "
+                "OGS 5 input. High order elements are generated in OGS 5 on "
+                "demand.");
+        }
+
         out << i << " ";
         if (!material_ids)
         {
@@ -384,11 +394,11 @@ void MeshIO::writeElements(
         {
             out << (*material_ids)[i] << " ";
         }
-        out << this->ElemType2StringOutput(ele_vec[i]->getGeomType()) << " ";
-        unsigned nElemNodes(ele_vec[i]->getNumberOfBaseNodes());
+        out << ElemType2StringOutput(element.getGeomType()) << " ";
+        unsigned nElemNodes(element.getNumberOfBaseNodes());
         for (std::size_t j = 0; j < nElemNodes; ++j)
         {
-            out << ele_vec[i]->getNode(j)->getID() << " ";
+            out << element.getNode(j)->getID() << " ";
         }
         out << "\n";
     }

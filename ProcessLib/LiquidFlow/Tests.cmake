@@ -590,3 +590,16 @@ AddTest(
     line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
     line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
 )
+
+AddTest(
+    NAME GMSH2OGS_quadratic_mesh_assembly_test
+    PATH Utils/GMSH2OGS
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS quadratic_mesh_assembly_test.prj
+    RUNTIME 1
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu pressure pressure 1e-8 1e-12
+)

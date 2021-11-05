@@ -759,3 +759,14 @@ MeshTest(
     REQUIREMENTS NOT (OGS_USE_MPI)
     DIFF_DATA quadratic_quadrilateral.vtu quadratic_quadrilateral.vtu 1.e-16
 )
+
+MeshTest(
+    NAME GMSH2OGS_quadratic_elements
+    PATH Utils/GMSH2OGS
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/GMSH2OGS
+    EXECUTABLE GMSH2OGS
+    EXECUTABLE_ARGS -i quadratic_mesh.msh
+                    -o ${Data_BINARY_DIR}/Utils/GMSH2OGS/quadratic_mesh.vtu
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    DIFF_DATA quadratic_mesh.vtu quadratic_mesh.vtu 1.e-16
+)
