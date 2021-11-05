@@ -64,17 +64,9 @@ void ThermoRichardsFlowProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    using nlohmann::json;
-
-    const int process_id = 0;
-    const int variable_id = 0;
     ProcessLib::createLocalAssemblers<ThermoRichardsFlowLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        getProcessVariables(process_id)[variable_id]
-            .get()
-            .getShapeFunctionOrder(),
-        _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
-        _process_data);
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,

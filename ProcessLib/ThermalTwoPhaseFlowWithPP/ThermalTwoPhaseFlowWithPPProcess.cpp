@@ -50,12 +50,8 @@ void ThermalTwoPhaseFlowWithPPProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    const int monolithic_process_id = 0;
-    ProcessLib::ProcessVariable const& pv =
-        getProcessVariables(monolithic_process_id)[0];
     ProcessLib::createLocalAssemblers<ThermalTwoPhaseFlowWithPPLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(

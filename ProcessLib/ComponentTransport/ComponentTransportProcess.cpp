@@ -84,8 +84,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
     }
 
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh.getDimension(), mesh.getElements(), dof_table,
-        pv.getShapeFunctionOrder(), _local_assemblers,
+        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data,
         transport_process_variables);
 

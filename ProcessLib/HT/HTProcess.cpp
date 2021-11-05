@@ -48,26 +48,19 @@ void HTProcess::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    // For the staggered scheme, both processes are assumed to use the same
-    // element order. Therefore the order of shape function can be fetched from
-    // any set of the sets of process variables of the coupled processes. Here,
-    // we take the one from the first process by setting process_id = 0.
-    const int process_id = 0;
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     if (_use_monolithic_scheme)
     {
         ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
-            pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order, _process_data);
+            _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
+            _process_data);
     }
     else
     {
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
             mesh.getDimension(), mesh.getElements(), dof_table,
-            pv.getShapeFunctionOrder(), _local_assemblers,
-            mesh.isAxiallySymmetric(), integration_order, _process_data);
+            _local_assemblers, mesh.isAxiallySymmetric(), integration_order,
+            _process_data);
     }
 
     _secondary_variables.addSecondaryVariable(

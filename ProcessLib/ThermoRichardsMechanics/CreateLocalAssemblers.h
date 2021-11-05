@@ -25,7 +25,6 @@ template <int GlobalDim,
           typename LocalAssemblerInterface, typename... ExtraCtorArgs>
 void createLocalAssemblers(
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    const unsigned shapefunction_order,
     std::vector<MeshLib::Element*> const& mesh_elements,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
@@ -40,7 +39,7 @@ void createLocalAssemblers(
     // Populate the vector of local assemblers.
     local_assemblers.resize(mesh_elements.size());
 
-    LocalDataInitializer initializer(dof_table, shapefunction_order);
+    LocalDataInitializer initializer(dof_table);
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
@@ -69,14 +68,13 @@ void createLocalAssemblers(
     const unsigned /*dimension*/,
     std::vector<MeshLib::Element*> const& mesh_elements,
     NumLib::LocalToGlobalIndexMap const& dof_table,
-    const unsigned shapefunction_order,
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
     DBUG("Create local assemblers.");
 
     detail::createLocalAssemblers<GlobalDim, LocalAssemblerImplementation>(
-        dof_table, shapefunction_order, mesh_elements, local_assemblers,
+        dof_table, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
 }  // namespace ProcessLib::ThermoRichardsMechanics

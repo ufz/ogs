@@ -137,18 +137,11 @@ class LocalDataInitializer final
 public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
-    LocalDataInitializer(NumLib::LocalToGlobalIndexMap const& dof_table,
-                         const unsigned shapefunction_order)
+    explicit LocalDataInitializer(
+        NumLib::LocalToGlobalIndexMap const& dof_table)
         : _dof_table(dof_table)
     {
-        if (shapefunction_order != 2)
-        {
-            OGS_FATAL(
-                "The given shape function order {:d} is not supported.\nOnly "
-                "shape functions of order 2 are supported.",
-                shapefunction_order);
-        }
-            // /// Quads and Hexahedra ///////////////////////////////////
+        // /// Quads and Hexahedra ///////////////////////////////////
 
 #if (OGS_ENABLED_ELEMENTS & ENABLED_ELEMENT_TYPE_QUAD) != 0 && \
     OGS_MAX_ELEMENT_DIM >= 2 && OGS_MAX_ELEMENT_ORDER >= 2
