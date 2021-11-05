@@ -1,7 +1,3 @@
-if(OGS_USE_MPI)
-    return()
-endif()
-
 if(OGS_BUILD_PROCESS_LIE)
     ogs_add_executable(postLIE postLIE.cpp)
     target_link_libraries(postLIE GitInfoLib LIECommon tclap)
