@@ -20,7 +20,6 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/MPI_IO/NodePartitionedMeshReader.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/NodePartitionedMesh.h"

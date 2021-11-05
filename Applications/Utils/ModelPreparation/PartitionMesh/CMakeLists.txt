@@ -10,8 +10,6 @@ if (OGS_USE_MPI)
         $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
     )
     install(TARGETS binaryToPVTU RUNTIME DESTINATION bin)
-
-    return()
 endif()
 
 CPMAddPackage(
