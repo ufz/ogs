@@ -54,13 +54,14 @@ std::unique_ptr<Process> createSteadyStateDiffusion(
 
     DBUG("Create SteadyStateDiffusion.");
 
-    // Process variable.
+    /// \section processvariablesssd Process Variables
 
     //! \ogs_file_param{prj__processes__process__STEADY_STATE_DIFFUSION__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
+    /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__STEADY_STATE_DIFFUSION__process_variables__process_variable}
@@ -80,6 +81,7 @@ std::unique_ptr<Process> createSteadyStateDiffusion(
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
+    /// \section parametersssd Process Parameters
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
     auto calculatesurfaceflux_config =
         //! \ogs_file_param{prj__processes__process__calculatesurfaceflux}

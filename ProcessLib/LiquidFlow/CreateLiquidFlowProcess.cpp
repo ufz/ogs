@@ -65,11 +65,12 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     DBUG("Create LiquidFlowProcess.");
 
-    // Process variable.
+    /// \section processvariableslf Process Variables
 
     //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__LIQUID_FLOW__process_variables__process_variable}
@@ -82,6 +83,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
+    /// \section parameterslf Process Parameters
     std::vector<double> const b =
         //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");

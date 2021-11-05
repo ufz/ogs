@@ -39,11 +39,12 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     config.checkConfigParameter("type", "SMALL_DEFORMATION");
     DBUG("Create SmallDeformationProcess.");
 
-    // Process variable.
+    /// \section processvariablessd Process Variables
 
     //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__SMALL_DEFORMATION__process_variables__process_variable}
@@ -66,6 +67,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         process_variables;
     process_variables.push_back(std::move(per_process_variables));
 
+    /// \section parameterssd Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);

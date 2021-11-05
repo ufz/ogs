@@ -52,13 +52,14 @@ std::unique_ptr<Process> createHeatConductionProcess(
 
     DBUG("Create HeatConductionProcess.");
 
-    // Process variable.
+    /// \section processvariablesheatconduction Process Variables
 
     //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
+    /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__HEAT_CONDUCTION__process_variables__process_variable}
@@ -72,6 +73,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
     checkMPLProperties(mesh, *media_map);
     DBUG("Media properties verified.");
 
+    /// \section parametersheatconduction Process Parameters
     auto const mass_lumping =
         //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);

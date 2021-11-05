@@ -44,7 +44,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
         "Solve the coupling with the staggered scheme,"
         "which is the only option for TM-Phasefield in the current code");
 
-    // Process variable.
+    /// \section processvariablestmpf Process Variables
 
     //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -54,6 +54,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     int mechanics_related_process_id = 1;
     int phase_field_process_id = 2;
 
+    /// Primary process variables as they appear in the global component vector:
     auto process_variable_T = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__process_variables__temperature}
@@ -112,6 +113,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
             variable_T->getNumberOfGlobalComponents());
     }
 
+    /// \section parameterstmpf Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);

@@ -75,7 +75,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
-    // Process variable.
+    /// \section processvariablesrm Process Variables
 
     //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
@@ -86,6 +86,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         process_variables;
     if (use_monolithic_scheme)  // monolithic scheme.
     {
+        /// Primary process variables as they appear in the global component vector:
         auto per_process_variables = findProcessVariables(
             variables, pv_config,
             {//! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__process_variables__pressure}
@@ -137,6 +138,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, config);
 
+    /// \section parametersrm Process Parameters
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
