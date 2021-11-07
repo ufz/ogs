@@ -6,7 +6,6 @@ AddTest(
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m Ammer-Homogen100m-Final-TopSurface.vtu -i Ammer-Rivers.gml -a -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/Ammer-Rivers-Mapped.gml
     TESTER diff
-    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Ammer-Rivers-Mapped.gml
 )
 
@@ -16,7 +15,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Bode
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m BodeComplex.msh -i BodeEZG_Fliessgewaesser.gml -a -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Bode/BodeEZG_Fliessgewaesser-Mapped.gml
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER gmldiff
     DIFF_DATA BodeEZG_Fliessgewaesser-Mapped.gml 1e-10 1e-10
 )
@@ -27,7 +25,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Naegelstedt
     EXECUTABLE MapGeometryToMeshSurface
     EXECUTABLE_ARGS -m SmallTest.vtu -i RiverNetwork.gml -a -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/RiverNetwork-Mapped.gml
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA RiverNetwork-Mapped.gml
 )
@@ -38,7 +35,7 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing
     EXECUTABLE postLIE
     EXECUTABLE_ARGS -i single_joint.pvd -o ${Data_BINARY_DIR}/LIE/PostProcessing/post_single_joint.pvd
-    REQUIREMENTS NOT OGS_USE_MPI AND OGS_BUILD_PROCESS_LIE
+    REQUIREMENTS OGS_BUILD_PROCESS_LIE
     TESTER vtkdiff
     DIFF_DATA
     expected_post_single_joint_ts_1_t_1.000000.vtu post_single_joint_ts_1_t_1.000000.vtu u u 1e-14 1e-14
@@ -50,7 +47,7 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing
     EXECUTABLE postLIE
     EXECUTABLE_ARGS -i single_joint_3D.pvd -o ${Data_BINARY_DIR}/LIE/PostProcessing/post_single_joint_3D.pvd
-    REQUIREMENTS NOT OGS_USE_MPI AND OGS_BUILD_PROCESS_LIE
+    REQUIREMENTS OGS_BUILD_PROCESS_LIE
     TESTER vtkdiff
     DIFF_DATA
     post_single_joint_3D_ts_1_t_1.000000.vtu post_single_joint_3D_ts_1_t_1.000000.vtu u u 1e-14 1e-14
@@ -62,7 +59,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
     EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/new_ -- 2D_mesh_top_boundary.vtu 2D_mesh_bottom_boundary.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     2D_mesh_top.vtu new_2D_mesh_top_boundary.vtu bulk_node_ids bulk_node_ids 0 0
@@ -77,7 +73,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
     EXECUTABLE_ARGS -m 2D_mesh.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/check_ -- 2D_mesh_top.vtu 2D_mesh_bottom.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     2D_mesh_top.vtu check_2D_mesh_top.vtu bulk_node_ids bulk_node_ids 0 0
@@ -92,7 +87,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
     EXECUTABLE_ARGS -m river_domain_triangle.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/triangle_ -- river_bc.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     river_bc_triangle.vtu triangle_river_bc.vtu bulk_node_ids bulk_node_ids 0 0
@@ -106,7 +100,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/IdentifySubdomains
     EXECUTABLE identifySubdomains
     EXECUTABLE_ARGS -s 1e-3 -m river_domain_prism.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/IdentifySubdomains/prism_ -- river_bc.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     river_bc_prism.vtu prism_river_bc.vtu bulk_node_ids bulk_node_ids 0 0
@@ -121,7 +114,6 @@ AddTest(
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -i 2Dmesh.vtu --ogs2metis
                     -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
-    REQUIREMENTS NOT (OGS_USE_MPI)
 )
 
 AddTest(
@@ -139,7 +131,7 @@ AddTest(
                     2Dmesh_POINT5.vtu
     # Mac is producing slightly different partitioning, so the results are not
     # comparable.
-    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+    REQUIREMENTS NOT APPLE
     DEPENDS partmesh-partmesh_2Dmesh_ogs2metis
     TESTER diff
     DIFF_DATA 2Dmesh_partitioned_node_properties_val3.bin
@@ -208,7 +200,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad8
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -i quad_q.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad8
-    REQUIREMENTS NOT (OGS_USE_MPI)
 )
 
 AddTest(
@@ -217,7 +208,7 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad8
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -m  -n 2 -i quad_q.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad8
-    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+    REQUIREMENTS NOT APPLE
     DEPENDS partmesh-partmesh_mesh_for_QuadraticElements_quad8_ogs2metis
     TESTER diff
     DIFF_DATA quad_q_partitioned_msh_ele2.bin
@@ -234,7 +225,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad9
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -i quad_9node.vtu --ogs2metis -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad9
-    REQUIREMENTS NOT (OGS_USE_MPI)
 )
 
 AddTest(
@@ -243,7 +233,7 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/QuadraticElements/Quad9
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -m -n 2 -i quad_9node.vtu -o ${Data_BINARY_DIR}/NodePartitionedMesh/QuadraticElements/Quad9
-    REQUIREMENTS NOT (OGS_USE_MPI OR APPLE)
+    REQUIREMENTS NOT APPLE
     DEPENDS partmesh-partmesh_mesh_for_QuadraticElements_quad9_ogs2metis
     TESTER diff
     DIFF_DATA  quad_9node_partitioned_msh_ele2.bin
@@ -263,7 +253,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/HydroMechanics
     EXECUTABLE checkMesh
     EXECUTABLE_ARGS -p -v TaskB_mesh.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
 )
 
 AddTest(
@@ -272,7 +261,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE Mesh2Raster
     EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-raster.asc -c 25
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA 00-raster.asc
 )
@@ -283,7 +271,6 @@ MeshTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Left.vtu -x 1 -y 0 -z 0 -a 25
-    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Left.vtu Left.vtu 1e-16
 )
 
@@ -293,7 +280,6 @@ MeshTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Right.vtu -x -1 -y 0 -z 0 -a 25
-    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Right.vtu Right.vtu 1e-16
 )
 
@@ -303,7 +289,6 @@ MeshTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Front.vtu -x 0 -y 1 -z 0 -a 25
-    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Front.vtu Front.vtu 1e-16
 )
 
@@ -313,7 +298,6 @@ MeshTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE ExtractSurface
     EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3_layers_10.vtu -o ${Data_BINARY_DIR}/MeshLib/Back.vtu -x 0 -y -1 -z 0 -a 25
-    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Back.vtu Back.vtu 1e-16
 )
 
@@ -323,7 +307,6 @@ MeshTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE GocadTSurfaceReader
     EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
-    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu 1e-16
 )
 
@@ -334,7 +317,6 @@ AddTest(
     EXECUTABLE GocadTSurfaceReader
     EXECUTABLE_ARGS -i Top-Lower-Shaly.ts -o ${Data_BINARY_DIR}/MeshLib -b
     DEPENDS GocadTSurfaceReader-GocadTSurface_Mesh_Test-vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     Top-Lower-Shaly.vtu Top-Lower-Shaly.vtu Reshape_Thickness Reshape_Thickness 1e-16 0
@@ -347,7 +329,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
     EXECUTABLE createIntermediateRasters
     EXECUTABLE_ARGS --file1 layer04.asc --file2 layer17.asc -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/output.asc
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA output0.asc
 )
@@ -358,13 +339,12 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
     EXECUTABLE Vtu2Grid
     EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerGridOutput.vtu -x 200 -y 200 -z 20
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     AmmerSubsurfaceGrid.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
 )
 
-if(SNAKEMAKE AND NOT OGS_USE_MPI AND TEE_TOOL_PATH)
+if(SNAKEMAKE AND TEE_TOOL_PATH)
     add_test(NAME snakemake_ExtractBoundary
         COMMAND ${SNAKEMAKE} -j 1
             --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
@@ -389,7 +369,6 @@ AddTest(
     EXECUTABLE partmesh
     EXECUTABLE_ARGS -n 2 -i cube_1x1x1_hex_8.vtu -x cube_1x1x1_hex_8 -o ${Data_BINARY_DIR}/NodePartitionedMesh/partmesh
     TESTER diff
-    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
         cube_1x1x1_hex_8_partitioned_cell_properties_cfg2.bin
         cube_1x1x1_hex_8_partitioned_cell_properties_val2.bin
@@ -408,7 +387,6 @@ if(OGS_USE_NETCDF)
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
         EXECUTABLE NetCdfConverter
         EXECUTABLE_ARGS -i sresa1b_ncar_ccsm3-example.nc -o ${Data_BINARY_DIR}/FileConverter/sresa1b_ncar_ccsm3-example.vtu -v pr -t 0 --dim1 2 --dim2 1 --timestep-first 0 --timestep-last 0 -e tri
-        REQUIREMENTS NOT OGS_USE_MPI
         TESTER vtkdiff
         DIFF_DATA
         sresa1b_ncar_ccsm3-example.vtu sresa1b_ncar_ccsm3-example.vtu pr pr 1e-16 0
@@ -420,7 +398,6 @@ if(OGS_USE_NETCDF)
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
         EXECUTABLE NetCdfConverter
         EXECUTABLE_ARGS -i slim_100897_198.nc -o ${Data_BINARY_DIR}/FileConverter/slim_100897_198.vtu -v NO -t 0 --dim1 3 --dim2 2 --dim3 1 --timestep-first 0 --timestep-last 0 -e hex
-        REQUIREMENTS NOT OGS_USE_MPI
         TESTER vtkdiff
         DIFF_DATA
         slim_100897_198.vtu slim_100897_198.vtu NO NO 1e-16 0
@@ -432,7 +409,6 @@ if(OGS_USE_NETCDF)
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
         EXECUTABLE NetCdfConverter
         EXECUTABLE_ARGS -i sresa1b_ncar_ccsm3-example.nc -o ${Data_BINARY_DIR}/FileConverter/sresa1b_ncar_ccsm3-example.asc -v pr -t 0 --dim1 2 --dim2 1 --timestep-first 0 --timestep-last 0 --images
-        REQUIREMENTS NOT OGS_USE_MPI
         TESTER diff
         DIFF_DATA sresa1b_ncar_ccsm3-example0.asc
     )
@@ -445,7 +421,6 @@ if(OGS_BUILD_GUI)
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
         EXECUTABLE RemoveGhostData
         EXECUTABLE_ARGS -i Mesh3D.pvtu -o ${Data_BINARY_DIR}/MeshLib/RemoveGhostDataOutput.vtu
-        REQUIREMENTS NOT OGS_USE_MPI
         TESTER vtkdiff
         DIFF_DATA
         RemoveGhostDataOutput.vtu RemoveGhostDataOutput.vtu slice slice 0 0
@@ -457,7 +432,6 @@ if(OGS_BUILD_GUI)
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/EllipticPETSc
         EXECUTABLE RemoveGhostData
         EXECUTABLE_ARGS -i square_1e1_neumann_ts_1_t_1_000000.pvtu -o ${Data_BINARY_DIR}/EllipticPETSc/square_1e1_neumann_ts_1_t_1_000000.vtu
-        REQUIREMENTS NOT OGS_USE_MPI
         TESTER diff
         DIFF_DATA
         square_1e1_neumann_ts_1_t_1_000000.vtu
@@ -470,7 +444,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
     EXECUTABLE Raster2Mesh
     EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-elevation.vtu -e tri -p elevation
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA RainEvent30-elevation.vtu
 )
@@ -481,7 +454,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
     EXECUTABLE Raster2Mesh
     EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-materials.vtu -e quad -p materials
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     RainEvent30-materials.vtu RainEvent30-materials.vtu MaterialIDs MaterialIDs 0 0
@@ -493,7 +465,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileConverter
     EXECUTABLE Raster2Mesh
     EXECUTABLE_ARGS -i RainEvent30.asc -o ${Data_BINARY_DIR}/FileConverter/RainEvent30-scalars.vtu -e tri -p scalar -n ScalarValues
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     RainEvent30-scalars.vtu RainEvent30-scalars.vtu ScalarValues ScalarValues 0 0
@@ -505,7 +476,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
     EXECUTABLE AssignRasterDataToMesh
     EXECUTABLE_ARGS -i Ammer-Homogen100m-Final-TopSurface.vtu -r AmmerGWN.asc -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerGWN.vtu -s GWN -c -n
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     AmmerGWN.vtu AmmerGWN.vtu GWN GWN 0 0
@@ -518,7 +488,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
     EXECUTABLE AssignRasterDataToMesh
     EXECUTABLE_ARGS -i AmmerRivers.vtu -r AmmerGWN.asc -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerRiversGWN.vtu -s GWN -c -n
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     AmmerRiversGWN.vtu AmmerRiversGWN.vtu GWN GWN 0 0
@@ -531,7 +500,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Naegelstedt
     EXECUTABLE ExtractMaterials
     EXECUTABLE_ARGS -i SmallTest.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Naegelstedt/SmallTest.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA SmallTest_Layer1.vtu
               SmallTest_Layer2.vtu
@@ -546,13 +514,12 @@ if(TARGET VerticalSliceFromLayers AND GMSH)
         WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Ammer
         EXECUTABLE VerticalSliceFromLayers
         EXECUTABLE_ARGS -i AmmerLayers.txt -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerSlice --start-x 3491000 --start-y 5380000 --end-x 3495000 --end-y 5385000 -r 200
-        REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA AmmerSlice.vtu AmmerSlice.vtu 1e-16
     )
 
 endif()
 
-if(TARGET GMSH2OGS AND SNAKEMAKE AND NOT OGS_USE_MPI AND TEE_TOOL_PATH)
+if(TARGET GMSH2OGS AND SNAKEMAKE AND TEE_TOOL_PATH)
     add_test(NAME snakemake_GMSH2OGS_ExtractBoundary
         COMMAND ${SNAKEMAKE} --cores all
         --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
@@ -570,7 +537,6 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE AddElementQuality
         EXECUTABLE_ARGS -i AmmerGWN.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Ammer/AmmerGWNWithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
         AmmerGWNWithElementQuality.vtu AmmerGWNWithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
     )
@@ -584,7 +550,6 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE AddElementQuality
         EXECUTABLE_ARGS -i 00-surface.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/Hamburg/00-surface-WithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
         00-surface-WithElementQuality.vtu 00-surface-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
     )
@@ -598,7 +563,6 @@ foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDiffer
         EXECUTABLE AddElementQuality
         EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu -c ${criterion}
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
         DIFF_DATA
         AmmerSubsurfaceCoarse-WithElementQuality.vtu AmmerSubsurfaceCoarse-WithElementQuality_${criterion}.vtu ${criterion} ${criterion} 1e-8 1e-11
     )
@@ -610,7 +574,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib
     EXECUTABLE IntegrateBoreholesIntoMesh
     EXECUTABLE_ARGS -i PrismCube10x10x10.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/PrismBHE_mat.vtu -g testpoints.gml --min-id 4 --max-id 8
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA
     PrismBHE_mat.vtu
@@ -622,7 +585,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib
     EXECUTABLE IntegrateBoreholesIntoMesh
     EXECUTABLE_ARGS -i PrismCube10x10x10.vtu -o ${Data_BINARY_DIR}/MeshGeoToolsLib/PrismBHE_elev.vtu -g testpoints.gml --min-id 4 --max-id 8 --min-elevation 4.5 --max-elevation 10
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     DIFF_DATA
     PrismBHE_elev.vtu
@@ -634,7 +596,6 @@ MeshTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE reviseMesh
     EXECUTABLE_ARGS -i basin_mesh.vtu -o ${Data_BINARY_DIR}/MeshLib/basin_mesh_fixed.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA basin_mesh_fixed.vtu basin_mesh_fixed.vtu 1e-16
 )
 
@@ -644,7 +605,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
     EXECUTABLE reviseMesh
     EXECUTABLE_ARGS -i basin_mesh.vtu -o ${Data_BINARY_DIR}/MeshLib/basin_mesh_fixed.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     basin_mesh_fixed.vtu basin_mesh_fixed.vtu head head 0 0
@@ -677,7 +637,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/geometryToGmshGeo
     EXECUTABLE geometryToGmshGeo
     EXECUTABLE_ARGS -i square_1x1.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1_adaptive.geo
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     TESTER_ARGS --ignore-matching-lines=OpenGeoSys
     DIFF_DATA
@@ -690,7 +649,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/geometryToGmshGeo
     EXECUTABLE geometryToGmshGeo
     EXECUTABLE_ARGS -i square_1x1.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1_homogeneous.geo --homogeneous -a 0.01
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER diff
     TESTER_ARGS --ignore-matching-lines=OpenGeoSys
     DIFF_DATA
@@ -703,16 +661,13 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/geometryToGmshGeo
     EXECUTABLE geometryToGmshGeo
     EXECUTABLE_ARGS -i square_1x1.gml -i line_intersecting_square.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1_with_intersecting_line.geo
-    REQUIREMENTS NOT OGS_USE_MPI
 )
-if (NOT OGS_USE_MPI)
-    set_tests_properties(
-        geometryToGmshGeo-LineIntersectingDomainBoundary
-        PROPERTIES
-            PASS_REGULAR_EXPRESSION
-            "ogs.*;ogs.*error.*\n\tpoint with id 5 and coordinates (1.001000000001, 0.6, 0) is outside of the polygon."
-    )
-endif()
+set_tests_properties(
+    geometryToGmshGeo-LineIntersectingDomainBoundary
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION
+        "ogs.*;ogs.*error.*\n\tpoint with id 5 and coordinates (1.001000000001, 0.6, 0) is outside of the polygon."
+)
 
 AddTest(
     NAME ResetPropertiesInPolygonalRegion_AllElementNodesInPolygon
@@ -720,7 +675,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion
     EXECUTABLE ResetPropertiesInPolygonalRegion
     EXECUTABLE_ARGS -m Cube.vtu -n ValidCells -i 1 -g Polylines.gml -p Back -o ${Data_BINARY_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion/Cube-BackPolylinePropertyChange_all_element_nodes_inside.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     Cube-BackPolylinePropertyChange_all_element_nodes_inside.vtu Cube-BackPolylinePropertyChange_all_element_nodes_inside.vtu ValidCells ValidCells 0 0
@@ -732,7 +686,6 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion
     EXECUTABLE ResetPropertiesInPolygonalRegion
     EXECUTABLE_ARGS -m Cube.vtu -n ValidCells -i 1 -g Polylines.gml -p Back --any_of -o ${Data_BINARY_DIR}/MeshGeoToolsLib/ResetPropertiesInPolygonalRegion/Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu
-    REQUIREMENTS NOT OGS_USE_MPI
     TESTER vtkdiff
     DIFF_DATA
     Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu ValidCells ValidCells 0 0
@@ -745,7 +698,6 @@ MeshTest(
     EXECUTABLE GMSH2OGS
     EXECUTABLE_ARGS -i linear_mesh.msh
                     -o ${Data_BINARY_DIR}/Utils/GMSH2OGS/linear_mesh.vtu
-    REQUIREMENTS NOT (OGS_USE_MPI)
     DIFF_DATA linear_mesh.vtu linear_mesh.vtu 1.e-16
 )
 
@@ -756,7 +708,6 @@ MeshTest(
     EXECUTABLE GMSH2OGS
     EXECUTABLE_ARGS -i quadratic_quadrilateral.msh
                     -o ${Data_BINARY_DIR}/Utils/GMSH2OGS/quadratic_quadrilateral.vtu
-    REQUIREMENTS NOT (OGS_USE_MPI)
     DIFF_DATA quadratic_quadrilateral.vtu quadratic_quadrilateral.vtu 1.e-16
 )
 

@@ -138,17 +138,21 @@ std::string getVtuFileNameForPetscOutputWithoutExtension(
 bool VtuInterface::writeToFile(std::filesystem::path const& file_path)
 {
 #ifdef USE_PETSC
-    auto const vtu_file_name =
-        getVtuFileNameForPetscOutputWithoutExtension(file_path.string());
-    int rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    int mpi_size;
-    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-    return writeVTU<vtkXMLPUnstructuredGridWriter>(vtu_file_name + ".pvtu",
-                                                   mpi_size, rank);
-#else
-    return writeVTU<vtkXMLUnstructuredGridWriter>(file_path.string());
+    int mpi_init;
+    MPI_Initialized(&mpi_init);
+    if (mpi_init == 1)
+    {
+        auto const vtu_file_name =
+            getVtuFileNameForPetscOutputWithoutExtension(file_path.string());
+        int rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        int mpi_size;
+        MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+        return writeVTU<vtkXMLPUnstructuredGridWriter>(vtu_file_name + ".pvtu",
+                                                       mpi_size, rank);
+    }
 #endif
+    return writeVTU<vtkXMLUnstructuredGridWriter>(file_path.string());
 }
 
 int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,

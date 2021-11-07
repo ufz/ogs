@@ -1,9 +1,5 @@
 add_subdirectory(PartitionMesh)
 
-if(OGS_USE_MPI)
-    return()
-endif()
-
 set(TOOLS ComputeNodeAreasFromSurfaceMesh convertVtkDataArrayToVtkDataArray
           createNeumannBc scaleProperty
 )
