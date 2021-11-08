@@ -36,7 +36,7 @@ chapters in the benchmark books.
 |3.16  |           {{< data-link "m3_3Dtopload" "Mechanics/Linear/Orthotropy/m3_3Dtopload.prj" >}}|
 |3.16 (rotated) |  {{< data-link "m3_3Dtoploadlc" "Mechanics/Linear/Orthotropy/m3_3Dtoploadlc.prj" >}}|
 
-Note that OGS uses plane strain assumptions in two dimensions (2D) as is common in geomechanics.
+Note that OGS uses plane strain assumptions in two dimensions (2D) as it is common in geomechanics.
 
 ## References
 
