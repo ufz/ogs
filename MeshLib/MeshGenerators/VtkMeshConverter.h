@@ -106,11 +106,11 @@ private:
     {
         // Keep for debugging purposes, since the vtk array type and the end
         // type T are not always the same.
-        INFO(
-            "Converting a vtk array '{:s}' with data type '{:s}' of "
-            "size {:d} to a type '{:s}' of size {:d}.",
-            array.GetName(), array.GetDataTypeAsString(),
-            array.GetDataTypeSize(), typeid(T).name(), sizeof(T));
+        // DBUG(
+        //    "Converting a vtk array '{:s}' with data type '{:s}' of "
+        //    "size {:d} to a type '{:s}' of size {:d}.",
+        //    array.GetName(), array.GetDataTypeAsString(),
+        //    array.GetDataTypeSize(), typeid(T).name(), sizeof(T));
 
         if (sizeof(T) != array.GetDataTypeSize())
         {
