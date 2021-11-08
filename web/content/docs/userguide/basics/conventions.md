@@ -59,7 +59,7 @@ OpenGeoSys assumes plane strain conditions as default for 2D simulations.
 
 OpenGeoSys uses internally a vector of primary vector components ("global component vector").
 Although, which set of components is used, varies from process to process, the order of primary variable components for most THM-based processes is: $T$, $p$, $u_{x}$, $u_{y}$, $u_{z}$.
-However, there are some exceptions and as there are also different primary variables for each process, you will find a list containing the process varaiables as they appear in the global component vector.
+However, there are some exceptions and as there are also different primary variables for each process, you will find a list containing the process variables as they appear in the global component vector.
 This order is used, e.g., to display the per component convergence of the non-linear solver in the output.
 
 * [ComponentTransport](https://doxygen.opengeosys.org/de/d0d/namespaceProcessLib_1_1ComponentTransport.html#processvariablescomponenttransport)
