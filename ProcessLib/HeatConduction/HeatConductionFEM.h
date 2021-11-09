@@ -256,16 +256,18 @@ public:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
-        vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-            medium
-                .property(
-                    MaterialPropertyLib::PropertyType::reference_temperature)
-                .template value<double>(vars, pos, t, dt);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
+            // get the local temperature and put it in the variable array for
+            // access in MPL
+            double T_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_x, sm.N, T_int_pt);
+            vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
+                T_int_pt;
+
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium
                     .property(
