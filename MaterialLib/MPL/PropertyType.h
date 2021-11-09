@@ -90,6 +90,9 @@ enum PropertyType : int
     thermal_conductivity,
     /// Thermal diffusion enhancement factor for water vapor flow
     thermal_diffusion_enhancement_factor,
+    /// The thermal expansivity corresponds to the linear thermal expansion
+    /// coefficient for a solid and to the volumetric thermal expansion
+    /// coefficient for a fluid
     thermal_expansivity,
     thermal_expansivity_contribution,
     thermal_longitudinal_dispersivity,
