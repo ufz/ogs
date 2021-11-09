@@ -119,11 +119,6 @@ public:
         auto const& medium =
             *_process_data.media_map->getMedium(_element.getID());
         MaterialPropertyLib::VariableArray vars;
-        // vars[static_cast<int>(MaterialPropertyLib::Variable::temperature)] =
-        //     medium
-        //         .property(
-        //             MaterialPropertyLib::PropertyType::reference_temperature)
-        //         .template value<double>(vars, pos, t, dt);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
