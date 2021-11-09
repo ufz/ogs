@@ -18,14 +18,17 @@ As of November 2021, there are four implemented processes in OGS6 that are able 
 | \# of phases | 2 | 2 | 2 | 2 |
 | \# of components | 2 | 2 | 2 | 2 |
 | Phase composition | Pure | Compositional (only liquid phase) | Compositional (only gas phase) | Flexible |
+| Primary Variables | $P_g, P_c$ | $P_g, \rho^h_{tot}$ | $P_g, P_c, T$ | $P_g, P_c, T, \sigma$ |
 | Temperature effect | Isothermal  | Isothermal | Non-isothermal | Non-isothermal |
 | Phase change | N.A. | Gas dissolution/degassing | Evaporation/condensation | Evaporation, etc. (WIP) |
 | Phase appearance/disappearance | N.A. | Yes, only gas phase | Yes, only liquid phase | ?? (TODO: Norbert) |
 
+Nomenclature: $P_g$: gas pressure; $P_c$: capillary pressure; $T$: temperature; $\sigma$: displacement; $\rho^h_{tot}$: total density of the light component.
+
 Some remarks:
 1. The `TwoPhaseFlowWithPP` process assumes that the two fluid phases are immiscible. Thus, it is most suitable for simulating two-phase flow under capillary effects (e.g. replacement of one phase by another due to gravity). Note that the wetting and non-wetting phases are not limited to water and gas, see the [McWhorter benchmark]({{< ref "../../benchmarks/two-phase-flow-pp-form/two-phase-flow-pp-mcwhorter.md" >}}) for example.
 
-2. The `TwoPhaseFlowWithPrho` process assumes that the main component of the gas phase can be dissolved in the liquid phase. Water evaporation is neglected here. The appearance/disappearance of the gas phase is controlled by the solubility (given by the Henry's Law) of the gaseous component, e.g. H2. It is therefore most suitable for nuclear waste (see the [MoMaS benchmark]({{< ref "../../benchmarks/two-phase-flow/momas.md" >}})) or CO2 storage problems.
+2. The `TwoPhaseFlowWithPrho` process assumes that the main component of the gas phase can be dissolved in the liquid phase. Water evaporation is neglected here. The appearance/disappearance of the gas phase is controlled by the solubility (given by the Henry's Law) of the gaseous component, e.g. H2. It is therefore most suitable for nuclear waste repository (see the [MoMaS benchmark]({{< ref "../../benchmarks/two-phase-flow/momas.md" >}})) or CO2 storage problems.
 
 3. The `ThermalTwoPhaseFlowWithPP` process simulates the temperature-dependent two-phase flow and moisture transport. Water evaporation and recondensation can be modeled thanks to that the gas phase is compositional. This process is most favorably used for shallow geothermal applications (e.g. borehole thermal energy storage), especially in unsaturated soils (see the [heat pipe benchmark]({{< ref "../../benchmarks/thermal-two-phase-flow/heat-pipe.md" >}})). 
 
