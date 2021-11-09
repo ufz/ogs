@@ -37,14 +37,14 @@ build jupyter:
       --tag $DOCKER_TAG_JUPYTER_PETSC
       $ON_MASTER_ARGS
     - cd $CI_PROJECT_DIR
-    # execute notebooks in container
+    # execute notebooks in (PETSc) container
     - >
       docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
-      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER
+      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
       bash -c "find Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 jupyter nbconvert --execute --inplace"
     - >
       docker run --rm -v $PWD:/home/jovyan/work --user `id -u $USER` --group-add users
-      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER
+      --workdir /home/jovyan/work $DOCKER_TAG_JUPYTER_PETSC
       bash -c "find Tests/Notebooks -type f -iname '*.ipynb' -not -path \"*.ipynb_checkpoints*\" | xargs -n1 nb2hugo --site-dir web --section docs/benchmarks/notebooks --template Tests/Notebooks/nbconvert_templates/collapsed.md.j2"
   artifacts:
     name: container
