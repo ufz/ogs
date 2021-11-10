@@ -32,6 +32,7 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
   - [scipy](https://docs.scipy.org/doc/scipy/reference/) — Scientific computing
   - [vtk](https://pypi.org/project/vtk/) — Visualization
   - [PyVista][pyvista] — Visualization
+  - [Snakemake](https://snakemake.github.io) — Workflow management
 - Jupyter-related tools:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
