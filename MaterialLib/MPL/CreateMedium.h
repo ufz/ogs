@@ -42,6 +42,7 @@ namespace MaterialPropertyLib
 /// Medium properties are optional. If not defined, default properties are
 /// assigned.
 std::unique_ptr<Medium> createMedium(
+    int const material_id,
     int const geometry_dimension,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
