@@ -1359,6 +1359,12 @@ public:
                         ->updatePorosityPostReaction(ip_data.chemical_system_id,
                                                      medium, ip_data.porosity);
                 }
+
+                (*_process_data.mesh_prop_porosity)[ele_id] =
+                    std::accumulate(_ip_data.begin(), _ip_data.end(), 0.,
+                                    [](double const s, auto const& ip)
+                                    { return s + ip.porosity; }) /
+                    n_integration_points;
             }
 
             std::vector<GlobalIndexType> chemical_system_indices;
