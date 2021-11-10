@@ -190,7 +190,7 @@ TEST_F(TetElementQuality, EquiAngleSkew)
     // tet 5 consist of nodes n3, n4, n5, n7
     auto const expected_value_tet5 = computeCriterionForTet(n3, n4, n5, n7);
 
-    auto constexpr eps = 11 * std::numeric_limits<double>::epsilon();
+    auto constexpr eps = 4e-15;
     for (std::size_t i = 0; i < element_quality_vector.size(); i = i + 6)
     {
         ASSERT_NEAR(expected_value_tet0, element_quality_vector[i], eps);
