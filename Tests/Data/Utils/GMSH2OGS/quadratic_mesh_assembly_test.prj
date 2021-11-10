@@ -6,7 +6,7 @@
         <process>
             <name>LiquidFlow</name>
             <type>LIQUID_FLOW</type>
-            <integration_order>10</integration_order>
+            <integration_order>3</integration_order>
             <process_variables>
                 <process_variable>pressure</process_variable>
             </process_variables>
@@ -140,19 +140,19 @@
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>tp3</geometry>
                     <type>Dirichlet</type>
-                    <parameter>p_bc_out</parameter>
+                    <parameter>p_bc_in</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>tp4</geometry>
                     <type>Dirichlet</type>
-                    <parameter>p_bc_out</parameter>
+                    <parameter>p_bc_in</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>tp5</geometry>
                     <type>Dirichlet</type>
-                    <parameter>p_bc_out</parameter>
+                    <parameter>p_bc_in</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
