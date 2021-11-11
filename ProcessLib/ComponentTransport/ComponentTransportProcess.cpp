@@ -59,6 +59,10 @@ void ComponentTransportProcess::initializeConcreteProcess(
         const_cast<MeshLib::Mesh&>(mesh), "velocity",
         MeshLib::MeshItemType::Cell, mesh.getDimension());
 
+    _process_data.mesh_prop_porosity = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
+        MeshLib::MeshItemType::Cell, 1);
+
     const int process_id = 0;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 

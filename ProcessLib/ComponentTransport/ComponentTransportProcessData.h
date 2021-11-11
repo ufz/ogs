@@ -78,6 +78,7 @@ struct ComponentTransportProcessData
     const int first_transport_process_id;
 
     MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_porosity = nullptr;
 };
 
 }  // namespace ComponentTransport
