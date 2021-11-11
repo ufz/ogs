@@ -15,10 +15,12 @@ weight = 5
 
 ## Jupyter Notebooks container environments
 
-You can use a pre-defined container environment which currently contains:
+You can use a pre-defined container environment.
+
+Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
 
 - The Jupyter Notebook / Lab application
-- The latest OpenGeoSys application (with MFront support) and tools
+- The latest OpenGeoSys application with MFront-support and tools
 - A set of Python packages:
   - [ogs6py](https://github.com/joergbuchwald/ogs6py) — OGS model manipulation
   - [VTUInterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
@@ -30,10 +32,16 @@ You can use a pre-defined container environment which currently contains:
   - [scipy](https://docs.scipy.org/doc/scipy/reference/) — Scientific computing
   - [vtk](https://pypi.org/project/vtk/) — Visualization
   - [PyVista][pyvista] — Visualization
+  - [Snakemake](https://snakemake.github.io) — Workflow management
 - Jupyter-related tools:
   - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
   - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
   - [nb2hugo](https://github.com/bilke/nb2hugo/tree/ogs) — Notebook to www.opengeosys.org markdown
+
+Image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` additionally contains:
+
+- PETSc-support
+
 ### Usage
 
 With [Docker]({{< ref "container.md#with-docker" >}}):
@@ -43,7 +51,7 @@ docker run --rm -p 8888:8888 -v $PWD:/home/jovyan/work --user `id -u $USER` \
     --group-add users registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter
 ```
 
-This mounts your current directory into `~/work` inside the container.
+This mounts your current directory into `~/work` inside the container. Use image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` for PETSc-support!
 
 
 <div class="note">
