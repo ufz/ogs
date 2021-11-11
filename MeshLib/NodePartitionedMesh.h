@@ -34,8 +34,8 @@ public:
     explicit NodePartitionedMesh(const Mesh& mesh)
         : Mesh(mesh),
           _global_node_ids(mesh.getNumberOfNodes()),
+          _n_global_base_nodes(mesh.getNumberOfBaseNodes()),
           _n_global_nodes(mesh.getNumberOfNodes()),
-          _n_active_base_nodes(mesh.getNumberOfBaseNodes()),
           _n_active_nodes(mesh.getNumberOfNodes()),
           _is_single_thread(true)
     {
@@ -56,25 +56,31 @@ public:
         \param elements      Vector for elements. Ghost elements are stored
                              after regular (non-ghost) elements.
         \param properties    Mesh property.
+        \param n_global_base_nodes Number of the base nodes of the global mesh.
         \param n_global_nodes      Number of all nodes of the global mesh.
-        \param n_active_base_nodes Number of the active base nodes.
         \param n_active_nodes      Number of all active nodes.
+        \param n_active_base_nodes_at_rank Numbers of the active base nodes of
+                                           all previous ranks.
+        \param n_active_high_order_nodes_at_rank Numbers of the active high
+                                                 order nodes of all previous
+                                                 ranks.
     */
-    NodePartitionedMesh(const std::string& name,
-                        const std::vector<Node*>& nodes,
-                        const std::vector<std::size_t>& glb_node_ids,
-                        const std::vector<Element*>& elements,
-                        Properties properties,
-                        const std::size_t n_global_nodes,
-                        const std::size_t n_active_base_nodes,
-                        const std::size_t n_active_nodes)
-        : Mesh(name, nodes, elements, properties),
-          _global_node_ids(glb_node_ids),
-          _n_global_nodes(n_global_nodes),
-          _n_active_base_nodes(n_active_base_nodes),
-          _n_active_nodes(n_active_nodes),
-          _is_single_thread(false)
+    NodePartitionedMesh(
+        const std::string& name,
+        const std::vector<Node*>& nodes,
+        const std::vector<std::size_t>& glb_node_ids,
+        const std::vector<Element*>& elements,
+        Properties properties,
+        const std::size_t n_global_base_nodes,
+        const std::size_t n_global_nodes,
+        const std::size_t n_active_nodes,
+        std::vector<std::size_t>&& n_active_base_nodes_at_rank,
+        std::vector<std::size_t>&& n_active_high_order_nodes_at_rank);
+
+    /// Get the number of nodes of the global mesh for linear elements.
+    std::size_t getNumberOfGlobalBaseNodes() const
     {
+        return _n_global_base_nodes;
     }
 
     /// Get the number of all nodes of the global mesh.
@@ -85,50 +91,31 @@ public:
         return _global_node_ids[node_id];
     }
 
-    /// Get the number of the active nodes of the partition for linear elements.
-    std::size_t getNumberOfActiveBaseNodes() const
-    {
-        return _n_active_base_nodes;
-    }
-
     /// Get the number of all active nodes of the partition.
     std::size_t getNumberOfActiveNodes() const { return _n_active_nodes; }
     /// Check whether a node with ID of node_id is a ghost node
-    bool isGhostNode(const std::size_t node_id) const
+    bool isGhostNode(const std::size_t node_id) const;
+
+    std::size_t getNumberOfActiveBaseNodesAtRank(int const partition_id) const
     {
-        if (node_id < _n_active_base_nodes)
-        {
-            return false;
-        }
-        if (!isBaseNode(*_nodes[node_id],
-                        getElementsConnectedToNode(node_id)) &&
-            node_id < getLargestActiveNodeID())
-        {
-            return false;
-        }
-        return true;
+        return _n_active_base_nodes_at_rank[partition_id];
     }
 
-    /// Get the largest ID of active nodes for higher order elements in a
-    /// partition.
-    std::size_t getLargestActiveNodeID() const
+    std::size_t getNumberOfActiveHighOrderNodesAtRank(
+        int const partition_id) const
     {
-        return getNumberOfBaseNodes() + _n_active_nodes - _n_active_base_nodes;
+        return _n_active_high_order_nodes_at_rank[partition_id];
     }
 
     // TODO I guess that is a simplified version of computeSparsityPattern()
     /// Get the maximum number of connected nodes to node.
-    std::size_t getMaximumNConnectedNodesToNode() const
+    std::size_t getMaximumNConnectedNodesToNode() const;
+
+    std::size_t getPartitionID(const std::size_t global_node_id) const;
+
+    int getNumberOfPartitions() const
     {
-        auto const& nodes_connections =
-            MeshLib::calculateNodesConnectedByElements(*this);
-        auto const max_connections = std::max_element(
-            nodes_connections.cbegin(), nodes_connections.cend(),
-            [](auto const& connections_node_a, auto const& connections_node_b) {
-                return (connections_node_a.size() < connections_node_b.size());
-            });
-        // Return the number of connected nodes +1 for the node itself.
-        return max_connections->size() + 1;
+        return _n_active_base_nodes_at_rank.size();
     }
 
     bool isForSingleThread() const { return _is_single_thread; }
@@ -137,14 +124,24 @@ private:
     /// Global IDs of nodes of a partition
     std::vector<std::size_t> _global_node_ids;
 
+    /// Number of the nodes of the global mesh linear interpolations.
+    std::size_t _n_global_base_nodes;
+
     /// Number of all nodes of the global mesh.
     std::size_t _n_global_nodes;
 
-    /// Number of the active nodes for linear interpolations
-    std::size_t _n_active_base_nodes;
-
     /// Number of the all active nodes.
     std::size_t _n_active_nodes;
+
+    /// Gathered numbers of the active nodes for linear interpolations of all
+    /// partitions.
+    std::vector<std::size_t> _n_active_base_nodes_at_rank;
+
+    /// Gathered numbers of the all active high order nodes of all partitions.
+    std::vector<std::size_t> _n_active_high_order_nodes_at_rank;
+
+    /// Gathered the end node id of each rank.
+    std::vector<int> _end_node_id_at_rank;
 
     const bool _is_single_thread;
 };

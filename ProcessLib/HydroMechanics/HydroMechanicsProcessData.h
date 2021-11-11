@@ -64,6 +64,8 @@ struct HydroMechanicsProcessData
     /// ID of the processes that contains mechanical process.
     int const mechanics_related_process_id;
 
+    const bool use_taylor_hood_elements;
+
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
         nullptr, nullptr, nullptr};

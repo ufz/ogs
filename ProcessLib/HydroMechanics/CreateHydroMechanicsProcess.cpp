@@ -182,6 +182,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
         &mesh);
 
+    const bool use_taylor_hood_elements = variable_p->getShapeFunctionOrder() !=
+                                          variable_u->getShapeFunctionOrder();
+
     HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
@@ -190,7 +193,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         specific_body_force,
         mass_lumping,
         hydraulic_process_id,
-        mechanics_related_process_id};
+        mechanics_related_process_id,
+        use_taylor_hood_elements};
 
     SecondaryVariableCollection secondary_variables;
 

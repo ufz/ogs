@@ -586,3 +586,91 @@ AddTest(
     flow_gravity_ts_16_t_40000000.000000.vtu flow_gravity_ts_16_t_40000000.000000.vtu pressure pressure 1e-9 0
     flow_gravity_ts_16_t_40000000.000000.vtu flow_gravity_ts_16_t_40000000.000000.vtu velocity velocity 1e-9 0
 )
+
+#Parallel computing with PETSc enabled.
+AddTest(
+    NAME ParallelFEM_SimpleHM_SingleMesh
+    PATH HydroMechanics/ParallelComputing/SimpleHM/SingleMesh
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS drainage.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu pressure pressure 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu pressure pressure 1e-10 1e-9
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu q q 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu q q 1e-10 1e-9
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu displacement displacement 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu displacement displacement 1e-10 1e-9
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu sigma sigma 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu sigma sigma 1e-10 1e-9
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu epsilon epsilon 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu epsilon epsilon 1e-10 1e-9
+)
+AddTest(
+    NAME ParallelFEM_SimpleHM_MultiMesh
+    PATH HydroMechanics/ParallelComputing/SimpleHM/MultiMesh
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS drainage.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu pressure pressure 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu pressure pressure 1e-10 1e-9
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu q q 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu q q 1e-10 1e-9
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu displacement displacement 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu displacement displacement 1e-10 1e-9
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu sigma sigma 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu sigma sigma 1e-10 1e-9
+    drainage_ts_10_t_10_000000_0.vtu drainage_ts_10_t_10_000000_0.vtu epsilon epsilon 1e-10 1e-9
+    drainage_ts_10_t_10_000000_1.vtu drainage_ts_10_t_10_000000_1.vtu epsilon epsilon 1e-10 1e-9
+)
+
+AddTest(
+    NAME ParallelFEM_SimpleHM_SingleMesh_StaggeredScheme
+    PATH HydroMechanics/ParallelComputing/SimpleHM/SingleMesh
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS drainage_staggered.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu pressure pressure 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu pressure pressure 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu q q 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu q q 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu displacement displacement 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu displacement displacement 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu sigma sigma 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu sigma sigma 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu epsilon epsilon 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu epsilon epsilon 1e-10 1e-9
+)
+
+AddTest(
+    NAME ParallelFEM_SimpleHM_MultiMesh_StaggeredScheme
+    PATH HydroMechanics/ParallelComputing/SimpleHM/MultiMesh
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS drainage_staggered.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu pressure pressure 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu pressure pressure 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu q q 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu q q 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu displacement displacement 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu displacement displacement 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu sigma sigma 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu sigma sigma 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_0.vtu drainage_staggered_ts_10_t_10_000000_0.vtu epsilon epsilon 1e-10 1e-9
+    drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu epsilon epsilon 1e-10 1e-9
+)

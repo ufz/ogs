@@ -90,12 +90,13 @@ template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    _mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
+        _mesh, _mesh.getNodes(), _process_data.use_taylor_hood_elements);
+
     // Create single component dof in the mesh's base nodes.
     _base_nodes = MeshLib::getBaseNodes(_mesh.getElements());
-    _mesh_subset_base_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _base_nodes);
+    _mesh_subset_base_nodes = std::make_unique<MeshLib::MeshSubset>(
+        _mesh, _base_nodes, _process_data.use_taylor_hood_elements);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain

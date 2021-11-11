@@ -28,8 +28,13 @@ public:
     /// Construct a mesh subset from vector of nodes on the given mesh.
     /// \param msh Mesh
     /// \param vec_items Vector of Node pointers.
-    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_items)
-        : _msh(msh), _nodes(vec_items)
+    /// \param use_taylor_hood_elements Flag to indicate whether the Taylor-Hood
+    ///                                 elements are used.
+    MeshSubset(const Mesh& msh, std::vector<Node*> const& vec_items,
+               const bool use_taylor_hood_elements = false)
+        : _msh(msh),
+          _nodes(vec_items),
+          _use_taylor_hood_elements(use_taylor_hood_elements)
     {
         // If the mesh nodes and the given nodes point to the same vector, they
         // must be equal.
@@ -82,6 +87,8 @@ public:
         return _nodes[i]->getID();
     }
 
+    bool useTaylorHoodElements() const { return _use_taylor_hood_elements; }
+
     std::vector<Element*>::const_iterator elementsBegin() const
     {
         return _msh.getElements().cbegin();
@@ -99,5 +106,6 @@ public:
 private:
     Mesh const& _msh;
     std::vector<Node*> const& _nodes;
+    bool const _use_taylor_hood_elements;
 };
 }  // namespace MeshLib
