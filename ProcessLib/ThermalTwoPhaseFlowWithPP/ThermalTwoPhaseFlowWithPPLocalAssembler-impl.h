@@ -179,7 +179,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             *_process_data.media_map->getMedium(this->_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
         auto const& solid_phase = medium.phase("Solid");
+        auto const& gas_phase = medium.phase("Gas");
 
+        auto const& vapor_component = gas_phase.component("w");
         auto const density_water =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
@@ -251,8 +253,10 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
             _process_data.material->getSpecificHeatCapacityAir(pg_int_pt,
                                                                T_int_pt);
         const double heat_capacity_water_vapor =
-            _process_data.material->getSpecificHeatCapacityVapor(pg_int_pt,
-                                                                 T_int_pt);
+            vapor_component
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t, dt);
 
         auto const heat_capacity_water =
             liquid_phase
@@ -351,8 +355,9 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<
         double const k_rel_nonwet =
             two_phase_material_model.getNonwetRelativePermeability(
                 t, pos, _pressure_wetting[ip], T_int_pt, Sw);
-        double const mu_nonwet = two_phase_material_model.getGasViscosity(
-            _pressure_wetting[ip], T_int_pt);
+        auto const mu_nonwet =
+            gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+                .template value<double>(vars, pos, t, dt);
         double const lambda_nonwet = k_rel_nonwet / mu_nonwet;
         double const diffusion_coeff_component_gas =
             _process_data.diffusion_coeff_component_b(t, pos)[0];

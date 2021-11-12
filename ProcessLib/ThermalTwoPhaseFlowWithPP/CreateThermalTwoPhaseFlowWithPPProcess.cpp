@@ -27,8 +27,7 @@ namespace ProcessLib
 namespace ThermalTwoPhaseFlowWithPP
 {
 void checkMPLProperties(
-    MeshLib::Mesh const& mesh,
-    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     std::array const required_property_medium = {
         MaterialPropertyLib::PropertyType::porosity,
@@ -43,9 +42,26 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::specific_heat_capacity,
         MaterialPropertyLib::PropertyType::density};
 
-    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
-        mesh, media_map, required_property_medium,
-        required_property_solid_phase, required_property_liquid_phase);
+    std::array const required_property_gas_phase = {
+        MaterialPropertyLib::PropertyType::viscosity};
+
+    std::array const required_property_vapor_component = {
+        MaterialPropertyLib::specific_heat_capacity};
+
+    for (auto const& m : media)
+    {
+        auto const& gas_phase = m.second->phase("Gas");
+        checkRequiredProperties(*m.second, required_property_medium);
+        checkRequiredProperties(gas_phase, required_property_gas_phase);
+        checkRequiredProperties(m.second->phase("AqueousLiquid"),
+                                required_property_liquid_phase);
+        checkRequiredProperties(m.second->phase("Solid"),
+                                required_property_solid_phase);
+
+        // TODO (BM): should use index to identify components (same for impl.h)
+        checkRequiredProperties(gas_phase.component("w"),
+                                required_property_vapor_component);
+    }
 }
 
 std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
@@ -132,7 +148,7 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
 
     DBUG(
         "Check the media properties of ThermalTwoPhaseFlowWithPP  process ...");
-    checkMPLProperties(mesh, *media_map);
+    checkMPLProperties(media);
     DBUG("Media properties verified.");
 
     ThermalTwoPhaseFlowWithPPProcessData process_data{std::move(media_map),
