@@ -23,10 +23,6 @@
                         <type>Constant</type>
                         <value> 1.e3 </value>
                     </liquid_density>
-                    <gas_density>
-                        <type>IdealGasLaw</type>
-                        <molar_mass> 0.029 </molar_mass>
-                    </gas_density>
                     <liquid_viscosity>
                         <type>Constant</type>
                         <value> 2.938e-4 </value>

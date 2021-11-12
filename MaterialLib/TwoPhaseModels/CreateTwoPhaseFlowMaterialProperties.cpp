@@ -43,10 +43,6 @@ createTwoPhaseFlowMaterialProperties(
     //! \ogs_file_param{material__twophase_flow__material_property__fluid__liquid_density}
     auto const& rho_conf = fluid_config.getConfigSubtree("liquid_density");
     auto liquid_density = MaterialLib::Fluid::createFluidDensityModel(rho_conf);
-    //! \ogs_file_param{material__twophase_flow__material_property__fluid__gas_density}
-    auto const& rho_gas_conf = fluid_config.getConfigSubtree("gas_density");
-    auto gas_density =
-        MaterialLib::Fluid::createFluidDensityModel(rho_gas_conf);
     //! \ogs_file_param{material__twophase_flow__material_property__fluid__liquid_viscosity}
     auto const& mu_conf = fluid_config.getConfigSubtree("liquid_viscosity");
     auto liquid_viscosity = MaterialLib::Fluid::createViscosityModel(mu_conf);
@@ -130,8 +126,8 @@ createTwoPhaseFlowMaterialProperties(
     return std::forward_as_tuple(
         std::make_unique<TwoPhaseFlowWithPPMaterialProperties>(
             material_ids, std::move(liquid_density),
-            std::move(liquid_viscosity), std::move(gas_density),
-            std::move(gas_viscosity), std::move(intrinsic_permeability_models),
+            std::move(liquid_viscosity), std::move(gas_viscosity),
+            std::move(intrinsic_permeability_models),
             std::move(porosity_models), std::move(storage_models),
             std::move(capillary_pressure_models),
             std::move(relative_permeability_models)),

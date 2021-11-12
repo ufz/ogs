@@ -32,7 +32,6 @@ TwoPhaseFlowWithPPMaterialProperties::TwoPhaseFlowWithPPMaterialProperties(
     MeshLib::PropertyVector<int> const* material_ids,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& liquid_density,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& liquid_viscosity,
-    std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& gas_density,
     std::unique_ptr<MaterialLib::Fluid::FluidProperty>&& gas_viscosity,
     std::vector<std::unique_ptr<MaterialLib::PorousMedium::Permeability>>&&
         intrinsic_permeability_models,
@@ -49,7 +48,6 @@ TwoPhaseFlowWithPPMaterialProperties::TwoPhaseFlowWithPPMaterialProperties(
     : _material_ids(material_ids),
       _liquid_density(std::move(liquid_density)),
       _liquid_viscosity(std::move(liquid_viscosity)),
-      _gas_density(std::move(gas_density)),
       _gas_viscosity(std::move(gas_viscosity)),
       _intrinsic_permeability_models(std::move(intrinsic_permeability_models)),
       _porosity_models(std::move(porosity_models)),
@@ -79,15 +77,6 @@ double TwoPhaseFlowWithPPMaterialProperties::getLiquidDensity(
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
     vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
     return _liquid_density->getValue(vars);
-}
-
-double TwoPhaseFlowWithPPMaterialProperties::getGasDensity(const double p,
-                                                           const double T) const
-{
-    ArrayType vars;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::T)] = T;
-    vars[static_cast<int>(MaterialLib::Fluid::PropertyVariableType::p)] = p;
-    return _gas_density->getValue(vars);
 }
 
 double TwoPhaseFlowWithPPMaterialProperties::getLiquidViscosity(
