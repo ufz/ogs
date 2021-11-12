@@ -213,11 +213,10 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
             "be specified.");
     }
 
-    // If time interval was specified then a dummy line segment is used
-    // *internally* because the whole selected material ids subdomain will be
-    // deactivated.
-    std::pair line_segment{Eigen::Vector3d{0, 0, 0}, Eigen::Vector3d{1, 1, 1}};
-
+    // If time interval was specified then an empty optional line segment is
+    // used *internally* because the whole selected material ids subdomain will
+    // be deactivated.
+    std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>> line_segment;
     if (curve_name)
     {
         line_segment = parseLineSegment(*line_segment_config);

@@ -14,6 +14,7 @@
 
 #include <Eigen/Dense>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -71,7 +72,7 @@ struct DeactivatedSubdomain
 {
     DeactivatedSubdomain(
         MathLib::PiecewiseLinearInterpolation time_interval_,
-        std::pair<Eigen::Vector3d, Eigen::Vector3d>
+        std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>>
             line_segment,
         std::unique_ptr<DeactivatedSubdomainMesh>&& deactivated_subdomain_mesh_,
         ParameterLib::Parameter<double> const* boundary_value_parameter);
@@ -90,7 +91,7 @@ struct DeactivatedSubdomain
 
     /// Line segment along which excavation progresses. Represented by start and
     /// end points.
-    std::pair<Eigen::Vector3d, Eigen::Vector3d> line_segment;
+    std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>> line_segment;
 
     std::unique_ptr<DeactivatedSubdomainMesh> const deactivated_subdomain_mesh;
 

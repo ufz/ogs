@@ -35,7 +35,7 @@ DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
 
 DeactivatedSubdomain::DeactivatedSubdomain(
     MathLib::PiecewiseLinearInterpolation time_interval_,
-    std::pair<Eigen::Vector3d, Eigen::Vector3d>
+    std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>>
         line_segment,
     std::unique_ptr<DeactivatedSubdomainMesh>&& deactivated_subdomain_mesh_,
     ParameterLib::Parameter<double> const* const boundary_value_parameter)
@@ -55,14 +55,20 @@ bool DeactivatedSubdomain::isInTimeSupportInterval(double const t) const
 bool DeactivatedSubdomain::isDeactivated(MathLib::Point3d const& point,
                                          double const time) const
 {
+    if (!line_segment)
+    {
+        return true;
+    }
+
     // Line from a to b.
-    auto const& a = line_segment.first;
-    auto const& b = line_segment.second;
+    auto const& a = line_segment->first;
+    auto const& b = line_segment->second;
     // Tangent vector t = (b - a)/|b - a|.
     Eigen::Vector3d const t = (b - a).normalized();
 
     // Position r on the line at given time.
-    Eigen::Vector3d const r = a + t * time_interval.getValue(time);
+    auto const curve_position = time_interval.getValue(time);
+    Eigen::Vector3d const r = a + t * curve_position;
 
     // Return true if p is "behind" the plane through r.
     return (point.asEigenVector3d() - r).dot(t) <= 0;
