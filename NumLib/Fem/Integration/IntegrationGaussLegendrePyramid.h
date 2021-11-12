@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "BaseLib/Error.h"
 #include "MathLib/Integration/GaussLegendrePyramid.h"
 #include "MathLib/TemplateWeightedPoint.h"
 
@@ -75,7 +76,8 @@ public:
             case 3:
                 return getWeightedPoint<MathLib::GaussLegendrePyramid<3>>(igp);
         }
-        return WeightedPoint(std::array<double, 3>(), 0);
+        OGS_FATAL("Integration order {:d} not implemented for pyramids.",
+                  order);
     }
 
     template <typename Method>
@@ -101,7 +103,8 @@ public:
             case 3:
                 return MathLib::GaussLegendrePyramid<3>::NPoints;
         }
-        return 0;
+        OGS_FATAL("Integration order {:d} not implemented for pyramids.",
+                  order);
     }
 
 private:

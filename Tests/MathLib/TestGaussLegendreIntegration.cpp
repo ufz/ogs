@@ -447,7 +447,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib, IntegrationGaussLegendreTet)
         MeshLib::IO::VtuInterface::readVTUFile(
             TestInfoLib::TestInfo::data_path + "/MathLib/unit_cube_tet.vtu"));
 
-    for (unsigned integration_order : {1, 2, 3})
+    for (unsigned integration_order : {1, 2, 3, 4})
     {
         DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
@@ -508,7 +508,7 @@ OGS_DONT_TEST_THIS_IF_PETSC(
         MeshLib::IO::VtuInterface::readVTUFile(
             TestInfoLib::TestInfo::data_path + "/MathLib/unit_cube_tet.vtu"));
 
-    for (unsigned integration_order : {1, 2, 3})
+    for (unsigned integration_order : {1, 2, 3, 4})
     {
         DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
@@ -564,15 +564,20 @@ OGS_DONT_TEST_THIS_IF_PETSC(MathLib,
         MeshLib::IO::VtuInterface::readVTUFile(
             TestInfoLib::TestInfo::data_path + "/MathLib/unit_cube_tet.vtu"));
 
-    for (unsigned integration_order : {1, 2, 3})
+    // quadrature must be exact up to the given polynomial degrees
+    // for integration order n = 1, 2, 3 it is 2*n-1 = 1, 3, 5
+    // for integration order 4 it is 5, i.e. the same as for 3rd integration
+    // order
+    const std::vector<unsigned> maximum_polynomial_degrees{0, 1, 3, 5, 5};
+
+    for (unsigned integration_order : {1, 2, 3, 4})
     {
         DBUG("\n==== integration order: {:d}.\n", integration_order);
         GaussLegendreTest::IntegrationTestProcess pcs_tet(*mesh_tet,
                                                           integration_order);
 
         for (unsigned polynomial_order = 0;
-             // Gauss-Legendre integration is exact up to this order!
-             polynomial_order < 2 * integration_order;
+             polynomial_order <= maximum_polynomial_degrees[integration_order];
              ++polynomial_order)
         {
             DBUG("  == polynomial order: {:d}.", polynomial_order);

@@ -70,9 +70,7 @@ IntegrationGaussLegendreRegular<N_DIM>::getWeightedPoint(unsigned order,
         case 4:
             return getWeightedPoint<MathLib::GaussLegendre<4>>(pos);
     }
-
-    return MathLib::TemplateWeightedPoint<double, double, N_DIM>(
-        std::array<double, N_DIM>(), 0);
+    OGS_FATAL("Integration order {:d} not implemented.", order);
 }
 
 template <unsigned N_DIM>

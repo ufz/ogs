@@ -92,7 +92,8 @@ public:
             case 4:
                 return getWeightedPoint<MathLib::GaussLegendreTri<4>>(igp);
         }
-        return WeightedPoint(std::array<double, 2>(), 0);
+        OGS_FATAL("Integration order {:d} not implemented for triangles.",
+                  order);
     }
 
     template <typename Method>
@@ -120,7 +121,8 @@ public:
             case 4:
                 return MathLib::GaussLegendreTri<4>::NPoints;
         }
-        return 0;
+        OGS_FATAL("Integration order {:d} not implemented for triangles.",
+                  order);
     }
 
 private:
