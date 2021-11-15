@@ -33,11 +33,6 @@
                     <type>Parameter</type>
                     <parameter_name>lambda</parameter_name>
                 </property>
-                <property>
-                    <name>reference_temperature</name>
-                    <type>Constant</type>
-                    <value>293.15</value>
-                </property>
             </properties>
         </medium>
         <medium id="1">

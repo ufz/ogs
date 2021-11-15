@@ -35,11 +35,6 @@
                     <type>Constant</type>
                     <value>2500</value>
                 </property>
-                <property>
-                    <name>reference_temperature</name>
-                    <type>Constant</type>
-                    <value>293.15</value>
-                </property>
             </properties>
         </medium>
     </media>
