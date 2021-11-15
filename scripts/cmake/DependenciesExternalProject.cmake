@@ -54,7 +54,7 @@ if(OGS_USE_PETSC)
             BUILD_COMMAND make -j all
             INSTALL_COMMAND make -j install
         )
-        set(PETSC_DIR ${PROJECT_BINARY_DIR}/_ext/PETSc)
+        set(PETSC_DIR ${PROJECT_BINARY_DIR}/_ext/PETSc CACHE PATH "" FORCE)
         find_package(PETSc ${ogs.minimum_version.petsc} REQUIRED)
     endif()
 
@@ -62,6 +62,11 @@ if(OGS_USE_PETSC)
     target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
     set_target_properties(petsc PROPERTIES IMPORTED_LOCATION ${PETSC_LIBRARIES})
     target_compile_definitions(petsc INTERFACE USE_PETSC)
+
+    if(EXISTS ${PETSC_DIR}/lib)
+        message(STATUS "RPATH: Appending ${PETSC_DIR}/lib")
+        list(APPEND CMAKE_INSTALL_RPATH ${PETSC_DIR}/lib)
+    endif()
 endif()
 
 if(OGS_USE_LIS)
