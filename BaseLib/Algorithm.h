@@ -310,4 +310,43 @@ void cleanupVectorElements(std::vector<T1*> const& items,
     }
 }
 
+/// Checks if any of the elements in the given list is true.
+template <typename List>
+constexpr bool any_of(List const& values)
+{
+    // std::any_of is not constexpr enough in some STLs
+    for (auto& value : values)
+    {
+        if (static_cast<bool>(value))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/// Checks if all of the elements in the given list are true.
+template <typename List>
+constexpr bool all_of(List const& values)
+{
+    // std::all_of is not constexpr enough in some STLs
+    for (auto& value : values)
+    {
+        if (!static_cast<bool>(value))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/// Checks if none of the elements in the given list are true.
+template <typename List>
+constexpr bool none_of(List const& values)
+{
+    return !any_of(values);
+}
+
 }  // namespace BaseLib
