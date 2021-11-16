@@ -22,7 +22,7 @@
 namespace GeoLib {
 
 /// Contains the relevant information when storing a geoscientific raster data
-struct RasterHeader
+struct RasterHeader final
 {
     std::size_t n_cols; // width
     std::size_t n_rows; // height
@@ -40,7 +40,8 @@ struct RasterHeader
  * Additional the object needs the raster data itself. The raster data will be
  * copied from the constructor. The destructor will release the memory.
  */
-class Raster {
+class Raster final
+{
 public:
     using const_iterator = const double*;
     using iterator = double*;
