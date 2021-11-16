@@ -16,6 +16,7 @@
 #include <array>
 #include <utility>
 
+#include "BaseLib/Error.h"
 #include "MathLib/Point3d.h"
 
 namespace GeoLib {
@@ -79,11 +80,30 @@ public:
      * @return constant iterator
      */
     const_iterator begin() const { return _raster_data; }
+
     /**
      * Constant iterator that is pointing to the last raster pixel value.
      * @return constant iterator
      */
     const_iterator end() const { return _raster_data + _header.n_rows*_header.n_cols; }
+
+    /**
+     * Access the pixel specified by row, col.
+     */
+    double const& operator()(std::size_t const row, std::size_t const col) const
+    {
+        if (row >= _header.n_rows || col >= _header.n_cols)
+        {
+            OGS_FATAL(
+                "Raster pixel ({}, {}) doesn't exist. Raster size is {} x {}.",
+                row, col, _header.n_rows, _header.n_cols);
+        }
+        return _raster_data[(_header.n_rows - 1 - row) * _header.n_cols + col];
+    }
+    double& operator()(std::size_t const row, std::size_t const col)
+    {
+        return const_cast<double&>(std::as_const(*this)(row, col));
+    }
 
     /**
      * Returns the raster value at the position of the given point.
