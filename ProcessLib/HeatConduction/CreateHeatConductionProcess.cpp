@@ -27,7 +27,6 @@ void checkMPLProperties(
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
 {
     std::array const required_medium_properties = {
-        MaterialPropertyLib::PropertyType::reference_temperature,
         MaterialPropertyLib::PropertyType::thermal_conductivity,
         MaterialPropertyLib::PropertyType::heat_capacity,
         MaterialPropertyLib::PropertyType::density};
