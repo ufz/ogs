@@ -554,6 +554,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& identity2 = Invariants::identity2;
 
+    auto const fixed_stress_stabilization_parameter =
+        _process_data.fixed_stress_stabilization_parameter;
+
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -623,8 +626,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const K_over_mu = K / mu;
 
-        // optimal coupling parameter for fixed-stress split [Wheeler]
-        auto const beta_FS = 0.5 * alpha_b * alpha_b / K_S;
+        // artificial compressibility to account for coupling
+        auto const beta_FS =
+            fixed_stress_stabilization_parameter * alpha_b * alpha_b / K_S;
 
         laplace.noalias() +=
             rho_fr * dNdx_p.transpose() * K_over_mu * dNdx_p * w;

@@ -1,0 +1,1 @@
+\copydoc ProcessLib::HydroMechanics::HydroMechanicsProcessData::fixed_stress_stabilization_parameter

@@ -95,3 +95,47 @@ For 2D, the Kelvin-Vector of the stress tensor looks like $\sigma=(\sigma_{xx},\
 
 For Kelvin mapping also see the [conversion function documentation](https://doxygen.opengeosys.org/d6/dce/namespacemathlib_1_1kelvinvector#ad78b122c10e91732e95181b6c9a92486).
 
+## Staggered Scheme
+
+A staggered scheme solves coupled problems by alternating on separate physical domains (e.g. thermal and mechanical) in contrast to monolithic schemes which solve all domains simultaneously (e.g. thermomechanical).
+Thus staggered schemes add another level of iterations, however this may pay off since the subproblems are smaller and they enable a finer tuning of the specific solvers.
+
+### Fixed-stress Split for Hydro-mechanical Processes
+
+For hydro-mechanical processes the fixed-stress split has been implemented, since it turned out advantageous [[1]](#1).
+For sake of brevity, we do not describe the scheme itself, but intend to provide guidance for its stabilization parameter.
+On this parameter depends how many coupling iterations are needed and thus how long it takes to obtain a solution.
+The optimal value of this parameter is not a-priori known, only that it lies within a certain interval [[2]](#2)
+\begin{equation}
+\frac{1}{2}\frac{\alpha^2}{K_\mathrm{1D}} \le \beta_\mathrm{FS} \le \frac{\alpha^2}{K_\mathrm{ph}},
+\end{equation}
+where $\alpha$ denotes Biot's coefficient, and $K_\mathrm{1D}$ and $K_\mathrm{ph}$ are the bulk moduli described next.
+By $K_\mathrm{ph}$ we mean the bulk modulus adjusted to the spatial dimension, so in three dimensions it coincides with the drained bulk modulus, whereas in lower dimensions it becomes a constrained bulk modulus (2D plane strain, 1D uniaxial strain).
+Assuming isotropic, linear elasticity we have
+\begin{eqnarray}
+K_\mathrm{3D} &=& \lambda + \frac{2}{3}\mu, \\
+K_\mathrm{2D} &=& \lambda + \frac{2}{2}\mu, \\
+K_\mathrm{1D} &=& \lambda + \frac{2}{1}\mu. \\
+\end{eqnarray}
+OGS sets the stabilization parameter, which corresponds to a coupling compressibility, via the `coupling_scheme_parameter`
+\begin{equation}
+\beta_\mathrm{FS} = p_\mathrm{FS} \frac{\alpha^2}{K_\mathrm{3D}},
+\end{equation}
+by default to $p_\mathrm{FS}=\frac{1}{2}$.
+For isotropic, linear elasticity we provide the interval [[2]](#2) and the recommended value [[3]](#3) in dependence on Poisson's ratio $\nu$ (note $\frac{\lambda}{\mu}=\frac{2\nu}{1-2\nu}$).
+
+| | 2D  | 3D |
+| ------ | ------ | ------ |
+| $p_\mathrm{FS}^\mathrm{min}$          | $\frac{1}{6}\frac{1+\nu}{1-\nu}$      | same as 2D  |
+| $p_\mathrm{FS}^\mathrm{MW}$        | $\frac{1+\nu}{3}$      | $\frac{1}{2}$  |
+| $p_\mathrm{FS}^\mathrm{max}$          | $\frac{2(1+\nu)}{3}$      | $1$ |
+
+## References
+<a id="1">[1]</a>
+{{< bib "kimtchjua2009" >}}
+
+<a id="2">[2]</a>
+{{< bib "stonor2019" >}}
+
+<a id="3">[3]</a>
+{{< bib "mikwhe2013" >}}

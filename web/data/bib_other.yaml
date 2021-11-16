@@ -175,8 +175,30 @@ entries:
             last: Kim
         -   first: H.A.
             last: Tchelepi
-        -   first: R
+        -   first: R.
             last: Juanes
+    stonor2019:
+        type: article
+        title: 'On the optimization of the fixed-stress splitting for Biots equations'
+        journal: International Journal for Numerical Methods in Engineering
+        volume: '120'
+        number: 02
+        pages: 179--194
+        year: '2019'
+        note: ''
+        doi: https://doi.org/10.1002/nme.6130
+        url: https://onlinelibrary.wiley.com/doi/full/10.1002/nme.6130
+        author:
+        -   first: E.
+            last: Storvik
+        -   first: J.W.
+            last: Both
+        -   first: K.
+            last: Kumar
+        -   first: J.M.
+            last: Nordbotten
+        -   first: F.A.
+            last: Radu
     mikwhe2013:
         type: article
         title: 'Convergence of iterative coupling for coupled flow
