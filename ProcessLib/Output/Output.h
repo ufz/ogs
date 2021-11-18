@@ -87,10 +87,10 @@ public:
 private:
     struct OutputFile;
 
-    static void outputMesh(OutputFile const& output_file,
-                           MeshLib::IO::PVDFile* const pvd_file,
-                           MeshLib::Mesh const& mesh,
-                           double const t);
+    static void outputMeshVtk(OutputFile const& output_file,
+                              MeshLib::IO::PVDFile* const pvd_file,
+                              MeshLib::Mesh const& mesh,
+                              double const t);
 
     void outputMeshXdmf(OutputFile const& output_file,
                         std::vector<std::reference_wrapper<const MeshLib::Mesh>>
@@ -98,7 +98,28 @@ private:
                         int const timestep,
                         double const t);
 
-private:
+    /**
+     * Get the address of a PVDFile from corresponding to the given process.
+     * @param process    Process.
+     * @param process_id Process ID.
+     * @param mesh_name_for_output mesh name for the output.
+     * @return Address of a PVDFile.
+     */
+    MeshLib::IO::PVDFile* findPVDFile(Process const& process,
+                                      const int process_id,
+                                      std::string const& mesh_name_for_output);
+
+    //! Determines if there should be output at the given \c timestep or \c t.
+    bool shallDoOutput(int timestep, double const t) const;
+
+    bool shallDoOutputStage2(int const process_id,
+                             Process const& process) const;
+
+    void outputMeshes(
+        Process const& process, const int process_id, int const timestep,
+        const double t, int const iteration,
+        std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes);
+
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> _mesh_xdmf_hdf_writer;
 
     std::string const _output_directory;
@@ -124,20 +145,6 @@ private:
     std::vector<double> const _fixed_output_times;
 
     std::multimap<Process const*, MeshLib::IO::PVDFile> _process_to_pvd_file;
-
-    /**
-     * Get the address of a PVDFile from corresponding to the given process.
-     * @param process    Process.
-     * @param process_id Process ID.
-     * @param mesh_name_for_output mesh name for the output.
-     * @return Address of a PVDFile.
-     */
-    MeshLib::IO::PVDFile* findPVDFile(Process const& process,
-                                      const int process_id,
-                                      std::string const& mesh_name_for_output);
-
-    //! Determines if there should be output at the given \c timestep or \c t.
-    bool shallDoOutput(int timestep, double const t);
 
     OutputDataSpecification const _output_data_specification;
     std::vector<std::string> _mesh_names_for_output;

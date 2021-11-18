@@ -58,7 +58,7 @@ std::string constructPVDName(std::string const& output_directory,
 
 namespace ProcessLib
 {
-bool Output::shallDoOutput(int timestep, double const t)
+bool Output::shallDoOutput(int timestep, double const t) const
 {
     auto const fixed_output_time = std::lower_bound(
         cbegin(_fixed_output_times), cend(_fixed_output_times), t);
@@ -91,6 +91,17 @@ bool Output::shallDoOutput(int timestep, double const t)
     }
 
     return false;
+}
+bool Output::shallDoOutputStage2(const int process_id,
+                                 const Process& process) const
+{
+    return process.isMonolithicSchemeUsed()
+           // For the staggered scheme for the coupling, only the last process,
+           // which gives the latest solution within a coupling loop, is allowed
+           // to make output.
+           || process_id == static_cast<int>(_process_to_pvd_file.size() /
+                                             _mesh_names_for_output.size()) -
+                                1;
 }
 
 Output::Output(std::string directory, OutputType file_type,
@@ -258,10 +269,10 @@ void Output::outputMeshXdmf(
     };
 }
 
-void Output::outputMesh(OutputFile const& output_file,
-                        MeshLib::IO::PVDFile* const pvd_file,
-                        MeshLib::Mesh const& mesh,
-                        double const t)
+void Output::outputMeshVtk(OutputFile const& output_file,
+                           MeshLib::IO::PVDFile* const pvd_file,
+                           MeshLib::Mesh const& mesh,
+                           double const t)
 {
     DBUG("output to {:s}", output_file.path);
 
@@ -274,6 +285,40 @@ void Output::outputMesh(OutputFile const& output_file,
                output_file.data_mode);
 }
 
+void Output::outputMeshes(
+    const Process& process, const int process_id, const int timestep,
+    const double t, const int iteration,
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
+{
+    if (_output_file_type == ProcessLib::OutputType::vtk)
+    {
+        for (auto const& mesh : meshes)
+        {
+            OutputFile const file(
+                _output_directory, _output_file_type, _output_file_prefix,
+                _output_file_suffix, mesh.get().getName(), timestep, t,
+                iteration, _output_file_data_mode, _output_file_compression,
+                _output_data_specification.output_variables, 1);
+
+            auto* const pvd_file =
+                findPVDFile(process, process_id, mesh.get().getName());
+            outputMeshVtk(file, pvd_file, mesh, t);
+        }
+    }
+    else if (_output_file_type == ProcessLib::OutputType::xdmf)
+    {
+        std::string name = meshes[0].get().getName();
+        OutputFile const file(
+            _output_directory, _output_file_type, _output_file_prefix, "", name,
+            timestep, t, iteration, _output_file_data_mode,
+            _output_file_compression,
+            _output_data_specification.output_variables, _n_files);
+
+        outputMeshXdmf(std::move(file), std::move(meshes), timestep, t);
+    }
+}
+
+// TODO refactor this next.
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
                             int const timestep,
@@ -284,74 +329,19 @@ void Output::doOutputAlways(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    dof_tables.reserve(solution_vectors.size());
-    for (std::size_t i = 0; i < solution_vectors.size(); ++i)
-    {
-        dof_tables.push_back(&process.getDOFTable(i));
-    }
-
-    bool output_secondary_variable = true;
-    // Need to add variables of process to vtu even no output takes place.
+    bool output_secondary_variables = true;
+    // Need to add variables of process to vtu even if no output takes place.
     addProcessDataToMesh(t, solution_vectors, process_id, process.getMesh(),
-                         dof_tables, dof_tables, process,
-                         output_secondary_variable, _output_data_specification);
+                         process, output_secondary_variables,
+                         _output_data_specification);
 
-    // For the staggered scheme for the coupling, only the last process, which
-    // gives the latest solution within a coupling loop, is allowed to make
-    // output.
-    if (!(process_id == static_cast<int>(_process_to_pvd_file.size() /
-                                         _mesh_names_for_output.size()) -
-                            1 ||
-          process.isMonolithicSchemeUsed()))
+    if (!shallDoOutputStage2(process_id, process))
     {
         return;
     }
 
-    auto output_bulk_mesh =
-        [&](std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes)
+    auto prepare_non_bulk_mesh = [&](std::string const& mesh_output_name)
     {
-        MeshLib::IO::PVDFile* pvd_file = nullptr;
-        if (_output_file_type == ProcessLib::OutputType::vtk)
-        {
-            for (auto const& mesh : meshes)
-            {
-                OutputFile const file(
-                    _output_directory, _output_file_type, _output_file_prefix,
-                    _output_file_suffix, mesh.get().getName(), timestep, t,
-                    iteration, _output_file_data_mode, _output_file_compression,
-                    _output_data_specification.output_variables, 1);
-
-                pvd_file =
-                    findPVDFile(process, process_id, mesh.get().getName());
-                outputMesh(file, pvd_file, mesh, t);
-            }
-        }
-        else if (_output_file_type == ProcessLib::OutputType::xdmf)
-        {
-            std::string name = meshes[0].get().getName();
-            OutputFile const file(
-                _output_directory, _output_file_type, _output_file_prefix, "",
-                name, timestep, t, iteration, _output_file_data_mode,
-                _output_file_compression,
-                _output_data_specification.output_variables, _n_files);
-
-            outputMeshXdmf(std::move(file), std::move(meshes), timestep, t);
-        }
-    };
-
-    std::vector<std::reference_wrapper<const MeshLib::Mesh>> output_meshes;
-    for (auto const& mesh_output_name : _mesh_names_for_output)
-    {
-        // process related output
-        if (process.getMesh().getName() == mesh_output_name)
-        {
-            output_meshes.push_back(process.getMesh());
-            continue;
-        }
-
-        // TODO (CL) auxiliary output
-        // mesh related output
         auto& non_bulk_mesh = *BaseLib::findElementOrError(
             begin(_meshes), end(_meshes),
             [&mesh_output_name](auto const& m)
@@ -381,16 +371,33 @@ void Output::doOutputAlways(Process const& process,
                   [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p)
                   { return p.get(); });
 
-        output_secondary_variable = false;
+        output_secondary_variables = false;
         addProcessDataToMesh(t, solution_vectors, process_id, non_bulk_mesh,
-                             dof_tables, mesh_dof_table_pointers, process,
-                             output_secondary_variable,
+                             mesh_dof_table_pointers, process,
+                             output_secondary_variables,
                              _output_data_specification);
 
-        output_meshes.push_back(non_bulk_mesh);
+        return non_bulk_mesh;
+    };
+
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> output_meshes;
+    for (auto const& mesh_output_name : _mesh_names_for_output)
+    {
+        if (process.getMesh().getName() == mesh_output_name)
+        {
+            // process related output
+            output_meshes.push_back(process.getMesh());
+        }
+        else
+        {
+            // mesh related output
+            auto const& non_bulk_mesh = prepare_non_bulk_mesh(mesh_output_name);
+            output_meshes.push_back(non_bulk_mesh);
+        }
     }
 
-    output_bulk_mesh(std::move(output_meshes));
+    outputMeshes(process, process_id, timestep, t, iteration,
+                 std::move(output_meshes));
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
 }
@@ -445,16 +452,9 @@ void Output::doOutputNonlinearIteration(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    for (std::size_t i = 0; i < x.size(); ++i)
-    {
-        dof_tables.push_back(&process.getDOFTable(i));
-    }
-
     bool const output_secondary_variable = true;
-    addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
-                         dof_tables, process, output_secondary_variable,
-                         _output_data_specification);
+    addProcessDataToMesh(t, x, process_id, process.getMesh(), process,
+                         output_secondary_variable, _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
