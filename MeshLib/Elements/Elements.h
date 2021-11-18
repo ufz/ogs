@@ -21,3 +21,11 @@
 #include "MeshLib/Elements/Quad.h"
 #include "MeshLib/Elements/Tet.h"
 #include "MeshLib/Elements/Tri.h"
+
+namespace MeshLib
+{
+using AllElements =
+    std::tuple<Point, Line, Line3, Quad, Quad8, Quad9, Hex, Hex20, Tri, Tri6,
+               Tet, Tet10, Prism, Prism15, Pyramid, Pyramid13>;
+
+}  // namespace MeshLib
