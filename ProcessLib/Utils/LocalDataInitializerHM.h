@@ -45,6 +45,11 @@ class LocalDataInitializerHM final
         template <typename ElementTraits>
         constexpr bool operator()(ElementTraits*) const
         {
+            if constexpr (GlobalDim < ElementTraits::ShapeFunction::DIM)
+            {
+                return false;
+            }
+
             // mechanics processes in OGS are defined in 2D and 3D only
             return ElementTraits::Element::dimension >= 2;
         }
@@ -126,22 +131,15 @@ private:
     template <typename ShapeFunction, typename LowerOrderShapeFunction>
     static LADataBuilder makeLocalAssemblerBuilder()
     {
-        if constexpr (GlobalDim < ShapeFunction::DIM)
+        return [](MeshLib::Element const& e,
+                  std::size_t const local_matrix_size,
+                  ConstructorArgs&&... args)
         {
-            return nullptr;
-        }
-        else
-        {
-            return [](MeshLib::Element const& e,
-                      std::size_t const local_matrix_size,
-                      ConstructorArgs&&... args)
-            {
-                return LADataIntfPtr{
-                    new LAData<ShapeFunction, LowerOrderShapeFunction>{
-                        e, local_matrix_size,
-                        std::forward<ConstructorArgs>(args)...}};
-            };
-        }
+            return LADataIntfPtr{
+                new LAData<ShapeFunction, LowerOrderShapeFunction>{
+                    e, local_matrix_size,
+                    std::forward<ConstructorArgs>(args)...}};
+        };
     }
 
     /// Mapping of element types to local assembler constructors.

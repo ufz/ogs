@@ -36,11 +36,24 @@ template <typename LocalAssemblerInterface,
           int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
+    struct HasSuitableDimension
+    {
+        template <typename ElementTraits>
+        constexpr bool operator()(ElementTraits*) const
+        {
+            return GlobalDim >= ElementTraits::ShapeFunction::DIM;
+        }
+    };
+
     struct Is2ndOrderElement
     {
         template <typename ElementTraits>
         constexpr bool operator()(ElementTraits*) const
         {
+            if constexpr (GlobalDim < ElementTraits::ShapeFunction::DIM)
+            {
+                return false;
+            }
             return ElementTraits::ShapeFunction::ORDER == 2 ||
                    // points are needed for 2nd order, too
                    std::is_same_v<MeshLib::Point,
@@ -56,13 +69,17 @@ public:
         : _dof_table(dof_table)
     {
         if (shapefunction_order < 1 || 2 < shapefunction_order)
+        {
             OGS_FATAL("The given shape function order {:d} is not supported",
                       shapefunction_order);
+        }
 
         if (shapefunction_order == 1)
         {
-            // 1st order is enabled on all elements
-            using EnabledElementTraits = EnabledElementTraitsLagrange;
+            // 1st order is enabled on all elements with suitable dimension
+            using EnabledElementTraits =
+                decltype(BaseLib::TMP::filter<EnabledElementTraitsLagrange>(
+                    std::declval<HasSuitableDimension>()));
 
             BaseLib::TMP::foreach<EnabledElementTraits>(
                 [this]<typename ET>(ET*)
@@ -135,31 +152,13 @@ private:
         LocalAssemblerData<ShapeFunction, IntegrationMethod<ShapeFunction>,
                            GlobalDim>;
 
-    /// A helper forwarding to the correct version of makeLocalAssemblerBuilder
-    /// depending whether the global dimension is less than the shape function's
-    /// dimension or not.
-    template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder()
-    {
-        return makeLocalAssemblerBuilder<ShapeFunction>(
-            static_cast<std::integral_constant<
-                bool, (GlobalDim >= ShapeFunction::DIM)>*>(nullptr));
-    }
-
-    /// Mapping of element types to local assembler constructors.
-    std::unordered_map<std::type_index, LADataBuilder> _builder;
-
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
-
-    // local assembler builder implementations.
-private:
     /// Generates a function that creates a new LocalAssembler of type
     /// LAData<ShapeFunction>. Only functions with shape function's dimension
     /// less or equal to the global dimension are instantiated, e.g.  following
     /// combinations of shape functions and global dimensions: (Line2, 1),
     /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
     template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder(std::true_type* /*unused*/)
+    static LADataBuilder makeLocalAssemblerBuilder()
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
@@ -170,13 +169,10 @@ private:
         };
     }
 
-    /// Returns nullptr for shape functions whose dimensions are less than the
-    /// global dimension.
-    template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder(std::false_type* /*unused*/)
-    {
-        return nullptr;
-    }
+    /// Mapping of element types to local assembler constructors.
+    std::unordered_map<std::type_index, LADataBuilder> _builder;
+
+    NumLib::LocalToGlobalIndexMap const& _dof_table;
 };
 
 }  // namespace BoundaryConditionAndSourceTerm
