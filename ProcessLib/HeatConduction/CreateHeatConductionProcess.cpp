@@ -28,7 +28,7 @@ void checkMPLProperties(
 {
     std::array const required_medium_properties = {
         MaterialPropertyLib::PropertyType::thermal_conductivity,
-        MaterialPropertyLib::PropertyType::heat_capacity,
+        MaterialPropertyLib::PropertyType::specific_heat_capacity,
         MaterialPropertyLib::PropertyType::density};
     std::array<MaterialPropertyLib::PropertyType, 0> const empty{};
 
