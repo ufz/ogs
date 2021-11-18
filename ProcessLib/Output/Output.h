@@ -79,7 +79,7 @@ public:
                                     const double t, const int iteration,
                                     std::vector<GlobalVector*> const& x);
 
-    std::vector<double> getFixedOutputTimes() const
+    std::vector<double> const& getFixedOutputTimes() const
     {
         return _fixed_output_times;
     }
@@ -119,6 +119,11 @@ private:
         Process const& process, const int process_id, int const timestep,
         const double t, int const iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes);
+
+    MeshLib::Mesh const& prepareNonBulkMesh(
+        std::string const& mesh_output_name, Process const& process,
+        const int process_id, double const t,
+        std::vector<GlobalVector*> const& xs) const;
 
     std::unique_ptr<MeshLib::IO::XdmfHdfWriter> _mesh_xdmf_hdf_writer;
 

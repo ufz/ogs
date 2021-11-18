@@ -54,6 +54,39 @@ std::string constructPVDName(std::string const& output_directory,
                                   output_file_prefix, mesh_name, 0, 0, 0) +
                                   ".pvd");
 }
+
+std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
+computeDofTablesForSubmesh(ProcessLib::Process const& process,
+                           MeshLib::Mesh const& submesh,
+                           std::size_t const num_processes)
+{
+    std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>> mesh_dof_tables;
+    mesh_dof_tables.reserve(num_processes);
+
+    for (std::size_t i = 0; i < num_processes; ++i)
+    {
+        mesh_dof_tables.push_back(
+            process.getDOFTable(i).deriveBoundaryConstrainedMap(
+                MeshLib::MeshSubset{submesh, submesh.getNodes()}));
+    }
+
+    return mesh_dof_tables;
+}
+
+std::vector<NumLib::LocalToGlobalIndexMap const*> toVectorOfConstPointers(
+    std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>> const&
+        dof_tables)
+{
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table_pointers;
+
+    dof_table_pointers.reserve(dof_tables.size());
+    transform(cbegin(dof_tables), cend(dof_tables),
+              back_inserter(dof_table_pointers),
+              [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p)
+              { return p.get(); });
+
+    return dof_table_pointers;
+}
 }  // namespace
 
 namespace ProcessLib
@@ -318,67 +351,56 @@ void Output::outputMeshes(
     }
 }
 
+MeshLib::Mesh const& Output::prepareNonBulkMesh(
+    std::string const& mesh_output_name, Process const& process,
+    const int process_id, double const t,
+    std::vector<GlobalVector*> const& xs) const
+{
+    auto& non_bulk_mesh = *BaseLib::findElementOrError(
+        begin(_meshes), end(_meshes),
+        [&mesh_output_name](auto const& m)
+        { return m->getName() == mesh_output_name; },
+        "Need mesh '" + mesh_output_name + "' for the output.");
+
+    DBUG("Found {:d} nodes for output at mesh '{:s}'.",
+         non_bulk_mesh.getNumberOfNodes(), non_bulk_mesh.getName());
+
+    // TODO do not recreate everytime when doing output
+    auto const mesh_dof_tables =
+        computeDofTablesForSubmesh(process, non_bulk_mesh, xs.size());
+
+    auto const mesh_dof_table_pointers =
+        toVectorOfConstPointers(mesh_dof_tables);
+
+    bool const output_secondary_variables = false;
+    addProcessDataToMesh(
+        t, xs, process_id, non_bulk_mesh, mesh_dof_table_pointers, process,
+        output_secondary_variables, _output_data_specification);
+
+    return non_bulk_mesh;
+}
+
 // TODO refactor this next.
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
                             int const timestep,
                             const double t,
                             int const iteration,
-                            std::vector<GlobalVector*> const& solution_vectors)
+                            std::vector<GlobalVector*> const& xs)
 {
     BaseLib::RunTime time_output;
     time_output.start();
 
-    bool output_secondary_variables = true;
     // Need to add variables of process to vtu even if no output takes place.
-    addProcessDataToMesh(t, solution_vectors, process_id, process.getMesh(),
-                         process, output_secondary_variables,
+    bool const output_secondary_variables = true;
+    addProcessDataToMesh(t, xs, process_id, process.getMesh(), process,
+                         output_secondary_variables,
                          _output_data_specification);
 
     if (!shallDoOutputStage2(process_id, process))
     {
         return;
     }
-
-    auto prepare_non_bulk_mesh = [&](std::string const& mesh_output_name)
-    {
-        auto& non_bulk_mesh = *BaseLib::findElementOrError(
-            begin(_meshes), end(_meshes),
-            [&mesh_output_name](auto const& m)
-            { return m->getName() == mesh_output_name; },
-            "Need mesh '" + mesh_output_name + "' for the output.");
-
-        std::vector<MeshLib::Node*> const& nodes = non_bulk_mesh.getNodes();
-        DBUG("Found {:d} nodes for output at mesh '{:s}'.", nodes.size(),
-             non_bulk_mesh.getName());
-
-        // TODO CL creating d.o.f. table
-        // TODO do not recreate everytime when doing output
-        std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
-            mesh_dof_tables;
-        mesh_dof_tables.reserve(solution_vectors.size());
-        for (std::size_t i = 0; i < solution_vectors.size(); ++i)
-        {
-            mesh_dof_tables.push_back(
-                process.getDOFTable(i).deriveBoundaryConstrainedMap(
-                    MeshLib::MeshSubset{non_bulk_mesh, nodes}));
-        }
-        std::vector<NumLib::LocalToGlobalIndexMap const*>
-            mesh_dof_table_pointers;
-        mesh_dof_table_pointers.reserve(mesh_dof_tables.size());
-        transform(cbegin(mesh_dof_tables), cend(mesh_dof_tables),
-                  back_inserter(mesh_dof_table_pointers),
-                  [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p)
-                  { return p.get(); });
-
-        output_secondary_variables = false;
-        addProcessDataToMesh(t, solution_vectors, process_id, non_bulk_mesh,
-                             mesh_dof_table_pointers, process,
-                             output_secondary_variables,
-                             _output_data_specification);
-
-        return non_bulk_mesh;
-    };
 
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> output_meshes;
     for (auto const& mesh_output_name : _mesh_names_for_output)
@@ -391,13 +413,15 @@ void Output::doOutputAlways(Process const& process,
         else
         {
             // mesh related output
-            auto const& non_bulk_mesh = prepare_non_bulk_mesh(mesh_output_name);
+            auto const& non_bulk_mesh = prepareNonBulkMesh(
+                mesh_output_name, process, process_id, t, xs);
             output_meshes.push_back(non_bulk_mesh);
         }
     }
 
     outputMeshes(process, process_id, timestep, t, iteration,
                  std::move(output_meshes));
+
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
 }
