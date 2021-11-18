@@ -153,7 +153,78 @@ std::set<std::string> addPrimaryVariablesToMesh(
     int global_component_offset = 0;
     int global_component_offset_next = 0;
 
-    // primary variables
+    auto output_single_component_at_node =
+        [&x, &x_copy, &global_component_offset, &dof_table](
+            MeshLib::PropertyVector<double>& output_data, std::size_t mesh_id,
+            MeshLib::Node const& node, int component_id, int n_components)
+    {
+        auto const node_id = node.getID();
+        MeshLib::Location const loc(mesh_id, MeshLib::MeshItemType::Node,
+                                    node_id);
+
+        auto const global_component_id = global_component_offset + component_id;
+        auto const index = dof_table.getLocalIndex(
+            loc, global_component_id, x.getRangeBegin(), x.getRangeEnd());
+
+        output_data[node_id * n_components + component_id] = x_copy[index];
+    };
+
+#ifdef USE_PETSC
+    MeshLib::PropertyVector<std::size_t>* bulk_node_id_map = nullptr;
+
+    if (&bulk_dof_table != &dof_table)
+    {
+        if (!mesh.getProperties().existsPropertyVector<std::size_t>(
+                "bulk_node_ids"))
+        {
+            OGS_FATAL(
+                "The required bulk node ids map does not exist in "
+                "the boundary mesh '{:s}' or has the wrong data "
+                "type (should be equivalent to C++ data type "
+                "std::size_t which is an unsigned integer of size "
+                "{:d} or UInt64 in vtk terminology).",
+                mesh.getName(), sizeof(std::size_t));
+        }
+        bulk_node_id_map = mesh.getProperties().getPropertyVector<std::size_t>(
+            "bulk_node_ids");
+    }
+
+    auto output_single_component_at_ghost_node =
+        [&x, &x_copy, &global_component_offset, &dof_table, &bulk_dof_table,
+         bulk_node_id_map, &mesh](MeshLib::PropertyVector<double>& output_data,
+                                  MeshLib::Node const& node, int component_id,
+                                  int n_components)
+    {
+        if (&bulk_dof_table != &dof_table)
+        {
+            auto const node_id = node.getID();
+
+            if (static_cast<MeshLib::NodePartitionedMesh const&>(mesh)
+                    .isGhostNode(node_id))
+            {
+                auto const bulk_node_id = (*bulk_node_id_map)[node_id];
+                // use bulk_dof_tables to find information
+                std::size_t const bulk_mesh_id = 0;
+                MeshLib::Location const loc(
+                    bulk_mesh_id, MeshLib::MeshItemType::Node, bulk_node_id);
+                auto const global_component_id =
+                    global_component_offset + component_id;
+                auto const index = bulk_dof_table.getLocalIndex(
+                    loc, global_component_id, x.getRangeBegin(),
+                    x.getRangeEnd());
+
+                output_data[node_id * n_components + component_id] =
+                    x_copy[index];
+
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+#endif
+
     for (int variable_id = 0;
          variable_id < static_cast<int>(process_variables.size());
          ++variable_id)
@@ -192,55 +263,16 @@ std::set<std::string> addPrimaryVariablesToMesh(
             for (auto const* node : mesh_subset.getNodes())
             {
 #ifdef USE_PETSC
-                if (&bulk_dof_table != &dof_table)
+
+                if (output_single_component_at_ghost_node(
+                        output_data, *node, component_id, n_components))
                 {
-                    if (!mesh.getProperties().existsPropertyVector<std::size_t>(
-                            "bulk_node_ids"))
-                    {
-                        OGS_FATAL(
-                            "The required bulk node ids map does not exist in "
-                            "the boundary mesh '{:s}' or has the wrong data "
-                            "type (should be equivalent to C++ data type "
-                            "std::size_t which is an unsigned integer of size "
-                            "{:d} or UInt64 in vtk terminology).",
-                            mesh.getName(), sizeof(std::size_t));
-                    }
-                    auto const bulk_node_id_map =
-                        *mesh.getProperties().getPropertyVector<std::size_t>(
-                            "bulk_node_ids");
-
-                    if (static_cast<MeshLib::NodePartitionedMesh const&>(mesh)
-                            .isGhostNode(node->getID()))
-                    {
-                        auto const bulk_node_id =
-                            bulk_node_id_map[node->getID()];
-                        // use bulk_dof_tables to find information
-                        std::size_t const bulk_mesh_id = 0;
-                        MeshLib::Location const l(bulk_mesh_id,
-                                                  MeshLib::MeshItemType::Node,
-                                                  bulk_node_id);
-                        auto const global_component_id =
-                            global_component_offset + component_id;
-                        auto const index = bulk_dof_table.getLocalIndex(
-                            l, global_component_id, x.getRangeBegin(),
-                            x.getRangeEnd());
-
-                        output_data[node->getID() * n_components +
-                                    component_id] = x_copy[index];
-                        continue;
-                    }
+                    continue;
                 }
 #endif
-                MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
-                                          node->getID());
 
-                auto const global_component_id =
-                    global_component_offset + component_id;
-                auto const index = dof_table.getLocalIndex(
-                    l, global_component_id, x.getRangeBegin(), x.getRangeEnd());
-
-                output_data[node->getID() * n_components + component_id] =
-                    x_copy[index];
+                output_single_component_at_node(output_data, mesh_id, *node,
+                                                component_id, n_components);
             }
         }
     }
