@@ -153,20 +153,23 @@ std::set<std::string> addPrimaryVariablesToMesh(
     int global_component_offset = 0;
     int global_component_offset_next = 0;
 
-    auto output_single_component_at_node =
-        [&x, &x_copy, &global_component_offset, &dof_table](
-            MeshLib::PropertyVector<double>& output_data, std::size_t mesh_id,
-            MeshLib::Node const& node, int component_id, int n_components)
+    auto get_in_out_indices =
+        [&x, &global_component_offset, &dof_table](
+            std::size_t mesh_id, MeshLib::Node const& node, int component_id,
+            int n_components) -> std::pair<GlobalIndexType, std::size_t>
     {
         auto const node_id = node.getID();
         MeshLib::Location const loc(mesh_id, MeshLib::MeshItemType::Node,
                                     node_id);
 
         auto const global_component_id = global_component_offset + component_id;
-        auto const index = dof_table.getLocalIndex(
+        auto const in_index = dof_table.getLocalIndex(
             loc, global_component_id, x.getRangeBegin(), x.getRangeEnd());
 
-        output_data[node_id * n_components + component_id] = x_copy[index];
+        // per node ordering of components
+        auto const out_index = node_id * n_components + component_id;
+
+        return {in_index, out_index};
     };
 
 #ifdef USE_PETSC
@@ -271,8 +274,10 @@ std::set<std::string> addPrimaryVariablesToMesh(
                 }
 #endif
 
-                output_single_component_at_node(output_data, mesh_id, *node,
-                                                component_id, n_components);
+                auto const [in_index, out_index] = get_in_out_indices(
+                    mesh_id, *node, component_id, n_components);
+
+                output_data[out_index] = x_copy[in_index];
             }
         }
     }
