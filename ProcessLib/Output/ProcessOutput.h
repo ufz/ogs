@@ -43,13 +43,6 @@ void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& x,
                           bool const output_secondary_variable,
                           OutputDataSpecification const& process_output);
 
-/// Prepare the output data, i.e. add the solution to vtu data structure.
-void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& x,
-                          int const process_id, MeshLib::Mesh& mesh,
-                          Process const& process,
-                          bool const output_secondary_variable,
-                          OutputDataSpecification const& process_output);
-
 /// Writes output to the given \c file_name using the specified file format.
 ///
 /// See Output::_output_file_data_mode documentation for the data_mode
