@@ -138,7 +138,7 @@ std::vector<double> copySolutionVector(GlobalVector const& x)
 
 MeshLib::PropertyVector<std::size_t> const* getBulkNodeIdMapForPetscIfNecessary(
     [[maybe_unused]] MeshLib::Mesh const& mesh,
-    [[maybe_unused]] NumLib::LocalToGlobalIndexMap const& dof_table,
+    [[maybe_unused]] NumLib::LocalToGlobalIndexMap const& mesh_dof_table,
     [[maybe_unused]] NumLib::LocalToGlobalIndexMap const& bulk_dof_table)
 {
 #ifdef USE_PETSC
@@ -169,7 +169,7 @@ GlobalIndexType getIndexForComponentInSolutionVector(
     MeshLib::Node const& node,
     int global_component_id,
     GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
+    NumLib::LocalToGlobalIndexMap const& mesh_dof_table,
     [[maybe_unused]] NumLib::LocalToGlobalIndexMap const& bulk_dof_table,
     [[maybe_unused]] MeshLib::PropertyVector<std::size_t> const* const
         bulk_node_id_map)
@@ -177,7 +177,7 @@ GlobalIndexType getIndexForComponentInSolutionVector(
     auto const node_id = node.getID();
 
 #ifdef USE_PETSC
-    if (&bulk_dof_table != &dof_table)
+    if (&bulk_dof_table != &mesh_dof_table)
     {
         if (static_cast<MeshLib::NodePartitionedMesh const&>(mesh).isGhostNode(
                 node_id))
@@ -199,7 +199,7 @@ GlobalIndexType getIndexForComponentInSolutionVector(
 
     MeshLib::Location const loc(mesh_id, MeshLib::MeshItemType::Node, node_id);
 
-    auto const in_index = dof_table.getLocalIndex(
+    auto const in_index = mesh_dof_table.getLocalIndex(
         loc, global_component_id, x.getRangeBegin(), x.getRangeEnd());
 
     return in_index;
@@ -211,19 +211,19 @@ std::set<std::string> addPrimaryVariablesToMesh(
     std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>> const&
         process_variables,
     std::set<std::string> const& output_variables,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
+    NumLib::LocalToGlobalIndexMap const& mesh_dof_table,
     NumLib::LocalToGlobalIndexMap const& bulk_dof_table)
 {
     auto const x_copy = copySolutionVector(x);
     std::set<std::string> names_of_already_output_variables;
 
-    const auto number_of_dof_variables = dof_table.getNumberOfVariables();
+    const auto number_of_dof_variables = mesh_dof_table.getNumberOfVariables();
 
     int global_component_offset = 0;
     int global_component_offset_next = 0;
 
-    auto const* const bulk_node_id_map =
-        getBulkNodeIdMapForPetscIfNecessary(mesh, dof_table, bulk_dof_table);
+    auto const* const bulk_node_id_map = getBulkNodeIdMapForPetscIfNecessary(
+        mesh, mesh_dof_table, bulk_dof_table);
 
     for (int variable_id = 0;
          variable_id < static_cast<int>(process_variables.size());
@@ -262,7 +262,7 @@ std::set<std::string> addPrimaryVariablesToMesh(
         {
             // TODO are they the same for all components? -> Swap for loops.
             auto const& mesh_subset =
-                dof_table.getMeshSubset(sub_meshset_id, component_id);
+                mesh_dof_table.getMeshSubset(sub_meshset_id, component_id);
             auto const mesh_id = mesh_subset.getMeshID();
 
             for (auto const* node : mesh_subset.getNodes())
@@ -271,7 +271,7 @@ std::set<std::string> addPrimaryVariablesToMesh(
                     global_component_offset + component_id;
 
                 auto const in_index = getIndexForComponentInSolutionVector(
-                    mesh_id, *node, global_component_id, x, dof_table,
+                    mesh_id, *node, global_component_id, x, mesh_dof_table,
                     bulk_dof_table, bulk_node_id_map);
 
                 // per node ordering of components
@@ -318,9 +318,8 @@ namespace ProcessLib
 void addProcessDataToMesh(
     const double t, std::vector<GlobalVector*> const& xs, int const process_id,
     MeshLib::Mesh& mesh,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& bulk_dof_tables,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-    Process const& process, bool const output_secondary_variable,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& mesh_dof_tables,
+    Process const& process, bool const output_secondary_variables,
     OutputDataSpecification const& process_output)
 {
     DBUG("Process output data.");
@@ -330,24 +329,42 @@ void addProcessDataToMesh(
     auto const* const integration_point_writers =
         process.getIntegrationPointWriter(mesh);
     auto const& output_variables = process_output.output_variables;
+    auto const& bulk_dof_table = process.getDOFTable(process_id);
 
     addOgsVersion(mesh);
 
     auto names_of_already_output_variables = addPrimaryVariablesToMesh(
         mesh, *xs[process_id], process_variables, output_variables,
-        *dof_tables[process_id], *bulk_dof_tables[process_id]);
+        *mesh_dof_tables[process_id], bulk_dof_table);
 
-    if (output_secondary_variable)
+    if (output_secondary_variables)
     {
         addSecondaryVariablesToMesh(
             secondary_variables, names_of_already_output_variables, t, xs, mesh,
-            dof_tables, process_output.output_residuals);
+            mesh_dof_tables, process_output.output_residuals);
     }
 
     if (integration_point_writers)
     {
         addIntegrationPointDataToMesh(mesh, *integration_point_writers);
     }
+}
+
+void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& xs,
+                          int const process_id, MeshLib::Mesh& mesh,
+                          Process const& process,
+                          bool const output_secondary_variables,
+                          OutputDataSpecification const& process_output)
+{
+    std::vector<NumLib::LocalToGlobalIndexMap const*> bulk_dof_tables(
+        xs.size());
+    for (std::size_t i = 0; i < xs.size(); ++i)
+    {
+        bulk_dof_tables[i] = &process.getDOFTable(i);
+    }
+
+    addProcessDataToMesh(t, xs, process_id, mesh, bulk_dof_tables, process,
+                         output_secondary_variables, process_output);
 }
 
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,

@@ -28,17 +28,29 @@ struct OutputDataSpecification final
     bool const output_residuals;
 };
 
-///
 /// Prepare the output data, i.e. add the solution to vtu data structure.
 void addProcessDataToMesh(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
     MeshLib::Mesh& mesh,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& bulk_dof_tables,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& mesh_dof_tables,
     Process const& process, bool const output_secondary_variable,
     OutputDataSpecification const& process_output);
 
-//! Writes output to the given \c file_name using the specified file format.
+/// Prepare the output data, i.e. add the solution to vtu data structure.
+void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& x,
+                          int const process_id, MeshLib::Mesh& mesh,
+                          Process const& process,
+                          bool const output_secondary_variable,
+                          OutputDataSpecification const& process_output);
+
+/// Prepare the output data, i.e. add the solution to vtu data structure.
+void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& x,
+                          int const process_id, MeshLib::Mesh& mesh,
+                          Process const& process,
+                          bool const output_secondary_variable,
+                          OutputDataSpecification const& process_output);
+
+/// Writes output to the given \c file_name using the specified file format.
 ///
 /// See Output::_output_file_data_mode documentation for the data_mode
 /// parameter.
