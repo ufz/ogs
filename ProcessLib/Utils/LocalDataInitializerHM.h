@@ -40,6 +40,16 @@ template <typename LocalAssemblerInterface,
           int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializerHM final
 {
+    struct IsElementEnabled
+    {
+        template <typename ElementTraits>
+        constexpr bool operator()(ElementTraits*) const
+        {
+            // mechanics processes in OGS are defined in 2D and 3D only
+            return ElementTraits::Element::dimension >= 2;
+        }
+    };
+
 public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
@@ -49,12 +59,7 @@ public:
     {
         using EnabledElementTraits =
             decltype(BaseLib::TMP::filter<EnabledElementTraitsLagrange>(
-                []<typename ET>(ET*)
-                {
-                    /* mechanics processes in OGS are defined in 2D and 3D only
-                     */
-                    return ET::Element::dimension >= 2;
-                }));
+                std::declval<IsElementEnabled>()));
 
         BaseLib::TMP::foreach<EnabledElementTraits>(
             [this]<typename ET>(ET*)

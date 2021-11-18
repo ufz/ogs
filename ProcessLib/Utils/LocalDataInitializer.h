@@ -34,6 +34,16 @@ template <typename LocalAssemblerInterface,
           int GlobalDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
+    struct IsElementEnabled
+    {
+        template <typename ElementTraits>
+        constexpr bool operator()(ElementTraits*) const
+        {
+            // exclude 0D elements
+            return ElementTraits::Element::dimension >= 1;
+        }
+    };
+
 public:
     using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
 
@@ -42,11 +52,7 @@ public:
     {
         using EnabledElementTraits =
             decltype(BaseLib::TMP::filter<EnabledElementTraitsLagrange>(
-                []<typename ET>(ET*)
-                {
-                    /* exclude 0D elements */
-                    return ET::Element::dimension >= 1;
-                }));
+                std::declval<IsElementEnabled>()));
 
         BaseLib::TMP::foreach<EnabledElementTraits>(
             [this]<typename ET>(ET*)
