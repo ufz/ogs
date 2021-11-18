@@ -35,12 +35,7 @@ void addProcessDataToMesh(
     MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& bulk_dof_tables,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-    std::vector<std::reference_wrapper<ProcessVariable>> const&
-        process_variables,
-    SecondaryVariableCollection const& secondary_variables,
-    bool const output_secondary_variable,
-    std::vector<std::unique_ptr<IntegrationPointWriter>> const*
-        integration_point_writer,
+    Process const& process, bool const output_secondary_variable,
     OutputDataSpecification const& process_output);
 
 //! Writes output to the given \c file_name using the specified file format.

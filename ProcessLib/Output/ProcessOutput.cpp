@@ -23,6 +23,7 @@
 #endif
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "ProcessLib/Process.h"
 
 /// Copies the ogs_version string containing the release number and the git
 /// hash.
@@ -127,15 +128,15 @@ void addProcessDataToMesh(
     [[maybe_unused]] std::vector<NumLib::LocalToGlobalIndexMap const*> const&
         bulk_dof_tables,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-    std::vector<std::reference_wrapper<ProcessVariable>> const&
-        process_variables,
-    SecondaryVariableCollection const& secondary_variables,
-    bool const output_secondary_variable,
-    std::vector<std::unique_ptr<IntegrationPointWriter>> const* const
-        integration_point_writer,
+    Process const& process, bool const output_secondary_variable,
     OutputDataSpecification const& process_output)
 {
     DBUG("Process output data.");
+
+    auto const& process_variables = process.getProcessVariables(process_id);
+    auto const& secondary_variables = process.getSecondaryVariables();
+    auto const* const integration_point_writers =
+        process.getIntegrationPointWriter(mesh);
 
     addOgsVersion(mesh);
 
@@ -276,9 +277,9 @@ void addProcessDataToMesh(
         }
     }
 
-    if (integration_point_writer != nullptr)
+    if (integration_point_writers)
     {
-        addIntegrationPointWriter(mesh, *integration_point_writer);
+        addIntegrationPointWriter(mesh, *integration_point_writers);
     }
 }
 

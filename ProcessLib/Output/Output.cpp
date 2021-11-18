@@ -293,12 +293,9 @@ void Output::doOutputAlways(Process const& process,
 
     bool output_secondary_variable = true;
     // Need to add variables of process to vtu even no output takes place.
-    addProcessDataToMesh(t, solution_vectors, process_id, process.getMesh(), dof_tables,
-                         dof_tables, process.getProcessVariables(process_id),
-                         process.getSecondaryVariables(),
-                         output_secondary_variable,
-                         process.getIntegrationPointWriter(process.getMesh()),
-                         _output_data_specification);
+    addProcessDataToMesh(t, solution_vectors, process_id, process.getMesh(),
+                         dof_tables, dof_tables, process,
+                         output_secondary_variable, _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
     // gives the latest solution within a coupling loop, is allowed to make
@@ -385,12 +382,10 @@ void Output::doOutputAlways(Process const& process,
                   { return p.get(); });
 
         output_secondary_variable = false;
-        addProcessDataToMesh(
-            t, solution_vectors, process_id, non_bulk_mesh, dof_tables,
-            mesh_dof_table_pointers, process.getProcessVariables(process_id),
-            process.getSecondaryVariables(), output_secondary_variable,
-            process.getIntegrationPointWriter(non_bulk_mesh),
-            _output_data_specification);
+        addProcessDataToMesh(t, solution_vectors, process_id, non_bulk_mesh,
+                             dof_tables, mesh_dof_table_pointers, process,
+                             output_secondary_variable,
+                             _output_data_specification);
 
         output_meshes.push_back(non_bulk_mesh);
     }
@@ -458,10 +453,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
 
     bool const output_secondary_variable = true;
     addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
-                         dof_tables, process.getProcessVariables(process_id),
-                         process.getSecondaryVariables(),
-                         output_secondary_variable,
-                         process.getIntegrationPointWriter(process.getMesh()),
+                         dof_tables, process, output_secondary_variable,
                          _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
