@@ -120,10 +120,26 @@ static void addSecondaryVariableResiduals(
     residuals.copyValues(residuals_mesh);
 }
 
+std::vector<double> copySolutionVector(GlobalVector const& x)
+{
+#ifdef USE_PETSC
+    // TODO It is also possible directly to copy the data for single process
+    // variable to a mesh property. It needs a vector of global indices and
+    // some PETSc magic to do so.
+    std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
+#else
+    std::vector<double> x_copy(x.size());
+#endif
+
+    x.copyValues(x_copy);
+
+    return x_copy;
+}
+
 namespace ProcessLib
 {
 void addProcessDataToMesh(
-    const double t, std::vector<GlobalVector*> const& x, int const process_id,
+    const double t, std::vector<GlobalVector*> const& xs, int const process_id,
     MeshLib::Mesh& mesh,
     [[maybe_unused]] std::vector<NumLib::LocalToGlobalIndexMap const*> const&
         bulk_dof_tables,
@@ -140,17 +156,7 @@ void addProcessDataToMesh(
 
     addOgsVersion(mesh);
 
-    // Copy result
-#ifdef USE_PETSC
-    // TODO It is also possible directly to copy the data for single process
-    // variable to a mesh property. It needs a vector of global indices and
-    // some PETSc magic to do so.
-    std::vector<double> x_copy(x[process_id]->getLocalSize() +
-                               x[process_id]->getGhostSize());
-#else
-    std::vector<double> x_copy(x[process_id]->size());
-#endif
-    x[process_id]->copyValues(x_copy);
+    auto const x_copy = copySolutionVector(*xs[process_id]);
 
     auto const& output_variables = process_output.output_variables;
     std::set<std::string> already_output;
@@ -246,8 +252,8 @@ void addProcessDataToMesh(
                 auto const global_component_id =
                     global_component_offset + component_id;
                 auto const index = dof_table[process_id]->getLocalIndex(
-                    l, global_component_id, x[process_id]->getRangeBegin(),
-                    x[process_id]->getRangeEnd());
+                    l, global_component_id, xs[process_id]->getRangeBegin(),
+                    xs[process_id]->getRangeEnd());
 
                 output_data[node->getID() * n_components + component_id] =
                     x_copy[index];
@@ -267,12 +273,13 @@ void addProcessDataToMesh(
             }
 
             addSecondaryVariableNodes(
-                t, x, dof_table, secondary_variables.get(name), name, mesh);
+                t, xs, dof_table, secondary_variables.get(name), name, mesh);
 
             if (process_output.output_residuals)
             {
-                addSecondaryVariableResiduals(
-                    t, x, dof_table, secondary_variables.get(name), name, mesh);
+                addSecondaryVariableResiduals(t, xs, dof_table,
+                                              secondary_variables.get(name),
+                                              name, mesh);
             }
         }
     }
