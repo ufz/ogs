@@ -279,7 +279,7 @@ void addProcessDataToMesh(
 
     if (integration_point_writers)
     {
-        addIntegrationPointWriter(mesh, *integration_point_writers);
+        addIntegrationPointDataToMesh(mesh, *integration_point_writers);
     }
 }
 

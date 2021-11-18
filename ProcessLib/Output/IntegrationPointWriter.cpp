@@ -88,7 +88,7 @@ static ProcessLib::IntegrationPointMetaData extractIntegrationPointMetaData(
 
 namespace ProcessLib
 {
-void addIntegrationPointWriter(
+void addIntegrationPointDataToMesh(
     MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const&
         integration_point_writer)
