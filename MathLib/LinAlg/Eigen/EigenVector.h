@@ -19,6 +19,8 @@
 #include <Eigen/Eigen>
 #include <Eigen/Sparse>
 
+#include "EigenMapTools.h"
+
 namespace MathLib
 {
 /// Global vector based on Eigen vector
@@ -90,11 +92,13 @@ public:
         }
     }
 
-    /// Copy vector values.
+    /// Copy local entries to a vector.
+    /// \param u a vector for the values of local entries. It will be resized to
+    /// hold the current vector data.
     void copyValues(std::vector<double>& u) const
     {
-        assert(u.size() == (std::size_t)vec_.size());
-        copy_n(vec_.data(), vec_.size(), u.begin());
+        u.resize(size());
+        toVector(u) = vec_;
     }
 
 #ifndef NDEBUG

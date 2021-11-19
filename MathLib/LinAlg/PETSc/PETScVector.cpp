@@ -196,7 +196,7 @@ void PETScVector::setLocalAccessibleVector() const
 
 void PETScVector::copyValues(std::vector<PetscScalar>& u) const
 {
-    assert(u.size() == (std::size_t)(getLocalSize() + getGhostSize()));
+    u.resize(getLocalSize() + getGhostSize());
 
     PetscScalar* loc_x = getLocalVector();
     std::copy_n(loc_x, getLocalSize() + getGhostSize(), u.begin());

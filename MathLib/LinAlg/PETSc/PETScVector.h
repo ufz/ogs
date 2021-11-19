@@ -177,8 +177,9 @@ public:
      */
     PETSc_Vec const& getRawVector() const { return v_; }
     /*!
-       Copy local entries including ghost ones to an array
-       \param u Preallocated vector for the values of local entries.
+       Copy local entries including ghost ones to a vector.
+       \param u a vector for the values of local entries. It will be resized to
+       hold the current vector data.
     */
     void copyValues(std::vector<PetscScalar>& u) const;
 
