@@ -233,32 +233,32 @@ std::set<std::string> addPrimaryVariablesToMesh(
 
         DBUG("  process variable {:s}", pv.getName());
 
-        auto const num_comp = pv.getNumberOfGlobalComponents();
         auto& output_data = *MeshLib::getOrCreateMeshProperty<double>(
-            mesh, pv.getName(), MeshLib::MeshItemType::Node, num_comp);
+            mesh, pv.getName(), MeshLib::MeshItemType::Node, n_components);
 
-        for (int component_id = 0; component_id < num_comp; ++component_id)
+        // mesh subsets are the same for all components
+        int const dummy_component_id = 0;
+        auto const& mesh_subset =
+            mesh_dof_table.getMeshSubset(variable_id, dummy_component_id);
+        auto const mesh_id = mesh_subset.getMeshID();
+
+        for (auto const* node : mesh_subset.getNodes())
         {
-            // TODO are they the same for all components? -> Swap for loops.
-            auto const& mesh_subset =
-                mesh_dof_table.getMeshSubset(variable_id, component_id);
-            auto const mesh_id = mesh_subset.getMeshID();
+            auto const node_id = node->getID();
+            auto const is_ghost_node = isGhostNode(mesh, node_id);
 
-            for (auto const* node : mesh_subset.getNodes())
+            for (int component_id = 0; component_id < n_components;
+                 ++component_id)
             {
                 auto const global_component_id =
                     global_component_offset + component_id;
-
-                auto const node_id = node->getID();
-                auto const is_ghost_node = isGhostNode(mesh, node_id);
 
                 auto const in_index = getIndexForComponentInSolutionVector(
                     mesh_id, node_id, is_ghost_node, global_component_id, x,
                     mesh_dof_table, bulk_dof_table, bulk_node_id_map);
 
                 // per node ordering of components
-                auto const out_index =
-                    node->getID() * n_components + component_id;
+                auto const out_index = node_id * n_components + component_id;
 
                 output_data[out_index] = x_copy[in_index];
             }
