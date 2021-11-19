@@ -20,7 +20,7 @@
             <phases/>
             <properties>
                 <property>
-                    <name>heat_capacity</name>
+                    <name>specific_heat_capacity</name>
                     <type>Constant</type>
                     <value>1500</value>
                 </property>

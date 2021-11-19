@@ -30,7 +30,7 @@
                     <parameter_name>lambda</parameter_name>
                 </property>
                 <property>
-                    <name>heat_capacity</name>
+                    <name>specific_heat_capacity</name>
                     <type>Parameter</type>
                     <parameter_name>c</parameter_name>
                 </property>
@@ -50,7 +50,7 @@
                     <parameter_name>lambda</parameter_name>
                 </property>
                 <property>
-                    <name>heat_capacity</name>
+                    <name>specific_heat_capacity</name>
                     <type>Parameter</type>
                     <parameter_name>c</parameter_name>
                 </property>
