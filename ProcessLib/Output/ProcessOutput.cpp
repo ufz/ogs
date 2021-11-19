@@ -63,19 +63,6 @@ static void addSecondaryVariableNodes(
     std::unique_ptr<GlobalVector> result_cache;
     auto const& nodal_values =
         var.fcts.eval_field(t, x, dof_table, result_cache);
-#ifdef USE_PETSC
-    std::size_t const global_vector_size =
-        nodal_values.getLocalSize() + nodal_values.getGhostSize();
-#else
-    std::size_t const global_vector_size = nodal_values.size();
-#endif
-    if (nodal_values_mesh.size() != global_vector_size)
-    {
-        OGS_FATAL(
-            "Secondary variable `{:s}' did not evaluate to the right number of "
-            "components. Expected: {:d}, actual: {:d}.",
-            var.name, nodal_values_mesh.size(), global_vector_size);
-    }
 
     // Copy result
     nodal_values.copyValues(nodal_values_mesh);

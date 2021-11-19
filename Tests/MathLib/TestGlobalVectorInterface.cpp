@@ -176,8 +176,7 @@ void checkGlobalVectorInterfacePETSc()
     ASSERT_ARRAY_NEAR(z, x0, 6, 1e-10);
 
     // check local array
-    std::vector<double> loc_v(x_fixed_p.getLocalSize() +
-                              x_fixed_p.getGhostSize());
+    std::vector<double> loc_v;
     x_fixed_p.copyValues(loc_v);
     z[0] = 1.0;
     z[1] = 2.0;
