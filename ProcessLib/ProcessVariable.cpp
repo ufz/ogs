@@ -263,41 +263,36 @@ void ProcessVariable::createBoundaryConditionsForDeactivatedSubDomains(
 {
     for (auto const& deactivated_subdomain : _deactivated_subdomains)
     {
-        auto const& deactivated_subdomain_meshes =
-            deactivated_subdomain->deactivated_subdomain_meshes;
-        for (auto const& deactivated_subdomain_mesh :
-             deactivated_subdomain_meshes)
+        auto const& deactivated_subdomain_mesh =
+            deactivated_subdomain->deactivated_subdomain_mesh;
+        auto const* parameter = &ParameterLib::findParameter<double>(
+            DeactivatedSubdomain::zero_parameter_name, parameters, 1);
+        bool const set_outer_nodes_dirichlet_values =
+            deactivated_subdomain->boundary_value_parameter != nullptr;
+        if (set_outer_nodes_dirichlet_values)
         {
-            auto const* parameter = &ParameterLib::findParameter<double>(
-                DeactivatedSubdomain::zero_parameter_name, parameters, 1);
-            bool const set_outer_nodes_dirichlet_values =
-                deactivated_subdomain->boundary_value_parameter != nullptr;
-            if (set_outer_nodes_dirichlet_values)
-            {
-                parameter = deactivated_subdomain->boundary_value_parameter;
-            }
+            parameter = deactivated_subdomain->boundary_value_parameter;
+        }
 
-            for (int component_id = 0;
-                 component_id <
-                 dof_table.getNumberOfVariableComponents(variable_id);
-                 component_id++)
-            {
-                auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
-                    &_ids_of_active_elements,
-                    deactivated_subdomain->time_interval, *parameter,
-                    set_outer_nodes_dirichlet_values,
-                    *deactivated_subdomain_mesh, dof_table, variable_id,
-                    component_id);
+        for (int component_id = 0;
+             component_id <
+             dof_table.getNumberOfVariableComponents(variable_id);
+             component_id++)
+        {
+            auto bc = std::make_unique<DeactivatedSubdomainDirichlet>(
+                &_ids_of_active_elements, deactivated_subdomain->time_interval,
+                *parameter, set_outer_nodes_dirichlet_values,
+                *deactivated_subdomain_mesh, dof_table, variable_id,
+                component_id);
 
 #ifdef USE_PETSC
-                // TODO: make it work under PETSc too.
-                if (bc == nullptr)
-                {
-                    continue;
-                }
-#endif  // USE_PETSC
-                bcs.push_back(std::move(bc));
+            // TODO: make it work under PETSc too.
+            if (bc == nullptr)
+            {
+                continue;
             }
+#endif  // USE_PETSC
+            bcs.push_back(std::move(bc));
         }
     }
 }
@@ -315,8 +310,6 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
         return;
     }
 
-    auto const* const material_ids = MeshLib::materialIDs(_mesh);
-
     auto is_active_in_subdomain = [&](std::size_t const i,
                                       DeactivatedSubdomain const& ds) -> bool
     {
@@ -325,17 +318,8 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
             return true;
         }
 
-        auto const& deactivated_materialIDs = ds.materialIDs;
-
         auto const& element_center = getCenterOfGravity(*_mesh.getElement(i));
-        if (std::binary_search(deactivated_materialIDs.begin(),
-                               deactivated_materialIDs.end(),
-                               (*material_ids)[i]) &&
-            ds.isDeactivated(element_center, time))
-        {
-            return false;
-        }
-        return true;
+        return !ds.isDeactivated(element_center, time);
     };
 
     auto const number_of_elements = _mesh.getNumberOfElements();

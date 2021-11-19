@@ -73,9 +73,7 @@ struct DeactivatedSubdomain
         MathLib::PiecewiseLinearInterpolation time_interval_,
         std::pair<Eigen::Vector3d, Eigen::Vector3d>
             line_segment,
-        std::vector<int>&& materialIDs_,
-        std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>&&
-            deactivated_subdomain_meshes_,
+        std::unique_ptr<DeactivatedSubdomainMesh>&& deactivated_subdomain_mesh_,
         ParameterLib::Parameter<double> const* boundary_value_parameter);
 
     /// \returns true if the given time is included in the subdomains time
@@ -94,11 +92,7 @@ struct DeactivatedSubdomain
     /// end points.
     std::pair<Eigen::Vector3d, Eigen::Vector3d> line_segment;
 
-    /// The material IDs of the deactivated the subdomains
-    std::vector<int> const materialIDs;
-
-    std::vector<std::unique_ptr<DeactivatedSubdomainMesh>> const
-        deactivated_subdomain_meshes;
+    std::unique_ptr<DeactivatedSubdomainMesh> const deactivated_subdomain_mesh;
 
     /// A pararameter for the optional Dirichlet boundary condition applied on
     /// the surface of the deactivated subdomain/excavation.

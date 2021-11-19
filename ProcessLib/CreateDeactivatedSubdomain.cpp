@@ -62,22 +62,31 @@ extractInnerAndOuterNodes(MeshLib::Mesh const& mesh,
 }
 
 static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
-    MeshLib::Mesh const& mesh, int const material_id)
+    MeshLib::Mesh const& mesh,
+    std::vector<int> const& deactivated_subdomain_material_ids)
 {
-    // An element is active if its material id matches the selected material id.
-    auto is_active = [material_id, material_ids = *materialIDs(mesh)](
-                         MeshLib::Element const* const e)
-    { return material_id == material_ids[e->getID()]; };
+    // An element is active if its material id matches one of the deactivated
+    // subdomain material ids.
+    auto is_active =
+        [deactivated_subdomain_material_ids,
+         material_ids = *materialIDs(mesh)](MeshLib::Element const* const e)
+    {
+        int const element_material_id = material_ids[e->getID()];
+        return std::any_of(begin(deactivated_subdomain_material_ids),
+                           end(deactivated_subdomain_material_ids),
+                           [&](int const material_id)
+                           { return material_id == element_material_id; });
+    };
 
     auto const& elements = mesh.getElements();
     std::vector<MeshLib::Element*> deactivated_elements;
     std::copy_if(begin(elements), end(elements),
-                 back_inserter(deactivated_elements),
-                 [&](auto const e) { return is_active(e); });
+                 back_inserter(deactivated_elements), is_active);
 
+    static int mesh_number = 0;
     // Subdomain mesh consisting of deactivated elements.
     auto sub_mesh = MeshLib::createMeshFromElementSelection(
-        "deactivate_subdomain_" + std::to_string(material_id),
+        "deactivate_subdomain_" + std::to_string(mesh_number++),
         MeshLib::cloneElements(deactivated_elements));
 
     auto [inner_nodes, outer_nodes] =
@@ -239,30 +248,20 @@ std::unique_ptr<DeactivatedSubdomain const> createDeactivatedSubdomain(
     std::sort(deactivated_subdomain_material_ids.begin(),
               deactivated_subdomain_material_ids.end());
 
-    auto const* const material_ids = materialIDs(mesh);
-    if (material_ids == nullptr)
+    if (materialIDs(mesh) == nullptr)
     {
         OGS_FATAL(
             "The mesh doesn't contain materialIDs for subdomain deactivation. "
             "The program terminates now.");
     }
 
-    std::vector<std::unique_ptr<DeactivatedSubdomainMesh>>
-        deactivated_subdomain_meshes;
-    deactivated_subdomain_meshes.reserve(
-        deactivated_subdomain_material_ids.size());
-
-    std::transform(begin(deactivated_subdomain_material_ids),
-                   end(deactivated_subdomain_material_ids),
-                   back_inserter(deactivated_subdomain_meshes),
-                   [&](std::size_t const id)
-                   { return createDeactivatedSubdomainMesh(mesh, id); });
+    auto deactivated_subdomain_mesh = createDeactivatedSubdomainMesh(
+        mesh, deactivated_subdomain_material_ids);
 
     return std::make_unique<DeactivatedSubdomain const>(
         std::move(time_interval),
         line_segment,
-        std::move(deactivated_subdomain_material_ids),
-        std::move(deactivated_subdomain_meshes),
+        std::move(deactivated_subdomain_mesh),
         boundary_value_parameter);
 }
 
