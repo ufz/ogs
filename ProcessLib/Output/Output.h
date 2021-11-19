@@ -21,6 +21,11 @@ namespace ProcessLib
 {
 class Process;
 
+/// Private struct that contains certain properties of output files.
+///
+/// Defined entirely in the cpp file. Not meant for reuse elsewhere.
+struct OutputFile;
+
 /*! Manages writing the solution of processes to disk.
  *
  * This class decides at which timesteps output is written
@@ -85,8 +90,6 @@ public:
     }
 
 private:
-    struct OutputFile;
-
     static void outputMeshVtk(OutputFile const& output_file,
                               MeshLib::IO::PVDFile* const pvd_file,
                               MeshLib::Mesh const& mesh,
