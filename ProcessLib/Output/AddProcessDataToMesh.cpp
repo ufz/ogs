@@ -127,7 +127,7 @@ MeshLib::PropertyVector<std::size_t> const* getBulkNodeIdMapForPetscIfNecessary(
 {
 #ifdef USE_PETSC
 
-    if (&bulk_dof_table != &dof_table)
+    if (&bulk_dof_table != &mesh_dof_table)
     {
         if (!mesh.getProperties().existsPropertyVector<std::size_t>(
                 "bulk_node_ids"))
@@ -149,35 +149,27 @@ MeshLib::PropertyVector<std::size_t> const* getBulkNodeIdMapForPetscIfNecessary(
 }
 
 GlobalIndexType getIndexForComponentInSolutionVector(
-    std::size_t mesh_id,
-    MeshLib::Node const& node,
-    int global_component_id,
-    GlobalVector const& x,
-    NumLib::LocalToGlobalIndexMap const& mesh_dof_table,
+    std::size_t const mesh_id, std::size_t const node_id,
+    [[maybe_unused]] bool const is_ghost_node, int const global_component_id,
+    GlobalVector const& x, NumLib::LocalToGlobalIndexMap const& mesh_dof_table,
     [[maybe_unused]] NumLib::LocalToGlobalIndexMap const& bulk_dof_table,
     [[maybe_unused]] MeshLib::PropertyVector<std::size_t> const* const
         bulk_node_id_map)
 {
-    auto const node_id = node.getID();
-
 #ifdef USE_PETSC
-    if (&bulk_dof_table != &mesh_dof_table)
+    if (is_ghost_node && &bulk_dof_table != &mesh_dof_table)
     {
-        if (static_cast<MeshLib::NodePartitionedMesh const&>(mesh).isGhostNode(
-                node_id))
-        {
-            auto const bulk_node_id = (*bulk_node_id_map)[node_id];
-            std::size_t const bulk_mesh_id = 0;
+        auto const bulk_node_id = (*bulk_node_id_map)[node_id];
+        std::size_t const bulk_mesh_id = 0;
 
-            MeshLib::Location const loc(
-                bulk_mesh_id, MeshLib::MeshItemType::Node, bulk_node_id);
+        MeshLib::Location const loc(bulk_mesh_id, MeshLib::MeshItemType::Node,
+                                    bulk_node_id);
 
-            auto const in_index = bulk_dof_table.getLocalIndex(
-                loc, global_component_id, x.getRangeBegin(), x.getRangeEnd());
+        auto const in_index = bulk_dof_table.getLocalIndex(
+            loc, global_component_id, x.getRangeBegin(), x.getRangeEnd());
 
-            // early return!
-            return in_index;
-        }
+        // early return!
+        return in_index;
     }
 #endif
 
@@ -187,6 +179,17 @@ GlobalIndexType getIndexForComponentInSolutionVector(
         loc, global_component_id, x.getRangeBegin(), x.getRangeEnd());
 
     return in_index;
+}
+
+bool isGhostNode([[maybe_unused]] MeshLib::Mesh const& mesh,
+                 [[maybe_unused]] std::size_t node_id)
+{
+#ifndef USE_PETSC
+    return false;
+#else
+    return static_cast<MeshLib::NodePartitionedMesh const&>(mesh).isGhostNode(
+        node_id);
+#endif
 }
 
 std::set<std::string> addPrimaryVariablesToMesh(
@@ -254,9 +257,12 @@ std::set<std::string> addPrimaryVariablesToMesh(
                 auto const global_component_id =
                     global_component_offset + component_id;
 
+                auto const node_id = node->getID();
+                auto const is_ghost_node = isGhostNode(mesh, node_id);
+
                 auto const in_index = getIndexForComponentInSolutionVector(
-                    mesh_id, *node, global_component_id, x, mesh_dof_table,
-                    bulk_dof_table, bulk_node_id_map);
+                    mesh_id, node_id, is_ghost_node, global_component_id, x,
+                    mesh_dof_table, bulk_dof_table, bulk_node_id_map);
 
                 // per node ordering of components
                 auto const out_index =
