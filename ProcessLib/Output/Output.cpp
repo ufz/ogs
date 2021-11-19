@@ -20,6 +20,7 @@
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
 #include "ProcessLib/Process.h"
+#include "ProcessOutput.h"
 
 namespace ProcessLib
 {

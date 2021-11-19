@@ -10,23 +10,13 @@
 
 #pragma once
 
-#include <set>
+#include <vector>
 
-#include "ProcessLib/ProcessVariable.h"
-#include "SecondaryVariable.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "Output.h"  // TODO avoid that
 
 namespace ProcessLib
 {
-struct IntegrationPointWriter;
-//! Holds information about which variables to write to output files.
-struct OutputDataSpecification final
-{
-    //! All variables that shall be output.
-    std::set<std::string> output_variables;
-
-    //! Tells if also to output extrapolation residuals.
-    bool const output_residuals;
-};
 
 /// Prepare the output data, i.e. add the solution to vtu data structure.
 void addProcessDataToMesh(
@@ -43,15 +33,6 @@ void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& x,
                           bool const output_secondary_variable,
                           OutputDataSpecification const& process_output);
 
-/// Writes output to the given \c file_name using the specified file format.
-///
-/// See Output::_output_file_data_mode documentation for the data_mode
-/// parameter.
-enum class OutputType : uint8_t
-{
-    vtk,
-    xdmf
-};
 void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
                 bool const compress_output, int const data_mode);
 }  // namespace ProcessLib

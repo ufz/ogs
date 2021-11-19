@@ -12,10 +12,11 @@
 
 #include <map>
 #include <utility>
+#include <vector>
 
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/IO/VtkIO/PVDFile.h"
 #include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
-#include "ProcessOutput.h"
 
 namespace ProcessLib
 {
@@ -25,6 +26,26 @@ class Process;
 ///
 /// Defined entirely in the cpp file. Not meant for reuse elsewhere.
 struct OutputFile;
+
+/// Writes output to the given \c file_name using the specified file format.
+///
+/// See Output::_output_file_data_mode documentation for the data_mode
+/// parameter.
+enum class OutputType : uint8_t
+{
+    vtk,
+    xdmf
+};
+
+//! Holds information about which variables to write to output files.
+struct OutputDataSpecification final
+{
+    //! All variables that shall be output.
+    std::set<std::string> output_variables;
+
+    //! Tells if also to output extrapolation residuals.
+    bool const output_residuals;
+};
 
 /*! Manages writing the solution of processes to disk.
  *
