@@ -90,11 +90,6 @@ public:
     }
 
 private:
-    static void outputMeshVtk(OutputFile const& output_file,
-                              MeshLib::IO::PVDFile* const pvd_file,
-                              MeshLib::Mesh const& mesh,
-                              double const t);
-
     void outputMeshXdmf(OutputFile const& output_file,
                         std::vector<std::reference_wrapper<const MeshLib::Mesh>>
                             meshes,
@@ -115,6 +110,9 @@ private:
     //! Determines if there should be output at the given \c timestep or \c t.
     bool shallDoOutput(int timestep, double const t) const;
 
+    //! Determines if output should be written for the given process.
+    //!
+    //! With staggered coupling not every process writes output.
     bool shallDoOutputStage2(int const process_id,
                              Process const& process) const;
 

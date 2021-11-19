@@ -341,7 +341,7 @@ void Output::outputMeshes(
 
             auto* const pvd_file =
                 findPVDFile(process, process_id, mesh.get().getName());
-            outputMeshVtk(file, pvd_file, mesh, t);
+            ::outputMeshVtk(file, pvd_file, mesh, t);
         }
     }
     else if (_output_file_type == ProcessLib::OutputType::xdmf)
