@@ -279,21 +279,21 @@ void Output::doOutputAlways(Process const& process,
                             int const timestep,
                             const double t,
                             int const iteration,
-                            std::vector<GlobalVector*> const& x)
+                            std::vector<GlobalVector*> const& solution_vectors)
 {
     BaseLib::RunTime time_output;
     time_output.start();
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    dof_tables.reserve(x.size());
-    for (std::size_t i = 0; i < x.size(); ++i)
+    dof_tables.reserve(solution_vectors.size());
+    for (std::size_t i = 0; i < solution_vectors.size(); ++i)
     {
         dof_tables.push_back(&process.getDOFTable(i));
     }
 
     bool output_secondary_variable = true;
     // Need to add variables of process to vtu even no output takes place.
-    addProcessDataToMesh(t, x, process_id, process.getMesh(), dof_tables,
+    addProcessDataToMesh(t, solution_vectors, process_id, process.getMesh(), dof_tables,
                          dof_tables, process.getProcessVariables(process_id),
                          process.getSecondaryVariables(),
                          output_secondary_variable,
@@ -352,6 +352,8 @@ void Output::doOutputAlways(Process const& process,
             output_meshes.push_back(process.getMesh());
             continue;
         }
+
+        // TODO (CL) auxiliary output
         // mesh related output
         auto& non_bulk_mesh = *BaseLib::findElementOrError(
             begin(_meshes), end(_meshes),
@@ -363,10 +365,12 @@ void Output::doOutputAlways(Process const& process,
         DBUG("Found {:d} nodes for output at mesh '{:s}'.", nodes.size(),
              non_bulk_mesh.getName());
 
+        // TODO CL creating d.o.f. table
+        // TODO do not recreate everytime when doing output
         std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
             mesh_dof_tables;
-        mesh_dof_tables.reserve(x.size());
-        for (std::size_t i = 0; i < x.size(); ++i)
+        mesh_dof_tables.reserve(solution_vectors.size());
+        for (std::size_t i = 0; i < solution_vectors.size(); ++i)
         {
             mesh_dof_tables.push_back(
                 process.getDOFTable(i).deriveBoundaryConstrainedMap(
@@ -382,7 +386,7 @@ void Output::doOutputAlways(Process const& process,
 
         output_secondary_variable = false;
         addProcessDataToMesh(
-            t, x, process_id, non_bulk_mesh, dof_tables,
+            t, solution_vectors, process_id, non_bulk_mesh, dof_tables,
             mesh_dof_table_pointers, process.getProcessVariables(process_id),
             process.getSecondaryVariables(), output_secondary_variable,
             process.getIntegrationPointWriter(non_bulk_mesh),

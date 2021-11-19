@@ -154,6 +154,7 @@ std::unique_ptr<Output> createOutput(
         //! \ogs_file_param{prj__time_loop__output__meshes__mesh}
         for (auto mesh_config : meshes_config->getConfigParameterList("mesh"))
         {
+            // TODO CL check here that meshes name can be found in meshes list?
             mesh_names_for_output.push_back(
                 mesh_config.getValue<std::string>());
             INFO("Configure mesh '{:s}' for output.",
