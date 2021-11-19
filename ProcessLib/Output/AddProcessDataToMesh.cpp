@@ -115,17 +115,8 @@ static void addSecondaryVariableResiduals(
 
 std::vector<double> copySolutionVector(GlobalVector const& x)
 {
-#ifdef USE_PETSC
-    // TODO It is also possible directly to copy the data for single process
-    // variable to a mesh property. It needs a vector of global indices and
-    // some PETSc magic to do so.
-    std::vector<double> x_copy(x.getLocalSize() + x.getGhostSize());
-#else
-    std::vector<double> x_copy(x.size());
-#endif
-
+    std::vector<double> x_copy;
     x.copyValues(x_copy);
-
     return x_copy;
 }
 
