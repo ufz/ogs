@@ -13,7 +13,8 @@
 #include <vector>
 
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "Output.h"  // TODO avoid that
+#include "OutputDataSpecification.h"
+#include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
