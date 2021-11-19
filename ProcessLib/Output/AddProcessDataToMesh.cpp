@@ -205,6 +205,7 @@ std::set<std::string> addPrimaryVariablesToMesh(
     std::set<std::string> names_of_already_output_variables;
 
     const auto number_of_dof_variables = mesh_dof_table.getNumberOfVariables();
+    assert(number_of_dof_variables == process_variables.size());
 
     int global_component_offset = 0;
     int global_component_offset_next = 0;
@@ -212,25 +213,16 @@ std::set<std::string> addPrimaryVariablesToMesh(
     auto const* const bulk_node_id_map = getBulkNodeIdMapForPetscIfNecessary(
         mesh, mesh_dof_table, bulk_dof_table);
 
-    for (int variable_id = 0;
-         variable_id < static_cast<int>(process_variables.size());
+    for (int variable_id = 0; variable_id < number_of_dof_variables;
          ++variable_id)
     {
-        ProcessLib::ProcessVariable& pv = process_variables[variable_id];
-        int const n_components = pv.getNumberOfGlobalComponents();
-        // If (number_of_dof_variables==1), the case is either the staggered
-        // scheme being applied or a single PDE being solved.
-        const int sub_meshset_id =
-            (number_of_dof_variables == 1) ? 0 : variable_id;
+        auto const& pv = process_variables[variable_id].get();
+        auto const n_components = pv.getNumberOfGlobalComponents();
 
-        // TODO is that check necessary?
-        // TODO is number_of_dof_variables != process_variables.size() in any
-        // circumstance?
-        if (number_of_dof_variables > 1)
-        {
-            global_component_offset = global_component_offset_next;
-            global_component_offset_next += n_components;
-        }
+        // increase global component offset even if we do not add anything in
+        // this iteration
+        global_component_offset = global_component_offset_next;
+        global_component_offset_next += n_components;
 
         if (output_variables.find(pv.getName()) == output_variables.cend())
         {
@@ -249,7 +241,7 @@ std::set<std::string> addPrimaryVariablesToMesh(
         {
             // TODO are they the same for all components? -> Swap for loops.
             auto const& mesh_subset =
-                mesh_dof_table.getMeshSubset(sub_meshset_id, component_id);
+                mesh_dof_table.getMeshSubset(variable_id, component_id);
             auto const mesh_id = mesh_subset.getMeshID();
 
             for (auto const* node : mesh_subset.getNodes())
