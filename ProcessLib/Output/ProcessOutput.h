@@ -32,7 +32,4 @@ void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& x,
                           Process const& process,
                           bool const output_secondary_variable,
                           OutputDataSpecification const& process_output);
-
-void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
-                bool const compress_output, int const data_mode);
 }  // namespace ProcessLib

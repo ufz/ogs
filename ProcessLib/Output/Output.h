@@ -124,7 +124,7 @@ private:
      * @param mesh_name_for_output mesh name for the output.
      * @return Address of a PVDFile.
      */
-    MeshLib::IO::PVDFile* findPVDFile(Process const& process,
+    MeshLib::IO::PVDFile& findPVDFile(Process const& process,
                                       const int process_id,
                                       std::string const& mesh_name_for_output);
 

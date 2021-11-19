@@ -15,10 +15,17 @@
 #include <fstream>
 #include <vector>
 
+#ifndef _WIN32
+#ifndef __APPLE__
+#include <cfenv>
+#endif  // __APPLE__
+#endif  // _WIN32
+
 #include "Applications/InSituLib/Adaptor.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "ProcessLib/Process.h"
 #include "ProcessOutput.h"
 
@@ -155,20 +162,47 @@ std::vector<NumLib::LocalToGlobalIndexMap const*> toVectorOfConstPointers(
     return dof_table_pointers;
 }
 
+void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
+                   bool const compress_output, int const data_mode)
+{
+    DBUG("Writing output to '{:s}'.", file_name);
+
+    // Store floating-point exception handling. Output of NaN's triggers
+    // floating point exceptions. Because we are not debugging VTK (or other
+    // libraries) at this point, the possibly set exceptions are temporary
+    // disabled and restored before end of the function.
+#ifndef _WIN32
+#ifndef __APPLE__
+    fenv_t fe_env;
+    fegetenv(&fe_env);
+    fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
+                           // exceptions.
+#endif                     //_WIN32
+#endif                     //__APPLE__
+
+    MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
+    vtu_interface.writeToFile(file_name);
+
+    // Restore floating-point exception handling.
+#ifndef _WIN32
+#ifndef __APPLE__
+    fesetenv(&fe_env);
+#endif  //_WIN32
+#endif  //__APPLE__
+}
+
 void outputMeshVtk(ProcessLib::OutputFile const& output_file,
-                   MeshLib::IO::PVDFile* const pvd_file,
+                   MeshLib::IO::PVDFile& pvd_file,
                    MeshLib::Mesh const& mesh,
                    double const t)
 {
-    DBUG("output to {:s}", output_file.path);
-
     if (output_file.type == ProcessLib::OutputType::vtk)
     {
-        pvd_file->addVTUFile(output_file.name, t);
+        pvd_file.addVTUFile(output_file.name, t);
     }
 
-    ProcessLib::makeOutput(output_file.path, mesh, output_file.compression,
-                           output_file.data_mode);
+    outputMeshVtk(output_file.path, mesh, output_file.compression,
+                  output_file.data_mode);
 }
 }  // namespace
 
@@ -269,8 +303,7 @@ void Output::addProcess(ProcessLib::Process const& process)
     }
 }
 
-// TODO return a reference.
-MeshLib::IO::PVDFile* Output::findPVDFile(
+MeshLib::IO::PVDFile& Output::findPVDFile(
     Process const& process,
     const int process_id,
     std::string const& mesh_name_for_output)
@@ -299,7 +332,7 @@ MeshLib::IO::PVDFile* Output::findPVDFile(
             "Aborting.");
     }
 
-    return pvd_file;
+    return *pvd_file;
 }
 
 void Output::outputMeshXdmf(
@@ -340,7 +373,7 @@ void Output::outputMeshes(
                 iteration, _output_file_data_mode, _output_file_compression,
                 _output_data_specification.output_variables, 1);
 
-            auto* const pvd_file =
+            auto& pvd_file =
                 findPVDFile(process, process_id, mesh.get().getName());
             ::outputMeshVtk(file, pvd_file, mesh, t);
         }
@@ -387,7 +420,6 @@ MeshLib::Mesh const& Output::prepareNonBulkMesh(
     return non_bulk_mesh;
 }
 
-// TODO refactor this next.
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
                             int const timestep,
@@ -507,8 +539,8 @@ void Output::doOutputNonlinearIteration(Process const& process,
         BaseLib::joinPaths(_output_directory, output_file_name);
 
     DBUG("output iteration results to {:s}", output_file_path);
-    makeOutput(output_file_path, process.getMesh(), _output_file_compression,
-               _output_file_data_mode);
+    outputMeshVtk(output_file_path, process.getMesh(), _output_file_compression,
+                  _output_file_data_mode);
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 }  // namespace ProcessLib

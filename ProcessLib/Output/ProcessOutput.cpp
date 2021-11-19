@@ -10,18 +10,11 @@
 
 #include "ProcessOutput.h"
 
-#ifndef _WIN32
-#ifndef __APPLE__
-#include <cfenv>
-#endif  // __APPLE__
-#endif  // _WIN32
-
 #include "InfoLib/GitInfo.h"
 #include "IntegrationPointWriter.h"
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
 
@@ -365,35 +358,5 @@ void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& xs,
 
     addProcessDataToMesh(t, xs, process_id, mesh, bulk_dof_tables, process,
                          output_secondary_variables, process_output);
-}
-
-void makeOutput(std::string const& file_name, MeshLib::Mesh const& mesh,
-                bool const compress_output, int const data_mode)
-{
-    // Write output file
-    DBUG("Writing output to '{:s}'.", file_name);
-
-    // Store floating-point exception handling. Output of NaN's triggers
-    // floating point exceptions. Because we are not debugging VTK (or other
-    // libraries) at this point, the possibly set exceptions are temporary
-    // disabled and restored before end of the function.
-#ifndef _WIN32
-#ifndef __APPLE__
-    fenv_t fe_env;
-    fegetenv(&fe_env);
-    fesetenv(FE_DFL_ENV);  // Set default environment effectively disabling
-                           // exceptions.
-#endif                     //_WIN32
-#endif                     //__APPLE__
-
-    MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
-    vtu_interface.writeToFile(file_name);
-
-    // Restore floating-point exception handling.
-#ifndef _WIN32
-#ifndef __APPLE__
-    fesetenv(&fe_env);
-#endif  //_WIN32
-#endif  //__APPLE__
 }
 }  // namespace ProcessLib
