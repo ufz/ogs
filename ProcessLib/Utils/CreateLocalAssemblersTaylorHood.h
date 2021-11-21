@@ -20,27 +20,6 @@ namespace ProcessLib
 {
 namespace detail
 {
-template <typename LocalAssemblerFactory, int GlobalDim,
-          template <typename, typename, typename, int>
-          class LocalAssemblerImplementation,
-          typename LocalAssemblerInterface, typename... ExtraCtorArgs>
-void createLocalAssemblersTaylorHood(
-    std::vector<MeshLib::Element*> const& mesh_elements,
-    NumLib::LocalToGlobalIndexMap const& dof_table,
-    std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
-    ExtraCtorArgs&&... extra_ctor_args)
-{
-    DBUG("Create local assemblers.");
-
-    LocalAssemblerFactory factory(dof_table);
-    local_assemblers.resize(mesh_elements.size());
-
-    DBUG("Calling local assembler builder for all mesh elements.");
-    GlobalExecutor::transformDereferenced(
-        factory, mesh_elements, local_assemblers,
-        std::forward<ExtraCtorArgs>(extra_ctor_args)...);
-}
-
 /*! Creates local assemblers for each element of the given \c mesh.
  *
  * \tparam LocalAssemblerFactory the factory that will instantiate the local
@@ -69,16 +48,21 @@ void createLocalAssemblersTaylorHood(
     std::vector<std::unique_ptr<LocalAssemblerInterface>>& local_assemblers,
     ExtraCtorArgs&&... extra_ctor_args)
 {
+    using LocAsmFac = LocalAssemblerFactory<LocalAssemblerInterface,
+                                            LocalAssemblerImplementation,
+                                            GlobalDim, ExtraCtorArgs...>;
+
     DBUG("Create local assemblers.");
 
-    createLocalAssemblersTaylorHood<
-        LocalAssemblerFactory<LocalAssemblerInterface,
-                              LocalAssemblerImplementation, GlobalDim,
-                              ExtraCtorArgs...>,
-        GlobalDim, LocalAssemblerImplementation>(
-        mesh_elements, dof_table, local_assemblers,
+    LocAsmFac factory(dof_table);
+    local_assemblers.resize(mesh_elements.size());
+
+    DBUG("Calling local assembler builder for all mesh elements.");
+    GlobalExecutor::transformDereferenced(
+        factory, mesh_elements, local_assemblers,
         std::forward<ExtraCtorArgs>(extra_ctor_args)...);
 }
+
 }  // namespace detail
 
 template <int GlobalDim,
