@@ -13,11 +13,11 @@
 #include <cassert>
 
 #include "BaseLib/Error.h"
-#include "CreateLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ThermoRichardsMechanicsFEM.h"
 
 namespace ProcessLib
@@ -154,9 +154,9 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    createLocalAssemblers<DisplacementDim,
-                          ThermoRichardsMechanicsLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table, local_assemblers_,
+    createLocalAssemblersHM<DisplacementDim,
+                            ThermoRichardsMechanicsLocalAssembler>(
+        mesh.getElements(), dof_table, local_assemblers_,
         mesh.isAxiallySymmetric(), integration_order, process_data_);
 
     auto add_secondary_variable = [&](std::string const& name,

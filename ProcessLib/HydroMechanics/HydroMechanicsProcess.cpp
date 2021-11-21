@@ -17,8 +17,9 @@
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
-#include "ProcessLib/HydroMechanics/CreateLocalAssemblers.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
+
 namespace ProcessLib
 {
 namespace HydroMechanics
@@ -170,9 +171,9 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::HydroMechanics::createLocalAssemblers<
-        DisplacementDim, HydroMechanicsLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+    ProcessLib::createLocalAssemblersHM<DisplacementDim,
+                                        HydroMechanicsLocalAssembler>(
+        mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     auto add_secondary_variable = [&](std::string const& name,

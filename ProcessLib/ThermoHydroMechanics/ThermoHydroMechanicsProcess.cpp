@@ -15,7 +15,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Process.h"
-#include "ProcessLib/ThermoHydroMechanics/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ThermoHydroMechanicsFEM.h"
 #include "ThermoHydroMechanicsProcessData.h"
 
@@ -176,9 +176,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    ProcessLib::ThermoHydroMechanics::createLocalAssemblers<
-        DisplacementDim, ThermoHydroMechanicsLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+    ProcessLib::createLocalAssemblersHM<DisplacementDim,
+                                        ThermoHydroMechanicsLocalAssembler>(
+        mesh.getElements(), dof_table, _local_assemblers,
         mesh.isAxiallySymmetric(), integration_order, _process_data);
 
     _secondary_variables.addSecondaryVariable(
