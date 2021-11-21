@@ -22,8 +22,7 @@ namespace ProcessLib
 {
 /// A functor creating a local assembler with shape functions corresponding to
 /// the mesh element type.
-template <typename LocalAssemblerInterface, int GlobalDim,
-          typename... ConstructorArgs>
+template <typename LocalAssemblerInterface, typename... ConstructorArgs>
 struct GenericLocalDataInitializer
 {
     using LocAsmIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
@@ -82,7 +81,7 @@ template <typename ShapeFunction, typename LocalAssemblerInterface,
           int GlobalDim, typename... ConstructorArgs>
 class LocalAssemblerBuilderFactory
 {
-    using GLDI = GenericLocalDataInitializer<LocalAssemblerInterface, GlobalDim,
+    using GLDI = GenericLocalDataInitializer<LocalAssemblerInterface,
                                              ConstructorArgs...>;
     using LocAsmIntfPtr = typename GLDI::LocAsmIntfPtr;
     using LocAsmBuilder = typename GLDI::LocAsmBuilder;
@@ -99,7 +98,7 @@ class LocalAssemblerBuilderFactory
 public:
     /// Generates a function that creates a new local assembler of type
     /// \c LocAsmImpl.
-    static LocAsmBuilder newInstance()
+    static LocAsmBuilder create()
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,

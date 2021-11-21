@@ -10,32 +10,34 @@
 
 #pragma once
 
-#include <functional>
-#include <memory>
-#include <type_traits>
-#include <typeindex>
-#include <typeinfo>
-#include <unordered_map>
-
-#include "MeshLib/Elements/Elements.h"
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
 #include "ProcessLib/Utils/EnabledElements.h"
+#include "ProcessLib/Utils/GenericLocalDataInitializer.h"
 
 namespace ProcessLib
 {
 namespace BoundaryConditionAndSourceTerm
 {
-/// The LocalDataInitializer is a functor creating a local assembler data with
-/// corresponding to the mesh element type shape functions and calling
-/// initialization of the new local assembler data.
-/// For example for MeshLib::Quad a local assembler data with template argument
-/// NumLib::ShapeQuad4 is created.
 template <typename LocalAssemblerInterface,
-          template <typename, typename, int> class LocalAssemblerData,
-          int GlobalDim, typename... ConstructorArgs>
+          template <typename, typename, int>
+          class LocalAssemblerImplementation,
+          int GlobalDim,
+          typename... ConstructorArgs>
 class LocalDataInitializer final
+    : public ProcessLib::GenericLocalDataInitializer<LocalAssemblerInterface,
+                                                     ConstructorArgs...>
 {
+    using Base =
+        ProcessLib::GenericLocalDataInitializer<LocalAssemblerInterface,
+                                                ConstructorArgs...>;
+
+    template <typename ShapeFunction>
+    using LocAsmBuilderFactory =
+        ProcessLib::LocalAssemblerBuilderFactory<ShapeFunction,
+                                                 LocalAssemblerInterface,
+                                                 LocalAssemblerImplementation,
+                                                 GlobalDim,
+                                                 ConstructorArgs...>;
+
     struct HasSuitableDimension
     {
         template <typename ElementTraits>
@@ -62,11 +64,9 @@ class LocalDataInitializer final
     };
 
 public:
-    using LADataIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
-
     LocalDataInitializer(NumLib::LocalToGlobalIndexMap const& dof_table,
                          const unsigned shapefunction_order)
-        : _dof_table(dof_table)
+        : Base(dof_table)
     {
         if (shapefunction_order < 1 || 2 < shapefunction_order)
         {
@@ -90,7 +90,7 @@ public:
                     using LowerOrderShapeFunction =
                         typename ET::LowerOrderShapeFunction;
                     _builder[std::type_index(typeid(MeshElement))] =
-                        makeLocalAssemblerBuilder<LowerOrderShapeFunction>();
+                        LocAsmBuilderFactory<LowerOrderShapeFunction>::create();
                 });
         }
         else if (shapefunction_order == 2)
@@ -106,74 +106,10 @@ public:
                     using MeshElement = typename ET::Element;
                     using ShapeFunction2ndOrder = typename ET::ShapeFunction;
                     _builder[std::type_index(typeid(MeshElement))] =
-                        makeLocalAssemblerBuilder<ShapeFunction2ndOrder>();
+                        LocAsmBuilderFactory<ShapeFunction2ndOrder>::create();
                 });
         }
     }
-
-    /// Returns data pointer to the newly created local assembler data.
-    ///
-    /// \attention
-    /// The index \c id is not necessarily the mesh item's id. Especially when
-    /// having multiple meshes it will differ from the latter.
-    LADataIntfPtr operator()(std::size_t const id,
-                             MeshLib::Element const& mesh_item,
-                             ConstructorArgs&&... args) const
-    {
-        auto const type_idx = std::type_index(typeid(mesh_item));
-        auto const it = _builder.find(type_idx);
-
-        if (it != _builder.end())
-        {
-            auto const num_local_dof = _dof_table.getNumberOfElementDOF(id);
-            return it->second(mesh_item, num_local_dof,
-                              std::forward<ConstructorArgs>(args)...);
-        }
-        OGS_FATAL(
-            "You are trying to build a local assembler for an unknown mesh "
-            "element type ({:s})."
-            " Maybe you have disabled this mesh element type in your build "
-            "configuration, or a mesh element order does not match shape "
-            "function order given in the project file.",
-            type_idx.name());
-    }
-
-private:
-    using LADataBuilder =
-        std::function<LADataIntfPtr(MeshLib::Element const& e,
-                                    std::size_t const local_matrix_size,
-                                    ConstructorArgs&&...)>;
-
-    template <typename ShapeFunction>
-    using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
-        typename ShapeFunction::MeshElement>::IntegrationMethod;
-
-    template <typename ShapeFunction>
-    using LAData =
-        LocalAssemblerData<ShapeFunction, IntegrationMethod<ShapeFunction>,
-                           GlobalDim>;
-
-    /// Generates a function that creates a new LocalAssembler of type
-    /// LAData<ShapeFunction>. Only functions with shape function's dimension
-    /// less or equal to the global dimension are instantiated, e.g.  following
-    /// combinations of shape functions and global dimensions: (Line2, 1),
-    /// (Line2, 2), (Line2, 3), (Hex20, 3) but not (Hex20, 2) or (Hex20, 1).
-    template <typename ShapeFunction>
-    static LADataBuilder makeLocalAssemblerBuilder()
-    {
-        return [](MeshLib::Element const& e,
-                  std::size_t const local_matrix_size,
-                  ConstructorArgs&&... args)
-        {
-            return LADataIntfPtr{new LAData<ShapeFunction>{
-                e, local_matrix_size, std::forward<ConstructorArgs>(args)...}};
-        };
-    }
-
-    /// Mapping of element types to local assembler constructors.
-    std::unordered_map<std::type_index, LADataBuilder> _builder;
-
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
 };
 
 }  // namespace BoundaryConditionAndSourceTerm
