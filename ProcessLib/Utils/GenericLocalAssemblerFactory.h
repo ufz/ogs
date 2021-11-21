@@ -81,10 +81,10 @@ template <typename ShapeFunction, typename LocalAssemblerInterface,
           int GlobalDim, typename... ConstructorArgs>
 class LocalAssemblerBuilderFactory
 {
-    using GLDI = GenericLocalAssemblerFactory<LocalAssemblerInterface,
+    using GLAF = GenericLocalAssemblerFactory<LocalAssemblerInterface,
                                               ConstructorArgs...>;
-    using LocAsmIntfPtr = typename GLDI::LocAsmIntfPtr;
-    using LocAsmBuilder = typename GLDI::LocAsmBuilder;
+    using LocAsmIntfPtr = typename GLAF::LocAsmIntfPtr;
+    using LocAsmBuilder = typename GLAF::LocAsmBuilder;
 
     using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
         typename ShapeFunction::MeshElement>::IntegrationMethod;
