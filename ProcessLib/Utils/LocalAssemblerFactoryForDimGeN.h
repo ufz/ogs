@@ -21,7 +21,7 @@ template <int MinElementDim,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-class LocalDataInitializerForDimGeN final
+class LocalAssemberFactoryForDimGeN final
     : public GenericLocalAssemblerFactory<LocalAssemblerInterface,
                                           ConstructorArgs...>
 {
@@ -43,7 +43,7 @@ class LocalDataInitializerForDimGeN final
     };
 
 public:
-    explicit LocalDataInitializerForDimGeN(
+    explicit LocalAssemberFactoryForDimGeN(
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : Base{dof_table}
     {
@@ -72,8 +72,8 @@ template <typename LocalAssemblerInterface,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-using LocalDataInitializer =
-    LocalDataInitializerForDimGeN<1,
+using LocalAssemberFactory =
+    LocalAssemberFactoryForDimGeN<1,
                                   LocalAssemblerInterface,
                                   LocalAssemblerImplementation,
                                   GlobalDim,
@@ -85,8 +85,8 @@ template <typename LocalAssemblerInterface,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-using LocalDataInitializerSD =
-    LocalDataInitializerForDimGeN<2,
+using LocalAssemberFactorySD =
+    LocalAssemberFactoryForDimGeN<2,
                                   LocalAssemblerInterface,
                                   LocalAssemblerImplementation,
                                   GlobalDim,
