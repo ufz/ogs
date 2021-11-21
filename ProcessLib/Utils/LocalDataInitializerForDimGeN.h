@@ -21,7 +21,7 @@ template <int MinElementDim,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-class LocalDataInitializerForDimGeN
+class LocalDataInitializerForDimGeN final
     : public GenericLocalDataInitializer<LocalAssemblerInterface,
                                          GlobalDim,
                                          ConstructorArgs...>
@@ -69,6 +69,7 @@ public:
     }
 };
 
+/// By default processes in OGS are defined in 1D, 2D and 3D.
 template <typename LocalAssemblerInterface,
           template <typename, typename, int>
           class LocalAssemblerImplementation,
@@ -81,4 +82,16 @@ using LocalDataInitializer =
                                   GlobalDim,
                                   ConstructorArgs...>;
 
+/// Mechanics processes in OGS are defined in 2D and 3D only.
+template <typename LocalAssemblerInterface,
+          template <typename, typename, int>
+          class LocalAssemblerImplementation,
+          int GlobalDim,
+          typename... ConstructorArgs>
+using LocalDataInitializerSD =
+    LocalDataInitializerForDimGeN<2,
+                                  LocalAssemblerInterface,
+                                  LocalAssemblerImplementation,
+                                  GlobalDim,
+                                  ConstructorArgs...>;
 }  // namespace ProcessLib
