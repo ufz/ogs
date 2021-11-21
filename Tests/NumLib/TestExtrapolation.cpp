@@ -24,7 +24,7 @@
 #include "NumLib/Function/Interpolation.h"
 #include "NumLib/NumericsConfig.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
-#include "ProcessLib/Utils/LocalDataInitializer.h"
+#include "ProcessLib/Utils/LocalDataInitializerForDimGeN.h"
 #include "Tests/VectorUtils.h"
 
 namespace ExtrapolationTest
