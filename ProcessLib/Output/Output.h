@@ -120,13 +120,12 @@ private:
                                       std::string const& mesh_name_for_output);
 
     //! Determines if there should be output at the given \c timestep or \c t.
-    bool shallDoOutput(int timestep, double const t) const;
+    bool isOutputStep(int timestep, double const t) const;
 
     //! Determines if output should be written for the given process.
     //!
     //! With staggered coupling not every process writes output.
-    bool shallDoOutputStage2(int const process_id,
-                             Process const& process) const;
+    bool isOutputProcess(int const process_id, Process const& process) const;
 
     void outputMeshes(
         Process const& process, const int process_id, int const timestep,

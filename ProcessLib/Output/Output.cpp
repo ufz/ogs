@@ -208,7 +208,7 @@ void outputMeshVtk(ProcessLib::OutputFile const& output_file,
 
 namespace ProcessLib
 {
-bool Output::shallDoOutput(int timestep, double const t) const
+bool Output::isOutputStep(int timestep, double const t) const
 {
     auto const fixed_output_time = std::lower_bound(
         cbegin(_fixed_output_times), cend(_fixed_output_times), t);
@@ -242,8 +242,7 @@ bool Output::shallDoOutput(int timestep, double const t) const
 
     return false;
 }
-bool Output::shallDoOutputStage2(const int process_id,
-                                 const Process& process) const
+bool Output::isOutputProcess(const int process_id, const Process& process) const
 {
     return process.isMonolithicSchemeUsed()
            // For the staggered scheme for the coupling, only the last process,
@@ -436,7 +435,7 @@ void Output::doOutputAlways(Process const& process,
                          output_secondary_variables,
                          _output_data_specification);
 
-    if (!shallDoOutputStage2(process_id, process))
+    if (!isOutputProcess(process_id, process))
     {
         return;
     }
@@ -472,7 +471,7 @@ void Output::doOutput(Process const& process,
                       int const iteration,
                       std::vector<GlobalVector*> const& x)
 {
-    if (shallDoOutput(timestep, t))
+    if (isOutputStep(timestep, t))
     {
         doOutputAlways(process, process_id, timestep, t, iteration, x);
     }
@@ -491,7 +490,7 @@ void Output::doOutputLastTimestep(Process const& process,
                                   int const iteration,
                                   std::vector<GlobalVector*> const& x)
 {
-    if (!shallDoOutput(timestep, t))
+    if (!isOutputStep(timestep, t))
     {
         doOutputAlways(process, process_id, timestep, t, iteration, x);
     }
