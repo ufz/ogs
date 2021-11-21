@@ -23,7 +23,7 @@ namespace ProcessLib
 /// A functor creating a local assembler with shape functions corresponding to
 /// the mesh element type.
 template <typename LocalAssemblerInterface, typename... ConstructorArgs>
-struct GenericLocalDataInitializer
+struct GenericLocalAssemblerFactory
 {
     using LocAsmIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
     using LocAsmBuilder =
@@ -32,7 +32,7 @@ struct GenericLocalDataInitializer
                                     ConstructorArgs&&...)>;
 
 protected:  // only allow instances of subclasses
-    explicit GenericLocalDataInitializer(
+    explicit GenericLocalAssemblerFactory(
         NumLib::LocalToGlobalIndexMap const& dof_table)
         : _dof_table(dof_table)
     {
@@ -81,8 +81,8 @@ template <typename ShapeFunction, typename LocalAssemblerInterface,
           int GlobalDim, typename... ConstructorArgs>
 class LocalAssemblerBuilderFactory
 {
-    using GLDI = GenericLocalDataInitializer<LocalAssemblerInterface,
-                                             ConstructorArgs...>;
+    using GLDI = GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                              ConstructorArgs...>;
     using LocAsmIntfPtr = typename GLDI::LocAsmIntfPtr;
     using LocAsmBuilder = typename GLDI::LocAsmBuilder;
 

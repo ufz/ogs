@@ -11,7 +11,7 @@
 #pragma once
 
 #include "EnabledElements.h"
-#include "GenericLocalDataInitializer.h"
+#include "GenericLocalAssemblerFactory.h"
 
 namespace ProcessLib
 {
@@ -27,10 +27,10 @@ template <typename ShapeFunction,
           typename... ConstructorArgs>
 class LocalAssemblerBuilderFactoryTaylorHood
 {
-    using GLDI = GenericLocalDataInitializer<LocalAssemblerInterface,
-                                             ConstructorArgs...>;
-    using LocAsmIntfPtr = typename GLDI::LocAsmIntfPtr;
-    using LocAsmBuilder = typename GLDI::LocAsmBuilder;
+    using GLAF = GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                              ConstructorArgs...>;
+    using LocAsmIntfPtr = typename GLAF::LocAsmIntfPtr;
+    using LocAsmBuilder = typename GLAF::LocAsmBuilder;
 
     using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
         typename ShapeFunction::MeshElement>::IntegrationMethod;
@@ -78,12 +78,12 @@ template <int MinShapeFctOrder,
           int GlobalDim,
           typename... ConstructorArgs>
 class LocalAssemblerFactoryTaylorHoodForOrderGeN final
-    : public ProcessLib::GenericLocalDataInitializer<LocalAssemblerInterface,
-                                                     ConstructorArgs...>
+    : public ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                                      ConstructorArgs...>
 {
     using Base =
-        ProcessLib::GenericLocalDataInitializer<LocalAssemblerInterface,
-                                                ConstructorArgs...>;
+        ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                                 ConstructorArgs...>;
 
     template <typename ShapeFunction, typename LowerOrderShapeFunction>
     using LocAsmBuilderFactory =

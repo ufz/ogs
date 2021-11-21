@@ -11,7 +11,7 @@
 #pragma once
 
 #include "ProcessLib/Utils/EnabledElements.h"
-#include "ProcessLib/Utils/GenericLocalDataInitializer.h"
+#include "ProcessLib/Utils/GenericLocalAssemblerFactory.h"
 
 namespace ProcessLib
 {
@@ -22,13 +22,13 @@ template <typename LocalAssemblerInterface,
           class LocalAssemblerImplementation,
           int GlobalDim,
           typename... ConstructorArgs>
-class LocalDataInitializer final
-    : public ProcessLib::GenericLocalDataInitializer<LocalAssemblerInterface,
-                                                     ConstructorArgs...>
+class LocalAssemblerFactory final
+    : public ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                                      ConstructorArgs...>
 {
     using Base =
-        ProcessLib::GenericLocalDataInitializer<LocalAssemblerInterface,
-                                                ConstructorArgs...>;
+        ProcessLib::GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                                 ConstructorArgs...>;
 
     template <typename ShapeFunction>
     using LocAsmBuilderFactory =
@@ -64,8 +64,8 @@ class LocalDataInitializer final
     };
 
 public:
-    LocalDataInitializer(NumLib::LocalToGlobalIndexMap const& dof_table,
-                         const unsigned shapefunction_order)
+    LocalAssemblerFactory(NumLib::LocalToGlobalIndexMap const& dof_table,
+                          const unsigned shapefunction_order)
         : Base(dof_table)
     {
         if (shapefunction_order < 1 || 2 < shapefunction_order)

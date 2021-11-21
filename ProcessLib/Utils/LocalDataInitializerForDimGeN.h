@@ -11,7 +11,7 @@
 #pragma once
 
 #include "EnabledElements.h"
-#include "GenericLocalDataInitializer.h"
+#include "GenericLocalAssemblerFactory.h"
 
 namespace ProcessLib
 {
@@ -22,11 +22,11 @@ template <int MinElementDim,
           int GlobalDim,
           typename... ConstructorArgs>
 class LocalDataInitializerForDimGeN final
-    : public GenericLocalDataInitializer<LocalAssemblerInterface,
-                                         ConstructorArgs...>
+    : public GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                          ConstructorArgs...>
 {
-    using Base = GenericLocalDataInitializer<LocalAssemblerInterface,
-                                             ConstructorArgs...>;
+    using Base = GenericLocalAssemblerFactory<LocalAssemblerInterface,
+                                              ConstructorArgs...>;
 
     struct IsElementEnabled
     {

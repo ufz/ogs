@@ -36,10 +36,9 @@ void createLocalAssemblers(
                                                   GlobalDim, ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
-    // Populate the vector of local assemblers.
-    local_assemblers.resize(mesh_elements.size());
 
     LocAsmFactory factory(dof_table);
+    local_assemblers.resize(mesh_elements.size());
 
     DBUG("Calling local assembler builder for all mesh elements.");
     GlobalExecutor::transformDereferenced(
