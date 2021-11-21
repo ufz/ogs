@@ -22,12 +22,15 @@ namespace ProcessLib
 {
 /// A functor creating a local assembler with shape functions corresponding to
 /// the mesh element type.
-template <typename LocalAssemblerInterface,
-          template <typename, typename, int> class LocalAssemblerImplementation,
-          int GlobalDim, typename... ConstructorArgs>
-class GenericLocalDataInitializer
+template <typename LocalAssemblerInterface, int GlobalDim,
+          typename... ConstructorArgs>
+struct GenericLocalDataInitializer
 {
     using LocAsmIntfPtr = std::unique_ptr<LocalAssemblerInterface>;
+    using LocAsmBuilder =
+        std::function<LocAsmIntfPtr(MeshLib::Element const& e,
+                                    std::size_t const local_matrix_size,
+                                    ConstructorArgs&&...)>;
 
 protected:  // only allow instances of subclasses
     explicit GenericLocalDataInitializer(
@@ -36,7 +39,7 @@ protected:  // only allow instances of subclasses
     {
     }
 
-public:  // public methods
+public:
     /// Returns the newly created local assembler.
     ///
     /// \attention
@@ -64,41 +67,48 @@ public:  // public methods
             type_idx.name());
     }
 
-private:  // private types
-    using LocAsmBuilder =
-        std::function<LocAsmIntfPtr(MeshLib::Element const& e,
-                                    std::size_t const local_matrix_size,
-                                    ConstructorArgs&&...)>;
+private:
+    NumLib::LocalToGlobalIndexMap const& _dof_table;
 
-    template <typename ShapeFunction>
+protected:
+    /// Mapping of element types to local assembler builders.
+    std::unordered_map<std::type_index, LocAsmBuilder> _builders;
+};
+
+template <typename ShapeFunction, typename LocalAssemblerInterface,
+          template <typename /* shp fct */, typename /* int meth */,
+                    int /* global dim */>
+          class LocalAssemblerImplementation,
+          int GlobalDim, typename... ConstructorArgs>
+class LocalAssemblerBuilderFactory
+{
+    using GLDI = GenericLocalDataInitializer<LocalAssemblerInterface, GlobalDim,
+                                             ConstructorArgs...>;
+    using LocAsmIntfPtr = typename GLDI::LocAsmIntfPtr;
+    using LocAsmBuilder = typename GLDI::LocAsmBuilder;
+
     using IntegrationMethod = typename NumLib::GaussLegendreIntegrationPolicy<
         typename ShapeFunction::MeshElement>::IntegrationMethod;
 
-    template <typename ShapeFunction>
-    using LocAsmImpl = LocalAssemblerImplementation<
-        ShapeFunction, IntegrationMethod<ShapeFunction>, GlobalDim>;
+    using LocAsmImpl =
+        LocalAssemblerImplementation<ShapeFunction, IntegrationMethod,
+                                     GlobalDim>;
 
-protected:  // protected methods
+    LocalAssemblerBuilderFactory() = delete;
+
+public:
     /// Generates a function that creates a new local assembler of type
-    /// LocAsmImpl<ShapeFunction>.
-    template <typename ShapeFunction>
-    static LocAsmBuilder makeLocalAssemblerBuilder()
+    /// \c LocAsmImpl.
+    static LocAsmBuilder newInstance()
     {
         return [](MeshLib::Element const& e,
                   std::size_t const local_matrix_size,
                   ConstructorArgs&&... args)
         {
-            return std::make_unique<LocAsmImpl<ShapeFunction>>(
+            return std::make_unique<LocAsmImpl>(
                 e, local_matrix_size, std::forward<ConstructorArgs>(args)...);
         };
     }
-
-private:  // private data
-    NumLib::LocalToGlobalIndexMap const& _dof_table;
-
-protected:  // protected data
-    /// Mapping of element types to local assembler builders.
-    std::unordered_map<std::type_index, LocAsmBuilder> _builders;
 };
 
 }  // namespace ProcessLib

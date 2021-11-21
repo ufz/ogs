@@ -23,12 +23,10 @@ template <int MinElementDim,
           typename... ConstructorArgs>
 class LocalDataInitializerForDimGeN
     : public GenericLocalDataInitializer<LocalAssemblerInterface,
-                                         LocalAssemblerImplementation,
                                          GlobalDim,
                                          ConstructorArgs...>
 {
     using Base = GenericLocalDataInitializer<LocalAssemblerInterface,
-                                             LocalAssemblerImplementation,
                                              GlobalDim,
                                              ConstructorArgs...>;
 
@@ -61,7 +59,12 @@ public:
                 using Elt = typename ET::Element;
                 using Shp = typename ET::ShapeFunction;
                 Base::_builders[std::type_index(typeid(Elt))] =
-                    Base::template makeLocalAssemblerBuilder<Shp>();
+                    LocalAssemblerBuilderFactory<
+                        Shp,
+                        LocalAssemblerInterface,
+                        LocalAssemblerImplementation,
+                        GlobalDim,
+                        ConstructorArgs...>::newInstance();
             });
     }
 };
