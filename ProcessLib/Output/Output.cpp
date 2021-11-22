@@ -147,7 +147,7 @@ computeDofTablesForSubmesh(ProcessLib::Process const& process,
     return mesh_dof_tables;
 }
 
-std::vector<NumLib::LocalToGlobalIndexMap const*> toVectorOfConstPointers(
+std::vector<NumLib::LocalToGlobalIndexMap const*> toNonOwning(
     std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables)
 {
@@ -408,8 +408,7 @@ MeshLib::Mesh const& Output::prepareNonBulkMesh(
     auto const mesh_dof_tables =
         computeDofTablesForSubmesh(process, non_bulk_mesh, xs.size());
 
-    auto const mesh_dof_table_pointers =
-        toVectorOfConstPointers(mesh_dof_tables);
+    auto const mesh_dof_table_pointers = toNonOwning(mesh_dof_tables);
 
     bool const output_secondary_variables = false;
     addProcessDataToMesh(
