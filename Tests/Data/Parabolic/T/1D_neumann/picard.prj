@@ -30,7 +30,7 @@
                     <value>2500</value>
                 </property>
                 <property>
-                    <name>heat_capacity</name>
+                    <name>specific_heat_capacity</name>
                     <type>Constant</type>
                     <value>1000</value>
                 </property>
