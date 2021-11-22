@@ -31,6 +31,7 @@
 #include <vtkLongLongArray.h>
 #include <vtkPointData.h>
 #include <vtkShortArray.h>
+#include <vtkSignedCharArray.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnsignedCharArray.h>
 #include <vtkUnsignedLongArray.h>
@@ -293,7 +294,8 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
 
     // This also covers the vtkTypeInt8Array type, which is derived from the
     // vtkCharArray type.
-    if (vtkCharArray::SafeDownCast(&array))
+    if (vtkCharArray::SafeDownCast(&array) ||
+        vtkSignedCharArray::SafeDownCast(&array))
     {
         if constexpr (sizeof(std::int8_t) != sizeof(char))
         {
