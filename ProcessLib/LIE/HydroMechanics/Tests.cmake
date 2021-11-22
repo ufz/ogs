@@ -1,7 +1,5 @@
 # LIE; HydroMechanics
 if (NOT (OGS_USE_LIS OR OGS_USE_MPI))
-    # Temporary disable test until resolution of the issue
-    # https://gitlab.opengeosys.org/ogs/ogs/-/issues/3173
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_constK.prj RUNTIME 17)
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_const.prj RUNTIME 250)
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_cubic.prj RUNTIME 120)
