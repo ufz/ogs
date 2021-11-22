@@ -66,19 +66,17 @@ public:
 template <typename ShapeFunction, typename IntegrationMethod, int GlobalDim>
 class LiquidFlowLocalAssembler : public LiquidFlowLocalAssemblerInterface
 {
-    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction>;
+    using ShapeMatricesType = ShapeMatrixPolicyType<ShapeFunction, GlobalDim>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
 
-    using LocalAssemblerTraits =
-        ProcessLib::LocalAssemblerTraits<ShapeMatricesType,
-                                         ShapeFunction::NPOINTS, NUM_NODAL_DOF,
-                                         ShapeFunction::DIM>;
+    using LocalAssemblerTraits = ProcessLib::LocalAssemblerTraits<
+        ShapeMatricesType, ShapeFunction::NPOINTS, NUM_NODAL_DOF, GlobalDim>;
 
     using NodalMatrixType = typename LocalAssemblerTraits::LocalMatrix;
     using NodalVectorType = typename LocalAssemblerTraits::LocalVector;
     using NodalRowVectorType = typename ShapeMatricesType::NodalRowVectorType;
-    using DimVectorType = typename ShapeMatricesType::DimVectorType;
-    using DimMatrixType = typename ShapeMatricesType::DimMatrixType;
+    using GlobalDimVectorType = typename ShapeMatricesType::GlobalDimVectorType;
+    using GlobalDimMatrixType = typename ShapeMatricesType::GlobalDimMatrixType;
     using GlobalDimNodalMatrixType =
         typename ShapeMatricesType::GlobalDimNodalMatrixType;
 
@@ -160,16 +158,16 @@ private:
             Eigen::Map<NodalVectorType>& local_b,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
-            DimMatrixType const& permeability, double const mu,
-            double const rho_L, DimVectorType const& specific_body_force,
+            GlobalDimMatrixType const& permeability, double const mu,
+            double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
 
-        static Eigen::Matrix<double, ShapeFunction::DIM, 1> calculateVelocity(
+        static Eigen::Matrix<double, GlobalDim, 1> calculateVelocity(
             Eigen::Map<const NodalVectorType> const& local_p,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
-            DimMatrixType const& permeability, double const mu,
-            double const rho_L, DimVectorType const& specific_body_force,
+            GlobalDimMatrixType const& permeability, double const mu,
+            double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
     };
 
@@ -184,16 +182,16 @@ private:
             Eigen::Map<NodalVectorType>& local_b,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
-            DimMatrixType const& permeability, double const mu,
-            double const rho_L, DimVectorType const& specific_body_force,
+            GlobalDimMatrixType const& permeability, double const mu,
+            double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
 
-        static Eigen::Matrix<double, ShapeFunction::DIM, 1> calculateVelocity(
+        static Eigen::Matrix<double, GlobalDim, 1> calculateVelocity(
             Eigen::Map<const NodalVectorType> const& local_p,
             IntegrationPointData<NodalRowVectorType,
                                  GlobalDimNodalMatrixType> const& ip_data,
-            DimMatrixType const& permeability, double const mu,
-            double const rho_L, DimVectorType const& specific_body_force,
+            GlobalDimMatrixType const& permeability, double const mu,
+            double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
     };
 
