@@ -20,6 +20,7 @@ code coverage:
     - poetry run python lcov_cobertura.py coverage.info --base-dir $CI_PROJECT_DIR
     - poetry run ./generate_coverage_vis_data.py
   artifacts:
+    when: always
     paths:
       - Coverage.html
       - build/coverage/coverage_report
