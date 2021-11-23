@@ -38,8 +38,8 @@ std::unique_ptr<MPL::Medium> createTestMaterial(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         curves;
 
-    return MPL::createMedium(geometry_dimension, config, parameters,
-                             local_coordinate_system, curves);
+    return MPL::createMedium(0 /*material id*/, geometry_dimension, config,
+                             parameters, local_coordinate_system, curves);
 }
 
 std::unique_ptr<MaterialPropertyLib::Property> createTestProperty(

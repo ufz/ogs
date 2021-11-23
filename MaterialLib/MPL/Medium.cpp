@@ -17,9 +17,10 @@
 
 namespace MaterialPropertyLib
 {
-Medium::Medium(std::vector<std::unique_ptr<Phase>>&& phases,
+Medium::Medium(int const material_id,
+               std::vector<std::unique_ptr<Phase>>&& phases,
                std::unique_ptr<PropertyArray>&& properties)
-    : phases_(std::move(phases))
+    : phases_(std::move(phases)), material_id_(material_id)
 {
     if (properties)
     {
@@ -74,9 +75,9 @@ std::size_t Medium::numberOfPhases() const
     return phases_.size();
 }
 
-std::string Medium::description()
+std::string Medium::description() const
 {
-    return "medium";
+    return "medium " + std::to_string(material_id_);
 }
 
 Phase const& fluidPhase(Medium const& medium)

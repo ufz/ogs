@@ -22,6 +22,7 @@
 namespace MaterialPropertyLib
 {
 std::unique_ptr<Medium> createMedium(
+    int const material_id,
     int const geometry_dimension,
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -49,7 +50,8 @@ std::unique_ptr<Medium> createMedium(
         OGS_FATAL("Neither tag <phases> nor tag <properties> has been found.");
     }
 
-    return std::make_unique<Medium>(std::move(phases), std::move(properties));
+    return std::make_unique<Medium>(material_id, std::move(phases),
+                                    std::move(properties));
 }
 
 }  // namespace MaterialPropertyLib

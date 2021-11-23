@@ -31,7 +31,8 @@ namespace MaterialPropertyLib
 class Medium final
 {
 public:
-    Medium(std::vector<std::unique_ptr<Phase>>&& phases,
+    Medium(int const material_id,
+           std::vector<std::unique_ptr<Phase>>&& phases,
            std::unique_ptr<PropertyArray>&& properties);
 
     /// A get-function for a particular phase. The ul argument specifies the
@@ -56,7 +57,7 @@ public:
     std::size_t numberOfPhases() const;
 
     /// Short description of the medium.
-    static std::string description();
+    std::string description() const;
 
     template <typename T>
     T value(PropertyType const p) const
@@ -98,6 +99,10 @@ private:
     /// Most properties are fine with the volume fraction average, but
     /// special-defaults are allowed as well...
     PropertyArray properties_;
+
+    /// The first material id for which the medium was created. Used in the
+    /// description.
+    int const material_id_;
 };
 
 template <typename Container>
