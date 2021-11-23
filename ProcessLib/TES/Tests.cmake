@@ -27,6 +27,9 @@ AddTest(
     tes_zeolite_discharge_large_ts_28_t_1_000000.vtu tes_zeolite_discharge_large_ts_28_t_1.000000.vtu solid_density solid_density 1e-3 1e-4
 )
 
+# Temporary disable the test not running in debug build.
+# See issue https://gitlab.opengeosys.org/ogs/ogs/-/issues/3230
+if (NOT OGS_COVERAGE)
 AddTest(
     NAME TES_zeolite_discharge_Newton
     PATH Parabolic/TES/1D
@@ -40,6 +43,7 @@ AddTest(
     # tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_t_0.100000.vtu vapour_partial_pressure vapour_partial_pressure 1.5e-3 1.5e-3
     tes_zeolite_discharge_small_ts_19_t_0_100000.vtu tes_zeolite_discharge_small_newton_t_0.100000.vtu solid_density solid_density 1.5e-3 1.5e-3
 )
+endif()
 
 
 # SQUARE 1x1 TES TEST -- AXIALLY SYMMETRIC
