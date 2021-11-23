@@ -61,6 +61,45 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     const bool use_monolithic_scheme =
         !(coupling_scheme && (*coupling_scheme == "staggered"));
 
+    auto coupling_scheme_parameter_optional =
+        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme_parameter}
+        config.getConfigParameterOptional<double>("coupling_scheme_parameter");
+    double coupling_scheme_parameter =
+        0.5;  // default value recommended [Mikelic & Wheeler]
+
+    if (coupling_scheme_parameter_optional)
+    {
+        if (use_monolithic_scheme)
+        {
+            WARN(
+                "Monolithic scheme ignores coupling scheme parameter set in "
+                "project file.");
+        }
+        else
+        {
+            coupling_scheme_parameter =
+                coupling_scheme_parameter_optional.value();
+            // optimum not a-priori known, but within certain interval [Storvik
+            // & Nordbotten]
+            double const csp_min = 1.0 / 6.0;
+            double const csp_max = 1.0;
+            if (coupling_scheme_parameter < csp_min ||
+                coupling_scheme_parameter > csp_max)
+            {
+                WARN(
+                    "Value of coupling scheme parameter = {:g} is out of "
+                    "reasonable range ({:g}, {:g}).",
+                    coupling_scheme_parameter, csp_min, csp_max);
+            }
+        }
+    }
+
+    if (!use_monolithic_scheme)
+    {
+        DBUG("Using value {:g} for coupling parameter of staggered scheme.",
+             coupling_scheme_parameter);
+    }
+
     /// \section processvariableshm Process Variables
 
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__process_variables}
@@ -186,14 +225,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                                           variable_u->getShapeFunctionOrder();
 
     HydroMechanicsProcessData<DisplacementDim> process_data{
-        materialIDs(mesh),
-        std::move(media_map),
-        std::move(solid_constitutive_relations),
-        initial_stress,
-        specific_body_force,
-        mass_lumping,
-        hydraulic_process_id,
-        mechanics_related_process_id,
+        materialIDs(mesh), std::move(media_map),
+        std::move(solid_constitutive_relations), initial_stress,
+        specific_body_force, mass_lumping,
+        coupling_scheme_parameter,  // this parameter gets its specific meaning
+                                    // in the process depending on implemented
+                                    // coupling scheme
+        hydraulic_process_id, mechanics_related_process_id,
         use_taylor_hood_elements};
 
     SecondaryVariableCollection secondary_variables;

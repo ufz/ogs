@@ -58,6 +58,13 @@ struct HydroMechanicsProcessData
     /// If set mass lumping will be applied to the pressure equation.
     bool const mass_lumping;
 
+    /// An optional input to set an algorithmic parameter of the staggered
+    /// scheme. In the HydroMechanics process the fixed-stress split has been
+    /// implemented as staggered scheme with a stabilization parameter to be
+    /// set. For more details see [user guide -
+    /// conventions](https://www.opengeosys.org/docs/userguide/basics/conventions/#fixed-stress-split-for-hydro-mechanical-processes).
+    double const fixed_stress_stabilization_parameter;
+
     /// ID of hydraulic process.
     int const hydraulic_process_id;
 
