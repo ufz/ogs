@@ -560,7 +560,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu pressure pressure 1e-14 1e-11
-    transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu v v 1e-14 1e-14
+    transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu v v 1e-11 1e-14
 )
 
 AddTest(
