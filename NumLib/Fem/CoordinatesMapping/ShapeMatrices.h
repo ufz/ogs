@@ -34,9 +34,11 @@ enum class ShapeMatrixType
  * \brief Coordinates mapping matrices at particular location
  *
  * \tparam T_N      Vector type for shape functions
- * \tparam T_DNDR   Matrix type for gradient of shape functions in natural
- * coordinates \tparam T_J      Jacobian matrix type \tparam T_DNDX   Matrix
- * type for gradient of shape functions in physical coordinates
+ * \tparam T_DNDR   Matrix type for gradient of shape functions
+ *                  in natural coordinates
+ * \tparam T_J      Jacobian matrix type
+ * \tparam T_DNDX   Matrix type for gradient of shape functions
+ *                  in physical coordinates
  */
 template <class T_N, class T_DNDR, class T_J, class T_DNDX>
 struct ShapeMatrices
