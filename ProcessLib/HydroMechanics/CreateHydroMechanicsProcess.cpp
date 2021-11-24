@@ -64,18 +64,20 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto coupling_scheme_parameter_optional =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme_parameter}
         config.getConfigParameterOptional<double>("coupling_scheme_parameter");
-    double coupling_scheme_parameter =
-        0.5;  // default value recommended [Mikelic & Wheeler]
+    double coupling_scheme_parameter = std::numeric_limits<double>::quiet_NaN();
 
-    if (coupling_scheme_parameter_optional)
+    if (use_monolithic_scheme)
     {
-        if (use_monolithic_scheme)
+        if (coupling_scheme_parameter_optional)
         {
             WARN(
                 "Monolithic scheme ignores coupling scheme parameter set in "
                 "project file.");
         }
-        else
+    }
+    else
+    {
+        if (coupling_scheme_parameter_optional)
         {
             coupling_scheme_parameter =
                 coupling_scheme_parameter_optional.value();
@@ -92,12 +94,12 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                     coupling_scheme_parameter, csp_min, csp_max);
             }
         }
-    }
-
-    if (!use_monolithic_scheme)
-    {
+        else
+        {
+            coupling_scheme_parameter = 0.5;  // default value recommended [Mikelic & Wheeler]
+        }
         DBUG("Using value {:g} for coupling parameter of staggered scheme.",
-             coupling_scheme_parameter);
+              coupling_scheme_parameter);
     }
 
     /// \section processvariableshm Process Variables

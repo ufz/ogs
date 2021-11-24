@@ -208,15 +208,15 @@ $$
 where $K_\mathrm{b}$ denotes the drained bulk modulus.
 Thus the weak form of the mass balance (H) depends only on pressure $p^{n,i}$ as unknown
 $$
-\int_V \left( \beta\frac{p^{n,i}-p^{n,i-1}}{\Delta t}v
+\int_V \left( \beta_\mathrm{FS}\frac{p^{n,i}-p^{n,i-1}}{\Delta t}v
 +S\frac{p^{n,i}-p^{n-1}}{\Delta t}v
 +\frac{k}{\mu}\nabla p^{n,i} \cdot \nabla v \right) \mathrm{d}V
 =\int_V \left( s v-\frac{k}{\mu}\varrho_\mathrm{f} \nabla \cdot \mathbf{g} v
 -\alpha\frac{ \varepsilon_V(\mathbf{u}^{n,i-1})- \varepsilon_V(\mathbf{u}^{n-1})}{\Delta t} v \right) \mathrm{d}V,
 $$
-where $\beta=\beta^\mathrm{ph}=\frac{\alpha^2}{K_\mathrm{b}}$ would correspond to the physically motivated volumetric stress.
+where $\beta_\mathrm{FS}=\beta_\mathrm{FS}^\mathrm{ph}=\frac{\alpha^2}{K_\mathrm{b}}$ would correspond to the physically motivated volumetric stress.
 However, choosing another artificial volumetric stress, i.e. using a different bulk modulus than $K_\mathrm{b}$, may accelerate the convergence of the coupling iterations.
-The analysis by Mikelic and Wheeler [[2]](#2) revealed that $\beta^\mathrm{MW}=\frac{\alpha^2}{2K_\mathrm{b}}$ is generally close to the a-priori unknown optimal value $\beta^\mathrm{opt}$.
+The analysis by Mikelic and Wheeler [[2]](#2) revealed that $\beta_\mathrm{FS}^\mathrm{MW}=\frac{\alpha^2}{2K_\mathrm{b}}$ is generally close to the a-priori unknown optimal value $\beta_\mathrm{FS}^\mathrm{opt}$, for more information see [user guide - conventions]({{< ref "conventions.md#staggered-scheme" >}}).
 
 The obtained pressure $p^{n,i}$ is then inserted into the momentum equation (M) with $\mathbf{u}^{n,i}$ as unknown
 $$
