@@ -64,11 +64,6 @@
                     <value>4.46e-13</value>
                 </property>
                 <property>
-                    <name>reference_temperature</name>
-                    <type>Constant</type>
-                    <value>293.15</value>
-                </property>
-                <property>
                     <name>saturation</name>
                     <type>SaturationVanGenuchten</type>
                     <residual_liquid_saturation>0.1689</residual_liquid_saturation>
