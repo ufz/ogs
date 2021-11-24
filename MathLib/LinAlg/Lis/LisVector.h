@@ -99,10 +99,12 @@ public:
         }
     }
 
-    /// Copy vector values.
+    /// Copy local entries to a vector.
+    /// \param u a vector for the values of local entries. It will be resized to
+    /// hold the current vector data.
     void copyValues(std::vector<double>& u) const
     {
-        assert(u.size() == size());
+        u.resize(size());
         lis_vector_get_values(vec_, 0, size(), u.data());
     }
 
