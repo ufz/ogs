@@ -702,6 +702,17 @@ AddTest(
     10x10.asc 10x10.asc
 )
 
+AddTest(
+    NAME addDataToRaster_10x10
+    PATH GeoTools/addDataToRaster/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/GeoTools/addDataToRaster
+    EXECUTABLE addDataToRaster
+    EXECUTABLE_ARGS --ll_x 1000 --ll_y 100 --ur_x 1100 --ur_y 200 --function sinxsiny --scaling_value 1 --offset_value 0 -i ${Data_SOURCE_DIR}/GeoTools/createRaster/10x10.asc -o ${Data_BINARY_DIR}/GeoTools/addDataToRaster/10x10_sinxsiny.asc
+    TESTER diff
+    DIFF_DATA
+    10x10_sinxsiny.asc 10x10_sinxsiny.asc
+)
+
 MeshTest(
     NAME GMSH2OGS_linearElements
     PATH Utils/GMSH2OGS
