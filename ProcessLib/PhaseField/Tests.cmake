@@ -42,3 +42,20 @@ AddTest(
         expected_AT1_vd_tension_ts_10_t_1_000000_0.vtu AT1_vd_tension_ts_10_t_1_000000_0.vtu displacement displacement 1e-5 0
         expected_AT1_vd_tension_ts_10_t_1_000000_0.vtu AT1_vd_tension_ts_10_t_1_000000_0.vtu phasefield phasefield 1e-6 0
 )
+
+AddTest(
+    NAME PhaseField_3D_beam_tens_AT1_vd_2core
+    PATH PhaseField/beam
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS AT1_vd_tensile.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 2
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    RUNTIME 18
+    DIFF_DATA
+        expected_AT1_vd_tension_2core_ts_10_t_1_000000_0.vtu AT1_vd_tension_ts_10_t_1_000000_0.vtu displacement displacement 1e-5 0
+        expected_AT1_vd_tension_2core_ts_10_t_1_000000_1.vtu AT1_vd_tension_ts_10_t_1_000000_1.vtu displacement displacement 1e-5 0
+        expected_AT1_vd_tension_2core_ts_10_t_1_000000_0.vtu AT1_vd_tension_ts_10_t_1_000000_0.vtu phasefield phasefield 1e-6 0
+        expected_AT1_vd_tension_2core_ts_10_t_1_000000_1.vtu AT1_vd_tension_ts_10_t_1_000000_1.vtu phasefield phasefield 1e-6 0
+)
