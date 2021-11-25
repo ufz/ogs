@@ -14,6 +14,7 @@
 #pragma once
 
 #include <array>
+#include <stdexcept>
 #include <utility>
 
 #include "BaseLib/Error.h"
@@ -60,6 +61,15 @@ public:
         : _header(std::move(header)),
           _raster_data(new double[_header.n_cols * _header.n_rows])
     {
+        unsigned long const number_of_input_values =
+            static_cast<unsigned long>(std::distance(begin, end));
+        if (number_of_input_values != _header.n_cols * _header.n_rows)
+        {
+            throw std::out_of_range(
+                "Number of raster data mismatch, need " +
+                std::to_string(_header.n_cols * _header.n_rows) +
+                " values, but got " + std::to_string(number_of_input_values));
+        }
         std::copy(begin, end, _raster_data);
     }
 
