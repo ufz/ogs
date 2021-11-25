@@ -41,9 +41,6 @@ public:
     /// @param length number of rows
     explicit EigenVector(IndexType length) : vec_(length) {}
 
-    /// copy constructor
-    EigenVector(EigenVector const& src) = default;
-
     /// return a vector length
     IndexType size() const { return static_cast<IndexType>(vec_.size()); }
 
