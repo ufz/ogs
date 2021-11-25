@@ -691,6 +691,17 @@ AddTest(
     Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu Cube-BackPolylinePropertyChange_at_least_one_element_node_inside.vtu ValidCells ValidCells 0 0
 )
 
+AddTest(
+    NAME createRaster_10x10
+    PATH GeoTools/createRaster/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/GeoTools/createRaster
+    EXECUTABLE createRaster
+    EXECUTABLE_ARGS -s 10 -r 10 -c 10 --ll_x 1000 --ll_y 100 -o ${Data_BINARY_DIR}/GeoTools/createRaster/10x10.asc
+    TESTER diff
+    DIFF_DATA
+    10x10.asc 10x10.asc
+)
+
 MeshTest(
     NAME GMSH2OGS_linearElements
     PATH Utils/GMSH2OGS
