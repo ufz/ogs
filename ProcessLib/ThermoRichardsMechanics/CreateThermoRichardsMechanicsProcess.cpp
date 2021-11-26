@@ -178,13 +178,20 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
         mass_lumping = *mass_lumping_ptr;
     }
 
+    const bool use_TaylorHood_elements =
+        variable_p->getShapeFunctionOrder() !=
+                variable_u->getShapeFunctionOrder()
+            ? true
+            : false;
+
     ThermoRichardsMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
         std::move(solid_constitutive_relations),
         initial_stress,
         specific_body_force,
-        mass_lumping};
+        mass_lumping,
+        use_TaylorHood_elements};
 
     SecondaryVariableCollection secondary_variables;
 
