@@ -1,7 +1,7 @@
 +++
 author = "Boyan Meng and Haibing Shao"
 date = "2021-11-2T18:52:00+01:00"
-title = "Overview of Multiphase Flow Processes"
+title = "Overview of Multiphase Flow Processes (without mechanics)"
 weight = 43
 
 [menu]
@@ -11,7 +11,7 @@ weight = 43
 +++
 
 
-As of November 2021, there are three implemented processes in OGS6 that are able to simulate the multiphase flow and transport phenomena in porous media. An overview of the process-specific features is given in the following table. Currently all processes assume two-phase flow.
+This documentation gives an overview of the multiphase flow processes (except `TH2M`) in OGS6. Currently all processes assume two-phase flow (The `Richards Flow` process is not considered as a "two-phase flow" process since the gas phase is assumed static). A comparison of the process-specific features is listed in the following table.
 
 | Feature | `TwoPhaseFlowWithPP` | `TwoPhaseFlowWithPrho` | `ThermalTwoPhaseFlowWithPP` |
 |---|---|---|---|
