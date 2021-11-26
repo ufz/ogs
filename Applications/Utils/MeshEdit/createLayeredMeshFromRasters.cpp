@@ -117,6 +117,7 @@ int main(int argc, char* argv[])
     }
     else
     {
+        ERR("Reading raster files.");
         return EXIT_FAILURE;
     }
 

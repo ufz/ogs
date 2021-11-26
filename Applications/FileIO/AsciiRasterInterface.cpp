@@ -280,6 +280,7 @@ static bool allRastersExist(std::vector<std::string> const& raster_paths)
         std::ifstream file_stream(raster_path, std::ifstream::in);
         if (!file_stream.good())
         {
+            ERR("Opening raster file {} failed.", raster_path);
             return false;
         }
         file_stream.close();

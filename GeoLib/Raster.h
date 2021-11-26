@@ -14,14 +14,16 @@
 #pragma once
 
 #include <array>
+#include <stdexcept>
 #include <utility>
 
+#include "BaseLib/Error.h"
 #include "MathLib/Point3d.h"
 
 namespace GeoLib {
 
 /// Contains the relevant information when storing a geoscientific raster data
-struct RasterHeader
+struct RasterHeader final
 {
     std::size_t n_cols; // width
     std::size_t n_rows; // height
@@ -39,7 +41,8 @@ struct RasterHeader
  * Additional the object needs the raster data itself. The raster data will be
  * copied from the constructor. The destructor will release the memory.
  */
-class Raster {
+class Raster final
+{
 public:
     using const_iterator = const double*;
     using iterator = double*;
@@ -58,6 +61,15 @@ public:
         : _header(std::move(header)),
           _raster_data(new double[_header.n_cols * _header.n_rows])
     {
+        unsigned long const number_of_input_values =
+            static_cast<unsigned long>(std::distance(begin, end));
+        if (number_of_input_values != _header.n_cols * _header.n_rows)
+        {
+            throw std::out_of_range(
+                "Number of raster data mismatch, need " +
+                std::to_string(_header.n_cols * _header.n_rows) +
+                " values, but got " + std::to_string(number_of_input_values));
+        }
         std::copy(begin, end, _raster_data);
     }
 
@@ -79,11 +91,30 @@ public:
      * @return constant iterator
      */
     const_iterator begin() const { return _raster_data; }
+
     /**
      * Constant iterator that is pointing to the last raster pixel value.
      * @return constant iterator
      */
     const_iterator end() const { return _raster_data + _header.n_rows*_header.n_cols; }
+
+    /**
+     * Access the pixel specified by row, col.
+     */
+    double const& operator()(std::size_t const row, std::size_t const col) const
+    {
+        if (row >= _header.n_rows || col >= _header.n_cols)
+        {
+            OGS_FATAL(
+                "Raster pixel ({}, {}) doesn't exist. Raster size is {} x {}.",
+                row, col, _header.n_rows, _header.n_cols);
+        }
+        return _raster_data[(_header.n_rows - 1 - row) * _header.n_cols + col];
+    }
+    double& operator()(std::size_t const row, std::size_t const col)
+    {
+        return const_cast<double&>(std::as_const(*this)(row, col));
+    }
 
     /**
      * Returns the raster value at the position of the given point.

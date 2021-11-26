@@ -1,4 +1,4 @@
-set(TOOLS MoveGeometry)
+set(TOOLS MoveGeometry createRaster addDataToRaster)
 foreach(tool ${TOOLS})
     ogs_add_executable(${tool} ${tool}.cpp)
     target_link_libraries(
