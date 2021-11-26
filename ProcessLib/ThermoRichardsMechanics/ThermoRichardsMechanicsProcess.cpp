@@ -109,12 +109,12 @@ template <int DisplacementDim>
 void ThermoRichardsMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
+    _mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
+        _mesh, _mesh.getNodes(), process_data_.use_TaylorHood_elements);
     // Create single component dof in the mesh's base nodes.
     base_nodes_ = MeshLib::getBaseNodes(_mesh.getElements());
-    mesh_subset_base_nodes_ =
-        std::make_unique<MeshLib::MeshSubset>(_mesh, base_nodes_);
+    mesh_subset_base_nodes_ = std::make_unique<MeshLib::MeshSubset>(
+        _mesh, base_nodes_, process_data_.use_TaylorHood_elements);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain

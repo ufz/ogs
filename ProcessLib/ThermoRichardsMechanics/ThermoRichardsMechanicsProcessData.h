@@ -53,6 +53,8 @@ struct ThermoRichardsMechanicsProcessData
 
     bool const apply_mass_lumping;
 
+    const bool use_TaylorHood_elements;
+
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* element_porosity = nullptr;
     MeshLib::PropertyVector<double>* element_stresses = nullptr;
