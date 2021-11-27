@@ -318,8 +318,9 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
             return true;
         }
 
-        auto const& element_center = getCenterOfGravity(*_mesh.getElement(i));
-        return !ds.isDeactivated(element_center, time);
+        auto const& e = *_mesh.getElement(i);
+        auto ret = !ds.isDeactivated(e, time);
+        return ret;
     };
 
     auto const number_of_elements = _mesh.getNumberOfElements();

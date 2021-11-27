@@ -25,9 +25,11 @@ const std::string DeactivatedSubdomain::zero_parameter_name =
 
 DeactivatedSubdomainMesh::DeactivatedSubdomainMesh(
     std::unique_ptr<MeshLib::Mesh> deactivated_subdomain_mesh_,
+    std::vector<std::size_t>&& bulk_element_ids_,
     std::vector<MeshLib::Node*>&& inner_nodes_,
     std::vector<MeshLib::Node*>&& outer_nodes_)
     : mesh(std::move(deactivated_subdomain_mesh_)),
+      bulk_element_ids(std::move(bulk_element_ids_)),
       inner_nodes(std::move(inner_nodes_)),
       outer_nodes(std::move(outer_nodes_))
 {
@@ -52,14 +54,21 @@ bool DeactivatedSubdomain::isInTimeSupportInterval(double const t) const
            t <= time_interval.getSupportMax();
 }
 
-bool DeactivatedSubdomain::isDeactivated(MathLib::Point3d const& point,
+bool DeactivatedSubdomain::isDeactivated(MeshLib::Element const& element,
                                          double const time) const
 {
+    auto const& bulk_element_ids = deactivated_subdomain_mesh->bulk_element_ids;
+    if (!BaseLib::contains(bulk_element_ids, element.getID()))
+    {
+        return false;
+    }
+
     if (!line_segment)
     {
         return true;
     }
 
+    auto const& element_center = getCenterOfGravity(element);
     // Line from a to b.
     auto const& a = line_segment->first;
     auto const& b = line_segment->second;
@@ -71,6 +80,6 @@ bool DeactivatedSubdomain::isDeactivated(MathLib::Point3d const& point,
     Eigen::Vector3d const r = a + t * curve_position;
 
     // Return true if p is "behind" the plane through r.
-    return (point.asEigenVector3d() - r).dot(t) <= 0;
+    return (element_center.asEigenVector3d() - r).dot(t) <= 0;
 }
 }  // namespace ProcessLib

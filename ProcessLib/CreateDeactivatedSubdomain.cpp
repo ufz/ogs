@@ -83,6 +83,12 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
     std::copy_if(begin(elements), end(elements),
                  back_inserter(deactivated_elements), is_active);
 
+    std::vector<std::size_t> bulk_element_ids;
+    bulk_element_ids.reserve(deactivated_elements.size());
+    transform(begin(deactivated_elements), end(deactivated_elements),
+              back_inserter(bulk_element_ids),
+              [](auto const* e) { return e->getID(); });
+
     static int mesh_number = 0;
     // Subdomain mesh consisting of deactivated elements.
     auto sub_mesh = MeshLib::createMeshFromElementSelection(
@@ -92,7 +98,8 @@ static std::unique_ptr<DeactivatedSubdomainMesh> createDeactivatedSubdomainMesh(
     auto [inner_nodes, outer_nodes] =
         extractInnerAndOuterNodes(mesh, *sub_mesh, is_active);
     return std::make_unique<DeactivatedSubdomainMesh>(
-        std::move(sub_mesh), std::move(inner_nodes), std::move(outer_nodes));
+        std::move(sub_mesh), std::move(bulk_element_ids),
+        std::move(inner_nodes), std::move(outer_nodes));
 }
 
 static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
