@@ -671,14 +671,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
     auto const& surface = phreeqc_io._chemical_system->surface;
     auto const& exchangers = phreeqc_io._chemical_system->exchangers;
 
-    if (!surface.empty() && !exchangers.empty())
-    {
-        OGS_FATAL(
-            "Using surface and exchange reactions simultaneously is not "
-            "supported at the moment");
-    }
-
-    int const num_skipped_lines = surface.empty() && exchangers.empty() ? 1 : 2;
+    int const num_skipped_lines =
+        1 + (!surface.empty() ? 1 : 0) + (!exchangers.empty() ? 1 : 0);
 
     auto& equilibrium_reactants =
         phreeqc_io._chemical_system->equilibrium_reactants;

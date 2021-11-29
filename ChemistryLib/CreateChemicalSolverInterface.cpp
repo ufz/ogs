@@ -114,13 +114,6 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         output_directory,
         BaseLib::extractBaseNameWithoutExtension(config.getProjectFileName()));
 
-    if (!surface.empty() && !exchangers.empty())
-    {
-        OGS_FATAL(
-            "Using surface and exchange reactions simultaneously is not "
-            "supported at the moment");
-    }
-
     auto dump = surface.empty() && exchangers.empty()
                     ? nullptr
                     : std::make_unique<PhreeqcIOData::Dump>(project_file_name);
