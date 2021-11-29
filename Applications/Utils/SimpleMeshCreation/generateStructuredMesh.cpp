@@ -18,6 +18,7 @@
 #include "BaseLib/Subdivision.h"
 #include "BaseLib/TCLAPCustomOutput.h"
 #include "InfoLib/GitInfo.h"
+#include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
@@ -141,6 +142,18 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<double> multiZArg("", "mz", "multiplier in z direction",
                                       false, 1, "real");
     cmd.add(multiZArg);
+    TCLAP::ValueArg<double> originXArg(
+        "", "ox", "mesh origin (lower left corner) in x direction", false, 0,
+        "real");
+    cmd.add(originXArg);
+    TCLAP::ValueArg<double> originYArg(
+        "", "oy", "mesh origin (lower left corner) in y direction", false, 0,
+        "real");
+    cmd.add(originYArg);
+    TCLAP::ValueArg<double> originZArg(
+        "", "oz", "mesh origin (lower left corner) in z direction", false, 0,
+        "real");
+    cmd.add(originZArg);
 
     // parse arguments
     cmd.parse(argc, argv);
@@ -165,6 +178,8 @@ int main(int argc, char* argv[])
                                                          &dmaxZArg};
     std::vector<TCLAP::ValueArg<double>*> vec_multiArg = {
         &multiXArg, &multiYArg, &multiZArg};
+    MathLib::Point3d const origin(
+        {originXArg.getValue(), originYArg.getValue(), originZArg.getValue()});
 
     const bool isLengthSet =
         std::any_of(vec_lengthArg.begin(), vec_lengthArg.end(),
@@ -233,32 +248,33 @@ int main(int argc, char* argv[])
     switch (eleType)
     {
         case MeshLib::MeshElemType::LINE:
-            mesh.reset(MeshLib::MeshGenerator::generateLineMesh(*vec_div[0]));
+            mesh.reset(
+                MeshLib::MeshGenerator::generateLineMesh(*vec_div[0], origin));
             break;
         case MeshLib::MeshElemType::TRIANGLE:
             mesh.reset(MeshLib::MeshGenerator::generateRegularTriMesh(
-                *vec_div[0], *vec_div[1]));
+                *vec_div[0], *vec_div[1], origin));
             break;
         case MeshLib::MeshElemType::QUAD:
             mesh.reset(MeshLib::MeshGenerator::generateRegularQuadMesh(
-                *vec_div[0], *vec_div[1]));
+                *vec_div[0], *vec_div[1], origin));
             break;
         case MeshLib::MeshElemType::HEXAHEDRON:
             mesh.reset(MeshLib::MeshGenerator::generateRegularHexMesh(
-                *vec_div[0], *vec_div[1], *vec_div[2]));
+                *vec_div[0], *vec_div[1], *vec_div[2], origin));
             break;
         case MeshLib::MeshElemType::PRISM:
             mesh.reset(MeshLib::MeshGenerator::generateRegularPrismMesh(
                 length[0], length[1], length[2], n_subdivision[0],
-                n_subdivision[1], n_subdivision[2]));
+                n_subdivision[1], n_subdivision[2], origin));
             break;
         case MeshLib::MeshElemType::TETRAHEDRON:
             mesh.reset(MeshLib::MeshGenerator::generateRegularTetMesh(
-                *vec_div[0], *vec_div[1], *vec_div[2]));
+                *vec_div[0], *vec_div[1], *vec_div[2], origin));
             break;
         case MeshLib::MeshElemType::PYRAMID:
             mesh.reset(MeshLib::MeshGenerator::generateRegularPyramidMesh(
-                *vec_div[0], *vec_div[1], *vec_div[2]));
+                *vec_div[0], *vec_div[1], *vec_div[2], origin));
             break;
         default:
             ERR("Given element type is not supported.");
