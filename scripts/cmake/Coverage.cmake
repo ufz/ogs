@@ -35,6 +35,7 @@ if(DEFINED ENV{CI})
 endif()
 
 # TODO: segfault in MeshLibMappedPropertyVector.Double|Int
+# TODO: segfault in TestVtkMeshConverter.Conversion
 setup_target_for_coverage_fastcov(
     NAME
     testrunner_coverage
@@ -44,7 +45,7 @@ setup_target_for_coverage_fastcov(
     $<TARGET_FILE:testrunner>
     -l
     warn
-    --gtest_filter=-MeshLibMappedPropertyVector.*:GeoLib.SearchNearestPointsInDenseGrid
+    --gtest_filter=-MeshLibMappedPropertyVector.*:GeoLib.SearchNearestPointsInDenseGrid:TestVtkMeshConverter.Conversion
     DEPENDENCIES
     testrunner
     FASTCOV_ARGS
