@@ -743,3 +743,36 @@ MeshTest(
     REQUIREMENTS NOT (OGS_USE_MPI)
     DIFF_DATA quadratic_mesh.vtu quadratic_mesh.vtu 1.e-16
 )
+
+AddTest(
+    NAME generateGeometry_10x10_quad
+    PATH GeoTools/generateGeometry/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/GeoTools/generateGeometry
+    EXECUTABLE generateGeometry
+    EXECUTABLE_ARGS --x0 0 --y0 0 --z0 0 --x1 10 --y1 10 --z1 0 --nx 1 --ny 1 --geometry_name TestGeometry --polyline_name TestQuad -o ${Data_BINARY_DIR}/GeoTools/generateGeometry/TestGeometry_10x10_quad.gml
+    TESTER diff
+    DIFF_DATA
+    TestGeometry_10x10_quad.gml TestGeometry_10x10_quad.gml
+)
+
+AddTest(
+    NAME generateGeometry_10_line_nx9
+    PATH GeoTools/generateGeometry/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/GeoTools/generateGeometry
+    EXECUTABLE generateGeometry
+    EXECUTABLE_ARGS --x0 0 --y0 0 --z0 0 --x1 10 --y1 0 --z1 0 --nx 9 --geometry_name TestGeometry --polyline_name TestLine -o ${Data_BINARY_DIR}/GeoTools/generateGeometry/TestGeometry_10_line_nx9.gml
+    TESTER diff
+    DIFF_DATA
+    TestGeometry_10_line_nx9.gml TestGeometry_10_line_nx9.gml
+)
+
+AddTest(
+    NAME generateGeometry_point
+    PATH GeoTools/generateGeometry/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/GeoTools/generateGeometry
+    EXECUTABLE generateGeometry
+    EXECUTABLE_ARGS --x0 1 --y0 1 --z0 0 --x1 1 --y1 1 --z1 0 --geometry_name TestGeometry --polyline_name TestPoint  -o ${Data_BINARY_DIR}/GeoTools/generateGeometry/TestGeometry_point.gml
+    TESTER diff
+    DIFF_DATA
+    TestGeometry_point.gml TestGeometry_point.gml
+)
