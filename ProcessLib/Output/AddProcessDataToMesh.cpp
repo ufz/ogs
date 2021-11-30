@@ -178,7 +178,7 @@ static GlobalIndexType getIndexForComponentInSolutionVector(
 }
 
 static bool isGhostNode([[maybe_unused]] MeshLib::Mesh const& mesh,
-                        [[maybe_unused]] std::size_t node_id)
+                        [[maybe_unused]] std::size_t const node_id)
 {
 #ifndef USE_PETSC
     return false;
