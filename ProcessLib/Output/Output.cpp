@@ -468,11 +468,11 @@ void Output::doOutput(Process const& process,
                       int const timestep,
                       const double t,
                       int const iteration,
-                      std::vector<GlobalVector*> const& x)
+                      std::vector<GlobalVector*> const& xs)
 {
     if (isOutputStep(timestep, t))
     {
-        doOutputAlways(process, process_id, timestep, t, iteration, x);
+        doOutputAlways(process, process_id, timestep, t, iteration, xs);
     }
 #ifdef USE_INSITU
     // Note: last time step may be output twice: here and in
@@ -487,11 +487,11 @@ void Output::doOutputLastTimestep(Process const& process,
                                   int const timestep,
                                   const double t,
                                   int const iteration,
-                                  std::vector<GlobalVector*> const& x)
+                                  std::vector<GlobalVector*> const& xs)
 {
     if (!isOutputStep(timestep, t))
     {
-        doOutputAlways(process, process_id, timestep, t, iteration, x);
+        doOutputAlways(process, process_id, timestep, t, iteration, xs);
     }
 #ifdef USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true,
@@ -503,7 +503,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
                                         const int process_id,
                                         int const timestep, const double t,
                                         int const iteration,
-                                        std::vector<GlobalVector*> const& x)
+                                        std::vector<GlobalVector*> const& xs)
 {
     if (!_output_nonlinear_iteration_results)
     {
@@ -514,7 +514,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
     time_output.start();
 
     bool const output_secondary_variable = true;
-    addProcessDataToMesh(t, x, process_id, process.getMesh(), process,
+    addProcessDataToMesh(t, xs, process_id, process.getMesh(), process,
                          output_secondary_variable, _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which
