@@ -411,7 +411,7 @@ MeshLib::Mesh const& Output::prepareNonBulkMesh(
     auto const mesh_dof_table_pointers = toNonOwning(mesh_dof_tables);
 
     bool const output_secondary_variables = false;
-    addProcessDataToMesh(
+    addProcessDataToSubMesh(
         t, xs, process_id, non_bulk_mesh, mesh_dof_table_pointers, process,
         output_secondary_variables, _output_data_specification);
 

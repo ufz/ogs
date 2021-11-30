@@ -312,7 +312,7 @@ static void addSecondaryVariablesToMesh(
 
 namespace ProcessLib
 {
-void addProcessDataToMesh(
+void addProcessDataToSubMesh(
     const double t, std::vector<GlobalVector*> const& xs, int const process_id,
     MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& mesh_dof_tables,
@@ -360,7 +360,8 @@ void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& xs,
         full_mesh_dof_tables[i] = &process.getDOFTable(i);
     }
 
-    addProcessDataToMesh(t, xs, process_id, mesh, full_mesh_dof_tables, process,
-                         output_secondary_variables, process_output);
+    addProcessDataToSubMesh(t, xs, process_id, mesh, full_mesh_dof_tables,
+                            process, output_secondary_variables,
+                            process_output);
 }
 }  // namespace ProcessLib
