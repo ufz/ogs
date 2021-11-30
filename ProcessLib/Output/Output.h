@@ -109,7 +109,7 @@ private:
                         double const t);
 
     /**
-     * Get the address of a PVDFile from corresponding to the given process.
+     * Get the address of a PVDFile corresponding to the given process.
      * @param process    Process.
      * @param process_id Process ID.
      * @param mesh_name_for_output mesh name for the output.
