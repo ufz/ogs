@@ -132,8 +132,8 @@ private:
         const double t, int const iteration,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> meshes);
 
-    MeshLib::Mesh const& prepareNonBulkMesh(
-        std::string const& mesh_output_name, Process const& process,
+    MeshLib::Mesh const& prepareSubmesh(
+        std::string const& submesh_output_name, Process const& process,
         const int process_id, double const t,
         std::vector<GlobalVector*> const& xs) const;
 

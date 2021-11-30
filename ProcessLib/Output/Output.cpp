@@ -134,17 +134,18 @@ computeDofTablesForSubmesh(ProcessLib::Process const& process,
                            MeshLib::Mesh const& submesh,
                            std::size_t const num_processes)
 {
-    std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>> mesh_dof_tables;
-    mesh_dof_tables.reserve(num_processes);
+    std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
+        submesh_dof_tables;
+    submesh_dof_tables.reserve(num_processes);
 
     for (std::size_t i = 0; i < num_processes; ++i)
     {
-        mesh_dof_tables.push_back(
+        submesh_dof_tables.push_back(
             process.getDOFTable(i).deriveBoundaryConstrainedMap(
                 MeshLib::MeshSubset{submesh, submesh.getNodes()}));
     }
 
-    return mesh_dof_tables;
+    return submesh_dof_tables;
 }
 
 std::vector<NumLib::LocalToGlobalIndexMap const*> toNonOwning(
@@ -390,32 +391,32 @@ void Output::outputMeshes(
     }
 }
 
-MeshLib::Mesh const& Output::prepareNonBulkMesh(
-    std::string const& mesh_output_name, Process const& process,
+MeshLib::Mesh const& Output::prepareSubmesh(
+    std::string const& submesh_output_name, Process const& process,
     const int process_id, double const t,
     std::vector<GlobalVector*> const& xs) const
 {
-    auto& non_bulk_mesh = *BaseLib::findElementOrError(
+    auto& submesh = *BaseLib::findElementOrError(
         begin(_meshes), end(_meshes),
-        [&mesh_output_name](auto const& m)
-        { return m->getName() == mesh_output_name; },
-        "Need mesh '" + mesh_output_name + "' for the output.");
+        [&submesh_output_name](auto const& m)
+        { return m->getName() == submesh_output_name; },
+        "Need mesh '" + submesh_output_name + "' for the output.");
 
     DBUG("Found {:d} nodes for output at mesh '{:s}'.",
-         non_bulk_mesh.getNumberOfNodes(), non_bulk_mesh.getName());
+         submesh.getNumberOfNodes(), submesh.getName());
 
     // TODO do not recreate everytime when doing output
-    auto const mesh_dof_tables =
-        computeDofTablesForSubmesh(process, non_bulk_mesh, xs.size());
+    auto const submesh_dof_tables =
+        computeDofTablesForSubmesh(process, submesh, xs.size());
 
-    auto const mesh_dof_table_pointers = toNonOwning(mesh_dof_tables);
+    auto const submesh_dof_table_pointers = toNonOwning(submesh_dof_tables);
 
     bool const output_secondary_variables = false;
     addProcessDataToSubMesh(
-        t, xs, process_id, non_bulk_mesh, mesh_dof_table_pointers, process,
+        t, xs, process_id, submesh, submesh_dof_table_pointers, process,
         output_secondary_variables, _output_data_specification);
 
-    return non_bulk_mesh;
+    return submesh;
 }
 
 void Output::doOutputAlways(Process const& process,
@@ -450,9 +451,9 @@ void Output::doOutputAlways(Process const& process,
         else
         {
             // mesh related output
-            auto const& non_bulk_mesh = prepareNonBulkMesh(
-                mesh_output_name, process, process_id, t, xs);
-            output_meshes.push_back(non_bulk_mesh);
+            auto const& submesh =
+                prepareSubmesh(mesh_output_name, process, process_id, t, xs);
+            output_meshes.push_back(submesh);
         }
     }
 
