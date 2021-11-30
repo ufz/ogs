@@ -113,7 +113,7 @@ static void addSecondaryVariableResiduals(
     residuals.copyValues(residuals_mesh);
 }
 
-std::vector<double> copySolutionVector(GlobalVector const& x)
+static std::vector<double> copySolutionVector(GlobalVector const& x)
 {
     std::vector<double> x_copy;
     x.copyValues(x_copy);
@@ -148,7 +148,7 @@ MeshLib::PropertyVector<std::size_t> const* getBulkNodeIdMapForPetscIfNecessary(
     return nullptr;
 }
 
-GlobalIndexType getIndexForComponentInSolutionVector(
+static GlobalIndexType getIndexForComponentInSolutionVector(
     std::size_t const mesh_id, std::size_t const node_id,
     [[maybe_unused]] bool const is_ghost_node, int const global_component_id,
     GlobalVector const& x, NumLib::LocalToGlobalIndexMap const& mesh_dof_table,
@@ -181,8 +181,8 @@ GlobalIndexType getIndexForComponentInSolutionVector(
     return in_index;
 }
 
-bool isGhostNode([[maybe_unused]] MeshLib::Mesh const& mesh,
-                 [[maybe_unused]] std::size_t node_id)
+static bool isGhostNode([[maybe_unused]] MeshLib::Mesh const& mesh,
+                        [[maybe_unused]] std::size_t node_id)
 {
 #ifndef USE_PETSC
     return false;
@@ -192,7 +192,7 @@ bool isGhostNode([[maybe_unused]] MeshLib::Mesh const& mesh,
 #endif
 }
 
-std::set<std::string> addPrimaryVariablesToMesh(
+static std::set<std::string> addPrimaryVariablesToMesh(
     MeshLib::Mesh& mesh,
     GlobalVector const& x,
     std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>> const&
@@ -268,7 +268,7 @@ std::set<std::string> addPrimaryVariablesToMesh(
     return names_of_already_output_variables;
 }
 
-void addSecondaryVariablesToMesh(
+static void addSecondaryVariablesToMesh(
     ProcessLib::SecondaryVariableCollection const& secondary_variables,
     std::set<std::string>& names_of_already_output_variables, const double t,
     std::vector<GlobalVector*> const& xs, MeshLib::Mesh& mesh,
