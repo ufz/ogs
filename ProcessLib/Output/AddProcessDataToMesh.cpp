@@ -165,20 +165,16 @@ static GlobalIndexType getIndexForComponentInSolutionVector(
         MeshLib::Location const loc(bulk_mesh_id, MeshLib::MeshItemType::Node,
                                     bulk_node_id);
 
-        auto const in_index = bulk_dof_table.getLocalIndex(
-            loc, global_component_id, x.getRangeBegin(), x.getRangeEnd());
-
         // early return!
-        return in_index;
+        return bulk_dof_table.getLocalIndex(loc, global_component_id,
+                                            x.getRangeBegin(), x.getRangeEnd());
     }
 #endif
 
     MeshLib::Location const loc(mesh_id, MeshLib::MeshItemType::Node, node_id);
 
-    auto const in_index = mesh_dof_table.getLocalIndex(
-        loc, global_component_id, x.getRangeBegin(), x.getRangeEnd());
-
-    return in_index;
+    return mesh_dof_table.getLocalIndex(loc, global_component_id,
+                                        x.getRangeBegin(), x.getRangeEnd());
 }
 
 static bool isGhostNode([[maybe_unused]] MeshLib::Mesh const& mesh,
