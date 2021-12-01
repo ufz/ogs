@@ -122,7 +122,7 @@ public:
     int getNumberOfGlobalComponents() const;
 
     RowColumnIndices operator()(std::size_t const mesh_item_id,
-                                const int component_id) const;
+                                const int global_component_id) const;
 
     std::size_t getNumberOfElementDOF(std::size_t const mesh_item_id) const;
 
