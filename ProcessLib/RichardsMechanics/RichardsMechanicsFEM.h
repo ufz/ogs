@@ -103,7 +103,6 @@ public:
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
-                              const double /*dxdot_dx*/, const double /*dx_dx*/,
                               std::vector<double>& /*local_M_data*/,
                               std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
@@ -111,8 +110,7 @@ public:
 
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
-        const double dx_dx, int const process_id,
+        Eigen::VectorXd const& local_xdot, int const process_id,
         std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data) override;
@@ -264,8 +262,6 @@ private:
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of an element.
      * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
-     * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
-     * @param dx_dx           Value of \f$ x \cdot dx\f$.
      * @param local_M_data    Mass matrix of an element, which takes the form of
      *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
      * @param local_K_data    Laplacian matrix of an element, which takes the
@@ -277,8 +273,7 @@ private:
      */
     void assembleWithJacobianForDeformationEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
-        const double dx_dx, std::vector<double>& local_M_data,
+        Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
@@ -299,8 +294,6 @@ private:
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of an element.
      * @param local_xdot      Nodal values of \f$\dot{x}\f$ of an element.
-     * @param dxdot_dx        Value of \f$\dot{x} \cdot dx\f$.
-     * @param dx_dx           Value of \f$ x \cdot dx\f$.
      * @param local_M_data    Mass matrix of an element, which takes the form of
      *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
      * @param local_K_data    Laplacian matrix of an element, which takes the
@@ -312,8 +305,7 @@ private:
      */
     void assembleWithJacobianForPressureEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_xdot, const double dxdot_dx,
-        const double dx_dx, std::vector<double>& local_M_data,
+        Eigen::VectorXd const& local_xdot, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 

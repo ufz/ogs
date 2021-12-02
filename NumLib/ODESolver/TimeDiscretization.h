@@ -138,15 +138,12 @@ public:
     {
         namespace LinAlg = MathLib::LinAlg;
 
-        auto const dxdot_dx = getNewXWeight();
+        double const dt = getCurrentTimeIncrement();
 
-        // xdot = dxdot_dx * x_at_new_timestep - x_old
+        // xdot = 1/dt * x_at_new_timestep - x_old
         getWeightedOldX(xdot, x_old);
-        LinAlg::axpby(xdot, dxdot_dx, -1.0, x_at_new_timestep);
+        LinAlg::axpby(xdot, 1. / dt, -1.0, x_at_new_timestep);
     }
-
-    //! Returns \f$ \alpha = \partial \hat x / \partial x_N \f$.
-    virtual double getNewXWeight() const = 0;
 
     //! Returns \f$ x_O \f$.
     virtual void getWeightedOldX(
@@ -172,7 +169,6 @@ public:
 
     double getCurrentTime() const override { return _t; }
     double getCurrentTimeIncrement() const override { return _delta_t; }
-    double getNewXWeight() const override { return 1.0 / _delta_t; }
     void getWeightedOldX(GlobalVector& y,
                          GlobalVector const& x_old) const override
     {

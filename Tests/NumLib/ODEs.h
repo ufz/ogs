@@ -48,10 +48,9 @@ public:
         setMKbValues(M, K, b);
     }
 
-    void assembleWithJacobian(const double /*t*/, double const /*dt*/,
+    void assembleWithJacobian(const double /*t*/, double const dt,
                               std::vector<GlobalVector*> const& /*x_curr*/,
                               std::vector<GlobalVector*> const& /*xdot*/,
-                              const double dxdot_dx, const double dx_dx,
                               int const /*process_id*/, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
@@ -60,15 +59,12 @@ public:
 
         setMKbValues(M, K, b);
 
-        // compute Jac = M*dxdot_dx + dx_dx*K
+        // compute Jac = M*1/dt + K
         LinAlg::finalizeAssembly(M);
         LinAlg::copy(M, Jac);
-        LinAlg::scale(Jac, dxdot_dx);
-        if (dx_dx != 0.0)
-        {
-            LinAlg::finalizeAssembly(K);
-            LinAlg::axpy(Jac, dx_dx, K);
-        }
+        LinAlg::scale(Jac, 1. / dt);
+        LinAlg::finalizeAssembly(K);
+        LinAlg::axpy(Jac, 1., K);
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications(
@@ -142,10 +138,9 @@ public:
         setMKbValues(*x[process_id], M, K, b);
     }
 
-    void assembleWithJacobian(const double /*t*/, double const /*dt*/,
+    void assembleWithJacobian(const double /*t*/, double const dt,
                               std::vector<GlobalVector*> const& x,
                               std::vector<GlobalVector*> const& /*xdot*/,
-                              const double dxdot_dx, const double dx_dx,
                               int const process_id, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
@@ -156,18 +151,15 @@ public:
         namespace LinAlg = MathLib::LinAlg;
 
         LinAlg::finalizeAssembly(M);
-        // compute Jac = M*dxdot_dx + dK_dx + dx_dx*K
+        // compute Jac = M*1/dt + dK_dx + K
         LinAlg::copy(M, Jac);
-        LinAlg::scale(Jac, dxdot_dx);
+        LinAlg::scale(Jac, 1. / dt);
 
         MathLib::addToMatrix(Jac, {(*x[process_id])[0]});  // add dK_dx
 
-        if (dx_dx != 0.0)
-        {
-            LinAlg::finalizeAssembly(K);
-            LinAlg::finalizeAssembly(Jac);
-            LinAlg::axpy(Jac, dx_dx, K);
-        }
+        LinAlg::finalizeAssembly(K);
+        LinAlg::finalizeAssembly(Jac);
+        LinAlg::axpy(Jac, 1., K);
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications(
@@ -249,10 +241,9 @@ public:
         setMKbValues(*x_curr[process_id], M, K, b);
     }
 
-    void assembleWithJacobian(const double /*t*/, double const /*dt*/,
+    void assembleWithJacobian(const double /*t*/, double const dt,
                               std::vector<GlobalVector*> const& x_curr,
                               std::vector<GlobalVector*> const& xdot,
-                              const double dxdot_dx, const double dx_dx,
                               int const process_id, GlobalMatrix& M,
                               GlobalMatrix& K, GlobalVector& b,
                               GlobalMatrix& Jac) override
@@ -271,38 +262,25 @@ public:
         namespace LinAlg = MathLib::LinAlg;
 
         // Compute Jac = M dxdot/dx + dM/dx xdot + K dx/dx + dK/dx x - db/dx
+        // with dxdot/dx = 1/dt and dx/dx = 1
 
         LinAlg::finalizeAssembly(M);
         LinAlg::copy(M, Jac);
-        LinAlg::scale(Jac, dxdot_dx); // Jac = M * dxdot_dx
+        LinAlg::scale(Jac, 1. / dt);  // Jac = M * 1/dt
 
-        /* dx_dx == 0 holds if and only if the ForwardEuler scheme is used.
-         *
-         * In that case M, K, and b are assembled at the preceding timestep.
-         * Thus their derivatices w.r.t. x of the current timestep vanishes
-         * and does not contribute to the Jacobian.
-         *
-         * TODO: Maybe if relaxation is applied, dx_dx takes values from the
-         *       interval [ 0.0, 1.0 ]
-         */
-        if (dx_dx != 0.0)
-        {
-            // in this block it is assumed that dx_dx == 1.0
+        // add dM/dx \cdot \dot x
+        MathLib::addToMatrix(Jac, {du - dv, 0.0, 0.0, dv - du});
 
-            // add dM/dx \cdot \dot x
-            MathLib::addToMatrix(Jac, {du - dv, 0.0, 0.0, dv - du});
+        LinAlg::finalizeAssembly(K);
+        LinAlg::finalizeAssembly(Jac);
+        LinAlg::axpy(Jac, 1., K);  // add K
 
-            LinAlg::finalizeAssembly(K);
-            LinAlg::finalizeAssembly(Jac);
-            LinAlg::axpy(Jac, dx_dx, K); // add K \cdot dx_dx
+        // add dK/dx \cdot \dot x
+        MathLib::addToMatrix(Jac, {-du - dv, -du, 0.0, du + 2.0 * dv});
 
-            // add dK/dx \cdot \dot x
-            MathLib::addToMatrix(Jac, {-du - dv, -du, 0.0, du + 2.0 * dv});
-
-            // add -db/dx
-            MathLib::addToMatrix(Jac,
-                                 {2.0 - 2.0 * v, -2.0 * u, 0.0, 2.0 * v - 5.0});
-        }
+        // add -db/dx
+        MathLib::addToMatrix(Jac,
+                             {2.0 - 2.0 * v, -2.0 * u, 0.0, 2.0 * v - 5.0});
 
         // Eigen::MatrixXd J(Jac.getRawMatrix());
 

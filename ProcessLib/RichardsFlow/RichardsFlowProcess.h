@@ -56,9 +56,9 @@ private:
 
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
-        const double dx_dx, int const process_id, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac) override;
+        std::vector<GlobalVector*> const& xdot, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        GlobalMatrix& Jac) override;
 
     RichardsFlowProcessData _process_data;
 

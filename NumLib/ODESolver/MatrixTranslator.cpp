@@ -20,11 +20,11 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto const dxdot_dx = _time_disc.getNewXWeight();
+    double const dt = _time_disc.getCurrentTimeIncrement();
 
-    // A = M * dxdot_dx + K
+    // A = M * 1/dt + K
     LinAlg::copy(M, A);
-    LinAlg::aypx(A, dxdot_dx, K);
+    LinAlg::aypx(A, 1. / dt, K);
 }
 
 void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
