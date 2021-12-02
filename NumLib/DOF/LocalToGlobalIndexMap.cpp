@@ -344,10 +344,10 @@ std::size_t LocalToGlobalIndexMap::size() const
 }
 
 LocalToGlobalIndexMap::RowColumnIndices LocalToGlobalIndexMap::operator()(
-    std::size_t const mesh_item_id, const int component_id) const
+    std::size_t const mesh_item_id, const int global_component_id) const
 {
-    return RowColumnIndices(_rows(mesh_item_id, component_id),
-                            _columns(mesh_item_id, component_id));
+    return RowColumnIndices(_rows(mesh_item_id, global_component_id),
+                            _columns(mesh_item_id, global_component_id));
 }
 
 std::size_t LocalToGlobalIndexMap::getNumberOfElementDOF(

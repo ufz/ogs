@@ -66,8 +66,6 @@ public:
         enlarge();
     }
 
-    AABB(AABB const&) = default;
-
     /**
      * Construction of object using input iterators. In contrast to give a
      * vector this approach is more generic. You can use every (stl) container
