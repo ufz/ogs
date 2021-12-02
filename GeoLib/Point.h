@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <memory>
+
 // GeoLib
 #include "GeoObject.h"
 

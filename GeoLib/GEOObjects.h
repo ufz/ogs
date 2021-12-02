@@ -14,18 +14,18 @@
 
 #pragma once
 
-#include <map>
 #include <functional>
+#include <map>
 #include <string>
 #include <vector>
 
+#include "GeoType.h"
 #include "Point.h"
 #include "PointVec.h"
 #include "Polyline.h"
 #include "PolylineVec.h"
 #include "Surface.h"
 #include "SurfaceVec.h"
-#include "GeoType.h"
 
 namespace GeoLib
 {
@@ -153,8 +153,8 @@ public:
      * \return true if the polylines are appended, false if the PolylineVec with the
      * corresponding name does not exist
      * */
-    bool appendPolylineVec(const std::vector<Polyline*> &polylines,
-                                   const std::string &name);
+    bool appendPolylineVec(const std::vector<Polyline*>& polylines,
+                           const std::string& name);
 
     /**
      * Returns the polyline vector with the given name.
@@ -373,5 +373,4 @@ private:
 int geoPointsToStations(GEOObjects& geo_objects, std::string const& geo_name,
                         std::string& stn_name,
                         bool const only_unused_pnts = true);
-
 }  // namespace GeoLib

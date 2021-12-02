@@ -27,6 +27,8 @@
 
 namespace GeoLib
 {
+class PointVec;
+
 enum class Location
 {
     LEFT,
@@ -243,4 +245,8 @@ bool operator==(Polyline const& lhs, Polyline const& rhs);
 
 bool pointsAreIdentical(const std::vector<Point*> &pnt_vec, std::size_t i, std::size_t j,
                         double prox);
+
+/// Create a polyline from given point ids.
+std::unique_ptr<Polyline> createPolyline(GeoLib::PointVec const& points_vec,
+                                         std::vector<std::size_t>&& point_ids);
 }  // namespace GeoLib
