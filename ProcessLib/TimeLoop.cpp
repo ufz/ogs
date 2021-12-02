@@ -199,14 +199,10 @@ void calculateNonEquilibriumInitialResiduum(
     INFO("Calculate non-equilibrium initial residuum.");
     for (auto& process_data : per_process_data)
     {
-        auto& ode_sys = *process_data->tdisc_ode_sys;
-
         auto& time_disc = *process_data->time_disc;
         auto& nonlinear_solver = process_data->nonlinear_solver;
-        auto& conv_crit = *process_data->conv_crit;
 
-        auto const nl_tag = process_data->nonlinear_solver_tag;
-        setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
+        setEquationSystem(*process_data);
         // dummy values to handle the time derivative terms more or less
         // correctly, i.e. to ignore them.
         double const t = 0;
@@ -227,12 +223,10 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     auto& process = process_data.process;
     int const process_id = process_data.process_id;
     auto& time_disc = *process_data.time_disc;
-    auto& conv_crit = *process_data.conv_crit;
     auto& ode_sys = *process_data.tdisc_ode_sys;
     auto& nonlinear_solver = process_data.nonlinear_solver;
-    auto const nl_tag = process_data.nonlinear_solver_tag;
 
-    setEquationSystem(nonlinear_solver, ode_sys, conv_crit, nl_tag);
+    setEquationSystem(process_data);
 
     // Note: Order matters!
     // First advance to the next timestep, then set known solutions at that

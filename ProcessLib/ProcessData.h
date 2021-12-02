@@ -20,11 +20,6 @@
 
 namespace ProcessLib
 {
-void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
-                       NumLib::EquationSystem& eq_sys,
-                       NumLib::ConvergenceCriterion& conv_crit,
-                       NumLib::NonlinearSolverTag nl_tag);
-
 struct ProcessData
 {
     ProcessData(std::unique_ptr<NumLib::TimeStepAlgorithm>&& timestepper_,
@@ -75,4 +70,7 @@ struct ProcessData
 
     Process& process;
 };
+
+void setEquationSystem(ProcessData const& process_data);
+
 }  // namespace ProcessLib

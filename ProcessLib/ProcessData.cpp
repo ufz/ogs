@@ -14,18 +14,18 @@
 
 namespace ProcessLib
 {
-void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
-                       NumLib::EquationSystem& eq_sys,
-                       NumLib::ConvergenceCriterion& conv_crit,
-                       NumLib::NonlinearSolverTag nl_tag)
+void setEquationSystem(ProcessData const& process_data)
 {
+    auto& conv_crit = *process_data.conv_crit;
+    auto& nonlinear_solver = process_data.nonlinear_solver;
+
     using Tag = NumLib::NonlinearSolverTag;
-    switch (nl_tag)
+    switch (process_data.nonlinear_solver_tag)
     {
         case Tag::Picard:
         {
             using EqSys = NumLib::NonlinearSystem<Tag::Picard>;
-            auto& eq_sys_ = static_cast<EqSys&>(eq_sys);
+            auto& eq_sys_ = static_cast<EqSys&>(*process_data.tdisc_ode_sys);
             if (auto* nl_solver =
                     dynamic_cast<NumLib::NonlinearSolver<Tag::Picard>*>(
                         &nonlinear_solver);
@@ -43,7 +43,7 @@ void setEquationSystem(NumLib::NonlinearSolverBase& nonlinear_solver,
         case Tag::Newton:
         {
             using EqSys = NumLib::NonlinearSystem<Tag::Newton>;
-            auto& eq_sys_ = static_cast<EqSys&>(eq_sys);
+            auto& eq_sys_ = static_cast<EqSys&>(*process_data.tdisc_ode_sys);
 
             if (auto* nl_solver =
                     dynamic_cast<NumLib::NonlinearSolver<Tag::Newton>*>(
