@@ -30,10 +30,9 @@ CentralDifferencesJacobianAssembler::CentralDifferencesJacobianAssembler(
 void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     LocalAssemblerInterface& local_assembler, const double t, double const dt,
     const std::vector<double>& local_x_data,
-    const std::vector<double>& local_xdot_data, const double dxdot_dx,
-    const double dx_dx, std::vector<double>& local_M_data,
-    std::vector<double>& local_K_data, std::vector<double>& local_b_data,
-    std::vector<double>& local_Jac_data)
+    const std::vector<double>& local_xdot_data,
+    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
+    std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
     // TODO do not check in every call.
     if (local_x_data.size() % _absolute_epsilons.size() != 0)
@@ -64,6 +63,7 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     // Residual  res := M xdot + K x - b
     // Computing Jac := dres/dx
     //                = M dxdot/dx + dM/dx xdot + K dx/dx + dK/dx x - db/dx
+    //                  with dxdot/dx = 1/dt and dx/dx = 1
     //                  (Note: dM/dx and dK/dx actually have the second and
     //                  third index transposed.)
     // The loop computes the dM/dx, dK/dx and db/dx terms, the rest is computed
@@ -132,15 +132,15 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
                              local_K_data, local_b_data);
 
     // Compute remaining terms of the Jacobian.
-    if (dxdot_dx != 0.0 && !local_M_data.empty())
+    if (!local_M_data.empty())
     {
         auto local_M = MathLib::toMatrix(local_M_data, num_r_c, num_r_c);
-        local_Jac.noalias() += local_M * dxdot_dx;
+        local_Jac.noalias() += local_M / dt;
     }
-    if (dx_dx != 0.0 && !local_K_data.empty())
+    if (!local_K_data.empty())
     {
         auto local_K = MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
-        local_Jac.noalias() += local_K * dx_dx;
+        local_Jac.noalias() += local_K;
     }
 }
 

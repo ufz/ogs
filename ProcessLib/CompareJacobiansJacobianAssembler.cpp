@@ -126,7 +126,6 @@ namespace ProcessLib
 void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     LocalAssemblerInterface& local_assembler, double const t, double const dt,
     std::vector<double> const& local_x, std::vector<double> const& local_xdot,
-    const double dxdot_dx, const double dx_dx,
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
@@ -148,8 +147,8 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     // First assembly -- the one whose results will be added to the global
     // equation system finally.
     _asm1->assembleWithJacobian(local_assembler, t, dt, local_x, local_xdot,
-                                dxdot_dx, dx_dx, local_M_data, local_K_data,
-                                local_b_data, local_Jac_data);
+                                local_M_data, local_K_data, local_b_data,
+                                local_Jac_data);
 
     auto const local_M1 = to_mat(local_M_data);
     auto const local_K1 = to_mat(local_K_data);
@@ -162,8 +161,8 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
     // Second assembly -- used for checking only.
     _asm2->assembleWithJacobian(local_assembler, t, dt, local_x, local_xdot,
-                                dxdot_dx, dx_dx, local_M_data2, local_K_data2,
-                                local_b_data2, local_Jac_data2);
+                                local_M_data2, local_K_data2, local_b_data2,
+                                local_Jac_data2);
 
     auto const local_M2 = to_mat(local_M_data2);
     auto const local_K2 = to_mat(local_K_data2);
@@ -322,8 +321,7 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
 
         dump_py(_log_file, "local_x", local_x);
         dump_py(_log_file, "local_x_dot", local_xdot);
-        dump_py(_log_file, "dxdot_dx", dxdot_dx);
-        dump_py(_log_file, "dx_dx", dx_dx);
+        dump_py(_log_file, "dt", dt);
 
         _log_file << '\n';
 

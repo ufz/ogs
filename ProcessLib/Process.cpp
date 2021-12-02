@@ -230,7 +230,6 @@ void Process::assemble(const double t, double const dt,
 void Process::assembleWithJacobian(const double t, double const dt,
                                    std::vector<GlobalVector*> const& x,
                                    std::vector<GlobalVector*> const& xdot,
-                                   const double dxdot_dx, const double dx_dx,
                                    int const process_id, GlobalMatrix& M,
                                    GlobalMatrix& K, GlobalVector& b,
                                    GlobalMatrix& Jac)
@@ -242,8 +241,8 @@ void Process::assembleWithJacobian(const double t, double const dt,
         MathLib::LinAlg::setLocalAccessibleVector(*xdot[i]);
     }
 
-    assembleWithJacobianConcreteProcess(t, dt, x, xdot, dxdot_dx, dx_dx,
-                                        process_id, M, K, b, Jac);
+    assembleWithJacobianConcreteProcess(t, dt, x, xdot, process_id, M, K, b,
+                                        Jac);
 
     // TODO: apply BCs to Jacobian.
     _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,

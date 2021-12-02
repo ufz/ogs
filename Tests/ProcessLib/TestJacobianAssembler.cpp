@@ -317,7 +317,6 @@ public:
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
-                              const double dxdot_dx, const double /*dx_dx*/,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
@@ -333,7 +332,7 @@ public:
             MathLib::toMatrix(local_Jac_data, local_x.size(), local_x.size());
         auto local_M =
             MathLib::toMatrix(local_M_data, local_x.size(), local_x.size());
-        local_Jac.noalias() += dxdot_dx * local_M;
+        local_Jac.noalias() += local_M / dt;
     }
 
     static double getTol() { return MatVec::tolerance; }
@@ -360,7 +359,6 @@ public:
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
-                              const double /*dxdot_dx*/, const double dx_dx,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
@@ -376,7 +374,7 @@ public:
             MathLib::toMatrix(local_Jac_data, local_x.size(), local_x.size());
         auto local_K =
             MathLib::toMatrix(local_K_data, local_x.size(), local_x.size());
-        local_Jac.noalias() += dx_dx * local_K;
+        local_Jac.noalias() += local_K;
     }
 
     static double getTol() { return MatVec::tolerance; }
@@ -403,7 +401,6 @@ public:
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
-                              const double /*dxdot_dx*/, const double /*dx_dx*/,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
@@ -447,7 +444,6 @@ public:
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
-                              const double dxdot_dx, const double dx_dx,
                               std::vector<double>& local_M_data,
                               std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
@@ -481,7 +477,7 @@ public:
             MathLib::toMatrix(local_M_data, local_x.size(), local_x.size());
         auto local_K =
             MathLib::toMatrix(local_K_data, local_x.size(), local_x.size());
-        local_Jac.noalias() += dxdot_dx * local_M + dx_dx * local_K;
+        local_Jac.noalias() += local_M / dt + local_K;
     }
 
     static double getTol()
@@ -503,8 +499,7 @@ struct ProcessLibCentralDifferencesJacobianAssembler : public ::testing::Test
         // these four local variables will be filled randomly
         std::vector<double> x;
         std::vector<double> xdot;
-        double dxdot_dx;
-        double dx_dx;
+        double dt;
 
         std::random_device rd;
         std::mt19937 random_number_generator(rd());
@@ -521,17 +516,16 @@ struct ProcessLibCentralDifferencesJacobianAssembler : public ::testing::Test
         }
         {
             std::uniform_real_distribution<double> rnd;
-            dxdot_dx = rnd(random_number_generator);
-            dx_dx = rnd(random_number_generator);
+            dt = rnd(random_number_generator);
         }
 
-        testInner(x, xdot, dxdot_dx, dx_dx);
+        testInner(x, xdot, dt);
     }
 
 private:
     static void testInner(std::vector<double> const& x,
                           std::vector<double> const& xdot,
-                          const double dxdot_dx, const double dx_dx)
+                          double const dt)
     {
         ProcessLib::AnalyticalJacobianAssembler jac_asm_ana;
         ProcessLib::CentralDifferencesJacobianAssembler jac_asm_cd({1e-8});
@@ -548,15 +542,12 @@ private:
         std::vector<double> b_data_ana;
         std::vector<double> Jac_data_ana;
         double const t = 0.0;
-        double const dt = 0.0;
 
-        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, dxdot_dx,
-                                        dx_dx, M_data_cd, K_data_cd, b_data_cd,
-                                        Jac_data_cd);
+        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, M_data_cd,
+                                        K_data_cd, b_data_cd, Jac_data_cd);
 
-        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, dxdot_dx,
-                                         dx_dx, M_data_ana, K_data_ana,
-                                         b_data_ana, Jac_data_ana);
+        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, M_data_ana,
+                                         K_data_ana, b_data_ana, Jac_data_ana);
 
         if (LocAsm::asmM)
         {

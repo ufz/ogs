@@ -23,8 +23,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, IntegrationMethod,
                               DisplacementDim>::
     assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& /*local_xdot*/, const double /*dxdot_dx*/,
-        const double /*dx_dx*/, int const process_id,
+        Eigen::VectorXd const& /*local_xdot*/, int const process_id,
         std::vector<double>& /*local_M_data*/,
         std::vector<double>& /*local_K_data*/,
         std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)

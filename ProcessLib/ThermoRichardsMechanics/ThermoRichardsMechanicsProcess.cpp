@@ -324,11 +324,12 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
 template <int DisplacementDim>
 void ThermoRichardsMechanicsProcess<DisplacementDim>::
-    assembleWithJacobianConcreteProcess(
-        const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
-        const double dx_dx, int const process_id, GlobalMatrix& M,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    assembleWithJacobianConcreteProcess(const double t, double const dt,
+                                        std::vector<GlobalVector*> const& x,
+                                        std::vector<GlobalVector*> const& xdot,
+                                        int const process_id, GlobalMatrix& M,
+                                        GlobalMatrix& K, GlobalVector& b,
+                                        GlobalMatrix& Jac)
 {
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_tables;
@@ -343,7 +344,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim>::
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac);
+        process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {

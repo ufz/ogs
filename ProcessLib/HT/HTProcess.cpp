@@ -111,9 +111,8 @@ void HTProcess::assembleConcreteProcess(const double t, double const dt,
 
 void HTProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& xdot, const double dxdot_dx,
-    const double dx_dx, int const process_id, GlobalMatrix& M, GlobalMatrix& K,
-    GlobalVector& b, GlobalMatrix& Jac)
+    std::vector<GlobalVector*> const& xdot, int const process_id,
+    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
@@ -134,7 +133,7 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x, xdot,
-        dxdot_dx, dx_dx, process_id, M, K, b, Jac);
+        process_id, M, K, b, Jac);
 }
 
 void HTProcess::setCoupledTermForTheStaggeredSchemeToLocalAssemblers(
