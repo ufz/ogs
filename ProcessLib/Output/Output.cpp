@@ -129,40 +129,6 @@ std::string constructPVDName(std::string const& output_directory,
                                   ".pvd");
 }
 
-std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
-computeDofTablesForSubmesh(ProcessLib::Process const& process,
-                           MeshLib::Mesh const& submesh,
-                           std::size_t const num_processes)
-{
-    std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>>
-        submesh_dof_tables;
-    submesh_dof_tables.reserve(num_processes);
-
-    for (std::size_t i = 0; i < num_processes; ++i)
-    {
-        submesh_dof_tables.push_back(
-            process.getDOFTable(i).deriveBoundaryConstrainedMap(
-                MeshLib::MeshSubset{submesh, submesh.getNodes()}));
-    }
-
-    return submesh_dof_tables;
-}
-
-std::vector<NumLib::LocalToGlobalIndexMap const*> toNonOwning(
-    std::vector<std::unique_ptr<NumLib::LocalToGlobalIndexMap>> const&
-        dof_tables)
-{
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table_pointers;
-
-    dof_table_pointers.reserve(dof_tables.size());
-    transform(cbegin(dof_tables), cend(dof_tables),
-              back_inserter(dof_table_pointers),
-              [](std::unique_ptr<NumLib::LocalToGlobalIndexMap> const& p)
-              { return p.get(); });
-
-    return dof_table_pointers;
-}
-
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
                    bool const compress_output, int const data_mode)
 {
@@ -405,16 +371,13 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     DBUG("Found {:d} nodes for output at mesh '{:s}'.",
          submesh.getNumberOfNodes(), submesh.getName());
 
-    // TODO do not recreate everytime when doing output
-    auto const submesh_dof_tables =
-        computeDofTablesForSubmesh(process, submesh, xs.size());
-
-    auto const submesh_dof_table_pointers = toNonOwning(submesh_dof_tables);
-
     bool const output_secondary_variables = false;
-    addProcessDataToSubMesh(
-        t, xs, process_id, submesh, submesh_dof_table_pointers, process,
-        output_secondary_variables, _output_data_specification);
+    auto const process_output_data =
+        createProcessOutputData(process, xs.size(), submesh);
+
+    addProcessDataToMesh(t, xs, process_id, process_output_data,
+                         output_secondary_variables,
+                         _output_data_specification);
 
     return submesh;
 }
@@ -431,7 +394,10 @@ void Output::doOutputAlways(Process const& process,
 
     // Need to add variables of process to vtu even if no output takes place.
     bool const output_secondary_variables = true;
-    addProcessDataToMesh(t, xs, process_id, process.getMesh(), process,
+    auto const process_output_data =
+        createProcessOutputData(process, xs.size(), process.getMesh());
+
+    addProcessDataToMesh(t, xs, process_id, process_output_data,
                          output_secondary_variables,
                          _output_data_specification);
 
@@ -515,7 +481,10 @@ void Output::doOutputNonlinearIteration(Process const& process,
     time_output.start();
 
     bool const output_secondary_variable = true;
-    addProcessDataToMesh(t, xs, process_id, process.getMesh(), process,
+    auto const process_output_data =
+        createProcessOutputData(process, xs.size(), process.getMesh());
+
+    addProcessDataToMesh(t, xs, process_id, process_output_data,
                          output_secondary_variable, _output_data_specification);
 
     // For the staggered scheme for the coupling, only the last process, which

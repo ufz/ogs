@@ -151,14 +151,10 @@ public:
         return _secondary_variables;
     }
 
-    std::vector<std::unique_ptr<IntegrationPointWriter>> const*
-    getIntegrationPointWriter(MeshLib::Mesh const& mesh) const
+    std::vector<std::unique_ptr<IntegrationPointWriter>> const&
+    getIntegrationPointWriters() const
     {
-        if (mesh == _mesh)
-        {
-            return &_integration_point_writer;
-        }
-        return nullptr;
+        return _integration_point_writer;
     }
 
     // Used as a call back for CalculateSurfaceFlux process.

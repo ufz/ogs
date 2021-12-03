@@ -58,6 +58,20 @@ static void addSecondaryVariableNodes(
     auto const& nodal_values =
         var.fcts.eval_field(t, x, dof_table, result_cache);
 
+#ifdef USE_PETSC
+    std::size_t const global_vector_size =
+        nodal_values.getLocalSize() + nodal_values.getGhostSize();
+#else
+    std::size_t const global_vector_size = nodal_values.size();
+#endif
+    if (nodal_values_mesh.size() != global_vector_size)
+    {
+        OGS_FATAL(
+            "Secondary variable `{:s}' did not evaluate to the right number of "
+            "components. Expected: {:d}, actual: {:d}.",
+            var.name, nodal_values_mesh.size(), global_vector_size);
+    }
+
     // Copy result
     nodal_values.copyValues(nodal_values_mesh);
 }
@@ -345,56 +359,46 @@ static void addSecondaryVariablesToMesh(
 
 namespace ProcessLib
 {
-void addProcessDataToSubMesh(
-    const double t, std::vector<GlobalVector*> const& xs, int const process_id,
-    MeshLib::Mesh& mesh,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-    Process const& process, bool const output_secondary_variables,
-    OutputDataSpecification const& process_output)
+void addProcessDataToMesh(const double t,
+                          std::vector<GlobalVector*> const& xs,
+                          int const process_id,
+                          ProcessOutputData const& process_output_data,
+                          bool const output_secondary_variables,
+                          OutputDataSpecification const& process_output)
 {
     DBUG("Process output data.");
 
-    auto const& process_variables = process.getProcessVariables(process_id);
-    auto const& secondary_variables = process.getSecondaryVariables();
+    auto const& pod = process_output_data;
+    auto const& process_variables = pod.getProcessVariables(process_id);
+    auto const& secondary_variables = pod.getSecondaryVariables();
     auto const* const integration_point_writers =
-        process.getIntegrationPointWriter(mesh);
-    auto const& output_variables = process_output.output_variables;
-    auto const& bulk_mesh_dof_table = process.getDOFTable(process_id);
+        pod.getIntegrationPointWriters();
+    auto const& bulk_mesh_dof_table = pod.getBulkMeshDofTable(process_id);
+    auto const& output_mesh_dof_table = pod.getOutputMeshDofTable(process_id);
+    auto& output_mesh = pod.getOutputMesh();
 
-    addOgsVersion(mesh);
+    auto const& output_variables = process_output.output_variables;
+
+    addOgsVersion(output_mesh);
 
     auto names_of_already_output_variables = addPrimaryVariablesToMesh(
-        mesh, *xs[process_id], process_variables, output_variables,
-        *dof_tables[process_id], bulk_mesh_dof_table);
+        output_mesh, *xs[process_id], process_variables, output_variables,
+        output_mesh_dof_table, bulk_mesh_dof_table);
 
     if (output_secondary_variables)
     {
-        addSecondaryVariablesToMesh(
-            secondary_variables, names_of_already_output_variables, t, xs, mesh,
-            dof_tables, process_output.output_residuals);
+        auto const& output_mesh_dof_tables =
+            pod.getOutputMeshDofTablesOfAllProcesses();
+
+        addSecondaryVariablesToMesh(secondary_variables,
+                                    names_of_already_output_variables, t, xs,
+                                    output_mesh, output_mesh_dof_tables,
+                                    process_output.output_residuals);
     }
 
     if (integration_point_writers)
     {
-        addIntegrationPointDataToMesh(mesh, *integration_point_writers);
+        addIntegrationPointDataToMesh(output_mesh, *integration_point_writers);
     }
-}
-
-void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& xs,
-                          int const process_id, MeshLib::Mesh& mesh,
-                          Process const& process,
-                          bool const output_secondary_variables,
-                          OutputDataSpecification const& process_output)
-{
-    std::vector<NumLib::LocalToGlobalIndexMap const*> bulk_mesh_dof_tables(
-        xs.size());
-    for (std::size_t i = 0; i < xs.size(); ++i)
-    {
-        bulk_mesh_dof_tables[i] = &process.getDOFTable(i);
-    }
-
-    addProcessDataToSubMesh(t, xs, process_id, mesh, bulk_mesh_dof_tables,
-                            process, output_secondary_variables,
-                            process_output);
 }
 }  // namespace ProcessLib
