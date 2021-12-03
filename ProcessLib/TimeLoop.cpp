@@ -339,14 +339,7 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
                              x, x_prev, norm_type))
                 : 0.;
 
-        if (!ppd.nonlinear_solver_status.error_norms_met)
-        {
-            timestepper->setAccepted(false);
-        }
-        else
-        {
-            timestepper->setAccepted(true);
-        }
+        timestepper->setAccepted(ppd.nonlinear_solver_status.error_norms_met);
 
         auto [step_accepted, timestepper_dt] = timestepper->next(
             solution_error, ppd.nonlinear_solver_status.number_iterations);
