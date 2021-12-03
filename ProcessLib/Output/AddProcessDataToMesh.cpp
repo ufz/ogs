@@ -219,8 +219,16 @@ static std::set<std::string> addPrimaryVariablesToMesh(
     auto const x_copy = copySolutionVector(x);
     std::set<std::string> names_of_already_output_variables;
 
-    const auto number_of_dof_variables = mesh_dof_table.getNumberOfVariables();
-    assert(number_of_dof_variables == process_variables.size());
+    auto const number_of_dof_variables = mesh_dof_table.getNumberOfVariables();
+    if (number_of_dof_variables != static_cast<int>(process_variables.size()))
+    {
+        OGS_FATAL(
+            "The number of variables in the d.o.f. table differs from the "
+            "number of primary variables of the process {} != {}. This could "
+            "be a not-yet-implemented corner case for the output of "
+            "staggeredly coupled processes.",
+            number_of_dof_variables, process_variables.size());
+    }
 
     int global_component_offset = 0;
     int global_component_offset_next = 0;
