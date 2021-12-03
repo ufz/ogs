@@ -73,10 +73,7 @@ public:
 
     bool accepted() const override { return _is_accepted; }
 
-    void setAcceptedOrNot(const bool accepted) override
-    {
-        _is_accepted = accepted;
-    }
+    void setAccepted(const bool accepted) override { _is_accepted = accepted; }
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 

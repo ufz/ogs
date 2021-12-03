@@ -96,7 +96,7 @@ public:
                                   int number_iterations) override;
 
     bool accepted() const override;
-    void setAcceptedOrNot(bool accepted) override { _accepted = accepted; };
+    void setAccepted(bool const accepted) override { _accepted = accepted; };
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 

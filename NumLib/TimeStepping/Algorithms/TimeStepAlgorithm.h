@@ -104,7 +104,7 @@ public:
     /// Set the status of the step.
     /// \param accepted A boolean parameter is needed to indicated whether the
     /// step is accepted or not.
-    virtual void setAcceptedOrNot(const bool accepted) { (void)accepted; };
+    virtual void setAccepted(bool const /*accepted*/){};
 
     /// return a history of time step sizes
     const std::vector<double>& getTimeStepSizeHistory() const

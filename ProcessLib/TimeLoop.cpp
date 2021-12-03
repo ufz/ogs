@@ -341,11 +341,11 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
 
         if (!ppd.nonlinear_solver_status.error_norms_met)
         {
-            timestepper->setAcceptedOrNot(false);
+            timestepper->setAccepted(false);
         }
         else
         {
-            timestepper->setAcceptedOrNot(true);
+            timestepper->setAccepted(true);
         }
 
         auto [step_accepted, timestepper_dt] = timestepper->next(
