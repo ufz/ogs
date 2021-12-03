@@ -211,13 +211,16 @@ bool Output::isOutputStep(int timestep, double const t) const
 }
 bool Output::isOutputProcess(const int process_id, const Process& process) const
 {
+    auto const n_processes = static_cast<int>(_process_to_pvd_file.size() /
+                                              _mesh_names_for_output.size());
+
+    auto const is_last_process = process_id == n_processes - 1;
+
     return process.isMonolithicSchemeUsed()
            // For the staggered scheme for the coupling, only the last process,
            // which gives the latest solution within a coupling loop, is allowed
            // to make output.
-           || process_id == static_cast<int>(_process_to_pvd_file.size() /
-                                             _mesh_names_for_output.size()) -
-                                1;
+           || is_last_process;
 }
 
 Output::Output(std::string directory, OutputType file_type,
@@ -491,11 +494,7 @@ void Output::doOutputNonlinearIteration(Process const& process,
     addProcessDataToMesh(t, xs, process_id, process_output_data,
                          output_secondary_variable, _output_data_specification);
 
-    // For the staggered scheme for the coupling, only the last process, which
-    // gives the latest solution within a coupling loop, is allowed to make
-    // output.
-    if (!(process_id == static_cast<int>(_process_to_pvd_file.size()) - 1 ||
-          process.isMonolithicSchemeUsed()))
+    if (!isOutputProcess(process_id, process))
     {
         return;
     }
