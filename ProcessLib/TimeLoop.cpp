@@ -299,15 +299,15 @@ double TimeLoop::computeTimeStepping(const double prev_dt, double& t,
     // Get minimum time step size among step sizes of all processes.
     double dt = std::numeric_limits<double>::max();
 
-    bool is_initial_step = false;
+    bool const is_initial_step = std::any_of(
+        _per_process_data.begin(), _per_process_data.end(),
+        [](auto const& ppd) -> bool
+        { return ppd->timestepper->getTimeStep().timeStepNumber() == 0; });
+
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         auto& ppd = *_per_process_data[i];
         const auto& timestepper = ppd.timestepper;
-        if (timestepper->getTimeStep().timeStepNumber() == 0)
-        {
-            is_initial_step = true;
-        }
 
         auto& time_disc = ppd.time_disc;
         auto const& x = *_process_solutions[i];
