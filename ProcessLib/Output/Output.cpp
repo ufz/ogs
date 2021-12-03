@@ -372,6 +372,10 @@ MeshLib::Mesh const& Output::prepareSubmesh(
          submesh.getNumberOfNodes(), submesh.getName());
 
     bool const output_secondary_variables = false;
+
+    // TODO Under the assumption that xs.size() and submesh do not change during
+    // the simulation, process output data should not be recreated everytime,
+    // but should rather be computed only once and stored for later reuse.
     auto const process_output_data =
         createProcessOutputData(process, xs.size(), submesh);
 
@@ -392,11 +396,11 @@ void Output::doOutputAlways(Process const& process,
     BaseLib::RunTime time_output;
     time_output.start();
 
-    // Need to add variables of process to vtu even if no output takes place.
     bool const output_secondary_variables = true;
     auto const process_output_data =
         createProcessOutputData(process, xs.size(), process.getMesh());
 
+    // Need to add variables of process to vtu even if no output takes place.
     addProcessDataToMesh(t, xs, process_id, process_output_data,
                          output_secondary_variables,
                          _output_data_specification);
