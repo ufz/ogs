@@ -189,7 +189,8 @@ static bool isGhostNode([[maybe_unused]] MeshLib::Mesh const& mesh,
 }
 
 /**
- * Adds data for all given primary variables to the given \c mesh.
+ * Adds data for the given \c process_variables to the given \c mesh, if they
+ * occur in \c output_variables.
  *
  * \param mesh the mesh the data is added to.
  * \param x the global solution vector providing the data.
@@ -203,7 +204,16 @@ static bool isGhostNode([[maybe_unused]] MeshLib::Mesh const& mesh,
  *
  * \note Usually \c mesh and the full simulation domain are the same. But if
  *       output should be written to a sub mesh, they will differ. In that case,
- *       also the two d.o.f. table will be different from each other.
+ *       also the two d.o.f. tables will be different from each other.
+ *
+ * \note The \c mesh_dof_table must correspond to the \c mesh, to the solution
+ *       vector \c x and to the \c process_variables. I.e., if there are, e.g.,
+ *       two primary variables in \c x, there must also be two variables in the
+ *       \c mesh_dof_table and two entries in \c process_variables and so on.
+ *
+ * \note The \c mesh_dof_table must correspond to the \c full_mesh_dof_table,
+ *       i.e., the former must have been derived from the latter. In particular,
+ *       both must have the same number of variables and components.
  *
  * \return The names of all variables that have been written to the \c mesh.
  */
@@ -216,19 +226,34 @@ static std::set<std::string> addPrimaryVariablesToMesh(
     NumLib::LocalToGlobalIndexMap const& mesh_dof_table,
     NumLib::LocalToGlobalIndexMap const& full_mesh_dof_table)
 {
-    auto const x_copy = copySolutionVector(x);
-    std::set<std::string> names_of_already_output_variables;
+    if (mesh_dof_table.getNumberOfVariables() !=
+            full_mesh_dof_table.getNumberOfVariables() ||
+        mesh_dof_table.getNumberOfGlobalComponents() !=
+            full_mesh_dof_table.getNumberOfGlobalComponents())
+    {
+        OGS_FATAL(
+            "The d.o.f. table for the passed mesh must have the same number of "
+            "variables and global components as the d.o.f. table for the full "
+            "simulation domain. But the values differ: {} != {} (variables) or "
+            "{} != {} (global components).",
+            mesh_dof_table.getNumberOfVariables(),
+            full_mesh_dof_table.getNumberOfVariables(),
+            mesh_dof_table.getNumberOfGlobalComponents(),
+            full_mesh_dof_table.getNumberOfGlobalComponents());
+    }
 
     auto const number_of_dof_variables = mesh_dof_table.getNumberOfVariables();
+
     if (number_of_dof_variables != static_cast<int>(process_variables.size()))
     {
         OGS_FATAL(
             "The number of variables in the d.o.f. table differs from the "
-            "number of primary variables of the process {} != {}. This could "
-            "be a not-yet-implemented corner case for the output of "
-            "staggeredly coupled processes.",
+            "number of primary variables of the process {} != {}.",
             number_of_dof_variables, process_variables.size());
     }
+
+    auto const x_copy = copySolutionVector(x);
+    std::set<std::string> names_of_already_output_variables;
 
     int global_component_offset = 0;
     int global_component_offset_next = 0;
