@@ -25,6 +25,19 @@ bool isMonolithicProcess(ProcessLib::ProcessData const& process_data)
 {
     return process_data.process.isMonolithicSchemeUsed();
 }
+
+void updateDeactivatedSubdomains(
+    std::vector<std::unique_ptr<ProcessLib::ProcessData>> const&
+        per_process_data,
+    double const t)
+{
+    for (auto& process_data : per_process_data)
+    {
+        process_data->process.updateDeactivatedSubdomains(
+            t, process_data->process_id);
+    }
+}
+
 }  // namespace
 
 namespace ProcessLib
@@ -533,12 +546,7 @@ bool TimeLoop::loop()
             "=== Time stepping at step #{:d} and time {:g} with step size {:g}",
             timesteps, t, dt);
 
-        // Check element deactivation:
-        for (auto& process_data : _per_process_data)
-        {
-            process_data->process.updateDeactivatedSubdomains(
-                t, process_data->process_id);
-        }
+        updateDeactivatedSubdomains(_per_process_data, t);
 
         if (!non_equilibrium_initial_residuum_computed)
         {
