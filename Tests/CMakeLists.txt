@@ -104,6 +104,10 @@ if(OGS_BUILD_GUI)
     endif()
 endif()
 
+if(OGS_USE_CONAN)
+    target_link_libraries(testrunner PRIVATE ${CONAN_LIBS})
+endif()
+
 # cmake-format: off
 # Add make-target tests which runs the testrunner
 if(DEFINED ENV{CI} AND NOT OGS_COVERAGE)

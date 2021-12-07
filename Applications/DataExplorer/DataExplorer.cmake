@@ -52,6 +52,10 @@ if(GEOTIFF_FOUND)
     target_link_libraries(DataExplorer ${GEOTIFF_LIBRARIES})
 endif()
 
+if(OGS_USE_CONAN)
+    target_link_libraries(DataExplorer ${CONAN_LIBS})
+endif()
+
 if(MSVC)
     # Set linker flags
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG

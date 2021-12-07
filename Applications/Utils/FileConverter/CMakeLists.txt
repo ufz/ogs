@@ -37,7 +37,7 @@ if(TARGET NetCdfConverter)
         NetCdfConverter ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
         ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES}
     )
-    if(OGS_USE_CONAN AND MSVC)
+    if(OGS_USE_CONAN)
         target_link_libraries(NetCdfConverter ${CONAN_LIBS})
     endif()
 endif()
