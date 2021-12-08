@@ -175,7 +175,7 @@ struct Example1
     ~Example1() { delete[] exH; }
 };
 
-template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER,
+template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOLVER,
           typename IntType>
 void checkLinearSolverInterface(T_MATRIX& A,
                                 BaseLib::ConfigTree const& ls_option)
@@ -209,14 +209,14 @@ void checkLinearSolverInterface(T_MATRIX& A,
     MathLib::finalizeMatrixAssembly(A);
 
     // solve
-    T_LINEAR_SOVLER ls("dummy_name", &ls_option);
+    T_LINEAR_SOLVER ls("dummy_name", &ls_option);
     ls.solve(A, rhs, x);
 
     ASSERT_ARRAY_NEAR(ex1.exH, x, ex1.dim_eqs, 1e-5);
 }
 
 #ifdef USE_PETSC
-template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOVLER>
+template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOLVER>
 void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
                                 const std::string& prefix_name,
                                 BaseLib::ConfigTree const& ls_option)
@@ -273,7 +273,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     // solve
     T_VECTOR y(b, deep_copy);
     y.setZero();
-    T_LINEAR_SOVLER ls(prefix_name, &ls_option);
+    T_LINEAR_SOLVER ls(prefix_name, &ls_option);
     EXPECT_TRUE(ls.solve(A, b, y));
 
     EXPECT_GT(ls.getNumberOfIterations(), 0u);
