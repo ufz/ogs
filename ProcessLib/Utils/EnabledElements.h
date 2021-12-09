@@ -90,7 +90,6 @@ constexpr bool isElementEnabledImpl(bool is_group_enabled)
 
 auto constexpr isElementEnabled = []<typename ElementTraits>(ElementTraits*)
 {
-    namespace TMP = BaseLib::TMP;
     using Element = typename ElementTraits::Element;
 
     if constexpr (ElementTraits::ShapeFunction::ORDER > OGS_MAX_ELEMENT_ORDER)
