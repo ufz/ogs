@@ -24,28 +24,28 @@ namespace ProcessLib
 {
 namespace detail
 {
-static constexpr bool ENABLE_ELEMENT_TYPE_SIMPLEX =
+static constexpr bool enable_element_type_simplex =
 #ifdef OGS_ENABLE_ELEMENT_SIMPLEX
     true;
 #else
     false;
 #endif
 
-static constexpr bool ENABLE_ELEMENT_TYPE_CUBOID =
+static constexpr bool enable_element_type_cuboid =
 #ifdef OGS_ENABLE_ELEMENT_CUBOID
     true;
 #else
     false;
 #endif
 
-static constexpr bool ENABLE_ELEMENT_TYPE_PRISM =
+static constexpr bool enable_element_type_prism =
 #ifdef OGS_ENABLE_ELEMENT_PRISM
     true;
 #else
     false;
 #endif
 
-static constexpr bool ENABLE_ELEMENT_TYPE_PYRAMID =
+static constexpr bool enable_element_type_pyramid =
 #ifdef OGS_ENABLE_ELEMENT_PYRAMID
     true;
 #else
@@ -53,14 +53,14 @@ static constexpr bool ENABLE_ELEMENT_TYPE_PYRAMID =
 #endif
 
 // Faces of tets, pyramids and prisms are triangles
-static constexpr bool ENABLE_ELEMENT_TYPE_TRI = ENABLE_ELEMENT_TYPE_SIMPLEX ||
-                                                ENABLE_ELEMENT_TYPE_PYRAMID ||
-                                                ENABLE_ELEMENT_TYPE_PRISM;
+static constexpr bool enable_element_type_tri = enable_element_type_simplex ||
+                                                enable_element_type_pyramid ||
+                                                enable_element_type_prism;
 
 // Faces of hexes, pyramids and prisms are quads
-static constexpr bool ENABLE_ELEMENT_TYPE_QUAD = ENABLE_ELEMENT_TYPE_CUBOID ||
-                                                 ENABLE_ELEMENT_TYPE_PYRAMID ||
-                                                 ENABLE_ELEMENT_TYPE_PRISM;
+static constexpr bool enable_element_type_quad = enable_element_type_cuboid ||
+                                                 enable_element_type_pyramid ||
+                                                 enable_element_type_prism;
 
 using ZeroOrOneD = std::tuple<MeshLib::Point, MeshLib::Line, MeshLib::Line3>;
 
@@ -102,14 +102,14 @@ auto constexpr isElementEnabled = []<typename ElementTraits>(ElementTraits*)
     }
 
     return isElementEnabledImpl<ZeroOrOneD, Element>(true) ||
-           isElementEnabledImpl<Cuboids, Element>(ENABLE_ELEMENT_TYPE_CUBOID) ||
+           isElementEnabledImpl<Cuboids, Element>(enable_element_type_cuboid) ||
            isElementEnabledImpl<Simplices, Element>(
-               ENABLE_ELEMENT_TYPE_SIMPLEX) ||
-           isElementEnabledImpl<Prisms, Element>(ENABLE_ELEMENT_TYPE_PRISM) ||
+               enable_element_type_simplex) ||
+           isElementEnabledImpl<Prisms, Element>(enable_element_type_prism) ||
            isElementEnabledImpl<Pyramids, Element>(
-               ENABLE_ELEMENT_TYPE_PYRAMID) ||
-           isElementEnabledImpl<Triangles, Element>(ENABLE_ELEMENT_TYPE_TRI) ||
-           isElementEnabledImpl<Quads, Element>(ENABLE_ELEMENT_TYPE_QUAD);
+               enable_element_type_pyramid) ||
+           isElementEnabledImpl<Triangles, Element>(enable_element_type_tri) ||
+           isElementEnabledImpl<Quads, Element>(enable_element_type_quad);
 };
 
 }  // namespace detail
